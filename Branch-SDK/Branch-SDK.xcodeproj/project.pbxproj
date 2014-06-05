@@ -1,0 +1,264 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		670016321940F4EC00A9E103 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016311940F4EC00A9E103 /* Foundation.framework */; };
+		670016371940F4EC00A9E103 /* Branch_SDK.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 670016361940F4EC00A9E103 /* Branch_SDK.h */; };
+		670016391940F4EC00A9E103 /* Branch_SDK.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016381940F4EC00A9E103 /* Branch_SDK.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6700162C1940F4EC00A9E103 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				670016371940F4EC00A9E103 /* Branch_SDK.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		6700162E1940F4EC00A9E103 /* libBranch-SDK.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libBranch-SDK.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		670016311940F4EC00A9E103 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		670016351940F4EC00A9E103 /* Branch-SDK-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Branch-SDK-Prefix.pch"; sourceTree = "<group>"; };
+		670016361940F4EC00A9E103 /* Branch_SDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Branch_SDK.h; sourceTree = "<group>"; };
+		670016381940F4EC00A9E103 /* Branch_SDK.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_SDK.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6700162B1940F4EC00A9E103 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				670016321940F4EC00A9E103 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		670016251940F4EC00A9E103 = {
+			isa = PBXGroup;
+			children = (
+				670016331940F4EC00A9E103 /* Branch-SDK */,
+				670016301940F4EC00A9E103 /* Frameworks */,
+				6700162F1940F4EC00A9E103 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6700162F1940F4EC00A9E103 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6700162E1940F4EC00A9E103 /* libBranch-SDK.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		670016301940F4EC00A9E103 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				670016311940F4EC00A9E103 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		670016331940F4EC00A9E103 /* Branch-SDK */ = {
+			isa = PBXGroup;
+			children = (
+				670016361940F4EC00A9E103 /* Branch_SDK.h */,
+				670016381940F4EC00A9E103 /* Branch_SDK.m */,
+				670016341940F4EC00A9E103 /* Supporting Files */,
+			);
+			path = "Branch-SDK";
+			sourceTree = "<group>";
+		};
+		670016341940F4EC00A9E103 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				670016351940F4EC00A9E103 /* Branch-SDK-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6700162D1940F4EC00A9E103 /* Branch-SDK */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 670016511940F4EC00A9E103 /* Build configuration list for PBXNativeTarget "Branch-SDK" */;
+			buildPhases = (
+				6700162A1940F4EC00A9E103 /* Sources */,
+				6700162B1940F4EC00A9E103 /* Frameworks */,
+				6700162C1940F4EC00A9E103 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Branch-SDK";
+			productName = "Branch-SDK";
+			productReference = 6700162E1940F4EC00A9E103 /* libBranch-SDK.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		670016261940F4EC00A9E103 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Branch Metrics";
+			};
+			buildConfigurationList = 670016291940F4EC00A9E103 /* Build configuration list for PBXProject "Branch-SDK" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 670016251940F4EC00A9E103;
+			productRefGroup = 6700162F1940F4EC00A9E103 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6700162D1940F4EC00A9E103 /* Branch-SDK */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6700162A1940F4EC00A9E103 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				670016391940F4EC00A9E103 /* Branch_SDK.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6700164F1940F4EC00A9E103 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		670016501940F4EC00A9E103 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		670016521940F4EC00A9E103 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/Branch_SDK.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Branch-SDK/Branch-SDK-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		670016531940F4EC00A9E103 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/Branch_SDK.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Branch-SDK/Branch-SDK-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		670016291940F4EC00A9E103 /* Build configuration list for PBXProject "Branch-SDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6700164F1940F4EC00A9E103 /* Debug */,
+				670016501940F4EC00A9E103 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		670016511940F4EC00A9E103 /* Build configuration list for PBXNativeTarget "Branch-SDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				670016521940F4EC00A9E103 /* Debug */,
+				670016531940F4EC00A9E103 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 670016261940F4EC00A9E103 /* Project object */;
+}
