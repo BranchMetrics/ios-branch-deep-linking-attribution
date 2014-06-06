@@ -19,5 +19,9 @@ static NSString *REQ_TAG_CREDIT_ACTION = @"t_credit_action";
 
 - (void)registerInstall;
 - (void)registerOpen;
+- (void)userCompletedAction:(NSDictionary *)post;
+- (void)creditUserForReferrals:(NSDictionary *)post;
+- (void)getReferrals;
+- (void)createCustomUrl:(NSDictionary *)post;
 
 @end

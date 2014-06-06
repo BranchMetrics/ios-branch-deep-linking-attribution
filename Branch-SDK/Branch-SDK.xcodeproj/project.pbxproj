@@ -8,12 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		670016321940F4EC00A9E103 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016311940F4EC00A9E103 /* Foundation.framework */; };
-		670016371940F4EC00A9E103 /* Branch_SDK.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 670016361940F4EC00A9E103 /* Branch_SDK.h */; };
-		670016391940F4EC00A9E103 /* Branch_SDK.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016381940F4EC00A9E103 /* Branch_SDK.m */; };
+		670016371940F4EC00A9E103 /* Branch.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 670016361940F4EC00A9E103 /* Branch.h */; };
+		670016391940F4EC00A9E103 /* Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016381940F4EC00A9E103 /* Branch.m */; };
 		6700169E194103AE00A9E103 /* BranchServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 67001698194103AE00A9E103 /* BranchServerInterface.m */; };
 		6700169F194103AE00A9E103 /* ServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 6700169A194103AE00A9E103 /* ServerInterface.m */; };
 		670016A0194103AE00A9E103 /* PreferenceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6700169B194103AE00A9E103 /* PreferenceHelper.m */; };
 		670016A319410C9B00A9E103 /* SystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016A219410C9B00A9E103 /* SystemObserver.m */; };
+		670016A6194178F300A9E103 /* ServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016A5194178F300A9E103 /* ServerRequest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,7 +24,7 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				670016371940F4EC00A9E103 /* Branch_SDK.h in CopyFiles */,
+				670016371940F4EC00A9E103 /* Branch.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,8 +34,8 @@
 		6700162E1940F4EC00A9E103 /* libBranch-SDK.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libBranch-SDK.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		670016311940F4EC00A9E103 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		670016351940F4EC00A9E103 /* Branch-SDK-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Branch-SDK-Prefix.pch"; sourceTree = "<group>"; };
-		670016361940F4EC00A9E103 /* Branch_SDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Branch_SDK.h; sourceTree = "<group>"; };
-		670016381940F4EC00A9E103 /* Branch_SDK.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_SDK.m; sourceTree = "<group>"; };
+		670016361940F4EC00A9E103 /* Branch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Branch.h; sourceTree = "<group>"; };
+		670016381940F4EC00A9E103 /* Branch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch.m; sourceTree = "<group>"; };
 		67001698194103AE00A9E103 /* BranchServerInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchServerInterface.m; sourceTree = "<group>"; };
 		67001699194103AE00A9E103 /* BranchServerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchServerInterface.h; sourceTree = "<group>"; };
 		6700169A194103AE00A9E103 /* ServerInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerInterface.m; sourceTree = "<group>"; };
@@ -43,6 +44,8 @@
 		6700169D194103AE00A9E103 /* PreferenceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferenceHelper.h; sourceTree = "<group>"; };
 		670016A119410C9B00A9E103 /* SystemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemObserver.h; sourceTree = "<group>"; };
 		670016A219410C9B00A9E103 /* SystemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemObserver.m; sourceTree = "<group>"; };
+		670016A4194178F300A9E103 /* ServerRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerRequest.h; sourceTree = "<group>"; };
+		670016A5194178F300A9E103 /* ServerRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerRequest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,14 +88,16 @@
 		670016331940F4EC00A9E103 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
-				670016361940F4EC00A9E103 /* Branch_SDK.h */,
-				670016381940F4EC00A9E103 /* Branch_SDK.m */,
+				670016361940F4EC00A9E103 /* Branch.h */,
+				670016381940F4EC00A9E103 /* Branch.m */,
 				6700169D194103AE00A9E103 /* PreferenceHelper.h */,
 				6700169B194103AE00A9E103 /* PreferenceHelper.m */,
 				670016A119410C9B00A9E103 /* SystemObserver.h */,
 				670016A219410C9B00A9E103 /* SystemObserver.m */,
 				6700169C194103AE00A9E103 /* ServerInterface.h */,
 				6700169A194103AE00A9E103 /* ServerInterface.m */,
+				670016A4194178F300A9E103 /* ServerRequest.h */,
+				670016A5194178F300A9E103 /* ServerRequest.m */,
 				67001699194103AE00A9E103 /* BranchServerInterface.h */,
 				67001698194103AE00A9E103 /* BranchServerInterface.m */,
 				670016341940F4EC00A9E103 /* Supporting Files */,
@@ -161,9 +166,10 @@
 			files = (
 				670016A0194103AE00A9E103 /* PreferenceHelper.m in Sources */,
 				6700169E194103AE00A9E103 /* BranchServerInterface.m in Sources */,
+				670016A6194178F300A9E103 /* ServerRequest.m in Sources */,
 				6700169F194103AE00A9E103 /* ServerInterface.m in Sources */,
 				670016A319410C9B00A9E103 /* SystemObserver.m in Sources */,
-				670016391940F4EC00A9E103 /* Branch_SDK.m in Sources */,
+				670016391940F4EC00A9E103 /* Branch.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

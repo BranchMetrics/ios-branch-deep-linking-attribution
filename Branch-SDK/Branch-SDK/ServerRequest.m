@@ -1,13 +1,13 @@
 //
-//  Branch_SDK.m
+//  ServerRequest.m
 //  Branch-SDK
 //
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#import "Branch_SDK.h"
+#import "ServerRequest.h"
 
-@implementation Branch_SDK
+@implementation ServerRequest
 
 @end

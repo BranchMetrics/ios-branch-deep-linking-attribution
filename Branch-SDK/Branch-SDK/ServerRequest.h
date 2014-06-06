@@ -1,5 +1,5 @@
 //
-//  Branch_SDK.h
+//  ServerRequest.h
 //  Branch-SDK
 //
 //  Created by Alex Austin on 6/5/14.
@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Branch_SDK : NSObject
+@interface ServerRequest : NSObject
+
+@property (strong, nonatomic) NSString *tag;
+@property (strong, nonatomic) NSDictionary *postData;
 
 @end
