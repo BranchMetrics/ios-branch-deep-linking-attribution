@@ -1,21 +1,47 @@
 //
 //  PreferenceHelper.h
-//  KindredPrints-iOS-TestBed
+//  Branch-SDK
 //
-//  Created by Alex Austin on 1/31/14.
-//  Copyright (c) 2014 Kindred Prints. All rights reserved.
+//  Created by Alex Austin on 6/6/14.
+//  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
+static const BOOL LOG = YES;
+static NSString *NO_STRING_VALUE = @"bnc_no_value";
+
 @interface PreferenceHelper : NSObject
 
-+ (void)writeIntegerToDefaults:(NSString *)key value:(NSInteger)value;
-+ (void)writeBoolToDefaults:(NSString *)key value:(BOOL)value;
-+ (void)writeObjectToDefaults:(NSString *)key value:(NSObject *)value;
++ (NSString *)getAPIBaseURL;
++ (NSString *)getShortUrl;
 
-+ (NSObject *)readObjectFromDefaults:(NSString *)key;
-+ (BOOL)readBoolFromDefaults:(NSString *)key;
-+ (NSInteger)readIntegerFromDefaults:(NSString *)key;
++ (void)setAppKey:(NSString *)appKey;
++ (NSString *)getAppKey;
+
++ (void)setUserID:(NSString *)userId;
++ (NSString *)getUserID;
+
++ (void)setAppInstallID:(NSString *)appInstallId;
++ (NSString *)getAppInstallID;
+
++ (void)setDeviceID:(NSString *)deviceId;
++ (NSString *)getDeviceID;
+
++ (void)setLinkClickID:(NSString *)linkClickId;
++ (NSString *)getLinkClickID;
+
++ (void)setSessionParams:(NSString *)sessionParams;
++ (NSString *)getSessionParams;
+
++ (void)setUserURL:(NSString *)userUrl;
++ (NSString *)getUserURL;
+
++ (void)setActionTotalCount:(NSString *)action withCount:(NSInteger)count;
++ (void)setActionBalanceCount:(NSString *)action withCount:(NSInteger)count;
++ (void)setActionCreditCount:(NSString *)action withCount:(NSInteger)count;
++ (NSInteger)getActionTotalCount:(NSString *)action;
++ (NSInteger)getActionBalanceCount:(NSString *)action;
++ (NSInteger)getActionCreditCount:(NSString *)action;
 
 @end

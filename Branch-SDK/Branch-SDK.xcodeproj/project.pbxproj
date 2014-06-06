@@ -10,6 +10,10 @@
 		670016321940F4EC00A9E103 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016311940F4EC00A9E103 /* Foundation.framework */; };
 		670016371940F4EC00A9E103 /* Branch_SDK.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 670016361940F4EC00A9E103 /* Branch_SDK.h */; };
 		670016391940F4EC00A9E103 /* Branch_SDK.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016381940F4EC00A9E103 /* Branch_SDK.m */; };
+		6700169E194103AE00A9E103 /* BranchServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 67001698194103AE00A9E103 /* BranchServerInterface.m */; };
+		6700169F194103AE00A9E103 /* ServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 6700169A194103AE00A9E103 /* ServerInterface.m */; };
+		670016A0194103AE00A9E103 /* PreferenceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6700169B194103AE00A9E103 /* PreferenceHelper.m */; };
+		670016A319410C9B00A9E103 /* SystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016A219410C9B00A9E103 /* SystemObserver.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +35,14 @@
 		670016351940F4EC00A9E103 /* Branch-SDK-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Branch-SDK-Prefix.pch"; sourceTree = "<group>"; };
 		670016361940F4EC00A9E103 /* Branch_SDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Branch_SDK.h; sourceTree = "<group>"; };
 		670016381940F4EC00A9E103 /* Branch_SDK.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_SDK.m; sourceTree = "<group>"; };
+		67001698194103AE00A9E103 /* BranchServerInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchServerInterface.m; sourceTree = "<group>"; };
+		67001699194103AE00A9E103 /* BranchServerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchServerInterface.h; sourceTree = "<group>"; };
+		6700169A194103AE00A9E103 /* ServerInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerInterface.m; sourceTree = "<group>"; };
+		6700169B194103AE00A9E103 /* PreferenceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferenceHelper.m; sourceTree = "<group>"; };
+		6700169C194103AE00A9E103 /* ServerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerInterface.h; sourceTree = "<group>"; };
+		6700169D194103AE00A9E103 /* PreferenceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferenceHelper.h; sourceTree = "<group>"; };
+		670016A119410C9B00A9E103 /* SystemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemObserver.h; sourceTree = "<group>"; };
+		670016A219410C9B00A9E103 /* SystemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemObserver.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +87,14 @@
 			children = (
 				670016361940F4EC00A9E103 /* Branch_SDK.h */,
 				670016381940F4EC00A9E103 /* Branch_SDK.m */,
+				6700169D194103AE00A9E103 /* PreferenceHelper.h */,
+				6700169B194103AE00A9E103 /* PreferenceHelper.m */,
+				670016A119410C9B00A9E103 /* SystemObserver.h */,
+				670016A219410C9B00A9E103 /* SystemObserver.m */,
+				6700169C194103AE00A9E103 /* ServerInterface.h */,
+				6700169A194103AE00A9E103 /* ServerInterface.m */,
+				67001699194103AE00A9E103 /* BranchServerInterface.h */,
+				67001698194103AE00A9E103 /* BranchServerInterface.m */,
 				670016341940F4EC00A9E103 /* Supporting Files */,
 			);
 			path = "Branch-SDK";
@@ -139,6 +159,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				670016A0194103AE00A9E103 /* PreferenceHelper.m in Sources */,
+				6700169E194103AE00A9E103 /* BranchServerInterface.m in Sources */,
+				6700169F194103AE00A9E103 /* ServerInterface.m in Sources */,
+				670016A319410C9B00A9E103 /* SystemObserver.m in Sources */,
 				670016391940F4EC00A9E103 /* Branch_SDK.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -257,6 +281,7 @@
 				670016531940F4EC00A9E103 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
