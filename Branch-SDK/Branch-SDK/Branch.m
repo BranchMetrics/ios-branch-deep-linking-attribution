@@ -19,6 +19,7 @@
 
 @property (strong, nonatomic) NSMutableArray *uploadQueue;
 @property (nonatomic) dispatch_semaphore_t processing_sema;
+@property (nonatomic) dispatch_queue_t asyncQueue;
 @property (nonatomic) NSInteger retryCount;
 @property (nonatomic) NSInteger networkCount;
 
@@ -26,8 +27,12 @@
 
 @implementation Branch
 
+static const NSInteger RETRY_INTERVAL = 3;
+static const NSInteger MAX_RETRIES = 5;
 
 static Branch *currInstance;
+
+// PUBLIC CALLS
 
 + (Branch *)getInstance:(NSString *)key {
     if (!currInstance) {
@@ -36,6 +41,7 @@ static Branch *currInstance;
         currInstance.bServerInterface = [[BranchServerInterface alloc] init];
         currInstance.bServerInterface.delegate = currInstance;
         currInstance.processing_sema = dispatch_semaphore_create(1);
+        currInstance.asyncQueue = dispatch_queue_create("brnch_upload_queue", NULL);
         currInstance.uploadQueue = [[NSMutableArray alloc] init];
         currInstance.retryCount = 0;
         currInstance.networkCount = 0;
@@ -49,100 +55,239 @@ static Branch *currInstance;
         [self initSession];
     }
 }
-/*
-private void processNextQueueItem() {
-    try {
-        serverSema_.acquire();
-        if (networkCount_ == 0 && requestQueue_.size() > 0) {
-            networkCount_ = 1;
-            serverSema_.release();
-            
-            ServerRequest req = requestQueue_.get(0);
-            
-            if (req.getTag().equals(BranchRemoteInterface.REQ_TAG_REGISTER_INSTALL)) {
-                Log.i("AppidemicSDK", "calling register install");
-                kRemoteInterface_.registerInstall(PrefHelper.NO_STRING_VALUE);
-            } else if (req.getTag().equals(BranchRemoteInterface.REQ_TAG_REGISTER_OPEN)) {
-                Log.i("AppidemicSDK", "calling register open");
-                kRemoteInterface_.registerOpen();
-            } else if (req.getTag().equals(BranchRemoteInterface.REQ_TAG_GET_REFERRALS) && hasUser()) {
-                Log.i("AppidemicSDK", "calling get referrals");
-                kRemoteInterface_.getReferrals();
-            } else if (req.getTag().equals(BranchRemoteInterface.REQ_TAG_CREDIT_REFERRED) && hasUser()) {
-                Log.i("AppidemicSDK", "calling credit referrals");
-                kRemoteInterface_.creditUserForReferrals(req.getPost());
-            } else if (req.getTag().equals(BranchRemoteInterface.REQ_TAG_COMPLETE_ACTION) && hasUser()){
-                Log.i("AppidemicSDK", "calling completed action");
-                kRemoteInterface_.userCompletedAction(req.getPost());
+
+- (void)loadPoints {
+    dispatch_async(self.asyncQueue, ^{
+        ServerRequest *req = [[ServerRequest alloc] init];
+        req.tag = REQ_TAG_GET_REFERRALS;
+        [self.uploadQueue addObject:req];
+        [self processNextQueueItem];
+    });
+}
+
+- (void)creditUserForReferralAction:(NSString *)action withCredits:(NSInteger)credits {
+    dispatch_async(self.asyncQueue, ^{
+        ServerRequest *req = [[ServerRequest alloc] init];
+        req.tag = REQ_TAG_CREDIT_ACTION;
+        NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[action, [NSNumber numberWithInteger:credits]] forKeys:@[@"action", @"credit"]];
+        req.postData = post;
+        [self.uploadQueue addObject:req];
+        [self processNextQueueItem];
+    });
+}
+
+- (void)userCompletedAction:(NSString *)action {
+    dispatch_async(self.asyncQueue, ^{
+        ServerRequest *req = [[ServerRequest alloc] init];
+        req.tag = REQ_TAG_COMPLETE_ACTION;
+        NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[action] forKeys:@[@"action"]];
+        req.postData = post;
+        [self.uploadQueue addObject:req];
+        [self processNextQueueItem];
+    });
+}
+
+- (NSInteger)getTotalPointsForAction:(NSString *)action {
+    return [PreferenceHelper getActionTotalCount:action];
+}
+
+- (NSInteger)getCreditsForAction:(NSString *)action {
+    return [PreferenceHelper getActionCreditCount:action];
+}
+
+- (NSInteger)getBalanceOfPointsForAction:(NSString *)action {
+    return [PreferenceHelper getActionBalanceCount:action];
+}
+
+- (NSDictionary *)getReferringParams {
+    NSString *storedParam = [PreferenceHelper getSessionParams];
+    if (![storedParam isEqualToString:NO_STRING_VALUE]) {
+        NSData *tempData = [storedParam dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary *params = [NSJSONSerialization JSONObjectWithData:tempData options:0 error:nil];
+        if (!params) {
+            NSString *decodedVersion = [PreferenceHelper base64DecodeStringToString:storedParam];
+            tempData = [decodedVersion dataUsingEncoding:NSUTF8StringEncoding];
+            params = [NSJSONSerialization JSONObjectWithData:tempData options:0 error:nil];
+            if (!params) {
+                params = [[NSDictionary alloc] init];
             }
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+        return params;
     }
-    
+    return [[NSDictionary alloc] init];
 }
 
-private void retryLastRequest() {
-    retryCount_ = retryCount_ + 1;
-    if (retryCount_ > MAX_RETRIES) {
-        requestQueue_.remove(0);
-        retryCount_ = 0;
+
+- (NSString *)getLongURL {
+    return [self generateLongUrl:nil andParams:nil];
+}
+
+- (NSString *)getLongURLWithParams:(NSDictionary *)params {
+    return [self generateLongUrl:nil andParams:[PreferenceHelper base64EncodeStringToString:[params description]]];
+}
+
+- (NSString *)getLongURLWithTag:(NSString *)tag {
+    return [self generateLongUrl:tag andParams:nil];
+}
+
+- (NSString *)getLongURLWithParams:(NSDictionary *)params andTag:(NSString *)tag {
+    return [self generateLongUrl:tag andParams:[PreferenceHelper base64EncodeStringToString:[params description]]];
+}
+
+- (void)getShortURL {
+    [self generateShortUrl:nil andParams:nil];
+}
+
+- (void)getShortURLWithParams:(NSDictionary *)params {
+    [self generateShortUrl:nil andParams:[params description]];
+}
+
+- (void)getShortURLWithTag:(NSString *)tag {
+    [self generateShortUrl:tag andParams:nil];
+}
+
+- (void)getShortURLWithParams:(NSDictionary *)params andTag:(NSString *)tag {
+    [self generateShortUrl:tag andParams:[params description]];
+}
+
+
+// PRIVATE CALLS
+
+- (NSString *)generateLongUrl:(NSString *)tag andParams:(NSString *)params {
+    if ([self hasUser]) {
+        NSString *url = [PreferenceHelper getUserURL];
+        if (tag) {
+            url = [[url stringByAppendingString:@"?t="] stringByAppendingString:tag];
+            if (params) {
+                url = [[url stringByAppendingString:@"&d="] stringByAppendingString:params];
+            }
+        } else if (params) {
+            url = [[url stringByAppendingString:@"?d="] stringByAppendingString:params];
+        }
+        return url;
     } else {
-        try {
-            Thread.sleep(INTERVAL_RETRY);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        return @"init incomplete, did you call init yet?";
     }
 }
 
-private boolean installInQueue() {
-    for (int i = 0; i < requestQueue_.size(); i++) {
-        ServerRequest req = requestQueue_.get(i);
-        if (req.getTag().equals(BranchRemoteInterface.REQ_TAG_REGISTER_INSTALL)) {
-            return true;
-        }
-    }
-    return false;
+- (void)generateShortUrl:(NSString *)tag andParams:(NSString *)params {
+    dispatch_async(self.asyncQueue, ^{
+        ServerRequest *req = [[ServerRequest alloc] init];
+        req.tag = REQ_TAG_GET_CUSTOM_URL;
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
+        [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
+        [post setObject:[PreferenceHelper getDeviceID] forKey:@"device_id"];
+        [post setObject:[PreferenceHelper getUserID] forKey:@"user_id"];
+        if (tag)
+            [post setObject:tag forKey:@"tag"];
+        if (params)
+            [post setObject:params forKey:@"params"];
+        req.postData = post;
+        [self.uploadQueue addObject:req];
+        [self processNextQueueItem];
+
+    });
 }
 
-private void moveInstallToFront() {
-    for (int i = 0; i < requestQueue_.size(); i++) {
-        ServerRequest req = requestQueue_.get(i);
-        if (req.getTag().equals(BranchRemoteInterface.REQ_TAG_REGISTER_INSTALL)) {
-            requestQueue_.remove(i);
+- (void)processNextQueueItem {
+    dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
+    if (self.networkCount == 0 && [self.uploadQueue count] > 0) {
+        self.networkCount = 1;
+        dispatch_semaphore_signal(self.processing_sema);
+        
+        ServerRequest *req = [self.uploadQueue objectAtIndex:0];
+        
+        if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
+            if (LOG) NSLog(@"calling register install");
+            [self.bServerInterface registerInstall];
+        } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_OPEN] && [self hasUser]) {
+            if (LOG) NSLog(@"calling register open");
+            [self.bServerInterface registerOpen];
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRALS] && [self hasUser]) {
+            if (LOG) NSLog(@"calling get referrals");
+            [self.bServerInterface getReferrals];
+        } else if ([req.tag isEqualToString:REQ_TAG_CREDIT_ACTION] && [self hasUser]) {
+            if (LOG) NSLog(@"calling credit referrals");
+            [self.bServerInterface creditUserForReferrals:req.postData];
+        } else if ([req.tag isEqualToString:REQ_TAG_COMPLETE_ACTION] && [self hasUser]) {
+            if (LOG) NSLog(@"calling completed action");
+            [self.bServerInterface userCompletedAction:req.postData];
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL] && [self hasUser]) {
+            if (LOG) NSLog(@"calling create custom url");
+            [self.bServerInterface createCustomUrl:req.postData];
+        }
+    } else {
+        dispatch_semaphore_signal(self.processing_sema);
+    }
+   
+}
+
+- (void)retryLastRequest {
+    self.retryCount = self.retryCount + 1;
+    if (self.retryCount > MAX_RETRIES) {
+        [self.uploadQueue removeObjectAtIndex:0];
+        self.retryCount = 0;
+    } else {
+        [NSThread sleepForTimeInterval:RETRY_INTERVAL];
+    }
+}
+
+
+- (BOOL)installInQueue {
+    for (ServerRequest *req in self.uploadQueue) {
+        if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (void)moveInstallToFront {
+    for (int i = 0; i < [self.uploadQueue count]; i++) {
+        ServerRequest *req = [self.uploadQueue objectAtIndex:i];
+        if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
+            [self.uploadQueue removeObjectAtIndex:i];
+            i--;
             break;
         }
     }
-    requestQueue_.add(0, new ServerRequest(BranchRemoteInterface.REQ_TAG_REGISTER_INSTALL, null));
+    ServerRequest *req = [[ServerRequest alloc] init];
+    req.postData = nil;
+    req.tag = REQ_TAG_REGISTER_INSTALL;
+    [self.uploadQueue insertObject:req atIndex:0];
+}
+- (BOOL)hasUser {
+    return ![[PreferenceHelper getUserID] isEqualToString:NO_STRING_VALUE];
 }
 
-private boolean hasUser() {
-    return !prefHelper_.getUserID().equals(PrefHelper.NO_STRING_VALUE);
-}
-
-private void registerInstall() {
-    if (!installInQueue()) {
-        requestQueue_.add(0, new ServerRequest(BranchRemoteInterface.REQ_TAG_REGISTER_INSTALL, null));
+- (void)registerInstall {
+    if (![self installInQueue]) {
+        ServerRequest *req = [[ServerRequest alloc] init];
+        req.postData = nil;
+        req.tag = REQ_TAG_REGISTER_INSTALL;
+        [self.uploadQueue insertObject:req atIndex:0];
     } else {
-        moveInstallToFront();
+        [self moveInstallToFront];
     }
-    processNextQueueItem();
+    [self processNextQueueItem];
 }
 
-private void registerOpen() {
-    requestQueue_.add(0, new ServerRequest(BranchRemoteInterface.REQ_TAG_REGISTER_OPEN, null));
-    processNextQueueItem();
+- (void)registerOpen {
+    ServerRequest *req = [[ServerRequest alloc] init];
+    req.postData = nil;
+    req.tag = REQ_TAG_REGISTER_INSTALL;
+    [self.uploadQueue insertObject:req atIndex:0];
+    [self processNextQueueItem];
 }
 
-private void initSession() {
-    if (hasUser()) {
-        registerOpen();
+-(void)initSession {
+    if ([self hasUser]) {
+        [self registerOpen];
     } else {
-        registerInstall();
+        [self registerInstall];
     }
 }
-*/
+
 -(void)processReferralCounts:(NSDictionary *)returnedData {
     BOOL updateListener = false;
     
@@ -158,15 +303,13 @@ private void initSession() {
         }
         [PreferenceHelper setActionTotalCount:key withCount:total];
         [PreferenceHelper setActionCreditCount:key withCount:credits];
-        [PreferenceHelper setActionBalanceCount:key withCount:Math]
-        prefHelper_.setActionTotalCount(key, total);
-            prefHelper_.setActionCreditCount(key, credits);
-            prefHelper_.setActionBalanceCount(key, Math.max(0, total-credits));
-       	
+        [PreferenceHelper setActionBalanceCount:key withCount:MAX(0, total-credits)];
     }
     if (updateListener) {
         if (self.delegate) {
-            [self.delegate onStateChanged];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.delegate onStateChanged];
+            });
         }
     }
 }
@@ -176,21 +319,70 @@ private void initSession() {
         NSInteger status = [[returnedData objectForKey:kpServerStatusCode] integerValue];
         NSString *requestTag = [returnedData objectForKey:kpServerRequestTag];
         
-        if ([requestTag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
-            if (status == 200) {
-    
+        
+        self.networkCount = 0;
+        if (status != 200) {
+            [self retryLastRequest];
+        } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
+            NSString *appInstallId = [returnedData objectForKey:@"app_install_id"];
+            [PreferenceHelper setUserID:[returnedData objectForKey:@"user_id"]];
+            [PreferenceHelper setDeviceID:[returnedData objectForKey:@"device_id"]];
+            [PreferenceHelper setAppInstallID:appInstallId];
+            [PreferenceHelper setUserURL:[[[PreferenceHelper getShortUrl] stringByAppendingString:@"a/"] stringByAppendingString:appInstallId]];
+            if ([returnedData objectForKey:@"link_click_id"]) {
+                [PreferenceHelper setLinkClickID:[returnedData objectForKey:@"link_click_id"]];
             } else {
-                
+                [PreferenceHelper setLinkClickID:NO_STRING_VALUE];
             }
+            if ([returnedData objectForKey:@"params"]) {
+                [PreferenceHelper setSessionParams:[returnedData objectForKey:@"params"]];
+            } else {
+                [PreferenceHelper setSessionParams:NO_STRING_VALUE];
+            }
+            if (self.delegate) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.delegate onInitFinished];
+                });
+            }
+            [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
-            
+            if ([returnedData objectForKey:@"link_click_id"]) {
+                [PreferenceHelper setLinkClickID:[returnedData objectForKey:@"link_click_id"]];
+            } else {
+                [PreferenceHelper setLinkClickID:NO_STRING_VALUE];
+            }
+            if ([returnedData objectForKey:@"params"]) {
+                [PreferenceHelper setSessionParams:[returnedData objectForKey:@"params"]];
+            } else {
+                [PreferenceHelper setSessionParams:NO_STRING_VALUE];
+            }
+            if (self.delegate) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.delegate onInitFinished];
+                });
+            }
+            [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REFERRALS]) {
-            
+            [self processReferralCounts:returnedData];
+            [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_CREDIT_ACTION]) {
-            
+            ServerRequest *req = [self.uploadQueue objectAtIndex:0];
+            NSString *action = [req.postData objectForKey:@"action"];
+            int credits = [[req.postData objectForKey:@"credit"] intValue];
+            [PreferenceHelper setActionCreditCount:action withCount:[PreferenceHelper getActionCreditCount:action] + credits];
+            [PreferenceHelper setActionBalanceCount:action withCount:MAX(0, [PreferenceHelper getActionTotalCount:action]-[PreferenceHelper getActionCreditCount:action])];
+            [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
-            
+            NSString *url = [returnedData objectForKey:@"url"];
+            if (self.delegate) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.delegate onUrlCreate:url];
+                });
+            }
+            [self.uploadQueue removeObjectAtIndex:0];
         }
+        
+        [self processNextQueueItem];
     }
 }
 

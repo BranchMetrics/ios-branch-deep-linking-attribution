@@ -44,4 +44,8 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (NSInteger)getActionBalanceCount:(NSString *)action;
 + (NSInteger)getActionCreditCount:(NSString *)action;
 
+
++ (NSString *)base64EncodeStringToString:(NSString *)strData;
++ (NSString *)base64DecodeStringToString:(NSString *)strData;
+
 @end
