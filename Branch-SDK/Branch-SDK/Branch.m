@@ -22,6 +22,9 @@
 @property (nonatomic) dispatch_queue_t asyncQueue;
 @property (nonatomic) NSInteger retryCount;
 @property (nonatomic) NSInteger networkCount;
+@property (strong, nonatomic) callback pointLoadCallback;
+@property (strong, nonatomic) callbackWithParams paramLoadCallback;
+@property (strong, nonatomic) callbackWithUrl urlLoadCallback;
 
 @end
 
@@ -49,14 +52,29 @@ static Branch *currInstance;
     return currInstance;
 }
 
++ (Branch *)getInstance {
+    if (!currInstance) {
+        NSLog(@"Branch Warning: getInstance called before getInstance with key. Please init");
+    }
+    return currInstance;
+}
+
 - (void)initUserSession {
+    [self initUserSessionWithCallback:nil];
+}
+
+- (void)initUserSessionWithCallback:(callbackWithParams)callback {
+    self.paramLoadCallback = callback;
     if (!self.isInit) {
         self.isInit = YES;
         [self initSession];
+    } else {
+        if (self.paramLoadCallback) self.paramLoadCallback([self getReferringParams]);
     }
 }
 
-- (void)loadPoints {
+- (void)loadPointsWithCallback:(callback)callback {
+    self.pointLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRALS;
@@ -134,20 +152,20 @@ static Branch *currInstance;
     return [self generateLongUrl:tag andParams:[PreferenceHelper base64EncodeStringToString:[params description]]];
 }
 
-- (void)getShortURL {
-    [self generateShortUrl:nil andParams:nil];
+- (void)getShortURLWithCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:nil andParams:nil andCallback:callback];
 }
 
-- (void)getShortURLWithParams:(NSDictionary *)params {
-    [self generateShortUrl:nil andParams:[params description]];
+- (void)getShortURLWithParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:nil andParams:[params description] andCallback:callback];
 }
 
-- (void)getShortURLWithTag:(NSString *)tag {
-    [self generateShortUrl:tag andParams:nil];
+- (void)getShortURLWithTag:(NSString *)tag andCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:tag andParams:nil andCallback:callback];
 }
 
-- (void)getShortURLWithParams:(NSDictionary *)params andTag:(NSString *)tag {
-    [self generateShortUrl:tag andParams:[params description]];
+- (void)getShortURLWithParams:(NSDictionary *)params andTag:(NSString *)tag andCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:tag andParams:[params description] andCallback:callback];
 }
 
 
@@ -170,7 +188,8 @@ static Branch *currInstance;
     }
 }
 
-- (void)generateShortUrl:(NSString *)tag andParams:(NSString *)params {
+- (void)generateShortUrl:(NSString *)tag andParams:(NSString *)params andCallback:(callbackWithUrl)callback {
+    self.urlLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_GET_CUSTOM_URL;
@@ -306,9 +325,9 @@ static Branch *currInstance;
         [PreferenceHelper setActionBalanceCount:key withCount:MAX(0, total-credits)];
     }
     if (updateListener) {
-        if (self.delegate) {
+        if (self.pointLoadCallback) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self.delegate onStateChanged];
+                self.pointLoadCallback();
             });
         }
     }
@@ -339,9 +358,9 @@ static Branch *currInstance;
             } else {
                 [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
-            if (self.delegate) {
+            if (self.paramLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.delegate onInitFinished];
+                     self.paramLoadCallback([self getReferringParams]);
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
@@ -356,9 +375,9 @@ static Branch *currInstance;
             } else {
                 [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
-            if (self.delegate) {
+            if (self.paramLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.delegate onInitFinished];
+                    self.paramLoadCallback([self getReferringParams]);
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
@@ -374,9 +393,9 @@ static Branch *currInstance;
             [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
             NSString *url = [returnedData objectForKey:@"url"];
-            if (self.delegate) {
+            if (self.urlLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.delegate onUrlCreate:url];
+                    self.urlLoadCallback(url);
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];

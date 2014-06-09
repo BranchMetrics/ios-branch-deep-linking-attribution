@@ -8,19 +8,35 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol BranchDelegate <NSObject>
 
-@optional
-- (void)onInitFinished;
-- (void)onStateChanged;
-- (void)onUrlCreate:(NSString *)url;
-@end
+typedef void (^callbackWithParams) (NSDictionary *params);
+typedef void (^callbackWithUrl) (NSString *url);
+typedef void (^callback) ();
 
 @interface Branch : NSObject
 
 + (Branch *)getInstance:(NSString *)key;
++ (Branch *)getInstance;
 
-@property (nonatomic, strong) id <BranchDelegate> delegate;
+- (void)initUserSession;
+- (void)initUserSessionWithCallback:(callbackWithParams)callback;
+- (NSDictionary *)getReferringParams;
 
+- (void)loadPointsWithCallback:(callback)callback;
+- (void)creditUserForReferralAction:(NSString *)action withCredits:(NSInteger)credits;
+- (void)userCompletedAction:(NSString *)action;
+- (NSInteger)getTotalPointsForAction:(NSString *)action;
+- (NSInteger)getCreditsForAction:(NSString *)action;
+- (NSInteger)getBalanceOfPointsForAction:(NSString *)action;
+
+- (NSString *)getLongURL;
+- (NSString *)getLongURLWithParams:(NSDictionary *)params;
+- (NSString *)getLongURLWithTag:(NSString *)tag;
+- (NSString *)getLongURLWithParams:(NSDictionary *)params andTag:(NSString *)tag;
+
+- (void)getShortURLWithCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithTag:(NSString *)tag andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(NSDictionary *)params andTag:(NSString *)tag andCallback:(callbackWithUrl)callback;
 
 @end
