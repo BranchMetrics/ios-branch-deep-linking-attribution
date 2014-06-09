@@ -15,6 +15,8 @@ Called when app first initializes a session. Please add these lines to the splas
 Also, if you want to track open events from the links, you can add these lines before view did load.
 
 ```objc
+#import "Branch.h"
+
 Branch *branch = [Branch getInstance:@"Your app key"];
 [branch initUserSession];
 ```

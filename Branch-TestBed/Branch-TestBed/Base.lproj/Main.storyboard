@@ -144,6 +144,8 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
+                        <outlet property="editRefShortUrl" destination="8ld-LZ-Y0e" id="1w8-3u-Zkr"/>
+                        <outlet property="editRefUrl" destination="zco-xk-mAU" id="Lxl-KI-KDq"/>
                         <outlet property="txtBuyCount" destination="jBi-oN-Wuz" id="n9p-Fs-upH"/>
                         <outlet property="txtBuyCredits" destination="UcP-YR-IjK" id="SvF-7P-Q6T"/>
                         <outlet property="txtInstallCount" destination="llw-d5-lH8" id="rIw-fH-SkQ"/>
