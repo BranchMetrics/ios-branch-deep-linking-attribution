@@ -11,7 +11,7 @@
 
 typedef void (^callbackWithParams) (NSDictionary *params);
 typedef void (^callbackWithUrl) (NSString *url);
-typedef void (^callback) ();
+typedef void (^callbackWithStatus) (BOOL changed);
 
 @interface Branch : NSObject
 
@@ -22,7 +22,7 @@ typedef void (^callback) ();
 - (void)initUserSessionWithCallback:(callbackWithParams)callback;
 - (NSDictionary *)getReferringParams;
 
-- (void)loadPointsWithCallback:(callback)callback;
+- (void)loadPointsWithCallback:(callbackWithStatus)callback;
 - (void)creditUserForReferralAction:(NSString *)action withCredits:(NSInteger)credits;
 - (void)userCompletedAction:(NSString *)action;
 - (NSInteger)getTotalPointsForAction:(NSString *)action;

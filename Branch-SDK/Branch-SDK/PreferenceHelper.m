@@ -28,10 +28,6 @@ static NSString *KEY_BALANCE_BASE = @"bnc_balance_base_";
     return @"http://api.branchmetrics.io/";
 }
 
-+ (NSString *)getShortUrl {
-    return @"bnc.lt/";
-}
-
 // PREFERENCE STORAGE
 
 + (void)setAppKey:(NSString *)appKey {
@@ -51,17 +47,6 @@ static NSString *KEY_BALANCE_BASE = @"bnc_balance_base_";
 
 + (NSString *)getUserID {
     NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_USER_ID];
-    if (!ret)
-        ret = NO_STRING_VALUE;
-    return ret;
-}
-
-+ (void)setAppInstallID:(NSString *)appInstallId {
-    [PreferenceHelper writeObjectToDefaults:KEY_APP_INSTALL_ID value:appInstallId];
-}
-
-+ (NSString *)getAppInstallID {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_APP_INSTALL_ID];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;

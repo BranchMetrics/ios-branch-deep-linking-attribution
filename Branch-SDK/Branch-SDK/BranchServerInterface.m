@@ -18,15 +18,15 @@
     [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
     if (![[PreferenceHelper getLinkClickID] isEqualToString:NO_STRING_VALUE])
         [post setObject:@"link_click_id" forKey:[PreferenceHelper getLinkClickID]];
-    [post setObject:[SystemObserver getUniqueHardwareId] forKey:@"unique_id"];
-    [post setObject:[SystemObserver getAppVersion] forKey:@"app_version"];
-    [post setObject:[SystemObserver getCarrier] forKey:@"carrier"];
-    [post setObject:[SystemObserver getBrand] forKey:@"brand"];
-    [post setObject:[SystemObserver getModel] forKey:@"model"];
-    [post setObject:[SystemObserver getOS] forKey:@"os"];
-    [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
-    [post setObject:[SystemObserver getScreenWidth] forKey:@"screen_width"];
-    [post setObject:[SystemObserver getScreenHeight] forKey:@"screen_height"];
+    if ([SystemObserver getUniqueHardwareId]) [post setObject:[SystemObserver getUniqueHardwareId] forKey:@"unique_id"];
+    if ([SystemObserver getAppVersion]) [post setObject:[SystemObserver getAppVersion] forKey:@"app_version"];
+    if ([SystemObserver getCarrier]) [post setObject:[SystemObserver getCarrier] forKey:@"carrier"];
+    if ([SystemObserver getBrand]) [post setObject:[SystemObserver getBrand] forKey:@"brand"];
+    if ([SystemObserver getModel]) [post setObject:[SystemObserver getModel] forKey:@"model"];
+    if ([SystemObserver getOS]) [post setObject:[SystemObserver getOS] forKey:@"os"];
+    if ([SystemObserver getOSVersion]) [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
+    if ([SystemObserver getScreenWidth]) [post setObject:[SystemObserver getScreenWidth] forKey:@"screen_width"];
+    if ([SystemObserver getScreenHeight]) [post setObject:[SystemObserver getScreenHeight] forKey:@"screen_height"];
     
     [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/install"] andTag:REQ_TAG_REGISTER_INSTALL];
 }

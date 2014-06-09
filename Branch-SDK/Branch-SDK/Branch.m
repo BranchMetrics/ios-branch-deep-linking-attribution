@@ -22,7 +22,7 @@
 @property (nonatomic) dispatch_queue_t asyncQueue;
 @property (nonatomic) NSInteger retryCount;
 @property (nonatomic) NSInteger networkCount;
-@property (strong, nonatomic) callback pointLoadCallback;
+@property (strong, nonatomic) callbackWithStatus pointLoadCallback;
 @property (strong, nonatomic) callbackWithParams paramLoadCallback;
 @property (strong, nonatomic) callbackWithUrl urlLoadCallback;
 
@@ -48,6 +48,7 @@ static Branch *currInstance;
         currInstance.uploadQueue = [[NSMutableArray alloc] init];
         currInstance.retryCount = 0;
         currInstance.networkCount = 0;
+        [PreferenceHelper setAppKey:key];
     }
     return currInstance;
 }
@@ -73,7 +74,7 @@ static Branch *currInstance;
     }
 }
 
-- (void)loadPointsWithCallback:(callback)callback {
+- (void)loadPointsWithCallback:(callbackWithStatus)callback {
     self.pointLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
@@ -244,6 +245,15 @@ static Branch *currInstance;
 - (void)retryLastRequest {
     self.retryCount = self.retryCount + 1;
     if (self.retryCount > MAX_RETRIES) {
+        ServerRequest *req = [self.uploadQueue objectAtIndex:0];
+        if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
+            NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
+            if (self.paramLoadCallback) self.paramLoadCallback(errorDict);
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRALS]) {
+            if (self.pointLoadCallback) self.pointLoadCallback(NO);
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
+            if (self.urlLoadCallback) self.urlLoadCallback(@"Trouble reaching server. Please try again in a few minutes");
+        }
         [self.uploadQueue removeObjectAtIndex:0];
         self.retryCount = 0;
     } else {
@@ -324,12 +334,10 @@ static Branch *currInstance;
         [PreferenceHelper setActionCreditCount:key withCount:credits];
         [PreferenceHelper setActionBalanceCount:key withCount:MAX(0, total-credits)];
     }
-    if (updateListener) {
-        if (self.pointLoadCallback) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.pointLoadCallback();
-            });
-        }
+    if (self.pointLoadCallback) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.pointLoadCallback(updateListener);
+        });
     }
 }
 
@@ -343,11 +351,10 @@ static Branch *currInstance;
         if (status != 200) {
             [self retryLastRequest];
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
-            NSString *appInstallId = [returnedData objectForKey:@"app_install_id"];
+            NSString *userLink = [returnedData objectForKey:@"link"];
             [PreferenceHelper setUserID:[returnedData objectForKey:@"user_id"]];
             [PreferenceHelper setDeviceID:[returnedData objectForKey:@"device_id"]];
-            [PreferenceHelper setAppInstallID:appInstallId];
-            [PreferenceHelper setUserURL:[[[PreferenceHelper getShortUrl] stringByAppendingString:@"a/"] stringByAppendingString:appInstallId]];
+            [PreferenceHelper setUserURL:userLink];
             if ([returnedData objectForKey:@"link_click_id"]) {
                 [PreferenceHelper setLinkClickID:[returnedData objectForKey:@"link_click_id"]];
             } else {

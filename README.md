@@ -64,7 +64,7 @@ Some example events you might want to track:
 
 There are a bunch of options for creating these links. You can tag them for analytics in the dashboard, or you can even pass data to the new installs or opens that come from the link click. How awesome is that?
 
-```java
+```objc
 // get a simple url to track events with
 Branch *branch = [Branch getInstance];
 String *urlToShare = [branch getLongURL];
@@ -140,7 +140,9 @@ To get the number of install events that occurred from this user's links:
 
 ```objc
 Branch *branch = [Branch getInstance];
-[branch loadPointsWithCallback:^() {
+[branch loadPointsWithCallback:^(BOOL changed) {
+	// changed will indicate if there was a state change from before
+	
 	// get the number of installs attributed to the user
 	NSInteger balance = [branch getBalance:@"install"];
 

@@ -36,10 +36,6 @@
     if (!uid) {
         uid = [[NSUUID UUID] UUIDString];
     }
-    
-    if (!uid) {
-        uid = NO_STRING_VALUE;
-    }
 
     return uid;
 }

@@ -52,6 +52,7 @@
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     
     if(LOG) NSLog(@"using url = %@", url);
+    if(LOG) NSLog(@"body = %@", [post description]);
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:url]];
@@ -72,7 +73,7 @@
 }
 
 - (void)genericHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag {
-    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler: ^(NSURLResponse *response, NSData *POSTReply, NSError *error) {
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue currentQueue] completionHandler: ^(NSURLResponse *response, NSData *POSTReply, NSError *error) {
         NSMutableDictionary *jsonObjects = [[NSMutableDictionary alloc] init];
 
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;

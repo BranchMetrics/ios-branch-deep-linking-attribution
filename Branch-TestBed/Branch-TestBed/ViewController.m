@@ -26,7 +26,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    Branch *branch = [Branch getInstance:@"key"];
+    Branch *branch = [Branch getInstance:@"4652133735465757"];
     [branch initUserSessionWithCallback:^(NSDictionary *params) {
         NSLog(@"finished init with params = %@", [params description]);
     }];
@@ -44,7 +44,7 @@
 
 - (IBAction)cmdRefreshPoints:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch loadPointsWithCallback:^{
+    [branch loadPointsWithCallback:^(BOOL changed){
         NSLog(@"load points callback, balance install = %d, balance buy = %d", [branch getBalanceOfPointsForAction:@"install"], [branch getBalanceOfPointsForAction:@"buy"]);
         [self.txtInstallCount setText:[NSString stringWithFormat:@"%d",[branch getTotalPointsForAction:@"install"]]];
         [self.txtInstallCredits setText:[NSString stringWithFormat:@"%d",[branch getCreditsForAction:@"install"]]];
