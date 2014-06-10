@@ -73,7 +73,7 @@
 }
 
 - (void)genericHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag {
-    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue currentQueue] completionHandler: ^(NSURLResponse *response, NSData *POSTReply, NSError *error) {
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler: ^(NSURLResponse *response, NSData *POSTReply, NSError *error) {
         NSMutableDictionary *jsonObjects = [[NSMutableDictionary alloc] init];
 
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;

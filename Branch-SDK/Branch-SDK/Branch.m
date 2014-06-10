@@ -86,12 +86,23 @@ static Branch *currInstance;
 
 - (void)creditUserForReferralAction:(NSString *)action withCredits:(NSInteger)credits {
     dispatch_async(self.asyncQueue, ^{
-        ServerRequest *req = [[ServerRequest alloc] init];
-        req.tag = REQ_TAG_CREDIT_ACTION;
-        NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[action, [NSNumber numberWithInteger:credits]] forKeys:@[@"action", @"credit"]];
-        req.postData = post;
-        [self.uploadQueue addObject:req];
-        [self processNextQueueItem];
+        int creditsToAdd = 0;
+        int total = [PreferenceHelper getActionTotalCount:action];
+        int prevCredits = [PreferenceHelper getActionCreditCount:action];
+        if ((prevCredits+credits) > total) {
+            creditsToAdd = total - prevCredits;
+        } else {
+            creditsToAdd = credits;
+        }
+        
+        if (creditsToAdd > 0) {
+            ServerRequest *req = [[ServerRequest alloc] init];
+            req.tag = REQ_TAG_CREDIT_ACTION;
+            NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[action, [NSNumber numberWithInteger:credits], [PreferenceHelper getAppKey]] forKeys:@[@"event", @"credit", @"app_id"]];
+            req.postData = post;
+            [self.uploadQueue addObject:req];
+            [self processNextQueueItem];
+        }
     });
 }
 
@@ -99,7 +110,8 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_COMPLETE_ACTION;
-        NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[action] forKeys:@[@"action"]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [PreferenceHelper getAppKey], [PreferenceHelper getDeviceID]] forKeys:@[@"event", @"app_id", @"device_id"]];
+        if (![[PreferenceHelper getLinkClickID] isEqualToString:NO_STRING_VALUE]) [post setObject:[PreferenceHelper getLinkClickID] forKey:@"link_click_id"];
         req.postData = post;
         [self.uploadQueue addObject:req];
         [self processNextQueueItem];
@@ -201,7 +213,7 @@ static Branch *currInstance;
         if (tag)
             [post setObject:tag forKey:@"tag"];
         if (params)
-            [post setObject:params forKey:@"params"];
+            [post setObject:params forKey:@"data"];
         req.postData = post;
         [self.uploadQueue addObject:req];
         [self processNextQueueItem];
@@ -286,6 +298,7 @@ static Branch *currInstance;
     [self.uploadQueue insertObject:req atIndex:0];
 }
 - (BOOL)hasUser {
+    if (LOG) NSLog(@"user id = %@", [PreferenceHelper getUserID]);
     return ![[PreferenceHelper getUserID] isEqualToString:NO_STRING_VALUE];
 }
 
@@ -304,7 +317,7 @@ static Branch *currInstance;
 - (void)registerOpen {
     ServerRequest *req = [[ServerRequest alloc] init];
     req.postData = nil;
-    req.tag = REQ_TAG_REGISTER_INSTALL;
+    req.tag = REQ_TAG_REGISTER_OPEN;
     [self.uploadQueue insertObject:req atIndex:0];
     [self processNextQueueItem];
 }
@@ -360,8 +373,8 @@ static Branch *currInstance;
             } else {
                 [PreferenceHelper setLinkClickID:NO_STRING_VALUE];
             }
-            if ([returnedData objectForKey:@"params"]) {
-                [PreferenceHelper setSessionParams:[returnedData objectForKey:@"params"]];
+            if ([returnedData objectForKey:@"data"]) {
+                [PreferenceHelper setSessionParams:[returnedData objectForKey:@"data"]];
             } else {
                 [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
@@ -377,8 +390,8 @@ static Branch *currInstance;
             } else {
                 [PreferenceHelper setLinkClickID:NO_STRING_VALUE];
             }
-            if ([returnedData objectForKey:@"params"]) {
-                [PreferenceHelper setSessionParams:[returnedData objectForKey:@"params"]];
+            if ([returnedData objectForKey:@"data"]) {
+                [PreferenceHelper setSessionParams:[returnedData objectForKey:@"data"]];
             } else {
                 [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
@@ -405,6 +418,8 @@ static Branch *currInstance;
                     self.urlLoadCallback(url);
                 });
             }
+            [self.uploadQueue removeObjectAtIndex:0];
+        } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION]) {
             [self.uploadQueue removeObjectAtIndex:0];
         }
         

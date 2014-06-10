@@ -39,7 +39,7 @@
     [post setObject:[SystemObserver getAppVersion] forKey:@"app_version"];
     [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
     
-    [self postRequestAsync:post url:[[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/open/"] stringByAppendingString:[PreferenceHelper getUserID]] andTag:REQ_TAG_REGISTER_OPEN];
+    [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/open"] andTag:REQ_TAG_REGISTER_OPEN];
 }
 
 - (void)userCompletedAction:(NSDictionary *)post {
@@ -51,7 +51,7 @@
 }
 
 - (void)getReferrals {
-    [self getRequestAsync:[[NSDictionary alloc] init] url:[[[[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/credit/"] stringByAppendingString:[PreferenceHelper getUserID]] stringByAppendingString:@"/"] stringByAppendingString:[PreferenceHelper getAppKey]] andTag:REQ_TAG_GET_REFERRALS];
+    [self getRequestAsync:[[NSDictionary alloc] init] url:[[[[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/referrals/"] stringByAppendingString:[PreferenceHelper getUserID]] stringByAppendingString:@"/"] stringByAppendingString:[PreferenceHelper getAppKey]] andTag:REQ_TAG_GET_REFERRALS];
 }
 
 - (void)createCustomUrl:(NSDictionary *)post {
