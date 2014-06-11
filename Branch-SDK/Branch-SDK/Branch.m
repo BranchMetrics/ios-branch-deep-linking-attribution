@@ -86,9 +86,9 @@ static Branch *currInstance;
 
 - (void)creditUserForReferralAction:(NSString *)action withCredits:(NSInteger)credits {
     dispatch_async(self.asyncQueue, ^{
-        int creditsToAdd = 0;
-        int total = [PreferenceHelper getActionTotalCount:action];
-        int prevCredits = [PreferenceHelper getActionCreditCount:action];
+        NSInteger creditsToAdd = 0;
+        NSInteger total = [PreferenceHelper getActionTotalCount:action];
+        NSInteger prevCredits = [PreferenceHelper getActionCreditCount:action];
         if ((prevCredits+credits) > total) {
             creditsToAdd = total - prevCredits;
         } else {
@@ -98,7 +98,7 @@ static Branch *currInstance;
         if (creditsToAdd > 0) {
             ServerRequest *req = [[ServerRequest alloc] init];
             req.tag = REQ_TAG_CREDIT_ACTION;
-            NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[action, [NSNumber numberWithInteger:credits], [PreferenceHelper getAppKey]] forKeys:@[@"event", @"credit", @"app_id"]];
+            NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[action, [NSNumber numberWithInteger:credits], [PreferenceHelper getAppKey], [PreferenceHelper getAppInstallID]] forKeys:@[@"event", @"credit", @"app_id", @"app_install_id"]];
             req.postData = post;
             [self.uploadQueue addObject:req];
             [self processNextQueueItem];
@@ -110,7 +110,7 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_COMPLETE_ACTION;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [PreferenceHelper getAppKey], [PreferenceHelper getDeviceID]] forKeys:@[@"event", @"app_id", @"device_id"]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [PreferenceHelper getAppKey], [PreferenceHelper getAppInstallID]] forKeys:@[@"event", @"app_id", @"app_install_id"]];
         if (![[PreferenceHelper getLinkClickID] isEqualToString:NO_STRING_VALUE]) [post setObject:[PreferenceHelper getLinkClickID] forKey:@"link_click_id"];
         req.postData = post;
         [self.uploadQueue addObject:req];
@@ -208,8 +208,7 @@ static Branch *currInstance;
         req.tag = REQ_TAG_GET_CUSTOM_URL;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
         [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
-        [post setObject:[PreferenceHelper getDeviceID] forKey:@"device_id"];
-        [post setObject:[PreferenceHelper getUserID] forKey:@"user_id"];
+        [post setObject:[PreferenceHelper getAppInstallID] forKey:@"device_id"];
         if (tag)
             [post setObject:tag forKey:@"tag"];
         if (params)
@@ -247,6 +246,8 @@ static Branch *currInstance;
         } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL] && [self hasUser]) {
             if (LOG) NSLog(@"calling create custom url");
             [self.bServerInterface createCustomUrl:req.postData];
+        } else if (![self hasUser]) {
+            NSLog(@"Branch Warning: User session not init yet. Please call initUserSession");
         }
     } else {
         dispatch_semaphore_signal(self.processing_sema);
@@ -298,8 +299,7 @@ static Branch *currInstance;
     [self.uploadQueue insertObject:req atIndex:0];
 }
 - (BOOL)hasUser {
-    if (LOG) NSLog(@"user id = %@", [PreferenceHelper getUserID]);
-    return ![[PreferenceHelper getUserID] isEqualToString:NO_STRING_VALUE];
+    return ![[PreferenceHelper getAppInstallID] isEqualToString:NO_STRING_VALUE];
 }
 
 - (void)registerInstall {
@@ -364,10 +364,8 @@ static Branch *currInstance;
         if (status != 200) {
             [self retryLastRequest];
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
-            NSString *userLink = [returnedData objectForKey:@"link"];
-            [PreferenceHelper setUserID:[returnedData objectForKey:@"user_id"]];
-            [PreferenceHelper setDeviceID:[returnedData objectForKey:@"device_id"]];
-            [PreferenceHelper setUserURL:userLink];
+            [PreferenceHelper setAppInstallID:[returnedData objectForKey:@"app_install_id"]];
+            [PreferenceHelper setUserURL:[returnedData objectForKey:@"link"]];
             if ([returnedData objectForKey:@"link_click_id"]) {
                 [PreferenceHelper setLinkClickID:[returnedData objectForKey:@"link_click_id"]];
             } else {

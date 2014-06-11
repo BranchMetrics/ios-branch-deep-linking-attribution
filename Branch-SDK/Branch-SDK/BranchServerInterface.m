@@ -35,7 +35,7 @@
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
-    [post setObject:[PreferenceHelper getDeviceID] forKey:@"device_id"];
+    [post setObject:[PreferenceHelper getAppInstallID] forKey:@"app_install_id"];
     [post setObject:[SystemObserver getAppVersion] forKey:@"app_version"];
     [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
     
@@ -47,11 +47,11 @@
 }
 
 - (void)creditUserForReferrals:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/credit/"] stringByAppendingString:[PreferenceHelper getUserID]] andTag:REQ_TAG_CREDIT_ACTION];
+    [self postRequestAsync:post url:[[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/credit/"] stringByAppendingString:[PreferenceHelper getAppInstallID]] andTag:REQ_TAG_CREDIT_ACTION];
 }
 
 - (void)getReferrals {
-    [self getRequestAsync:[[NSDictionary alloc] init] url:[[[[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/referrals/"] stringByAppendingString:[PreferenceHelper getUserID]] stringByAppendingString:@"/"] stringByAppendingString:[PreferenceHelper getAppKey]] andTag:REQ_TAG_GET_REFERRALS];
+    [self getRequestAsync:[[NSDictionary alloc] init] url:[[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/referrals/"] stringByAppendingString:[PreferenceHelper getAppInstallID]] andTag:REQ_TAG_GET_REFERRALS];
 }
 
 - (void)createCustomUrl:(NSDictionary *)post {

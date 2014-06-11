@@ -18,11 +18,8 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)setAppKey:(NSString *)appKey;
 + (NSString *)getAppKey;
 
-+ (void)setUserID:(NSString *)userId;
-+ (NSString *)getUserID;
-
-+ (void)setDeviceID:(NSString *)deviceId;
-+ (NSString *)getDeviceID;
++ (void)setAppInstallID:(NSString *)deviceId;
++ (NSString *)getAppInstallID;
 
 + (void)setLinkClickID:(NSString *)linkClickId;
 + (NSString *)getLinkClickID;

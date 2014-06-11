@@ -11,8 +11,7 @@
 
 static NSString *KEY_APP_KEY = @"bnc_app_key";
 
-static NSString *KEY_USER_ID = @"bnc_user_id";
-static NSString *KEY_DEVICE_ID = @"bnc_device_id";
+static NSString *KEY_APP_INSTALL_ID = @"bnc_app_install_id";
 static NSString *KEY_LINK_CLICK_ID = @"bnc_link_click_id";
 static NSString *KEY_SESSION_PARAMS = @"bnc_session_params";
 static NSString *KEY_USER_URL = @"bnc_user_url";
@@ -40,23 +39,12 @@ static NSString *KEY_BALANCE_BASE = @"bnc_balance_base_";
     return ret;
 }
 
-+ (void)setUserID:(NSString *)userId {
-    [PreferenceHelper writeObjectToDefaults:KEY_USER_ID value:userId];
++ (void)setAppInstallID:(NSString *)deviceId {
+    [PreferenceHelper writeObjectToDefaults:KEY_APP_INSTALL_ID value:deviceId];
 }
 
-+ (NSString *)getUserID {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_USER_ID];
-    if (!ret)
-        ret = NO_STRING_VALUE;
-    return ret;
-}
-
-+ (void)setDeviceID:(NSString *)deviceId {
-    [PreferenceHelper writeObjectToDefaults:KEY_DEVICE_ID value:deviceId];
-}
-
-+ (NSString *)getDeviceID {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_DEVICE_ID];
++ (NSString *)getAppInstallID {
+    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_APP_INSTALL_ID];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
