@@ -208,7 +208,7 @@ static Branch *currInstance;
         req.tag = REQ_TAG_GET_CUSTOM_URL;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
         [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
-        [post setObject:[PreferenceHelper getAppInstallID] forKey:@"device_id"];
+        [post setObject:[PreferenceHelper getAppInstallID] forKey:@"app_install_id"];
         if (tag)
             [post setObject:tag forKey:@"tag"];
         if (params)

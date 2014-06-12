@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#include <sys/sysctl.h>
+#include <sys/utsname.h>
 #import "PreferenceHelper.h"
 #import "SystemObserver.h"
 #import <UIKit/UIDevice.h>
@@ -32,10 +32,6 @@
     if (!uid && NSClassFromString(@"UIDevice")) {
         uid = [[UIDevice currentDevice].identifierForVendor UUIDString];
     }
-    
-    if (!uid) {
-        uid = [[NSUUID UUID] UUIDString];
-    }
 
     return uid;
 }
@@ -55,17 +51,15 @@
 }
 
 + (NSString *)getModel {
-    size_t size;
-    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
-    char answer[size];
-    sysctlbyname("hw.machine", answer, &size, NULL, 0);
-    NSString *results = @(answer);
-    return results;
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    
+    return [NSString stringWithCString:systemInfo.machine
+                              encoding:NSUTF8StringEncoding];
 }
 
 + (NSString *)getOS {
-    UIDevice *device = [UIDevice currentDevice];
-    return [device systemName];
+    return @"iOS";
 }
 
 + (NSString *)getOSVersion {
