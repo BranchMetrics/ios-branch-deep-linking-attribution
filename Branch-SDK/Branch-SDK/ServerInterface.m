@@ -65,11 +65,24 @@
     [self genericHTTPRequest:request withTag:requestTag];
 }
 
-
-+ (NSData *) encodePostParams:(NSDictionary *)params {
++ (NSData *)encodePostParams:(NSDictionary *)params {
     NSError *writeError = nil;
     NSData *postData = [NSJSONSerialization dataWithJSONObject:params options:NSJSONWritingPrettyPrinted error:&writeError];
     return postData;
+}
+
++ (NSString *)encodePostToUniversalString:(NSDictionary *)params {
+    NSMutableString *encodedParams = [[NSMutableString alloc] initWithString:@"{"];
+    for (NSString *key in params) {
+        [encodedParams appendString:@"\""];
+        [encodedParams appendString:key];
+        [encodedParams appendString:@"\":\""];
+        [encodedParams appendString:[params objectForKey:key]];
+        [encodedParams appendString:@"\","];
+    }
+    [encodedParams replaceCharactersInRange:NSMakeRange([encodedParams length]-1, 1) withString:@"}"];
+    if (LOG) NSLog(@"encoded params : %@", encodedParams);
+    return encodedParams;
 }
 
 - (void)genericHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag {

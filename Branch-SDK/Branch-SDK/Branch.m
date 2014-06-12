@@ -170,7 +170,7 @@ static Branch *currInstance;
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:nil andParams:[params description] andCallback:callback];
+    [self generateShortUrl:nil andParams:[BranchServerInterface encodePostToUniversalString:params] andCallback:callback];
 }
 
 - (void)getShortURLWithTag:(NSString *)tag andCallback:(callbackWithUrl)callback {
@@ -178,7 +178,7 @@ static Branch *currInstance;
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andTag:(NSString *)tag andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:tag andParams:[params description] andCallback:callback];
+    [self generateShortUrl:tag andParams:[BranchServerInterface encodePostToUniversalString:params] andCallback:callback];
 }
 
 

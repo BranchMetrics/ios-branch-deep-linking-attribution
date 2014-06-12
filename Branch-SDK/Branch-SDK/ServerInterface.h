@@ -24,6 +24,8 @@ static NSString *kpServerStatusCode = @"server_return_code";
 
 @property (nonatomic, strong) id <ServerInterfaceDelegate> delegate;
 
++ (NSString *)encodePostToUniversalString:(NSDictionary *)params;
+
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag;
 - (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag;
 - (void)genericHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag;
