@@ -18,9 +18,11 @@ typedef void (^callbackWithStatus) (BOOL changed);
 + (Branch *)getInstance:(NSString *)key;
 + (Branch *)getInstance;
 
+
 - (void)initUserSession;
 - (void)initUserSessionWithCallback:(callbackWithParams)callback;
 - (NSDictionary *)getReferringParams;
+- (void)resetUserSession;
 
 - (void)loadPointsWithCallback:(callbackWithStatus)callback;
 - (void)creditUserForReferralAction:(NSString *)action withCredits:(NSInteger)credits;

@@ -60,6 +60,12 @@ static Branch *currInstance;
     return currInstance;
 }
 
+- (void)resetUserSession {
+    if (self) {
+        self.isInit = NO;
+    }
+}
+
 - (void)initUserSession {
     [self initUserSessionWithCallback:nil];
 }
