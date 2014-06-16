@@ -2,11 +2,13 @@
 
 ### Install library project
 
-Download code from here (not yet live):
+Download code from here:
 https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip
 
-The testbed project (not working yet):
-https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK-TestBed.zip
+The testbed project:
+https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip
+
+Or just clone this project!
 
 ### Initialize SDK (registers install/open events)
 
