@@ -328,7 +328,7 @@ static Branch *currInstance;
     [self processNextQueueItem];
 }
 
--(void)initSession {
+-(void)initSession {    
     if ([self hasUser]) {
         [self registerOpen];
     } else {

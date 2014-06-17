@@ -1,5 +1,7 @@
 ## Installation
 
+compiled SDK size: ~150kb
+
 ### Install library project
 
 Download code from here:
