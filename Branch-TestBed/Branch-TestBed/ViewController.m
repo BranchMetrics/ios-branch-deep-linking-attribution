@@ -33,7 +33,8 @@
 }
 
 - (IBAction)cmdRefresh:(id)sender {
-    [self.editRefUrl setText:[[Branch getInstance] getLongURL]];
+    NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!"] forKeys:@[@"key1", @"key2"]];
+    [self.editRefUrl setText:[[Branch getInstance] getLongURLWithParams:params andTag:@"test_tag"]];
 }
 
 - (IBAction)cmdRefreshShort:(id)sender {
@@ -64,6 +65,10 @@
 - (IBAction)cmdExecuteBuy:(id)sender {
     Branch *branch = [Branch getInstance];
     [branch userCompletedAction:@"buy"];
+}
+- (IBAction)cmdIdentifyUserClick:(id)sender {
+    Branch *branch = [Branch getInstance];
+    [branch identifyUser:@"my_special_user"];
 }
 
 @end

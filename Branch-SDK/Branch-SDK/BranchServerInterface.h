@@ -14,6 +14,8 @@ static NSString *REQ_TAG_COMPLETE_ACTION = @"t_complete_action";
 static NSString *REQ_TAG_GET_REFERRALS = @"t_get_referrals";
 static NSString *REQ_TAG_GET_CUSTOM_URL = @"t_get_custom_url";
 static NSString *REQ_TAG_CREDIT_ACTION = @"t_credit_action";
+static NSString *REQ_TAG_IDENTIFY = @"t_identify_user";
+static NSString *REQ_TAG_PROFILE_DATA = @"t_profile_data";
 
 @interface BranchServerInterface : ServerInterface
 
@@ -23,5 +25,10 @@ static NSString *REQ_TAG_CREDIT_ACTION = @"t_credit_action";
 - (void)creditUserForReferrals:(NSDictionary *)post;
 - (void)getReferrals;
 - (void)createCustomUrl:(NSDictionary *)post;
+- (void)identifyUser:(NSDictionary *)post;
+- (void)addProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;
+- (void)setProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;
+- (void)appendProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;
+- (void)unionProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;
 
 @end

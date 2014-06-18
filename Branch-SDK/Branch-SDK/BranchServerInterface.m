@@ -58,4 +58,35 @@
     [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/url"] andTag:REQ_TAG_GET_CUSTOM_URL];
 }
 
+- (void)identifyUser:(NSDictionary *)post {
+    [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/identify"] andTag:REQ_TAG_IDENTIFY];
+}
+
+- (void)addProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params {
+    NSMutableDictionary *newPost = [post mutableCopy];
+    [newPost setObject:params forKey:@"add"];
+    [self updateProfileParams:newPost];
+}
+
+- (void)setProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params {
+    NSMutableDictionary *newPost = [post mutableCopy];
+    [newPost setObject:params forKey:@"set"];
+    [self updateProfileParams:newPost];
+}
+
+- (void)appendProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params {
+    NSMutableDictionary *newPost = [post mutableCopy];
+    [newPost setObject:params forKey:@"append"];
+    [self updateProfileParams:newPost];
+}
+
+- (void)unionProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params {
+    NSMutableDictionary *newPost = [post mutableCopy];
+    [newPost setObject:params forKey:@"union"];
+    [self updateProfileParams:newPost];
+}
+- (void)updateProfileParams:(NSDictionary *)post {
+    [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/profile"] andTag:REQ_TAG_PROFILE_DATA];
+}
+
 @end
