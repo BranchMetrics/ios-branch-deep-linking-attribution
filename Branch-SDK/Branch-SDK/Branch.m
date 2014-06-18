@@ -410,7 +410,7 @@ static Branch *currInstance;
             [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_CREDIT_ACTION]) {
             ServerRequest *req = [self.uploadQueue objectAtIndex:0];
-            NSString *action = [req.postData objectForKey:@"action"];
+            NSString *action = [req.postData objectForKey:@"event"];
             int credits = [[req.postData objectForKey:@"credit"] intValue];
             [PreferenceHelper setActionCreditCount:action withCount:[PreferenceHelper getActionCreditCount:action] + credits];
             [PreferenceHelper setActionBalanceCount:action withCount:MAX(0, [PreferenceHelper getActionTotalCount:action]-[PreferenceHelper getActionCreditCount:action])];

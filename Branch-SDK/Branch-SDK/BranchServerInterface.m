@@ -47,7 +47,7 @@
 }
 
 - (void)creditUserForReferrals:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/credit/"] stringByAppendingString:[PreferenceHelper getAppInstallID]] andTag:REQ_TAG_CREDIT_ACTION];
+    [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/credit"] andTag:REQ_TAG_CREDIT_ACTION];
 }
 
 - (void)getReferrals {
