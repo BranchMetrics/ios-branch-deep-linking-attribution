@@ -91,6 +91,10 @@ static Branch *currInstance;
     });
 }
 
+- (void)clearUser {
+    
+}
+
 - (void)loadPointsWithCallback:(callbackWithStatus)callback {
     self.pointLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{

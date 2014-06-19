@@ -24,6 +24,7 @@ typedef void (^callbackWithStatus) (BOOL changed);
 - (void)resetUserSession;
 
 - (void)identifyUser:(NSString *)userId;
+- (void)clearUser;
 
 - (void)loadPointsWithCallback:(callbackWithStatus)callback;
 - (void)creditUserForReferralAction:(NSString *)action withCredits:(NSInteger)credits;
