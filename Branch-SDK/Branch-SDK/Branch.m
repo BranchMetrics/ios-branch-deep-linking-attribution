@@ -80,6 +80,11 @@ static Branch *currInstance;
     }
 }
 
+- (void)identifyUserWithCallback:(callbackWithParams)callback {
+    self.paramLoadCallback = callback;
+    self.paramLoadCallback([[NSDictionary alloc] init]);
+}
+
 - (void)identifyUser:(NSString *)userId {
     /*dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
