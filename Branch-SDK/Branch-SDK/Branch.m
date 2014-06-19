@@ -75,20 +75,20 @@ static Branch *currInstance;
     if (!self.isInit) {
         self.isInit = YES;
         [self initSession];
-    } else {
+    } else if (![self installInQueue]) {
         if (self.paramLoadCallback) self.paramLoadCallback([self getReferringParams]);
     }
 }
 
 - (void)identifyUser:(NSString *)userId {
-    dispatch_async(self.asyncQueue, ^{
+    /*dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_IDENTIFY;
         NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[userId, [PreferenceHelper getAppKey], [PreferenceHelper getAppInstallID]] forKeys:@[@"identity", @"app_id", @"app_install_id"]];
         req.postData = post;
         [self.uploadQueue addObject:req];
         [self processNextQueueItem];
-    });
+    });*/
 }
 
 - (void)clearUser {
