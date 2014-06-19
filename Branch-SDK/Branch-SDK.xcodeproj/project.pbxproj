@@ -15,7 +15,6 @@
 		670016A0194103AE00A9E103 /* PreferenceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 6700169B194103AE00A9E103 /* PreferenceHelper.m */; };
 		670016A319410C9B00A9E103 /* SystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016A219410C9B00A9E103 /* SystemObserver.m */; };
 		670016A6194178F300A9E103 /* ServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016A5194178F300A9E103 /* ServerRequest.m */; };
-		67008D4C19509AA100DC8DE0 /* BranchShareView.m in Sources */ = {isa = PBXBuildFile; fileRef = 67008D4B19509AA100DC8DE0 /* BranchShareView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,8 +46,6 @@
 		670016A219410C9B00A9E103 /* SystemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemObserver.m; sourceTree = "<group>"; };
 		670016A4194178F300A9E103 /* ServerRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerRequest.h; sourceTree = "<group>"; };
 		670016A5194178F300A9E103 /* ServerRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerRequest.m; sourceTree = "<group>"; };
-		67008D4A19509AA100DC8DE0 /* BranchShareView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchShareView.h; sourceTree = "<group>"; };
-		67008D4B19509AA100DC8DE0 /* BranchShareView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShareView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,8 +101,6 @@
 				67001699194103AE00A9E103 /* BranchServerInterface.h */,
 				67001698194103AE00A9E103 /* BranchServerInterface.m */,
 				670016341940F4EC00A9E103 /* Supporting Files */,
-				67008D4A19509AA100DC8DE0 /* BranchShareView.h */,
-				67008D4B19509AA100DC8DE0 /* BranchShareView.m */,
 			);
 			path = "Branch-SDK";
 			sourceTree = "<group>";
@@ -170,7 +165,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				670016A0194103AE00A9E103 /* PreferenceHelper.m in Sources */,
-				67008D4C19509AA100DC8DE0 /* BranchShareView.m in Sources */,
 				6700169E194103AE00A9E103 /* BranchServerInterface.m in Sources */,
 				670016A6194178F300A9E103 /* ServerRequest.m in Sources */,
 				6700169F194103AE00A9E103 /* ServerInterface.m in Sources */,
