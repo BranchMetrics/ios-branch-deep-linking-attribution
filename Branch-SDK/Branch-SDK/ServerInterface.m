@@ -74,10 +74,18 @@
 + (NSString *)encodePostToUniversalString:(NSDictionary *)params {
     NSMutableString *encodedParams = [[NSMutableString alloc] initWithString:@"{"];
     for (NSString *key in params) {
+        NSString *value = nil;
+        if ([[params objectForKey:key] isKindOfClass:[NSString class]]) {
+            value = [params objectForKey:key];
+        } else if ([[params objectForKey:key] isKindOfClass:[NSDictionary class]]) {
+            value = [ServerInterface encodePostToUniversalString:[params objectForKey:key]];
+        } else if ([[params objectForKey:key] isKindOfClass:[NSNumber class]]) {
+            value = [[params objectForKey:key] stringValue];
+        }
         [encodedParams appendString:@"\""];
         [encodedParams appendString:key];
         [encodedParams appendString:@"\":\""];
-        [encodedParams appendString:[params objectForKey:key]];
+        [encodedParams appendString:value];
         [encodedParams appendString:@"\","];
     }
     [encodedParams replaceCharactersInRange:NSMakeRange([encodedParams length]-1, 1) withString:@"}"];
