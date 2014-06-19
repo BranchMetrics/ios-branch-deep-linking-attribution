@@ -75,9 +75,29 @@ static Branch *currInstance;
     if (!self.isInit) {
         self.isInit = YES;
         [self initSession];
-    } else {
+    } else if (![self installInQueue]) {
         if (self.paramLoadCallback) self.paramLoadCallback([self getReferringParams]);
     }
+}
+
+- (void)identifyUserWithCallback:(callbackWithParams)callback {
+    self.paramLoadCallback = callback;
+    self.paramLoadCallback([[NSDictionary alloc] init]);
+}
+
+- (void)identifyUser:(NSString *)userId {
+    /*dispatch_async(self.asyncQueue, ^{
+        ServerRequest *req = [[ServerRequest alloc] init];
+        req.tag = REQ_TAG_IDENTIFY;
+        NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[userId, [PreferenceHelper getAppKey], [PreferenceHelper getAppInstallID]] forKeys:@[@"identity", @"app_id", @"app_install_id"]];
+        req.postData = post;
+        [self.uploadQueue addObject:req];
+        [self processNextQueueItem];
+    });*/
+}
+
+- (void)clearUser {
+    
 }
 
 - (void)loadPointsWithCallback:(callbackWithStatus)callback {
@@ -160,7 +180,7 @@ static Branch *currInstance;
 }
 
 - (NSString *)getLongURLWithParams:(NSDictionary *)params {
-    return [self generateLongUrl:nil andParams:[PreferenceHelper base64EncodeStringToString:[params description]]];
+    return [self generateLongUrl:nil andParams:[PreferenceHelper base64EncodeStringToString:[BranchServerInterface encodePostToUniversalString:params]]];
 }
 
 - (NSString *)getLongURLWithTag:(NSString *)tag {
@@ -168,7 +188,7 @@ static Branch *currInstance;
 }
 
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andTag:(NSString *)tag {
-    return [self generateLongUrl:tag andParams:[PreferenceHelper base64EncodeStringToString:[params description]]];
+    return [self generateLongUrl:tag andParams:[PreferenceHelper base64EncodeStringToString:[BranchServerInterface encodePostToUniversalString:params]]];
 }
 
 - (void)getShortURLWithCallback:(callbackWithUrl)callback {
@@ -252,6 +272,9 @@ static Branch *currInstance;
         } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL] && [self hasUser]) {
             if (LOG) NSLog(@"calling create custom url");
             [self.bServerInterface createCustomUrl:req.postData];
+        } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY] && [self hasUser]) {
+            if (LOG) NSLog(@"calling identify user");
+            [self.bServerInterface identifyUser:req.postData];
         } else if (![self hasUser]) {
             NSLog(@"Branch Warning: User session not init yet. Please call initUserSession");
         }
@@ -410,7 +433,7 @@ static Branch *currInstance;
             [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_CREDIT_ACTION]) {
             ServerRequest *req = [self.uploadQueue objectAtIndex:0];
-            NSString *action = [req.postData objectForKey:@"action"];
+            NSString *action = [req.postData objectForKey:@"event"];
             int credits = [[req.postData objectForKey:@"credit"] intValue];
             [PreferenceHelper setActionCreditCount:action withCount:[PreferenceHelper getActionCreditCount:action] + credits];
             [PreferenceHelper setActionBalanceCount:action withCount:MAX(0, [PreferenceHelper getActionTotalCount:action]-[PreferenceHelper getActionCreditCount:action])];
@@ -423,7 +446,7 @@ static Branch *currInstance;
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
-        } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION]) {
+        } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_IDENTIFY] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA]) {
             [self.uploadQueue removeObjectAtIndex:0];
         }
         
