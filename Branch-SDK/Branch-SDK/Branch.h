@@ -20,11 +20,12 @@ typedef void (^callbackWithStatus) (BOOL changed);
 
 - (void)initUserSession;
 - (void)initUserSessionWithCallback:(callbackWithParams)callback;
+- (NSDictionary *)getInstallReferringParams;
 - (NSDictionary *)getReferringParams;
 - (void)resetUserSession;
 
 - (void)identifyUser:(NSString *)userId;
-- (void)identifyUserWithCallback:(callbackWithParams)callback;
+- (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback;
 - (void)clearUser;
 
 - (void)loadPointsWithCallback:(callbackWithStatus)callback;

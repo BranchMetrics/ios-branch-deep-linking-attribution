@@ -80,9 +80,9 @@ static Branch *currInstance;
     }
 }
 
-- (void)identifyUserWithCallback:(callbackWithParams)callback {
+- (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback {
     self.paramLoadCallback = callback;
-    self.paramLoadCallback([[NSDictionary alloc] init]);
+    self.paramLoadCallback([self getInstallReferringParams]);
 }
 
 - (void)identifyUser:(NSString *)userId {
@@ -154,6 +154,10 @@ static Branch *currInstance;
 
 - (NSInteger)getBalanceOfPointsForAction:(NSString *)action {
     return [PreferenceHelper getActionBalanceCount:action];
+}
+
+- (NSDictionary *)getInstallReferringParams {
+    return [self getReferringParams];
 }
 
 - (NSDictionary *)getReferringParams {
