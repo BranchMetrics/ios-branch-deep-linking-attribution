@@ -38,7 +38,8 @@
 }
 
 - (IBAction)cmdRefreshShort:(id)sender {
-    [[Branch getInstance] getShortURLWithCallback:^(NSString *url) {
+    NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!"] forKeys:@[@"key1", @"key2"]];
+    [[Branch getInstance] getShortURLWithParams:params andCallback:^(NSString *url) {
         [self.editRefShortUrl setText:url];
     }];
 }
@@ -68,7 +69,15 @@
 }
 - (IBAction)cmdIdentifyUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch identifyUser:@"my_special_user"];
+    [branch identifyUser:@"my_really_special_user"];
+}
+- (IBAction)cmdClearUserClick:(id)sender {
+    Branch *branch = [Branch getInstance];
+    [branch clearUser];
+}
+- (IBAction)cmdPrintInstall:(id)sender {
+    Branch *branch = [Branch getInstance];
+    NSLog(@"found params = %@", [[branch getInstallReferringParams] description]);
 }
 
 @end

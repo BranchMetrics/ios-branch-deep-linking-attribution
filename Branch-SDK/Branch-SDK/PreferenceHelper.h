@@ -18,14 +18,23 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)setAppKey:(NSString *)appKey;
 + (NSString *)getAppKey;
 
-+ (void)setAppInstallID:(NSString *)deviceId;
-+ (NSString *)getAppInstallID;
++ (void)setDeviceFingerprintID:(NSString *)deviceID;
++ (NSString *)getDeviceFingerprintID;
+
++ (void)setSessionID:(NSString *)sessionID;
++ (NSString *)getSessionID;
+
++ (void)setIdentityID:(NSString *)identityID;
++ (NSString *)getIdentityID;
 
 + (void)setLinkClickID:(NSString *)linkClickId;
 + (NSString *)getLinkClickID;
 
 + (void)setSessionParams:(NSString *)sessionParams;
 + (NSString *)getSessionParams;
+
++ (void)setInstallParams:(NSString *)installParams;
++ (NSString *)getInstallParams;
 
 + (void)setUserURL:(NSString *)userUrl;
 + (NSString *)getUserURL;

@@ -58,6 +58,16 @@
                               encoding:NSUTF8StringEncoding];
 }
 
++ (NSNumber *)getUpdateState {
+    NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];    NSFileManager *manager = [NSFileManager defaultManager];
+    NSDictionary* attrs = [manager attributesOfItemAtPath:bundleRoot error:nil];
+    if ((int)([[attrs fileCreationDate] timeIntervalSince1970]/(60*60*24)) == (int)([[attrs fileModificationDate] timeIntervalSince1970]/(60*60*24))) {
+        return nil;
+    } else {
+        return [NSNumber numberWithInt:1];
+    }
+}
+
 + (NSString *)getOS {
     return @"iOS";
 }

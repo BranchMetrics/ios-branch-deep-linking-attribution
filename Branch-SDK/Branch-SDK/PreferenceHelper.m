@@ -11,9 +11,12 @@
 
 static NSString *KEY_APP_KEY = @"bnc_app_key";
 
-static NSString *KEY_APP_INSTALL_ID = @"bnc_app_install_id";
+static NSString *KEY_DEVICE_FINGERPRINT_ID = @"bnc_device_fingerprint_id";
+static NSString *KEY_SESSION_ID = @"bnc_session_id";
+static NSString *KEY_IDENTITY_ID = @"bnc_identity_id";
 static NSString *KEY_LINK_CLICK_ID = @"bnc_link_click_id";
 static NSString *KEY_SESSION_PARAMS = @"bnc_session_params";
+static NSString *KEY_INSTALL_PARAMS = @"bnc_install_params";
 static NSString *KEY_USER_URL = @"bnc_user_url";
 
 static NSString *KEY_CREDIT_BASE = @"bnc_credit_base_";
@@ -39,12 +42,34 @@ static NSString *KEY_BALANCE_BASE = @"bnc_balance_base_";
     return ret;
 }
 
-+ (void)setAppInstallID:(NSString *)deviceId {
-    [PreferenceHelper writeObjectToDefaults:KEY_APP_INSTALL_ID value:deviceId];
++ (void)setDeviceFingerprintID:(NSString *)deviceID {
+    [PreferenceHelper writeObjectToDefaults:KEY_DEVICE_FINGERPRINT_ID value:deviceID];
 }
 
-+ (NSString *)getAppInstallID {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_APP_INSTALL_ID];
++ (NSString *)getDeviceFingerprintID {
+    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_DEVICE_FINGERPRINT_ID];
+    if (!ret)
+        ret = NO_STRING_VALUE;
+    return ret;
+}
+
++ (void)setSessionID:(NSString *)sessionID {
+    [PreferenceHelper writeObjectToDefaults:KEY_SESSION_ID value:sessionID];
+}
+
++ (NSString *)getSessionID {
+    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_SESSION_ID];
+    if (!ret)
+        ret = NO_STRING_VALUE;
+    return ret;
+}
+
++ (void)setIdentityID:(NSString *)identityID {
+    [PreferenceHelper writeObjectToDefaults:KEY_IDENTITY_ID value:identityID];
+}
+
++ (NSString *)getIdentityID {
+    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_IDENTITY_ID];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
@@ -67,6 +92,17 @@ static NSString *KEY_BALANCE_BASE = @"bnc_balance_base_";
 
 + (NSString *)getSessionParams {
     NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_SESSION_PARAMS];
+    if (!ret)
+        ret = NO_STRING_VALUE;
+    return ret;
+}
+
++ (void)setInstallParams:(NSString *)installParams {
+    [PreferenceHelper writeObjectToDefaults:KEY_INSTALL_PARAMS value:installParams];
+}
+
++ (NSString *)getInstallParams {
+    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_INSTALL_PARAMS];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;

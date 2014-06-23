@@ -19,5 +19,6 @@
 + (NSString *)getOSVersion;
 + (NSNumber *)getScreenWidth;
 + (NSNumber *)getScreenHeight;
++ (NSNumber *)getUpdateState;
 
 @end

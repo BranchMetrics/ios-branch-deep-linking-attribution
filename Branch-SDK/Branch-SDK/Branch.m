@@ -23,7 +23,8 @@
 @property (nonatomic) NSInteger retryCount;
 @property (nonatomic) NSInteger networkCount;
 @property (strong, nonatomic) callbackWithStatus pointLoadCallback;
-@property (strong, nonatomic) callbackWithParams paramLoadCallback;
+@property (strong, nonatomic) callbackWithParams sessionparamLoadCallback;
+@property (strong, nonatomic) callbackWithParams installparamLoadCallback;
 @property (strong, nonatomic) callbackWithUrl urlLoadCallback;
 
 @end
@@ -71,33 +72,40 @@ static Branch *currInstance;
 }
 
 - (void)initUserSessionWithCallback:(callbackWithParams)callback {
-    self.paramLoadCallback = callback;
+    self.sessionparamLoadCallback = callback;
     if (!self.isInit) {
         self.isInit = YES;
         [self initSession];
     } else if (![self installInQueue]) {
-        if (self.paramLoadCallback) self.paramLoadCallback([self getReferringParams]);
+        if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getReferringParams]);
     }
 }
 
 - (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback {
-    self.paramLoadCallback = callback;
-    self.paramLoadCallback([self getInstallReferringParams]);
+    self.installparamLoadCallback = callback;
+    [self identifyUser:userId];
 }
 
 - (void)identifyUser:(NSString *)userId {
-    /*dispatch_async(self.asyncQueue, ^{
+    dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_IDENTIFY;
-        NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[userId, [PreferenceHelper getAppKey], [PreferenceHelper getAppInstallID]] forKeys:@[@"identity", @"app_id", @"app_install_id"]];
+        NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[userId, [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[@"identity", @"app_id", @"identity_id"]];
         req.postData = post;
         [self.uploadQueue addObject:req];
         [self processNextQueueItem];
-    });*/
+    });
 }
 
 - (void)clearUser {
-    
+    dispatch_async(self.asyncQueue, ^{
+        ServerRequest *req = [[ServerRequest alloc] init];
+        req.tag = REQ_TAG_LOGOUT;
+        NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[[PreferenceHelper getAppKey], [PreferenceHelper getSessionID]] forKeys:@[@"app_id", @"session_id"]];
+        req.postData = post;
+        [self.uploadQueue addObject:req];
+        [self processNextQueueItem];
+    });
 }
 
 - (void)loadPointsWithCallback:(callbackWithStatus)callback {
@@ -124,7 +132,7 @@ static Branch *currInstance;
         if (creditsToAdd > 0) {
             ServerRequest *req = [[ServerRequest alloc] init];
             req.tag = REQ_TAG_CREDIT_ACTION;
-            NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[action, [NSNumber numberWithInteger:credits], [PreferenceHelper getAppKey], [PreferenceHelper getAppInstallID]] forKeys:@[@"event", @"credit", @"app_id", @"app_install_id"]];
+            NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[action, [NSNumber numberWithInteger:credits], [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[@"event", @"credit", @"app_id", @"identity_id"]];
             req.postData = post;
             [self.uploadQueue addObject:req];
             [self processNextQueueItem];
@@ -136,8 +144,7 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_COMPLETE_ACTION;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [PreferenceHelper getAppKey], [PreferenceHelper getAppInstallID]] forKeys:@[@"event", @"app_id", @"app_install_id"]];
-        if (![[PreferenceHelper getLinkClickID] isEqualToString:NO_STRING_VALUE]) [post setObject:[PreferenceHelper getLinkClickID] forKey:@"link_click_id"];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [PreferenceHelper getAppKey], [PreferenceHelper getSessionID]] forKeys:@[@"event", @"app_id", @"session_id"]];
         req.postData = post;
         [self.uploadQueue addObject:req];
         [self processNextQueueItem];
@@ -238,7 +245,7 @@ static Branch *currInstance;
         req.tag = REQ_TAG_GET_CUSTOM_URL;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
         [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
-        [post setObject:[PreferenceHelper getAppInstallID] forKey:@"app_install_id"];
+        [post setObject:[PreferenceHelper getIdentityID] forKey:@"identity_id"];
         if (tag)
             [post setObject:tag forKey:@"tag"];
         if (params)
@@ -279,6 +286,12 @@ static Branch *currInstance;
         } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY] && [self hasUser]) {
             if (LOG) NSLog(@"calling identify user");
             [self.bServerInterface identifyUser:req.postData];
+        } else if ([req.tag isEqualToString:REQ_TAG_LOGOUT] && [self hasUser]) {
+            if (LOG) NSLog(@"calling identify user");
+            [self.bServerInterface logoutUser:req.postData];
+        } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE] && [self hasUser]) {
+            if (LOG) NSLog(@"calling identify user");
+            [self.bServerInterface registerClose];
         } else if (![self hasUser]) {
             NSLog(@"Branch Warning: User session not init yet. Please call initUserSession");
         }
@@ -294,11 +307,14 @@ static Branch *currInstance;
         ServerRequest *req = [self.uploadQueue objectAtIndex:0];
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
-            if (self.paramLoadCallback) self.paramLoadCallback(errorDict);
+            if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRALS]) {
             if (self.pointLoadCallback) self.pointLoadCallback(NO);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
             if (self.urlLoadCallback) self.urlLoadCallback(@"Trouble reaching server. Please try again in a few minutes");
+        } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
+            NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
+            if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict);
         }
         [self.uploadQueue removeObjectAtIndex:0];
         self.retryCount = 0;
@@ -331,8 +347,9 @@ static Branch *currInstance;
     req.tag = REQ_TAG_REGISTER_INSTALL;
     [self.uploadQueue insertObject:req atIndex:0];
 }
+
 - (BOOL)hasUser {
-    return ![[PreferenceHelper getAppInstallID] isEqualToString:NO_STRING_VALUE];
+    return ![[PreferenceHelper getIdentityID] isEqualToString:NO_STRING_VALUE];
 }
 
 - (void)registerInstall {
@@ -344,7 +361,9 @@ static Branch *currInstance;
     } else {
         [self moveInstallToFront];
     }
-    [self processNextQueueItem];
+    dispatch_async(self.asyncQueue, ^{
+        [self processNextQueueItem];
+    });
 }
 
 - (void)registerOpen {
@@ -352,10 +371,12 @@ static Branch *currInstance;
     req.postData = nil;
     req.tag = REQ_TAG_REGISTER_OPEN;
     [self.uploadQueue insertObject:req atIndex:0];
-    [self processNextQueueItem];
+    dispatch_async(self.asyncQueue, ^{
+        [self processNextQueueItem];
+    });
 }
 
--(void)initSession {    
+-(void)initSession {
     if ([self hasUser]) {
         [self registerOpen];
     } else {
@@ -397,8 +418,20 @@ static Branch *currInstance;
         if (status != 200) {
             [self retryLastRequest];
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
-            [PreferenceHelper setAppInstallID:[returnedData objectForKey:@"app_install_id"]];
+            [PreferenceHelper setIdentityID:[returnedData objectForKey:@"identity_id"]];
+            [PreferenceHelper setDeviceFingerprintID:[returnedData objectForKey:@"device_fingerprint_id"]];
             [PreferenceHelper setUserURL:[returnedData objectForKey:@"link"]];
+            [PreferenceHelper setSessionID:[returnedData objectForKey:@"session_id"]];
+            
+            ServerRequest *req = [self.uploadQueue objectAtIndex:0];
+            if (req.postData && ![req.postData objectForKey:@"update"]) {
+                if ([returnedData objectForKey:@"data"]) {
+                    [PreferenceHelper setInstallParams:[returnedData objectForKey:@"data"]];
+                } else {
+                    [PreferenceHelper setInstallParams:NO_STRING_VALUE];
+                }
+            }
+            
             if ([returnedData objectForKey:@"link_click_id"]) {
                 [PreferenceHelper setLinkClickID:[returnedData objectForKey:@"link_click_id"]];
             } else {
@@ -409,13 +442,14 @@ static Branch *currInstance;
             } else {
                 [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
-            if (self.paramLoadCallback) {
+            if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                     self.paramLoadCallback([self getReferringParams]);
+                     self.sessionparamLoadCallback([self getReferringParams]);
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
+            [PreferenceHelper setSessionID:[returnedData objectForKey:@"session_id"]];
             if ([returnedData objectForKey:@"link_click_id"]) {
                 [PreferenceHelper setLinkClickID:[returnedData objectForKey:@"link_click_id"]];
             } else {
@@ -426,9 +460,9 @@ static Branch *currInstance;
             } else {
                 [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
-            if (self.paramLoadCallback) {
+            if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.paramLoadCallback([self getReferringParams]);
+                    self.sessionparamLoadCallback([self getReferringParams]);
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
@@ -450,11 +484,30 @@ static Branch *currInstance;
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
-        } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_IDENTIFY] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA]) {
+        } else if ([requestTag isEqualToString:REQ_TAG_LOGOUT]) {
+            [PreferenceHelper setSessionID:[returnedData objectForKey:@"session_id"]];
+            [PreferenceHelper setIdentityID:[returnedData objectForKey:@"identity_id"]];
+            [self.uploadQueue removeObjectAtIndex:0];
+        } else if ([requestTag isEqualToString:REQ_TAG_IDENTIFY]) {
+            [PreferenceHelper setIdentityID:[returnedData objectForKey:@"identity_id"]];
+            if ([returnedData objectForKey:@"data"]) {
+                [PreferenceHelper setInstallParams:[returnedData objectForKey:@"data"]];
+            } else {
+                [PreferenceHelper setInstallParams:NO_STRING_VALUE];
+            }
+            if (self.installparamLoadCallback) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.installparamLoadCallback([self getInstallReferringParams]);
+                });
+            }
+            [self.uploadQueue removeObjectAtIndex:0];
+        } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_IDENTIFY] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
             [self.uploadQueue removeObjectAtIndex:0];
         }
         
-        [self processNextQueueItem];
+        dispatch_async(self.asyncQueue, ^{
+            [self processNextQueueItem];
+        });
     }
 }
 

@@ -18,7 +18,7 @@
     [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
     if (![[PreferenceHelper getLinkClickID] isEqualToString:NO_STRING_VALUE])
         [post setObject:@"link_click_id" forKey:[PreferenceHelper getLinkClickID]];
-    if ([SystemObserver getUniqueHardwareId]) [post setObject:[SystemObserver getUniqueHardwareId] forKey:@"unique_id"];
+    if ([SystemObserver getUniqueHardwareId]) [post setObject:[SystemObserver getUniqueHardwareId] forKey:@"hardware_id"];
     if ([SystemObserver getAppVersion]) [post setObject:[SystemObserver getAppVersion] forKey:@"app_version"];
     if ([SystemObserver getCarrier]) [post setObject:[SystemObserver getCarrier] forKey:@"carrier"];
     if ([SystemObserver getBrand]) [post setObject:[SystemObserver getBrand] forKey:@"brand"];
@@ -27,6 +27,7 @@
     if ([SystemObserver getOSVersion]) [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
     if ([SystemObserver getScreenWidth]) [post setObject:[SystemObserver getScreenWidth] forKey:@"screen_width"];
     if ([SystemObserver getScreenHeight]) [post setObject:[SystemObserver getScreenHeight] forKey:@"screen_height"];
+    if ([SystemObserver getUpdateState]) [post setObject:[SystemObserver getUpdateState] forKey:@"update"];
     
     [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/install"] andTag:REQ_TAG_REGISTER_INSTALL];
 }
@@ -35,11 +36,21 @@
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
-    [post setObject:[PreferenceHelper getAppInstallID] forKey:@"app_install_id"];
-    [post setObject:[SystemObserver getAppVersion] forKey:@"app_version"];
-    [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
+    [post setObject:[PreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
+    [post setObject:[PreferenceHelper getIdentityID] forKey:@"identity_id"];
+    if ([SystemObserver getAppVersion]) [post setObject:[SystemObserver getAppVersion] forKey:@"app_version"];
+    if ([SystemObserver getOSVersion]) [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
     
     [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/open"] andTag:REQ_TAG_REGISTER_OPEN];
+}
+
+- (void)registerClose {
+    NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
+    
+    [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[PreferenceHelper getSessionID] forKey:@"session_id"];
+    
+    [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/close"] andTag:REQ_TAG_REGISTER_CLOSE];
 }
 
 - (void)userCompletedAction:(NSDictionary *)post {
@@ -51,7 +62,7 @@
 }
 
 - (void)getReferrals {
-    [self getRequestAsync:[[NSDictionary alloc] init] url:[[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/referrals/"] stringByAppendingString:[PreferenceHelper getAppInstallID]] andTag:REQ_TAG_GET_REFERRALS];
+    [self getRequestAsync:[[NSDictionary alloc] init] url:[[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/referrals/"] stringByAppendingString:[PreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REFERRALS];
 }
 
 - (void)createCustomUrl:(NSDictionary *)post {
@@ -60,6 +71,10 @@
 
 - (void)identifyUser:(NSDictionary *)post {
     [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/profile"] andTag:REQ_TAG_IDENTIFY];
+}
+
+- (void)logoutUser:(NSDictionary *)post {
+    [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/logout"] andTag:REQ_TAG_LOGOUT];
 }
 
 - (void)addProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params {
