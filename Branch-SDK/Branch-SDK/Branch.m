@@ -47,6 +47,17 @@ static Branch *currInstance;
         currInstance.processing_sema = dispatch_semaphore_create(1);
         currInstance.asyncQueue = dispatch_queue_create("brnch_upload_queue", NULL);
         currInstance.uploadQueue = [[NSMutableArray alloc] init];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:currInstance
+                                                 selector:@selector(applicationWillResignActive)
+                                                     name:UIApplicationDidEnterBackgroundNotification
+                                                   object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:currInstance
+                                                 selector:@selector(applicationDidBecomeActive)
+                                                     name:UIApplicationDidEnterBackgroundNotification
+                                                   object:nil];
+        
         currInstance.retryCount = 0;
         currInstance.networkCount = 0;
         [PreferenceHelper setAppKey:key];
@@ -253,8 +264,28 @@ static Branch *currInstance;
         req.postData = post;
         [self.uploadQueue addObject:req];
         [self processNextQueueItem];
-
     });
+}
+
+- (void)applicationDidBecomeActive {
+    dispatch_async(self.asyncQueue, ^{
+        ServerRequest *req = [[ServerRequest alloc] init];
+        req.tag = REQ_TAG_REGISTER_OPEN;
+        [self.uploadQueue addObject:req];
+        [self processNextQueueItem];
+    });
+}
+- (void)applicationWillResignActive {
+     dispatch_async(self.asyncQueue, ^{
+         ServerRequest *req = [[ServerRequest alloc] init];
+         req.tag = REQ_TAG_REGISTER_CLOSE;
+         [self.uploadQueue addObject:req];
+         [self processNextQueueItem];
+     });
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)processNextQueueItem {
