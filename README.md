@@ -114,7 +114,7 @@ Some example events you might want to track:
 
 #### Short links (for social media sharing)
 
-There are a bunch of options for creating these links. You can tag them for analytics in the dashboard, or you can even pass data to the new installs or opens that come from the link click. How awesome is that? All of the above options are the same (ie tagging, data passing) but you need to pass a callback. This will be called when you link is prepared (which should return very quickly, ~ 100 ms to process)
+There are a bunch of options for creating these links. You can tag them for analytics in the dashboard, or you can even pass data to the new installs or opens that come from the link click. How awesome is that? You need to pass a callback for when you link is prepared (which should return very quickly, ~ 100 ms to process). If you don't want a callback, and can tolerate long links, check out the section right below.
 
 ```objc
 // get a simple url to track events with
@@ -162,6 +162,9 @@ Branch *branch = [Branch getInstance];
 String *urlToShare = [branch getLongURL];
 ```
 
+all of the above options with tagging and data passing are available.
+
+
 ### Referral system rewarding functionality
 
 In a standard referral system, you have 2 parties: the original user and the invitee. Our system is flexible enough to handle rewards for all users. Here are a couple example scenarios:
@@ -169,20 +172,11 @@ In a standard referral system, you have 2 parties: the original user and the inv
 2) Reward the invitee for installing the app from the original user's referral link
 3) Reward the original user when the invitee takes action (eg. give the original user credit when their the invitee buys something)
 
-```objc
-Branch *branch = [Branch getInstance];
-[branch loadReferralStateWithCallback:^(BOOL changed) {
-	// changed will indicate if there was a state change from before
-	
-	// get the number of installs attributed to the user
-	NSInteger balance = [branch getBalance:@"install"];
+These reward definitions are created on the dashboard, under the 'Referral Program Configuration' ** coming soon **
 
-	// reward the user
-}];
+In the SDK, we have a way to track and record history of earned points. So every user has the following:
+1) A reward credit total (this is total historical earned reward points)
+2) A reward redemption total. This is the total earned reward points claimed. This helps keep track of whether you've already rewarded that user or not.
+3) A reward credit balance (total-redeemed). This will tell you how many credits to award the user
 
-
-// adds two credits towards the outstanding balance
-// this will reduce the number returned by getBalance:@"install" by 2
-[branch creditUserForReferralAction:@"install" withCredits:2];
-
-```
+SECTION IN PROGRESS
