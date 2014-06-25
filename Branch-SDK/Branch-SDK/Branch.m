@@ -522,6 +522,8 @@ static Branch *currInstance;
         } else if ([requestTag isEqualToString:REQ_TAG_LOGOUT]) {
             [PreferenceHelper setSessionID:[returnedData objectForKey:@"session_id"]];
             [PreferenceHelper setIdentityID:[returnedData objectForKey:@"identity_id"]];
+            [PreferenceHelper setInstallParams:NO_STRING_VALUE];
+            [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             
             [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_IDENTIFY]) {
