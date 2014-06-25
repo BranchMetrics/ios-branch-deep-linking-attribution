@@ -522,16 +522,18 @@ static Branch *currInstance;
         } else if ([requestTag isEqualToString:REQ_TAG_LOGOUT]) {
             [PreferenceHelper setSessionID:[returnedData objectForKey:@"session_id"]];
             [PreferenceHelper setIdentityID:[returnedData objectForKey:@"identity_id"]];
+            [PreferenceHelper setUserURL:[returnedData objectForKey:@"link"]];
+            
             [PreferenceHelper setInstallParams:NO_STRING_VALUE];
             [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             
             [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_IDENTIFY]) {
             [PreferenceHelper setIdentityID:[returnedData objectForKey:@"identity_id"]];
+            [PreferenceHelper setUserURL:[returnedData objectForKey:@"link"]];
+            
             if ([returnedData objectForKey:@"referring_data"]) {
                 [PreferenceHelper setInstallParams:[returnedData objectForKey:@"referring_data"]];
-            } else {
-                [PreferenceHelper setInstallParams:NO_STRING_VALUE];
             }
             if (self.installparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
