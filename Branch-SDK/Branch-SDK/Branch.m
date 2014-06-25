@@ -347,7 +347,7 @@ static Branch *currInstance;
             if (self.pointLoadCallback) self.pointLoadCallback(NO);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
             if (self.urlLoadCallback) self.urlLoadCallback(@"Trouble reaching server. Please try again in a few minutes");
-        } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
+        } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
             NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
             if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict);
         }
