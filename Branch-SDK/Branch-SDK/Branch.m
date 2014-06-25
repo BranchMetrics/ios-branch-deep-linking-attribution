@@ -10,6 +10,7 @@
 #import "BranchServerInterface.h"
 #import "PreferenceHelper.h"
 #import "ServerRequest.h"
+#import "SystemObserver.h"
 
 @interface Branch() <ServerInterfaceDelegate>
 
@@ -458,8 +459,7 @@ static Branch *currInstance;
             [PreferenceHelper setUserURL:[returnedData objectForKey:@"link"]];
             [PreferenceHelper setSessionID:[returnedData objectForKey:@"session_id"]];
             
-            ServerRequest *req = [self.uploadQueue objectAtIndex:0];
-            if (req.postData && ![req.postData objectForKey:@"update"]) {
+            if (![SystemObserver getUpdateState]) {
                 if ([returnedData objectForKey:@"data"]) {
                     [PreferenceHelper setInstallParams:[returnedData objectForKey:@"data"]];
                 } else {
