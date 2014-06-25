@@ -87,7 +87,7 @@ static Branch *currInstance;
     if (!self.isInit) {
         self.isInit = YES;
         [self initSession];
-    } else if (![self installInQueue]) {
+    } else if (![self installOrOpenInQueue]) {
         if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getReferringParams]);
     }
 }
@@ -359,9 +359,9 @@ static Branch *currInstance;
 }
 
 
-- (BOOL)installInQueue {
+- (BOOL)installOrOpenInQueue {
     for (ServerRequest *req in self.uploadQueue) {
-        if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
+        if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             return YES;
         }
     }
@@ -388,7 +388,7 @@ static Branch *currInstance;
 }
 
 - (void)registerInstall {
-    if (![self installInQueue]) {
+    if (![self installOrOpenInQueue]) {
         ServerRequest *req = [[ServerRequest alloc] init];
         req.postData = nil;
         req.tag = REQ_TAG_REGISTER_INSTALL;
