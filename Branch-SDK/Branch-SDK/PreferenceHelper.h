@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-static const BOOL LOG = YES;
+static const BOOL LOG = NO;
 static NSString *NO_STRING_VALUE = @"bnc_no_value";
 
 @interface PreferenceHelper : NSObject

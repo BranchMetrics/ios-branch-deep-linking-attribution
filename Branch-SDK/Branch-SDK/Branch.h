@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 #import <Foundation/Foundation.h>
-
+#import <UIKit/UIKit.h>
 
 typedef void (^callbackWithParams) (NSDictionary *params);
 typedef void (^callbackWithUrl) (NSString *url);
