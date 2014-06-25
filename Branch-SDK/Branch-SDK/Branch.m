@@ -175,27 +175,14 @@ static Branch *currInstance;
 }
 
 - (NSDictionary *)getInstallReferringParams {
-    return [self getReferringParams];
+    NSString *storedParam = [PreferenceHelper getInstallParams];
+    return [self convertParamsStringToDictionary:storedParam];
 }
 
 - (NSDictionary *)getReferringParams {
     NSString *storedParam = [PreferenceHelper getSessionParams];
-    if (![storedParam isEqualToString:NO_STRING_VALUE]) {
-        NSData *tempData = [storedParam dataUsingEncoding:NSUTF8StringEncoding];
-        NSDictionary *params = [NSJSONSerialization JSONObjectWithData:tempData options:0 error:nil];
-        if (!params) {
-            NSString *decodedVersion = [PreferenceHelper base64DecodeStringToString:storedParam];
-            tempData = [decodedVersion dataUsingEncoding:NSUTF8StringEncoding];
-            params = [NSJSONSerialization JSONObjectWithData:tempData options:0 error:nil];
-            if (!params) {
-                params = [[NSDictionary alloc] init];
-            }
-        }
-        return params;
-    }
-    return [[NSDictionary alloc] init];
+    return [self convertParamsStringToDictionary:storedParam];
 }
-
 
 - (NSString *)getLongURL {
     return [self generateLongUrl:nil andParams:nil];
@@ -282,6 +269,23 @@ static Branch *currInstance;
          [self.uploadQueue addObject:req];
          [self processNextQueueItem];
      });
+}
+
+- (NSDictionary *)convertParamsStringToDictionary:(NSString *)paramsString {
+    if (![paramsString isEqualToString:NO_STRING_VALUE]) {
+        NSData *tempData = [paramsString dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary *params = [NSJSONSerialization JSONObjectWithData:tempData options:0 error:nil];
+        if (!params) {
+            NSString *decodedVersion = [PreferenceHelper base64DecodeStringToString:paramsString];
+            tempData = [decodedVersion dataUsingEncoding:NSUTF8StringEncoding];
+            params = [NSJSONSerialization JSONObjectWithData:tempData options:0 error:nil];
+            if (!params) {
+                params = [[NSDictionary alloc] init];
+            }
+        }
+        return params;
+    }
+    return [[NSDictionary alloc] init];
 }
 
 - (void)dealloc {
