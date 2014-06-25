@@ -528,8 +528,8 @@ static Branch *currInstance;
             [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_IDENTIFY]) {
             [PreferenceHelper setIdentityID:[returnedData objectForKey:@"identity_id"]];
-            if ([returnedData objectForKey:@"data"]) {
-                [PreferenceHelper setInstallParams:[returnedData objectForKey:@"data"]];
+            if ([returnedData objectForKey:@"referring_data"]) {
+                [PreferenceHelper setInstallParams:[returnedData objectForKey:@"referring_data"]];
             } else {
                 [PreferenceHelper setInstallParams:NO_STRING_VALUE];
             }
