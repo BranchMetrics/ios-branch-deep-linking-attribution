@@ -522,6 +522,7 @@ static Branch *currInstance;
         } else if ([requestTag isEqualToString:REQ_TAG_LOGOUT]) {
             [PreferenceHelper setSessionID:[returnedData objectForKey:@"session_id"]];
             [PreferenceHelper setIdentityID:[returnedData objectForKey:@"identity_id"]];
+            
             [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_IDENTIFY]) {
             [PreferenceHelper setIdentityID:[returnedData objectForKey:@"identity_id"]];
@@ -536,7 +537,7 @@ static Branch *currInstance;
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
-        } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_IDENTIFY] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
+        } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
             [self.uploadQueue removeObjectAtIndex:0];
         }
         
