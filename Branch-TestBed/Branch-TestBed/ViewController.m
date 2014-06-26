@@ -13,10 +13,11 @@
 
 @property (weak, nonatomic) IBOutlet UITextField *editRefShortUrl;
 @property (weak, nonatomic) IBOutlet UITextField *editRefUrl;
-@property (weak, nonatomic) IBOutlet UILabel *txtInstallCount;
-@property (weak, nonatomic) IBOutlet UILabel *txtInstallCredits;
+@property (weak, nonatomic) IBOutlet UILabel *txtRewardCredits;
+@property (weak, nonatomic) IBOutlet UILabel *txtInstallTotal;
+@property (weak, nonatomic) IBOutlet UILabel *txtInstallUniques;
 @property (weak, nonatomic) IBOutlet UILabel *txtBuyCount;
-@property (weak, nonatomic) IBOutlet UILabel *txtBuyCredits;
+@property (weak, nonatomic) IBOutlet UILabel *txtBuyUniques;
 
 
 @end
@@ -46,23 +47,26 @@
 
 - (IBAction)cmdRefreshPoints:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch loadPointsWithCallback:^(BOOL changed){
-        NSLog(@"load points callback, balance install = %d, balance buy = %d", [branch getBalanceOfPointsForAction:@"install"], [branch getBalanceOfPointsForAction:@"buy"]);
-        [self.txtInstallCount setText:[NSString stringWithFormat:@"%d",[branch getTotalPointsForAction:@"install"]]];
-        [self.txtInstallCredits setText:[NSString stringWithFormat:@"%d",[branch getCreditsForAction:@"install"]]];
-        [self.txtBuyCount setText:[NSString stringWithFormat:@"%d",[branch getTotalPointsForAction:@"buy"]]];
-        [self.txtBuyCredits setText:[NSString stringWithFormat:@"%d",[branch getCreditsForAction:@"buy"]]];
+    [branch loadActionCountsWithCallback:^(BOOL changed){
+        NSLog(@"load points callback, balance install = %d, balance buy = %d", [branch getTotalCountsForAction:@"install"], [branch getTotalCountsForAction:@"buy"]);
+        [self.txtInstallTotal setText:[NSString stringWithFormat:@"%d",[branch getTotalCountsForAction:@"install"]]];
+        [self.txtInstallUniques setText:[NSString stringWithFormat:@"%d",[branch getUniqueCountsForAction:@"install"]]];
+        [self.txtBuyCount setText:[NSString stringWithFormat:@"%d",[branch getTotalCountsForAction:@"buy"]]];
+        [self.txtBuyUniques setText:[NSString stringWithFormat:@"%d",[branch getUniqueCountsForAction:@"buy"]]];
     }];
 }
 
-- (IBAction)cmdCreditInstall:(id)sender {
+- (IBAction)cmdRefreshRewards:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch creditUserForReferralAction:@"install" withCredits:1];
+    [branch loadRewardsWithCallback:^(BOOL changed) {
+        [self.txtRewardCredits setText:[NSString stringWithFormat:@"%d", [branch getCredits]]];
+    }];
 }
-- (IBAction)cmdCreditBuy:(id)sender {
+- (IBAction)cmdRedeemFive:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch creditUserForReferralAction:@"buy" withCredits:1];
+    [branch redeemRewards:5];
 }
+
 - (IBAction)cmdExecuteBuy:(id)sender {
     Branch *branch = [Branch getInstance];
     [branch userCompletedAction:@"buy"];
