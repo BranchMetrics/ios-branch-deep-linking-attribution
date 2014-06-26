@@ -19,8 +19,10 @@ static NSString *KEY_SESSION_PARAMS = @"bnc_session_params";
 static NSString *KEY_INSTALL_PARAMS = @"bnc_install_params";
 static NSString *KEY_USER_URL = @"bnc_user_url";
 
+static NSString *KEY_CREDITS = @"bnc_credits";
 static NSString *KEY_CREDIT_BASE = @"bnc_credit_base_";
 
+static NSString *KEY_COUNTS = @"bnc_counts";
 static NSString *KEY_TOTAL_BASE = @"bnc_total_base_";
 static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
@@ -120,34 +122,70 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
     return ret;
 }
 
++ (void)clearUserCreditsAndCounts {
+    [PreferenceHelper setCreditsDictionary:[[NSDictionary alloc] init]];
+    [PreferenceHelper setCountsDictionary:[[NSDictionary alloc] init]];
+}
+
 // CREDIT STORAGE
+
++ (NSDictionary *)getCreditsDictionary {
+    NSDictionary *dict = (NSDictionary *)[PreferenceHelper readObjectFromDefaults:KEY_CREDITS];
+    if (!dict)
+        dict = [[NSDictionary alloc] init];
+    return dict;
+}
+
++ (void)setCreditsDictionary:(NSDictionary *)credits {
+    [PreferenceHelper writeObjectToDefaults:KEY_CREDITS value:credits];
+}
 
 + (void)setCreditCount:(NSInteger)count {
     [self setCreditCount:count forBucket:@"default"];
 }
 + (void)setCreditCount:(NSInteger)count forBucket:(NSString *)bucket {
-    [PreferenceHelper writeIntegerToDefaults:[KEY_CREDIT_BASE stringByAppendingString:bucket] value:count];
+    NSMutableDictionary *creditDict = [[PreferenceHelper getCreditsDictionary] mutableCopy];
+    [creditDict setObject:[NSNumber numberWithInteger:count] forKey:[KEY_CREDIT_BASE stringByAppendingString:bucket]];
+    [PreferenceHelper setCreditsDictionary:creditDict];
 }
 + (NSInteger)getCreditCount {
     return [self getCreditCountForBucket:@"default"];
 }
 + (NSInteger)getCreditCountForBucket:(NSString *)bucket {
-    return [PreferenceHelper readIntegerFromDefaults:[KEY_CREDIT_BASE stringByAppendingString:bucket]];
+    NSDictionary *creditDict = [PreferenceHelper getCreditsDictionary];
+    return [[creditDict objectForKey:[KEY_CREDIT_BASE stringByAppendingString:bucket]] integerValue];
 }
 
 // COUNT STORAGE
 
++ (NSDictionary *)getCountsDictionary {
+    NSDictionary *dict = (NSDictionary *)[PreferenceHelper readObjectFromDefaults:KEY_COUNTS];
+    if (!dict)
+        dict = [[NSDictionary alloc] init];
+    return dict;
+}
+
++ (void)setCountsDictionary:(NSDictionary *)counts {
+    [PreferenceHelper writeObjectToDefaults:KEY_COUNTS value:counts];
+}
+
 + (void)setActionTotalCount:(NSString *)action withCount:(NSInteger)count {
-    [PreferenceHelper writeIntegerToDefaults:[KEY_TOTAL_BASE stringByAppendingString:action] value:count];
+    NSMutableDictionary *counts = [[PreferenceHelper getCountsDictionary] mutableCopy];
+    [counts setObject:[NSNumber numberWithInteger:count] forKey:[KEY_TOTAL_BASE stringByAppendingString:action]];
+    [PreferenceHelper setCountsDictionary:counts];
 }
 + (void)setActionUniqueCount:(NSString *)action withCount:(NSInteger)count {
-    [PreferenceHelper writeIntegerToDefaults:[KEY_UNIQUE_BASE stringByAppendingString:action] value:count];
+    NSMutableDictionary *counts = [[PreferenceHelper getCountsDictionary] mutableCopy];
+    [counts setObject:[NSNumber numberWithInteger:count] forKey:[KEY_UNIQUE_BASE stringByAppendingString:action]];
+    [PreferenceHelper setCountsDictionary:counts];
 }
 + (NSInteger)getActionTotalCount:(NSString *)action {
-    return [PreferenceHelper readIntegerFromDefaults:[KEY_TOTAL_BASE stringByAppendingString:action]];
+    NSDictionary *counts = [PreferenceHelper getCountsDictionary];
+    return [[counts objectForKey:[KEY_TOTAL_BASE stringByAppendingString:action]] integerValue];
 }
 + (NSInteger)getActionUniqueCount:(NSString *)action {
-    return [PreferenceHelper readIntegerFromDefaults:[KEY_UNIQUE_BASE stringByAppendingString:action]];
+    NSDictionary *counts = [PreferenceHelper getCountsDictionary];
+    return [[counts objectForKey:[KEY_UNIQUE_BASE stringByAppendingString:action]] integerValue];
 }
 
 // GENERIC FUNCS

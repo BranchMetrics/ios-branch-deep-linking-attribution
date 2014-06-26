@@ -39,6 +39,8 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)setUserURL:(NSString *)userUrl;
 + (NSString *)getUserURL;
 
++ (void)clearUserCreditsAndCounts;
+
 + (void)setCreditCount:(NSInteger)count;
 + (void)setCreditCount:(NSInteger)count forBucket:(NSString *)bucket;
 + (NSInteger)getCreditCount;

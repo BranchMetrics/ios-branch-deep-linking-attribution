@@ -570,6 +570,7 @@ static Branch *currInstance;
             
             [PreferenceHelper setInstallParams:NO_STRING_VALUE];
             [PreferenceHelper setSessionParams:NO_STRING_VALUE];
+            [PreferenceHelper clearUserCreditsAndCounts];
             
             [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_IDENTIFY]) {
