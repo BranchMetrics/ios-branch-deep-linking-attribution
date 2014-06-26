@@ -99,14 +99,16 @@ static Branch *currInstance;
 }
 
 - (void)identifyUser:(NSString *)userId {
-    dispatch_async(self.asyncQueue, ^{
-        ServerRequest *req = [[ServerRequest alloc] init];
-        req.tag = REQ_TAG_IDENTIFY;
-        NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[userId, [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[@"identity", @"app_id", @"identity_id"]];
-        req.postData = post;
-        [self.uploadQueue addObject:req];
-        [self processNextQueueItem];
-    });
+    if (![self identifyInQueue]) {
+        dispatch_async(self.asyncQueue, ^{
+            ServerRequest *req = [[ServerRequest alloc] init];
+            req.tag = REQ_TAG_IDENTIFY;
+            NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[userId, [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[@"identity", @"app_id", @"identity_id"]];
+            req.postData = post;
+            [self.uploadQueue addObject:req];
+            [self processNextQueueItem];
+        });
+    }
 }
 
 - (void)clearUser {
@@ -379,6 +381,14 @@ static Branch *currInstance;
     }
 }
 
+- (BOOL)identifyInQueue {
+    for (ServerRequest *req in self.uploadQueue) {
+        if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
+            return YES;
+        }
+    }
+    return NO;
+}
 
 - (BOOL)installOrOpenInQueue {
     for (ServerRequest *req in self.uploadQueue) {
