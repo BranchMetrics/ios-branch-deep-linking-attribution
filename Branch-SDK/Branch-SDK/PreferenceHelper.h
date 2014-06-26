@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-static const BOOL LOG = NO;
+static const BOOL LOG = YES;
 static NSString *NO_STRING_VALUE = @"bnc_no_value";
 
 @interface PreferenceHelper : NSObject
@@ -39,13 +39,15 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)setUserURL:(NSString *)userUrl;
 + (NSString *)getUserURL;
 
-+ (void)setActionTotalCount:(NSString *)action withCount:(NSInteger)count;
-+ (void)setActionBalanceCount:(NSString *)action withCount:(NSInteger)count;
-+ (void)setActionCreditCount:(NSString *)action withCount:(NSInteger)count;
-+ (NSInteger)getActionTotalCount:(NSString *)action;
-+ (NSInteger)getActionBalanceCount:(NSString *)action;
-+ (NSInteger)getActionCreditCount:(NSString *)action;
++ (void)setCreditCount:(NSInteger)count;
++ (void)setCreditCount:(NSInteger)count forBucket:(NSString *)bucket;
++ (NSInteger)getCreditCount;
++ (NSInteger)getCreditCountForBucket:(NSString *)bucket;
 
++ (void)setActionTotalCount:(NSString *)action withCount:(NSInteger)count;
++ (void)setActionUniqueCount:(NSString *)action withCount:(NSInteger)count;
++ (NSInteger)getActionTotalCount:(NSString *)action;
++ (NSInteger)getActionUniqueCount:(NSString *)action;
 
 + (NSString *)base64EncodeStringToString:(NSString *)strData;
 + (NSString *)base64DecodeStringToString:(NSString *)strData;

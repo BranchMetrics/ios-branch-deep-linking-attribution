@@ -20,8 +20,9 @@ static NSString *KEY_INSTALL_PARAMS = @"bnc_install_params";
 static NSString *KEY_USER_URL = @"bnc_user_url";
 
 static NSString *KEY_CREDIT_BASE = @"bnc_credit_base_";
+
 static NSString *KEY_TOTAL_BASE = @"bnc_total_base_";
-static NSString *KEY_BALANCE_BASE = @"bnc_balance_base_";
+static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 @implementation PreferenceHelper
 
@@ -119,31 +120,34 @@ static NSString *KEY_BALANCE_BASE = @"bnc_balance_base_";
     return ret;
 }
 
-// COUNT STORAGE
+// CREDIT STORAGE
 
++ (void)setCreditCount:(NSInteger)count {
+    [self setCreditCount:count forBucket:@"default"];
+}
++ (void)setCreditCount:(NSInteger)count forBucket:(NSString *)bucket {
+    [PreferenceHelper writeIntegerToDefaults:[KEY_CREDIT_BASE stringByAppendingString:bucket] value:count];
+}
++ (NSInteger)getCreditCount {
+    return [self getCreditCountForBucket:@"default"];
+}
++ (NSInteger)getCreditCountForBucket:(NSString *)bucket {
+    return [PreferenceHelper readIntegerFromDefaults:[KEY_CREDIT_BASE stringByAppendingString:bucket]];
+}
+
+// COUNT STORAGE
 
 + (void)setActionTotalCount:(NSString *)action withCount:(NSInteger)count {
     [PreferenceHelper writeIntegerToDefaults:[KEY_TOTAL_BASE stringByAppendingString:action] value:count];
 }
-
-+ (void)setActionBalanceCount:(NSString *)action withCount:(NSInteger)count {
-    [PreferenceHelper writeIntegerToDefaults:[KEY_BALANCE_BASE stringByAppendingString:action] value:count];
++ (void)setActionUniqueCount:(NSString *)action withCount:(NSInteger)count {
+    [PreferenceHelper writeIntegerToDefaults:[KEY_UNIQUE_BASE stringByAppendingString:action] value:count];
 }
-
-+ (void)setActionCreditCount:(NSString *)action withCount:(NSInteger)count {
-    [PreferenceHelper writeIntegerToDefaults:[KEY_CREDIT_BASE stringByAppendingString:action] value:count];
-}
-
 + (NSInteger)getActionTotalCount:(NSString *)action {
     return [PreferenceHelper readIntegerFromDefaults:[KEY_TOTAL_BASE stringByAppendingString:action]];
 }
-
-+ (NSInteger)getActionBalanceCount:(NSString *)action {
-    return [PreferenceHelper readIntegerFromDefaults:[KEY_BALANCE_BASE stringByAppendingString:action]];
-}
-
-+ (NSInteger)getActionCreditCount:(NSString *)action {
-    return [PreferenceHelper readIntegerFromDefaults:[KEY_CREDIT_BASE stringByAppendingString:action]];
++ (NSInteger)getActionUniqueCount:(NSString *)action {
+    return [PreferenceHelper readIntegerFromDefaults:[KEY_UNIQUE_BASE stringByAppendingString:action]];
 }
 
 // GENERIC FUNCS

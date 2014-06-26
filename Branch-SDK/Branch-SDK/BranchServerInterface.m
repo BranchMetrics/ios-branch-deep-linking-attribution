@@ -57,12 +57,16 @@
     [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/event"] andTag:REQ_TAG_COMPLETE_ACTION];
 }
 
-- (void)creditUserForReferrals:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/credit"] andTag:REQ_TAG_CREDIT_ACTION];
+- (void)getReferralCounts {
+    [self getRequestAsync:[[NSDictionary alloc] init] url:[[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/referrals/"] stringByAppendingString:[PreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
 }
 
-- (void)getReferrals {
-    [self getRequestAsync:[[NSDictionary alloc] init] url:[[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/referrals/"] stringByAppendingString:[PreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REFERRALS];
+- (void)getRewards {
+    [self getRequestAsync:[[NSDictionary alloc] init] url:[[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/credits/"] stringByAppendingString:[PreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REWARDS];
+}
+
+- (void)redeemRewards:(NSDictionary *)post {
+    [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/redeem"] andTag:REQ_TAG_REDEEM_REWARDS];
 }
 
 - (void)createCustomUrl:(NSDictionary *)post {

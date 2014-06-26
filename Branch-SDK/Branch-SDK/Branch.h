@@ -27,12 +27,15 @@ typedef void (^callbackWithStatus) (BOOL changed);
 - (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback;
 - (void)clearUser;
 
-- (void)loadPointsWithCallback:(callbackWithStatus)callback;
-- (void)creditUserForReferralAction:(NSString *)action withCredits:(NSInteger)credits;
+- (void)loadRewardsWithCallback:(callbackWithStatus)callback;
+- (void)loadActionCountsWithCallback:(callbackWithStatus)callback;
+- (NSInteger)getCredits;
+- (void)redeemRewards:(NSInteger)count;
+- (NSInteger)getCreditsForBucket:(NSString *)bucket;
+- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket;
 - (void)userCompletedAction:(NSString *)action;
-- (NSInteger)getTotalPointsForAction:(NSString *)action;
-- (NSInteger)getCreditsForAction:(NSString *)action;
-- (NSInteger)getBalanceOfPointsForAction:(NSString *)action;
+- (NSInteger)getTotalCountsForAction:(NSString *)action;
+- (NSInteger)getUniqueCountsForAction:(NSString *)action;
 
 - (NSString *)getLongURL;
 - (NSString *)getLongURLWithParams:(NSDictionary *)params;

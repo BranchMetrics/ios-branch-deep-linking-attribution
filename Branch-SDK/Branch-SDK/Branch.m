@@ -120,36 +120,66 @@ static Branch *currInstance;
     });
 }
 
-- (void)loadPointsWithCallback:(callbackWithStatus)callback {
+- (void)loadActionCountsWithCallback:(callbackWithStatus)callback {
     self.pointLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
-        req.tag = REQ_TAG_GET_REFERRALS;
+        req.tag = REQ_TAG_GET_REFERRAL_COUNTS;
         [self.uploadQueue addObject:req];
         [self processNextQueueItem];
     });
 }
 
-- (void)creditUserForReferralAction:(NSString *)action withCredits:(NSInteger)credits {
+- (void)loadRewardsWithCallback:(callbackWithStatus)callback {
+    self.pointLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{
-        NSInteger creditsToAdd = 0;
-        NSInteger total = [PreferenceHelper getActionTotalCount:action];
-        NSInteger prevCredits = [PreferenceHelper getActionCreditCount:action];
-        if ((prevCredits+credits) > total) {
-            creditsToAdd = total - prevCredits;
+        ServerRequest *req = [[ServerRequest alloc] init];
+        req.tag = REQ_TAG_GET_REWARDS;
+        [self.uploadQueue addObject:req];
+        [self processNextQueueItem];
+    });
+}
+
+- (NSInteger)getCredits {
+    return [PreferenceHelper getCreditCount];
+}
+
+- (void)redeemRewards:(NSInteger)count {
+    [self redeemRewards:count forBucket:@"default"];
+}
+
+- (NSInteger)getCreditsForBucket:(NSString *)bucket {
+    return [PreferenceHelper getCreditCountForBucket:bucket];
+}
+
+- (NSInteger)getTotalCountsForAction:(NSString *)action {
+    return [PreferenceHelper getActionTotalCount:action];
+}
+- (NSInteger)getUniqueCountsForAction:(NSString *)action {
+    return [PreferenceHelper getActionUniqueCount:action];
+}
+
+- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket {
+    dispatch_async(self.asyncQueue, ^{
+        NSInteger redemptionsToAdd = 0;
+        NSInteger credits = [PreferenceHelper getCreditCountForBucket:bucket];
+        if (count > credits) {
+            redemptionsToAdd = credits;
+            NSLog(@"Branch Warning: You're trying to redeem more credits than are available. Have you updated loaded rewards");
         } else {
-            creditsToAdd = credits;
+            redemptionsToAdd = count;
         }
         
-        if (creditsToAdd > 0) {
+        if (redemptionsToAdd > 0) {
             ServerRequest *req = [[ServerRequest alloc] init];
-            req.tag = REQ_TAG_CREDIT_ACTION;
-            NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[action, [NSNumber numberWithInteger:credits], [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[@"event", @"credit", @"app_id", @"identity_id"]];
+            req.tag = REQ_TAG_REDEEM_REWARDS;
+            NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[bucket, [NSNumber numberWithInteger:redemptionsToAdd], [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[@"bucket", @"amount", @"app_id", @"identity_id"]];
             req.postData = post;
             [self.uploadQueue addObject:req];
             [self processNextQueueItem];
         }
     });
+
 }
 
 - (void)userCompletedAction:(NSString *)action {
@@ -161,18 +191,6 @@ static Branch *currInstance;
         [self.uploadQueue addObject:req];
         [self processNextQueueItem];
     });
-}
-
-- (NSInteger)getTotalPointsForAction:(NSString *)action {
-    return [PreferenceHelper getActionTotalCount:action];
-}
-
-- (NSInteger)getCreditsForAction:(NSString *)action {
-    return [PreferenceHelper getActionCreditCount:action];
-}
-
-- (NSInteger)getBalanceOfPointsForAction:(NSString *)action {
-    return [PreferenceHelper getActionBalanceCount:action];
 }
 
 - (NSDictionary *)getInstallReferringParams {
@@ -216,7 +234,6 @@ static Branch *currInstance;
 - (void)getShortURLWithParams:(NSDictionary *)params andTag:(NSString *)tag andCallback:(callbackWithUrl)callback {
     [self generateShortUrl:tag andParams:[BranchServerInterface encodePostToUniversalString:params] andCallback:callback];
 }
-
 
 // PRIVATE CALLS
 
@@ -307,12 +324,15 @@ static Branch *currInstance;
         } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_OPEN] && [self hasUser]) {
             if (LOG) NSLog(@"calling register open");
             [self.bServerInterface registerOpen];
-        } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRALS] && [self hasUser]) {
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS] && [self hasUser]) {
             if (LOG) NSLog(@"calling get referrals");
-            [self.bServerInterface getReferrals];
-        } else if ([req.tag isEqualToString:REQ_TAG_CREDIT_ACTION] && [self hasUser]) {
-            if (LOG) NSLog(@"calling credit referrals");
-            [self.bServerInterface creditUserForReferrals:req.postData];
+            [self.bServerInterface getReferralCounts];
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS] && [self hasUser]) {
+            if (LOG) NSLog(@"calling get rewards");
+            [self.bServerInterface getRewards];
+        } else if ([req.tag isEqualToString:REQ_TAG_REDEEM_REWARDS] && [self hasUser]) {
+            if (LOG) NSLog(@"calling redeem rewards");
+            [self.bServerInterface redeemRewards:req.postData];
         } else if ([req.tag isEqualToString:REQ_TAG_COMPLETE_ACTION] && [self hasUser]) {
             if (LOG) NSLog(@"calling completed action");
             [self.bServerInterface userCompletedAction:req.postData];
@@ -344,7 +364,7 @@ static Branch *currInstance;
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
             if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict);
-        } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRALS]) {
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS] || [req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
             if (self.pointLoadCallback) self.pointLoadCallback(NO);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
             if (self.urlLoadCallback) self.urlLoadCallback(@"Trouble reaching server. Please try again in a few minutes");
@@ -421,7 +441,7 @@ static Branch *currInstance;
 }
 
 -(void)processReferralCounts:(NSDictionary *)returnedData {
-    BOOL updateListener = false;
+    BOOL updateListener = NO;
     
     for (NSString *key in returnedData) {
         if ([key isEqualToString:kpServerStatusCode] || [key isEqualToString:kpServerRequestTag])
@@ -429,13 +449,35 @@ static Branch *currInstance;
         
         NSDictionary *counts = [returnedData objectForKey:key];
         NSInteger total = [[counts objectForKey:@"total"] integerValue];
-        NSInteger credits = [[counts objectForKey:@"credits"] integerValue];
-        if (total != [PreferenceHelper getActionTotalCount:key] || credits != [PreferenceHelper getActionCreditCount:key]) {
+        NSInteger unique = [[counts objectForKey:@"unique"] integerValue];
+        
+        if (total != [PreferenceHelper getActionTotalCount:key] || unique != [PreferenceHelper getActionUniqueCount:key])
             updateListener = YES;
-        }
+        
         [PreferenceHelper setActionTotalCount:key withCount:total];
-        [PreferenceHelper setActionCreditCount:key withCount:credits];
-        [PreferenceHelper setActionBalanceCount:key withCount:MAX(0, total-credits)];
+        [PreferenceHelper setActionUniqueCount:key withCount:unique];
+    }
+    if (self.pointLoadCallback) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.pointLoadCallback(updateListener);
+        });
+    }
+}
+
+
+-(void)processReferralCredits:(NSDictionary *)returnedData {
+    BOOL updateListener = NO;
+    
+    for (NSString *key in returnedData) {
+        if ([key isEqualToString:kpServerStatusCode] || [key isEqualToString:kpServerRequestTag])
+            continue;
+        
+        NSInteger credits = [[returnedData objectForKey:key] integerValue];
+        
+        if (credits != [PreferenceHelper getCreditCountForBucket:key])
+            updateListener = YES;
+        
+        [PreferenceHelper setCreditCount:credits forBucket:key];
     }
     if (self.pointLoadCallback) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -451,8 +493,14 @@ static Branch *currInstance;
         
         
         self.networkCount = 0;
-        if (status != 200) {
+        if (status >= 500) {
             [self retryLastRequest];
+        } else if (status >= 400 && status < 500) {
+            NSLog(@"Branch API Error: %@", [returnedData objectForKey:@"message"]);
+            [self.uploadQueue removeObjectAtIndex:0];
+        } else if (status != 200) {
+            NSLog(@"Branch API Error: %@", [returnedData objectForKey:@"message"]);
+            [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
             [PreferenceHelper setIdentityID:[returnedData objectForKey:@"identity_id"]];
             [PreferenceHelper setDeviceFingerprintID:[returnedData objectForKey:@"device_fingerprint_id"]];
@@ -501,15 +549,11 @@ static Branch *currInstance;
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
-        } else if ([requestTag isEqualToString:REQ_TAG_GET_REFERRALS]) {
-            [self processReferralCounts:returnedData];
+        } else if ([requestTag isEqualToString:REQ_TAG_GET_REWARDS]) {
+            [self processReferralCredits:returnedData];
             [self.uploadQueue removeObjectAtIndex:0];
-        } else if ([requestTag isEqualToString:REQ_TAG_CREDIT_ACTION]) {
-            ServerRequest *req = [self.uploadQueue objectAtIndex:0];
-            NSString *action = [req.postData objectForKey:@"event"];
-            int credits = [[req.postData objectForKey:@"credit"] intValue];
-            [PreferenceHelper setActionCreditCount:action withCount:[PreferenceHelper getActionCreditCount:action] + credits];
-            [PreferenceHelper setActionBalanceCount:action withCount:MAX(0, [PreferenceHelper getActionTotalCount:action]-[PreferenceHelper getActionCreditCount:action])];
+        } else if ([requestTag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
+            [self processReferralCounts:returnedData];
             [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
             NSString *url = [returnedData objectForKey:@"url"];
@@ -541,7 +585,7 @@ static Branch *currInstance;
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
-        } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
+        } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE] || [requestTag isEqualToString:REQ_TAG_REDEEM_REWARDS]) {
             [self.uploadQueue removeObjectAtIndex:0];
         }
         
