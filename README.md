@@ -167,16 +167,31 @@ all of the above options with tagging and data passing are available.
 
 ### Referral system rewarding functionality
 
-In a standard referral system, you have 2 parties: the original user and the invitee. Our system is flexible enough to handle rewards for all users. Here are a couple example scenarios:
+In a standard referral system, you have 2 parties: the original user and the invitee. Our system is flexible enough to handle rewards for all users for any actions. Here are a couple example scenarios:
 1) Reward the original user for taking action (eg. inviting, purchasing, etc)
 2) Reward the invitee for installing the app from the original user's referral link
 3) Reward the original user when the invitee takes action (eg. give the original user credit when their the invitee buys something)
 
-These reward definitions are created on the dashboard, under the 'Referral Program Configuration' ** coming soon **
+These reward definitions are created on the dashboard, under the 'Referral Program Configuration' ** coming soon ** Please contact alex@branchmetrics.io and he will create these rules manually for you.
 
-In the SDK, we have a way to track and record history of earned points. So every user has the following:
-1) A reward credit total (this is total historical earned reward points)
-2) A reward redemption total. This is the total earned reward points claimed. This helps keep track of whether you've already rewarded that user or not.
-3) A reward credit balance (total-redeemed). This will tell you how many credits to award the user
+#### Get reward balance
 
-SECTION IN PROGRESS
+Reward balances change randomly on the backend when certain actions are taken (defined by your rules), so you'll need to make an asynchronous call to retrieve the balance. Here the syntax:
+
+```objc
+[[Branch getInstance] loadRewardsWithCallback:^(BOOL changed) {
+	// changed boolean will indicate if the balance changed from what is currently in memory
+
+	// will return the balance of the current user's credits
+	NSInteger credits = [[Branch getInstance] getCredits];
+}];
+```
+
+#### Redeem all or some of the reward balance (store state)
+
+We will store how many of the rewards have been deployed so that you don't have to track it on your end. In order to save that you gave the credits to the user, you can call redeem. Redemptions will reduce the balance of outstanding credits permanently.
+
+```objc
+// Save that the user has redeemed 5 credits
+[[Branch getInstance] redeemRewards:5];
+```
