@@ -80,17 +80,11 @@ static Branch *currInstance;
 }
 
 - (void)initUserSession {
-    [PreferenceHelper clearIsReferrable];
-    [self initUserSessionWithCallbackInternal:nil];
+    [self initUserSessionWithCallback:nil];
 }
 
 - (void)initUserSession:(BOOL)isReferrable {
-    if (isReferrable) {
-        [PreferenceHelper setIsReferrable];
-    } else {
-        [PreferenceHelper clearIsReferrable];
-    }
-    [self initUserSessionWithCallbackInternal:nil];
+    [self initUserSessionWithCallback:nil andIsReferrable:isReferrable];
 }
 
 - (void) initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable {
