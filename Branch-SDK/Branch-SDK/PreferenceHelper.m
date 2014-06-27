@@ -18,6 +18,7 @@ static NSString *KEY_LINK_CLICK_ID = @"bnc_link_click_id";
 static NSString *KEY_SESSION_PARAMS = @"bnc_session_params";
 static NSString *KEY_INSTALL_PARAMS = @"bnc_install_params";
 static NSString *KEY_USER_URL = @"bnc_user_url";
+static NSString *KEY_IS_REFERRABLE = @"bnc_is_referrable";
 
 static NSString *KEY_CREDITS = @"bnc_credits";
 static NSString *KEY_CREDIT_BASE = @"bnc_credit_base_";
@@ -120,6 +121,15 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
+}
++ (NSInteger)getIsReferrable {
+    return [PreferenceHelper readIntegerFromDefaults:KEY_IS_REFERRABLE];
+}
++ (void)setIsReferrable {
+    [PreferenceHelper writeIntegerToDefaults:KEY_IS_REFERRABLE value:1];
+}
++ (void)clearIsReferrable {
+    [PreferenceHelper writeIntegerToDefaults:KEY_IS_REFERRABLE value:0];
 }
 
 + (void)clearUserCreditsAndCounts {

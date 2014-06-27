@@ -19,6 +19,8 @@ typedef void (^callbackWithStatus) (BOOL changed);
 
 - (void)initUserSession;
 - (void)initUserSessionWithCallback:(callbackWithParams)callback;
+- (void)initUserSessionAndIsReferrable;
+- (void)initUserSessionAndIsReferrableWithCallback:(callbackWithParams)callback;
 - (NSDictionary *)getInstallReferringParams;
 - (NSDictionary *)getReferringParams;
 - (void)resetUserSession;

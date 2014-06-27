@@ -39,6 +39,10 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)setUserURL:(NSString *)userUrl;
 + (NSString *)getUserURL;
 
++ (NSInteger)getIsReferrable;
++ (void)setIsReferrable;
++ (void)clearIsReferrable;
+
 + (void)clearUserCreditsAndCounts;
 
 + (void)setCreditCount:(NSInteger)count;

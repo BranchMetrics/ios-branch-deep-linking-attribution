@@ -75,18 +75,22 @@
     NSMutableString *encodedParams = [[NSMutableString alloc] initWithString:@"{"];
     for (NSString *key in params) {
         NSString *value = nil;
+        BOOL string = YES;
         if ([[params objectForKey:key] isKindOfClass:[NSString class]]) {
             value = [params objectForKey:key];
         } else if ([[params objectForKey:key] isKindOfClass:[NSDictionary class]]) {
             value = [ServerInterface encodePostToUniversalString:[params objectForKey:key]];
         } else if ([[params objectForKey:key] isKindOfClass:[NSNumber class]]) {
             value = [[params objectForKey:key] stringValue];
+            string = NO;
         }
         [encodedParams appendString:@"\""];
         [encodedParams appendString:key];
-        [encodedParams appendString:@"\":\""];
+        if (string) [encodedParams appendString:@"\":\""];
+        else [encodedParams appendString:@"\":"];
         [encodedParams appendString:value];
-        [encodedParams appendString:@"\","];
+        if (string) [encodedParams appendString:@"\","];
+        else [encodedParams appendString:@","];
     }
     [encodedParams replaceCharactersInRange:NSMakeRange([encodedParams length]-1, 1) withString:@"}"];
     if (LOG) NSLog(@"encoded params : %@", encodedParams);

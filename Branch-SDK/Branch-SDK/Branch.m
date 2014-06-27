@@ -83,7 +83,21 @@ static Branch *currInstance;
     [self initUserSessionWithCallback:nil];
 }
 
+- (void)initUserSessionAndIsReferrable {
+    [self initUserSessionAndIsReferrableWithCallback:nil];
+}
+
+- (void)initUserSessionAndIsReferrableWithCallback:(callbackWithParams)callback {
+    [PreferenceHelper setIsReferrable];
+    [self initUserSessionWithCallbackInternal:callback];
+}
+
 - (void)initUserSessionWithCallback:(callbackWithParams)callback {
+    [PreferenceHelper clearIsReferrable];
+    [self initUserSessionWithCallbackInternal:callback];
+}
+
+- (void)initUserSessionWithCallbackInternal:(callbackWithParams)callback {
     self.sessionparamLoadCallback = callback;
     if (!self.isInit) {
         self.isInit = YES;
@@ -91,6 +105,7 @@ static Branch *currInstance;
     } else if (![self installOrOpenInQueue]) {
         if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getReferringParams]);
     }
+
 }
 
 - (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback {
