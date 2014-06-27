@@ -80,16 +80,26 @@ static Branch *currInstance;
 }
 
 - (void)initUserSession {
-    [self initUserSessionWithCallback:nil];
+    [PreferenceHelper clearIsReferrable];
+    [self initUserSessionWithCallbackInternal:nil];
 }
 
-- (void)initUserSessionAndIsReferrable {
-    [self initUserSessionAndIsReferrableWithCallback:nil];
+- (void)initUserSession:(BOOL)isReferrable {
+    if (isReferrable) {
+        [PreferenceHelper setIsReferrable];
+    } else {
+        [PreferenceHelper clearIsReferrable];
+    }
+    [self initUserSessionWithCallbackInternal:nil];
 }
 
-- (void)initUserSessionAndIsReferrableWithCallback:(callbackWithParams)callback {
-    [PreferenceHelper setIsReferrable];
-    [self initUserSessionWithCallbackInternal:callback];
+- (void) initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable {
+    if (isReferrable) {
+        [PreferenceHelper setIsReferrable];
+    } else {
+        [PreferenceHelper clearIsReferrable];
+    }
+    [self initUserSessionWithCallbackInternal:nil];
 }
 
 - (void)initUserSessionWithCallback:(callbackWithParams)callback {
