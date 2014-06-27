@@ -14,7 +14,7 @@ Or just clone this project!
 
 ### Initialize SDK (registers install/open events)
 
-Called when app first initializes a session. Please add these lines to the splash view controller that will be seen on app install.
+Called when app first initializes a session. Please add these lines to the splash view controller that will be seen on app install. **NOTE** please email alex@branchmetrics.io for an app ID.
 
 Also, if you want to track open events from the links, you can add these lines before view did load.
 
