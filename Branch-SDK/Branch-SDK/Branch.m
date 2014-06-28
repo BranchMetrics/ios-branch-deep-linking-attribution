@@ -97,7 +97,7 @@ static Branch *currInstance;
 }
 
 - (void)initUserSessionWithCallback:(callbackWithParams)callback {
-    if (![SystemObserver getUpdateState])
+    if (![SystemObserver getUpdateState] && ![self hasUser])
         [PreferenceHelper setIsReferrable];
     else
         [PreferenceHelper clearIsReferrable];
