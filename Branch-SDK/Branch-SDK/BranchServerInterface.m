@@ -27,11 +27,7 @@
     if ([SystemObserver getOSVersion]) [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
     if ([SystemObserver getScreenWidth]) [post setObject:[SystemObserver getScreenWidth] forKey:@"screen_width"];
     if ([SystemObserver getScreenHeight]) [post setObject:[SystemObserver getScreenHeight] forKey:@"screen_height"];
-    if ([PreferenceHelper getIsReferrable]) {
-        [post setObject:[NSNumber numberWithInt:1] forKey:@"is_referrable"];
-    } else {
-        if (![SystemObserver getUpdateState]) [post setObject:[NSNumber numberWithInt:1] forKey:@"is_referrable"];
-    }
+    [post setObject:[NSNumber numberWithInteger:[PreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     
     [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/install"] andTag:REQ_TAG_REGISTER_INSTALL];
 }
@@ -44,7 +40,7 @@
     [post setObject:[PreferenceHelper getIdentityID] forKey:@"identity_id"];
     if ([SystemObserver getAppVersion]) [post setObject:[SystemObserver getAppVersion] forKey:@"app_version"];
     if ([SystemObserver getOSVersion]) [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
-    if ([PreferenceHelper getIsReferrable]) [post setObject:[NSNumber numberWithInt:1] forKey:@"is_referrable"];
+    [post setObject:[NSNumber numberWithInteger:[PreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     
     [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/open"] andTag:REQ_TAG_REGISTER_OPEN];
 }

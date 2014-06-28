@@ -97,7 +97,10 @@ static Branch *currInstance;
 }
 
 - (void)initUserSessionWithCallback:(callbackWithParams)callback {
-    [PreferenceHelper clearIsReferrable];
+    if (![SystemObserver getUpdateState])
+        [PreferenceHelper setIsReferrable];
+    else
+        [PreferenceHelper clearIsReferrable];
     [self initUserSessionWithCallbackInternal:callback];
 }
 
@@ -536,7 +539,8 @@ static Branch *currInstance;
             [PreferenceHelper setUserURL:[returnedData objectForKey:@"link"]];
             [PreferenceHelper setSessionID:[returnedData objectForKey:@"session_id"]];
             
-            if (![SystemObserver getUpdateState]) {
+            
+            if ([PreferenceHelper getIsReferrable]) {
                 if ([returnedData objectForKey:@"data"]) {
                     [PreferenceHelper setInstallParams:[returnedData objectForKey:@"data"]];
                 } else {
@@ -567,6 +571,15 @@ static Branch *currInstance;
             } else {
                 [PreferenceHelper setLinkClickID:NO_STRING_VALUE];
             }
+            
+            if ([PreferenceHelper getIsReferrable]) {
+                if ([returnedData objectForKey:@"data"]) {
+                    [PreferenceHelper setInstallParams:[returnedData objectForKey:@"data"]];
+                } else {
+                    [PreferenceHelper setInstallParams:NO_STRING_VALUE];
+                }
+            }
+            
             if ([returnedData objectForKey:@"data"]) {
                 [PreferenceHelper setSessionParams:[returnedData objectForKey:@"data"]];
             } else {
