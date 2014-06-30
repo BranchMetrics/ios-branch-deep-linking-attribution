@@ -93,7 +93,7 @@ static Branch *currInstance;
     } else {
         [PreferenceHelper clearIsReferrable];
     }
-    [self initUserSessionWithCallbackInternal:nil];
+    [self initUserSessionWithCallbackInternal:callback];
 }
 
 - (void)initUserSessionWithCallback:(callbackWithParams)callback {
