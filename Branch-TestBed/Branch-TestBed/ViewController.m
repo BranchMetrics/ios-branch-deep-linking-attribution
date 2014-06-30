@@ -30,7 +30,7 @@
     Branch *branch = [Branch getInstance:@"5680621892404085"];
     [branch initUserSessionWithCallback:^(NSDictionary *params) {
         NSLog(@"finished init with params = %@", [params description]);
-    }];
+    } andIsReferrable:YES];
 }
 
 - (IBAction)cmdRefresh:(id)sender {

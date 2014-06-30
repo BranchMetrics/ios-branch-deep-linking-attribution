@@ -575,8 +575,6 @@ static Branch *currInstance;
             if ([PreferenceHelper getIsReferrable]) {
                 if ([returnedData objectForKey:@"data"]) {
                     [PreferenceHelper setInstallParams:[returnedData objectForKey:@"data"]];
-                } else {
-                    [PreferenceHelper setInstallParams:NO_STRING_VALUE];
                 }
             }
             
