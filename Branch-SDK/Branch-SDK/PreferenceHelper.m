@@ -314,8 +314,11 @@ static const short _base64DecodingTable[256] = {
 	// Terminate the string-based result
 	*objPointer = '\0';
     
+    NSString *retString = [NSString stringWithCString:strResult encoding:NSASCIIStringEncoding];
+    free(strResult);
+    
 	// Return the results as an NSString object
-	return [NSString stringWithCString:strResult encoding:NSASCIIStringEncoding];
+	return retString;
 }
 
 + (NSData *)base64DecodeString:(NSString *)strBase64 {
@@ -324,7 +327,7 @@ static const short _base64DecodingTable[256] = {
 	int intCurrent;
 	int i = 0, j = 0, k;
     
-	unsigned char * objResult;
+    char * objResult;
 	objResult = calloc(intLength, sizeof(char));
     
 	// Run through the whole string, converting as we go
