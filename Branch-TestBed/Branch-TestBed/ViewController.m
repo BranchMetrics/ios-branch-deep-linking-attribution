@@ -73,7 +73,7 @@
 }
 - (IBAction)cmdIdentifyUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch identifyUser:@"my_really_special_user"];
+    [branch identifyUser:@"my_awesome_special_user"];
 }
 - (IBAction)cmdClearUserClick:(id)sender {
     Branch *branch = [Branch getInstance];

@@ -403,6 +403,22 @@ static Branch *currInstance;
     }
 }
 
+- (void)updateAllRequestsInQueue {
+    for (ServerRequest *request in self.uploadQueue) {
+        if (request.postData) {
+            for (NSString *key in [request.postData allKeys]) {
+                if ([key isEqualToString:@"app_id"]) {
+                    [request.postData setValue:[PreferenceHelper getAppKey] forKey:@"app_id"];
+                } else if ([key isEqualToString:@"session_id"]) {
+                    [request.postData setValue:[PreferenceHelper getSessionID] forKey:@"session_id"];
+                } else if ([key isEqualToString:@"identity_id"]) {
+                    [request.postData setValue:[PreferenceHelper getIdentityID] forKey:@"identity_id"];
+                }
+            }
+        }
+    }
+}
+
 - (BOOL)identifyInQueue {
     for (ServerRequest *req in self.uploadQueue) {
         if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
@@ -558,6 +574,9 @@ static Branch *currInstance;
             } else {
                 [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
+            
+            [self updateAllRequestsInQueue];
+            
             if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                      self.sessionparamLoadCallback([self getReferringParams]);
