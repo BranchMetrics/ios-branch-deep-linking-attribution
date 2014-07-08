@@ -207,10 +207,15 @@ static Branch *currInstance;
 }
 
 - (void)userCompletedAction:(NSString *)action {
+    [self userCompletedAction:action withState:nil];
+}
+
+- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_COMPLETE_ACTION;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [PreferenceHelper getAppKey], [PreferenceHelper getSessionID]] forKeys:@[@"event", @"app_id", @"session_id"]];
+        if (state) [post setObject:state forKey:@"metadata"];
         req.postData = post;
         [self.uploadQueue addObject:req];
         [self processNextQueueItem];

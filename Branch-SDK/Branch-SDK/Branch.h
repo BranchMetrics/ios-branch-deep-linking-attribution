@@ -36,6 +36,7 @@ typedef void (^callbackWithStatus) (BOOL changed);
 - (NSInteger)getCreditsForBucket:(NSString *)bucket;
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket;
 - (void)userCompletedAction:(NSString *)action;
+- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state;
 - (NSInteger)getTotalCountsForAction:(NSString *)action;
 - (NSInteger)getUniqueCountsForAction:(NSString *)action;
 

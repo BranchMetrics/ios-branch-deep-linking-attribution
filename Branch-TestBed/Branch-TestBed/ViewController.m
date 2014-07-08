@@ -83,5 +83,9 @@
     Branch *branch = [Branch getInstance];
     NSLog(@"found params = %@", [[branch getInstallReferringParams] description]);
 }
+- (IBAction)cmdBuyWithState:(id)sender {
+    Branch *branch = [Branch getInstance];
+    [branch userCompletedAction:@"buy" withState:[[NSDictionary alloc] initWithObjects:@[@"Alex", [NSNumber numberWithInt:1], [NSNumber numberWithBool:YES], [NSNumber numberWithFloat:0.01240123]] forKeys:@[@"name",@"integer",@"boolean",@"float"]]];
+}
 
 @end
