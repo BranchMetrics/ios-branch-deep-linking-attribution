@@ -159,6 +159,23 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 }];
 ```
 
+**Note** 
+You can customize the Facebook OG tags of each URL if you want to dynamically share content by using the following optional keys in the params dictionary:
+```objc
+@"$og_app_id"
+@"$og_title"
+@"$og_description"
+@"$og_image_url"
+```
+
+Also, you do custom redirection by inserting the following optional keys in the dictionary
+```objc
+@"$desktop_url"
+@"$android_url"
+@"$ios_url"
+@"$ipad_url"
+```
+
 #### Long links (immediate return but no shortening done)
 
 Generating long links are immediate return, but can be long as the associated parameters are base64 encoded into the url itself.
