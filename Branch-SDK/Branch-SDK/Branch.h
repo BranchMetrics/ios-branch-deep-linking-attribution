@@ -25,6 +25,7 @@ typedef void (^callbackWithStatus) (BOOL changed);
 - (NSDictionary *)getReferringParams;
 - (void)resetUserSession;
 
+- (BOOL)hasIdentity;
 - (void)identifyUser:(NSString *)userId;
 - (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback;
 - (void)clearUser;

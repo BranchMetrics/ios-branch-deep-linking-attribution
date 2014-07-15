@@ -125,7 +125,7 @@ static Branch *currInstance;
         dispatch_async(self.asyncQueue, ^{
             ServerRequest *req = [[ServerRequest alloc] init];
             req.tag = REQ_TAG_IDENTIFY;
-            NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[userId, [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[@"identity", @"app_id", @"identity_id"]];
+            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[userId, [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[@"identity", @"app_id", @"identity_id"]];
             req.postData = post;
             [self.uploadQueue addObject:req];
             [self processNextQueueItem];
@@ -137,7 +137,7 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_LOGOUT;
-        NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[[PreferenceHelper getAppKey], [PreferenceHelper getSessionID]] forKeys:@[@"app_id", @"session_id"]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[PreferenceHelper getAppKey], [PreferenceHelper getSessionID]] forKeys:@[@"app_id", @"session_id"]];
         req.postData = post;
         [self.uploadQueue addObject:req];
         [self processNextQueueItem];
@@ -197,7 +197,7 @@ static Branch *currInstance;
         if (redemptionsToAdd > 0) {
             ServerRequest *req = [[ServerRequest alloc] init];
             req.tag = REQ_TAG_REDEEM_REWARDS;
-            NSDictionary *post = [[NSDictionary alloc] initWithObjects:@[bucket, [NSNumber numberWithInteger:redemptionsToAdd], [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[@"bucket", @"amount", @"app_id", @"identity_id"]];
+            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[bucket, [NSNumber numberWithInteger:redemptionsToAdd], [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[@"bucket", @"amount", @"app_id", @"identity_id"]];
             req.postData = post;
             [self.uploadQueue addObject:req];
             [self processNextQueueItem];
@@ -457,6 +457,10 @@ static Branch *currInstance;
     [self.uploadQueue insertObject:req atIndex:0];
 }
 
+- (BOOL)hasIdentity {
+    return ![[PreferenceHelper getUserIdentity] isEqualToString:NO_STRING_VALUE];
+}
+
 - (BOOL)hasUser {
     return ![[PreferenceHelper getIdentityID] isEqualToString:NO_STRING_VALUE];
 }
@@ -632,6 +636,7 @@ static Branch *currInstance;
             [PreferenceHelper setIdentityID:[returnedData objectForKey:@"identity_id"]];
             [PreferenceHelper setUserURL:[returnedData objectForKey:@"link"]];
             
+            [PreferenceHelper setUserIdentity:NO_STRING_VALUE];
             [PreferenceHelper setInstallParams:NO_STRING_VALUE];
             [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             [PreferenceHelper clearUserCreditsAndCounts];
@@ -644,6 +649,14 @@ static Branch *currInstance;
             if ([returnedData objectForKey:@"referring_data"]) {
                 [PreferenceHelper setInstallParams:[returnedData objectForKey:@"referring_data"]];
             }
+            
+            if ([self.uploadQueue objectAtIndex:0]) {
+                ServerRequest *req = [self.uploadQueue objectAtIndex:0];
+                if (req.postData && [req.postData objectForKey:@"identity"]) {
+                    [PreferenceHelper setUserIdentity:[req.postData objectForKey:@"identity"]];
+                }
+            }
+            
             if (self.installparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.installparamLoadCallback([self getInstallReferringParams]);
