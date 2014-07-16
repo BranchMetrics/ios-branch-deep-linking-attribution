@@ -593,7 +593,7 @@ static Branch *currInstance;
             
             if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                     self.sessionparamLoadCallback([self getReferringParams]);
+                     if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getReferringParams]);
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
@@ -618,7 +618,7 @@ static Branch *currInstance;
             }
             if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.sessionparamLoadCallback([self getReferringParams]);
+                    if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getReferringParams]);
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
@@ -632,7 +632,7 @@ static Branch *currInstance;
             NSString *url = [returnedData objectForKey:@"url"];
             if (self.urlLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.urlLoadCallback(url);
+                    if (self.urlLoadCallback) self.urlLoadCallback(url);
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
@@ -664,7 +664,7 @@ static Branch *currInstance;
             
             if (self.installparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.installparamLoadCallback([self getInstallReferringParams]);
+                    if (self.installparamLoadCallback) self.installparamLoadCallback([self getInstallReferringParams]);
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
