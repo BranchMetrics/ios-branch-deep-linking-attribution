@@ -215,7 +215,8 @@ static Branch *currInstance;
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_COMPLETE_ACTION;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [PreferenceHelper getAppKey], [PreferenceHelper getSessionID]] forKeys:@[@"event", @"app_id", @"session_id"]];
-        if (state) [post setObject:state forKey:@"metadata"];
+        
+        if (state && [NSJSONSerialization isValidJSONObject:state]) [post setObject:state forKey:@"metadata"];
         req.postData = post;
         [self.uploadQueue addObject:req];
         [self processNextQueueItem];
@@ -406,6 +407,7 @@ static Branch *currInstance;
     } else {
         [NSThread sleepForTimeInterval:RETRY_INTERVAL];
     }
+    [self processNextQueueItem];
 }
 
 - (void)updateAllRequestsInQueue {
@@ -548,10 +550,13 @@ static Branch *currInstance;
         NSInteger status = [[returnedData objectForKey:kpServerStatusCode] integerValue];
         NSString *requestTag = [returnedData objectForKey:kpServerRequestTag];
         
-        
+        BOOL retry = NO;
         self.networkCount = 0;
         if (status >= 500) {
-            [self retryLastRequest];
+            retry = YES;
+            dispatch_async(self.asyncQueue, ^{
+                [self retryLastRequest];
+            });
         } else if (status >= 400 && status < 500) {
             NSLog(@"Branch API Error: %@", [returnedData objectForKey:@"message"]);
             [self.uploadQueue removeObjectAtIndex:0];
@@ -667,9 +672,11 @@ static Branch *currInstance;
             [self.uploadQueue removeObjectAtIndex:0];
         }
         
-        dispatch_async(self.asyncQueue, ^{
-            [self processNextQueueItem];
-        });
+        if (!retry) {
+            dispatch_async(self.asyncQueue, ^{
+                [self processNextQueueItem];
+            });
+        }
     }
 }
 
