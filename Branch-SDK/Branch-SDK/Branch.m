@@ -41,26 +41,7 @@ static Branch *currInstance;
 
 + (Branch *)getInstance:(NSString *)key {
     if (!currInstance) {
-        currInstance = [[Branch alloc] init];
-        currInstance.isInit = false;
-        currInstance.bServerInterface = [[BranchServerInterface alloc] init];
-        currInstance.bServerInterface.delegate = currInstance;
-        currInstance.processing_sema = dispatch_semaphore_create(1);
-        currInstance.asyncQueue = dispatch_queue_create("brnch_upload_queue", NULL);
-        currInstance.uploadQueue = [[NSMutableArray alloc] init];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:currInstance
-                                                 selector:@selector(applicationWillResignActive)
-                                                     name:UIApplicationDidEnterBackgroundNotification
-                                                   object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:currInstance
-                                                 selector:@selector(applicationDidBecomeActive)
-                                                     name:UIApplicationDidEnterBackgroundNotification
-                                                   object:nil];
-        
-        currInstance.retryCount = 0;
-        currInstance.networkCount = 0;
+        [Branch initInstance];
         [PreferenceHelper setAppKey:key];
     }
     return currInstance;
@@ -68,9 +49,33 @@ static Branch *currInstance;
 
 + (Branch *)getInstance {
     if (!currInstance) {
+        [Branch initInstance];
         NSLog(@"Branch Warning: getInstance called before getInstance with key. Please init");
     }
     return currInstance;
+}
+
++ (void)initInstance {
+    currInstance = [[Branch alloc] init];
+    currInstance.isInit = false;
+    currInstance.bServerInterface = [[BranchServerInterface alloc] init];
+    currInstance.bServerInterface.delegate = currInstance;
+    currInstance.processing_sema = dispatch_semaphore_create(1);
+    currInstance.asyncQueue = dispatch_queue_create("brnch_upload_queue", NULL);
+    currInstance.uploadQueue = [[NSMutableArray alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:currInstance
+                                             selector:@selector(applicationWillResignActive)
+                                                 name:UIApplicationDidEnterBackgroundNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:currInstance
+                                             selector:@selector(applicationDidBecomeActive)
+                                                 name:UIApplicationDidEnterBackgroundNotification
+                                               object:nil];
+    
+    currInstance.retryCount = 0;
+    currInstance.networkCount = 0;
 }
 
 - (void)resetUserSession {
