@@ -40,7 +40,7 @@ If you created a custom link with your own custom dictionary data, you probably 
 		// here is the data from the example below if a new user clicked on Joe's link and installed the app
 		NSString *name = [params objectForKey:@"user"]; // returns Joe
 		NSString *profileUrl = [params objectForKey:@"profile_pic"]; // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
-		NSString *description = [params objectForKey:@"description"] // returns Joe likes long walks on the beach...
+		NSString *description = [params objectForKey:@"description"]; // returns Joe likes long walks on the beach...
 	}];
 }
 ```
@@ -136,9 +136,9 @@ Branch *branch = [Branch getInstance];
 
 NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 
-[params setObject:"Joe" forKey:@"user"];
-[params setObject:"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"profile_pic"];
-[params setObject:"Joe likes long walks on the beach..." forKey:@"description"];
+[params setObject:@"Joe" forKey:@"user"];
+[params setObject:@"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"profile_pic"];
+[params setObject:@"Joe likes long walks on the beach..." forKey:@"description"];
 
 [branch getShortUrlWithParams:params andCallback:^(NSString *url) {
 	// show the link to the user or share it immediately	
