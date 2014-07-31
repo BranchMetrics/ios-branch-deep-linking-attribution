@@ -20,10 +20,13 @@ typedef void (^callbackWithStatus) (BOOL changed);
 - (void)initUserSession;
 - (void)initUserSession:(BOOL)isReferrable;
 - (void)initUserSessionWithCallback:(callbackWithParams)callback;
-- (void) initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable;
+- (void)initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable;
+- (void)initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable withLaunchOptions:(NSDictionary *)options;
 - (NSDictionary *)getInstallReferringParams;
 - (NSDictionary *)getReferringParams;
 - (void)resetUserSession;
+
+- (void)handleDeepLink:(NSURL *)url;
 
 - (BOOL)hasIdentity;
 - (void)identifyUser:(NSString *)userId;

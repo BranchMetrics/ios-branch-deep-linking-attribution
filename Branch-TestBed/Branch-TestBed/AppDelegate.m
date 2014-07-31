@@ -5,14 +5,25 @@
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
-
+#import "Branch.h"
 #import "AppDelegate.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    Branch *branch = [Branch getInstance:@"15549557400141826"];
+    [branch initUserSessionWithCallback:^(NSDictionary *params) {
+        NSLog(@"finished init with params = %@", [params description]);
+    } andIsReferrable:YES withLaunchOptions:launchOptions];
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    
+    NSLog(@"opened app from URL %@", [url description]);
+    [[Branch getInstance] handleDeepLink:url];
+    
     return YES;
 }
 							
@@ -35,6 +46,7 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+    
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 

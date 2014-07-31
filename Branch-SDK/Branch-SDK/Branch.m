@@ -71,7 +71,7 @@ static Branch *currInstance;
     
     [[NSNotificationCenter defaultCenter] addObserver:currInstance
                                              selector:@selector(applicationDidBecomeActive)
-                                                 name:UIApplicationDidEnterBackgroundNotification
+                                                 name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
     
     currInstance.retryCount = 0;
@@ -101,6 +101,11 @@ static Branch *currInstance;
     [self initUserSessionWithCallbackInternal:callback];
 }
 
+- (void)initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable withLaunchOptions:(NSDictionary *)options {
+    if (![options objectForKey:UIApplicationLaunchOptionsURLKey])
+        [self initUserSessionWithCallback:callback andIsReferrable:isReferrable];
+}
+
 - (void)initUserSessionWithCallback:(callbackWithParams)callback {
     if (![SystemObserver getUpdateState] && ![self hasUser])
         [PreferenceHelper setIsReferrable];
@@ -118,6 +123,19 @@ static Branch *currInstance;
         if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getReferringParams]);
     }
 
+}
+
+- (void)handleDeepLink:(NSURL *)url {
+    NSString *query = [url fragment];
+    if (!query) {
+        query = [url query];
+    }
+    NSDictionary *params = [self parseURLParams:query];
+    if ([params objectForKey:@"link_click_id"]) {
+        [PreferenceHelper setLinkClickIdentifier:[params objectForKey:@"link_click_id"]];
+    }
+    [PreferenceHelper setIsReferrable];
+    [self initUserSessionWithCallbackInternal:self.sessionparamLoadCallback];
 }
 
 - (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback {
@@ -309,14 +327,17 @@ static Branch *currInstance;
 
 - (void)applicationDidBecomeActive {
     dispatch_async(self.asyncQueue, ^{
-        ServerRequest *req = [[ServerRequest alloc] init];
-        req.tag = REQ_TAG_REGISTER_OPEN;
-        [self.uploadQueue addObject:req];
-        [self processNextQueueItem];
+        if (!self.isInit) {
+            ServerRequest *req = [[ServerRequest alloc] init];
+            req.tag = REQ_TAG_REGISTER_OPEN;
+            [self.uploadQueue addObject:req];
+            [self processNextQueueItem];
+        }
     });
 }
 - (void)applicationWillResignActive {
      dispatch_async(self.asyncQueue, ^{
+         self.isInit = NO;
          ServerRequest *req = [[ServerRequest alloc] init];
          req.tag = REQ_TAG_REGISTER_CLOSE;
          [self.uploadQueue addObject:req];
@@ -339,6 +360,18 @@ static Branch *currInstance;
         return params;
     }
     return [[NSDictionary alloc] init];
+}
+
+- (NSDictionary*)parseURLParams:(NSString *)query {
+    NSArray *pairs = [query componentsSeparatedByString:@"&"];
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    for (NSString *pair in pairs) {
+        NSArray *kv = [pair componentsSeparatedByString:@"="];
+        NSString *val = [[kv objectAtIndex:1]
+                         stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        [params setObject:val forKey:[kv objectAtIndex:0]];
+    }
+    return params;
 }
 
 - (void)dealloc {
@@ -582,6 +615,7 @@ static Branch *currInstance;
                     [PreferenceHelper setInstallParams:NO_STRING_VALUE];
                 }
             }
+            [PreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
             
             if ([returnedData objectForKey:@"link_click_id"]) {
                 [PreferenceHelper setLinkClickID:[returnedData objectForKey:@"link_click_id"]];
@@ -609,6 +643,7 @@ static Branch *currInstance;
             } else {
                 [PreferenceHelper setLinkClickID:NO_STRING_VALUE];
             }
+            [PreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
             
             if ([PreferenceHelper getIsReferrable]) {
                 if ([returnedData objectForKey:@"data"]) {

@@ -27,6 +27,9 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)setIdentityID:(NSString *)identityID;
 + (NSString *)getIdentityID;
 
++ (void)setLinkClickIdentifier:(NSString *)linkClickIdentifier;
++ (NSString *)getLinkClickIdentifier;
+
 + (void)setLinkClickID:(NSString *)linkClickId;
 + (NSString *)getLinkClickID;
 

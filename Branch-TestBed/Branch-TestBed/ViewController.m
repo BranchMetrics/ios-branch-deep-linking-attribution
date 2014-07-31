@@ -24,14 +24,6 @@
 
 @implementation ViewController
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    Branch *branch = [Branch getInstance:@"5680621892404085"];
-    [branch initUserSessionWithCallback:^(NSDictionary *params) {
-        NSLog(@"finished init with params = %@", [params description]);
-    } andIsReferrable:YES];
-}
 
 - (IBAction)cmdRefresh:(id)sender {
     NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!"] forKeys:@[@"key1", @"key2"]];
@@ -44,7 +36,6 @@
         [self.editRefShortUrl setText:url];
     }];
 }
-
 - (IBAction)cmdRefreshPoints:(id)sender {
     Branch *branch = [Branch getInstance];
     [branch loadActionCountsWithCallback:^(BOOL changed){
@@ -82,10 +73,11 @@
 - (IBAction)cmdPrintInstall:(id)sender {
     Branch *branch = [Branch getInstance];
     NSLog(@"found params = %@", [[branch getInstallReferringParams] description]);
+    [self.editRefUrl setText:[[branch getReferringParams] description]];
 }
 - (IBAction)cmdBuyWithState:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch userCompletedAction:@"buy" withState:[[NSDictionary alloc] initWithObjects:@[@"Alex", [NSNumber numberWithInt:1], [NSNumber numberWithBool:YES], [NSNumber numberWithFloat:0.01240123]] forKeys:@[@"name",@"integer",@"boolean",@"float"]]];
+    [branch userCompletedAction:@"buy" withState:[[NSDictionary alloc] initWithObjects:@[@"Alex", [NSNumber numberWithInt:1], [NSNumber numberWithBool:YES], [NSNumber numberWithFloat:0.01240123],@"hello"] forKeys:@[@"name",@"integer",@"boolean",@"float",@"test_key"]]];
 }
 
 @end

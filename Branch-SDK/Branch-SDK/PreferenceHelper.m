@@ -15,6 +15,7 @@ static NSString *KEY_DEVICE_FINGERPRINT_ID = @"bnc_device_fingerprint_id";
 static NSString *KEY_SESSION_ID = @"bnc_session_id";
 static NSString *KEY_IDENTITY_ID = @"bnc_identity_id";
 static NSString *KEY_IDENTITY = @"bnc_identity";
+static NSString *KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
 static NSString *KEY_LINK_CLICK_ID = @"bnc_link_click_id";
 static NSString *KEY_SESSION_PARAMS = @"bnc_session_params";
 static NSString *KEY_INSTALL_PARAMS = @"bnc_install_params";
@@ -89,6 +90,17 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
         ret = NO_STRING_VALUE;
     return ret;
 
+}
+
++ (void)setLinkClickIdentifier:(NSString *)linkClickIdentifier {
+    [PreferenceHelper writeObjectToDefaults:KEY_LINK_CLICK_IDENTIFIER value:linkClickIdentifier];
+
+}
++ (NSString *)getLinkClickIdentifier {
+    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_LINK_CLICK_IDENTIFIER];
+    if (!ret)
+        ret = NO_STRING_VALUE;
+    return ret;
 }
 
 + (void)setLinkClickID:(NSString *)linkClickId {

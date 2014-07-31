@@ -27,6 +27,7 @@
     if ([SystemObserver getOSVersion]) [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
     if ([SystemObserver getScreenWidth]) [post setObject:[SystemObserver getScreenWidth] forKey:@"screen_width"];
     if ([SystemObserver getScreenHeight]) [post setObject:[SystemObserver getScreenHeight] forKey:@"screen_height"];
+    if (![[PreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[PreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     [post setObject:[NSNumber numberWithInteger:[PreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     
     [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/install"] andTag:REQ_TAG_REGISTER_INSTALL];
@@ -39,8 +40,10 @@
     [post setObject:[PreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     [post setObject:[PreferenceHelper getIdentityID] forKey:@"identity_id"];
     if ([SystemObserver getAppVersion]) [post setObject:[SystemObserver getAppVersion] forKey:@"app_version"];
+    if ([SystemObserver getOS]) [post setObject:[SystemObserver getOS] forKey:@"os"];
     if ([SystemObserver getOSVersion]) [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
     [post setObject:[NSNumber numberWithInteger:[PreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
+    if (![[PreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[PreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     
     [self postRequestAsync:post url:[[PreferenceHelper getAPIBaseURL] stringByAppendingString:@"v1/open"] andTag:REQ_TAG_REGISTER_OPEN];
 }
