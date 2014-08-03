@@ -18,7 +18,9 @@ typedef void (^callbackWithStatus) (BOOL changed);
 + (Branch *)getInstance;
 
 - (void)initUserSession;
+- (void)initUserSessionWithLaunchOptions:(NSDictionary *)options;
 - (void)initUserSession:(BOOL)isReferrable;
+- (void)initUserSession:(BOOL)isReferrable withLaunchOptions:(NSDictionary *)options;
 - (void)initUserSessionWithCallback:(callbackWithParams)callback;
 - (void)initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable;
 - (void)initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable withLaunchOptions:(NSDictionary *)options;

@@ -88,8 +88,18 @@ static Branch *currInstance;
     [self initUserSessionWithCallback:nil];
 }
 
+- (void)initUserSessionWithLaunchOptions:(NSDictionary *)options {
+    if (![options objectForKey:UIApplicationLaunchOptionsURLKey])
+        [self initUserSessionWithCallback:nil];
+}
+
 - (void)initUserSession:(BOOL)isReferrable {
     [self initUserSessionWithCallback:nil andIsReferrable:isReferrable];
+}
+
+- (void)initUserSession:(BOOL)isReferrable withLaunchOptions:(NSDictionary *)options {
+    if (![options objectForKey:UIApplicationLaunchOptionsURLKey])
+        [self initUserSessionWithCallback:nil andIsReferrable:isReferrable];
 }
 
 - (void) initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable {
