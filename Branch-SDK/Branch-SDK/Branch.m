@@ -391,7 +391,7 @@ static Branch *currInstance;
     NSMutableDictionary *retDict = [[NSMutableDictionary alloc] init];
     [input enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         if ([key isKindOfClass:[NSString class]] && [obj isKindOfClass:[NSString class]]) {
-            [retDict setObject:[obj stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""] forKey:key];
+            [retDict setObject:[[[obj stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""] stringByReplacingOccurrencesOfString:@"\n" withString:@" "] stringByReplacingOccurrencesOfString:@"’" withString:@"'"] forKey:key];
         } else {
             [retDict setObject:obj forKey:key];
         }
