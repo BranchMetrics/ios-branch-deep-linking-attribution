@@ -1,6 +1,6 @@
 ## Installation
 
-compiled SDK size: ~150kb
+compiled SDK size: ~155kb
 
 ### Install library project
 
@@ -12,28 +12,42 @@ https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip
 
 Or just clone this project!
 
-### Initialize SDK (registers install/open events)
+### Register you app
 
-Called when app first initializes a session. Please add these lines to the splash view controller that will be seen on app install. **NOTE** You can sign up for your own app id at http://dashboard.branchmetrics.io
+You can sign up for your own app id at http://dashboard.branchmetrics.io
 
-Also, if you want to track open events from the links, you can add these lines before view did load.
+## Configuration (for tracking)
+
+Ideally, you want to use our links any time you have an external link pointing to your app (share, invite, referral, etc) because:
+1) Our dashboard can tell you where your installs are coming from
+2) Our links are the highest possible converting channel to new downloads and users
+3) You can pass that shared data across install to give new users a custom welcome or show them the content they expect to see
+
+Our linking infrastructure will support anything you want to build. If it doesn't, we'll fix it so that it does: just reach out to alex@branchmetrics.io with requests.
+
+### Register a URI scheme direct deep linking (optional but recommended)
+
+You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Also, make sure to change **yourapp** to a unique string that represents your app name.
+
+1) In Xcode, click on YourProject-Info.plist on the left.
+2) Find URL Types and click the right arrow. (If it doesn't exist, right click anywhere and choose Add Row. Scroll down and choose URL Types)
+3) Add "yourapp", where yourapp is a unique string for your app, as an item in URL Schemes as below:
+![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlScheme.png)
+
+### Initialize SDK And Register Deep Link Routing Function
+
+Called when app first initializes a session, ideally in the app delegate. If you created a custom link with your own custom dictionary data, you probably want to know when the user session init finishes, so you can check that data. Think of this callback as your "deep link router". If your app opens with some data, you want to route the user depending on the data you passed in. Otherwise, send them to a generic install flow.
+
+This deep link routing callback is called 100% of the time on init, with your link params or an empty dictionary if none present.
 
 ```objc
-#import "Branch.h"
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+	// your other init code
 
-Branch *branch = [Branch getInstance:@"Your app key"];
-[branch initUserSession];
-```
 
-#### OR
-
-If you created a custom link with your own custom dictionary data, you probably want to know when the user session init finishes, so you need to pass a block to handle the callback. If no params, the dictionary will be empty.
-
-```objc
-- (void)viewDidLoad {
 	Branch *branch = [Branch getInstance:@"Your app key"];
 	[branch initUserSessionWithCallback:^(NSDictionary *params) {
-		// show the user some custom stuff or do some action based on what data you associate with a link
+		// params are the deep linked params associated with the link that the user clicked before showing up
 		// params will be empty if no data found
 
 
@@ -41,7 +55,21 @@ If you created a custom link with your own custom dictionary data, you probably 
 		NSString *name = [params objectForKey:@"user"]; // returns Joe
 		NSString *profileUrl = [params objectForKey:@"profile_pic"]; // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
 		NSString *description = [params objectForKey:@"description"]; // returns Joe likes long walks on the beach...
-	}];
+
+		// route to a profile page in the app for Joe
+		// show a customer welcome
+	} withLaunchOptions:launchOptions];
+}
+```
+
+```objc
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+	// pass the url to the handle deep link call
+	// if handleDeepLink returns YES, and you registered a callback in initUserSession, the callback will be called with the data associated with the deep link
+	if (![[Branch getInstance] handleDeepLink:url]) {
+		// do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+	}
+    return ;
 }
 ```
 
@@ -65,25 +93,8 @@ Often, you might have your own user IDs, or want referral and event data to pers
 
 To identify a user, just call:
 ```objc
-[[Branch getInstance] identifyUser:@"your user id"];
-```
-
-#### OR
-
-We store these identities, and associate the referral connections among them. Therefore, if we see that you are identifying a user that already exists, we'll return the parameters associated with the first creation of that identity. You just need to register for the callback block.
-
-```objc
-[[Branch getInstance] identifyUser:@"your user id" withCallback:^(NSDictionary *params) {
-	// here is the data from the example below if a new user clicked on Joe's link and installed the app
-	NSString *name = [params objectForKey:@"user"]; // returns Joe
-	NSString *profileUrl = [params objectForKey:@"profile_pic"]; // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
-	NSString *description = [params objectForKey:@"description"] // returns Joe likes long walks on the beach...
-}];
-```
-
-You can access these parameters at any time thereafter using this call.
-```objc
-NSDictionary *installParams = [[Branch getInstance] getInstallReferringParams];
+if (![[Branch getInstance] hasIdentity])
+	[[Branch getInstance] identifyUser:@"your user id"];
 ```
 
 #### Logout
@@ -115,24 +126,15 @@ Some example events you might want to track:
 @"finished_level_ten"
 ```
 
-## Use
+## Generate Tracked, Deep Linking URLs (pass data across install and open)
 
-### Generate URLs
+### Shortened links
 
-#### Short links (for social media sharing)
-
-There are a bunch of options for creating these links. You can tag them for analytics in the dashboard, or you can even pass data to the new installs or opens that come from the link click. How awesome is that? You need to pass a callback for when you link is prepared (which should return very quickly, ~ 100 ms to process). If you don't want a callback, and can tolerate long links, check out the section right below.
+There are a bunch of options for creating these links. You can tag them for analytics in the dashboard, or you can even pass data to the new installs or opens that come from the link click. How awesome is that? You need to pass a callback for when you link is prepared (which should return very quickly, ~ 100 ms to process). If you don't want a callback, and can tolerate long links, you can explore the getLongUrl method family.
 
 ```objc
-// get a simple url to track events with
-Branch *branch = [Branch getInstance];
-[branch getShortUrlWithCallback:^(NSString *url) {
-	// show the link to the user or share it immediately
-}];
-
-// or 
 // associate data with a link
-// you can access this data from anyone instance that installs or opens the app from this link (amazing...)
+// you can access this data from any instance that installs or opens the app from this link (amazing...)
 
 NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 
@@ -140,24 +142,16 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 [params setObject:@"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"profile_pic"];
 [params setObject:@"Joe likes long walks on the beach..." forKey:@"description"];
 
-[branch getShortUrlWithParams:params andCallback:^(NSString *url) {
-	// show the link to the user or share it immediately	
-}];
-
-// or
 // get a url with a tag for analytics in the dashboard
 // example tag could be "fb", "email", "twitter"
 
-[branch getShortUrlWithTag:@"twitter" andCallback:^(NSString *url) {
-	// show the link to the user or share it immediately
-}];
-
-// or
-
+Branch *branch = [Branch getInstance];
 [branch getShortUrlWithParams:params andTag:@"twitter" andCallback:^(NSString *url) {
 	// show the link to the user or share it immediately
 }];
 ```
+
+There are other methods which exclude tag and data if you don't want to pass those. Explore Xcode's autocomplete functionality.
 
 **Note** 
 You can customize the Facebook OG tags of each URL if you want to dynamically share content by using the following optional keys in the params dictionary:
@@ -168,7 +162,7 @@ You can customize the Facebook OG tags of each URL if you want to dynamically sh
 @"$og_image_url"
 ```
 
-Also, you do custom redirection by inserting the following optional keys in the dictionary
+Also, you do custom redirection by inserting the following optional keys in the dictionary. For example, if you want to send users on the desktop to a page on your website, insert the $desktop_url with that URL value
 ```objc
 @"$desktop_url"
 @"$android_url"
@@ -176,20 +170,7 @@ Also, you do custom redirection by inserting the following optional keys in the 
 @"$ipad_url"
 ```
 
-#### Long links (immediate return but no shortening done)
-
-Generating long links are immediate return, but can be long as the associated parameters are base64 encoded into the url itself.
-
-```objc
-// get a simple url to track events with
-Branch *branch = [Branch getInstance];
-String *urlToShare = [branch getLongURL];
-```
-
-all of the above options with tagging and data passing are available.
-
-
-### Referral system rewarding functionality
+## Referral system rewarding functionality
 
 In a standard referral system, you have 2 parties: the original user and the invitee. Our system is flexible enough to handle rewards for all users for any actions. Here are a couple example scenarios:
 
@@ -203,7 +184,7 @@ These reward definitions are created on the dashboard, under the 'Referral Progr
 
 Warning: For a referral program, you should not use unique awards for custom events and redeem pre-identify call. This can allow users to cheat the system.
 
-#### Get reward balance
+### Get reward balance
 
 Reward balances change randomly on the backend when certain actions are taken (defined by your rules), so you'll need to make an asynchronous call to retrieve the balance. Here is the syntax:
 
@@ -216,7 +197,7 @@ Reward balances change randomly on the backend when certain actions are taken (d
 }];
 ```
 
-#### Redeem all or some of the reward balance (store state)
+### Redeem all or some of the reward balance (store state)
 
 We will store how many of the rewards have been deployed so that you don't have to track it on your end. In order to save that you gave the credits to the user, you can call redeem. Redemptions will reduce the balance of outstanding credits permanently.
 
