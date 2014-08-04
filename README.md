@@ -21,9 +21,7 @@ You can sign up for your own app id at http://dashboard.branchmetrics.io
 Ideally, you want to use our links any time you have an external link pointing to your app (share, invite, referral, etc) because:
 
 1) Our dashboard can tell you where your installs are coming from
-
 1) Our links are the highest possible converting channel to new downloads and users
-
 1) You can pass that shared data across install to give new users a custom welcome or show them the content they expect to see
 
 Our linking infrastructure will support anything you want to build. If it doesn't, we'll fix it so that it does: just reach out to alex@branchmetrics.io with requests.
@@ -33,9 +31,7 @@ Our linking infrastructure will support anything you want to build. If it doesn'
 You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Also, make sure to change **yourapp** to a unique string that represents your app name.
 
 1) In Xcode, click on YourProject-Info.plist on the left.
-
 1) Find URL Types and click the right arrow. (If it doesn't exist, right click anywhere and choose Add Row. Scroll down and choose URL Types)
-
 1) Add "yourapp", where yourapp is a unique string for your app, as an item in URL Schemes as below:
 
 ![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlScheme.png)
