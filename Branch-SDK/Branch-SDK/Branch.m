@@ -137,14 +137,16 @@ static Branch *currInstance;
 
 - (BOOL)handleDeepLink:(NSURL *)url {
     BOOL handled = NO;
-    NSString *query = [url fragment];
-    if (!query) {
-        query = [url query];
-    }
-    NSDictionary *params = [self parseURLParams:query];
-    if ([params objectForKey:@"link_click_id"]) {
-        handled = YES;
-        [PreferenceHelper setLinkClickIdentifier:[params objectForKey:@"link_click_id"]];
+    if (url) {
+        NSString *query = [url fragment];
+        if (!query) {
+            query = [url query];
+        }
+        NSDictionary *params = [self parseURLParams:query];
+        if ([params objectForKey:@"link_click_id"]) {
+            handled = YES;
+            [PreferenceHelper setLinkClickIdentifier:[params objectForKey:@"link_click_id"]];
+        }
     }
     [PreferenceHelper setIsReferrable];
     [self initUserSessionWithCallbackInternal:self.sessionparamLoadCallback];
@@ -157,6 +159,8 @@ static Branch *currInstance;
 }
 
 - (void)identifyUser:(NSString *)userId {
+    if (!userId)
+        return;
     if (![self identifyInQueue]) {
         dispatch_async(self.asyncQueue, ^{
             ServerRequest *req = [[ServerRequest alloc] init];
@@ -247,6 +251,8 @@ static Branch *currInstance;
 }
 
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
+    if (!action)
+        return;
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_COMPLETE_ACTION;

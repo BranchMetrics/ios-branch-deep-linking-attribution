@@ -72,7 +72,7 @@
 }
 
 + (NSString *)encodePostToUniversalString:(NSDictionary *)params {
-    NSMutableString *encodedParams = [[NSMutableString alloc] initWithString:@"{"];
+    NSMutableString *encodedParams = [[NSMutableString alloc] initWithString:@"{ "];
     for (NSString *key in params) {
         NSString *value = nil;
         BOOL string = YES;
