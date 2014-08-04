@@ -28,7 +28,7 @@ typedef void (^callbackWithStatus) (BOOL changed);
 - (NSDictionary *)getReferringParams;
 - (void)resetUserSession;
 
-- (void)handleDeepLink:(NSURL *)url;
+- (BOOL)handleDeepLink:(NSURL *)url;
 
 - (BOOL)hasIdentity;
 - (void)identifyUser:(NSString *)userId;

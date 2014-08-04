@@ -135,17 +135,20 @@ static Branch *currInstance;
 
 }
 
-- (void)handleDeepLink:(NSURL *)url {
+- (BOOL)handleDeepLink:(NSURL *)url {
+    BOOL handled = NO;
     NSString *query = [url fragment];
     if (!query) {
         query = [url query];
     }
     NSDictionary *params = [self parseURLParams:query];
     if ([params objectForKey:@"link_click_id"]) {
+        handled = YES;
         [PreferenceHelper setLinkClickIdentifier:[params objectForKey:@"link_click_id"]];
     }
     [PreferenceHelper setIsReferrable];
     [self initUserSessionWithCallbackInternal:self.sessionparamLoadCallback];
+    return handled;
 }
 
 - (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback {
@@ -248,8 +251,8 @@ static Branch *currInstance;
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_COMPLETE_ACTION;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [PreferenceHelper getAppKey], [PreferenceHelper getSessionID]] forKeys:@[@"event", @"app_id", @"session_id"]];
-        
-        if (state && [NSJSONSerialization isValidJSONObject:state]) [post setObject:state forKey:@"metadata"];
+        NSDictionary *saniState = [self sanitizeQuotesFromInput:state];
+        if (saniState && [NSJSONSerialization isValidJSONObject:saniState]) [post setObject:saniState forKey:@"metadata"];
         req.postData = post;
         [self.uploadQueue addObject:req];
         [self processNextQueueItem];
@@ -271,7 +274,7 @@ static Branch *currInstance;
 }
 
 - (NSString *)getLongURLWithParams:(NSDictionary *)params {
-    return [self generateLongUrl:nil andParams:[PreferenceHelper base64EncodeStringToString:[BranchServerInterface encodePostToUniversalString:params]]];
+    return [self generateLongUrl:nil andParams:[PreferenceHelper base64EncodeStringToString:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]]];
 }
 
 - (NSString *)getLongURLWithTag:(NSString *)tag {
@@ -279,7 +282,7 @@ static Branch *currInstance;
 }
 
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andTag:(NSString *)tag {
-    return [self generateLongUrl:tag andParams:[PreferenceHelper base64EncodeStringToString:[BranchServerInterface encodePostToUniversalString:params]]];
+    return [self generateLongUrl:tag andParams:[PreferenceHelper base64EncodeStringToString:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]]];
 }
 
 - (void)getShortURLWithCallback:(callbackWithUrl)callback {
@@ -287,7 +290,7 @@ static Branch *currInstance;
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:nil andParams:[BranchServerInterface encodePostToUniversalString:params] andCallback:callback];
+    [self generateShortUrl:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getShortURLWithTag:(NSString *)tag andCallback:(callbackWithUrl)callback {
@@ -295,7 +298,7 @@ static Branch *currInstance;
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andTag:(NSString *)tag andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:tag andParams:[BranchServerInterface encodePostToUniversalString:params] andCallback:callback];
+    [self generateShortUrl:tag andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 // PRIVATE CALLS
@@ -382,6 +385,18 @@ static Branch *currInstance;
         [params setObject:val forKey:[kv objectAtIndex:0]];
     }
     return params;
+}
+
+- (NSDictionary *)sanitizeQuotesFromInput:(NSDictionary *)input {
+    NSMutableDictionary *retDict = [[NSMutableDictionary alloc] init];
+    [input enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        if ([key isKindOfClass:[NSString class]] && [obj isKindOfClass:[NSString class]]) {
+            [retDict setObject:[obj stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""] forKey:key];
+        } else {
+            [retDict setObject:obj forKey:key];
+        }
+    }];
+    return retDict;
 }
 
 - (void)dealloc {
