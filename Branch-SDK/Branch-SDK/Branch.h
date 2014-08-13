@@ -20,7 +20,7 @@ typedef void (^callbackWithStatus) (BOOL changed);
 - (void)initUserSession;
 - (void)initUserSessionWithLaunchOptions:(NSDictionary *)options;
 - (void)initUserSession:(BOOL)isReferrable;
-- (void)initUserSession:(BOOL)isReferrable withLaunchOptions:(NSDictionary *)options;
+- (void)initUserSessionWithLaunchOptions:(NSDictionary *)options andIsReferrable:(BOOL)isReferrable;
 - (void)initUserSessionWithCallback:(callbackWithParams)callback;
 - (void)initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable;
 - (void)initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable withLaunchOptions:(NSDictionary *)options;
@@ -55,5 +55,6 @@ typedef void (^callbackWithStatus) (BOOL changed);
 - (void)getShortURLWithParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback;
 - (void)getShortURLWithTag:(NSString *)tag andCallback:(callbackWithUrl)callback;
 - (void)getShortURLWithParams:(NSDictionary *)params andTag:(NSString *)tag andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andandCallback:(callbackWithUrl)callback;
 
 @end

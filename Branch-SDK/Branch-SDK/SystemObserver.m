@@ -15,6 +15,7 @@
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
+//#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 @implementation SystemObserver
 
@@ -30,7 +31,11 @@
     }
     
     if (!uid && NSClassFromString(@"UIDevice")) {
+        //if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")) {
         uid = [[UIDevice currentDevice].identifierForVendor UUIDString];
+        //} else {
+        //    uid = [[UIDevice currentDevice].uniqueIdentifer UUIDString];
+        //}
     }
 
     return uid;

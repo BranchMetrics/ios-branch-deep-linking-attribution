@@ -97,7 +97,7 @@ static Branch *currInstance;
     [self initUserSessionWithCallback:nil andIsReferrable:isReferrable];
 }
 
-- (void)initUserSession:(BOOL)isReferrable withLaunchOptions:(NSDictionary *)options {
+- (void)initUserSessionWithLaunchOptions:(NSDictionary *)options andIsReferrable:(BOOL)isReferrable {
     if (![options objectForKey:UIApplicationLaunchOptionsURLKey])
         [self initUserSessionWithCallback:nil andIsReferrable:isReferrable];
 }
@@ -292,19 +292,23 @@ static Branch *currInstance;
 }
 
 - (void)getShortURLWithCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:nil andParams:nil andCallback:callback];
+    [self generateShortUrl:nil andChannel:nil andFeature:nil andStage:nil andParams:nil andCallback:callback];
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:nil andChannel:nil andFeature:nil andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getShortURLWithTag:(NSString *)tag andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:tag andParams:nil andCallback:callback];
+    [self generateShortUrl:@[tag] andChannel:nil andFeature:nil andStage:nil  andParams:nil andCallback:callback];
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andTag:(NSString *)tag andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:tag andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:@[tag] andChannel:nil andFeature:nil andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+}
+
+- (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andandCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:tags andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 // PRIVATE CALLS
@@ -326,7 +330,7 @@ static Branch *currInstance;
     }
 }
 
-- (void)generateShortUrl:(NSString *)tag andParams:(NSString *)params andCallback:(callbackWithUrl)callback {
+- (void)generateShortUrl:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params andCallback:(callbackWithUrl)callback {
     self.urlLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
@@ -334,8 +338,14 @@ static Branch *currInstance;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
         [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
         [post setObject:[PreferenceHelper getIdentityID] forKey:@"identity_id"];
-        if (tag)
-            [post setObject:tag forKey:@"tag"];
+        if (tags)
+            [post setObject:tags forKey:@"tag"];
+        if (channel)
+            [post setObject:channel forKey:@"channel"];
+        if (feature)
+            [post setObject:feature forKey:@"feature"];
+        if (stage)
+            [post setObject:stage forKey:@"stage"];
         if (params)
             [post setObject:params forKey:@"data"];
         req.postData = post;
