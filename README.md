@@ -71,7 +71,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 	if (![[Branch getInstance] handleDeepLink:url]) {
 		// do other deep link routing for the Facebook SDK, Pinterest SDK, etc
 	}
-    return ;
+    return YES;
 }
 ```
 
