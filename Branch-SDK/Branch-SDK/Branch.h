@@ -12,6 +12,12 @@ typedef void (^callbackWithParams) (NSDictionary *params);
 typedef void (^callbackWithUrl) (NSString *url);
 typedef void (^callbackWithStatus) (BOOL changed);
 
+static NSString *BRANCH_FEATURE_TAG_SHARE = @"share";
+static NSString *BRANCH_FEATURE_TAG_REFERRAL = @"referral";
+static NSString *BRANCH_FEATURE_TAG_INVITE = @"invite";
+static NSString *BRANCH_FEATURE_TAG_DEAL = @"deal";
+static NSString *BRANCH_FEATURE_TAG_GIFT = @"gift";
+
 @interface Branch : NSObject
 
 + (Branch *)getInstance:(NSString *)key;
