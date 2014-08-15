@@ -101,8 +101,7 @@ Often, you might have your own user IDs, or want referral and event data to pers
 
 To identify a user, just call:
 ```objc
-if (![[Branch getInstance] hasIdentity])
-	[[Branch getInstance] identifyUser:@"your user id"];
+[[Branch getInstance] identifyUser:@"your user id"];
 ```
 
 #### Logout
