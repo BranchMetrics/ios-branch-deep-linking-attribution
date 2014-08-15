@@ -339,7 +339,7 @@ static Branch *currInstance;
         [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
         [post setObject:[PreferenceHelper getIdentityID] forKey:@"identity_id"];
         if (tags)
-            [post setObject:tags forKey:@"tag"];
+            [post setObject:tags forKey:@"tags"];
         if (channel)
             [post setObject:channel forKey:@"channel"];
         if (feature)
