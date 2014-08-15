@@ -32,7 +32,7 @@
 
 - (IBAction)cmdRefreshShort:(id)sender {
     NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!"] forKeys:@[@"key1", @"key2"]];
-    [[Branch getInstance] getShortURLWithParams:params andCallback:^(NSString *url) {
+    [[Branch getInstance] getShortURLWithParams:params andTags:@[@"tag1", @"tag2"] andChannel:@"facebook" andFeature:@"invite" andStage:@"2" andCallback:^(NSString *url) {
         [self.editRefShortUrl setText:url];
     }];
 }

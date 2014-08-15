@@ -61,6 +61,6 @@ static NSString *BRANCH_FEATURE_TAG_GIFT = @"gift";
 - (void)getShortURLWithParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback;
 - (void)getShortURLWithTag:(NSString *)tag andCallback:(callbackWithUrl)callback;
 - (void)getShortURLWithParams:(NSDictionary *)params andTag:(NSString *)tag andCallback:(callbackWithUrl)callback;
-- (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andandCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback;
 
 @end

@@ -144,11 +144,14 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 [params setObject:@"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"profile_pic"];
 [params setObject:@"Joe likes long walks on the beach..." forKey:@"description"];
 
-// get a url with a tag for analytics in the dashboard
-// example tag could be "fb", "email", "twitter"
+// associate a url with a set of tags, channel, feature, and stage for better analytics.
+// tags: null or example set of tags could be "version1", "trial6", etc
+// channel: null or examples: "facebook", "twitter", "text_message", etc
+// feature: null or examples: Branch.FEATURE_TAG_SHARE, Branch.FEATURE_TAG_REFERRAL, "unlock", etc
+// stage: null or examples: "past_customer", "logged_in", "level_6"
 
 Branch *branch = [Branch getInstance];
-[branch getShortUrlWithParams:params andTag:@"twitter" andCallback:^(NSString *url) {
+[branch getShortUrlWithParams:params andTags:@[@"version1", @"trial6"] andChannel:@"text_message" andFeature:BRANCH_FEATURE_TAG_SHARE andStage:@"level_6" andCallback:^(NSString *url) {
 	// show the link to the user or share it immediately
 }];
 ```
