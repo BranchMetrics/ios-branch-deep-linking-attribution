@@ -460,7 +460,11 @@ static Branch *currInstance;
             if (LOG) NSLog(@"calling identify user");
             [self.bServerInterface registerClose];
         } else if (![self hasUser]) {
-            NSLog(@"Branch Warning: User session not init yet. Please call initUserSession");
+            if (![self hasAppKey]) {
+                NSLog(@"Branch Warning: User session not init yet. Please call initUserSession");
+            } else {
+                [self initUserSession];
+            }
         }
     } else {
         dispatch_semaphore_signal(self.processing_sema);
@@ -546,6 +550,10 @@ static Branch *currInstance;
 
 - (BOOL)hasUser {
     return ![[PreferenceHelper getIdentityID] isEqualToString:NO_STRING_VALUE];
+}
+
+- (BOOL)hasAppKey {
+    return ![[PreferenceHelper getAppKey] isEqualToString:NO_STRING_VALUE];
 }
 
 - (void)registerInstall {

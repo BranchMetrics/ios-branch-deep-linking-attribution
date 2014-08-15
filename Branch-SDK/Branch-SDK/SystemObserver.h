@@ -11,6 +11,7 @@
 @interface SystemObserver : NSObject
 
 + (NSString *)getUniqueHardwareId;
++ (NSString *)getURIScheme;
 + (NSString *)getAppVersion;
 + (NSString *)getCarrier;
 + (NSString *)getBrand;

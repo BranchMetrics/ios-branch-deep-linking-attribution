@@ -27,6 +27,7 @@
     if ([SystemObserver getOSVersion]) [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
     if ([SystemObserver getScreenWidth]) [post setObject:[SystemObserver getScreenWidth] forKey:@"screen_width"];
     if ([SystemObserver getScreenHeight]) [post setObject:[SystemObserver getScreenHeight] forKey:@"screen_height"];
+    if ([SystemObserver getURIScheme]) [post setObject:[SystemObserver getURIScheme] forKey:@"uri_scheme"];
     if (![[PreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[PreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     [post setObject:[NSNumber numberWithInteger:[PreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     
@@ -42,6 +43,7 @@
     if ([SystemObserver getAppVersion]) [post setObject:[SystemObserver getAppVersion] forKey:@"app_version"];
     if ([SystemObserver getOS]) [post setObject:[SystemObserver getOS] forKey:@"os"];
     if ([SystemObserver getOSVersion]) [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
+    if ([SystemObserver getURIScheme]) [post setObject:[SystemObserver getURIScheme] forKey:@"uri_scheme"];
     [post setObject:[NSNumber numberWithInteger:[PreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     if (![[PreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[PreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     
