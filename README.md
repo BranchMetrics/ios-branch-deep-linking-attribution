@@ -2,7 +2,13 @@
 
 compiled SDK size: ~155kb
 
-### Install library project
+### Available in CocoaPods
+
+Branch is available through [CocoaPods](http://cocoapods.org), to install it simply add the following line to your Podfile:
+
+    pod "Branch"
+
+#### Or download the raw files
 
 Download code from here:
 https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip
