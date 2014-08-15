@@ -161,6 +161,8 @@ static Branch *currInstance;
 - (void)identifyUser:(NSString *)userId {
     if (!userId)
         return;
+    if ([self hasIdentity])
+        return;
     if (![self identifyInQueue]) {
         dispatch_async(self.asyncQueue, ^{
             ServerRequest *req = [[ServerRequest alloc] init];
@@ -648,6 +650,9 @@ static Branch *currInstance;
             [PreferenceHelper setUserURL:[returnedData objectForKey:@"link"]];
             [PreferenceHelper setSessionID:[returnedData objectForKey:@"session_id"]];
             
+            if ([returnedData objectForKey:@"identity"]) {
+                [PreferenceHelper setUserIdentity:[returnedData objectForKey:@"identity"]];
+            }
             
             if ([PreferenceHelper getIsReferrable]) {
                 if ([returnedData objectForKey:@"data"]) {
@@ -685,6 +690,10 @@ static Branch *currInstance;
                 [PreferenceHelper setLinkClickID:NO_STRING_VALUE];
             }
             [PreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
+            
+            if ([returnedData objectForKey:@"identity"]) {
+                [PreferenceHelper setUserIdentity:[returnedData objectForKey:@"identity"]];
+            }
             
             if ([PreferenceHelper getIsReferrable]) {
                 if ([returnedData objectForKey:@"data"]) {
