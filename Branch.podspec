@@ -16,7 +16,7 @@ Use the Branch SDK (branchmetrics.io) create and power the links that point back
   s.license          = 'Proprietary'
   s.author           = { "Alex Austin" => "alex@branchmetrics.io" }
   s.source           = { :git => "https://github.com/BranchMetrics/Branch-iOS-SDK.git", :tag => s.version.to_s }
-  s.social_media_url = 'https://www.facebook.com/BranchMetrics'
+  s.social_media_url = 'https://www.linkedin.com/company/3813083'
 
   s.platform     = :ios, '6.0'
   s.requires_arc = true
