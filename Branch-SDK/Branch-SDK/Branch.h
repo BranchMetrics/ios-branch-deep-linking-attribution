@@ -28,6 +28,7 @@ static NSString *BRANCH_FEATURE_TAG_GIFT = @"gift";
 - (void)initUserSession:(BOOL)isReferrable;
 - (void)initUserSessionWithLaunchOptions:(NSDictionary *)options andIsReferrable:(BOOL)isReferrable;
 - (void)initUserSessionWithCallback:(callbackWithParams)callback;
+- (void)initUserSessionWithCallback:(callbackWithParams)callback withLaunchOptions:(NSDictionary *)options;
 - (void)initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable;
 - (void)initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable withLaunchOptions:(NSDictionary *)options;
 - (NSDictionary *)getInstallReferringParams;
