@@ -24,6 +24,7 @@
 @property (nonatomic) NSInteger retryCount;
 @property (nonatomic) NSInteger networkCount;
 @property (strong, nonatomic) callbackWithStatus pointLoadCallback;
+@property (strong, nonatomic) callbackWithStatus rewardLoadCallback;
 @property (strong, nonatomic) callbackWithParams sessionparamLoadCallback;
 @property (strong, nonatomic) callbackWithParams installparamLoadCallback;
 @property (strong, nonatomic) callbackWithUrl urlLoadCallback;
@@ -197,7 +198,7 @@ static Branch *currInstance;
 }
 
 - (void)loadRewardsWithCallback:(callbackWithStatus)callback {
-    self.pointLoadCallback = callback;
+    self.rewardLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REWARDS;
@@ -479,8 +480,10 @@ static Branch *currInstance;
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
             if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict);
-        } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS] || [req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
             if (self.pointLoadCallback) self.pointLoadCallback(NO);
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS]) {
+            if (self.rewardLoadCallback) self.rewardLoadCallback(NO);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
             if (self.urlLoadCallback) self.urlLoadCallback(@"Trouble reaching server. Please try again in a few minutes");
         } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
@@ -627,9 +630,9 @@ static Branch *currInstance;
         
         [PreferenceHelper setCreditCount:credits forBucket:key];
     }
-    if (self.pointLoadCallback) {
+    if (self.rewardLoadCallback) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.pointLoadCallback(updateListener);
+            self.rewardLoadCallback(updateListener);
         });
     }
 }
