@@ -122,6 +122,7 @@ static Branch *currInstance;
 }
 
 - (void)initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable withLaunchOptions:(NSDictionary *)options {
+    self.sessionparamLoadCallback = callback;
     if (![options objectForKey:UIApplicationLaunchOptionsURLKey])
         [self initUserSessionWithCallback:callback andIsReferrable:isReferrable];
 }
