@@ -64,7 +64,7 @@
 }
 - (IBAction)cmdIdentifyUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch identifyUser:@"my_awesome_special_user"];
+    [branch identifyUser:@"test_user_1"];
 }
 - (IBAction)cmdClearUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
@@ -73,7 +73,6 @@
 - (IBAction)cmdPrintInstall:(id)sender {
     Branch *branch = [Branch getInstance];
     NSLog(@"found params = %@", [[branch getInstallReferringParams] description]);
-    [self.editRefUrl setText:[[branch getReferringParams] description]];
 }
 - (IBAction)cmdBuyWithState:(id)sender {
     Branch *branch = [Branch getInstance];

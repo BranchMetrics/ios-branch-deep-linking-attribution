@@ -16,6 +16,13 @@
 		670016A319410C9B00A9E103 /* SystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016A219410C9B00A9E103 /* SystemObserver.m */; };
 		670016A6194178F300A9E103 /* ServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016A5194178F300A9E103 /* ServerRequest.m */; };
 		673B442F195A3F9C005991DE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 673B442E195A3F9C005991DE /* UIKit.framework */; };
+		6782963C19ACE576009833D7 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6782963B19ACE576009833D7 /* AdSupport.framework */; };
+		6782963E19ACE676009833D7 /* Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 670016361940F4EC00A9E103 /* Branch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6782963F19ACE6B6009833D7 /* PreferenceHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 6700169D194103AE00A9E103 /* PreferenceHelper.h */; };
+		6782964019ACE6B8009833D7 /* SystemObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 670016A119410C9B00A9E103 /* SystemObserver.h */; };
+		6782964119ACE6BB009833D7 /* ServerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 6700169C194103AE00A9E103 /* ServerInterface.h */; };
+		6782964219ACE6BE009833D7 /* ServerRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 670016A4194178F300A9E103 /* ServerRequest.h */; };
+		6782964319ACE6C0009833D7 /* BranchServerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 67001699194103AE00A9E103 /* BranchServerInterface.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -48,6 +55,7 @@
 		670016A4194178F300A9E103 /* ServerRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerRequest.h; sourceTree = "<group>"; };
 		670016A5194178F300A9E103 /* ServerRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerRequest.m; sourceTree = "<group>"; };
 		673B442E195A3F9C005991DE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		6782963B19ACE576009833D7 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6782963C19ACE576009833D7 /* AdSupport.framework in Frameworks */,
 				673B442F195A3F9C005991DE /* UIKit.framework in Frameworks */,
 				670016321940F4EC00A9E103 /* Foundation.framework in Frameworks */,
 			);
@@ -83,6 +92,7 @@
 		670016301940F4EC00A9E103 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6782963B19ACE576009833D7 /* AdSupport.framework */,
 				673B442E195A3F9C005991DE /* UIKit.framework */,
 				670016311940F4EC00A9E103 /* Foundation.framework */,
 			);
@@ -119,6 +129,22 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		6782963D19ACE661009833D7 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6782963E19ACE676009833D7 /* Branch.h in Headers */,
+				6782964319ACE6C0009833D7 /* BranchServerInterface.h in Headers */,
+				6782964219ACE6BE009833D7 /* ServerRequest.h in Headers */,
+				6782963F19ACE6B6009833D7 /* PreferenceHelper.h in Headers */,
+				6782964019ACE6B8009833D7 /* SystemObserver.h in Headers */,
+				6782964119ACE6BB009833D7 /* ServerInterface.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		6700162D1940F4EC00A9E103 /* Branch-SDK */ = {
 			isa = PBXNativeTarget;
@@ -127,6 +153,7 @@
 				6700162A1940F4EC00A9E103 /* Sources */,
 				6700162B1940F4EC00A9E103 /* Frameworks */,
 				6700162C1940F4EC00A9E103 /* CopyFiles */,
+				6782963D19ACE661009833D7 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -251,24 +278,31 @@
 		670016521940F4EC00A9E103 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = NO;
 				DSTROOT = /tmp/Branch_SDK.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Branch-SDK/Branch-SDK-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
 				SKIP_INSTALL = YES;
+				STRIP_STYLE = "non-global";
 			};
 			name = Debug;
 		};
 		670016531940F4EC00A9E103 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = NO;
 				DSTROOT = /tmp/Branch_SDK.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Branch-SDK/Branch-SDK-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
 				SKIP_INSTALL = YES;
+				STRIP_STYLE = "non-global";
 			};
 			name = Release;
 		};

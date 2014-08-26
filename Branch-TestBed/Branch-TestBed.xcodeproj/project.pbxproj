@@ -22,6 +22,7 @@
 		670016CC1946309100A9E103 /* ServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C41946309100A9E103 /* ServerInterface.m */; };
 		670016CD1946309100A9E103 /* ServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C61946309100A9E103 /* ServerRequest.m */; };
 		670016CE1946309100A9E103 /* SystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C81946309100A9E103 /* SystemObserver.m */; };
+		6782963A19ACE3C6009833D7 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6782963919ACE3C6009833D7 /* AdSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		670016C61946309100A9E103 /* ServerRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerRequest.m; sourceTree = "<group>"; };
 		670016C71946309100A9E103 /* SystemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemObserver.h; sourceTree = "<group>"; };
 		670016C81946309100A9E103 /* SystemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemObserver.m; sourceTree = "<group>"; };
+		6782963919ACE3C6009833D7 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6782963A19ACE3C6009833D7 /* AdSupport.framework in Frameworks */,
 				670016661940F51400A9E103 /* CoreGraphics.framework in Frameworks */,
 				670016681940F51400A9E103 /* UIKit.framework in Frameworks */,
 				670016641940F51400A9E103 /* Foundation.framework in Frameworks */,
@@ -88,6 +91,7 @@
 		670016621940F51400A9E103 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6782963919ACE3C6009833D7 /* AdSupport.framework */,
 				670016631940F51400A9E103 /* Foundation.framework */,
 				670016651940F51400A9E103 /* CoreGraphics.framework */,
 				670016671940F51400A9E103 /* UIKit.framework */,
