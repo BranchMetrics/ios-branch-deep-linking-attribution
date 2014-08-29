@@ -104,7 +104,7 @@ static Branch *currInstance;
     else
         [PreferenceHelper clearIsReferrable];
     if (![options objectForKey:UIApplicationLaunchOptionsURLKey])
-        [self initUserSessionWithCallbackInternal:nil];
+        [self initUserSessionWithCallbackInternal:callback];
 }
 
 - (void)initUserSessionWithLaunchOptions:(NSDictionary *)options andIsReferrable:(BOOL)isReferrable {
