@@ -27,7 +27,7 @@
 
 - (IBAction)cmdRefresh:(id)sender {
     NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!"] forKeys:@[@"key1", @"key2"]];
-    [self.editRefUrl setText:[[Branch getInstance] getLongURLWithParams:params andTag:@"test_tag"]];
+    [self.editRefUrl setText:[[Branch getInstance] getLongURLWithParams:params]];
 }
 
 - (IBAction)cmdRefreshShort:(id)sender {

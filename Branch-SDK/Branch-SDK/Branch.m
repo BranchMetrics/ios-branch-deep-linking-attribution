@@ -18,6 +18,7 @@
 
 @property (nonatomic) BOOL isInit;
 
+@property (strong, nonatomic) NSTimer *sessionTimer;
 @property (strong, nonatomic) NSMutableArray *uploadQueue;
 @property (nonatomic) dispatch_semaphore_t processing_sema;
 @property (nonatomic) dispatch_queue_t asyncQueue;
@@ -140,10 +141,15 @@ static Branch *currInstance;
     if (!self.isInit) {
         self.isInit = YES;
         [self initSession];
-    } else if (![self installOrOpenInQueue]) {
+    } else if ([self hasUser] && [self hasSession] && ![self installOrOpenInQueue]) {
         if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getReferringParams]);
+    } else {
+        if ((![self hasUser] || ![self hasSession]) && ![self installOrOpenInQueue]) {
+            [self initSession];
+        } else {
+            [self processNextQueueItem];
+        }
     }
-
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url {
@@ -296,32 +302,40 @@ static Branch *currInstance;
     return [self generateLongUrl:nil andParams:[PreferenceHelper base64EncodeStringToString:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]]];
 }
 
-- (NSString *)getLongURLWithTag:(NSString *)tag {
-    return [self generateLongUrl:tag andParams:nil];
-}
-
-- (NSString *)getLongURLWithParams:(NSDictionary *)params andTag:(NSString *)tag {
-    return [self generateLongUrl:tag andParams:[PreferenceHelper base64EncodeStringToString:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]]];
-}
-
 - (void)getShortURLWithCallback:(callbackWithUrl)callback {
     [self generateShortUrl:nil andChannel:nil andFeature:nil andStage:nil andParams:nil andCallback:callback];
+}
+
+- (void)getContentUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:tags andChannel:channel andFeature:BRANCH_FEATURE_TAG_SHARE andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+}
+
+- (void)getContentUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:nil andChannel:channel andFeature:BRANCH_FEATURE_TAG_SHARE andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+}
+
+- (void)getReferralUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:tags andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+}
+
+- (void)getReferralUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:nil andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback {
     [self generateShortUrl:nil andChannel:nil andFeature:nil andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
-- (void)getShortURLWithTag:(NSString *)tag andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:@[tag] andChannel:nil andFeature:nil andStage:nil  andParams:nil andCallback:callback];
-}
-
-- (void)getShortURLWithParams:(NSDictionary *)params andTag:(NSString *)tag andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:@[tag] andChannel:nil andFeature:nil andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
-}
-
 - (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback {
     [self generateShortUrl:tags andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+}
+
+- (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:nil andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+}
+
+- (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:nil andChannel:channel andFeature:feature andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 // PRIVATE CALLS
@@ -378,13 +392,22 @@ static Branch *currInstance;
     });
 }
 - (void)applicationWillResignActive {
-     dispatch_async(self.asyncQueue, ^{
-         self.isInit = NO;
-         ServerRequest *req = [[ServerRequest alloc] init];
-         req.tag = REQ_TAG_REGISTER_CLOSE;
-         [self.uploadQueue addObject:req];
-         [self processNextQueueItem];
-     });
+    [self clearTimer];
+    self.sessionTimer = [NSTimer scheduledTimerWithTimeInterval:30 target:self selector:@selector(callClose) userInfo:nil repeats:NO];
+}
+
+- (void)clearTimer {
+    [self.sessionTimer invalidate];
+}
+
+- (void)callClose {
+    dispatch_async(self.asyncQueue, ^{
+        self.isInit = NO;
+        ServerRequest *req = [[ServerRequest alloc] init];
+        req.tag = REQ_TAG_REGISTER_CLOSE;
+        [self.uploadQueue addObject:req];
+        [self processNextQueueItem];
+    });
 }
 
 - (NSDictionary *)convertParamsStringToDictionary:(NSString *)paramsString {
@@ -420,7 +443,7 @@ static Branch *currInstance;
     NSMutableDictionary *retDict = [[NSMutableDictionary alloc] init];
     [input enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         if ([key isKindOfClass:[NSString class]] && [obj isKindOfClass:[NSString class]]) {
-            [retDict setObject:[[[[obj stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""] stringByReplacingOccurrencesOfString:@"\n" withString:@" "] stringByReplacingOccurrencesOfString:@"’" withString:@"'"] stringByReplacingOccurrencesOfString:@"\r" withString:@" "] forKey:key];
+            [retDict setObject:[[[[obj stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""] stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"] stringByReplacingOccurrencesOfString:@"’" withString:@"'"] stringByReplacingOccurrencesOfString:@"\r" withString:@"\\r"] forKey:key];
         } else {
             [retDict setObject:obj forKey:key];
         }
@@ -439,6 +462,10 @@ static Branch *currInstance;
         dispatch_semaphore_signal(self.processing_sema);
         
         ServerRequest *req = [self.uploadQueue objectAtIndex:0];
+
+        if (![req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
+            [self clearTimer];
+        }
         
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
             if (LOG) NSLog(@"calling register install");
@@ -446,34 +473,35 @@ static Branch *currInstance;
         } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_OPEN] && [self hasUser]) {
             if (LOG) NSLog(@"calling register open");
             [self.bServerInterface registerOpen];
-        } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS] && [self hasUser]) {
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS] && [self hasUser] && [self hasSession]) {
             if (LOG) NSLog(@"calling get referrals");
             [self.bServerInterface getReferralCounts];
-        } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS] && [self hasUser]) {
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS] && [self hasUser] && [self hasSession]) {
             if (LOG) NSLog(@"calling get rewards");
             [self.bServerInterface getRewards];
-        } else if ([req.tag isEqualToString:REQ_TAG_REDEEM_REWARDS] && [self hasUser]) {
+        } else if ([req.tag isEqualToString:REQ_TAG_REDEEM_REWARDS] && [self hasUser] && [self hasSession]) {
             if (LOG) NSLog(@"calling redeem rewards");
             [self.bServerInterface redeemRewards:req.postData];
-        } else if ([req.tag isEqualToString:REQ_TAG_COMPLETE_ACTION] && [self hasUser]) {
+        } else if ([req.tag isEqualToString:REQ_TAG_COMPLETE_ACTION] && [self hasUser] && [self hasSession]) {
             if (LOG) NSLog(@"calling completed action");
             [self.bServerInterface userCompletedAction:req.postData];
-        } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL] && [self hasUser]) {
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL] && [self hasUser] && [self hasSession]) {
             if (LOG) NSLog(@"calling create custom url");
             [self.bServerInterface createCustomUrl:req.postData];
-        } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY] && [self hasUser]) {
+        } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY] && [self hasUser] && [self hasSession]) {
             if (LOG) NSLog(@"calling identify user");
             [self.bServerInterface identifyUser:req.postData];
-        } else if ([req.tag isEqualToString:REQ_TAG_LOGOUT] && [self hasUser]) {
+        } else if ([req.tag isEqualToString:REQ_TAG_LOGOUT] && [self hasUser] && [self hasSession]) {
             if (LOG) NSLog(@"calling identify user");
             [self.bServerInterface logoutUser:req.postData];
-        } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE] && [self hasUser]) {
+        } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE] && [self hasUser] && [self hasSession]) {
             if (LOG) NSLog(@"calling identify user");
             [self.bServerInterface registerClose];
         } else if (![self hasUser]) {
-            if (![self hasAppKey]) {
+            if (![self hasAppKey] && [self hasSession]) {
                 NSLog(@"Branch Warning: User session not init yet. Please call initUserSession");
             } else {
+                self.networkCount = 0;
                 [self initUserSession];
             }
         }
@@ -565,6 +593,10 @@ static Branch *currInstance;
     return ![[PreferenceHelper getIdentityID] isEqualToString:NO_STRING_VALUE];
 }
 
+- (BOOL)hasSession {
+    return ![[PreferenceHelper getSessionID] isEqualToString:NO_STRING_VALUE];
+}
+
 - (BOOL)hasAppKey {
     return ![[PreferenceHelper getAppKey] isEqualToString:NO_STRING_VALUE];
 }
@@ -654,17 +686,14 @@ static Branch *currInstance;
         
         BOOL retry = NO;
         self.networkCount = 0;
-        if (status >= 500) {
+        if (status >= 400 && status < 500) {
+            NSLog(@"Branch API Error: %@", [returnedData objectForKey:@"message"]);
+            [self.uploadQueue removeObjectAtIndex:0];
+        } else if (status != 200) {
             retry = YES;
             dispatch_async(self.asyncQueue, ^{
                 [self retryLastRequest];
             });
-        } else if (status >= 400 && status < 500) {
-            NSLog(@"Branch API Error: %@", [returnedData objectForKey:@"message"]);
-            [self.uploadQueue removeObjectAtIndex:0];
-        } else if (status != 200) {
-            NSLog(@"Branch API Error: %@", [returnedData objectForKey:@"message"]);
-            [self.uploadQueue removeObjectAtIndex:0];
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
             [PreferenceHelper setIdentityID:[returnedData objectForKey:@"identity_id"]];
             [PreferenceHelper setDeviceFingerprintID:[returnedData objectForKey:@"device_fingerprint_id"]];
