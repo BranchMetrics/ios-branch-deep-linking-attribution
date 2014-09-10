@@ -100,6 +100,7 @@ static Branch *currInstance;
 }
 
 - (void)initUserSessionWithCallback:(callbackWithParams)callback withLaunchOptions:(NSDictionary *)options {
+    self.sessionparamLoadCallback = callback;
     if (![SystemObserver getUpdateState] && ![self hasUser])
         [PreferenceHelper setIsReferrable];
     else
