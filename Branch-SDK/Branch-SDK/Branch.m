@@ -394,7 +394,7 @@ static Branch *currInstance;
 }
 - (void)applicationWillResignActive {
     [self clearTimer];
-    self.sessionTimer = [NSTimer scheduledTimerWithTimeInterval:30 target:self selector:@selector(callClose) userInfo:nil repeats:NO];
+    self.sessionTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(callClose) userInfo:nil repeats:NO];
 }
 
 - (void)clearTimer {
@@ -801,7 +801,7 @@ static Branch *currInstance;
                 });
             }
             [self.uploadQueue removeObjectAtIndex:0];
-        } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE] || [requestTag isEqualToString:REQ_TAG_REDEEM_REWARDS]) {
+        } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REDEEM_REWARDS] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
             [self.uploadQueue removeObjectAtIndex:0];
         }
         
