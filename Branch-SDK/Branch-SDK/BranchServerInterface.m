@@ -16,8 +16,6 @@
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
-    if (![[PreferenceHelper getLinkClickID] isEqualToString:NO_STRING_VALUE])
-        [post setObject:@"link_click_id" forKey:[PreferenceHelper getLinkClickID]];
     if ([SystemObserver getUniqueHardwareId]) [post setObject:[SystemObserver getUniqueHardwareId] forKey:@"hardware_id"];
     if ([SystemObserver getAppVersion]) [post setObject:[SystemObserver getAppVersion] forKey:@"app_version"];
     if ([SystemObserver getCarrier]) [post setObject:[SystemObserver getCarrier] forKey:@"carrier"];
