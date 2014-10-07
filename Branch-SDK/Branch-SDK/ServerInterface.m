@@ -8,6 +8,7 @@
 
 #import "ServerInterface.h"
 #import "PreferenceHelper.h"
+#import "Config.h"
 
 @implementation ServerInterface
 
@@ -33,7 +34,7 @@
             i = i + 1;
         }
     }
-    if(LOG) NSLog(@"using url = %@", url);
+    Debug(@"using url = %@", url);
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:url]];
@@ -51,8 +52,8 @@
     NSData *postData = [ServerInterface encodePostParams:post];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     
-    if(LOG) NSLog(@"using url = %@", url);
-    if(LOG) NSLog(@"body = %@", [post description]);
+    Debug(@"using url = %@", url);
+    Debug(@"body = %@", [post description]);
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:url]];
@@ -93,7 +94,7 @@
         else [encodedParams appendString:@","];
     }
     [encodedParams replaceCharactersInRange:NSMakeRange([encodedParams length]-1, 1) withString:@"}"];
-    if (LOG) NSLog(@"encoded params : %@", encodedParams);
+    Debug(@"encoded params : %@", encodedParams);
     return encodedParams;
 }
 
@@ -116,7 +117,7 @@
             }
         }
         
-        if(LOG) NSLog(@"returned = %@", [jsonObjects description]);
+        Debug(@"returned = %@", [jsonObjects description]);
         
         if (self.delegate) [self.delegate serverCallback:jsonObjects];
     }];

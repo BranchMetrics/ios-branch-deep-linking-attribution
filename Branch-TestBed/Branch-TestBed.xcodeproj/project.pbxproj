@@ -23,6 +23,7 @@
 		670016CD1946309100A9E103 /* ServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C61946309100A9E103 /* ServerRequest.m */; };
 		670016CE1946309100A9E103 /* SystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C81946309100A9E103 /* SystemObserver.m */; };
 		6782963A19ACE3C6009833D7 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6782963919ACE3C6009833D7 /* AdSupport.framework */; };
+		7E6ACAF819E324090066913E /* ServerRequestQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6ACAF719E324090066913E /* ServerRequestQueue.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,9 @@
 		670016C71946309100A9E103 /* SystemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemObserver.h; sourceTree = "<group>"; };
 		670016C81946309100A9E103 /* SystemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemObserver.m; sourceTree = "<group>"; };
 		6782963919ACE3C6009833D7 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		7E6ACAF619E324090066913E /* ServerRequestQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerRequestQueue.h; sourceTree = "<group>"; };
+		7E6ACAF719E324090066913E /* ServerRequestQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerRequestQueue.m; sourceTree = "<group>"; };
+		7E6ACAF919E324120066913E /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +145,9 @@
 				670016C61946309100A9E103 /* ServerRequest.m */,
 				670016C71946309100A9E103 /* SystemObserver.h */,
 				670016C81946309100A9E103 /* SystemObserver.m */,
+				7E6ACAF619E324090066913E /* ServerRequestQueue.h */,
+				7E6ACAF719E324090066913E /* ServerRequestQueue.m */,
+				7E6ACAF919E324120066913E /* Config.h */,
 			);
 			name = "Branch-SDK";
 			path = "../../Branch-SDK/Branch-SDK";
@@ -215,6 +222,7 @@
 				670016CC1946309100A9E103 /* ServerInterface.m in Sources */,
 				670016CD1946309100A9E103 /* ServerRequest.m in Sources */,
 				670016C91946309100A9E103 /* Branch.m in Sources */,
+				7E6ACAF819E324090066913E /* ServerRequestQueue.m in Sources */,
 				670016CB1946309100A9E103 /* PreferenceHelper.m in Sources */,
 				670016CA1946309100A9E103 /* BranchServerInterface.m in Sources */,
 				670016741940F51400A9E103 /* AppDelegate.m in Sources */,

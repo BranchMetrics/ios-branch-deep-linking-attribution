@@ -7,6 +7,7 @@
 //
 
 #import "PreferenceHelper.h"
+#import "Config.h"
 
 
 static NSString *KEY_APP_KEY = @"bnc_app_key";
@@ -32,7 +33,7 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 @implementation PreferenceHelper
 
 + (NSString *)getAPIBaseURL {
-    return @"http://api.branchmetrics.io/";
+    return API_BASE_URL;
 }
 
 // PREFERENCE STORAGE
