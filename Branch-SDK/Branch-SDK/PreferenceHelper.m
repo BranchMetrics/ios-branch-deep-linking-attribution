@@ -36,6 +36,10 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
     return API_BASE_URL;
 }
 
++ (NSString *)getAPIURL {
+    return [NSString stringWithFormat:@"%@/%@/", [self getAPIBaseURL], API_VERSION];
+}
+
 // PREFERENCE STORAGE
 
 + (void)setAppKey:(NSString *)appKey {

@@ -13,6 +13,7 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 @interface PreferenceHelper : NSObject
 
 + (NSString *)getAPIBaseURL;
++ (NSString *)getAPIURL;
 
 + (void)setAppKey:(NSString *)appKey;
 + (NSString *)getAppKey;

@@ -141,9 +141,10 @@
 
 - (void)persist {
     dispatch_async(self.asyncQueue, ^{
+        NSArray * copyQueue = [NSArray arrayWithArray:self.queue];
         NSMutableArray *arr = [NSMutableArray array];
         
-        for (ServerRequest *req in self.queue) {
+        for (ServerRequest *req in copyQueue) {
             NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
             [arr addObject:encodedReq];
         }

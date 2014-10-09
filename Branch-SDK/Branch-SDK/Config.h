@@ -13,13 +13,15 @@
 #define PROD_ENV
 
 #ifdef DEV_ENV
-#define API_BASE_URL            @"http://localhost:3001/";
+#define API_BASE_URL            @"http://localhost:3001";
 #define DEBUG_MODE
 #endif
 
 #ifdef PROD_ENV
-#define API_BASE_URL            @"http://api.branchmetrics.io/";
+#define API_BASE_URL            @"http://api.branchmetrics.io";
 #endif
+
+#define API_VERSION             @"v1"
 
 #ifdef DEBUG_MODE
 #define Debug( s, ... ) NSLog( @"<%p %@:(%d)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
