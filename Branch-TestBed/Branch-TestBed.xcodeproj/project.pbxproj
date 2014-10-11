@@ -24,6 +24,8 @@
 		670016CE1946309100A9E103 /* SystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C81946309100A9E103 /* SystemObserver.m */; };
 		6782963A19ACE3C6009833D7 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6782963919ACE3C6009833D7 /* AdSupport.framework */; };
 		7E6ACAF819E324090066913E /* ServerRequestQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6ACAF719E324090066913E /* ServerRequestQueue.m */; };
+		7EAA790219E89F67008D4A83 /* CreditHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */; };
+		7EAA790A19E90B9F008D4A83 /* ServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790919E90B9F008D4A83 /* ServerResponse.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +60,10 @@
 		7E6ACAF619E324090066913E /* ServerRequestQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerRequestQueue.h; sourceTree = "<group>"; };
 		7E6ACAF719E324090066913E /* ServerRequestQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerRequestQueue.m; sourceTree = "<group>"; };
 		7E6ACAF919E324120066913E /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
+		7EAA790019E89F67008D4A83 /* CreditHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreditHistoryViewController.h; sourceTree = "<group>"; };
+		7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreditHistoryViewController.m; sourceTree = "<group>"; };
+		7EAA790819E90B9F008D4A83 /* ServerResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerResponse.h; sourceTree = "<group>"; };
+		7EAA790919E90B9F008D4A83 /* ServerResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerResponse.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +118,8 @@
 				670016751940F51400A9E103 /* Main.storyboard */,
 				670016781940F51400A9E103 /* ViewController.h */,
 				670016791940F51400A9E103 /* ViewController.m */,
+				7EAA790019E89F67008D4A83 /* CreditHistoryViewController.h */,
+				7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */,
 				6700167B1940F51400A9E103 /* Images.xcassets */,
 				6700166A1940F51400A9E103 /* Supporting Files */,
 			);
@@ -148,6 +156,8 @@
 				7E6ACAF619E324090066913E /* ServerRequestQueue.h */,
 				7E6ACAF719E324090066913E /* ServerRequestQueue.m */,
 				7E6ACAF919E324120066913E /* Config.h */,
+				7EAA790819E90B9F008D4A83 /* ServerResponse.h */,
+				7EAA790919E90B9F008D4A83 /* ServerResponse.m */,
 			);
 			name = "Branch-SDK";
 			path = "../../Branch-SDK/Branch-SDK";
@@ -222,6 +232,8 @@
 				670016CC1946309100A9E103 /* ServerInterface.m in Sources */,
 				670016CD1946309100A9E103 /* ServerRequest.m in Sources */,
 				670016C91946309100A9E103 /* Branch.m in Sources */,
+				7EAA790219E89F67008D4A83 /* CreditHistoryViewController.m in Sources */,
+				7EAA790A19E90B9F008D4A83 /* ServerResponse.m in Sources */,
 				7E6ACAF819E324090066913E /* ServerRequestQueue.m in Sources */,
 				670016CB1946309100A9E103 /* PreferenceHelper.m in Sources */,
 				670016CA1946309100A9E103 /* BranchServerInterface.m in Sources */,

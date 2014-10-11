@@ -12,7 +12,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    Branch *branch = [Branch getInstance:@"5668720416392049"];
+    Branch *branch = [Branch getInstance:@"49285445883790282"];
     [branch initUserSessionWithCallback:^(NSDictionary *params) {
         NSLog(@"finished init with params = %@", [params description]);
     } andIsReferrable:YES withLaunchOptions:launchOptions];

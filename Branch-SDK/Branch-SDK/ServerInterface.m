@@ -100,26 +100,20 @@
 
 - (void)genericHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag {
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler: ^(NSURLResponse *response, NSData *POSTReply, NSError *error) {
-        NSMutableDictionary *jsonObjects = [[NSMutableDictionary alloc] init];
-
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
         NSNumber *statusCode = [NSNumber numberWithLong:[httpResponse statusCode]];
         
-        [jsonObjects setObject:statusCode forKey:kpServerStatusCode];
-        [jsonObjects setObject:requestTag forKey:kpServerRequestTag];
+        ServerResponse *serverResponse = [[ServerResponse alloc] initWithTag:requestTag andStatusCode:statusCode];
         
         if (POSTReply != nil) {
             NSError *convError;
-            NSDictionary *returnedObjs = [NSJSONSerialization JSONObjectWithData:POSTReply options:NSJSONReadingMutableContainers error:&convError];
-            
-            for (NSString *key in returnedObjs) {
-                [jsonObjects setObject:[returnedObjs objectForKey:key] forKey:key];
-            }
+            id jsonData = [NSJSONSerialization JSONObjectWithData:POSTReply options:NSJSONReadingMutableContainers error:&convError];
+            serverResponse.data = jsonData;            
         }
         
-        Debug(@"returned = %@", [jsonObjects description]);
+        Debug(@"returned = %@", [serverResponse description]);
         
-        if (self.delegate) [self.delegate serverCallback:jsonObjects];
+        if (self.delegate) [self.delegate serverCallback:serverResponse];
     }];
 }
 

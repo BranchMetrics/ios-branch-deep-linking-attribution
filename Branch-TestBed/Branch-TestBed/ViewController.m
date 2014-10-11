@@ -8,6 +8,7 @@
 
 #import "Branch.h"
 #import "ViewController.h"
+#import "CreditHistoryViewController.h"
 
 @interface ViewController ()
 
@@ -18,6 +19,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *txtInstallUniques;
 @property (weak, nonatomic) IBOutlet UILabel *txtBuyCount;
 @property (weak, nonatomic) IBOutlet UILabel *txtBuyUniques;
+
 
 
 @end
@@ -77,6 +79,22 @@
 - (IBAction)cmdBuyWithState:(id)sender {
     Branch *branch = [Branch getInstance];
     [branch userCompletedAction:@"buy" withState:[[NSDictionary alloc] initWithObjects:@[@"Alex", [NSNumber numberWithInt:1], [NSNumber numberWithBool:YES], [NSNumber numberWithFloat:0.01240123],@"hello"] forKeys:@[@"name",@"integer",@"boolean",@"float",@"test_key"]]];
+}
+- (IBAction)cmdGetCreditHistory:(id)sender {
+    Branch *branch = [Branch getInstance];
+    [branch getCreditHistoryWithCallback:^(NSArray *creditHistory) {
+        [self performSegueWithIdentifier:@"ShowCreditHistory" sender:creditHistory];
+    }];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"ShowCreditHistory"]) {
+        ((CreditHistoryViewController *)segue.destinationViewController).creditTransactions = sender;
+    }
+}
+
+- (void)viewDidLoad {
+    self.navigationController.navigationBar.translucent = NO;
 }
 
 @end

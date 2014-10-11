@@ -22,6 +22,8 @@
 		6782964119ACE6BB009833D7 /* ServerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 6700169C194103AE00A9E103 /* ServerInterface.h */; };
 		6782964219ACE6BE009833D7 /* ServerRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 670016A4194178F300A9E103 /* ServerRequest.h */; };
 		6782964319ACE6C0009833D7 /* BranchServerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 67001699194103AE00A9E103 /* BranchServerInterface.h */; };
+		7EAA790619E9024E008D4A83 /* ServerResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EAA790419E9024E008D4A83 /* ServerResponse.h */; };
+		7EAA790719E9024E008D4A83 /* ServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790519E9024E008D4A83 /* ServerResponse.m */; };
 		7EE4E7B719DF1A6400ADD376 /* ServerRequestQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE4E7B619DF1A6400ADD376 /* ServerRequestQueue.h */; };
 		7EE4E7B919DF1A6E00ADD376 /* ServerRequestQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EE4E7B819DF1A6E00ADD376 /* ServerRequestQueue.m */; };
 /* End PBXBuildFile section */
@@ -57,6 +59,8 @@
 		673B442E195A3F9C005991DE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		6782963B19ACE576009833D7 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		7E6ACAF419E317EF0066913E /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
+		7EAA790419E9024E008D4A83 /* ServerResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerResponse.h; sourceTree = "<group>"; };
+		7EAA790519E9024E008D4A83 /* ServerResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerResponse.m; sourceTree = "<group>"; };
 		7EE4E7B619DF1A6400ADD376 /* ServerRequestQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerRequestQueue.h; sourceTree = "<group>"; };
 		7EE4E7B819DF1A6E00ADD376 /* ServerRequestQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerRequestQueue.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -120,6 +124,8 @@
 				7EE4E7B619DF1A6400ADD376 /* ServerRequestQueue.h */,
 				7EE4E7B819DF1A6E00ADD376 /* ServerRequestQueue.m */,
 				7E6ACAF419E317EF0066913E /* Config.h */,
+				7EAA790419E9024E008D4A83 /* ServerResponse.h */,
+				7EAA790519E9024E008D4A83 /* ServerResponse.m */,
 				670016341940F4EC00A9E103 /* Supporting Files */,
 			);
 			path = "Branch-SDK";
@@ -144,6 +150,7 @@
 				6782964319ACE6C0009833D7 /* BranchServerInterface.h in Headers */,
 				6782964219ACE6BE009833D7 /* ServerRequest.h in Headers */,
 				7EE4E7B719DF1A6400ADD376 /* ServerRequestQueue.h in Headers */,
+				7EAA790619E9024E008D4A83 /* ServerResponse.h in Headers */,
 				6782963F19ACE6B6009833D7 /* PreferenceHelper.h in Headers */,
 				6782964019ACE6B8009833D7 /* SystemObserver.h in Headers */,
 				6782964119ACE6BB009833D7 /* ServerInterface.h in Headers */,
@@ -203,6 +210,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7EE4E7B919DF1A6E00ADD376 /* ServerRequestQueue.m in Sources */,
+				7EAA790719E9024E008D4A83 /* ServerResponse.m in Sources */,
 				670016A0194103AE00A9E103 /* PreferenceHelper.m in Sources */,
 				6700169E194103AE00A9E103 /* BranchServerInterface.m in Sources */,
 				670016A6194178F300A9E103 /* ServerRequest.m in Sources */,

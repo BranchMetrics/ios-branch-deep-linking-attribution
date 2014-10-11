@@ -33,10 +33,10 @@
 }
 
 - (id)initWithTag:(NSString *)tag {
-    return [self initWithTag:tag data:nil];
+    return [self initWithTag:tag andData:nil];
 }
 
-- (id)initWithTag:(NSString *)tag data:(NSDictionary *)postData {
+- (id)initWithTag:(NSString *)tag andData:(NSDictionary *)postData {
     if (!tag) {
         Debug(@"Invalid: server request missing tag!");
         return nil;

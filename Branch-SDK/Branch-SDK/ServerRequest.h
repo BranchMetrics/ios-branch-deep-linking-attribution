@@ -14,6 +14,6 @@
 @property (strong, nonatomic) NSDictionary *postData;
 
 - (id)initWithTag:(NSString *)tag;
-- (id)initWithTag:(NSString *)tag data:(NSDictionary *)postData;
+- (id)initWithTag:(NSString *)tag andData:(NSDictionary *)postData;
 
 @end

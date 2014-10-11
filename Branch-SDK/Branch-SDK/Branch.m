@@ -10,6 +10,7 @@
 #import "BranchServerInterface.h"
 #import "PreferenceHelper.h"
 #import "ServerRequest.h"
+#import "ServerResponse.h"
 #import "SystemObserver.h"
 #import "ServerRequestQueue.h"
 #import "Config.h"
@@ -37,6 +38,12 @@ static NSString *LINK_CLICK_ID = @"link_click_id";
 static NSString *URL = @"url";
 static NSString *REFERRING_DATA = @"referring_data";
 
+static NSString *LENGTH = @"length";
+static NSString *BEGIN_AFTER_ID = @"begin_after_id";
+static NSString *DIRECTION = @"direction";
+
+#define DIRECTIONS @[@"desc", @"asc"]
+
 
 
 @interface Branch() <ServerInterfaceDelegate>
@@ -56,6 +63,7 @@ static NSString *REFERRING_DATA = @"referring_data";
 @property (strong, nonatomic) callbackWithParams sessionparamLoadCallback;
 @property (strong, nonatomic) callbackWithParams installparamLoadCallback;
 @property (strong, nonatomic) callbackWithUrl urlLoadCallback;
+@property (strong, nonatomic) callbackWithList creditHistoryLoadCallback;
 
 @end
 
@@ -291,6 +299,38 @@ static Branch *currInstance;
         }
     });
     
+}
+
+- (void)getCreditHistoryWithCallback:(callbackWithList)callback {
+    [self getCreditHistoryAfter:nil number:100 order:kMostRecentFirst andCallback:callback];
+}
+
+- (void)getCreditHistoryForBucket:(NSString *)bucket andCallback:(callbackWithList)callback {
+    [self getCreditHistoryForBucket:bucket after:nil number:100 order:kMostRecentFirst andCallback:callback];
+}
+
+- (void)getCreditHistoryAfter:(NSString *)creditTransactionId number:(NSInteger)length order:(CreditHistoryOrder)order andCallback:(callbackWithList)callback {
+    [self getCreditHistoryForBucket:nil after:creditTransactionId number:length order:order andCallback:callback];
+}
+
+- (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(CreditHistoryOrder)order andCallback:(callbackWithList)callback {
+    self.creditHistoryLoadCallback = callback;
+    
+    dispatch_async(self.asyncQueue, ^{
+        ServerRequest *req = [[ServerRequest alloc] init];
+        req.tag = REQ_TAG_GET_REWARD_HISTORY;
+        NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjects:@[[PreferenceHelper getAppKey], [PreferenceHelper getIdentityID], [NSNumber numberWithLong:length], DIRECTIONS[order]]
+                                                                       forKeys:@[APP_ID, IDENTITY_ID, LENGTH, DIRECTION]];
+        if (bucket) {
+            [data setObject:bucket forKey:BUCKET];
+        }
+        if (creditTransactionId) {
+            [data setObject:creditTransactionId forKey:BEGIN_AFTER_ID];
+        }
+        req.postData = data;
+        [self.requestQueue enqueue:req];
+        [self processNextQueueItem];
+    });
 }
 
 - (void)userCompletedAction:(NSString *)action {
@@ -529,6 +569,9 @@ static Branch *currInstance;
             } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE] && [self hasUser] && [self hasSession]) {
                 Debug(@"calling identify user");
                 [self.bServerInterface registerClose];
+            } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY] && [self hasUser] && [self hasSession]) {
+                Debug(@"calling get reward history");
+                [self.bServerInterface getCreditHistory:req.postData];
             } else if (![self hasUser]) {
                 if (![self hasAppKey] && [self hasSession]) {
                     NSLog(@"Branch Warning: User session not init yet. Please call initUserSession");
@@ -555,6 +598,10 @@ static Branch *currInstance;
             if (self.pointLoadCallback) self.pointLoadCallback(NO);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS]) {
             if (self.rewardLoadCallback) self.rewardLoadCallback(NO);
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {
+            if (self.creditHistoryLoadCallback) {
+                self.creditHistoryLoadCallback(nil);
+            }
         } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
             if (self.urlLoadCallback) self.urlLoadCallback(@"Trouble reaching server. Please try again in a few minutes");
         } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
@@ -640,9 +687,6 @@ static Branch *currInstance;
     BOOL updateListener = NO;
     
     for (NSString *key in returnedData) {
-        if ([key isEqualToString:kpServerStatusCode] || [key isEqualToString:kpServerRequestTag])
-            continue;
-        
         NSDictionary *counts = [returnedData objectForKey:key];
         NSInteger total = [[counts objectForKey:TOTAL] integerValue];
         NSInteger unique = [[counts objectForKey:UNIQUE] integerValue];
@@ -665,9 +709,6 @@ static Branch *currInstance;
     BOOL updateListener = NO;
     
     for (NSString *key in returnedData) {
-        if ([key isEqualToString:kpServerStatusCode] || [key isEqualToString:kpServerRequestTag])
-            continue;
-        
         NSInteger credits = [[returnedData objectForKey:key] integerValue];
         
         if (credits != [PreferenceHelper getCreditCountForBucket:key])
@@ -682,42 +723,50 @@ static Branch *currInstance;
     }
 }
 
-- (void)serverCallback:(NSDictionary *)returnedData {
-    if (returnedData) {
-        NSInteger status = [[returnedData objectForKey:kpServerStatusCode] integerValue];
-        NSString *requestTag = [returnedData objectForKey:kpServerRequestTag];
+- (void)processCreditHistory:(NSArray *)returnedData {
+    if (self.creditHistoryLoadCallback) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.creditHistoryLoadCallback(returnedData);
+        });
+    }
+}
+
+- (void)serverCallback:(ServerResponse *)response {
+    if (response) {
+        NSInteger status = [response.statusCode integerValue];
+        NSString *requestTag = response.tag;
         
         BOOL retry = NO;
         self.networkCount = 0;
         if (status >= 400 && status < 500) {
-            NSLog(@"Branch API Error: %@", [returnedData objectForKey:MESSAGE]);
+            NSLog(@"Branch API Error: %@", [response.data objectForKey:MESSAGE]);
         } else if (status != 200) {
             retry = YES;
             dispatch_async(self.asyncQueue, ^{
                 [self retryLastRequest];
             });
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
-            [PreferenceHelper setIdentityID:[returnedData objectForKey:IDENTITY_ID]];
-            [PreferenceHelper setDeviceFingerprintID:[returnedData objectForKey:DEVICE_FINGERPRINT_ID]];
-            [PreferenceHelper setUserURL:[returnedData objectForKey:LINK]];
-            [PreferenceHelper setSessionID:[returnedData objectForKey:SESSION_ID]];
+            [PreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
+            [PreferenceHelper setDeviceFingerprintID:[response.data objectForKey:DEVICE_FINGERPRINT_ID]];
+            [PreferenceHelper setUserURL:[response.data objectForKey:LINK]];
+            [PreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
             
             if ([PreferenceHelper getIsReferrable]) {
-                if ([returnedData objectForKey:DATA]) {
-                    [PreferenceHelper setInstallParams:[returnedData objectForKey:DATA]];
+                if ([response.data objectForKey:DATA]) {
+                    [PreferenceHelper setInstallParams:[response.data objectForKey:DATA]];
                 } else {
                     [PreferenceHelper setInstallParams:NO_STRING_VALUE];
                 }
             }
             [PreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
             
-            if ([returnedData objectForKey:LINK_CLICK_ID]) {
-                [PreferenceHelper setLinkClickID:[returnedData objectForKey:LINK_CLICK_ID]];
+            if ([response.data objectForKey:LINK_CLICK_ID]) {
+                [PreferenceHelper setLinkClickID:[response.data objectForKey:LINK_CLICK_ID]];
             } else {
                 [PreferenceHelper setLinkClickID:NO_STRING_VALUE];
             }
-            if ([returnedData objectForKey:DATA]) {
-                [PreferenceHelper setSessionParams:[returnedData objectForKey:DATA]];
+            if ([response.data objectForKey:DATA]) {
+                [PreferenceHelper setSessionParams:[response.data objectForKey:DATA]];
             } else {
                 [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
@@ -730,22 +779,22 @@ static Branch *currInstance;
                 });
             }
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
-            [PreferenceHelper setSessionID:[returnedData objectForKey:SESSION_ID]];
-            if ([returnedData objectForKey:LINK_CLICK_ID]) {
-                [PreferenceHelper setLinkClickID:[returnedData objectForKey:LINK_CLICK_ID]];
+            [PreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
+            if ([response.data objectForKey:LINK_CLICK_ID]) {
+                [PreferenceHelper setLinkClickID:[response.data objectForKey:LINK_CLICK_ID]];
             } else {
                 [PreferenceHelper setLinkClickID:NO_STRING_VALUE];
             }
             [PreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
             
             if ([PreferenceHelper getIsReferrable]) {
-                if ([returnedData objectForKey:DATA]) {
-                    [PreferenceHelper setInstallParams:[returnedData objectForKey:DATA]];
+                if ([response.data objectForKey:DATA]) {
+                    [PreferenceHelper setInstallParams:[response.data objectForKey:DATA]];
                 }
             }
             
-            if ([returnedData objectForKey:DATA]) {
-                [PreferenceHelper setSessionParams:[returnedData objectForKey:DATA]];
+            if ([response.data objectForKey:DATA]) {
+                [PreferenceHelper setSessionParams:[response.data objectForKey:DATA]];
             } else {
                 [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
@@ -755,31 +804,33 @@ static Branch *currInstance;
                 });
             }
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REWARDS]) {
-            [self processReferralCredits:returnedData];
+            [self processReferralCredits:response.data];
+        } else if ([requestTag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {
+            [self processCreditHistory:response.data];
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
-            [self processReferralCounts:returnedData];
+            [self processReferralCounts:response.data];
         } else if ([requestTag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
-            NSString *url = [returnedData objectForKey:URL];
+            NSString *url = [response.data objectForKey:URL];
             if (self.urlLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (self.urlLoadCallback) self.urlLoadCallback(url);
                 });
             }
         } else if ([requestTag isEqualToString:REQ_TAG_LOGOUT]) {
-            [PreferenceHelper setSessionID:[returnedData objectForKey:SESSION_ID]];
-            [PreferenceHelper setIdentityID:[returnedData objectForKey:IDENTITY_ID]];
-            [PreferenceHelper setUserURL:[returnedData objectForKey:LINK]];
+            [PreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
+            [PreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
+            [PreferenceHelper setUserURL:[response.data objectForKey:LINK]];
             
             [PreferenceHelper setUserIdentity:NO_STRING_VALUE];
             [PreferenceHelper setInstallParams:NO_STRING_VALUE];
             [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             [PreferenceHelper clearUserCreditsAndCounts];
         } else if ([requestTag isEqualToString:REQ_TAG_IDENTIFY]) {
-            [PreferenceHelper setIdentityID:[returnedData objectForKey:IDENTITY_ID]];
-            [PreferenceHelper setUserURL:[returnedData objectForKey:LINK]];
+            [PreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
+            [PreferenceHelper setUserURL:[response.data objectForKey:LINK]];
             
-            if ([returnedData objectForKey:REFERRING_DATA]) {
-                [PreferenceHelper setInstallParams:[returnedData objectForKey:REFERRING_DATA]];
+            if ([response.data objectForKey:REFERRING_DATA]) {
+                [PreferenceHelper setInstallParams:[response.data objectForKey:REFERRING_DATA]];
             }
             
             if (self.requestQueue.size > 0) {
