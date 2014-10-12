@@ -41,18 +41,18 @@
 - (IBAction)cmdRefreshPoints:(id)sender {
     Branch *branch = [Branch getInstance];
     [branch loadActionCountsWithCallback:^(BOOL changed){
-        NSLog(@"load points callback, balance install = %d, balance buy = %d", [branch getTotalCountsForAction:@"install"], [branch getTotalCountsForAction:@"buy"]);
-        [self.txtInstallTotal setText:[NSString stringWithFormat:@"%d",[branch getTotalCountsForAction:@"install"]]];
-        [self.txtInstallUniques setText:[NSString stringWithFormat:@"%d",[branch getUniqueCountsForAction:@"install"]]];
-        [self.txtBuyCount setText:[NSString stringWithFormat:@"%d",[branch getTotalCountsForAction:@"buy"]]];
-        [self.txtBuyUniques setText:[NSString stringWithFormat:@"%d",[branch getUniqueCountsForAction:@"buy"]]];
+        NSLog(@"load points callback, balance install = %ld, balance buy = %ld", (long)[branch getTotalCountsForAction:@"install"], (long)[branch getTotalCountsForAction:@"buy"]);
+        [self.txtInstallTotal setText:[NSString stringWithFormat:@"%ld",(long)[branch getTotalCountsForAction:@"install"]]];
+        [self.txtInstallUniques setText:[NSString stringWithFormat:@"%ld",(long)[branch getUniqueCountsForAction:@"install"]]];
+        [self.txtBuyCount setText:[NSString stringWithFormat:@"%ld",(long)[branch getTotalCountsForAction:@"buy"]]];
+        [self.txtBuyUniques setText:[NSString stringWithFormat:@"%ld",(long)[branch getUniqueCountsForAction:@"buy"]]];
     }];
 }
 
 - (IBAction)cmdRefreshRewards:(id)sender {
     Branch *branch = [Branch getInstance];
     [branch loadRewardsWithCallback:^(BOOL changed) {
-        [self.txtRewardCredits setText:[NSString stringWithFormat:@"%d", [branch getCredits]]];
+        [self.txtRewardCredits setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
     }];
 }
 - (IBAction)cmdRedeemFive:(id)sender {
@@ -95,6 +95,26 @@
 
 - (void)viewDidLoad {
     self.navigationController.navigationBar.translucent = NO;
+    [self.editRefShortUrl addTarget:self action:@selector(textFieldFinished:) forControlEvents:UIControlEventEditingDidEndOnExit];
+    
+    [super viewDidLoad];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    self.navigationController.navigationBarHidden = YES;
+    [super viewWillAppear:animated];
+}
+
+- (void)textFieldFinished:(id)sender {
+    [sender resignFirstResponder];
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    UITouch *touch = [[event allTouches] anyObject];
+    if ([self.editRefShortUrl isFirstResponder] && [touch view] != self.editRefShortUrl) {
+        [self.editRefShortUrl resignFirstResponder];
+    }
+    [super touchesBegan:touches withEvent:event];
 }
 
 @end

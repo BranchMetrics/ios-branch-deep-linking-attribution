@@ -32,6 +32,7 @@ static NSString *DATA = @"data";
 static NSString *TOTAL = @"total";
 static NSString *UNIQUE = @"unique";
 static NSString *MESSAGE = @"message";
+static NSString *ERROR = @"error";
 static NSString *DEVICE_FINGERPRINT_ID = @"device_fingerprint_id";
 static NSString *LINK = @"link";
 static NSString *LINK_CLICK_ID = @"link_click_id";
@@ -739,7 +740,9 @@ static Branch *currInstance;
         BOOL retry = NO;
         self.networkCount = 0;
         if (status >= 400 && status < 500) {
-            NSLog(@"Branch API Error: %@", [response.data objectForKey:MESSAGE]);
+            if (response.data && [response.data objectForKey:ERROR]) {
+                NSLog(@"Branch API Error: %@", [[response.data objectForKey:ERROR] objectForKey:MESSAGE]);
+            }
         } else if (status != 200) {
             retry = YES;
             dispatch_async(self.asyncQueue, ^{
