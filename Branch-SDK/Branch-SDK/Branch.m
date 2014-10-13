@@ -87,8 +87,10 @@ static Branch *currInstance;
 
 + (Branch *)getInstance {
     if (!currInstance) {
-        [Branch initInstance];
-        NSLog(@"Branch Warning: getInstance called before getInstance with key. Please init");
+        if (![[PreferenceHelper getAppKey] isEqualToString:NO_STRING_VALUE]) {
+            [Branch initInstance];
+            NSLog(@"Branch Warning: getInstance called before getInstance with key. Please init");
+        }
     }
     return currInstance;
 }
