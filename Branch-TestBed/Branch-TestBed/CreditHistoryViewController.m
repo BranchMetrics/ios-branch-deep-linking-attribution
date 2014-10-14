@@ -56,9 +56,7 @@
         NSDictionary *creditItem = self.creditTransactions[indexPath.row];
         NSDictionary *transaction = [creditItem objectForKey:@"transaction"];
         NSMutableString *text = [NSMutableString stringWithFormat:@"%@ : %@", [transaction objectForKey:@"bucket"], [transaction objectForKey:@"amount"]];
-//        if ([creditItem objectForKey:@"referrer"] != [NSNull null]) {
-//            [text appendFormat:@"\t(referrer: %@)", [transaction objectForKey:@"referrer"]];
-//        }
+
         if ([creditItem objectForKey:@"referrer"]) {
             [text appendFormat:@"\t(referrer: %@)", [creditItem objectForKey:@"referrer"]];
         }
@@ -66,6 +64,7 @@
         cell.detailTextLabel.text = [transaction objectForKey:@"date"];
     } else {
         cell.textLabel.text = @"None found";
+        cell.detailTextLabel.text = nil;
     }
     
     return cell;
