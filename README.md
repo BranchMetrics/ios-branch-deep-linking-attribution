@@ -53,6 +53,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 	// your other init code
 
 
+	// sign up to get your key at http://branch.io
 	Branch *branch = [Branch getInstance:@"Your app key"];
 	[branch initUserSessionWithCallback:^(NSDictionary *params) {
 		// params are the deep linked params associated with the link that the user clicked before showing up
