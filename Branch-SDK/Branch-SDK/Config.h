@@ -10,10 +10,16 @@
 #define Branch_SDK_Config_h
 
 //#define DEV_ENV
+//#define STAGE_ENV
 #define PROD_ENV
 
 #ifdef DEV_ENV
 #define API_BASE_URL            @"http://localhost:3001";
+#define DEBUG_MODE
+#endif
+
+#ifdef STAGE_ENV
+#define API_BASE_URL            @"http://api.dev.branchmetrics.io";
 #define DEBUG_MODE
 #endif
 

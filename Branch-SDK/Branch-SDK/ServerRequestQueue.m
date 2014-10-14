@@ -159,7 +159,7 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     id data = [defaults objectForKey:STORAGE_KEY];
     if (!data) {
-        return nil;
+        return [NSMutableArray array];
     }
     
     NSMutableArray *queue = [NSMutableArray array];

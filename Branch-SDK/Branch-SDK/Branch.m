@@ -38,6 +38,7 @@ static NSString *LINK = @"link";
 static NSString *LINK_CLICK_ID = @"link_click_id";
 static NSString *URL = @"url";
 static NSString *REFERRING_DATA = @"referring_data";
+static NSString *REFERRER = @"referrer";
 
 static NSString *LENGTH = @"length";
 static NSString *BEGIN_AFTER_ID = @"begin_after_id";
@@ -728,6 +729,12 @@ static Branch *currInstance;
 
 - (void)processCreditHistory:(NSArray *)returnedData {
     if (self.creditHistoryLoadCallback) {
+        for (NSMutableDictionary *transaction in returnedData) {
+            if ([transaction objectForKey:REFERRER] == [NSNull null]) {
+                [transaction removeObjectForKey:REFERRER];
+            }
+        }
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             self.creditHistoryLoadCallback(returnedData);
         });

@@ -53,10 +53,14 @@
     }
     
     if (self.creditTransactions.count > 0) {
-        NSDictionary *transaction = self.creditTransactions[indexPath.row];
+        NSDictionary *creditItem = self.creditTransactions[indexPath.row];
+        NSDictionary *transaction = [creditItem objectForKey:@"transaction"];
         NSMutableString *text = [NSMutableString stringWithFormat:@"%@ : %@", [transaction objectForKey:@"bucket"], [transaction objectForKey:@"amount"]];
-        if ([transaction objectForKey:@"referrer"] != [NSNull null]) {
-            [text appendFormat:@"\t(referrer: %@)", [transaction objectForKey:@"referrer"]];
+//        if ([creditItem objectForKey:@"referrer"] != [NSNull null]) {
+//            [text appendFormat:@"\t(referrer: %@)", [transaction objectForKey:@"referrer"]];
+//        }
+        if ([creditItem objectForKey:@"referrer"]) {
+            [text appendFormat:@"\t(referrer: %@)", [creditItem objectForKey:@"referrer"]];
         }
         cell.textLabel.text = text;
         cell.detailTextLabel.text = [transaction objectForKey:@"date"];
