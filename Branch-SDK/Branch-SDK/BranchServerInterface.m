@@ -62,15 +62,19 @@
 }
 
 - (void)getReferralCounts {
-    [self getRequestAsync:[[NSDictionary alloc] init] url:[[[PreferenceHelper getAPIURL] stringByAppendingString:@"referrals/"] stringByAppendingString:[PreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
+    [self getRequestAsync:nil url:[[[PreferenceHelper getAPIURL] stringByAppendingString:@"referrals/"] stringByAppendingString:[PreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
 }
 
 - (void)getRewards {
-    [self getRequestAsync:[[NSDictionary alloc] init] url:[[[PreferenceHelper getAPIURL] stringByAppendingString:@"credits/"] stringByAppendingString:[PreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REWARDS];
+    [self getRequestAsync:nil url:[[[PreferenceHelper getAPIURL] stringByAppendingString:@"credits/"] stringByAppendingString:[PreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REWARDS];
 }
 
 - (void)redeemRewards:(NSDictionary *)post {
     [self postRequestAsync:post url:[[PreferenceHelper getAPIURL] stringByAppendingString:@"redeem"] andTag:REQ_TAG_REDEEM_REWARDS];
+}
+
+- (void)getCreditHistory:(NSDictionary *)query {
+    [self getRequestAsync:query url:[[PreferenceHelper getAPIURL] stringByAppendingString:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
 }
 
 - (void)createCustomUrl:(NSDictionary *)post {

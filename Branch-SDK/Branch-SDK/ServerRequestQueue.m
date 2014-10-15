@@ -156,13 +156,13 @@
 }
 
 + (NSMutableArray *)retrieve {
+    NSMutableArray *queue = [NSMutableArray array];
+    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     id data = [defaults objectForKey:STORAGE_KEY];
     if (!data) {
-        data = @[];
+        return queue;
     }
-    
-    NSMutableArray *queue = [NSMutableArray array];
     
     NSArray *arr = (NSArray *)data;
     for (NSData *encodedRequest in arr) {

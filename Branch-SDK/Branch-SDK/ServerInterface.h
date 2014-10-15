@@ -7,18 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ServerResponse.h"
 
 @protocol ServerInterfaceDelegate <NSObject>
 
 @optional
-- (void)serverCallback:(NSDictionary *)returnedData;
+- (void)serverCallback:(ServerResponse *)returnedData;
 
 @end
 
 static NSString *kpServerIdentNone = @"no_value";
-
-static NSString *kpServerRequestTag = @"server_request_tag";
-static NSString *kpServerStatusCode = @"server_return_code";
 
 @interface ServerInterface : NSObject
 
