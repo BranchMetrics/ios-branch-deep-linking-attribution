@@ -26,4 +26,6 @@
 
 + (id)getInstance;
 
+- (NSString *)description;
+
 @end

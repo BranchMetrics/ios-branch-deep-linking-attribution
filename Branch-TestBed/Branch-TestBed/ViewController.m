@@ -97,7 +97,7 @@
     self.navigationController.navigationBar.translucent = NO;
     [self.editRefShortUrl addTarget:self action:@selector(textFieldFinished:) forControlEvents:UIControlEventEditingDidEndOnExit];
     
-    NSLog(@"1=============");
+    NSLog(@"===== 1. in view controller's viewDidLoad");
     Branch *branch = [Branch getInstance];
     [branch loadRewardsWithCallback:^(BOOL changed) {
         [self.txtRewardCredits setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];

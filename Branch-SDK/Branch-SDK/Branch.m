@@ -212,10 +212,6 @@ static Branch *currInstance;
     return handled;
 }
 
-- (BOOL)hasNoAppKey {
-    return [[PreferenceHelper getAppKey] isEqualToString:NO_STRING_VALUE];
-}
-
 - (void)bufferReq:(ServerRequest *)req {
     [self.unInitReqQueue addObject:req];
 }
@@ -237,7 +233,7 @@ static Branch *currInstance;
             NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[userId, [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[IDENTITY, APP_ID, IDENTITY_ID]];
             req.postData = post;
             
-            if ([self hasNoAppKey]) {
+            if (self.unInitReqQueue) {
                 [self bufferReq:req];
             } else {
                 [self.requestQueue enqueue:req];
@@ -254,7 +250,7 @@ static Branch *currInstance;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[PreferenceHelper getAppKey], [PreferenceHelper getSessionID]] forKeys:@[APP_ID, SESSION_ID]];
         req.postData = post;
         
-        if ([self hasNoAppKey]) {
+        if (self.unInitReqQueue) {
             [self bufferReq:req];
         } else {
             [self.requestQueue enqueue:req];
@@ -269,7 +265,7 @@ static Branch *currInstance;
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_COUNTS;
         
-        if ([self hasNoAppKey]) {
+        if (self.unInitReqQueue) {
             [self bufferReq:req];
         } else {
             [self.requestQueue enqueue:req];
@@ -284,7 +280,7 @@ static Branch *currInstance;
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REWARDS;
         
-        if ([self hasNoAppKey]) {
+        if (self.unInitReqQueue) {
             [self bufferReq:req];
         } else {
             [self.requestQueue enqueue:req];
@@ -329,7 +325,7 @@ static Branch *currInstance;
             NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[bucket, [NSNumber numberWithInteger:redemptionsToAdd], [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[BUCKET, AMOUNT, APP_ID, IDENTITY_ID]];
             req.postData = post;
             
-            if ([self hasNoAppKey]) {
+            if (self.unInitReqQueue) {
                 [self bufferReq:req];
             } else {
                 [self.requestQueue enqueue:req];
@@ -368,7 +364,7 @@ static Branch *currInstance;
         }
         req.postData = data;
         
-        if ([self hasNoAppKey]) {
+        if (self.unInitReqQueue) {
             [self bufferReq:req];
         } else {
             [self.requestQueue enqueue:req];
@@ -392,7 +388,7 @@ static Branch *currInstance;
         if (saniState && [NSJSONSerialization isValidJSONObject:saniState]) [post setObject:saniState forKey:METADATA];
         req.postData = post;
         
-        if ([self hasNoAppKey]) {
+        if (self.unInitReqQueue) {
             [self bufferReq:req];
         } else {
             [self.requestQueue enqueue:req];
@@ -494,7 +490,7 @@ static Branch *currInstance;
             [post setObject:params forKey:DATA];
         req.postData = post;
         
-        if ([self hasNoAppKey]) {
+        if (self.unInitReqQueue) {
             [self bufferReq:req];
         } else {
             [self.requestQueue enqueue:req];
@@ -508,13 +504,8 @@ static Branch *currInstance;
         if (!self.isInit) {
             ServerRequest *req = [[ServerRequest alloc] init];
             req.tag = REQ_TAG_REGISTER_OPEN;
-            
-            if ([self hasNoAppKey]) {
-                [self bufferReq:req];
-            } else {
-                [self.requestQueue enqueue:req];
-                [self processNextQueueItem];
-            }
+            [self.requestQueue enqueue:req];                    //TODO: should insert to head instead?
+            [self processNextQueueItem];
         }
     });
 }
@@ -532,7 +523,7 @@ static Branch *currInstance;
     
     if (![self.requestQueue containsClose]) {
         ServerRequest *req = [[ServerRequest alloc] initWithTag:REQ_TAG_REGISTER_CLOSE];
-        if ([self hasNoAppKey]) {
+        if (self.unInitReqQueue) {
             [self bufferReq:req];
         } else {
             [self.requestQueue enqueue:req];
@@ -540,7 +531,7 @@ static Branch *currInstance;
     }
     
     dispatch_async(self.asyncQueue, ^{
-        if (![self hasNoAppKey]) {
+        if (!self.unInitReqQueue) {
             [self processNextQueueItem];
         }
     });
@@ -593,11 +584,14 @@ static Branch *currInstance;
 
 - (void)processNextQueueItem {
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
+    
+    NSLog(@"=== Main Queue: %@, networkCount: %ld", self.requestQueue, (long)self.networkCount);
     if (self.networkCount == 0 && self.requestQueue.size > 0) {
         self.networkCount = 1;
         dispatch_semaphore_signal(self.processing_sema);
         
         ServerRequest *req = [self.requestQueue peek];
+        NSLog(@"-- Processing: %@", req);
         
         if (req) {
             if (![req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
@@ -696,8 +690,6 @@ static Branch *currInstance;
                 }
             }
         }
-        
-        NSLog(@"=-=-=-= %@", request);
     }
 
     [self.requestQueue persist];
@@ -732,17 +724,13 @@ static Branch *currInstance;
 - (void)registerInstallOrOpen:(NSString *)tag {
     if (![self.requestQueue containsInstallOrOpen]) {
         ServerRequest *req = [[ServerRequest alloc] initWithTag:tag];
-        if (![self hasNoAppKey]) {
-            [self.requestQueue insert:req at:0];
-        }
+        [self.requestQueue insert:req at:0];
     } else {
         [self.requestQueue moveInstallOrOpenToFront:tag];
     }
     
     dispatch_async(self.asyncQueue, ^{
-        if (![self hasNoAppKey]) {
-            [self processNextQueueItem];
-        }
+        [self processNextQueueItem];
     });
 }
 
@@ -812,7 +800,6 @@ static Branch *currInstance;
     if (response) {
         NSInteger status = [response.statusCode integerValue];
         NSString *requestTag = response.tag;
-        
         BOOL retry = NO;
         self.networkCount = 0;
         if (status >= 400 && status < 500) {
@@ -850,16 +837,7 @@ static Branch *currInstance;
                 [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
             
-            // add requests from the unInitReqQueue, if any
-            NSLog(@"=======--------- Buffer size: %lu", (unsigned long)self.unInitReqQueue.count);
-            if (self.unInitReqQueue.count > 0) {
-                for (ServerRequest *req in self.unInitReqQueue) {
-                    [self.requestQueue enqueue:req];
-                }
-            }
-            
-            [self.unInitReqQueue removeAllObjects];
-            self.unInitReqQueue = nil;
+            [self moveUnInitReqsToMainQueue];
             
             [self updateAllRequestsInQueue];
             
@@ -893,6 +871,8 @@ static Branch *currInstance;
                     if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getReferringParams]);
                 });
             }
+            
+            [self moveUnInitReqsToMainQueue];
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REWARDS]) {
             [self processReferralCredits:response.data];
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {
@@ -946,6 +926,19 @@ static Branch *currInstance;
             });
         }
     }
+}
+
+- (void)moveUnInitReqsToMainQueue {
+    // dump all pending requests from the unInitReqQueue, if any, to the main request queue
+    NSLog(@"=-=-= Moving %lu buffered reqs to main queue.", (unsigned long)self.unInitReqQueue.count);
+    if (self.unInitReqQueue.count > 0) {
+        for (ServerRequest *req in self.unInitReqQueue) {
+            [self.requestQueue enqueue:req];
+        }
+    }
+    
+    [self.unInitReqQueue removeAllObjects];
+    self.unInitReqQueue = nil;
 }
 
 @end
