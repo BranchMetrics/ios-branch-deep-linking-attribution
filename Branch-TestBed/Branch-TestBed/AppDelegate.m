@@ -12,10 +12,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    Branch *branch = [Branch getInstance:@"5668720416392049"];
-    [branch initUserSessionWithCallback:^(NSDictionary *params) {
-        NSLog(@"finished init with params = %@", [params description]);
-    } andIsReferrable:YES withLaunchOptions:launchOptions];
+//    Branch *branch = [Branch getInstance:@"49285445883790282"];
+//    [branch initUserSessionWithCallback:^(NSDictionary *params) {
+//        NSLog(@"finished init with params = %@", [params description]);
+//    } andIsReferrable:YES withLaunchOptions:launchOptions];
     return YES;
 }
 
@@ -46,7 +46,9 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    
+    NSLog(@"===== 2. calling getInstance:AppKey");
+    Branch *branch = [Branch getInstance:@"49285445883790282"];
+    [branch initUserSession];
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 
