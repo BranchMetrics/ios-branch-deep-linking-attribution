@@ -66,7 +66,7 @@ static NSString *DIRECTION = @"direction";
 @property (strong, nonatomic) callbackWithParams installparamLoadCallback;
 @property (strong, nonatomic) callbackWithUrl urlLoadCallback;
 @property (strong, nonatomic) callbackWithList creditHistoryLoadCallback;
-@property (strong, nonatomic) NSMutableArray *unInitReqQueue;
+@property (assign, nonatomic) BOOL initFinished;
 
 @end
 
@@ -99,13 +99,13 @@ static Branch *currInstance;
 
 + (void)initInstance {
     currInstance = [[Branch alloc] init];
-    currInstance.isInit = false;
+    currInstance.isInit = NO;
     currInstance.bServerInterface = [[BranchServerInterface alloc] init];
     currInstance.bServerInterface.delegate = currInstance;
     currInstance.processing_sema = dispatch_semaphore_create(1);
     currInstance.asyncQueue = dispatch_queue_create("brnch_request_queue", NULL);
     currInstance.requestQueue = [ServerRequestQueue getInstance];
-    currInstance.unInitReqQueue = [NSMutableArray array];
+    currInstance.initFinished = NO;
     
     [[NSNotificationCenter defaultCenter] addObserver:currInstance
                                              selector:@selector(applicationWillResignActive)
@@ -212,10 +212,6 @@ static Branch *currInstance;
     return handled;
 }
 
-- (void)bufferReq:(ServerRequest *)req {
-    [self.unInitReqQueue addObject:req];
-}
-
 - (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback {
     self.installparamLoadCallback = callback;
     [self identifyUser:userId];
@@ -232,11 +228,9 @@ static Branch *currInstance;
             req.tag = REQ_TAG_IDENTIFY;
             NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[userId, [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[IDENTITY, APP_ID, IDENTITY_ID]];
             req.postData = post;
+            [self.requestQueue enqueue:req];
             
-            if (self.unInitReqQueue) {
-                [self bufferReq:req];
-            } else {
-                [self.requestQueue enqueue:req];
+            if (self.initFinished) {
                 [self processNextQueueItem];
             }
         });
@@ -249,11 +243,9 @@ static Branch *currInstance;
         req.tag = REQ_TAG_LOGOUT;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[PreferenceHelper getAppKey], [PreferenceHelper getSessionID]] forKeys:@[APP_ID, SESSION_ID]];
         req.postData = post;
+        [self.requestQueue enqueue:req];
         
-        if (self.unInitReqQueue) {
-            [self bufferReq:req];
-        } else {
-            [self.requestQueue enqueue:req];
+        if (self.initFinished) {
             [self processNextQueueItem];
         }
     });
@@ -264,11 +256,9 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_COUNTS;
+        [self.requestQueue enqueue:req];
         
-        if (self.unInitReqQueue) {
-            [self bufferReq:req];
-        } else {
-            [self.requestQueue enqueue:req];
+        if (self.initFinished) {
             [self processNextQueueItem];
         }
     });
@@ -279,11 +269,9 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REWARDS;
+        [self.requestQueue enqueue:req];
         
-        if (self.unInitReqQueue) {
-            [self bufferReq:req];
-        } else {
-            [self.requestQueue enqueue:req];
+        if (self.initFinished) {
             [self processNextQueueItem];
         }
     });
@@ -324,11 +312,9 @@ static Branch *currInstance;
             req.tag = REQ_TAG_REDEEM_REWARDS;
             NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[bucket, [NSNumber numberWithInteger:redemptionsToAdd], [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[BUCKET, AMOUNT, APP_ID, IDENTITY_ID]];
             req.postData = post;
+            [self.requestQueue enqueue:req];
             
-            if (self.unInitReqQueue) {
-                [self bufferReq:req];
-            } else {
-                [self.requestQueue enqueue:req];
+            if (self.initFinished) {
                 [self processNextQueueItem];
             }
         }
@@ -363,11 +349,9 @@ static Branch *currInstance;
             [data setObject:creditTransactionId forKey:BEGIN_AFTER_ID];
         }
         req.postData = data;
+        [self.requestQueue enqueue:req];
         
-        if (self.unInitReqQueue) {
-            [self bufferReq:req];
-        } else {
-            [self.requestQueue enqueue:req];
+        if (self.initFinished) {
             [self processNextQueueItem];
         }
     });
@@ -387,11 +371,9 @@ static Branch *currInstance;
         NSDictionary *saniState = [self sanitizeQuotesFromInput:state];
         if (saniState && [NSJSONSerialization isValidJSONObject:saniState]) [post setObject:saniState forKey:METADATA];
         req.postData = post;
+        [self.requestQueue enqueue:req];
         
-        if (self.unInitReqQueue) {
-            [self bufferReq:req];
-        } else {
-            [self.requestQueue enqueue:req];
+        if (self.initFinished) {
             [self processNextQueueItem];
         }
     });
@@ -489,11 +471,9 @@ static Branch *currInstance;
         if (params)
             [post setObject:params forKey:DATA];
         req.postData = post;
+        [self.requestQueue enqueue:req];
         
-        if (self.unInitReqQueue) {
-            [self bufferReq:req];
-        } else {
-            [self.requestQueue enqueue:req];
+        if (self.initFinished) {
             [self processNextQueueItem];
         }
     });
@@ -504,7 +484,7 @@ static Branch *currInstance;
         if (!self.isInit) {
             ServerRequest *req = [[ServerRequest alloc] init];
             req.tag = REQ_TAG_REGISTER_OPEN;
-            [self.requestQueue enqueue:req];                    //TODO: should insert to head instead?
+            [self.requestQueue insert:req at:0];    //TODO: confirm with Alex: should insert to head instead?
             [self processNextQueueItem];
         }
     });
@@ -523,18 +503,14 @@ static Branch *currInstance;
     
     if (![self.requestQueue containsClose]) {
         ServerRequest *req = [[ServerRequest alloc] initWithTag:REQ_TAG_REGISTER_CLOSE];
-        if (self.unInitReqQueue) {
-            [self bufferReq:req];
-        } else {
-            [self.requestQueue enqueue:req];
-        }
+        [self.requestQueue enqueue:req];
     }
     
-    dispatch_async(self.asyncQueue, ^{
-        if (!self.unInitReqQueue) {
+    if (self.initFinished) {
+        dispatch_async(self.asyncQueue, ^{
             [self processNextQueueItem];
-        }
-    });
+        });
+    }
 }
 
 - (NSDictionary *)convertParamsStringToDictionary:(NSString *)paramsString {
@@ -837,8 +813,6 @@ static Branch *currInstance;
                 [PreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
             
-            [self moveUnInitReqsToMainQueue];
-            
             [self updateAllRequestsInQueue];
             
             if (self.sessionparamLoadCallback) {
@@ -846,6 +820,8 @@ static Branch *currInstance;
                     if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getReferringParams]);
                 });
             }
+            
+            self.initFinished = YES;
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             [PreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
             if ([response.data objectForKey:LINK_CLICK_ID]) {
@@ -872,7 +848,7 @@ static Branch *currInstance;
                 });
             }
             
-            [self moveUnInitReqsToMainQueue];
+            self.initFinished = YES;
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REWARDS]) {
             [self processReferralCredits:response.data];
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {
@@ -926,19 +902,6 @@ static Branch *currInstance;
             });
         }
     }
-}
-
-- (void)moveUnInitReqsToMainQueue {
-    // dump all pending requests from the unInitReqQueue, if any, to the main request queue
-    NSLog(@"=-=-= Moving %lu buffered reqs to main queue.", (unsigned long)self.unInitReqQueue.count);
-    if (self.unInitReqQueue.count > 0) {
-        for (ServerRequest *req in self.unInitReqQueue) {
-            [self.requestQueue enqueue:req];
-        }
-    }
-    
-    [self.unInitReqQueue removeAllObjects];
-    self.unInitReqQueue = nil;
 }
 
 @end
