@@ -64,9 +64,6 @@ typedef enum {
 - (void)getCreditHistoryAfter:(NSString *)creditTransactionId number:(NSInteger)length order:(CreditHistoryOrder)order andCallback:(callbackWithList)callback;
 - (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(CreditHistoryOrder)order andCallback:(callbackWithList)callback;
 
-- (NSString *)getLongURL;
-- (NSString *)getLongURLWithParams:(NSDictionary *)params;
-
 - (void)getShortURLWithCallback:(callbackWithUrl)callback;
 - (void)getShortURLWithParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback;
 - (void)getContentUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback;

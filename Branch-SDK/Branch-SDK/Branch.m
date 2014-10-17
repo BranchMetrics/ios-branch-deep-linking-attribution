@@ -366,14 +366,6 @@ static Branch *currInstance;
     return [self convertParamsStringToDictionary:storedParam];
 }
 
-- (NSString *)getLongURL {
-    return [self generateLongUrl:nil andParams:nil];
-}
-
-- (NSString *)getLongURLWithParams:(NSDictionary *)params {
-    return [self generateLongUrl:nil andParams:[PreferenceHelper base64EncodeStringToString:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]]];
-}
-
 - (void)getShortURLWithCallback:(callbackWithUrl)callback {
     [self generateShortUrl:nil andChannel:nil andFeature:nil andStage:nil andParams:nil andCallback:callback];
 }
@@ -412,23 +404,6 @@ static Branch *currInstance;
 
 // PRIVATE CALLS
 
-- (NSString *)generateLongUrl:(NSString *)tag andParams:(NSString *)params {
-    if ([self hasUser]) {
-        NSString *url = [PreferenceHelper getUserURL];
-        if (tag) {
-            url = [[url stringByAppendingString:@"?t="] stringByAppendingString:tag];
-            if (params) {
-                url = [[url stringByAppendingString:@"&d="] stringByAppendingString:params];
-            }
-        } else if (params) {
-            url = [[url stringByAppendingString:@"?d="] stringByAppendingString:params];
-        }
-        return url;
-    } else {
-        return @"init incomplete, did you call init yet?";
-    }
-}
-
 - (void)generateShortUrl:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params andCallback:(callbackWithUrl)callback {
     self.urlLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{
@@ -445,8 +420,10 @@ static Branch *currInstance;
             [post setObject:feature forKey:FEATURE];
         if (stage)
             [post setObject:stage forKey:STAGE];
-        if (params)
-            [post setObject:params forKey:DATA];
+        
+        NSString *args = params ? params : @"{ \"source\":\"ios\" }";
+        [post setObject:args forKey:DATA];
+        
         req.postData = post;
         [self.requestQueue enqueue:req];
         [self processNextQueueItem];

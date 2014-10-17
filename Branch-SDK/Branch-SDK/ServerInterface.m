@@ -93,7 +93,7 @@
         if (string) [encodedParams appendString:@"\","];
         else [encodedParams appendString:@","];
     }
-    [encodedParams replaceCharactersInRange:NSMakeRange([encodedParams length]-1, 1) withString:@"}"];
+    [encodedParams appendString:@"\"source\":\"ios\" }"];
     Debug(@"encoded params : %@", encodedParams);
     return encodedParams;
 }

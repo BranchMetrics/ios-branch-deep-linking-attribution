@@ -26,12 +26,6 @@
 
 @implementation ViewController
 
-
-- (IBAction)cmdRefresh:(id)sender {
-    NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!"] forKeys:@[@"key1", @"key2"]];
-    [self.editRefUrl setText:[[Branch getInstance] getLongURLWithParams:params]];
-}
-
 - (IBAction)cmdRefreshShort:(id)sender {
     NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!"] forKeys:@[@"key1", @"key2"]];
     [[Branch getInstance] getShortURLWithParams:params andTags:@[@"tag1", @"tag2"] andChannel:@"facebook" andFeature:@"invite" andStage:@"2" andCallback:^(NSString *url) {
