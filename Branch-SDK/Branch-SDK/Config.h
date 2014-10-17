@@ -9,9 +9,9 @@
 #ifndef Branch_SDK_Config_h
 #define Branch_SDK_Config_h
 
-#define DEV_ENV
+//#define DEV_ENV
 //#define STAGE_ENV
-//#define PROD_ENV
+#define PROD_ENV
 
 #ifdef DEV_ENV
 #define API_BASE_URL            @"http://localhost:3001";

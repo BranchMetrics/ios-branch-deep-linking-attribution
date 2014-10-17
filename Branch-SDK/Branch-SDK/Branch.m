@@ -484,7 +484,7 @@ static Branch *currInstance;
         if (!self.isInit) {
             ServerRequest *req = [[ServerRequest alloc] init];
             req.tag = REQ_TAG_REGISTER_OPEN;
-            [self.requestQueue insert:req at:0];    //TODO: confirm with Alex: should insert to head instead?
+            [self.requestQueue insert:req at:0];
             [self processNextQueueItem];
         }
     });
@@ -561,13 +561,11 @@ static Branch *currInstance;
 - (void)processNextQueueItem {
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
     
-    NSLog(@"=== Main Queue: %@, networkCount: %ld", self.requestQueue, (long)self.networkCount);
     if (self.networkCount == 0 && self.requestQueue.size > 0) {
         self.networkCount = 1;
         dispatch_semaphore_signal(self.processing_sema);
         
         ServerRequest *req = [self.requestQueue peek];
-        NSLog(@"-- Processing: %@", req);
         
         if (req) {
             if (![req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
@@ -776,6 +774,7 @@ static Branch *currInstance;
     if (response) {
         NSInteger status = [response.statusCode integerValue];
         NSString *requestTag = response.tag;
+        
         BOOL retry = NO;
         self.networkCount = 0;
         if (status >= 400 && status < 500) {
