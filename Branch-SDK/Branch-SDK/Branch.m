@@ -212,11 +212,13 @@ static Branch *currInstance;
     return handled;
 }
 
+//deprecated
 - (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback {
     self.installparamLoadCallback = callback;
     [self identifyUser:userId];
 }
 
+//deprecated
 - (void)identifyUser:(NSString *)userId {
     if (!userId)
         return;
@@ -237,7 +239,44 @@ static Branch *currInstance;
     }
 }
 
+//deprecated
 - (void)clearUser {
+    dispatch_async(self.asyncQueue, ^{
+        ServerRequest *req = [[ServerRequest alloc] init];
+        req.tag = REQ_TAG_LOGOUT;
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[PreferenceHelper getAppKey], [PreferenceHelper getSessionID]] forKeys:@[APP_ID, SESSION_ID]];
+        req.postData = post;
+        [self.requestQueue enqueue:req];
+        
+        if (self.initFinished) {
+            [self processNextQueueItem];
+        }
+    });
+}
+
+- (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
+    self.installparamLoadCallback = callback;
+    [self setIdentity:userId];
+}
+
+- (void)setIdentity:(NSString *)userId {
+    if (!userId)
+        return;
+
+    dispatch_async(self.asyncQueue, ^{
+        ServerRequest *req = [[ServerRequest alloc] init];
+        req.tag = REQ_TAG_IDENTIFY;
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[userId, [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[IDENTITY, APP_ID, IDENTITY_ID]];
+        req.postData = post;
+        [self.requestQueue enqueue:req];
+        
+        if (self.initFinished) {
+            [self processNextQueueItem];
+        }
+    });
+}
+
+- (void)logout {
     dispatch_async(self.asyncQueue, ^{
         ServerRequest *req = [[ServerRequest alloc] init];
         req.tag = REQ_TAG_LOGOUT;
@@ -646,6 +685,7 @@ static Branch *currInstance;
     [self.requestQueue persist];
 }
 
+//deprecate
 - (BOOL)identifyInQueue {
     for (int i = 0; i < self.requestQueue.size; i++) {
         ServerRequest *req = [self.requestQueue peekAt:i];

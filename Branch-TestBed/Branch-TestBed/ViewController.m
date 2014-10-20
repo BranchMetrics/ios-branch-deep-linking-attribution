@@ -60,11 +60,11 @@
 }
 - (IBAction)cmdIdentifyUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch identifyUser:@"test_user_1"];
+    [branch setIdentity:@"test_user_1"];
 }
 - (IBAction)cmdClearUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch clearUser];
+    [branch logout];
 }
 - (IBAction)cmdPrintInstall:(id)sender {
     Branch *branch = [Branch getInstance];

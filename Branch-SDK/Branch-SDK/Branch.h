@@ -43,10 +43,14 @@ typedef enum {
 
 - (BOOL)handleDeepLink:(NSURL *)url;
 
-- (BOOL)hasIdentity;
-- (void)identifyUser:(NSString *)userId;
-- (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback;
-- (void)clearUser;
+- (BOOL)hasIdentity;                                                                    //deprecated
+- (void)identifyUser:(NSString *)userId;                                                //deprecated
+- (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback;      //deprecated
+- (void)clearUser;                                                                      //deprecated
+
+- (void)setIdentity:(NSString *)userId;
+- (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback;
+- (void)logout;
 
 - (void)loadRewardsWithCallback:(callbackWithStatus)callback;
 - (void)loadActionCountsWithCallback:(callbackWithStatus)callback;
