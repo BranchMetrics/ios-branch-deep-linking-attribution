@@ -102,7 +102,7 @@ Often, you might have your own user IDs, or want referral and event data to pers
 
 To identify a user, just call:
 ```objc
-[[Branch getInstance] identifyUser:@"your user id"];
+[[Branch getInstance] setIdentity:@"your user id"];
 ```
 
 #### Logout
@@ -112,7 +112,7 @@ If you provide a logout function in your app, be sure to clear the user when the
 **Warning** this call will clear the referral credits and attribution on the device.
 
 ```objc
-[[Branch getInstance] clearUser];
+[[Branch getInstance] logout];
 ```
 
 ### Register custom events
