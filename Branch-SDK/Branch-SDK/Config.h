@@ -24,7 +24,7 @@
 #endif
 
 #ifdef PROD_ENV
-#define API_BASE_URL            @"http://api.branchmetrics.io";
+#define API_BASE_URL            @"https://api.branch.io";
 #endif
 
 #define API_VERSION             @"v1"
