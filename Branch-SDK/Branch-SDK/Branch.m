@@ -551,9 +551,11 @@ static Branch *currInstance;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     for (NSString *pair in pairs) {
         NSArray *kv = [pair componentsSeparatedByString:@"="];
-        NSString *val = [[kv objectAtIndex:1]
-                         stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        [params setObject:val forKey:[kv objectAtIndex:0]];
+        if (kv.count > 1) {
+            NSString *val = [[kv objectAtIndex:1]
+                             stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            [params setObject:val forKey:[kv objectAtIndex:0]];
+        }
     }
     return params;
 }
