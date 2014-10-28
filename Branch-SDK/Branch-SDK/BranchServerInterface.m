@@ -26,7 +26,7 @@
     if ([SystemObserver getScreenWidth]) [post setObject:[SystemObserver getScreenWidth] forKey:@"screen_width"];
     if ([SystemObserver getScreenHeight]) [post setObject:[SystemObserver getScreenHeight] forKey:@"screen_height"];
     if ([SystemObserver getURIScheme]) [post setObject:[SystemObserver getURIScheme] forKey:@"uri_scheme"];
-    if ([SystemObserver getUpdateState]) [post setObject:[SystemObserver getUpdateState] forKeyedSubscript:@"update_state"];
+    if ([SystemObserver getUpdateState]) [post setObject:[SystemObserver getUpdateState] forKeyedSubscript:@"update"];
     if (![[PreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[PreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     [post setObject:[NSNumber numberWithInteger:[PreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     
