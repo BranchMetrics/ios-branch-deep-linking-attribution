@@ -13,9 +13,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     Branch *branch = [Branch getInstance:@"5668720416392049"];
-    [branch initUserSessionWithCallback:^(NSDictionary *params) {
+    [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params) {
         NSLog(@"finished init with params = %@", [params description]);
-    } andIsReferrable:YES withLaunchOptions:launchOptions];
+    }];
     return YES;
 }
 

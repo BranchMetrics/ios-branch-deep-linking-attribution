@@ -29,24 +29,20 @@ typedef enum {
 + (Branch *)getInstance:(NSString *)key;
 + (Branch *)getInstance;
 
-- (void)initUserSession;
-- (void)initUserSessionWithLaunchOptions:(NSDictionary *)options;
-- (void)initUserSession:(BOOL)isReferrable;
-- (void)initUserSessionWithLaunchOptions:(NSDictionary *)options andIsReferrable:(BOOL)isReferrable;
-- (void)initUserSessionWithCallback:(callbackWithParams)callback;
-- (void)initUserSessionWithCallback:(callbackWithParams)callback withLaunchOptions:(NSDictionary *)options;
-- (void)initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable;
-- (void)initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable withLaunchOptions:(NSDictionary *)options;
-- (NSDictionary *)getInstallReferringParams;
-- (NSDictionary *)getReferringParams;
+- (void)initSession;
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options;
+- (void)initSession:(BOOL)isReferrable;
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable;
+- (void)initSessionAndRegisterDeepLinkHandler:(callbackWithParams)callback;
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback;
+- (void)initSession:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback;
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback;
+
+- (NSDictionary *)getFirstReferringParams;
+- (NSDictionary *)getLatestReferringParams;
 - (void)resetUserSession;
 
 - (BOOL)handleDeepLink:(NSURL *)url;
-
-- (BOOL)hasIdentity;                                                                    //deprecated
-- (void)identifyUser:(NSString *)userId;                                                //deprecated
-- (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback;      //deprecated
-- (void)clearUser;                                                                      //deprecated
 
 - (void)setIdentity:(NSString *)userId;
 - (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback;

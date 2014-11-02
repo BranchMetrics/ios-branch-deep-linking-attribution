@@ -65,10 +65,16 @@
 - (IBAction)cmdClearUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
     [branch logout];
+    
+    self.txtBuyCount.text = @"";
+    self.txtBuyUniques.text = @"";
+    self.txtInstallTotal.text = @"";
+    self.txtInstallUniques.text = @"";
+    self.txtRewardCredits.text = @"";
 }
 - (IBAction)cmdPrintInstall:(id)sender {
     Branch *branch = [Branch getInstance];
-    NSLog(@"found params = %@", [[branch getInstallReferringParams] description]);
+    NSLog(@"found params = %@", [[branch getFirstReferringParams] description]);
 }
 - (IBAction)cmdBuyWithState:(id)sender {
     Branch *branch = [Branch getInstance];

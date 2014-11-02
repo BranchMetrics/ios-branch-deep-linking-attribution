@@ -127,54 +127,63 @@ static Branch *currInstance;
     }
 }
 
-- (void)initUserSession {
-    [self initUserSessionWithCallback:nil];
+- (void)initSession {
+    [self initSessionAndRegisterDeepLinkHandler:nil];
 }
 
-- (void)initUserSessionWithLaunchOptions:(NSDictionary *)options {
-    if (![options objectForKey:UIApplicationLaunchOptionsURLKey])
-        [self initUserSessionWithCallback:nil];
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options {
+    if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
+        [self initSessionAndRegisterDeepLinkHandler:nil];
+    }
 }
 
-- (void)initUserSession:(BOOL)isReferrable {
-    [self initUserSessionWithCallback:nil andIsReferrable:isReferrable];
+- (void)initSession:(BOOL)isReferrable {
+    [self initSession:isReferrable andRegisterDeepLinkHandler:nil];
 }
 
-- (void)initUserSessionWithCallback:(callbackWithParams)callback withLaunchOptions:(NSDictionary *)options {
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback {
     self.sessionparamLoadCallback = callback;
-    if (![SystemObserver getUpdateState] && ![self hasUser])
+    if (![SystemObserver getUpdateState] && ![self hasUser]) {
         [PreferenceHelper setIsReferrable];
-    else
+    } else {
         [PreferenceHelper clearIsReferrable];
-    if (![options objectForKey:UIApplicationLaunchOptionsURLKey])
+    }
+    
+    if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
         [self initUserSessionWithCallbackInternal:callback];
+    }
 }
 
-- (void)initUserSessionWithLaunchOptions:(NSDictionary *)options andIsReferrable:(BOOL)isReferrable {
-    if (![options objectForKey:UIApplicationLaunchOptionsURLKey])
-        [self initUserSessionWithCallback:nil andIsReferrable:isReferrable];
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable {
+    if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
+        [self initSession:isReferrable andRegisterDeepLinkHandler:nil];
+    }
 }
 
-- (void) initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable {
+- (void)initSession:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback {
     if (isReferrable) {
         [PreferenceHelper setIsReferrable];
     } else {
         [PreferenceHelper clearIsReferrable];
     }
+    
     [self initUserSessionWithCallbackInternal:callback];
 }
 
-- (void)initUserSessionWithCallback:(callbackWithParams)callback andIsReferrable:(BOOL)isReferrable withLaunchOptions:(NSDictionary *)options {
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback {
     self.sessionparamLoadCallback = callback;
-    if (![options objectForKey:UIApplicationLaunchOptionsURLKey])
-        [self initUserSessionWithCallback:callback andIsReferrable:isReferrable];
+    if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
+        [self initSession:isReferrable andRegisterDeepLinkHandler:callback];
+    }
 }
 
-- (void)initUserSessionWithCallback:(callbackWithParams)callback {
-    if (![SystemObserver getUpdateState] && ![self hasUser])
+- (void)initSessionAndRegisterDeepLinkHandler:(callbackWithParams)callback {
+    if (![SystemObserver getUpdateState] && ![self hasUser]) {
         [PreferenceHelper setIsReferrable];
-    else
+    } else {
         [PreferenceHelper clearIsReferrable];
+    }
+    
     [self initUserSessionWithCallbackInternal:callback];
 }
 
@@ -182,12 +191,12 @@ static Branch *currInstance;
     self.sessionparamLoadCallback = callback;
     if (!self.isInit) {
         self.isInit = YES;
-        [self initSession];
+        [self initializeSession];
     } else if ([self hasUser] && [self hasSession] && ![self.requestQueue containsInstallOrOpen]) {
-        if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getReferringParams]);
+        if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams]);
     } else {
         if (![self.requestQueue containsInstallOrOpen]) {
-            [self initSession];
+            [self initializeSession];
         } else {
             [self processNextQueueItem];
         }
@@ -210,48 +219,6 @@ static Branch *currInstance;
     [PreferenceHelper setIsReferrable];
     [self initUserSessionWithCallbackInternal:self.sessionparamLoadCallback];
     return handled;
-}
-
-//deprecated
-- (void)identifyUser:(NSString *)userId withCallback:(callbackWithParams)callback {
-    self.installparamLoadCallback = callback;
-    [self identifyUser:userId];
-}
-
-//deprecated
-- (void)identifyUser:(NSString *)userId {
-    if (!userId)
-        return;
-    if ([self hasIdentity])
-        return;
-    if (![self identifyInQueue]) {
-        dispatch_async(self.asyncQueue, ^{
-            ServerRequest *req = [[ServerRequest alloc] init];
-            req.tag = REQ_TAG_IDENTIFY;
-            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[userId, [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[IDENTITY, APP_ID, IDENTITY_ID]];
-            req.postData = post;
-            [self.requestQueue enqueue:req];
-            
-            if (self.initFinished) {
-                [self processNextQueueItem];
-            }
-        });
-    }
-}
-
-//deprecated
-- (void)clearUser {
-    dispatch_async(self.asyncQueue, ^{
-        ServerRequest *req = [[ServerRequest alloc] init];
-        req.tag = REQ_TAG_LOGOUT;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[PreferenceHelper getAppKey], [PreferenceHelper getSessionID]] forKeys:@[APP_ID, SESSION_ID]];
-        req.postData = post;
-        [self.requestQueue enqueue:req];
-        
-        if (self.initFinished) {
-            [self processNextQueueItem];
-        }
-    });
 }
 
 - (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
@@ -418,12 +385,12 @@ static Branch *currInstance;
     });
 }
 
-- (NSDictionary *)getInstallReferringParams {
+- (NSDictionary *)getFirstReferringParams {
     NSString *storedParam = [PreferenceHelper getInstallParams];
     return [self convertParamsStringToDictionary:storedParam];
 }
 
-- (NSDictionary *)getReferringParams {
+- (NSDictionary *)getLatestReferringParams {
     NSString *storedParam = [PreferenceHelper getSessionParams];
     return [self convertParamsStringToDictionary:storedParam];
 }
@@ -628,7 +595,7 @@ static Branch *currInstance;
                     NSLog(@"Branch Warning: User session not init yet. Please call initUserSession");
                 } else {
                     self.networkCount = 0;
-                    [self initUserSession];
+                    [self initSession];
                 }
             }
         }
@@ -687,17 +654,6 @@ static Branch *currInstance;
     [self.requestQueue persist];
 }
 
-//deprecate
-- (BOOL)identifyInQueue {
-    for (int i = 0; i < self.requestQueue.size; i++) {
-        ServerRequest *req = [self.requestQueue peekAt:i];
-        if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
-            return YES;
-        }
-    }
-    return NO;
-}
-
 - (BOOL)hasIdentity {
     return ![[PreferenceHelper getUserIdentity] isEqualToString:NO_STRING_VALUE];
 }
@@ -727,7 +683,7 @@ static Branch *currInstance;
     });
 }
 
--(void)initSession {
+-(void)initializeSession {
     if ([self hasUser]) {
         [self registerInstallOrOpen:REQ_TAG_REGISTER_OPEN];
     } else {
@@ -835,7 +791,7 @@ static Branch *currInstance;
             
             if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getReferringParams]);
+                    if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams]);
                 });
             }
             
@@ -862,7 +818,7 @@ static Branch *currInstance;
             }
             if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getReferringParams]);
+                    if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams]);
                 });
             }
             
@@ -906,7 +862,7 @@ static Branch *currInstance;
             
             if (self.installparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if (self.installparamLoadCallback) self.installparamLoadCallback([self getInstallReferringParams]);
+                    if (self.installparamLoadCallback) self.installparamLoadCallback([self getFirstReferringParams]);
                 });
             }
         } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REDEEM_REWARDS] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
