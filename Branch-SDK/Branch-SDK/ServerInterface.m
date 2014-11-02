@@ -14,26 +14,24 @@
 
 // make a generalized get request
 - (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag {
+    url = [url stringByAppendingString:@"?"];
+    
     if (params) {
         NSArray *allKeys = [params allKeys];
-        if ([allKeys count] > 0) {
-            url = [url stringByAppendingString:@"?"];
-        }
-        int count = (int)[allKeys count];
-        int i = 0;
+
         for (NSString *key in allKeys) {
             if ([key length] > 0) {
                 if ([params objectForKey:key]) {
                     url = [url stringByAppendingString:key];
                     url = [url stringByAppendingString:@"="];
                     url = [url stringByAppendingString:[[params objectForKey:key] description]];
-                    if(i < count-1)
-                        url = [url stringByAppendingString:@"&"];
+                    url = [url stringByAppendingString:@"&"];
                 }
             }
-            i = i + 1;
         }
     }
+    
+    url = [url stringByAppendingFormat:@"sdk=ios%@", SDK_VERSION];
     Debug(@"using url = %@", url);
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
@@ -49,6 +47,7 @@
 
 // make a generalized post request
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag {
+    [post setValue:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
     NSData *postData = [ServerInterface encodePostParams:post];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     

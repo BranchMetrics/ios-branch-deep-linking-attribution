@@ -9,13 +9,14 @@
 #ifndef Branch_SDK_Config_h
 #define Branch_SDK_Config_h
 
-//#define DEV_ENV
-//#define STAGE_ENV
-#define PROD_ENV
+#define SDK_VERSION             @"0.2.6"
 
-#ifdef DEV_ENV
-#define API_BASE_URL            @"http://localhost:3001";
-#define DEBUG_MODE
+#define PROD_ENV
+//#define STAGE_ENV
+//#define DEV_ENV
+
+#ifdef PROD_ENV
+#define API_BASE_URL            @"https://api.branch.io";
 #endif
 
 #ifdef STAGE_ENV
@@ -23,8 +24,9 @@
 #define DEBUG_MODE
 #endif
 
-#ifdef PROD_ENV
-#define API_BASE_URL            @"https://api.branch.io";
+#ifdef DEV_ENV
+#define API_BASE_URL            @"http://localhost:3001";
+#define DEBUG_MODE
 #endif
 
 #define API_VERSION             @"v1"
