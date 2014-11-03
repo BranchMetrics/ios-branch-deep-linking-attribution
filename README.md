@@ -55,7 +55,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 
 	// sign up to get your key at http://branch.io
 	Branch *branch = [Branch getInstance:@"Your app key"];
-	[branch initUserSessionWithCallback:^(NSDictionary *params) {
+	[branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params) {		// previously initUserSessionWithCallback:
 		// params are the deep linked params associated with the link that the user clicked before showing up
 		// params will be empty if no data found
 
@@ -74,7 +74,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 ```objc
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
 	// pass the url to the handle deep link call
-	// if handleDeepLink returns YES, and you registered a callback in initUserSession, the callback will be called with the data associated with the deep link
+	// if handleDeepLink returns YES, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
 	if (![[Branch getInstance] handleDeepLink:url]) {
 		// do other deep link routing for the Facebook SDK, Pinterest SDK, etc
 	}
@@ -86,14 +86,14 @@ This deep link routing callback is called 100% of the time on init, with your li
 
 These session parameters will be available at any point later on with this command. If no params, the dictionary will be empty. This refreshes with every new session (app installs AND app opens)
 ```objc
-NSDictionary *sessionParams = [[Branch getInstance] getReferringParams];
+NSDictionary *sessionParams = [[Branch getInstance] getLatestReferringParams]; // previously getReferringParams
 ```
 
 #### Retrieve install (install only) parameters
 
 If you ever want to access the original session params (the parameters passed in for the first install event only), you can use this line. This is useful if you only want to reward users who newly installed the app from a referral link or something.
 ```objc
-NSDictionary *installParams = [[Branch getInstance] getInstallReferringParams];
+NSDictionary *installParams = [[Branch getInstance] getFirstReferringParams]; // previously getInstallReferringParams
 ```
 
 ### Persistent identities
@@ -102,7 +102,7 @@ Often, you might have your own user IDs, or want referral and event data to pers
 
 To identify a user, just call:
 ```objc
-[[Branch getInstance] setIdentity:@"your user id"];
+[[Branch getInstance] setIdentity:@"your user id"];	// previously identifyUser:
 ```
 
 #### Logout
@@ -112,7 +112,7 @@ If you provide a logout function in your app, be sure to clear the user when the
 **Warning** this call will clear the referral credits and attribution on the device.
 
 ```objc
-[[Branch getInstance] logout];
+[[Branch getInstance] logout];	// previously clearUser
 ```
 
 ### Register custom events
