@@ -67,6 +67,7 @@ static NSString *DIRECTION = @"direction";
 @property (strong, nonatomic) callbackWithUrl urlLoadCallback;
 @property (strong, nonatomic) callbackWithList creditHistoryLoadCallback;
 @property (assign, nonatomic) BOOL initFinished;
+@property (assign, nonatomic) BOOL hasNetwork;
 
 @end
 
@@ -106,6 +107,7 @@ static Branch *currInstance;
     currInstance.asyncQueue = dispatch_queue_create("brnch_request_queue", NULL);
     currInstance.requestQueue = [ServerRequestQueue getInstance];
     currInstance.initFinished = NO;
+    currInstance.hasNetwork = YES;
     
     [[NSNotificationCenter defaultCenter] addObserver:currInstance
                                              selector:@selector(applicationWillResignActive)
@@ -237,7 +239,7 @@ static Branch *currInstance;
         req.postData = post;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished || !self.hasNetwork) {
             [self processNextQueueItem];
         }
     });
@@ -251,7 +253,7 @@ static Branch *currInstance;
         req.postData = post;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished || !self.hasNetwork) {
             [self processNextQueueItem];
         }
     });
@@ -264,7 +266,7 @@ static Branch *currInstance;
         req.tag = REQ_TAG_GET_REFERRAL_COUNTS;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished || !self.hasNetwork) {
             [self processNextQueueItem];
         }
     });
@@ -277,7 +279,7 @@ static Branch *currInstance;
         req.tag = REQ_TAG_GET_REWARDS;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished || !self.hasNetwork) {
             [self processNextQueueItem];
         }
     });
@@ -320,7 +322,7 @@ static Branch *currInstance;
             req.postData = post;
             [self.requestQueue enqueue:req];
             
-            if (self.initFinished) {
+            if (self.initFinished || !self.hasNetwork) {
                 [self processNextQueueItem];
             }
         }
@@ -357,7 +359,7 @@ static Branch *currInstance;
         req.postData = data;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished || !self.hasNetwork) {
             [self processNextQueueItem];
         }
     });
@@ -379,7 +381,7 @@ static Branch *currInstance;
         req.postData = post;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished || !self.hasNetwork) {
             [self processNextQueueItem];
         }
     });
@@ -456,7 +458,7 @@ static Branch *currInstance;
         req.postData = post;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished || !self.hasNetwork) {
             [self processNextQueueItem];
         }
     });
@@ -489,7 +491,7 @@ static Branch *currInstance;
         [self.requestQueue enqueue:req];
     }
     
-    if (self.initFinished) {
+    if (self.initFinished || !self.hasNetwork) {
         dispatch_async(self.asyncQueue, ^{
             [self processNextQueueItem];
         });
@@ -752,15 +754,21 @@ static Branch *currInstance;
         
         BOOL retry = NO;
         self.networkCount = 0;
+        self.hasNetwork = YES;
+        
         if (status >= 400 && status < 500) {
             if (response.data && [response.data objectForKey:ERROR]) {
                 NSLog(@"Branch API Error: %@", [[response.data objectForKey:ERROR] objectForKey:MESSAGE]);
             }
         } else if (status != 200) {
-            retry = YES;
-            dispatch_async(self.asyncQueue, ^{
-                [self retryLastRequest];
-            });
+            if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorNetworkConnectionLost || status == NSURLErrorCannotFindHost) {
+                self.hasNetwork = NO;
+            } else {
+                retry = YES;
+                dispatch_async(self.asyncQueue, ^{
+                    [self retryLastRequest];
+                });
+            }
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
             [PreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
             [PreferenceHelper setDeviceFingerprintID:[response.data objectForKey:DEVICE_FINGERPRINT_ID]];
@@ -868,7 +876,7 @@ static Branch *currInstance;
         } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REDEEM_REWARDS] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
         }
         
-        if (!retry) {
+        if (!retry && self.hasNetwork) {
             [self.requestQueue dequeue];
             
             dispatch_async(self.asyncQueue, ^{

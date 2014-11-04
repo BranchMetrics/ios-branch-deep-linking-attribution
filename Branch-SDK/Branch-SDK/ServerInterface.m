@@ -99,15 +99,21 @@
 
 - (void)genericHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag {
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler: ^(NSURLResponse *response, NSData *POSTReply, NSError *error) {
-        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-        NSNumber *statusCode = [NSNumber numberWithLong:[httpResponse statusCode]];
-        
-        ServerResponse *serverResponse = [[ServerResponse alloc] initWithTag:requestTag andStatusCode:statusCode];
-        
-        if (POSTReply != nil) {
-            NSError *convError;
-            id jsonData = [NSJSONSerialization JSONObjectWithData:POSTReply options:NSJSONReadingMutableContainers error:&convError];
-            serverResponse.data = jsonData;            
+        ServerResponse *serverResponse;
+        if (!error) {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+            NSNumber *statusCode = [NSNumber numberWithLong:[httpResponse statusCode]];
+            
+            serverResponse = [[ServerResponse alloc] initWithTag:requestTag andStatusCode:statusCode];
+            
+            if (POSTReply != nil) {
+                NSError *convError;
+                id jsonData = [NSJSONSerialization JSONObjectWithData:POSTReply options:NSJSONReadingMutableContainers error:&convError];
+                serverResponse.data = jsonData;
+            }
+        } else {
+            serverResponse = [[ServerResponse alloc] initWithTag:requestTag andStatusCode:[NSNumber numberWithInteger:error.code]];
+            serverResponse.data = error.userInfo;
         }
         
         Debug(@"returned = %@", [serverResponse description]);
