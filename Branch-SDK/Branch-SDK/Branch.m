@@ -14,6 +14,7 @@
 #import "SystemObserver.h"
 #import "ServerRequestQueue.h"
 #import "Config.h"
+#import "Reachability.h"
 
 
 static NSString *APP_ID = @"app_id";
@@ -189,7 +190,9 @@ static Branch *currInstance;
         if (![self.requestQueue containsInstallOrOpen]) {
             [self initSession];
         } else {
-            [self processNextQueueItem];
+            if ([self hasNetwork]) {
+                [self processNextQueueItem];
+            }
         }
     }
 }
@@ -232,7 +235,7 @@ static Branch *currInstance;
             req.postData = post;
             [self.requestQueue enqueue:req];
             
-            if (self.initFinished) {
+            if (self.initFinished && [self hasNetwork]) {
                 [self processNextQueueItem];
             }
         });
@@ -248,7 +251,7 @@ static Branch *currInstance;
         req.postData = post;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished && [self hasNetwork]) {
             [self processNextQueueItem];
         }
     });
@@ -270,7 +273,7 @@ static Branch *currInstance;
         req.postData = post;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished && [self hasNetwork]) {
             [self processNextQueueItem];
         }
     });
@@ -284,7 +287,7 @@ static Branch *currInstance;
         req.postData = post;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished && [self hasNetwork]) {
             [self processNextQueueItem];
         }
     });
@@ -297,7 +300,7 @@ static Branch *currInstance;
         req.tag = REQ_TAG_GET_REFERRAL_COUNTS;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished && [self hasNetwork]) {
             [self processNextQueueItem];
         }
     });
@@ -310,7 +313,7 @@ static Branch *currInstance;
         req.tag = REQ_TAG_GET_REWARDS;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished && [self hasNetwork]) {
             [self processNextQueueItem];
         }
     });
@@ -353,7 +356,7 @@ static Branch *currInstance;
             req.postData = post;
             [self.requestQueue enqueue:req];
             
-            if (self.initFinished) {
+            if (self.initFinished && [self hasNetwork]) {
                 [self processNextQueueItem];
             }
         }
@@ -390,7 +393,7 @@ static Branch *currInstance;
         req.postData = data;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished && [self hasNetwork]) {
             [self processNextQueueItem];
         }
     });
@@ -412,7 +415,7 @@ static Branch *currInstance;
         req.postData = post;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished && [self hasNetwork]) {
             [self processNextQueueItem];
         }
     });
@@ -489,7 +492,7 @@ static Branch *currInstance;
         req.postData = post;
         [self.requestQueue enqueue:req];
         
-        if (self.initFinished) {
+        if (self.initFinished && [self hasNetwork]) {
             [self processNextQueueItem];
         }
     });
@@ -501,7 +504,9 @@ static Branch *currInstance;
             ServerRequest *req = [[ServerRequest alloc] init];
             req.tag = REQ_TAG_REGISTER_OPEN;
             [self.requestQueue insert:req at:0];
-            [self processNextQueueItem];
+            if ([self hasNetwork]) {
+                [self processNextQueueItem];
+            }
         }
     });
 }
@@ -522,11 +527,15 @@ static Branch *currInstance;
         [self.requestQueue enqueue:req];
     }
     
-    if (self.initFinished) {
+    if (self.initFinished && [self hasNetwork]) {
         dispatch_async(self.asyncQueue, ^{
             [self processNextQueueItem];
         });
     }
+}
+
+- (BOOL)hasNetwork {
+    return [[Reachability reachabilityForInternetConnection] currentReachabilityStatus] != NotReachable;
 }
 
 - (NSDictionary *)convertParamsStringToDictionary:(NSString *)paramsString {
@@ -722,9 +731,11 @@ static Branch *currInstance;
         [self.requestQueue moveInstallOrOpenToFront:tag];
     }
     
-    dispatch_async(self.asyncQueue, ^{
-        [self processNextQueueItem];
-    });
+    if ([self hasNetwork]) {
+        dispatch_async(self.asyncQueue, ^{
+            [self processNextQueueItem];
+        });
+    }
 }
 
 -(void)initSession {
@@ -915,9 +926,11 @@ static Branch *currInstance;
         if (!retry) {
             [self.requestQueue dequeue];
             
-            dispatch_async(self.asyncQueue, ^{
-                [self processNextQueueItem];
-            });
+            if ([self hasNetwork]) {
+                dispatch_async(self.asyncQueue, ^{
+                    [self processNextQueueItem];
+                });
+            }
         }
     }
 }

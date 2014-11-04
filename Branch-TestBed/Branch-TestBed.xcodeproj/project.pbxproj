@@ -24,6 +24,7 @@
 		670016CE1946309100A9E103 /* SystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C81946309100A9E103 /* SystemObserver.m */; };
 		6782963A19ACE3C6009833D7 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6782963919ACE3C6009833D7 /* AdSupport.framework */; };
 		7E6ACAF819E324090066913E /* ServerRequestQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6ACAF719E324090066913E /* ServerRequestQueue.m */; };
+		7E7AC3C11A08715B00662E14 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E7AC3C01A08715B00662E14 /* Reachability.m */; };
 		7EAA790219E89F67008D4A83 /* CreditHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */; };
 		7EAA790A19E90B9F008D4A83 /* ServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790919E90B9F008D4A83 /* ServerResponse.m */; };
 /* End PBXBuildFile section */
@@ -60,6 +61,8 @@
 		7E6ACAF619E324090066913E /* ServerRequestQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerRequestQueue.h; sourceTree = "<group>"; };
 		7E6ACAF719E324090066913E /* ServerRequestQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerRequestQueue.m; sourceTree = "<group>"; };
 		7E6ACAF919E324120066913E /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
+		7E7AC3BF1A08715B00662E14 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		7E7AC3C01A08715B00662E14 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		7EAA790019E89F67008D4A83 /* CreditHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreditHistoryViewController.h; sourceTree = "<group>"; };
 		7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreditHistoryViewController.m; sourceTree = "<group>"; };
 		7EAA790819E90B9F008D4A83 /* ServerResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerResponse.h; sourceTree = "<group>"; };
@@ -158,6 +161,8 @@
 				7E6ACAF919E324120066913E /* Config.h */,
 				7EAA790819E90B9F008D4A83 /* ServerResponse.h */,
 				7EAA790919E90B9F008D4A83 /* ServerResponse.m */,
+				7E7AC3BF1A08715B00662E14 /* Reachability.h */,
+				7E7AC3C01A08715B00662E14 /* Reachability.m */,
 			);
 			name = "Branch-SDK";
 			path = "../../Branch-SDK/Branch-SDK";
@@ -233,6 +238,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E7AC3C11A08715B00662E14 /* Reachability.m in Sources */,
 				6700167A1940F51400A9E103 /* ViewController.m in Sources */,
 				670016CC1946309100A9E103 /* ServerInterface.m in Sources */,
 				670016CD1946309100A9E103 /* ServerRequest.m in Sources */,
