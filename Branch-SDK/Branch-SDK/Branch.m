@@ -8,12 +8,12 @@
 
 #import "Branch.h"
 #import "BranchServerInterface.h"
-#import "PreferenceHelper.h"
-#import "ServerRequest.h"
-#import "ServerResponse.h"
-#import "SystemObserver.h"
-#import "ServerRequestQueue.h"
-#import "Config.h"
+#import "BNCPreferenceHelper.h"
+#import "BNCServerRequest.h"
+#import "BNCServerResponse.h"
+#import "BNCSystemObserver.h"
+#import "BNCServerRequestQueue.h"
+#import "BNCConfig.h"
 
 
 static NSString *APP_ID = @"app_id";
@@ -48,14 +48,14 @@ static NSString *DIRECTION = @"direction";
 
 
 
-@interface Branch() <ServerInterfaceDelegate>
+@interface Branch() <BNCServerInterfaceDelegate>
 
 @property (strong, nonatomic) BranchServerInterface *bServerInterface;
 
 @property (nonatomic) BOOL isInit;
 
 @property (strong, nonatomic) NSTimer *sessionTimer;
-@property (strong, nonatomic) ServerRequestQueue *requestQueue;
+@property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (nonatomic) dispatch_semaphore_t processing_sema;
 @property (nonatomic) dispatch_queue_t asyncQueue;
 @property (nonatomic) NSInteger retryCount;
@@ -81,7 +81,7 @@ static Branch *currInstance;
 // PUBLIC CALLS
 
 + (Branch *)getInstance:(NSString *)key {
-    [PreferenceHelper setAppKey:key];
+    [BNCPreferenceHelper setAppKey:key];
     
     if (!currInstance) {
         [Branch initInstance];
@@ -105,7 +105,7 @@ static Branch *currInstance;
     currInstance.bServerInterface.delegate = currInstance;
     currInstance.processing_sema = dispatch_semaphore_create(1);
     currInstance.asyncQueue = dispatch_queue_create("brnch_request_queue", NULL);
-    currInstance.requestQueue = [ServerRequestQueue getInstance];
+    currInstance.requestQueue = [BNCServerRequestQueue getInstance];
     currInstance.initFinished = NO;
     currInstance.hasNetwork = YES;
     
@@ -145,10 +145,10 @@ static Branch *currInstance;
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback {
     self.sessionparamLoadCallback = callback;
-    if (![SystemObserver getUpdateState] && ![self hasUser]) {
-        [PreferenceHelper setIsReferrable];
+    if (![BNCSystemObserver getUpdateState] && ![self hasUser]) {
+        [BNCPreferenceHelper setIsReferrable];
     } else {
-        [PreferenceHelper clearIsReferrable];
+        [BNCPreferenceHelper clearIsReferrable];
     }
     
     if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
@@ -164,9 +164,9 @@ static Branch *currInstance;
 
 - (void)initSession:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback {
     if (isReferrable) {
-        [PreferenceHelper setIsReferrable];
+        [BNCPreferenceHelper setIsReferrable];
     } else {
-        [PreferenceHelper clearIsReferrable];
+        [BNCPreferenceHelper clearIsReferrable];
     }
     
     [self initUserSessionWithCallbackInternal:callback];
@@ -180,10 +180,10 @@ static Branch *currInstance;
 }
 
 - (void)initSessionAndRegisterDeepLinkHandler:(callbackWithParams)callback {
-    if (![SystemObserver getUpdateState] && ![self hasUser]) {
-        [PreferenceHelper setIsReferrable];
+    if (![BNCSystemObserver getUpdateState] && ![self hasUser]) {
+        [BNCPreferenceHelper setIsReferrable];
     } else {
-        [PreferenceHelper clearIsReferrable];
+        [BNCPreferenceHelper clearIsReferrable];
     }
     
     [self initUserSessionWithCallbackInternal:callback];
@@ -215,10 +215,10 @@ static Branch *currInstance;
         NSDictionary *params = [self parseURLParams:query];
         if ([params objectForKey:@"link_click_id"]) {
             handled = YES;
-            [PreferenceHelper setLinkClickIdentifier:[params objectForKey:@"link_click_id"]];
+            [BNCPreferenceHelper setLinkClickIdentifier:[params objectForKey:@"link_click_id"]];
         }
     }
-    [PreferenceHelper setIsReferrable];
+    [BNCPreferenceHelper setIsReferrable];
     [self initUserSessionWithCallbackInternal:self.sessionparamLoadCallback];
     return handled;
 }
@@ -233,9 +233,9 @@ static Branch *currInstance;
         return;
 
     dispatch_async(self.asyncQueue, ^{
-        ServerRequest *req = [[ServerRequest alloc] init];
+        BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_IDENTIFY;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[userId, [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[IDENTITY, APP_ID, IDENTITY_ID]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[userId, [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID]] forKeys:@[IDENTITY, APP_ID, IDENTITY_ID]];
         req.postData = post;
         [self.requestQueue enqueue:req];
         
@@ -247,9 +247,9 @@ static Branch *currInstance;
 
 - (void)logout {
     dispatch_async(self.asyncQueue, ^{
-        ServerRequest *req = [[ServerRequest alloc] init];
+        BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_LOGOUT;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[PreferenceHelper getAppKey], [PreferenceHelper getSessionID]] forKeys:@[APP_ID, SESSION_ID]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID]] forKeys:@[APP_ID, SESSION_ID]];
         req.postData = post;
         [self.requestQueue enqueue:req];
         
@@ -262,7 +262,7 @@ static Branch *currInstance;
 - (void)loadActionCountsWithCallback:(callbackWithStatus)callback {
     self.pointLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{
-        ServerRequest *req = [[ServerRequest alloc] init];
+        BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_COUNTS;
         [self.requestQueue enqueue:req];
         
@@ -275,7 +275,7 @@ static Branch *currInstance;
 - (void)loadRewardsWithCallback:(callbackWithStatus)callback {
     self.rewardLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{
-        ServerRequest *req = [[ServerRequest alloc] init];
+        BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REWARDS;
         [self.requestQueue enqueue:req];
         
@@ -286,7 +286,7 @@ static Branch *currInstance;
 }
 
 - (NSInteger)getCredits {
-    return [PreferenceHelper getCreditCount];
+    return [BNCPreferenceHelper getCreditCount];
 }
 
 - (void)redeemRewards:(NSInteger)count {
@@ -294,20 +294,20 @@ static Branch *currInstance;
 }
 
 - (NSInteger)getCreditsForBucket:(NSString *)bucket {
-    return [PreferenceHelper getCreditCountForBucket:bucket];
+    return [BNCPreferenceHelper getCreditCountForBucket:bucket];
 }
 
 - (NSInteger)getTotalCountsForAction:(NSString *)action {
-    return [PreferenceHelper getActionTotalCount:action];
+    return [BNCPreferenceHelper getActionTotalCount:action];
 }
 - (NSInteger)getUniqueCountsForAction:(NSString *)action {
-    return [PreferenceHelper getActionUniqueCount:action];
+    return [BNCPreferenceHelper getActionUniqueCount:action];
 }
 
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket {
     dispatch_async(self.asyncQueue, ^{
         NSInteger redemptionsToAdd = 0;
-        NSInteger credits = [PreferenceHelper getCreditCountForBucket:bucket];
+        NSInteger credits = [BNCPreferenceHelper getCreditCountForBucket:bucket];
         if (count > credits) {
             redemptionsToAdd = credits;
             NSLog(@"Branch Warning: You're trying to redeem more credits than are available. Have you updated loaded rewards");
@@ -316,9 +316,9 @@ static Branch *currInstance;
         }
         
         if (redemptionsToAdd > 0) {
-            ServerRequest *req = [[ServerRequest alloc] init];
+            BNCServerRequest *req = [[BNCServerRequest alloc] init];
             req.tag = REQ_TAG_REDEEM_REWARDS;
-            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[bucket, [NSNumber numberWithInteger:redemptionsToAdd], [PreferenceHelper getAppKey], [PreferenceHelper getIdentityID]] forKeys:@[BUCKET, AMOUNT, APP_ID, IDENTITY_ID]];
+            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[bucket, [NSNumber numberWithInteger:redemptionsToAdd], [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID]] forKeys:@[BUCKET, AMOUNT, APP_ID, IDENTITY_ID]];
             req.postData = post;
             [self.requestQueue enqueue:req];
             
@@ -346,9 +346,9 @@ static Branch *currInstance;
     self.creditHistoryLoadCallback = callback;
     
     dispatch_async(self.asyncQueue, ^{
-        ServerRequest *req = [[ServerRequest alloc] init];
+        BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REWARD_HISTORY;
-        NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjects:@[[PreferenceHelper getAppKey], [PreferenceHelper getIdentityID], [NSNumber numberWithLong:length], DIRECTIONS[order]]
+        NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjects:@[[BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID], [NSNumber numberWithLong:length], DIRECTIONS[order]]
                                                                        forKeys:@[APP_ID, IDENTITY_ID, LENGTH, DIRECTION]];
         if (bucket) {
             [data setObject:bucket forKey:BUCKET];
@@ -373,9 +373,9 @@ static Branch *currInstance;
     if (!action)
         return;
     dispatch_async(self.asyncQueue, ^{
-        ServerRequest *req = [[ServerRequest alloc] init];
+        BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_COMPLETE_ACTION;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [PreferenceHelper getAppKey], [PreferenceHelper getSessionID]] forKeys:@[EVENT, APP_ID, SESSION_ID]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID]] forKeys:@[EVENT, APP_ID, SESSION_ID]];
         NSDictionary *saniState = [self sanitizeQuotesFromInput:state];
         if (saniState && [NSJSONSerialization isValidJSONObject:saniState]) [post setObject:saniState forKey:METADATA];
         req.postData = post;
@@ -388,12 +388,12 @@ static Branch *currInstance;
 }
 
 - (NSDictionary *)getFirstReferringParams {
-    NSString *storedParam = [PreferenceHelper getInstallParams];
+    NSString *storedParam = [BNCPreferenceHelper getInstallParams];
     return [self convertParamsStringToDictionary:storedParam];
 }
 
 - (NSDictionary *)getLatestReferringParams {
-    NSString *storedParam = [PreferenceHelper getSessionParams];
+    NSString *storedParam = [BNCPreferenceHelper getSessionParams];
     return [self convertParamsStringToDictionary:storedParam];
 }
 
@@ -438,11 +438,11 @@ static Branch *currInstance;
 - (void)generateShortUrl:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params andCallback:(callbackWithUrl)callback {
     self.urlLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{
-        ServerRequest *req = [[ServerRequest alloc] init];
+        BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_CUSTOM_URL;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
-        [post setObject:[PreferenceHelper getAppKey] forKey:APP_ID];
-        [post setObject:[PreferenceHelper getIdentityID] forKey:IDENTITY_ID];
+        [post setObject:[BNCPreferenceHelper getAppKey] forKey:APP_ID];
+        [post setObject:[BNCPreferenceHelper getIdentityID] forKey:IDENTITY_ID];
         if (tags)
             [post setObject:tags forKey:TAGS];
         if (channel)
@@ -467,7 +467,7 @@ static Branch *currInstance;
 - (void)applicationDidBecomeActive {
     dispatch_async(self.asyncQueue, ^{
         if (!self.isInit) {
-            ServerRequest *req = [[ServerRequest alloc] init];
+            BNCServerRequest *req = [[BNCServerRequest alloc] init];
             req.tag = REQ_TAG_REGISTER_OPEN;
             [self.requestQueue insert:req at:0];
             [self processNextQueueItem];
@@ -487,7 +487,7 @@ static Branch *currInstance;
     self.isInit = NO;
     
     if (![self.requestQueue containsClose]) {
-        ServerRequest *req = [[ServerRequest alloc] initWithTag:REQ_TAG_REGISTER_CLOSE];
+        BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:REQ_TAG_REGISTER_CLOSE];
         [self.requestQueue enqueue:req];
     }
     
@@ -503,7 +503,7 @@ static Branch *currInstance;
         NSData *tempData = [paramsString dataUsingEncoding:NSUTF8StringEncoding];
         NSDictionary *params = [NSJSONSerialization JSONObjectWithData:tempData options:0 error:nil];
         if (!params) {
-            NSString *decodedVersion = [PreferenceHelper base64DecodeStringToString:paramsString];
+            NSString *decodedVersion = [BNCPreferenceHelper base64DecodeStringToString:paramsString];
             tempData = [decodedVersion dataUsingEncoding:NSUTF8StringEncoding];
             params = [NSJSONSerialization JSONObjectWithData:tempData options:0 error:nil];
             if (!params) {
@@ -552,7 +552,7 @@ static Branch *currInstance;
         self.networkCount = 1;
         dispatch_semaphore_signal(self.processing_sema);
         
-        ServerRequest *req = [self.requestQueue peek];
+        BNCServerRequest *req = [self.requestQueue peek];
         
         if (req) {
             if (![req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
@@ -607,27 +607,31 @@ static Branch *currInstance;
     
 }
 
+- (void)handleFailure {
+    BNCServerRequest *req = [self.requestQueue peek];
+    if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
+        NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
+        if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict);
+    } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
+        if (self.pointLoadCallback) self.pointLoadCallback(NO);
+    } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS]) {
+        if (self.rewardLoadCallback) self.rewardLoadCallback(NO);
+    } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {
+        if (self.creditHistoryLoadCallback) {
+            self.creditHistoryLoadCallback(nil);
+        }
+    } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
+        if (self.urlLoadCallback) self.urlLoadCallback(@"Trouble reaching server. Please try again in a few minutes");
+    } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
+        NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
+        if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict);
+    }
+}
+
 - (void)retryLastRequest {
     self.retryCount = self.retryCount + 1;
     if (self.retryCount > MAX_RETRIES) {
-        ServerRequest *req = [self.requestQueue peek];
-        if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
-            NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
-            if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict);
-        } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
-            if (self.pointLoadCallback) self.pointLoadCallback(NO);
-        } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS]) {
-            if (self.rewardLoadCallback) self.rewardLoadCallback(NO);
-        } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {
-            if (self.creditHistoryLoadCallback) {
-                self.creditHistoryLoadCallback(nil);
-            }
-        } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
-            if (self.urlLoadCallback) self.urlLoadCallback(@"Trouble reaching server. Please try again in a few minutes");
-        } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
-            NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
-            if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict);
-        }
+        [self handleFailure];
         [self.requestQueue dequeue];
         self.retryCount = 0;
     } else {
@@ -638,16 +642,16 @@ static Branch *currInstance;
 
 - (void)updateAllRequestsInQueue {
     for (int i = 0; i < self.requestQueue.size; i++) {
-        ServerRequest *request = [self.requestQueue peekAt:i];
+        BNCServerRequest *request = [self.requestQueue peekAt:i];
         
         if (request.postData) {
             for (NSString *key in [request.postData allKeys]) {
                 if ([key isEqualToString:APP_ID]) {
-                    [request.postData setValue:[PreferenceHelper getAppKey] forKey:APP_ID];
+                    [request.postData setValue:[BNCPreferenceHelper getAppKey] forKey:APP_ID];
                 } else if ([key isEqualToString:SESSION_ID]) {
-                    [request.postData setValue:[PreferenceHelper getSessionID] forKey:SESSION_ID];
+                    [request.postData setValue:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
                 } else if ([key isEqualToString:IDENTITY_ID]) {
-                    [request.postData setValue:[PreferenceHelper getIdentityID] forKey:IDENTITY_ID];
+                    [request.postData setValue:[BNCPreferenceHelper getIdentityID] forKey:IDENTITY_ID];
                 }
             }
         }
@@ -657,24 +661,24 @@ static Branch *currInstance;
 }
 
 - (BOOL)hasIdentity {
-    return ![[PreferenceHelper getUserIdentity] isEqualToString:NO_STRING_VALUE];
+    return ![[BNCPreferenceHelper getUserIdentity] isEqualToString:NO_STRING_VALUE];
 }
 
 - (BOOL)hasUser {
-    return ![[PreferenceHelper getIdentityID] isEqualToString:NO_STRING_VALUE];
+    return ![[BNCPreferenceHelper getIdentityID] isEqualToString:NO_STRING_VALUE];
 }
 
 - (BOOL)hasSession {
-    return ![[PreferenceHelper getSessionID] isEqualToString:NO_STRING_VALUE];
+    return ![[BNCPreferenceHelper getSessionID] isEqualToString:NO_STRING_VALUE];
 }
 
 - (BOOL)hasAppKey {
-    return ![[PreferenceHelper getAppKey] isEqualToString:NO_STRING_VALUE];
+    return ![[BNCPreferenceHelper getAppKey] isEqualToString:NO_STRING_VALUE];
 }
 
 - (void)registerInstallOrOpen:(NSString *)tag {
     if (![self.requestQueue containsInstallOrOpen]) {
-        ServerRequest *req = [[ServerRequest alloc] initWithTag:tag];
+        BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:tag];
         [self.requestQueue insert:req at:0];
     } else {
         [self.requestQueue moveInstallOrOpenToFront:tag];
@@ -701,11 +705,11 @@ static Branch *currInstance;
         NSInteger total = [[counts objectForKey:TOTAL] integerValue];
         NSInteger unique = [[counts objectForKey:UNIQUE] integerValue];
         
-        if (total != [PreferenceHelper getActionTotalCount:key] || unique != [PreferenceHelper getActionUniqueCount:key])
+        if (total != [BNCPreferenceHelper getActionTotalCount:key] || unique != [BNCPreferenceHelper getActionUniqueCount:key])
             updateListener = YES;
         
-        [PreferenceHelper setActionTotalCount:key withCount:total];
-        [PreferenceHelper setActionUniqueCount:key withCount:unique];
+        [BNCPreferenceHelper setActionTotalCount:key withCount:total];
+        [BNCPreferenceHelper setActionUniqueCount:key withCount:unique];
     }
     if (self.pointLoadCallback) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -721,10 +725,10 @@ static Branch *currInstance;
     for (NSString *key in returnedData) {
         NSInteger credits = [[returnedData objectForKey:key] integerValue];
         
-        if (credits != [PreferenceHelper getCreditCountForBucket:key])
+        if (credits != [BNCPreferenceHelper getCreditCountForBucket:key])
             updateListener = YES;
         
-        [PreferenceHelper setCreditCount:credits forBucket:key];
+        [BNCPreferenceHelper setCreditCount:credits forBucket:key];
     }
     if (self.rewardLoadCallback) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -747,7 +751,7 @@ static Branch *currInstance;
     }
 }
 
-- (void)serverCallback:(ServerResponse *)response {
+- (void)serverCallback:(BNCServerResponse *)response {
     if (response) {
         NSInteger status = [response.statusCode integerValue];
         NSString *requestTag = response.tag;
@@ -763,6 +767,8 @@ static Branch *currInstance;
         } else if (status != 200) {
             if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorNetworkConnectionLost || status == NSURLErrorCannotFindHost) {
                 self.hasNetwork = NO;
+                [self handleFailure];
+                NSLog(@"Branch API Error: Poor network connectivity. Please try again later.");
             } else {
                 retry = YES;
                 dispatch_async(self.asyncQueue, ^{
@@ -770,29 +776,29 @@ static Branch *currInstance;
                 });
             }
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
-            [PreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
-            [PreferenceHelper setDeviceFingerprintID:[response.data objectForKey:DEVICE_FINGERPRINT_ID]];
-            [PreferenceHelper setUserURL:[response.data objectForKey:LINK]];
-            [PreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
+            [BNCPreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
+            [BNCPreferenceHelper setDeviceFingerprintID:[response.data objectForKey:DEVICE_FINGERPRINT_ID]];
+            [BNCPreferenceHelper setUserURL:[response.data objectForKey:LINK]];
+            [BNCPreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
             
-            if ([PreferenceHelper getIsReferrable]) {
+            if ([BNCPreferenceHelper getIsReferrable]) {
                 if ([response.data objectForKey:DATA]) {
-                    [PreferenceHelper setInstallParams:[response.data objectForKey:DATA]];
+                    [BNCPreferenceHelper setInstallParams:[response.data objectForKey:DATA]];
                 } else {
-                    [PreferenceHelper setInstallParams:NO_STRING_VALUE];
+                    [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
                 }
             }
-            [PreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
+            [BNCPreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
             
             if ([response.data objectForKey:LINK_CLICK_ID]) {
-                [PreferenceHelper setLinkClickID:[response.data objectForKey:LINK_CLICK_ID]];
+                [BNCPreferenceHelper setLinkClickID:[response.data objectForKey:LINK_CLICK_ID]];
             } else {
-                [PreferenceHelper setLinkClickID:NO_STRING_VALUE];
+                [BNCPreferenceHelper setLinkClickID:NO_STRING_VALUE];
             }
             if ([response.data objectForKey:DATA]) {
-                [PreferenceHelper setSessionParams:[response.data objectForKey:DATA]];
+                [BNCPreferenceHelper setSessionParams:[response.data objectForKey:DATA]];
             } else {
-                [PreferenceHelper setSessionParams:NO_STRING_VALUE];
+                [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
             
             [self updateAllRequestsInQueue];
@@ -805,24 +811,24 @@ static Branch *currInstance;
             
             self.initFinished = YES;
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
-            [PreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
+            [BNCPreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
             if ([response.data objectForKey:LINK_CLICK_ID]) {
-                [PreferenceHelper setLinkClickID:[response.data objectForKey:LINK_CLICK_ID]];
+                [BNCPreferenceHelper setLinkClickID:[response.data objectForKey:LINK_CLICK_ID]];
             } else {
-                [PreferenceHelper setLinkClickID:NO_STRING_VALUE];
+                [BNCPreferenceHelper setLinkClickID:NO_STRING_VALUE];
             }
-            [PreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
+            [BNCPreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
             
-            if ([PreferenceHelper getIsReferrable]) {
+            if ([BNCPreferenceHelper getIsReferrable]) {
                 if ([response.data objectForKey:DATA]) {
-                    [PreferenceHelper setInstallParams:[response.data objectForKey:DATA]];
+                    [BNCPreferenceHelper setInstallParams:[response.data objectForKey:DATA]];
                 }
             }
             
             if ([response.data objectForKey:DATA]) {
-                [PreferenceHelper setSessionParams:[response.data objectForKey:DATA]];
+                [BNCPreferenceHelper setSessionParams:[response.data objectForKey:DATA]];
             } else {
-                [PreferenceHelper setSessionParams:NO_STRING_VALUE];
+                [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
             if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -845,26 +851,26 @@ static Branch *currInstance;
                 });
             }
         } else if ([requestTag isEqualToString:REQ_TAG_LOGOUT]) {
-            [PreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
-            [PreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
-            [PreferenceHelper setUserURL:[response.data objectForKey:LINK]];
+            [BNCPreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
+            [BNCPreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
+            [BNCPreferenceHelper setUserURL:[response.data objectForKey:LINK]];
             
-            [PreferenceHelper setUserIdentity:NO_STRING_VALUE];
-            [PreferenceHelper setInstallParams:NO_STRING_VALUE];
-            [PreferenceHelper setSessionParams:NO_STRING_VALUE];
-            [PreferenceHelper clearUserCreditsAndCounts];
+            [BNCPreferenceHelper setUserIdentity:NO_STRING_VALUE];
+            [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
+            [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
+            [BNCPreferenceHelper clearUserCreditsAndCounts];
         } else if ([requestTag isEqualToString:REQ_TAG_IDENTIFY]) {
-            [PreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
-            [PreferenceHelper setUserURL:[response.data objectForKey:LINK]];
+            [BNCPreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
+            [BNCPreferenceHelper setUserURL:[response.data objectForKey:LINK]];
             
             if ([response.data objectForKey:REFERRING_DATA]) {
-                [PreferenceHelper setInstallParams:[response.data objectForKey:REFERRING_DATA]];
+                [BNCPreferenceHelper setInstallParams:[response.data objectForKey:REFERRING_DATA]];
             }
             
             if (self.requestQueue.size > 0) {
-                ServerRequest *req = [self.requestQueue peek];
+                BNCServerRequest *req = [self.requestQueue peek];
                 if (req.postData && [req.postData objectForKey:IDENTITY]) {
-                    [PreferenceHelper setUserIdentity:[req.postData objectForKey:IDENTITY]];
+                    [BNCPreferenceHelper setUserIdentity:[req.postData objectForKey:IDENTITY]];
                 }
             }
             

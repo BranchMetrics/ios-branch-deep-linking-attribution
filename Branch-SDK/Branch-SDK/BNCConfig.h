@@ -1,5 +1,5 @@
 //
-//  Config.h
+//  BNCConfig.h
 //  Branch-SDK
 //
 //  Created by Qinwei Gong on 10/6/14.

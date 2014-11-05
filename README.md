@@ -64,7 +64,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 
 	// sign up to get your key at http://branch.io
 	Branch *branch = [Branch getInstance:@"Your app key"];
-	[branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params) {		// previously initUserSessionWithCallback:
+	[branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params) {		// previously initUserSessionWithCallback:withLaunchOptions:
 		// params are the deep linked params associated with the link that the user clicked before showing up
 		// params will be empty if no data found
 
@@ -76,7 +76,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 
 		// route to a profile page in the app for Joe
 		// show a customer welcome
-	} withLaunchOptions:launchOptions];
+	}];
 }
 ```
 
@@ -128,14 +128,14 @@ If you provide a logout function in your app, be sure to clear the user when the
 
 ```objc
 Branch *branch = [Branch getInstance];
-[branch userCompletedAction:@"your_custom_event"]; 
+[branch userCompletedAction:@"your_custom_event"];
 ```
 
 OR if you want to store some state with the event
 
 ```objc
 Branch *branch = [Branch getInstance];
-[branch userCompletedAction:@"your_custom_event" withState:(NSDictionary *)appState]; 
+[branch userCompletedAction:@"your_custom_event" withState:(NSDictionary *)appState];
 ```
 
 Some example events you might want to track:
@@ -175,7 +175,7 @@ Branch *branch = [Branch getInstance];
 
 There are other methods which exclude tag and data if you don't want to pass those. Explore Xcode's autocomplete functionality.
 
-**Note** 
+**Note**
 You can customize the Facebook OG tags of each URL if you want to dynamically share content by using the following optional keys in the params dictionary:
 ```objc
 @"$og_app_id"

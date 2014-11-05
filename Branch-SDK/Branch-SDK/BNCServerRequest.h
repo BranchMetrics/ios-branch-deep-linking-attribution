@@ -1,5 +1,5 @@
 //
-//  ServerRequest.h
+//  BNCServerRequest.h
 //  Branch-SDK
 //
 //  Created by Alex Austin on 6/5/14.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ServerRequest : NSObject
+@interface BNCServerRequest : NSObject
 
 @property (strong, nonatomic) NSString *tag;
 @property (strong, nonatomic) NSDictionary *postData;

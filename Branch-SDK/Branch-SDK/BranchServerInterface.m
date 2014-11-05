@@ -7,87 +7,87 @@
 //
 
 #import "BranchServerInterface.h"
-#import "SystemObserver.h"
-#import "PreferenceHelper.h"
+#import "BNCSystemObserver.h"
+#import "BNCPreferenceHelper.h"
 
 @implementation BranchServerInterface
 
 - (void)registerInstall {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
-    [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
-    if ([SystemObserver getUniqueHardwareId]) [post setObject:[SystemObserver getUniqueHardwareId] forKey:@"hardware_id"];
-    if ([SystemObserver getAppVersion]) [post setObject:[SystemObserver getAppVersion] forKey:@"app_version"];
-    if ([SystemObserver getCarrier]) [post setObject:[SystemObserver getCarrier] forKey:@"carrier"];
-    if ([SystemObserver getBrand]) [post setObject:[SystemObserver getBrand] forKey:@"brand"];
-    if ([SystemObserver getModel]) [post setObject:[SystemObserver getModel] forKey:@"model"];
-    if ([SystemObserver getOS]) [post setObject:[SystemObserver getOS] forKey:@"os"];
-    if ([SystemObserver getOSVersion]) [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
-    if ([SystemObserver getScreenWidth]) [post setObject:[SystemObserver getScreenWidth] forKey:@"screen_width"];
-    if ([SystemObserver getScreenHeight]) [post setObject:[SystemObserver getScreenHeight] forKey:@"screen_height"];
-    if ([SystemObserver getURIScheme]) [post setObject:[SystemObserver getURIScheme] forKey:@"uri_scheme"];
-    if ([SystemObserver getUpdateState]) [post setObject:[SystemObserver getUpdateState] forKeyedSubscript:@"update"];
-    if (![[PreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[PreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
-    [post setObject:[NSNumber numberWithInteger:[PreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    if ([BNCSystemObserver getUniqueHardwareId]) [post setObject:[BNCSystemObserver getUniqueHardwareId] forKey:@"hardware_id"];
+    if ([BNCSystemObserver getAppVersion]) [post setObject:[BNCSystemObserver getAppVersion] forKey:@"app_version"];
+    if ([BNCSystemObserver getCarrier]) [post setObject:[BNCSystemObserver getCarrier] forKey:@"carrier"];
+    if ([BNCSystemObserver getBrand]) [post setObject:[BNCSystemObserver getBrand] forKey:@"brand"];
+    if ([BNCSystemObserver getModel]) [post setObject:[BNCSystemObserver getModel] forKey:@"model"];
+    if ([BNCSystemObserver getOS]) [post setObject:[BNCSystemObserver getOS] forKey:@"os"];
+    if ([BNCSystemObserver getOSVersion]) [post setObject:[BNCSystemObserver getOSVersion] forKey:@"os_version"];
+    if ([BNCSystemObserver getScreenWidth]) [post setObject:[BNCSystemObserver getScreenWidth] forKey:@"screen_width"];
+    if ([BNCSystemObserver getScreenHeight]) [post setObject:[BNCSystemObserver getScreenHeight] forKey:@"screen_height"];
+    if ([BNCSystemObserver getURIScheme]) [post setObject:[BNCSystemObserver getURIScheme] forKey:@"uri_scheme"];
+    if ([BNCSystemObserver getUpdateState]) [post setObject:[BNCSystemObserver getUpdateState] forKeyedSubscript:@"update"];
+    if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
+    [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     
-    [self postRequestAsync:post url:[[PreferenceHelper getAPIURL] stringByAppendingString:@"install"] andTag:REQ_TAG_REGISTER_INSTALL];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"install"] andTag:REQ_TAG_REGISTER_INSTALL];
 }
 
 - (void)registerOpen {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
-    [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
-    [post setObject:[PreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
-    [post setObject:[PreferenceHelper getIdentityID] forKey:@"identity_id"];
-    if ([SystemObserver getAppVersion]) [post setObject:[SystemObserver getAppVersion] forKey:@"app_version"];
-    if ([SystemObserver getOS]) [post setObject:[SystemObserver getOS] forKey:@"os"];
-    if ([SystemObserver getOSVersion]) [post setObject:[SystemObserver getOSVersion] forKey:@"os_version"];
-    if ([SystemObserver getURIScheme]) [post setObject:[SystemObserver getURIScheme] forKey:@"uri_scheme"];
-    [post setObject:[NSNumber numberWithInteger:[PreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
-    if (![[PreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[PreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
+    [post setObject:[BNCPreferenceHelper getIdentityID] forKey:@"identity_id"];
+    if ([BNCSystemObserver getAppVersion]) [post setObject:[BNCSystemObserver getAppVersion] forKey:@"app_version"];
+    if ([BNCSystemObserver getOS]) [post setObject:[BNCSystemObserver getOS] forKey:@"os"];
+    if ([BNCSystemObserver getOSVersion]) [post setObject:[BNCSystemObserver getOSVersion] forKey:@"os_version"];
+    if ([BNCSystemObserver getURIScheme]) [post setObject:[BNCSystemObserver getURIScheme] forKey:@"uri_scheme"];
+    [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
+    if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     
-    [self postRequestAsync:post url:[[PreferenceHelper getAPIURL] stringByAppendingString:@"open"] andTag:REQ_TAG_REGISTER_OPEN];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"open"] andTag:REQ_TAG_REGISTER_OPEN];
 }
 
 - (void)registerClose {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
-    [post setObject:[PreferenceHelper getAppKey] forKey:@"app_id"];
-    [post setObject:[PreferenceHelper getSessionID] forKey:@"session_id"];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
     
-    [self postRequestAsync:post url:[[PreferenceHelper getAPIURL] stringByAppendingString:@"close"] andTag:REQ_TAG_REGISTER_CLOSE];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"close"] andTag:REQ_TAG_REGISTER_CLOSE];
 }
 
 - (void)userCompletedAction:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[PreferenceHelper getAPIURL] stringByAppendingString:@"event"] andTag:REQ_TAG_COMPLETE_ACTION];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"event"] andTag:REQ_TAG_COMPLETE_ACTION];
 }
 
 - (void)getReferralCounts {
-    [self getRequestAsync:nil url:[[[PreferenceHelper getAPIURL] stringByAppendingString:@"referrals/"] stringByAppendingString:[PreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
+    [self getRequestAsync:nil url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"referrals/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
 }
 
 - (void)getRewards {
-    [self getRequestAsync:nil url:[[[PreferenceHelper getAPIURL] stringByAppendingString:@"credits/"] stringByAppendingString:[PreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REWARDS];
+    [self getRequestAsync:nil url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"credits/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REWARDS];
 }
 
 - (void)redeemRewards:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[PreferenceHelper getAPIURL] stringByAppendingString:@"redeem"] andTag:REQ_TAG_REDEEM_REWARDS];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"redeem"] andTag:REQ_TAG_REDEEM_REWARDS];
 }
 
 - (void)getCreditHistory:(NSDictionary *)query {
-    [self getRequestAsync:query url:[[PreferenceHelper getAPIURL] stringByAppendingString:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
+    [self getRequestAsync:query url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
 }
 
 - (void)createCustomUrl:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[PreferenceHelper getAPIURL] stringByAppendingString:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL];
 }
 
 - (void)identifyUser:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[PreferenceHelper getAPIURL] stringByAppendingString:@"profile"] andTag:REQ_TAG_IDENTIFY];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"profile"] andTag:REQ_TAG_IDENTIFY];
 }
 
 - (void)logoutUser:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[PreferenceHelper getAPIURL] stringByAppendingString:@"logout"] andTag:REQ_TAG_LOGOUT];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"logout"] andTag:REQ_TAG_LOGOUT];
 }
 
 - (void)addProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params {
@@ -114,7 +114,7 @@
     [self updateProfileParams:newPost];
 }
 - (void)updateProfileParams:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[PreferenceHelper getAPIURL] stringByAppendingString:@"profile"] andTag:REQ_TAG_PROFILE_DATA];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"profile"] andTag:REQ_TAG_PROFILE_DATA];
 }
 
 @end
