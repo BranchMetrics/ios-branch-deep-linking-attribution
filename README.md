@@ -64,7 +64,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 
 	// sign up to get your key at http://branch.io
 	Branch *branch = [Branch getInstance:@"Your app key"];
-	[branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params) {		// previously initUserSessionWithCallback:
+	[branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params) {		// previously initUserSessionWithCallback:withLaunchOptions:
 		// params are the deep linked params associated with the link that the user clicked before showing up
 		// params will be empty if no data found
 
@@ -76,7 +76,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 
 		// route to a profile page in the app for Joe
 		// show a customer welcome
-	} withLaunchOptions:launchOptions];
+	}];
 }
 ```
 
