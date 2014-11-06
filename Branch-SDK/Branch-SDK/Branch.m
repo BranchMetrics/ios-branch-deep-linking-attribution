@@ -464,7 +464,7 @@ static Branch *currInstance;
     });
 }
 
-- (void)boostRequest:(BNCServerRequest *)req {
+- (void)insertRequestAtFront:(BNCServerRequest *)req {
     if (self.networkCount == 0) {
         [self.requestQueue insert:req at:0];
     } else {
@@ -477,7 +477,7 @@ static Branch *currInstance;
         if (!self.isInit) {
             BNCServerRequest *req = [[BNCServerRequest alloc] init];
             req.tag = REQ_TAG_REGISTER_OPEN;
-            [self boostRequest:req];
+            [self insertRequestAtFront:req];
             [self processNextQueueItem];
         }
     });
@@ -689,7 +689,7 @@ static Branch *currInstance;
 - (void)registerInstallOrOpen:(NSString *)tag {
     if (![self.requestQueue containsInstallOrOpen]) {
         BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:tag];
-        [self boostRequest:req];
+        [self insertRequestAtFront:req];
     } else {
         [self.requestQueue moveInstallOrOpen:tag ToFront:self.networkCount];
     }
