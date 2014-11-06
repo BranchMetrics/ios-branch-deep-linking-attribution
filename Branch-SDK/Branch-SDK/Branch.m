@@ -633,8 +633,6 @@ static Branch *currInstance;
     } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
         NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
         if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict);
-    } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
-        [self.requestQueue dequeue];
     }
 }
 
@@ -777,6 +775,9 @@ static Branch *currInstance;
             if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorNetworkConnectionLost || status == NSURLErrorCannotFindHost) {
                 self.hasNetwork = NO;
                 [self handleFailure];
+                if ([requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
+                    [self.requestQueue dequeue];
+                }
                 NSLog(@"Branch API Error: Poor network connectivity. Please try again later.");
             } else {
                 retry = YES;
