@@ -895,11 +895,12 @@ static Branch *currInstance;
             [self.requestQueue dequeue];
             
             dispatch_async(self.asyncQueue, ^{
+                self.networkCount = 0;
                 [self processNextQueueItem];
             });
+        } else {
+            self.networkCount = 0;
         }
-        
-        self.networkCount = 0;
     }
 }
 
