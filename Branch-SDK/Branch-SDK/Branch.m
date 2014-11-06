@@ -464,12 +464,20 @@ static Branch *currInstance;
     });
 }
 
+- (void)boostRequest:(BNCServerRequest *)req {
+    if (self.networkCount == 0) {
+        [self.requestQueue insert:req at:0];
+    } else {
+        [self.requestQueue insert:req at:1];
+    }
+}
+
 - (void)applicationDidBecomeActive {
     dispatch_async(self.asyncQueue, ^{
         if (!self.isInit) {
             BNCServerRequest *req = [[BNCServerRequest alloc] init];
             req.tag = REQ_TAG_REGISTER_OPEN;
-            [self.requestQueue insert:req at:0];
+            [self boostRequest:req];
             [self processNextQueueItem];
         }
     });
@@ -584,10 +592,10 @@ static Branch *currInstance;
                 Debug(@"calling identify user");
                 [self.bServerInterface identifyUser:req.postData];
             } else if ([req.tag isEqualToString:REQ_TAG_LOGOUT] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling identify user");
+                Debug(@"calling logout");
                 [self.bServerInterface logoutUser:req.postData];
             } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling identify user");
+                Debug(@"calling close");
                 [self.bServerInterface registerClose];
             } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY] && [self hasUser] && [self hasSession]) {
                 Debug(@"calling get reward history");
@@ -625,6 +633,8 @@ static Branch *currInstance;
     } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
         NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
         if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict);
+    } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
+        [self.requestQueue dequeue];
     }
 }
 
@@ -679,9 +689,9 @@ static Branch *currInstance;
 - (void)registerInstallOrOpen:(NSString *)tag {
     if (![self.requestQueue containsInstallOrOpen]) {
         BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:tag];
-        [self.requestQueue insert:req at:0];
+        [self boostRequest:req];
     } else {
-        [self.requestQueue moveInstallOrOpenToFront:tag];
+        [self.requestQueue moveInstallOrOpen:tag ToFront:self.networkCount];
     }
     
     dispatch_async(self.asyncQueue, ^{
@@ -757,7 +767,6 @@ static Branch *currInstance;
         NSString *requestTag = response.tag;
         
         BOOL retry = NO;
-        self.networkCount = 0;
         self.hasNetwork = YES;
         
         if (status >= 400 && status < 500) {
@@ -889,6 +898,8 @@ static Branch *currInstance;
                 [self processNextQueueItem];
             });
         }
+        
+        self.networkCount = 0;
     }
 }
 

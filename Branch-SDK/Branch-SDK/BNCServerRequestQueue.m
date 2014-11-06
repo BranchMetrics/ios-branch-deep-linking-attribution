@@ -113,7 +113,7 @@
     return NO;
 }
 
-- (void)moveInstallOrOpenToFront:(NSString *)tag {
+- (void)moveInstallOrOpen:(NSString *)tag ToFront:(NSInteger)networkCount {
     for (int i = 0; i < self.queue.count; i++) {
         BNCServerRequest *req = [self.queue objectAtIndex:i];
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
@@ -123,7 +123,11 @@
     }
     
     BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:tag];
-    [self insert:req at:0];
+    if (networkCount == 0) {
+        [self insert:req at:0];
+    } else {
+        [self insert:req at:1];
+    }
 }
 
 - (BOOL)containsClose {
