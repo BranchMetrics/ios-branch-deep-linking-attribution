@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#import "ServerInterface.h"
+#import "BNCServerInterface.h"
 
 
 static NSString *REQ_TAG_REGISTER_INSTALL = @"t_register_install";
@@ -22,7 +22,7 @@ static NSString *REQ_TAG_IDENTIFY = @"t_identify_user";
 static NSString *REQ_TAG_LOGOUT = @"t_logout";
 static NSString *REQ_TAG_PROFILE_DATA = @"t_profile_data";
 
-@interface BranchServerInterface : ServerInterface
+@interface BranchServerInterface : BNCServerInterface
 
 - (void)registerInstall;
 - (void)registerOpen;

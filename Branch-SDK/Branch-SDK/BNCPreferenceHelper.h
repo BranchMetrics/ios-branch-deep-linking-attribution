@@ -1,5 +1,5 @@
 //
-//  PreferenceHelper.h
+//  BNCPreferenceHelper.h
 //  Branch-SDK
 //
 //  Created by Alex Austin on 6/6/14.
@@ -10,7 +10,7 @@
 
 static NSString *NO_STRING_VALUE = @"bnc_no_value";
 
-@interface PreferenceHelper : NSObject
+@interface BNCPreferenceHelper : NSObject
 
 + (NSString *)getAPIBaseURL;
 + (NSString *)getAPIURL;

@@ -1,5 +1,5 @@
 //
-//  ServerResponse.h
+//  BNCServerResponse.h
 //  Branch-SDK
 //
 //  Created by Qinwei Gong on 10/10/14.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ServerResponse : NSObject
+@interface BNCServerResponse : NSObject
 
 @property (nonatomic, strong) NSNumber *statusCode;
 @property (nonatomic, strong) NSString *tag;

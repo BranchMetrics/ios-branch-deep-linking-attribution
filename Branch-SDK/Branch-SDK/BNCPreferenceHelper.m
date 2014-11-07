@@ -1,13 +1,13 @@
 //
-//  PreferenceHelper.m
+//  BNCPreferenceHelper.m
 //  Branch-SDK
 //
 //  Created by Alex Austin on 6/6/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#import "PreferenceHelper.h"
-#import "Config.h"
+#import "BNCPreferenceHelper.h"
+#import "BNCConfig.h"
 
 
 static NSString *KEY_APP_KEY = @"bnc_app_key";
@@ -30,7 +30,7 @@ static NSString *KEY_COUNTS = @"bnc_counts";
 static NSString *KEY_TOTAL_BASE = @"bnc_total_base_";
 static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
-@implementation PreferenceHelper
+@implementation BNCPreferenceHelper
 
 + (NSString *)getAPIBaseURL {
     return API_BASE_URL;
@@ -43,54 +43,54 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 // PREFERENCE STORAGE
 
 + (void)setAppKey:(NSString *)appKey {
-    [PreferenceHelper writeObjectToDefaults:KEY_APP_KEY value:appKey];
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_APP_KEY value:appKey];
 }
 
 + (NSString *)getAppKey {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_APP_KEY];
+    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_APP_KEY];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
 }
 
 + (void)setDeviceFingerprintID:(NSString *)deviceID {
-    [PreferenceHelper writeObjectToDefaults:KEY_DEVICE_FINGERPRINT_ID value:deviceID];
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_DEVICE_FINGERPRINT_ID value:deviceID];
 }
 
 + (NSString *)getDeviceFingerprintID {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_DEVICE_FINGERPRINT_ID];
+    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_DEVICE_FINGERPRINT_ID];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
 }
 
 + (void)setSessionID:(NSString *)sessionID {
-    [PreferenceHelper writeObjectToDefaults:KEY_SESSION_ID value:sessionID];
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_SESSION_ID value:sessionID];
 }
 
 + (NSString *)getSessionID {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_SESSION_ID];
+    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_SESSION_ID];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
 }
 
 + (void)setIdentityID:(NSString *)identityID {
-    [PreferenceHelper writeObjectToDefaults:KEY_IDENTITY_ID value:identityID];
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_IDENTITY_ID value:identityID];
 }
 
 + (NSString *)getIdentityID {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_IDENTITY_ID];
+    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_IDENTITY_ID];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
 }
 
 + (void)setUserIdentity:(NSString *)userIdentity {
-    [PreferenceHelper writeObjectToDefaults:KEY_IDENTITY value:userIdentity];
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_IDENTITY value:userIdentity];
 }
 + (NSString *)getUserIdentity {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_IDENTITY];
+    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_IDENTITY];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
@@ -98,132 +98,132 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 }
 
 + (void)setLinkClickIdentifier:(NSString *)linkClickIdentifier {
-    [PreferenceHelper writeObjectToDefaults:KEY_LINK_CLICK_IDENTIFIER value:linkClickIdentifier];
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_LINK_CLICK_IDENTIFIER value:linkClickIdentifier];
 
 }
 + (NSString *)getLinkClickIdentifier {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_LINK_CLICK_IDENTIFIER];
+    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_LINK_CLICK_IDENTIFIER];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
 }
 
 + (void)setLinkClickID:(NSString *)linkClickId {
-    [PreferenceHelper writeObjectToDefaults:KEY_LINK_CLICK_ID value:linkClickId];
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_LINK_CLICK_ID value:linkClickId];
 }
 
 + (NSString *)getLinkClickID {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_LINK_CLICK_ID];
+    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_LINK_CLICK_ID];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
 }
 
 + (void)setSessionParams:(NSString *)sessionParams {
-    [PreferenceHelper writeObjectToDefaults:KEY_SESSION_PARAMS value:sessionParams];
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_SESSION_PARAMS value:sessionParams];
 }
 
 + (NSString *)getSessionParams {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_SESSION_PARAMS];
+    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_SESSION_PARAMS];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
 }
 
 + (void)setInstallParams:(NSString *)installParams {
-    [PreferenceHelper writeObjectToDefaults:KEY_INSTALL_PARAMS value:installParams];
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_INSTALL_PARAMS value:installParams];
 }
 
 + (NSString *)getInstallParams {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_INSTALL_PARAMS];
+    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_INSTALL_PARAMS];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
 }
 
 + (void)setUserURL:(NSString *)userUrl {
-    [PreferenceHelper writeObjectToDefaults:KEY_USER_URL value:userUrl];
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_USER_URL value:userUrl];
 }
 
 + (NSString *)getUserURL {
-    NSString *ret = (NSString *)[PreferenceHelper readObjectFromDefaults:KEY_USER_URL];
+    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_USER_URL];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
 }
 + (NSInteger)getIsReferrable {
-    return [PreferenceHelper readIntegerFromDefaults:KEY_IS_REFERRABLE];
+    return [BNCPreferenceHelper readIntegerFromDefaults:KEY_IS_REFERRABLE];
 }
 + (void)setIsReferrable {
-    [PreferenceHelper writeIntegerToDefaults:KEY_IS_REFERRABLE value:1];
+    [BNCPreferenceHelper writeIntegerToDefaults:KEY_IS_REFERRABLE value:1];
 }
 + (void)clearIsReferrable {
-    [PreferenceHelper writeIntegerToDefaults:KEY_IS_REFERRABLE value:0];
+    [BNCPreferenceHelper writeIntegerToDefaults:KEY_IS_REFERRABLE value:0];
 }
 
 + (void)clearUserCreditsAndCounts {
-    [PreferenceHelper setCreditsDictionary:[[NSDictionary alloc] init]];
-    [PreferenceHelper setCountsDictionary:[[NSDictionary alloc] init]];
+    [BNCPreferenceHelper setCreditsDictionary:[[NSDictionary alloc] init]];
+    [BNCPreferenceHelper setCountsDictionary:[[NSDictionary alloc] init]];
 }
 
 // CREDIT STORAGE
 
 + (NSDictionary *)getCreditsDictionary {
-    NSDictionary *dict = (NSDictionary *)[PreferenceHelper readObjectFromDefaults:KEY_CREDITS];
+    NSDictionary *dict = (NSDictionary *)[BNCPreferenceHelper readObjectFromDefaults:KEY_CREDITS];
     if (!dict)
         dict = [[NSDictionary alloc] init];
     return dict;
 }
 
 + (void)setCreditsDictionary:(NSDictionary *)credits {
-    [PreferenceHelper writeObjectToDefaults:KEY_CREDITS value:credits];
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_CREDITS value:credits];
 }
 
 + (void)setCreditCount:(NSInteger)count {
     [self setCreditCount:count forBucket:@"default"];
 }
 + (void)setCreditCount:(NSInteger)count forBucket:(NSString *)bucket {
-    NSMutableDictionary *creditDict = [[PreferenceHelper getCreditsDictionary] mutableCopy];
+    NSMutableDictionary *creditDict = [[BNCPreferenceHelper getCreditsDictionary] mutableCopy];
     [creditDict setObject:[NSNumber numberWithInteger:count] forKey:[KEY_CREDIT_BASE stringByAppendingString:bucket]];
-    [PreferenceHelper setCreditsDictionary:creditDict];
+    [BNCPreferenceHelper setCreditsDictionary:creditDict];
 }
 + (NSInteger)getCreditCount {
     return [self getCreditCountForBucket:@"default"];
 }
 + (NSInteger)getCreditCountForBucket:(NSString *)bucket {
-    NSDictionary *creditDict = [PreferenceHelper getCreditsDictionary];
+    NSDictionary *creditDict = [BNCPreferenceHelper getCreditsDictionary];
     return [[creditDict objectForKey:[KEY_CREDIT_BASE stringByAppendingString:bucket]] integerValue];
 }
 
 // COUNT STORAGE
 
 + (NSDictionary *)getCountsDictionary {
-    NSDictionary *dict = (NSDictionary *)[PreferenceHelper readObjectFromDefaults:KEY_COUNTS];
+    NSDictionary *dict = (NSDictionary *)[BNCPreferenceHelper readObjectFromDefaults:KEY_COUNTS];
     if (!dict)
         dict = [[NSDictionary alloc] init];
     return dict;
 }
 
 + (void)setCountsDictionary:(NSDictionary *)counts {
-    [PreferenceHelper writeObjectToDefaults:KEY_COUNTS value:counts];
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_COUNTS value:counts];
 }
 
 + (void)setActionTotalCount:(NSString *)action withCount:(NSInteger)count {
-    NSMutableDictionary *counts = [[PreferenceHelper getCountsDictionary] mutableCopy];
+    NSMutableDictionary *counts = [[BNCPreferenceHelper getCountsDictionary] mutableCopy];
     [counts setObject:[NSNumber numberWithInteger:count] forKey:[KEY_TOTAL_BASE stringByAppendingString:action]];
-    [PreferenceHelper setCountsDictionary:counts];
+    [BNCPreferenceHelper setCountsDictionary:counts];
 }
 + (void)setActionUniqueCount:(NSString *)action withCount:(NSInteger)count {
-    NSMutableDictionary *counts = [[PreferenceHelper getCountsDictionary] mutableCopy];
+    NSMutableDictionary *counts = [[BNCPreferenceHelper getCountsDictionary] mutableCopy];
     [counts setObject:[NSNumber numberWithInteger:count] forKey:[KEY_UNIQUE_BASE stringByAppendingString:action]];
-    [PreferenceHelper setCountsDictionary:counts];
+    [BNCPreferenceHelper setCountsDictionary:counts];
 }
 + (NSInteger)getActionTotalCount:(NSString *)action {
-    NSDictionary *counts = [PreferenceHelper getCountsDictionary];
+    NSDictionary *counts = [BNCPreferenceHelper getCountsDictionary];
     return [[counts objectForKey:[KEY_TOTAL_BASE stringByAppendingString:action]] integerValue];
 }
 + (NSInteger)getActionUniqueCount:(NSString *)action {
-    NSDictionary *counts = [PreferenceHelper getCountsDictionary];
+    NSDictionary *counts = [BNCPreferenceHelper getCountsDictionary];
     return [[counts objectForKey:[KEY_UNIQUE_BASE stringByAppendingString:action]] integerValue];
 }
 
@@ -298,7 +298,7 @@ static const short _base64DecodingTable[256] = {
 }
 
 + (NSString *)base64DecodeStringToString:(NSString *)strData {
-    return [[NSString alloc] initWithData:[PreferenceHelper base64DecodeString:strData] encoding:NSUTF8StringEncoding];
+    return [[NSString alloc] initWithData:[BNCPreferenceHelper base64DecodeString:strData] encoding:NSUTF8StringEncoding];
 }
 
 + (NSString *)base64EncodeData:(NSData *)objData {

@@ -1,14 +1,14 @@
 //
-//  ServerResponse.m
+//  BNCServerResponse.m
 //  Branch-SDK
 //
 //  Created by Qinwei Gong on 10/10/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#import "ServerResponse.h"
+#import "BNCServerResponse.h"
 
-@implementation ServerResponse
+@implementation BNCServerResponse
 
 - (id)initWithTag:(NSString *)tag andStatusCode:(NSNumber *)code {
     if (!tag || !code) {

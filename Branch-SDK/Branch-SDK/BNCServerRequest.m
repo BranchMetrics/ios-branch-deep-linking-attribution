@@ -1,23 +1,23 @@
 //
-//  ServerRequest.m
+//  BNCServerRequest.m
 //  Branch-SDK
 //
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#import "ServerRequest.h"
-#import "Config.h"
+#import "BNCServerRequest.h"
+#import "BNCConfig.h"
 
 #define TAG         @"TAG"
 #define DATA        @"POSTDATA"
 
-@interface ServerRequest() <NSCoding>
+@interface BNCServerRequest() <NSCoding>
 
 @end
 
 
-@implementation ServerRequest
+@implementation BNCServerRequest
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     [coder encodeObject:self.tag forKey:TAG];

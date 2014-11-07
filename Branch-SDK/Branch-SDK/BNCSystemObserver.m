@@ -1,5 +1,5 @@
 //
-//  SystemObserver.m
+//  BNCSystemObserver.m
 //  Branch-SDK
 //
 //  Created by Alex Austin on 6/5/14.
@@ -7,15 +7,15 @@
 //
 
 #include <sys/utsname.h>
-#import "PreferenceHelper.h"
-#import "SystemObserver.h"
+#import "BNCPreferenceHelper.h"
+#import "BNCSystemObserver.h"
 #import <UIKit/UIDevice.h>
 #import <UIKit/UIScreen.h>
 #import <CoreTelephony/CTCarrier.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
-@implementation SystemObserver
+@implementation BNCSystemObserver
 
 + (NSString *)getUniqueHardwareId {
     NSString *uid = nil;

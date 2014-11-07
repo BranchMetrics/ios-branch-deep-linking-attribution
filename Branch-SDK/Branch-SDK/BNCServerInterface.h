@@ -1,5 +1,5 @@
 //
-//  ServerInterface.h
+//  BNCServerInterface.h
 //  Branch-SDK
 //
 //  Created by Alex Austin on 6/4/14.
@@ -7,20 +7,20 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ServerResponse.h"
+#import "BNCServerResponse.h"
 
-@protocol ServerInterfaceDelegate <NSObject>
+@protocol BNCServerInterfaceDelegate <NSObject>
 
 @optional
-- (void)serverCallback:(ServerResponse *)returnedData;
+- (void)serverCallback:(BNCServerResponse *)returnedData;
 
 @end
 
 static NSString *kpServerIdentNone = @"no_value";
 
-@interface ServerInterface : NSObject
+@interface BNCServerInterface : NSObject
 
-@property (nonatomic, strong) id <ServerInterfaceDelegate> delegate;
+@property (nonatomic, strong) id <BNCServerInterfaceDelegate> delegate;
 
 + (NSString *)encodePostToUniversalString:(NSDictionary *)params;
 
