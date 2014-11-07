@@ -111,7 +111,7 @@ static Branch *currInstance;
     
     [[NSNotificationCenter defaultCenter] addObserver:currInstance
                                              selector:@selector(applicationWillResignActive)
-                                                 name:UIApplicationDidEnterBackgroundNotification
+                                                 name:UIApplicationWillResignActiveNotification
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:currInstance
@@ -501,7 +501,9 @@ static Branch *currInstance;
         // if there's no network connectivity, purge the old open
         BNCServerRequest *req = [self.requestQueue peek];
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
+            NSLog(@"1 ========== queue: %@", self.requestQueue);
             [self.requestQueue dequeue];
+            NSLog(@"2 ========== queue: %@", self.requestQueue);
         }
     } else {
         if (![self.requestQueue containsClose]) {
@@ -565,6 +567,7 @@ static Branch *currInstance;
 }
 
 - (void)processNextQueueItem {
+    NSLog(@"----------------- Queue: %@", self.requestQueue);
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
     
     if (self.networkCount == 0 && self.requestQueue.size > 0) {

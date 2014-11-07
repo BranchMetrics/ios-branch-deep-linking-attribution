@@ -17,6 +17,7 @@
 
 #ifdef PROD_ENV
 #define API_BASE_URL            @"https://api.branch.io";
+#define DEBUG_MODE
 #endif
 
 #ifdef STAGE_ENV
