@@ -476,12 +476,15 @@ static Branch *currInstance;
     if (!self.isInit) {
         dispatch_async(self.asyncQueue, ^{
             BNCServerRequest *req = [[BNCServerRequest alloc] init];
-            req.tag = REQ_TAG_REGISTER_OPEN;
+            if (![self hasUser]) {
+                req.tag = REQ_TAG_REGISTER_INSTALL;
+            } else {
+                req.tag = REQ_TAG_REGISTER_OPEN;
+            }
             [self insertRequestAtFront:req];
             [self processNextQueueItem];
+            self.isInit = YES;
         });
-    } else {
-        self.isInit = NO;
     }
 }
 
@@ -497,13 +500,11 @@ static Branch *currInstance;
 - (void)callClose {
     self.isInit = NO;
     
-    if (!self.hasNetwork) {     //QUESTION: why not throw away old open here regardless?
-        // if there's no network connectivity, purge the old open
+    if (!self.hasNetwork) {
+        // if there's no network connectivity, purge the old install/open
         BNCServerRequest *req = [self.requestQueue peek];
-        if ([req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
-            NSLog(@"1 ========== queue: %@", self.requestQueue);
+        if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             [self.requestQueue dequeue];
-            NSLog(@"2 ========== queue: %@", self.requestQueue);
         }
     } else {
         if (![self.requestQueue containsClose]) {
@@ -567,7 +568,6 @@ static Branch *currInstance;
 }
 
 - (void)processNextQueueItem {
-    NSLog(@"----------------- Queue: %@", self.requestQueue);
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
     
     if (self.networkCount == 0 && self.requestQueue.size > 0) {
@@ -789,7 +789,7 @@ static Branch *currInstance;
             if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorNetworkConnectionLost || status == NSURLErrorCannotFindHost) {
                 self.hasNetwork = NO;
                 [self handleFailure];
-                if ([requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
+                if ([requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {  // for safety sake		
                     [self.requestQueue dequeue];
                 }
                 NSLog(@"Branch API Error: Poor network connectivity. Please try again later.");
