@@ -775,7 +775,7 @@ static Branch *currInstance;
             if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorNetworkConnectionLost || status == NSURLErrorCannotFindHost) {
                 self.hasNetwork = NO;
                 [self handleFailure];
-                if ([requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
+                if ([requestTag isEqualToString:REQ_TAG_REGISTER_OPEN] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
                     [self.requestQueue dequeue];
                 }
                 NSLog(@"Branch API Error: Poor network connectivity. Please try again later.");
