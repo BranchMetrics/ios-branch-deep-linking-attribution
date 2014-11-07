@@ -473,15 +473,18 @@ static Branch *currInstance;
 }
 
 - (void)applicationDidBecomeActive {
-    dispatch_async(self.asyncQueue, ^{
-        if (!self.isInit) {
+    if (!self.isInit) {
+        dispatch_async(self.asyncQueue, ^{
             BNCServerRequest *req = [[BNCServerRequest alloc] init];
             req.tag = REQ_TAG_REGISTER_OPEN;
             [self insertRequestAtFront:req];
             [self processNextQueueItem];
-        }
-    });
+        });
+    } else {
+        self.isInit = NO;
+    }
 }
+
 - (void)applicationWillResignActive {
     [self clearTimer];
     self.sessionTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(callClose) userInfo:nil repeats:NO];
