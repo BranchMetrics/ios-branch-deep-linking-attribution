@@ -1,12 +1,12 @@
 Pod::Spec.new do |s|
   s.name             = "Branch"
-  s.version          = "0.2.7"
+  s.version          = "0.2.8"
   s.summary          = "Create an HTTP URL for any piece of content in your app"
   s.description      = <<-DESC
-- Want the highest possible conversions on your sharing feature? 
-- Want to measure the k-factor of your invite feature? 
+- Want the highest possible conversions on your sharing feature?
+- Want to measure the k-factor of your invite feature?
 - Want a whole referral program in 10 lines of code, with automatic user-user attribution and rewarding?
-- Want to pass data (deep link) from a URL across install and open? 
+- Want to pass data (deep link) from a URL across install and open?
 - Want custom onboarding post install?
 - Want it all for free?
 
