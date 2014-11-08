@@ -17,8 +17,10 @@
 
 @implementation BNCSystemObserver
 
-+ (NSString *)getUniqueHardwareId {
++ (NSString *)getUniqueHardwareId:(BOOL *)isReal {
     NSString *uid = nil;
+    *isReal = YES;
+    
     Class ASIdentifierManagerClass = NSClassFromString(@"ASIdentifierManager");
     if (ASIdentifierManagerClass) {
         SEL sharedManagerSelector = NSSelectorFromString(@"sharedManager");
@@ -34,8 +36,9 @@
     
     if (!uid) {
         uid = [[NSUUID UUID] UUIDString];
+        *isReal = NO;
     }
-
+    
     return uid;
 }
 
@@ -100,13 +103,17 @@
 }
 
 + (NSNumber *)getScreenWidth {
-    CGSize size = [UIScreen mainScreen].bounds.size;
-    return [NSNumber numberWithInteger:(NSInteger)size.width];
+    UIScreen *mainScreen = [UIScreen mainScreen];
+    float scaleFactor = mainScreen.scale;
+    CGFloat width = mainScreen.bounds.size.width * scaleFactor;
+    return [NSNumber numberWithInteger:(NSInteger)width];
 }
 
 + (NSNumber *)getScreenHeight {
-    CGSize size = [UIScreen mainScreen].bounds.size;
-    return [NSNumber numberWithInteger:(NSInteger)size.height];
+    UIScreen *mainScreen = [UIScreen mainScreen];
+    float scaleFactor = mainScreen.scale;
+    CGFloat height = mainScreen.bounds.size.height * scaleFactor;
+    return [NSNumber numberWithInteger:(NSInteger)height];
 }
 
 @end

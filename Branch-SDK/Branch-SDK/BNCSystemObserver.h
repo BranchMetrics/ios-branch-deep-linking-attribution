@@ -10,7 +10,7 @@
 
 @interface BNCSystemObserver : NSObject
 
-+ (NSString *)getUniqueHardwareId;
++ (NSString *)getUniqueHardwareId:(BOOL *)isReal;
 + (NSString *)getURIScheme;
 + (NSString *)getAppVersion;
 + (NSString *)getCarrier;

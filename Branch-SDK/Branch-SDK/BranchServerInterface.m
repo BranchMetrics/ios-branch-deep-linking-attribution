@@ -16,7 +16,12 @@
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
-    if ([BNCSystemObserver getUniqueHardwareId]) [post setObject:[BNCSystemObserver getUniqueHardwareId] forKey:@"hardware_id"];
+    BOOL isRealHardwareId;
+    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId];
+    if (hardwareId) {
+        [post setObject:hardwareId forKey:@"hardware_id"];
+        [post setObject:[NSNumber numberWithBool:isRealHardwareId] forKey:@"is_hardware_id_real"];
+    }
     if ([BNCSystemObserver getAppVersion]) [post setObject:[BNCSystemObserver getAppVersion] forKey:@"app_version"];
     if ([BNCSystemObserver getCarrier]) [post setObject:[BNCSystemObserver getCarrier] forKey:@"carrier"];
     if ([BNCSystemObserver getBrand]) [post setObject:[BNCSystemObserver getBrand] forKey:@"brand"];
