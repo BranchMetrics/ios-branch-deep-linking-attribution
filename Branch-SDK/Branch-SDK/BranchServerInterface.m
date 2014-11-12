@@ -12,7 +12,7 @@
 
 @implementation BranchServerInterface
 
-- (void)registerInstall {
+- (void)registerInstall:(BOOL)debug {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
@@ -34,11 +34,12 @@
     if ([BNCSystemObserver getUpdateState]) [post setObject:[BNCSystemObserver getUpdateState] forKeyedSubscript:@"update"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
+    [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     
     [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"install"] andTag:REQ_TAG_REGISTER_INSTALL];
 }
 
-- (void)registerOpen {
+- (void)registerOpen:(BOOL)debug {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
@@ -49,6 +50,7 @@
     if ([BNCSystemObserver getOSVersion]) [post setObject:[BNCSystemObserver getOSVersion] forKey:@"os_version"];
     if ([BNCSystemObserver getURIScheme]) [post setObject:[BNCSystemObserver getURIScheme] forKey:@"uri_scheme"];
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
+    [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     
     [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"open"] andTag:REQ_TAG_REGISTER_OPEN];

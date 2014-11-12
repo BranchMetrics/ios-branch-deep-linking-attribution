@@ -24,8 +24,8 @@ static NSString *REQ_TAG_PROFILE_DATA = @"t_profile_data";
 
 @interface BranchServerInterface : BNCServerInterface
 
-- (void)registerInstall;
-- (void)registerOpen;
+- (void)registerInstall:(BOOL)debug;
+- (void)registerOpen:(BOOL)debug;
 - (void)registerClose;
 - (void)getReferralCounts;
 - (void)getCreditHistory:(NSDictionary *)query ;

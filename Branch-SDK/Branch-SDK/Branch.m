@@ -68,6 +68,7 @@ static NSString *DIRECTION = @"direction";
 @property (strong, nonatomic) callbackWithList creditHistoryLoadCallback;
 @property (assign, nonatomic) BOOL initFinished;
 @property (assign, nonatomic) BOOL hasNetwork;
+@property (assign, nonatomic) BOOL isDebugMode;
 
 @end
 
@@ -108,6 +109,7 @@ static Branch *currInstance;
     currInstance.requestQueue = [BNCServerRequestQueue getInstance];
     currInstance.initFinished = NO;
     currInstance.hasNetwork = YES;
+    currInstance.isDebugMode = NO;
     
     [[NSNotificationCenter defaultCenter] addObserver:currInstance
                                              selector:@selector(applicationWillResignActive)
@@ -121,6 +123,10 @@ static Branch *currInstance;
     
     currInstance.retryCount = 0;
     currInstance.networkCount = 0;
+}
+
+- (void)setDebug {
+    self.isDebugMode = YES;
 }
 
 - (void)resetUserSession {
@@ -568,6 +574,7 @@ static Branch *currInstance;
 }
 
 - (void)processNextQueueItem {
+    NSLog(@"Platform: %@", [BNCSystemObserver getModel]);
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
     
     if (self.networkCount == 0 && self.requestQueue.size > 0) {
@@ -583,10 +590,10 @@ static Branch *currInstance;
             
             if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
                 Debug(@"calling register install");
-                [self.bServerInterface registerInstall];
+                [self.bServerInterface registerInstall:self.isDebugMode];
             } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_OPEN] && [self hasUser]) {
                 Debug(@"calling register open");
-                [self.bServerInterface registerOpen];
+                [self.bServerInterface registerOpen:self.isDebugMode];
             } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS] && [self hasUser] && [self hasSession]) {
                 Debug(@"calling get referrals");
                 [self.bServerInterface getReferralCounts];

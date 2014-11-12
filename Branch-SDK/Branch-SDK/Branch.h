@@ -29,6 +29,8 @@ typedef enum {
 + (Branch *)getInstance:(NSString *)key;
 + (Branch *)getInstance;
 
+- (void)setDebug;
+
 - (void)initSession;
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options;
 - (void)initSession:(BOOL)isReferrable;
