@@ -105,15 +105,29 @@
 + (NSNumber *)getScreenWidth {
     UIScreen *mainScreen = [UIScreen mainScreen];
     float scaleFactor = mainScreen.scale;
-    CGFloat width = mainScreen.bounds.size.width * scaleFactor;
-    return [NSNumber numberWithInteger:(NSInteger)width];
+    CGFloat width;
+    CGSize size = mainScreen.bounds.size;
+    if (UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
+        width = size.height;
+    } else {
+        width = size.width;
+    }
+    CGFloat scaledWidth = width * scaleFactor;
+    return [NSNumber numberWithInteger:(NSInteger)scaledWidth];
 }
 
 + (NSNumber *)getScreenHeight {
     UIScreen *mainScreen = [UIScreen mainScreen];
     float scaleFactor = mainScreen.scale;
-    CGFloat height = mainScreen.bounds.size.height * scaleFactor;
-    return [NSNumber numberWithInteger:(NSInteger)height];
+    CGFloat height;
+    CGSize size = mainScreen.bounds.size;
+    if (UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
+        height = size.width;
+    } else {
+        height = size.height;
+    }
+    CGFloat scaledHeight = height * scaleFactor;
+    return [NSNumber numberWithInteger:(NSInteger)scaledHeight];
 }
 
 @end
