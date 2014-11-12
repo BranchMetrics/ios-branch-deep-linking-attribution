@@ -719,7 +719,7 @@ static Branch *currInstance;
 
 -(void)initializeSession {
     if (![self hasAppKey]) {
-        NSLog(@"Branch Warning: Feed me app key please! You need to call getInstance:yourAppKey first.")
+        NSLog(@"Branch Warning: Feed me app key please! You need to call getInstance:yourAppKey first.");
         return;
     }
     
