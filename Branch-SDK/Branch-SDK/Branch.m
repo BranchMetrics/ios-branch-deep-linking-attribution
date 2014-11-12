@@ -574,7 +574,6 @@ static Branch *currInstance;
 }
 
 - (void)processNextQueueItem {
-    NSLog(@"Platform: %@", [BNCSystemObserver getModel]);
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
     
     if (self.networkCount == 0 && self.requestQueue.size > 0) {
