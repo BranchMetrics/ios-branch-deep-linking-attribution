@@ -8,12 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+#define FILE_NAME   [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
+#define LINE_NUM    __LINE__
+
 static NSString *NO_STRING_VALUE = @"bnc_no_value";
 
 @interface BNCPreferenceHelper : NSObject
 
 + (NSString *)getAPIBaseURL;
-+ (NSString *)getAPIURL;
++ (NSString *)getAPIURL:(NSString *) endpoint;
 
 + (void)setAppKey:(NSString *)appKey;
 + (NSString *)getAppKey;
@@ -63,5 +66,10 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 
 + (NSString *)base64EncodeStringToString:(NSString *)strData;
 + (NSString *)base64DecodeStringToString:(NSString *)strData;
+
++ (void)setDebug;
++ (void)clearDebug;
++ (BOOL)getDebug;
++ (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
 
 @end

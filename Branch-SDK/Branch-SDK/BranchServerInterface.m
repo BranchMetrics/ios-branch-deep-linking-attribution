@@ -36,7 +36,7 @@
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"install"] andTag:REQ_TAG_REGISTER_INSTALL];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"install"] andTag:REQ_TAG_REGISTER_INSTALL];
 }
 
 - (void)registerOpen:(BOOL)debug {
@@ -53,7 +53,7 @@
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"open"] andTag:REQ_TAG_REGISTER_OPEN];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"open"] andTag:REQ_TAG_REGISTER_OPEN];
 }
 
 - (void)registerClose {
@@ -62,39 +62,39 @@
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
     
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"close"] andTag:REQ_TAG_REGISTER_CLOSE];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"close"] andTag:REQ_TAG_REGISTER_CLOSE];
 }
 
 - (void)userCompletedAction:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"event"] andTag:REQ_TAG_COMPLETE_ACTION];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"event"] andTag:REQ_TAG_COMPLETE_ACTION];
 }
 
 - (void)getReferralCounts {
-    [self getRequestAsync:nil url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"referrals/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
+    [self getRequestAsync:nil url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@", @"referrals/", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
 }
 
 - (void)getRewards {
-    [self getRequestAsync:nil url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"credits/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REWARDS];
+    [self getRequestAsync:nil url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@", @"credits/", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REWARDS];
 }
 
 - (void)redeemRewards:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"redeem"] andTag:REQ_TAG_REDEEM_REWARDS];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"redeem"] andTag:REQ_TAG_REDEEM_REWARDS];
 }
 
 - (void)getCreditHistory:(NSDictionary *)query {
-    [self getRequestAsync:query url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
+    [self getRequestAsync:query url:[BNCPreferenceHelper getAPIURL:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
 }
 
 - (void)createCustomUrl:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL];
 }
 
 - (void)identifyUser:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"profile"] andTag:REQ_TAG_IDENTIFY];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_IDENTIFY];
 }
 
 - (void)logoutUser:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"logout"] andTag:REQ_TAG_LOGOUT];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"logout"] andTag:REQ_TAG_LOGOUT];
 }
 
 - (void)addProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params {
@@ -120,8 +120,16 @@
     [newPost setObject:params forKey:@"union"];
     [self updateProfileParams:newPost];
 }
+
 - (void)updateProfileParams:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"profile"] andTag:REQ_TAG_PROFILE_DATA];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_PROFILE_DATA];
+}
+
+- (void)sendLog:(NSString *)log {
+    [self postRequestAsync:[NSMutableDictionary dictionaryWithObject:log forKey:@"log"]
+                       url:[BNCPreferenceHelper getAPIURL:@"log"]
+                    andTag:REQ_TAG_SEND_LOG
+                       log:NO];
 }
 
 @end

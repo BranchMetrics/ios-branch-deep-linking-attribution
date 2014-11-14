@@ -9,36 +9,24 @@
 #ifndef Branch_SDK_Config_h
 #define Branch_SDK_Config_h
 
-#define SDK_VERSION             @"0.2.9"
+#define BNC_SDK_VERSION         @"0.2.9"
 
-#define PROD_ENV
-//#define STAGE_ENV
-//#define DEV_ENV
+#define BNC_PROD_ENV
+//#define BNC_STAGE_ENV
+//#define BNC_DEV_ENV
 
-#ifdef PROD_ENV
-#define API_BASE_URL            @"https://api.branch.io";
+#ifdef BNC_PROD_ENV
+#define BNC_API_BASE_URL        @"https://api.branch.io"
 #endif
 
-#ifdef STAGE_ENV
-#define API_BASE_URL            @"http://api.dev.branchmetrics.io";
-#define DEBUG_MODE
+#ifdef BNC_STAGE_ENV
+#define BNC_API_BASE_URL        @"http://api.dev.branchmetrics.io"
 #endif
 
-#ifdef DEV_ENV
-#define API_BASE_URL            @"http://localhost:3001";
-#define DEBUG_MODE
+#ifdef BNC_DEV_ENV
+#define BNC_API_BASE_URL        @"http://localhost:3001"
 #endif
 
-#define API_VERSION             @"v1"
-
-#ifdef DEBUG_MODE
-#define Debug( s, ... ) NSLog( @"<%p %@:(%d)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
-#else
-#define Debug( s, ... )
-#endif
-
-#define Error( s, ... ) NSLog( @"<%p %@:(%d)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
-
-
+#define BNC_API_VERSION         @"v1"
 
 #endif

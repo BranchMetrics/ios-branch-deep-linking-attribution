@@ -7,6 +7,7 @@
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "UIViewController+BNCDebugging.h"
 
 typedef void (^callbackWithParams) (NSDictionary *params);
 typedef void (^callbackWithUrl) (NSString *url);
@@ -29,7 +30,7 @@ typedef enum {
 + (Branch *)getInstance:(NSString *)key;
 + (Branch *)getInstance;
 
-- (void)setDebug;
++ (void)setDebug;
 
 - (void)initSession;
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options;

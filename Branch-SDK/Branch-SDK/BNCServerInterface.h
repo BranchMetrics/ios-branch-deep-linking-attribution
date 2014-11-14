@@ -17,6 +17,7 @@
 @end
 
 static NSString *kpServerIdentNone = @"no_value";
+static NSString *REQ_TAG_SEND_LOG = @"t_send_log";
 
 @interface BNCServerInterface : NSObject
 
@@ -25,7 +26,9 @@ static NSString *kpServerIdentNone = @"no_value";
 + (NSString *)encodePostToUniversalString:(NSDictionary *)params;
 
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag;
+- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log;
 - (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag;
+- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log;
 - (void)genericHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag;
 
 @end

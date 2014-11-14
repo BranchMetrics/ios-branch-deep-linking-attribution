@@ -13,7 +13,6 @@
 #import "BNCServerResponse.h"
 #import "BNCSystemObserver.h"
 #import "BNCServerRequestQueue.h"
-#import "BNCConfig.h"
 
 
 static NSString *APP_ID = @"app_id";
@@ -68,7 +67,6 @@ static NSString *DIRECTION = @"direction";
 @property (strong, nonatomic) callbackWithList creditHistoryLoadCallback;
 @property (assign, nonatomic) BOOL initFinished;
 @property (assign, nonatomic) BOOL hasNetwork;
-@property (assign, nonatomic) BOOL isDebugMode;
 
 @end
 
@@ -109,7 +107,6 @@ static Branch *currInstance;
     currInstance.requestQueue = [BNCServerRequestQueue getInstance];
     currInstance.initFinished = NO;
     currInstance.hasNetwork = YES;
-    currInstance.isDebugMode = NO;
     
     [[NSNotificationCenter defaultCenter] addObserver:currInstance
                                              selector:@selector(applicationWillResignActive)
@@ -125,8 +122,8 @@ static Branch *currInstance;
     currInstance.networkCount = 0;
 }
 
-- (void)setDebug {
-    self.isDebugMode = YES;
++ (void)setDebug {
+    [BNCPreferenceHelper setDebug];
 }
 
 - (void)resetUserSession {
@@ -588,37 +585,37 @@ static Branch *currInstance;
             }
             
             if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
-                Debug(@"calling register install");
-                [self.bServerInterface registerInstall:self.isDebugMode];
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling register install"];
+                [self.bServerInterface registerInstall:[BNCPreferenceHelper getDebug]];
             } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_OPEN] && [self hasUser]) {
-                Debug(@"calling register open");
-                [self.bServerInterface registerOpen:self.isDebugMode];
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling register open"];
+                [self.bServerInterface registerOpen:[BNCPreferenceHelper getDebug]];
             } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling get referrals");
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get referrals"];
                 [self.bServerInterface getReferralCounts];
             } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling get rewards");
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get rewards"];
                 [self.bServerInterface getRewards];
             } else if ([req.tag isEqualToString:REQ_TAG_REDEEM_REWARDS] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling redeem rewards");
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling redeem rewards"];
                 [self.bServerInterface redeemRewards:req.postData];
             } else if ([req.tag isEqualToString:REQ_TAG_COMPLETE_ACTION] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling completed action");
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling completed action"];
                 [self.bServerInterface userCompletedAction:req.postData];
             } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling create custom url");
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling create custom url"];
                 [self.bServerInterface createCustomUrl:req.postData];
             } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling identify user");
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling identify user"];
                 [self.bServerInterface identifyUser:req.postData];
             } else if ([req.tag isEqualToString:REQ_TAG_LOGOUT] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling logout");
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling logout"];
                 [self.bServerInterface logoutUser:req.postData];
             } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling close");
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling close"];
                 [self.bServerInterface registerClose];
             } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling get reward history");
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get reward history"];
                 [self.bServerInterface getCreditHistory:req.postData];
             } else if (![self hasUser]) {
                 if (![self hasAppKey] && [self hasSession]) {

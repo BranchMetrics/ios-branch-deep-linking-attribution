@@ -8,7 +8,7 @@
 
 #import "BNCServerRequestQueue.h"
 #import "BranchServerInterface.h"
-#import "BNCConfig.h"
+#import "BNCPreferenceHelper.h"
 
 #define STORAGE_KEY     @"BNCServerRequestQueue"
 
@@ -43,7 +43,7 @@
 
 - (void)insert:(BNCServerRequest *)request at:(unsigned int)index {
     if (index > self.queue.count) {
-        Debug(@"Invalid queue operation: index out of bound!");
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
         return;
     }
     
@@ -67,7 +67,7 @@
 
 - (BNCServerRequest *)removeAt:(unsigned int)index {
     if (index >= self.queue.count) {
-        Debug(@"Invalid queue operation: index out of bound!");
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
         return nil;
     }
     
@@ -85,7 +85,7 @@
 
 - (BNCServerRequest *)peekAt:(unsigned int)index {
     if (index >= self.queue.count) {
-        Debug(@"Invalid queue operation: index out of bound!");
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
         return nil;
     }
     
@@ -186,7 +186,7 @@
     dispatch_once(&onceToken, ^{
         sharedQueue = [[BNCServerRequestQueue alloc] init];
         sharedQueue.queue = [BNCServerRequestQueue retrieve];
-        Debug(@"Retrieved from Persist: %@", sharedQueue);
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Retrieved from Persist: %@", sharedQueue];
     });
     
     return sharedQueue;

@@ -7,6 +7,7 @@
 //
 
 #import "BNCPreferenceHelper.h"
+#import "BranchServerInterface.h"
 #import "BNCConfig.h"
 
 
@@ -30,14 +31,41 @@ static NSString *KEY_COUNTS = @"bnc_counts";
 static NSString *KEY_TOTAL_BASE = @"bnc_total_base_";
 static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
+static BOOL BNC_Debug = NO;
+
 @implementation BNCPreferenceHelper
 
-+ (NSString *)getAPIBaseURL {
-    return API_BASE_URL;
++ (void)setDebug {
+    BNC_Debug = YES;
 }
 
-+ (NSString *)getAPIURL {
-    return [NSString stringWithFormat:@"%@/%@/", [self getAPIBaseURL], API_VERSION];
++ (void)clearDebug {
+    BNC_Debug = NO;
+}
+
++ (BOOL)getDebug {
+    return BNC_Debug;
+}
+
++ (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ... {
+    if (BNC_Debug) {
+        va_list args;
+        va_start(args, format);
+        NSString *log = [NSString stringWithFormat:@"<%@:(%d)> %@", filename, line, [[NSString alloc] initWithFormat:format arguments:args]];
+        va_end(args);
+        NSLog(@"%@", log);
+        
+        BranchServerInterface *serverInterface = [[BranchServerInterface alloc] init];
+        [serverInterface sendLog:log];
+    }
+}
+
++ (NSString *)getAPIBaseURL {
+    return [NSString stringWithFormat:@"%@/%@/", BNC_API_BASE_URL, BNC_API_VERSION];
+}
+
++ (NSString *)getAPIURL:(NSString *) endpoint {
+    return [[BNCPreferenceHelper getAPIBaseURL] stringByAppendingString:endpoint];
 }
 
 // PREFERENCE STORAGE
