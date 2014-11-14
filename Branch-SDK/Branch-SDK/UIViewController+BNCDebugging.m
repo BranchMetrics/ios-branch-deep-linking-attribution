@@ -25,9 +25,9 @@ static UIWindow *bnc_debugWindow = nil;
     dispatch_once(&onceToken, ^{
         Class class = [self class];
         
-        // viewWillAppear
-        SEL originalWillSelector = @selector(viewWillAppear:);
-        SEL swizzledWillSelector = @selector(bnc_viewWillAppear:);
+        // viewDidLoad
+        SEL originalWillSelector = @selector(viewDidLoad);
+        SEL swizzledWillSelector = @selector(bnc_viewDidLoad);
         
         Method originalWillMethod = class_getInstanceMethod(class, originalWillSelector);
         Method swizzledWillMethod = class_getInstanceMethod(class, swizzledWillSelector);
@@ -62,14 +62,14 @@ static UIWindow *bnc_debugWindow = nil;
     bnc_debugWindow = self.view.window;
 }
 
-- (void)bnc_viewWillAppear:(BOOL)animated {
-    [self bnc_viewWillAppear:animated];
+- (void)bnc_viewDidLoad {
+    [self bnc_viewDidLoad];
     [self bnc_addDebugGestureRecognizers];
 }
 
 - (void)bnc_addDebugGestureRecognizers {
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(bnc_startDebug:)];
-    longPress.minimumPressDuration = 4.0;
+    longPress.minimumPressDuration = 3.0;
     longPress.numberOfTouchesRequired = 4;
     [self.view addGestureRecognizer:longPress];
     
