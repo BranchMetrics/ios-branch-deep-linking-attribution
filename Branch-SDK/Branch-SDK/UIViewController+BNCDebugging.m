@@ -58,6 +58,7 @@ static UIWindow *bnc_debugWindow = nil;
 }
 
 - (void)bnc_viewDidAppear:(BOOL)animated {
+    [self bnc_viewDidAppear:animated];
     bnc_debugWindow = self.view.window;
 }
 

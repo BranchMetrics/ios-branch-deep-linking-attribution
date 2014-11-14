@@ -32,6 +32,7 @@ static NSString *KEY_TOTAL_BASE = @"bnc_total_base_";
 static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 static BOOL BNC_Debug = NO;
+static dispatch_queue_t bnc_asyncLogQueue = nil;
 
 @implementation BNCPreferenceHelper
 
@@ -53,10 +54,16 @@ static BOOL BNC_Debug = NO;
         va_start(args, format);
         NSString *log = [NSString stringWithFormat:@"<%@:(%d)> %@", filename, line, [[NSString alloc] initWithFormat:format arguments:args]];
         va_end(args);
-        NSLog(@"%@", log);
         
-        BranchServerInterface *serverInterface = [[BranchServerInterface alloc] init];
-        [serverInterface sendLog:log];
+        if (!bnc_asyncLogQueue) {
+            bnc_asyncLogQueue = dispatch_queue_create("bnc_log_queue", NULL);
+        }
+        dispatch_async(bnc_asyncLogQueue, ^{
+            NSLog(@"%@", log);
+            
+            BranchServerInterface *serverInterface = [[BranchServerInterface alloc] init];
+            [serverInterface sendLog:log];
+        });
     }
 }
 
