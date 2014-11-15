@@ -40,6 +40,8 @@ static NSString *REQ_TAG_PROFILE_DATA = @"t_profile_data";
 - (void)appendProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;
 - (void)unionProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;
 
+- (void)connectToDebug;
 - (void)sendLog:(NSString *)log;
+- (void)sendScreenshot:(NSData *)data;
 
 @end

@@ -125,11 +125,50 @@
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_PROFILE_DATA];
 }
 
+- (void)connectToDebug {
+    NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
+    
+    [self getRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug"] andTag:REQ_TAG_DEBUG_CONNECT log:NO];
+}
+
 - (void)sendLog:(NSString *)log {
-    [self postRequestAsync:[NSMutableDictionary dictionaryWithObject:log forKey:@"log"]
-                       url:[BNCPreferenceHelper getAPIURL:@"log"]
-                    andTag:REQ_TAG_SEND_LOG
-                       log:NO];
+    NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObject:log forKey:@"log"];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
+    
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug"] andTag:REQ_TAG_SEND_LOG log:NO];
+}
+
+- (void)sendScreenshot:(NSData *)data {
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    NSString *file = @"BNC_Debug_Screen.png";
+    
+    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?app_id=%@&session_id=%@", [BNCPreferenceHelper getAPIURL:@"screenshot"], [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID]]]]
+    ;
+    [request setHTTPMethod:@"POST"];
+    
+    NSString *boundary = @"---------------------------Boundary Line---------------------------";
+    NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary];
+    [request addValue:contentType forHTTPHeaderField: @"Content-Type"];
+    
+    NSMutableData *body = [NSMutableData data];
+    
+    [body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"data\"\r\n\r\n"]  dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"{\"id\":\"%@\", \"fileName\":\"%@\"}\r\n", @"", file] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    [body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"Filedata\"; filename=\"%@\"\r\n", file] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[@"Content-Type: application/octet-stream\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[NSData dataWithData:data]];
+    [body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    [request setHTTPBody:body];
+    [request addValue:[NSString stringWithFormat:@"%lu", (unsigned long)[body length]] forHTTPHeaderField:@"Content-Length"];
+    
+    [self genericHTTPRequest:request withTag:REQ_TAG_SEND_SCREEN];
 }
 
 @end

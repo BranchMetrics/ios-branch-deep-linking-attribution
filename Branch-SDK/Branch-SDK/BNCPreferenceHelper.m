@@ -31,17 +31,37 @@ static NSString *KEY_COUNTS = @"bnc_counts";
 static NSString *KEY_TOTAL_BASE = @"bnc_total_base_";
 static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
+static BNCPreferenceHelper *instance = nil;
 static BOOL BNC_Debug = NO;
+static BOOL BNC_Remote_Debug = NO;
 static dispatch_queue_t bnc_asyncLogQueue = nil;
+static id<BNCDebugConnectionDelegate> bnc_asyncDebugConnectionDelegate = nil;
+static BranchServerInterface *serverInterface = nil;
+
+@interface BNCPreferenceHelper() <BNCServerInterfaceDelegate>
+
+@end
 
 @implementation BNCPreferenceHelper
 
 + (void)setDebug {
     BNC_Debug = YES;
+    
+    if (!instance) {
+        instance = [[BNCPreferenceHelper alloc] init];
+        serverInterface = [[BranchServerInterface alloc] init];
+        serverInterface.delegate = instance;
+        bnc_asyncLogQueue = dispatch_queue_create("bnc_log_queue", NULL);
+    }
+    
+    dispatch_async(bnc_asyncLogQueue, ^{
+        [serverInterface connectToDebug];
+    });
 }
 
 + (void)clearDebug {
     BNC_Debug = NO;
+    BNC_Remote_Debug = NO;
 }
 
 + (BOOL)getDebug {
@@ -56,14 +76,24 @@ static dispatch_queue_t bnc_asyncLogQueue = nil;
         va_end(args);
         NSLog(@"%@", log);
         
-        if (!bnc_asyncLogQueue) {
-            bnc_asyncLogQueue = dispatch_queue_create("bnc_log_queue", NULL);
+        if (BNC_Remote_Debug) {
+            dispatch_async(bnc_asyncLogQueue, ^{
+                [serverInterface sendLog:log];
+            });
         }
+    }
+}
+
++ (void)sendScreenshot:(NSData *)data {
+    if (BNC_Remote_Debug) {
         dispatch_async(bnc_asyncLogQueue, ^{
-            BranchServerInterface *serverInterface = [[BranchServerInterface alloc] init];
-            [serverInterface sendLog:log];
+            [serverInterface sendScreenshot:data];
         });
     }
+}
+
++ (void)setDebugConnectionDelegate:(id<BNCDebugConnectionDelegate>) debugConnectionDelegate {
+    bnc_asyncDebugConnectionDelegate = debugConnectionDelegate;
 }
 
 + (NSString *)getAPIBaseURL {
@@ -457,6 +487,32 @@ static const short _base64DecodingTable[256] = {
 	NSData * objData = [[NSData alloc] initWithBytes:objResult length:j] ;
 	free(objResult);
 	return objData;
+}
+
+#pragma mark - ServerInterface delegate
+
+- (void)serverCallback:(BNCServerResponse *)response {
+    if (response) {
+        NSInteger status = [response.statusCode integerValue];
+        NSString *requestTag = response.tag;
+        
+        if (status >= 400 && status < 500) {
+            if (response.data && [response.data objectForKey:@"error"]) {
+                NSLog(@"Branch API Error: %@", [[response.data objectForKey:@"error"] objectForKey:@"message"]);
+            }
+        } else if (status != 200) {
+            if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorNetworkConnectionLost || status == NSURLErrorCannotFindHost) {
+                NSLog(@"Branch API Error: Poor network connectivity. Please try again later.");
+            } else {
+                NSLog(@"Trouble reaching server. Please try again in a few minutes.");
+            }
+        } else if ([requestTag isEqualToString:REQ_TAG_DEBUG_CONNECT]) {
+            BNC_Remote_Debug = YES;
+            [bnc_asyncDebugConnectionDelegate bnc_debugConnectionEstablished];
+        } else if ([requestTag isEqualToString:REQ_TAG_SEND_LOG]) {
+            
+        }
+    }
 }
 
 @end

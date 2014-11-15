@@ -127,7 +127,7 @@
             serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:[NSNumber numberWithInteger:error.code]];
             serverResponse.data = error.userInfo;
         }
-        if (![requestTag isEqualToString:REQ_TAG_SEND_LOG]) {
+        if (![requestTag isEqualToString:REQ_TAG_SEND_LOG] && ![requestTag isEqualToString:REQ_TAG_DEBUG_CONNECT]) {
             [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned = %@", [serverResponse description]];
         }
         

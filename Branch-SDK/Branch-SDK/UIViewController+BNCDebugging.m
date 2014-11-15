@@ -10,7 +10,7 @@
 #import <objc/runtime.h>
 #import "BNCPreferenceHelper.h"
 
-@interface UIViewController () <UIGestureRecognizerDelegate>
+@interface UIViewController () <UIGestureRecognizerDelegate, BNCDebugConnectionDelegate>
 
 @end
 
@@ -68,7 +68,7 @@ static UIWindow *bnc_debugWindow = nil;
 }
 
 - (void)bnc_addDebugGestureRecognizers {
-    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(bnc_startDebug:)];
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(bnc_connectToDebug:)];
     longPress.minimumPressDuration = 3.0;
     longPress.numberOfTouchesRequired = 4;
     [self.view addGestureRecognizer:longPress];
@@ -79,14 +79,18 @@ static UIWindow *bnc_debugWindow = nil;
     [self.view addGestureRecognizer:tap];
 }
 
-- (void)bnc_startDebug:(UILongPressGestureRecognizer *)gesture {
-    NSLog(@"======= Start Debug Session =======");
+- (void)bnc_connectToDebug:(UILongPressGestureRecognizer *)gesture {
+    [BNCPreferenceHelper setDebugConnectionDelegate:self];
     [BNCPreferenceHelper setDebug];
+}
+
+- (void)bnc_startDebug {
+    NSLog(@"======= Start Debug Session =======");
     if (!bnc_asyncDebugQueue) {
         bnc_asyncDebugQueue = dispatch_queue_create("bnc_debug_queue", NULL);
     }
     if (!bnc_debugTimer || !bnc_debugTimer.isValid) {
-        bnc_debugTimer = [NSTimer scheduledTimerWithTimeInterval:4.0f
+        bnc_debugTimer = [NSTimer scheduledTimerWithTimeInterval:3.0f
                                                                target:self
                                                              selector:@selector(bnc_takeScreenshot)
                                                              userInfo:nil
@@ -114,15 +118,20 @@ static UIWindow *bnc_debugWindow = nil;
             UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
             NSData * data = UIImagePNGRepresentation(image);
-            NSLog(@"========== image size: %lu", (unsigned long)data.length);
+            [BNCPreferenceHelper sendScreenshot:data];
         });
     }
 }
 
-#pragma mark - Gesture recognizer delegate
+#pragma mark - BNCDebugConnectionDelegate delegate
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    return YES;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-protocol-method-implementation"
+
+- (void)bnc_debugConnectionEstablished {
+    [self bnc_startDebug];
 }
+
+#pragma clang diagnostic pop
 
 @end
