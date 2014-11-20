@@ -1,3 +1,13 @@
+## API renaming since v0.2.7
+
+Deprecated API | Renamed to
+-------------- | -------------
+all of initUserSession... | initSession...
+all of identifyUser... | setIdentity...
+clearUser | logout
+getInstallReferringParams | getFirstReferringParams
+getReferringParams | getLatestReferringParams
+
 ## Installation
 
 compiled SDK size: ~155kb
