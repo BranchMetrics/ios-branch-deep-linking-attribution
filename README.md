@@ -3,8 +3,11 @@
 An NSError* is added to all callback signatures
 
 typedef void (^callbackWithParams) (NSDictionary *params, NSError *error);
+
 typedef void (^callbackWithUrl) (NSString *url, NSError *error);
+
 typedef void (^callbackWithStatus) (BOOL changed, NSError *error);
+
 typedef void (^callbackWithList) (NSArray *list, NSError *error);
 
 Please look up BNCError.h for the list of error code.
