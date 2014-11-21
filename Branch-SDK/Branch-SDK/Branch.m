@@ -40,6 +40,7 @@ static NSString *LINK_CLICK_ID = @"link_click_id";
 static NSString *URL = @"url";
 static NSString *REFERRING_DATA = @"referring_data";
 static NSString *REFERRER = @"referrer";
+static NSString *REFERREE = @"referree";
 
 static NSString *LENGTH = @"length";
 static NSString *BEGIN_AFTER_ID = @"begin_after_id";
@@ -776,6 +777,9 @@ static Branch *currInstance;
         for (NSMutableDictionary *transaction in returnedData) {
             if ([transaction objectForKey:REFERRER] == [NSNull null]) {
                 [transaction removeObjectForKey:REFERRER];
+            }
+            if ([transaction objectForKey:REFERREE] == [NSNull null]) {
+                [transaction removeObjectForKey:REFERREE];
             }
         }
         
