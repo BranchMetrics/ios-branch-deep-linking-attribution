@@ -1,6 +1,6 @@
 //
 //  BNCServerRequestQueue.m
-//  Experiment
+//  Branch-SDK
 //
 //  Created by Qinwei Gong on 9/6/14.
 //
@@ -144,17 +144,18 @@
 #pragma mark - Private method
 
 - (void)persist {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     dispatch_async(self.asyncQueue, ^{
-        NSArray * copyQueue = [NSArray arrayWithArray:self.queue];
-        NSMutableArray *arr = [NSMutableArray array];
-        
-        for (BNCServerRequest *req in copyQueue) {
-            NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
-            [arr addObject:encodedReq];
+        @synchronized(self.queue) {
+            NSMutableArray *arr = [NSMutableArray array];
+            
+            for (BNCServerRequest *req in self.queue) {
+                NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
+                [arr addObject:encodedReq];
+            }
+            
+            [defaults setObject:arr forKey:STORAGE_KEY];
         }
-        
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setObject:arr forKey:STORAGE_KEY];
         [defaults synchronize];
     });
 }

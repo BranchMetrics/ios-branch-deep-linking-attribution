@@ -13,8 +13,10 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     Branch *branch = [Branch getInstance:@"5668720416392049"];
-    [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params) {
-        NSLog(@"finished init with params = %@", [params description]);
+    [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+        if (!error) {
+            NSLog(@"finished init with params = %@", [params description]);
+        }
     }];
     return YES;
 }
