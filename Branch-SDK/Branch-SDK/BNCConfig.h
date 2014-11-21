@@ -9,7 +9,7 @@
 #ifndef Branch_SDK_Config_h
 #define Branch_SDK_Config_h
 
-#define SDK_VERSION             @"0.2.9"
+#define SDK_VERSION             @"0.3.0"
 
 #define PROD_ENV
 //#define STAGE_ENV
