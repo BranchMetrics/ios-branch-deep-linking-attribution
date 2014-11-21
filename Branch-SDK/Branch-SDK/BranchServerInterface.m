@@ -81,8 +81,8 @@
     [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"redeem"] andTag:REQ_TAG_REDEEM_REWARDS];
 }
 
-- (void)getCreditHistory:(NSDictionary *)query {
-    [self getRequestAsync:query url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
+- (void)getCreditHistory:(NSDictionary *)post {
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
 }
 
 - (void)createCustomUrl:(NSDictionary *)post {

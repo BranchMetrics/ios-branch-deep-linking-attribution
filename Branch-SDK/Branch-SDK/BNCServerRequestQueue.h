@@ -1,6 +1,6 @@
 //
 //  BNCServerRequestQueue.h
-//  Experiment
+//  Branch-SDK
 //
 //  Created by Qinwei Gong on 9/6/14.
 //

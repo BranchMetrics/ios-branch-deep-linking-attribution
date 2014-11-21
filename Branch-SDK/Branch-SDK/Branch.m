@@ -14,6 +14,7 @@
 #import "BNCSystemObserver.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCConfig.h"
+#import "BNCError.h"
 
 
 static NSString *APP_ID = @"app_id";
@@ -39,6 +40,7 @@ static NSString *LINK_CLICK_ID = @"link_click_id";
 static NSString *URL = @"url";
 static NSString *REFERRING_DATA = @"referring_data";
 static NSString *REFERRER = @"referrer";
+static NSString *REFERREE = @"referree";
 
 static NSString *LENGTH = @"length";
 static NSString *BEGIN_AFTER_ID = @"begin_after_id";
@@ -201,7 +203,7 @@ static Branch *currInstance;
         self.isInit = YES;
         [self initializeSession];
     } else if ([self hasUser] && [self hasSession] && ![self.requestQueue containsInstallOrOpen]) {
-        if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams]);
+        if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams], nil);
     } else {
         if (![self.requestQueue containsInstallOrOpen]) {
             [self initializeSession];
@@ -636,23 +638,23 @@ static Branch *currInstance;
 }
 
 - (void)handleFailure {
+    NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Trouble reaching server. Please try again in a few minutes"] forKey:NSLocalizedDescriptionKey];
+    
     BNCServerRequest *req = [self.requestQueue peek];
     if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
-        NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
-        if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict);
+        if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:errorDict]);
     } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
-        if (self.pointLoadCallback) self.pointLoadCallback(NO);
+        if (self.pointLoadCallback) self.pointLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralsError userInfo:nil]);
     } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS]) {
-        if (self.rewardLoadCallback) self.rewardLoadCallback(NO);
+        if (self.rewardLoadCallback) self.rewardLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditsError userInfo:nil]);
     } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {
         if (self.creditHistoryLoadCallback) {
-            self.creditHistoryLoadCallback(nil);
+            self.creditHistoryLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:nil]);
         }
     } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
-        if (self.urlLoadCallback) self.urlLoadCallback(@"Trouble reaching server. Please try again in a few minutes");
+        if (self.urlLoadCallback) self.urlLoadCallback(@"Trouble reaching server. Please try again in a few minutes", [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:errorDict]);
     } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
-        NSDictionary *errorDict = [[NSDictionary alloc] initWithObjects:@[@"Trouble reaching server. Please try again in a few minutes"] forKeys:@[@"error"]];
-        if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict);
+        if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCIdentifyError userInfo:errorDict]);
     }
 }
 
@@ -746,7 +748,7 @@ static Branch *currInstance;
     }
     if (self.pointLoadCallback) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.pointLoadCallback(updateListener);
+            self.pointLoadCallback(updateListener, nil);
         });
     }
 }
@@ -765,7 +767,7 @@ static Branch *currInstance;
     }
     if (self.rewardLoadCallback) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.rewardLoadCallback(updateListener);
+            self.rewardLoadCallback(updateListener, nil);
         });
     }
 }
@@ -776,10 +778,13 @@ static Branch *currInstance;
             if ([transaction objectForKey:REFERRER] == [NSNull null]) {
                 [transaction removeObjectForKey:REFERRER];
             }
+            if ([transaction objectForKey:REFERREE] == [NSNull null]) {
+                [transaction removeObjectForKey:REFERREE];
+            }
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.creditHistoryLoadCallback(returnedData);
+            self.creditHistoryLoadCallback(returnedData, nil);
         });
     }
 }
@@ -840,7 +845,7 @@ static Branch *currInstance;
             
             if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams]);
+                    if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams], nil);
                 });
             }
             
@@ -867,7 +872,7 @@ static Branch *currInstance;
             }
             if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams]);
+                    if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams], nil);
                 });
             }
             
@@ -882,7 +887,7 @@ static Branch *currInstance;
             NSString *url = [response.data objectForKey:URL];
             if (self.urlLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if (self.urlLoadCallback) self.urlLoadCallback(url);
+                    if (self.urlLoadCallback) self.urlLoadCallback(url, nil);
                 });
             }
         } else if ([requestTag isEqualToString:REQ_TAG_LOGOUT]) {
@@ -911,7 +916,7 @@ static Branch *currInstance;
             
             if (self.installparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if (self.installparamLoadCallback) self.installparamLoadCallback([self getFirstReferringParams]);
+                    if (self.installparamLoadCallback) self.installparamLoadCallback([self getFirstReferringParams], nil);
                 });
             }
         } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REDEEM_REWARDS] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {

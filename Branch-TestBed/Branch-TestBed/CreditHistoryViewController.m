@@ -57,8 +57,20 @@
         NSDictionary *transaction = [creditItem objectForKey:@"transaction"];
         NSMutableString *text = [NSMutableString stringWithFormat:@"%@ : %@", [transaction objectForKey:@"bucket"], [transaction objectForKey:@"amount"]];
 
-        if ([creditItem objectForKey:@"referrer"]) {
-            [text appendFormat:@"\t(referrer: %@)", [creditItem objectForKey:@"referrer"]];
+        if ([creditItem objectForKey:@"referrer"] || [creditItem objectForKey:@"referree"]) {
+            BOOL hasReferrer = NO;
+            [text appendString:@"\t("];
+            if ([creditItem objectForKey:@"referrer"]) {
+                hasReferrer = YES;
+                [text appendFormat:@"referrer: %@)", [creditItem objectForKey:@"referrer"]];
+            }
+            if ([creditItem objectForKey:@"referree"]) {
+                if (hasReferrer) {
+                    [text appendString:@" -> "];
+                }
+                [text appendFormat:@"referree: %@)", [creditItem objectForKey:@"referree"]];
+            }
+            [text appendString:@")"];
         }
         cell.textLabel.text = text;
         cell.detailTextLabel.text = [transaction objectForKey:@"date"];

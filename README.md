@@ -1,3 +1,14 @@
+## Callback changes since v0.3.0
+
+An NSError* is added to all callback signatures
+
+typedef void (^callbackWithParams) (NSDictionary *params, NSError *error);
+typedef void (^callbackWithUrl) (NSString *url, NSError *error);
+typedef void (^callbackWithStatus) (BOOL changed, NSError *error);
+typedef void (^callbackWithList) (NSArray *list, NSError *error);
+
+Please look up BNCError.h for the list of error code.
+
 ## API renaming since v0.2.7
 
 Deprecated API | Renamed to
@@ -74,18 +85,20 @@ This deep link routing callback is called 100% of the time on init, with your li
 
 	// sign up to get your key at http://branch.io
 	Branch *branch = [Branch getInstance:@"Your app key"];
-	[branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params) {		// previously initUserSessionWithCallback:withLaunchOptions:
-		// params are the deep linked params associated with the link that the user clicked before showing up
-		// params will be empty if no data found
+	[branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {		// previously initUserSessionWithCallback:withLaunchOptions:
+        if (!error) {
+            // params are the deep linked params associated with the link that the user clicked before showing up
+            // params will be empty if no data found
 
 
-		// here is the data from the example below if a new user clicked on Joe's link and installed the app
-		NSString *name = [params objectForKey:@"user"]; // returns Joe
-		NSString *profileUrl = [params objectForKey:@"profile_pic"]; // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
-		NSString *description = [params objectForKey:@"description"]; // returns Joe likes long walks on the beach...
+            // here is the data from the example below if a new user clicked on Joe's link and installed the app
+            NSString *name = [params objectForKey:@"user"]; // returns Joe
+            NSString *profileUrl = [params objectForKey:@"profile_pic"]; // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
+            NSString *description = [params objectForKey:@"description"]; // returns Joe likes long walks on the beach...
 
-		// route to a profile page in the app for Joe
-		// show a customer welcome
+            // route to a profile page in the app for Joe
+            // show a customer welcome
+        }
 	}];
 }
 ```

@@ -8,10 +8,10 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-typedef void (^callbackWithParams) (NSDictionary *params);
-typedef void (^callbackWithUrl) (NSString *url);
-typedef void (^callbackWithStatus) (BOOL changed);
-typedef void (^callbackWithList) (NSArray *list);
+typedef void (^callbackWithParams) (NSDictionary *params, NSError *error);
+typedef void (^callbackWithUrl) (NSString *url, NSError *error);
+typedef void (^callbackWithStatus) (BOOL changed, NSError *error);
+typedef void (^callbackWithList) (NSArray *list, NSError *error);
 
 static NSString *BRANCH_FEATURE_TAG_SHARE = @"share";
 static NSString *BRANCH_FEATURE_TAG_REFERRAL = @"referral";
