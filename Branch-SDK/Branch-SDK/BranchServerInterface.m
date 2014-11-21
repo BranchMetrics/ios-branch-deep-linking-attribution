@@ -82,7 +82,7 @@
 }
 
 - (void)getCreditHistory:(NSDictionary *)query {
-    [self getRequestAsync:query url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
+    [self postRequestAsync:query url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
 }
 
 - (void)createCustomUrl:(NSDictionary *)post {
