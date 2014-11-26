@@ -36,8 +36,10 @@
 
 - (void)enqueue:(BNCServerRequest *)request {
     if (request) {
-        [self.queue addObject:request];
-        [self persist];
+        @synchronized(self.queue) {
+            [self.queue addObject:request];
+            [self persist];
+        }
     }
 }
 
@@ -48,8 +50,10 @@
     }
     
     if (request) {
-        [self.queue insertObject:request atIndex:index];
-        [self persist];
+        @synchronized(self.queue) {
+            [self.queue insertObject:request atIndex:index];
+            [self persist];
+        }
     }
 }
 
@@ -57,9 +61,11 @@
     BNCServerRequest *request = nil;
     
     if (self.queue.count > 0) {
-        request = [self.queue objectAtIndex:0];
-        [self.queue removeObjectAtIndex:0];
-        [self persist];
+        @synchronized(self.queue) {
+            request = [self.queue objectAtIndex:0];
+            [self.queue removeObjectAtIndex:0];
+            [self persist];
+        }
     }
     
     return request;
@@ -71,9 +77,12 @@
         return nil;
     }
     
-    BNCServerRequest *request = [self.queue objectAtIndex:index];
-    [self.queue removeObjectAtIndex:index];
-    [self persist];
+    BNCServerRequest *request;
+    @synchronized(self.queue) {
+        request = [self.queue objectAtIndex:index];
+        [self.queue removeObjectAtIndex:index];
+        [self persist];
+    }
     
     return request;
 }
