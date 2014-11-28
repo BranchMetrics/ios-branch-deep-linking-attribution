@@ -76,4 +76,9 @@ typedef enum {
 - (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback;
 - (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andCallback:(callbackWithUrl)callback;
 
+- (void)getReferralCodeWithMetadata:(NSDictionary *)metadata andCallback:(callbackWithParams)callback;
+- (void)getReferralCodeWithPrefix:(NSString *)prefix calculationType:(NSInteger)calcType location:(NSInteger)location metadata:(NSDictionary *)metadata andCallback:(callbackWithParams)callback;
+- (void)getReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
+- (void)applyReferralCode:(NSString *)code;
+
 @end

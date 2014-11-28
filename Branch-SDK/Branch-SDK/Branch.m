@@ -46,6 +46,24 @@ static NSString *LENGTH = @"length";
 static NSString *BEGIN_AFTER_ID = @"begin_after_id";
 static NSString *DIRECTION = @"direction";
 
+static NSString *REFERRAL_CODE = @"referral_code";
+static NSString *REFERRAL_CODE_CALCULATION_TYPE = @"calculation_type";
+static NSString *REFERRAL_CODE_LOCATION = @"location";
+static NSString *REFERRAL_CODE_TYPE = @"type";
+static NSString *REFERRAL_CODE_FILTER = @"filter";
+static NSString *REFERRAL_CODE_CREATION_SOURCE = @"creation_source";
+static NSString *REFERRAL_CODE_EXPIRATION = @"expiration";
+
+enum ReferralCodeCalculationType {
+    REFERRAL_CALCULATION_TOTAL,
+    REFERRAL_CALCULATION_UNIQUE
+};
+
+enum ReferralCodeLocation {
+    REFERRAL_SENDER,
+    REFERRAL_RECEIVER
+};
+
 #define DIRECTIONS @[@"desc", @"asc"]
 
 
@@ -68,6 +86,8 @@ static NSString *DIRECTION = @"direction";
 @property (strong, nonatomic) callbackWithParams installparamLoadCallback;
 @property (strong, nonatomic) callbackWithUrl urlLoadCallback;
 @property (strong, nonatomic) callbackWithList creditHistoryLoadCallback;
+@property (strong, nonatomic) callbackWithParams getReferralCodeCallback;
+@property (strong, nonatomic) callbackWithParams validateReferralCodeCallback;
 @property (assign, nonatomic) BOOL initFinished;
 @property (assign, nonatomic) BOOL hasNetwork;
 @property (assign, nonatomic) BOOL isDebugMode;
@@ -441,6 +461,67 @@ static Branch *currInstance;
     [self generateShortUrl:nil andChannel:channel andFeature:feature andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
+- (void)getReferralCodeWithMetadata:(NSDictionary *)metadata andCallback:(callbackWithParams)callback {
+    [self getReferralCodeWithPrefix:nil calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER metadata:metadata andCallback:callback];
+}
+
+- (void)getReferralCodeWithPrefix:(NSString *)prefix calculationType:(NSInteger)calcType location:(NSInteger)location metadata:(NSDictionary *)metadata andCallback:(callbackWithParams)callback
+{
+    self.getReferralCodeCallback = callback;
+    
+    dispatch_async(self.asyncQueue, ^{
+        BNCServerRequest *req = [[BNCServerRequest alloc] init];
+        req.tag = REQ_TAG_GET_REFERRAL_CODE;
+        NSMutableArray *keys = [NSMutableArray arrayWithArray:@[APP_ID,
+                                                                IDENTITY_ID,
+                                                                REFERRAL_CODE_CALCULATION_TYPE,
+                                                                REFERRAL_CODE_LOCATION,
+                                                                REFERRAL_CODE_TYPE,
+                                                                EVENT,
+                                                                METADATA]];
+        NSMutableArray *values = [NSMutableArray arrayWithArray:@[[BNCPreferenceHelper getAppKey],
+                                                                  [BNCPreferenceHelper getIdentityID],
+                                                                  [NSNumber numberWithInt:calcType],
+                                                                  [NSNumber numberWithInt:location],
+                                                                  @"credit",
+                                                                  REFERRAL_CODE,
+                                                                  [BNCServerInterface encodePostToUniversalString:metadata needSource:NO]]];
+        if (prefix && prefix.length > 0) {
+            [keys addObject:REFERRAL_CODE_FILTER];
+            NSDictionary *filter = [NSDictionary dictionaryWithObject:prefix forKey:@"prefix"];
+            [values addObject:[BNCServerInterface encodePostToUniversalString:filter needSource:NO]];
+        }
+        
+        NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:values forKeys:keys];
+        req.postData = post;
+        [self.requestQueue enqueue:req];
+        
+        if (self.initFinished || !self.hasNetwork) {
+            [self processNextQueueItem];
+        }
+    });
+}
+
+- (void)getReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
+    self.validateReferralCodeCallback = callback;
+    
+    dispatch_async(self.asyncQueue, ^{
+        BNCServerRequest *req = [[BNCServerRequest alloc] init];
+        req.tag = REQ_TAG_VALIDATE_REFERRAL_CODE;
+        NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code, [BNCPreferenceHelper getAppKey]] forKeys:@[REFERRAL_CODE, APP_ID]];
+        req.postData = post;
+        [self.requestQueue enqueue:req];
+        
+        if (self.initFinished || !self.hasNetwork) {
+            [self processNextQueueItem];
+        }
+    });
+}
+
+- (void)applyReferralCode:(NSString *)code {
+    [self userCompletedAction:REFERRAL_CODE withState:[NSDictionary dictionaryWithObject:code forKey:@"referralcode"]];
+}
+
 // PRIVATE CALLS
 
 - (void)generateShortUrl:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params andCallback:(callbackWithUrl)callback {
@@ -511,7 +592,7 @@ static Branch *currInstance;
     if (!self.hasNetwork) {
         // if there's no network connectivity, purge the old install/open
         BNCServerRequest *req = [self.requestQueue peek];
-        if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
+        if (req && ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN])) {
             [self.requestQueue dequeue];
         }
     } else {
@@ -622,6 +703,12 @@ static Branch *currInstance;
             } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY] && [self hasUser] && [self hasSession]) {
                 Debug(@"calling get reward history");
                 [self.bServerInterface getCreditHistory:req.postData];
+            } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_CODE] && [self hasUser] && [self hasSession]) {
+                Debug(@"calling get/create referral code");
+                [self.bServerInterface getReferralCode:req.postData];
+            } else if ([req.tag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE] && [self hasUser] && [self hasSession]) {
+                Debug(@"calling validate referral code");
+                [self.bServerInterface validateReferralCode:req.postData];
             } else if (![self hasUser]) {
                 if (![self hasAppKey] && [self hasSession]) {
                     NSLog(@"Branch Warning: User session not init yet. Please call initUserSession");
@@ -655,6 +742,14 @@ static Branch *currInstance;
         if (self.urlLoadCallback) self.urlLoadCallback(@"Trouble reaching server. Please try again in a few minutes", [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:errorDict]);
     } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
         if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCIdentifyError userInfo:errorDict]);
+    } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_CODE]) {
+        if (self.getReferralCodeCallback) {
+            self.getReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:nil]);
+        }
+    } else if ([req.tag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE]) {
+        if (self.validateReferralCodeCallback) {
+            self.validateReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:nil]);
+        }
     }
 }
 
@@ -789,6 +884,28 @@ static Branch *currInstance;
     }
 }
 
+- (void)processReferralCodeGet:(NSDictionary *)returnedData {
+    if (self.getReferralCodeCallback) {
+        NSMutableDictionary *eventResponse = [NSMutableDictionary dictionaryWithDictionary:returnedData];
+        [eventResponse setObject:[eventResponse objectForKey:@"alias"] forKey:REFERRAL_CODE];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.getReferralCodeCallback(eventResponse, nil);
+        });
+    }
+}
+
+- (void)processReferralCodeValidation:(NSDictionary *)returnedData {
+    if (self.validateReferralCodeCallback) {
+        NSMutableDictionary *eventResponse = [NSMutableDictionary dictionaryWithDictionary:returnedData];
+        [eventResponse setObject:[eventResponse objectForKey:@"alias"] forKey:REFERRAL_CODE];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.validateReferralCodeCallback(eventResponse, nil);
+        });
+    }
+}
+
 - (void)serverCallback:(BNCServerResponse *)response {
     if (response) {
         NSInteger status = [response.statusCode integerValue];
@@ -919,6 +1036,10 @@ static Branch *currInstance;
                     if (self.installparamLoadCallback) self.installparamLoadCallback([self getFirstReferringParams], nil);
                 });
             }
+        } else if ([requestTag isEqualToString:REQ_TAG_GET_REFERRAL_CODE]) {
+            [self processReferralCodeGet:response.data];
+        } else if ([requestTag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE]) {
+            [self processReferralCodeValidation:response.data];
         } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REDEEM_REWARDS] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
         }
         

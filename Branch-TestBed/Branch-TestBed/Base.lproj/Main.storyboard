@@ -167,6 +167,15 @@
                                     <action selector="cmdGetCreditHistory:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="mFm-OO-CSp"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mAL-3s-Zyv">
+                                <rect key="frame" x="163" y="384" width="115" height="30"/>
+                                <state key="normal" title="Referral code">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="NBd-ng-CiI" kind="push" id="gyj-XZ-xHW"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -186,6 +195,110 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="671" y="136"/>
+        </scene>
+        <!--Referral Code-->
+        <scene sceneID="lLX-n3-iOU">
+            <objects>
+                <viewController id="NBd-ng-CiI" customClass="ReferralCodeViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="FGR-nl-9ii"/>
+                        <viewControllerLayoutGuide type="bottom" id="U34-Yt-k3k"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="zaH-Zp-jhQ">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Code prefix" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Zdg-AP-syb">
+                                <rect key="frame" x="24" y="260" width="150" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Referral code" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="QKd-tB-hnn">
+                                <rect key="frame" x="70" y="64" width="180" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FoG-ZU-UE8">
+                                <rect key="frame" x="208" y="260" width="66" height="30"/>
+                                <state key="normal" title="Get Code">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="cmdGetReferralCode:" destination="NBd-ng-CiI" eventType="touchUpInside" id="cKI-jj-19z"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oyh-BL-Wth">
+                                <rect key="frame" x="208" y="298" width="96" height="30"/>
+                                <state key="normal" title="Validate Code">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="cmdValidateReferralCode:" destination="NBd-ng-CiI" eventType="touchUpInside" id="sxd-nC-xEM"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jbD-tO-N5p">
+                                <rect key="frame" x="24" y="302" width="176" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Ift-cW-JHL">
+                                <rect key="frame" x="62" y="204" width="197" height="29"/>
+                                <segments>
+                                    <segment title="Referrer"/>
+                                    <segment title="Referred User"/>
+                                </segments>
+                            </segmentedControl>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="qew-JZ-uua">
+                                <rect key="frame" x="62" y="139" width="199" height="29"/>
+                                <segments>
+                                    <segment title="Every time"/>
+                                    <segment title="First time only"/>
+                                </segments>
+                            </segmentedControl>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Give to" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oZC-W2-qhO">
+                                <rect key="frame" x="24" y="175" width="57" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Frequency" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fEb-HB-95q">
+                                <rect key="frame" x="24" y="110" width="90" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="naB-vq-FW9">
+                                <rect key="frame" x="208" y="331" width="81" height="30"/>
+                                <state key="normal" title="Apply Code">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="cmdApplyReferralCode:" destination="NBd-ng-CiI" eventType="touchUpInside" id="89t-PV-Sz0"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cqX-pE-bcn">
+                                <rect key="frame" x="24" y="335" width="176" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Referral Code" id="Kph-Mj-byg"/>
+                    <connections>
+                        <outlet property="lblReferralCodeApplication" destination="cqX-pE-bcn" id="fnQ-fd-9OX"/>
+                        <outlet property="lblReferralCodeValidation" destination="jbD-tO-N5p" id="Y1N-rI-Evg"/>
+                        <outlet property="segReferralCodeFreq" destination="qew-JZ-uua" id="vNq-iG-vir"/>
+                        <outlet property="segReferralCodeLocation" destination="Ift-cW-JHL" id="Zzc-Q9-kCl"/>
+                        <outlet property="txtReferralCodePrefix" destination="Zdg-AP-syb" id="jiM-cA-fJn"/>
+                        <outlet property="txtReferralCodeResult" destination="QKd-tB-hnn" id="IwU-qd-zHz"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xgW-rd-YmN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="671" y="838"/>
         </scene>
         <!--Credit History-->
         <scene sceneID="nTj-xn-fDL">

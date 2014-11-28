@@ -27,6 +27,7 @@
 		7EAA790219E89F67008D4A83 /* CreditHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */; };
 		7EAA790A19E90B9F008D4A83 /* BNCServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790919E90B9F008D4A83 /* BNCServerResponse.m */; };
 		7EC2C9F51A1ACAC200B8A9FA /* BNCError.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC2C9F41A1ACAC200B8A9FA /* BNCError.m */; };
+		7EEE2F731A27EAFC005B08AA /* ReferralCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EEE2F721A27EAFC005B08AA /* ReferralCodeViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +68,8 @@
 		7EAA790919E90B9F008D4A83 /* BNCServerResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerResponse.m; sourceTree = "<group>"; };
 		7EC2C9F31A1ACAC200B8A9FA /* BNCError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCError.h; sourceTree = "<group>"; };
 		7EC2C9F41A1ACAC200B8A9FA /* BNCError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCError.m; sourceTree = "<group>"; };
+		7EEE2F711A27EAFC005B08AA /* ReferralCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReferralCodeViewController.h; sourceTree = "<group>"; };
+		7EEE2F721A27EAFC005B08AA /* ReferralCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReferralCodeViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +126,8 @@
 				670016791940F51400A9E103 /* ViewController.m */,
 				7EAA790019E89F67008D4A83 /* CreditHistoryViewController.h */,
 				7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */,
+				7EEE2F711A27EAFC005B08AA /* ReferralCodeViewController.h */,
+				7EEE2F721A27EAFC005B08AA /* ReferralCodeViewController.m */,
 				6700167B1940F51400A9E103 /* Images.xcassets */,
 				6700166A1940F51400A9E103 /* Supporting Files */,
 			);
@@ -248,6 +253,7 @@
 				670016CB1946309100A9E103 /* BNCPreferenceHelper.m in Sources */,
 				670016CA1946309100A9E103 /* BranchServerInterface.m in Sources */,
 				670016741940F51400A9E103 /* AppDelegate.m in Sources */,
+				7EEE2F731A27EAFC005B08AA /* ReferralCodeViewController.m in Sources */,
 				670016CE1946309100A9E103 /* BNCSystemObserver.m in Sources */,
 				7EC2C9F51A1ACAC200B8A9FA /* BNCError.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,

@@ -23,6 +23,7 @@ static NSString *kpServerIdentNone = @"no_value";
 @property (nonatomic, strong) id <BNCServerInterfaceDelegate> delegate;
 
 + (NSString *)encodePostToUniversalString:(NSDictionary *)params;
++ (NSString *)encodePostToUniversalString:(NSDictionary *)params needSource:(BOOL)source;
 
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag;
 - (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag;
