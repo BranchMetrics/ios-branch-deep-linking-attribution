@@ -46,11 +46,12 @@ static NSString *LENGTH = @"length";
 static NSString *BEGIN_AFTER_ID = @"begin_after_id";
 static NSString *DIRECTION = @"direction";
 
+static NSString *REDEEM_CODE = @"$redeem_code";
 static NSString *REFERRAL_CODE = @"referral_code";
 static NSString *REFERRAL_CODE_CALCULATION_TYPE = @"calculation_type";
 static NSString *REFERRAL_CODE_LOCATION = @"location";
 static NSString *REFERRAL_CODE_TYPE = @"type";
-static NSString *REFERRAL_CODE_FILTER = @"filter";
+static NSString *REFERRAL_CODE_PREFIX = @"prefix";
 static NSString *REFERRAL_CODE_CREATION_SOURCE = @"creation_source";
 static NSString *REFERRAL_CODE_EXPIRATION = @"expiration";
 
@@ -461,11 +462,11 @@ static Branch *currInstance;
     [self generateShortUrl:nil andChannel:channel andFeature:feature andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
-- (void)getReferralCodeWithMetadata:(NSDictionary *)metadata andCallback:(callbackWithParams)callback {
-    [self getReferralCodeWithPrefix:nil calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER metadata:metadata andCallback:callback];
+- (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback {
+    [self getReferralCodeWithPrefix:nil amount:amount bucket:@"default" calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER andCallback:callback];
 }
 
-- (void)getReferralCodeWithPrefix:(NSString *)prefix calculationType:(NSInteger)calcType location:(NSInteger)location metadata:(NSDictionary *)metadata andCallback:(callbackWithParams)callback
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount bucket:(NSString *)bucket calculationType:(NSInteger)calcType location:(NSInteger)location andCallback:(callbackWithParams)callback
 {
     self.getReferralCodeCallback = callback;
     
@@ -477,19 +478,20 @@ static Branch *currInstance;
                                                                 REFERRAL_CODE_CALCULATION_TYPE,
                                                                 REFERRAL_CODE_LOCATION,
                                                                 REFERRAL_CODE_TYPE,
-                                                                EVENT,
-                                                                METADATA]];
+                                                                REFERRAL_CODE_CREATION_SOURCE,
+                                                                AMOUNT,
+                                                                BUCKET]];
         NSMutableArray *values = [NSMutableArray arrayWithArray:@[[BNCPreferenceHelper getAppKey],
                                                                   [BNCPreferenceHelper getIdentityID],
                                                                   [NSNumber numberWithInt:calcType],
                                                                   [NSNumber numberWithInt:location],
                                                                   @"credit",
-                                                                  REFERRAL_CODE,
-                                                                  [BNCServerInterface encodePostToUniversalString:metadata needSource:NO]]];
+                                                                  [NSNumber numberWithInt:2],
+                                                                  [NSNumber numberWithInt:amount],
+                                                                  bucket]];
         if (prefix && prefix.length > 0) {
-            [keys addObject:REFERRAL_CODE_FILTER];
-            NSDictionary *filter = [NSDictionary dictionaryWithObject:prefix forKey:@"prefix"];
-            [values addObject:[BNCServerInterface encodePostToUniversalString:filter needSource:NO]];
+            [keys addObject:REFERRAL_CODE_PREFIX];
+            [values addObject:prefix];
         }
         
         NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:values forKeys:keys];
@@ -519,7 +521,7 @@ static Branch *currInstance;
 }
 
 - (void)applyReferralCode:(NSString *)code {
-    [self userCompletedAction:REFERRAL_CODE withState:[NSDictionary dictionaryWithObject:code forKey:@"referralcode"]];
+    [self userCompletedAction:[NSString stringWithFormat:@"%@-%@", REDEEM_CODE, code]] ;
 }
 
 // PRIVATE CALLS
@@ -887,7 +889,9 @@ static Branch *currInstance;
 - (void)processReferralCodeGet:(NSDictionary *)returnedData {
     if (self.getReferralCodeCallback) {
         NSMutableDictionary *eventResponse = [NSMutableDictionary dictionaryWithDictionary:returnedData];
-        [eventResponse setObject:[eventResponse objectForKey:@"alias"] forKey:REFERRAL_CODE];
+        NSString *event = [eventResponse objectForKey:EVENT];
+        NSString *code = [event substringFromIndex:REDEEM_CODE.length + 1];
+        [eventResponse setObject:code forKey:REFERRAL_CODE];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.getReferralCodeCallback(eventResponse, nil);
@@ -898,7 +902,9 @@ static Branch *currInstance;
 - (void)processReferralCodeValidation:(NSDictionary *)returnedData {
     if (self.validateReferralCodeCallback) {
         NSMutableDictionary *eventResponse = [NSMutableDictionary dictionaryWithDictionary:returnedData];
-        [eventResponse setObject:[eventResponse objectForKey:@"alias"] forKey:REFERRAL_CODE];
+        NSString *event = [eventResponse objectForKey:EVENT];
+        NSString *code = [event substringFromIndex:REDEEM_CODE.length + 1];
+        [eventResponse setObject:code forKey:REFERRAL_CODE];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.validateReferralCodeCallback(eventResponse, nil);
