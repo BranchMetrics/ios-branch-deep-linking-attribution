@@ -55,10 +55,10 @@
     Branch *branch = [Branch getInstance];
     [branch getReferralCodeWithPrefix:self.txtReferralCodePrefix.text
                                amount:5
+                           expiration:self.expirationPicker.date
                                bucket:@"default"
                       calculationType:self.segReferralCodeFreq.selectedSegmentIndex
                              location:self.segReferralCodeLocation.selectedSegmentIndex
-                           expiration:self.expirationPicker.date
                           andCallback:^(NSDictionary *params, NSError *error) {
                               if (!error) {
                                   self.txtReferralCodeResult.text = [params objectForKey:@"referral_code"];

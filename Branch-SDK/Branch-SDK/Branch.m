@@ -462,11 +462,24 @@ static Branch *currInstance;
     [self generateShortUrl:nil andChannel:channel andFeature:feature andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
+
 - (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback {
-    [self getReferralCodeWithPrefix:nil amount:amount bucket:@"default" calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER expiration:nil andCallback:callback];
+    [self getReferralCodeWithPrefix:nil amount:amount expiration:nil bucket:@"default" calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER andCallback:callback];
 }
 
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount bucket:(NSString *)bucket calculationType:(NSInteger)calcType location:(NSInteger)location expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback {
+    [self getReferralCodeWithPrefix:prefix amount:amount expiration:nil bucket:@"default" calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER andCallback:callback];
+}
+
+- (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback {
+    [self getReferralCodeWithPrefix:nil amount:amount expiration:expiration bucket:@"default" calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER andCallback:callback];
+}
+
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback {
+    [self getReferralCodeWithPrefix:prefix amount:amount expiration:expiration bucket:@"default" calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER andCallback:callback];
+}
+
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(NSInteger)calcType location:(NSInteger)location andCallback:(callbackWithParams)callback
 {
     self.getReferralCodeCallback = callback;
     
