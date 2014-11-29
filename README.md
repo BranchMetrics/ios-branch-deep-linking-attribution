@@ -194,7 +194,7 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 // stage: null or examples: "past_customer", "logged_in", "level_6"
 
 Branch *branch = [Branch getInstance];
-[branch getShortUrlWithParams:params andTags:@[@"version1", @"trial6"] andChannel:@"text_message" andFeature:BRANCH_FEATURE_TAG_SHARE andStage:@"level_6" andCallback:^(NSString *url) {
+[branch getShortURLWithParams:params andTags:@[@"version1", @"trial6"] andChannel:@"text_message" andFeature:BRANCH_FEATURE_TAG_SHARE andStage:@"level_6" andCallback:^(NSString *url, NSError *error) {
 	// show the link to the user or share it immediately
 }];
 ```
