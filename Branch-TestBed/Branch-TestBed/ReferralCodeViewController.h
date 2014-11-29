@@ -13,8 +13,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *txtReferralCodeResult;
 @property (weak, nonatomic) IBOutlet UITextField *txtReferralCodePrefix;
 @property (weak, nonatomic) IBOutlet UILabel *lblReferralCodeValidation;
-@property (weak, nonatomic) IBOutlet UILabel *lblReferralCodeApplication;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segReferralCodeFreq;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segReferralCodeLocation;
+@property (weak, nonatomic) IBOutlet UITextField *txtReferralCodeExpiration;
 
 @end

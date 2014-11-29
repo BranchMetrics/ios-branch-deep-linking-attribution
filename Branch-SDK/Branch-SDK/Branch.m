@@ -463,10 +463,10 @@ static Branch *currInstance;
 }
 
 - (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback {
-    [self getReferralCodeWithPrefix:nil amount:amount bucket:@"default" calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER andCallback:callback];
+    [self getReferralCodeWithPrefix:nil amount:amount bucket:@"default" calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER expiration:nil andCallback:callback];
 }
 
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount bucket:(NSString *)bucket calculationType:(NSInteger)calcType location:(NSInteger)location andCallback:(callbackWithParams)callback
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount bucket:(NSString *)bucket calculationType:(NSInteger)calcType location:(NSInteger)location expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback
 {
     self.getReferralCodeCallback = callback;
     
@@ -479,6 +479,7 @@ static Branch *currInstance;
                                                                 REFERRAL_CODE_LOCATION,
                                                                 REFERRAL_CODE_TYPE,
                                                                 REFERRAL_CODE_CREATION_SOURCE,
+                                                                REFERRAL_CODE_EXPIRATION,
                                                                 AMOUNT,
                                                                 BUCKET]];
         NSMutableArray *values = [NSMutableArray arrayWithArray:@[[BNCPreferenceHelper getAppKey],
@@ -487,6 +488,7 @@ static Branch *currInstance;
                                                                   [NSNumber numberWithInt:location],
                                                                   @"credit",
                                                                   [NSNumber numberWithInt:2],
+                                                                  [self convertDate:expiration],
                                                                   [NSNumber numberWithInt:amount],
                                                                   bucket]];
         if (prefix && prefix.length > 0) {
@@ -502,6 +504,12 @@ static Branch *currInstance;
             [self processNextQueueItem];
         }
     });
+}
+
+- (NSString *)convertDate:(NSDate *)date {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd"];
+    return [formatter stringFromDate:date];
 }
 
 - (void)getReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
@@ -520,7 +528,7 @@ static Branch *currInstance;
     });
 }
 
-- (void)applyReferralCode:(NSString *)code {
+- (void)redeemReferralCode:(NSString *)code {
     [self userCompletedAction:[NSString stringWithFormat:@"%@-%@", REDEEM_CODE, code]] ;
 }
 

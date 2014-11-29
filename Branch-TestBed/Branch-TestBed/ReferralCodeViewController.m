@@ -11,6 +11,8 @@
 
 @interface ReferralCodeViewController ()
 
+@property (nonatomic, strong) UIDatePicker *expirationPicker;
+
 @end
 
 @implementation ReferralCodeViewController
@@ -22,7 +24,25 @@
     [self.txtReferralCodePrefix addTarget:self action:@selector(textFieldFinished:) forControlEvents:UIControlEventEditingDidEndOnExit];
     self.txtReferralCodeResult.text = nil;
     self.lblReferralCodeValidation.text = nil;
-    self.lblReferralCodeApplication.text = nil;
+    self.txtReferralCodeExpiration.text = nil;
+    
+    self.expirationPicker = [[UIDatePicker alloc] init];
+    self.expirationPicker.datePickerMode = UIDatePickerModeDate;
+    [self.expirationPicker addTarget:self action:@selector(updateDate) forControlEvents:UIControlEventValueChanged];
+    self.txtReferralCodeExpiration.inputView = self.expirationPicker;
+    
+    NSDate *now = [NSDate date];
+    int daysToAdd = 7;
+    NSDate *date = [now dateByAddingTimeInterval:60 * 60 * 24 * daysToAdd];
+    self.expirationPicker.date = date;
+    [self updateDate];
+}
+
+- (void)updateDate {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-MM-dd"];
+    NSString *stringFromDate = [formatter stringFromDate:self.expirationPicker.date];
+    self.txtReferralCodeExpiration.text = stringFromDate;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -38,6 +58,7 @@
                                bucket:@"default"
                       calculationType:self.segReferralCodeFreq.selectedSegmentIndex
                              location:self.segReferralCodeLocation.selectedSegmentIndex
+                           expiration:self.expirationPicker.date
                           andCallback:^(NSDictionary *params, NSError *error) {
                               if (!error) {
                                   self.txtReferralCodeResult.text = [params objectForKey:@"referral_code"];
@@ -56,9 +77,9 @@
         [branch getReferralCode:self.txtReferralCodeResult.text andCallback:^(NSDictionary *params, NSError *error) {
             if (!error) {
                 if ([self.txtReferralCodeResult.text isEqualToString:[params objectForKey:@"referral_code"]]) {
-                    self.lblReferralCodeValidation.text = @"Referral code is valid";
+                    self.lblReferralCodeValidation.text = @"Valid";
                 } else {
-                    self.lblReferralCodeValidation.text = @"Referral code is not valid!";
+                    self.lblReferralCodeValidation.text = @"Invalid!";
                 }
             } else {
                 NSLog(@"Error in getting credit history: %@", error.localizedDescription);
@@ -71,7 +92,7 @@
 - (IBAction)cmdApplyReferralCode:(UIButton *)sender {
     if (self.txtReferralCodeResult.text.length > 0) {
         Branch *branch = [Branch getInstance];
-        [branch applyReferralCode:self.txtReferralCodeResult.text];
+        [branch redeemReferralCode:self.txtReferralCodeResult.text];
     }
 }
 
@@ -87,7 +108,12 @@
     if ([self.txtReferralCodePrefix isFirstResponder] && [touch view] != self.txtReferralCodePrefix) {
         [self.txtReferralCodePrefix resignFirstResponder];
     }
+    if ([self.txtReferralCodeExpiration isFirstResponder] && [touch view] != self.txtReferralCodeExpiration) {
+        [self.txtReferralCodeExpiration resignFirstResponder];
+    }
     [super touchesBegan:touches withEvent:event];
 }
+
+
 
 @end
