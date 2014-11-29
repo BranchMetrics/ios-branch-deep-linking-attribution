@@ -237,7 +237,7 @@ Warning: For a referral program, you should not use unique awards for custom eve
 Reward balances change randomly on the backend when certain actions are taken (defined by your rules), so you'll need to make an asynchronous call to retrieve the balance. Here is the syntax:
 
 ```objc
-[[Branch getInstance] loadRewardsWithCallback:^(BOOL changed) {
+[[Branch getInstance] loadRewardsWithCallback:^(BOOL changed, NSError *error) {
 	// changed boolean will indicate if the balance changed from what is currently in memory
 
 	// will return the balance of the current user's credits
