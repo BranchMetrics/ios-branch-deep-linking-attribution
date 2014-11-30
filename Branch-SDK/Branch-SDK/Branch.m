@@ -41,6 +41,7 @@ static NSString *URL = @"url";
 static NSString *REFERRING_DATA = @"referring_data";
 static NSString *REFERRER = @"referrer";
 static NSString *REFERREE = @"referree";
+static NSString *CREDIT = @"credit";
 
 static NSString *LENGTH = @"length";
 static NSString *BEGIN_AFTER_ID = @"begin_after_id";
@@ -55,14 +56,16 @@ static NSString *REFERRAL_CODE_PREFIX = @"prefix";
 static NSString *REFERRAL_CODE_CREATION_SOURCE = @"creation_source";
 static NSString *REFERRAL_CODE_EXPIRATION = @"expiration";
 
+static NSInteger REFERRAL_CREATION_SOURCE_SDK = 2;
+
 enum ReferralCodeCalculationType {
     REFERRAL_CALCULATION_TOTAL,
     REFERRAL_CALCULATION_UNIQUE
 };
 
 enum ReferralCodeLocation {
-    REFERRAL_SENDER,
-    REFERRAL_RECEIVER
+    REFERRAL_RECEIVER,
+    REFERRAL_SENDER
 };
 
 #define DIRECTIONS @[@"desc", @"asc"]
@@ -492,21 +495,23 @@ static Branch *currInstance;
                                                                 REFERRAL_CODE_LOCATION,
                                                                 REFERRAL_CODE_TYPE,
                                                                 REFERRAL_CODE_CREATION_SOURCE,
-                                                                REFERRAL_CODE_EXPIRATION,
                                                                 AMOUNT,
                                                                 BUCKET]];
         NSMutableArray *values = [NSMutableArray arrayWithArray:@[[BNCPreferenceHelper getAppKey],
                                                                   [BNCPreferenceHelper getIdentityID],
-                                                                  [NSNumber numberWithInt:calcType],
-                                                                  [NSNumber numberWithInt:location],
-                                                                  @"credit",
-                                                                  [NSNumber numberWithInt:2],
-                                                                  [self convertDate:expiration],
-                                                                  [NSNumber numberWithInt:amount],
+                                                                  [NSNumber numberWithLong:calcType],
+                                                                  [NSNumber numberWithLong:location],
+                                                                  CREDIT,
+                                                                  [NSNumber numberWithLong:REFERRAL_CREATION_SOURCE_SDK],
+                                                                  [NSNumber numberWithLong:amount],
                                                                   bucket]];
         if (prefix && prefix.length > 0) {
             [keys addObject:REFERRAL_CODE_PREFIX];
             [values addObject:prefix];
+        }
+        if (expiration) {
+            [keys addObject:REFERRAL_CODE_EXPIRATION];
+            [values addObject:[self convertDate:expiration]];
         }
         
         NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:values forKeys:keys];

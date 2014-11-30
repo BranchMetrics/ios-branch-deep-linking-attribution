@@ -35,7 +35,6 @@
     int daysToAdd = 7;
     NSDate *date = [now dateByAddingTimeInterval:60 * 60 * 24 * daysToAdd];
     self.expirationPicker.date = date;
-    [self updateDate];
 }
 
 - (void)updateDate {
@@ -52,10 +51,20 @@
 
 - (IBAction)cmdGetReferralCode:(UIButton *)sender {
     self.txtReferralCodeResult.text = nil;
+    NSInteger amount = [self.txtReferralCodeAmount.text integerValue];
+    if (amount == 0) {
+        self.txtReferralCodeAmount.text = nil;
+        self.txtReferralCodeAmount.placeholder = @"Invalid value";
+        return;
+    }
+    NSDate *expiration = nil;
+    if ([self.txtReferralCodeExpiration.text length] > 0) {
+        expiration = self.expirationPicker.date;
+    }
     Branch *branch = [Branch getInstance];
     [branch getReferralCodeWithPrefix:self.txtReferralCodePrefix.text
-                               amount:5
-                           expiration:self.expirationPicker.date
+                               amount:amount
+                           expiration:expiration
                                bucket:@"default"
                       calculationType:self.segReferralCodeFreq.selectedSegmentIndex
                              location:self.segReferralCodeLocation.selectedSegmentIndex
@@ -110,6 +119,9 @@
     }
     if ([self.txtReferralCodeExpiration isFirstResponder] && [touch view] != self.txtReferralCodeExpiration) {
         [self.txtReferralCodeExpiration resignFirstResponder];
+    }
+    if ([self.txtReferralCodeAmount isFirstResponder] && [touch view] != self.txtReferralCodeAmount) {
+        [self.txtReferralCodeAmount resignFirstResponder];
     }
     [super touchesBegan:touches withEvent:event];
 }

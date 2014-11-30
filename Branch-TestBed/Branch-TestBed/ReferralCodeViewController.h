@@ -16,5 +16,6 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segReferralCodeFreq;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segReferralCodeLocation;
 @property (weak, nonatomic) IBOutlet UITextField *txtReferralCodeExpiration;
+@property (weak, nonatomic) IBOutlet UITextField *txtReferralCodeAmount;
 
 @end
