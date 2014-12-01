@@ -66,8 +66,8 @@
                                amount:amount
                            expiration:expiration
                                bucket:@"default"
-                      calculationType:self.segReferralCodeFreq.selectedSegmentIndex
-                             location:self.segReferralCodeLocation.selectedSegmentIndex
+                      calculationType:[self retrieveCalculationForSegment]
+                             location:[self retrieveLocationForSegment]
                           andCallback:^(NSDictionary *params, NSError *error) {
                               if (!error) {
                                   self.txtReferralCodeResult.text = [params objectForKey:@"referral_code"];
@@ -77,6 +77,30 @@
                               }
                           }
      ];
+}
+
+- (ReferralCodeCalculation)retrieveCalculationForSegment {
+    switch (self.segReferralCodeFreq.selectedSegmentIndex) {
+        case 0:
+            return BranchUnlimitedRewards;
+        case 1:
+            return BranchUniqueRewards;
+        default:
+            return BranchUnlimitedRewards;
+    }
+}
+
+- (ReferralCodeLocation)retrieveLocationForSegment {
+    switch (self.segReferralCodeLocation.selectedSegmentIndex) {
+        case 0:
+            return BranchReferreeUser;
+        case 1:
+            return BranchReferringUser;
+        case 2:
+            return BranchBothUsers;
+        default:
+            return BranchReferringUser;
+    }
 }
 
 - (IBAction)cmdValidateReferralCode:(UIButton *)sender {

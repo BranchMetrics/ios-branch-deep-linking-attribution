@@ -58,15 +58,6 @@ static NSString *REFERRAL_CODE_EXPIRATION = @"expiration";
 
 static NSInteger REFERRAL_CREATION_SOURCE_SDK = 2;
 
-enum ReferralCodeCalculationType {
-    REFERRAL_CALCULATION_TOTAL,
-    REFERRAL_CALCULATION_UNIQUE
-};
-
-enum ReferralCodeLocation {
-    REFERRAL_RECEIVER,
-    REFERRAL_SENDER
-};
 
 #define DIRECTIONS @[@"desc", @"asc"]
 
@@ -363,11 +354,11 @@ static Branch *currInstance;
 }
 
 - (void)getCreditHistoryWithCallback:(callbackWithList)callback {
-    [self getCreditHistoryAfter:nil number:100 order:kMostRecentFirst andCallback:callback];
+    [self getCreditHistoryAfter:nil number:100 order:BranchMostRecentFirst andCallback:callback];
 }
 
 - (void)getCreditHistoryForBucket:(NSString *)bucket andCallback:(callbackWithList)callback {
-    [self getCreditHistoryForBucket:bucket after:nil number:100 order:kMostRecentFirst andCallback:callback];
+    [self getCreditHistoryForBucket:bucket after:nil number:100 order:BranchMostRecentFirst andCallback:callback];
 }
 
 - (void)getCreditHistoryAfter:(NSString *)creditTransactionId number:(NSInteger)length order:(CreditHistoryOrder)order andCallback:(callbackWithList)callback {
@@ -467,22 +458,22 @@ static Branch *currInstance;
 
 
 - (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback {
-    [self getReferralCodeWithPrefix:nil amount:amount expiration:nil bucket:@"default" calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER andCallback:callback];
+    [self getReferralCodeWithPrefix:nil amount:amount expiration:nil bucket:@"default" calculationType:BranchUnlimitedRewards location:BranchReferringUser andCallback:callback];
 }
 
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback {
-    [self getReferralCodeWithPrefix:prefix amount:amount expiration:nil bucket:@"default" calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER andCallback:callback];
+    [self getReferralCodeWithPrefix:prefix amount:amount expiration:nil bucket:@"default" calculationType:BranchUnlimitedRewards location:BranchReferringUser andCallback:callback];
 }
 
 - (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback {
-    [self getReferralCodeWithPrefix:nil amount:amount expiration:expiration bucket:@"default" calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER andCallback:callback];
+    [self getReferralCodeWithPrefix:nil amount:amount expiration:expiration bucket:@"default" calculationType:BranchUnlimitedRewards location:BranchReferringUser andCallback:callback];
 }
 
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback {
-    [self getReferralCodeWithPrefix:prefix amount:amount expiration:expiration bucket:@"default" calculationType:REFERRAL_CALCULATION_TOTAL location:REFERRAL_RECEIVER andCallback:callback];
+    [self getReferralCodeWithPrefix:prefix amount:amount expiration:expiration bucket:@"default" calculationType:BranchUnlimitedRewards location:BranchReferringUser andCallback:callback];
 }
 
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(NSInteger)calcType location:(NSInteger)location andCallback:(callbackWithParams)callback
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(ReferralCodeCalculation)calcType location:(ReferralCodeLocation)location andCallback:(callbackWithParams)callback
 {
     self.getReferralCodeCallback = callback;
     
