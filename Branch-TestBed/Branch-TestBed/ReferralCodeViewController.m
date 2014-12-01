@@ -72,7 +72,7 @@
                               if (!error) {
                                   self.txtReferralCodeResult.text = [params objectForKey:@"referral_code"];
                               } else {
-                                  NSLog(@"Error in getting credit history: %@", error.localizedDescription);
+                                  NSLog(@"Error in getting referral code: %@", error.localizedDescription);
                                   self.txtReferralCodeResult.text = error.localizedDescription;
                               }
                           }
@@ -83,7 +83,7 @@
     self.lblReferralCodeValidation.text = nil;
     if (self.txtReferralCodeResult.text.length > 0) {
         Branch *branch = [Branch getInstance];
-        [branch getReferralCode:self.txtReferralCodeResult.text andCallback:^(NSDictionary *params, NSError *error) {
+        [branch validateReferralCode:self.txtReferralCodeResult.text andCallback:^(NSDictionary *params, NSError *error) {
             if (!error) {
                 if ([self.txtReferralCodeResult.text isEqualToString:[params objectForKey:@"referral_code"]]) {
                     self.lblReferralCodeValidation.text = @"Valid";
@@ -91,7 +91,7 @@
                     self.lblReferralCodeValidation.text = @"Invalid!";
                 }
             } else {
-                NSLog(@"Error in getting credit history: %@", error.localizedDescription);
+                NSLog(@"Error in getting referral code: %@", error.localizedDescription);
                 self.lblReferralCodeValidation.text = error.localizedDescription;
             }
         }];
@@ -101,7 +101,14 @@
 - (IBAction)cmdApplyReferralCode:(UIButton *)sender {
     if (self.txtReferralCodeResult.text.length > 0) {
         Branch *branch = [Branch getInstance];
-        [branch redeemReferralCode:self.txtReferralCodeResult.text];
+        [branch applyReferralCode:self.txtReferralCodeResult.text andCallback:^(NSDictionary *params, NSError *error) {
+            if (!error) {
+                self.lblReferralCodeValidation.text = @"Applied";
+            } else {
+                NSLog(@"Error in apply referral code: %@", error.localizedDescription);
+                self.lblReferralCodeValidation.text = @"Failed!";
+            }
+        }];
     }
 }
 

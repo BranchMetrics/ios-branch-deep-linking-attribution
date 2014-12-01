@@ -81,7 +81,7 @@ typedef enum {
 - (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback;
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback;
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(NSInteger)calcType location:(NSInteger)location andCallback:(callbackWithParams)callback;
-- (void)getReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
-- (void)redeemReferralCode:(NSString *)code;
+- (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
+- (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
 
 @end

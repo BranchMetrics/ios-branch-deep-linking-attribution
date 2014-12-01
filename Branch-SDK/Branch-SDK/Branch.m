@@ -530,13 +530,14 @@ static Branch *currInstance;
     return [formatter stringFromDate:date];
 }
 
-- (void)getReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
+- (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
     self.validateReferralCodeCallback = callback;
     
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_VALIDATE_REFERRAL_CODE;
-        NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code, [BNCPreferenceHelper getAppKey]] forKeys:@[REFERRAL_CODE, APP_ID]];
+        NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code, [BNCPreferenceHelper getIdentityID], [BNCPreferenceHelper getAppKey]]
+                                                                       forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID]];
         req.postData = post;
         [self.requestQueue enqueue:req];
         
@@ -546,8 +547,25 @@ static Branch *currInstance;
     });
 }
 
-- (void)redeemReferralCode:(NSString *)code {
-    [self userCompletedAction:[NSString stringWithFormat:@"%@-%@", REDEEM_CODE, code]] ;
+- (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
+    [self validateReferralCode:code andCallback:^(NSDictionary *params, NSError *error) {
+        if (!error) {
+            if ([code isEqualToString:[params objectForKey:@"referral_code"]]) {
+                [self userCompletedAction:[NSString stringWithFormat:@"%@-%@", REDEEM_CODE, code]];
+                if (callback) {
+                    callback(params, nil);
+                }
+            } else {
+                if (callback) {
+                    NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Referral code doesn't match!"] forKey:NSLocalizedDescriptionKey];
+                    callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict]);
+                }
+            }
+        } else {
+            NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Failed to apply referral code. Please try again in a few minutes."] forKey:NSLocalizedDescriptionKey];
+            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict]);
+        }
+    }];
 }
 
 // PRIVATE CALLS
