@@ -194,7 +194,7 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 // stage: null or examples: "past_customer", "logged_in", "level_6"
 
 Branch *branch = [Branch getInstance];
-[branch getShortUrlWithParams:params andTags:@[@"version1", @"trial6"] andChannel:@"text_message" andFeature:BRANCH_FEATURE_TAG_SHARE andStage:@"level_6" andCallback:^(NSString *url) {
+[branch getShortUrlWithParams:params andTags:@[@"version1", @"trial6"] andChannel:@"text_message" andFeature:BRANCH_FEATURE_TAG_SHARE andStage:@"level_6" andCallback:^(NSString *url, NSError *error) {
 	// show the link to the user or share it immediately
 }];
 ```
@@ -237,7 +237,7 @@ Warning: For a referral program, you should not use unique awards for custom eve
 Reward balances change randomly on the backend when certain actions are taken (defined by your rules), so you'll need to make an asynchronous call to retrieve the balance. Here is the syntax:
 
 ```objc
-[[Branch getInstance] loadRewardsWithCallback:^(BOOL changed) {
+[[Branch getInstance] loadRewardsWithCallback:^(BOOL changed, NSError *error) {
 	// changed boolean will indicate if the balance changed from what is currently in memory
 
 	// will return the balance of the current user's credits
@@ -252,4 +252,110 @@ We will store how many of the rewards have been deployed so that you don't have 
 ```objc
 // Save that the user has redeemed 5 credits
 [[Branch getInstance] redeemRewards:5];
+```
+
+### Get referral code
+
+Retrieve the referral code created by current user
+
+```objc
+[[Branch getInstance] getReferralCodeWithCallback:^(NSDictionary *params, NSError *error) {
+    if (!error) {
+        NSString *referralCode = [params objectForKey:@"referral_code"];
+    }
+}];
+```
+
+### Create referral code
+
+Create a new referral code for the current user, only if this user doesn't have any existing non-expired referral code.
+
+In the simplest form, just specify an amount for the referral code.
+The returned referral code is a 6 character long unique alpha-numeric string wrapped inside the params dictionary with key @"referral_code".
+
+**amount** _NSInteger_
+: The amount of credit to redeem when user applies the referral code
+
+```objc
+// Create a referral code of 5 credits
+[[Branch getInstance] getReferralCodeWithAmount:5
+                                    andCallback:^(NSDictionary *params, NSError *error) {
+                                        if (!error) {
+                                            NSString *referralCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with referralCode
+                                        }
+                                    }
+];
+```
+
+Alternatively, you can specify a prefix for the referral code.
+The resulting code will have your prefix, concatenated with a 4 character long unique alpha-numeric string wrapped in the same data structure.
+
+**prefix** _NSString*_
+: The prefix to the referral code that you desire
+
+```objc
+// Create a referral code with prefix "BRANCH", 5 credits, and without an expiration date
+[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"
+                                         amount:5
+                                    andCallback:^(NSDictionary *params, NSError *error) {
+                                        if (!error) {
+                                            NSString *referralCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with referralCode
+                                        }
+                                    }
+];
+```
+
+If you want to specify an expiration date for the referral code, you can add an "expiration:" parameter.
+The prefix parameter is optional here, i.e. it could be getReferralCodeWithAmount:expiration:andCallback.
+
+**expiration** _NSDate*_
+: The expiration date of the referral code
+
+```objc
+[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"
+                                         amount:5
+                                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+                                    andCallback:^(NSDictionary *params, NSError *error) {
+                                        if (!error) {
+                                            NSString *referralCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with referralCode
+                                        }
+                                    }
+];
+```
+
+You can also tune the referral code to the finest granularity, with the following additional parameters:
+
+**bucket** _NSString*_
+: The name of the bucket to use. If none is specified, defaults to 'default'
+
+**calculation_type**  _ReferralCodeCalculation_
+: This defines whether the referral code can be applied indefinitely, or only once per user
+
+1. _BranchUnlimitedRewards_ - referral code can be applied continually
+1. _BranchUniqueRewards_ - a user can only apply a specific referral code once
+
+**location** _ReferralCodeLocation_
+: The user to reward for applying the referral code
+
+1. _BranchReferreeUser_ - the user applying the referral code receives credit
+1. _BranchReferringUser_ - the user who created the referral code receives credit
+1. _BranchBothUsers_ - both the creator and applicant receive credit
+
+```objc
+[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"
+				                         amount:5
+				                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+				                         bucket:@"default"
+				                calculationType:BranchUniqueRewards
+				                       location:BranchBothUsers
+				                    andCallback:^(NSDictionary *params, NSError *error) {
+				                        if (!error) {
+				                            NSString *referralCode = [params objectForKey:@"referral_code"];
+				                            // do whatever with referralCode
+				                        }
+			                       	}
+];
 ```
