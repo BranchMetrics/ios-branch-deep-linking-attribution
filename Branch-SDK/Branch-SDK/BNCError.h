@@ -22,6 +22,9 @@ enum {
     BNCIdentifyError,
     BNCLogoutError,
     BNCGetProfileError,
+    BNCGetReferralCodeError,
+    BNCValidateReferralCodeError,
+    BNCApplyReferralCodeError,
 };
 
 @interface BNCError : NSObject
