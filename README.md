@@ -190,11 +190,14 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 // associate a url with a set of tags, channel, feature, and stage for better analytics.
 // tags: null or example set of tags could be "version1", "trial6", etc
 // channel: null or examples: "facebook", "twitter", "text_message", etc
-// feature: null or examples: Branch.FEATURE_TAG_SHARE, Branch.FEATURE_TAG_REFERRAL, "unlock", etc
+// feature: null or examples: FEATURE_TAG_SHARE, FEATURE_TAG_REFERRAL, "unlock", etc
 // stage: null or examples: "past_customer", "logged_in", "level_6"
 
+// Link 'type' can be used for scenarios where you want the link to only deep link the first time. 
+// Use _nil_, _BranchLinkTypeUnlimitedUse_ or _BranchLinkTypeOneTimeUse_
+
 Branch *branch = [Branch getInstance];
-[branch getShortURLWithParams:params andTags:@[@"version1", @"trial6"] andChannel:@"text_message" andFeature:BRANCH_FEATURE_TAG_SHARE andStage:@"level_6" andCallback:^(NSString *url, NSError *error) {
+[branch getShortURLWithParams:params andTags:@[@"version1", @"trial6"] andChannel:@"text_message" andFeature:BRANCH_FEATURE_TAG_SHARE andStage:@"level_6" andType:BranchLinkTypeUnlimitedUse andCallback:^(NSString *url, NSError *error) {
 	// show the link to the user or share it immediately
 }];
 ```
