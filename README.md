@@ -362,7 +362,13 @@ You can also tune the referral code to the finest granularity, with the followin
 
 ### Validate referral code
 
-Validate if a referral code exists in Branch system and is still valid (not expired). If valid, return the referral code JSONObject in the call back.
+Validate if a referral code exists in Branch system and is still valid.
+A code is vaild if:
+
+1. It hasn't expired.
+1. If its calculation type is uniqe, it hasn't been applied by current user.
+
+If valid, returns the referral code JSONObject in the call back.
 
 **code** _NSString*_
 : The referral code to validate
@@ -383,7 +389,7 @@ Validate if a referral code exists in Branch system and is still valid (not expi
 
 ### Apply referral code
 
-Apply a referral code if it exists in Branch system and is still valid (not expired). If the code is valid, return the referral code JSONObject in the call back.
+Apply a referral code if it exists in Branch system and is still valid (see above). If the code is valid, returns the referral code JSONObject in the call back.
 
 **code** _NSString*_
 : The referral code to apply
