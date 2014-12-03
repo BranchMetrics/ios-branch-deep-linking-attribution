@@ -132,4 +132,9 @@
     [self postRequestAsync:post url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"referralcode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_VALIDATE_REFERRAL_CODE];
 }
 
+- (void)applyReferralCode:(NSDictionary *)post {
+    [self postRequestAsync:post url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"applycode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_APPLY_REFERRAL_CODE];
+}
+
+
 @end
