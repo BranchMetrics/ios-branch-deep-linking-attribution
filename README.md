@@ -371,7 +371,7 @@ Validate if a referral code exists in Branch system and is still valid (not expi
 [[Branch getInstance] validateReferralCode:code andCallback:^(NSDictionary *params, NSError *error) {
     if (!error) {
         if ([code isEqualToString:[params objectForKey:@"referral_code"]]) {
-            // invalid
+            // valid
         } else {
             // invaid (should never happen)
         }
@@ -391,7 +391,7 @@ Apply a referral code if it exists in Branch system and is still valid (not expi
 ```objc
 [[Branch getInstance] applyReferralCode:code andCallback:^(NSDictionary *params, NSError *error) {
     if (!error) {
-        // invalid
+        // applied. you can get the referral code amount from the params and deduct it in your UI.
     } else {
         NSLog(@"Error in applying referral code: %@", error.localizedDescription);
     }
