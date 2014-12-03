@@ -73,7 +73,7 @@
                                   self.txtReferralCodeResult.text = [params objectForKey:@"referral_code"];
                               } else {
                                   NSLog(@"Error in getting referral code: %@", error.localizedDescription);
-                                  self.txtReferralCodeResult.text = error.localizedDescription;
+                                  self.txtReferralCodeResult.text = @"Failed to get referral code";
                               }
                           }
      ];
@@ -115,8 +115,8 @@
                     self.lblReferralCodeValidation.text = @"Invalid!";
                 }
             } else {
-                NSLog(@"Error in getting referral code: %@", error.localizedDescription);
-                self.lblReferralCodeValidation.text = error.localizedDescription;
+                NSLog(@"Error in validating referral code: %@", error.localizedDescription);
+                self.lblReferralCodeValidation.text = @"Invalid!";
             }
         }];
     }

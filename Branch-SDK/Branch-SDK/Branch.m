@@ -83,6 +83,7 @@ static NSInteger REFERRAL_CREATION_SOURCE_SDK = 2;
 @property (strong, nonatomic) callbackWithList creditHistoryLoadCallback;
 @property (strong, nonatomic) callbackWithParams getReferralCodeCallback;
 @property (strong, nonatomic) callbackWithParams validateReferralCodeCallback;
+@property (strong, nonatomic) callbackWithParams applyReferralCodeCallback;
 @property (assign, nonatomic) BOOL initFinished;
 @property (assign, nonatomic) BOOL hasNetwork;
 @property (assign, nonatomic) BOOL isDebugMode;
@@ -559,24 +560,23 @@ static Branch *currInstance;
 }
 
 - (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
-    [self validateReferralCode:code andCallback:^(NSDictionary *params, NSError *error) {
-        if (!error) {
-            if ([code isEqualToString:[params objectForKey:@"referral_code"]]) {
-                [self userCompletedAction:[NSString stringWithFormat:@"%@-%@", REDEEM_CODE, code]];
-                if (callback) {
-                    callback(params, nil);
-                }
-            } else {
-                if (callback) {
-                    NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Referral code doesn't match!"] forKey:NSLocalizedDescriptionKey];
-                    callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict]);
-                }
-            }
-        } else {
-            NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Failed to apply referral code. Please try again in a few minutes."] forKey:NSLocalizedDescriptionKey];
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict]);
+    self.applyReferralCodeCallback = callback;
+    
+    dispatch_async(self.asyncQueue, ^{
+        BNCServerRequest *req = [[BNCServerRequest alloc] init];
+        req.tag = REQ_TAG_APPLY_REFERRAL_CODE;
+        NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code,
+                                                                                 [BNCPreferenceHelper getIdentityID],
+                                                                                 [BNCPreferenceHelper getAppKey],
+                                                                                 [BNCPreferenceHelper getSessionID]]
+                                                                       forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID, SESSION_ID]];
+        req.postData = post;
+        [self.requestQueue enqueue:req];
+        
+        if (self.initFinished || !self.hasNetwork) {
+            [self processNextQueueItem];
         }
-    }];
+    });
 }
 
 // PRIVATE CALLS
@@ -766,6 +766,9 @@ static Branch *currInstance;
             } else if ([req.tag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE] && [self hasUser] && [self hasSession]) {
                 Debug(@"calling validate referral code");
                 [self.bServerInterface validateReferralCode:req.postData];
+            } else if ([req.tag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE] && [self hasUser] && [self hasSession]) {
+                Debug(@"calling apply referral code");
+                [self.bServerInterface applyReferralCode:req.postData];
             } else if (![self hasUser]) {
                 if (![self hasAppKey] && [self hasSession]) {
                     NSLog(@"Branch Warning: User session not init yet. Please call initUserSession");
@@ -805,7 +808,11 @@ static Branch *currInstance;
         }
     } else if ([req.tag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE]) {
         if (self.validateReferralCodeCallback) {
-            self.validateReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:nil]);
+            self.validateReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:nil]);
+        }
+    } else if ([req.tag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE]) {
+        if (self.applyReferralCodeCallback) {
+            self.applyReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:nil]);
         }
     }
 }
@@ -943,26 +950,42 @@ static Branch *currInstance;
 
 - (void)processReferralCodeGet:(NSDictionary *)returnedData {
     if (self.getReferralCodeCallback) {
-        NSMutableDictionary *eventResponse = [NSMutableDictionary dictionaryWithDictionary:returnedData];
-        NSString *event = [eventResponse objectForKey:EVENT];
-        NSString *code = [event substringFromIndex:REDEEM_CODE.length + 1];
-        [eventResponse setObject:code forKey:REFERRAL_CODE];
+        NSError *error = nil;
+        if (![returnedData objectForKey:REFERRAL_CODE]) {
+            NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Failed to get referral code"] forKey:NSLocalizedDescriptionKey];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:errorDict];
+        }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.getReferralCodeCallback(eventResponse, nil);
+            self.getReferralCodeCallback(returnedData, error);
         });
     }
 }
 
 - (void)processReferralCodeValidation:(NSDictionary *)returnedData {
     if (self.validateReferralCodeCallback) {
-        NSMutableDictionary *eventResponse = [NSMutableDictionary dictionaryWithDictionary:returnedData];
-        NSString *event = [eventResponse objectForKey:EVENT];
-        NSString *code = [event substringFromIndex:REDEEM_CODE.length + 1];
-        [eventResponse setObject:code forKey:REFERRAL_CODE];
+        NSError *error = nil;
+        if (![returnedData objectForKey:REFERRAL_CODE]) {
+            NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Referral code is invalid"] forKey:NSLocalizedDescriptionKey];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:errorDict];
+        }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.validateReferralCodeCallback(eventResponse, nil);
+            self.validateReferralCodeCallback(returnedData, error);
+        });
+    }
+}
+
+- (void)processReferralCodeApply:(NSDictionary *)returnedData {
+    if (self.applyReferralCodeCallback) {
+        NSError *error = nil;
+        if (![returnedData objectForKey:REFERRAL_CODE]) {
+            NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Referral code is invalid"] forKey:NSLocalizedDescriptionKey];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict];
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.applyReferralCodeCallback(returnedData, error);
         });
     }
 }
@@ -1104,6 +1127,8 @@ static Branch *currInstance;
             [self processReferralCodeGet:response.data];
         } else if ([requestTag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE]) {
             [self processReferralCodeValidation:response.data];
+        } else if ([requestTag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE]) {
+            [self processReferralCodeApply:response.data];
         } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REDEEM_REWARDS] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
         }
         
