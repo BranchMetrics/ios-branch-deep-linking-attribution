@@ -561,7 +561,7 @@ static Branch *currInstance;
 - (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
     [self validateReferralCode:code andCallback:^(NSDictionary *params, NSError *error) {
         if (!error) {
-            if ([code isEqualToString:[params objectForKey:@"referral_code"]]) {
+            if ([code isEqualToString:[params objectForKey:REFERRAL_CODE]]) {
                 [self userCompletedAction:[NSString stringWithFormat:@"%@-%@", REDEEM_CODE, code]];
                 if (callback) {
                     callback(params, nil);
@@ -943,26 +943,28 @@ static Branch *currInstance;
 
 - (void)processReferralCodeGet:(NSDictionary *)returnedData {
     if (self.getReferralCodeCallback) {
-        NSMutableDictionary *eventResponse = [NSMutableDictionary dictionaryWithDictionary:returnedData];
-        NSString *event = [eventResponse objectForKey:EVENT];
-        NSString *code = [event substringFromIndex:REDEEM_CODE.length + 1];
-        [eventResponse setObject:code forKey:REFERRAL_CODE];
+        NSError *error = nil;
+        if (![returnedData objectForKey:REFERRAL_CODE]) {
+            NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Failed to get referral code"] forKey:NSLocalizedDescriptionKey];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:errorDict];
+        }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.getReferralCodeCallback(eventResponse, nil);
+            self.getReferralCodeCallback(returnedData, error);
         });
     }
 }
 
 - (void)processReferralCodeValidation:(NSDictionary *)returnedData {
     if (self.validateReferralCodeCallback) {
-        NSMutableDictionary *eventResponse = [NSMutableDictionary dictionaryWithDictionary:returnedData];
-        NSString *event = [eventResponse objectForKey:EVENT];
-        NSString *code = [event substringFromIndex:REDEEM_CODE.length + 1];
-        [eventResponse setObject:code forKey:REFERRAL_CODE];
+        NSError *error = nil;
+        if (![returnedData objectForKey:REFERRAL_CODE]) {
+            NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Referral code is invalid"] forKey:NSLocalizedDescriptionKey];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:errorDict];
+        }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.validateReferralCodeCallback(eventResponse, nil);
+            self.validateReferralCodeCallback(returnedData, error);
         });
     }
 }
