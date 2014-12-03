@@ -1030,6 +1030,9 @@ static Branch *currInstance;
             self.initFinished = YES;
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             [BNCPreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
+            if ([response.data objectForKey:IDENTITY_ID]) {
+                [BNCPreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
+            }
             if ([response.data objectForKey:LINK_CLICK_ID]) {
                 [BNCPreferenceHelper setLinkClickID:[response.data objectForKey:LINK_CLICK_ID]];
             } else {
