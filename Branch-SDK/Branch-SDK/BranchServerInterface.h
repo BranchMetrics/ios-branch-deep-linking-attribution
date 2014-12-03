@@ -23,6 +23,7 @@ static NSString *REQ_TAG_LOGOUT = @"t_logout";
 static NSString *REQ_TAG_PROFILE_DATA = @"t_profile_data";
 static NSString *REQ_TAG_GET_REFERRAL_CODE = @"t_get_referral_code";
 static NSString *REQ_TAG_VALIDATE_REFERRAL_CODE = @"t_validate_referral_code";
+static NSString *REQ_TAG_APPLY_REFERRAL_CODE = @"t_apply_referral_code";
 
 @interface BranchServerInterface : BNCServerInterface
 
@@ -41,8 +42,8 @@ static NSString *REQ_TAG_VALIDATE_REFERRAL_CODE = @"t_validate_referral_code";
 - (void)setProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;
 - (void)appendProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;
 - (void)unionProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;
-
 - (void)getReferralCode:(NSDictionary *)post;
 - (void)validateReferralCode:(NSDictionary *)post;
+- (void)applyReferralCode:(NSDictionary *)post;
 
 @end
