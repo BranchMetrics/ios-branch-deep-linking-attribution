@@ -159,8 +159,12 @@
             NSMutableArray *arr = [NSMutableArray array];
             
             for (BNCServerRequest *req in self.queue) {
-                NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
-                [arr addObject:encodedReq];
+                @try {
+                    NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
+                    [arr addObject:encodedReq];
+                }
+                @catch (NSException *exception) {
+                }
             }
             
             [defaults setObject:arr forKey:STORAGE_KEY];
@@ -180,8 +184,12 @@
     
     NSArray *arr = (NSArray *)data;
     for (NSData *encodedRequest in arr) {
-        BNCServerRequest *request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
-        [queue addObject:request];
+        @try {
+            BNCServerRequest *request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
+            [queue addObject:request];
+        }
+        @catch (NSException* exception) {
+        }
     }
     
     return queue;
