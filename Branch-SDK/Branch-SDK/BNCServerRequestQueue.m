@@ -35,8 +35,8 @@
 }
 
 - (void)enqueue:(BNCServerRequest *)request {
-    if (request) {
-        @synchronized(self.queue) {
+    @synchronized(self.queue) {
+        if (request) {
             [self.queue addObject:request];
             [self persist];
         }
@@ -44,13 +44,13 @@
 }
 
 - (void)insert:(BNCServerRequest *)request at:(unsigned int)index {
-    if (index > self.queue.count) {
-        Debug(@"Invalid queue operation: index out of bound!");
-        return;
-    }
-    
-    if (request) {
-        @synchronized(self.queue) {
+    @synchronized(self.queue) {
+        if (index > self.queue.count) {
+            Debug(@"Invalid queue operation: index out of bound!");
+            return;
+        }
+        
+        if (request) {
             [self.queue insertObject:request atIndex:index];
             [self persist];
         }
@@ -60,8 +60,8 @@
 - (BNCServerRequest *)dequeue {
     BNCServerRequest *request = nil;
     
-    if (self.queue.count > 0) {
-        @synchronized(self.queue) {
+    @synchronized(self.queue) {
+        if (self.queue.count > 0) {
             request = [self.queue objectAtIndex:0];
             [self.queue removeObjectAtIndex:0];
             [self persist];
@@ -72,13 +72,13 @@
 }
 
 - (BNCServerRequest *)removeAt:(unsigned int)index {
-    if (index >= self.queue.count) {
-        Debug(@"Invalid queue operation: index out of bound!");
-        return nil;
-    }
-    
-    BNCServerRequest *request;
+    BNCServerRequest *request = nil;
     @synchronized(self.queue) {
+        if (index >= self.queue.count) {
+            Debug(@"Invalid queue operation: index out of bound!");
+            return nil;
+        }
+        
         request = [self.queue objectAtIndex:index];
         [self.queue removeObjectAtIndex:index];
         [self persist];
