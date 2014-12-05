@@ -799,31 +799,33 @@ static Branch *currInstance;
     NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Trouble reaching server. Please try again in a few minutes"] forKey:NSLocalizedDescriptionKey];
     
     BNCServerRequest *req = [self.requestQueue peek];
-    if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
-        if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:errorDict]);
-    } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
-        if (self.pointLoadCallback) self.pointLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralsError userInfo:nil]);
-    } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS]) {
-        if (self.rewardLoadCallback) self.rewardLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditsError userInfo:nil]);
-    } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {
-        if (self.creditHistoryLoadCallback) {
-            self.creditHistoryLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:nil]);
-        }
-    } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
-        if (self.urlLoadCallback) self.urlLoadCallback(@"Trouble reaching server. Please try again in a few minutes", [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:errorDict]);
-    } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
-        if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCIdentifyError userInfo:errorDict]);
-    } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_CODE]) {
-        if (self.getReferralCodeCallback) {
-            self.getReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:nil]);
-        }
-    } else if ([req.tag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE]) {
-        if (self.validateReferralCodeCallback) {
-            self.validateReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:nil]);
-        }
-    } else if ([req.tag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE]) {
-        if (self.applyReferralCodeCallback) {
-            self.applyReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:nil]);
+    if (req) {
+        if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
+            if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:errorDict]);
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
+            if (self.pointLoadCallback) self.pointLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralsError userInfo:nil]);
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS]) {
+            if (self.rewardLoadCallback) self.rewardLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditsError userInfo:nil]);
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {
+            if (self.creditHistoryLoadCallback) {
+                self.creditHistoryLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:nil]);
+            }
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
+            if (self.urlLoadCallback) self.urlLoadCallback(@"Trouble reaching server. Please try again in a few minutes", [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:errorDict]);
+        } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
+            if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCIdentifyError userInfo:errorDict]);
+        } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_CODE]) {
+            if (self.getReferralCodeCallback) {
+                self.getReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:nil]);
+            }
+        } else if ([req.tag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE]) {
+            if (self.validateReferralCodeCallback) {
+                self.validateReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:nil]);
+            }
+        } else if ([req.tag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE]) {
+            if (self.applyReferralCodeCallback) {
+                self.applyReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:nil]);
+            }
         }
     }
 }
@@ -844,7 +846,7 @@ static Branch *currInstance;
     for (int i = 0; i < self.requestQueue.size; i++) {
         BNCServerRequest *request = [self.requestQueue peekAt:i];
         
-        if (request.postData) {
+        if (request && request.postData) {
             for (NSString *key in [request.postData allKeys]) {
                 if ([key isEqualToString:APP_ID]) {
                     [request.postData setValue:[BNCPreferenceHelper getAppKey] forKey:APP_ID];
@@ -1124,7 +1126,7 @@ static Branch *currInstance;
             
             if (self.requestQueue.size > 0) {
                 BNCServerRequest *req = [self.requestQueue peek];
-                if (req.postData && [req.postData objectForKey:IDENTITY]) {
+                if (req && req.postData && [req.postData objectForKey:IDENTITY]) {
                     [BNCPreferenceHelper setUserIdentity:[req.postData objectForKey:IDENTITY]];
                 }
             }
