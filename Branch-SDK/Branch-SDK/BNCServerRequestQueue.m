@@ -156,7 +156,7 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     dispatch_async(self.asyncQueue, ^{
         @synchronized(self.queue) {
-            NSMutableArray *arr = [NSMutableArray array];
+            NSMutableArray *arr = [[NSMutableArray alloc] init];
             
             for (BNCServerRequest *req in self.queue) {
                 if (req) {
@@ -172,7 +172,7 @@
 }
 
 + (NSMutableArray *)retrieve {
-    NSMutableArray *queue = [NSMutableArray array];
+    NSMutableArray *queue = [[NSMutableArray alloc] init];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     id data = [defaults objectForKey:STORAGE_KEY];
