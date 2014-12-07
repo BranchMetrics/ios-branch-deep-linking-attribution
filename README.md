@@ -196,10 +196,15 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 // Link 'type' can be used for scenarios where you want the link to only deep link the first time. 
 // Use _nil_, _BranchLinkTypeUnlimitedUse_ or _BranchLinkTypeOneTimeUse_
 
+// Link 'alias' can be used to label the endpoint on the link. For example: http://bnc.lt/AUSTIN28. 
+// Be careful about aliases: these are immutable objects permanently associated with the data and associated paramters you pass into the link. When you create one in the SDK, it's tied to that user identity as well (automatically specified by the Branch internals). If you want to retrieve the same link again, you'll need to call getShortUrl with all of the same parameters from before.
+
 Branch *branch = [Branch getInstance];
-[branch getShortURLWithParams:params andTags:@[@"version1", @"trial6"] andChannel:@"text_message" andFeature:BRANCH_FEATURE_TAG_SHARE andStage:@"level_6" andType:BranchLinkTypeUnlimitedUse andCallback:^(NSString *url, NSError *error) {
+[branch getShortURLWithParams:params andTags:@[@"version1", @"trial6"] andChannel:@"text_message" andFeature:BRANCH_FEATURE_TAG_SHARE andStage:@"level_6" andAlias:@"AUSTIN68" andCallback:^(NSString *url, NSError *error) {
 	// show the link to the user or share it immediately
 }];
+
+// The callback will return null if the link generation fails (or if the alias specified is aleady taken.)
 ```
 
 There are other methods which exclude tag and data if you don't want to pass those. Explore Xcode's autocomplete functionality.
