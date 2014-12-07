@@ -144,6 +144,18 @@ func application(application: UIApplication, didFinishLaunchingWithOptions launc
 }
 ```
 
+```swift
+func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
+    // pass the url to the handle deep link call
+    // if handleDeepLink returns true, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
+    if (!Branch.getInstance().handleDeepLink(url)) {
+        // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+    }
+        
+    return true
+}
+```
+
 #### Retrieve session (install or open) parameters
 
 These session parameters will be available at any point later on with this command. If no params, the dictionary will be empty. This refreshes with every new session (app installs AND app opens)
