@@ -20,9 +20,25 @@ static NSString *BRANCH_FEATURE_TAG_DEAL = @"deal";
 static NSString *BRANCH_FEATURE_TAG_GIFT = @"gift";
 
 typedef enum {
-    kMostRecentFirst,
-    kLeastRecentFirst
+    BranchMostRecentFirst,
+    BranchLeastRecentFirst
 } CreditHistoryOrder;
+
+typedef enum {
+    BranchReferreeUser = 0,
+    BranchReferringUser = 2,
+    BranchBothUsers = 3
+} ReferralCodeLocation;
+
+typedef enum {
+    BranchUniqueRewards = 1,
+    BranchUnlimitedRewards = 0
+} ReferralCodeCalculation;
+
+typedef enum {
+    BranchLinkTypeUnlimitedUse = 0,
+    BranchLinkTypeOneTimeUse = 1
+} BranchLinkType;
 
 @interface Branch : NSObject
 
@@ -73,7 +89,20 @@ typedef enum {
 - (void)getReferralUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback;
 - (void)getReferralUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback;
 - (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type andCallback:(callbackWithUrl)callback;
 - (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type andCallback:(callbackWithUrl)callback;
 - (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andCallback:(callbackWithUrl)callback;
+
+- (void)getReferralCodeWithCallback:(callbackWithParams)callback;
+- (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback;
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback;
+- (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback;
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback;
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(ReferralCodeCalculation)calcType location:(ReferralCodeLocation)location andCallback:(callbackWithParams)callback;
+- (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
+- (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
 
 @end
