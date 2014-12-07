@@ -81,6 +81,7 @@ Called when app first initializes a session, ideally in the app delegate. If you
 
 This deep link routing callback is called 100% of the time on init, with your link params or an empty dictionary if none present.
 
+#### Objective-C
 ```objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	// your other init code
