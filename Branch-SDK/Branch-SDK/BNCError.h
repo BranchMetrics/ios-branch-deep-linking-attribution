@@ -25,6 +25,7 @@ enum {
     BNCGetReferralCodeError,
     BNCValidateReferralCodeError,
     BNCApplyReferralCodeError,
+    BNCCreateURLDuplicateAliasError
 };
 
 @interface BNCError : NSObject
