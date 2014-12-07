@@ -125,7 +125,19 @@ func application(application: UIApplication, didFinishLaunchingWithOptions launc
 	
     let branch: Branch = Branch.getInstance("Your app key")
     branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
-        NSLog("\(params!.description)")
+        if (error == nil) {
+            // params are the deep linked params associated with the link that the user clicked before showing up
+            // params will be empty if no data found
+            
+                
+            // here is the data from the example below if a new user clicked on Joe's link and installed the app
+            let name = params["user"] as? String                // returns Joe
+            let profileUrl = params["profile_pic"] as? String   // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
+            let description = params["description"] as? String  // returns Joe likes long walks on the beach...
+                
+            // route to a profile page in the app for Joe
+            // show a customer welcome
+        }
     })
         
     return true
