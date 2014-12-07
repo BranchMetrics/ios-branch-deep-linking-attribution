@@ -81,7 +81,7 @@ Called when app first initializes a session, ideally in the app delegate. If you
 
 This deep link routing callback is called 100% of the time on init, with your link params or an empty dictionary if none present.
 
-#### Objective-C
+##### Objective-C
 ```objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	// your other init code
@@ -116,6 +116,20 @@ This deep link routing callback is called 100% of the time on init, with your li
 	}
     return YES;
 }
+```
+
+##### Swift
+```swift
+func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+	// your other init code
+	
+        let branch: Branch = Branch.getInstance("Your app key")
+        branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
+            NSLog("\(params!.description)")
+        })
+        
+        return true
+    }
 ```
 
 #### Retrieve session (install or open) parameters
