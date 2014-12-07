@@ -121,15 +121,15 @@ This deep link routing callback is called 100% of the time on init, with your li
 ##### Swift
 ```swift
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-	// your other init code
+    // your other init code
 	
-        let branch: Branch = Branch.getInstance("Your app key")
-        branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
-            NSLog("\(params!.description)")
-        })
+    let branch: Branch = Branch.getInstance("Your app key")
+    branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
+        NSLog("\(params!.description)")
+    })
         
-        return true
-    }
+    return true
+}
 ```
 
 #### Retrieve session (install or open) parameters
