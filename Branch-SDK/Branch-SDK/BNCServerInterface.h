@@ -18,8 +18,9 @@
 
 static NSString *kpServerIdentNone = @"no_value";
 static NSString *REQ_TAG_DEBUG_CONNECT = @"t_debug_connect";
-static NSString *REQ_TAG_SEND_LOG = @"t_send_log";
-static NSString *REQ_TAG_SEND_SCREEN = @"t_send_screen";
+static NSString *REQ_TAG_DEBUG_LOG = @"t_debug_log";
+static NSString *REQ_TAG_DEBUG_SCREEN = @"t_debug_screen";
+static NSString *REQ_TAG_DEBUG_DISCONNECT = @"t_debug_disconnect";
 
 
 @interface BNCServerInterface : NSObject

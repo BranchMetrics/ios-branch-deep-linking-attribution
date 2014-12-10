@@ -69,13 +69,13 @@ static UIWindow *bnc_debugWindow = nil;
 
 - (void)bnc_addDebugGestureRecognizers {
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(bnc_connectToDebug:)];
-    longPress.minimumPressDuration = 3.0;
-    longPress.numberOfTouchesRequired = 4;
+    longPress.minimumPressDuration = 1.0;
+    longPress.numberOfTouchesRequired = 2;
     [self.view addGestureRecognizer:longPress];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bnc_endDebug:)];
     tap.numberOfTapsRequired = 2;
-    tap.numberOfTouchesRequired = 4;
+    tap.numberOfTouchesRequired = 2;
     [self.view addGestureRecognizer:tap];
 }
 
@@ -89,13 +89,15 @@ static UIWindow *bnc_debugWindow = nil;
     if (!bnc_asyncDebugQueue) {
         bnc_asyncDebugQueue = dispatch_queue_create("bnc_debug_queue", NULL);
     }
-    if (!bnc_debugTimer || !bnc_debugTimer.isValid) {
-        bnc_debugTimer = [NSTimer scheduledTimerWithTimeInterval:3.0f
-                                                               target:self
-                                                             selector:@selector(bnc_takeScreenshot)
-                                                             userInfo:nil
-                                                              repeats:YES];
-    }
+    
+    //TODO: screenshots for future
+//    if (!bnc_debugTimer || !bnc_debugTimer.isValid) {
+//        bnc_debugTimer = [NSTimer scheduledTimerWithTimeInterval:3.0f
+//                                                               target:self
+//                                                             selector:@selector(bnc_takeScreenshot)
+//                                                             userInfo:nil
+//                                                              repeats:YES];
+//    }
 }
 
 - (void)bnc_endDebug:(UITapGestureRecognizer *)gesture {

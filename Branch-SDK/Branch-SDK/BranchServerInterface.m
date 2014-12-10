@@ -133,12 +133,20 @@
     [self getRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug"] andTag:REQ_TAG_DEBUG_CONNECT log:NO];
 }
 
+- (void)disconnectFromDebug {
+    NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
+    
+    [self getRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"canceldebug"] andTag:REQ_TAG_DEBUG_DISCONNECT log:NO];
+}
+
 - (void)sendLog:(NSString *)log {
     NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObject:log forKey:@"log"];
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
     
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug"] andTag:REQ_TAG_SEND_LOG log:NO];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug"] andTag:REQ_TAG_DEBUG_LOG log:NO];
 }
 
 - (void)sendScreenshot:(NSData *)data {
@@ -167,8 +175,8 @@
     
     [request setHTTPBody:body];
     [request addValue:[NSString stringWithFormat:@"%lu", (unsigned long)[body length]] forHTTPHeaderField:@"Content-Length"];
-    
-    [self genericHTTPRequest:request withTag:REQ_TAG_SEND_SCREEN];
+    NSLog(@"================== Data size: %lu", (unsigned long)[body length]);  //temp
+    [self genericHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN];
 }
 
 @end
