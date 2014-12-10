@@ -28,6 +28,7 @@ static NSString *REQ_TAG_DEBUG_DISCONNECT = @"t_debug_disconnect";
 @property (nonatomic, strong) id <BNCServerInterfaceDelegate> delegate;
 
 + (NSString *)encodePostToUniversalString:(NSDictionary *)params;
++ (NSString *)encodePostToUniversalString:(NSDictionary *)params needSource:(BOOL)source;
 
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag;
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log;

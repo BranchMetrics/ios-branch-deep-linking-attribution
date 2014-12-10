@@ -81,8 +81,8 @@
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"redeem"] andTag:REQ_TAG_REDEEM_REWARDS];
 }
 
-- (void)getCreditHistory:(NSDictionary *)query {
-    [self getRequestAsync:query url:[BNCPreferenceHelper getAPIURL:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
+- (void)getCreditHistory:(NSDictionary *)post {
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
 }
 
 - (void)createCustomUrl:(NSDictionary *)post {
@@ -178,5 +178,18 @@
     NSLog(@"================== Data size: %lu", (unsigned long)[body length]);  //temp
     [self genericHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN];
 }
+
+- (void)getReferralCode:(NSDictionary *)post {
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"referralcode"] andTag:REQ_TAG_GET_REFERRAL_CODE];
+}
+
+- (void)validateReferralCode:(NSDictionary *)post {
+    [self postRequestAsync:post url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"referralcode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_VALIDATE_REFERRAL_CODE];
+}
+
+- (void)applyReferralCode:(NSDictionary *)post {
+    [self postRequestAsync:post url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"applycode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_APPLY_REFERRAL_CODE];
+}
+
 
 @end

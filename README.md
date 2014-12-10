@@ -1,3 +1,27 @@
+## Callback changes since v0.3.0
+
+An NSError* is added to all callback signatures
+
+typedef void (^callbackWithParams) (NSDictionary *params, NSError *error);
+
+typedef void (^callbackWithUrl) (NSString *url, NSError *error);
+
+typedef void (^callbackWithStatus) (BOOL changed, NSError *error);
+
+typedef void (^callbackWithList) (NSArray *list, NSError *error);
+
+Please look up BNCError.h for the list of error code.
+
+## API renaming since v0.2.7
+
+Deprecated API | Renamed to
+-------------- | -------------
+all of initUserSession... | initSession...
+all of identifyUser... | setIdentity...
+clearUser | logout
+getInstallReferringParams | getFirstReferringParams
+getReferringParams | getLatestReferringParams
+
 ## Installation
 
 compiled SDK size: ~155kb
@@ -57,6 +81,7 @@ Called when app first initializes a session, ideally in the app delegate. If you
 
 This deep link routing callback is called 100% of the time on init, with your link params or an empty dictionary if none present.
 
+##### Objective-C
 ```objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	// your other init code
@@ -64,18 +89,20 @@ This deep link routing callback is called 100% of the time on init, with your li
 
 	// sign up to get your key at http://branch.io
 	Branch *branch = [Branch getInstance:@"Your app key"];
-	[branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params) {		// previously initUserSessionWithCallback:withLaunchOptions:
-		// params are the deep linked params associated with the link that the user clicked before showing up
-		// params will be empty if no data found
+	[branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {		// previously initUserSessionWithCallback:withLaunchOptions:
+        if (!error) {
+            // params are the deep linked params associated with the link that the user clicked before showing up
+            // params will be empty if no data found
 
 
-		// here is the data from the example below if a new user clicked on Joe's link and installed the app
-		NSString *name = [params objectForKey:@"user"]; // returns Joe
-		NSString *profileUrl = [params objectForKey:@"profile_pic"]; // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
-		NSString *description = [params objectForKey:@"description"]; // returns Joe likes long walks on the beach...
+            // here is the data from the example below if a new user clicked on Joe's link and installed the app
+            NSString *name = [params objectForKey:@"user"]; // returns Joe
+            NSString *profileUrl = [params objectForKey:@"profile_pic"]; // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
+            NSString *description = [params objectForKey:@"description"]; // returns Joe likes long walks on the beach...
 
-		// route to a profile page in the app for Joe
-		// show a customer welcome
+            // route to a profile page in the app for Joe
+            // show a customer welcome
+        }
 	}];
 }
 ```
@@ -88,6 +115,44 @@ This deep link routing callback is called 100% of the time on init, with your li
 		// do other deep link routing for the Facebook SDK, Pinterest SDK, etc
 	}
     return YES;
+}
+```
+
+##### Swift
+```swift
+func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    // your other init code
+	
+    let branch: Branch = Branch.getInstance("Your app key")
+    branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
+        if (error == nil) {
+            // params are the deep linked params associated with the link that the user clicked before showing up
+            // params will be empty if no data found
+            
+                
+            // here is the data from the example below if a new user clicked on Joe's link and installed the app
+            let name = params["user"] as? String                // returns Joe
+            let profileUrl = params["profile_pic"] as? String   // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
+            let description = params["description"] as? String  // returns Joe likes long walks on the beach...
+                
+            // route to a profile page in the app for Joe
+            // show a customer welcome
+        }
+    })
+        
+    return true
+}
+```
+
+```swift
+func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
+    // pass the url to the handle deep link call
+    // if handleDeepLink returns true, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
+    if (!Branch.getInstance().handleDeepLink(url)) {
+        // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+    }
+        
+    return true
 }
 ```
 
@@ -164,13 +229,21 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 // associate a url with a set of tags, channel, feature, and stage for better analytics.
 // tags: null or example set of tags could be "version1", "trial6", etc
 // channel: null or examples: "facebook", "twitter", "text_message", etc
-// feature: null or examples: Branch.FEATURE_TAG_SHARE, Branch.FEATURE_TAG_REFERRAL, "unlock", etc
+// feature: null or examples: FEATURE_TAG_SHARE, FEATURE_TAG_REFERRAL, "unlock", etc
 // stage: null or examples: "past_customer", "logged_in", "level_6"
 
+// Link 'type' can be used for scenarios where you want the link to only deep link the first time. 
+// Use _nil_, _BranchLinkTypeUnlimitedUse_ or _BranchLinkTypeOneTimeUse_
+
+// Link 'alias' can be used to label the endpoint on the link. For example: http://bnc.lt/AUSTIN28. 
+// Be careful about aliases: these are immutable objects permanently associated with the data and associated paramters you pass into the link. When you create one in the SDK, it's tied to that user identity as well (automatically specified by the Branch internals). If you want to retrieve the same link again, you'll need to call getShortUrl with all of the same parameters from before.
+
 Branch *branch = [Branch getInstance];
-[branch getShortUrlWithParams:params andTags:@[@"version1", @"trial6"] andChannel:@"text_message" andFeature:BRANCH_FEATURE_TAG_SHARE andStage:@"level_6" andCallback:^(NSString *url) {
+[branch getShortURLWithParams:params andTags:@[@"version1", @"trial6"] andChannel:@"text_message" andFeature:BRANCH_FEATURE_TAG_SHARE andStage:@"level_6" andAlias:@"AUSTIN68" andCallback:^(NSString *url, NSError *error) {
 	// show the link to the user or share it immediately
 }];
+
+// The callback will return null if the link generation fails (or if the alias specified is aleady taken.)
 ```
 
 There are other methods which exclude tag and data if you don't want to pass those. Explore Xcode's autocomplete functionality.
@@ -211,7 +284,7 @@ Warning: For a referral program, you should not use unique awards for custom eve
 Reward balances change randomly on the backend when certain actions are taken (defined by your rules), so you'll need to make an asynchronous call to retrieve the balance. Here is the syntax:
 
 ```objc
-[[Branch getInstance] loadRewardsWithCallback:^(BOOL changed) {
+[[Branch getInstance] loadRewardsWithCallback:^(BOOL changed, NSError *error) {
 	// changed boolean will indicate if the balance changed from what is currently in memory
 
 	// will return the balance of the current user's credits
@@ -226,4 +299,154 @@ We will store how many of the rewards have been deployed so that you don't have 
 ```objc
 // Save that the user has redeemed 5 credits
 [[Branch getInstance] redeemRewards:5];
+```
+
+### Get referral code
+
+Retrieve the referral code created by current user
+
+```objc
+[[Branch getInstance] getReferralCodeWithCallback:^(NSDictionary *params, NSError *error) {
+    if (!error) {
+        NSString *referralCode = [params objectForKey:@"referral_code"];
+    }
+}];
+```
+
+### Create referral code
+
+Create a new referral code for the current user, only if this user doesn't have any existing non-expired referral code.
+
+In the simplest form, just specify an amount for the referral code.
+The returned referral code is a 6 character long unique alpha-numeric string wrapped inside the params dictionary with key @"referral_code".
+
+**amount** _NSInteger_
+: The amount of credit to redeem when user applies the referral code
+
+```objc
+// Create a referral code of 5 credits
+[[Branch getInstance] getReferralCodeWithAmount:5
+                                    andCallback:^(NSDictionary *params, NSError *error) {
+                                        if (!error) {
+                                            NSString *referralCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with referralCode
+                                        }
+                                    }
+];
+```
+
+Alternatively, you can specify a prefix for the referral code.
+The resulting code will have your prefix, concatenated with a 4 character long unique alpha-numeric string wrapped in the same data structure.
+
+**prefix** _NSString*_
+: The prefix to the referral code that you desire
+
+```objc
+// Create a referral code with prefix "BRANCH", 5 credits, and without an expiration date
+[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"
+                                         amount:5
+                                    andCallback:^(NSDictionary *params, NSError *error) {
+                                        if (!error) {
+                                            NSString *referralCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with referralCode
+                                        }
+                                    }
+];
+```
+
+If you want to specify an expiration date for the referral code, you can add an "expiration:" parameter.
+The prefix parameter is optional here, i.e. it could be getReferralCodeWithAmount:expiration:andCallback.
+
+**expiration** _NSDate*_
+: The expiration date of the referral code
+
+```objc
+[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"
+                                         amount:5
+                                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+                                    andCallback:^(NSDictionary *params, NSError *error) {
+                                        if (!error) {
+                                            NSString *referralCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with referralCode
+                                        }
+                                    }
+];
+```
+
+You can also tune the referral code to the finest granularity, with the following additional parameters:
+
+**bucket** _NSString*_
+: The name of the bucket to use. If none is specified, defaults to 'default'
+
+**calculation_type**  _ReferralCodeCalculation_
+: This defines whether the referral code can be applied indefinitely, or only once per user
+
+1. _BranchUnlimitedRewards_ - referral code can be applied continually
+1. _BranchUniqueRewards_ - a user can only apply a specific referral code once
+
+**location** _ReferralCodeLocation_
+: The user to reward for applying the referral code
+
+1. _BranchReferreeUser_ - the user applying the referral code receives credit
+1. _BranchReferringUser_ - the user who created the referral code receives credit
+1. _BranchBothUsers_ - both the creator and applicant receive credit
+
+```objc
+[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"
+				                         amount:5
+				                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+				                         bucket:@"default"
+				                calculationType:BranchUniqueRewards
+				                       location:BranchBothUsers
+				                    andCallback:^(NSDictionary *params, NSError *error) {
+				                        if (!error) {
+				                            NSString *referralCode = [params objectForKey:@"referral_code"];
+				                            // do whatever with referralCode
+				                        }
+			                       	}
+];
+```
+
+### Validate referral code
+
+Validate if a referral code exists in Branch system and is still valid.
+A code is vaild if:
+
+1. It hasn't expired.
+1. If its calculation type is uniqe, it hasn't been applied by current user.
+
+If valid, returns the referral code JSONObject in the call back.
+
+**code** _NSString*_
+: The referral code to validate
+
+```objc
+[[Branch getInstance] validateReferralCode:code andCallback:^(NSDictionary *params, NSError *error) {
+    if (!error) {
+        if ([code isEqualToString:[params objectForKey:@"referral_code"]]) {
+            // valid
+        } else {
+            // invaid (should never happen)
+        }
+    } else {
+        NSLog(@"Error in validating referral code: %@", error.localizedDescription);
+    }
+}];
+```
+
+### Apply referral code
+
+Apply a referral code if it exists in Branch system and is still valid (see above). If the code is valid, returns the referral code JSONObject in the call back.
+
+**code** _NSString*_
+: The referral code to apply
+
+```objc
+[[Branch getInstance] applyReferralCode:code andCallback:^(NSDictionary *params, NSError *error) {
+    if (!error) {
+        // applied. you can get the referral code amount from the params and deduct it in your UI.
+    } else {
+        NSLog(@"Error in applying referral code: %@", error.localizedDescription);
+    }
+}];
 ```
