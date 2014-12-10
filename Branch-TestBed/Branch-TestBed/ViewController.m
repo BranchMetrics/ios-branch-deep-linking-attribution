@@ -28,25 +28,29 @@
 
 - (IBAction)cmdRefreshShort:(id)sender {
     NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!"] forKeys:@[@"key1", @"key2"]];
-    [[Branch getInstance] getShortURLWithParams:params andTags:@[@"tag1", @"tag2"] andChannel:@"facebook" andFeature:@"invite" andStage:@"2" andCallback:^(NSString *url) {
+    [[Branch getInstance] getShortURLWithParams:params andTags:@[@"tag1", @"tag2"] andChannel:@"facebook" andFeature:@"invite" andStage:@"2" andCallback:^(NSString *url, NSError *err) {
         [self.editRefShortUrl setText:url];
     }];
 }
 - (IBAction)cmdRefreshPoints:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch loadActionCountsWithCallback:^(BOOL changed){
-        NSLog(@"load points callback, balance install = %ld, balance buy = %ld", (long)[branch getTotalCountsForAction:@"install"], (long)[branch getTotalCountsForAction:@"buy"]);
-        [self.txtInstallTotal setText:[NSString stringWithFormat:@"%ld",(long)[branch getTotalCountsForAction:@"install"]]];
-        [self.txtInstallUniques setText:[NSString stringWithFormat:@"%ld",(long)[branch getUniqueCountsForAction:@"install"]]];
-        [self.txtBuyCount setText:[NSString stringWithFormat:@"%ld",(long)[branch getTotalCountsForAction:@"buy"]]];
-        [self.txtBuyUniques setText:[NSString stringWithFormat:@"%ld",(long)[branch getUniqueCountsForAction:@"buy"]]];
+    [branch loadActionCountsWithCallback:^(BOOL changed, NSError *err){
+        if (!err) {
+            NSLog(@"load points callback, balance install = %ld, balance buy = %ld", (long)[branch getTotalCountsForAction:@"install"], (long)[branch getTotalCountsForAction:@"buy"]);
+            [self.txtInstallTotal setText:[NSString stringWithFormat:@"%ld",(long)[branch getTotalCountsForAction:@"install"]]];
+            [self.txtInstallUniques setText:[NSString stringWithFormat:@"%ld",(long)[branch getUniqueCountsForAction:@"install"]]];
+            [self.txtBuyCount setText:[NSString stringWithFormat:@"%ld",(long)[branch getTotalCountsForAction:@"buy"]]];
+            [self.txtBuyUniques setText:[NSString stringWithFormat:@"%ld",(long)[branch getUniqueCountsForAction:@"buy"]]];
+        }
     }];
 }
 
 - (IBAction)cmdRefreshRewards:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch loadRewardsWithCallback:^(BOOL changed) {
-        [self.txtRewardCredits setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
+    [branch loadRewardsWithCallback:^(BOOL changed, NSError *err) {
+        if (!err) {
+            [self.txtRewardCredits setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
+        }
     }];
 }
 - (IBAction)cmdRedeemFive:(id)sender {
@@ -82,8 +86,12 @@
 }
 - (IBAction)cmdGetCreditHistory:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch getCreditHistoryWithCallback:^(NSArray *creditHistory) {
-        [self performSegueWithIdentifier:@"ShowCreditHistory" sender:creditHistory];
+    [branch getCreditHistoryWithCallback:^(NSArray *creditHistory, NSError *err) {
+        if (!err) {
+            [self performSegueWithIdentifier:@"ShowCreditHistory" sender:creditHistory];
+        } else {
+            NSLog(@"Error in getting credit history: %@", err.localizedDescription);
+        }
     }];
 }
 

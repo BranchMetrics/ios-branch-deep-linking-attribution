@@ -84,6 +84,10 @@
 }
 
 + (NSString *)encodePostToUniversalString:(NSDictionary *)params {
+    return [BNCServerInterface encodePostToUniversalString:params needSource:YES];
+}
+
++ (NSString *)encodePostToUniversalString:(NSDictionary *)params needSource:(BOOL)source {
     NSMutableString *encodedParams = [[NSMutableString alloc] initWithString:@"{ "];
     for (NSString *key in params) {
         NSString *value = nil;
@@ -104,8 +108,16 @@
         if (string) [encodedParams appendString:@"\","];
         else [encodedParams appendString:@","];
     }
-    [encodedParams appendString:@"\"source\":\"ios\" }"];
+
+    if (source) {
+        [encodedParams appendString:@"\"source\":\"ios\" }"];
+    } else {
+        [encodedParams deleteCharactersInRange:NSMakeRange([encodedParams length]-1, 1)];
+        [encodedParams appendString:@" }"];
+    }
+    
     [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"encoded params : %@", encodedParams];
+
     return encodedParams;
 }
 
