@@ -87,6 +87,7 @@ static NSInteger REFERRAL_CREATION_SOURCE_SDK = 2;
 @property (strong, nonatomic) callbackWithParams validateReferralCodeCallback;
 @property (strong, nonatomic) callbackWithParams applyReferralCodeCallback;
 @property (assign, nonatomic) BOOL initFinished;
+@property (assign, nonatomic) BOOL lastRequestWasInit;
 @property (assign, nonatomic) BOOL hasNetwork;
 @property (assign, nonatomic) BOOL isDebugMode;
 
@@ -129,6 +130,7 @@ static Branch *currInstance;
     currInstance.requestQueue = [BNCServerRequestQueue getInstance];
     currInstance.initFinished = NO;
     currInstance.hasNetwork = YES;
+    currInstance.lastRequestWasInit = YES;
     currInstance.isDebugMode = NO;
     
     [[NSNotificationCenter defaultCenter] addObserver:currInstance
@@ -217,6 +219,7 @@ static Branch *currInstance;
 
 - (void)initUserSessionWithCallbackInternal:(callbackWithParams)callback {
     self.sessionparamLoadCallback = callback;
+    self.lastRequestWasInit = YES;
     if (!self.isInit) {
         self.isInit = YES;
         [self initializeSession];
@@ -226,7 +229,9 @@ static Branch *currInstance;
         if (![self.requestQueue containsInstallOrOpen]) {
             [self initializeSession];
         } else {
-            [self processNextQueueItem];
+            dispatch_async(self.asyncQueue, ^{
+                [self processNextQueueItem];
+            });
         }
     }
 }
@@ -266,6 +271,7 @@ static Branch *currInstance;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
         }
     });
@@ -280,6 +286,7 @@ static Branch *currInstance;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
         }
     });
@@ -293,6 +300,7 @@ static Branch *currInstance;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
         }
     });
@@ -306,6 +314,7 @@ static Branch *currInstance;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
         }
     });
@@ -349,6 +358,7 @@ static Branch *currInstance;
             [self.requestQueue enqueue:req];
             
             if (self.initFinished || !self.hasNetwork) {
+                self.lastRequestWasInit = NO;
                 [self processNextQueueItem];
             }
         }
@@ -386,6 +396,7 @@ static Branch *currInstance;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
         }
     });
@@ -408,6 +419,7 @@ static Branch *currInstance;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
         }
     });
@@ -491,6 +503,7 @@ static Branch *currInstance;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
         }
     });
@@ -549,6 +562,7 @@ static Branch *currInstance;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
         }
     });
@@ -572,6 +586,7 @@ static Branch *currInstance;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
         }
     });
@@ -592,6 +607,7 @@ static Branch *currInstance;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
         }
     });
@@ -628,6 +644,7 @@ static Branch *currInstance;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
         }
     });
@@ -643,6 +660,7 @@ static Branch *currInstance;
 
 - (void)applicationDidBecomeActive {
     if (!self.isInit) {
+        self.lastRequestWasInit = YES;
         dispatch_async(self.asyncQueue, ^{
             BNCServerRequest *req = [[BNCServerRequest alloc] init];
             if (![self hasUser]) {
@@ -668,7 +686,7 @@ static Branch *currInstance;
 
 - (void)callClose {
     self.isInit = NO;
-    
+    self.lastRequestWasInit = NO;
     if (!self.hasNetwork) {
         // if there's no network connectivity, purge the old install/open
         BNCServerRequest *req = [self.requestQueue peek];
@@ -793,12 +811,9 @@ static Branch *currInstance;
                 Debug(@"calling apply referral code");
                 [self.bServerInterface applyReferralCode:req.postData];
             } else if (![self hasUser]) {
-                if (![self hasAppKey] && [self hasSession]) {
-                    NSLog(@"Branch Warning: User session not init yet. Please call initUserSession");
-                } else {
-                    self.networkCount = 0;
-                    [self initSession];
-                }
+                self.networkCount = 0;
+                [self handleFailure:NO];
+                [self initSession];
             }
         }
     } else {
@@ -807,10 +822,16 @@ static Branch *currInstance;
     
 }
 
-- (void)handleFailure {
+- (void)handleFailure:(BOOL)first {
     NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Trouble reaching server. Please try again in a few minutes"] forKey:NSLocalizedDescriptionKey];
     
-    BNCServerRequest *req = [self.requestQueue peek];
+    BNCServerRequest *req;
+    if (first) {
+        req = [self.requestQueue peek];
+    } else {
+        req = [self.requestQueue peekAt:[self.requestQueue size]-1];
+    }
+    
     if (req) {
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:errorDict]);
@@ -845,7 +866,7 @@ static Branch *currInstance;
 - (void)retryLastRequest {
     self.retryCount = self.retryCount + 1;
     if (self.retryCount > MAX_RETRIES) {
-        [self handleFailure];
+        [self handleFailure:YES];
         [self.requestQueue dequeue];
         self.retryCount = 0;
     } else {
@@ -1030,7 +1051,7 @@ static Branch *currInstance;
                 });
             } else {
                 NSLog(@"Branch API Error: Duplicate Branch resource error.");
-                [self handleFailure];
+                [self handleFailure:NO];
             }
         } else if (status >= 400 && status < 500) {
             if (response.data && [response.data objectForKey:ERROR]) {
@@ -1039,7 +1060,7 @@ static Branch *currInstance;
         } else if (status != 200) {
             if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorNetworkConnectionLost || status == NSURLErrorCannotFindHost) {
                 self.hasNetwork = NO;
-                [self handleFailure];
+                [self handleFailure:self.lastRequestWasInit];
                 if ([requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {  // for safety sake		
                     [self.requestQueue dequeue];
                 }
