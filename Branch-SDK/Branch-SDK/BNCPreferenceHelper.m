@@ -61,11 +61,14 @@ static BranchServerInterface *serverInterface = nil;
 
 + (void)clearDebug {
     BNC_Debug = NO;
-    BNC_Remote_Debug = NO;
     
-    dispatch_async(bnc_asyncLogQueue, ^{
-        [serverInterface disconnectFromDebug];
-    });
+    if (BNC_Remote_Debug) {
+        BNC_Remote_Debug = NO;
+        
+        dispatch_async(bnc_asyncLogQueue, ^{
+            [serverInterface disconnectFromDebug];
+        });
+    }
 }
 
 + (BOOL)getDebug {
@@ -500,9 +503,9 @@ static const short _base64DecodingTable[256] = {
         NSInteger status = [response.statusCode integerValue];
         NSString *requestTag = response.tag;
         
-        if (status == 403) {
+        if (status == 765) {    // server not listening
             BNC_Remote_Debug = NO;
-            
+            NSLog(@"======= Server is not listening =======");
         } else if (status >= 400 && status < 500) {
             if (response.data && [response.data objectForKey:@"error"]) {
                 NSLog(@"Branch API Error: %@", [[response.data objectForKey:@"error"] objectForKey:@"message"]);

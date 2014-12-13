@@ -69,19 +69,31 @@ static UIWindow *bnc_debugWindow = nil;
 
 - (void)bnc_addDebugGestureRecognizers {
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(bnc_connectToDebug:)];
-    longPress.minimumPressDuration = 1.0;
+    longPress.cancelsTouchesInView = NO;
+    longPress.minimumPressDuration = 2.9;
+#if TARGET_IPHONE_SIMULATOR
     longPress.numberOfTouchesRequired = 2;
+#else
+    longPress.numberOfTouchesRequired = 4;
+#endif
     [self.view addGestureRecognizer:longPress];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bnc_endDebug:)];
-    tap.numberOfTapsRequired = 2;
+    tap.cancelsTouchesInView = NO;
+    tap.numberOfTapsRequired = 3;
+#if TARGET_IPHONE_SIMULATOR
     tap.numberOfTouchesRequired = 2;
+#else
+    tap.numberOfTouchesRequired = 4;
+#endif
     [self.view addGestureRecognizer:tap];
 }
 
-- (void)bnc_connectToDebug:(UILongPressGestureRecognizer *)gesture {
-    [BNCPreferenceHelper setDebugConnectionDelegate:self];
-    [BNCPreferenceHelper setDebug];
+- (void)bnc_connectToDebug:(UILongPressGestureRecognizer *)sender {
+    if (sender.state == UIGestureRecognizerStateBegan){
+        [BNCPreferenceHelper setDebugConnectionDelegate:self];
+        [BNCPreferenceHelper setDebug];
+    }
 }
 
 - (void)bnc_startDebug {

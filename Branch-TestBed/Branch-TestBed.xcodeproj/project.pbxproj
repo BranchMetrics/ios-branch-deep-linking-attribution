@@ -23,6 +23,8 @@
 		670016CD1946309100A9E103 /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C61946309100A9E103 /* BNCServerRequest.m */; };
 		670016CE1946309100A9E103 /* BNCSystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C81946309100A9E103 /* BNCSystemObserver.m */; };
 		6782963A19ACE3C6009833D7 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6782963919ACE3C6009833D7 /* AdSupport.framework */; };
+		7E3882A01A37E22A004BDABE /* BNCError.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E38829F1A37E22A004BDABE /* BNCError.m */; };
+		7E3882A31A37E42F004BDABE /* ReferralCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E3882A21A37E42F004BDABE /* ReferralCodeViewController.m */; };
 		7E6ACAF819E324090066913E /* BNCServerRequestQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6ACAF719E324090066913E /* BNCServerRequestQueue.m */; };
 		7EAA790219E89F67008D4A83 /* CreditHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */; };
 		7EAA790A19E90B9F008D4A83 /* BNCServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790919E90B9F008D4A83 /* BNCServerResponse.m */; };
@@ -58,6 +60,10 @@
 		670016C71946309100A9E103 /* BNCSystemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSystemObserver.h; sourceTree = "<group>"; };
 		670016C81946309100A9E103 /* BNCSystemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserver.m; sourceTree = "<group>"; };
 		6782963919ACE3C6009833D7 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		7E38829E1A37E22A004BDABE /* BNCError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCError.h; sourceTree = "<group>"; };
+		7E38829F1A37E22A004BDABE /* BNCError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCError.m; sourceTree = "<group>"; };
+		7E3882A11A37E42F004BDABE /* ReferralCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReferralCodeViewController.h; sourceTree = "<group>"; };
+		7E3882A21A37E42F004BDABE /* ReferralCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReferralCodeViewController.m; sourceTree = "<group>"; };
 		7E6ACAF619E324090066913E /* BNCServerRequestQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCServerRequestQueue.h; sourceTree = "<group>"; };
 		7E6ACAF719E324090066913E /* BNCServerRequestQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerRequestQueue.m; sourceTree = "<group>"; };
 		7E6ACAF919E324120066913E /* BNCConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCConfig.h; sourceTree = "<group>"; };
@@ -123,6 +129,8 @@
 				670016791940F51400A9E103 /* ViewController.m */,
 				7EAA790019E89F67008D4A83 /* CreditHistoryViewController.h */,
 				7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */,
+				7E3882A11A37E42F004BDABE /* ReferralCodeViewController.h */,
+				7E3882A21A37E42F004BDABE /* ReferralCodeViewController.m */,
 				6700167B1940F51400A9E103 /* Images.xcassets */,
 				6700166A1940F51400A9E103 /* Supporting Files */,
 			);
@@ -159,6 +167,8 @@
 				7E6ACAF619E324090066913E /* BNCServerRequestQueue.h */,
 				7E6ACAF719E324090066913E /* BNCServerRequestQueue.m */,
 				7E6ACAF919E324120066913E /* BNCConfig.h */,
+				7E38829E1A37E22A004BDABE /* BNCError.h */,
+				7E38829F1A37E22A004BDABE /* BNCError.m */,
 				7EAA790819E90B9F008D4A83 /* BNCServerResponse.h */,
 				7EAA790919E90B9F008D4A83 /* BNCServerResponse.m */,
 				7EC2C9EF1A14390300B8A9FA /* UIViewController+BNCDebugging.h */,
@@ -238,6 +248,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E3882A01A37E22A004BDABE /* BNCError.m in Sources */,
 				6700167A1940F51400A9E103 /* ViewController.m in Sources */,
 				670016CC1946309100A9E103 /* BNCServerInterface.m in Sources */,
 				670016CD1946309100A9E103 /* BNCServerRequest.m in Sources */,
@@ -248,6 +259,7 @@
 				7E6ACAF819E324090066913E /* BNCServerRequestQueue.m in Sources */,
 				670016CB1946309100A9E103 /* BNCPreferenceHelper.m in Sources */,
 				670016CA1946309100A9E103 /* BranchServerInterface.m in Sources */,
+				7E3882A31A37E42F004BDABE /* ReferralCodeViewController.m in Sources */,
 				670016741940F51400A9E103 /* AppDelegate.m in Sources */,
 				670016CE1946309100A9E103 /* BNCSystemObserver.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,
