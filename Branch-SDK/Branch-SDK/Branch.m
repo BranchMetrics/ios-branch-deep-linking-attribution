@@ -782,13 +782,13 @@ static Branch *currInstance;
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get reward history"];
                 [self.bServerInterface getCreditHistory:req.postData];
             } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_CODE] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling get/create referral code");
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get/create referral code"];
                 [self.bServerInterface getReferralCode:req.postData];
             } else if ([req.tag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling validate referral code");
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling validate referral code"];
                 [self.bServerInterface validateReferralCode:req.postData];
             } else if ([req.tag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE] && [self hasUser] && [self hasSession]) {
-                Debug(@"calling apply referral code");
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling apply referral code"];
                 [self.bServerInterface applyReferralCode:req.postData];
             } else if (![self hasUser]) {
                 if (![self hasAppKey] && [self hasSession]) {

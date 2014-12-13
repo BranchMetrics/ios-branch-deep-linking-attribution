@@ -82,7 +82,7 @@
 }
 
 - (void)getCreditHistory:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
 }
 
 - (void)createCustomUrl:(NSDictionary *)post {
@@ -138,7 +138,7 @@
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
     
-    [self getRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"canceldebug"] andTag:REQ_TAG_DEBUG_DISCONNECT log:NO];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"canceldebug"] andTag:REQ_TAG_DEBUG_DISCONNECT log:NO];
 }
 
 - (void)sendLog:(NSString *)log {
@@ -180,15 +180,15 @@
 }
 
 - (void)getReferralCode:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"referralcode"] andTag:REQ_TAG_GET_REFERRAL_CODE];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"referralcode"] andTag:REQ_TAG_GET_REFERRAL_CODE];
 }
 
 - (void)validateReferralCode:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"referralcode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_VALIDATE_REFERRAL_CODE];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL:@"referralcode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_VALIDATE_REFERRAL_CODE];
 }
 
 - (void)applyReferralCode:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"applycode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_APPLY_REFERRAL_CODE];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL:@"applycode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_APPLY_REFERRAL_CODE];
 }
 
 
