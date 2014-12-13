@@ -273,6 +273,8 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else {
+            [self handleFailure:NO];
         }
     });
 }
@@ -288,6 +290,8 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else {
+            [self handleFailure:NO];
         }
     });
 }
@@ -302,6 +306,8 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else {
+            [self handleFailure:NO];
         }
     });
 }
@@ -316,6 +322,8 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else {
+            [self handleFailure:NO];
         }
     });
 }
@@ -360,6 +368,8 @@ static Branch *currInstance;
             if (self.initFinished || !self.hasNetwork) {
                 self.lastRequestWasInit = NO;
                 [self processNextQueueItem];
+            } else {
+                [self handleFailure:NO];
             }
         }
     });
@@ -398,6 +408,8 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else {
+            [self handleFailure:NO];
         }
     });
 }
@@ -421,6 +433,8 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else {
+            [self handleFailure:NO];
         }
     });
 }
@@ -505,6 +519,8 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else {
+            [self handleFailure:NO];
         }
     });
 }
@@ -564,6 +580,8 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else {
+            [self handleFailure:NO];
         }
     });
 }
@@ -588,6 +606,8 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else {
+            [self handleFailure:NO];
         }
     });
 }
@@ -609,6 +629,8 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else {
+            [self handleFailure:NO];
         }
     });
 }
@@ -646,6 +668,8 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else {
+            [self handleFailure:NO];
         }
     });
 }
@@ -703,6 +727,8 @@ static Branch *currInstance;
             dispatch_async(self.asyncQueue, ^{
                 [self processNextQueueItem];
             });
+        } else {
+            [self handleFailure:NO];
         }
     }
 }
@@ -1057,6 +1083,7 @@ static Branch *currInstance;
             if (response.data && [response.data objectForKey:ERROR]) {
                 NSLog(@"Branch API Error: %@", [[response.data objectForKey:ERROR] objectForKey:MESSAGE]);
             }
+            [self handleFailure:self.lastRequestWasInit];
         } else if (status != 200) {
             if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorNetworkConnectionLost || status == NSURLErrorCannotFindHost) {
                 self.hasNetwork = NO;
