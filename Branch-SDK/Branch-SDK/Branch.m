@@ -304,7 +304,9 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_COUNTS;
-        [self.requestQueue enqueue:req];
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
@@ -320,7 +322,9 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REWARDS;
-        [self.requestQueue enqueue:req];
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
@@ -406,7 +410,9 @@ static Branch *currInstance;
             [data setObject:creditTransactionId forKey:BEGIN_AFTER_ID];
         }
         req.postData = data;
-        [self.requestQueue enqueue:req];
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
@@ -517,7 +523,9 @@ static Branch *currInstance;
         
         NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:values forKeys:keys];
         req.postData = post;
-        [self.requestQueue enqueue:req];
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
@@ -578,7 +586,9 @@ static Branch *currInstance;
         
         NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:values forKeys:keys];
         req.postData = post;
-        [self.requestQueue enqueue:req];
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
@@ -604,7 +614,9 @@ static Branch *currInstance;
         NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code, [BNCPreferenceHelper getIdentityID], [BNCPreferenceHelper getAppKey]]
                                                                        forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID]];
         req.postData = post;
-        [self.requestQueue enqueue:req];
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
@@ -627,7 +639,9 @@ static Branch *currInstance;
                                                                                  [BNCPreferenceHelper getSessionID]]
                                                                        forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID, SESSION_ID]];
         req.postData = post;
-        [self.requestQueue enqueue:req];
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
@@ -666,7 +680,10 @@ static Branch *currInstance;
         [post setObject:args forKey:DATA];
         
         req.postData = post;
-        [self.requestQueue enqueue:req];
+        
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
@@ -1084,7 +1101,7 @@ static Branch *currInstance;
             if (response.data && [response.data objectForKey:ERROR]) {
                 NSLog(@"Branch API Error: %@", [[response.data objectForKey:ERROR] objectForKey:MESSAGE]);
             }
-            if (self.lastRequestWasInit) {
+            if (self.lastRequestWasInit && !self.initFailed) {
                 self.initFailed = YES;
                 for (int i = 0; i < [self.requestQueue size]-1; i++) {
                     [self handleFailure:i];
