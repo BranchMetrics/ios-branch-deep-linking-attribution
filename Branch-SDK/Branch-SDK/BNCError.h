@@ -23,7 +23,9 @@ enum {
     BNCLogoutError,
     BNCGetProfileError,
     BNCGetReferralCodeError,
+    BNCDuplicateReferralCodeError,
     BNCValidateReferralCodeError,
+    BNCInvalidReferralCodeError,
     BNCApplyReferralCodeError,
     BNCCreateURLDuplicateAliasError
 };

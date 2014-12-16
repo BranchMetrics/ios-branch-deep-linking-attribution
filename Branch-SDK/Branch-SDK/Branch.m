@@ -1043,7 +1043,7 @@ static Branch *currInstance;
         NSError *error = nil;
         if (![returnedData objectForKey:REFERRAL_CODE]) {
             NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Failed to get referral code"] forKey:NSLocalizedDescriptionKey];
-            error = [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:errorDict];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCDuplicateReferralCodeError userInfo:errorDict];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1057,7 +1057,7 @@ static Branch *currInstance;
         NSError *error = nil;
         if (![returnedData objectForKey:REFERRAL_CODE]) {
             NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Referral code is invalid"] forKey:NSLocalizedDescriptionKey];
-            error = [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:errorDict];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:errorDict];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1071,7 +1071,7 @@ static Branch *currInstance;
         NSError *error = nil;
         if (![returnedData objectForKey:REFERRAL_CODE]) {
             NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Referral code is invalid"] forKey:NSLocalizedDescriptionKey];
-            error = [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:errorDict];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
