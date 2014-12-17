@@ -303,6 +303,59 @@ We will store how many of the rewards have been deployed so that you don't have 
 [[Branch getInstance] redeemRewards:5];
 ```
 
+### Get credit history
+
+This call will retrieve the entire history of credits and redemptions from the individual user. To use this call, implement like so:
+
+```objc
+[[Branch getInstance] getCreditHistoryWithCallback:^(NSArray *history, NSError *error) {
+    if (!error) {
+        // process history
+    }
+}];
+```
+
+The response will return an array that has been parsed from the following JSON:
+```json
+[
+    {
+        "transaction": {
+                           "date": "2014-10-14T01:54:40.425Z",
+                           "id": "50388077461373184",
+                           "bucket": "default",
+                           "type": 0,
+                           "amount": 5
+                       },
+        "referrer": "12345678",
+        "referree": null
+    },
+    {
+        "transaction": {
+                           "date": "2014-10-14T01:55:09.474Z",
+                           "id": "50388199301710081",
+                           "bucket": "default",
+                           "type": 2,
+                           "amount": -3
+                       },
+        "referrer": null,
+        "referree": "12345678"
+    }
+]
+```
+**referrer**
+: The id of the referring user for this credit transaction. Returns null if no referrer is involved. Note this id is the user id in developer's own system that's previously passed to Branch's identify user API call.
+
+**referree**
+: The id of the user who was referred for this credit transaction. Returns null if no referree is involved. Note this id is the user id in developer's own system that's previously passed to Branch's identify user API call.
+
+**type**
+: This is the type of credit transaction
+
+1. _0_ - A reward that was added automatically by the user completing an action or referral
+1. _1_ - A reward that was added manually
+2. _2_ - A redemption of credits that occurred through our API or SDKs
+3. _3_ - This is a very unique case where we will subtract credits automatically when we detect fraud
+
 ### Get referral code
 
 Retrieve the referral code created by current user

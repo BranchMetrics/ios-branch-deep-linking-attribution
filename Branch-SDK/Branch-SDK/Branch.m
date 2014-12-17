@@ -269,7 +269,7 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_IDENTIFY;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[userId, [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID]] forKeys:@[IDENTITY, APP_ID, IDENTITY_ID]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[userId, [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID], [NSString stringWithFormat:@"ios%@", SDK_VERSION]] forKeys:@[IDENTITY, APP_ID, IDENTITY_ID, @"sdk"]];
         req.postData = post;
         [self.requestQueue enqueue:req];
         
@@ -286,7 +286,7 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_LOGOUT;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID]] forKeys:@[APP_ID, SESSION_ID]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID], [NSString stringWithFormat:@"ios%@", SDK_VERSION]] forKeys:@[APP_ID, SESSION_ID, @"sdk"]];
         req.postData = post;
         [self.requestQueue enqueue:req];
         
@@ -304,6 +304,8 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_COUNTS;
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[NSString stringWithFormat:@"ios%@", SDK_VERSION]] forKeys:@[@"sdk"]];
+        req.postData = post;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
         }
@@ -321,6 +323,8 @@ static Branch *currInstance;
     self.rewardLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[NSString stringWithFormat:@"ios%@", SDK_VERSION]] forKeys:@[@"sdk"]];
+        req.postData = post;
         req.tag = REQ_TAG_GET_REWARDS;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
@@ -368,7 +372,7 @@ static Branch *currInstance;
         if (redemptionsToAdd > 0) {
             BNCServerRequest *req = [[BNCServerRequest alloc] init];
             req.tag = REQ_TAG_REDEEM_REWARDS;
-            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[bucket, [NSNumber numberWithInteger:redemptionsToAdd], [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID]] forKeys:@[BUCKET, AMOUNT, APP_ID, IDENTITY_ID]];
+            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[bucket, [NSNumber numberWithInteger:redemptionsToAdd], [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID], [NSString stringWithFormat:@"ios%@", SDK_VERSION]] forKeys:@[BUCKET, AMOUNT, APP_ID, IDENTITY_ID, @"sdk"]];
             req.postData = post;
             [self.requestQueue enqueue:req];
             
@@ -401,8 +405,8 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REWARD_HISTORY;
-        NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjects:@[[BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID], [NSNumber numberWithLong:length], DIRECTIONS[order]]
-                                                                       forKeys:@[APP_ID, IDENTITY_ID, LENGTH, DIRECTION]];
+        NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjects:@[[BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID], [NSNumber numberWithLong:length], DIRECTIONS[order], [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
+                                                                       forKeys:@[APP_ID, IDENTITY_ID, LENGTH, DIRECTION, @"sdk"]];
         if (bucket) {
             [data setObject:bucket forKey:BUCKET];
         }
@@ -433,7 +437,7 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_COMPLETE_ACTION;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID]] forKeys:@[EVENT, APP_ID, SESSION_ID]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID], [NSString stringWithFormat:@"ios%@", SDK_VERSION]] forKeys:@[EVENT, APP_ID, SESSION_ID, @"sdk"]];
         NSDictionary *saniState = [self sanitizeQuotesFromInput:state];
         if (saniState && [NSJSONSerialization isValidJSONObject:saniState]) [post setObject:saniState forKey:METADATA];
         req.postData = post;
@@ -517,9 +521,11 @@ static Branch *currInstance;
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_CODE;
         NSMutableArray *keys = [NSMutableArray arrayWithArray:@[APP_ID,
-                                                                IDENTITY_ID]];
+                                                                IDENTITY_ID,
+                                                                @"sdk"]];
         NSMutableArray *values = [NSMutableArray arrayWithArray:@[[BNCPreferenceHelper getAppKey],
-                                                                  [BNCPreferenceHelper getIdentityID]]];
+                                                                  [BNCPreferenceHelper getIdentityID],
+                                                                  [NSString stringWithFormat:@"ios%@", SDK_VERSION]]];
         
         NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:values forKeys:keys];
         req.postData = post;
@@ -566,7 +572,8 @@ static Branch *currInstance;
                                                                 REFERRAL_CODE_TYPE,
                                                                 REFERRAL_CODE_CREATION_SOURCE,
                                                                 AMOUNT,
-                                                                BUCKET]];
+                                                                BUCKET,
+                                                                @"sdk"]];
         NSMutableArray *values = [NSMutableArray arrayWithArray:@[[BNCPreferenceHelper getAppKey],
                                                                   [BNCPreferenceHelper getIdentityID],
                                                                   [NSNumber numberWithLong:calcType],
@@ -574,7 +581,8 @@ static Branch *currInstance;
                                                                   CREDIT,
                                                                   [NSNumber numberWithLong:REFERRAL_CREATION_SOURCE_SDK],
                                                                   [NSNumber numberWithLong:amount],
-                                                                  bucket]];
+                                                                  bucket,
+                                                                  [NSString stringWithFormat:@"ios%@", SDK_VERSION]]];
         if (prefix && prefix.length > 0) {
             [keys addObject:REFERRAL_CODE_PREFIX];
             [values addObject:prefix];
@@ -611,8 +619,8 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_VALIDATE_REFERRAL_CODE;
-        NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code, [BNCPreferenceHelper getIdentityID], [BNCPreferenceHelper getAppKey]]
-                                                                       forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID]];
+        NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code, [BNCPreferenceHelper getIdentityID], [BNCPreferenceHelper getAppKey], [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
+                                                                       forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID, @"sdk"]];
         req.postData = post;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
@@ -636,8 +644,9 @@ static Branch *currInstance;
         NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code,
                                                                                  [BNCPreferenceHelper getIdentityID],
                                                                                  [BNCPreferenceHelper getAppKey],
-                                                                                 [BNCPreferenceHelper getSessionID]]
-                                                                       forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID, SESSION_ID]];
+                                                                                 [BNCPreferenceHelper getSessionID],
+                                                                                 [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
+                                                                       forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID, SESSION_ID, @"sdk"]];
         req.postData = post;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
@@ -675,6 +684,7 @@ static Branch *currInstance;
             [post setObject:stage forKey:STAGE];
         if (alias)
             [post setObject:alias forKey:ALIAS];
+        [post setObject:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
         
         NSString *args = params ? params : @"{ \"source\":\"ios\" }";
         [post setObject:args forKey:DATA];
@@ -738,6 +748,8 @@ static Branch *currInstance;
     } else {
         if (![self.requestQueue containsClose]) {
             BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:REQ_TAG_REGISTER_CLOSE];
+            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[NSString stringWithFormat:@"ios%@", SDK_VERSION]] forKeys:@[@"sdk"]];
+            req.postData = post;
             [self.requestQueue enqueue:req];
         }
         
@@ -1043,7 +1055,7 @@ static Branch *currInstance;
         NSError *error = nil;
         if (![returnedData objectForKey:REFERRAL_CODE]) {
             NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Failed to get referral code"] forKey:NSLocalizedDescriptionKey];
-            error = [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:errorDict];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCDuplicateReferralCodeError userInfo:errorDict];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1057,7 +1069,7 @@ static Branch *currInstance;
         NSError *error = nil;
         if (![returnedData objectForKey:REFERRAL_CODE]) {
             NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Referral code is invalid"] forKey:NSLocalizedDescriptionKey];
-            error = [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:errorDict];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:errorDict];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1071,7 +1083,7 @@ static Branch *currInstance;
         NSError *error = nil;
         if (![returnedData objectForKey:REFERRAL_CODE]) {
             NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Referral code is invalid"] forKey:NSLocalizedDescriptionKey];
-            error = [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:errorDict];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
