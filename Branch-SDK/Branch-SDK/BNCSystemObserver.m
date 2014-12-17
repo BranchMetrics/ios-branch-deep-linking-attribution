@@ -83,6 +83,21 @@
                               encoding:NSUTF8StringEncoding];
 }
 
++ (BOOL)isSimulator {
+    UIDevice *currentDevice = [UIDevice currentDevice];
+    return [currentDevice.model rangeOfString:@"Simulator"].location != NSNotFound;
+}
+
++ (NSString *)getDeviceName {
+    if ([BNCSystemObserver isSimulator]) {
+        struct utsname name;
+        uname(&name);
+        return [NSString stringWithFormat:@"%@ %s", [[UIDevice currentDevice] name], name.nodename];
+    } else {
+        return [[UIDevice currentDevice] name];
+    }
+}
+
 + (NSNumber *)getUpdateState {
     NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];    NSFileManager *manager = [NSFileManager defaultManager];
     NSDictionary* attrs = [manager attributesOfItemAtPath:bundleRoot error:nil];

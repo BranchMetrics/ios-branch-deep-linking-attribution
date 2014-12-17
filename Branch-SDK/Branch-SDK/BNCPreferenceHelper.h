@@ -79,5 +79,6 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
 + (void)sendScreenshot:(NSData *)data;
 + (void)setDebugConnectionDelegate:(id<BNCDebugConnectionDelegate>) debugConnectionDelegate;
++ (void)keepDebugAlive;
 
 @end

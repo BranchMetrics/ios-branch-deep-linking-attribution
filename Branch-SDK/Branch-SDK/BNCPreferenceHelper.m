@@ -10,7 +10,6 @@
 #import "BranchServerInterface.h"
 #import "BNCConfig.h"
 
-
 static NSString *KEY_APP_KEY = @"bnc_app_key";
 
 static NSString *KEY_DEVICE_FINGERPRINT_ID = @"bnc_device_fingerprint_id";
@@ -79,7 +78,7 @@ static BranchServerInterface *serverInterface = nil;
     if (BNC_Debug) {
         va_list args;
         va_start(args, format);
-        NSString *log = [NSString stringWithFormat:@"<%@:(%d)> %@", filename, line, [[NSString alloc] initWithFormat:format arguments:args]];
+        NSString *log = [NSString stringWithFormat:@"[%@:%d] %@", filename, line, [[NSString alloc] initWithFormat:format arguments:args]];
         va_end(args);
         NSLog(@"%@", log);
         
@@ -88,6 +87,14 @@ static BranchServerInterface *serverInterface = nil;
                 [serverInterface sendLog:log];
             });
         }
+    }
+}
+
++ (void)keepDebugAlive {
+    if (BNC_Remote_Debug) {
+        dispatch_async(bnc_asyncLogQueue, ^{
+            [serverInterface sendLog:@""];
+        });
     }
 }
 
