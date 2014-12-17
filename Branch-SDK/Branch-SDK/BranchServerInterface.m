@@ -140,6 +140,7 @@
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
+    [post setObject:[[BNCSystemObserver getDeviceName] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey:@"device_name"];
     
     [self getRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug"] andTag:REQ_TAG_DEBUG_CONNECT log:NO];
 }
