@@ -87,6 +87,8 @@ static NSInteger REFERRAL_CREATION_SOURCE_SDK = 2;
 @property (strong, nonatomic) callbackWithParams validateReferralCodeCallback;
 @property (strong, nonatomic) callbackWithParams applyReferralCodeCallback;
 @property (assign, nonatomic) BOOL initFinished;
+@property (assign, nonatomic) BOOL initFailed;
+@property (assign, nonatomic) BOOL lastRequestWasInit;
 @property (assign, nonatomic) BOOL hasNetwork;
 
 @end
@@ -127,7 +129,9 @@ static Branch *currInstance;
     currInstance.asyncQueue = dispatch_queue_create("brnch_request_queue", NULL);
     currInstance.requestQueue = [BNCServerRequestQueue getInstance];
     currInstance.initFinished = NO;
+    currInstance.initFailed = NO;
     currInstance.hasNetwork = YES;
+    currInstance.lastRequestWasInit = YES;
     
     [[NSNotificationCenter defaultCenter] addObserver:currInstance
                                              selector:@selector(applicationWillResignActive)
@@ -215,6 +219,8 @@ static Branch *currInstance;
 
 - (void)initUserSessionWithCallbackInternal:(callbackWithParams)callback {
     self.sessionparamLoadCallback = callback;
+    self.lastRequestWasInit = YES;
+    self.initFailed = NO;
     if (!self.isInit) {
         self.isInit = YES;
         [self initializeSession];
@@ -224,7 +230,9 @@ static Branch *currInstance;
         if (![self.requestQueue containsInstallOrOpen]) {
             [self initializeSession];
         } else {
-            [self processNextQueueItem];
+            dispatch_async(self.asyncQueue, ^{
+                [self processNextQueueItem];
+            });
         }
     }
 }
@@ -259,12 +267,15 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_IDENTIFY;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[userId, [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID]] forKeys:@[IDENTITY, APP_ID, IDENTITY_ID]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[userId, [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID], [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION]] forKeys:@[IDENTITY, APP_ID, IDENTITY_ID, @"sdk"]];
         req.postData = post;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else if (self.initFailed) {
+            [self handleFailure:[self.requestQueue size]-1];
         }
     });
 }
@@ -273,12 +284,15 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_LOGOUT;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID]] forKeys:@[APP_ID, SESSION_ID]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID], [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION]] forKeys:@[APP_ID, SESSION_ID, @"sdk"]];
         req.postData = post;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else if (self.initFailed) {
+            [self handleFailure:[self.requestQueue size]-1];
         }
     });
 }
@@ -288,10 +302,17 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_COUNTS;
-        [self.requestQueue enqueue:req];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION]] forKeys:@[@"sdk"]];
+        req.postData = post;
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else if (self.initFailed) {
+            [self handleFailure:[self.requestQueue size]-1];
         }
     });
 }
@@ -300,11 +321,18 @@ static Branch *currInstance;
     self.rewardLoadCallback = callback;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION]] forKeys:@[@"sdk"]];
+        req.postData = post;
         req.tag = REQ_TAG_GET_REWARDS;
-        [self.requestQueue enqueue:req];
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else if (self.initFailed) {
+            [self handleFailure:[self.requestQueue size]-1];
         }
     });
 }
@@ -342,12 +370,15 @@ static Branch *currInstance;
         if (redemptionsToAdd > 0) {
             BNCServerRequest *req = [[BNCServerRequest alloc] init];
             req.tag = REQ_TAG_REDEEM_REWARDS;
-            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[bucket, [NSNumber numberWithInteger:redemptionsToAdd], [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID]] forKeys:@[BUCKET, AMOUNT, APP_ID, IDENTITY_ID]];
+            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[bucket, [NSNumber numberWithInteger:redemptionsToAdd], [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID], [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION]] forKeys:@[BUCKET, AMOUNT, APP_ID, IDENTITY_ID, @"sdk"]];
             req.postData = post;
             [self.requestQueue enqueue:req];
             
             if (self.initFinished || !self.hasNetwork) {
+                self.lastRequestWasInit = NO;
                 [self processNextQueueItem];
+            } else if (self.initFailed) {
+                [self handleFailure:[self.requestQueue size]-1];
             }
         }
     });
@@ -372,8 +403,8 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REWARD_HISTORY;
-        NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjects:@[[BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID], [NSNumber numberWithLong:length], DIRECTIONS[order]]
-                                                                       forKeys:@[APP_ID, IDENTITY_ID, LENGTH, DIRECTION]];
+        NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjects:@[[BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID], [NSNumber numberWithLong:length], DIRECTIONS[order], [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION]]
+                                                                       forKeys:@[APP_ID, IDENTITY_ID, LENGTH, DIRECTION, @"sdk"]];
         if (bucket) {
             [data setObject:bucket forKey:BUCKET];
         }
@@ -381,10 +412,15 @@ static Branch *currInstance;
             [data setObject:creditTransactionId forKey:BEGIN_AFTER_ID];
         }
         req.postData = data;
-        [self.requestQueue enqueue:req];
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else if (self.initFailed) {
+            [self handleFailure:[self.requestQueue size]-1];
         }
     });
 }
@@ -399,14 +435,17 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_COMPLETE_ACTION;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID]] forKeys:@[EVENT, APP_ID, SESSION_ID]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID], [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION]] forKeys:@[EVENT, APP_ID, SESSION_ID, @"sdk"]];
         NSDictionary *saniState = [self sanitizeQuotesFromInput:state];
         if (saniState && [NSJSONSerialization isValidJSONObject:saniState]) [post setObject:saniState forKey:METADATA];
         req.postData = post;
         [self.requestQueue enqueue:req];
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else if (self.initFailed) {
+            [self handleFailure:[self.requestQueue size]-1];
         }
     });
 }
@@ -480,16 +519,23 @@ static Branch *currInstance;
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_CODE;
         NSMutableArray *keys = [NSMutableArray arrayWithArray:@[APP_ID,
-                                                                IDENTITY_ID]];
+                                                                IDENTITY_ID,
+                                                                @"sdk"]];
         NSMutableArray *values = [NSMutableArray arrayWithArray:@[[BNCPreferenceHelper getAppKey],
-                                                                  [BNCPreferenceHelper getIdentityID]]];
+                                                                  [BNCPreferenceHelper getIdentityID],
+                                                                  [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION]]];
         
         NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:values forKeys:keys];
         req.postData = post;
-        [self.requestQueue enqueue:req];
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else if (self.initFailed) {
+            [self handleFailure:[self.requestQueue size]-1];
         }
     });
 }
@@ -524,7 +570,8 @@ static Branch *currInstance;
                                                                 REFERRAL_CODE_TYPE,
                                                                 REFERRAL_CODE_CREATION_SOURCE,
                                                                 AMOUNT,
-                                                                BUCKET]];
+                                                                BUCKET,
+                                                                @"sdk"]];
         NSMutableArray *values = [NSMutableArray arrayWithArray:@[[BNCPreferenceHelper getAppKey],
                                                                   [BNCPreferenceHelper getIdentityID],
                                                                   [NSNumber numberWithLong:calcType],
@@ -532,7 +579,8 @@ static Branch *currInstance;
                                                                   CREDIT,
                                                                   [NSNumber numberWithLong:REFERRAL_CREATION_SOURCE_SDK],
                                                                   [NSNumber numberWithLong:amount],
-                                                                  bucket]];
+                                                                  bucket,
+                                                                  [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION]]];
         if (prefix && prefix.length > 0) {
             [keys addObject:REFERRAL_CODE_PREFIX];
             [values addObject:prefix];
@@ -544,10 +592,15 @@ static Branch *currInstance;
         
         NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:values forKeys:keys];
         req.postData = post;
-        [self.requestQueue enqueue:req];
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else if (self.initFailed) {
+            [self handleFailure:[self.requestQueue size]-1];
         }
     });
 }
@@ -564,13 +617,18 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_VALIDATE_REFERRAL_CODE;
-        NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code, [BNCPreferenceHelper getIdentityID], [BNCPreferenceHelper getAppKey]]
-                                                                       forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID]];
+        NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code, [BNCPreferenceHelper getIdentityID], [BNCPreferenceHelper getAppKey], [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION]]
+                                                                       forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID, @"sdk"]];
         req.postData = post;
-        [self.requestQueue enqueue:req];
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else if (self.initFailed) {
+            [self handleFailure:[self.requestQueue size]-1];
         }
     });
 }
@@ -584,13 +642,19 @@ static Branch *currInstance;
         NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code,
                                                                                  [BNCPreferenceHelper getIdentityID],
                                                                                  [BNCPreferenceHelper getAppKey],
-                                                                                 [BNCPreferenceHelper getSessionID]]
-                                                                       forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID, SESSION_ID]];
+                                                                                 [BNCPreferenceHelper getSessionID],
+                                                                                 [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION]]
+                                                                       forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID, SESSION_ID, @"sdk"]];
         req.postData = post;
-        [self.requestQueue enqueue:req];
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else if (self.initFailed) {
+            [self handleFailure:[self.requestQueue size]-1];
         }
     });
 }
@@ -618,15 +682,22 @@ static Branch *currInstance;
             [post setObject:stage forKey:STAGE];
         if (alias)
             [post setObject:alias forKey:ALIAS];
+        [post setObject:[NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION] forKey:@"sdk"];
         
         NSString *args = params ? params : @"{ \"source\":\"ios\" }";
         [post setObject:args forKey:DATA];
         
         req.postData = post;
-        [self.requestQueue enqueue:req];
+        
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
         
         if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
             [self processNextQueueItem];
+        } else if (self.initFailed) {
+            [self handleFailure:[self.requestQueue size]-1];
         }
     });
 }
@@ -641,16 +712,15 @@ static Branch *currInstance;
 
 - (void)applicationDidBecomeActive {
     if (!self.isInit) {
+        self.initFailed = NO;
+        self.lastRequestWasInit = YES;
         dispatch_async(self.asyncQueue, ^{
-            BNCServerRequest *req = [[BNCServerRequest alloc] init];
-            if (![self hasUser]) {
-                req.tag = REQ_TAG_REGISTER_INSTALL;
-            } else {
-                req.tag = REQ_TAG_REGISTER_OPEN;
-            }
-            [self insertRequestAtFront:req];
-            [self processNextQueueItem];
             self.isInit = YES;
+            if (![self hasUser]) {
+                [self registerInstallOrOpen:REQ_TAG_REGISTER_INSTALL];
+            } else {
+                [self registerInstallOrOpen:REQ_TAG_REGISTER_OPEN];
+            }
         });
     }
 }
@@ -666,7 +736,7 @@ static Branch *currInstance;
 
 - (void)callClose {
     self.isInit = NO;
-    
+    self.lastRequestWasInit = NO;
     if (!self.hasNetwork) {
         // if there's no network connectivity, purge the old install/open
         BNCServerRequest *req = [self.requestQueue peek];
@@ -676,6 +746,8 @@ static Branch *currInstance;
     } else {
         if (![self.requestQueue containsClose]) {
             BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:REQ_TAG_REGISTER_CLOSE];
+            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION]] forKeys:@[@"sdk"]];
+            req.postData = post;
             [self.requestQueue enqueue:req];
         }
         
@@ -683,6 +755,8 @@ static Branch *currInstance;
             dispatch_async(self.asyncQueue, ^{
                 [self processNextQueueItem];
             });
+        } else if (self.initFailed) {
+            [self handleFailure:[self.requestQueue size]-1];
         }
     }
 }
@@ -791,12 +865,9 @@ static Branch *currInstance;
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling apply referral code"];
                 [self.bServerInterface applyReferralCode:req.postData];
             } else if (![self hasUser]) {
-                if (![self hasAppKey] && [self hasSession]) {
-                    NSLog(@"Branch Warning: User session not init yet. Please call initUserSession");
-                } else {
-                    self.networkCount = 0;
-                    [self initSession];
-                }
+                self.networkCount = 0;
+                [self handleFailure:[self.requestQueue size]-1];
+                [self initSession];
             }
         }
     } else {
@@ -805,10 +876,16 @@ static Branch *currInstance;
     
 }
 
-- (void)handleFailure {
+- (void)handleFailure:(unsigned int)index {
     NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Trouble reaching server. Please try again in a few minutes"] forKey:NSLocalizedDescriptionKey];
     
-    BNCServerRequest *req = [self.requestQueue peek];
+    BNCServerRequest *req;
+    if (index >= [self.requestQueue size]) {
+        req = [self.requestQueue peekAt:[self.requestQueue size]-1];
+    } else {
+        req = [self.requestQueue peekAt:index];
+    }
+    
     if (req) {
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:errorDict]);
@@ -843,7 +920,7 @@ static Branch *currInstance;
 - (void)retryLastRequest {
     self.retryCount = self.retryCount + 1;
     if (self.retryCount > MAX_RETRIES) {
-        [self handleFailure];
+        [self handleFailure:0];
         [self.requestQueue dequeue];
         self.retryCount = 0;
     } else {
@@ -976,7 +1053,7 @@ static Branch *currInstance;
         NSError *error = nil;
         if (![returnedData objectForKey:REFERRAL_CODE]) {
             NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Failed to get referral code"] forKey:NSLocalizedDescriptionKey];
-            error = [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:errorDict];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCDuplicateReferralCodeError userInfo:errorDict];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -990,7 +1067,7 @@ static Branch *currInstance;
         NSError *error = nil;
         if (![returnedData objectForKey:REFERRAL_CODE]) {
             NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Referral code is invalid"] forKey:NSLocalizedDescriptionKey];
-            error = [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:errorDict];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:errorDict];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1004,7 +1081,7 @@ static Branch *currInstance;
         NSError *error = nil;
         if (![returnedData objectForKey:REFERRAL_CODE]) {
             NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Referral code is invalid"] forKey:NSLocalizedDescriptionKey];
-            error = [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:errorDict];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1028,16 +1105,23 @@ static Branch *currInstance;
                 });
             } else {
                 NSLog(@"Branch API Error: Duplicate Branch resource error.");
-                [self handleFailure];
+                [self handleFailure:[self.requestQueue size]-1];
             }
         } else if (status >= 400 && status < 500) {
             if (response.data && [response.data objectForKey:ERROR]) {
                 NSLog(@"Branch API Error: %@", [[response.data objectForKey:ERROR] objectForKey:MESSAGE]);
             }
+            if (self.lastRequestWasInit && !self.initFailed) {
+                self.initFailed = YES;
+                for (int i = 0; i < [self.requestQueue size]-1; i++) {
+                    [self handleFailure:i];
+                }
+            }
+            [self handleFailure:[self.requestQueue size]-1];
         } else if (status != 200) {
             if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorNetworkConnectionLost || status == NSURLErrorCannotFindHost) {
                 self.hasNetwork = NO;
-                [self handleFailure];
+                [self handleFailure:self.lastRequestWasInit ? 0 : [self.requestQueue size]-1];
                 if ([requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {  // for safety sake		
                     [self.requestQueue dequeue];
                 }
@@ -1164,7 +1248,7 @@ static Branch *currInstance;
         } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REDEEM_REWARDS] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
         }
         
-        if (!retry && self.hasNetwork) {
+        if (!retry && self.hasNetwork && !self.initFailed) {
             [self.requestQueue dequeue];
             
             dispatch_async(self.asyncQueue, ^{
