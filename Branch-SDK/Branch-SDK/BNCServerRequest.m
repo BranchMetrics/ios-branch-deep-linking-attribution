@@ -20,8 +20,12 @@
 @implementation BNCServerRequest
 
 - (void)encodeWithCoder:(NSCoder *)coder {
-    [coder encodeObject:self.tag forKey:TAG];
-    [coder encodeObject:self.postData forKey:DATA];
+    if (self.tag) {
+        [coder encodeObject:self.tag forKey:TAG];
+    }
+    if (self.postData) {
+        [coder encodeObject:self.postData forKey:DATA];
+    }
 }
 
 - (id)initWithCoder:(NSCoder *)coder {
