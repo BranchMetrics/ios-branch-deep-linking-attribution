@@ -70,7 +70,7 @@ static BranchServerInterface *serverInterface = nil;
     }
 }
 
-+ (BOOL)getDebug {
++ (BOOL)isDebug {
     return BNC_Debug;
 }
 

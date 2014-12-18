@@ -139,7 +139,7 @@
             serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:[NSNumber numberWithInteger:error.code]];
             serverResponse.data = error.userInfo;
         }
-        if ([BNCPreferenceHelper getDebug]  // for efficiency short-circuit purpose
+        if ([BNCPreferenceHelper isDebug]  // for efficiency short-circuit purpose
             && ![requestTag isEqualToString:REQ_TAG_DEBUG_LOG]
             && ![requestTag isEqualToString:REQ_TAG_DEBUG_CONNECT]
             && [requestTag isEqualToString:REQ_TAG_DEBUG_DISCONNECT]
