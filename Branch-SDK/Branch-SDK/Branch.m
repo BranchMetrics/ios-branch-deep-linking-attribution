@@ -824,10 +824,10 @@ static Branch *currInstance;
             
             if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling register install"];
-                [self.bServerInterface registerInstall:[BNCPreferenceHelper getDebug]];
+                [self.bServerInterface registerInstall:[BNCPreferenceHelper isDebug]];
             } else if ([req.tag isEqualToString:REQ_TAG_REGISTER_OPEN] && [self hasUser]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling register open"];
-                [self.bServerInterface registerOpen:[BNCPreferenceHelper getDebug]];
+                [self.bServerInterface registerOpen:[BNCPreferenceHelper isDebug]];
             } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS] && [self hasUser] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get referrals"];
                 [self.bServerInterface getReferralCounts];
