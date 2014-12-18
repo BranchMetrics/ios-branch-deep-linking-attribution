@@ -96,9 +96,6 @@ static NSInteger REFERRAL_CREATION_SOURCE_SDK = 2;
 
 @implementation Branch
 
-static const NSInteger RETRY_INTERVAL = 3;
-static const NSInteger MAX_RETRIES = 5;
-
 static Branch *currInstance;
 
 // PUBLIC CALLS
@@ -156,6 +153,24 @@ static Branch *currInstance;
 - (void)resetUserSession {
     if (self) {
         self.isInit = NO;
+    }
+}
+
+- (void)setNetworkTimeout:(NSInteger)timeout {
+    if (self) {
+        [BNCPreferenceHelper setTimeout:timeout];
+    }
+}
+
+- (void)setMaxRetries:(NSInteger)maxRetries {
+    if (self) {
+        [BNCPreferenceHelper setRetryCount:maxRetries];
+    }
+}
+
+- (void)setRetryInterval:(NSInteger)retryInterval {
+    if (self) {
+        [BNCPreferenceHelper setRetryInterval:retryInterval];
     }
 }
 
@@ -263,7 +278,7 @@ static Branch *currInstance;
 }
 
 - (void)setIdentity:(NSString *)userId {
-    if (!userId)
+    if (!userId || [[BNCPreferenceHelper getUserIdentity] isEqualToString:userId])
         return;
 
     dispatch_async(self.asyncQueue, ^{
@@ -900,7 +915,13 @@ static Branch *currInstance;
                 self.creditHistoryLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:nil]);
             }
         } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
-            if (self.urlLoadCallback) self.urlLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:errorDict]);
+            if (self.urlLoadCallback) {
+                NSString *failedUrl = nil;
+                if (![[BNCPreferenceHelper getUserURL] isEqualToString:NO_STRING_VALUE]) {
+                    failedUrl = [BNCPreferenceHelper getUserURL];
+                }
+                self.urlLoadCallback(failedUrl, [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:errorDict]);
+            }
         } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
             if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCIdentifyError userInfo:errorDict]);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_CODE]) {
@@ -921,12 +942,12 @@ static Branch *currInstance;
 
 - (void)retryLastRequest {
     self.retryCount = self.retryCount + 1;
-    if (self.retryCount > MAX_RETRIES) {
+    if (self.retryCount > [BNCPreferenceHelper getRetryCount]) {
         [self handleFailure:0];
         [self.requestQueue dequeue];
         self.retryCount = 0;
     } else {
-        [NSThread sleepForTimeInterval:RETRY_INTERVAL];
+        [NSThread sleepForTimeInterval:[BNCPreferenceHelper getRetryInterval]];
     }
     [self processNextQueueItem];
 }

@@ -55,7 +55,7 @@
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:url]];
-    [request setTimeoutInterval:3];
+    [request setTimeoutInterval:[BNCPreferenceHelper getTimeout]];
     [request setHTTPMethod:@"POST"];
     [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-type"];
