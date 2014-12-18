@@ -510,7 +510,7 @@ static const short _base64DecodingTable[256] = {
         NSInteger status = [response.statusCode integerValue];
         NSString *requestTag = response.tag;
         
-        if (status == 765) {    // server not listening
+        if (status == 465) {    // server not listening
             BNC_Remote_Debug = NO;
             NSLog(@"======= Server is not listening =======");
         } else if (status >= 400 && status < 500) {
