@@ -165,8 +165,7 @@
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     NSString *file = @"BNC_Debug_Screen.png";
     
-    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?app_id=%@&session_id=%@", [BNCPreferenceHelper getAPIURL:@"screenshot"], [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID]]]]
-    ;
+    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?app_id=%@&session_id=%@", [BNCPreferenceHelper getAPIURL:@"screenshot"], [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID]]]];
     [request setHTTPMethod:@"POST"];
     
     NSString *boundary = @"---------------------------Boundary Line---------------------------";
