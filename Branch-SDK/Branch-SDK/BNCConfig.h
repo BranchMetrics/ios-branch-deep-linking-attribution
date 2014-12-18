@@ -9,10 +9,10 @@
 #ifndef Branch_SDK_Config_h
 #define Branch_SDK_Config_h
 
-#define SDK_VERSION             @"0.3.81"
+#define SDK_VERSION             @"0.3.91"
 
-//#define PROD_ENV
-#define STAGE_ENV
+#define PROD_ENV
+//#define STAGE_ENV
 //#define DEV_ENV
 
 #ifdef PROD_ENV
