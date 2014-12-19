@@ -11,9 +11,9 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 
-static int DebugTriggerDuration = 2.9;
-static int DebugTriggerFingers = 4;
-static int DebugTriggerFingersSimulator = 2;
+static int BNCDebugTriggerDuration = 2.9;
+static int BNCDebugTriggerFingers = 4;
+static int BNCDebugTriggerFingersSimulator = 2;
 
 @interface UIViewController () <UIGestureRecognizerDelegate, BNCDebugConnectionDelegate>
 
@@ -83,11 +83,11 @@ static UIWindow *bnc_debugWindow = nil;
 - (void)bnc_addGesterRecognizer:(SEL)action {
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:action];
     longPress.cancelsTouchesInView = NO;
-    longPress.minimumPressDuration = DebugTriggerDuration;
+    longPress.minimumPressDuration = BNCDebugTriggerDuration;
     if (![BNCSystemObserver isSimulator]) {
-        longPress.numberOfTouchesRequired = DebugTriggerFingers;
+        longPress.numberOfTouchesRequired = BNCDebugTriggerFingers;
     } else {
-        longPress.numberOfTouchesRequired = DebugTriggerFingersSimulator;
+        longPress.numberOfTouchesRequired = BNCDebugTriggerFingersSimulator;
     }
     [self.view addGestureRecognizer:longPress];
 }
