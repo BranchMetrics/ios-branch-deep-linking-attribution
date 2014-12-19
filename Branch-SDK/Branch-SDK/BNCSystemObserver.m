@@ -79,8 +79,7 @@
     struct utsname systemInfo;
     uname(&systemInfo);
     
-    return [NSString stringWithCString:systemInfo.machine
-                              encoding:NSUTF8StringEncoding];
+    return [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
 }
 
 + (BOOL)isSimulator {
@@ -92,9 +91,9 @@
     if ([BNCSystemObserver isSimulator]) {
         struct utsname name;
         uname(&name);
-        return [NSString stringWithFormat:@"%@ %s", [[UIDevice currentDevice] name], name.nodename];
+        return [[NSString stringWithFormat:@"%@ %s", [[UIDevice currentDevice] name], name.nodename] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     } else {
-        return [[UIDevice currentDevice] name];
+        return [[[UIDevice currentDevice] name] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     }
 }
 
