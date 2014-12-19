@@ -91,9 +91,9 @@
     if ([BNCSystemObserver isSimulator]) {
         struct utsname name;
         uname(&name);
-        return [[NSString stringWithFormat:@"%@ %s", [[UIDevice currentDevice] name], name.nodename] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        return [NSString stringWithFormat:@"%@ %s", [[UIDevice currentDevice] name], name.nodename];
     } else {
-        return [[[UIDevice currentDevice] name] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        return [[UIDevice currentDevice] name];
     }
 }
 
