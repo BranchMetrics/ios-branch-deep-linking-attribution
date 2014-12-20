@@ -60,6 +60,9 @@ typedef enum {
 - (NSDictionary *)getFirstReferringParams;
 - (NSDictionary *)getLatestReferringParams;
 - (void)resetUserSession;
+- (void)setRetryInterval:(NSInteger)retryInterval;
+- (void)setMaxRetries:(NSInteger)maxRetries;
+- (void)setNetworkTimeout:(NSInteger)timeout;
 
 - (BOOL)handleDeepLink:(NSURL *)url;
 

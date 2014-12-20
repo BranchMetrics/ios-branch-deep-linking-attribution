@@ -35,7 +35,7 @@
         }
     }
     
-    url = [url stringByAppendingFormat:@"sdk=ios%@", BNC_SDK_VERSION];
+    url = [url stringByAppendingFormat:@"sdk=ios%@", SDK_VERSION];
     if (log) {
         [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
     }
@@ -57,7 +57,7 @@
 }
 
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
-    [post setValue:[NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION] forKey:@"sdk"];
+    [post setValue:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
     NSData *postData = [BNCServerInterface encodePostParams:post];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     
@@ -68,7 +68,7 @@
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:url]];
-    [request setTimeoutInterval:3];
+    [request setTimeoutInterval:[BNCPreferenceHelper getTimeout]];
     [request setHTTPMethod:@"POST"];
     [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-type"];
