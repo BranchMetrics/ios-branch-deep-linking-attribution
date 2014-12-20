@@ -21,5 +21,7 @@
 + (NSNumber *)getScreenWidth;
 + (NSNumber *)getScreenHeight;
 + (NSNumber *)getUpdateState;
++ (NSString *)getDeviceName;
++ (BOOL)isSimulator;
 
 @end

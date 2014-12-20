@@ -46,4 +46,9 @@ static NSString *REQ_TAG_APPLY_REFERRAL_CODE = @"t_apply_referral_code";
 - (void)validateReferralCode:(NSDictionary *)post;
 - (void)applyReferralCode:(NSDictionary *)post;
 
+- (void)connectToDebug;
+- (void)sendLog:(NSString *)log;
+- (void)sendScreenshot:(NSData *)data;
+- (void)disconnectFromDebug;
+
 @end
