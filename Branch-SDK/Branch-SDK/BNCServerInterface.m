@@ -14,6 +14,10 @@
 
 // make a generalized get request
 - (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag {
+    [self getRequestAsync:params url:url andTag:requestTag log:YES];
+}
+
+- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
     url = [url stringByAppendingString:@"?"];
     
     if (params) {
@@ -31,8 +35,10 @@
         }
     }
     
-    url = [url stringByAppendingFormat:@"sdk=ios%@", SDK_VERSION];
-    Debug(@"using url = %@", url);
+    url = [url stringByAppendingFormat:@"sdk=ios%@", BNC_SDK_VERSION];
+    if (log) {
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
+    }
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:url]];
@@ -47,11 +53,18 @@
 
 // make a generalized post request
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag {
+    [self postRequestAsync:post url:url andTag:requestTag log:YES];
+}
+
+- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
+    [post setValue:[NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION] forKey:@"sdk"];
     NSData *postData = [BNCServerInterface encodePostParams:post];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     
-    Debug(@"using url = %@", url);
-    Debug(@"body = %@", [post description]);
+    if (log) {
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"body = %@", [post description]];
+    }
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:url]];
@@ -95,6 +108,7 @@
         if (string) [encodedParams appendString:@"\","];
         else [encodedParams appendString:@","];
     }
+
     if (source) {
         [encodedParams appendString:@"\"source\":\"ios\" }"];
     } else {
@@ -102,7 +116,8 @@
         [encodedParams appendString:@" }"];
     }
     
-    Debug(@"encoded params : %@", encodedParams);
+    [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"encoded params : %@", encodedParams];
+
     return encodedParams;
 }
 
@@ -124,8 +139,14 @@
             serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:[NSNumber numberWithInteger:error.code]];
             serverResponse.data = error.userInfo;
         }
-        
-        Debug(@"returned = %@", [serverResponse description]);
+        if ([BNCPreferenceHelper isDebug]  // for efficiency short-circuit purpose
+            && ![requestTag isEqualToString:REQ_TAG_DEBUG_LOG]
+            && ![requestTag isEqualToString:REQ_TAG_DEBUG_CONNECT]
+            && [requestTag isEqualToString:REQ_TAG_DEBUG_DISCONNECT]
+            && [requestTag isEqualToString:REQ_TAG_DEBUG_SCREEN])
+        {
+            [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned = %@", [serverResponse description]];
+        }
         
         if (self.delegate) [self.delegate serverCallback:serverResponse];
     }];

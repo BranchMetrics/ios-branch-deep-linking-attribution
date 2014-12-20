@@ -7,7 +7,7 @@
 //
 
 #import "BNCServerRequest.h"
-#import "BNCConfig.h"
+#import "BNCPreferenceHelper.h"
 
 #define TAG         @"TAG"
 #define DATA        @"POSTDATA"
@@ -42,7 +42,8 @@
 
 - (id)initWithTag:(NSString *)tag andData:(NSDictionary *)postData {
     if (!tag) {
-        Debug(@"Invalid: server request missing tag!");
+        
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Invalid: server request missing tag!"];
         return nil;
     }
     

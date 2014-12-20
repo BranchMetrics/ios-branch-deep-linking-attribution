@@ -79,8 +79,22 @@
     struct utsname systemInfo;
     uname(&systemInfo);
     
-    return [NSString stringWithCString:systemInfo.machine
-                              encoding:NSUTF8StringEncoding];
+    return [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
+}
+
++ (BOOL)isSimulator {
+    UIDevice *currentDevice = [UIDevice currentDevice];
+    return [currentDevice.model rangeOfString:@"Simulator"].location != NSNotFound;
+}
+
++ (NSString *)getDeviceName {
+    if ([BNCSystemObserver isSimulator]) {
+        struct utsname name;
+        uname(&name);
+        return [NSString stringWithFormat:@"%@ %s", [[UIDevice currentDevice] name], name.nodename];
+    } else {
+        return [[UIDevice currentDevice] name];
+    }
 }
 
 + (NSNumber *)getUpdateState {

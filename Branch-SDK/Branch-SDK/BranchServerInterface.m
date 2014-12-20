@@ -44,7 +44,7 @@
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"install"] andTag:REQ_TAG_REGISTER_INSTALL];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"install"] andTag:REQ_TAG_REGISTER_INSTALL];
 }
 
 - (void)registerOpen:(BOOL)debug {
@@ -64,7 +64,7 @@
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"open"] andTag:REQ_TAG_REGISTER_OPEN];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"open"] andTag:REQ_TAG_REGISTER_OPEN];
 }
 
 - (void)registerClose {
@@ -73,39 +73,39 @@
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
     
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"close"] andTag:REQ_TAG_REGISTER_CLOSE];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"close"] andTag:REQ_TAG_REGISTER_CLOSE];
 }
 
 - (void)userCompletedAction:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"event"] andTag:REQ_TAG_COMPLETE_ACTION];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"event"] andTag:REQ_TAG_COMPLETE_ACTION];
 }
 
 - (void)getReferralCounts {
-    [self getRequestAsync:nil url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"referrals/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
+    [self getRequestAsync:nil url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@", @"referrals/", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
 }
 
 - (void)getRewards {
-    [self getRequestAsync:nil url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"credits/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]] andTag:REQ_TAG_GET_REWARDS];
+    [self getRequestAsync:nil url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@", @"credits/", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REWARDS];
 }
 
 - (void)redeemRewards:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"redeem"] andTag:REQ_TAG_REDEEM_REWARDS];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"redeem"] andTag:REQ_TAG_REDEEM_REWARDS];
 }
 
 - (void)getCreditHistory:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
 }
 
 - (void)createCustomUrl:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL];
 }
 
 - (void)identifyUser:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"profile"] andTag:REQ_TAG_IDENTIFY];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_IDENTIFY];
 }
 
 - (void)logoutUser:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"logout"] andTag:REQ_TAG_LOGOUT];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"logout"] andTag:REQ_TAG_LOGOUT];
 }
 
 - (void)addProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params {
@@ -131,20 +131,79 @@
     [newPost setObject:params forKey:@"union"];
     [self updateProfileParams:newPost];
 }
+
 - (void)updateProfileParams:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"profile"] andTag:REQ_TAG_PROFILE_DATA];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_PROFILE_DATA];
+}
+
+- (void)connectToDebug {
+    NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
+    [post setObject:[BNCSystemObserver getDeviceName] forKey:@"device_name"];
+    [post setObject:[BNCSystemObserver getOS] forKey:@"os"];
+    [post setObject:[BNCSystemObserver getOSVersion] forKey:@"os_version"];
+    [post setObject:[BNCSystemObserver getModel] forKey:@"model"];
+    [post setObject:[NSNumber numberWithBool:[BNCSystemObserver isSimulator]] forKey:@"is_simulator"];
+    
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug/connect"] andTag:REQ_TAG_DEBUG_CONNECT log:NO];
+}
+
+- (void)disconnectFromDebug {
+    NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
+    
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug/disconnect"] andTag:REQ_TAG_DEBUG_DISCONNECT log:NO];
+}
+
+- (void)sendLog:(NSString *)log {
+    NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObject:log forKey:@"log"];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
+    
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug/log"] andTag:REQ_TAG_DEBUG_LOG log:NO];
+}
+
+- (void)sendScreenshot:(NSData *)data {
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    NSString *file = @"BNC_Debug_Screen.png";
+    
+    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?app_id=%@&device_fingerprint_id=%@", [BNCPreferenceHelper getAPIURL:@"debug/screenshot"], [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getDeviceFingerprintID]]]];
+    [request setHTTPMethod:@"POST"];
+    
+    NSString *boundary = @"---------------------------Boundary Line---------------------------";
+    NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary];
+    [request addValue:contentType forHTTPHeaderField: @"Content-Type"];
+    
+    NSMutableData *body = [NSMutableData data];
+    
+    [body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"data\"\r\n\r\n"]  dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"{\"id\":\"%@\", \"fileName\":\"%@\"}\r\n", @"", file] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    [body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"Filedata\"; filename=\"%@\"\r\n", file] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[@"Content-Type: application/octet-stream\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[NSData dataWithData:data]];
+    [body appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    [request setHTTPBody:body];
+    [request addValue:[NSString stringWithFormat:@"%lu", (unsigned long)[body length]] forHTTPHeaderField:@"Content-Length"];
+    NSLog(@"================== Data size: %lu", (unsigned long)[body length]);  //temp
+    [self genericHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN];
 }
 
 - (void)getReferralCode:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"referralcode"] andTag:REQ_TAG_GET_REFERRAL_CODE];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"referralcode"] andTag:REQ_TAG_GET_REFERRAL_CODE];
 }
 
 - (void)validateReferralCode:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"referralcode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_VALIDATE_REFERRAL_CODE];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL:@"referralcode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_VALIDATE_REFERRAL_CODE];
 }
 
 - (void)applyReferralCode:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[[BNCPreferenceHelper getAPIURL] stringByAppendingString:@"applycode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_APPLY_REFERRAL_CODE];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL:@"applycode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_APPLY_REFERRAL_CODE];
 }
 
 
