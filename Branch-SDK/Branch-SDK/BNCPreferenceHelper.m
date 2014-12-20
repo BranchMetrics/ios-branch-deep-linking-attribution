@@ -10,6 +10,10 @@
 #import "BranchServerInterface.h"
 #import "BNCConfig.h"
 
+static const NSInteger DEFAULT_TIMEOUT = 3;
+static const NSInteger RETRY_INTERVAL = 3;
+static const NSInteger MAX_RETRIES = 5;
+
 static NSString *KEY_APP_KEY = @"bnc_app_key";
 
 static NSString *KEY_DEVICE_FINGERPRINT_ID = @"bnc_device_fingerprint_id";
@@ -36,6 +40,10 @@ static BOOL BNC_Remote_Debug = NO;
 static dispatch_queue_t bnc_asyncLogQueue = nil;
 static id<BNCDebugConnectionDelegate> bnc_asyncDebugConnectionDelegate = nil;
 static BranchServerInterface *serverInterface = nil;
+
+static NSString *KEY_TIMEOUT = @"bnc_timeout";
+static NSString *KEY_RETRY_INTERVAL = @"bnc_retry_interval";
+static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 
 @interface BNCPreferenceHelper() <BNCServerInterfaceDelegate>
 
@@ -119,6 +127,42 @@ static BranchServerInterface *serverInterface = nil;
 }
 
 // PREFERENCE STORAGE
+
++ (void)setTimeout:(NSInteger)timeout {
+    [BNCPreferenceHelper writeIntegerToDefaults:KEY_TIMEOUT value:timeout];
+}
+
++ (NSInteger)getTimeout {
+    NSInteger timeout = [BNCPreferenceHelper readIntegerFromDefaults:KEY_TIMEOUT];
+    if (timeout <= 0) {
+        timeout = DEFAULT_TIMEOUT;
+    }
+    return timeout;
+}
+
++ (void)setRetryInterval:(NSInteger)retryInterval {
+    [BNCPreferenceHelper writeIntegerToDefaults:KEY_RETRY_INTERVAL value:retryInterval];
+}
+
++ (NSInteger)getRetryInterval {
+    NSInteger retryInt = [BNCPreferenceHelper readIntegerFromDefaults:KEY_RETRY_INTERVAL];
+    if (retryInt <= 0) {
+        retryInt = RETRY_INTERVAL;
+    }
+    return retryInt;
+}
+
++ (void)setRetryCount:(NSInteger)retryCount {
+    [BNCPreferenceHelper writeIntegerToDefaults:KEY_RETRY_COUNT value:retryCount];
+}
+
++ (NSInteger)getRetryCount {
+    NSInteger retryCount = [BNCPreferenceHelper readIntegerFromDefaults:KEY_RETRY_COUNT];
+    if (retryCount <= 0) {
+        retryCount = MAX_RETRIES;
+    }
+    return retryCount;
+}
 
 + (void)setAppKey:(NSString *)appKey {
     [BNCPreferenceHelper writeObjectToDefaults:KEY_APP_KEY value:appKey];

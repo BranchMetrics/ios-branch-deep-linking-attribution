@@ -24,6 +24,15 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (NSString *)getAPIBaseURL;
 + (NSString *)getAPIURL:(NSString *) endpoint;
 
++ (void)setTimeout:(NSInteger)timeout;
++ (NSInteger)getTimeout;
+
++ (void)setRetryInterval:(NSInteger)retryInterval;
++ (NSInteger)getRetryInterval;
+
++ (void)setRetryCount:(NSInteger)retryCount;
++ (NSInteger)getRetryCount;
+
 + (void)setAppKey:(NSString *)appKey;
 + (NSString *)getAppKey;
 
