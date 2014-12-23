@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Branch"
-  s.version          = "0.3.92"
+  s.version          = "0.3.93"
   s.summary          = "Create an HTTP URL for any piece of content in your app"
   s.description      = <<-DESC
 - Want the highest possible conversions on your sharing feature?
@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
 Use the Branch SDK (branch.io) to create and power the links that point back to your apps for all of these things and more. Branch makes it incredibly simple to create powerful deep links that can pass data across app install and open while handling all edge cases (using on desktop vs. mobile vs. already having the app installed, etc). Best of all, it's really simple to start using the links for your own app: only 2 lines of code to register the deep link router and one more line of code to create the links with custom data.
                        DESC
   s.homepage         = "https://branch.io"
-  s.screenshots      = "https://s3-us-west-1.amazonaws.com/branchhost/BranchDiagram_HowItWorks.png"
+  s.screenshots      = "https://branch.io/img/branch-links/how-links-work-diagram.jpg"
   s.license          = 'Proprietary'
   s.author           = { "Alex Austin" => "alex@branch.io" }
   s.source           = { :git => "https://github.com/BranchMetrics/Branch-iOS-SDK.git", :tag => s.version.to_s }
@@ -24,5 +24,5 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
 
   s.source_files = "Branch-SDK/Branch-SDK/*.{h,m}"
   s.public_header_files = 'Branch-SDK/Branch-SDK/Branch.h'
-  s.frameworks = 'AdSupport'
+  s.frameworks = 'AdSupport', 'CoreTelephony'
 end
