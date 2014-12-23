@@ -15,7 +15,7 @@
 #import "BNCServerRequestQueue.h"
 #import "BNCConfig.h"
 #import "BNCError.h"
-
+#import "UIViewController+BNCDebugging.h"
 
 static NSString *APP_ID = @"app_id";
 static NSString *IDENTITY = @"identity";
