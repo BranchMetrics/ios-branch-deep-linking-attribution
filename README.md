@@ -44,7 +44,7 @@ Or just clone this project!
 
 ### Register you app
 
-You can sign up for your own app id at http://dashboard.branchmetrics.io
+You can sign up for your own app id at [https://dashboard.branch.io](https://dashboard.branch.io)
 
 ## Configuration (for tracking)
 
@@ -54,7 +54,7 @@ Ideally, you want to use our links any time you have an external link pointing t
 1. Our links are the highest possible converting channel to new downloads and users
 1. You can pass that shared data across install to give new users a custom welcome or show them the content they expect to see
 
-Our linking infrastructure will support anything you want to build. If it doesn't, we'll fix it so that it does: just reach out to alex@branchmetrics.io with requests.
+Our linking infrastructure will support anything you want to build. If it doesn't, we'll fix it so that it does: just reach out to alex@branch.io with requests.
 
 ### Register a URI scheme direct deep linking (optional but recommended)
 
@@ -87,7 +87,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 	// your other init code
 
 
-	// sign up to get your key at http://branch.io
+	// Your app key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard
 	Branch *branch = [Branch getInstance:@"Your app key"];
 	[branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {		// previously initUserSessionWithCallback:withLaunchOptions:
         if (!error) {
@@ -267,6 +267,9 @@ Also, you do custom redirection by inserting the following optional keys in the 
 @"$android_url"
 @"$ios_url"
 @"$ipad_url"
+@"$fire_url"
+@"$blackberry_url"
+@"$windows_phone_url"
 ```
 
 ## Referral system rewarding functionality
