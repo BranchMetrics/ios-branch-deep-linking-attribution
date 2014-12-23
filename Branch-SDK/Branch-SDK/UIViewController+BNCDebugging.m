@@ -24,6 +24,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 static dispatch_queue_t bnc_asyncDebugQueue = nil;
 static NSTimer *bnc_debugTimer = nil;
 static UIWindow *bnc_debugWindow = nil;
+static UILongPressGestureRecognizer *BNCLongPress = nil;
 
 + (void)load {
     static dispatch_once_t onceToken;
@@ -81,25 +82,22 @@ static UIWindow *bnc_debugWindow = nil;
 }
 
 - (void)bnc_addGesterRecognizer:(SEL)action {
-    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:action];
-    longPress.cancelsTouchesInView = NO;
-    longPress.minimumPressDuration = BNCDebugTriggerDuration;
+    BNCLongPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:action];
+    BNCLongPress.cancelsTouchesInView = NO;
+    BNCLongPress.minimumPressDuration = BNCDebugTriggerDuration;
     if (![BNCSystemObserver isSimulator]) {
-        longPress.numberOfTouchesRequired = BNCDebugTriggerFingers;
+        BNCLongPress.numberOfTouchesRequired = BNCDebugTriggerFingers;
     } else {
-        longPress.numberOfTouchesRequired = BNCDebugTriggerFingersSimulator;
+        BNCLongPress.numberOfTouchesRequired = BNCDebugTriggerFingersSimulator;
     }
-    [self.view addGestureRecognizer:longPress];
+    [self.view addGestureRecognizer:BNCLongPress];
 }
 
 - (void)bnc_connectToDebug:(UILongPressGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateBegan){
         NSLog(@"======= Start Debug Session =======");
-        
-        [self.view removeGestureRecognizer:sender];
         [BNCPreferenceHelper setDebugConnectionDelegate:self];
         [BNCPreferenceHelper setDebug];
-        [self bnc_addCancelDebugGestureRecognizer];
     }
 }
 
@@ -109,6 +107,9 @@ static UIWindow *bnc_debugWindow = nil;
     if (!bnc_asyncDebugQueue) {
         bnc_asyncDebugQueue = dispatch_queue_create("bnc_debug_queue", NULL);
     }
+    
+    [self.view removeGestureRecognizer:BNCLongPress];
+    [self bnc_addCancelDebugGestureRecognizer];
     
     //TODO: change to send screenshots instead in future
     if (!bnc_debugTimer || !bnc_debugTimer.isValid) {
