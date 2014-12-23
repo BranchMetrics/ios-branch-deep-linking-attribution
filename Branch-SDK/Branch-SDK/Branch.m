@@ -118,30 +118,33 @@ static Branch *currInstance;
 }
 
 + (void)initInstance {
-    currInstance = [[Branch alloc] init];
-    currInstance.isInit = NO;
-    currInstance.bServerInterface = [[BranchServerInterface alloc] init];
-    currInstance.bServerInterface.delegate = currInstance;
-    currInstance.processing_sema = dispatch_semaphore_create(1);
-    currInstance.asyncQueue = dispatch_queue_create("brnch_request_queue", NULL);
-    currInstance.requestQueue = [BNCServerRequestQueue getInstance];
-    currInstance.initFinished = NO;
-    currInstance.initFailed = NO;
-    currInstance.hasNetwork = YES;
-    currInstance.lastRequestWasInit = YES;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        currInstance = [[Branch alloc] init];
+        currInstance.isInit = NO;
+        currInstance.bServerInterface = [[BranchServerInterface alloc] init];
+        currInstance.bServerInterface.delegate = currInstance;
+        currInstance.processing_sema = dispatch_semaphore_create(1);
+        currInstance.asyncQueue = dispatch_queue_create("brnch_request_queue", NULL);
+        currInstance.requestQueue = [BNCServerRequestQueue getInstance];
+        currInstance.initFinished = NO;
+        currInstance.initFailed = NO;
+        currInstance.hasNetwork = YES;
+        currInstance.lastRequestWasInit = YES;
     
-    [[NSNotificationCenter defaultCenter] addObserver:currInstance
+        [[NSNotificationCenter defaultCenter] addObserver:currInstance
                                              selector:@selector(applicationWillResignActive)
                                                  name:UIApplicationWillResignActiveNotification
                                                object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:currInstance
+        [[NSNotificationCenter defaultCenter] addObserver:currInstance
                                              selector:@selector(applicationDidBecomeActive)
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
     
-    currInstance.retryCount = 0;
-    currInstance.networkCount = 0;
+        currInstance.retryCount = 0;
+        currInstance.networkCount = 0;
+    });
 }
 
 + (void)setDebug {
