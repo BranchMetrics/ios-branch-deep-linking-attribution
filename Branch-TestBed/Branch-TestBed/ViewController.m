@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#import "Branch.h"
+#import <Branch/Branch.h>
 #import "ViewController.h"
 #import "CreditHistoryViewController.h"
 

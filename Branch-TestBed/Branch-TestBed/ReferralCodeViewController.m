@@ -7,7 +7,7 @@
 //
 
 #import "ReferralCodeViewController.h"
-#import "Branch.h"
+#import <Branch/Branch.h>
 
 @interface ReferralCodeViewController ()
 
