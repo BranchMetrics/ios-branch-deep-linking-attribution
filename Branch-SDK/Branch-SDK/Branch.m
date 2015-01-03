@@ -734,6 +734,7 @@ static Branch *currInstance;
 - (void)applicationDidBecomeActive {
     if (!self.isInit) {
         self.initFailed = NO;
+        self.initNotCalled = NO;
         self.lastRequestWasInit = YES;
         dispatch_async(self.asyncQueue, ^{
             self.isInit = YES;
