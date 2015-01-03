@@ -76,6 +76,14 @@
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"close"] andTag:REQ_TAG_REGISTER_CLOSE];
 }
 
+- (void)uploadListOfApps:(NSDictionary *)post {
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"applist"] andTag:REQ_TAG_UPLOAD_LIST_OF_APPS];
+}
+
+- (BNCServerResponse *)retrieveAppsToCheck {
+    return [self getRequestSync:nil url:[BNCPreferenceHelper getAPIURL:@"applist"] andTag:REQ_TAG_GET_LIST_OF_APPS];
+}
+
 - (void)userCompletedAction:(NSDictionary *)post {
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"event"] andTag:REQ_TAG_COMPLETE_ACTION];
 }
@@ -191,7 +199,7 @@
     [request setHTTPBody:body];
     [request addValue:[NSString stringWithFormat:@"%lu", (unsigned long)[body length]] forHTTPHeaderField:@"Content-Length"];
     NSLog(@"================== Data size: %lu", (unsigned long)[body length]);  //temp
-    [self genericHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN];
+    [self genericAsyncHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN];
 }
 
 - (void)getReferralCode:(NSDictionary *)post {

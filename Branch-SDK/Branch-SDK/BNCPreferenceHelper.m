@@ -13,6 +13,7 @@
 static const NSInteger DEFAULT_TIMEOUT = 3;
 static const NSInteger RETRY_INTERVAL = 3;
 static const NSInteger MAX_RETRIES = 5;
+static const NSInteger APP_READ_INTERVAL = 520000;
 
 static NSString *KEY_APP_KEY = @"bnc_app_key";
 
@@ -26,6 +27,7 @@ static NSString *KEY_SESSION_PARAMS = @"bnc_session_params";
 static NSString *KEY_INSTALL_PARAMS = @"bnc_install_params";
 static NSString *KEY_USER_URL = @"bnc_user_url";
 static NSString *KEY_IS_REFERRABLE = @"bnc_is_referrable";
+static NSString *KEY_APP_LIST_CHECK = @"bnc_app_list_check";
 
 static NSString *KEY_CREDITS = @"bnc_credits";
 static NSString *KEY_CREDIT_BASE = @"bnc_credit_base_";
@@ -281,6 +283,21 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 }
 + (void)clearIsReferrable {
     [BNCPreferenceHelper writeIntegerToDefaults:KEY_IS_REFERRABLE value:0];
+}
+
++ (void)setAppListCheckDone {
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_APP_LIST_CHECK value:[NSDate date]];
+}
++ (BOOL)getNeedAppListCheck {
+    NSDate *currDate = [NSDate date];
+    NSDate *lastDate = (NSDate *)[self readObjectFromDefaults:KEY_APP_LIST_CHECK];
+    if (lastDate) {
+        NSTimeInterval diff = [currDate timeIntervalSinceDate:lastDate];
+        if (diff < APP_READ_INTERVAL) {
+            return NO;
+        }
+    }
+    return YES;
 }
 
 + (void)clearUserCreditsAndCounts {

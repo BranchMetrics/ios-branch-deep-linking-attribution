@@ -22,7 +22,6 @@ static NSString *REQ_TAG_DEBUG_LOG = @"t_debug_log";
 static NSString *REQ_TAG_DEBUG_SCREEN = @"t_debug_screen";
 static NSString *REQ_TAG_DEBUG_DISCONNECT = @"t_debug_disconnect";
 
-
 @interface BNCServerInterface : NSObject
 
 @property (nonatomic, strong) id <BNCServerInterfaceDelegate> delegate;
@@ -30,10 +29,12 @@ static NSString *REQ_TAG_DEBUG_DISCONNECT = @"t_debug_disconnect";
 + (NSString *)encodePostToUniversalString:(NSDictionary *)params;
 + (NSString *)encodePostToUniversalString:(NSDictionary *)params needSource:(BOOL)source;
 
+- (BNCServerResponse *)getRequestSync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag;
+- (BNCServerResponse *)getRequestSync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log;
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag;
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log;
 - (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag;
 - (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log;
-- (void)genericHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag;
+- (void)genericAsyncHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag;
 
 @end

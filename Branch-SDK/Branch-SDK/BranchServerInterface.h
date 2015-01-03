@@ -24,6 +24,8 @@ static NSString *REQ_TAG_PROFILE_DATA = @"t_profile_data";
 static NSString *REQ_TAG_GET_REFERRAL_CODE = @"t_get_referral_code";
 static NSString *REQ_TAG_VALIDATE_REFERRAL_CODE = @"t_validate_referral_code";
 static NSString *REQ_TAG_APPLY_REFERRAL_CODE = @"t_apply_referral_code";
+static NSString *REQ_TAG_UPLOAD_LIST_OF_APPS = @"t_upload_list_of_apps";
+static NSString *REQ_TAG_GET_LIST_OF_APPS = @"t_get_list_of_apps";
 
 @interface BranchServerInterface : BNCServerInterface
 
@@ -45,6 +47,8 @@ static NSString *REQ_TAG_APPLY_REFERRAL_CODE = @"t_apply_referral_code";
 - (void)getReferralCode:(NSDictionary *)post;
 - (void)validateReferralCode:(NSDictionary *)post;
 - (void)applyReferralCode:(NSDictionary *)post;
+- (void)uploadListOfApps:(NSDictionary *)post;
+- (BNCServerResponse *)retrieveAppsToCheck;
 
 - (void)connectToDebug;
 - (void)sendLog:(NSString *)log;
