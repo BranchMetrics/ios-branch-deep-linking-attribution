@@ -9,6 +9,7 @@
 #include <sys/utsname.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
+#import "BranchServerInterface.h"
 #import <UIKit/UIDevice.h>
 #import <UIKit/UIScreen.h>
 #import <CoreTelephony/CTCarrier.h>
@@ -129,5 +130,32 @@
     CGFloat height = mainScreen.bounds.size.height * scaleFactor;
     return [NSNumber numberWithInteger:(NSInteger)height];
 }
+
++ (NSArray *)getListOfApps {
+    NSMutableArray *appsPresent = [[NSMutableArray alloc] init];
+    BNCServerResponse *serverResponse = [[[BranchServerInterface alloc] init] retrieveAppsToCheck];
+    NSLog(@"returned from app check with %@", serverResponse.data);
+    if (serverResponse && serverResponse.data) {
+        NSInteger status = [serverResponse.statusCode integerValue];
+        NSArray *apps = [serverResponse.data objectForKey:@"potential_apps"];
+        UIApplication *application = [UIApplication sharedApplication];
+        if (status == 200 && apps && application) {
+            for (NSDictionary *app in apps) {
+                NSString *uriScheme = [app objectForKey:@"uri_scheme"];
+                if (uriScheme) {
+                    if (![uriScheme containsString:@"://"])
+                        uriScheme = [uriScheme stringByAppendingString:@"://"];
+                    NSURL *url = [NSURL URLWithString:uriScheme];
+                    if ([application canOpenURL:url]) {
+                        [appsPresent addObject:app];
+                    }
+                }
+            }
+        }
+    }
+    
+    return appsPresent;
+}
+
 
 @end

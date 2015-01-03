@@ -24,7 +24,7 @@
 #endif
 
 #ifdef BNC_DEV_ENV
-#define BNC_API_BASE_URL        @"http://localhost:3001"
+#define BNC_API_BASE_URL        @"http://localhost:3000"
 #endif
 
 #define BNC_API_VERSION         @"v1"
