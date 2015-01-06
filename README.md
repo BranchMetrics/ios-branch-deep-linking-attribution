@@ -111,7 +111,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
 	// pass the url to the handle deep link call
 	// if handleDeepLink returns YES, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
-	if (![[Branch getInstance] handleDeepLink:url]) {
+	if (![[Branch getInstance:@"Your app key"] handleDeepLink:url]) {
 		// do other deep link routing for the Facebook SDK, Pinterest SDK, etc
 	}
     return YES;
@@ -148,7 +148,7 @@ func application(application: UIApplication, didFinishLaunchingWithOptions launc
 func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
     // pass the url to the handle deep link call
     // if handleDeepLink returns true, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
-    if (!Branch.getInstance().handleDeepLink(url)) {
+    if (!Branch.getInstance("Your app key").handleDeepLink(url)) {
         // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
     }
         
