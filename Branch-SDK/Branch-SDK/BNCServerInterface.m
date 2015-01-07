@@ -13,16 +13,12 @@
 @implementation BNCServerInterface
 
 // make a generalized get request
-- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag {
-    [self getRequestAsync:params url:url andTag:requestTag log:YES];
-}
-
-- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
+- (NSMutableURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
     url = [url stringByAppendingString:@"?"];
     
     if (params) {
         NSArray *allKeys = [params allKeys];
-
+        
         for (NSString *key in allKeys) {
             if ([key length] > 0) {
                 if ([params objectForKey:key]) {
@@ -48,7 +44,23 @@
     [request setValue:@"applications/json" forHTTPHeaderField:@"Content-type"];
     [request setHTTPBody:nil];
     
-    [self genericHTTPRequest:request withTag:requestTag];
+    return request;
+}
+
+- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag {
+    [self getRequestAsync:params url:url andTag:requestTag log:YES];
+}
+
+- (BNCServerResponse *)getRequestSync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag {
+    return [self getRequestSync:params url:url andTag:requestTag log:YES];
+}
+
+- (BNCServerResponse *)getRequestSync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
+    return [self genericSyncHTTPRequest:[self prepareGetRequest:params url:url andTag:requestTag log:log] withTag:requestTag];
+}
+
+- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
+    [self genericAsyncHTTPRequest:[self prepareGetRequest:params url:url andTag:requestTag log:log] withTag:requestTag];
 }
 
 // make a generalized post request
@@ -73,7 +85,7 @@
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-type"];
     [request setHTTPBody:postData];
     
-    [self genericHTTPRequest:request withTag:requestTag];
+    [self genericAsyncHTTPRequest:request withTag:requestTag];
 }
 
 + (NSData *)encodePostParams:(NSDictionary *)params {
@@ -120,36 +132,49 @@
     return encodedParams;
 }
 
-- (void)genericHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag {
+- (void)genericAsyncHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag {
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler: ^(NSURLResponse *response, NSData *POSTReply, NSError *error) {
-        BNCServerResponse *serverResponse;
-        if (!error) {
-            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-            NSNumber *statusCode = [NSNumber numberWithLong:[httpResponse statusCode]];
-            
-            serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:statusCode];
-            
-            if (POSTReply != nil) {
-                NSError *convError;
-                id jsonData = [NSJSONSerialization JSONObjectWithData:POSTReply options:NSJSONReadingMutableContainers error:&convError];
-                serverResponse.data = jsonData;
-            }
-        } else {
-            serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:[NSNumber numberWithInteger:error.code]];
-            serverResponse.data = error.userInfo;
-        }
-        if ([BNCPreferenceHelper isDebug]  // for efficiency short-circuit purpose
-            && ![requestTag isEqualToString:REQ_TAG_DEBUG_LOG]
-            && ![requestTag isEqualToString:REQ_TAG_DEBUG_CONNECT]
-            && [requestTag isEqualToString:REQ_TAG_DEBUG_DISCONNECT]
-            && [requestTag isEqualToString:REQ_TAG_DEBUG_SCREEN])
-        {
-            [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned = %@", [serverResponse description]];
-        }
-        
-        if (self.delegate) [self.delegate serverCallback:serverResponse];
+        [self processResponse:response withData:POSTReply withError:error withTag:requestTag];
     }];
 }
 
+- (BNCServerResponse *)genericSyncHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag {
+    NSURLResponse *response;
+    NSError *error;
+    NSData *POSTreply = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    
+    return [self processResponse:response withData:POSTreply withError:error withTag:requestTag];
+}
+
+- (BNCServerResponse *)processResponse:(NSURLResponse *)response withData:(NSData *)POSTReply withError:(NSError *)error withTag:(NSString *)requestTag {
+    BNCServerResponse *serverResponse;
+    if (!error) {
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        NSNumber *statusCode = [NSNumber numberWithLong:[httpResponse statusCode]];
+        
+        serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:statusCode];
+        
+        if (POSTReply != nil) {
+            NSError *convError;
+            id jsonData = [NSJSONSerialization JSONObjectWithData:POSTReply options:NSJSONReadingMutableContainers error:&convError];
+            serverResponse.data = jsonData;
+        }
+    } else {
+        serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:[NSNumber numberWithInteger:error.code]];
+        serverResponse.data = error.userInfo;
+    }
+    if ([BNCPreferenceHelper isDebug]  // for efficiency short-circuit purpose
+        && ![requestTag isEqualToString:REQ_TAG_DEBUG_LOG]
+        && ![requestTag isEqualToString:REQ_TAG_DEBUG_CONNECT]
+        && [requestTag isEqualToString:REQ_TAG_DEBUG_DISCONNECT]
+        && [requestTag isEqualToString:REQ_TAG_DEBUG_SCREEN])
+    {
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned = %@", [serverResponse description]];
+    }
+    
+    if (self.delegate) [self.delegate serverCallback:serverResponse];
+    
+    return serverResponse;
+}
 
 @end

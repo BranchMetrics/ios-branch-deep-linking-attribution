@@ -822,6 +822,29 @@ static Branch *currInstance;
     return retDict;
 }
 
+- (void)processListOfApps {
+    dispatch_async(dispatch_queue_create("app_lister", NULL), ^{
+        BNCServerRequest *req = [[BNCServerRequest alloc] init];
+        req.tag = REQ_TAG_UPLOAD_LIST_OF_APPS;
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
+        [post setObject:[BNCPreferenceHelper getAppKey] forKey:APP_ID];
+        [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:DEVICE_FINGERPRINT_ID];
+        [post setObject:[BNCSystemObserver getOS] forKey:@"os"];
+        [post setObject:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
+        [post setObject:[BNCSystemObserver getListOfApps] forKey:@"installed_apps"];
+        req.postData = post;
+        
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        }
+        
+        if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
+            [self processNextQueueItem];
+        }
+    });
+}
+
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -882,6 +905,9 @@ static Branch *currInstance;
             } else if ([req.tag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE] && [self hasUser] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling apply referral code"];
                 [self.bServerInterface applyReferralCode:req.postData];
+            } else if ([req.tag isEqualToString:REQ_TAG_UPLOAD_LIST_OF_APPS] && [self hasUser] && [self hasSession]) {
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling upload apps"];
+                [self.bServerInterface uploadListOfApps:req.postData];
             } else if (![self hasUser]) {
                 self.networkCount = 0;
                 [self handleFailure:[self.requestQueue size]-1];
@@ -1181,7 +1207,9 @@ static Branch *currInstance;
             } else {
                 [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
-            
+            if ([BNCPreferenceHelper getNeedAppListCheck]) {
+                [self processListOfApps];
+            }
             [self updateAllRequestsInQueue];
             
             if (self.sessionparamLoadCallback) {
@@ -1208,7 +1236,9 @@ static Branch *currInstance;
                     [BNCPreferenceHelper setInstallParams:[response.data objectForKey:DATA]];
                 }
             }
-            
+            if ([BNCPreferenceHelper getNeedAppListCheck]) {
+                [self processListOfApps];
+            }
             if ([response.data objectForKey:DATA]) {
                 [BNCPreferenceHelper setSessionParams:[response.data objectForKey:DATA]];
             } else {
@@ -1269,7 +1299,8 @@ static Branch *currInstance;
             [self processReferralCodeValidation:response.data];
         } else if ([requestTag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE]) {
             [self processReferralCodeApply:response.data];
-        } else if ([requestTag isEqualToString:REQ_TAG_COMPLETE_ACTION] || [requestTag isEqualToString:REQ_TAG_PROFILE_DATA] || [requestTag isEqualToString:REQ_TAG_REDEEM_REWARDS] || [requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
+        } else if ([requestTag isEqualToString:REQ_TAG_UPLOAD_LIST_OF_APPS]) {
+            [BNCPreferenceHelper setAppListCheckDone];
         }
         
         if (!retry && self.hasNetwork && !self.initFailed) {

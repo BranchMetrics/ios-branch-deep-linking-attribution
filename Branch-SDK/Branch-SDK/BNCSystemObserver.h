@@ -22,6 +22,7 @@
 + (NSNumber *)getScreenHeight;
 + (NSNumber *)getUpdateState;
 + (NSString *)getDeviceName;
++ (NSArray *)getListOfApps;
 + (BOOL)isSimulator;
 
 @end
