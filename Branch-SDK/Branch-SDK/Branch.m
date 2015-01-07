@@ -1166,7 +1166,7 @@ static Branch *currInstance;
             }
             [self handleFailure:[self.requestQueue size]-1];
         } else if (status != 200) {
-            if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorNetworkConnectionLost || status == NSURLErrorCannotFindHost) {
+            if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorCannotFindHost) {
                 self.hasNetwork = NO;
                 [self handleFailure:self.lastRequestWasInit ? 0 : [self.requestQueue size]-1];
                 if ([requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {  // for safety sake		
