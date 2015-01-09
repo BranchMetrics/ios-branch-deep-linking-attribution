@@ -88,6 +88,7 @@ static NSInteger REFERRAL_CREATION_SOURCE_SDK = 2;
 @property (strong, nonatomic) callbackWithParams applyReferralCodeCallback;
 @property (assign, nonatomic) BOOL initFinished;
 @property (assign, nonatomic) BOOL initFailed;
+@property (assign, nonatomic) BOOL initNotCalled;
 @property (assign, nonatomic) BOOL lastRequestWasInit;
 @property (assign, nonatomic) BOOL hasNetwork;
 
@@ -130,6 +131,7 @@ static Branch *currInstance;
         currInstance.initFinished = NO;
         currInstance.initFailed = NO;
         currInstance.hasNetwork = YES;
+        currInstance.initNotCalled = YES;
         currInstance.lastRequestWasInit = YES;
     
         [[NSNotificationCenter defaultCenter] addObserver:currInstance
@@ -239,6 +241,7 @@ static Branch *currInstance;
     self.sessionparamLoadCallback = callback;
     self.lastRequestWasInit = YES;
     self.initFailed = NO;
+    self.initNotCalled = NO;
     if (!self.isInit) {
         self.isInit = YES;
         [self initializeSession];
@@ -292,7 +295,7 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
-        } else if (self.initFailed) {
+        } else if (self.initFailed || self.initNotCalled) {
             [self handleFailure:[self.requestQueue size]-1];
         }
     });
@@ -309,7 +312,7 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
-        } else if (self.initFailed) {
+        } else if (self.initFailed || self.initNotCalled) {
             [self handleFailure:[self.requestQueue size]-1];
         }
     });
@@ -329,7 +332,7 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
-        } else if (self.initFailed) {
+        } else if (self.initFailed || self.initNotCalled) {
             [self handleFailure:[self.requestQueue size]-1];
         }
     });
@@ -349,7 +352,7 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
-        } else if (self.initFailed) {
+        } else if (self.initFailed || self.initNotCalled) {
             [self handleFailure:[self.requestQueue size]-1];
         }
     });
@@ -395,7 +398,7 @@ static Branch *currInstance;
             if (self.initFinished || !self.hasNetwork) {
                 self.lastRequestWasInit = NO;
                 [self processNextQueueItem];
-            } else if (self.initFailed) {
+            } else if (self.initFailed || self.initNotCalled) {
                 [self handleFailure:[self.requestQueue size]-1];
             }
         }
@@ -437,7 +440,7 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
-        } else if (self.initFailed) {
+        } else if (self.initFailed || self.initNotCalled) {
             [self handleFailure:[self.requestQueue size]-1];
         }
     });
@@ -462,7 +465,7 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
-        } else if (self.initFailed) {
+        } else if (self.initFailed || self.initNotCalled) {
             [self handleFailure:[self.requestQueue size]-1];
         }
     });
@@ -552,7 +555,7 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
-        } else if (self.initFailed) {
+        } else if (self.initFailed || self.initNotCalled) {
             [self handleFailure:[self.requestQueue size]-1];
         }
     });
@@ -617,7 +620,7 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
-        } else if (self.initFailed) {
+        } else if (self.initFailed || self.initNotCalled) {
             [self handleFailure:[self.requestQueue size]-1];
         }
     });
@@ -645,7 +648,7 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
-        } else if (self.initFailed) {
+        } else if (self.initFailed || self.initNotCalled) {
             [self handleFailure:[self.requestQueue size]-1];
         }
     });
@@ -671,7 +674,7 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
-        } else if (self.initFailed) {
+        } else if (self.initFailed || self.initNotCalled) {
             [self handleFailure:[self.requestQueue size]-1];
         }
     });
@@ -714,7 +717,7 @@ static Branch *currInstance;
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
-        } else if (self.initFailed) {
+        } else if (self.initFailed || self.initNotCalled) {
             [self handleFailure:[self.requestQueue size]-1];
         }
     });
@@ -731,6 +734,7 @@ static Branch *currInstance;
 - (void)applicationDidBecomeActive {
     if (!self.isInit) {
         self.initFailed = NO;
+        self.initNotCalled = NO;
         self.lastRequestWasInit = YES;
         dispatch_async(self.asyncQueue, ^{
             self.isInit = YES;
@@ -755,6 +759,7 @@ static Branch *currInstance;
 - (void)callClose {
     self.isInit = NO;
     self.lastRequestWasInit = NO;
+    self.initNotCalled = YES;
     if (!self.hasNetwork) {
         // if there's no network connectivity, purge the old install/open
         BNCServerRequest *req = [self.requestQueue peek];
@@ -773,7 +778,7 @@ static Branch *currInstance;
             dispatch_async(self.asyncQueue, ^{
                 [self processNextQueueItem];
             });
-        } else if (self.initFailed) {
+        } else if (self.initFailed || self.initNotCalled) {
             [self handleFailure:[self.requestQueue size]-1];
         }
     }
@@ -895,8 +900,9 @@ static Branch *currInstance;
 }
 
 - (void)handleFailure:(unsigned int)index {
-    NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Trouble reaching server. Please try again in a few minutes"] forKey:NSLocalizedDescriptionKey];
-    
+    NSDictionary *errorDict;
+    if (self.initNotCalled)
+        errorDict = [BNCError getUserInfoDictForDomain:BNCNotInitError];
     BNCServerRequest *req;
     if (index >= [self.requestQueue size]) {
         req = [self.requestQueue peekAt:[self.requestQueue size]-1];
@@ -906,17 +912,26 @@ static Branch *currInstance;
     
     if (req) {
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
+            errorDict = [BNCError getUserInfoDictForDomain:BNCInitError];
             if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:errorDict]);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
-            if (self.pointLoadCallback) self.pointLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralsError userInfo:nil]);
+            if (!self.initNotCalled)
+                errorDict = [BNCError getUserInfoDictForDomain:BNCGetReferralsError];
+            if (self.pointLoadCallback) self.pointLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralsError userInfo:errorDict]);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS]) {
-            if (self.rewardLoadCallback) self.rewardLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditsError userInfo:nil]);
+            if (!self.initNotCalled)
+                errorDict = [BNCError getUserInfoDictForDomain:BNCGetCreditsError];
+            if (self.rewardLoadCallback) self.rewardLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditsError userInfo:errorDict]);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {
+            if (!self.initNotCalled)
+                errorDict = [BNCError getUserInfoDictForDomain:BNCGetCreditHistoryError];
             if (self.creditHistoryLoadCallback) {
-                self.creditHistoryLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:nil]);
+                self.creditHistoryLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:errorDict]);
             }
         } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
             if (self.urlLoadCallback) {
+                if (!self.initNotCalled)
+                    errorDict = [BNCError getUserInfoDictForDomain:BNCCreateURLError];
                 NSString *failedUrl = nil;
                 if (![[BNCPreferenceHelper getUserURL] isEqualToString:NO_STRING_VALUE]) {
                     failedUrl = [BNCPreferenceHelper getUserURL];
@@ -924,18 +939,26 @@ static Branch *currInstance;
                 self.urlLoadCallback(failedUrl, [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:errorDict]);
             }
         } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
+            if (!self.initNotCalled)
+                errorDict = [BNCError getUserInfoDictForDomain:BNCIdentifyError];
             if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCIdentifyError userInfo:errorDict]);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_CODE]) {
+            if (!self.initNotCalled)
+                errorDict = [BNCError getUserInfoDictForDomain:BNCGetReferralCodeError];
             if (self.getReferralCodeCallback) {
-                self.getReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:nil]);
+                self.getReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:errorDict]);
             }
         } else if ([req.tag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE]) {
+            if (!self.initNotCalled)
+                errorDict = [BNCError getUserInfoDictForDomain:BNCValidateReferralCodeError];
             if (self.validateReferralCodeCallback) {
-                self.validateReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:nil]);
+                self.validateReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:errorDict]);
             }
         } else if ([req.tag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE]) {
+            if (!self.initNotCalled)
+                errorDict = [BNCError getUserInfoDictForDomain:BNCApplyReferralCodeError];
             if (self.applyReferralCodeCallback) {
-                self.applyReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:nil]);
+                self.applyReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict]);
             }
         }
     }
@@ -1076,7 +1099,7 @@ static Branch *currInstance;
     if (self.getReferralCodeCallback) {
         NSError *error = nil;
         if (![returnedData objectForKey:REFERRAL_CODE]) {
-            NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Failed to get referral code"] forKey:NSLocalizedDescriptionKey];
+            NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCDuplicateReferralCodeError];
             error = [NSError errorWithDomain:BNCErrorDomain code:BNCDuplicateReferralCodeError userInfo:errorDict];
         }
         
@@ -1090,7 +1113,7 @@ static Branch *currInstance;
     if (self.validateReferralCodeCallback) {
         NSError *error = nil;
         if (![returnedData objectForKey:REFERRAL_CODE]) {
-            NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Referral code is invalid"] forKey:NSLocalizedDescriptionKey];
+            NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCInvalidReferralCodeError];
             error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:errorDict];
         }
         
@@ -1104,7 +1127,7 @@ static Branch *currInstance;
     if (self.applyReferralCodeCallback) {
         NSError *error = nil;
         if (![returnedData objectForKey:REFERRAL_CODE]) {
-            NSDictionary *errorDict = [NSDictionary dictionaryWithObject:@[@"Referral code is invalid"] forKey:NSLocalizedDescriptionKey];
+            NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCInvalidReferralCodeError];
             error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:errorDict];
         }
         
@@ -1125,7 +1148,7 @@ static Branch *currInstance;
         if (status == 409) {
             if ([requestTag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if (self.urlLoadCallback) self.urlLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLDuplicateAliasError userInfo:[[NSDictionary alloc] initWithObjects:@[@"That link alias is already taken - please try a different one or adjust the parameters to retrieve on that's already been created"] forKeys:@[NSLocalizedDescriptionKey]]]);
+                    if (self.urlLoadCallback) self.urlLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLDuplicateAliasError userInfo:[BNCError getUserInfoDictForDomain:BNCCreateURLDuplicateAliasError]]);
                 });
             } else {
                 NSLog(@"Branch API Error: Duplicate Branch resource error.");
@@ -1143,7 +1166,7 @@ static Branch *currInstance;
             }
             [self handleFailure:[self.requestQueue size]-1];
         } else if (status != 200) {
-            if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorNetworkConnectionLost || status == NSURLErrorCannotFindHost) {
+            if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorCannotFindHost) {
                 self.hasNetwork = NO;
                 [self handleFailure:self.lastRequestWasInit ? 0 : [self.requestQueue size]-1];
                 if ([requestTag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {  // for safety sake		
