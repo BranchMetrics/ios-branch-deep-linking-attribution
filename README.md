@@ -75,6 +75,15 @@ Alternatively, you can add the URI scheme in your project's Info page.
 
 ![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png)
 
+### Add your app key to your project
+
+After you register your app, your app key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift).
+
+1. In plist file, mouse hover "Information Property List" which is the root item under the Key column.
+1. After about half a second, you will see a "+" sign appear. Click it.
+1. In the newly added row, fill in "BNCAppKey" for its key, leave type as String, and enter your app key obtained in above steps in its value column.
+1. Save the plist file.
+
 ### Initialize SDK And Register Deep Link Routing Function
 
 Called when app first initializes a session, ideally in the app delegate. If you created a custom link with your own custom dictionary data, you probably want to know when the user session init finishes, so you can check that data. Think of this callback as your "deep link router". If your app opens with some data, you want to route the user depending on the data you passed in. Otherwise, send them to a generic install flow.
@@ -86,9 +95,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	// your other init code
 
-
-	// Your app key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard
-	Branch *branch = [Branch getInstance:@"Your app key"];
+	Branch *branch = [Branch getInstance:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"BNCAppKey"]];
 	[branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {		// previously initUserSessionWithCallback:withLaunchOptions:
         if (!error) {
             // params are the deep linked params associated with the link that the user clicked before showing up
@@ -111,7 +118,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
 	// pass the url to the handle deep link call
 	// if handleDeepLink returns YES, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
-	if (![[Branch getInstance:@"Your app key"] handleDeepLink:url]) {
+	if (![[Branch getInstance] handleDeepLink:url]) {
 		// do other deep link routing for the Facebook SDK, Pinterest SDK, etc
 	}
     return YES;
@@ -123,7 +130,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     // your other init code
 	
-    let branch: Branch = Branch.getInstance("Your app key")
+    let branch: Branch = Branch.getInstance(NSBundle.mainBundle().infoDictionary?["BNCAppKey"] as String)
     branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
         if (error == nil) {
             // params are the deep linked params associated with the link that the user clicked before showing up
@@ -148,7 +155,7 @@ func application(application: UIApplication, didFinishLaunchingWithOptions launc
 func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
     // pass the url to the handle deep link call
     // if handleDeepLink returns true, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
-    if (!Branch.getInstance("Your app key").handleDeepLink(url)) {
+    if (!Branch.getInstance().handleDeepLink(url)) {
         // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
     }
         
