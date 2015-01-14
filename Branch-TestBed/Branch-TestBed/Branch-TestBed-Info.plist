@@ -45,5 +45,7 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>BNCAppKey</key>
+	<string>5668720416392049</string>
 </dict>
 </plist>
