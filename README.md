@@ -22,6 +22,12 @@ clearUser | logout
 getInstallReferringParams | getFirstReferringParams
 getReferringParams | getLatestReferringParams
 
+## FAQ
+
+1. __What if you go down?! Or there is a poor connection?__
+
+At Branch, we live, breath uptime and performance. Just in case, we've got mechanisms internal to the SDK to deal with network issues. We always call the callbacks with the error parameter describing the issue. If the phone is in airplane mode and the connection is not available, the callbacks are called immediately. If there is a server latency, we timeout after 3 seconds and will retry 4 more times with a 3 second pause in between each. These timeouts are adjustable on the singleton instance by calling setNetworkTimeout (ms), setRetryCount and setRetryInterval (ms).
+
 ## Installation
 
 compiled SDK size: ~155kb
