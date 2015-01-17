@@ -27,7 +27,7 @@
 @implementation ViewController
 
 - (IBAction)cmdRefreshShort:(id)sender {
-    NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!"] forKeys:@[@"key1", @"key2"]];
+    NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!", @"Kindred", @"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png"] forKeys:@[@"key1", @"key2", @"$og_title", @"$og_image_url"]];
     [[Branch getInstance] getShortURLWithParams:params andTags:@[@"tag1", @"tag2"] andChannel:@"facebook" andFeature:@"invite" andStage:@"2" andCallback:^(NSString *url, NSError *err) {
         [self.editRefShortUrl setText:url];
     }];
@@ -64,7 +64,7 @@
 }
 - (IBAction)cmdIdentifyUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch setIdentity:@"test_user_1"];
+    [branch setIdentity:@"test_user_10"];
 }
 - (IBAction)cmdClearUserClick:(id)sender {
     Branch *branch = [Branch getInstance];

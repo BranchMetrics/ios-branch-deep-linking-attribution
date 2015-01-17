@@ -22,7 +22,7 @@
 		670016CC1946309100A9E103 /* BNCServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C41946309100A9E103 /* BNCServerInterface.m */; };
 		670016CD1946309100A9E103 /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C61946309100A9E103 /* BNCServerRequest.m */; };
 		670016CE1946309100A9E103 /* BNCSystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C81946309100A9E103 /* BNCSystemObserver.m */; };
-		6782963A19ACE3C6009833D7 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6782963919ACE3C6009833D7 /* AdSupport.framework */; };
+		67BBCF281A69E49A009C7DAE /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67BBCF271A69E49A009C7DAE /* AdSupport.framework */; };
 		7E3882A01A37E22A004BDABE /* BNCError.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E38829F1A37E22A004BDABE /* BNCError.m */; };
 		7E3882A31A37E42F004BDABE /* ReferralCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E3882A21A37E42F004BDABE /* ReferralCodeViewController.m */; };
 		7E6ACAF819E324090066913E /* BNCServerRequestQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6ACAF719E324090066913E /* BNCServerRequestQueue.m */; };
@@ -59,7 +59,7 @@
 		670016C61946309100A9E103 /* BNCServerRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerRequest.m; sourceTree = "<group>"; };
 		670016C71946309100A9E103 /* BNCSystemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSystemObserver.h; sourceTree = "<group>"; };
 		670016C81946309100A9E103 /* BNCSystemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserver.m; sourceTree = "<group>"; };
-		6782963919ACE3C6009833D7 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		67BBCF271A69E49A009C7DAE /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		7E38829E1A37E22A004BDABE /* BNCError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCError.h; sourceTree = "<group>"; };
 		7E38829F1A37E22A004BDABE /* BNCError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCError.m; sourceTree = "<group>"; };
 		7E3882A11A37E42F004BDABE /* ReferralCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReferralCodeViewController.h; sourceTree = "<group>"; };
@@ -80,7 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6782963A19ACE3C6009833D7 /* AdSupport.framework in Frameworks */,
+				67BBCF281A69E49A009C7DAE /* AdSupport.framework in Frameworks */,
 				670016661940F51400A9E103 /* CoreGraphics.framework in Frameworks */,
 				670016681940F51400A9E103 /* UIKit.framework in Frameworks */,
 				670016641940F51400A9E103 /* Foundation.framework in Frameworks */,
@@ -110,7 +110,7 @@
 		670016621940F51400A9E103 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				6782963919ACE3C6009833D7 /* AdSupport.framework */,
+				67BBCF271A69E49A009C7DAE /* AdSupport.framework */,
 				670016631940F51400A9E103 /* Foundation.framework */,
 				670016651940F51400A9E103 /* CoreGraphics.framework */,
 				670016671940F51400A9E103 /* UIKit.framework */,
@@ -208,7 +208,7 @@
 				ORGANIZATIONNAME = "Branch Metrics";
 				TargetAttributes = {
 					6700165F1940F51400A9E103 = {
-						DevelopmentTeam = DQ29659ZU2;
+						DevelopmentTeam = 6B2DFWM843;
 					};
 				};
 			};
