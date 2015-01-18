@@ -12,7 +12,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    Branch *branch = [Branch getInstance:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"BNCAppKey"]];
+    Branch *branch = [Branch getInstance];
     [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         if (!error) {
             NSLog(@"finished init with params = %@", [params description]);
