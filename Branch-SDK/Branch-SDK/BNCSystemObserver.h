@@ -23,5 +23,6 @@
 + (NSNumber *)getUpdateState;
 + (NSString *)getDeviceName;
 + (BOOL)isSimulator;
++ (BOOL)adTrackingSafe;
 
 @end

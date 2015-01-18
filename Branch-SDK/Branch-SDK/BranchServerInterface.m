@@ -41,6 +41,7 @@
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     if (updateState) [post setObject:updateState forKeyedSubscript:@"update"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
+    [post setObject:[NSNumber numberWithBool:[BNCSystemObserver adTrackingSafe]] forKey:@"ad_tracking_enabled"];
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     
@@ -51,7 +52,16 @@
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
-    [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
+    if ([[BNCPreferenceHelper getDeviceFingerprintID] isEqualToString:NO_STRING_VALUE]) {
+        BOOL isRealHardwareId;
+        NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId];
+        if (hardwareId) {
+            [post setObject:hardwareId forKey:@"hardware_id"];
+            [post setObject:[NSNumber numberWithBool:isRealHardwareId] forKey:@"is_hardware_id_real"];
+        }
+    } else {
+        [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
+    }
     [post setObject:[BNCPreferenceHelper getIdentityID] forKey:@"identity_id"];
     NSString *appVersion = [BNCSystemObserver getAppVersion];
     if (appVersion) [post setObject:appVersion forKey:@"app_version"];
@@ -60,6 +70,7 @@
     if (osVersion) [post setObject:osVersion forKey:@"os_version"];
     NSString *uriScheme = [BNCSystemObserver getURIScheme];
     if (uriScheme) [post setObject:uriScheme forKey:@"uri_scheme"];
+    [post setObject:[NSNumber numberWithBool:[BNCSystemObserver adTrackingSafe]] forKey:@"ad_tracking_enabled"];
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
@@ -71,7 +82,9 @@
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getIdentityID] forKey:@"identity_id"];
     [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
+    [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"close"] andTag:REQ_TAG_REGISTER_CLOSE];
 }
