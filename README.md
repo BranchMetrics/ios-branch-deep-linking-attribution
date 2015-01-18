@@ -81,7 +81,7 @@ After you register your app, your app key can be retrieved on the [Settings](htt
 
 1. In plist file, mouse hover "Information Property List" which is the root item under the Key column.
 1. After about half a second, you will see a "+" sign appear. Click it.
-1. In the newly added row, fill in "BNCAppKey" for its key, leave type as String, and enter your app key obtained in above steps in its value column.
+1. In the newly added row, fill in "bnc_app_key" for its key, leave type as String, and enter your app key obtained in above steps in its value column.
 1. Save the plist file.
 
 ### Initialize SDK And Register Deep Link Routing Function
@@ -95,7 +95,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	// your other init code
 
-	Branch *branch = [Branch getInstance:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"BNCAppKey"]];
+	Branch *branch = [Branch getInstance];
 	[branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {		// previously initUserSessionWithCallback:withLaunchOptions:
         if (!error) {
             // params are the deep linked params associated with the link that the user clicked before showing up
@@ -130,7 +130,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     // your other init code
 	
-    let branch: Branch = Branch.getInstance(NSBundle.mainBundle().infoDictionary?["BNCAppKey"] as String)
+    let branch: Branch = Branch.getInstance()
     branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
         if (error == nil) {
             // params are the deep linked params associated with the link that the user clicked before showing up
