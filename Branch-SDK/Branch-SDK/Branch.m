@@ -144,7 +144,7 @@ static Branch *currInstance;
 }
 
 + (void)setDebug {
-    [BNCPreferenceHelper setDebug];
+    [BNCPreferenceHelper setDevDebug];
 }
 
 - (void)resetUserSession {
@@ -282,7 +282,20 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_IDENTIFY;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[userId, [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID], [NSString stringWithFormat:@"ios%@", SDK_VERSION]] forKeys:@[IDENTITY, APP_ID, IDENTITY_ID, @"sdk"]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[
+                                                                                   userId,
+                                                                                   [BNCPreferenceHelper getAppKey],
+                                                                                   [BNCPreferenceHelper getDeviceFingerprintID],
+                                                                                   [BNCPreferenceHelper getSessionID],
+                                                                                   [BNCPreferenceHelper getIdentityID],
+                                                                                   [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
+                                                                         forKeys:@[
+                                                                                   IDENTITY,
+                                                                                   APP_ID,
+                                                                                   DEVICE_FINGERPRINT_ID,
+                                                                                   SESSION_ID,
+                                                                                   IDENTITY_ID,
+                                                                                   @"sdk"]];
         req.postData = post;
         [self.requestQueue enqueue:req];
         
@@ -299,7 +312,18 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_LOGOUT;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID], [NSString stringWithFormat:@"ios%@", SDK_VERSION]] forKeys:@[APP_ID, SESSION_ID, @"sdk"]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[
+                                                                                   [BNCPreferenceHelper getAppKey],
+                                                                                   [BNCPreferenceHelper getDeviceFingerprintID],
+                                                                                   [BNCPreferenceHelper getSessionID],
+                                                                                   [BNCPreferenceHelper getIdentityID],
+                                                                                   [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
+                                                                         forKeys:@[
+                                                                                   APP_ID,
+                                                                                   DEVICE_FINGERPRINT_ID,
+                                                                                   SESSION_ID,
+                                                                                   IDENTITY_ID,
+                                                                                   @"sdk"]];
         req.postData = post;
         [self.requestQueue enqueue:req];
         
@@ -317,7 +341,10 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_COUNTS;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[[NSString stringWithFormat:@"ios%@", SDK_VERSION]] forKeys:@[@"sdk"]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[
+                                                                                   [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
+                                                                         forKeys:@[
+                                                                                   @"sdk"]];
         req.postData = post;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
@@ -385,7 +412,22 @@ static Branch *currInstance;
         if (redemptionsToAdd > 0) {
             BNCServerRequest *req = [[BNCServerRequest alloc] init];
             req.tag = REQ_TAG_REDEEM_REWARDS;
-            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[bucket, [NSNumber numberWithInteger:redemptionsToAdd], [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID], [NSString stringWithFormat:@"ios%@", SDK_VERSION]] forKeys:@[BUCKET, AMOUNT, APP_ID, IDENTITY_ID, @"sdk"]];
+            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[
+                                                                                       bucket,
+                                                                                       [NSNumber numberWithInteger:redemptionsToAdd],
+                                                                                       [BNCPreferenceHelper getAppKey],
+                                                                                       [BNCPreferenceHelper getDeviceFingerprintID],
+                                                                                       [BNCPreferenceHelper getIdentityID],
+                                                                                       [BNCPreferenceHelper getSessionID],
+                                                                                       [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
+                                                                             forKeys:@[
+                                                                                       BUCKET,
+                                                                                       AMOUNT,
+                                                                                       APP_ID,
+                                                                                       DEVICE_FINGERPRINT_ID,
+                                                                                       IDENTITY_ID,
+                                                                                       SESSION_ID,
+                                                                                       @"sdk"]];
             req.postData = post;
             [self.requestQueue enqueue:req];
             
@@ -418,8 +460,21 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REWARD_HISTORY;
-        NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjects:@[[BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getIdentityID], [NSNumber numberWithLong:length], DIRECTIONS[order], [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
-                                                                       forKeys:@[APP_ID, IDENTITY_ID, LENGTH, DIRECTION, @"sdk"]];
+        NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjects:@[
+                                                                                 [BNCPreferenceHelper getAppKey],
+                                                                                 [BNCPreferenceHelper getDeviceFingerprintID],
+                                                                                 [BNCPreferenceHelper getIdentityID],
+                                                                                 [BNCPreferenceHelper getSessionID],
+                                                                                 [NSNumber numberWithLong:length],
+                                                                                 DIRECTIONS[order],
+                                                                                 [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
+                                                                       forKeys:@[APP_ID,
+                                                                                 DEVICE_FINGERPRINT_ID,
+                                                                                 IDENTITY_ID,
+                                                                                 SESSION_ID,
+                                                                                 LENGTH,
+                                                                                 DIRECTION,
+                                                                                 @"sdk"]];
         if (bucket) {
             [data setObject:bucket forKey:BUCKET];
         }
@@ -450,7 +505,20 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_COMPLETE_ACTION;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[action, [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getSessionID], [NSString stringWithFormat:@"ios%@", SDK_VERSION]] forKeys:@[EVENT, APP_ID, SESSION_ID, @"sdk"]];
+        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[
+                                                                                   action,
+                                                                                   [BNCPreferenceHelper getAppKey],
+                                                                                   [BNCPreferenceHelper getDeviceFingerprintID],
+                                                                                   [BNCPreferenceHelper getIdentityID],
+                                                                                   [BNCPreferenceHelper getSessionID],
+                                                                                   [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
+                                                                         forKeys:@[
+                                                                                   EVENT,
+                                                                                   APP_ID,
+                                                                                   DEVICE_FINGERPRINT_ID,
+                                                                                   IDENTITY_ID,
+                                                                                   SESSION_ID,
+                                                                                   @"sdk"]];
         NSDictionary *saniState = [self sanitizeQuotesFromInput:state];
         if (saniState && [NSJSONSerialization isValidJSONObject:saniState]) [post setObject:saniState forKey:METADATA];
         req.postData = post;
@@ -534,10 +602,14 @@ static Branch *currInstance;
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_CODE;
         NSMutableArray *keys = [NSMutableArray arrayWithArray:@[APP_ID,
+                                                                DEVICE_FINGERPRINT_ID,
                                                                 IDENTITY_ID,
+                                                                SESSION_ID,
                                                                 @"sdk"]];
         NSMutableArray *values = [NSMutableArray arrayWithArray:@[[BNCPreferenceHelper getAppKey],
+                                                                  [BNCPreferenceHelper getDeviceFingerprintID],
                                                                   [BNCPreferenceHelper getIdentityID],
+                                                                  [BNCPreferenceHelper getSessionID],
                                                                   [NSString stringWithFormat:@"ios%@", SDK_VERSION]]];
         
         NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:values forKeys:keys];
@@ -579,7 +651,9 @@ static Branch *currInstance;
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_CODE;
         NSMutableArray *keys = [NSMutableArray arrayWithArray:@[APP_ID,
+                                                                DEVICE_FINGERPRINT_ID,
                                                                 IDENTITY_ID,
+                                                                SESSION_ID,
                                                                 REFERRAL_CODE_CALCULATION_TYPE,
                                                                 REFERRAL_CODE_LOCATION,
                                                                 REFERRAL_CODE_TYPE,
@@ -588,7 +662,9 @@ static Branch *currInstance;
                                                                 BUCKET,
                                                                 @"sdk"]];
         NSMutableArray *values = [NSMutableArray arrayWithArray:@[[BNCPreferenceHelper getAppKey],
+                                                                  [BNCPreferenceHelper getDeviceFingerprintID],
                                                                   [BNCPreferenceHelper getIdentityID],
+                                                                  [BNCPreferenceHelper getSessionID],
                                                                   [NSNumber numberWithLong:calcType],
                                                                   [NSNumber numberWithLong:location],
                                                                   CREDIT,
@@ -632,8 +708,19 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_VALIDATE_REFERRAL_CODE;
-        NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code, [BNCPreferenceHelper getIdentityID], [BNCPreferenceHelper getAppKey], [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
-                                                                       forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID, @"sdk"]];
+        NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code,
+                                                                                 [BNCPreferenceHelper getIdentityID],
+                                                                                 [BNCPreferenceHelper getAppKey],
+                                                                                 [BNCPreferenceHelper getDeviceFingerprintID],
+                                                                                 [BNCPreferenceHelper getSessionID],
+                                                                                 [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
+                                                                       forKeys:@[
+                                                                                 REFERRAL_CODE,
+                                                                                 IDENTITY_ID,
+                                                                                 APP_ID,
+                                                                                 DEVICE_FINGERPRINT_ID,
+                                                                                 SESSION_ID,
+                                                                                 @"sdk"]];
         req.postData = post;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
@@ -658,8 +745,14 @@ static Branch *currInstance;
                                                                                  [BNCPreferenceHelper getIdentityID],
                                                                                  [BNCPreferenceHelper getAppKey],
                                                                                  [BNCPreferenceHelper getSessionID],
+                                                                                 [BNCPreferenceHelper getDeviceFingerprintID],
                                                                                  [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
-                                                                       forKeys:@[REFERRAL_CODE, IDENTITY_ID, APP_ID, SESSION_ID, @"sdk"]];
+                                                                       forKeys:@[REFERRAL_CODE,
+                                                                                 IDENTITY_ID,
+                                                                                 APP_ID,
+                                                                                 SESSION_ID,
+                                                                                 DEVICE_FINGERPRINT_ID,
+                                                                                 @"sdk"]];
         req.postData = post;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
@@ -683,7 +776,9 @@ static Branch *currInstance;
         req.tag = REQ_TAG_GET_CUSTOM_URL;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
         [post setObject:[BNCPreferenceHelper getAppKey] forKey:APP_ID];
+        [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:DEVICE_FINGERPRINT_ID];
         [post setObject:[BNCPreferenceHelper getIdentityID] forKey:IDENTITY_ID];
+        [post setObject:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
         
         if (type)
             [post setObject:[NSNumber numberWithInt:type] forKey:LINK_TYPE];
@@ -1210,6 +1305,7 @@ static Branch *currInstance;
             self.initFinished = YES;
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             [BNCPreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
+            [BNCPreferenceHelper setDeviceFingerprintID:[response.data objectForKey:DEVICE_FINGERPRINT_ID]];
             if ([response.data objectForKey:IDENTITY_ID]) {
                 [BNCPreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
             }
