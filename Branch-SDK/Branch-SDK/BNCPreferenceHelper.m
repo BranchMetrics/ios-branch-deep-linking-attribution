@@ -36,6 +36,7 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 static BNCPreferenceHelper *instance = nil;
 static BOOL BNC_Debug = NO;
+static BOOL BNC_Dev_Debug = NO;
 static BOOL BNC_Remote_Debug = NO;
 static dispatch_queue_t bnc_asyncLogQueue = nil;
 static id<BNCDebugConnectionDelegate> bnc_asyncDebugConnectionDelegate = nil;
@@ -66,6 +67,10 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
     });
 }
 
++ (void)setDevDebug {
+    BNC_Dev_Debug = YES;
+}
+
 + (void)clearDebug {
     BNC_Debug = NO;
     
@@ -83,7 +88,7 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 }
 
 + (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ... {
-    if (BNC_Debug) {
+    if (BNC_Debug || BNC_Dev_Debug) {
         va_list args;
         va_start(args, format);
         NSString *log = [NSString stringWithFormat:@"[%@:%d] %@", filename, line, [[NSString alloc] initWithFormat:format arguments:args]];
