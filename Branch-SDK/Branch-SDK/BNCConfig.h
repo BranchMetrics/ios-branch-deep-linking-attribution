@@ -11,9 +11,9 @@
 
 #define SDK_VERSION             @"0.3.95"
 
-//#define BNC_PROD_ENV
+#define BNC_PROD_ENV
 //#define BNC_STAGE_ENV
-#define BNC_DEV_ENV
+//#define BNC_DEV_ENV
 
 #ifdef BNC_PROD_ENV
 #define BNC_API_BASE_URL        @"https://api.branch.io"

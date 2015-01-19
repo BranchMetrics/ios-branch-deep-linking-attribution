@@ -102,6 +102,11 @@ static Branch *currInstance;
 
 + (Branch *)getInstance {
     if (!currInstance) {
+        NSString *appKey = [BNCPreferenceHelper getAppKey];
+        if (!appKey || [appKey isEqualToString:NO_STRING_VALUE]) {
+            NSLog(@"Branch Warning: Please enter your Branch App Key in the plist!");
+        }
+        
         [Branch initInstance];
     }
     return currInstance;
