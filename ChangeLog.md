@@ -1,14 +1,10 @@
 Branch iOS SDK change log 
 
-- v0.3.96: Moved app key to plist
+- v0.3.97: Moved app key to plist
+
+- v0.3.96: Added adTrackingSafe
 
 - v0.3.95: Added BNCDebugging category to framework
-
-- v0.3.94: 
-
-- v0.3.93: 
-
-- v0.3.92: 
 
 - v0.3.91: Added getters/setters for API timeout, retryInterval and retryCount 
 
