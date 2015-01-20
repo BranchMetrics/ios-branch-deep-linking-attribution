@@ -12,7 +12,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    Branch *branch = [Branch getInstance:@"5668720416392049"];
+    Branch *branch = [Branch getInstance];
     [Branch setDebug];
     [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         if (!error) {

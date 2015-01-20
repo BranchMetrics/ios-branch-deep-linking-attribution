@@ -169,14 +169,16 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
     return retryCount;
 }
 
-+ (void)setAppKey:(NSString *)appKey {
-    [BNCPreferenceHelper writeObjectToDefaults:KEY_APP_KEY value:appKey];
-}
-
 + (NSString *)getAppKey {
-    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_APP_KEY];
-    if (!ret)
-        ret = NO_STRING_VALUE;
+    NSString *ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:KEY_APP_KEY];
+    if (!ret) {
+        // for backward compatibility
+        ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_APP_KEY];
+        if (!ret) {
+            ret = NO_STRING_VALUE;
+        }
+    }
+    
     return ret;
 }
 

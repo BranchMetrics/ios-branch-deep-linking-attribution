@@ -100,20 +100,14 @@ static Branch *currInstance;
 
 // PUBLIC CALLS
 
-+ (Branch *)getInstance:(NSString *)key {
-    [BNCPreferenceHelper setAppKey:key];
-    
-    if (!currInstance) {
-        [Branch initInstance];
-    }
-    
-    return currInstance;
-}
-
 + (Branch *)getInstance {
     if (!currInstance) {
+        NSString *appKey = [BNCPreferenceHelper getAppKey];
+        if (!appKey || [appKey isEqualToString:NO_STRING_VALUE]) {
+            NSLog(@"Branch Warning: Please enter your Branch App Key in the plist!");
+        }
+        
         [Branch initInstance];
-        NSLog(@"Branch Warning: getInstance called before getInstance with key. Please init");
     }
     return currInstance;
 }
