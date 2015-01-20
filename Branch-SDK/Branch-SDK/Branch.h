@@ -42,7 +42,6 @@ typedef enum {
 
 @interface Branch : NSObject
 
-+ (Branch *)getInstance:(NSString *)key;
 + (Branch *)getInstance;
 
 + (void)setDebug;
