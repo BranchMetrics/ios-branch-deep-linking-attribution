@@ -241,6 +241,7 @@ static Branch *currInstance;
         [self initializeSession];
     } else if ([self hasUser] && [self hasSession] && ![self.requestQueue containsInstallOrOpen]) {
         if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams], nil);
+        self.sessionparamLoadCallback = nil;
     } else {
         if (![self.requestQueue containsInstallOrOpen]) {
             [self initializeSession];
@@ -1003,19 +1004,23 @@ static Branch *currInstance;
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             errorDict = [BNCError getUserInfoDictForDomain:BNCInitError];
             if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:errorDict]);
+            self.sessionparamLoadCallback = nil;
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCGetReferralsError];
             if (self.pointLoadCallback) self.pointLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralsError userInfo:errorDict]);
+            self.pointLoadCallback = nil;
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCGetCreditsError];
             if (self.rewardLoadCallback) self.rewardLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditsError userInfo:errorDict]);
+            self.rewardLoadCallback = nil;
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCGetCreditHistoryError];
             if (self.creditHistoryLoadCallback) {
                 self.creditHistoryLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:errorDict]);
+                self.creditHistoryLoadCallback = nil;
             }
         } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
             if (self.urlLoadCallback) {
@@ -1026,28 +1031,33 @@ static Branch *currInstance;
                     failedUrl = [BNCPreferenceHelper getUserURL];
                 }
                 self.urlLoadCallback(failedUrl, [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:errorDict]);
+                self.urlLoadCallback = nil;
             }
         } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCIdentifyError];
             if (self.installparamLoadCallback) self.installparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCIdentifyError userInfo:errorDict]);
+            self.installparamLoadCallback = nil;
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_CODE]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCGetReferralCodeError];
             if (self.getReferralCodeCallback) {
                 self.getReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:errorDict]);
+                self.getReferralCodeCallback = nil;
             }
         } else if ([req.tag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCValidateReferralCodeError];
             if (self.validateReferralCodeCallback) {
                 self.validateReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:errorDict]);
+                self.validateReferralCodeCallback = nil;
             }
         } else if ([req.tag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCApplyReferralCodeError];
             if (self.applyReferralCodeCallback) {
                 self.applyReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict]);
+                self.applyReferralCodeCallback = nil;
             }
         }
     }
@@ -1144,6 +1154,7 @@ static Branch *currInstance;
     if (self.pointLoadCallback) {
         dispatch_async(dispatch_get_main_queue(), ^{
             self.pointLoadCallback(updateListener, nil);
+            self.pointLoadCallback = nil;
         });
     }
 }
@@ -1163,6 +1174,7 @@ static Branch *currInstance;
     if (self.rewardLoadCallback) {
         dispatch_async(dispatch_get_main_queue(), ^{
             self.rewardLoadCallback(updateListener, nil);
+            self.rewardLoadCallback = nil;
         });
     }
 }
@@ -1180,6 +1192,7 @@ static Branch *currInstance;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.creditHistoryLoadCallback(returnedData, nil);
+            self.creditHistoryLoadCallback = nil;
         });
     }
 }
@@ -1194,6 +1207,7 @@ static Branch *currInstance;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.getReferralCodeCallback(returnedData, error);
+            self.getReferralCodeCallback = nil;
         });
     }
 }
@@ -1208,6 +1222,7 @@ static Branch *currInstance;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.validateReferralCodeCallback(returnedData, error);
+            self.validateReferralCodeCallback = nil;
         });
     }
 }
@@ -1222,6 +1237,7 @@ static Branch *currInstance;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.applyReferralCodeCallback(returnedData, error);
+            self.applyReferralCodeCallback = nil;
         });
     }
 }
@@ -1238,6 +1254,7 @@ static Branch *currInstance;
             if ([requestTag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (self.urlLoadCallback) self.urlLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLDuplicateAliasError userInfo:[BNCError getUserInfoDictForDomain:BNCCreateURLDuplicateAliasError]]);
+                    self.urlLoadCallback = nil;
                 });
             } else {
                 NSLog(@"Branch API Error: Duplicate Branch resource error.");
@@ -1299,6 +1316,7 @@ static Branch *currInstance;
             if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams], nil);
+                    self.sessionparamLoadCallback = nil;
                 });
             }
             
@@ -1330,6 +1348,7 @@ static Branch *currInstance;
             if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams], nil);
+                    self.sessionparamLoadCallback = nil;
                 });
             }
             
@@ -1345,6 +1364,7 @@ static Branch *currInstance;
             if (self.urlLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (self.urlLoadCallback) self.urlLoadCallback(url, nil);
+                    self.urlLoadCallback = nil;
                 });
             }
         } else if ([requestTag isEqualToString:REQ_TAG_LOGOUT]) {
@@ -1374,6 +1394,7 @@ static Branch *currInstance;
             if (self.installparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (self.installparamLoadCallback) self.installparamLoadCallback([self getFirstReferringParams], nil);
+                    self.installparamLoadCallback = nil;
                 });
             }
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REFERRAL_CODE]) {
