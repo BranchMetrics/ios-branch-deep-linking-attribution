@@ -16,6 +16,8 @@
 #import "BNCConfig.h"
 #import "BNCError.h"
 #import "UIViewController+BNCDebugging.h"
+#import "BNCLinkData.h"
+#import "BNCLinkCache.h"
 
 static NSString *APP_ID = @"app_id";
 static NSString *IDENTITY = @"identity";
@@ -25,13 +27,6 @@ static NSString *BUCKET = @"bucket";
 static NSString *AMOUNT = @"amount";
 static NSString *EVENT = @"event";
 static NSString *METADATA = @"metadata";
-static NSString *TAGS = @"tags";
-static NSString *LINK_TYPE = @"type";
-static NSString *ALIAS = @"alias";
-static NSString *CHANNEL = @"channel";
-static NSString *FEATURE = @"feature";
-static NSString *STAGE = @"stage";
-static NSString *DATA = @"data";
 static NSString *TOTAL = @"total";
 static NSString *UNIQUE = @"unique";
 static NSString *MESSAGE = @"message";
@@ -91,6 +86,7 @@ static NSInteger REFERRAL_CREATION_SOURCE_SDK = 2;
 @property (assign, nonatomic) BOOL initNotCalled;
 @property (assign, nonatomic) BOOL lastRequestWasInit;
 @property (assign, nonatomic) BOOL hasNetwork;
+@property (strong, nonatomic) BNCLinkCache *linkCache;
 
 @end
 
@@ -127,6 +123,7 @@ static Branch *currInstance;
         currInstance.hasNetwork = YES;
         currInstance.initNotCalled = YES;
         currInstance.lastRequestWasInit = YES;
+        currInstance.linkCache = [[BNCLinkCache alloc] init];
     
         [[NSNotificationCenter defaultCenter] addObserver:currInstance
                                              selector:@selector(applicationWillResignActive)
@@ -775,40 +772,44 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_CUSTOM_URL;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
+        BNCLinkData *post = [[BNCLinkData alloc] init];
         [post setObject:[BNCPreferenceHelper getAppKey] forKey:APP_ID];
         [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:DEVICE_FINGERPRINT_ID];
         [post setObject:[BNCPreferenceHelper getIdentityID] forKey:IDENTITY_ID];
         [post setObject:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
         
-        if (type)
-            [post setObject:[NSNumber numberWithInt:type] forKey:LINK_TYPE];
-        if (tags)
-            [post setObject:tags forKey:TAGS];
-        if (channel)
-            [post setObject:channel forKey:CHANNEL];
-        if (feature)
-            [post setObject:feature forKey:FEATURE];
-        if (stage)
-            [post setObject:stage forKey:STAGE];
-        if (alias)
-            [post setObject:alias forKey:ALIAS];
+        [post setupType:type];
+        [post setupTags:tags];
+        [post setupChannel:channel];
+        [post setupFeature:feature];
+        [post setupStage:stage];
+        [post setupAlias:alias];
+        
         [post setObject:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
         
         NSString *args = params ? params : @"{ \"source\":\"ios\" }";
-        [post setObject:args forKey:DATA];
+        [post setupParams:args];
         
-        req.postData = post;
-        
-        if (!self.initFailed) {
-            [self.requestQueue enqueue:req];
-        }
-        
-        if (self.initFinished || !self.hasNetwork) {
-            self.lastRequestWasInit = NO;
-            [self processNextQueueItem];
-        } else if (self.initFailed || self.initNotCalled) {
-            [self handleFailure:[self.requestQueue size]-1];
+        if (![self.linkCache objectForKey:post]) {
+            req.postData = post.data;
+            req.linkData = post;
+            
+            if (!self.initFailed) {
+                [self.requestQueue enqueue:req];
+            }
+            
+            if (self.initFinished || !self.hasNetwork) {
+                self.lastRequestWasInit = NO;
+                [self processNextQueueItem];
+            } else if (self.initFailed || self.initNotCalled) {
+                [self handleFailure:[self.requestQueue size]-1];
+            }
+        } else {
+            if (callback) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (callback) callback([self.linkCache objectForKey:post], nil);
+                });
+            }
         }
     });
 }
@@ -955,7 +956,7 @@ static Branch *currInstance;
                 [self.bServerInterface userCompletedAction:req.postData];
             } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL] && [self hasUser] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling create custom url"];
-                [self.bServerInterface createCustomUrl:req.postData];
+                [self.bServerInterface createCustomUrl:req];
             } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY] && [self hasUser] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling identify user"];
                 [self.bServerInterface identifyUser:req.postData];
@@ -1366,6 +1367,12 @@ static Branch *currInstance;
                     if (self.urlLoadCallback) self.urlLoadCallback(url, nil);
                     self.urlLoadCallback = nil;
                 });
+            }
+            
+            // cache the link
+            BNCLinkData *linkData = response.linkData;
+            if (linkData) {
+                [self.linkCache setObject:url forKey:linkData];
             }
         } else if ([requestTag isEqualToString:REQ_TAG_LOGOUT]) {
             [BNCPreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
