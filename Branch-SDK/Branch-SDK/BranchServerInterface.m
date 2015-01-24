@@ -109,8 +109,8 @@
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
 }
 
-- (void)createCustomUrl:(NSDictionary *)post {
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL];
+- (void)createCustomUrl:(BNCServerRequest *)req {
+    [self postRequestAsync:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL andLinkData:req.linkData];
 }
 
 - (void)identifyUser:(NSDictionary *)post {
@@ -204,7 +204,7 @@
     [request setHTTPBody:body];
     [request addValue:[NSString stringWithFormat:@"%lu", (unsigned long)[body length]] forHTTPHeaderField:@"Content-Length"];
     NSLog(@"================== Data size: %lu", (unsigned long)[body length]);  //temp
-    [self genericHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN];
+    [self genericHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN andLinkData:nil];
 }
 
 - (void)getReferralCode:(NSDictionary *)post {
