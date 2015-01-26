@@ -26,42 +26,42 @@ static NSTimer *bnc_debugTimer = nil;
 static UIWindow *bnc_debugWindow = nil;
 static UILongPressGestureRecognizer *BNCLongPress = nil;
 
-+ (void)load {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        Class class = [self class];
-        
-        // viewDidLoad
-        SEL originalWillSelector = @selector(viewDidLoad);
-        SEL swizzledWillSelector = @selector(bnc_viewDidLoad);
-        
-        Method originalWillMethod = class_getInstanceMethod(class, originalWillSelector);
-        Method swizzledWillMethod = class_getInstanceMethod(class, swizzledWillSelector);
-        
-        BOOL willAddMethod = class_addMethod(class, originalWillSelector, method_getImplementation(swizzledWillMethod), method_getTypeEncoding(swizzledWillMethod));
-        
-        if (willAddMethod) {
-            class_replaceMethod(class, swizzledWillSelector, method_getImplementation(originalWillMethod), method_getTypeEncoding(originalWillMethod));
-        } else {
-            method_exchangeImplementations(originalWillMethod, swizzledWillMethod);
-        }
-        
-        // viewDidAppear
-        SEL originalDidSelector = @selector(viewDidAppear:);
-        SEL swizzledDidSelector = @selector(bnc_viewDidAppear:);
-        
-        Method originalDidMethod = class_getInstanceMethod(class, originalDidSelector);
-        Method swizzledDidMethod = class_getInstanceMethod(class, swizzledDidSelector);
-        
-        BOOL didAddMethod = class_addMethod(class, originalDidSelector, method_getImplementation(swizzledDidMethod), method_getTypeEncoding(swizzledDidMethod));
-        
-        if (didAddMethod) {
-            class_replaceMethod(class, swizzledDidSelector, method_getImplementation(originalDidMethod), method_getTypeEncoding(originalDidMethod));
-        } else {
-            method_exchangeImplementations(originalDidMethod, swizzledDidMethod);
-        }
-    });
-}
+//+ (void)load {
+//    static dispatch_once_t onceToken;
+//    dispatch_once(&onceToken, ^{
+//        Class class = [self class];
+//        
+//        // viewDidLoad
+//        SEL originalWillSelector = @selector(viewDidLoad);
+//        SEL swizzledWillSelector = @selector(bnc_viewDidLoad);
+//        
+//        Method originalWillMethod = class_getInstanceMethod(class, originalWillSelector);
+//        Method swizzledWillMethod = class_getInstanceMethod(class, swizzledWillSelector);
+//        
+//        BOOL willAddMethod = class_addMethod(class, originalWillSelector, method_getImplementation(swizzledWillMethod), method_getTypeEncoding(swizzledWillMethod));
+//        
+//        if (willAddMethod) {
+//            class_replaceMethod(class, swizzledWillSelector, method_getImplementation(originalWillMethod), method_getTypeEncoding(originalWillMethod));
+//        } else {
+//            method_exchangeImplementations(originalWillMethod, swizzledWillMethod);
+//        }
+//        
+//        // viewDidAppear
+//        SEL originalDidSelector = @selector(viewDidAppear:);
+//        SEL swizzledDidSelector = @selector(bnc_viewDidAppear:);
+//        
+//        Method originalDidMethod = class_getInstanceMethod(class, originalDidSelector);
+//        Method swizzledDidMethod = class_getInstanceMethod(class, swizzledDidSelector);
+//        
+//        BOOL didAddMethod = class_addMethod(class, originalDidSelector, method_getImplementation(swizzledDidMethod), method_getTypeEncoding(swizzledDidMethod));
+//        
+//        if (didAddMethod) {
+//            class_replaceMethod(class, swizzledDidSelector, method_getImplementation(originalDidMethod), method_getTypeEncoding(originalDidMethod));
+//        } else {
+//            method_exchangeImplementations(originalDidMethod, swizzledDidMethod);
+//        }
+//    });
+//}
 
 - (void)bnc_viewDidAppear:(BOOL)animated {
     [self bnc_viewDidAppear:animated];
@@ -82,11 +82,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 }
 
 - (void)bnc_addGesterRecognizer:(SEL)action {
-    for (UIGestureRecognizer *gesture in self.view.gestureRecognizers) {
-        if (gesture == BNCLongPress) {
-            return;
-        }
-    }
     BNCLongPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:action];
     BNCLongPress.cancelsTouchesInView = NO;
     BNCLongPress.minimumPressDuration = BNCDebugTriggerDuration;
