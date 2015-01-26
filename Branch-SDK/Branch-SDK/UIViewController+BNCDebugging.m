@@ -82,6 +82,11 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 }
 
 - (void)bnc_addGesterRecognizer:(SEL)action {
+    for (UIGestureRecognizer *gesture in self.view.gestureRecognizers) {
+        if (gesture == BNCLongPress) {
+            return;
+        }
+    }
     BNCLongPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:action];
     BNCLongPress.cancelsTouchesInView = NO;
     BNCLongPress.minimumPressDuration = BNCDebugTriggerDuration;
