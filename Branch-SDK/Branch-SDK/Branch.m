@@ -807,7 +807,7 @@ static Branch *currInstance;
         } else {
             if (callback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if (callback) callback([self.linkCache objectForKey:post], nil);
+                    callback([self.linkCache objectForKey:post], nil);
                 });
             }
         }

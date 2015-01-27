@@ -19,19 +19,14 @@
 }
 
 - (void)setObject:(NSString *)anObject forKey:(BNCLinkData *)aKey {
-    for (id key in [self.cache allKeys]) {
-        BNCLinkData *data = (BNCLinkData *)key;
-        if ([data hash] == [aKey hash]) {
-            return;
-        }
-    }
     [self.cache setObject:anObject forKey:aKey];
 }
 
 - (NSString *)objectForKey:(BNCLinkData *)aKey {
+    NSUInteger hashcode = [aKey hash];
     for (id key in [self.cache allKeys]) {
         BNCLinkData *data = (BNCLinkData *)key;
-        if ([data hash] == [aKey hash]) {
+        if ([data hash] == hashcode) {
             return [self.cache objectForKey:data];
         }
     }

@@ -114,4 +114,42 @@
     return result;
 }
 
+- (void)encodeWithCoder:(NSCoder *)coder {
+    if (self.tags) {
+        [coder encodeObject:self.tags forKey:TAGS];
+    }
+    if (self.alias) {
+        [coder encodeObject:self.alias forKey:ALIAS];
+    }
+    if (self.type) {
+        [coder encodeObject:[NSNumber numberWithInteger:self.type] forKey:LINK_TYPE];
+    }
+    if (self.channel) {
+        [coder encodeObject:self.channel forKey:CHANNEL];
+    }
+    if (self.feature) {
+        [coder encodeObject:self.feature forKey:FEATURE];
+    }
+    if (self.stage) {
+        [coder encodeObject:self.stage forKey:STAGE];
+    }
+    if (self.params) {
+        [coder encodeObject:self.params forKey:DATA];
+    }
+}
+
+- (id)initWithCoder:(NSCoder *)coder {
+    if (self = [super init]) {
+        self.tags = [coder decodeObjectForKey:TAGS];
+        self.alias = [coder decodeObjectForKey:ALIAS];
+        self.type = [[coder decodeObjectForKey:LINK_TYPE] intValue];
+        self.channel = [coder decodeObjectForKey:CHANNEL];
+        self.feature = [coder decodeObjectForKey:FEATURE];
+        self.stage = [coder decodeObjectForKey:STAGE];
+        self.params = [coder decodeObjectForKey:DATA];
+    }
+    return self;
+}
+
+
 @end
