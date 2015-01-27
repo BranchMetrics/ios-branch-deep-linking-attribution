@@ -848,6 +848,10 @@ static Branch *currInstance;
 - (void)applicationWillResignActive {
     [self clearTimer];
     self.sessionTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(callClose) userInfo:nil repeats:NO];
+    
+    if (BNCLongPress) {
+        [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:BNCLongPress];
+    }
 }
 
 - (void)clearTimer {
@@ -1427,7 +1431,7 @@ static Branch *currInstance;
     }
 }
 
-#pragma mark - Debugging functions
+#pragma mark - Debugger functions
 
 - (void)bnc_addDebugGestureRecognizer {
     [self bnc_addGesterRecognizer:@selector(bnc_connectToDebug:)];
@@ -1439,12 +1443,12 @@ static Branch *currInstance;
 
 - (void)bnc_addGesterRecognizer:(SEL)action {
     BNCLongPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:action];
-    BNCLongPress.cancelsTouchesInView = NO;
+    BNCLongPress.delegate = self;
     BNCLongPress.minimumPressDuration = BNCDebugTriggerDuration;
-    if (![BNCSystemObserver isSimulator]) {
-        BNCLongPress.numberOfTouchesRequired = BNCDebugTriggerFingers;
-    } else {
+    if ([BNCSystemObserver isSimulator]) {
         BNCLongPress.numberOfTouchesRequired = BNCDebugTriggerFingersSimulator;
+    } else {
+        BNCLongPress.numberOfTouchesRequired = BNCDebugTriggerFingers;
     }
     [[UIApplication sharedApplication].keyWindow addGestureRecognizer:BNCLongPress];
 }
@@ -1495,10 +1499,16 @@ static Branch *currInstance;
     }
 }
 
-#pragma mark - BNCDebugConnectionDelegate delegate
+#pragma mark - BNCDebugConnectionDelegate
 
 - (void)bnc_debugConnectionEstablished {
     [self bnc_startDebug];
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+        return YES;
 }
 
 @end
