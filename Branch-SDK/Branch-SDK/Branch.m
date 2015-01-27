@@ -15,7 +15,6 @@
 #import "BNCServerRequestQueue.h"
 #import "BNCConfig.h"
 #import "BNCError.h"
-#import "UIViewController+BNCDebugging.h"
 
 static NSString *APP_ID = @"app_id";
 static NSString *IDENTITY = @"identity";
@@ -60,12 +59,19 @@ static NSString *REFERRAL_CODE_EXPIRATION = @"expiration";
 
 static NSInteger REFERRAL_CREATION_SOURCE_SDK = 2;
 
+static int BNCDebugTriggerDuration = 2.9;
+static int BNCDebugTriggerFingers = 4;
+static int BNCDebugTriggerFingersSimulator = 2;
+static dispatch_queue_t bnc_asyncDebugQueue = nil;
+static NSTimer *bnc_debugTimer = nil;
+static UILongPressGestureRecognizer *BNCLongPress = nil;
+
 
 #define DIRECTIONS @[@"desc", @"asc"]
 
 
 
-@interface Branch() <BNCServerInterfaceDelegate>
+@interface Branch() <BNCServerInterfaceDelegate, BNCDebugConnectionDelegate, UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) BranchServerInterface *bServerInterface;
 
@@ -835,6 +841,8 @@ static Branch *currInstance;
             }
         });
     }
+    
+    [self bnc_addDebugGestureRecognizer];
 }
 
 - (void)applicationWillResignActive {
@@ -1417,6 +1425,80 @@ static Branch *currInstance;
             self.networkCount = 0;
         }
     }
+}
+
+#pragma mark - Debugging functions
+
+- (void)bnc_addDebugGestureRecognizer {
+    [self bnc_addGesterRecognizer:@selector(bnc_connectToDebug:)];
+}
+
+- (void)bnc_addCancelDebugGestureRecognizer {
+    [self bnc_addGesterRecognizer:@selector(bnc_endDebug:)];
+}
+
+- (void)bnc_addGesterRecognizer:(SEL)action {
+    BNCLongPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:action];
+    BNCLongPress.cancelsTouchesInView = NO;
+    BNCLongPress.minimumPressDuration = BNCDebugTriggerDuration;
+    if (![BNCSystemObserver isSimulator]) {
+        BNCLongPress.numberOfTouchesRequired = BNCDebugTriggerFingers;
+    } else {
+        BNCLongPress.numberOfTouchesRequired = BNCDebugTriggerFingersSimulator;
+    }
+    [[UIApplication sharedApplication].keyWindow addGestureRecognizer:BNCLongPress];
+}
+
+- (void)bnc_connectToDebug:(UILongPressGestureRecognizer *)sender {
+    if (sender.state == UIGestureRecognizerStateBegan){
+        NSLog(@"======= Start Debug Session =======");
+        [BNCPreferenceHelper setDebugConnectionDelegate:self];
+        [BNCPreferenceHelper setDebug];
+    }
+}
+
+- (void)bnc_startDebug {
+    NSLog(@"======= Connected to Branch Remote Debugger =======");
+    
+    if (!bnc_asyncDebugQueue) {
+        bnc_asyncDebugQueue = dispatch_queue_create("bnc_debug_queue", NULL);
+    }
+    
+    [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:BNCLongPress];
+    [self bnc_addCancelDebugGestureRecognizer];
+    
+    //TODO: change to send screenshots instead in future
+    if (!bnc_debugTimer || !bnc_debugTimer.isValid) {
+        bnc_debugTimer = [NSTimer scheduledTimerWithTimeInterval:20.0f
+                                                          target:self
+                                                        selector:@selector(bnc_keepDebugAlive)     //change to @selector(bnc_takeScreenshot)
+                                                        userInfo:nil
+                                                         repeats:YES];
+    }
+}
+
+- (void)bnc_endDebug:(UILongPressGestureRecognizer *)sender {
+    NSLog(@"======= End Debug Session =======");
+    
+    [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:sender];
+    [BNCPreferenceHelper clearDebug];
+    bnc_asyncDebugQueue = nil;
+    [bnc_debugTimer invalidate];
+    [self bnc_addDebugGestureRecognizer];
+}
+
+- (void)bnc_keepDebugAlive {
+    if (bnc_asyncDebugQueue) {
+        dispatch_async(bnc_asyncDebugQueue, ^{
+            [BNCPreferenceHelper keepDebugAlive];
+        });
+    }
+}
+
+#pragma mark - BNCDebugConnectionDelegate delegate
+
+- (void)bnc_debugConnectionEstablished {
+    [self bnc_startDebug];
 }
 
 @end
