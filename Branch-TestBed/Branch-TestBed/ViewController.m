@@ -100,7 +100,9 @@
 - (IBAction)cmdShareSheet:(id)sender {
     NSString *shareString = @"Super amazing thing I want to share!";
     
-    UIActivityItemProvider *itemProvider = [Branch getBranchActivityItemWithURL:@"http://lmgtfy.com/?q=branch+metrics"];
+    NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!", @"Kindred", @"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png"] forKeys:@[@"key1", @"key2", @"$og_title", @"$og_image_url"]];
+    
+    UIActivityItemProvider *itemProvider = [Branch getBranchActivityItemWithURL:@"http://lmgtfy.com/?q=branch+metrics" andParams:params andTags:@[@"tag1", @"tag2"] andFeature:@"invite" andStage:@"2" andAlias:@"test-alias"];
     
     UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareString, itemProvider] applicationActivities:nil];
     
