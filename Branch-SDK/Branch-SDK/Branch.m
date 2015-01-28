@@ -128,8 +128,13 @@ static Branch *currInstance;
     return currInstance;
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithURL:(NSString *)url {
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url];
++ (BranchActivityItemProvider *)getBranchActivityItemWithURL:(NSString *)url
+                                                   andParams:(NSDictionary *)params
+                                                     andTags:(NSArray *)tags
+                                                  andFeature:(NSString *)feature
+                                                    andStage:(NSString *)stage
+                                                    andAlias:(NSString *)alias {
+    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:tags andFeature:feature andStage:stage andAlias:alias];
 }
 
 + (void)initInstance {

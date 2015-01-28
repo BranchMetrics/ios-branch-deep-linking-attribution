@@ -46,7 +46,13 @@ typedef enum {
 + (Branch *)getInstance;
 + (Branch *)getInstance:(NSString *)appKey;
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithURL:(NSString *)url;
++ (BranchActivityItemProvider *)getBranchActivityItemWithURL:(NSString *)url
+                                                   andParams:(NSDictionary *)params
+                                                     andTags:(NSArray *)tags
+                                                  andFeature:(NSString *)feature
+                                                    andStage:(NSString *)stage
+                                                    andAlias:(NSString *)alias;
+//+ (BranchActivityItemProvider *)getBranchActivityItemWithURL:(NSString *)url;
 
 + (void)setDebug;
 
