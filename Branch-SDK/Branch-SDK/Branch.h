@@ -7,6 +7,7 @@
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "BranchActivityItemProvider.h"
 
 typedef void (^callbackWithParams) (NSDictionary *params, NSError *error);
 typedef void (^callbackWithUrl) (NSString *url, NSError *error);
@@ -44,6 +45,8 @@ typedef enum {
 
 + (Branch *)getInstance;
 + (Branch *)getInstance:(NSString *)appKey;
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithURL:(NSString *)url;
 
 + (void)setDebug;
 

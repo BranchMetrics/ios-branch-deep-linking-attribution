@@ -28,6 +28,7 @@
 		7E6ACAF819E324090066913E /* BNCServerRequestQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6ACAF719E324090066913E /* BNCServerRequestQueue.m */; };
 		7EAA790219E89F67008D4A83 /* CreditHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */; };
 		7EAA790A19E90B9F008D4A83 /* BNCServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790919E90B9F008D4A83 /* BNCServerResponse.m */; };
+		D258D2C61A794D64004A1C90 /* BranchActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = D258D2C51A794D64004A1C90 /* BranchActivityItemProvider.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,6 +71,8 @@
 		7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreditHistoryViewController.m; sourceTree = "<group>"; };
 		7EAA790819E90B9F008D4A83 /* BNCServerResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCServerResponse.h; sourceTree = "<group>"; };
 		7EAA790919E90B9F008D4A83 /* BNCServerResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerResponse.m; sourceTree = "<group>"; };
+		D258D2C41A794D64004A1C90 /* BranchActivityItemProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchActivityItemProvider.h; sourceTree = "<group>"; };
+		D258D2C51A794D64004A1C90 /* BranchActivityItemProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchActivityItemProvider.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,6 +171,8 @@
 				7E38829F1A37E22A004BDABE /* BNCError.m */,
 				7EAA790819E90B9F008D4A83 /* BNCServerResponse.h */,
 				7EAA790919E90B9F008D4A83 /* BNCServerResponse.m */,
+				D258D2C41A794D64004A1C90 /* BranchActivityItemProvider.h */,
+				D258D2C51A794D64004A1C90 /* BranchActivityItemProvider.m */,
 			);
 			name = "Branch-SDK";
 			path = "../../Branch-SDK/Branch-SDK";
@@ -255,6 +260,7 @@
 				670016CA1946309100A9E103 /* BranchServerInterface.m in Sources */,
 				7E3882A31A37E42F004BDABE /* ReferralCodeViewController.m in Sources */,
 				670016741940F51400A9E103 /* AppDelegate.m in Sources */,
+				D258D2C61A794D64004A1C90 /* BranchActivityItemProvider.m in Sources */,
 				670016CE1946309100A9E103 /* BNCSystemObserver.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,
 			);
