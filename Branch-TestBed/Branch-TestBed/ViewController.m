@@ -100,8 +100,9 @@
 - (IBAction)cmdShareSheet:(id)sender {
     NSString *shareString = @"Super amazing thing I want to share!";
     
+    UIActivityItemProvider *itemProvider = [Branch getBranchActivityItemWithURL:@"http://lmgtfy.com/?q=branch+metrics"];
     
-    UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareString, [Branch getBranchActivityItemWithURL:@"http://lmgtfy.com/?q=branch+metrics"]] applicationActivities:nil];
+    UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareString, itemProvider] applicationActivities:nil];
     
     [self.navigationController presentViewController:shareViewController animated:YES completion:nil];
 }

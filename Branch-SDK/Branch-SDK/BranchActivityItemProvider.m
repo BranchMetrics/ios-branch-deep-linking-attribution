@@ -21,7 +21,6 @@
 }
 
 - (id) item {
-    
     // Set's channel string automatically based on what share
     // channel the user selected in UIActivityViewController
     NSString *channel = self.activityType; //default
