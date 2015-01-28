@@ -294,6 +294,42 @@ You have the ability to control the direct deep linking of each link by insertin
 | "$deeplink_path" | The value of the deep link path that you'd like us to append to your URI. For example, you could specify "$deeplink_path": "radio/station/456" and we'll open the app with the URI "yourapp://radio/station/456?link_click_id=branch-identifier". This is primarily for supporting legacy deep linking infrastructure. 
 | "$always_deeplink" | true or false. (default is not to deep link first) This key can be specified to have our linking service force try to open the app, even if we're not sure the user has the app installed. If the app is not installed, we fall back to the respective app store or $platform_url key. By default, we only open the app if we've seen a user initiate a session in your app from a Branch link (has been cookied and deep linked by Branch)
 
+### UIAcitivityView Share Sheet
+
+UIActivityView is the standard way of allwoing users to share content from your app. A common use case is a user sharing a referral code, or a content URL with their friends. If you want to give your users a way of sharing content from your app, this is the simpelist way to implement Branch.
+
+Sample UIActivityView Share sheet:
+![UIActivityView Share Sheet](https://s3-us-west-1.amazonaws.com/branchhost/iOSShareSheet.png )
+
+The Branch iOS SDK includes a subclassed UIActivityItemProvider that can be passed into a UIActivityViewController, that will generate a Branch short URL and automatically tag it with the channel the user selects (Facebook, Twitter, etc.). The sample app included with the Branch iOS SDK shows a sample of this in ViewController.m:
+
+```objc
+// Setup up the content you want to share, and the Branch
+    // params and properties, as you would for any branch link
+    
+    // No need to set the channel, that is done automatically based
+    // on the share activity the user selects
+    NSString *shareString = @"Super amazing thing I want to share!";
+    NSString *defaultURL = @"http://lmgtfy.com/?q=branch+metrics";
+    
+    NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!", @"Kindred", @"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png"] forKeys:@[@"key1", @"key2", @"$og_title", @"$og_image_url"]];
+    
+    NSArray *tags = @[@"tag1", @"tag2"];
+    
+    NSString *feature = @"invite";
+    
+    NSString *stage = @"2";
+    
+    // Branch UIActivityItemProvider
+    UIActivityItemProvider *itemProvider = [Branch getBranchActivityItemWithDefaultURL:defaultURL andParams:params andTags:tags andFeature:feature andStage:stage];
+    
+    // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
+    UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareString, itemProvider] applicationActivities:nil];
+    
+    // Present the share sheet!
+    [self.navigationController presentViewController:shareViewController animated:YES completion:nil];
+```
+
 ## Referral system rewarding functionality
 
 In a standard referral system, you have 2 parties: the original user and the invitee. Our system is flexible enough to handle rewards for all users for any actions. Here are a couple example scenarios:
