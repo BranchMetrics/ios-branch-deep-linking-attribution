@@ -120,6 +120,7 @@
     // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
     UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareString, itemProvider] applicationActivities:nil];
     
+    // Present the share sheet!
     [self.navigationController presentViewController:shareViewController animated:YES completion:nil];
 }
 
