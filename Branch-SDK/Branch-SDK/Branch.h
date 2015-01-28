@@ -46,13 +46,70 @@ typedef enum {
 + (Branch *)getInstance;
 + (Branch *)getInstance:(NSString *)appKey;
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithURL:(NSString *)url
+// Branch Activity item providers for UIActivityViewController
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
                                                    andParams:(NSDictionary *)params
                                                      andTags:(NSArray *)tags
                                                   andFeature:(NSString *)feature
                                                     andStage:(NSString *)stage
                                                     andAlias:(NSString *)alias;
-//+ (BranchActivityItemProvider *)getBranchActivityItemWithURL:(NSString *)url;
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                          andParams:(NSDictionary *)params;
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                   andParams:(NSDictionary *)params
+                                                  andFeature:(NSString *)feature;
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                          andParams:(NSDictionary *)params
+                                                         andStage:(NSString *)stage;
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                          andParams:(NSDictionary *)params
+                                                         andAlias:(NSString *)alias;
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                          andParams:(NSDictionary *)params
+                                                            andTags:(NSArray *)tags;
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                   andParams:(NSDictionary *)params
+                                                  andFeature:(NSString *)feature
+                                                    andStage:(NSString *)stage;
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                          andParams:(NSDictionary *)params
+                                                            andAlias:(NSString *)alias
+                                                            andTags:(NSArray *)tags;
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                          andParams:(NSDictionary *)params
+                                                         andFeature:(NSString *)feature
+                                                           andAlias:(NSString *)alias;
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                          andParams:(NSDictionary *)params
+                                                         andFeature:(NSString *)feature
+                                                           andTags:(NSArray *)tags;
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                          andParams:(NSDictionary *)params
+                                                         andFeature:(NSString *)feature
+                                                           andStage:(NSString *)stage
+                                                           andAlias:(NSString *)alias;
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                          andParams:(NSDictionary *)params
+                                                            andTags:(NSArray *)tags
+                                                         andFeature:(NSString *)feature
+                                                           andStage:(NSString *)stage;
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                          andParams:(NSDictionary *)params
+                                                            andTags:(NSArray *)tags
+                                                           andStage:(NSString *)stage
+                                                           andAlias:(NSString *)alias;
 
 + (void)setDebug;
 
