@@ -128,6 +128,10 @@ static Branch *currInstance;
     return currInstance;
 }
 
++ (BranchActivityItemProvider *)getBranchActivityItemWithURL:(NSString *)url {
+    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url];
+}
+
 + (void)initInstance {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
