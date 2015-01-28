@@ -72,7 +72,7 @@
     } else if (activityString == UIActivityTypePostToFlickr) {
         channel = @"flickr";
     } else if (activityString == UIActivityTypePostToTencentWeibo) {
-        channel = @"tecent_weibo";
+        channel = @"tencent_weibo";
     } else if (activityString == UIActivityTypePostToTwitter) {
         channel = @"twitter";
     } else if (activityString == UIActivityTypePostToVimeo) {
