@@ -118,6 +118,16 @@ static Branch *currInstance;
     return currInstance;
 }
 
++ (Branch *)getInstance:(NSString *)appKey {
+    [BNCPreferenceHelper setAppKey:appKey];
+    
+    if (!currInstance) {
+        [Branch initInstance];
+    }
+    
+    return currInstance;
+}
+
 + (void)initInstance {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

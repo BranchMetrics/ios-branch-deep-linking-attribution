@@ -171,7 +171,7 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 
 + (NSString *)getAppKey {
     NSString *ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:KEY_APP_KEY];
-    if (!ret) {
+    if (!ret || ret.length == 0) {
         // for backward compatibility
         ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_APP_KEY];
         if (!ret) {
@@ -180,6 +180,10 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
     }
     
     return ret;
+}
+
++ (void)setAppKey:(NSString *)appKey {
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_APP_KEY value:appKey];
 }
 
 + (void)setDeviceFingerprintID:(NSString *)deviceID {
