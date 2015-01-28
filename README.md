@@ -299,7 +299,7 @@ You have the ability to control the direct deep linking of each link by insertin
 UIActivityView is the standard way of allwoing users to share content from your app. A common use case is a user sharing a referral code, or a content URL with their friends. If you want to give your users a way of sharing content from your app, this is the simpelist way to implement Branch.
 
 Sample UIActivityView Share sheet:
-![UIActivityView Share Sheet](http://)
+![UIActivityView Share Sheet](https://s3-us-west-1.amazonaws.com/branchhost/iOSShareSheet.png )
 
 The Branch iOS SDK includes a subclassed UIActivityItemProvider that can be passed into a UIActivityViewController, that will generate a Branch short URL and automatically tag it with the channel the user selects (Facebook, Twitter, etc.). The sample app included with the Branch iOS SDK shows a sample of this in ViewController.m:
 
