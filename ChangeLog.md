@@ -1,5 +1,7 @@
 Branch iOS SDK change log 
 
+- v0.3.102: Caching short url's for the same parameters
+
 - v0.3.101: Completely fixed nil sessionparamLoadCallback issue
 
 - v0.3.100: Fixed nilling sessionparamLoadCallback in initSession
