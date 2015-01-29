@@ -1338,7 +1338,6 @@ static Branch *currInstance;
             if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams], nil);
-                    self.sessionparamLoadCallback = nil;
                 });
             }
             
@@ -1370,7 +1369,6 @@ static Branch *currInstance;
             if (self.sessionparamLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams], nil);
-                    self.sessionparamLoadCallback = nil;
                 });
             }
             
