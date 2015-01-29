@@ -28,6 +28,16 @@ getReferringParams | getLatestReferringParams
 
 At Branch, we live, breath uptime and performance. Just in case, we've got mechanisms internal to the SDK to deal with network issues. We always call the callbacks with the error parameter describing the issue. If the phone is in airplane mode and the connection is not available, the callbacks are called immediately. If there is a server latency, we timeout after 3 seconds and will retry 4 more times with a 3 second pause in between each. These timeouts are adjustable on the singleton instance by calling setNetworkTimeout (s), setRetryCount and setRetryInterval (s).
 
+2. __How can I debug/test the SDK__
+
+Just call setDebug after you get a reference to the Branch singleton. We'll log all requests. Even more importantly, we won't reference the hardware ID of the phone so you can register installs after just uninstalling/reinstalling the app.
+
+**make sure to remove this line before releasing**
+
+3. __Why do I not see any installs when I reinstall?__
+
+We do a lot of smart things to give you an accurate read on the number of installs you actually have. The most common one is associating the user with the actual hardware ID of the phone. If a user uninstalls the app, then reinstalls, we'll know it's the same person from before and just register and 'open' instead of an 'install'. To register an install on the same phone again, see FAQ #2 about debugging.
+
 ## Installation
 
 compiled SDK size: ~155kb
