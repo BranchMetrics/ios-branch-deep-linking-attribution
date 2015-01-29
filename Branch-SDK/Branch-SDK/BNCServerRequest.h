@@ -7,11 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "BNCLinkData.h"
 
 @interface BNCServerRequest : NSObject
 
 @property (strong, nonatomic) NSString *tag;
 @property (strong, nonatomic) NSDictionary *postData;
+@property (strong, nonatomic) BNCLinkData *linkData;
 
 - (id)initWithTag:(NSString *)tag;
 - (id)initWithTag:(NSString *)tag andData:(NSDictionary *)postData;

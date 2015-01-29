@@ -19,6 +19,14 @@ static NSString *BRANCH_FEATURE_TAG_INVITE = @"invite";
 static NSString *BRANCH_FEATURE_TAG_DEAL = @"deal";
 static NSString *BRANCH_FEATURE_TAG_GIFT = @"gift";
 
+static NSString *TAGS = @"tags";
+static NSString *LINK_TYPE = @"type";
+static NSString *ALIAS = @"alias";
+static NSString *CHANNEL = @"channel";
+static NSString *FEATURE = @"feature";
+static NSString *STAGE = @"stage";
+static NSString *DATA = @"data";
+
 typedef enum {
     BranchMostRecentFirst,
     BranchLeastRecentFirst

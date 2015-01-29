@@ -9,6 +9,7 @@
 #import "BNCServerInterface.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCConfig.h"
+#import "BNCLinkData.h"
 
 @implementation BNCServerInterface
 
@@ -48,15 +49,23 @@
     [request setValue:@"applications/json" forHTTPHeaderField:@"Content-type"];
     [request setHTTPBody:nil];
     
-    [self genericHTTPRequest:request withTag:requestTag];
+    [self genericHTTPRequest:request withTag:requestTag andLinkData:nil];
 }
 
 // make a generalized post request
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag {
-    [self postRequestAsync:post url:url andTag:requestTag log:YES];
+    [self postRequestAsync:post url:url andTag:requestTag andLinkData:nil log:YES];
 }
 
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
+    [self postRequestAsync:post url:url andTag:requestTag andLinkData:nil log:log];
+}
+
+- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
+    [self postRequestAsync:post url:url andTag:requestTag andLinkData:linkData log:YES];
+}
+
+- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log {
     NSData *postData = [BNCServerInterface encodePostParams:post];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     
@@ -73,7 +82,7 @@
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-type"];
     [request setHTTPBody:postData];
     
-    [self genericHTTPRequest:request withTag:requestTag];
+    [self genericHTTPRequest:request withTag:requestTag andLinkData:linkData];
 }
 
 + (NSData *)encodePostParams:(NSDictionary *)params {
@@ -120,7 +129,7 @@
     return encodedParams;
 }
 
-- (void)genericHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag {
+- (void)genericHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler: ^(NSURLResponse *response, NSData *POSTReply, NSError *error) {
         BNCServerResponse *serverResponse;
         if (!error) {
@@ -128,6 +137,7 @@
             NSNumber *statusCode = [NSNumber numberWithLong:[httpResponse statusCode]];
             
             serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:statusCode];
+            serverResponse.linkData = linkData;
             
             if (POSTReply != nil) {
                 NSError *convError;
