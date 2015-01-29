@@ -257,7 +257,6 @@ static Branch *currInstance;
         [self initializeSession];
     } else if ([self hasUser] && [self hasSession] && ![self.requestQueue containsInstallOrOpen]) {
         if (self.sessionparamLoadCallback) self.sessionparamLoadCallback([self getLatestReferringParams], nil);
-        self.sessionparamLoadCallback = nil;
     } else {
         if (![self.requestQueue containsInstallOrOpen]) {
             [self initializeSession];
@@ -1026,7 +1025,6 @@ static Branch *currInstance;
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             errorDict = [BNCError getUserInfoDictForDomain:BNCInitError];
             if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:errorDict]);
-            self.sessionparamLoadCallback = nil;
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCGetReferralsError];

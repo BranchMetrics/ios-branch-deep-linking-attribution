@@ -1,5 +1,13 @@
 Branch iOS SDK change log 
 
+- v0.3.101: Completely fixed nil sessionparamLoadCallback issue
+
+- v0.3.100: Fixed nilling sessionparamLoadCallback in initSession
+
+- v0.3.99: Restored old way to specify app key in app delegate as an alternative to plist
+
+- v0.3.98: Removed swizzling for debugger
+
 - v0.3.97: Moved app key to plist
 
 - v0.3.96: Added adTrackingSafe
