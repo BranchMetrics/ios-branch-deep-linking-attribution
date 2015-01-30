@@ -152,27 +152,6 @@ static Branch *currInstance;
 
 + (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
                                                           andParams:(NSDictionary *)params
-                                                           andStage:(NSString *)stage  {
-    
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:nil andFeature:nil andStage:stage andAlias:nil];
-}
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
-                                                           andAlias:(NSString *)alias {
-    
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:nil andFeature:nil andStage:nil andAlias:alias];
-}
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
-                                                            andTags:(NSArray *)tags {
-    
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:tags andFeature:nil andStage:nil andAlias:nil];
-}
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
                                                          andFeature:(NSString *)feature
                                                            andStage:(NSString *)stage {
     
@@ -181,44 +160,10 @@ static Branch *currInstance;
 
 + (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
                                                           andParams:(NSDictionary *)params
-                                                           andAlias:(NSString *)alias
-                                                            andTags:(NSArray *)tags {
-    
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:tags andFeature:nil andStage:nil andAlias:alias];
-}
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
-                                                         andFeature:(NSString *)feature
-                                                           andAlias:(NSString *)alias {
-    
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:nil andFeature:feature andStage:nil andAlias:alias];
-}
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
                                                          andFeature:(NSString *)feature
                                                             andTags:(NSArray *)tags {
     
     return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:tags andFeature:feature andStage:nil andAlias:nil];
-}
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
-                                                         andFeature:(NSString *)feature
-                                                           andStage:(NSString *)stage
-                                                           andAlias:(NSString *)alias {
-    
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:nil andFeature:feature andStage:stage andAlias:alias];
-}
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
-                                                            andTags:(NSArray *)tags
-                                                         andFeature:(NSString *)feature
-                                                           andStage:(NSString *)stage {
-    
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:tags andFeature:feature andStage:stage andAlias:nil];
 }
 
 + (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
