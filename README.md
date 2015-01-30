@@ -199,7 +199,8 @@ Often, you might have your own user IDs, or want referral and event data to pers
 
 To identify a user, just call:
 ```objc
-[[Branch getInstance] setIdentity:@"your user id"];	// previously identifyUser:
+// previously identifyUser:
+[[Branch getInstance] setIdentity:@"your user id"];	// your user id should not exceed 127 characters
 ```
 
 #### Logout
@@ -216,14 +217,14 @@ If you provide a logout function in your app, be sure to clear the user when the
 
 ```objc
 Branch *branch = [Branch getInstance];
-[branch userCompletedAction:@"your_custom_event"];
+[branch userCompletedAction:@"your_custom_event"]; // your custom event name should not exceed 63 characters
 ```
 
 OR if you want to store some state with the event
 
 ```objc
 Branch *branch = [Branch getInstance];
-[branch userCompletedAction:@"your_custom_event" withState:(NSDictionary *)appState];
+[branch userCompletedAction:@"your_custom_event" withState:(NSDictionary *)appState]; // same 63 characters max limit
 ```
 
 Some example events you might want to track:
@@ -252,15 +253,15 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 [params setObject:@"Joe likes long walks on the beach..." forKey:@"description"];
 
 // associate a url with a set of tags, channel, feature, and stage for better analytics.
-// tags: null or example set of tags could be "version1", "trial6", etc
-// channel: null or examples: "facebook", "twitter", "text_message", etc
-// feature: null or examples: FEATURE_TAG_SHARE, FEATURE_TAG_REFERRAL, "unlock", etc
-// stage: null or examples: "past_customer", "logged_in", "level_6"
+// tags: null or example set of tags could be "version1", "trial6", etc; each tag should not exceed 64 characters
+// channel: null or examples: "facebook", "twitter", "text_message", etc; should not exceed 128 characters
+// feature: null or examples: FEATURE_TAG_SHARE, FEATURE_TAG_REFERRAL, "unlock", etc; should not exceed 128 characters
+// stage: null or examples: "past_customer", "logged_in", "level_6"; should not exceed 128 characters
 
 // Link 'type' can be used for scenarios where you want the link to only deep link the first time. 
 // Use _nil_, _BranchLinkTypeUnlimitedUse_ or _BranchLinkTypeOneTimeUse_
 
-// Link 'alias' can be used to label the endpoint on the link. For example: http://bnc.lt/AUSTIN28. 
+// Link 'alias' can be used to label the endpoint on the link. For example: http://bnc.lt/AUSTIN28. Should not exceed 128 characters
 // Be careful about aliases: these are immutable objects permanently associated with the data and associated paramters you pass into the link. When you create one in the SDK, it's tied to that user identity as well (automatically specified by the Branch internals). If you want to retrieve the same link again, you'll need to call getShortUrl with all of the same parameters from before.
 
 Branch *branch = [Branch getInstance];
@@ -435,7 +436,7 @@ The resulting code will have your prefix, concatenated with a 4 character long u
 
 ```objc
 // Create a referral code with prefix "BRANCH", 5 credits, and without an expiration date
-[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"
+[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
                                          amount:5
                                     andCallback:^(NSDictionary *params, NSError *error) {
                                         if (!error) {
@@ -453,7 +454,7 @@ The prefix parameter is optional here, i.e. it could be getReferralCodeWithAmoun
 : The expiration date of the referral code
 
 ```objc
-[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"
+[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
                                          amount:5
                                      expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
                                     andCallback:^(NSDictionary *params, NSError *error) {
@@ -484,7 +485,7 @@ You can also tune the referral code to the finest granularity, with the followin
 1. _BranchBothUsers_ - both the creator and applicant receive credit
 
 ```objc
-[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"
+[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
 				                         amount:5
 				                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
 				                         bucket:@"default"
