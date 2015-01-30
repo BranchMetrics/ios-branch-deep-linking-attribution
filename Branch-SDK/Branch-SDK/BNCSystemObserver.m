@@ -15,12 +15,12 @@
 
 @implementation BNCSystemObserver
 
-+ (NSString *)getUniqueHardwareId:(BOOL *)isReal {
++ (NSString *)getUniqueHardwareId:(BOOL *)isReal andIsDebug:(BOOL)debug {
     NSString *uid = nil;
     *isReal = YES;
     
     Class ASIdentifierManagerClass = NSClassFromString(@"ASIdentifierManager");
-    if (ASIdentifierManagerClass) {
+    if (ASIdentifierManagerClass && !debug) {
         SEL sharedManagerSelector = NSSelectorFromString(@"sharedManager");
         id sharedManager = ((id (*)(id, SEL))[ASIdentifierManagerClass methodForSelector:sharedManagerSelector])(ASIdentifierManagerClass, sharedManagerSelector);
         SEL advertisingIdentifierSelector = NSSelectorFromString(@"advertisingIdentifier");

@@ -1,6 +1,6 @@
 Branch iOS SDK change log 
 
-- v0.3.103: Made CoreTelephony framework optional
+- v0.4.0: Made CoreTelephony framework optional, Added UIAcitivityView item provider, Make debug clear device fingerprint
 
 - v0.3.102: Caching short url's for the same parameters
 

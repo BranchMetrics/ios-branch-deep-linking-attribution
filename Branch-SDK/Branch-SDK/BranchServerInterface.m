@@ -17,7 +17,7 @@
     
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     BOOL isRealHardwareId;
-    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId];
+    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper getDevDebug]];
     if (hardwareId) {
         [post setObject:hardwareId forKey:@"hardware_id"];
         [post setObject:[NSNumber numberWithBool:isRealHardwareId] forKey:@"is_hardware_id_real"];
@@ -54,7 +54,7 @@
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     if ([[BNCPreferenceHelper getDeviceFingerprintID] isEqualToString:NO_STRING_VALUE]) {
         BOOL isRealHardwareId;
-        NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId];
+        NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper getDevDebug]];
         if (hardwareId) {
             [post setObject:hardwareId forKey:@"hardware_id"];
             [post setObject:[NSNumber numberWithBool:isRealHardwareId] forKey:@"is_hardware_id_real"];
