@@ -166,11 +166,11 @@ static Branch *currInstance;
 
 + (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
                                                           andParams:(NSDictionary *)params
-                                                            andTags:(NSArray *)tags
+                                                            andFeature:(NSString *)feature
                                                            andStage:(NSString *)stage
                                                            andAlias:(NSString *)alias {
     
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:tags andFeature:nil andStage:stage andAlias:alias];
+    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:nil andFeature:feature andStage:stage andAlias:alias];
 }
 
 + (void)initInstance {
