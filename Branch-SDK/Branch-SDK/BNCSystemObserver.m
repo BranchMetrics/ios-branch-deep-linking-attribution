@@ -11,8 +11,6 @@
 #import "BNCSystemObserver.h"
 #import <UIKit/UIDevice.h>
 #import <UIKit/UIScreen.h>
-#import <CoreTelephony/CTCarrier.h>
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
 @implementation BNCSystemObserver
@@ -78,9 +76,21 @@
 }
 
 + (NSString *)getCarrier {
-    CTTelephonyNetworkInfo *networkInfo = [[CTTelephonyNetworkInfo alloc] init];
-    CTCarrier *carrier = [networkInfo subscriberCellularProvider];
-    return carrier.carrierName;
+    NSString *carrierName = nil;
+    
+    Class CTTelephonyNetworkInfoClass = NSClassFromString(@"CTTelephonyNetworkInfo");
+    if (CTTelephonyNetworkInfoClass) {
+        id networkInfo = [[CTTelephonyNetworkInfoClass alloc] init];
+        SEL subscriberCellularProviderSelector = NSSelectorFromString(@"subscriberCellularProvider");
+        
+        id carrier = ((id (*)(id, SEL))[networkInfo methodForSelector:subscriberCellularProviderSelector])(networkInfo, subscriberCellularProviderSelector);
+        if (carrier) {
+            SEL carrierNameSelector = NSSelectorFromString(@"carrierName");
+            carrierName = ((NSString* (*)(id, SEL))[carrier methodForSelector:carrierNameSelector])(carrier, carrierNameSelector);
+        }
+    }
+    
+    return carrierName;
 }
 
 + (NSString *)getBrand {
