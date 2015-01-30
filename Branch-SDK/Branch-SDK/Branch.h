@@ -62,31 +62,9 @@ typedef enum {
                                                   andFeature:(NSString *)feature;
 
 + (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
-                                                         andStage:(NSString *)stage;
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
-                                                         andAlias:(NSString *)alias;
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
-                                                            andTags:(NSArray *)tags;
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
                                                    andParams:(NSDictionary *)params
                                                   andFeature:(NSString *)feature
                                                     andStage:(NSString *)stage;
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
-                                                            andAlias:(NSString *)alias
-                                                            andTags:(NSArray *)tags;
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
-                                                         andFeature:(NSString *)feature
-                                                           andAlias:(NSString *)alias;
 
 + (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
                                                           andParams:(NSDictionary *)params
@@ -96,18 +74,6 @@ typedef enum {
 + (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
                                                           andParams:(NSDictionary *)params
                                                          andFeature:(NSString *)feature
-                                                           andStage:(NSString *)stage
-                                                           andAlias:(NSString *)alias;
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
-                                                            andTags:(NSArray *)tags
-                                                         andFeature:(NSString *)feature
-                                                           andStage:(NSString *)stage;
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
-                                                            andTags:(NSArray *)tags
                                                            andStage:(NSString *)stage
                                                            andAlias:(NSString *)alias;
 
