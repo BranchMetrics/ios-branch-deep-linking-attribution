@@ -1,5 +1,7 @@
 Branch iOS SDK change log 
 
+- v0.3.103: Made CoreTelephony framework optional
+
 - v0.3.102: Caching short url's for the same parameters
 
 - v0.3.101: Completely fixed nil sessionparamLoadCallback issue
