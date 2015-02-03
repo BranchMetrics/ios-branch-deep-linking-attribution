@@ -169,7 +169,9 @@
         if (POSTReply != nil) {
             NSError *convError;
             id jsonData = [NSJSONSerialization JSONObjectWithData:POSTReply options:NSJSONReadingMutableContainers error:&convError];
-            serverResponse.data = jsonData;
+            if (!convError) {
+                serverResponse.data = jsonData;
+            }
         }
     } else {
         serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:[NSNumber numberWithInteger:error.code]];
