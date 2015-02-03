@@ -51,4 +51,6 @@ static NSString *REQ_TAG_APPLY_REFERRAL_CODE = @"t_apply_referral_code";
 - (void)sendScreenshot:(NSData *)data;
 - (void)disconnectFromDebug;
 
+- (BNCServerResponse *)createCustomUrlSynchronous:(BNCServerRequest *)req;
+
 @end

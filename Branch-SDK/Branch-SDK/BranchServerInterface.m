@@ -113,6 +113,10 @@
     [self postRequestAsync:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL andLinkData:req.linkData];
 }
 
+- (BNCServerResponse *)createCustomUrlSynchronous:(BNCServerRequest *)req {
+    return [self postRequestSync:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL andLinkData:req.linkData log:YES];
+}
+
 - (void)identifyUser:(NSDictionary *)post {
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_IDENTIFY];
 }

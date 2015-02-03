@@ -188,7 +188,9 @@
         if (encodedRequest) {
             @try {
                 BNCServerRequest *request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
-                [queue addObject:request];
+                if (![request.tag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
+                    [queue addObject:request];
+                }
             }
             @catch (NSException* exception) {
             }

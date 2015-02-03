@@ -605,6 +605,59 @@ static Branch *currInstance;
     return [self convertParamsStringToDictionary:storedParam];
 }
 
+- (NSString *)getShortURL {
+    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:nil andFeature:nil andStage:nil andParams:nil];
+}
+
+- (NSString *)getShortURLWithParams:(NSDictionary *)params {
+    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:nil andFeature:nil andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+- (NSString *)getContentUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel {
+    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:BRANCH_FEATURE_TAG_SHARE andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+- (NSString *)getContentUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel {
+    return [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:BRANCH_FEATURE_TAG_SHARE andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+- (NSString *)getReferralUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel {
+    return [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+- (NSString *)getReferralUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel {
+    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage {
+    return [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
+    return [self generateShortUrl:tags andAlias:alias andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type {
+    return [self generateShortUrl:tags andAlias:nil andType:type andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage {
+    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
+    return [self generateShortUrl:nil andAlias:alias andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type {
+    return [self generateShortUrl:nil andAlias:nil andType:type andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature {
+    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+
 - (void)getShortURLWithCallback:(callbackWithUrl)callback {
     [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:nil andFeature:nil andStage:nil andParams:nil andCallback:callback];
 }
@@ -836,23 +889,7 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_CUSTOM_URL;
-        BNCLinkData *post = [[BNCLinkData alloc] init];
-        [post setObject:[BNCPreferenceHelper getAppKey] forKey:APP_ID];
-        [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:DEVICE_FINGERPRINT_ID];
-        [post setObject:[BNCPreferenceHelper getIdentityID] forKey:IDENTITY_ID];
-        [post setObject:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
-        
-        [post setupType:type];
-        [post setupTags:tags];
-        [post setupChannel:channel];
-        [post setupFeature:feature];
-        [post setupStage:stage];
-        [post setupAlias:alias];
-        
-        [post setObject:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
-        
-        NSString *args = params ? params : @"{ \"source\":\"ios\" }";
-        [post setupParams:args];
+        BNCLinkData *post = [self prepareLinkDataFor:tags andAlias:alias andType:type andChannel:channel andFeature:feature andStage:stage andParams:params];
         
         if (![self.linkCache objectForKey:post]) {
             req.postData = post.data;
@@ -876,6 +913,59 @@ static Branch *currInstance;
             }
         }
     });
+}
+
+- (NSString *)generateShortUrl:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params {
+    NSString *shortURL = nil;
+    
+    BNCServerRequest *req = [[BNCServerRequest alloc] init];
+    req.tag = REQ_TAG_GET_CUSTOM_URL;
+    BNCLinkData *post = [self prepareLinkDataFor:tags andAlias:alias andType:type andChannel:channel andFeature:feature andStage:stage andParams:params];
+    
+    if ([self.linkCache objectForKey:post]) {
+        shortURL = [self.linkCache objectForKey:post];
+    } else {
+        req.postData = post.data;
+        req.linkData = post;
+        
+        if (self.initFinished && self.hasNetwork) {
+            self.lastRequestWasInit = NO;
+            [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Created custom url synchronously"];
+            BNCServerResponse * serverResponse = [self.bServerInterface createCustomUrlSynchronous:req];
+            shortURL = [serverResponse.data objectForKey:URL];
+            
+            // cache the link
+            BNCLinkData *linkData = serverResponse.linkData;
+            if (linkData) {
+                [self.linkCache setObject:shortURL forKey:linkData];
+            }
+        } else if (self.initFailed || self.initNotCalled) {
+            NSLog(@"Branch SDK Error: making request before init succeeded!");
+        }
+    }
+    
+    return shortURL;
+}
+
+- (BNCLinkData *)prepareLinkDataFor:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params {
+    BNCLinkData *post = [[BNCLinkData alloc] init];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:APP_ID];
+    [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:DEVICE_FINGERPRINT_ID];
+    [post setObject:[BNCPreferenceHelper getIdentityID] forKey:IDENTITY_ID];
+    [post setObject:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
+    
+    [post setupType:type];
+    [post setupTags:tags];
+    [post setupChannel:channel];
+    [post setupFeature:feature];
+    [post setupStage:stage];
+    [post setupAlias:alias];
+    
+    [post setObject:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
+    
+    NSString *args = params ? params : @"{ \"source\":\"ios\" }";
+    [post setupParams:args];
+    return post;
 }
 
 - (void)insertRequestAtFront:(BNCServerRequest *)req {
@@ -1002,6 +1092,11 @@ static Branch *currInstance;
         BNCServerRequest *req = [self.requestQueue peek];
         
         if (req) {
+            if (![req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] && ![self hasUser]) {
+                NSLog(@"Branch Error: can't proceed because no Branch identity has been set!");
+                return;
+            }
+            
             if (![req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
                 [self clearTimer];
             }
