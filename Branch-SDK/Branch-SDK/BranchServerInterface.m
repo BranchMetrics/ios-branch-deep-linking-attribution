@@ -17,7 +17,7 @@
     
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     BOOL isRealHardwareId;
-    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId];
+    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper getDevDebug]];
     if (hardwareId) {
         [post setObject:hardwareId forKey:@"hardware_id"];
         [post setObject:[NSNumber numberWithBool:isRealHardwareId] forKey:@"is_hardware_id_real"];
@@ -41,6 +41,7 @@
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     if (updateState) [post setObject:updateState forKeyedSubscript:@"update"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
+    [post setObject:[NSNumber numberWithBool:[BNCSystemObserver adTrackingSafe]] forKey:@"ad_tracking_enabled"];
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     
@@ -51,7 +52,16 @@
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
-    [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
+    if ([[BNCPreferenceHelper getDeviceFingerprintID] isEqualToString:NO_STRING_VALUE]) {
+        BOOL isRealHardwareId;
+        NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper getDevDebug]];
+        if (hardwareId) {
+            [post setObject:hardwareId forKey:@"hardware_id"];
+            [post setObject:[NSNumber numberWithBool:isRealHardwareId] forKey:@"is_hardware_id_real"];
+        }
+    } else {
+        [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
+    }
     [post setObject:[BNCPreferenceHelper getIdentityID] forKey:@"identity_id"];
     NSString *appVersion = [BNCSystemObserver getAppVersion];
     if (appVersion) [post setObject:appVersion forKey:@"app_version"];
@@ -60,6 +70,7 @@
     if (osVersion) [post setObject:osVersion forKey:@"os_version"];
     NSString *uriScheme = [BNCSystemObserver getURIScheme];
     if (uriScheme) [post setObject:uriScheme forKey:@"uri_scheme"];
+    [post setObject:[NSNumber numberWithBool:[BNCSystemObserver adTrackingSafe]] forKey:@"ad_tracking_enabled"];
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
@@ -71,7 +82,9 @@
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getIdentityID] forKey:@"identity_id"];
     [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
+    [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"close"] andTag:REQ_TAG_REGISTER_CLOSE];
 }
@@ -104,8 +117,8 @@
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
 }
 
-- (void)createCustomUrl:(NSDictionary *)post {
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL];
+- (void)createCustomUrl:(BNCServerRequest *)req {
+    [self postRequestAsync:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL andLinkData:req.linkData];
 }
 
 - (void)identifyUser:(NSDictionary *)post {
@@ -199,7 +212,7 @@
     [request setHTTPBody:body];
     [request addValue:[NSString stringWithFormat:@"%lu", (unsigned long)[body length]] forHTTPHeaderField:@"Content-Length"];
     NSLog(@"================== Data size: %lu", (unsigned long)[body length]);  //temp
-    [self genericAsyncHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN];
+    [self genericHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN andLinkData:nil];
 }
 
 - (void)getReferralCode:(NSDictionary *)post {

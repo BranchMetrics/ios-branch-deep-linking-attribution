@@ -7,7 +7,7 @@
 //
 
 #import "BNCServerInterface.h"
-
+#import "BNCServerRequest.h"
 
 static NSString *REQ_TAG_REGISTER_INSTALL = @"t_register_install";
 static NSString *REQ_TAG_REGISTER_OPEN = @"t_register_open";
@@ -37,7 +37,7 @@ static NSString *REQ_TAG_GET_LIST_OF_APPS = @"t_get_list_of_apps";
 - (void)userCompletedAction:(NSDictionary *)post;
 - (void)getRewards;
 - (void)redeemRewards:(NSDictionary *)post;
-- (void)createCustomUrl:(NSDictionary *)post;
+- (void)createCustomUrl:(BNCServerRequest *)post;
 - (void)identifyUser:(NSDictionary *)post;
 - (void)logoutUser:(NSDictionary *)post;
 - (void)addProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;

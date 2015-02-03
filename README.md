@@ -22,6 +22,22 @@ clearUser | logout
 getInstallReferringParams | getFirstReferringParams
 getReferringParams | getLatestReferringParams
 
+## FAQ
+
+1 __What if you go down?! Or there is a poor connection?__
+
+At Branch, we live, breath uptime and performance. Just in case, we've got mechanisms internal to the SDK to deal with network issues. We always call the callbacks with the error parameter describing the issue. If the phone is in airplane mode and the connection is not available, the callbacks are called immediately. If there is a server latency, we timeout after 3 seconds and will retry 4 more times with a 3 second pause in between each. These timeouts are adjustable on the singleton instance by calling setNetworkTimeout (s), setRetryCount and setRetryInterval (s).
+
+2 __How can I debug/test the SDK__
+
+Just call setDebug after you get a reference to the Branch singleton. We'll log all requests. Even more importantly, we won't reference the hardware ID of the phone so you can register installs after just uninstalling/reinstalling the app.
+
+**make sure to remove this line before releasing**
+
+3 __Why do I not see any installs when I reinstall?__
+
+We do a lot of smart things to give you an accurate read on the number of installs you actually have. The most common one is associating the user with the actual hardware ID of the phone. If a user uninstalls the app, then reinstalls, we'll know it's the same person from before and just register and 'open' instead of an 'install'. To register an install on the same phone again, see FAQ #2 about debugging.
+
 ## Installation
 
 compiled SDK size: ~155kb
@@ -75,6 +91,15 @@ Alternatively, you can add the URI scheme in your project's Info page.
 
 ![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png)
 
+### Add your app key to your project
+
+After you register your app, your app key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift).
+
+1. In plist file, mouse hover "Information Property List" which is the root item under the Key column.
+1. After about half a second, you will see a "+" sign appear. Click it.
+1. In the newly added row, fill in "bnc_app_key" for its key, leave type as String, and enter your app key obtained in above steps in its value column.
+1. Save the plist file.
+
 ### Initialize SDK And Register Deep Link Routing Function
 
 Called when app first initializes a session, ideally in the app delegate. If you created a custom link with your own custom dictionary data, you probably want to know when the user session init finishes, so you can check that data. Think of this callback as your "deep link router". If your app opens with some data, you want to route the user depending on the data you passed in. Otherwise, send them to a generic install flow.
@@ -86,9 +111,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	// your other init code
 
-
-	// Your app key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard
-	Branch *branch = [Branch getInstance:@"Your app key"];
+	Branch *branch = [Branch getInstance];
 	[branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {		// previously initUserSessionWithCallback:withLaunchOptions:
         if (!error) {
             // params are the deep linked params associated with the link that the user clicked before showing up
@@ -123,7 +146,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     // your other init code
 	
-    let branch: Branch = Branch.getInstance("Your app key")
+    let branch: Branch = Branch.getInstance()
     branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
         if (error == nil) {
             // params are the deep linked params associated with the link that the user clicked before showing up
@@ -176,7 +199,8 @@ Often, you might have your own user IDs, or want referral and event data to pers
 
 To identify a user, just call:
 ```objc
-[[Branch getInstance] setIdentity:@"your user id"];	// previously identifyUser:
+// previously identifyUser:
+[[Branch getInstance] setIdentity:@"your user id"];	// your user id should not exceed 127 characters
 ```
 
 #### Logout
@@ -193,14 +217,14 @@ If you provide a logout function in your app, be sure to clear the user when the
 
 ```objc
 Branch *branch = [Branch getInstance];
-[branch userCompletedAction:@"your_custom_event"];
+[branch userCompletedAction:@"your_custom_event"]; // your custom event name should not exceed 63 characters
 ```
 
 OR if you want to store some state with the event
 
 ```objc
 Branch *branch = [Branch getInstance];
-[branch userCompletedAction:@"your_custom_event" withState:(NSDictionary *)appState];
+[branch userCompletedAction:@"your_custom_event" withState:(NSDictionary *)appState]; // same 63 characters max limit
 ```
 
 Some example events you might want to track:
@@ -229,15 +253,15 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 [params setObject:@"Joe likes long walks on the beach..." forKey:@"description"];
 
 // associate a url with a set of tags, channel, feature, and stage for better analytics.
-// tags: null or example set of tags could be "version1", "trial6", etc
-// channel: null or examples: "facebook", "twitter", "text_message", etc
-// feature: null or examples: FEATURE_TAG_SHARE, FEATURE_TAG_REFERRAL, "unlock", etc
-// stage: null or examples: "past_customer", "logged_in", "level_6"
+// tags: null or example set of tags could be "version1", "trial6", etc; each tag should not exceed 64 characters
+// channel: null or examples: "facebook", "twitter", "text_message", etc; should not exceed 128 characters
+// feature: null or examples: FEATURE_TAG_SHARE, FEATURE_TAG_REFERRAL, "unlock", etc; should not exceed 128 characters
+// stage: null or examples: "past_customer", "logged_in", "level_6"; should not exceed 128 characters
 
 // Link 'type' can be used for scenarios where you want the link to only deep link the first time. 
 // Use _nil_, _BranchLinkTypeUnlimitedUse_ or _BranchLinkTypeOneTimeUse_
 
-// Link 'alias' can be used to label the endpoint on the link. For example: http://bnc.lt/AUSTIN28. 
+// Link 'alias' can be used to label the endpoint on the link. For example: http://bnc.lt/AUSTIN28. Should not exceed 128 characters
 // Be careful about aliases: these are immutable objects permanently associated with the data and associated paramters you pass into the link. When you create one in the SDK, it's tied to that user identity as well (automatically specified by the Branch internals). If you want to retrieve the same link again, you'll need to call getShortUrl with all of the same parameters from before.
 
 Branch *branch = [Branch getInstance];
@@ -251,7 +275,7 @@ Branch *branch = [Branch getInstance];
 There are other methods which exclude tag and data if you don't want to pass those. Explore Xcode's autocomplete functionality.
 
 **Note**
-You can customize the Facebook OG tags of each URL if you want to dynamically share content by using the following _optional keys in the data dictionary_:
+You can customize the Facebook OG tags of each URL if you want to dynamically share content by using the following _optional keys in the data dictionary_. Please use this [Facebook tool](https://developers.facebook.com/tools/debug/og/object) to debug your OG tags!
 
 | Key | Value
 | --- | ---
@@ -280,6 +304,42 @@ You have the ability to control the direct deep linking of each link by insertin
 | --- | ---
 | "$deeplink_path" | The value of the deep link path that you'd like us to append to your URI. For example, you could specify "$deeplink_path": "radio/station/456" and we'll open the app with the URI "yourapp://radio/station/456?link_click_id=branch-identifier". This is primarily for supporting legacy deep linking infrastructure. 
 | "$always_deeplink" | true or false. (default is not to deep link first) This key can be specified to have our linking service force try to open the app, even if we're not sure the user has the app installed. If the app is not installed, we fall back to the respective app store or $platform_url key. By default, we only open the app if we've seen a user initiate a session in your app from a Branch link (has been cookied and deep linked by Branch)
+
+### UIAcitivityView Share Sheet
+
+UIActivityView is the standard way of allowing users to share content from your app. A common use case is a user sharing a referral code, or a content URL with their friends. If you want to give your users a way of sharing content from your app, this is the simpelist way to implement Branch.
+
+Sample UIActivityView Share sheet:
+![UIActivityView Share Sheet](https://s3-us-west-1.amazonaws.com/branchhost/iOSShareSheet.png )
+
+The Branch iOS SDK includes a subclassed UIActivityItemProvider that can be passed into a UIActivityViewController, that will generate a Branch short URL and automatically tag it with the channel the user selects (Facebook, Twitter, etc.). The sample app included with the Branch iOS SDK shows a sample of this in ViewController.m:
+
+```objc
+// Setup up the content you want to share, and the Branch
+    // params and properties, as you would for any branch link
+    
+    // No need to set the channel, that is done automatically based
+    // on the share activity the user selects
+    NSString *shareString = @"Super amazing thing I want to share!";
+    NSString *defaultURL = @"http://lmgtfy.com/?q=branch+metrics";
+    
+    NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!", @"Kindred", @"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png"] forKeys:@[@"key1", @"key2", @"$og_title", @"$og_image_url"]];
+    
+    NSArray *tags = @[@"tag1", @"tag2"];
+    
+    NSString *feature = @"invite";
+    
+    NSString *stage = @"2";
+    
+    // Branch UIActivityItemProvider
+    UIActivityItemProvider *itemProvider = [Branch getBranchActivityItemWithDefaultURL:defaultURL andParams:params andFeature:feature andStage:stage andTags:tags];
+    
+    // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
+    UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareString, itemProvider] applicationActivities:nil];
+    
+    // Present the share sheet!
+    [self.navigationController presentViewController:shareViewController animated:YES completion:nil];
+```
 
 ## Referral system rewarding functionality
 
@@ -412,7 +472,7 @@ The resulting code will have your prefix, concatenated with a 4 character long u
 
 ```objc
 // Create a referral code with prefix "BRANCH", 5 credits, and without an expiration date
-[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"
+[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
                                          amount:5
                                     andCallback:^(NSDictionary *params, NSError *error) {
                                         if (!error) {
@@ -430,7 +490,7 @@ The prefix parameter is optional here, i.e. it could be getReferralCodeWithAmoun
 : The expiration date of the referral code
 
 ```objc
-[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"
+[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
                                          amount:5
                                      expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
                                     andCallback:^(NSDictionary *params, NSError *error) {
@@ -461,7 +521,7 @@ You can also tune the referral code to the finest granularity, with the followin
 1. _BranchBothUsers_ - both the creator and applicant receive credit
 
 ```objc
-[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"
+[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
 				                         amount:5
 				                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
 				                         bucket:@"default"

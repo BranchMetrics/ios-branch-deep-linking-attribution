@@ -21,15 +21,17 @@ enum {
     BNCCreateURLError,
     BNCIdentifyError,
     BNCLogoutError,
-    BNCGetProfileError,
     BNCGetReferralCodeError,
     BNCDuplicateReferralCodeError,
     BNCValidateReferralCodeError,
     BNCInvalidReferralCodeError,
     BNCApplyReferralCodeError,
-    BNCCreateURLDuplicateAliasError
+    BNCCreateURLDuplicateAliasError,
+    BNCNotInitError
 };
 
 @interface BNCError : NSObject
+
++ (NSDictionary *)getUserInfoDictForDomain:(NSInteger)code;
 
 @end
