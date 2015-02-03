@@ -33,8 +33,8 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)setRetryCount:(NSInteger)retryCount;
 + (NSInteger)getRetryCount;
 
-+ (void)setAppKey:(NSString *)appKey;
 + (NSString *)getAppKey;
++ (void)setAppKey:(NSString *)appKey;
 
 + (void)setDeviceFingerprintID:(NSString *)deviceID;
 + (NSString *)getDeviceFingerprintID;
@@ -85,6 +85,8 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (NSString *)base64EncodeStringToString:(NSString *)strData;
 + (NSString *)base64DecodeStringToString:(NSString *)strData;
 
++ (void)setDevDebug;
++ (BOOL)getDevDebug;
 + (void)setDebug;
 + (void)clearDebug;
 + (BOOL)isDebug;
