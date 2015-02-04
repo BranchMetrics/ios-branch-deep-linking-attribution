@@ -212,7 +212,7 @@
     [request setHTTPBody:body];
     [request addValue:[NSString stringWithFormat:@"%lu", (unsigned long)[body length]] forHTTPHeaderField:@"Content-Length"];
     NSLog(@"================== Data size: %lu", (unsigned long)[body length]);  //temp
-    [self genericHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN andLinkData:nil];
+    [self genericAsyncHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN andLinkData:nil];
 }
 
 - (void)getReferralCode:(NSDictionary *)post {

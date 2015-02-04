@@ -290,12 +290,15 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
         ret = NO_STRING_VALUE;
     return ret;
 }
+
 + (NSInteger)getIsReferrable {
     return [BNCPreferenceHelper readIntegerFromDefaults:KEY_IS_REFERRABLE];
 }
+
 + (void)setIsReferrable {
     [BNCPreferenceHelper writeIntegerToDefaults:KEY_IS_REFERRABLE value:1];
 }
+
 + (void)clearIsReferrable {
     [BNCPreferenceHelper writeIntegerToDefaults:KEY_IS_REFERRABLE value:0];
 }
@@ -303,10 +306,11 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 + (void)setAppListCheckDone {
     [BNCPreferenceHelper writeObjectToDefaults:KEY_APP_LIST_CHECK value:[NSDate date]];
 }
+
 + (BOOL)getNeedAppListCheck {
-    NSDate *currDate = [NSDate date];
     NSDate *lastDate = (NSDate *)[self readObjectFromDefaults:KEY_APP_LIST_CHECK];
     if (lastDate) {
+        NSDate *currDate = [NSDate date];
         NSTimeInterval diff = [currDate timeIntervalSinceDate:lastDate];
         if (diff < APP_READ_INTERVAL) {
             return NO;
