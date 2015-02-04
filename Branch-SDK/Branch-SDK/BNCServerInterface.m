@@ -78,21 +78,7 @@
 }
 
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log {
-    NSData *postData = [BNCServerInterface encodePostParams:post];
-    NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
-    
-    if (log) {
-        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
-        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"body = %@", [post description]];
-    }
-    
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    [request setTimeoutInterval:[BNCPreferenceHelper getTimeout]];
-    [request setHTTPMethod:@"POST"];
-    [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
-    [request setValue:@"application/json" forHTTPHeaderField:@"Content-type"];
-    [request setHTTPBody:postData];
-    
+    NSMutableURLRequest *request = [self prepareURLRequest:post url:url log:log];
     [self genericAsyncHTTPRequest:request withTag:requestTag andLinkData:linkData];
 }
 
@@ -142,21 +128,49 @@
 
 - (void)genericAsyncHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler: ^(NSURLResponse *response, NSData *POSTReply, NSError *error) {
-        BNCServerResponse *serverResponse = [self processResponse:response data:POSTReply error:error tag:requestTag andLinkData:linkData];
+        BNCServerResponse *serverResponse = [self processServerResponse:response data:POSTReply error:error tag:requestTag andLinkData:linkData];
         if (self.delegate) [self.delegate serverCallback:serverResponse];
     }];
 }
 
-- (BNCServerResponse *)genericSyncHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
-    NSURLResponse *response;
-    NSError *error;
-    NSData *POSTreply = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    
-    return [self processResponse:response data:POSTreply error:error tag:requestTag andLinkData:linkData];
+#pragma mark - Synchronous functions
+
+- (BNCServerResponse *)postRequestSync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log {
+    NSMutableURLRequest *request = [self prepareURLRequest:post url:url log:log];
+    return [self genericSynchronousHTTPRequest:request withTag:requestTag andLinkData:linkData];
 }
 
-- (BNCServerResponse *)processResponse:(NSURLResponse *)response data:(NSData *)POSTReply error:(NSError *)error tag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
-    BNCServerResponse *serverResponse;
+- (BNCServerResponse *)genericSyncHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
+    NSURLResponse * response = nil;
+    NSError * error = nil;
+    NSData * POSTReply = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    
+    return [self processServerResponse:response data:POSTReply error:error tag:requestTag andLinkData:linkData];
+}
+
+#pragma mark - Common functions
+
+- (NSMutableURLRequest *)prepareURLRequest:(NSDictionary *)post url:(NSString *)url log:(BOOL)log {
+    NSData *postData = [BNCServerInterface encodePostParams:post];
+    NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
+    
+    if (log) {
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"body = %@", [post description]];
+    }
+    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [request setTimeoutInterval:[BNCPreferenceHelper getTimeout]];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-type"];
+    [request setHTTPBody:postData];
+    
+    return request;
+}
+
+- (BNCServerResponse *)processServerResponse:(NSURLResponse *)response data:(NSData *)POSTReply error:(NSError *)error tag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
+    BNCServerResponse *serverResponse = nil;
     if (!error) {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
         NSNumber *statusCode = [NSNumber numberWithLong:[httpResponse statusCode]];
@@ -167,7 +181,9 @@
         if (POSTReply != nil) {
             NSError *convError;
             id jsonData = [NSJSONSerialization JSONObjectWithData:POSTReply options:NSJSONReadingMutableContainers error:&convError];
-            serverResponse.data = jsonData;
+            if (!convError) {
+                serverResponse.data = jsonData;
+            }
         }
     } else {
         serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:[NSNumber numberWithInteger:error.code]];

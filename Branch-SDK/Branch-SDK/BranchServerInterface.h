@@ -55,4 +55,6 @@ static NSString *REQ_TAG_GET_LIST_OF_APPS = @"t_get_list_of_apps";
 - (void)sendScreenshot:(NSData *)data;
 - (void)disconnectFromDebug;
 
+- (BNCServerResponse *)createCustomUrlSynchronous:(BNCServerRequest *)req;
+
 @end
