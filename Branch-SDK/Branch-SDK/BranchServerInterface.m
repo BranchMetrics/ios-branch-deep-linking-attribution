@@ -121,6 +121,10 @@
     [self postRequestAsync:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL andLinkData:req.linkData];
 }
 
+- (BNCServerResponse *)createCustomUrlSynchronous:(BNCServerRequest *)req {
+    return [self postRequestSync:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL andLinkData:req.linkData log:YES];
+}
+
 - (void)identifyUser:(NSDictionary *)post {
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_IDENTIFY];
 }
@@ -212,6 +216,7 @@
     [request setHTTPBody:body];
     [request addValue:[NSString stringWithFormat:@"%lu", (unsigned long)[body length]] forHTTPHeaderField:@"Content-Length"];
     NSLog(@"================== Data size: %lu", (unsigned long)[body length]);  //temp
+
     [self genericAsyncHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN andLinkData:nil];
 }
 
