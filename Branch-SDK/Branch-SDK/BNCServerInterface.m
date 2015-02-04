@@ -57,7 +57,7 @@
 }
 
 - (BNCServerResponse *)getRequestSync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
-    return [self genericSyncHTTPRequest:[self prepareGetRequest:params url:url andTag:requestTag log:log] withTag:requestTag];
+    return [self genericSyncHTTPRequest:[self prepareGetRequest:params url:url andTag:requestTag log:log] withTag:requestTag andLinkData:nil];
 }
 
 - (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
