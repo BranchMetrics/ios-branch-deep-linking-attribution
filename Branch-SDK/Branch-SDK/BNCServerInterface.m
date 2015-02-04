@@ -142,7 +142,8 @@
 
 - (void)genericAsyncHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler: ^(NSURLResponse *response, NSData *POSTReply, NSError *error) {
-        [self processResponse:response withData:POSTReply withError:error withTag:requestTag andLinkData:linkData];
+        BNCServerResponse *serverResponse = [self processResponse:response withData:POSTReply withError:error withTag:requestTag andLinkData:linkData];
+        if (self.delegate) [self.delegate serverCallback:serverResponse];
     }];
 }
 
@@ -180,8 +181,6 @@
     {
         [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned = %@", [serverResponse description]];
     }
-    
-    if (self.delegate) [self.delegate serverCallback:serverResponse];
     
     return serverResponse;
 }
