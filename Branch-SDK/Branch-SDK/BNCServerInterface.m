@@ -14,7 +14,7 @@
 @implementation BNCServerInterface
 
 // make a generalized get request
-- (NSMutableURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
+- (NSMutableURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url log:(BOOL)log {
     url = [url stringByAppendingString:@"?"];
     
     if (params) {
@@ -57,11 +57,11 @@
 }
 
 - (BNCServerResponse *)getRequestSync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
-    return [self genericSyncHTTPRequest:[self prepareGetRequest:params url:url andTag:requestTag log:log] withTag:requestTag andLinkData:nil];
+    return [self genericSyncHTTPRequest:[self prepareGetRequest:params url:url log:log] withTag:requestTag andLinkData:nil];
 }
 
 - (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
-    [self genericAsyncHTTPRequest:[self prepareGetRequest:params url:url andTag:requestTag log:log] withTag:requestTag andLinkData:nil];
+    [self genericAsyncHTTPRequest:[self prepareGetRequest:params url:url log:log] withTag:requestTag andLinkData:nil];
 }
 
 // make a generalized post request
@@ -142,7 +142,7 @@
 
 - (void)genericAsyncHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler: ^(NSURLResponse *response, NSData *POSTReply, NSError *error) {
-        BNCServerResponse *serverResponse = [self processResponse:response withData:POSTReply withError:error withTag:requestTag andLinkData:linkData];
+        BNCServerResponse *serverResponse = [self processResponse:response data:POSTReply error:error tag:requestTag andLinkData:linkData];
         if (self.delegate) [self.delegate serverCallback:serverResponse];
     }];
 }
@@ -152,10 +152,10 @@
     NSError *error;
     NSData *POSTreply = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
     
-    return [self processResponse:response withData:POSTreply withError:error withTag:requestTag andLinkData:linkData];
+    return [self processResponse:response data:POSTreply error:error tag:requestTag andLinkData:linkData];
 }
 
-- (BNCServerResponse *)processResponse:(NSURLResponse *)response withData:(NSData *)POSTReply withError:(NSError *)error withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
+- (BNCServerResponse *)processResponse:(NSURLResponse *)response data:(NSData *)POSTReply error:(NSError *)error tag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
     BNCServerResponse *serverResponse;
     if (!error) {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
