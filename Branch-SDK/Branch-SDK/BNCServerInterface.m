@@ -14,42 +14,12 @@
 @implementation BNCServerInterface
 
 // make a generalized get request
-- (NSMutableURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url log:(BOOL)log {
-    url = [url stringByAppendingString:@"?"];
-    
-    if (params) {
-        NSArray *allKeys = [params allKeys];
-        
-        for (NSString *key in allKeys) {
-            if ([key length] > 0) {
-                if ([params objectForKey:key]) {
-                    url = [url stringByAppendingString:key];
-                    url = [url stringByAppendingString:@"="];
-                    url = [url stringByAppendingString:[[params objectForKey:key] description]];
-                    url = [url stringByAppendingString:@"&"];
-                }
-            }
-        }
-    }
-    
-    url = [url stringByAppendingFormat:@"sdk=ios%@", SDK_VERSION];
-    if (log) {
-        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
-    }
-    
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setURL:[NSURL URLWithString:url]];
-    
-    [request setHTTPMethod:@"GET"];
-    [request setValue:@"0" forHTTPHeaderField:@"Content-Length"];
-    [request setValue:@"applications/json" forHTTPHeaderField:@"Content-type"];
-    [request setHTTPBody:nil];
-    
-    return request;
-}
-
 - (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag {
     [self getRequestAsync:params url:url andTag:requestTag log:YES];
+}
+
+- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
+    [self genericAsyncHTTPRequest:[self prepareGetRequest:params url:url log:log] withTag:requestTag andLinkData:nil];
 }
 
 - (BNCServerResponse *)getRequestSync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag {
@@ -58,10 +28,6 @@
 
 - (BNCServerResponse *)getRequestSync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
     return [self genericSyncHTTPRequest:[self prepareGetRequest:params url:url log:log] withTag:requestTag andLinkData:nil];
-}
-
-- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
-    [self genericAsyncHTTPRequest:[self prepareGetRequest:params url:url log:log] withTag:requestTag andLinkData:nil];
 }
 
 // make a generalized post request
@@ -78,8 +44,13 @@
 }
 
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log {
-    NSMutableURLRequest *request = [self prepareURLRequest:post url:url log:log];
+    NSMutableURLRequest *request = [self preparePostRequest:post url:url log:log];
     [self genericAsyncHTTPRequest:request withTag:requestTag andLinkData:linkData];
+}
+
+- (BNCServerResponse *)postRequestSync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log {
+    NSMutableURLRequest *request = [self preparePostRequest:post url:url log:log];
+    return [self genericSyncHTTPRequest:request withTag:requestTag andLinkData:linkData];
 }
 
 + (NSData *)encodePostParams:(NSDictionary *)params {
@@ -133,13 +104,6 @@
     }];
 }
 
-#pragma mark - Synchronous functions
-
-- (BNCServerResponse *)postRequestSync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log {
-    NSMutableURLRequest *request = [self prepareURLRequest:post url:url log:log];
-    return [self genericSynchronousHTTPRequest:request withTag:requestTag andLinkData:linkData];
-}
-
 - (BNCServerResponse *)genericSyncHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
     NSURLResponse * response = nil;
     NSError * error = nil;
@@ -148,9 +112,41 @@
     return [self processServerResponse:response data:POSTReply error:error tag:requestTag andLinkData:linkData];
 }
 
-#pragma mark - Common functions
+- (NSMutableURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url log:(BOOL)log {
+    url = [url stringByAppendingString:@"?"];
+    
+    if (params) {
+        NSArray *allKeys = [params allKeys];
+        
+        for (NSString *key in allKeys) {
+            if ([key length] > 0) {
+                if ([params objectForKey:key]) {
+                    url = [url stringByAppendingString:key];
+                    url = [url stringByAppendingString:@"="];
+                    url = [url stringByAppendingString:[[params objectForKey:key] description]];
+                    url = [url stringByAppendingString:@"&"];
+                }
+            }
+        }
+    }
+    
+    url = [url stringByAppendingFormat:@"sdk=ios%@", SDK_VERSION];
+    if (log) {
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
+    }
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    [request setURL:[NSURL URLWithString:url]];
+    
+    [request setHTTPMethod:@"GET"];
+    [request setValue:@"0" forHTTPHeaderField:@"Content-Length"];
+    [request setValue:@"applications/json" forHTTPHeaderField:@"Content-type"];
+    [request setHTTPBody:nil];
+    
+    return request;
+}
 
-- (NSMutableURLRequest *)prepareURLRequest:(NSDictionary *)post url:(NSString *)url log:(BOOL)log {
+- (NSMutableURLRequest *)preparePostRequest:(NSDictionary *)post url:(NSString *)url log:(BOOL)log {
     NSData *postData = [BNCServerInterface encodePostParams:post];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     
