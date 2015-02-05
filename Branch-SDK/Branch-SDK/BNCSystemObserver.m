@@ -153,8 +153,11 @@
     return [NSNumber numberWithInteger:(NSInteger)height];
 }
 
-+ (NSArray *)getListOfApps {
++ (NSDictionary *)getListOfApps {
     NSMutableArray *appsPresent = [[NSMutableArray alloc] init];
+    NSMutableArray *appsNotPresent = [[NSMutableArray alloc] init];
+    NSDictionary *appsData = [NSDictionary dictionaryWithObjects:@[appsPresent, appsNotPresent] forKeys:@[@"canOpen", @"notOpen"]];
+    
     BNCServerResponse *serverResponse = [[[BranchServerInterface alloc] init] retrieveAppsToCheck];
     NSLog(@"returned from app check with %@", serverResponse.data);
     if (serverResponse && serverResponse.data) {
@@ -162,21 +165,22 @@
         NSArray *apps = [serverResponse.data objectForKey:@"potential_apps"];
         UIApplication *application = [UIApplication sharedApplication];
         if (status == 200 && apps && application) {
-            for (NSDictionary *app in apps) {
-                NSString *uriScheme = [app objectForKey:@"uri_scheme"];
-                if (uriScheme) {
-                    if (![uriScheme containsString:@"://"])
-                        uriScheme = [uriScheme stringByAppendingString:@"://"];
-                    NSURL *url = [NSURL URLWithString:uriScheme];
-                    if ([application canOpenURL:url]) {
-                        [appsPresent addObject:app];
-                    }
+            for (NSString *app in apps) {
+                NSString *uriScheme = app;
+                if (![uriScheme containsString:@"://"]) {
+                    uriScheme = [uriScheme stringByAppendingString:@"://"];
+                }
+                NSURL *url = [NSURL URLWithString:uriScheme];
+                if ([application canOpenURL:url]) {
+                    [appsPresent addObject:app];
+                } else {
+                    [appsNotPresent addObject:app];
                 }
             }
         }
     }
     
-    return appsPresent;
+    return appsData;
 }
 
 
