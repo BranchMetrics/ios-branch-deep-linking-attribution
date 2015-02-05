@@ -297,6 +297,7 @@ Also, you do custom redirection by inserting the following _optional keys in the
 | "$fire_url" | Same as above but for Amazon Fire Store
 | "$blackberry_url" | Same as above but for Blackberry Store
 | "$windows_phone_url" | Same as above but for Windows Store
+| "$after_click_url" | When a user returns to the browser after going to the app, take them to this URL. _iOS only; Android coming soon_
 
 You have the ability to control the direct deep linking of each link by inserting the following _optional keys in the dictionary_:
 
