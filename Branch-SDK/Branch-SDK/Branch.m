@@ -1087,7 +1087,7 @@ static Branch *currInstance;
         [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:DEVICE_FINGERPRINT_ID];
         [post setObject:[BNCSystemObserver getOS] forKey:@"os"];
         [post setObject:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
-        [post setObject:[BNCSystemObserver getListOfApps] forKey:@"installed_apps"];
+        [post setObject:[BNCSystemObserver getListOfApps] forKey:@"apps_data"];
         req.postData = post;
         
         if (!self.initFailed) {
