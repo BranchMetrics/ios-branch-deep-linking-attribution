@@ -1116,7 +1116,9 @@ static Branch *currInstance;
         
         if (req) {
             if (![req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] && ![self hasUser]) {
-                NSLog(@"Branch Error: can't proceed because no Branch identity has been set!");
+                NSLog(@"Branch Error: User session has not been initialized!");
+                self.networkCount = 0;
+                [self handleFailure:[self.requestQueue size]-1];
                 return;
             }
             
@@ -1169,10 +1171,6 @@ static Branch *currInstance;
             } else if ([req.tag isEqualToString:REQ_TAG_UPLOAD_LIST_OF_APPS] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling upload apps"];
                 [self.bServerInterface uploadListOfApps:req.postData];
-            } else if (![self hasUser]) {
-                self.networkCount = 0;
-                [self handleFailure:[self.requestQueue size]-1];
-                [self initSession];
             }
         }
     } else {
