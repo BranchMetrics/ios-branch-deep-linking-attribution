@@ -159,7 +159,7 @@
     NSDictionary *appsData = [NSDictionary dictionaryWithObjects:@[appsPresent, appsNotPresent] forKeys:@[@"canOpen", @"notOpen"]];
     
     BNCServerResponse *serverResponse = [[[BranchServerInterface alloc] init] retrieveAppsToCheck];
-    NSLog(@"returned from app check with %@", serverResponse.data);
+    [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned from app check with %@", serverResponse.data];
     if (serverResponse && serverResponse.data) {
         NSInteger status = [serverResponse.statusCode integerValue];
         NSArray *apps = [serverResponse.data objectForKey:@"potential_apps"];
