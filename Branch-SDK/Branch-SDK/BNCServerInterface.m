@@ -97,6 +97,14 @@
     return encodedParams;
 }
 
++ (NSString *)urlEncode:(NSString *)string {
+    return (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
+                                                                                 (CFStringRef)string,
+                                                                                 NULL,
+                                                                                 (CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",
+                                                                                 CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)));
+}
+
 - (void)genericAsyncHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler: ^(NSURLResponse *response, NSData *POSTReply, NSError *error) {
         BNCServerResponse *serverResponse = [self processServerResponse:response data:POSTReply error:error tag:requestTag andLinkData:linkData];
@@ -121,9 +129,9 @@
         for (NSString *key in allKeys) {
             if ([key length] > 0) {
                 if ([params objectForKey:key]) {
-                    url = [url stringByAppendingString:key];
+                    url = [url stringByAppendingString:[BNCServerInterface urlEncode:key]];
                     url = [url stringByAppendingString:@"="];
-                    url = [url stringByAppendingString:[[params objectForKey:key] description]];
+                    url = [url stringByAppendingString:[[BNCServerInterface urlEncode:[params objectForKey:key]] description]];
                     url = [url stringByAppendingString:@"&"];
                 }
             }
@@ -139,9 +147,7 @@
     [request setURL:[NSURL URLWithString:url]];
     
     [request setHTTPMethod:@"GET"];
-    [request setValue:@"0" forHTTPHeaderField:@"Content-Length"];
-    [request setValue:@"applications/json" forHTTPHeaderField:@"Content-type"];
-    [request setHTTPBody:nil];
+    [request setValue:@"applications/json" forHTTPHeaderField:@"Content-Type"];
     
     return request;
 }
@@ -159,7 +165,7 @@
     [request setTimeoutInterval:[BNCPreferenceHelper getTimeout]];
     [request setHTTPMethod:@"POST"];
     [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
-    [request setValue:@"application/json" forHTTPHeaderField:@"Content-type"];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:postData];
     
     return request;
