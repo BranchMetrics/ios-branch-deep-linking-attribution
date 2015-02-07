@@ -167,7 +167,7 @@
         if (status == 200 && apps && application) {
             for (NSString *app in apps) {
                 NSString *uriScheme = app;
-                if (![uriScheme containsString:@"://"]) {
+                if ([uriScheme rangeOfString:@"://"].location != NSNotFound) {  // if (![uriScheme containsString:@"://"]) {
                     uriScheme = [uriScheme stringByAppendingString:@"://"];
                 }
                 NSURL *url = [NSURL URLWithString:uriScheme];
