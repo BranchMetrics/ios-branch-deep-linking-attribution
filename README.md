@@ -74,7 +74,7 @@ Our linking infrastructure will support anything you want to build. If it doesn'
 
 ### Register a URI scheme direct deep linking (optional but recommended)
 
-You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Also, make sure to change **yourapp** to a unique string that represents your app name.
+You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to keep this URI scheme as the first item (item 0) under URL schemes. Also, make sure to change **yourapp** to a unique string that represents your app name.
 
 1. In Xcode, click on YourProject-Info.plist on the left.
 1. Find URL Types and click the right arrow. (If it doesn't exist, right click anywhere and choose Add Row. Scroll down and choose URL Types)
