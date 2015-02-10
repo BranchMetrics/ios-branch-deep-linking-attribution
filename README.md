@@ -252,10 +252,12 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 [params setObject:@"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"profile_pic"];
 [params setObject:@"Joe likes long walks on the beach..." forKey:@"description"];
 
+// Customize the display of the link
 [params setObject:@"Joe's My App Referral" forKey:@"$og_title"];
 [params setObject:@"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"$og_image_url"];
 [params setObject:@"Join Joe in My App - it's awesome" forKey:@"$og_description"];
 
+// Customize the redirect performance
 [params setObject:@"http://myapp.com/desktop_splash" forKey:@"$desktop_url"];
 
 // associate a url with a set of tags, channel, feature, and stage for better analytics.
@@ -336,10 +338,12 @@ The Branch iOS SDK includes a subclassed UIActivityItemProvider that can be pass
     [params setObject:@"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"profile_pic"];
     [params setObject:@"Joe likes long walks on the beach..." forKey:@"description"];
         
+    // Customize the display of the link
     [params setObject:@"Joe's My App Referral" forKey:@"$og_title"];
     [params setObject:@"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"$og_image_url"];
     [params setObject:@"Join Joe in My App - it's awesome" forKey:@"$og_description"];
 
+    // Customize the redirect performance
     [params setObject:@"http://myapp.com/desktop_splash" forKey:@"$desktop_url"];
 
 
