@@ -252,6 +252,12 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 [params setObject:@"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"profile_pic"];
 [params setObject:@"Joe likes long walks on the beach..." forKey:@"description"];
 
+[params setObject:@"Joe's My App Referral" forKey:@"$og_title"];
+[params setObject:@"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"$og_image_url"];
+[params setObject:@"Join Joe in My App - it's awesome" forKey:@"$og_description"];
+
+[params setObject:@"http://myapp.com/desktop_splash" forKey:@"$desktop_url"];
+
 // associate a url with a set of tags, channel, feature, and stage for better analytics.
 // tags: null or example set of tags could be "version1", "trial6", etc; each tag should not exceed 64 characters
 // channel: null or examples: "facebook", "twitter", "text_message", etc; should not exceed 128 characters
@@ -324,8 +330,19 @@ The Branch iOS SDK includes a subclassed UIActivityItemProvider that can be pass
     NSString *shareString = @"Super amazing thing I want to share!";
     NSString *defaultURL = @"http://lmgtfy.com/?q=branch+metrics";
     
-    NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!", @"Kindred", @"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png"] forKeys:@[@"key1", @"key2", @"$og_title", @"$og_image_url"]];
-    
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+
+    [params setObject:@"Joe" forKey:@"user"];
+    [params setObject:@"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"profile_pic"];
+    [params setObject:@"Joe likes long walks on the beach..." forKey:@"description"];
+        
+    [params setObject:@"Joe's My App Referral" forKey:@"$og_title"];
+    [params setObject:@"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"$og_image_url"];
+    [params setObject:@"Join Joe in My App - it's awesome" forKey:@"$og_description"];
+
+    [params setObject:@"http://myapp.com/desktop_splash" forKey:@"$desktop_url"];
+
+
     NSArray *tags = @[@"tag1", @"tag2"];
     
     NSString *feature = @"invite";
