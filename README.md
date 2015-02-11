@@ -299,7 +299,7 @@ Also, you do custom redirection by inserting the following _optional keys in the
 | Key | Value
 | --- | ---
 | "$desktop_url" | Where to send the user on a desktop or laptop. By default it is the Branch-hosted text-me service
-| "$android_url" | The replacement URL for the Play Store to send the user if they don't have the app. _Only necessary if you want a mobile web splash_
+| "$android_url" | The replacement URL for the Play Store to send the user if they don't have the app. Currently, Chrome does not support this override. _Only necessary if you want a mobile web splash_
 | "$ios_url" | The replacement URL for the App Store to send the user if they don't have the app. _Only necessary if you want a mobile web splash_
 | "$ipad_url" | Same as above but for iPad Store
 | "$fire_url" | Same as above but for Amazon Fire Store
