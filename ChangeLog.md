@@ -1,5 +1,7 @@
 Branch iOS SDK change log 
 
+- v0.4.3: Added app listing
+
 - v0.4.2: Added API's for getShortURL Synchrnously
 
 - v0.4.1: Added BranchActivityItemProvider
