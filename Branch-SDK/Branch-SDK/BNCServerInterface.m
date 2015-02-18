@@ -18,8 +18,10 @@
     [self getRequestAsync:params url:url andTag:requestTag log:YES];
 }
 
+// this is actually a synchronous call, since its callers are NOT on the main queue
 - (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
-    [self genericAsyncHTTPRequest:[self prepareGetRequest:params url:url log:log] withTag:requestTag andLinkData:nil];
+    BNCServerResponse *serverResponse = [self genericSyncHTTPRequest:[self prepareGetRequest:params url:url log:log] withTag:requestTag andLinkData:nil];
+    if (self.delegate) [self.delegate serverCallback:serverResponse];
 }
 
 - (BNCServerResponse *)getRequestSync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag {
@@ -43,9 +45,10 @@
     [self postRequestAsync:post url:url andTag:requestTag andLinkData:linkData log:YES];
 }
 
+// this is actually a synchronous call, since its callers are NOT on the main queue
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log {
-    NSMutableURLRequest *request = [self preparePostRequest:post url:url log:log];
-    [self genericAsyncHTTPRequest:request withTag:requestTag andLinkData:linkData];
+    BNCServerResponse *serverResponse = [self genericSyncHTTPRequest:[self preparePostRequest:post url:url log:log] withTag:requestTag andLinkData:linkData];
+    if (self.delegate) [self.delegate serverCallback:serverResponse];
 }
 
 - (BNCServerResponse *)postRequestSync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log {
