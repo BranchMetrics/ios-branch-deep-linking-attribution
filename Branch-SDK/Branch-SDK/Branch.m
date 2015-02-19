@@ -885,13 +885,14 @@ static Branch *currInstance;
 // PRIVATE CALLS
 
 - (void)generateShortUrl:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params andCallback:(callbackWithUrl)callback {
-    self.urlLoadCallback = callback;
     
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
     req.tag = REQ_TAG_GET_CUSTOM_URL;
     BNCLinkData *post = [self prepareLinkDataFor:tags andAlias:alias andType:type andChannel:channel andFeature:feature andStage:stage andParams:params];
     
     if (![self.linkCache objectForKey:post]) {
+        self.urlLoadCallback = callback;
+        
         dispatch_async(self.asyncQueue, ^{
             req.postData = post.data;
             req.linkData = post;
@@ -907,10 +908,8 @@ static Branch *currInstance;
                 [self handleFailure:[self.requestQueue size]-1];
             }
         });
-    } else {
-        if (callback) {
-            callback([self.linkCache objectForKey:post], nil);
-        }
+    } else if (callback) {
+        callback([self.linkCache objectForKey:post], nil);
     }
 }
 
