@@ -316,13 +316,13 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 [params setObject:@"http://myapp.com/desktop_splash" forKey:@"$desktop_url"];
 
 // associate a url with a set of tags, channel, feature, and stage for better analytics.
-// tags: null or example set of tags could be "version1", "trial6", etc; each tag should not exceed 64 characters
-// channel: null or examples: "facebook", "twitter", "text_message", etc; should not exceed 128 characters
-// feature: null or examples: FEATURE_TAG_SHARE, FEATURE_TAG_REFERRAL, "unlock", etc; should not exceed 128 characters
-// stage: null or examples: "past_customer", "logged_in", "level_6"; should not exceed 128 characters
+// tags: nil or example set of tags could be "version1", "trial6", etc; each tag should not exceed 64 characters
+// channel: nil or examples: "facebook", "twitter", "text_message", etc; should not exceed 128 characters
+// feature: nil or examples: FEATURE_TAG_SHARE, FEATURE_TAG_REFERRAL, "unlock", etc; should not exceed 128 characters
+// stage: nil or examples: "past_customer", "logged_in", "level_6"; should not exceed 128 characters
 
 // Link 'type' can be used for scenarios where you want the link to only deep link the first time. 
-// Use _nil_, _BranchLinkTypeUnlimitedUse_ or _BranchLinkTypeOneTimeUse_
+// Use nil, BranchLinkTypeUnlimitedUse or BranchLinkTypeOneTimeUse
 
 // Link 'alias' can be used to label the endpoint on the link. For example: http://bnc.lt/AUSTIN28. Should not exceed 128 characters
 // Be careful about aliases: these are immutable objects permanently associated with the data and associated paramters you pass into the link. When you create one in the SDK, it's tied to that user identity as well (automatically specified by the Branch internals). If you want to retrieve the same link again, you'll need to call getShortUrl with all of the same parameters from before.
@@ -354,13 +354,13 @@ params["$og_description"] = "Join Joe in My App - it's awesome"
 params["$desktop_url"] = "http://myapp.com/desktop_splash"
 
 // associate a url with a set of tags, channel, feature, and stage for better analytics.
-// tags: null or example set of tags could be "version1", "trial6", etc; each tag should not exceed 64 characters
-// channel: null or examples: "facebook", "twitter", "text_message", etc; should not exceed 128 characters
-// feature: null or examples: FEATURE_TAG_SHARE, FEATURE_TAG_REFERRAL, "unlock", etc; should not exceed 128 characters
-// stage: null or examples: "past_customer", "logged_in", "level_6"; should not exceed 128 characters
+// tags: nil or example set of tags could be "version1", "trial6", etc; each tag should not exceed 64 characters
+// channel: nil or examples: "facebook", "twitter", "text_message", etc; should not exceed 128 characters
+// feature: nil or examples: FEATURE_TAG_SHARE, FEATURE_TAG_REFERRAL, "unlock", etc; should not exceed 128 characters
+// stage: nil or examples: "past_customer", "logged_in", "level_6"; should not exceed 128 characters
 
 // Link 'type' can be used for scenarios where you want the link to only deep link the first time.
-// Use _nil_, _BranchLinkTypeUnlimitedUse_ or _BranchLinkTypeOneTimeUse_
+// Use nil, BranchLinkTypeUnlimitedUse or BranchLinkTypeOneTimeUse
 
 // Link 'alias' can be used to label the endpoint on the link. For example: http://bnc.lt/AUSTIN28. Should not exceed 128 characters
 // Be careful about aliases: these are immutable objects permanently associated with the data and associated paramters you pass into the link. When you create one in the SDK, it's tied to that user identity as well (automatically specified by the Branch internals). If you want to retrieve the same link again, you'll need to call getShortUrl with all of the same parameters from before.
