@@ -43,11 +43,10 @@
     short_link = @"https://bnc.lt/l/3PxZVFU-BK";
     
     [[LSNocilla sharedInstance] start];
+    
     branch = [Branch getInstance:app_id];
     
     credits = 0;
-    
-    [self testOpen];
 }
 
 - (void)tearDown {
@@ -82,18 +81,24 @@
     [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         XCTAssertNotNil([BNCPreferenceHelper getSessionID]);
-        XCTAssertNotEqualObjects([BNCPreferenceHelper getSessionID], NO_STRING_VALUE);
-        XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], session_id);  // only for stubbing case
+        if ([[LSNocilla sharedInstance] isStarted]) {
+            XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], session_id);
+        } else {
+            XCTAssertNotEqualObjects([BNCPreferenceHelper getSessionID], NO_STRING_VALUE);
+        }
 
         [openExpectation fulfill];
     }];
     
     [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        
     }];
 }
 
 - (void)testGetShortURL {
+    [self testOpen];
+    
+    NSString __block *url1, __block *url2, __block *url3;
+    
     NSDictionary *responseDict = @{@"url": short_link};
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
     
@@ -107,15 +112,16 @@
     [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *url, NSError *error) {
         XCTAssertNil(error);
         XCTAssertNotNil(url);
-        XCTAssertEqualObjects(url, short_link);
+        if ([[LSNocilla sharedInstance] isStarted]) {
+            XCTAssertEqualObjects(url, short_link);
+        }
+        url1 = url;
         
         [getShortURLExpectation fulfill];
     }];
     
     [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        
     }];
-    
 }
 
 - (void)testGetRewards {
