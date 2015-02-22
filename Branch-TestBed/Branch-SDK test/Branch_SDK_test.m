@@ -97,7 +97,7 @@
 - (void)testGetShortURL {
     [self testOpen];
     
-    NSString __block *url1, __block *url2, __block *url3;
+    NSString __block *returnURL;
     
     NSDictionary *responseDict = @{@"url": short_link};
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
@@ -115,12 +115,31 @@
         if ([[LSNocilla sharedInstance] isStarted]) {
             XCTAssertEqualObjects(url, short_link);
         }
-        url1 = url;
+        returnURL = url;
+        
+        [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *url, NSError *error) {
+            XCTAssertNil(error);
+            XCTAssertNotNil(url);
+            if ([[LSNocilla sharedInstance] isStarted]) {
+                XCTAssertEqualObjects(url, returnURL);
+            }
+        }];
+        
+//        if (![[LSNocilla sharedInstance] isStarted]) {
+//            [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil andCallback:^(NSString *url, NSError *error) {
+//                XCTAssertNil(error);
+//                XCTAssertNotNil(url);
+//                if ([[LSNocilla sharedInstance] isStarted]) {
+//                    NSLog(@"------------ %@", url);
+//                    XCTAssertNotEqualObjects(url, url1);
+//                }
+//            }];
+//        }
         
         [getShortURLExpectation fulfill];
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:3 handler:^(NSError *error) {
     }];
 }
 
