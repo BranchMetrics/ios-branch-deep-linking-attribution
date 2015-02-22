@@ -94,7 +94,7 @@
     }];
 }
 
-- (void)testGetShortURL {
+- (void)testGetShortURLAsync {
     [self testOpen];
     
     NSString __block *returnURL;
@@ -143,8 +143,35 @@
     }];
 }
 
+- (void)testGetShortURLSync {
+    [self testOpen];
+    
+    NSDictionary *responseDict = @{@"url": short_link};
+    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
+    .andReturn(200)
+    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withBody(responseData);
+    
+    NSString *url1 = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
+    XCTAssertNotNil(url1);
+    if ([[LSNocilla sharedInstance] isStarted]) {
+        XCTAssertEqualObjects(url1, short_link);
+    }
+    
+    NSString *url2 = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
+    XCTAssertEqualObjects(url1, url2);
+    
+    if (![[LSNocilla sharedInstance] isStarted]) {
+        NSString *url3 = [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil];
+        XCTAssertNotNil(url3);
+        XCTAssertNotEqualObjects(url1, url3);
+    }
+}
+
 - (void)testGetRewards {
-    XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], session_id);
+//    XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], session_id);
     
     XCTAssert(YES, @"Pass");
 }
