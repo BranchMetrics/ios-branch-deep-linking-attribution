@@ -1559,6 +1559,7 @@ static Branch *currInstance;
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
             [self processReferralCounts:response.data];
         } else if ([requestTag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
+            NSLog(@"========= %@", response);
             NSString *url = [response.data objectForKey:URL];
             if (self.urlLoadCallback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
