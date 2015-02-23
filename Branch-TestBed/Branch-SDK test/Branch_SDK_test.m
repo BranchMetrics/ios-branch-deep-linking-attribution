@@ -26,6 +26,10 @@
     NSString *session_id;
     NSString *identity_link;
     NSString *short_link;
+    NSString *logout_identity_id;
+    NSString *new_identity_id;
+    NSString *new_session_id;
+    NSString *new_user_link;
 }
 
 @end
@@ -43,6 +47,10 @@
     identity_link = @"https://bnc.lt/i/3N-xr0E-_M";
     short_link = @"https://bnc.lt/l/3PxZVFU-BK";
     credits = 30;
+    logout_identity_id = @"98274447349252681";
+    new_identity_id = @"85782216939930424";
+    new_session_id = @"98274447370224207";
+    new_user_link = @"https://bnc.lt/i/2kkbX6k-As";
     
     [[LSNocilla sharedInstance] start];
     
@@ -125,17 +133,6 @@
             }
         }];
         
-//        if (![[LSNocilla sharedInstance] isStarted]) {
-//            [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil andCallback:^(NSString *url, NSError *error) {
-//                XCTAssertNil(error);
-//                XCTAssertNotNil(url);
-//                if ([[LSNocilla sharedInstance] isStarted]) {
-//                    NSLog(@"------------ %@", url);
-//                    XCTAssertNotEqualObjects(url, url1);
-//                }
-//            }];
-//        }
-        
         [getShortURLExpectation fulfill];
     }];
     
@@ -168,6 +165,65 @@
         XCTAssertNotNil(url3);
         XCTAssertNotEqualObjects(url1, url3);
     }
+}
+
+- (void)testSetIdentity {
+    [self testOpen];
+
+    [BNCPreferenceHelper setSessionID:new_session_id];
+    [BNCPreferenceHelper setIdentityID:logout_identity_id];
+    [BNCPreferenceHelper setUserURL:@"https://bnc.lt/i/3R7_PIk-77"];
+    
+    [BNCPreferenceHelper setUserIdentity:NO_STRING_VALUE];
+    [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
+    [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
+    [BNCPreferenceHelper clearUserCreditsAndCounts];
+    
+    NSDictionary *responseDict = @{@"identity_id": new_identity_id,
+                                   @"link": new_user_link,
+                                   @"link_click_id": @"87925296346431956",
+                                   @"referring_data": @"{ \"$og_title\":\"Kindred\",\"key\":\"test_object\" }"
+                                   };
+    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"profile"])
+    .andReturn(200)
+    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withBody(responseData);
+    
+    XCTestExpectation *setIdentityExpectation = [self expectationWithDescription:@"Test setIdentity"];
+
+    [branch setIdentity:@"test_user_10" withCallback:^(NSDictionary *params, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(params);
+        
+        XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], new_identity_id);
+        XCTAssertEqualObjects([BNCPreferenceHelper getUserURL], new_user_link);
+        NSDictionary *installParams = [branch getFirstReferringParams];
+        
+        XCTAssertEqualObjects(installParams[@"$og_title"], @"Kindred");
+        XCTAssertEqualObjects(installParams[@"key"], @"test_object");
+        
+        [setIdentityExpectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:3 handler:^(NSError *error) {
+    }];
+}
+
+- (void)logout {
+    NSDictionary *responseDict = @{@"identity_id": logout_identity_id,
+                                   @"link": @"https://bnc.lt/i/3R7_PIk-77",
+                                   @"session_id": new_session_id
+                                   };
+    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"logout"])
+    .andReturn(200)
+    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withBody(responseData);
+    
+    [branch logout];
 }
 
 - (void)testGetRewardsChanged {
@@ -226,15 +282,7 @@
     }];
 }
 
-- (void)performReferral {
-    credits += 5;
-}
 
-- (void)performRedeem {
-    if (credits >= 5) {
-        credits -= 5;
-    }
-}
 
 //- (void)testPerformanceExample {
 //    // This is an example of a performance test case.
