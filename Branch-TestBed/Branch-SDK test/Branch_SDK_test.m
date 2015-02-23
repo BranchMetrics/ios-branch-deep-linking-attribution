@@ -11,6 +11,7 @@
 #import "Branch.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
+#import "BNCConfig.h"
 #import "Nocilla.h"
 
 @interface Branch_SDK_Tests : XCTestCase {
@@ -41,12 +42,11 @@
     session_id = @"97141055400444225";
     identity_link = @"https://bnc.lt/i/3N-xr0E-_M";
     short_link = @"https://bnc.lt/l/3PxZVFU-BK";
+    credits = 30;
     
     [[LSNocilla sharedInstance] start];
     
     branch = [Branch getInstance:app_id];
-    
-    credits = 0;
 }
 
 - (void)tearDown {
@@ -139,7 +139,7 @@
         [getShortURLExpectation fulfill];
     }];
     
-    [self waitForExpectationsWithTimeout:3 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
     }];
 }
 
@@ -170,10 +170,60 @@
     }
 }
 
-- (void)testGetRewards {
-//    XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], session_id);
+- (void)testGetRewardsChanged {
+    [self testOpen];
     
-    XCTAssert(YES, @"Pass");
+    [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
+
+    NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
+    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@?sdk=ios%@", @"credits/", [BNCPreferenceHelper getIdentityID], SDK_VERSION]])
+    .andReturn(200)
+    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withBody(responseData);
+    
+    XCTestExpectation *getRewardExpectation = [self expectationWithDescription:@"Test getReward"];
+    
+    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
+        XCTAssertNil(error);
+        if ([[LSNocilla sharedInstance] isStarted]) {
+            XCTAssertTrue(changed);
+        }
+        
+        [getRewardExpectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+    }];
+}
+
+- (void)testGetRewardsUnchanged {
+    [self testOpen];
+    
+    [BNCPreferenceHelper setCreditCount:credits forBucket:@"default"];
+    
+    NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
+    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@?sdk=ios%@", @"credits/", [BNCPreferenceHelper getIdentityID], SDK_VERSION]])
+    .andReturn(200)
+    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withBody(responseData);
+    
+    XCTestExpectation *getRewardExpectation = [self expectationWithDescription:@"Test getReward"];
+    
+    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
+        XCTAssertNil(error);
+        if ([[LSNocilla sharedInstance] isStarted]) {
+            XCTAssertFalse(changed);
+        }
+        
+        [getRewardExpectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+    }];
 }
 
 - (void)performReferral {
