@@ -395,6 +395,61 @@
     }];
 }
 
+- (void)testGetCreditHistory {
+    [self testOpen];
+    
+    NSArray *responseArray = @[
+                               @{@"referree": @"<null>",
+                                 @"referrer": @"user_1",
+                                 @"transaction": @{@"amount": @7,
+                                                   @"bucket": @"default",
+                                                   @"date": @"2015-02-23T19:14:40.880Z",
+                                                   @"id": @"98485002198582256",
+                                                   @"type": @0
+                                                   }
+                                 },
+                               @{@"referree": @"<null>",
+                                 @"referrer": @"user_2",
+                                 @"transaction": @{@"amount": @8,
+                                                   @"bucket": @"default",
+                                                   @"date": @"2015-02-23T19:13:32.798Z",
+                                                   @"id": @"98484716641976809",
+                                                   @"type": @0
+                                                   }
+                                 }
+                               ];
+    NSError *err = nil;
+    NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseArray options:NSJSONWritingPrettyPrinted error:&err];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"credithistory"])
+    .andReturn(200)
+    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withBody(responseData);
+    
+    XCTestExpectation *getCreditHistoryExpectation = [self expectationWithDescription:@"Test getCreditHistory"];
+    
+    [branch getCreditHistoryWithCallback:^(NSArray *list, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(list);
+        XCTAssertEqual(list.count, 2);
+        
+        NSDictionary *xact = list[0];
+        XCTAssertEqualObjects(xact[@"referrer"], @"user_1");
+        XCTAssertEqualObjects(xact[@"transaction"][@"id"], @"98485002198582256");
+        XCTAssertEqualObjects(xact[@"transaction"][@"amount"], @7);
+        
+        xact = list[1];
+        XCTAssertEqualObjects(xact[@"referrer"], @"user_2");
+        XCTAssertEqualObjects(xact[@"transaction"][@"id"], @"98484716641976809");
+        XCTAssertEqualObjects(xact[@"transaction"][@"amount"], @8);
+        
+        [getCreditHistoryExpectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+    }];
+}
+
 
 //- (void)testPerformanceExample {
 //    // This is an example of a performance test case.
