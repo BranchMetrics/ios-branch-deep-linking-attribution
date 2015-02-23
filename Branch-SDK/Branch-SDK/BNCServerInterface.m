@@ -48,8 +48,6 @@
 // this is actually a synchronous call; it should NOT be called from the main queue
 - (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log {
     BNCServerResponse *serverResponse = [self genericSyncHTTPRequest:[self preparePostRequest:post url:url log:log] withTag:requestTag andLinkData:linkData];
-    NSLog(@"======================= %@, %@", requestTag, url);
-    NSLog(@"======================= %@", post);
     if (self.delegate) [self.delegate serverCallback:serverResponse];
 }
 
