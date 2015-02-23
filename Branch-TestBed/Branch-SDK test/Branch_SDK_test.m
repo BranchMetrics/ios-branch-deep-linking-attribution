@@ -17,7 +17,7 @@
 @interface Branch_SDK_Tests : XCTestCase {
     
 @private
-    Branch *branch;
+    __weak Branch *branch;
     int credits;
     NSString *app_id;
     NSString *device_fingerprint_id;
@@ -315,7 +315,83 @@
         [getReferralCodeExpectation fulfill];
     }];
     
-    [self waitForExpectationsWithTimeout:3 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+    }];
+}
+
+- (void)testValidateReferralCode {
+    [self testOpen];
+    
+    NSDictionary *responseDict = @{@"referral_code": @"testRC",
+                                   @"calculation_type": @1,
+                                   @"event": @"$redeem_code-testRC",
+                                   @"location": @2,
+                                   @"metadata": @{@"amount": @7,
+                                                  @"bucket": @"default"
+                                                  }
+                                   };
+    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referralcode", @"testRC"]])
+    .andReturn(200)
+    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withBody(responseData);
+    
+    XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test validateReferralCode"];
+        
+    [branch validateReferralCode:@"testRC" andCallback:^(NSDictionary *params, NSError *error) {
+        XCTAssertNil(error);
+        
+        NSString *code = params[@"referral_code"];
+        XCTAssertNotNil(code);
+        XCTAssertTrue([code hasPrefix:@"test"]);
+        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUniqueRewards);
+        XCTAssertEqual([params[@"location"] integerValue], BranchReferringUser);
+        XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 7);
+        
+        [getReferralCodeExpectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+    }];
+}
+
+- (void)testApplyReferralCode {
+    [self testOpen];
+    
+    [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
+    
+    NSDictionary *responseDict = @{@"referral_code": @"testRC",
+                                   @"calculation_type": @1,
+                                   @"event": @"$redeem_code-testRC",
+                                   @"location": @2,
+                                   @"metadata": @{@"amount": @7,
+                                                  @"bucket": @"default"
+                                                  }
+                                   };
+    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"applycode", @"testRC"]])
+    .andReturn(200)
+    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withBody(responseData);
+    
+    XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test applyReferralCode"];
+    
+    [branch applyReferralCode:@"testRC" andCallback:^(NSDictionary *params, NSError *error) {
+        XCTAssertNil(error);
+        
+        NSString *code = params[@"referral_code"];
+        XCTAssertNotNil(code);
+        XCTAssertTrue([code hasPrefix:@"test"]);
+        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUniqueRewards);
+        XCTAssertEqual([params[@"location"] integerValue], BranchReferringUser);
+        XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 7);
+        
+        [getReferralCodeExpectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
     }];
 }
 
