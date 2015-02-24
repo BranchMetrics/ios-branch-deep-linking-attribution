@@ -55,6 +55,7 @@
     [[LSNocilla sharedInstance] start];
     
     branch = [Branch getInstance:app_id];
+    [self initSession];
 }
 
 - (void)tearDown {
@@ -70,7 +71,7 @@
     [BNCPreferenceHelper setIdentityID:NO_STRING_VALUE];
 }
 
-- (void)testOpen {
+- (void)initSession {
     NSDictionary *responseDict = @{@"browser_fingerprint_id": browser_fingerprint_id,
                                    @"device_fingerprint_id": device_fingerprint_id,
                                    @"identity_id": identity_id,
@@ -103,8 +104,6 @@
 }
 
 - (void)testGetShortURLAsync {
-    [self testOpen];
-    
     NSString __block *returnURL;
     
     NSDictionary *responseDict = @{@"url": short_link};
@@ -141,7 +140,7 @@
 }
 
 - (void)testGetShortURLSync {
-    [self testOpen];
+//    [self initSession];
     
     NSDictionary *responseDict = @{@"url": short_link};
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
@@ -167,67 +166,8 @@
     }
 }
 
-- (void)testSetIdentity {
-    [self testOpen];
-
-    [BNCPreferenceHelper setSessionID:new_session_id];
-    [BNCPreferenceHelper setIdentityID:logout_identity_id];
-    [BNCPreferenceHelper setUserURL:@"https://bnc.lt/i/3R7_PIk-77"];
-    
-    [BNCPreferenceHelper setUserIdentity:NO_STRING_VALUE];
-    [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
-    [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
-    [BNCPreferenceHelper clearUserCreditsAndCounts];
-    
-    NSDictionary *responseDict = @{@"identity_id": new_identity_id,
-                                   @"link": new_user_link,
-                                   @"link_click_id": @"87925296346431956",
-                                   @"referring_data": @"{ \"$og_title\":\"Kindred\",\"key\":\"test_object\" }"
-                                   };
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
-    
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"profile"])
-    .andReturn(200)
-    .withHeaders(@{@"application/json": @"Content-Type"})
-    .withBody(responseData);
-    
-    XCTestExpectation *setIdentityExpectation = [self expectationWithDescription:@"Test setIdentity"];
-
-    [branch setIdentity:@"test_user_10" withCallback:^(NSDictionary *params, NSError *error) {
-        XCTAssertNil(error);
-        XCTAssertNotNil(params);
-        
-        XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], new_identity_id);
-        XCTAssertEqualObjects([BNCPreferenceHelper getUserURL], new_user_link);
-        NSDictionary *installParams = [branch getFirstReferringParams];
-        
-        XCTAssertEqualObjects(installParams[@"$og_title"], @"Kindred");
-        XCTAssertEqualObjects(installParams[@"key"], @"test_object");
-        
-        [setIdentityExpectation fulfill];
-    }];
-    
-    [self waitForExpectationsWithTimeout:3 handler:^(NSError *error) {
-    }];
-}
-
-- (void)logout {
-    NSDictionary *responseDict = @{@"identity_id": logout_identity_id,
-                                   @"link": @"https://bnc.lt/i/3R7_PIk-77",
-                                   @"session_id": new_session_id
-                                   };
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
-    
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"logout"])
-    .andReturn(200)
-    .withHeaders(@{@"application/json": @"Content-Type"})
-    .withBody(responseData);
-    
-    [branch logout];
-}
-
 - (void)testGetRewardsChanged {
-    [self testOpen];
+//    [self initSession];
     
     [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
 
@@ -255,7 +195,7 @@
 }
 
 - (void)testGetRewardsUnchanged {
-    [self testOpen];
+//    [self initSession];
     
     [BNCPreferenceHelper setCreditCount:credits forBucket:@"default"];
     
@@ -283,7 +223,7 @@
 }
 
 - (void)testGetReferralCode {
-    [self testOpen];
+//    [self initSession];
     
     NSDictionary *responseDict = @{@"referral_code": @"testRC",
                                    @"calculation_type": @1,
@@ -320,7 +260,7 @@
 }
 
 - (void)testValidateReferralCode {
-    [self testOpen];
+//    [self initSession];
     
     NSDictionary *responseDict = @{@"referral_code": @"testRC",
                                    @"calculation_type": @1,
@@ -357,7 +297,7 @@
 }
 
 - (void)testApplyReferralCode {
-    [self testOpen];
+//    [self initSession];
     
     [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
     
@@ -396,7 +336,7 @@
 }
 
 - (void)testGetCreditHistory {
-    [self testOpen];
+//    [self initSession];
     
     NSArray *responseArray = @[
                                @{@"referree": @"<null>",
@@ -450,6 +390,48 @@
     }];
 }
 
+- (void)testSetIdentity {
+    [self initSession];
+    
+    [BNCPreferenceHelper setIdentityID:logout_identity_id];
+    [BNCPreferenceHelper setUserURL:@"https://bnc.lt/i/3R7_PIk-77"];
+    
+    [BNCPreferenceHelper setUserIdentity:NO_STRING_VALUE];
+    [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
+    [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
+    [BNCPreferenceHelper clearUserCreditsAndCounts];
+    
+    NSDictionary *responseDict = @{@"identity_id": new_identity_id,
+                                   @"link": new_user_link,
+                                   @"link_click_id": @"87925296346431956",
+                                   @"referring_data": @"{ \"$og_title\":\"Kindred\",\"key\":\"test_object\" }"
+                                   };
+    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"profile"])
+    .andReturn(200)
+    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withBody(responseData);
+    
+    XCTestExpectation *setIdentityExpectation = [self expectationWithDescription:@"Test setIdentity"];
+    
+    [branch setIdentity:@"test_user_10" withCallback:^(NSDictionary *params, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(params);
+        
+        XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], new_identity_id);
+        XCTAssertEqualObjects([BNCPreferenceHelper getUserURL], new_user_link);
+        NSDictionary *installParams = [branch getFirstReferringParams];
+        
+        XCTAssertEqualObjects(installParams[@"$og_title"], @"Kindred");
+        XCTAssertEqualObjects(installParams[@"key"], @"test_object");
+        
+        [setIdentityExpectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:3 handler:^(NSError *error) {
+    }];
+}
 
 //- (void)testPerformanceExample {
 //    // This is an example of a performance test case.

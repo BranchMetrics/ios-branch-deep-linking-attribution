@@ -209,6 +209,10 @@ static Branch *currInstance;
     [BNCPreferenceHelper setDevDebug];
 }
 
+- (void)simulateInitFinished {
+    self.initFinished = YES;
+}
+
 - (void)resetUserSession {
     if (self) {
         self.isInit = NO;
