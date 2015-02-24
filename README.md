@@ -223,14 +223,14 @@ To identify a user, just call:
 
 ```objc
 // previously identifyUser:
-[[Branch getInstance] setIdentity:@"your user id"];	// your user id should not exceed 127 characters
+[[Branch getInstance] setIdentity:your user id];	// your user id should not exceed 127 characters
 ```
 
 ###### Swift
 
 ```swift
 // previously identifyUser:
-Branch.getInstance().setIdentity("your user id")	// your user id should not exceed 127 characters
+Branch.getInstance().setIdentity(your user id)	// your user id should not exceed 127 characters
 ```
 
 #### Logout
