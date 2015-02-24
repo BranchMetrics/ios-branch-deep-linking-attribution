@@ -87,6 +87,7 @@ typedef enum {
                                                            andAlias:(NSString *)alias;
 
 + (void)setDebug;
+- (void)simulateInitFinished;
 
 - (void)initSession;
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options;
