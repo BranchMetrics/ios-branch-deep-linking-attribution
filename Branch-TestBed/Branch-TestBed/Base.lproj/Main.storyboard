@@ -193,6 +193,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="editRefShortUrl" destination="8ld-LZ-Y0e" id="1w8-3u-Zkr"/>
+                        <outlet property="refreshUrlButton" destination="K5h-gj-5ro" id="1WX-mO-mhS"/>
                         <outlet property="txtBuyCount" destination="jBi-oN-Wuz" id="hhd-10-xa1"/>
                         <outlet property="txtBuyUniques" destination="uk0-AJ-GV0" id="4Do-hb-K8x"/>
                         <outlet property="txtInstallTotal" destination="d6R-jy-rkj" id="fP7-UX-amR"/>
