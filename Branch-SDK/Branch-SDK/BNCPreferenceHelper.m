@@ -77,6 +77,10 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
     return BNC_Dev_Debug;
 }
 
++ (BOOL)getRemoteDebug {
+    return BNC_Remote_Debug;
+}
+
 + (void)clearDebug {
     BNC_Debug = NO;
     

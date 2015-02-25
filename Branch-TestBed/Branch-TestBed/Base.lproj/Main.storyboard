@@ -8,7 +8,7 @@
         <!--View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController id="vXZ-lx-hvc" customClass="ViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MainVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="vXZ-lx-hvc" customClass="ViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
@@ -208,7 +208,7 @@
         <!--Referral Code-->
         <scene sceneID="lLX-n3-iOU">
             <objects>
-                <viewController id="NBd-ng-CiI" customClass="ReferralCodeViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ReferralCodeVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="NBd-ng-CiI" customClass="ReferralCodeViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="FGR-nl-9ii"/>
                         <viewControllerLayoutGuide type="bottom" id="U34-Yt-k3k"/>
@@ -332,7 +332,7 @@
         <!--Credit History-->
         <scene sceneID="nTj-xn-fDL">
             <objects>
-                <tableViewController id="7ko-2I-ZBR" customClass="CreditHistoryViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="CreditHistoryVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="7ko-2I-ZBR" customClass="CreditHistoryViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="xgB-Lj-hV2">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

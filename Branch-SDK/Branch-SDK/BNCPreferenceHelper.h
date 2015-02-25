@@ -94,5 +94,6 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)sendScreenshot:(NSData *)data;
 + (void)setDebugConnectionDelegate:(id<BNCDebugConnectionDelegate>) debugConnectionDelegate;
 + (void)keepDebugAlive;
++ (BOOL)getRemoteDebug;
 
 @end
