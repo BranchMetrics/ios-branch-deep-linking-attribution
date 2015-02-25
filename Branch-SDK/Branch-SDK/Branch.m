@@ -55,7 +55,7 @@ static NSString *REFERRAL_CODE_EXPIRATION = @"expiration";
 
 static NSInteger REFERRAL_CREATION_SOURCE_SDK = 2;
 
-static int BNCDebugTriggerDuration = 2.9;
+static int BNCDebugTriggerDuration = 3;
 static int BNCDebugTriggerFingers = 4;
 static int BNCDebugTriggerFingersSimulator = 2;
 static dispatch_queue_t bnc_asyncDebugQueue = nil;
