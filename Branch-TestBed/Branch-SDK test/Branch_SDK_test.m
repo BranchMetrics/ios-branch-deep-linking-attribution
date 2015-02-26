@@ -36,6 +36,15 @@
 
 @implementation Branch_SDK_Tests
 
++ (void)setUp {
+    [[LSNocilla sharedInstance] start];
+}
+
++ (void)tearDown {
+    [[LSNocilla sharedInstance] clearStubs];
+    [[LSNocilla sharedInstance] stop];
+}
+
 - (void)setUp {
     [super setUp];
     
@@ -52,16 +61,11 @@
     new_session_id = @"98274447370224207";
     new_user_link = @"https://bnc.lt/i/2kkbX6k-As";
     
-    [[LSNocilla sharedInstance] start];
-    
     branch = [Branch getInstance:app_id];
     [self initSession];
 }
 
 - (void)tearDown {
-    [[LSNocilla sharedInstance] clearStubs];
-    [[LSNocilla sharedInstance] stop];
-    
     [super tearDown];
 }
 

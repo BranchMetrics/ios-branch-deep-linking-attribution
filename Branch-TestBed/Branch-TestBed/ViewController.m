@@ -12,6 +12,8 @@
 
 @interface ViewController ()
 
+@property (nonatomic, weak) IBOutlet UIButton *refreshUrlButton;
+@property (weak, nonatomic) IBOutlet UITextField *editRefShortUrl;
 @property (weak, nonatomic) IBOutlet UILabel *txtRewardCredits;
 @property (weak, nonatomic) IBOutlet UILabel *txtInstallTotal;
 @property (weak, nonatomic) IBOutlet UILabel *txtInstallUniques;

@@ -46,7 +46,7 @@
     
     [serverInterface connectToDebug];
     
-    XCTAssertTrue([BNCPreferenceHelper getRemoteDebug]);
+    XCTAssertTrue(BNC_Remote_Debug);
 }
 
 - (void)testConnectFail {
@@ -59,7 +59,7 @@
     .withBody(responseData);
     
     [BNCPreferenceHelper setDebug];
-    XCTAssertFalse([BNCPreferenceHelper getRemoteDebug]);
+    XCTAssertFalse(BNC_Remote_Debug);
 }
 
 @end

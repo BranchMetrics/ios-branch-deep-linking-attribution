@@ -10,7 +10,4 @@
 
 @interface ViewController : UIViewController
 
-@property (nonatomic, weak) IBOutlet UIButton *refreshUrlButton;
-@property (weak, nonatomic) IBOutlet UITextField *editRefShortUrl;
-
 @end
