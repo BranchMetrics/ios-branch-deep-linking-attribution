@@ -34,7 +34,8 @@
     [BNCPreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
     [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
     
-    [branch simulateInitFinished];
+    [BNCPreferenceHelper setTestDelegate:(id<BNCTestDelegate>)branch];
+    [BNCPreferenceHelper simulateInitFinished];
     
     [[LSNocilla sharedInstance] start];
 }

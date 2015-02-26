@@ -95,9 +95,6 @@
                <Test
                   Identifier = "Branch_SDK_Load_Tests/testLoad">
                </Test>
-               <Test
-                  Identifier = "Branch_SDK_Tests">
-               </Test>
             </SkippedTests>
          </TestableReference>
          <TestableReference

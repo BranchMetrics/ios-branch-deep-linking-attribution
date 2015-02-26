@@ -39,7 +39,8 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 static BNCPreferenceHelper *instance = nil;
 static BOOL BNC_Debug = NO;
 static BOOL BNC_Dev_Debug = NO;
-static BOOL BNC_Remote_Debug = NO;
+BOOL BNC_Remote_Debug = NO;
+
 static dispatch_queue_t bnc_asyncLogQueue = nil;
 static id<BNCDebugConnectionDelegate> bnc_asyncDebugConnectionDelegate = nil;
 static BranchServerInterface *serverInterface = nil;
@@ -47,6 +48,8 @@ static BranchServerInterface *serverInterface = nil;
 static NSString *KEY_TIMEOUT = @"bnc_timeout";
 static NSString *KEY_RETRY_INTERVAL = @"bnc_retry_interval";
 static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
+
+static id<BNCTestDelegate> bnc_testDelegate = nil;
 
 @interface BNCPreferenceHelper() <BNCServerInterfaceDelegate>
 
@@ -75,10 +78,6 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 
 + (BOOL)getDevDebug {
     return BNC_Dev_Debug;
-}
-
-+ (BOOL)getRemoteDebug {
-    return BNC_Remote_Debug;
 }
 
 + (void)clearDebug {
@@ -592,6 +591,14 @@ static const short _base64DecodingTable[256] = {
 	NSData * objData = [[NSData alloc] initWithBytes:objResult length:j] ;
 	free(objResult);
 	return objData;
+}
+
++ (void)setTestDelegate:(id<BNCTestDelegate>) testDelegate {
+    bnc_testDelegate = testDelegate;
+}
+
++ (void)simulateInitFinished {
+    [bnc_testDelegate simulateInitFinished];
 }
 
 #pragma mark - ServerInterface delegate

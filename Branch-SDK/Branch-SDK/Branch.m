@@ -67,7 +67,7 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 
 
 
-@interface Branch() <BNCServerInterfaceDelegate, BNCDebugConnectionDelegate, UIGestureRecognizerDelegate>
+@interface Branch() <BNCServerInterfaceDelegate, BNCDebugConnectionDelegate, UIGestureRecognizerDelegate, BNCTestDelegate>
 
 @property (strong, nonatomic) BranchServerInterface *bServerInterface;
 
@@ -207,10 +207,6 @@ static Branch *currInstance;
 
 + (void)setDebug {
     [BNCPreferenceHelper setDevDebug];
-}
-
-- (void)simulateInitFinished {
-    self.initFinished = YES;
 }
 
 - (void)resetUserSession {
@@ -1709,6 +1705,12 @@ static Branch *currInstance;
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
         return YES;
+}
+
+#pragma mark - BNCTestDelagate
+
+- (void)simulateInitFinished {
+    self.initFinished = YES;
 }
 
 @end
