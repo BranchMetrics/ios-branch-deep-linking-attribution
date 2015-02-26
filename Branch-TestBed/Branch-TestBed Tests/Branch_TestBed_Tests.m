@@ -11,7 +11,7 @@
 #import "BNCSystemObserver.h"
 
 @interface Branch_TestBed_Tests : XCTestCase
-
+    
 @end
 
 @implementation Branch_TestBed_Tests
