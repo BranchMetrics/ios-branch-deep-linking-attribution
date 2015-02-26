@@ -46,7 +46,19 @@
     
     [serverInterface connectToDebug];
     
+    // Verify that the gesture recognizer is present
+    BOOL hasLongPress = NO;
+    for (UIGestureRecognizer *gestureRecognizer in [UIApplication sharedApplication].keyWindow.gestureRecognizers) {
+        if ([gestureRecognizer isMemberOfClass:[UILongPressGestureRecognizer class]]) {
+            UILongPressGestureRecognizer *longPress = (UILongPressGestureRecognizer *)gestureRecognizer;
+            if (longPress.minimumPressDuration == 3) {
+                hasLongPress = YES;
+            }
+        }
+    }
+    
     XCTAssertTrue(BNC_Remote_Debug);
+    XCTAssertTrue(hasLongPress);
 }
 
 - (void)testConnectFail {
@@ -59,7 +71,20 @@
     .withBody(responseData);
     
     [BNCPreferenceHelper setDebug];
+    
+    // Verify that the gesture recognizer is not present
+    BOOL hasLongPress = NO;
+    for (UIGestureRecognizer *gestureRecognizer in [UIApplication sharedApplication].keyWindow.gestureRecognizers) {
+        if ([gestureRecognizer isMemberOfClass:[UILongPressGestureRecognizer class]]) {
+            UILongPressGestureRecognizer *longPress = (UILongPressGestureRecognizer *)gestureRecognizer;
+            if (longPress.minimumPressDuration == 3) {
+                hasLongPress = YES;
+            }
+        }
+    }
+    
     XCTAssertFalse(BNC_Remote_Debug);
+    XCTAssertFalse(hasLongPress);
 }
 
 @end
