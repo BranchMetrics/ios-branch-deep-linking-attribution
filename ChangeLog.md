@@ -1,5 +1,7 @@
 Branch iOS SDK change log 
 
+- v0.4.5: Double check all delegates when switching to main queue
+
 - v0.4.4: Fixed potential deadlock issue
 
 - v0.4.3: Added app listing
