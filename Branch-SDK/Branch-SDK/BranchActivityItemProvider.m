@@ -74,7 +74,7 @@
         channel = @"print";
     } else if (activityString == UIActivityTypeSaveToCameraRoll) {
         channel = @"camera_roll";
-    } else if ([BranchActivityItemProvider iOS7OrAbove]) {
+    } else if ([BNCSystemObserver getOSVersion].integerValue >= 7) {
         if (activityString == UIActivityTypeAddToReadingList) {
             channel = @"reading_list";
         } else if (activityString == UIActivityTypeAirDrop) {
@@ -88,10 +88,6 @@
         }
     }
     return channel;
-}
-
-+ (BOOL)iOS7OrAbove {
-    return [BNCSystemObserver getOSVersion].integerValue >= 7;
 }
 
 @end
