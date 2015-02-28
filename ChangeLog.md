@@ -1,5 +1,7 @@
 Branch iOS SDK change log 
 
+- V0.4.6: Added API Key to GET requests; Fixed iOS 6 issue in UIActivityItemProvider
+
 - v0.4.5: Double check all delegates when switching to main queue
 
 - v0.4.4: Fixed potential deadlock issue
@@ -10,7 +12,7 @@ Branch iOS SDK change log
 
 - v0.4.1: Added BranchActivityItemProvider
 
-- v0.4.0: Made CoreTelephony framework optional, Added UIAcitivityView item provider, Make debug clear device fingerprint
+- v0.4.0: Made CoreTelephony framework optional, Added UIActivityView item provider, Make debug clear device fingerprint
 
 - v0.3.102: Caching short url's for the same parameters
 
