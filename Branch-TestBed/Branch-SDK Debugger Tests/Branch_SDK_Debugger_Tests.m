@@ -30,7 +30,7 @@
     
     prefHelper = [[BNCPreferenceHelper alloc] init];
     serverInterface = [[BranchServerInterface alloc] init];
-    serverInterface.delegate = (id<BNCServerInterfaceDelegate>)prefHelper;    
+    serverInterface.delegate = (id<BNCServerInterfaceDelegate>)prefHelper;
 }
 
 - (void)tearDown {

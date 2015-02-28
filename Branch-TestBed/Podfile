@@ -1,3 +1,19 @@
+target 'Branch-TestBed' do
+
+end
+
 target 'Branch-SDK test' do
+  pod 'Nocilla', :inhibit_warnings => true
+end
+
+target 'Branch-SDK Load Tests' do
+  pod 'Nocilla', :inhibit_warnings => true
+end
+
+target 'Branch-SDK Debugger Tests' do
+  pod 'Nocilla', :inhibit_warnings => true
+end
+
+target 'Branch-TestBed Tests' do
   pod 'Nocilla', :inhibit_warnings => true
 end
