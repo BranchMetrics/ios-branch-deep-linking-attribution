@@ -8,6 +8,7 @@
 
 #import "BranchActivityItemProvider.h"
 #import "Branch.h"
+#import "BNCSystemObserver.h"
 
 @implementation BranchActivityItemProvider
 
@@ -55,11 +56,7 @@
     NSString *channel = activityString; //default
     
     // Set to a more human readible sting if we can identify it
-    if (activityString == UIActivityTypeAddToReadingList) {
-        channel = @"reading_list";
-    } else if (activityString == UIActivityTypeAirDrop) {
-        channel = @"airdrop";
-    } else if (activityString == UIActivityTypeAssignToContact) {
+    if (activityString == UIActivityTypeAssignToContact) {
         channel = @"assign_to_contact";
     } else if (activityString == UIActivityTypeCopyToPasteboard) {
         channel = @"pasteboard";
@@ -69,22 +66,32 @@
         channel = @"sms";
     } else if (activityString == UIActivityTypePostToFacebook) {
         channel = @"facebook";
-    } else if (activityString == UIActivityTypePostToFlickr) {
-        channel = @"flickr";
-    } else if (activityString == UIActivityTypePostToTencentWeibo) {
-        channel = @"tencent_weibo";
     } else if (activityString == UIActivityTypePostToTwitter) {
         channel = @"twitter";
-    } else if (activityString == UIActivityTypePostToVimeo) {
-        channel = @"vimeo";
     } else if (activityString == UIActivityTypePostToWeibo) {
         channel = @"weibo";
     } else if (activityString == UIActivityTypePrint) {
         channel = @"print";
     } else if (activityString == UIActivityTypeSaveToCameraRoll) {
         channel = @"camera_roll";
+    } else if ([BranchActivityItemProvider iOS7OrAbove]) {
+        if (activityString == UIActivityTypeAddToReadingList) {
+            channel = @"reading_list";
+        } else if (activityString == UIActivityTypeAirDrop) {
+            channel = @"airdrop";
+        } else if (activityString == UIActivityTypePostToFlickr) {
+            channel = @"flickr";
+        } else if (activityString == UIActivityTypePostToTencentWeibo) {
+            channel = @"tencent_weibo";
+        } else if (activityString == UIActivityTypePostToVimeo) {
+            channel = @"vimeo";
+        }
     }
     return channel;
+}
+
++ (BOOL)iOS7OrAbove {
+    return [BNCSystemObserver getOSVersion].integerValue >= 7;
 }
 
 @end
