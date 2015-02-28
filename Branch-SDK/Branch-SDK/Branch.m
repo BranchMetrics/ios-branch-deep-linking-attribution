@@ -1331,43 +1331,49 @@ static Branch *currInstance;
 }
 
 -(void)processReferralCounts:(NSDictionary *)returnedData {
-    BOOL updateListener = NO;
-    
-    for (NSString *key in returnedData) {
-        NSDictionary *counts = [returnedData objectForKey:key];
-        NSInteger total = [[counts objectForKey:TOTAL] integerValue];
-        NSInteger unique = [[counts objectForKey:UNIQUE] integerValue];
-        
-        if (total != [BNCPreferenceHelper getActionTotalCount:key] || unique != [BNCPreferenceHelper getActionUniqueCount:key])
-            updateListener = YES;
-        
-        [BNCPreferenceHelper setActionTotalCount:key withCount:total];
-        [BNCPreferenceHelper setActionUniqueCount:key withCount:unique];
-    }
     if (self.pointLoadCallback) {
+        BOOL updateListener = NO;
+        
+        for (NSString *key in returnedData) {
+            NSDictionary *counts = [returnedData objectForKey:key];
+            NSInteger total = [[counts objectForKey:TOTAL] integerValue];
+            NSInteger unique = [[counts objectForKey:UNIQUE] integerValue];
+            
+            if (total != [BNCPreferenceHelper getActionTotalCount:key] || unique != [BNCPreferenceHelper getActionUniqueCount:key])
+                updateListener = YES;
+            
+            [BNCPreferenceHelper setActionTotalCount:key withCount:total];
+            [BNCPreferenceHelper setActionUniqueCount:key withCount:unique];
+        }
+    
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.pointLoadCallback(updateListener, nil);
-            self.pointLoadCallback = nil;
+            if (self.pointLoadCallback) {
+                self.pointLoadCallback(updateListener, nil);
+                self.pointLoadCallback = nil;
+            }
         });
     }
 }
 
 
 -(void)processReferralCredits:(NSDictionary *)returnedData {
-    BOOL updateListener = NO;
-    
-    for (NSString *key in returnedData) {
-        NSInteger credits = [[returnedData objectForKey:key] integerValue];
-        
-        if (credits != [BNCPreferenceHelper getCreditCountForBucket:key])
-            updateListener = YES;
-        
-        [BNCPreferenceHelper setCreditCount:credits forBucket:key];
-    }
     if (self.rewardLoadCallback) {
+        BOOL updateListener = NO;
+        
+        for (NSString *key in returnedData) {
+            NSInteger credits = [[returnedData objectForKey:key] integerValue];
+            
+            if (credits != [BNCPreferenceHelper getCreditCountForBucket:key])
+                updateListener = YES;
+            
+            [BNCPreferenceHelper setCreditCount:credits forBucket:key];
+        }
+    
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.rewardLoadCallback(updateListener, nil);
-            self.rewardLoadCallback = nil;
+            if (self.rewardLoadCallback) {
+                self.rewardLoadCallback(updateListener, nil);
+                self.rewardLoadCallback = nil;
+            }
         });
     }
 }
@@ -1384,8 +1390,10 @@ static Branch *currInstance;
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.creditHistoryLoadCallback(returnedData, nil);
-            self.creditHistoryLoadCallback = nil;
+            if (self.creditHistoryLoadCallback) {
+                self.creditHistoryLoadCallback(returnedData, nil);
+                self.creditHistoryLoadCallback = nil;
+            }
         });
     }
 }
@@ -1399,8 +1407,10 @@ static Branch *currInstance;
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.getReferralCodeCallback(returnedData, error);
-            self.getReferralCodeCallback = nil;
+            if (self.getReferralCodeCallback) {
+                self.getReferralCodeCallback(returnedData, error);
+                self.getReferralCodeCallback = nil;
+            }
         });
     }
 }
@@ -1414,8 +1424,10 @@ static Branch *currInstance;
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.validateReferralCodeCallback(returnedData, error);
-            self.validateReferralCodeCallback = nil;
+            if (self.validateReferralCodeCallback) {
+                self.validateReferralCodeCallback(returnedData, error);
+                self.validateReferralCodeCallback = nil;
+            }
         });
     }
 }
@@ -1429,8 +1441,10 @@ static Branch *currInstance;
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.applyReferralCodeCallback(returnedData, error);
-            self.applyReferralCodeCallback = nil;
+            if (self.applyReferralCodeCallback) {
+                self.applyReferralCodeCallback(returnedData, error);
+                self.applyReferralCodeCallback = nil;
+            }
         });
     }
 }
