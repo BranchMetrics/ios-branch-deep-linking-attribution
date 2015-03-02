@@ -6,10 +6,6 @@ target 'Branch-SDK Functionality Tests' do
   pod 'Nocilla', :inhibit_warnings => true
 end
 
-target 'Branch-SDK Tests' do
-  pod 'Nocilla', :inhibit_warnings => true
-end
-
 target 'Branch-SDK Load Tests' do
   pod 'Nocilla', :inhibit_warnings => true
 end
