@@ -10,11 +10,11 @@
 #import <XCTest/XCTest.h>
 #import "BNCSystemObserver.h"
 
-@interface Branch_TestBed_Tests : XCTestCase
-    
+@interface Branch_SDK_UI_Tests : XCTestCase
+
 @end
 
-@implementation Branch_TestBed_Tests
+@implementation Branch_SDK_UI_Tests
 
 - (void)setUp {
     [super setUp];
