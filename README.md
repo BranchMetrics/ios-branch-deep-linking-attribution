@@ -12,16 +12,6 @@ typedef void (^callbackWithList) (NSArray *list, NSError *error);
 
 Please look up BNCError.h for the list of error code.
 
-## API renaming since v0.2.7
-
-Deprecated API | Renamed to
--------------- | -------------
-all of initUserSession... | initSession...
-all of identifyUser... | setIdentity...
-clearUser | logout
-getInstallReferringParams | getFirstReferringParams
-getReferringParams | getLatestReferringParams
-
 ## FAQ
 
 1 __What if you go down?! Or there is a poor connection?__
