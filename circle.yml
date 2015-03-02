@@ -3,4 +3,5 @@ test:
     - xctool -scheme "Branch-SDK Debugger Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
     - xctool -scheme "Branch-SDK_Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
     - xctool -scheme "Branch-TestBed" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
+    - xctool -scheme "Branch-SDK Load Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
 
