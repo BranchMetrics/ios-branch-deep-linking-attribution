@@ -14,7 +14,7 @@
 #import "BNCConfig.h"
 #import "Nocilla.h"
 
-@interface Branch_SDK_Tests : XCTestCase {
+@interface Branch_SDK_Functionality_Tests : XCTestCase {
     
 @private
     __weak Branch *branch;
@@ -34,7 +34,7 @@
 
 @end
 
-@implementation Branch_SDK_Tests
+@implementation Branch_SDK_Functionality_Tests
 
 + (void)setUp {
     [[LSNocilla sharedInstance] start];
@@ -99,7 +99,7 @@
         } else {
             XCTAssertNotEqualObjects([BNCPreferenceHelper getSessionID], NO_STRING_VALUE);
         }
-
+        
         [openExpectation fulfill];
     }];
     
@@ -144,7 +144,7 @@
 }
 
 - (void)testGetShortURLSync {
-//    [self initSession];
+    //    [self initSession];
     
     NSDictionary *responseDict = @{@"url": short_link};
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
@@ -171,10 +171,10 @@
 }
 
 - (void)testGetRewardsChanged {
-//    [self initSession];
+    //    [self initSession];
     
     [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
-
+    
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
     
@@ -199,7 +199,7 @@
 }
 
 - (void)testGetRewardsUnchanged {
-//    [self initSession];
+    //    [self initSession];
     
     [BNCPreferenceHelper setCreditCount:credits forBucket:@"default"];
     
@@ -227,7 +227,7 @@
 }
 
 - (void)testGetReferralCode {
-//    [self initSession];
+    //    [self initSession];
     
     NSDictionary *responseDict = @{@"referral_code": @"testRC",
                                    @"calculation_type": @1,
@@ -264,7 +264,7 @@
 }
 
 - (void)testValidateReferralCode {
-//    [self initSession];
+    //    [self initSession];
     
     NSDictionary *responseDict = @{@"referral_code": @"testRC",
                                    @"calculation_type": @1,
@@ -282,7 +282,7 @@
     .withBody(responseData);
     
     XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test validateReferralCode"];
-        
+    
     [branch validateReferralCode:@"testRC" andCallback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         
@@ -301,7 +301,7 @@
 }
 
 - (void)testApplyReferralCode {
-//    [self initSession];
+    //    [self initSession];
     
     [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
     
@@ -340,7 +340,7 @@
 }
 
 - (void)testGetCreditHistory {
-//    [self initSession];
+    //    [self initSession];
     
     NSArray *responseArray = @[
                                @{@"referree": @"<null>",
@@ -445,3 +445,4 @@
 //}
 
 @end
+
