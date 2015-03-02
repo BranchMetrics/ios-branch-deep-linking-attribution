@@ -39,7 +39,7 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 static BNCPreferenceHelper *instance = nil;
 static BOOL BNC_Debug = NO;
 static BOOL BNC_Dev_Debug = NO;
-BOOL BNC_Remote_Debug = NO;
+static BOOL BNC_Remote_Debug = NO;
 
 static dispatch_queue_t bnc_asyncLogQueue = nil;
 static id<BNCDebugConnectionDelegate> bnc_asyncDebugConnectionDelegate = nil;
@@ -94,6 +94,10 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
 
 + (BOOL)isDebug {
     return BNC_Debug;
+}
+
++ (BOOL)isRemoteDebug {
+    return BNC_Remote_Debug;
 }
 
 + (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ... {

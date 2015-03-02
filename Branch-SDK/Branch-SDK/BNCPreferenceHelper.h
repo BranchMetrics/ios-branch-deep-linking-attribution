@@ -12,7 +12,6 @@
 #define LINE_NUM    __LINE__
 
 static NSString *NO_STRING_VALUE = @"bnc_no_value";
-extern BOOL BNC_Remote_Debug;
 
 @protocol BNCDebugConnectionDelegate <NSObject>
 
@@ -103,5 +102,6 @@ extern BOOL BNC_Remote_Debug;
 + (void)keepDebugAlive;
 + (void)setTestDelegate:(id<BNCTestDelegate>) testDelegate;
 + (void)simulateInitFinished;
++ (BOOL)isRemoteDebug;
 
 @end

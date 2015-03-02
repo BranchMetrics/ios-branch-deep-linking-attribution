@@ -46,7 +46,7 @@
     
     [serverInterface connectToDebug];
     
-    XCTAssertTrue(BNC_Remote_Debug);
+    XCTAssertTrue([BNCPreferenceHelper isRemoteDebug]);
 }
 
 - (void)testConnectFail {
@@ -58,8 +58,8 @@
     .withHeaders(@{@"application/json": @"Content-Type"})
     .withBody(responseData);
     
-    [BNCPreferenceHelper setDebug];
-    XCTAssertFalse(BNC_Remote_Debug);
+    [serverInterface connectToDebug];
+    XCTAssertFalse([BNCPreferenceHelper isRemoteDebug]);
 }
 
 @end
