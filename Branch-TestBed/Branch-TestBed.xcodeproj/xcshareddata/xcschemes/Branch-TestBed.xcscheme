@@ -28,7 +28,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7E3065A61A8ED53E0098527A"
+               BlueprintIdentifier = "7E6B3B361AA426A9005F45BF"
                BuildableName = "Branch-SDK Tests.xctest"
                BlueprintName = "Branch-SDK Tests"
                ReferencedContainer = "container:Branch-TestBed.xcodeproj">
@@ -74,33 +74,6 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7E86C5051A96C38400B2FDC3"
-               BuildableName = "Branch-SDK test.xctest"
-               BlueprintName = "Branch-SDK test"
-               ReferencedContainer = "container:Branch-TestBed.xcodeproj">
-            </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "Branch_SDK_Debugger_Tests">
-               </Test>
-               <Test
-                  Identifier = "Branch_SDK_Debugger_Tests/testConnectFail">
-               </Test>
-               <Test
-                  Identifier = "Branch_SDK_Debugger_Tests/testConnectSucceed">
-               </Test>
-               <Test
-                  Identifier = "Branch_SDK_Load_Tests">
-               </Test>
-               <Test
-                  Identifier = "Branch_SDK_Load_Tests/testLoad">
-               </Test>
-            </SkippedTests>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "7EC326CC1A9D3EFE0083C5DF"
                BuildableName = "Branch-TestBed Tests.xctest"
                BlueprintName = "Branch-TestBed Tests"
@@ -124,6 +97,16 @@
                BlueprintIdentifier = "7EFC86CA1A9D6C3800F87A23"
                BuildableName = "Branch-SDK Debugger Tests.xctest"
                BlueprintName = "Branch-SDK Debugger Tests"
+               ReferencedContainer = "container:Branch-TestBed.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "7E6B3B361AA426A9005F45BF"
+               BuildableName = "Branch-SDK Tests.xctest"
+               BlueprintName = "Branch-SDK Tests"
                ReferencedContainer = "container:Branch-TestBed.xcodeproj">
             </BuildableReference>
          </TestableReference>
