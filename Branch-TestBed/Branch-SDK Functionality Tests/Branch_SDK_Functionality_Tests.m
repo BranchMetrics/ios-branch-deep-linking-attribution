@@ -107,7 +107,7 @@
     }];
 }
 
-- (void)testGetShortURLAsync {
+- (void)test01GetShortURLAsync {
     NSString __block *returnURL;
     
     NSDictionary *responseDict = @{@"url": short_link};
@@ -143,7 +143,7 @@
     }];
 }
 
-- (void)testGetShortURLSync {
+- (void)test02GetShortURLSync {
     //    [self initSession];
     
     NSDictionary *responseDict = @{@"url": short_link};
@@ -170,7 +170,7 @@
     }
 }
 
-- (void)testGetRewardsChanged {
+- (void)test03GetRewardsChanged {
     //    [self initSession];
     
     [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
@@ -198,7 +198,7 @@
     }];
 }
 
-- (void)testGetRewardsUnchanged {
+- (void)test04GetRewardsUnchanged {
     //    [self initSession];
     
     [BNCPreferenceHelper setCreditCount:credits forBucket:@"default"];
@@ -226,7 +226,7 @@
     }];
 }
 
-- (void)testGetReferralCode {
+- (void)test05GetReferralCode {
     //    [self initSession];
     
     NSDictionary *responseDict = @{@"referral_code": @"testRC",
@@ -263,7 +263,7 @@
     }];
 }
 
-- (void)testValidateReferralCode {
+- (void)test06ValidateReferralCode {
     //    [self initSession];
     
     NSDictionary *responseDict = @{@"referral_code": @"testRC",
@@ -300,7 +300,7 @@
     }];
 }
 
-- (void)testApplyReferralCode {
+- (void)test07ApplyReferralCode {
     //    [self initSession];
     
     [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
@@ -339,7 +339,7 @@
     }];
 }
 
-- (void)testGetCreditHistory {
+- (void)test08GetCreditHistory {
     //    [self initSession];
     
     NSArray *responseArray = @[
@@ -394,7 +394,7 @@
     }];
 }
 
-- (void)testSetIdentity {
+- (void)test09SetIdentity {
     [self initSession];
     
     [BNCPreferenceHelper setIdentityID:logout_identity_id];
