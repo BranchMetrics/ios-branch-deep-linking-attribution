@@ -54,7 +54,7 @@
     }
 }
 
-- (void)setupMatchDuration:(NSInteger)duration {
+- (void)setupMatchDuration:(NSUInteger)duration {
     if (duration > 0) {
         _duration = duration;
         [self.data setObject:[NSNumber numberWithInteger:duration] forKey:DURATION];
