@@ -1,6 +1,7 @@
 test:
   override:
-    - xctool -scheme "Branch-SDK Functionality Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
+    - set -o pipefail && xcodebuild -destination 'platform=iOS Simulator,name=iPhone 6,OS=iOS 6.1' -scheme 'Branch-SDK Functionality Tests' -workspace 'Branch-TestBed/Branch-TestBed.xcworkspace' build test CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= PROVISIONING_PROFILE= | tee $CIRCLE_ARTIFACTS/xcode_raw.log | xcpretty --color --report junit --output $CIRCLE_TEST_REPORTS/xcode/xcode.xml
+    - xctool -scheme "Branch-SDK Debugger Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
     - xctool -scheme "Branch-SDK Debugger Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
     - xctool -scheme "Branch-SDK UI Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
     - xctool -scheme "Branch-SDK Load Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
