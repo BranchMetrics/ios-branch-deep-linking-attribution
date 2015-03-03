@@ -1,6 +1,6 @@
 test:
   override:
-    - set -o pipefail && xcodebuild -destination 'platform=iOS Simulator,name=iPhone 6,OS=8.1' -scheme 'Branch-SDK Functionality Tests' -workspace 'Branch-TestBed.xcworkspace' test
+    - set -o pipefail && xcodebuild -destination 'platform=iOS Simulator,name=iPhone 6,OS=8.1' -scheme 'Branch-SDK Functionality Tests' -workspace 'Branch-TestBed/Branch-TestBed.xcworkspace' test
     - xctool -scheme "Branch-SDK Debugger Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
     - xctool -scheme "Branch-SDK UI Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
     - xctool -scheme "Branch-SDK Load Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
