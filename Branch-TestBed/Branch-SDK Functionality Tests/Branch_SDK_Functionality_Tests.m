@@ -86,7 +86,7 @@
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"open"])
     .andReturn(200)
-    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
