@@ -1,5 +1,7 @@
 Branch iOS SDK change log 
 
+- V0.4.6.1: Exposed duration in getShortUrl for tuning link click match duration
+
 - V0.4.6: Added API Key to GET requests; Fixed iOS 6 issue in UIActivityItemProvider
 
 - v0.4.5: Double check all delegates when switching to main queue
