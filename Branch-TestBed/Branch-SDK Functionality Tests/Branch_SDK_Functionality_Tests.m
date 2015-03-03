@@ -287,7 +287,7 @@
         
         NSString *code = params[@"referral_code"];
         XCTAssertNotNil(code);
-        XCTAssertTrue([code hasPrefix:@"test"]);
+        XCTAssertTrue([code isEqualToString:@"testRC"]);
         XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUniqueRewards);
         XCTAssertEqual([params[@"location"] integerValue], BranchReferringUser);
         XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 7);
@@ -324,7 +324,7 @@
         
         NSString *code = params[@"referral_code"];
         XCTAssertNotNil(code);
-        XCTAssertTrue([code hasPrefix:@"test"]);
+        XCTAssertTrue([code isEqualToString:@"testRC"]);
         XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUniqueRewards);
         XCTAssertEqual([params[@"location"] integerValue], BranchReferringUser);
         XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 7);
