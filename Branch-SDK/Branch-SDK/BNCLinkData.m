@@ -28,6 +28,7 @@
     copy.stage = [_stage copyWithZone:zone];
     copy.params = [_params copyWithZone:zone];
     copy.type = _type;
+    copy.duration = _duration;
 
     return copy;
 }
@@ -50,6 +51,13 @@
     if (type) {
         _type = type;
         [self.data setObject:[NSNumber numberWithInt:type] forKey:LINK_TYPE];
+    }
+}
+
+- (void)setupMatchDuration:(NSUInteger)duration {
+    if (duration > 0) {
+        _duration = duration;
+        [self.data setObject:[NSNumber numberWithInteger:duration] forKey:DURATION];
     }
 }
 
@@ -106,6 +114,7 @@
     result = prime * result + [[self.feature lowercaseString] hash];
     result = prime * result + [[self.stage lowercaseString] hash];
     result = prime * result + [[self.params lowercaseString] hash];
+    result = prime * result + self.duration;
     
     for (NSString *tag in self.tags) {
         result = prime * result + [[tag lowercaseString] hash];
@@ -136,6 +145,9 @@
     if (self.params) {
         [coder encodeObject:self.params forKey:DATA];
     }
+    if (self.duration > 0) {
+        [coder encodeObject:[NSNumber numberWithInteger:self.duration] forKey:DURATION];
+    }
 }
 
 - (id)initWithCoder:(NSCoder *)coder {
@@ -147,6 +159,7 @@
         self.feature = [coder decodeObjectForKey:FEATURE];
         self.stage = [coder decodeObjectForKey:STAGE];
         self.params = [coder decodeObjectForKey:DATA];
+        self.duration = [[coder decodeObjectForKey:DURATION] intValue];
     }
     return self;
 }
