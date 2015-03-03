@@ -53,7 +53,7 @@
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
     .andReturn(200)
-    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];

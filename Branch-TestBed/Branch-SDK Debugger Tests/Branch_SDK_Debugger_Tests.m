@@ -55,7 +55,7 @@
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"debug/connect"])
     .andReturn(465)
-    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     [serverInterface connectToDebug];
