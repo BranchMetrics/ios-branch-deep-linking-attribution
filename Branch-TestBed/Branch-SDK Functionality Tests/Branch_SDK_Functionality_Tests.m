@@ -115,7 +115,7 @@
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
     .andReturn(200)
-    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
@@ -136,6 +136,15 @@
             }
         }];
         
+        NSString *urlFB = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
+        XCTAssertEqualObjects(urlFB, url);
+        
+        if (![[LSNocilla sharedInstance] isStarted]) {
+            NSString *urlTT = [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil];
+            XCTAssertNotNil(urlTT);
+            XCTAssertNotEqualObjects(urlTT, url);
+        }
+        
         [getShortURLExpectation fulfill];
     }];
     
@@ -144,14 +153,12 @@
 }
 
 - (void)test02GetShortURLSync {
-    //    [self initSession];
-    
     NSDictionary *responseDict = @{@"url": short_link};
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
     .andReturn(200)
-    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     NSString *url1 = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
@@ -171,8 +178,6 @@
 }
 
 - (void)test03GetRewardsChanged {
-    //    [self initSession];
-    
     [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
     
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
@@ -180,7 +185,7 @@
     
     stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@?sdk=ios%@", @"credits/", [BNCPreferenceHelper getIdentityID], SDK_VERSION]])
     .andReturn(200)
-    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     XCTestExpectation *getRewardExpectation = [self expectationWithDescription:@"Test getReward"];
@@ -199,8 +204,6 @@
 }
 
 - (void)test04GetRewardsUnchanged {
-    //    [self initSession];
-    
     [BNCPreferenceHelper setCreditCount:credits forBucket:@"default"];
     
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
@@ -208,7 +211,7 @@
     
     stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@?sdk=ios%@", @"credits/", [BNCPreferenceHelper getIdentityID], SDK_VERSION]])
     .andReturn(200)
-    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     XCTestExpectation *getRewardExpectation = [self expectationWithDescription:@"Test getReward"];
@@ -227,8 +230,6 @@
 }
 
 - (void)test05GetReferralCode {
-    //    [self initSession];
-    
     NSDictionary *responseDict = @{@"referral_code": @"testRC",
                                    @"calculation_type": @1,
                                    @"event": @"$redeem_code-testRC",
@@ -241,7 +242,7 @@
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"referralcode"])
     .andReturn(200)
-    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test getReferralCode"];
@@ -264,8 +265,6 @@
 }
 
 - (void)test06ValidateReferralCode {
-    //    [self initSession];
-    
     NSDictionary *responseDict = @{@"referral_code": @"testRC",
                                    @"calculation_type": @1,
                                    @"event": @"$redeem_code-testRC",
@@ -278,7 +277,7 @@
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referralcode", @"testRC"]])
     .andReturn(200)
-    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test validateReferralCode"];
@@ -301,8 +300,6 @@
 }
 
 - (void)test07ApplyReferralCode {
-    //    [self initSession];
-    
     [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
     
     NSDictionary *responseDict = @{@"referral_code": @"testRC",
@@ -317,7 +314,7 @@
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"applycode", @"testRC"]])
     .andReturn(200)
-    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test applyReferralCode"];
@@ -340,8 +337,6 @@
 }
 
 - (void)test08GetCreditHistory {
-    //    [self initSession];
-    
     NSArray *responseArray = @[
                                @{@"referree": @"<null>",
                                  @"referrer": @"user_1",
@@ -367,7 +362,7 @@
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"credithistory"])
     .andReturn(200)
-    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     XCTestExpectation *getCreditHistoryExpectation = [self expectationWithDescription:@"Test getCreditHistory"];
@@ -395,8 +390,6 @@
 }
 
 - (void)test09SetIdentity {
-    [self initSession];
-    
     [BNCPreferenceHelper setIdentityID:logout_identity_id];
     [BNCPreferenceHelper setUserURL:@"https://bnc.lt/i/3R7_PIk-77"];
     
@@ -414,7 +407,7 @@
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"profile"])
     .andReturn(200)
-    .withHeaders(@{@"application/json": @"Content-Type"})
+    .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     XCTestExpectation *setIdentityExpectation = [self expectationWithDescription:@"Test setIdentity"];
@@ -433,7 +426,7 @@
         [setIdentityExpectation fulfill];
     }];
     
-    [self waitForExpectationsWithTimeout:3 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
     }];
 }
 
