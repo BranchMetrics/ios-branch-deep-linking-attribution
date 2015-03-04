@@ -980,9 +980,9 @@ static Branch *currInstance;
 }
 
 - (NSString *) generateLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
-    NSString *longURL = BNC_LINK_URL;
+    NSMutableString *longURL = [BNC_LINK_URL mutableCopy];
     
-    longURL = [NSString stringWithFormat:@"%@/a/%@?", longURL, [BNCPreferenceHelper getAppKey]];
+    [longURL appendString:[NSString stringWithFormat:@"/a/%@?", [BNCPreferenceHelper getAppKey]]];
     
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params options:NSJSONWritingPrettyPrinted error:nil];
     NSString *base64EncodedParams = [jsonData base64EncodedStringWithOptions:0];
@@ -1007,9 +1007,9 @@ static Branch *currInstance;
         NSString *paramValue = [[thisParam allValues] firstObject];
         if (paramValue.length > 0) {
             if(![longURL hasSuffix:@"?"]) {
-                longURL = [NSString stringWithFormat:@"%@%@", longURL, @"&"];
+                [longURL appendString:@"&"];
             }
-            longURL = [NSString stringWithFormat:@"%@%@=%@", longURL, paramName, paramValue];
+            [longURL appendString:[NSString stringWithFormat:@"%@=%@", paramName, paramValue]];
         }
     }
     
