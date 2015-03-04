@@ -1,5 +1,7 @@
 Branch iOS SDK change log 
 
+- V0.4.7.0: Removed Default URL argument from BranchActivityItemProvider, and replaced with an automatically generated long URL placeholder
+
 - V0.4.6.1: Exposed duration in getShortUrl for tuning link click match duration
 
 - V0.4.6: Added API Key to GET requests; Fixed iOS 6 issue in UIActivityItemProvider

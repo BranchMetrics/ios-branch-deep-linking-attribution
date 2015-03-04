@@ -125,52 +125,46 @@ static Branch *currInstance;
     return currInstance;
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                   andParams:(NSDictionary *)params
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
                                                      andTags:(NSArray *)tags
                                                   andFeature:(NSString *)feature
                                                     andStage:(NSString *)stage
                                                     andAlias:(NSString *)alias {
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:tags andFeature:feature andStage:stage andAlias:alias];
+    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:tags andFeature:feature andStage:stage andAlias:alias];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params {
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params {
     
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:nil andFeature:nil andStage:nil andAlias:nil];
+    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:nil andFeature:nil andStage:nil andAlias:nil];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
                                                          andFeature:(NSString *)feature {
     
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:nil andFeature:feature andStage:nil andAlias:nil];
+    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:nil andFeature:feature andStage:nil andAlias:nil];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
                                                          andFeature:(NSString *)feature
                                                            andStage:(NSString *)stage {
     
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:nil andFeature:feature andStage:stage andAlias:nil];
+    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:nil andFeature:feature andStage:stage andAlias:nil];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
                                                          andFeature:(NSString *)feature
                                                            andStage:(NSString *)stage
                                                             andTags:(NSArray *)tags {
     
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:tags andFeature:feature andStage:stage andAlias:nil];
+    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:tags andFeature:feature andStage:stage andAlias:nil];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
-                                                          andParams:(NSDictionary *)params
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
                                                             andFeature:(NSString *)feature
                                                            andStage:(NSString *)stage
                                                            andAlias:(NSString *)alias {
     
-    return [[BranchActivityItemProvider alloc] initWithDefaultURL:url andParams:params andTags:nil andFeature:feature andStage:stage andAlias:alias];
+    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:nil andFeature:feature andStage:stage andAlias:alias];
 }
 
 + (void)initInstance {
@@ -665,6 +659,29 @@ static Branch *currInstance;
     return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
 }
 
+- (NSString *)getLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
+    return [self generateLongURLWithParams:params andChannel:channel andTags:tags andFeature:feature andStage:stage andAlias:alias];
+}
+
+- (NSString *)getLongURLWithParams:(NSDictionary *)params {
+    return [self generateLongURLWithParams:params andChannel:nil andTags:nil andFeature:nil andStage:nil andAlias:nil];
+}
+
+- (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature {
+    return [self generateLongURLWithParams:params andChannel:nil andTags:nil andFeature:feature andStage:nil andAlias:nil];
+}
+
+- (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage {
+    return [self generateLongURLWithParams:params andChannel:nil andTags:nil andFeature:feature andStage:stage andAlias:nil];
+}
+
+- (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags {
+    return [self generateLongURLWithParams:params andChannel:nil andTags:tags andFeature:feature andStage:stage andAlias:nil];
+}
+
+- (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
+    return [self generateLongURLWithParams:params andChannel:nil andTags:nil andFeature:feature andStage:stage andAlias:alias];
+}
 
 - (void)getShortURLWithCallback:(callbackWithUrl)callback {
     [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:nil andFeature:nil andStage:nil andParams:nil andCallback:callback];
@@ -960,6 +977,43 @@ static Branch *currInstance;
     }
     
     return shortURL;
+}
+
+- (NSString *) generateLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
+    NSString *longURL = BNC_LINK_URL;
+    
+    longURL = [NSString stringWithFormat:@"%@/a/%@?", longURL, [BNCPreferenceHelper getAppKey]];
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params options:NSJSONWritingPrettyPrinted error:nil];
+    NSString *base64EncodedParams = [jsonData base64EncodedStringWithOptions:0];
+    
+    if (channel == nil) channel = @"";
+    if (feature == nil) feature = @"";
+    if (stage == nil) stage = @"";
+    if (alias == nil) alias = @"";
+    
+    NSMutableArray *urlParamStrings = [@[ @{ @"channel": channel },
+                                @{ @"feature": feature },
+                                @{ @"stage": stage },
+                                @{ @"alias": alias },
+                                 @{ @"data": base64EncodedParams} ] mutableCopy];
+    
+    for (NSString *tag in tags) {
+        [urlParamStrings addObject:@{ @"tags": tag}];
+    }
+    
+    for (NSDictionary *thisParam in urlParamStrings) {
+        NSString *paramName = [[thisParam allKeys] firstObject];
+        NSString *paramValue = [[thisParam allValues] firstObject];
+        if (paramValue.length > 0) {
+            if(![longURL hasSuffix:@"?"]) {
+                longURL = [NSString stringWithFormat:@"%@%@", longURL, @"&"];
+            }
+            longURL = [NSString stringWithFormat:@"%@%@=%@", longURL, paramName, paramValue];
+        }
+    }
+    
+    return longURL;
 }
 
 - (BNCLinkData *)prepareLinkDataFor:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params {
