@@ -405,7 +405,10 @@ UIActivityView is the standard way of allowing users to share content from your 
 Sample UIActivityView Share sheet:
 ![UIActivityView Share Sheet](https://s3-us-west-1.amazonaws.com/branchhost/iOSShareSheet.png )
 
-The Branch iOS SDK includes a subclassed UIActivityItemProvider that can be passed into a UIActivityViewController, that will generate a Branch short URL and automatically tag it with the channel the user selects (Facebook, Twitter, etc.). The sample app included with the Branch iOS SDK shows a sample of this in ViewController.m:
+The Branch iOS SDK includes a subclassed UIActivityItemProvider that can be passed into a UIActivityViewController, that will generate a Branch short URL and automatically tag it with the channel the user selects (Facebook, Twitter, etc.).
+**Note**: This method was formerly getBranchActivityItemWithDefaultURL:, which is now depreciated. Rather than requiring a default URL that acts as a placeholder for UIActivityItemProvider, a longURL is generated instantly and synchronously.
+
+The sample app included with the Branch iOS SDK shows a sample of this in ViewController.m:
 
 ###### Objective-C
 
