@@ -400,7 +400,7 @@ You have the ability to control the direct deep linking of each link by insertin
 
 ### UIActivityView Share Sheet
 
-UIActivityView is the standard way of allowing users to share content from your app. A common use case is a user sharing a referral code, or a content URL with their friends. If you want to give your users a way of sharing content from your app, this is the simpelist way to implement Branch.
+UIActivityView is the standard way of allowing users to share content from your app. A common use case is a user sharing a referral code, or a content URL with their friends. If you want to give your users a way of sharing content from your app, this is the simplest way to implement Branch.
 
 Sample UIActivityView Share sheet:
 ![UIActivityView Share Sheet](https://s3-us-west-1.amazonaws.com/branchhost/iOSShareSheet.png )
