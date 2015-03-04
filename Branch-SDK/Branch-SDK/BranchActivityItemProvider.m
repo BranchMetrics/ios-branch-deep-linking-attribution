@@ -12,32 +12,34 @@
 
 @implementation BranchActivityItemProvider
 
-- (id)initWithDefaultURL:(NSString *)url
-               andParams:(NSDictionary *)params
+- (id)initWithParams:(NSDictionary *)params
                  andTags:(NSArray *)tags
               andFeature:(NSString *)feature
                 andStage:(NSString *)stage
                 andAlias:(NSString *)alias {
+    
+    NSString *url = [[Branch getInstance] getLongURLWithParams:params andChannel:nil andTags:tags andFeature:feature andStage:stage andAlias:alias];
+    
     self = [super initWithPlaceholderItem:url];
+    
     if (self) {
-        self.branchURL = url;
         self.params = params;
         self.tags = tags;
         self.feature = feature;
         self.stage = stage;
         self.alias = alias;
+        self.branchURL = url;
         self.semaphore = dispatch_semaphore_create(0);
     }
+    
     return self;
 }
 
 - (id) item {
-    // Set's channel string automatically based on what share
-    // channel the user selected in UIActivityViewController
-    NSString *channel = [BranchActivityItemProvider
-                         humanReadableChannelWithActivityType:self.activityType];
-    
     if ([self.placeholderItem isKindOfClass:[NSString class]]) {
+        
+        NSString *channel = [BranchActivityItemProvider humanReadableChannelWithActivityType:self.activityType];
+        
         __weak BranchActivityItemProvider *weakSelf = self;
         [[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias andCallback:^(NSString *url, NSError *err) {
             if (!err) {

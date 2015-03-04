@@ -416,7 +416,6 @@ The Branch iOS SDK includes a subclassed UIActivityItemProvider that can be pass
 // No need to set the channel, that is done automatically based
 // on the share activity the user selects
 NSString *shareString = @"Super amazing thing I want to share!";
-NSString *defaultURL = @"http://lmgtfy.com/?q=branch+metrics";
     
 NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 
@@ -438,7 +437,7 @@ NSString *feature = @"invite";
 NSString *stage = @"2";
     
 // Branch UIActivityItemProvider
-UIActivityItemProvider *itemProvider = [Branch getBranchActivityItemWithDefaultURL:defaultURL andParams:params andFeature:feature andStage:stage andTags:tags];
+UIActivityItemProvider *itemProvider = [Branch getBranchActivityItemWithParams:params andFeature:feature andStage:stage andTags:tags];
     
 // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
 UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareString, itemProvider] applicationActivities:nil];
@@ -456,7 +455,6 @@ UIActivityViewController *shareViewController = [[UIActivityViewController alloc
 // No need to set the channel, that is done automatically based
 // on the share activity the user selects
 let shareString = "Super amazing thing I want to share!"
-let defaultURL = "http://lmgtfy.com/?q=branch+metrics"
 
 var params = ["user": "Joe"]
 params["profile_pic"] = "https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg"
@@ -475,7 +473,7 @@ let feature = "invite"
 let stage = "2"
 
 // Branch UIActivityItemProvider
-let itemProvider = Branch.getBranchActivityItemWithDefaultURL(defaultURL, andParams: params, andFeature: feature, andStage: stage, andTags: tags)
+let itemProvider = Branch.getBranchActivityItemWithParams(params, andFeature: feature, andStage: stage, andTags: tags)
 
 // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
 let shareViewController = UIActivityViewController(activityItems: [shareString, itemProvider], applicationActivities: nil)

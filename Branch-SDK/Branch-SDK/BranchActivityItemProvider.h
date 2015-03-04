@@ -18,11 +18,10 @@
 @property (strong, nonatomic) NSString *alias;
 @property dispatch_semaphore_t semaphore;
 
-- (id)initWithDefaultURL:(NSString *)url
-               andParams:(NSDictionary *)params
-                 andTags:(NSArray *)tags
-              andFeature:(NSString *)feature
-                andStage:(NSString *)stage
-                andAlias:(NSString *)alias;
+- (id)initWithParams:(NSDictionary *)params
+             andTags:(NSArray *)tags
+          andFeature:(NSString *)feature
+            andStage:(NSString *)stage
+            andAlias:(NSString *)alias;
 
 @end
