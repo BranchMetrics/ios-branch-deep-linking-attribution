@@ -27,6 +27,7 @@ static NSString *REQ_TAG_DEBUG_DISCONNECT = @"t_debug_disconnect";
 
 + (NSString *)encodePostToUniversalString:(NSDictionary *)params;
 + (NSString *)encodePostToUniversalString:(NSDictionary *)params needSource:(BOOL)source;
++ (NSData *)encodePostParams:(NSDictionary *)params;
 
 - (BNCServerResponse *)getRequestSync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag;
 - (BNCServerResponse *)getRequestSync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log;
