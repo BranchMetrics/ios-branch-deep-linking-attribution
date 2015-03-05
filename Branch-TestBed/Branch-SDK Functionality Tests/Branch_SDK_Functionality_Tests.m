@@ -75,6 +75,7 @@
     [BNCPreferenceHelper setLinkClickID:NO_STRING_VALUE];
     [BNCPreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
     [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
+    [BNCPreferenceHelper simulateInitFinished];
 }
 
 - (void)test00Open {
@@ -191,7 +192,7 @@
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
     
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@?sdk=ios%@", @"credits/", [BNCPreferenceHelper getIdentityID], SDK_VERSION]])
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@?app_id=%@&sdk=ios%@", @"credits", [BNCPreferenceHelper getIdentityID], app_id, SDK_VERSION]])
     .andReturn(200)
     .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
@@ -219,7 +220,7 @@
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
     
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@?sdk=ios%@", @"credits/", [BNCPreferenceHelper getIdentityID], SDK_VERSION]])
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@?app_id=%@&sdk=ios%@", @"credits", [BNCPreferenceHelper getIdentityID], app_id, SDK_VERSION]])
     .andReturn(200)
     .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
