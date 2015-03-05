@@ -606,108 +606,125 @@ static Branch *currInstance;
 }
 
 - (NSString *)getShortURL {
-    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:nil andFeature:nil andStage:nil andParams:nil];
+    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:nil andFeature:nil andStage:nil andParams:nil];
 }
 
 - (NSString *)getShortURLWithParams:(NSDictionary *)params {
-    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:nil andFeature:nil andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:nil andFeature:nil andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
 }
 
 - (NSString *)getContentUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel {
-    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:BRANCH_FEATURE_TAG_SHARE andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:BRANCH_FEATURE_TAG_SHARE andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
 }
 
 - (NSString *)getContentUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel {
-    return [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:BRANCH_FEATURE_TAG_SHARE andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+    return [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:BRANCH_FEATURE_TAG_SHARE andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
 }
 
 - (NSString *)getReferralUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel {
-    return [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+    return [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
 }
 
 - (NSString *)getReferralUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel {
-    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
 }
 
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage {
-    return [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+    return [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
 }
 
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
-    return [self generateShortUrl:tags andAlias:alias andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+    return [self generateShortUrl:tags andAlias:alias andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
 }
 
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type {
-    return [self generateShortUrl:tags andAlias:nil andType:type andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+    return [self generateShortUrl:tags andAlias:nil andType:type andMatchDuration:0 andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration {
+    return [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
 }
 
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage {
-    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
 }
 
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
-    return [self generateShortUrl:nil andAlias:alias andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+    return [self generateShortUrl:nil andAlias:alias andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
 }
 
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type {
-    return [self generateShortUrl:nil andAlias:nil andType:type andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+    return [self generateShortUrl:nil andAlias:nil andType:type andMatchDuration:0 andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+}
+
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration {
+    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
 }
 
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature {
-    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
+    return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]]];
 }
 
 
 - (void)getShortURLWithCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:nil andFeature:nil andStage:nil andParams:nil andCallback:callback];
+    [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:nil andFeature:nil andStage:nil andParams:nil andCallback:callback];
 }
 
 - (void)getContentUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:BRANCH_FEATURE_TAG_SHARE andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:BRANCH_FEATURE_TAG_SHARE andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getContentUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:BRANCH_FEATURE_TAG_SHARE andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:BRANCH_FEATURE_TAG_SHARE andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getReferralUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getReferralUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:nil andFeature:nil andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:nil andFeature:nil andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:tags andAlias:alias andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:tags andAlias:alias andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:tags andAlias:nil andType:type andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:tags andAlias:nil andType:type andMatchDuration:0 andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+}
+
+- (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration andCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:tags andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:nil andAlias:alias andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:nil andAlias:alias andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:nil andAlias:nil andType:type andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:nil andAlias:nil andType:type andMatchDuration:0 andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+}
+
+- (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration andCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andCallback:(callbackWithUrl)callback {
-    [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andChannel:channel andFeature:feature andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
+    [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:nil andParams:[BranchServerInterface encodePostToUniversalString:[self sanitizeQuotesFromInput:params]] andCallback:callback];
 }
 
 - (void)getReferralCodeWithCallback:(callbackWithParams)callback {
@@ -884,11 +901,11 @@ static Branch *currInstance;
 
 // PRIVATE CALLS
 
-- (void)generateShortUrl:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params andCallback:(callbackWithUrl)callback {
+- (void)generateShortUrl:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params andCallback:(callbackWithUrl)callback {
     
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
     req.tag = REQ_TAG_GET_CUSTOM_URL;
-    BNCLinkData *post = [self prepareLinkDataFor:tags andAlias:alias andType:type andChannel:channel andFeature:feature andStage:stage andParams:params];
+    BNCLinkData *post = [self prepareLinkDataFor:tags andAlias:alias andType:type andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:params];
     
     if (![self.linkCache objectForKey:post]) {
         self.urlLoadCallback = callback;
@@ -913,12 +930,12 @@ static Branch *currInstance;
     }
 }
 
-- (NSString *)generateShortUrl:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params {
+- (NSString *)generateShortUrl:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params {
     NSString *shortURL = nil;
     
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
     req.tag = REQ_TAG_GET_CUSTOM_URL;
-    BNCLinkData *post = [self prepareLinkDataFor:tags andAlias:alias andType:type andChannel:channel andFeature:feature andStage:stage andParams:params];
+    BNCLinkData *post = [self prepareLinkDataFor:tags andAlias:alias andType:type andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:params];
     
     if ([self.linkCache objectForKey:post]) {
         shortURL = [self.linkCache objectForKey:post];
@@ -945,7 +962,7 @@ static Branch *currInstance;
     return shortURL;
 }
 
-- (BNCLinkData *)prepareLinkDataFor:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params {
+- (BNCLinkData *)prepareLinkDataFor:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params {
     BNCLinkData *post = [[BNCLinkData alloc] init];
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:APP_ID];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:DEVICE_FINGERPRINT_ID];
@@ -958,6 +975,7 @@ static Branch *currInstance;
     [post setupFeature:feature];
     [post setupStage:stage];
     [post setupAlias:alias];
+    [post setupMatchDuration:duration];
     
     [post setObject:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
     
@@ -1331,43 +1349,49 @@ static Branch *currInstance;
 }
 
 -(void)processReferralCounts:(NSDictionary *)returnedData {
-    BOOL updateListener = NO;
-    
-    for (NSString *key in returnedData) {
-        NSDictionary *counts = [returnedData objectForKey:key];
-        NSInteger total = [[counts objectForKey:TOTAL] integerValue];
-        NSInteger unique = [[counts objectForKey:UNIQUE] integerValue];
-        
-        if (total != [BNCPreferenceHelper getActionTotalCount:key] || unique != [BNCPreferenceHelper getActionUniqueCount:key])
-            updateListener = YES;
-        
-        [BNCPreferenceHelper setActionTotalCount:key withCount:total];
-        [BNCPreferenceHelper setActionUniqueCount:key withCount:unique];
-    }
     if (self.pointLoadCallback) {
+        BOOL updateListener = NO;
+        
+        for (NSString *key in returnedData) {
+            NSDictionary *counts = [returnedData objectForKey:key];
+            NSInteger total = [[counts objectForKey:TOTAL] integerValue];
+            NSInteger unique = [[counts objectForKey:UNIQUE] integerValue];
+            
+            if (total != [BNCPreferenceHelper getActionTotalCount:key] || unique != [BNCPreferenceHelper getActionUniqueCount:key])
+                updateListener = YES;
+            
+            [BNCPreferenceHelper setActionTotalCount:key withCount:total];
+            [BNCPreferenceHelper setActionUniqueCount:key withCount:unique];
+        }
+    
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.pointLoadCallback(updateListener, nil);
-            self.pointLoadCallback = nil;
+            if (self.pointLoadCallback) {
+                self.pointLoadCallback(updateListener, nil);
+                self.pointLoadCallback = nil;
+            }
         });
     }
 }
 
 
 -(void)processReferralCredits:(NSDictionary *)returnedData {
-    BOOL updateListener = NO;
-    
-    for (NSString *key in returnedData) {
-        NSInteger credits = [[returnedData objectForKey:key] integerValue];
-        
-        if (credits != [BNCPreferenceHelper getCreditCountForBucket:key])
-            updateListener = YES;
-        
-        [BNCPreferenceHelper setCreditCount:credits forBucket:key];
-    }
     if (self.rewardLoadCallback) {
+        BOOL updateListener = NO;
+        
+        for (NSString *key in returnedData) {
+            NSInteger credits = [[returnedData objectForKey:key] integerValue];
+            
+            if (credits != [BNCPreferenceHelper getCreditCountForBucket:key])
+                updateListener = YES;
+            
+            [BNCPreferenceHelper setCreditCount:credits forBucket:key];
+        }
+    
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.rewardLoadCallback(updateListener, nil);
-            self.rewardLoadCallback = nil;
+            if (self.rewardLoadCallback) {
+                self.rewardLoadCallback(updateListener, nil);
+                self.rewardLoadCallback = nil;
+            }
         });
     }
 }
@@ -1384,8 +1408,10 @@ static Branch *currInstance;
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.creditHistoryLoadCallback(returnedData, nil);
-            self.creditHistoryLoadCallback = nil;
+            if (self.creditHistoryLoadCallback) {
+                self.creditHistoryLoadCallback(returnedData, nil);
+                self.creditHistoryLoadCallback = nil;
+            }
         });
     }
 }
@@ -1399,8 +1425,10 @@ static Branch *currInstance;
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.getReferralCodeCallback(returnedData, error);
-            self.getReferralCodeCallback = nil;
+            if (self.getReferralCodeCallback) {
+                self.getReferralCodeCallback(returnedData, error);
+                self.getReferralCodeCallback = nil;
+            }
         });
     }
 }
@@ -1414,8 +1442,10 @@ static Branch *currInstance;
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.validateReferralCodeCallback(returnedData, error);
-            self.validateReferralCodeCallback = nil;
+            if (self.validateReferralCodeCallback) {
+                self.validateReferralCodeCallback(returnedData, error);
+                self.validateReferralCodeCallback = nil;
+            }
         });
     }
 }
@@ -1429,8 +1459,10 @@ static Branch *currInstance;
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.applyReferralCodeCallback(returnedData, error);
-            self.applyReferralCodeCallback = nil;
+            if (self.applyReferralCodeCallback) {
+                self.applyReferralCodeCallback(returnedData, error);
+                self.applyReferralCodeCallback = nil;
+            }
         });
     }
 }
