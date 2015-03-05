@@ -23,17 +23,6 @@ static NSInteger credits = 0;
     
 @private
     __weak Branch *branch;
-    NSString *app_id;
-//    NSString *device_fingerprint_id;
-//    NSString *browser_fingerprint_id;
-//    NSString *identity_id;
-//    NSString *session_id;
-//    NSString *identity_link;
-//    NSString *short_link;
-    NSString *logout_identity_id;
-//    NSString *new_identity_id;
-//    NSString *new_session_id;
-//    NSString *new_user_link;
 }
 
 @end
@@ -43,20 +32,7 @@ static NSInteger credits = 0;
 - (void)setUp {
     [super setUp];
     
-    app_id = @"5668720416392049";
-//    device_fingerprint_id = @"94938498586381084";
-//    browser_fingerprint_id = @"69198153995256641";
-//    identity_id = @"95765863201768032";
-//    session_id = @"97141055400444225";
-//    identity_link = @"https://bnc.lt/i/3N-xr0E-_M";
-//    short_link = @"https://bnc.lt/l/3PxZVFU-BK";
-//    credits = 30;
-    logout_identity_id = @"98274447349252681";
-//    new_identity_id = @"85782216939930424";
-//    new_session_id = @"98274447370224207";
-//    new_user_link = @"https://bnc.lt/i/2kkbX6k-As";
-    
-    branch = [Branch getInstance:app_id];
+    branch = [Branch getInstance:@"5668720416392049"];
     [self initSession];
 }
 
@@ -87,7 +63,7 @@ static NSInteger credits = 0;
 
 - (void)test00SetIdentity {
     // mock logout synchronously
-    [BNCPreferenceHelper setIdentityID:logout_identity_id];
+    [BNCPreferenceHelper setIdentityID:@"98274447349252681"];
     [BNCPreferenceHelper setUserURL:@"https://bnc.lt/i/3R7_PIk-77"];
     [BNCPreferenceHelper setUserIdentity:NO_STRING_VALUE];
     [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
@@ -103,7 +79,7 @@ static NSInteger credits = 0;
         XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], @"98687515069776101");
         NSDictionary *installParams = [branch getFirstReferringParams];
         
-        XCTAssertEqualObjects(installParams[@"$og_title"], @"Kindred");
+        XCTAssertEqualObjects(installParams[@"$og_title"], @"Kindred"); //TODO: equal to params?
         XCTAssertEqualObjects(installParams[@"key1"], @"test_object");
         
         [setIdentityExpectation fulfill];
