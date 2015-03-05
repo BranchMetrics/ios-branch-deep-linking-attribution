@@ -55,7 +55,7 @@ static NSString *REFERRAL_CODE_EXPIRATION = @"expiration";
 
 static NSInteger REFERRAL_CREATION_SOURCE_SDK = 2;
 
-static int BNCDebugTriggerDuration = 2.9;
+static int BNCDebugTriggerDuration = 3;
 static int BNCDebugTriggerFingers = 4;
 static int BNCDebugTriggerFingersSimulator = 2;
 static dispatch_queue_t bnc_asyncDebugQueue = nil;
@@ -67,7 +67,7 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 
 
 
-@interface Branch() <BNCServerInterfaceDelegate, BNCDebugConnectionDelegate, UIGestureRecognizerDelegate>
+@interface Branch() <BNCServerInterfaceDelegate, BNCDebugConnectionDelegate, UIGestureRecognizerDelegate, BNCTestDelegate>
 
 @property (strong, nonatomic) BranchServerInterface *bServerInterface;
 
@@ -1737,6 +1737,12 @@ static Branch *currInstance;
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
         return YES;
+}
+
+#pragma mark - BNCTestDelagate
+
+- (void)simulateInitFinished {
+    self.initFinished = YES;
 }
 
 @end
