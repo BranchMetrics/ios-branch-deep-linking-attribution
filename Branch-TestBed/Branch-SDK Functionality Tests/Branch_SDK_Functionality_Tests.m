@@ -300,8 +300,6 @@
 }
 
 - (void)test07ApplyReferralCode {
-    [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
-    
     NSDictionary *responseDict = @{@"referral_code": @"testRC",
                                    @"calculation_type": @1,
                                    @"event": @"$redeem_code-testRC",
