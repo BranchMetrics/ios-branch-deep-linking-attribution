@@ -20,6 +20,7 @@
 @property (nonatomic, strong) NSString *feature;
 @property (nonatomic, strong) NSString *stage;
 @property (nonatomic, strong) NSString *params;
+@property (nonatomic, assign) NSUInteger duration;
 
 - (void)setupTags:(NSArray *)tags;
 - (void)setupAlias:(NSString *)alias;
@@ -28,6 +29,7 @@
 - (void)setupFeature:(NSString *)feature;
 - (void)setupStage:(NSString *)stage;
 - (void)setupParams:(NSString *)params;
+- (void)setupMatchDuration:(NSUInteger)duration;
 
 - (void)setObject:(id)anObject forKey:(id <NSCopying>)aKey;
 - (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key NS_AVAILABLE(10_8, 6_0);

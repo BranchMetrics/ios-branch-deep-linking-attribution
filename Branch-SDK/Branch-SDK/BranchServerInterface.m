@@ -102,11 +102,11 @@
 }
 
 - (void)getReferralCounts {
-    [self getRequestAsync:nil url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@", @"referrals/", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
+    [self getRequestAsync:@{@"app_id": [BNCPreferenceHelper getAppKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referrals", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
 }
 
 - (void)getRewards {
-    [self getRequestAsync:nil url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@", @"credits/", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REWARDS];
+    [self getRequestAsync:@{@"app_id": [BNCPreferenceHelper getAppKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REWARDS];
 }
 
 - (void)redeemRewards:(NSDictionary *)post {
