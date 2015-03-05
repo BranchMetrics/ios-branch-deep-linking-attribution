@@ -1,5 +1,3 @@
-[![Circle CI](https://circleci.com/gh/BranchMetrics/Branch-iOS-SDK.svg?style=svg)](https://circleci.com/gh/BranchMetrics/Branch-iOS-SDK)
-
 ## Callback changes since v0.3.0
 
 An NSError* is added to all callback signatures
