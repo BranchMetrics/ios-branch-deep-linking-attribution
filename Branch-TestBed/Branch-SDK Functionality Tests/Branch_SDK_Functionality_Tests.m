@@ -36,17 +36,10 @@
 
 @implementation Branch_SDK_Functionality_Tests
 
-+ (void)setUp {
-    [[LSNocilla sharedInstance] start];
-}
-
-+ (void)tearDown {
-    [[LSNocilla sharedInstance] clearStubs];
-    [[LSNocilla sharedInstance] stop];
-}
-
 - (void)setUp {
     [super setUp];
+    
+    [[LSNocilla sharedInstance] start];
     
     app_id = @"5668720416392049";
     device_fingerprint_id = @"94938498586381084";
@@ -66,6 +59,9 @@
 }
 
 - (void)tearDown {
+    [[LSNocilla sharedInstance] clearStubs];
+    [[LSNocilla sharedInstance] stop];
+    
     [super tearDown];
 }
 
