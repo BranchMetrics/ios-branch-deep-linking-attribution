@@ -62,20 +62,22 @@
     new_user_link = @"https://bnc.lt/i/2kkbX6k-As";
     
     branch = [Branch getInstance:app_id];
-    [self initSession];
 }
 
 - (void)tearDown {
     [super tearDown];
 }
 
-- (void)reset {
-    [BNCPreferenceHelper setDeviceFingerprintID:NO_STRING_VALUE];
-    [BNCPreferenceHelper setSessionID:NO_STRING_VALUE];
-    [BNCPreferenceHelper setIdentityID:NO_STRING_VALUE];
+- (void)initSession {
+    [BNCPreferenceHelper setSessionID:session_id];
+    [BNCPreferenceHelper setDeviceFingerprintID:device_fingerprint_id];
+    [BNCPreferenceHelper setIdentityID:identity_id];
+    [BNCPreferenceHelper setLinkClickID:NO_STRING_VALUE];
+    [BNCPreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
+    [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
 }
 
-- (void)initSession {
+- (void)test00Open {
     NSDictionary *responseDict = @{@"browser_fingerprint_id": browser_fingerprint_id,
                                    @"device_fingerprint_id": device_fingerprint_id,
                                    @"identity_id": identity_id,
@@ -84,7 +86,7 @@
                                    };
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
     
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"install"])
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"open"])
     .andReturn(200)
     .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
@@ -108,6 +110,8 @@
 }
 
 - (void)test01GetShortURLAsync {
+    [self initSession];
+    
     NSString __block *returnURL;
     
     NSDictionary *responseDict = @{@"url": short_link};
@@ -153,6 +157,8 @@
 }
 
 - (void)test02GetShortURLSync {
+    [self initSession];
+    
     NSDictionary *responseDict = @{@"url": short_link};
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
     
@@ -178,6 +184,8 @@
 }
 
 - (void)test03GetRewardsChanged {
+    [self initSession];
+    
     [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
     
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
@@ -204,6 +212,8 @@
 }
 
 - (void)test04GetRewardsUnchanged {
+    [self initSession];
+    
     [BNCPreferenceHelper setCreditCount:credits forBucket:@"default"];
     
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
@@ -230,6 +240,8 @@
 }
 
 - (void)test05GetReferralCode {
+    [self initSession];
+    
     NSDictionary *responseDict = @{@"referral_code": @"testRC",
                                    @"calculation_type": @1,
                                    @"event": @"$redeem_code-testRC",
@@ -265,6 +277,8 @@
 }
 
 - (void)test06ValidateReferralCode {
+    [self initSession];
+    
     NSDictionary *responseDict = @{@"referral_code": @"testRC",
                                    @"calculation_type": @1,
                                    @"event": @"$redeem_code-testRC",
@@ -300,6 +314,8 @@
 }
 
 - (void)test07ApplyReferralCode {
+    [self initSession];
+    
     NSDictionary *responseDict = @{@"referral_code": @"testRC",
                                    @"calculation_type": @1,
                                    @"event": @"$redeem_code-testRC",
@@ -335,6 +351,8 @@
 }
 
 - (void)test08GetCreditHistory {
+    [self initSession];
+    
     NSArray *responseArray = @[
                                @{@"referree": @"<null>",
                                  @"referrer": @"user_1",
@@ -388,6 +406,8 @@
 }
 
 - (void)test09SetIdentity {
+    [self initSession];
+    
     [BNCPreferenceHelper setIdentityID:logout_identity_id];
     [BNCPreferenceHelper setUserURL:@"https://bnc.lt/i/3R7_PIk-77"];
     
