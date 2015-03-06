@@ -985,8 +985,7 @@ static Branch *currInstance;
     [longURL appendString:[NSString stringWithFormat:@"/a/%@?", [BNCPreferenceHelper getAppKey]]];
     
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params options:NSJSONWritingPrettyPrinted error:nil];
-    [BNCPreferenceHelper base64EncodeData:jsonData];
-    NSString *base64EncodedParams = [jsonData base64EncodedStringWithOptions:0];
+    NSString *base64EncodedParams = [BNCPreferenceHelper base64EncodeData:jsonData];
     
     if (channel == nil) channel = @"";
     if (feature == nil) feature = @"";
