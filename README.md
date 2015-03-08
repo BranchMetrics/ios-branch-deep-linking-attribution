@@ -400,16 +400,17 @@ You have the ability to control the direct deep linking of each link by insertin
 
 ### UIActivityView Share Sheet
 
-UIActivityView is the standard way of allowing users to share content from your app. A common use case is a user sharing a referral code, or a content URL with their friends. If you want to give your users a way of sharing content from your app, this is the simpelist way to implement Branch.
+UIActivityView is the standard way of allowing users to share content from your app. A common use case is a user sharing a referral code, or a content URL with their friends. If you want to give your users a way of sharing content from your app, this is the simplest way to implement Branch.
 
-Sample UIActivityView Share sheet:
+**Sample UIActivityView Share sheet**
+
 ![UIActivityView Share Sheet](https://s3-us-west-1.amazonaws.com/branchhost/iOSShareSheet.png )
 
 The Branch iOS SDK includes a subclassed UIActivityItemProvider that can be passed into a UIActivityViewController, that will generate a Branch short URL and automatically tag it with the channel the user selects (Facebook, Twitter, etc.).
-**Note**: This method was formerly getBranchActivityItemWithDefaultURL:, which is now depreciated. Rather than requiring a default URL that acts as a placeholder for UIActivityItemProvider, a longURL is generated instantly and synchronously.
+
+**Note**: This method was formerly getBranchActivityItemWithDefaultURL:, which is now deprecated. Rather than requiring a default URL that acts as a placeholder for UIActivityItemProvider, a longURL is generated instantly and synchronously.
 
 The sample app included with the Branch iOS SDK shows a sample of this in ViewController.m:
-
 ###### Objective-C
 
 ```objc
@@ -419,6 +420,7 @@ The sample app included with the Branch iOS SDK shows a sample of this in ViewCo
 // No need to set the channel, that is done automatically based
 // on the share activity the user selects
 NSString *shareString = @"Super amazing thing I want to share!";
+UIImage *amazingImage = [UIImage imageNamed:@"Super-Amazing-Image.png"];
     
 NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 
@@ -443,7 +445,7 @@ NSString *stage = @"2";
 UIActivityItemProvider *itemProvider = [Branch getBranchActivityItemWithParams:params andFeature:feature andStage:stage andTags:tags];
     
 // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
-UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareString, itemProvider] applicationActivities:nil];
+UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareString, amazingImage, itemProvider] applicationActivities:nil];
     
 // Present the share sheet!
 [self.navigationController presentViewController:shareViewController animated:YES completion:nil];
@@ -458,6 +460,7 @@ UIActivityViewController *shareViewController = [[UIActivityViewController alloc
 // No need to set the channel, that is done automatically based
 // on the share activity the user selects
 let shareString = "Super amazing thing I want to share!"
+let amazingImage = UIImage(named: "Super-Amazing-Image.png")
 
 var params = ["user": "Joe"]
 params["profile_pic"] = "https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg"
@@ -479,7 +482,7 @@ let stage = "2"
 let itemProvider = Branch.getBranchActivityItemWithParams(params, andFeature: feature, andStage: stage, andTags: tags)
 
 // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
-let shareViewController = UIActivityViewController(activityItems: [shareString, itemProvider], applicationActivities: nil)
+let shareViewController = UIActivityViewController(activityItems: [shareString, amazingImage, itemProvider], applicationActivities: nil)
 
 // Present the share sheet!
 self.navigationController?.presentViewController(shareViewController, animated: true, completion: nil)

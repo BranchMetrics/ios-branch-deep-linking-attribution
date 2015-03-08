@@ -19,6 +19,12 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 
 @end
 
+@protocol BNCTestDelegate <NSObject>
+
+- (void)simulateInitFinished;
+
+@end
+
 @interface BNCPreferenceHelper : NSObject
 
 + (NSString *)getAPIBaseURL;
@@ -95,5 +101,8 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)sendScreenshot:(NSData *)data;
 + (void)setDebugConnectionDelegate:(id<BNCDebugConnectionDelegate>) debugConnectionDelegate;
 + (void)keepDebugAlive;
++ (void)setTestDelegate:(id<BNCTestDelegate>) testDelegate;
++ (void)simulateInitFinished;
++ (BOOL)isRemoteDebug;
 
 @end
