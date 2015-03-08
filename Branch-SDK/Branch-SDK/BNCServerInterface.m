@@ -66,33 +66,53 @@
     return [BNCServerInterface encodePostToUniversalString:params needSource:YES];
 }
 
+// TODO add support for additional data types like NSArrays and NSDates
 + (NSString *)encodePostToUniversalString:(NSDictionary *)params needSource:(BOOL)source {
-    NSMutableString *encodedParams = [[NSMutableString alloc] initWithString:@"{ "];
+    NSMutableString *encodedParams = [[NSMutableString alloc] initWithString:@"{"];
     for (NSString *key in params) {
         NSString *value = nil;
         BOOL string = YES;
-        if ([[params objectForKey:key] isKindOfClass:[NSString class]]) {
-            value = [params objectForKey:key];
-        } else if ([[params objectForKey:key] isKindOfClass:[NSDictionary class]]) {
-            value = [BNCServerInterface encodePostToUniversalString:[params objectForKey:key]];
-        } else if ([[params objectForKey:key] isKindOfClass:[NSNumber class]]) {
-            value = [[params objectForKey:key] stringValue];
+        
+        id obj = params[key];
+        if ([obj isKindOfClass:[NSString class]]) {
+            value = obj;
+        }
+        else if ([obj isKindOfClass:[NSDictionary class]]) {
+            value = [BNCServerInterface encodePostToUniversalString:obj needSource:NO]; // Sub dictionaries have no need for source
             string = NO;
         }
-        [encodedParams appendString:@"\""];
-        [encodedParams appendString:key];
-        if (string) [encodedParams appendString:@"\":\""];
-        else [encodedParams appendString:@"\":"];
-        [encodedParams appendString:value];
-        if (string) [encodedParams appendString:@"\","];
-        else [encodedParams appendString:@","];
+        else if ([obj isKindOfClass:[NSNumber class]]) {
+            value = [obj stringValue];
+            string = NO;
+        }
+        else if ([obj isKindOfClass:[NSNull class]]) {
+            value = @"null";
+            string = NO;
+        }
+        else {
+            // If this type is not a known type, don't attempt to encode it.
+            continue;
+        }
+
+        [encodedParams appendFormat:@"\"%@\":", key];
+        
+        // If this is a "string" object, wrap it in quotes
+        if (string) {
+            [encodedParams appendFormat:@"\"%@\",", value];
+        }
+        // Otherwise, just add the raw value after the colon
+        else {
+            [encodedParams appendFormat:@"%@,", value];
+        }
     }
 
     if (source) {
-        [encodedParams appendString:@"\"source\":\"ios\" }"];
-    } else {
-        [encodedParams deleteCharactersInRange:NSMakeRange([encodedParams length]-1, 1)];
-        [encodedParams appendString:@" }"];
+        [encodedParams appendString:@"\"source\":\"ios\"}"];
+    }
+    else {
+        // Delete the trailing comma
+        [encodedParams deleteCharactersInRange:NSMakeRange([encodedParams length] - 1, 1)];
+        [encodedParams appendString:@"}"];
     }
     
     [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"encoded params : %@", encodedParams];
