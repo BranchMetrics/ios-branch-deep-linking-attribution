@@ -1,6 +1,10 @@
 Branch iOS SDK change log 
 
-- V0.4.7.0: Removed Default URL argument from BranchActivityItemProvider, and replaced with an automatically generated long URL placeholder
+- V0.5.0: Removed Default URL argument from BranchActivityItemProvider, and replaced with an automatically generated long URL placeholder
+
+- v0.4.7: Rework of `BNCServerInterface encodePostToUniversalString:needSource:`
+
+- v0.4.6.2: Added unit tests
 
 - V0.4.6.1: Exposed duration in getShortUrl for tuning link click match duration
 

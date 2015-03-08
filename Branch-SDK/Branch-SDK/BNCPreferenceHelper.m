@@ -40,6 +40,7 @@ static BNCPreferenceHelper *instance = nil;
 static BOOL BNC_Debug = NO;
 static BOOL BNC_Dev_Debug = NO;
 static BOOL BNC_Remote_Debug = NO;
+
 static dispatch_queue_t bnc_asyncLogQueue = nil;
 static id<BNCDebugConnectionDelegate> bnc_asyncDebugConnectionDelegate = nil;
 static BranchServerInterface *serverInterface = nil;
@@ -47,6 +48,8 @@ static BranchServerInterface *serverInterface = nil;
 static NSString *KEY_TIMEOUT = @"bnc_timeout";
 static NSString *KEY_RETRY_INTERVAL = @"bnc_retry_interval";
 static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
+
+static id<BNCTestDelegate> bnc_testDelegate = nil;
 
 @interface BNCPreferenceHelper() <BNCServerInterfaceDelegate>
 
@@ -91,6 +94,10 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 
 + (BOOL)isDebug {
     return BNC_Debug;
+}
+
++ (BOOL)isRemoteDebug {
+    return BNC_Remote_Debug;
 }
 
 + (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ... {
@@ -179,7 +186,7 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
     NSString *ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:KEY_APP_KEY];
     if (!ret || ret.length == 0) {
         // for backward compatibility
-        ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_APP_KEY];
+        ret = [BNCPreferenceHelper readStringFromDefaults:KEY_APP_KEY];
         if (!ret) {
             ret = NO_STRING_VALUE;
         }
@@ -197,7 +204,7 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 }
 
 + (NSString *)getDeviceFingerprintID {
-    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_DEVICE_FINGERPRINT_ID];
+    NSString *ret = [BNCPreferenceHelper readStringFromDefaults:KEY_DEVICE_FINGERPRINT_ID];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
@@ -208,7 +215,7 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 }
 
 + (NSString *)getSessionID {
-    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_SESSION_ID];
+    NSString *ret = [BNCPreferenceHelper readStringFromDefaults:KEY_SESSION_ID];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
@@ -219,7 +226,7 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 }
 
 + (NSString *)getIdentityID {
-    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_IDENTITY_ID];
+    NSString *ret = [BNCPreferenceHelper readStringFromDefaults:KEY_IDENTITY_ID];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
@@ -229,7 +236,7 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
     [BNCPreferenceHelper writeObjectToDefaults:KEY_IDENTITY value:userIdentity];
 }
 + (NSString *)getUserIdentity {
-    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_IDENTITY];
+    NSString *ret = [BNCPreferenceHelper readStringFromDefaults:KEY_IDENTITY];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
@@ -241,7 +248,7 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 
 }
 + (NSString *)getLinkClickIdentifier {
-    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_LINK_CLICK_IDENTIFIER];
+    NSString *ret = [BNCPreferenceHelper readStringFromDefaults:KEY_LINK_CLICK_IDENTIFIER];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
@@ -252,7 +259,7 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 }
 
 + (NSString *)getLinkClickID {
-    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_LINK_CLICK_ID];
+    NSString *ret = [BNCPreferenceHelper readStringFromDefaults:KEY_LINK_CLICK_ID];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
@@ -263,7 +270,7 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 }
 
 + (NSString *)getSessionParams {
-    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_SESSION_PARAMS];
+    NSString *ret = [BNCPreferenceHelper readStringFromDefaults:KEY_SESSION_PARAMS];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
@@ -274,7 +281,7 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 }
 
 + (NSString *)getInstallParams {
-    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_INSTALL_PARAMS];
+    NSString *ret = [BNCPreferenceHelper readStringFromDefaults:KEY_INSTALL_PARAMS];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
@@ -285,7 +292,7 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 }
 
 + (NSString *)getUserURL {
-    NSString *ret = (NSString *)[BNCPreferenceHelper readObjectFromDefaults:KEY_USER_URL];
+    NSString *ret = [BNCPreferenceHelper readStringFromDefaults:KEY_USER_URL];
     if (!ret)
         ret = NO_STRING_VALUE;
     return ret;
@@ -413,6 +420,13 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSObject *obj = [defaults objectForKey:key];
     return obj;
+}
+
++ (NSString *)readStringFromDefaults:(NSString *)key
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *str = [defaults stringForKey:key];
+    return str;
 }
 
 + (BOOL)readBoolFromDefaults:(NSString *)key {
@@ -581,6 +595,14 @@ static const short _base64DecodingTable[256] = {
 	NSData * objData = [[NSData alloc] initWithBytes:objResult length:j] ;
 	free(objResult);
 	return objData;
+}
+
++ (void)setTestDelegate:(id<BNCTestDelegate>) testDelegate {
+    bnc_testDelegate = testDelegate;
+}
+
++ (void)simulateInitFinished {
+    [bnc_testDelegate simulateInitFinished];
 }
 
 #pragma mark - ServerInterface delegate
