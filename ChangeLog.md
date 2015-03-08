@@ -1,5 +1,7 @@
 Branch iOS SDK change log 
 
+- v0.4.7: Rework of `BNCServerInterface encodePostToUniversalString:needSource:`
+
 - v0.4.6.2: Added unit tests
 
 - V0.4.6.1: Exposed duration in getShortUrl for tuning link click match duration
