@@ -462,8 +462,13 @@ UIActivityViewController *shareViewController = [[UIActivityViewController alloc
 
 // No need to set the channel, that is done automatically based
 // on the share activity the user selects
+var items: Array = [AnyObject]()
+
 let shareString = "Super amazing thing I want to share!"
-let amazingImage = UIImage(named: "Super-Amazing-Image.png")
+items.append(shareString)
+if let amazingImage: UIImage = UIImage(named: "mada.png") {
+    items.append(amazingImage)
+}
 let defaultURL = "http://lmgtfy.com/?q=branch+metrics"
 
 var params = ["user": "Joe"]
@@ -484,9 +489,10 @@ let stage = "2"
 
 // Branch UIActivityItemProvider
 let itemProvider = Branch.getBranchActivityItemWithDefaultURL(defaultURL, andParams: params, andFeature: feature, andStage: stage, andTags: tags)
+items.append(itemProvider)
 
 // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
-let shareViewController = UIActivityViewController(activityItems: [shareString, amazingImage, itemProvider], applicationActivities: nil)
+let shareViewController = UIActivityViewController(activityItems: items, applicationActivities: nil)
 
 // Present the share sheet!
 self.navigationController?.presentViewController(shareViewController, animated: true, completion: nil)
