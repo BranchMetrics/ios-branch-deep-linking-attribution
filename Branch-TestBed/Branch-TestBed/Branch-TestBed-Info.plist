@@ -45,7 +45,7 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>bnc_app_key</key>
-	<string>5668720416392049</string>
+	<key>branch_key</key>
+	<string>key_live_78801a996de4287481fe73708cc95da2</string>
 </dict>
 </plist>
