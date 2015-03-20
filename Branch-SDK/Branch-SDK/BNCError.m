@@ -15,7 +15,7 @@ NSString *const BNCErrorDomain = @"io.branch";
 + (NSDictionary *)getUserInfoDictForDomain:(NSInteger)code {
     switch (code) {
         case BNCInitError:
-            return [NSDictionary dictionaryWithObject:@[@"Failed to initialize - are you using the right API key?"] forKey:NSLocalizedDescriptionKey];
+            return [NSDictionary dictionaryWithObject:@[@"Failed to initialize - are you using the right Branch key?"] forKey:NSLocalizedDescriptionKey];
         case BNCCloseError:
             return [NSDictionary dictionaryWithObject:@[@"Trouble closing the session - check network connectivity?"] forKey:NSLocalizedDescriptionKey];
         case BNCEventError:

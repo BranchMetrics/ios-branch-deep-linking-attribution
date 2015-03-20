@@ -53,7 +53,7 @@ typedef enum {
 @interface Branch : NSObject
 
 + (Branch *)getInstance;
-+ (Branch *)getInstance:(NSString *)appKey;
++ (Branch *)getInstance:(NSString *)branchKey;
 
 // Branch Activity item providers for UIActivityViewController
 + (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url

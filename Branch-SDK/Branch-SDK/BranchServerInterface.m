@@ -15,7 +15,7 @@
 - (void)registerInstall:(BOOL)debug {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
-    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getBranchKey] forKey:BRANCH_KEY];
     BOOL isRealHardwareId;
     NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper getDevDebug]];
     if (hardwareId) {
@@ -51,7 +51,7 @@
 - (void)registerOpen:(BOOL)debug {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
-    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getBranchKey] forKey:BRANCH_KEY];
     if ([[BNCPreferenceHelper getDeviceFingerprintID] isEqualToString:NO_STRING_VALUE]) {
         BOOL isRealHardwareId;
         NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper getDevDebug]];
@@ -81,7 +81,7 @@
 - (void)registerClose {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
-    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getBranchKey] forKey:BRANCH_KEY];
     [post setObject:[BNCPreferenceHelper getIdentityID] forKey:@"identity_id"];
     [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
@@ -102,11 +102,11 @@
 }
 
 - (void)getReferralCounts {
-    [self getRequestAsync:@{@"app_id": [BNCPreferenceHelper getAppKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referrals", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
+    [self getRequestAsync:@{BRANCH_KEY: [BNCPreferenceHelper getBranchKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referrals", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
 }
 
 - (void)getRewards {
-    [self getRequestAsync:@{@"app_id": [BNCPreferenceHelper getAppKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REWARDS];
+    [self getRequestAsync:@{BRANCH_KEY: [BNCPreferenceHelper getBranchKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REWARDS];
 }
 
 - (void)redeemRewards:(NSDictionary *)post {
@@ -163,7 +163,7 @@
 
 - (void)connectToDebug {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
-    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getBranchKey] forKey:BRANCH_KEY];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     [post setObject:[BNCSystemObserver getDeviceName] forKey:@"device_name"];
     [post setObject:[BNCSystemObserver getOS] forKey:@"os"];
@@ -176,7 +176,7 @@
 
 - (void)disconnectFromDebug {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
-    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getBranchKey] forKey:BRANCH_KEY];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug/disconnect"] andTag:REQ_TAG_DEBUG_DISCONNECT log:NO];
@@ -184,7 +184,7 @@
 
 - (void)sendLog:(NSString *)log {
     NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObject:log forKey:@"log"];
-    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
+    [post setObject:[BNCPreferenceHelper getBranchKey] forKey:BRANCH_KEY];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug/log"] andTag:REQ_TAG_DEBUG_LOG log:NO];
@@ -194,7 +194,7 @@
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     NSString *file = @"BNC_Debug_Screen.png";
     
-    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?app_id=%@&device_fingerprint_id=%@", [BNCPreferenceHelper getAPIURL:@"debug/screenshot"], [BNCPreferenceHelper getAppKey], [BNCPreferenceHelper getDeviceFingerprintID]]]];
+    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?%@=%@&device_fingerprint_id=%@", [BNCPreferenceHelper getAPIURL:@"debug/screenshot"], BRANCH_KEY, [BNCPreferenceHelper getBranchKey], [BNCPreferenceHelper getDeviceFingerprintID]]]];
     [request setHTTPMethod:@"POST"];
     
     NSString *boundary = @"---------------------------Boundary Line---------------------------";
