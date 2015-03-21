@@ -1,5 +1,7 @@
 Branch iOS SDK change log 
 
+- v0.4.8: Fixed hashing issue on very long NSString in link caching
+
 - v0.4.7: Rework of `BNCServerInterface encodePostToUniversalString:needSource:`
 
 - v0.4.6.2: Added unit tests
