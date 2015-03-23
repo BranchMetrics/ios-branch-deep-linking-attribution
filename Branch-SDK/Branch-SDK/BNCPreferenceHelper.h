@@ -11,7 +11,7 @@
 #define FILE_NAME   [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
 #define LINE_NUM    __LINE__
 
-static NSString *BRANCH_KEY = @"branch_key";
+static NSString *KEY_BRANCH_KEY = @"branch_key";
 static NSString *NO_STRING_VALUE = @"bnc_no_value";
 
 @protocol BNCDebugConnectionDelegate <NSObject>
@@ -41,6 +41,7 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (NSInteger)getRetryCount;
 
 + (NSString *)getBranchKey;
++ (NSString *)getBranchKey:(BOOL)isLive;
 + (void)setBranchKey:(NSString *)branchKey;
 
 + (void)setDeviceFingerprintID:(NSString *)deviceID;

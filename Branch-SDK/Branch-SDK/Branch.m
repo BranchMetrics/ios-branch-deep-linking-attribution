@@ -102,9 +102,9 @@ static Branch *currInstance;
 
 // PUBLIC CALLS
 
-+ (Branch *)getInstance {
++ (Branch *)getBranchInstance:(BOOL)isLive {
     if (!currInstance) {
-        NSString *branchKey = [BNCPreferenceHelper getBranchKey];
+        NSString *branchKey = [BNCPreferenceHelper getBranchKey:isLive];
         if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
             NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
         }
@@ -112,6 +112,14 @@ static Branch *currInstance;
         [Branch initInstance];
     }
     return currInstance;
+}
+
++ (Branch *)getInstance {
+    return [Branch getBranchInstance:YES];
+}
+
++ (Branch *)getTestInstance {
+    return [Branch getBranchInstance:NO];
 }
 
 + (Branch *)getInstance:(NSString *)branchKey {
@@ -352,7 +360,7 @@ static Branch *currInstance;
                                                                                    [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
                                                                          forKeys:@[
                                                                                    IDENTITY,
-                                                                                   BRANCH_KEY,
+                                                                                   KEY_BRANCH_KEY,
                                                                                    DEVICE_FINGERPRINT_ID,
                                                                                    SESSION_ID,
                                                                                    IDENTITY_ID,
@@ -380,7 +388,7 @@ static Branch *currInstance;
                                                                                    [BNCPreferenceHelper getIdentityID],
                                                                                    [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
                                                                          forKeys:@[
-                                                                                   BRANCH_KEY,
+                                                                                   KEY_BRANCH_KEY,
                                                                                    DEVICE_FINGERPRINT_ID,
                                                                                    SESSION_ID,
                                                                                    IDENTITY_ID,
@@ -484,7 +492,7 @@ static Branch *currInstance;
                                                                              forKeys:@[
                                                                                        BUCKET,
                                                                                        AMOUNT,
-                                                                                       BRANCH_KEY,
+                                                                                       KEY_BRANCH_KEY,
                                                                                        DEVICE_FINGERPRINT_ID,
                                                                                        IDENTITY_ID,
                                                                                        SESSION_ID,
@@ -529,7 +537,7 @@ static Branch *currInstance;
                                                                                  [NSNumber numberWithLong:length],
                                                                                  DIRECTIONS[order],
                                                                                  [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
-                                                                       forKeys:@[BRANCH_KEY,
+                                                                       forKeys:@[KEY_BRANCH_KEY,
                                                                                  DEVICE_FINGERPRINT_ID,
                                                                                  IDENTITY_ID,
                                                                                  SESSION_ID,
@@ -575,7 +583,7 @@ static Branch *currInstance;
                                                                                    [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
                                                                          forKeys:@[
                                                                                    EVENT,
-                                                                                   BRANCH_KEY,
+                                                                                   KEY_BRANCH_KEY,
                                                                                    DEVICE_FINGERPRINT_ID,
                                                                                    IDENTITY_ID,
                                                                                    SESSION_ID,
@@ -732,7 +740,7 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_CODE;
-        NSMutableArray *keys = [NSMutableArray arrayWithArray:@[BRANCH_KEY,
+        NSMutableArray *keys = [NSMutableArray arrayWithArray:@[KEY_BRANCH_KEY,
                                                                 DEVICE_FINGERPRINT_ID,
                                                                 IDENTITY_ID,
                                                                 SESSION_ID,
@@ -781,7 +789,7 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_CODE;
-        NSMutableArray *keys = [NSMutableArray arrayWithArray:@[BRANCH_KEY,
+        NSMutableArray *keys = [NSMutableArray arrayWithArray:@[KEY_BRANCH_KEY,
                                                                 DEVICE_FINGERPRINT_ID,
                                                                 IDENTITY_ID,
                                                                 SESSION_ID,
@@ -848,7 +856,7 @@ static Branch *currInstance;
                                                                        forKeys:@[
                                                                                  REFERRAL_CODE,
                                                                                  IDENTITY_ID,
-                                                                                 BRANCH_KEY,
+                                                                                 KEY_BRANCH_KEY,
                                                                                  DEVICE_FINGERPRINT_ID,
                                                                                  SESSION_ID,
                                                                                  @"sdk"]];
@@ -880,7 +888,7 @@ static Branch *currInstance;
                                                                                  [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
                                                                        forKeys:@[REFERRAL_CODE,
                                                                                  IDENTITY_ID,
-                                                                                 BRANCH_KEY,
+                                                                                 KEY_BRANCH_KEY,
                                                                                  SESSION_ID,
                                                                                  DEVICE_FINGERPRINT_ID,
                                                                                  @"sdk"]];
@@ -963,7 +971,7 @@ static Branch *currInstance;
 
 - (BNCLinkData *)prepareLinkDataFor:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params {
     BNCLinkData *post = [[BNCLinkData alloc] init];
-    [post setObject:[BNCPreferenceHelper getBranchKey] forKey:BRANCH_KEY];
+    [post setObject:[BNCPreferenceHelper getBranchKey] forKey:KEY_BRANCH_KEY];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:DEVICE_FINGERPRINT_ID];
     [post setObject:[BNCPreferenceHelper getIdentityID] forKey:IDENTITY_ID];
     [post setObject:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
@@ -1098,7 +1106,7 @@ static Branch *currInstance;
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_UPLOAD_LIST_OF_APPS;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
-        [post setObject:[BNCPreferenceHelper getBranchKey] forKey:BRANCH_KEY];
+        [post setObject:[BNCPreferenceHelper getBranchKey] forKey:KEY_BRANCH_KEY];
         [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:DEVICE_FINGERPRINT_ID];
         [post setObject:[BNCSystemObserver getOS] forKey:@"os"];
         [post setObject:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
@@ -1291,8 +1299,8 @@ static Branch *currInstance;
         
         if (request && request.postData) {
             for (NSString *key in [request.postData allKeys]) {
-                if ([key isEqualToString:BRANCH_KEY]) {
-                    [request.postData setValue:[BNCPreferenceHelper getBranchKey] forKey:BRANCH_KEY];
+                if ([key isEqualToString:KEY_BRANCH_KEY]) {
+                    [request.postData setValue:[BNCPreferenceHelper getBranchKey] forKey:KEY_BRANCH_KEY];
                 } else if ([key isEqualToString:SESSION_ID]) {
                     [request.postData setValue:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
                 } else if ([key isEqualToString:IDENTITY_ID]) {
@@ -1338,6 +1346,8 @@ static Branch *currInstance;
     if (![self hasBranchKey]) {
         NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
         return;
+    } else if ([[BNCPreferenceHelper getBranchKey] rangeOfString:@"key_test_"].location != NSNotFound) {
+        NSLog(@"Branch Warning: You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment.");
     }
     
     if ([self hasUser]) {
