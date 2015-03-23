@@ -46,6 +46,11 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>branch_key</key>
-	<string>key_live_78801a996de4287481fe73708cc95da2</string>
+	<dict>
+		<key>live</key>
+		<string>key_live_78801a996de4287481fe73708cc95da2</string>
+		<key>test</key>
+		<string>key_test_fM8bpMUpxr8hQSmiXyKZZ2nEXgiBhwuT</string>
+	</dict>
 </dict>
 </plist>

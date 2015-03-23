@@ -49,6 +49,8 @@ static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 
 static id<BNCTestDelegate> bnc_testDelegate = nil;
 
+static NSString *Branch_Key = nil;
+
 @interface BNCPreferenceHelper() <BNCServerInterfaceDelegate>
 
 @end
@@ -181,20 +183,36 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
 }
 
 + (NSString *)getBranchKey {
-    NSString *ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:BRANCH_KEY];
-    if (!ret || ret.length == 0) {
-        // for backward compatibility
-        ret = [BNCPreferenceHelper readStringFromDefaults:BRANCH_KEY];
-        if (!ret) {
-            ret = NO_STRING_VALUE;
+    if (!Branch_Key) {
+        Branch_Key = [BNCPreferenceHelper getBranchKey:YES];
+    }
+    
+    return Branch_Key;
+}
+
++ (NSString *)getBranchKey:(BOOL)isLive {
+    NSString *key = nil;
+    
+    id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:KEY_BRANCH_KEY];
+    if (ret) {
+        if ([ret isKindOfClass:[NSString class]]) {
+            key = ret;
+        } else if ([ret isKindOfClass:[NSDictionary class]]) {
+            key = isLive ? ret[@"live"] : ret[@"test"];
         }
     }
     
-    return ret;
+    if (!key || key.length == 0) {
+        key = NO_STRING_VALUE;
+    }
+    
+    [BNCPreferenceHelper setBranchKey:key];
+    
+    return key;
 }
 
 + (void)setBranchKey:(NSString *)branchKey {
-    [BNCPreferenceHelper writeObjectToDefaults:BRANCH_KEY value:branchKey];
+    Branch_Key = branchKey;
 }
 
 + (void)setDeviceFingerprintID:(NSString *)deviceID {
