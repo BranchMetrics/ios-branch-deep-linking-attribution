@@ -75,10 +75,11 @@
     [BNCPreferenceHelper setLinkClickID:NO_STRING_VALUE];
     [BNCPreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
     [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
+    [BNCPreferenceHelper setTestDelegate:(id<BNCTestDelegate>)branch];
     [BNCPreferenceHelper simulateInitFinished];
 }
 
-- (void)test00Open {
+- (void)test99Open {
     NSDictionary *responseDict = @{@"browser_fingerprint_id": browser_fingerprint_id,
                                    @"device_fingerprint_id": device_fingerprint_id,
                                    @"identity_id": identity_id,
