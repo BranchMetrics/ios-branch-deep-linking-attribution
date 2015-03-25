@@ -1,4 +1,6 @@
-Branch iOS SDK change log 
+Branch iOS SDK change log
+
+- V0.5.0: Removed Default URL argument from BranchActivityItemProvider, and replaced with an automatically generated long URL placeholder
 
 - v0.4.8: Fixed hashing issue on very long NSString in link caching
 
@@ -38,7 +40,7 @@ Branch iOS SDK change log
 
 - v0.3.95: Added BNCDebugging category to framework
 
-- v0.3.91: Added getters/setters for API timeout, retryInterval and retryCount 
+- v0.3.91: Added getters/setters for API timeout, retryInterval and retryCount
 
 - v0.3.90: Added more info to debug connect
 
