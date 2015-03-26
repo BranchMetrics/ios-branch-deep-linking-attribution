@@ -145,7 +145,7 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
     return [[BNCPreferenceHelper getAPIBaseURL] stringByAppendingString:endpoint];
 }
 
-#pragma mark Preference Storage
+#pragma mark - Preference Storage
 
 + (void)setTimeout:(NSInteger)timeout {
     [BNCPreferenceHelper writeIntegerToDefaults:KEY_TIMEOUT value:timeout];
@@ -341,7 +341,7 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
     [BNCPreferenceHelper setCountsDictionary:[[NSDictionary alloc] init]];
 }
 
-#pragma mark Credit Storage
+#pragma mark - Credit Storage
 
 + (NSDictionary *)getCreditsDictionary {
     NSDictionary *dict = (NSDictionary *)[BNCPreferenceHelper readObjectFromDefaults:KEY_CREDITS];
@@ -370,7 +370,7 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
     return [[creditDict objectForKey:[KEY_CREDIT_BASE stringByAppendingString:bucket]] integerValue];
 }
 
-#pragma mark Count Storage
+#pragma mark - Count Storage
 
 + (NSDictionary *)getCountsDictionary {
     NSDictionary *dict = (NSDictionary *)[BNCPreferenceHelper readObjectFromDefaults:KEY_COUNTS];
@@ -402,7 +402,7 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
     return [[counts objectForKey:[KEY_UNIQUE_BASE stringByAppendingString:action]] integerValue];
 }
 
-#pragma mark Writing To Defaults
+#pragma mark - Writing To Defaults
 
 + (void)writeIntegerToDefaults:(NSString *)key value:(NSInteger)value
 {
@@ -425,7 +425,7 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
     [defaults synchronize];
 }
 
-#pragma mark Reading From Defaults
+#pragma mark - Reading From Defaults
 
 + (NSObject *)readObjectFromDefaults:(NSString *)key
 {
