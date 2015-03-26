@@ -73,7 +73,7 @@
 }
 
 + (NSString *)getAppVersion {
-    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
 }
 
 + (NSString *)getCarrier {
@@ -121,13 +121,16 @@
 }
 
 + (NSNumber *)getUpdateState {
-    NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];    NSFileManager *manager = [NSFileManager defaultManager];
-    NSDictionary* attrs = [manager attributesOfItemAtPath:bundleRoot error:nil];
-    if ((int)([[attrs fileCreationDate] timeIntervalSince1970]/(60*60*24)) == (int)([[attrs fileModificationDate] timeIntervalSince1970]/(60*60*24))) {
-        return nil;
-    } else {
+
+    NSString *storedAppVersion = [BNCPreferenceHelper getAppVersion];
+    NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
+
+    if (storedAppVersion == nil ||
+        ([storedAppVersion compare:currentAppVersion options:NSNumericSearch] == NSOrderedAscending)) {
+        [BNCPreferenceHelper setAppVersion:currentAppVersion];
         return [NSNumber numberWithInt:1];
     }
+    return nil;
 }
 
 + (NSString *)getOS {
