@@ -328,13 +328,10 @@ static Branch *currInstance;
 
 - (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
     self.installparamLoadCallback = callback;
-    [self setIdentity:userId];
-}
-
-- (void)setIdentity:(NSString *)userId {
+    
     if (!userId || [[BNCPreferenceHelper getUserIdentity] isEqualToString:userId])
         return;
-
+    
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_IDENTIFY;
@@ -353,7 +350,19 @@ static Branch *currInstance;
                                                                                    IDENTITY_ID,
                                                                                    @"sdk"]];
         req.postData = post;
-        [self.requestQueue enqueue:req];
+
+        if (!self.initFailed) {
+            [self.requestQueue enqueue:req];
+        } else {
+            if (callback) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCIdentifyError];
+                    callback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCIdentifyError userInfo:errorDict]);
+                });
+            }
+            self.installparamLoadCallback = nil;
+            return;
+        }
         
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
@@ -362,6 +371,10 @@ static Branch *currInstance;
             [self handleFailure:[self.requestQueue size]-1];
         }
     });
+}
+
+- (void)setIdentity:(NSString *)userId {
+    [self setIdentity:userId withCallback:nil];
 }
 
 - (void)logout {
@@ -404,12 +417,20 @@ static Branch *currInstance;
         req.postData = post;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
+        } else {
+            if (callback) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    callback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralsError userInfo:[BNCError getUserInfoDictForDomain:BNCGetReferralsError]]);
+                });
+            }
+            self.pointLoadCallback = nil;
+            return;
         }
         
         if (self.initFinished || !self.hasNetwork) {
             self.lastRequestWasInit = NO;
             [self processNextQueueItem];
-        } else if (self.initFailed || self.initNotCalled) {
+        } else if (self.initNotCalled) {
             [self handleFailure:[self.requestQueue size]-1];
         }
     });
@@ -424,6 +445,14 @@ static Branch *currInstance;
         req.tag = REQ_TAG_GET_REWARDS;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
+        } else {
+            if (callback) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    callback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditsError userInfo:[BNCError getUserInfoDictForDomain:BNCGetCreditsError]]);
+                });
+            }
+            self.rewardLoadCallback = nil;
+            return;
         }
         
         if (self.initFinished || !self.hasNetwork) {
@@ -540,6 +569,14 @@ static Branch *currInstance;
         req.postData = data;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
+        } else {
+            if (callback) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:[BNCError getUserInfoDictForDomain:BNCGetCreditHistoryError]]);
+                });
+            }
+            self.creditHistoryLoadCallback = nil;
+            return;
         }
         
         if (self.initFinished || !self.hasNetwork) {
@@ -765,6 +802,14 @@ static Branch *currInstance;
         req.postData = post;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
+        } else {
+            if (callback) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:[BNCError getUserInfoDictForDomain:BNCGetReferralCodeError]]);
+                });
+            }
+            self.getReferralCodeCallback = nil;
+            return;
         }
         
         if (self.initFinished || !self.hasNetwork) {
@@ -834,6 +879,14 @@ static Branch *currInstance;
         req.postData = post;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
+        } else {
+            if (callback) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:[BNCError getUserInfoDictForDomain:BNCGetReferralCodeError]]);
+                });
+            }
+            self.getReferralCodeCallback = nil;
+            return;
         }
         
         if (self.initFinished || !self.hasNetwork) {
@@ -873,6 +926,14 @@ static Branch *currInstance;
         req.postData = post;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
+        } else {
+            if (callback) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:[BNCError getUserInfoDictForDomain:BNCValidateReferralCodeError]]);
+                });
+            }
+            self.validateReferralCodeCallback = nil;
+            return;
         }
         
         if (self.initFinished || !self.hasNetwork) {
@@ -905,6 +966,14 @@ static Branch *currInstance;
         req.postData = post;
         if (!self.initFailed) {
             [self.requestQueue enqueue:req];
+        } else {
+            if (callback) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:[BNCError getUserInfoDictForDomain:BNCApplyReferralCodeError]]);
+                });
+            }
+            self.applyReferralCodeCallback = nil;
+            return;
         }
         
         if (self.initFinished || !self.hasNetwork) {
@@ -933,6 +1002,18 @@ static Branch *currInstance;
             
             if (!self.initFailed) {
                 [self.requestQueue enqueue:req];
+            } else {
+                if (callback) {
+                    NSString *failedUrl = nil;
+                    if (![[BNCPreferenceHelper getUserURL] isEqualToString:NO_STRING_VALUE]) {
+                        failedUrl = [BNCPreferenceHelper getUserURL];
+                    }
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        callback(failedUrl, [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:[BNCError getUserInfoDictForDomain:BNCCreateURLError]]);
+                    });
+                }
+                self.urlLoadCallback = nil;
+                return;
             }
             
             if (self.initFinished || !self.hasNetwork) {
@@ -1262,28 +1343,35 @@ static Branch *currInstance;
     
     if (req) {
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
+            self.initFailed = YES;
             errorDict = [BNCError getUserInfoDictForDomain:BNCInitError];
             if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:errorDict]);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCGetReferralsError];
             if (self.pointLoadCallback) {
-                self.pointLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralsError userInfo:errorDict]);
-                self.pointLoadCallback = nil;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.pointLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralsError userInfo:errorDict]);
+                    self.pointLoadCallback = nil;
+                });
             }
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCGetCreditsError];
             if (self.rewardLoadCallback) {
-                self.rewardLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditsError userInfo:errorDict]);
-                self.rewardLoadCallback = nil;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.rewardLoadCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditsError userInfo:errorDict]);
+                    self.rewardLoadCallback = nil;
+                });
             }
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCGetCreditHistoryError];
             if (self.creditHistoryLoadCallback) {
-                self.creditHistoryLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:errorDict]);
-                self.creditHistoryLoadCallback = nil;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.creditHistoryLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:errorDict]);
+                    self.creditHistoryLoadCallback = nil;
+                });
             }
         } else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
             if (self.urlLoadCallback) {
@@ -1293,36 +1381,46 @@ static Branch *currInstance;
                 if (![[BNCPreferenceHelper getUserURL] isEqualToString:NO_STRING_VALUE]) {
                     failedUrl = [BNCPreferenceHelper getUserURL];
                 }
-                self.urlLoadCallback(failedUrl, [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:errorDict]);
-                self.urlLoadCallback = nil;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.urlLoadCallback(failedUrl, [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:errorDict]);
+                    self.urlLoadCallback = nil;
+                });
             }
         } else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCIdentifyError];
             if (self.installparamLoadCallback) {
-                self.installparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCIdentifyError userInfo:errorDict]);
-                self.installparamLoadCallback = nil;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.installparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCIdentifyError userInfo:errorDict]);
+                    self.installparamLoadCallback = nil;
+                });
             }
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_CODE]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCGetReferralCodeError];
             if (self.getReferralCodeCallback) {
-                self.getReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:errorDict]);
-                self.getReferralCodeCallback = nil;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.getReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:errorDict]);
+                    self.getReferralCodeCallback = nil;
+                });
             }
         } else if ([req.tag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCValidateReferralCodeError];
             if (self.validateReferralCodeCallback) {
-                self.validateReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:errorDict]);
-                self.validateReferralCodeCallback = nil;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.validateReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:errorDict]);
+                    self.validateReferralCodeCallback = nil;
+                });
             }
         } else if ([req.tag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCApplyReferralCodeError];
             if (self.applyReferralCodeCallback) {
-                self.applyReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict]);
-                self.applyReferralCodeCallback = nil;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.applyReferralCodeCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict]);
+                    self.applyReferralCodeCallback = nil;
+                });
             }
         }
     }
