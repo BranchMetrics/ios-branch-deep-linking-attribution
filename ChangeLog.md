@@ -1,5 +1,7 @@
 Branch iOS SDK change log
 
+- v0.5.1: Fixed request black hole after initSession failed
+
 - V0.5.0: Removed Default URL argument from BranchActivityItemProvider, and replaced with an automatically generated long URL placeholder
 
 - v0.4.8: Fixed hashing issue on very long NSString in link caching
