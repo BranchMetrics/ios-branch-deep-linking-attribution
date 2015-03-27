@@ -70,8 +70,6 @@
     if (osVersion) [post setObject:osVersion forKey:@"os_version"];
     NSString *uriScheme = [BNCSystemObserver getURIScheme];
     if (uriScheme) [post setObject:uriScheme forKey:@"uri_scheme"];
-    NSNumber *updateState = [BNCSystemObserver getUpdateState];
-    if (updateState) [post setObject:updateState forKeyedSubscript:@"update"];
     [post setObject:[NSNumber numberWithBool:[BNCSystemObserver adTrackingSafe]] forKey:@"ad_tracking_enabled"];
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];

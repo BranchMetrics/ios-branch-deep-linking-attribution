@@ -124,13 +124,22 @@
 
     NSString *storedAppVersion = [BNCPreferenceHelper getAppVersion];
     NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
+    NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
+    NSFileManager *manager = [NSFileManager defaultManager];
+    NSDictionary* attrs = [manager attributesOfItemAtPath:bundleRoot error:nil];
 
-    if (storedAppVersion == nil ||
-        ([storedAppVersion compare:currentAppVersion options:NSNumericSearch] == NSOrderedAscending)) {
+    int fileCreationDate = (int)([[attrs fileCreationDate] timeIntervalSince1970]/(60*60*24));
+    int fileModificationDate = (int)([[attrs fileModificationDate] timeIntervalSince1970]/(60*60*24));
+
+    if (([storedAppVersion compare:currentAppVersion])
+        || (storedAppVersion == nil)
+        || (fileCreationDate == fileModificationDate)) {
         [BNCPreferenceHelper setAppVersion:currentAppVersion];
+        return nil;
+    } else {
         return [NSNumber numberWithInt:1];
     }
-    return nil;
+
 }
 
 + (NSString *)getOS {
