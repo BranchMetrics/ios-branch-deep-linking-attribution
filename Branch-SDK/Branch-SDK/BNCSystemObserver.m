@@ -121,7 +121,6 @@
 }
 
 + (NSNumber *)getUpdateState {
-
     NSString *storedAppVersion = [BNCPreferenceHelper getAppVersion];
     NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
     NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
@@ -131,15 +130,18 @@
     int fileCreationDate = (int)([[attrs fileCreationDate] timeIntervalSince1970]/(60*60*24));
     int fileModificationDate = (int)([[attrs fileModificationDate] timeIntervalSince1970]/(60*60*24));
 
-    if (([storedAppVersion compare:currentAppVersion])
-        || (storedAppVersion == nil)
-        || (fileCreationDate == fileModificationDate)) {
+    if (!storedAppVersion) {
         [BNCPreferenceHelper setAppVersion:currentAppVersion];
+        if ([attrs fileCreationDate] && [attrs fileModificationDate] && (fileCreationDate != fileModificationDate)) {
+            return [NSNumber numberWithInt:1];
+        }
         return nil;
+    } else if (![storedAppVersion isEqualToString:currentAppVersion]) {
+        [BNCPreferenceHelper setAppVersion:currentAppVersion];
+        return [NSNumber numberWithInt:2];
     } else {
         return [NSNumber numberWithInt:1];
     }
-
 }
 
 + (NSString *)getOS {
