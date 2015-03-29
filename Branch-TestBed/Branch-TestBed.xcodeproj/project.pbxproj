@@ -1315,6 +1315,7 @@
 				7EF767AA1AA7D21E0094678F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7EFC86D31A9D6C3800F87A23 /* Build configuration list for PBXNativeTarget "Branch-SDK Debugger Tests" */ = {
 			isa = XCConfigurationList;
