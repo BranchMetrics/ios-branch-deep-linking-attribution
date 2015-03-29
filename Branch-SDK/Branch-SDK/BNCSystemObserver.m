@@ -123,16 +123,21 @@
 + (NSNumber *)getUpdateState {
     NSString *storedAppVersion = [BNCPreferenceHelper getAppVersion];
     NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
-    NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
     NSFileManager *manager = [NSFileManager defaultManager];
-    NSDictionary* attrs = [manager attributesOfItemAtPath:bundleRoot error:nil];
+    
+    // for creation date
+    NSURL *documentsDirRoot = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    NSDictionary *documentsDirAttributes = [manager attributesOfItemAtPath:documentsDirRoot.path error:nil];
+    int appCreationDay = (int)([[documentsDirAttributes fileCreationDate] timeIntervalSince1970]/(60*60*24));
 
-    int fileCreationDate = (int)([[attrs fileCreationDate] timeIntervalSince1970]/(60*60*24));
-    int fileModificationDate = (int)([[attrs fileModificationDate] timeIntervalSince1970]/(60*60*24));
+    // for modification date
+    NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
+    NSDictionary *bundleAttributes = [manager attributesOfItemAtPath:bundleRoot error:nil];
+    int appModificationDay = (int)([[bundleAttributes fileModificationDate] timeIntervalSince1970]/(60*60*24));
 
     if (!storedAppVersion) {
         [BNCPreferenceHelper setAppVersion:currentAppVersion];
-        if ([attrs fileCreationDate] && [attrs fileModificationDate] && (fileCreationDate != fileModificationDate)) {
+        if ([documentsDirAttributes fileCreationDate] && [bundleAttributes fileModificationDate] && (appCreationDay != appModificationDay)) {
             return [NSNumber numberWithInt:1];
         }
         return nil;
