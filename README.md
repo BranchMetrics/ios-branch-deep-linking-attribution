@@ -436,7 +436,6 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 // Customize the redirect performance
 [params setObject:@"http://myapp.com/desktop_splash" forKey:@"$desktop_url"];
 
-
 NSArray *tags = @[@"tag1", @"tag2"];
 NSString *feature = @"invite";
 NSString *stage = @"2";
@@ -466,7 +465,6 @@ items.append(shareString)
 if let amazingImage: UIImage = UIImage(named: "mada.png") {
     items.append(amazingImage)
 }
-let defaultURL = "http://lmgtfy.com/?q=branch+metrics"
 
 var params = ["user": "Joe"]
 params["profile_pic"] = "https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg"
