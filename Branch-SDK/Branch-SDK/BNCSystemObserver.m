@@ -133,7 +133,7 @@
     if (!storedAppVersion) {
         [BNCPreferenceHelper setAppVersion:currentAppVersion];
         if ([attrs fileCreationDate] && [attrs fileModificationDate] && (fileCreationDate != fileModificationDate)) {
-            return [NSNumber numberWithInt:1];
+            return [NSNumber numberWithInt:2];
         }
         return nil;
     } else if (![storedAppVersion isEqualToString:currentAppVersion]) {
