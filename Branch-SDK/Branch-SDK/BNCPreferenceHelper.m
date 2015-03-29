@@ -16,6 +16,7 @@ static const NSInteger MAX_RETRIES = 5;
 static const NSInteger APP_READ_INTERVAL = 520000;
 
 static NSString *KEY_APP_KEY = @"bnc_app_key";
+static NSString *KEY_APP_VERSION = @"bnc_app_version";
 
 static NSString *KEY_DEVICE_FINGERPRINT_ID = @"bnc_device_fingerprint_id";
 static NSString *KEY_SESSION_ID = @"bnc_session_id";
@@ -144,7 +145,7 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
     return [[BNCPreferenceHelper getAPIBaseURL] stringByAppendingString:endpoint];
 }
 
-// PREFERENCE STORAGE
+#pragma mark - Preference Storage
 
 + (void)setTimeout:(NSInteger)timeout {
     [BNCPreferenceHelper writeIntegerToDefaults:KEY_TIMEOUT value:timeout];
@@ -197,6 +198,15 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
 
 + (void)setAppKey:(NSString *)appKey {
     [BNCPreferenceHelper writeObjectToDefaults:KEY_APP_KEY value:appKey];
+}
+
++(NSString *)getAppVersion {
+    NSString *appVersion = [BNCPreferenceHelper readStringFromDefaults:KEY_APP_VERSION];
+    return appVersion;
+}
+
++(void)setAppVersion:(NSString *)appVersion {
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_APP_VERSION value:appVersion];
 }
 
 + (void)setDeviceFingerprintID:(NSString *)deviceID {
@@ -331,7 +341,7 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
     [BNCPreferenceHelper setCountsDictionary:[[NSDictionary alloc] init]];
 }
 
-// CREDIT STORAGE
+#pragma mark - Credit Storage
 
 + (NSDictionary *)getCreditsDictionary {
     NSDictionary *dict = (NSDictionary *)[BNCPreferenceHelper readObjectFromDefaults:KEY_CREDITS];
@@ -360,7 +370,7 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
     return [[creditDict objectForKey:[KEY_CREDIT_BASE stringByAppendingString:bucket]] integerValue];
 }
 
-// COUNT STORAGE
+#pragma mark - Count Storage
 
 + (NSDictionary *)getCountsDictionary {
     NSDictionary *dict = (NSDictionary *)[BNCPreferenceHelper readObjectFromDefaults:KEY_COUNTS];
@@ -392,7 +402,7 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
     return [[counts objectForKey:[KEY_UNIQUE_BASE stringByAppendingString:action]] integerValue];
 }
 
-// GENERIC FUNCS
+#pragma mark - Writing To Defaults
 
 + (void)writeIntegerToDefaults:(NSString *)key value:(NSInteger)value
 {
@@ -414,6 +424,8 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
     [defaults setObject:value forKey:key];
     [defaults synchronize];
 }
+
+#pragma mark - Reading From Defaults
 
 + (NSObject *)readObjectFromDefaults:(NSString *)key
 {

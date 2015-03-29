@@ -42,6 +42,9 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (NSString *)getAppKey;
 + (void)setAppKey:(NSString *)appKey;
 
++ (NSString *)getAppVersion;
++ (void)setAppVersion:(NSString *)appVersion;
+
 + (void)setDeviceFingerprintID:(NSString *)deviceID;
 + (NSString *)getDeviceFingerprintID;
 

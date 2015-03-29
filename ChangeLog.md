@@ -1,5 +1,7 @@
 Branch iOS SDK change log
 
+- v0.5.2: Recent iOS update resets bundle file creation date on update, messing with our update/install detection method
+
 - v0.5.1: Fixed request black hole after initSession failed
 
 - V0.5.0: Removed Default URL argument from BranchActivityItemProvider, and replaced with an automatically generated long URL placeholder
