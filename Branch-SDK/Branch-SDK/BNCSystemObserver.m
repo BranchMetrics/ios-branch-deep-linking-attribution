@@ -73,7 +73,7 @@
 }
 
 + (NSString *)getAppVersion {
-    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
 }
 
 + (NSString *)getCarrier {
@@ -121,10 +121,24 @@
 }
 
 + (NSNumber *)getUpdateState {
-    NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];    NSFileManager *manager = [NSFileManager defaultManager];
+    NSString *storedAppVersion = [BNCPreferenceHelper getAppVersion];
+    NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
+    NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
+    NSFileManager *manager = [NSFileManager defaultManager];
     NSDictionary* attrs = [manager attributesOfItemAtPath:bundleRoot error:nil];
-    if ((int)([[attrs fileCreationDate] timeIntervalSince1970]/(60*60*24)) == (int)([[attrs fileModificationDate] timeIntervalSince1970]/(60*60*24))) {
+
+    int fileCreationDate = (int)([[attrs fileCreationDate] timeIntervalSince1970]/(60*60*24));
+    int fileModificationDate = (int)([[attrs fileModificationDate] timeIntervalSince1970]/(60*60*24));
+
+    if (!storedAppVersion) {
+        [BNCPreferenceHelper setAppVersion:currentAppVersion];
+        if ([attrs fileCreationDate] && [attrs fileModificationDate] && (fileCreationDate != fileModificationDate)) {
+            return [NSNumber numberWithInt:2];
+        }
         return nil;
+    } else if (![storedAppVersion isEqualToString:currentAppVersion]) {
+        [BNCPreferenceHelper setAppVersion:currentAppVersion];
+        return [NSNumber numberWithInt:2];
     } else {
         return [NSNumber numberWithInt:1];
     }
