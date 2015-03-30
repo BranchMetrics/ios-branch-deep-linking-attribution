@@ -1,5 +1,7 @@
 Branch iOS SDK change log
 
+- v0.5.3: Follow up to 0.5.2, now looks at Documents directory creation date and considers this to be the original app install date
+
 - v0.5.2: Recent iOS update resets bundle file creation date on update, messing with our update/install detection method
 
 - v0.5.1: Fixed request black hole after initSession failed
