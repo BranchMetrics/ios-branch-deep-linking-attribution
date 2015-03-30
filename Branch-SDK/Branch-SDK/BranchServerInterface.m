@@ -78,6 +78,7 @@
     if (updateState) [post setObject:updateState forKeyedSubscript:@"update"];
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
+    [post setObject:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
     
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"open"] andTag:REQ_TAG_REGISTER_OPEN];
 }
