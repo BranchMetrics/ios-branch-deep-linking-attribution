@@ -77,7 +77,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (nonatomic) dispatch_semaphore_t processing_sema;
 @property (nonatomic) dispatch_queue_t asyncQueue;
-@property (nonatomic) NSInteger retryCount;
 @property (nonatomic) NSInteger networkCount;
 @property (strong, nonatomic) callbackWithStatus pointLoadCallback;
 @property (strong, nonatomic) callbackWithStatus rewardLoadCallback;
@@ -194,7 +193,6 @@ static Branch *currInstance;
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
     
-        currInstance.retryCount = 0;
         currInstance.networkCount = 0;
     });
 }
@@ -1426,18 +1424,6 @@ static Branch *currInstance;
     }
 }
 
-- (void)retryLastRequest {
-    self.retryCount = self.retryCount + 1;
-    if (self.retryCount > [BNCPreferenceHelper getRetryCount]) {
-        [self handleFailure:0];
-        [self.requestQueue dequeue];
-        self.retryCount = 0;
-    } else {
-        [NSThread sleepForTimeInterval:[BNCPreferenceHelper getRetryInterval]];
-    }
-    [self processNextQueueItem];
-}
-
 - (void)updateAllRequestsInQueue {
     for (int i = 0; i < self.requestQueue.size; i++) {
         BNCServerRequest *request = [self.requestQueue peekAt:i];
@@ -1627,6 +1613,7 @@ static Branch *currInstance;
         BOOL retry = NO;
         self.hasNetwork = YES;
         
+        // 409 means something is duplicated
         if (status == 409) {
             if ([requestTag isEqualToString:REQ_TAG_GET_CUSTOM_URL]) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -1639,7 +1626,9 @@ static Branch *currInstance;
                 NSLog(@"Branch API Error: Duplicate Branch resource error.");
                 [self handleFailure:[self.requestQueue size]-1];
             }
-        } else if (status >= 400 && status < 500) {
+        }
+        // Any other 4xx request is considered a generic failure
+        else if (status >= 400 && status < 500) {
             if (response.data && [response.data objectForKey:ERROR]) {
                 NSLog(@"Branch API Error: %@", [[response.data objectForKey:ERROR] objectForKey:MESSAGE]);
             }
@@ -1650,7 +1639,9 @@ static Branch *currInstance;
                 }
             }
             [self handleFailure:[self.requestQueue size]-1];
-        } else if (status != 200) {
+        }
+        // Anything else not between 200 and 400 indicates a server error or iOS error (like connectivity)
+        else if (status < 200 || status > 399) {
             if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorCannotFindHost) {
                 self.hasNetwork = NO;
                 [self handleFailure:self.lastRequestWasInit ? 0 : [self.requestQueue size]-1];
@@ -1658,11 +1649,10 @@ static Branch *currInstance;
                     [self.requestQueue dequeue];
                 }
                 NSLog(@"Branch API Error: Poor network connectivity. Please try again later.");
-            } else {
-                retry = YES;
-                dispatch_async(self.asyncQueue, ^{
-                    [self retryLastRequest];
-                });
+            }
+            else {
+                [self handleFailure:0];
+                [self.requestQueue dequeue];
             }
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
             [BNCPreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];

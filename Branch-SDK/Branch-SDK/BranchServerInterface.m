@@ -47,7 +47,7 @@
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     [post setObject:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
     
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"install"] andTag:REQ_TAG_REGISTER_INSTALL];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"install"] andTag:REQ_TAG_REGISTER_INSTALL retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (void)registerOpen:(BOOL)debug {
@@ -80,7 +80,7 @@
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     [post setObject:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
     
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"open"] andTag:REQ_TAG_REGISTER_OPEN];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"open"] andTag:REQ_TAG_REGISTER_OPEN retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (void)registerClose {
@@ -91,11 +91,11 @@
     [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"close"] andTag:REQ_TAG_REGISTER_CLOSE];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"close"] andTag:REQ_TAG_REGISTER_CLOSE retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (void)uploadListOfApps:(NSDictionary *)post {
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"applist"] andTag:REQ_TAG_UPLOAD_LIST_OF_APPS];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"applist"] andTag:REQ_TAG_UPLOAD_LIST_OF_APPS retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (BNCServerResponse *)retrieveAppsToCheck {
@@ -103,27 +103,27 @@
 }
 
 - (void)userCompletedAction:(NSDictionary *)post {
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"event"] andTag:REQ_TAG_COMPLETE_ACTION];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"event"] andTag:REQ_TAG_COMPLETE_ACTION retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (void)getReferralCounts {
-    [self getRequestAsync:@{@"app_id": [BNCPreferenceHelper getAppKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referrals", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
+    [self getRequestAsync:@{@"app_id": [BNCPreferenceHelper getAppKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referrals", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REFERRAL_COUNTS retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (void)getRewards {
-    [self getRequestAsync:@{@"app_id": [BNCPreferenceHelper getAppKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REWARDS];
+    [self getRequestAsync:@{@"app_id": [BNCPreferenceHelper getAppKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REWARDS retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (void)redeemRewards:(NSDictionary *)post {
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"redeem"] andTag:REQ_TAG_REDEEM_REWARDS];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"redeem"] andTag:REQ_TAG_REDEEM_REWARDS retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (void)getCreditHistory:(NSDictionary *)post {
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (void)createCustomUrl:(BNCServerRequest *)req {
-    [self postRequestAsync:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL andLinkData:req.linkData];
+    [self postRequestAsync:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL andLinkData:req.linkData retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (BNCServerResponse *)createCustomUrlSynchronous:(BNCServerRequest *)req {
@@ -131,11 +131,11 @@
 }
 
 - (void)identifyUser:(NSDictionary *)post {
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_IDENTIFY];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_IDENTIFY retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (void)logoutUser:(NSDictionary *)post {
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"logout"] andTag:REQ_TAG_LOGOUT];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"logout"] andTag:REQ_TAG_LOGOUT retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (void)addProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params {
@@ -163,7 +163,7 @@
 }
 
 - (void)updateProfileParams:(NSDictionary *)post {
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_PROFILE_DATA];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_PROFILE_DATA retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (void)connectToDebug {
@@ -176,7 +176,7 @@
     [post setObject:[BNCSystemObserver getModel] forKey:@"model"];
     [post setObject:[NSNumber numberWithBool:[BNCSystemObserver isSimulator]] forKey:@"is_simulator"];
     
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug/connect"] andTag:REQ_TAG_DEBUG_CONNECT log:NO];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug/connect"] andTag:REQ_TAG_DEBUG_CONNECT retryCount:[BNCPreferenceHelper getRetryCount] log:NO];
 }
 
 - (void)disconnectFromDebug {
@@ -184,7 +184,7 @@
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug/disconnect"] andTag:REQ_TAG_DEBUG_DISCONNECT log:NO];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug/disconnect"] andTag:REQ_TAG_DEBUG_DISCONNECT retryCount:[BNCPreferenceHelper getRetryCount] log:NO];
 }
 
 - (void)sendLog:(NSString *)log {
@@ -192,7 +192,7 @@
     [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug/log"] andTag:REQ_TAG_DEBUG_LOG log:NO];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug/log"] andTag:REQ_TAG_DEBUG_LOG retryCount:[BNCPreferenceHelper getRetryCount] log:NO];
 }
 
 - (void)sendScreenshot:(NSData *)data {
@@ -226,15 +226,15 @@
 }
 
 - (void)getReferralCode:(NSDictionary *)post {
-    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"referralcode"] andTag:REQ_TAG_GET_REFERRAL_CODE];
+    [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"referralcode"] andTag:REQ_TAG_GET_REFERRAL_CODE retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (void)validateReferralCode:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL:@"referralcode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_VALIDATE_REFERRAL_CODE];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL:@"referralcode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_VALIDATE_REFERRAL_CODE retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 - (void)applyReferralCode:(NSDictionary *)post {
-    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL:@"applycode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_APPLY_REFERRAL_CODE];
+    [self postRequestAsync:post url:[[BNCPreferenceHelper getAPIURL:@"applycode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_APPLY_REFERRAL_CODE retryCount:[BNCPreferenceHelper getRetryCount]];
 }
 
 
