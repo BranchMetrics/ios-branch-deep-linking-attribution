@@ -38,6 +38,8 @@
 
 + (void)setUp {
     [[LSNocilla sharedInstance] start];
+    
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"applist?sdk=ios%@&retryNumber=0", SDK_VERSION]]).andReturn(200);
 }
 
 + (void)tearDown {
@@ -193,7 +195,7 @@
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
     
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@?app_id=%@&sdk=ios%@", @"credits", [BNCPreferenceHelper getIdentityID], app_id, SDK_VERSION]])
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@?sdk=ios%@&retryNumber=0&app_id=%@", @"credits", [BNCPreferenceHelper getIdentityID], SDK_VERSION, app_id]])
     .andReturn(200)
     .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
@@ -221,7 +223,7 @@
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
     
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@?app_id=%@&sdk=ios%@", @"credits", [BNCPreferenceHelper getIdentityID], app_id, SDK_VERSION]])
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@?sdk=ios%@&retryNumber=0&app_id=%@", @"credits", [BNCPreferenceHelper getIdentityID], SDK_VERSION, app_id]])
     .andReturn(200)
     .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
@@ -449,13 +451,6 @@
     [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
     }];
 }
-
-//- (void)testPerformanceExample {
-//    // This is an example of a performance test case.
-//    [self measureBlock:^{
-//        // Put the code you want to measure the time of here.
-//    }];
-//}
 
 @end
 
