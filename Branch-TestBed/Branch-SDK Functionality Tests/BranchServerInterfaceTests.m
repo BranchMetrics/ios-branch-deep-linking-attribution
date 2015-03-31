@@ -30,7 +30,7 @@
 
 #pragma mark - Retry tests
 
-- (void)testGetRequestASyncRetriesWhenAppropriate {
+- (void)testGetRequestAsyncRetriesWhenAppropriate {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
     BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@500];
     
@@ -49,7 +49,7 @@
     [serverInterfaceMock verify];
 }
 
-- (void)testGetRequestASyncRetriesWhenInappropriateResponse {
+- (void)testGetRequestAsyncRetriesWhenInappropriateResponse {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
     BNCServerResponse *nonRetryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@200];
     
@@ -65,7 +65,7 @@
     [serverInterfaceMock verify];
 }
 
-- (void)testGetRequestASyncRetriesWhenInappropriateRetryCount {
+- (void)testGetRequestAsyncRetriesWhenInappropriateRetryCount {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
     BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@500];
     
@@ -81,7 +81,7 @@
     [serverInterfaceMock verify];
 }
 
-- (void)testPostRequestASyncRetriesWhenAppropriate {
+- (void)testPostRequestAsyncRetriesWhenAppropriate {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
     BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@500];
     
@@ -100,7 +100,7 @@
     [serverInterfaceMock verify];
 }
 
-- (void)testPostRequestASyncRetriesWhenInappropriateResponse {
+- (void)testPostRequestAsyncRetriesWhenInappropriateResponse {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
     BNCServerResponse *nonRetryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@200];
     
@@ -116,7 +116,7 @@
     [serverInterfaceMock verify];
 }
 
-- (void)testPostRequestASyncRetriesWhenInappropriateRetryCount {
+- (void)testPostRequestAsyncRetriesWhenInappropriateRetryCount {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
     BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@500];
     
