@@ -1,6 +1,6 @@
 //
 //  BNCServerInterface.m
-//  Branch-TestBed
+//  Branch
 //
 //  Created by Graham Mueller on 3/31/15.
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
@@ -152,46 +152,6 @@
     
     // Verify count of retries
     [serverInterfaceMock verify];
-}
-
-
-#pragma mark - Encoding tests
-
-- (void)testEncodePostToUniversalStringWithExpectedParams {
-    NSDictionary *dataDict = @{ @"foo": @"bar", @"num": @1, @"dict": @{ @"sub": @1 } };
-    NSString *expectedEncodedString = @"{\"foo\":\"bar\",\"num\":1,\"dict\":{\"sub\":1}}";
-    
-    NSString *encodedValue = [BNCServerInterface encodePostToUniversalString:dataDict needSource:NO];
-    
-    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
-}
-
-- (void)testEncodePostToUniversalStringWithUnexpectedParams {
-    // TODO better "unknown" type since NSDate should be handled
-    NSDictionary *dataDict = @{ @"foo": @"bar", @"date": [NSDate date] };
-    NSString *expectedEncodedString = @"{\"foo\":\"bar\"}";
-    
-    NSString *encodedValue = [BNCServerInterface encodePostToUniversalString:dataDict needSource:NO];
-    
-    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
-}
-
-- (void)testEncodePostToUniversalStringWithNull {
-    NSDictionary *dataDict = @{ @"foo": [NSNull null] };
-    NSString *expectedEncodedString = @"{\"foo\":null}";
-    
-    NSString *encodedValue = [BNCServerInterface encodePostToUniversalString:dataDict needSource:NO];
-    
-    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
-}
-
-- (void)testEncodePostToUniversalStringWithSubDictWithNeedSource {
-    NSDictionary *dataDict = @{ @"root": @{ @"sub": @1 } };
-    NSString *expectedEncodedString = @"{\"root\":{\"sub\":1},\"source\":\"ios\"}";
-    
-    NSString *encodedValue = [BNCServerInterface encodePostToUniversalString:dataDict needSource:YES];
-    
-    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
 }
 
 @end

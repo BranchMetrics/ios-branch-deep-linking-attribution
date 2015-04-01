@@ -13,6 +13,7 @@
 #import "BNCServerInterface.h"
 #import "BNCConfig.h"
 #import "Nocilla.h"
+#import "BNCEncodingUtils.h"
 
 @interface Branch_SDK_Functionality_Tests : XCTestCase {
     
@@ -88,7 +89,7 @@
                                    @"link": identity_link,
                                    @"session_id": session_id
                                    };
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"open"])
     .andReturn(200)
@@ -119,7 +120,7 @@
     NSString __block *returnURL;
     
     NSDictionary *responseDict = @{@"url": short_link};
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
     .andReturn(200)
@@ -164,7 +165,7 @@
     [self initSession];
     
     NSDictionary *responseDict = @{@"url": short_link};
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
     .andReturn(200)
@@ -193,7 +194,7 @@
     [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
     
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@?sdk=ios%@&retryNumber=0&app_id=%@", @"credits", [BNCPreferenceHelper getIdentityID], SDK_VERSION, app_id]])
     .andReturn(200)
@@ -221,7 +222,7 @@
     [BNCPreferenceHelper setCreditCount:credits forBucket:@"default"];
     
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@?sdk=ios%@&retryNumber=0&app_id=%@", @"credits", [BNCPreferenceHelper getIdentityID], SDK_VERSION, app_id]])
     .andReturn(200)
@@ -254,7 +255,7 @@
                                                   @"bucket": @"default"
                                                   }
                                    };
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"referralcode"])
     .andReturn(200)
@@ -291,7 +292,7 @@
                                                   @"bucket": @"default"
                                                   }
                                    };
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referralcode", @"testRC"]])
     .andReturn(200)
@@ -328,7 +329,7 @@
                                                   @"bucket": @"default"
                                                   }
                                    };
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"applycode", @"testRC"]])
     .andReturn(200)
@@ -425,7 +426,7 @@
                                    @"link_click_id": @"87925296346431956",
                                    @"referring_data": @"{ \"$og_title\":\"Kindred\",\"key\":\"test_object\" }"
                                    };
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"profile"])
     .andReturn(200)
