@@ -53,22 +53,27 @@
     return YES;
 }
 
-+ (NSString *)getURIScheme {
++ (NSString *)getDefaultURIScheme {
     NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
-    if (urlTypes) {
-        for (NSDictionary *urlType in urlTypes) {
-            NSArray *urlSchemes = [urlType objectForKey:@"CFBundleURLSchemes"];
-            if (urlSchemes) {
-                for (NSString *urlScheme in urlSchemes) {
-                    if (![[urlScheme substringWithRange:NSMakeRange(0, 2)] isEqualToString:@"fb"] &&
-                        ![[urlScheme substringWithRange:NSMakeRange(0, 2)] isEqualToString:@"db"] &&
-                        ![[urlScheme substringWithRange:NSMakeRange(0, 3)] isEqualToString:@"pin"]) {
-                        return urlScheme;
-                    }
-                }
+
+    // Choose the first url scheme in the url types that isn't another integration's.
+    for (NSDictionary *urlType in urlTypes) {
+        NSArray *urlSchemes = [urlType objectForKey:@"CFBundleURLSchemes"];
+
+        for (NSString *urlScheme in urlSchemes) {
+            NSString *firstTwoCharacters = [urlScheme substringWithRange:NSMakeRange(0, 2)];
+            NSString *firstThreeCharacters = [urlScheme substringWithRange:NSMakeRange(0, 3)];
+            BOOL isFBScheme = [firstTwoCharacters isEqualToString:@"fb"];
+            BOOL isDBScheme = [firstTwoCharacters isEqualToString:@"db"];
+            BOOL isPinScheme = [firstThreeCharacters isEqualToString:@"pin"];
+
+            // Don't use the schemes set aside for other integrations.
+            if (!isFBScheme && !isDBScheme && !isPinScheme) {
+                return urlScheme;
             }
         }
     }
+
     return nil;
 }
 
