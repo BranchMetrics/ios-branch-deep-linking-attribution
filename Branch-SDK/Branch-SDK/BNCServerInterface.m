@@ -177,17 +177,15 @@
 }
 
 - (BNCServerResponse *)processServerResponse:(NSURLResponse *)response data:(NSData *)data error:(NSError *)error tag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
-    BNCServerResponse *serverResponse = nil;
+    BNCServerResponse *serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag];
+
     if (!error) {
-        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-        NSNumber *statusCode = @([httpResponse statusCode]);
-        
-        serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:statusCode];
+        serverResponse.statusCode = @([(NSHTTPURLResponse *)response statusCode]);
         serverResponse.linkData = linkData;
         serverResponse.data = [BNCEncodingUtils decodeJsonDataToDictionary:data];
     }
     else {
-        serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:@(error.code)];
+        serverResponse.statusCode = @(error.code);
         serverResponse.data = error.userInfo;
     }
 
