@@ -308,16 +308,16 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
     return ret;
 }
 
-+ (NSInteger)getIsReferrable {
-    return [BNCPreferenceHelper readIntegerFromDefaults:KEY_IS_REFERRABLE];
++ (BOOL)getIsReferrable {
+    return [BNCPreferenceHelper readBoolFromDefaults:KEY_IS_REFERRABLE];
 }
 
 + (void)setIsReferrable {
-    [BNCPreferenceHelper writeIntegerToDefaults:KEY_IS_REFERRABLE value:1];
+    [BNCPreferenceHelper writeBoolToDefaults:KEY_IS_REFERRABLE value:YES];
 }
 
 + (void)clearIsReferrable {
-    [BNCPreferenceHelper writeIntegerToDefaults:KEY_IS_REFERRABLE value:0];
+    [BNCPreferenceHelper writeBoolToDefaults:KEY_IS_REFERRABLE value:NO];
 }
 
 + (void)setAppListCheckDone {

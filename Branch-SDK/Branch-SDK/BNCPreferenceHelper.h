@@ -75,7 +75,7 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)setAppListCheckDone;
 + (BOOL)getNeedAppListCheck;
 
-+ (NSInteger)getIsReferrable;
++ (BOOL)getIsReferrable;
 + (void)setIsReferrable;
 + (void)clearIsReferrable;
 
