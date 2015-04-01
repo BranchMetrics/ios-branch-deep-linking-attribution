@@ -81,6 +81,20 @@ Alternatively, you can add the URI scheme in your project's Info page.
 
 ![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png)
 
+### Configure Branch Uri Scheme (optional)
+
+###### Objective C
+```objc
+[[Branch getInstance] setUriScheme:@"myScheme"];
+```
+
+###### Swift
+```swift
+Branch = Branch.getInstance().setUriScheme("myScheme")
+```
+
+This is optional. If you do not specifiy which scheme to use, Branch will pick the first non `fb*`, `db*`, or `pin*` it finds in your bundle. Note that you should call this *before* initializing Branch; the install/open calls utilize this value, and will fall back to the default behavior if you don't set it ahead of time.
+
 ### Add your app key to your project
 
 After you register your app, your app key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift).
