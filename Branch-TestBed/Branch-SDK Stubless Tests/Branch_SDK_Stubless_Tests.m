@@ -19,12 +19,9 @@ static ReferralCodeCalculation referralCodeCalculationType = BranchUnlimitedRewa
 static ReferralCodeLocation referralCodeLocation = BranchReferreeUser;
 static int referralCodeAmount = 0;
 static NSInteger credits = 0;
+static Branch *branch;
 
-@interface Branch_SDK_Stubless_Tests : XCTestCase {
-    
-@private
-    __weak Branch *branch;
-}
+@interface Branch_SDK_Stubless_Tests : XCTestCase
 
 @end
 
@@ -33,38 +30,17 @@ static NSInteger credits = 0;
 
 + (void)setUp {
     [[BNCServerRequestQueue getInstance] clearQueue];
-}
-
-- (void)setUp {
-    [super setUp];
     
     branch = [Branch getInstance:@"5668720416392049"];
-    [self initSession];
-}
-
-- (void)tearDown {
-    [super tearDown];
+    [branch initSession];
+    
+    [NSThread sleepForTimeInterval:1]; // Allow init to complete
 }
 
 - (void)reset {
     [BNCPreferenceHelper setDeviceFingerprintID:NO_STRING_VALUE];
     [BNCPreferenceHelper setSessionID:NO_STRING_VALUE];
     [BNCPreferenceHelper setIdentityID:NO_STRING_VALUE];
-}
-
-- (void)initSession {
-    XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
-    
-    [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
-        XCTAssertNil(error);
-        XCTAssertNotNil([BNCPreferenceHelper getSessionID]);
-        XCTAssertNotEqualObjects([BNCPreferenceHelper getSessionID], NO_STRING_VALUE);
-        
-        [openExpectation fulfill];
-    }];
-    
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
 }
 
 - (void)test00SetIdentity {
