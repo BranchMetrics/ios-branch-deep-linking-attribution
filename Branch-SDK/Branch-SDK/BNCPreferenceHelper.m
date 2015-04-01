@@ -153,7 +153,7 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
 
 + (NSInteger)getTimeout {
     NSInteger timeout = [BNCPreferenceHelper readIntegerFromDefaults:KEY_TIMEOUT];
-    if (timeout <= 0) {
+    if (timeout == NSNotFound) {
         timeout = DEFAULT_TIMEOUT;
     }
     return timeout;
@@ -165,7 +165,7 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
 
 + (NSInteger)getRetryInterval {
     NSInteger retryInt = [BNCPreferenceHelper readIntegerFromDefaults:KEY_RETRY_INTERVAL];
-    if (retryInt <= 0) {
+    if (retryInt == NSNotFound) {
         retryInt = RETRY_INTERVAL;
     }
     return retryInt;
@@ -177,7 +177,7 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
 
 + (NSInteger)getRetryCount {
     NSInteger retryCount = [BNCPreferenceHelper readIntegerFromDefaults:KEY_RETRY_COUNT];
-    if (retryCount <= 0) {
+    if (retryCount == NSNotFound) {
         retryCount = MAX_RETRIES;
     }
     return retryCount;
@@ -447,11 +447,15 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
     return boo;
 }
 
-+ (NSInteger)readIntegerFromDefaults:(NSString *)key
-{
++ (NSInteger)readIntegerFromDefaults:(NSString *)key {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSInteger integ = [defaults integerForKey:key];
-    return integ;
+    NSNumber *number = [defaults objectForKey:key];
+    
+    if (number) {
+        return [number integerValue];
+    }
+    
+    return NSNotFound;
 }
 
 
