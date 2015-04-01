@@ -14,30 +14,30 @@
 @implementation BNCServerInterface
 
 // make a generalized get request
-- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag retryCount:(NSInteger)retryCount {
-    [self getRequestAsync:params url:url andTag:requestTag retryNumber:0 retryCount:retryCount log:YES];
+- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag {
+    [self getRequestAsync:params url:url andTag:requestTag retryNumber:0 log:YES];
 }
 
 // this is actually a synchronous call; it should NOT be called from the main queue
-- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag retryCount:(NSInteger)retryCount log:(BOOL)log {
-    [self getRequestAsync:params url:url andTag:requestTag retryNumber:0 retryCount:retryCount log:log];
+- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
+    [self getRequestAsync:params url:url andTag:requestTag retryNumber:0 log:log];
 }
 
-- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag retryNumber:(NSInteger)retryNumber retryCount:(NSInteger)retryCount log:(BOOL)log {
+- (void)getRequestAsync:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag retryNumber:(NSInteger)retryNumber log:(BOOL)log {
     BNCServerResponse *serverResponse = [self genericSyncHTTPRequest:[self prepareGetRequest:params url:url retryNumber:retryNumber log:log] withTag:requestTag andLinkData:nil];
 
     NSInteger status = [serverResponse.statusCode integerValue];
     BOOL isRetryableStatusCode = status >= 500;
     
     // Retry the request if appropriate
-    if (retryCount > 0 && isRetryableStatusCode) {
+    if (retryNumber < [BNCPreferenceHelper getRetryCount] && isRetryableStatusCode) {
         [NSThread sleepForTimeInterval:[BNCPreferenceHelper getRetryInterval]];
 
         if (log) {
             [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Replaying request with tag %@", requestTag];
         }
 
-        [self getRequestAsync:params url:url andTag:requestTag retryNumber:++retryNumber retryCount:--retryCount log:log];
+        [self getRequestAsync:params url:url andTag:requestTag retryNumber:++retryNumber log:log];
     }
     // Otherwise, let the delegate handle it
     else if (self.delegate) {
@@ -54,38 +54,38 @@
 }
 
 // make a generalized post request
-- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag retryCount:(NSInteger)retryCount {
-    [self postRequestAsync:post url:url andTag:requestTag andLinkData:nil retryNumber:0 retryCount:retryCount log:YES];
+- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag {
+    [self postRequestAsync:post url:url andTag:requestTag andLinkData:nil retryNumber:0 log:YES];
 }
 
-- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag retryCount:(NSInteger)retryCount log:(BOOL)log {
-    [self postRequestAsync:post url:url andTag:requestTag andLinkData:nil retryNumber:0 retryCount:retryCount log:log];
+- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
+    [self postRequestAsync:post url:url andTag:requestTag andLinkData:nil retryNumber:0 log:log];
 }
 
-- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData retryCount:(NSInteger)retryCount {
-    [self postRequestAsync:post url:url andTag:requestTag andLinkData:linkData retryNumber:0 retryCount:retryCount log:YES];
+- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
+    [self postRequestAsync:post url:url andTag:requestTag andLinkData:linkData retryNumber:0 log:YES];
 }
 
 // this is actually a synchronous call; it should NOT be called from the main queue
-- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData retryCount:(NSInteger)retryCount log:(BOOL)log {
-    [self postRequestAsync:post url:url andTag:requestTag andLinkData:linkData retryNumber:0 retryCount:retryCount log:log];
+- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log {
+    [self postRequestAsync:post url:url andTag:requestTag andLinkData:linkData retryNumber:0 log:log];
 }
 
-- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData retryNumber:(NSInteger)retryNumber retryCount:(NSInteger)retryCount log:(BOOL)log {
+- (void)postRequestAsync:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData retryNumber:(NSInteger)retryNumber log:(BOOL)log {
     BNCServerResponse *serverResponse = [self genericSyncHTTPRequest:[self preparePostRequest:post url:url retryNumber:retryNumber log:log] withTag:requestTag andLinkData:linkData];
     
     NSInteger status = [serverResponse.statusCode integerValue];
     BOOL isRetryableStatusCode = status >= 500;
 
     // Retry the request if appropriate
-    if (retryCount > 0 && isRetryableStatusCode) {
+    if (retryNumber < [BNCPreferenceHelper getRetryCount] && isRetryableStatusCode) {
         [NSThread sleepForTimeInterval:[BNCPreferenceHelper getRetryInterval]];
 
         if (log) {
             [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Replaying request with tag %@", requestTag];
         }
 
-        [self postRequestAsync:post url:url andTag:requestTag andLinkData:linkData retryNumber:++retryNumber retryCount:--retryCount log:log];
+        [self postRequestAsync:post url:url andTag:requestTag andLinkData:linkData retryNumber:++retryNumber log:log];
     }
     // Otherwise, let the delegate handle it
     else if (self.delegate) {
