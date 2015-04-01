@@ -30,10 +30,13 @@ static NSInteger credits = 0;
 
 @implementation Branch_SDK_Stubless_Tests
 
+
++ (void)setUp {
+    [[BNCServerRequestQueue getInstance] clearQueue];
+}
+
 - (void)setUp {
     [super setUp];
-    
-    [[BNCServerRequestQueue getInstance] clearQueue];
     
     branch = [Branch getInstance:@"5668720416392049"];
     [self initSession];
