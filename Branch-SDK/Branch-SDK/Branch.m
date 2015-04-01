@@ -1108,7 +1108,7 @@ static Branch *currInstance;
     
     [post setObject:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
     
-    NSString *args = @"{ \"source\":\"ios\" }";
+    NSString *args = @"{\"source\":\"ios\"}";
     if (params) {
         args = [BNCEncodingUtils encodeDictionaryToJsonString:params];
     }
