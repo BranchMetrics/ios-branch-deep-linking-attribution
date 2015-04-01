@@ -14,6 +14,8 @@
 + (NSString *)base64DecodeStringToString:(NSString *)strData;
 + (NSString *)base64EncodeData:(NSData *)objData;
 
++ (NSString *)md5Encode:(NSString *)input;
+
 + (NSString *)encodeArrayToJsonString:(NSArray *)dictionary;
 + (NSString *)encodeDictionaryToJsonString:(NSDictionary *)dictionary;
 + (NSString *)encodeDictionaryToJsonString:(NSDictionary *)dictionary needSource:(BOOL)source;

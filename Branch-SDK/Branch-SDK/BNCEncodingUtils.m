@@ -8,6 +8,7 @@
 
 #import "BNCEncodingUtils.h"
 #import "BNCPreferenceHelper.h"
+#import <CommonCrypto/CommonDigest.h>
 
 @implementation BNCEncodingUtils
 
@@ -165,6 +166,27 @@ static const short _base64DecodingTable[256] = {
     NSData * objData = [[NSData alloc] initWithBytes:objResult length:j] ;
     free(objResult);
     return objData;
+}
+
+
+#pragma mark - MD5 methods
+
++ (NSString *)md5Encode:(NSString *)input {
+    if (!input) {
+        return @"";
+    }
+
+    const char *cStr = [input UTF8String];
+    unsigned char digest[CC_MD5_DIGEST_LENGTH];
+    CC_MD5(cStr, (CC_LONG)strlen(cStr), digest);
+    
+    NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+    
+    for (int i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
+        [output appendFormat:@"%02x", digest[i]];
+    }
+
+    return  output;
 }
 
 

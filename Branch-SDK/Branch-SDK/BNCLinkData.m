@@ -7,7 +7,7 @@
 //
 
 #import "BNCLinkData.h"
-#import <CommonCrypto/CommonDigest.h>
+#import "BNCEncodingUtils.h"
 
 @implementation BNCLinkData
 
@@ -105,34 +105,20 @@
     return [self.data objectForKey:aKey];
 }
 
-- (NSString *)md5:(NSString *)input {
-    if (!input) { return @""; }
-    const char *cStr = [input UTF8String];
-    unsigned char digest[CC_MD5_DIGEST_LENGTH];
-    CC_MD5( cStr, (CC_LONG)strlen(cStr), digest );
-    
-    NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
-    
-    for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
-        [output appendFormat:@"%02x", digest[i]];
-    }
-    return  output;
-}
-
 - (NSUInteger)hash {
     NSUInteger result = 1;
     NSUInteger prime = 19;
 
     result = prime * result + self.type;
-    result = prime * result + [[self md5:[self.alias lowercaseString]] hash];
-    result = prime * result + [[self md5:[self.channel lowercaseString]] hash];
-    result = prime * result + [[self md5:[self.feature lowercaseString]] hash];
-    result = prime * result + [[self md5:[self.stage lowercaseString]] hash];
-    result = prime * result + [[self md5:[self.params lowercaseString]] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:[self.alias lowercaseString]] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:[self.channel lowercaseString]] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:[self.feature lowercaseString]] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:[self.stage lowercaseString]] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:[self.params lowercaseString]] hash];
     result = prime * result + self.duration;
     
     for (NSString *tag in self.tags) {
-        result = prime * result + [[self md5:[tag lowercaseString]] hash];
+        result = prime * result + [[BNCEncodingUtils md5Encode:[tag lowercaseString]] hash];
     }
     
     return result;
