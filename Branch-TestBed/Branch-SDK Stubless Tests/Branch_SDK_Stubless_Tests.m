@@ -12,6 +12,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
 #import "BNCConfig.h"
+#import "BNCServerRequestQueue.h"
 
 static NSString *referralCode = nil;
 static ReferralCodeCalculation referralCodeCalculationType = BranchUnlimitedRewards;
@@ -31,6 +32,8 @@ static NSInteger credits = 0;
 
 - (void)setUp {
     [super setUp];
+    
+    [[BNCServerRequestQueue getInstance] clearQueue];
     
     branch = [Branch getInstance:@"5668720416392049"];
     [self initSession];
