@@ -1,0 +1,5 @@
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#endif
+
+#import "Pods-Branch-SDK UI Tests-environment.h"

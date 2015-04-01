@@ -178,7 +178,7 @@
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
     
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@?sdk=ios%@", @"credits/", [BNCPreferenceHelper getIdentityID], SDK_VERSION]])
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@?sdk=ios%@&retryNumber=0", @"credits/", [BNCPreferenceHelper getIdentityID], SDK_VERSION]])
     .andReturn(200)
     .withHeaders(@{@"application/json": @"Content-Type"})
     .withBody(responseData);
@@ -206,7 +206,7 @@
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
     NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
     
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@?sdk=ios%@", @"credits/", [BNCPreferenceHelper getIdentityID], SDK_VERSION]])
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@%@?sdk=ios%@&retryNumber=0", @"credits/", [BNCPreferenceHelper getIdentityID], SDK_VERSION]])
     .andReturn(200)
     .withHeaders(@{@"application/json": @"Content-Type"})
     .withBody(responseData);
