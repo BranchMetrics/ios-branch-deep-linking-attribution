@@ -72,6 +72,9 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)setUserIdentity:(NSString *)userIdentity;
 + (NSString *)getUserIdentity;
 
++ (void)setUriScheme:(NSString *)uriScheme;
++ (NSString *)getUriScheme;
+
 + (void)setAppListCheckDone;
 + (BOOL)getNeedAppListCheck;
 

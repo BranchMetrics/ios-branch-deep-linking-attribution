@@ -98,6 +98,7 @@ typedef enum {
 - (void)setRetryInterval:(NSInteger)retryInterval;
 - (void)setMaxRetries:(NSInteger)maxRetries;
 - (void)setNetworkTimeout:(NSInteger)timeout;
+- (void)setUriScheme:(NSString *)uriScheme;
 
 - (BOOL)handleDeepLink:(NSURL *)url;
 

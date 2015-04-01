@@ -49,6 +49,7 @@ static BranchServerInterface *serverInterface = nil;
 static NSString *KEY_TIMEOUT = @"bnc_timeout";
 static NSString *KEY_RETRY_INTERVAL = @"bnc_retry_interval";
 static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
+static NSString *KEY_URI_SCHEME = @"bnc_uri_scheme";
 
 static id<BNCTestDelegate> bnc_testDelegate = nil;
 
@@ -181,6 +182,14 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
         retryCount = MAX_RETRIES;
     }
     return retryCount;
+}
+
++ (void)setUriScheme:(NSString *)uriScheme {
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_URI_SCHEME value:uriScheme];
+}
+
++ (NSString *)getUriScheme {
+    return [BNCPreferenceHelper readStringFromDefaults:KEY_URI_SCHEME];
 }
 
 + (NSString *)getAppKey {
