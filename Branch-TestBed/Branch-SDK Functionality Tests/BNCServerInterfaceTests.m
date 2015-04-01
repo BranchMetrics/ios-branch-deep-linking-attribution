@@ -36,7 +36,8 @@
 
 - (void)testGetRequestAsyncRetriesWhenAppropriate {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@500];
+    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo"];
+    retryableResponse.statusCode = @500;
     
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:3];
@@ -58,7 +59,8 @@
 
 - (void)testGetRequestAsyncRetriesWhenInappropriateResponse {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *nonRetryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@200];
+    BNCServerResponse *nonRetryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo"];
+    nonRetryableResponse.statusCode = @200;
 
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:3];
@@ -77,7 +79,8 @@
 
 - (void)testGetRequestAsyncRetriesWhenInappropriateRetryCount {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@500];
+    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo"];
+    retryableResponse.statusCode = @500;
 
     // Specify retry count as 0
     [BNCPreferenceHelper setRetryCount:0];
@@ -96,7 +99,8 @@
 
 - (void)testPostRequestAsyncRetriesWhenAppropriate {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@500];
+    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo"];
+    retryableResponse.statusCode = @500;
 
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:3];
@@ -118,7 +122,8 @@
 
 - (void)testPostRequestAsyncRetriesWhenInappropriateResponse {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *nonRetryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@200];
+    BNCServerResponse *nonRetryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo"];
+    nonRetryableResponse.statusCode = @200;
     
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:3];
@@ -137,8 +142,9 @@
 
 - (void)testPostRequestAsyncRetriesWhenInappropriateRetryCount {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@500];
-    
+    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo"];
+    retryableResponse.statusCode = @500;
+
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:0];
     
