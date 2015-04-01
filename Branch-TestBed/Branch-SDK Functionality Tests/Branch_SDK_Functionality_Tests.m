@@ -14,6 +14,7 @@
 #import "BNCConfig.h"
 #import "Nocilla.h"
 #import "BNCEncodingUtils.h"
+#import "BNCServerRequestQueue.h"
 
 @interface Branch_SDK_Functionality_Tests : XCTestCase {
     
@@ -39,6 +40,8 @@
 
 + (void)setUp {
     [[LSNocilla sharedInstance] start];
+    
+    [[BNCServerRequestQueue getInstance] clearQueue];
     
     stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"applist?sdk=ios%@&retryNumber=0", SDK_VERSION]]).andReturn(200);
 }
