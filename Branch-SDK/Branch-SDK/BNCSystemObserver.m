@@ -53,7 +53,7 @@
     return YES;
 }
 
-+ (NSString *)getDefaultURIScheme {
++ (NSString *)getDefaultUriScheme {
     NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
 
     // Choose the first url scheme in the url types that isn't another integration's.
