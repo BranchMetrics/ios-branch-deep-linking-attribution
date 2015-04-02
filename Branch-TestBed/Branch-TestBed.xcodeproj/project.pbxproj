@@ -187,7 +187,7 @@
 		7EC326DC1A9D640F0083C5DF /* Branch-SDK Load Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK Load Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EC326DF1A9D640F0083C5DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7EC326E01A9D640F0083C5DF /* Branch_SDK_Load_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_SDK_Load_Tests.m; sourceTree = "<group>"; };
-		7EF767A71AA7D21E0094678F /* Branch_SDK_Stubless_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = Branch_SDK_Stubless_Tests.m; path = "../Branch-SDK Stubless Tests/Branch_SDK_Stubless_Tests.m"; sourceTree = "<group>"; };
+		7EF767A71AA7D21E0094678F /* Branch_SDK_Stubless_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_SDK_Stubless_Tests.m; sourceTree = "<group>"; };
 		7EFC86CB1A9D6C3800F87A23 /* Branch-SDK Debugger Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK Debugger Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EFC86CE1A9D6C3800F87A23 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7EFC86CF1A9D6C3800F87A23 /* Branch_SDK_Debugger_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_SDK_Debugger_Tests.m; sourceTree = "<group>"; };
