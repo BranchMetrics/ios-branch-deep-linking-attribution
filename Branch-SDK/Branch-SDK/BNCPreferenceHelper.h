@@ -27,6 +27,11 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 
 @interface BNCPreferenceHelper : NSObject
 
+@property (strong, nonatomic) NSString *uriScheme;
+@property (assign, nonatomic) NSInteger retryCount;
+@property (assign, nonatomic) NSInteger retryInterval;
+@property (assign, nonatomic) NSInteger timeout;
+
 + (NSString *)getAPIBaseURL;
 + (NSString *)getAPIURL:(NSString *) endpoint;
 
