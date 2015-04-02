@@ -16,7 +16,6 @@
 @property (strong, nonatomic) NSString *feature;
 @property (strong, nonatomic) NSString *stage;
 @property (strong, nonatomic) NSString *alias;
-@property dispatch_semaphore_t semaphore;
 
 - (id)initWithParams:(NSDictionary *)params
              andTags:(NSArray *)tags

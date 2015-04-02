@@ -29,25 +29,16 @@
         self.stage = stage;
         self.alias = alias;
         self.branchURL = url;
-        self.semaphore = dispatch_semaphore_create(0);
     }
     
     return self;
 }
 
-- (id) item {
+- (id)item {
     if ([self.placeholderItem isKindOfClass:[NSString class]]) {
-        
         NSString *channel = [BranchActivityItemProvider humanReadableChannelWithActivityType:self.activityType];
-        
-        __weak BranchActivityItemProvider *weakSelf = self;
-        [[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias andCallback:^(NSString *url, NSError *err) {
-            if (!err) {
-                self.branchURL = url;
-            }
-            dispatch_semaphore_signal(weakSelf.semaphore);
-        }];
-        dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
+        self.branchURL = [[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias];
+
         return self.branchURL;
     }
     return self.placeholderItem;
