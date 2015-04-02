@@ -13,8 +13,10 @@
 #import "BNCServerInterface.h"
 #import "BNCConfig.h"
 #import "BNCServerRequestQueue.h"
+#import <Nocilla/Nocilla.h>
 
-static NSString *referralCode = nil;
+NSString * const REFERRAL_CODE = @"LMDLDV";
+
 static ReferralCodeCalculation referralCodeCalculationType = BranchUnlimitedRewards;
 static ReferralCodeLocation referralCodeLocation = BranchReferreeUser;
 static int referralCodeAmount = 0;
@@ -27,14 +29,45 @@ static Branch *branch;
 
 @implementation Branch_SDK_Stubless_Tests
 
-
+#pragma mark - Setup
 + (void)setUp {
     [[BNCServerRequestQueue getInstance] clearQueue];
     
+    [[LSNocilla sharedInstance] start];
+    
+    NSDictionary *openResponseDict = @{
+        @"session_id": @"112263020234678596",
+        @"identity_id": @"98687515069776101",
+        @"device_fingerprint_id": @"94938498586381084",
+        @"browser_fingerprint_id": [NSNull null],
+        @"link": @"https://bnc.lt/i/3SawKbU-1Z",
+        @"new_identity_id": @"98687515069776101",
+        @"identity": @"test_user_10"
+    };
+
+    NSData *responseData = [NSJSONSerialization dataWithJSONObject:openResponseDict options:kNilOptions error:nil];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"open"])
+    .andReturn(200)
+    .withHeaders(@{@"Content-Type": @"application/json"})
+    .withBody(responseData);
+    
     branch = [Branch getInstance:@"5668720416392049"];
-    [branch initSession];
+    [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+        if (error) {
+            NSLog(@"An error prevented Branch from initializing: %@", error);
+        }
+    }];
     
     [NSThread sleepForTimeInterval:1]; // Allow init to complete
+}
+
++ (void)tearDown {
+    [[LSNocilla sharedInstance] stop];
+}
+
+- (void)tearDown {
+    [[LSNocilla sharedInstance] clearStubs];
 }
 
 - (void)reset {
@@ -42,6 +75,8 @@ static Branch *branch;
     [BNCPreferenceHelper setSessionID:NO_STRING_VALUE];
     [BNCPreferenceHelper setIdentityID:NO_STRING_VALUE];
 }
+
+#pragma mark - Tests
 
 - (void)test00SetIdentity {
     // mock logout synchronously
@@ -51,6 +86,20 @@ static Branch *branch;
     [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
     [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
     [BNCPreferenceHelper clearUserCreditsAndCounts];
+
+    NSDictionary *setIdentityResponseDict = @{
+        @"identity_id": @"98687515069776101",
+        @"link_click_id": @"87925296346431956",
+        @"link": @"https://bnc.lt/i/3SawKbU-1Z",
+        @"referring_data": @"{\"$og_title\":\"Kindred\",\"key1\":\"test_object\",\"key2\":\"here is another object!!\",\"$og_image_url\":\"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png\",\"source\":\"ios\"}"
+    };
+    
+    NSData *responseData = [NSJSONSerialization dataWithJSONObject:setIdentityResponseDict options:kNilOptions error:nil];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"profile"])
+    .andReturn(200)
+    .withHeaders(@{@"Content-Type": @"application/json"})
+    .withBody(responseData);
     
     XCTestExpectation *setIdentityExpectation = [self expectationWithDescription:@"Test setIdentity"];
     
@@ -72,15 +121,31 @@ static Branch *branch;
 }
 
 - (void)test01GetShortURLAsync {
-    NSString __block *returnURL;
+    NSDictionary *shortUrlFBResponseDict = @{ @"url": @"https://bnc.lt/l/4BGtJj-03N" };
+    NSDictionary *shortUrlTWResponseDict = @{ @"url": @"https://bnc.lt/l/-03N4BGtJj" };
+
+    NSData *fbResponseData = [NSJSONSerialization dataWithJSONObject:shortUrlFBResponseDict options:kNilOptions error:nil];
+    NSData *twResponseData = [NSJSONSerialization dataWithJSONObject:shortUrlTWResponseDict options:kNilOptions error:nil];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
+    .withBody(@"\"channel\":\"facebook\"".regex)
+    .andReturn(200)
+    .withHeaders(@{@"Content-Type": @"application/json"})
+    .withBody(fbResponseData);
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
+    .withBody(@"\"channel\":\"twitter\"".regex)
+    .andReturn(200)
+    .withHeaders(@{@"Content-Type": @"application/json"})
+    .withBody(twResponseData);
 
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
-    
+
     [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *url, NSError *error) {
         XCTAssertNil(error);
         XCTAssertNotNil(url);
 
-        returnURL = url;
+        NSString *returnURL = url;
         
         [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *url, NSError *error) {
             XCTAssertNil(error);
@@ -114,9 +179,20 @@ static Branch *branch;
     XCTAssertNotEqualObjects(url1, url3);
 }
 
-// Assumption: there's only one "default" bucket for this identity
 - (void)test03GetRewardsChanged {
-    [BNCPreferenceHelper setCreditCount:9999999 forBucket:@"default"];
+    [BNCPreferenceHelper setCreditCount:NSIntegerMax forBucket:@"default"];
+
+    NSDictionary *getRewardsResponseDict = @{
+        @"default": @(NSIntegerMin)
+    };
+    
+    NSData *responseData = [NSJSONSerialization dataWithJSONObject:getRewardsResponseDict options:kNilOptions error:nil];
+
+    NSRegularExpression *creditsRegex = [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"credits/%@", [BNCPreferenceHelper getIdentityID]]].regex;
+    stubRequest(@"GET", creditsRegex)
+    .andReturn(200)
+    .withHeaders(@{@"Content-Type": @"application/json"})
+    .withBody(responseData);
     
     XCTestExpectation *getRewardExpectation = [self expectationWithDescription:@"Test getReward"];
     
@@ -132,10 +208,18 @@ static Branch *branch;
     }];
 }
 
-// Assumption: there's only one "default" bucket for this identity
-// This test depends on test03GetRewardsChanged
 - (void)test04GetRewardsUnchanged {
-    [BNCPreferenceHelper setCreditCount:credits forBucket:@"default"];
+    [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
+    NSDictionary *getRewardsResponseDict = @{
+        @"default": @(1)
+    };
+    
+    NSData *responseData = [NSJSONSerialization dataWithJSONObject:getRewardsResponseDict options:kNilOptions error:nil];
+
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"credits/%@", [BNCPreferenceHelper getIdentityID]]].regex)
+    .andReturn(200)
+    .withHeaders(@{@"Content-Type": @"application/json"})
+    .withBody(responseData);
     
     XCTestExpectation *getRewardExpectation = [self expectationWithDescription:@"Test getReward"];
     
@@ -152,12 +236,36 @@ static Branch *branch;
 
 - (void)test05GetReferralCode {
     XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test getReferralCode"];
+    NSDictionary *getReferralResponseDict = @{
+        @"id": @"85782843459895738",
+        @"app_id": @"5668720416392049",
+        @"calculation_type": @0,
+        @"location": @0,
+        @"type": @"credit",
+        @"event": @"$redeem_code-LMDLDV",
+        @"metadata": @{
+            @"bucket": @"default",
+            @"amount": @5
+        },
+        @"filter": [NSNull null],
+        @"link_id": [NSNull null],
+        @"identity_id": @"98687515069776101",
+        @"creation_source": @2,
+        @"expiration": [NSNull null],
+        @"date": @"2015-01-19T18:00:50.242Z",
+        @"referral_code": @"LMDLDV"
+    };
     
+    NSData *responseData = [NSJSONSerialization dataWithJSONObject:getReferralResponseDict options:kNilOptions error:nil];
+
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"referralcode"].regex)
+    .andReturn(200)
+    .withHeaders(@{@"Content-Type": @"application/json"})
+    .withBody(responseData);
+
     [branch getReferralCodeWithPrefix:@"test" amount:7 expiration:nil bucket:@"default" calculationType:BranchUniqueRewards location:BranchReferringUser andCallback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
-        
-        referralCode = params[@"referral_code"];
-        XCTAssertNotNil(referralCode);
+        XCTAssertNotNil(params[@"referral_code"]);
         
         referralCodeCalculationType = (ReferralCodeCalculation)[params[@"calculation_type"] integerValue];
         referralCodeLocation = (ReferralCodeLocation)[params[@"location"] integerValue];
@@ -172,14 +280,41 @@ static Branch *branch;
 
 // This test depends on test05GetReferralCode
 - (void)test06ValidateReferralCode {
+    NSDictionary *validateReferralResponseDict = @{
+        @"id": @"85782843459895738",
+        @"app_id": @"5668720416392049",
+        @"calculation_type": @0,
+        @"location": @0,
+        @"type": @"credit",
+        @"event": @"$redeem_code-LMDLDV",
+        @"metadata": @{
+           @"bucket": @"default",
+           @"amount": @5
+        },
+        @"filter": [NSNull null],
+        @"link_id": [NSNull null],
+        @"identity_id": @"98687515069776101",
+        @"creation_source": @2,
+        @"expiration": [NSNull null],
+        @"date": @"2015-01-19T18:00:50.242Z",
+        @"referral_code": REFERRAL_CODE
+    };
+    
+    NSData *responseData = [NSJSONSerialization dataWithJSONObject:validateReferralResponseDict options:kNilOptions error:nil];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"referralcode/%@", REFERRAL_CODE]].regex)
+    .andReturn(200)
+    .withHeaders(@{@"Content-Type": @"application/json"})
+    .withBody(responseData);
+    
     XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test validateReferralCode"];
     
-    [branch validateReferralCode:referralCode andCallback:^(NSDictionary *params, NSError *error) {
+    [branch validateReferralCode:REFERRAL_CODE andCallback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         
         NSString *code = params[@"referral_code"];
         XCTAssertNotNil(code);
-        XCTAssertTrue([code isEqualToString:referralCode]);
+        XCTAssertTrue([code isEqualToString:REFERRAL_CODE]);
         XCTAssertEqual([params[@"calculation_type"] integerValue], referralCodeCalculationType);
         XCTAssertEqual([params[@"location"] integerValue], referralCodeLocation);
         XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], referralCodeAmount);
@@ -193,14 +328,41 @@ static Branch *branch;
 
 // This test depends on test05GetReferralCode
 - (void)test07ApplyReferralCode {
-    XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test applyReferralCode"];
+    NSDictionary *applyReferralResponseDict = @{
+        @"id": @"85782843459895738",
+        @"app_id": @"5668720416392049",
+        @"calculation_type": @0,
+        @"location": @0,
+        @"type": @"credit",
+        @"event": @"$redeem_code-LMDLDV",
+        @"metadata": @{
+            @"bucket": @"default",
+            @"amount": @5
+        },
+        @"filter": [NSNull null],
+        @"link_id": [NSNull null],
+        @"identity_id": @"98687515069776101",
+        @"creation_source": @2,
+        @"expiration": [NSNull null],
+        @"date": @"2015-01-19T18:00:50.242Z",
+        @"referral_code": REFERRAL_CODE
+    };
     
-    [branch applyReferralCode:referralCode andCallback:^(NSDictionary *params, NSError *error) {
+    NSData *responseData = [NSJSONSerialization dataWithJSONObject:applyReferralResponseDict options:kNilOptions error:nil];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"applycode/%@", REFERRAL_CODE]].regex)
+    .andReturn(200)
+    .withHeaders(@{@"Content-Type": @"application/json"})
+    .withBody(responseData);
+    
+    XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test applyReferralCode"];
+
+    [branch applyReferralCode:REFERRAL_CODE andCallback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         
         NSString *code = params[@"referral_code"];
         XCTAssertNotNil(code);
-        XCTAssertTrue([code isEqualToString:referralCode]);
+        XCTAssertTrue([code isEqualToString:REFERRAL_CODE]);
         XCTAssertEqual([params[@"calculation_type"] integerValue], referralCodeCalculationType);
         XCTAssertEqual([params[@"location"] integerValue], referralCodeLocation);
         XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], referralCodeAmount);
@@ -213,6 +375,27 @@ static Branch *branch;
 }
 
 - (void)test08GetCreditHistory {
+    NSArray *creditHistoryResponseArray = @[
+        @{
+            @"transaction": @{
+                @"id": @"112281771218838351",
+                @"bucket": @"default",
+                @"type": @0,
+                @"amount": @5,
+                @"date": @"2015-04-02T20:58:06.946Z"
+            },
+            @"referrer": @"test_user_10",
+            @"referree": [NSNull null]
+        }
+    ];
+    
+    NSData *responseData = [NSJSONSerialization dataWithJSONObject:creditHistoryResponseArray options:kNilOptions error:nil];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"credithistory"].regex)
+    .andReturn(200)
+    .withHeaders(@{@"Content-Type": @"application/json"})
+    .withBody(responseData);
+
     XCTestExpectation *getCreditHistoryExpectation = [self expectationWithDescription:@"Test getCreditHistory"];
     
     [branch getCreditHistoryWithCallback:^(NSArray *list, NSError *error) {
