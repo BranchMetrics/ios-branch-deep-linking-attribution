@@ -13,6 +13,7 @@
 		464EA3981ACB1797000E4094 /* BNCServerInterfaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */; };
 		464EA39B1ACB38EC000E4094 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
 		4672D74E1ACC9797006E46D2 /* BranchServerInterfaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4672D74D1ACC9797006E46D2 /* BranchServerInterfaceTests.m */; };
+		46D0B6FA1ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */; };
 		46FFCF101ACC317200039CE0 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
 		46FFCF111ACC317200039CE0 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
 		46FFCF121ACC317300039CE0 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
@@ -140,6 +141,7 @@
 		464EA3991ACB38EC000E4094 /* BNCEncodingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCEncodingUtils.h; sourceTree = "<group>"; };
 		464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtils.m; sourceTree = "<group>"; };
 		4672D74D1ACC9797006E46D2 /* BranchServerInterfaceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchServerInterfaceTests.m; sourceTree = "<group>"; };
+		46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCPreferenceHelperTests.m; sourceTree = "<group>"; };
 		46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
 		556F7F2A4D139BFA019B2C92 /* Pods-Branch-SDK UI Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK UI Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK UI Tests/Pods-Branch-SDK UI Tests.release.xcconfig"; sourceTree = "<group>"; };
 		5B7859EF6C3C9526AA01CD8C /* libPods-Branch-SDK Functionality Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK Functionality Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -411,6 +413,7 @@
 				4672D74D1ACC9797006E46D2 /* BranchServerInterfaceTests.m */,
 				464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */,
 				46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */,
+				46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */,
 				7E6B3B531AA42D0E005F45BF /* Supporting Files */,
 			);
 			path = "Branch-SDK Functionality Tests";
@@ -886,6 +889,7 @@
 				7E6B3B611AA42F1D005F45BF /* BNCError.m in Sources */,
 				464EA3981ACB1797000E4094 /* BNCServerInterfaceTests.m in Sources */,
 				7E6B3B601AA42F19005F45BF /* BNCServerRequestQueue.m in Sources */,
+				46D0B6FA1ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m in Sources */,
 				7E6B3B5B1AA42E9A005F45BF /* BranchServerInterface.m in Sources */,
 				7E6B3B651AA42F35005F45BF /* BranchActivityItemProvider.m in Sources */,
 				7E6B3B661AA42F3B005F45BF /* AppDelegate.m in Sources */,
