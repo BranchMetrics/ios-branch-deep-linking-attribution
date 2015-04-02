@@ -94,10 +94,6 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (NSInteger)getActionTotalCount:(NSString *)action;
 + (NSInteger)getActionUniqueCount:(NSString *)action;
 
-+ (NSString *)base64EncodeStringToString:(NSString *)strData;
-+ (NSString *)base64DecodeStringToString:(NSString *)strData;
-+ (NSString *)base64EncodeData:(NSData *)objData;
-
 + (void)setDevDebug;
 + (BOOL)getDevDebug;
 + (void)setDebug;

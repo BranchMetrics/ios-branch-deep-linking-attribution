@@ -1,197 +1,140 @@
 //
-//  BNCServerInterface.m
+//  BranchServerInterfaceTests.m
 //  Branch-TestBed
 //
-//  Created by Graham Mueller on 3/31/15.
+//  Created by Graham Mueller on 4/1/15.
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
-#import "BNCServerInterface.h"
-#import "BNCPreferenceHelper.h"
 #import <OCMock/OCMock.h>
+#import "BranchServerInterface.h"
+#import "BNCPreferenceHelper.h"
+#import "BNCSystemObserver.h"
 
-@interface BNCServerInterfaceTests : XCTestCase
-
-@property (assign, nonatomic) NSInteger originalRetryInterval;
-@property (assign, nonatomic) NSInteger originalRetryCount;
+@interface BranchServerInterfaceTests : XCTestCase
 
 @end
 
-@implementation BNCServerInterfaceTests
+@implementation BranchServerInterfaceTests
 
-- (void)setUp {
-    self.originalRetryInterval = [BNCPreferenceHelper getRetryInterval];
-    self.originalRetryCount = [BNCPreferenceHelper getRetryCount];
+#pragma mark - RegisterInstall tests
 
-    [BNCPreferenceHelper setRetryInterval:1]; // turn down sleep time
-}
-
-- (void)tearDown {
-    [BNCPreferenceHelper setRetryInterval:self.originalRetryInterval]; // set values back to original
-    [BNCPreferenceHelper setRetryCount:self.originalRetryCount];
-}
-
-#pragma mark - Retry tests
-
-- (void)testGetRequestAsyncRetriesWhenAppropriate {
-    BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@500];
-    
-    // Specify retry count as 3
-    [BNCPreferenceHelper setRetryCount:3];
-
-    // Mock the actual request part, should happen 4 times (once through, 3 replays). Reject any more
+- (void)testRegisterInstallWithSpecifiedUriScheme {
+    BranchServerInterface *serverInterface = [[BranchServerInterface alloc] init];
     id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[serverInterfaceMock reject] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
     
-    // Make the request
-    [serverInterface getRequestAsync:nil url:@"http://foo" andTag:@"foo"];
+    NSString *expectedUriScheme = @"foo://";
+    NSString *unexpectedUriScheme = @"bar://";
+    id preferenceHelperMock = [OCMockObject mockForClass:[BNCPreferenceHelper class]];
+    [[[preferenceHelperMock stub] andReturn:expectedUriScheme] getUriScheme];
+    id systemObserverMock = [OCMockObject mockForClass:[BNCSystemObserver class]];
+    [[[systemObserverMock stub] andReturn:unexpectedUriScheme] getDefaultUriScheme];
     
-    // Verify count of retries
+    id paramCheckBlock = [OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+        NSString *uriScheme = params[@"uri_scheme"];
+        BOOL hasExpectedUriScheme = [uriScheme isEqualToString:expectedUriScheme];
+        
+        // TODO add additional items we care about
+        return hasExpectedUriScheme;
+    }];
+    
+    // Expect the postRequestAsync method to be called, verify the post params
+    [[serverInterfaceMock expect] postRequestAsync:paramCheckBlock url:[OCMArg any] andTag:[OCMArg any]];
+    
+    // Make the actual call
+    [serverInterface registerInstall:NO];
+    
+    // Verify post was called with correct params
     [serverInterfaceMock verify];
 }
 
-- (void)testGetRequestAsyncRetriesWhenInappropriateResponse {
-    BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *nonRetryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@200];
-
-    // Specify retry count as 3
-    [BNCPreferenceHelper setRetryCount:3];
-    
-    // Mock the actual request part, reject any replays -- shouldn't be replayed.
+- (void)testRegisterInstallWithoutSpecifiedUriScheme {
+    BranchServerInterface *serverInterface = [[BranchServerInterface alloc] init];
     id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
-    [[[serverInterfaceMock expect] andReturn:nonRetryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[serverInterfaceMock reject] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
     
-    // Make the request
-    [serverInterface getRequestAsync:nil url:@"http://foo" andTag:@"foo"];
+    NSString *expectedUriScheme = @"foo://";
+    id preferenceHelperMock = [OCMockObject mockForClass:[BNCPreferenceHelper class]];
+    [[[preferenceHelperMock stub] andReturn:nil] getUriScheme];
+    id systemObserverMock = [OCMockObject mockForClass:[BNCSystemObserver class]];
+    [[[systemObserverMock stub] andReturn:expectedUriScheme] getDefaultUriScheme];
     
-    // Verify count of retries
-    [serverInterfaceMock verify];
-}
-
-- (void)testGetRequestAsyncRetriesWhenInappropriateRetryCount {
-    BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@500];
-
-    // Specify retry count as 0
-    [BNCPreferenceHelper setRetryCount:0];
+    id paramCheckBlock = [OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+        NSString *uriScheme = params[@"uri_scheme"];
+        BOOL hasExpectedUriScheme = [uriScheme isEqualToString:expectedUriScheme];
+        
+        // TODO add additional items we care about
+        return hasExpectedUriScheme;
+    }];
     
-    // Mock the actual request part, reject any replays -- shouldn't be replayed.
-    id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[serverInterfaceMock reject] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
+    // Expect the postRequestAsync method to be called, verify the post params
+    [[serverInterfaceMock expect] postRequestAsync:paramCheckBlock url:[OCMArg any] andTag:[OCMArg any]];
     
-    // Make the request
-    [serverInterface getRequestAsync:nil url:@"http://foo" andTag:@"foo"];
+    // Make the actual call
+    [serverInterface registerInstall:NO];
     
-    // Verify count of retries
-    [serverInterfaceMock verify];
-}
-
-- (void)testPostRequestAsyncRetriesWhenAppropriate {
-    BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@500];
-
-    // Specify retry count as 3
-    [BNCPreferenceHelper setRetryCount:3];
-    
-    // Mock the actual request part, should happen 4 times (once through, 3 replays). Reject any more
-    id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[serverInterfaceMock reject] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    
-    // Make the request
-    [serverInterface postRequestAsync:nil url:@"http://foo" andTag:@"foo"];
-    
-    // Verify count of retries
-    [serverInterfaceMock verify];
-}
-
-- (void)testPostRequestAsyncRetriesWhenInappropriateResponse {
-    BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *nonRetryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@200];
-    
-    // Specify retry count as 3
-    [BNCPreferenceHelper setRetryCount:3];
-    
-    // Mock the actual request part, reject any replays -- shouldn't be replayed.
-    id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
-    [[[serverInterfaceMock expect] andReturn:nonRetryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[serverInterfaceMock reject] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    
-    // Make the request
-    [serverInterface postRequestAsync:nil url:@"http://foo" andTag:@"foo"];
-    
-    // Verify count of retries
-    [serverInterfaceMock verify];
-}
-
-- (void)testPostRequestAsyncRetriesWhenInappropriateRetryCount {
-    BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo" andStatusCode:@500];
-    
-    // Specify retry count as 3
-    [BNCPreferenceHelper setRetryCount:0];
-    
-    // Mock the actual request part, reject any replays -- shouldn't be replayed.
-    id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[serverInterfaceMock reject] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    
-    // Make the request
-    [serverInterface postRequestAsync:nil url:@"http://foo" andTag:@"foo"];
-    
-    // Verify count of retries
+    // Verify post was called with correct params
     [serverInterfaceMock verify];
 }
 
 
-#pragma mark - Encoding tests
+#pragma mark - RegisterOpen tests
 
-- (void)testEncodePostToUniversalStringWithExpectedParams {
-    NSDictionary *dataDict = @{ @"foo": @"bar", @"num": @1, @"dict": @{ @"sub": @1 } };
-    NSString *expectedEncodedString = @"{\"foo\":\"bar\",\"num\":1,\"dict\":{\"sub\":1}}";
+- (void)testRegisterOpenWithSpecifiedUriScheme {
+    BranchServerInterface *serverInterface = [[BranchServerInterface alloc] init];
+    id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
     
-    NSString *encodedValue = [BNCServerInterface encodePostToUniversalString:dataDict needSource:NO];
+    NSString *expectedUriScheme = @"foo://";
+    NSString *unexpectedUriScheme = @"bar://";
+    id preferenceHelperMock = [OCMockObject mockForClass:[BNCPreferenceHelper class]];
+    [[[preferenceHelperMock stub] andReturn:expectedUriScheme] getUriScheme];
+    id systemObserverMock = [OCMockObject mockForClass:[BNCSystemObserver class]];
+    [[[systemObserverMock stub] andReturn:unexpectedUriScheme] getDefaultUriScheme];
     
-    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
+    id paramCheckBlock = [OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+        NSString *uriScheme = params[@"uri_scheme"];
+        BOOL hasExpectedUriScheme = [uriScheme isEqualToString:expectedUriScheme];
+        
+        // TODO add additional items we care about
+        return hasExpectedUriScheme;
+    }];
+    
+    // Expect the postRequestAsync method to be called, verify the post params
+    [[serverInterfaceMock expect] postRequestAsync:paramCheckBlock url:[OCMArg any] andTag:[OCMArg any]];
+    
+    // Make the actual call
+    [serverInterface registerOpen:NO];
+    
+    // Verify post was called with correct params
+    [serverInterfaceMock verify];
 }
 
-- (void)testEncodePostToUniversalStringWithUnexpectedParams {
-    // TODO better "unknown" type since NSDate should be handled
-    NSDictionary *dataDict = @{ @"foo": @"bar", @"date": [NSDate date] };
-    NSString *expectedEncodedString = @"{\"foo\":\"bar\"}";
+- (void)testRegisterOpenWithoutSpecifiedUriScheme {
+    BranchServerInterface *serverInterface = [[BranchServerInterface alloc] init];
+    id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
     
-    NSString *encodedValue = [BNCServerInterface encodePostToUniversalString:dataDict needSource:NO];
+    NSString *expectedUriScheme = @"foo://";
+    id preferenceHelperMock = [OCMockObject mockForClass:[BNCPreferenceHelper class]];
+    [[[preferenceHelperMock stub] andReturn:nil] getUriScheme];
+    id systemObserverMock = [OCMockObject mockForClass:[BNCSystemObserver class]];
+    [[[systemObserverMock stub] andReturn:expectedUriScheme] getDefaultUriScheme];
     
-    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
-}
-
-- (void)testEncodePostToUniversalStringWithNull {
-    NSDictionary *dataDict = @{ @"foo": [NSNull null] };
-    NSString *expectedEncodedString = @"{\"foo\":null}";
+    id paramCheckBlock = [OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+        NSString *uriScheme = params[@"uri_scheme"];
+        BOOL hasExpectedUriScheme = [uriScheme isEqualToString:expectedUriScheme];
+        
+        // TODO add additional items we care about
+        return hasExpectedUriScheme;
+    }];
     
-    NSString *encodedValue = [BNCServerInterface encodePostToUniversalString:dataDict needSource:NO];
+    // Expect the postRequestAsync method to be called, verify the post params
+    [[serverInterfaceMock expect] postRequestAsync:paramCheckBlock url:[OCMArg any] andTag:[OCMArg any]];
     
-    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
-}
-
-- (void)testEncodePostToUniversalStringWithSubDictWithNeedSource {
-    NSDictionary *dataDict = @{ @"root": @{ @"sub": @1 } };
-    NSString *expectedEncodedString = @"{\"root\":{\"sub\":1},\"source\":\"ios\"}";
+    // Make the actual call
+    [serverInterface registerOpen:NO];
     
-    NSString *encodedValue = [BNCServerInterface encodePostToUniversalString:dataDict needSource:YES];
-    
-    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
+    // Verify post was called with correct params
+    [serverInterfaceMock verify];
 }
 
 @end

@@ -10,14 +10,9 @@
 
 @implementation BNCServerResponse
 
-- (id)initWithTag:(NSString *)tag andStatusCode:(NSNumber *)code {
-    if (!tag || !code) {
-        return nil;
-    }
-    
+- (id)initWithTag:(NSString *)tag {
     if (self = [super init]) {
         self.tag = tag;
-        self.statusCode = code;
     }
     
     return self;

@@ -11,6 +11,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchServerInterface.h"
 #import "Nocilla.h"
+#import "BNCEncodingUtils.h"
 
 @interface Branch_SDK_Debugger_Tests : XCTestCase {
     
@@ -51,7 +52,7 @@
 
 - (void)testConnectFail {
     NSDictionary *responseDict = @{@"error": @{@"code": @465, @"message": @"Server not listening"}};
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"debug/connect"])
     .andReturn(465)

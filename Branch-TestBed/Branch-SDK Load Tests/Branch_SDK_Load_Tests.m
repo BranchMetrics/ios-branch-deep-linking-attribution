@@ -11,6 +11,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
 #import "Nocilla.h"
+#import "BNCEncodingUtils.h"
 
 @interface Branch_SDK_Load_Tests : XCTestCase {
     
@@ -49,7 +50,7 @@
 
 - (void)testLoad {
     NSDictionary *responseDict = @{@"url": @"https://bnc.lt/l/3PxZVFU-BK"};
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
     .andReturn(200)

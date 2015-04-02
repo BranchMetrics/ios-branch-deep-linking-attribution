@@ -112,6 +112,11 @@
     return [self.queue description];
 }
 
+- (void)clearQueue {
+    [self.queue removeAllObjects];
+    [self persist];
+}
+
 - (BOOL)containsInstallOrOpen {
     for (int i = 0; i < self.queue.count; i++) {
         BNCServerRequest *req = [self.queue objectAtIndex:i];
