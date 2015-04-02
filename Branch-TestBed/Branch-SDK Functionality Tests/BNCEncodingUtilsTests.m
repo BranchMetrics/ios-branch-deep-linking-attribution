@@ -106,6 +106,15 @@
     XCTAssertEqualObjects(expectedEncodedString, encodedValue);
 }
 
+- (void)testEncodeDictionaryToQueryString {
+    NSDictionary *dataDict = @{ @"foo": @"bar", @"something": @"something & something" };
+    NSString *expectedEncodedString = @"?foo=bar&something=something%20%26%20something";
+    
+    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToQueryString:dataDict];
+    
+    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
+}
+
 
 #pragma mark - DecodeToDictionary tests
 
