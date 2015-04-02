@@ -40,6 +40,9 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)setRetryCount:(NSInteger)retryCount;
 + (NSInteger)getRetryCount;
 
++ (NSString *)getAppKey;
++ (void)setAppKey:(NSString *)appKey;
+
 + (NSString *)getBranchKey;
 + (NSString *)getBranchKey:(BOOL)isLive;
 + (void)setBranchKey:(NSString *)branchKey;

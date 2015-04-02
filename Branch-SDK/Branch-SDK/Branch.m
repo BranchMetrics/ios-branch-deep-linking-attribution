@@ -19,6 +19,7 @@
 #import "BNCLinkCache.h"
 
 
+static NSString *APP_ID = @"app_id";
 static NSString *IDENTITY = @"identity";
 static NSString *IDENTITY_ID = @"identity_id";
 static NSString *SESSION_ID = @"session_id";
@@ -123,7 +124,11 @@ static Branch *currInstance;
 }
 
 + (Branch *)getInstance:(NSString *)branchKey {
-    [BNCPreferenceHelper setBranchKey:branchKey];
+    if ([branchKey rangeOfString:@"key_"].location != NSNotFound) {
+        [BNCPreferenceHelper setBranchKey:branchKey];
+    } else {
+        [BNCPreferenceHelper setAppKey:branchKey];
+    }
     
     if (!currInstance) {
         [Branch initInstance];
@@ -354,6 +359,7 @@ static Branch *currInstance;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[
                                                                                    userId,
                                                                                    [BNCPreferenceHelper getBranchKey],
+                                                                                   [BNCPreferenceHelper getAppKey],
                                                                                    [BNCPreferenceHelper getDeviceFingerprintID],
                                                                                    [BNCPreferenceHelper getSessionID],
                                                                                    [BNCPreferenceHelper getIdentityID],
@@ -361,6 +367,7 @@ static Branch *currInstance;
                                                                          forKeys:@[
                                                                                    IDENTITY,
                                                                                    KEY_BRANCH_KEY,
+                                                                                   APP_ID,
                                                                                    DEVICE_FINGERPRINT_ID,
                                                                                    SESSION_ID,
                                                                                    IDENTITY_ID,
@@ -383,12 +390,14 @@ static Branch *currInstance;
         req.tag = REQ_TAG_LOGOUT;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[
                                                                                    [BNCPreferenceHelper getBranchKey],
+                                                                                   [BNCPreferenceHelper getAppKey],
                                                                                    [BNCPreferenceHelper getDeviceFingerprintID],
                                                                                    [BNCPreferenceHelper getSessionID],
                                                                                    [BNCPreferenceHelper getIdentityID],
                                                                                    [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
                                                                          forKeys:@[
                                                                                    KEY_BRANCH_KEY,
+                                                                                   APP_ID,
                                                                                    DEVICE_FINGERPRINT_ID,
                                                                                    SESSION_ID,
                                                                                    IDENTITY_ID,
@@ -485,6 +494,7 @@ static Branch *currInstance;
                                                                                        bucket,
                                                                                        [NSNumber numberWithInteger:redemptionsToAdd],
                                                                                        [BNCPreferenceHelper getBranchKey],
+                                                                                       [BNCPreferenceHelper getAppKey],
                                                                                        [BNCPreferenceHelper getDeviceFingerprintID],
                                                                                        [BNCPreferenceHelper getIdentityID],
                                                                                        [BNCPreferenceHelper getSessionID],
@@ -493,6 +503,7 @@ static Branch *currInstance;
                                                                                        BUCKET,
                                                                                        AMOUNT,
                                                                                        KEY_BRANCH_KEY,
+                                                                                       APP_ID,
                                                                                        DEVICE_FINGERPRINT_ID,
                                                                                        IDENTITY_ID,
                                                                                        SESSION_ID,
@@ -531,6 +542,7 @@ static Branch *currInstance;
         req.tag = REQ_TAG_GET_REWARD_HISTORY;
         NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjects:@[
                                                                                  [BNCPreferenceHelper getBranchKey],
+                                                                                 [BNCPreferenceHelper getAppKey],
                                                                                  [BNCPreferenceHelper getDeviceFingerprintID],
                                                                                  [BNCPreferenceHelper getIdentityID],
                                                                                  [BNCPreferenceHelper getSessionID],
@@ -538,6 +550,7 @@ static Branch *currInstance;
                                                                                  DIRECTIONS[order],
                                                                                  [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
                                                                        forKeys:@[KEY_BRANCH_KEY,
+                                                                                 APP_ID,
                                                                                  DEVICE_FINGERPRINT_ID,
                                                                                  IDENTITY_ID,
                                                                                  SESSION_ID,
@@ -577,6 +590,7 @@ static Branch *currInstance;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[
                                                                                    action,
                                                                                    [BNCPreferenceHelper getBranchKey],
+                                                                                   [BNCPreferenceHelper getAppKey],
                                                                                    [BNCPreferenceHelper getDeviceFingerprintID],
                                                                                    [BNCPreferenceHelper getIdentityID],
                                                                                    [BNCPreferenceHelper getSessionID],
@@ -584,6 +598,7 @@ static Branch *currInstance;
                                                                          forKeys:@[
                                                                                    EVENT,
                                                                                    KEY_BRANCH_KEY,
+                                                                                   APP_ID,
                                                                                    DEVICE_FINGERPRINT_ID,
                                                                                    IDENTITY_ID,
                                                                                    SESSION_ID,
@@ -741,11 +756,13 @@ static Branch *currInstance;
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_CODE;
         NSMutableArray *keys = [NSMutableArray arrayWithArray:@[KEY_BRANCH_KEY,
+                                                                APP_ID,
                                                                 DEVICE_FINGERPRINT_ID,
                                                                 IDENTITY_ID,
                                                                 SESSION_ID,
                                                                 @"sdk"]];
         NSMutableArray *values = [NSMutableArray arrayWithArray:@[[BNCPreferenceHelper getBranchKey],
+                                                                  [BNCPreferenceHelper getAppKey],
                                                                   [BNCPreferenceHelper getDeviceFingerprintID],
                                                                   [BNCPreferenceHelper getIdentityID],
                                                                   [BNCPreferenceHelper getSessionID],
@@ -790,6 +807,7 @@ static Branch *currInstance;
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_CODE;
         NSMutableArray *keys = [NSMutableArray arrayWithArray:@[KEY_BRANCH_KEY,
+                                                                APP_ID,
                                                                 DEVICE_FINGERPRINT_ID,
                                                                 IDENTITY_ID,
                                                                 SESSION_ID,
@@ -801,6 +819,7 @@ static Branch *currInstance;
                                                                 BUCKET,
                                                                 @"sdk"]];
         NSMutableArray *values = [NSMutableArray arrayWithArray:@[[BNCPreferenceHelper getBranchKey],
+                                                                  [BNCPreferenceHelper getAppKey],
                                                                   [BNCPreferenceHelper getDeviceFingerprintID],
                                                                   [BNCPreferenceHelper getIdentityID],
                                                                   [BNCPreferenceHelper getSessionID],
@@ -850,6 +869,7 @@ static Branch *currInstance;
         NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code,
                                                                                  [BNCPreferenceHelper getIdentityID],
                                                                                  [BNCPreferenceHelper getBranchKey],
+                                                                                 [BNCPreferenceHelper getAppKey],
                                                                                  [BNCPreferenceHelper getDeviceFingerprintID],
                                                                                  [BNCPreferenceHelper getSessionID],
                                                                                  [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
@@ -857,6 +877,7 @@ static Branch *currInstance;
                                                                                  REFERRAL_CODE,
                                                                                  IDENTITY_ID,
                                                                                  KEY_BRANCH_KEY,
+                                                                                 APP_ID,
                                                                                  DEVICE_FINGERPRINT_ID,
                                                                                  SESSION_ID,
                                                                                  @"sdk"]];
@@ -883,12 +904,14 @@ static Branch *currInstance;
         NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code,
                                                                                  [BNCPreferenceHelper getIdentityID],
                                                                                  [BNCPreferenceHelper getBranchKey],
+                                                                                 [BNCPreferenceHelper getAppKey],
                                                                                  [BNCPreferenceHelper getSessionID],
                                                                                  [BNCPreferenceHelper getDeviceFingerprintID],
                                                                                  [NSString stringWithFormat:@"ios%@", SDK_VERSION]]
                                                                        forKeys:@[REFERRAL_CODE,
                                                                                  IDENTITY_ID,
                                                                                  KEY_BRANCH_KEY,
+                                                                                 APP_ID,
                                                                                  SESSION_ID,
                                                                                  DEVICE_FINGERPRINT_ID,
                                                                                  @"sdk"]];
@@ -972,6 +995,7 @@ static Branch *currInstance;
 - (BNCLinkData *)prepareLinkDataFor:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSString *)params {
     BNCLinkData *post = [[BNCLinkData alloc] init];
     [post setObject:[BNCPreferenceHelper getBranchKey] forKey:KEY_BRANCH_KEY];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:APP_ID];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:DEVICE_FINGERPRINT_ID];
     [post setObject:[BNCPreferenceHelper getIdentityID] forKey:IDENTITY_ID];
     [post setObject:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
@@ -1107,6 +1131,7 @@ static Branch *currInstance;
         req.tag = REQ_TAG_UPLOAD_LIST_OF_APPS;
         NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
         [post setObject:[BNCPreferenceHelper getBranchKey] forKey:KEY_BRANCH_KEY];
+        [post setObject:[BNCPreferenceHelper getAppKey] forKey:APP_ID];
         [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:DEVICE_FINGERPRINT_ID];
         [post setObject:[BNCSystemObserver getOS] forKey:@"os"];
         [post setObject:[NSString stringWithFormat:@"ios%@", SDK_VERSION] forKey:@"sdk"];
@@ -1215,6 +1240,11 @@ static Branch *currInstance;
     
     if (req) {
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
+                self.initFailed = YES;
+                //                for (int i = 0; i < [self.requestQueue size]-1; i++) {
+                //                    [self handleFailure:i];
+                //                }
+
             errorDict = [BNCError getUserInfoDictForDomain:BNCInitError];
             if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:errorDict]);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
@@ -1301,6 +1331,8 @@ static Branch *currInstance;
             for (NSString *key in [request.postData allKeys]) {
                 if ([key isEqualToString:KEY_BRANCH_KEY]) {
                     [request.postData setValue:[BNCPreferenceHelper getBranchKey] forKey:KEY_BRANCH_KEY];
+                } else if ([key isEqualToString:APP_ID]) {
+                    [request.postData setValue:[BNCPreferenceHelper getAppKey] forKey:APP_ID];
                 } else if ([key isEqualToString:SESSION_ID]) {
                     [request.postData setValue:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
                 } else if ([key isEqualToString:IDENTITY_ID]) {
@@ -1329,6 +1361,10 @@ static Branch *currInstance;
     return ![[BNCPreferenceHelper getBranchKey] isEqualToString:NO_STRING_VALUE];
 }
 
+- (BOOL)hasAppKey {
+    return ![[BNCPreferenceHelper getAppKey] isEqualToString:NO_STRING_VALUE];
+}
+
 - (void)registerInstallOrOpen:(NSString *)tag {
     if (![self.requestQueue containsInstallOrOpen]) {
         BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:tag];
@@ -1343,10 +1379,10 @@ static Branch *currInstance;
 }
 
 -(void)initializeSession {
-    if (![self hasBranchKey]) {
+    if (![self hasBranchKey] && ![self hasAppKey]) {
         NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
         return;
-    } else if ([[BNCPreferenceHelper getBranchKey] rangeOfString:@"key_test_"].location != NSNotFound) {
+    } else if ([self hasBranchKey] && [[BNCPreferenceHelper getBranchKey] rangeOfString:@"key_test_"].location != NSNotFound) {
         NSLog(@"Branch Warning: You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment.");
     }
     
@@ -1558,6 +1594,7 @@ static Branch *currInstance;
             }
             
             self.initFinished = YES;
+            self.initFailed = NO;
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             [BNCPreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
             [BNCPreferenceHelper setDeviceFingerprintID:[response.data objectForKey:DEVICE_FINGERPRINT_ID]];
@@ -1591,6 +1628,7 @@ static Branch *currInstance;
             }
             
             self.initFinished = YES;
+            self.initFailed = NO;
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REWARDS]) {
             [self processReferralCredits:response.data];
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {

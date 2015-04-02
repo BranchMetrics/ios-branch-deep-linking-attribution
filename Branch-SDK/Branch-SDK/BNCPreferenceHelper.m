@@ -15,6 +15,8 @@ static const NSInteger RETRY_INTERVAL = 3;
 static const NSInteger MAX_RETRIES = 5;
 static const NSInteger APP_READ_INTERVAL = 520000;
 
+static NSString *KEY_APP_KEY = @"bnc_app_key";
+
 static NSString *KEY_DEVICE_FINGERPRINT_ID = @"bnc_device_fingerprint_id";
 static NSString *KEY_SESSION_ID = @"bnc_session_id";
 static NSString *KEY_IDENTITY_ID = @"bnc_identity_id";
@@ -180,6 +182,22 @@ static NSString *Branch_Key = nil;
         retryCount = MAX_RETRIES;
     }
     return retryCount;
+}
+
++ (NSString *)getAppKey {
+    NSString *ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:KEY_APP_KEY];
+    if (!ret || ret.length == 0) {
+        // for backward compatibility
+        ret = [BNCPreferenceHelper readStringFromDefaults:KEY_APP_KEY];
+        if (!ret) {
+            ret = NO_STRING_VALUE;
+        }
+    }
+    return ret;
+}
+
++ (void)setAppKey:(NSString *)appKey {
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_APP_KEY value:appKey];
 }
 
 + (NSString *)getBranchKey {
