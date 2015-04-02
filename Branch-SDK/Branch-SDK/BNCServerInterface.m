@@ -10,6 +10,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCConfig.h"
 #import "BNCLinkData.h"
+#import "BNCEncodingUtils.h"
 
 @implementation BNCServerInterface
 
@@ -98,70 +99,6 @@
     return [self genericSyncHTTPRequest:request withTag:requestTag andLinkData:linkData];
 }
 
-+ (NSData *)encodePostParams:(NSDictionary *)params {
-    NSError *writeError = nil;
-    NSData *postData = [NSJSONSerialization dataWithJSONObject:params options:NSJSONWritingPrettyPrinted error:&writeError];
-    return postData;
-}
-
-+ (NSString *)encodePostToUniversalString:(NSDictionary *)params {
-    return [BNCServerInterface encodePostToUniversalString:params needSource:YES];
-}
-
-// TODO add support for additional data types like NSArrays and NSDates
-+ (NSString *)encodePostToUniversalString:(NSDictionary *)params needSource:(BOOL)source {
-    NSMutableString *encodedParams = [[NSMutableString alloc] initWithString:@"{"];
-    for (NSString *key in params) {
-        NSString *value = nil;
-        BOOL string = YES;
-        
-        id obj = params[key];
-        if ([obj isKindOfClass:[NSString class]]) {
-            value = obj;
-        }
-        else if ([obj isKindOfClass:[NSDictionary class]]) {
-            value = [BNCServerInterface encodePostToUniversalString:obj needSource:NO]; // Sub dictionaries have no need for source
-            string = NO;
-        }
-        else if ([obj isKindOfClass:[NSNumber class]]) {
-            value = [obj stringValue];
-            string = NO;
-        }
-        else if ([obj isKindOfClass:[NSNull class]]) {
-            value = @"null";
-            string = NO;
-        }
-        else {
-            // If this type is not a known type, don't attempt to encode it.
-            continue;
-        }
-
-        [encodedParams appendFormat:@"\"%@\":", key];
-        
-        // If this is a "string" object, wrap it in quotes
-        if (string) {
-            [encodedParams appendFormat:@"\"%@\",", value];
-        }
-        // Otherwise, just add the raw value after the colon
-        else {
-            [encodedParams appendFormat:@"%@,", value];
-        }
-    }
-
-    if (source) {
-        [encodedParams appendString:@"\"source\":\"ios\"}"];
-    }
-    else {
-        // Delete the trailing comma
-        [encodedParams deleteCharactersInRange:NSMakeRange([encodedParams length] - 1, 1)];
-        [encodedParams appendString:@"}"];
-    }
-    
-    [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"encoded params : %@", encodedParams];
-
-    return encodedParams;
-}
-
 + (NSString *)urlEncode:(NSString *)string {
     return (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
                                                                                  (CFStringRef)string,
@@ -221,7 +158,7 @@
     [fullPostBodyDict addEntriesFromDictionary:post];
     fullPostBodyDict[@"retryNumber"] = @(retryNumber);
 
-    NSData *postData = [BNCServerInterface encodePostParams:fullPostBodyDict];
+    NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:fullPostBodyDict];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     
     if (log) {
@@ -239,26 +176,19 @@
     return request;
 }
 
-- (BNCServerResponse *)processServerResponse:(NSURLResponse *)response data:(NSData *)POSTReply error:(NSError *)error tag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
-    BNCServerResponse *serverResponse = nil;
+- (BNCServerResponse *)processServerResponse:(NSURLResponse *)response data:(NSData *)data error:(NSError *)error tag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
+    BNCServerResponse *serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag];
+
     if (!error) {
-        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-        NSNumber *statusCode = [NSNumber numberWithLong:[httpResponse statusCode]];
-        
-        serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:statusCode];
+        serverResponse.statusCode = @([(NSHTTPURLResponse *)response statusCode]);
         serverResponse.linkData = linkData;
-        
-        if (POSTReply != nil) {
-            NSError *convError;
-            id jsonData = [NSJSONSerialization JSONObjectWithData:POSTReply options:NSJSONReadingMutableContainers error:&convError];
-            if (!convError) {
-                serverResponse.data = jsonData;
-            }
-        }
-    } else {
-        serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag andStatusCode:[NSNumber numberWithInteger:error.code]];
+        serverResponse.data = [BNCEncodingUtils decodeJsonDataToDictionary:data];
+    }
+    else {
+        serverResponse.statusCode = @(error.code);
         serverResponse.data = error.userInfo;
     }
+
     if ([BNCPreferenceHelper isDebug]  // for efficiency short-circuit purpose
         && ![requestTag isEqualToString:REQ_TAG_DEBUG_LOG]
         && ![requestTag isEqualToString:REQ_TAG_DEBUG_CONNECT]
