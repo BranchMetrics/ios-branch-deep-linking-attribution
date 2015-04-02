@@ -32,7 +32,8 @@ static NSInteger credits = 0;
 - (void)setUp {
     [super setUp];
     
-    branch = [Branch getInstance:@"key_live_78801a996de4287481fe73708cc95da2"]; // need to replace with prod app branch key, also in plist
+    branch = [Branch getInstance:@"5668720416392049"];
+//    branch = [Branch getInstance:@"key_live_78801a996de4287481fe73708cc95da2"]; // need to replace with prod app branch key, also in plist
     [self initSession];
 }
 
