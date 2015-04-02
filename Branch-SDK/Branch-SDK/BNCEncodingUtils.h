@@ -24,5 +24,6 @@
 + (NSDictionary *)decodeJsonDataToDictionary:(NSData *)jsonData;
 + (NSDictionary *)decodeJsonStringToDictionary:(NSString *)jsonString;
 + (NSDictionary *)decodeQueryStringToDictionary:(NSString *)queryString;
++ (NSString *)encodeDictionaryToQueryString:(NSDictionary *)dictionary;
 
 @end
