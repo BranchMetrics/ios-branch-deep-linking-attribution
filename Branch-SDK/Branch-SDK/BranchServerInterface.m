@@ -16,6 +16,7 @@
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     [post setObject:[BNCPreferenceHelper getBranchKey] forKey:KEY_BRANCH_KEY];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     BOOL isRealHardwareId;
     NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper getDevDebug]];
     if (hardwareId) {
@@ -52,6 +53,7 @@
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     [post setObject:[BNCPreferenceHelper getBranchKey] forKey:KEY_BRANCH_KEY];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     if ([[BNCPreferenceHelper getDeviceFingerprintID] isEqualToString:NO_STRING_VALUE]) {
         BOOL isRealHardwareId;
         NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper getDevDebug]];
@@ -82,6 +84,7 @@
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     [post setObject:[BNCPreferenceHelper getBranchKey] forKey:KEY_BRANCH_KEY];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     [post setObject:[BNCPreferenceHelper getIdentityID] forKey:@"identity_id"];
     [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
@@ -102,11 +105,11 @@
 }
 
 - (void)getReferralCounts {
-    [self getRequestAsync:@{KEY_BRANCH_KEY: [BNCPreferenceHelper getBranchKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referrals", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
+    [self getRequestAsync:@{KEY_BRANCH_KEY: [BNCPreferenceHelper getBranchKey], @"app_id": [BNCPreferenceHelper getAppKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referrals", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REFERRAL_COUNTS];
 }
 
 - (void)getRewards {
-    [self getRequestAsync:@{KEY_BRANCH_KEY: [BNCPreferenceHelper getBranchKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REWARDS];
+    [self getRequestAsync:@{KEY_BRANCH_KEY: [BNCPreferenceHelper getBranchKey], @"app_id": [BNCPreferenceHelper getAppKey]} url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REWARDS];
 }
 
 - (void)redeemRewards:(NSDictionary *)post {
@@ -164,6 +167,7 @@
 - (void)connectToDebug {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     [post setObject:[BNCPreferenceHelper getBranchKey] forKey:KEY_BRANCH_KEY];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     [post setObject:[BNCSystemObserver getDeviceName] forKey:@"device_name"];
     [post setObject:[BNCSystemObserver getOS] forKey:@"os"];
@@ -177,6 +181,7 @@
 - (void)disconnectFromDebug {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     [post setObject:[BNCPreferenceHelper getBranchKey] forKey:KEY_BRANCH_KEY];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug/disconnect"] andTag:REQ_TAG_DEBUG_DISCONNECT log:NO];
@@ -185,6 +190,7 @@
 - (void)sendLog:(NSString *)log {
     NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObject:log forKey:@"log"];
     [post setObject:[BNCPreferenceHelper getBranchKey] forKey:KEY_BRANCH_KEY];
+    [post setObject:[BNCPreferenceHelper getAppKey] forKey:@"app_id"];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"debug/log"] andTag:REQ_TAG_DEBUG_LOG log:NO];
