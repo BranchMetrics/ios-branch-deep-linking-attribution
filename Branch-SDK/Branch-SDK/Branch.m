@@ -578,7 +578,7 @@ static Branch *currInstance;
         req.tag = REQ_TAG_COMPLETE_ACTION;
         NSDictionary *post = @{
             EVENT: action,
-            METADATA: state,
+            METADATA: state ?: [NSNull null],
             DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
             IDENTITY_ID: [BNCPreferenceHelper getIdentityID],
             SESSION_ID: [BNCPreferenceHelper getSessionID],
