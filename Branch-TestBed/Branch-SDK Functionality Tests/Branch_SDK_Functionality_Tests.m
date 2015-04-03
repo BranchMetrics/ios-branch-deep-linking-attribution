@@ -39,16 +39,20 @@
 @implementation Branch_SDK_Functionality_Tests
 
 + (void)setUp {
+    [super setUp];
     [[LSNocilla sharedInstance] start];
     
     [[BNCServerRequestQueue getInstance] clearQueue];
     
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"applist?sdk=ios%@&retryNumber=0", SDK_VERSION]]).andReturn(200);
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
 }
 
 + (void)tearDown {
     [[LSNocilla sharedInstance] clearStubs];
     [[LSNocilla sharedInstance] stop];
+
+    [super tearDown];
 }
 
 - (void)setUp {
@@ -68,10 +72,6 @@
     new_user_link = @"https://bnc.lt/i/2kkbX6k-As";
     
     branch = [Branch getInstance:app_id];
-}
-
-- (void)tearDown {
-    [super tearDown];
 }
 
 - (void)initSession {
@@ -120,8 +120,6 @@
 - (void)test01GetShortURLAsync {
     [self initSession];
     
-    NSString __block *returnURL;
-    
     NSDictionary *responseDict = @{@"url": short_link};
     NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
@@ -132,29 +130,26 @@
     
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
     
-    [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *url, NSError *error) {
+    [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *fbUrl, NSError *error) {
         XCTAssertNil(error);
-        XCTAssertNotNil(url);
-        if ([[LSNocilla sharedInstance] isStarted]) {
-            XCTAssertEqualObjects(url, short_link);
-        }
-        returnURL = url;
+        XCTAssertNotNil(fbUrl);
+        XCTAssertEqualObjects(fbUrl, short_link);
         
-        [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *url, NSError *error) {
+        [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *fbUrl2, NSError *error) {
             XCTAssertNil(error);
-            XCTAssertNotNil(url);
+            XCTAssertNotNil(fbUrl2);
             if ([[LSNocilla sharedInstance] isStarted]) {
-                XCTAssertEqualObjects(url, returnURL);
+                XCTAssertEqualObjects(fbUrl, fbUrl2);
             }
         }];
         
-        NSString *urlFB = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
-        XCTAssertEqualObjects(urlFB, url);
+        NSString *fbUrlSync = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
+        XCTAssertEqualObjects(fbUrl, fbUrlSync);
         
         if (![[LSNocilla sharedInstance] isStarted]) {
-            NSString *urlTT = [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil];
-            XCTAssertNotNil(urlTT);
-            XCTAssertNotEqualObjects(urlTT, url);
+            NSString *twUrl = [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil];
+            XCTAssertNotNil(twUrl);
+            XCTAssertNotEqualObjects(fbUrl, twUrl);
         }
         
         [getShortURLExpectation fulfill];
@@ -199,7 +194,7 @@
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
     NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@?sdk=ios%@&retryNumber=0&app_id=%@", @"credits", [BNCPreferenceHelper getIdentityID], SDK_VERSION, app_id]])
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"credits/%@", [BNCPreferenceHelper getIdentityID]]].regex)
     .andReturn(200)
     .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
