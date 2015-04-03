@@ -120,8 +120,6 @@
 - (void)test01GetShortURLAsync {
     [self initSession];
     
-    NSString __block *returnURL;
-    
     NSDictionary *responseDict = @{@"url": short_link};
     NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
@@ -132,29 +130,26 @@
     
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
     
-    [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *url, NSError *error) {
+    [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *fbUrl, NSError *error) {
         XCTAssertNil(error);
-        XCTAssertNotNil(url);
-        if ([[LSNocilla sharedInstance] isStarted]) {
-            XCTAssertEqualObjects(url, short_link);
-        }
-        returnURL = url;
+        XCTAssertNotNil(fbUrl);
+        XCTAssertEqualObjects(fbUrl, short_link);
         
-        [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *url, NSError *error) {
+        [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *fbUrl2, NSError *error) {
             XCTAssertNil(error);
-            XCTAssertNotNil(url);
+            XCTAssertNotNil(fbUrl2);
             if ([[LSNocilla sharedInstance] isStarted]) {
-                XCTAssertEqualObjects(url, returnURL);
+                XCTAssertEqualObjects(fbUrl, fbUrl2);
             }
         }];
         
-        NSString *urlFB = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
-        XCTAssertEqualObjects(urlFB, url);
+        NSString *fbUrlSync = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
+        XCTAssertEqualObjects(fbUrl, fbUrlSync);
         
         if (![[LSNocilla sharedInstance] isStarted]) {
-            NSString *urlTT = [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil];
-            XCTAssertNotNil(urlTT);
-            XCTAssertNotEqualObjects(urlTT, url);
+            NSString *twUrl = [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil];
+            XCTAssertNotNil(twUrl);
+            XCTAssertNotEqualObjects(fbUrl, twUrl);
         }
         
         [getShortURLExpectation fulfill];
