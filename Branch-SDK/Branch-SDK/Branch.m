@@ -328,7 +328,6 @@ static Branch *currInstance;
     self.installparamLoadCallback = callback;
     
     if (!userId || [[BNCPreferenceHelper getUserIdentity] isEqualToString:userId]) {
-        NSLog(@"No user id, or already set");
         return;
     }
     
@@ -348,10 +347,8 @@ static Branch *currInstance;
         req.postData = post;
 
         if (!self.initFailed) {
-            NSLog(@"Enqueued");
             [self.requestQueue enqueue:req];
         } else {
-            NSLog(@"Init failed");
             if (callback) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCIdentifyError];
@@ -1200,7 +1197,6 @@ static Branch *currInstance;
         BNCServerRequest *req = [self.requestQueue peek];
         
         if (req) {
-            NSLog(@"processing request");
             if (![req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] && ![self hasUser]) {
                 NSLog(@"Branch Error: User session has not been initialized!");
                 self.networkCount = 0;
