@@ -1240,11 +1240,7 @@ static Branch *currInstance;
     
     if (req) {
         if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
-                self.initFailed = YES;
-                //                for (int i = 0; i < [self.requestQueue size]-1; i++) {
-                //                    [self handleFailure:i];
-                //                }
-
+            self.initFailed = YES;
             errorDict = [BNCError getUserInfoDictForDomain:BNCInitError];
             if (self.sessionparamLoadCallback) self.sessionparamLoadCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:errorDict]);
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS]) {
