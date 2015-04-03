@@ -17,13 +17,11 @@
 
 NSString * const REFERRAL_CODE = @"LMDLDV";
 
-static ReferralCodeCalculation referralCodeCalculationType = BranchUnlimitedRewards;
-static ReferralCodeLocation referralCodeLocation = BranchReferreeUser;
-static int referralCodeAmount = 0;
-static NSInteger credits = 0;
 static Branch *branch;
 
 @interface Branch_SDK_Stubless_Tests : XCTestCase
+
+@property (assign, nonatomic) BOOL hasExceededExpectations;
 
 @end
 
@@ -35,6 +33,9 @@ static Branch *branch;
     
     [[LSNocilla sharedInstance] start];
     
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
+
     NSDictionary *openResponseDict = @{
         @"session_id": @"112263020234678596",
         @"identity_id": @"98687515069776101",
@@ -63,7 +64,14 @@ static Branch *branch;
 }
 
 + (void)tearDown {
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
+
     [[LSNocilla sharedInstance] stop];
+}
+
+- (void)setUp {
+    self.hasExceededExpectations = NO;
 }
 
 - (void)tearDown {
@@ -113,11 +121,10 @@ static Branch *branch;
         XCTAssertEqualObjects(installParams[@"$og_title"], @"Kindred"); //TODO: equal to params?
         XCTAssertEqualObjects(installParams[@"key1"], @"test_object");
         
-        [setIdentityExpectation fulfill];
+        [self safelyFulfillExpectation:setIdentityExpectation];
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
+    [self awaitExpectations];
 }
 
 - (void)test01GetShortURLAsync {
@@ -160,11 +167,10 @@ static Branch *branch;
         XCTAssertNotNil(urlTT);
         XCTAssertNotEqualObjects(urlTT, url);
         
-        [getShortURLExpectation fulfill];
+        [self safelyFulfillExpectation:getShortURLExpectation];
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
+    [self awaitExpectations];
 }
 
 - (void)test02GetShortURLSync {
@@ -199,13 +205,11 @@ static Branch *branch;
     [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNil(error);
         XCTAssertTrue(changed);
-        credits = [BNCPreferenceHelper getCreditCountForBucket:@"default"];
         
-        [getRewardExpectation fulfill];
+        [self safelyFulfillExpectation:getRewardExpectation];
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
+    [self awaitExpectations];
 }
 
 - (void)test04GetRewardsUnchanged {
@@ -226,12 +230,11 @@ static Branch *branch;
     [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNil(error);
         XCTAssertFalse(changed);
-        
-        [getRewardExpectation fulfill];
+
+        [self safelyFulfillExpectation:getRewardExpectation];
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
+    [self awaitExpectations];
 }
 
 - (void)test05GetReferralCode {
@@ -267,15 +270,10 @@ static Branch *branch;
         XCTAssertNil(error);
         XCTAssertNotNil(params[@"referral_code"]);
         
-        referralCodeCalculationType = (ReferralCodeCalculation)[params[@"calculation_type"] integerValue];
-        referralCodeLocation = (ReferralCodeLocation)[params[@"location"] integerValue];
-        referralCodeAmount = (int)[params[@"metadata"][@"amount"] integerValue];
-        
-        [getReferralCodeExpectation fulfill];
+        [self safelyFulfillExpectation:getReferralCodeExpectation];
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
+    [self awaitExpectations];
 }
 
 // This test depends on test05GetReferralCode
@@ -315,15 +313,15 @@ static Branch *branch;
         NSString *code = params[@"referral_code"];
         XCTAssertNotNil(code);
         XCTAssertTrue([code isEqualToString:REFERRAL_CODE]);
-        XCTAssertEqual([params[@"calculation_type"] integerValue], referralCodeCalculationType);
-        XCTAssertEqual([params[@"location"] integerValue], referralCodeLocation);
-        XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], referralCodeAmount);
-        
-        [getReferralCodeExpectation fulfill];
+        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUnlimitedRewards);
+        XCTAssertEqual([params[@"location"] integerValue], BranchReferreeUser);
+        XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 5);
+
+        [self safelyFulfillExpectation:getReferralCodeExpectation];
+
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
+    [self awaitExpectations];
 }
 
 // This test depends on test05GetReferralCode
@@ -363,15 +361,14 @@ static Branch *branch;
         NSString *code = params[@"referral_code"];
         XCTAssertNotNil(code);
         XCTAssertTrue([code isEqualToString:REFERRAL_CODE]);
-        XCTAssertEqual([params[@"calculation_type"] integerValue], referralCodeCalculationType);
-        XCTAssertEqual([params[@"location"] integerValue], referralCodeLocation);
-        XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], referralCodeAmount);
+        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUnlimitedRewards);
+        XCTAssertEqual([params[@"location"] integerValue], BranchReferreeUser);
+        XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 5);
         
-        [getReferralCodeExpectation fulfill];
+        [self safelyFulfillExpectation:getReferralCodeExpectation];
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
+    [self awaitExpectations];
 }
 
 - (void)test08GetCreditHistory {
@@ -403,10 +400,22 @@ static Branch *branch;
         XCTAssertNotNil(list);
         XCTAssertGreaterThan(list.count, 0);
         
-        [getCreditHistoryExpectation fulfill];
+        [self safelyFulfillExpectation:getCreditHistoryExpectation];
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+    [self awaitExpectations];
+}
+
+#pragma mark - Test Util
+- (void)safelyFulfillExpectation:(XCTestExpectation *)expectation {
+    if (!self.hasExceededExpectations) {
+        [expectation fulfill];
+    }
+}
+
+- (void)awaitExpectations {
+    [self waitForExpectationsWithTimeout:10 handler:^(NSError *error) {
+        self.hasExceededExpectations = YES;
     }];
 }
 
