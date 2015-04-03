@@ -39,16 +39,20 @@
 @implementation Branch_SDK_Functionality_Tests
 
 + (void)setUp {
+    [super setUp];
     [[LSNocilla sharedInstance] start];
     
     [[BNCServerRequestQueue getInstance] clearQueue];
     
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"applist?sdk=ios%@&retryNumber=0", SDK_VERSION]]).andReturn(200);
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
 }
 
 + (void)tearDown {
     [[LSNocilla sharedInstance] clearStubs];
     [[LSNocilla sharedInstance] stop];
+
+    [super tearDown];
 }
 
 - (void)setUp {
@@ -68,10 +72,6 @@
     new_user_link = @"https://bnc.lt/i/2kkbX6k-As";
     
     branch = [Branch getInstance:app_id];
-}
-
-- (void)tearDown {
-    [super tearDown];
 }
 
 - (void)initSession {
