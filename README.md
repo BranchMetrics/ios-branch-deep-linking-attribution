@@ -137,24 +137,24 @@ This deep link routing callback is called 100% of the time on init, with your li
 ```swift
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     // your other init code
-	
+
     let branch: Branch = Branch.getInstance()
     branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
         if (error == nil) {
             // params are the deep linked params associated with the link that the user clicked before showing up
             // params will be empty if no data found
-            
-                
+
+
             // here is the data from the example below if a new user clicked on Joe's link and installed the app
             let name = params["user"] as? String                // returns Joe
             let profileUrl = params["profile_pic"] as? String   // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
             let description = params["description"] as? String  // returns Joe likes long walks on the beach...
-                
+
             // route to a profile page in the app for Joe
             // show a customer welcome
         }
     })
-        
+
     return true
 }
 ```
@@ -166,10 +166,13 @@ func application(application: UIApplication, openURL url: NSURL, sourceApplicati
     if (!Branch.getInstance().handleDeepLink(url)) {
         // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
     }
-        
+
     return true
 }
 ```
+
+#### Encoding Note
+One quick note about encoding. Since `NSJSONSerializaiton` supports a limited set of classes, we do some custom encoding to allow additional types. Current supported types include `NSDictionary`, `NSArray`, `NSURL`, `NSString`, `NSNumber`, `NSNull`, and `NSDate` (encoded as an ISO8601 string with timezone). If a parameter is of an unknown type, it will be ignored.
 
 #### Retrieve session (install or open) parameters
 
@@ -311,7 +314,7 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 // feature: nil or examples: FEATURE_TAG_SHARE, FEATURE_TAG_REFERRAL, "unlock", etc; should not exceed 128 characters
 // stage: nil or examples: "past_customer", "logged_in", "level_6"; should not exceed 128 characters
 
-// Link 'type' can be used for scenarios where you want the link to only deep link the first time. 
+// Link 'type' can be used for scenarios where you want the link to only deep link the first time.
 // Use nil, BranchLinkTypeUnlimitedUse or BranchLinkTypeOneTimeUse
 
 // Link 'alias' can be used to label the endpoint on the link. For example: http://bnc.lt/AUSTIN28. Should not exceed 128 characters
@@ -374,7 +377,7 @@ You can customize the Facebook OG tags of each URL if you want to dynamically sh
 | "$og_title" | The title you'd like to appear for the link in social media
 | "$og_description" | The description you'd like to appear for the link in social media
 | "$og_image_url" | The URL for the image you'd like to appear for the link in social media
-| "$og_video" | The URL for the video 
+| "$og_video" | The URL for the video
 | "$og_url" | The URL you'd like to appear
 | "$og_app_id" | Your OG app ID. Optional and rarely used.
 
@@ -395,7 +398,7 @@ You have the ability to control the direct deep linking of each link by insertin
 
 | Key | Value
 | --- | ---
-| "$deeplink_path" | The value of the deep link path that you'd like us to append to your URI. For example, you could specify "$deeplink_path": "radio/station/456" and we'll open the app with the URI "yourapp://radio/station/456?link_click_id=branch-identifier". This is primarily for supporting legacy deep linking infrastructure. 
+| "$deeplink_path" | The value of the deep link path that you'd like us to append to your URI. For example, you could specify "$deeplink_path": "radio/station/456" and we'll open the app with the URI "yourapp://radio/station/456?link_click_id=branch-identifier". This is primarily for supporting legacy deep linking infrastructure.
 | "$always_deeplink" | true or false. (default is not to deep link first) This key can be specified to have our linking service force try to open the app, even if we're not sure the user has the app installed. If the app is not installed, we fall back to the respective app store or $platform_url key. By default, we only open the app if we've seen a user initiate a session in your app from a Branch link (has been cookied and deep linked by Branch)
 
 ### UIActivityView Share Sheet
@@ -408,7 +411,7 @@ UIActivityView is the standard way of allowing users to share content from your 
 
 The Branch iOS SDK includes a subclassed UIActivityItemProvider that can be passed into a UIActivityViewController, that will generate a Branch short URL and automatically tag it with the channel the user selects (Facebook, Twitter, etc.).
 
-**Note**: UIActivityViewController accepts an NSArray of shareable items. Thus, you are able to share more than *just* the Branch link. For example, if you want to share a UIImage and a Branch link, simply include both in the array.
+**Note**: This method was formerly getBranchActivityItemWithDefaultURL:, which is now deprecated. Rather than requiring a default URL that acts as a placeholder for UIActivityItemProvider, a longURL is generated instantly and synchronously.
 
 The sample app included with the Branch iOS SDK shows a sample of this in ViewController.m:
 ###### Objective-C
@@ -416,21 +419,18 @@ The sample app included with the Branch iOS SDK shows a sample of this in ViewCo
 ```objc
 // Setup up the content you want to share, and the Branch
 // params and properties, as you would for any branch link
-    
+
 // No need to set the channel, that is done automatically based
 // on the share activity the user selects
 NSString *shareString = @"Super amazing thing I want to share!";
-
 UIImage *amazingImage = [UIImage imageNamed:@"Super-Amazing-Image.png"];
 
-NSString *defaultURL = @"http://lmgtfy.com/?q=branch+metrics";
-    
 NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 
 [params setObject:@"Joe" forKey:@"user"];
 [params setObject:@"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"profile_pic"];
 [params setObject:@"Joe likes long walks on the beach..." forKey:@"description"];
-   
+
 // Customize the display of the link
 [params setObject:@"Joe's My App Referral" forKey:@"$og_title"];
 [params setObject:@"https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg" forKey:@"$og_image_url"];
@@ -439,17 +439,16 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 // Customize the redirect performance
 [params setObject:@"http://myapp.com/desktop_splash" forKey:@"$desktop_url"];
 
-
 NSArray *tags = @[@"tag1", @"tag2"];
 NSString *feature = @"invite";
 NSString *stage = @"2";
-    
+
 // Branch UIActivityItemProvider
-UIActivityItemProvider *itemProvider = [Branch getBranchActivityItemWithDefaultURL:defaultURL andParams:params andFeature:feature andStage:stage andTags:tags];
-    
+UIActivityItemProvider *itemProvider = [Branch getBranchActivityItemWithParams:params andFeature:feature andStage:stage andTags:tags];
+
 // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
 UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareString, amazingImage, itemProvider] applicationActivities:nil];
-    
+
 // Present the share sheet!
 [self.navigationController presentViewController:shareViewController animated:YES completion:nil];
 ```
@@ -469,7 +468,6 @@ items.append(shareString)
 if let amazingImage: UIImage = UIImage(named: "mada.png") {
     items.append(amazingImage)
 }
-let defaultURL = "http://lmgtfy.com/?q=branch+metrics"
 
 var params = ["user": "Joe"]
 params["profile_pic"] = "https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg"
@@ -488,7 +486,7 @@ let feature = "invite"
 let stage = "2"
 
 // Branch UIActivityItemProvider
-let itemProvider = Branch.getBranchActivityItemWithDefaultURL(defaultURL, andParams: params, andFeature: feature, andStage: stage, andTags: tags)
+let itemProvider = Branch.getBranchActivityItemWithParams(params, andFeature: feature, andStage: stage, andTags: tags)
 items.append(itemProvider)
 
 // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
@@ -532,7 +530,7 @@ Reward balances change randomly on the backend when certain actions are taken (d
 ```swift
 Branch().loadRewardsWithCallback { (changed: Bool, error: NSError!) -> Void in
     // changed boolean will indicate if the balance changed from what is currently in memory
-    
+
     // will return the balance of the current user's credits
     let credits = Branch().getCredits()
 }

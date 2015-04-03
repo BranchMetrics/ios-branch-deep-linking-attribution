@@ -47,6 +47,9 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (NSString *)getBranchKey:(BOOL)isLive;
 + (void)setBranchKey:(NSString *)branchKey;
 
++ (NSString *)getAppVersion;
++ (void)setAppVersion:(NSString *)appVersion;
+
 + (void)setDeviceFingerprintID:(NSString *)deviceID;
 + (NSString *)getDeviceFingerprintID;
 
@@ -77,7 +80,7 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)setAppListCheckDone;
 + (BOOL)getNeedAppListCheck;
 
-+ (NSInteger)getIsReferrable;
++ (BOOL)getIsReferrable;
 + (void)setIsReferrable;
 + (void)clearIsReferrable;
 
@@ -92,9 +95,6 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (void)setActionUniqueCount:(NSString *)action withCount:(NSInteger)count;
 + (NSInteger)getActionTotalCount:(NSString *)action;
 + (NSInteger)getActionUniqueCount:(NSString *)action;
-
-+ (NSString *)base64EncodeStringToString:(NSString *)strData;
-+ (NSString *)base64DecodeStringToString:(NSString *)strData;
 
 + (void)setDevDebug;
 + (BOOL)getDevDebug;

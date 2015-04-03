@@ -13,6 +13,8 @@
 #import "BNCServerInterface.h"
 #import "BNCConfig.h"
 #import "Nocilla.h"
+#import "BNCEncodingUtils.h"
+#import "BNCServerRequestQueue.h"
 
 @interface Branch_SDK_Functionality_Tests : XCTestCase {
     
@@ -37,12 +39,20 @@
 @implementation Branch_SDK_Functionality_Tests
 
 + (void)setUp {
+    [super setUp];
     [[LSNocilla sharedInstance] start];
+    
+    [[BNCServerRequestQueue getInstance] clearQueue];
+    
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
 }
 
 + (void)tearDown {
     [[LSNocilla sharedInstance] clearStubs];
     [[LSNocilla sharedInstance] stop];
+
+    [super tearDown];
 }
 
 - (void)setUp {
@@ -64,10 +74,6 @@
     branch = [Branch getInstance:branch_key];
 }
 
-- (void)tearDown {
-    [super tearDown];
-}
-
 - (void)initSession {
     [BNCPreferenceHelper setSessionID:session_id];
     [BNCPreferenceHelper setDeviceFingerprintID:device_fingerprint_id];
@@ -75,17 +81,18 @@
     [BNCPreferenceHelper setLinkClickID:NO_STRING_VALUE];
     [BNCPreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
     [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
+    [BNCPreferenceHelper setTestDelegate:(id<BNCTestDelegate>)branch];
     [BNCPreferenceHelper simulateInitFinished];
 }
 
-- (void)test00Open {
+- (void)test99Open {
     NSDictionary *responseDict = @{@"browser_fingerprint_id": browser_fingerprint_id,
                                    @"device_fingerprint_id": device_fingerprint_id,
                                    @"identity_id": identity_id,
                                    @"link": identity_link,
                                    @"session_id": session_id
                                    };
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"open"])
     .andReturn(200)
@@ -113,10 +120,8 @@
 - (void)test01GetShortURLAsync {
     [self initSession];
     
-    NSString __block *returnURL;
-    
     NSDictionary *responseDict = @{@"url": short_link};
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
     .andReturn(200)
@@ -125,29 +130,26 @@
     
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
     
-    [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *url, NSError *error) {
+    [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *fbUrl, NSError *error) {
         XCTAssertNil(error);
-        XCTAssertNotNil(url);
-        if ([[LSNocilla sharedInstance] isStarted]) {
-            XCTAssertEqualObjects(url, short_link);
-        }
-        returnURL = url;
+        XCTAssertNotNil(fbUrl);
+        XCTAssertEqualObjects(fbUrl, short_link);
         
-        [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *url, NSError *error) {
+        [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *fbUrl2, NSError *error) {
             XCTAssertNil(error);
-            XCTAssertNotNil(url);
+            XCTAssertNotNil(fbUrl2);
             if ([[LSNocilla sharedInstance] isStarted]) {
-                XCTAssertEqualObjects(url, returnURL);
+                XCTAssertEqualObjects(fbUrl, fbUrl2);
             }
         }];
         
-        NSString *urlFB = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
-        XCTAssertEqualObjects(urlFB, url);
+        NSString *fbUrlSync = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
+        XCTAssertEqualObjects(fbUrl, fbUrlSync);
         
         if (![[LSNocilla sharedInstance] isStarted]) {
-            NSString *urlTT = [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil];
-            XCTAssertNotNil(urlTT);
-            XCTAssertNotEqualObjects(urlTT, url);
+            NSString *twUrl = [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil];
+            XCTAssertNotNil(twUrl);
+            XCTAssertNotEqualObjects(fbUrl, twUrl);
         }
         
         [getShortURLExpectation fulfill];
@@ -161,7 +163,7 @@
     [self initSession];
     
     NSDictionary *responseDict = @{@"url": short_link};
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
     .andReturn(200)
@@ -190,9 +192,9 @@
     [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
     
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@?branch_key=%@&sdk=ios%@", @"credits", [BNCPreferenceHelper getIdentityID], branch_key, SDK_VERSION]])
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"credits/%@", [BNCPreferenceHelper getIdentityID]]].regex)
     .andReturn(200)
     .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
@@ -218,9 +220,9 @@
     [BNCPreferenceHelper setCreditCount:credits forBucket:@"default"];
     
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@?branch_key=%@&sdk=ios%@", @"credits", [BNCPreferenceHelper getIdentityID], branch_key, SDK_VERSION]])
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"credits"].regex)
     .andReturn(200)
     .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
@@ -251,7 +253,7 @@
                                                   @"bucket": @"default"
                                                   }
                                    };
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"referralcode"])
     .andReturn(200)
@@ -288,7 +290,7 @@
                                                   @"bucket": @"default"
                                                   }
                                    };
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referralcode", @"testRC"]])
     .andReturn(200)
@@ -325,7 +327,7 @@
                                                   @"bucket": @"default"
                                                   }
                                    };
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"applycode", @"testRC"]])
     .andReturn(200)
@@ -422,7 +424,7 @@
                                    @"link_click_id": @"87925296346431956",
                                    @"referring_data": @"{ \"$og_title\":\"Kindred\",\"key\":\"test_object\" }"
                                    };
-    NSData *responseData = [BNCServerInterface encodePostParams:responseDict];
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"profile"])
     .andReturn(200)
@@ -448,13 +450,6 @@
     [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
     }];
 }
-
-//- (void)testPerformanceExample {
-//    // This is an example of a performance test case.
-//    [self measureBlock:^{
-//        // Put the code you want to measure the time of here.
-//    }];
-//}
 
 @end
 
