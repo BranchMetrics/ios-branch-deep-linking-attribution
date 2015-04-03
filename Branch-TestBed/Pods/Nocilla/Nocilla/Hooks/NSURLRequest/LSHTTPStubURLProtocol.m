@@ -27,9 +27,12 @@
 
     LSStubResponse* stubbedResponse = [[LSNocilla sharedInstance] responseForRequest:request];
 
+    NSLog(@"Request is being handled within nocilla");
     if (stubbedResponse.shouldFail) {
+        NSLog(@"Request should fail");
         [client URLProtocol:self didFailWithError:stubbedResponse.error];
     } else {
+        NSLog(@"Request should succeed, building response");
         NSHTTPURLResponse* urlResponse = [[NSHTTPURLResponse alloc] initWithURL:request.URL
                                                   statusCode:stubbedResponse.statusCode
                                                 headerFields:stubbedResponse.headers
@@ -39,11 +42,13 @@
             || stubbedResponse.statusCode == 304 || stubbedResponse.statusCode == 305 ) {
             NSData *body = stubbedResponse.body;
 
+            NSLog(@"Sending response");
             [client URLProtocol:self didReceiveResponse:urlResponse
              cacheStoragePolicy:NSURLCacheStorageNotAllowed];
             [client URLProtocol:self didLoadData:body];
             [client URLProtocolDidFinishLoading:self];
         } else {
+            NSLog(@"Should be cached");
             NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
                       [cookieStorage setCookies:[NSHTTPCookie cookiesWithResponseHeaderFields:stubbedResponse.headers forURL:request.url]
                                      forURL:request.URL mainDocumentURL:request.URL];
