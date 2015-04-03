@@ -198,6 +198,7 @@ static NSString *Branch_Key = nil;
 }
 
 + (void)setAppKey:(NSString *)appKey {
+    NSLog(@"Usage of App Key is deprecated, please move toward using a Branch key");
     [BNCPreferenceHelper writeObjectToDefaults:KEY_APP_KEY value:appKey];
 }
 
