@@ -7,6 +7,7 @@
 //
 
 #import "BNCLinkData.h"
+#import "BNCEncodingUtils.h"
 
 @implementation BNCLinkData
 
@@ -107,17 +108,17 @@
 - (NSUInteger)hash {
     NSUInteger result = 1;
     NSUInteger prime = 19;
-    
+
     result = prime * result + self.type;
-    result = prime * result + [[self.alias lowercaseString] hash];
-    result = prime * result + [[self.channel lowercaseString] hash];
-    result = prime * result + [[self.feature lowercaseString] hash];
-    result = prime * result + [[self.stage lowercaseString] hash];
-    result = prime * result + [[self.params lowercaseString] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:[self.alias lowercaseString]] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:[self.channel lowercaseString]] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:[self.feature lowercaseString]] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:[self.stage lowercaseString]] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:[self.params lowercaseString]] hash];
     result = prime * result + self.duration;
     
     for (NSString *tag in self.tags) {
-        result = prime * result + [[tag lowercaseString] hash];
+        result = prime * result + [[BNCEncodingUtils md5Encode:[tag lowercaseString]] hash];
     }
     
     return result;

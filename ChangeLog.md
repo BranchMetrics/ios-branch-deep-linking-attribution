@@ -1,4 +1,14 @@
-Branch iOS SDK change log 
+Branch iOS SDK change log
+
+- v0.5.3: Follow up to 0.5.2, now looks at Documents directory creation date and considers this to be the original app install date
+
+- v0.5.2: Recent iOS update resets bundle file creation date on update, messing with our update/install detection method
+
+- v0.5.1: Fixed request black hole after initSession failed
+
+- V0.5.0: Removed Default URL argument from BranchActivityItemProvider, and replaced with an automatically generated long URL placeholder
+
+- v0.4.8: Fixed hashing issue on very long NSString in link caching
 
 - v0.4.7: Rework of `BNCServerInterface encodePostToUniversalString:needSource:`
 
@@ -36,7 +46,7 @@ Branch iOS SDK change log
 
 - v0.3.95: Added BNCDebugging category to framework
 
-- v0.3.91: Added getters/setters for API timeout, retryInterval and retryCount 
+- v0.3.91: Added getters/setters for API timeout, retryInterval and retryCount
 
 - v0.3.90: Added more info to debug connect
 

@@ -16,6 +16,6 @@
 @property (nonatomic, strong) id data;
 @property (nonatomic, strong) BNCLinkData *linkData;
 
-- (id)initWithTag:(NSString *)tag andStatusCode:(NSNumber *)code;
+- (id)initWithTag:(NSString *)tag;
 
 @end

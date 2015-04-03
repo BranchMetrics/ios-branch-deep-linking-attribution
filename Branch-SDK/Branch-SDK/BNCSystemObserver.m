@@ -73,7 +73,7 @@
 }
 
 + (NSString *)getAppVersion {
-    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+    return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
 }
 
 + (NSString *)getCarrier {
@@ -121,10 +121,29 @@
 }
 
 + (NSNumber *)getUpdateState {
-    NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];    NSFileManager *manager = [NSFileManager defaultManager];
-    NSDictionary* attrs = [manager attributesOfItemAtPath:bundleRoot error:nil];
-    if ((int)([[attrs fileCreationDate] timeIntervalSince1970]/(60*60*24)) == (int)([[attrs fileModificationDate] timeIntervalSince1970]/(60*60*24))) {
+    NSString *storedAppVersion = [BNCPreferenceHelper getAppVersion];
+    NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
+    // for creation date
+    NSURL *documentsDirRoot = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    NSDictionary *documentsDirAttributes = [manager attributesOfItemAtPath:documentsDirRoot.path error:nil];
+    int appCreationDay = (int)([[documentsDirAttributes fileCreationDate] timeIntervalSince1970]/(60*60*24));
+
+    // for modification date
+    NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
+    NSDictionary *bundleAttributes = [manager attributesOfItemAtPath:bundleRoot error:nil];
+    int appModificationDay = (int)([[bundleAttributes fileModificationDate] timeIntervalSince1970]/(60*60*24));
+
+    if (!storedAppVersion) {
+        [BNCPreferenceHelper setAppVersion:currentAppVersion];
+        if ([documentsDirAttributes fileCreationDate] && [bundleAttributes fileModificationDate] && (appCreationDay != appModificationDay)) {
+            return [NSNumber numberWithInt:2];
+        }
         return nil;
+    } else if (![storedAppVersion isEqualToString:currentAppVersion]) {
+        [BNCPreferenceHelper setAppVersion:currentAppVersion];
+        return [NSNumber numberWithInt:2];
     } else {
         return [NSNumber numberWithInt:1];
     }
