@@ -343,6 +343,46 @@ static const short _base64DecodingTable[256] = {
     return encodedArray;
 }
 
++ (NSString *)urlEncodedString:(NSString *)string {
+    return (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)string, NULL, CFSTR("!*'\"();:@&=+$,/?%#[]% "), CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)));
+}
+
++ (NSString *)encodeDictionaryToQueryString:(NSDictionary *)dictionary {
+    NSMutableString *queryString = [[NSMutableString alloc] initWithString:@"?"];
+
+    for (NSString *key in [dictionary allKeys]) {
+        // No empty keys, please.
+        if (key.length) {
+            id obj = dictionary[key];
+            NSString *value;
+            
+            if ([obj isKindOfClass:[NSString class]]) {
+                value = [BNCEncodingUtils urlEncodedString:obj];
+            }
+            else if ([obj isKindOfClass:[NSURL class]]) {
+                value = [BNCEncodingUtils urlEncodedString:[obj absoluteString]];
+            }
+            else if ([obj isKindOfClass:[NSDate class]]) {
+                value = [BNCEncodingUtils iso8601StringFromDate:obj];
+            }
+            else if ([obj isKindOfClass:[NSNumber class]]) {
+                value = [obj stringValue];
+            }
+            else {
+                // If this type is not a known type, don't attempt to encode it.
+                NSLog(@"Cannot encode value %@, type is in list of accepted types", obj);
+                continue;
+            }
+            
+            [queryString appendFormat:@"%@=%@&", [BNCEncodingUtils urlEncodedString:key], value];
+        }
+    }
+
+    // Delete last character (either trailing & or ? if no params present)
+    [queryString deleteCharactersInRange:NSMakeRange(queryString.length - 1, 1)];
+    
+    return queryString;
+}
 
 #pragma mark - Param Decoding methods
 + (NSDictionary *)decodeJsonDataToDictionary:(NSData *)jsonData {

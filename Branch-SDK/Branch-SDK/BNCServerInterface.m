@@ -99,14 +99,6 @@
     return [self genericSyncHTTPRequest:request withTag:requestTag andLinkData:linkData];
 }
 
-+ (NSString *)urlEncode:(NSString *)string {
-    return (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
-                                                                                 (CFStringRef)string,
-                                                                                 NULL,
-                                                                                 (CFStringRef)@"!*'\"();:@&=+$,/?%#[]% ",
-                                                                                 CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)));
-}
-
 - (void)genericAsyncHTTPRequest:(NSMutableURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler: ^(NSURLResponse *response, NSData *POSTReply, NSError *error) {
         BNCServerResponse *serverResponse = [self processServerResponse:response data:POSTReply error:error tag:requestTag andLinkData:linkData];
@@ -123,22 +115,13 @@
 }
 
 - (NSURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url retryNumber:(NSInteger)retryNumber log:(BOOL)log {
-    NSMutableString *requestUrlString = [[NSMutableString alloc] initWithString:url];
-    [requestUrlString appendFormat:@"?sdk=ios%@&retryNumber=%lld", SDK_VERSION, (long long)retryNumber];
+    NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
+    [fullParamDict addEntriesFromDictionary:params];
+    fullParamDict[@"app_id"] = [BNCPreferenceHelper getAppKey];
+    fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
+    fullParamDict[@"retryNumber"] = @(retryNumber);
     
-    if (params) {
-        NSArray *allKeys = [params allKeys];
-        
-        for (NSString *key in allKeys) {
-            if ([key length] > 0) {
-                if ([params objectForKey:key]) {
-                    NSString *encodedKey = [BNCServerInterface urlEncode:key];
-                    NSString *encodedValue = [[BNCServerInterface urlEncode:[params objectForKey:key]] description];
-                    [requestUrlString appendFormat:@"&%@=%@", encodedKey, encodedValue];
-                }
-            }
-        }
-    }
+    NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:fullParamDict]];
     
     if (log) {
         [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
@@ -146,24 +129,25 @@
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:requestUrlString]];
-    
     [request setHTTPMethod:@"GET"];
     [request setValue:@"applications/json" forHTTPHeaderField:@"Content-Type"];
     
     return request;
 }
 
-- (NSURLRequest *)preparePostRequest:(NSDictionary *)post url:(NSString *)url retryNumber:(NSInteger)retryNumber log:(BOOL)log {
-    NSMutableDictionary *fullPostBodyDict = [[NSMutableDictionary alloc] init];
-    [fullPostBodyDict addEntriesFromDictionary:post];
-    fullPostBodyDict[@"retryNumber"] = @(retryNumber);
+- (NSURLRequest *)preparePostRequest:(NSDictionary *)params url:(NSString *)url retryNumber:(NSInteger)retryNumber log:(BOOL)log {
+    NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
+    [fullParamDict addEntriesFromDictionary:params];
+    fullParamDict[@"app_id"] = [BNCPreferenceHelper getAppKey];
+    fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
+    fullParamDict[@"retryNumber"] = @(retryNumber);
 
-    NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:fullPostBodyDict];
+    NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:fullParamDict];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     
     if (log) {
         [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
-        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"body = %@", [post description]];
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"body = %@", [fullParamDict description]];
     }
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
