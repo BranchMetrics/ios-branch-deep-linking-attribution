@@ -107,9 +107,11 @@
 }
 
 - (BNCServerResponse *)genericSyncHTTPRequest:(NSURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
+    NSLog(@"Making request");
     NSURLResponse * response = nil;
     NSError * error = nil;
     NSData * POSTReply = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    NSLog(@"Completed request");
     
     return [self processServerResponse:response data:POSTReply error:error tag:requestTag andLinkData:linkData];
 }

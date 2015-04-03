@@ -78,12 +78,6 @@ static Branch *branch;
     [[LSNocilla sharedInstance] clearStubs];
 }
 
-- (void)reset {
-    [BNCPreferenceHelper setDeviceFingerprintID:NO_STRING_VALUE];
-    [BNCPreferenceHelper setSessionID:NO_STRING_VALUE];
-    [BNCPreferenceHelper setIdentityID:NO_STRING_VALUE];
-}
-
 #pragma mark - Tests
 
 - (void)test00SetIdentity {
@@ -111,6 +105,7 @@ static Branch *branch;
     
     XCTestExpectation *setIdentityExpectation = [self expectationWithDescription:@"Test setIdentity"];
     
+    NSLog(@"Calling set identity");
     [branch setIdentity:@"test_user_10" withCallback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         XCTAssertNotNil(params);
@@ -414,7 +409,7 @@ static Branch *branch;
 }
 
 - (void)awaitExpectations {
-    [self waitForExpectationsWithTimeout:10 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
         self.hasExceededExpectations = YES;
     }];
 }
