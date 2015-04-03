@@ -22,10 +22,11 @@
     [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZZ"];
     NSDate *date = [dateFormatter dateFromString:@"2015-04-01T00:00:00-05:00"];
+    NSString *formattedDateString = [dateFormatter stringFromDate:date];
     
     NSURL *someUrl = [NSURL URLWithString:@"https://branch.io"];
     NSDictionary *dataDict = @{ @"foo": @"bar", @"num": @1, @"array": @[ @"array", @"items" ], @"dict": @{ @"sub": @1 }, @"url": someUrl, @"date": date };
-    NSString *expectedEncodedString = @"{\"foo\":\"bar\",\"num\":1,\"array\":[\"array\",\"items\"],\"dict\":{\"sub\":1},\"url\":\"https://branch.io\",\"date\":\"2015-04-01T00:00:00-05:00\"}";
+    NSString *expectedEncodedString = [NSString stringWithFormat:@"{\"foo\":\"bar\",\"num\":1,\"array\":[\"array\",\"items\"],\"dict\":{\"sub\":1},\"url\":\"https://branch.io\",\"date\":\"%@\"\"}", formattedDateString];
     
     NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:dataDict needSource:NO];
     
@@ -77,10 +78,11 @@
     [dateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZZ"];
     NSDate *date = [dateFormatter dateFromString:@"2015-04-01T00:00:00-05:00"];
+    NSString *formattedDateString = [dateFormatter stringFromDate:date];
     
     NSURL *someUrl = [NSURL URLWithString:@"https://branch.io"];
     NSArray *dataArray = @[ @"bar", @1, @[ @"array", @"items" ], @{ @"sub": @1 }, someUrl, date ];
-    NSString *expectedEncodedString = @"[\"bar\",1,[\"array\",\"items\"],{\"sub\":1},\"https://branch.io\",\"2015-04-01T00:00:00-05:00\"]";
+    NSString *expectedEncodedString = [NSString stringWithFormat:@"{\"foo\":\"bar\",\"num\":1,\"array\":[\"array\",\"items\"],\"dict\":{\"sub\":1},\"url\":\"https://branch.io\",\"date\":\"%@\"}", formattedDateString];
     
     NSString *encodedValue = [BNCEncodingUtils encodeArrayToJsonString:dataArray];
     
