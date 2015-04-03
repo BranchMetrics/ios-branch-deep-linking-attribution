@@ -64,18 +64,15 @@ static Branch *branch;
 }
 
 + (void)tearDown {
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
-
+    [[LSNocilla sharedInstance] clearStubs];
     [[LSNocilla sharedInstance] stop];
 }
 
 - (void)setUp {
-    self.hasExceededExpectations = NO;
-}
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
 
-- (void)tearDown {
-    [[LSNocilla sharedInstance] clearStubs];
+    self.hasExceededExpectations = NO;
 }
 
 #pragma mark - Tests
