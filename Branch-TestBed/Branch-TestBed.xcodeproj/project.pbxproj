@@ -14,11 +14,11 @@
 		464EA39B1ACB38EC000E4094 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
 		4672D74E1ACC9797006E46D2 /* BranchServerInterfaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4672D74D1ACC9797006E46D2 /* BranchServerInterfaceTests.m */; };
 		46D0B6FA1ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */; };
+		46A958FF1ACDF27900F7941D /* Branch_SDK_Stubless_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EF767A71AA7D21E0094678F /* Branch_SDK_Stubless_Tests.m */; };
 		46FFCF101ACC317200039CE0 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
 		46FFCF111ACC317200039CE0 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
 		46FFCF121ACC317300039CE0 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
 		46FFCF131ACC317300039CE0 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
-		46FFCF141ACC317400039CE0 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
 		46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */; };
 		670016641940F51400A9E103 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016631940F51400A9E103 /* Foundation.framework */; };
 		670016661940F51400A9E103 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016651940F51400A9E103 /* CoreGraphics.framework */; };
@@ -88,20 +88,6 @@
 		7EC1A7B61A9D66A800309B61 /* BranchActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = D258D2C51A794D64004A1C90 /* BranchActivityItemProvider.m */; };
 		7EC1A7B81A9D66B000309B61 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016731940F51400A9E103 /* AppDelegate.m */; };
 		7EC326E11A9D640F0083C5DF /* Branch_SDK_Load_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC326E01A9D640F0083C5DF /* Branch_SDK_Load_Tests.m */; };
-		7EF767A81AA7D21E0094678F /* Branch_SDK_Stubless_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EF767A71AA7D21E0094678F /* Branch_SDK_Stubless_Tests.m */; };
-		7EF767AC1AA7D3530094678F /* Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016BE1946309100A9E103 /* Branch.m */; };
-		7EF767AD1AA7D35C0094678F /* BranchServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C01946309100A9E103 /* BranchServerInterface.m */; };
-		7EF767AE1AA7D35F0094678F /* BNCPreferenceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C21946309100A9E103 /* BNCPreferenceHelper.m */; };
-		7EF767AF1AA7D3620094678F /* BNCServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C41946309100A9E103 /* BNCServerInterface.m */; };
-		7EF767B01AA7D3640094678F /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C61946309100A9E103 /* BNCServerRequest.m */; };
-		7EF767B11AA7D3680094678F /* BNCSystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C81946309100A9E103 /* BNCSystemObserver.m */; };
-		7EF767B21AA7D36B0094678F /* BNCServerRequestQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6ACAF719E324090066913E /* BNCServerRequestQueue.m */; };
-		7EF767B31AA7D36F0094678F /* BNCError.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E38829F1A37E22A004BDABE /* BNCError.m */; };
-		7EF767B41AA7D3720094678F /* BNCServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790919E90B9F008D4A83 /* BNCServerResponse.m */; };
-		7EF767B51AA7D3750094678F /* BNCLinkData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E30BCF31A71EEEE00AC7402 /* BNCLinkData.m */; };
-		7EF767B61AA7D3780094678F /* BNCLinkCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E30BCF61A72FE7900AC7402 /* BNCLinkCache.m */; };
-		7EF767B71AA7D37B0094678F /* BranchActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = D258D2C51A794D64004A1C90 /* BranchActivityItemProvider.m */; };
-		7EF767B81AA7D37F0094678F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016731940F51400A9E103 /* AppDelegate.m */; };
 		7EFC86D01A9D6C3800F87A23 /* Branch_SDK_Debugger_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EFC86CF1A9D6C3800F87A23 /* Branch_SDK_Debugger_Tests.m */; };
 		7EFC86D41A9D6D0600F87A23 /* BNCPreferenceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C21946309100A9E103 /* BNCPreferenceHelper.m */; };
 		7EFC86D51A9D6D0A00F87A23 /* BNCServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C41946309100A9E103 /* BNCServerInterface.m */; };
@@ -144,6 +130,7 @@
 		46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCPreferenceHelperTests.m; sourceTree = "<group>"; };
 		46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
 		556F7F2A4D139BFA019B2C92 /* Pods-Branch-SDK UI Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK UI Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK UI Tests/Pods-Branch-SDK UI Tests.release.xcconfig"; sourceTree = "<group>"; };
+		574EC83F8E1776D9731C09CF /* libPods-Branch-SDK Stubless Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK Stubless Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B7859EF6C3C9526AA01CD8C /* libPods-Branch-SDK Functionality Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK Functionality Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		610C9898D542C31B49F8D8DE /* Pods-Branch-SDK test.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK test.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK test/Pods-Branch-SDK test.debug.xcconfig"; sourceTree = "<group>"; };
 		670016601940F51400A9E103 /* Branch-TestBed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Branch-TestBed.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -175,6 +162,7 @@
 		670016C81946309100A9E103 /* BNCSystemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserver.m; sourceTree = "<group>"; };
 		670D888BABFFAFC9FE991DB4 /* Pods-Branch-SDK Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK Tests/Pods-Branch-SDK Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		67BBCF271A69E49A009C7DAE /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		74CA01A0EB646FDE7882C89D /* Pods-Branch-SDK Stubless Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK Stubless Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK Stubless Tests/Pods-Branch-SDK Stubless Tests.release.xcconfig"; sourceTree = "<group>"; };
 		77B4FCF3467D12C20C0AA99B /* Pods-Branch-SDK Functionality Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK Functionality Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK Functionality Tests/Pods-Branch-SDK Functionality Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		79E9D81FDE18975EDC890FF1 /* Pods-Branch-SDK test.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK test.release.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK test/Pods-Branch-SDK test.release.xcconfig"; sourceTree = "<group>"; };
 		7E30BCF21A71EEEE00AC7402 /* BNCLinkData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLinkData.h; sourceTree = "<group>"; };
@@ -203,8 +191,6 @@
 		7EC326DC1A9D640F0083C5DF /* Branch-SDK Load Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK Load Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EC326DF1A9D640F0083C5DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7EC326E01A9D640F0083C5DF /* Branch_SDK_Load_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_SDK_Load_Tests.m; sourceTree = "<group>"; };
-		7EF767A31AA7D21E0094678F /* Branch-SDK Stubless Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK Stubless Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7EF767A61AA7D21E0094678F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7EF767A71AA7D21E0094678F /* Branch_SDK_Stubless_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_SDK_Stubless_Tests.m; sourceTree = "<group>"; };
 		7EFC86CB1A9D6C3800F87A23 /* Branch-SDK Debugger Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK Debugger Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EFC86CE1A9D6C3800F87A23 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -213,6 +199,7 @@
 		9AEEE98D08E3F8BE262884D7 /* Pods-Branch-SDK Load Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK Load Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK Load Tests/Pods-Branch-SDK Load Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		9AF2E312FE4B66A29C94A06C /* libPods-Branch-TestBed Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-TestBed Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B58005CFA323382EAD1E0A48 /* libPods-Branch-SDK UI Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK UI Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B78A2847D1FF59451D97C1F5 /* Pods-Branch-SDK Stubless Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK Stubless Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK Stubless Tests/Pods-Branch-SDK Stubless Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		CA823FD1CC3586156BE19E8F /* Pods-Branch-SDK UI Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK UI Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK UI Tests/Pods-Branch-SDK UI Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		D06BB0D2AE99BF2F0768751E /* Pods-Branch-TestBed Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-TestBed Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-TestBed Tests/Pods-Branch-TestBed Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		D258D2C41A794D64004A1C90 /* BranchActivityItemProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchActivityItemProvider.h; sourceTree = "<group>"; };
@@ -258,13 +245,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7EF767A01AA7D21E0094678F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		7EFC86C81A9D6C3800F87A23 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -285,7 +265,6 @@
 				7E6B3B381AA426A9005F45BF /* Branch-SDK Tests */,
 				7E6B3B521AA42D0E005F45BF /* Branch-SDK Functionality Tests */,
 				7E6B3B7B1AA44845005F45BF /* Branch-SDK UI Tests */,
-				7EF767A41AA7D21E0094678F /* Branch-SDK Stubless Tests */,
 				670016621940F51400A9E103 /* Frameworks */,
 				670016611940F51400A9E103 /* Products */,
 				F20A84EF7037E598DD5BBA71 /* Pods */,
@@ -300,7 +279,6 @@
 				7EFC86CB1A9D6C3800F87A23 /* Branch-SDK Debugger Tests.xctest */,
 				7E6B3B511AA42D0E005F45BF /* Branch-SDK Functionality Tests.xctest */,
 				7E6B3B7A1AA44845005F45BF /* Branch-SDK UI Tests.xctest */,
-				7EF767A31AA7D21E0094678F /* Branch-SDK Stubless Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -319,6 +297,7 @@
 				FDC715ABABBD5DC03AF5936B /* libPods-Branch-SDK Debugger Tests.a */,
 				5B7859EF6C3C9526AA01CD8C /* libPods-Branch-SDK Functionality Tests.a */,
 				B58005CFA323382EAD1E0A48 /* libPods-Branch-SDK UI Tests.a */,
+				574EC83F8E1776D9731C09CF /* libPods-Branch-SDK Stubless Tests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -409,6 +388,7 @@
 		7E6B3B521AA42D0E005F45BF /* Branch-SDK Functionality Tests */ = {
 			isa = PBXGroup;
 			children = (
+				7EF767A71AA7D21E0094678F /* Branch_SDK_Stubless_Tests.m */,
 				7E6B3B551AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m */,
 				4672D74D1ACC9797006E46D2 /* BranchServerInterfaceTests.m */,
 				464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */,
@@ -461,23 +441,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		7EF767A41AA7D21E0094678F /* Branch-SDK Stubless Tests */ = {
-			isa = PBXGroup;
-			children = (
-				7EF767A71AA7D21E0094678F /* Branch_SDK_Stubless_Tests.m */,
-				7EF767A51AA7D21E0094678F /* Supporting Files */,
-			);
-			path = "Branch-SDK Stubless Tests";
-			sourceTree = "<group>";
-		};
-		7EF767A51AA7D21E0094678F /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				7EF767A61AA7D21E0094678F /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		7EFC86CC1A9D6C3800F87A23 /* Branch-SDK Debugger Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -512,6 +475,8 @@
 				0ADE9EFB8E31411D9E84C8F1 /* Pods-Branch-SDK Functionality Tests.release.xcconfig */,
 				CA823FD1CC3586156BE19E8F /* Pods-Branch-SDK UI Tests.debug.xcconfig */,
 				556F7F2A4D139BFA019B2C92 /* Pods-Branch-SDK UI Tests.release.xcconfig */,
+				B78A2847D1FF59451D97C1F5 /* Pods-Branch-SDK Stubless Tests.debug.xcconfig */,
+				74CA01A0EB646FDE7882C89D /* Pods-Branch-SDK Stubless Tests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -594,23 +559,6 @@
 			productReference = 7EC326DC1A9D640F0083C5DF /* Branch-SDK Load Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		7EF767A21AA7D21E0094678F /* Branch-SDK Stubless Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 7EF767AB1AA7D21E0094678F /* Build configuration list for PBXNativeTarget "Branch-SDK Stubless Tests" */;
-			buildPhases = (
-				7EF7679F1AA7D21E0094678F /* Sources */,
-				7EF767A01AA7D21E0094678F /* Frameworks */,
-				7EF767A11AA7D21E0094678F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Branch-SDK Stubless Tests";
-			productName = "Branch-SDK Stubless Tests";
-			productReference = 7EF767A31AA7D21E0094678F /* Branch-SDK Stubless Tests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		7EFC86CA1A9D6C3800F87A23 /* Branch-SDK Debugger Tests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7EFC86D31A9D6C3800F87A23 /* Build configuration list for PBXNativeTarget "Branch-SDK Debugger Tests" */;
@@ -652,9 +600,6 @@
 					7EC326DB1A9D640F0083C5DF = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
-					7EF767A21AA7D21E0094678F = {
-						CreatedOnToolsVersion = 6.1.1;
-					};
 					7EFC86CA1A9D6C3800F87A23 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
@@ -678,7 +623,6 @@
 				7EFC86CA1A9D6C3800F87A23 /* Branch-SDK Debugger Tests */,
 				7E6B3B501AA42D0E005F45BF /* Branch-SDK Functionality Tests */,
 				7E6B3B791AA44845005F45BF /* Branch-SDK UI Tests */,
-				7EF767A21AA7D21E0094678F /* Branch-SDK Stubless Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -709,13 +653,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7EC326DA1A9D640F0083C5DF /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		7EF767A11AA7D21E0094678F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -890,6 +827,7 @@
 				464EA3981ACB1797000E4094 /* BNCServerInterfaceTests.m in Sources */,
 				7E6B3B601AA42F19005F45BF /* BNCServerRequestQueue.m in Sources */,
 				46D0B6FA1ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m in Sources */,
+				46A958FF1ACDF27900F7941D /* Branch_SDK_Stubless_Tests.m in Sources */,
 				7E6B3B5B1AA42E9A005F45BF /* BranchServerInterface.m in Sources */,
 				7E6B3B651AA42F35005F45BF /* BranchActivityItemProvider.m in Sources */,
 				7E6B3B661AA42F3B005F45BF /* AppDelegate.m in Sources */,
@@ -950,28 +888,6 @@
 				7EC1A7B41A9D66A300309B61 /* BNCLinkCache.m in Sources */,
 				7EC1A7B21A9D669F00309B61 /* BNCLinkData.m in Sources */,
 				46FFCF101ACC317200039CE0 /* BNCEncodingUtils.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		7EF7679F1AA7D21E0094678F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7EF767A81AA7D21E0094678F /* Branch_SDK_Stubless_Tests.m in Sources */,
-				7EF767AF1AA7D3620094678F /* BNCServerInterface.m in Sources */,
-				7EF767B31AA7D36F0094678F /* BNCError.m in Sources */,
-				7EF767B21AA7D36B0094678F /* BNCServerRequestQueue.m in Sources */,
-				7EF767AD1AA7D35C0094678F /* BranchServerInterface.m in Sources */,
-				7EF767B71AA7D37B0094678F /* BranchActivityItemProvider.m in Sources */,
-				7EF767B81AA7D37F0094678F /* AppDelegate.m in Sources */,
-				7EF767AE1AA7D35F0094678F /* BNCPreferenceHelper.m in Sources */,
-				7EF767B01AA7D3640094678F /* BNCServerRequest.m in Sources */,
-				7EF767B41AA7D3720094678F /* BNCServerResponse.m in Sources */,
-				7EF767B11AA7D3680094678F /* BNCSystemObserver.m in Sources */,
-				7EF767AC1AA7D3530094678F /* Branch.m in Sources */,
-				7EF767B61AA7D3780094678F /* BNCLinkCache.m in Sources */,
-				7EF767B51AA7D3750094678F /* BNCLinkData.m in Sources */,
-				46FFCF141ACC317400039CE0 /* BNCEncodingUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1256,44 +1172,6 @@
 			};
 			name = Release;
 		};
-		7EF767A91AA7D21E0094678F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "Branch-SDK Stubless Tests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		7EF767AA1AA7D21E0094678F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "Branch-SDK Stubless Tests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		7EFC86D11A9D6C3800F87A23 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1FA72C8E0661EAB3522405BA /* Pods-Branch-SDK Debugger Tests.debug.xcconfig */;
@@ -1378,15 +1256,6 @@
 			buildConfigurations = (
 				7EC326E31A9D640F0083C5DF /* Debug */,
 				7EC326E41A9D640F0083C5DF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		7EF767AB1AA7D21E0094678F /* Build configuration list for PBXNativeTarget "Branch-SDK Stubless Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				7EF767A91AA7D21E0094678F /* Debug */,
-				7EF767AA1AA7D21E0094678F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
