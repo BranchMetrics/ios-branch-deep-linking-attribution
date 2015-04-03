@@ -29,10 +29,12 @@ static Branch *branch;
 
 #pragma mark - Setup
 + (void)setUp {
-    [[BNCServerRequestQueue getInstance] clearQueue];
-    
+    [super setUp];
+
     [[LSNocilla sharedInstance] start];
     
+    [[BNCServerRequestQueue getInstance] clearQueue];
+
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
     stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
 
@@ -66,9 +68,13 @@ static Branch *branch;
 + (void)tearDown {
     [[LSNocilla sharedInstance] clearStubs];
     [[LSNocilla sharedInstance] stop];
+
+    [super tearDown];
 }
 
 - (void)setUp {
+    [super setUp];
+
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
     stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
 
