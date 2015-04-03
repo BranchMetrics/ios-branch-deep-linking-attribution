@@ -66,7 +66,6 @@ static Branch *branch;
 }
 
 + (void)tearDown {
-    [[LSNocilla sharedInstance] clearStubs];
     [[LSNocilla sharedInstance] stop];
 
     [super tearDown];
@@ -79,6 +78,12 @@ static Branch *branch;
     stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
 
     self.hasExceededExpectations = NO;
+}
+
+- (void)tearDown {
+    [[LSNocilla sharedInstance] clearStubs];
+
+    [super tearDown];
 }
 
 #pragma mark - Tests
@@ -108,7 +113,6 @@ static Branch *branch;
     
     XCTestExpectation *setIdentityExpectation = [self expectationWithDescription:@"Test setIdentity"];
     
-    NSLog(@"Calling set identity");
     [branch setIdentity:@"test_user_10" withCallback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         XCTAssertNotNil(params);

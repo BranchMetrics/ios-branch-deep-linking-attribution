@@ -126,7 +126,6 @@
 }
 
 - (void)identifyUser:(NSDictionary *)post {
-    NSLog(@"Identity User request");
     [self postRequestAsync:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_IDENTIFY];
 }
 
