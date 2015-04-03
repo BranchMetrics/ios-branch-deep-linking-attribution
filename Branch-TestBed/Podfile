@@ -18,3 +18,7 @@ end
 target 'Branch-SDK UI Tests' do
   pod 'Nocilla', :inhibit_warnings => true
 end
+
+target 'Branch-SDK Stubless Tests' do
+  pod 'Nocilla', :inhibit_warnings => true
+end
