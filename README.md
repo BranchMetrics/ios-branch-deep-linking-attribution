@@ -171,6 +171,9 @@ func application(application: UIApplication, openURL url: NSURL, sourceApplicati
 }
 ```
 
+#### Encoding Note
+One quick note about encoding. Since `NSJSONSerializaiton` supports a limited set of classes, we do some custom encoding to allow additional types. Current supported types include `NSDictionary`, `NSArray`, `NSURL`, `NSString`, `NSNumber`, `NSNull`, and `NSDate` (encoded as an ISO8601 string with timezone). If a parameter is of an unknown type, it will be ignored.
+
 #### Retrieve session (install or open) parameters
 
 These session parameters will be available at any point later on with this command. If no params, the dictionary will be empty. This refreshes with every new session (app installs AND app opens)
