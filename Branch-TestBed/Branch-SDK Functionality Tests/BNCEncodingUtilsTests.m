@@ -52,6 +52,24 @@
     XCTAssertEqualObjects(expectedEncodedString, encodedValue);
 }
 
+- (void)testEncodeDictionaryToJsonStringWithNoKeys {
+    NSDictionary *emptyDict = @{ };
+    NSString *expectedEncodedString = @"{}";
+    
+    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:emptyDict needSource:NO];
+    
+    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
+}
+
+- (void)testEncodeDictionaryToJsonStringWithNoKeysAndSource {
+    NSDictionary *emptyDict = @{ };
+    NSString *expectedEncodedString = @"{\"source\":\"ios\"}";
+    
+    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:emptyDict needSource:YES];
+    
+    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
+}
+
 - (void)testEncodeDictionaryToJsonStringWithSubDictWithNeedSource {
     NSDictionary *dataDict = @{ @"root": @{ @"sub": @1 } };
     NSString *expectedEncodedString = @"{\"root\":{\"sub\":1},\"source\":\"ios\"}";
@@ -68,6 +86,15 @@
     NSData *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonData:dataDict];
     
     XCTAssertEqualObjects(expectedEncodedData, encodedValue);
+}
+
+- (void)testEncodeDictionaryToQueryString {
+    NSDictionary *dataDict = @{ @"foo": @"bar", @"something": @"something & something" };
+    NSString *expectedEncodedString = @"?foo=bar&something=something%20%26%20something";
+    
+    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToQueryString:dataDict];
+    
+    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
 }
 
 
@@ -108,11 +135,11 @@
     XCTAssertEqualObjects(expectedEncodedString, encodedValue);
 }
 
-- (void)testEncodeDictionaryToQueryString {
-    NSDictionary *dataDict = @{ @"foo": @"bar", @"something": @"something & something" };
-    NSString *expectedEncodedString = @"?foo=bar&something=something%20%26%20something";
+- (void)testEncodeArrayToJsonStringWithNoValues {
+    NSArray *emptyArray = @[ ];
+    NSString *expectedEncodedString = @"[]";
     
-    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToQueryString:dataDict];
+    NSString *encodedValue = [BNCEncodingUtils encodeArrayToJsonString:emptyArray];
     
     XCTAssertEqualObjects(expectedEncodedString, encodedValue);
 }
