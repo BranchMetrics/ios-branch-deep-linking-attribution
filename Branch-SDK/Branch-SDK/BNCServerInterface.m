@@ -117,6 +117,7 @@
 - (NSURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url retryNumber:(NSInteger)retryNumber log:(BOOL)log {
     NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
     [fullParamDict addEntriesFromDictionary:params];
+    fullParamDict[KEY_BRANCH_KEY] = [BNCPreferenceHelper getBranchKey];
     fullParamDict[@"app_id"] = [BNCPreferenceHelper getAppKey];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
     fullParamDict[@"retryNumber"] = @(retryNumber);
@@ -138,6 +139,7 @@
 - (NSURLRequest *)preparePostRequest:(NSDictionary *)params url:(NSString *)url retryNumber:(NSInteger)retryNumber log:(BOOL)log {
     NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
     [fullParamDict addEntriesFromDictionary:params];
+    fullParamDict[KEY_BRANCH_KEY] = [BNCPreferenceHelper getBranchKey];
     fullParamDict[@"app_id"] = [BNCPreferenceHelper getAppKey];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
     fullParamDict[@"retryNumber"] = @(retryNumber);

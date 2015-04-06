@@ -101,11 +101,11 @@ static Branch *currInstance;
 
 // PUBLIC CALLS
 
-+ (Branch *)getInstance {
++ (Branch *)getBranchInstance:(BOOL)isLive {
     if (!currInstance) {
-        NSString *appKey = [BNCPreferenceHelper getAppKey];
-        if (!appKey || [appKey isEqualToString:NO_STRING_VALUE]) {
-            NSLog(@"Branch Warning: Please enter your Branch App Key in the plist!");
+        NSString *branchKey = [BNCPreferenceHelper getBranchKey:isLive];
+        if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
+            NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
         }
         
         [Branch initInstance];
@@ -113,8 +113,20 @@ static Branch *currInstance;
     return currInstance;
 }
 
-+ (Branch *)getInstance:(NSString *)appKey {
-    [BNCPreferenceHelper setAppKey:appKey];
++ (Branch *)getInstance {
+    return [Branch getBranchInstance:YES];
+}
+
++ (Branch *)getTestInstance {
+    return [Branch getBranchInstance:NO];
+}
+
++ (Branch *)getInstance:(NSString *)branchKey {
+    if ([branchKey rangeOfString:@"key_"].location != NSNotFound) {
+        [BNCPreferenceHelper setBranchKey:branchKey];
+    } else {
+        [BNCPreferenceHelper setAppKey:branchKey];
+    }
     
     if (!currInstance) {
         [Branch initInstance];
@@ -577,6 +589,7 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_COMPLETE_ACTION;
+
         NSDictionary *post = @{
             EVENT: action,
             METADATA: state ?: [NSNull null],
@@ -759,6 +772,7 @@ static Branch *currInstance;
     dispatch_async(self.asyncQueue, ^{
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_GET_REFERRAL_CODE;
+
         NSArray *keys = @[
             DEVICE_FINGERPRINT_ID,
             IDENTITY_ID,
@@ -1386,6 +1400,10 @@ static Branch *currInstance;
     return ![[BNCPreferenceHelper getSessionID] isEqualToString:NO_STRING_VALUE];
 }
 
+- (BOOL)hasBranchKey {
+    return ![[BNCPreferenceHelper getBranchKey] isEqualToString:NO_STRING_VALUE];
+}
+
 - (BOOL)hasAppKey {
     return ![[BNCPreferenceHelper getAppKey] isEqualToString:NO_STRING_VALUE];
 }
@@ -1404,9 +1422,11 @@ static Branch *currInstance;
 }
 
 -(void)initializeSession {
-    if (![self hasAppKey]) {
-        NSLog(@"Branch Warning: Feed me app key please! You need to call getInstance:yourAppKey first.");
+    if (![self hasBranchKey] && ![self hasAppKey]) {
+        NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
         return;
+    } else if ([self hasBranchKey] && [[BNCPreferenceHelper getBranchKey] rangeOfString:@"key_test_"].location != NSNotFound) {
+        NSLog(@"Branch Warning: You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment.");
     }
     
     if ([self hasUser]) {
@@ -1621,6 +1641,7 @@ static Branch *currInstance;
             }
             
             self.initFinished = YES;
+            self.initFailed = NO;
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             [BNCPreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
             [BNCPreferenceHelper setDeviceFingerprintID:[response.data objectForKey:DEVICE_FINGERPRINT_ID]];
@@ -1654,6 +1675,7 @@ static Branch *currInstance;
             }
             
             self.initFinished = YES;
+            self.initFailed = NO;
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REWARDS]) {
             [self processReferralCredits:response.data];
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {

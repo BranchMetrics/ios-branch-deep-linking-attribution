@@ -172,8 +172,6 @@
 		7E6ACAF619E324090066913E /* BNCServerRequestQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCServerRequestQueue.h; sourceTree = "<group>"; };
 		7E6ACAF719E324090066913E /* BNCServerRequestQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerRequestQueue.m; sourceTree = "<group>"; };
 		7E6ACAF919E324120066913E /* BNCConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCConfig.h; sourceTree = "<group>"; };
-		7E6B3B3A1AA426A9005F45BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7E6B3B3B1AA426A9005F45BF /* Branch_SDK_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_SDK_Tests.m; sourceTree = "<group>"; };
 		7E6B3B511AA42D0E005F45BF /* Branch-SDK Functionality Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK Functionality Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E6B3B541AA42D0E005F45BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7E6B3B551AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_SDK_Functionality_Tests.m; sourceTree = "<group>"; };
@@ -258,7 +256,6 @@
 				670016691940F51400A9E103 /* Branch-TestBed */,
 				7EC326DD1A9D640F0083C5DF /* Branch-SDK Load Tests */,
 				7EFC86CC1A9D6C3800F87A23 /* Branch-SDK Debugger Tests */,
-				7E6B3B381AA426A9005F45BF /* Branch-SDK Tests */,
 				7E6B3B521AA42D0E005F45BF /* Branch-SDK Functionality Tests */,
 				7E6B3B7B1AA44845005F45BF /* Branch-SDK UI Tests */,
 				670016621940F51400A9E103 /* Frameworks */,
@@ -362,23 +359,6 @@
 			);
 			name = "Branch-SDK";
 			path = "../../Branch-SDK/Branch-SDK";
-			sourceTree = "<group>";
-		};
-		7E6B3B381AA426A9005F45BF /* Branch-SDK Tests */ = {
-			isa = PBXGroup;
-			children = (
-				7E6B3B3B1AA426A9005F45BF /* Branch_SDK_Tests.m */,
-				7E6B3B391AA426A9005F45BF /* Supporting Files */,
-			);
-			path = "Branch-SDK Tests";
-			sourceTree = "<group>";
-		};
-		7E6B3B391AA426A9005F45BF /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				7E6B3B3A1AA426A9005F45BF /* Info.plist */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		7E6B3B521AA42D0E005F45BF /* Branch-SDK Functionality Tests */ = {
