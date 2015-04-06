@@ -223,11 +223,6 @@ static const short _base64DecodingTable[256] = {
 }
 
 + (NSString *)encodeDictionaryToJsonString:(NSDictionary *)dictionary needSource:(BOOL)source {
-    // Empty dict
-    if (![dictionary count]) {
-        return @"{}";
-    }
-
     NSMutableString *encodedDictionary = [[NSMutableString alloc] initWithString:@"{"];
     for (NSString *key in dictionary) {
         NSString *value = nil;
@@ -281,8 +276,11 @@ static const short _base64DecodingTable[256] = {
         [encodedDictionary appendString:@"\"source\":\"ios\"}"];
     }
     else {
-        // Delete the trailing comma
-        [encodedDictionary deleteCharactersInRange:NSMakeRange([encodedDictionary length] - 1, 1)];
+        // Delete the trailing comma. Not necessary for an empty dictionary
+        if (encodedDictionary.length > 1) {
+            [encodedDictionary deleteCharactersInRange:NSMakeRange([encodedDictionary length] - 1, 1)];
+        }
+
         [encodedDictionary appendString:@"}"];
     }
     
@@ -343,7 +341,6 @@ static const short _base64DecodingTable[256] = {
         }
     }
     
-
     // Delete the trailing comma
     [encodedArray deleteCharactersInRange:NSMakeRange([encodedArray length] - 1, 1)];
     [encodedArray appendString:@"]"];
