@@ -37,9 +37,22 @@
 - (id)item {
     if ([self.placeholderItem isKindOfClass:[NSString class]]) {
         NSString *channel = [BranchActivityItemProvider humanReadableChannelWithActivityType:self.activityType];
+        
+        // Because Facebook immediately scrapes URLs, we add an additional parameter to the existing list, telling the backend to ignore the first click
+        if ([channel isEqualToString:@"facebook"]) {
+            NSMutableDictionary *fixedParams = [[NSMutableDictionary alloc] init];
+            
+            // Preserve existing parameters
+            if (self.params) {
+                [fixedParams addEntriesFromDictionary:self.params];
+            }
+
+            fixedParams[@"$bypass_first_click"] = @YES;
+        }
+
         self.branchURL = [[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias];
 
-        return self.branchURL;
+        return [NSURL URLWithString:self.branchURL];
     }
     return self.placeholderItem;
 }
