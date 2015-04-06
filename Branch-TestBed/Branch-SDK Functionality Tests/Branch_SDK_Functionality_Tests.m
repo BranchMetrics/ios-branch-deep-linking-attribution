@@ -21,7 +21,7 @@
 @private
     __weak Branch *branch;
     int credits;
-    NSString *app_id;
+    NSString *branch_key;
     NSString *device_fingerprint_id;
     NSString *browser_fingerprint_id;
     NSString *identity_id;
@@ -58,7 +58,7 @@
 - (void)setUp {
     [super setUp];
     
-    app_id = @"5668720416392049";
+    branch_key = @"key_live_78801a996de4287481fe73708cc95da2";  //temp
     device_fingerprint_id = @"94938498586381084";
     browser_fingerprint_id = @"69198153995256641";
     identity_id = @"95765863201768032";
@@ -71,7 +71,7 @@
     new_session_id = @"98274447370224207";
     new_user_link = @"https://bnc.lt/i/2kkbX6k-As";
     
-    branch = [Branch getInstance:app_id];
+    branch = [Branch getInstance:branch_key];
 }
 
 - (void)initSession {
@@ -222,7 +222,7 @@
     NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
     NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
     
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@?sdk=ios%@&retryNumber=0&app_id=%@", @"credits", [BNCPreferenceHelper getIdentityID], SDK_VERSION, app_id]])
+    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"credits"].regex)
     .andReturn(200)
     .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);

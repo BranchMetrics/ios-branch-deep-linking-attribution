@@ -17,6 +17,8 @@
     [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         if (!error) {
             NSLog(@"finished init with params = %@", [params description]);
+        } else {
+            NSLog(@"failed init: %@", error);
         }
     }];
     return YES;
