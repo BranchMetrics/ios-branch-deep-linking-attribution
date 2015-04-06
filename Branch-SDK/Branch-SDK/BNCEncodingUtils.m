@@ -223,6 +223,11 @@ static const short _base64DecodingTable[256] = {
 }
 
 + (NSString *)encodeDictionaryToJsonString:(NSDictionary *)dictionary needSource:(BOOL)source {
+    // Empty dict
+    if (![dictionary count]) {
+        return @"{}";
+    }
+
     NSMutableString *encodedDictionary = [[NSMutableString alloc] initWithString:@"{"];
     for (NSString *key in dictionary) {
         NSString *value = nil;
@@ -287,6 +292,11 @@ static const short _base64DecodingTable[256] = {
 }
 
 + (NSString *)encodeArrayToJsonString:(NSArray *)array {
+    // Empty array
+    if (![array count]) {
+        return @"[]";
+    }
+
     NSMutableString *encodedArray = [[NSMutableString alloc] initWithString:@"["];
     for (id obj in array) {
         NSString *value = nil;
