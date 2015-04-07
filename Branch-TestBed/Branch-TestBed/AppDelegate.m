@@ -14,7 +14,7 @@
 {
     Branch *branch = [Branch getInstance];
     [Branch setDebug];
-    [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         if (!error) {
             NSLog(@"finished init with params = %@", [params description]);
         } else {
