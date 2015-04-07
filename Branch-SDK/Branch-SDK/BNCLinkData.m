@@ -30,6 +30,7 @@
     copy.params = [_params copyWithZone:zone];
     copy.type = _type;
     copy.duration = _duration;
+    copy.ignoreFirstClick = _ignoreFirstClick;
 
     return copy;
 }
@@ -81,6 +82,11 @@
         _stage = stage;
         [self.data setObject:stage forKey:STAGE];
     }
+}
+
+- (void)setupIgnoreFirstClick:(NSNumber *)ignoreFirstClick {
+    _ignoreFirstClick = ignoreFirstClick;
+    [self.data setObject:ignoreFirstClick forKey:IGNORE_FIRST_CLICK];
 }
 
 - (void)setupParams:(NSString *)params {
