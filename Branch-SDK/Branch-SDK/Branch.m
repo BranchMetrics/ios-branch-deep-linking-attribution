@@ -103,9 +103,14 @@ static Branch *currInstance;
 
 + (Branch *)getBranchInstance:(BOOL)isLive {
     if (!currInstance) {
-        NSString *branchKey = [BNCPreferenceHelper getBranchKey:isLive];
-        if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
-            NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+        // TODO re-enable this
+//        NSString *branchKey = [BNCPreferenceHelper getBranchKey:isLive];
+//        if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
+//            NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+//        }
+        NSString *appId = [BNCPreferenceHelper getAppKey];
+        if (!appId || [appId isEqualToString:NO_STRING_VALUE]) {
+            NSLog(@"Branch Warning: Please enter your bnc_app_key in the plist!");
         }
         
         [Branch initInstance];
@@ -252,7 +257,7 @@ static Branch *currInstance;
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback {
     self.sessionparamLoadCallback = callback;
-    if (![BNCSystemObserver getUpdateState] && ![self hasUser]) {
+    if (![BNCSystemObserver getUpdateState:NO] && ![self hasUser]) {
         [BNCPreferenceHelper setIsReferrable];
     } else {
         [BNCPreferenceHelper clearIsReferrable];
@@ -287,7 +292,7 @@ static Branch *currInstance;
 }
 
 - (void)initSessionAndRegisterDeepLinkHandler:(callbackWithParams)callback {
-    if (![BNCSystemObserver getUpdateState] && ![self hasUser]) {
+    if (![BNCSystemObserver getUpdateState:NO] && ![self hasUser]) {
         [BNCPreferenceHelper setIsReferrable];
     } else {
         [BNCPreferenceHelper clearIsReferrable];
@@ -1044,11 +1049,11 @@ static Branch *currInstance;
             shortURL = [serverResponse.data objectForKey:URL];
             
             // cache the link
-            BNCLinkData *linkData = serverResponse.linkData;
-            if (linkData) {
-                [self.linkCache setObject:shortURL forKey:linkData];
+            if (shortURL) {
+                [self.linkCache setObject:shortURL forKey:post];
             }
-        } else if (self.initFailed || self.initNotCalled) {
+        }
+        else if (self.initFailed || self.initNotCalled) {
             NSLog(@"Branch SDK Error: making request before init succeeded!");
         }
     }
@@ -1701,9 +1706,8 @@ static Branch *currInstance;
             }
             
             // cache the link
-            BNCLinkData *linkData = response.linkData;
-            if (linkData) {
-                [self.linkCache setObject:url forKey:linkData];
+            if (url) {
+                [self.linkCache setObject:url forKey:response.linkData];
             }
         } else if ([requestTag isEqualToString:REQ_TAG_LOGOUT]) {
             [BNCPreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
