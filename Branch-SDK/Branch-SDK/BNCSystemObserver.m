@@ -79,6 +79,7 @@ NSString * const BRANCH_URI_SCHEME_NAME = @"io.branch.sdk";
                 // Don't use the schemes set aside for other integrations.
                 if (!isFBScheme && !isDBScheme && !isPinScheme) {
                     fallbackFirstScheme = urlScheme;
+                    break;
                 }
             }
         }
