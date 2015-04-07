@@ -164,10 +164,10 @@
 
 - (BNCServerResponse *)processServerResponse:(NSURLResponse *)response data:(NSData *)data error:(NSError *)error tag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
     BNCServerResponse *serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag];
+    serverResponse.linkData = linkData;
 
     if (!error) {
         serverResponse.statusCode = @([(NSHTTPURLResponse *)response statusCode]);
-        serverResponse.linkData = linkData;
         serverResponse.data = [BNCEncodingUtils decodeJsonDataToDictionary:data];
     }
     else {
