@@ -57,12 +57,36 @@ NSString * const BRANCH_URI_SCHEME_NAME = @"io.branch.sdk";
 
 + (NSString *)getDefaultUriScheme {
     NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
+    NSString *fallbackFirstScheme;
 
     // Choose the first url scheme with the Branch specified name.
     for (NSDictionary *urlType in urlTypes) {
+        NSArray *urlSchemes = [urlType objectForKey:@"CFBundleURLSchemes"];
+
         if ([urlType[@"CFBundleURLName"] isEqualToString:BRANCH_URI_SCHEME_NAME]) {
-            return [urlType[@"CFBundleURLSchemes"] firstObject];
+            return [urlSchemes firstObject];
         }
+        
+        // Backwards compat
+        if (!fallbackFirstScheme) {
+            for (NSString *urlScheme in urlSchemes) {
+                NSString *firstTwoCharacters = [urlScheme substringWithRange:NSMakeRange(0, 2)];
+                NSString *firstThreeCharacters = [urlScheme substringWithRange:NSMakeRange(0, 3)];
+                BOOL isFBScheme = [firstTwoCharacters isEqualToString:@"fb"];
+                BOOL isDBScheme = [firstTwoCharacters isEqualToString:@"db"];
+                BOOL isPinScheme = [firstThreeCharacters isEqualToString:@"pin"];
+                
+                // Don't use the schemes set aside for other integrations.
+                if (!isFBScheme && !isDBScheme && !isPinScheme) {
+                    fallbackFirstScheme = urlScheme;
+                }
+            }
+        }
+    }
+    
+    if (fallbackFirstScheme) {
+        NSLog(@"Branch is assuming \"%@\" is the URI scheme you want to use. This behavior is deprecated, and will be removed in a future version.\n\nInstead, please specify a scheme with the name \"io.branch.sdk\" or configure the scheme via [Branch setUriScheme:@\"%@\"]; before initializing your Branch session.\n\n", fallbackFirstScheme, fallbackFirstScheme);
+        return fallbackFirstScheme;
     }
 
     return nil;
