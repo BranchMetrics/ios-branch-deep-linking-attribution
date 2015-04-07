@@ -117,10 +117,19 @@
 - (NSURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url retryNumber:(NSInteger)retryNumber log:(BOOL)log {
     NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
     [fullParamDict addEntriesFromDictionary:params];
-    fullParamDict[KEY_BRANCH_KEY] = [BNCPreferenceHelper getBranchKey];
-    fullParamDict[@"app_id"] = [BNCPreferenceHelper getAppKey];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
     fullParamDict[@"retryNumber"] = @(retryNumber);
+    
+    NSString *appId = [BNCPreferenceHelper getAppKey];
+    // TODO re-add this
+    //    NSString *branchKey = [BNCPreferenceHelper getBranchKey];
+    //    if (![branchKey isEqualToString:NO_STRING_VALUE]) {
+    //        fullParamDict[KEY_BRANCH_KEY] = branchKey;
+    //    }
+    //    else if (![appId isEqualToString:NO_STRING_VALUE]) {
+    if (![appId isEqualToString:NO_STRING_VALUE]) {
+        fullParamDict[@"app_id"] = appId;
+    }
     
     NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:fullParamDict]];
     
@@ -139,10 +148,20 @@
 - (NSURLRequest *)preparePostRequest:(NSDictionary *)params url:(NSString *)url retryNumber:(NSInteger)retryNumber log:(BOOL)log {
     NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
     [fullParamDict addEntriesFromDictionary:params];
-    fullParamDict[KEY_BRANCH_KEY] = [BNCPreferenceHelper getBranchKey];
-    fullParamDict[@"app_id"] = [BNCPreferenceHelper getAppKey];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
     fullParamDict[@"retryNumber"] = @(retryNumber);
+    
+    NSString *appId = [BNCPreferenceHelper getAppKey];
+    // TODO re-add this
+//    NSString *branchKey = [BNCPreferenceHelper getBranchKey];
+//    if (![branchKey isEqualToString:NO_STRING_VALUE]) {
+//        fullParamDict[KEY_BRANCH_KEY] = branchKey;
+//    }
+//    else if (![appId isEqualToString:NO_STRING_VALUE]) {
+    if (![appId isEqualToString:NO_STRING_VALUE]) {
+        fullParamDict[@"app_id"] = appId;
+    }
+
 
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:fullParamDict];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
