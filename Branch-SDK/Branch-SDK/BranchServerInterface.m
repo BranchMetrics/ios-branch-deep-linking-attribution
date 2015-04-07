@@ -38,7 +38,7 @@
     if (screenHeight) [post setObject:screenHeight forKey:@"screen_height"];
     NSString *uriScheme = [BNCPreferenceHelper getUriScheme] ?: [BNCSystemObserver getDefaultUriScheme];
     if (uriScheme) [post setObject:uriScheme forKey:@"uri_scheme"];
-    NSNumber *updateState = [BNCSystemObserver getUpdateState];
+    NSNumber *updateState = [BNCSystemObserver getUpdateState:YES];
     if (updateState) [post setObject:updateState forKeyedSubscript:@"update"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     [post setObject:[NSNumber numberWithBool:[BNCSystemObserver adTrackingSafe]] forKey:@"ad_tracking_enabled"];
@@ -71,7 +71,7 @@
     if (uriScheme) [post setObject:uriScheme forKey:@"uri_scheme"];
     [post setObject:[NSNumber numberWithBool:[BNCSystemObserver adTrackingSafe]] forKey:@"ad_tracking_enabled"];
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
-    NSNumber *updateState = [BNCSystemObserver getUpdateState];
+    NSNumber *updateState = [BNCSystemObserver getUpdateState:YES];
     if (updateState) [post setObject:updateState forKeyedSubscript:@"update"];
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
@@ -191,7 +191,7 @@
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     NSString *file = @"BNC_Debug_Screen.png";
     
-    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?app_id=%@&sdk=ios%@&device_fingerprint_id=%@", [BNCPreferenceHelper getAPIURL:@"debug/screenshot"], [BNCPreferenceHelper getAppKey], SDK_VERSION, [BNCPreferenceHelper getDeviceFingerprintID]]]];
+    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?%@=%@&app_id=%@&sdk=ios%@&device_fingerprint_id=%@", [BNCPreferenceHelper getAPIURL:@"debug/screenshot"], KEY_BRANCH_KEY, [BNCPreferenceHelper getBranchKey], [BNCPreferenceHelper getAppKey], SDK_VERSION, [BNCPreferenceHelper getDeviceFingerprintID]]]];
     [request setHTTPMethod:@"POST"];
     
     NSString *boundary = @"---------------------------Boundary Line---------------------------";
