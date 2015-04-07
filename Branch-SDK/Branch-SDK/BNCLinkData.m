@@ -28,9 +28,9 @@
     copy.feature = [_feature copyWithZone:zone];
     copy.stage = [_stage copyWithZone:zone];
     copy.params = [_params copyWithZone:zone];
+    copy.ignoreUAString = [_ignoreUAString copyWithZone:zone];
     copy.type = _type;
     copy.duration = _duration;
-    copy.ignoreFirstClick = _ignoreFirstClick;
 
     return copy;
 }
@@ -84,9 +84,11 @@
     }
 }
 
-- (void)setupIgnoreFirstClick:(NSString *)ignoreFirstClick {
-    _ignoreFirstClick = ignoreFirstClick;
-    [self.data setObject:ignoreFirstClick forKey:IGNORE_FIRST_CLICK];
+- (void)setupIgnoreUAString:(NSString *)ignoreUAString {
+    if (ignoreUAString) {
+        _ignoreUAString = ignoreUAString;
+        [self.data setObject:ignoreUAString forKey:IGNORE_UA_STRING];
+    }
 }
 
 - (void)setupParams:(NSString *)params {
