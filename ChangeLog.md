@@ -1,5 +1,17 @@
 Branch iOS SDK change log
 
+- v0.5.6: Issue sending proper update to server if isReferrable not set
+
+- v0.5.5: Reverting branch_key change until server component is updated. Fixing an issue with getShortUrl failures causing crashes.
+
+- v0.5.4: A large number of changes have been included in this version, but all are backwards compatibile.
+  * Retry Number has been added to all requests, so that the server is able to differentiate.
+  * Organization of some of the encoding methods in the repository has been centralized.
+  * Fixed an encoding bug with empty param dictionaries and arrays.
+  * A couple of encoding issues were fixed, and a large number of tests have been added.
+  * Perhaps most importantly, the `branch_key` is now replacing the `bnc_app_key` and `app_id` items. For now, both will continue to work, but the non-`branch_key` items are deprecated, and will be removed with `0.6.0`.
+  * The presence of `app_id` and `branch_key` has been ensured across all requests, no longer piecemeal.
+
 - v0.5.3: Follow up to 0.5.2, now looks at Documents directory creation date and considers this to be the original app install date
 
 - v0.5.2: Recent iOS update resets bundle file creation date on update, messing with our update/install detection method

@@ -95,13 +95,13 @@ Branch = Branch.getInstance().setUriScheme("myScheme")
 
 This is optional. If you do not specifiy which scheme to use, Branch will pick the first non `fb*`, `db*`, or `pin*` it finds in your bundle. Note that you should call this *before* initializing Branch; the install/open calls utilize this value, and will fall back to the default behavior if you don't set it ahead of time.
 
-### Add your app key to your project
+### Add your Branch Key to your project
 
 After you register your app, your app key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift).
 
 1. In plist file, mouse hover "Information Property List" which is the root item under the Key column.
 1. After about half a second, you will see a "+" sign appear. Click it.
-1. In the newly added row, fill in "bnc_app_key" for its key, leave type as String, and enter your app key obtained in above steps in its value column.
+1. In the newly added row, fill in "branch_key" for its key, leave type as String, and enter your Branch Key obtained in above steps in its value column.
 1. Save the plist file.
 
 For additional help configuring the SDK, including step-by-step instructions, please see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios_quickstart.md).

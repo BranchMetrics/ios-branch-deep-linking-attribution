@@ -47,6 +47,8 @@ static BranchServerInterface *serverInterface = nil;
 
 static id<BNCTestDelegate> bnc_testDelegate = nil;
 
+static NSString *Branch_Key = nil;
+
 @interface BNCPreferenceHelper() <BNCServerInterfaceDelegate>
 
 @end
@@ -201,12 +203,46 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
             ret = NO_STRING_VALUE;
         }
     }
-    
     return ret;
 }
 
 + (void)setAppKey:(NSString *)appKey {
+    //TODO re-deprecate
+//    NSLog(@"Usage of App Key is deprecated, please move toward using a Branch key");
     [BNCPreferenceHelper writeObjectToDefaults:KEY_APP_KEY value:appKey];
+}
+
++ (NSString *)getBranchKey {
+    if (!Branch_Key) {
+        Branch_Key = [BNCPreferenceHelper getBranchKey:YES];
+    }
+    
+    return Branch_Key;
+}
+
++ (NSString *)getBranchKey:(BOOL)isLive {
+    NSString *key = nil;
+    
+    id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:KEY_BRANCH_KEY];
+    if (ret) {
+        if ([ret isKindOfClass:[NSString class]]) {
+            key = ret;
+        } else if ([ret isKindOfClass:[NSDictionary class]]) {
+            key = isLive ? ret[@"live"] : ret[@"test"];
+        }
+    }
+    
+    if (!key || key.length == 0) {
+        key = NO_STRING_VALUE;
+    }
+    
+    [BNCPreferenceHelper setBranchKey:key];
+    
+    return key;
+}
+
++ (void)setBranchKey:(NSString *)branchKey {
+    Branch_Key = branchKey;
 }
 
 +(NSString *)getAppVersion {
