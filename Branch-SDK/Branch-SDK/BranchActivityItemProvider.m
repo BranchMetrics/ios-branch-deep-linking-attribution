@@ -13,10 +13,10 @@
 @implementation BranchActivityItemProvider
 
 - (id)initWithParams:(NSDictionary *)params
-                 andTags:(NSArray *)tags
-              andFeature:(NSString *)feature
-                andStage:(NSString *)stage
-                andAlias:(NSString *)alias {
+             andTags:(NSArray *)tags
+          andFeature:(NSString *)feature
+            andStage:(NSString *)stage
+            andAlias:(NSString *)alias {
     
     NSString *url = [[Branch getInstance] getLongURLWithParams:params andChannel:nil andTags:tags andFeature:feature andStage:stage andAlias:alias];
     
@@ -31,6 +31,11 @@
         self.branchURL = url;
     }
     
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIWebView *webView = [[UIWebView alloc] initWithFrame:CGRectZero];
+        self.userAgentString = [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+    });
+    
     return self;
 }
 
@@ -40,9 +45,12 @@
         
         // Because Facebook immediately scrapes URLs, we add an additional parameter to the existing list, telling the backend to ignore the first click
         BOOL ignoreFirstClick = [channel isEqualToString:@"facebook"];
-
-        self.branchURL = [[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias ignoreFirstClick:ignoreFirstClick];
-
+        if (ignoreFirstClick && self.userAgentString) {
+            self.branchURL = [[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias ignoreFirstClick:self.userAgentString];
+        } else {
+            self.branchURL = [[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias ignoreFirstClick:nil];
+        }
+        NSLog(@"url: %@", self.branchURL);
         return [NSURL URLWithString:self.branchURL];
     }
     return self.placeholderItem;

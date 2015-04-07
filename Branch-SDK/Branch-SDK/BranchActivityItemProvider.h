@@ -16,6 +16,7 @@
 @property (strong, nonatomic) NSString *feature;
 @property (strong, nonatomic) NSString *stage;
 @property (strong, nonatomic) NSString *alias;
+@property (strong, nonatomic) NSString *userAgentString;
 
 - (id)initWithParams:(NSDictionary *)params
              andTags:(NSArray *)tags
