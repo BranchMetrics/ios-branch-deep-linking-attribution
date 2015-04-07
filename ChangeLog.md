@@ -1,5 +1,7 @@
 Branch iOS SDK change log
 
+- v0.5.7: Adding handling around the Facebook share sheet to prevent incorrect link clicks. Removing `branch_key` warning message.
+
 - v0.5.6: Issue sending proper update to server if isReferrable not set
 
 - v0.5.5: Reverting branch_key change until server component is updated. Fixing an issue with getShortUrl failures causing crashes.
