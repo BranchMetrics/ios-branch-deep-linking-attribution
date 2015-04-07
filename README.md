@@ -68,7 +68,7 @@ You can register your app to respond to direct deep links (yourapp:// in a mobil
 
 1. In Xcode, click on YourProject-Info.plist on the left.
 1. Find URL Types and click the right arrow. (If it doesn't exist, right click anywhere and choose Add Row. Scroll down and choose URL Types)
-1. Add "yourapp", where yourapp is a unique string for your app, as an item in URL Schemes as below:
+1. Add "io.branch.sdk" as the URL Identifier and create an Array of URL Schems with an entry, "yourapp," where yourapp is a unique string for your app, as an item in URL Schemes as below:
 
 ![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlScheme.png)
 
@@ -83,6 +83,8 @@ Alternatively, you can add the URI scheme in your project's Info page.
 
 ### Configure Branch Uri Scheme (optional)
 
+If you've already specified a Uri Scheme you would prefer to use in place of the Branch default, you can manually specify it via the `setUriScheme` method. Note that you should call this *before* initializing Branch; the install/open calls utilize this value, and will fall back to the default behavior if you don't set it ahead of time.
+
 ###### Objective C
 ```objc
 [[Branch getInstance] setUriScheme:@"myScheme"];
@@ -92,8 +94,6 @@ Alternatively, you can add the URI scheme in your project's Info page.
 ```swift
 Branch = Branch.getInstance().setUriScheme("myScheme")
 ```
-
-This is optional. If you do not specifiy which scheme to use, Branch will pick the first non `fb*`, `db*`, or `pin*` it finds in your bundle. Note that you should call this *before* initializing Branch; the install/open calls utilize this value, and will fall back to the default behavior if you don't set it ahead of time.
 
 ### Add your Branch Key to your project
 

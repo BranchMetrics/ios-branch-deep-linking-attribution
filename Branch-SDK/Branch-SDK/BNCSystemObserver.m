@@ -14,6 +14,8 @@
 #import <UIKit/UIScreen.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
+NSString * const BRANCH_URI_SCHEME_NAME = @"io.branch.sdk";
+
 @implementation BNCSystemObserver
 
 + (NSString *)getUniqueHardwareId:(BOOL *)isReal andIsDebug:(BOOL)debug {
@@ -56,21 +58,10 @@
 + (NSString *)getDefaultUriScheme {
     NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
 
-    // Choose the first url scheme in the url types that isn't another integration's.
+    // Choose the first url scheme with the Branch specified name.
     for (NSDictionary *urlType in urlTypes) {
-        NSArray *urlSchemes = [urlType objectForKey:@"CFBundleURLSchemes"];
-
-        for (NSString *urlScheme in urlSchemes) {
-            NSString *firstTwoCharacters = [urlScheme substringWithRange:NSMakeRange(0, 2)];
-            NSString *firstThreeCharacters = [urlScheme substringWithRange:NSMakeRange(0, 3)];
-            BOOL isFBScheme = [firstTwoCharacters isEqualToString:@"fb"];
-            BOOL isDBScheme = [firstTwoCharacters isEqualToString:@"db"];
-            BOOL isPinScheme = [firstThreeCharacters isEqualToString:@"pin"];
-
-            // Don't use the schemes set aside for other integrations.
-            if (!isFBScheme && !isDBScheme && !isPinScheme) {
-                return urlScheme;
-            }
+        if ([urlType[@"CFBundleURLName"] isEqualToString:BRANCH_URI_SCHEME_NAME]) {
+            return [urlType[@"CFBundleURLSchemes"] firstObject];
         }
     }
 
