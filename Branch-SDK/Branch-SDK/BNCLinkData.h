@@ -21,6 +21,7 @@
 @property (nonatomic, strong) NSString *stage;
 @property (nonatomic, strong) NSString *params;
 @property (nonatomic, assign) NSUInteger duration;
+@property (nonatomic, strong) NSString *ignoreUAString;
 
 - (void)setupTags:(NSArray *)tags;
 - (void)setupAlias:(NSString *)alias;
@@ -30,6 +31,7 @@
 - (void)setupStage:(NSString *)stage;
 - (void)setupParams:(NSString *)params;
 - (void)setupMatchDuration:(NSUInteger)duration;
+- (void)setupIgnoreUAString:(NSString *)ignoreUAString;
 
 - (void)setObject:(id)anObject forKey:(id <NSCopying>)aKey;
 - (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key NS_AVAILABLE(10_8, 6_0);
