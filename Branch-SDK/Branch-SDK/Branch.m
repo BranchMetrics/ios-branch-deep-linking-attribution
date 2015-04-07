@@ -218,27 +218,23 @@ static Branch *currInstance;
 }
 
 - (void)resetUserSession {
-    if (self) {
-        self.isInit = NO;
-    }
+    self.isInit = NO;
+}
+
+- (void)setUriScheme:(NSString *)uriScheme {
+    [BNCPreferenceHelper setUriScheme:uriScheme];
 }
 
 - (void)setNetworkTimeout:(NSInteger)timeout {
-    if (self) {
-        [BNCPreferenceHelper setTimeout:timeout];
-    }
+    [BNCPreferenceHelper setTimeout:timeout];
 }
 
 - (void)setMaxRetries:(NSInteger)maxRetries {
-    if (self) {
-        [BNCPreferenceHelper setRetryCount:maxRetries];
-    }
+    [BNCPreferenceHelper setRetryCount:maxRetries];
 }
 
 - (void)setRetryInterval:(NSInteger)retryInterval {
-    if (self) {
-        [BNCPreferenceHelper setRetryInterval:retryInterval];
-    }
+    [BNCPreferenceHelper setRetryInterval:retryInterval];
 }
 
 - (void)initSession {

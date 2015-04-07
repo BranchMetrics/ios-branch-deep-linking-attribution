@@ -11,8 +11,8 @@
 #import "BNCConfig.h"
 
 static const NSInteger DEFAULT_TIMEOUT = 3;
-static const NSInteger RETRY_INTERVAL = 3;
-static const NSInteger MAX_RETRIES = 5;
+static const NSInteger DEFAULT_RETRY_INTERVAL = 3;
+static const NSInteger DEFAULT_RETRY_COUNT = 5;
 static const NSInteger APP_READ_INTERVAL = 520000;
 
 static NSString *KEY_APP_KEY = @"bnc_app_key";
@@ -37,7 +37,6 @@ static NSString *KEY_COUNTS = @"bnc_counts";
 static NSString *KEY_TOTAL_BASE = @"bnc_total_base_";
 static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
-static BNCPreferenceHelper *instance = nil;
 static BOOL BNC_Debug = NO;
 static BOOL BNC_Dev_Debug = NO;
 static BOOL BNC_Remote_Debug = NO;
@@ -45,10 +44,6 @@ static BOOL BNC_Remote_Debug = NO;
 static dispatch_queue_t bnc_asyncLogQueue = nil;
 static id<BNCDebugConnectionDelegate> bnc_asyncDebugConnectionDelegate = nil;
 static BranchServerInterface *serverInterface = nil;
-
-static NSString *KEY_TIMEOUT = @"bnc_timeout";
-static NSString *KEY_RETRY_INTERVAL = @"bnc_retry_interval";
-static NSString *KEY_RETRY_COUNT = @"bnc_retry_count";
 
 static id<BNCTestDelegate> bnc_testDelegate = nil;
 
@@ -60,16 +55,34 @@ static NSString *Branch_Key = nil;
 
 @implementation BNCPreferenceHelper
 
+- (id)init {
+    if (self = [super init]) {
+        _timeout = DEFAULT_TIMEOUT;
+        _retryCount = DEFAULT_RETRY_COUNT;
+        _retryInterval = DEFAULT_RETRY_INTERVAL;
+    }
+    
+    return self;
+}
+
++ (BNCPreferenceHelper *)getInstance {
+    static BNCPreferenceHelper *preferenceHelper;
+    static dispatch_once_t onceToken;
+    
+    dispatch_once(&onceToken, ^{
+        preferenceHelper = [[BNCPreferenceHelper alloc] init];
+    });
+    
+    return preferenceHelper;
+}
+
 + (void)setDebug {
     BNC_Debug = YES;
     
-    if (!instance) {
-        instance = [[BNCPreferenceHelper alloc] init];
-        serverInterface = [[BranchServerInterface alloc] init];
-        serverInterface.delegate = instance;
-        bnc_asyncLogQueue = dispatch_queue_create("bnc_log_queue", NULL);
-    }
-    
+    serverInterface = [[BranchServerInterface alloc] init];
+    serverInterface.delegate = [BNCPreferenceHelper getInstance];
+    bnc_asyncLogQueue = dispatch_queue_create("bnc_log_queue", NULL);
+
     dispatch_async(bnc_asyncLogQueue, ^{
         [serverInterface connectToDebug];
     });
@@ -150,39 +163,35 @@ static NSString *Branch_Key = nil;
 #pragma mark - Preference Storage
 
 + (void)setTimeout:(NSInteger)timeout {
-    [BNCPreferenceHelper writeIntegerToDefaults:KEY_TIMEOUT value:timeout];
+    [BNCPreferenceHelper getInstance].timeout = timeout;
 }
 
 + (NSInteger)getTimeout {
-    NSInteger timeout = [BNCPreferenceHelper readIntegerFromDefaults:KEY_TIMEOUT];
-    if (timeout == NSNotFound) {
-        timeout = DEFAULT_TIMEOUT;
-    }
-    return timeout;
+    return [BNCPreferenceHelper getInstance].timeout;
 }
 
 + (void)setRetryInterval:(NSInteger)retryInterval {
-    [BNCPreferenceHelper writeIntegerToDefaults:KEY_RETRY_INTERVAL value:retryInterval];
+    [BNCPreferenceHelper getInstance].retryInterval = retryInterval;
 }
 
 + (NSInteger)getRetryInterval {
-    NSInteger retryInt = [BNCPreferenceHelper readIntegerFromDefaults:KEY_RETRY_INTERVAL];
-    if (retryInt == NSNotFound) {
-        retryInt = RETRY_INTERVAL;
-    }
-    return retryInt;
+    return [BNCPreferenceHelper getInstance].retryInterval;
 }
 
 + (void)setRetryCount:(NSInteger)retryCount {
-    [BNCPreferenceHelper writeIntegerToDefaults:KEY_RETRY_COUNT value:retryCount];
+    [BNCPreferenceHelper getInstance].retryCount = retryCount;
 }
 
 + (NSInteger)getRetryCount {
-    NSInteger retryCount = [BNCPreferenceHelper readIntegerFromDefaults:KEY_RETRY_COUNT];
-    if (retryCount == NSNotFound) {
-        retryCount = MAX_RETRIES;
-    }
-    return retryCount;
+    return [BNCPreferenceHelper getInstance].retryCount;
+}
+
++ (void)setUriScheme:(NSString *)uriScheme {
+    [BNCPreferenceHelper getInstance].uriScheme = uriScheme;
+}
+
++ (NSString *)getUriScheme {
+    return [BNCPreferenceHelper getInstance].uriScheme;
 }
 
 + (NSString *)getAppKey {
