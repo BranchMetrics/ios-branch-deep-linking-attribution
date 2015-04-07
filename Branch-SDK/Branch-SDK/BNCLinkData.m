@@ -84,7 +84,7 @@
     }
 }
 
-- (void)setupIgnoreFirstClick:(NSNumber *)ignoreFirstClick {
+- (void)setupIgnoreFirstClick:(NSString *)ignoreFirstClick {
     _ignoreFirstClick = ignoreFirstClick;
     [self.data setObject:ignoreFirstClick forKey:IGNORE_FIRST_CLICK];
 }
