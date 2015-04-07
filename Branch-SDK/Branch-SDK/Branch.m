@@ -1038,11 +1038,11 @@ static Branch *currInstance;
             shortURL = [serverResponse.data objectForKey:URL];
             
             // cache the link
-            BNCLinkData *linkData = serverResponse.linkData;
-            if (linkData) {
-                [self.linkCache setObject:shortURL forKey:linkData];
+            if (shortURL) {
+                [self.linkCache setObject:shortURL forKey:post];
             }
-        } else if (self.initFailed || self.initNotCalled) {
+        }
+        else if (self.initFailed || self.initNotCalled) {
             NSLog(@"Branch SDK Error: making request before init succeeded!");
         }
     }
@@ -1694,9 +1694,8 @@ static Branch *currInstance;
             }
             
             // cache the link
-            BNCLinkData *linkData = response.linkData;
-            if (linkData) {
-                [self.linkCache setObject:url forKey:linkData];
+            if (url) {
+                [self.linkCache setObject:url forKey:response.linkData];
             }
         } else if ([requestTag isEqualToString:REQ_TAG_LOGOUT]) {
             [BNCPreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
