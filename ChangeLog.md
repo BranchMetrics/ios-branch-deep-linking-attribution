@@ -1,5 +1,7 @@
 Branch iOS SDK change log
 
+- v0.5.5: Reverting branch_key change until server component is updated. Fixing an issue with getShortUrl failures causing crashes.
+
 - v0.5.4: A large number of changes have been included in this version, but all are backwards compatibile.
   * Retry Number has been added to all requests, so that the server is able to differentiate.
   * Organization of some of the encoding methods in the repository has been centralized.
