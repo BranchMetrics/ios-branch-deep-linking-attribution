@@ -1,5 +1,7 @@
 Branch iOS SDK change log
 
+- v0.5.6: Issue sending proper update to server if isReferrable not set
+
 - v0.5.5: Reverting branch_key change until server component is updated. Fixing an issue with getShortUrl failures causing crashes.
 
 - v0.5.4: A large number of changes have been included in this version, but all are backwards compatibile.

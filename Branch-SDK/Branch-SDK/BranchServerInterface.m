@@ -38,7 +38,7 @@
     if (screenHeight) [post setObject:screenHeight forKey:@"screen_height"];
     NSString *uriScheme = [BNCSystemObserver getURIScheme];
     if (uriScheme) [post setObject:uriScheme forKey:@"uri_scheme"];
-    NSNumber *updateState = [BNCSystemObserver getUpdateState];
+    NSNumber *updateState = [BNCSystemObserver getUpdateState:YES];
     if (updateState) [post setObject:updateState forKeyedSubscript:@"update"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     [post setObject:[NSNumber numberWithBool:[BNCSystemObserver adTrackingSafe]] forKey:@"ad_tracking_enabled"];
@@ -71,7 +71,7 @@
     if (uriScheme) [post setObject:uriScheme forKey:@"uri_scheme"];
     [post setObject:[NSNumber numberWithBool:[BNCSystemObserver adTrackingSafe]] forKey:@"ad_tracking_enabled"];
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
-    NSNumber *updateState = [BNCSystemObserver getUpdateState];
+    NSNumber *updateState = [BNCSystemObserver getUpdateState:YES];
     if (updateState) [post setObject:updateState forKeyedSubscript:@"update"];
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];

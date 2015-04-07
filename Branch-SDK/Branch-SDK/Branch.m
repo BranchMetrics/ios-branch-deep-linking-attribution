@@ -252,7 +252,7 @@ static Branch *currInstance;
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback {
     self.sessionparamLoadCallback = callback;
-    if (![BNCSystemObserver getUpdateState] && ![self hasUser]) {
+    if (![BNCSystemObserver getUpdateState:NO] && ![self hasUser]) {
         [BNCPreferenceHelper setIsReferrable];
     } else {
         [BNCPreferenceHelper clearIsReferrable];
@@ -287,7 +287,7 @@ static Branch *currInstance;
 }
 
 - (void)initSessionAndRegisterDeepLinkHandler:(callbackWithParams)callback {
-    if (![BNCSystemObserver getUpdateState] && ![self hasUser]) {
+    if (![BNCSystemObserver getUpdateState:NO] && ![self hasUser]) {
         [BNCPreferenceHelper setIsReferrable];
     } else {
         [BNCPreferenceHelper clearIsReferrable];
