@@ -120,7 +120,7 @@
 - (BOOL)containsInstallOrOpen {
     for (int i = 0; i < self.queue.count; i++) {
         BNCServerRequest *req = [self.queue objectAtIndex:i];
-        if (req && ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN])) {
+        if (req && ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) && req.callback) {
             return YES;
         }
     }
