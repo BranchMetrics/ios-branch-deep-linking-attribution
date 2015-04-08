@@ -221,9 +221,9 @@ static Branch *currInstance;
     self.isInit = NO;
 }
 
-- (void)setUriScheme:(NSString *)uriScheme {
-    [BNCPreferenceHelper setUriScheme:uriScheme];
-}
+//- (void)setUriScheme:(NSString *)uriScheme {
+//    [BNCPreferenceHelper setUriScheme:uriScheme];
+//}
 
 - (void)setNetworkTimeout:(NSInteger)timeout {
     [BNCPreferenceHelper setTimeout:timeout];
