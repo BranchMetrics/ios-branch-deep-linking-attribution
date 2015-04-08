@@ -29,32 +29,32 @@ static NSString *REQ_TAG_GET_LIST_OF_APPS = @"t_get_list_of_apps";
 
 @interface BranchServerInterface : BNCServerInterface
 
-- (void)registerInstall:(BOOL)debug;
-- (void)registerOpen:(BOOL)debug;
-- (void)registerClose;
-- (void)getReferralCounts;
-- (void)getCreditHistory:(NSDictionary *)query ;
-- (void)userCompletedAction:(NSDictionary *)post;
-- (void)getRewards;
-- (void)redeemRewards:(NSDictionary *)post;
-- (void)createCustomUrl:(BNCServerRequest *)post;
-- (void)identifyUser:(NSDictionary *)post;
-- (void)logoutUser:(NSDictionary *)post;
-- (void)addProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;
-- (void)setProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;
-- (void)appendProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;
-- (void)unionProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params;
-- (void)getReferralCode:(NSDictionary *)post;
-- (void)validateReferralCode:(NSDictionary *)post;
-- (void)applyReferralCode:(NSDictionary *)post;
-- (void)uploadListOfApps:(NSDictionary *)post;
+- (void)registerInstall:(BOOL)debug callback:(BNCServerCallback)callback;
+- (void)registerOpen:(BOOL)debug callback:(BNCServerCallback)callback;
+- (void)registerCloseWithCallback:(BNCServerCallback)callback;
+- (void)getReferralCountsWithCallback:(BNCServerCallback)callback;
+- (void)getCreditHistory:(NSDictionary *)query callback:(BNCServerCallback)callback;
+- (void)userCompletedAction:(NSDictionary *)post callback:(BNCServerCallback)callback;
+- (void)getRewardsWithCallback:(BNCServerCallback)callback;
+- (void)redeemRewards:(NSDictionary *)post callback:(BNCServerCallback)callback;
+- (void)createCustomUrl:(BNCServerRequest *)post callback:(BNCServerCallback)callback;
+- (void)identifyUser:(NSDictionary *)post callback:(BNCServerCallback)callback;
+- (void)logoutUser:(NSDictionary *)post callback:(BNCServerCallback)callback;
+- (void)addProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params callback:(BNCServerCallback)callback;
+- (void)setProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params callback:(BNCServerCallback)callback;
+- (void)appendProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params callback:(BNCServerCallback)callback;
+- (void)unionProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params callback:(BNCServerCallback)callback;
+- (void)getReferralCode:(NSDictionary *)post callback:(BNCServerCallback)callback;
+- (void)validateReferralCode:(NSDictionary *)post callback:(BNCServerCallback)callback;
+- (void)applyReferralCode:(NSDictionary *)post callback:(BNCServerCallback)callback;
+- (void)uploadListOfApps:(NSDictionary *)post callback:(BNCServerCallback)callback;
 - (BNCServerResponse *)retrieveAppsToCheck;
 
-- (void)connectToDebug;
-- (void)sendLog:(NSString *)log;
-- (void)sendScreenshot:(NSData *)data;
-- (void)disconnectFromDebug;
+- (void)connectToDebugWithCallback:(BNCServerCallback)callback;
+- (void)sendLog:(NSString *)log callback:(BNCServerCallback)callback;
+- (void)sendScreenshot:(NSData *)data callback:(BNCServerCallback)callback;
+- (void)disconnectFromDebugWithCallback:(BNCServerCallback)callback;
 
-- (BNCServerResponse *)createCustomUrlSynchronous:(BNCServerRequest *)req;
+- (BNCServerResponse *)createCustomUrl:(BNCServerRequest *)req;
 
 @end
