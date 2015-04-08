@@ -49,10 +49,6 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
 
 static NSString *Branch_Key = nil;
 
-@interface BNCPreferenceHelper() <BNCServerInterfaceDelegate>
-
-@end
-
 @implementation BNCPreferenceHelper
 
 - (id)init {
@@ -80,12 +76,9 @@ static NSString *Branch_Key = nil;
     BNC_Debug = YES;
     
     serverInterface = [[BranchServerInterface alloc] init];
-    serverInterface.delegate = [BNCPreferenceHelper getInstance];
     bnc_asyncLogQueue = dispatch_queue_create("bnc_log_queue", NULL);
 
-    dispatch_async(bnc_asyncLogQueue, ^{
-        [serverInterface connectToDebug];
-    });
+    [serverInterface connectToDebugWithCallback:NULL];
 }
 
 + (void)setDevDebug {
@@ -102,9 +95,7 @@ static NSString *Branch_Key = nil;
     if (BNC_Remote_Debug) {
         BNC_Remote_Debug = NO;
         
-        dispatch_async(bnc_asyncLogQueue, ^{
-            [serverInterface disconnectFromDebug];
-        });
+        [serverInterface disconnectFromDebugWithCallback:NULL];
     }
 }
 
@@ -125,26 +116,20 @@ static NSString *Branch_Key = nil;
         NSLog(@"%@", log);
         
         if (BNC_Remote_Debug) {
-            dispatch_async(bnc_asyncLogQueue, ^{
-                [serverInterface sendLog:log];
-            });
+            [serverInterface sendLog:log callback:NULL];
         }
     }
 }
 
 + (void)keepDebugAlive {
     if (BNC_Remote_Debug) {
-        dispatch_async(bnc_asyncLogQueue, ^{
-            [serverInterface sendLog:@""];
-        });
+        [serverInterface sendLog:@"" callback:NULL];
     }
 }
 
 + (void)sendScreenshot:(NSData *)data {
     if (BNC_Remote_Debug) {
-        dispatch_async(bnc_asyncLogQueue, ^{
-            [serverInterface sendScreenshot:data];
-        });
+        [serverInterface sendScreenshot:data callback:NULL];
     }
 }
 
