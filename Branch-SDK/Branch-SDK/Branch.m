@@ -406,7 +406,7 @@ static Branch *currInstance;
                 NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCIdentifyError];
                 callback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCIdentifyError userInfo:errorDict]);
             }
-
+            [self completeRequest];
             return;
         }
 
@@ -427,6 +427,8 @@ static Branch *currInstance;
         if (callback) {
             callback([self getFirstReferringParams], nil);
         }
+        
+        [self completeRequest];
     };
 
     [self.requestQueue enqueue:req];
@@ -458,6 +460,8 @@ static Branch *currInstance;
         [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
         [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
         [BNCPreferenceHelper clearUserCreditsAndCounts];
+        
+        [self completeRequest];
     };
 
     [self.requestQueue enqueue:req];
@@ -488,6 +492,7 @@ static Branch *currInstance;
                 NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCGetReferralsError];
                 callback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralsError userInfo:errorDict]);
             }
+            [self completeRequest];
             return;
         }
 
@@ -508,6 +513,8 @@ static Branch *currInstance;
         if (callback) {
             callback(hasUpdated, nil);
         }
+        
+        [self completeRequest];
     };
     
     [self.requestQueue enqueue:req];
@@ -547,6 +554,7 @@ static Branch *currInstance;
     } mutableCopy];
     
     req.postData = post;
+
     [self.requestQueue enqueue:req];
     
     if (self.initFinished || !self.hasNetwork) {
@@ -575,6 +583,7 @@ static Branch *currInstance;
                 NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCGetCreditsError];
                 callback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditsError userInfo:errorDict]);
             }
+            [self completeRequest];
             return;
         }
 
@@ -592,6 +601,8 @@ static Branch *currInstance;
         if (callback) {
             callback(hasUpdated, nil);
         }
+        
+        [self completeRequest];
     };
     
     [self.requestQueue enqueue:req];
@@ -698,6 +709,7 @@ static Branch *currInstance;
                 NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCGetCreditHistoryError];
                 callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:errorDict]);
             }
+            [self completeRequest];
             return;
         }
         for (NSMutableDictionary *transaction in response.data) {
@@ -712,6 +724,8 @@ static Branch *currInstance;
         if (callback) {
             callback(response.data, nil);
         }
+        
+        [self completeRequest];
     };
 
     [self.requestQueue enqueue:req];
@@ -955,6 +969,7 @@ static Branch *currInstance;
                 NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCGetReferralCodeError];
                 callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:errorDict]);
             }
+            [self completeRequest];
             return;
         }
         
@@ -966,6 +981,8 @@ static Branch *currInstance;
         if (callback) {
             callback(response.data, error);
         }
+        
+        [self completeRequest];
     };
 
     [self.requestQueue enqueue:req];
@@ -1008,6 +1025,7 @@ static Branch *currInstance;
                 NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCValidateReferralCodeError];
                 callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:errorDict]);
             }
+            [self completeRequest];
             return;
         }
         
@@ -1019,6 +1037,8 @@ static Branch *currInstance;
         if (callback) {
             callback(response.data, error);
         }
+        
+        [self completeRequest];
     };
     
     [self.requestQueue enqueue:req];
@@ -1061,6 +1081,7 @@ static Branch *currInstance;
                 NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCApplyReferralCodeError];
                 callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict]);
             }
+            [self completeRequest];
             return;
         }
 
@@ -1072,6 +1093,8 @@ static Branch *currInstance;
         if (callback) {
             callback(response.data, error);
         }
+        
+        [self completeRequest];
     };
 
     [self.requestQueue enqueue:req];
@@ -1129,18 +1152,22 @@ static Branch *currInstance;
                 
                 callback(failedUrl, urlError);
             }
+            [self completeRequest];
             return;
         }
         
         NSString *url = [response.data objectForKey:URL];
-        if (callback) {
-            callback(url, nil);
-        }
         
         // cache the link
         if (url) {
             [self.linkCache setObject:url forKey:response.linkData];
         }
+
+        if (callback) {
+            callback(url, nil);
+        }
+        
+        [self completeRequest];
     };
     
     [self.requestQueue enqueue:req];
@@ -1294,6 +1321,7 @@ static Branch *currInstance;
         if (![self.requestQueue containsClose]) {
             BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:REQ_TAG_REGISTER_CLOSE];
             req.postData = [[NSMutableDictionary alloc] init];
+
             [self.requestQueue enqueue:req];
         }
         
@@ -1314,6 +1342,7 @@ static Branch *currInstance;
     req.postData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
         [BNCPreferenceHelper setAppListCheckDone];
+        [self completeRequest];
     };
     
     if (!self.initFailed) {
@@ -1348,6 +1377,12 @@ static Branch *currInstance;
         BNCServerRequest *req = [self.requestQueue peek];
         
         if (req) {
+            if (!req.callback) {
+                req.callback = ^(BNCServerResponse *response, NSError *error) {
+                    [self completeRequest];
+                };
+            }
+
             if (![req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] && ![self hasUser]) {
                 NSLog(@"Branch Error: User session has not been initialized!");
                 self.networkCount = 0;
@@ -1446,14 +1481,12 @@ static Branch *currInstance;
     [self.requestQueue persist];
 }
 
-- (void)completeRequest:(BNCServerRequest *)request {
+- (void)completeRequest {
     self.networkCount = 0;
     
-    if (self.hasNetwork && !self.initFailed) {
-        [self.requestQueue dequeue];
-        
-        [self processNextQueueItem];
-    }
+    [self.requestQueue dequeue];
+    
+    [self processNextQueueItem];
 }
 
 
@@ -1506,7 +1539,7 @@ static Branch *currInstance;
                 [self handleInitFailure];
             }
             else {
-                [self processInitSuccess:req data:response.data allowNoStringInstallParams:YES];
+                [self processInitSuccess:response.data allowNoStringInstallParams:YES];
             }
         };
 
@@ -1527,7 +1560,7 @@ static Branch *currInstance;
                 [self handleInitFailure];
             }
             else {
-                [self processInitSuccess:req data:response.data allowNoStringInstallParams:NO];
+                [self processInitSuccess:response.data allowNoStringInstallParams:NO];
             }
         };
 
@@ -1540,7 +1573,7 @@ static Branch *currInstance;
     [self processNextQueueItem];
 }
 
-- (void)processInitSuccess:(BNCServerRequest *)req data:(NSDictionary *)data allowNoStringInstallParams:(BOOL)allowNoStringInstallParams {
+- (void)processInitSuccess:(NSDictionary *)data allowNoStringInstallParams:(BOOL)allowNoStringInstallParams {
     [BNCPreferenceHelper setDeviceFingerprintID:[data objectForKey:DEVICE_FINGERPRINT_ID]];
     [BNCPreferenceHelper setUserURL:[data objectForKey:LINK]];
     [BNCPreferenceHelper setSessionID:[data objectForKey:SESSION_ID]];
@@ -1582,12 +1615,12 @@ static Branch *currInstance;
     
     self.initFinished = YES;
     self.initFailed = NO;
-
-    [self completeRequest:req];
     
     if (self.sessionInitWithParamsCallback) {
         self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
     }
+    
+    [self completeRequest];
 }
 
 - (void)handleInitFailure {
@@ -1597,6 +1630,8 @@ static Branch *currInstance;
         NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCInitError];
         self.sessionInitWithParamsCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:errorDict]);
     }
+    
+    [self completeRequest];
 }
 
 - (void)dealloc {
