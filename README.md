@@ -70,7 +70,7 @@ You can register your app to respond to direct deep links (yourapp:// in a mobil
 1. Find URL Types and click the right arrow. (If it doesn't exist, right click anywhere and choose Add Row. Scroll down and choose URL Types)
 1. Add "yourapp", where yourapp is a unique string for your app, as an item in URL Schemes as below:
 
-![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlScheme.png)
+![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlScheme.png?v=1)
 
 Alternatively, you can add the URI scheme in your project's Info page.
 
@@ -79,7 +79,7 @@ Alternatively, you can add the URI scheme in your project's Info page.
 1. Expand the "URL Types" section at the bottom.
 1. Click the "+" sign to add a new URI Scheme, as below:
 
-![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png)
+![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png?v=1)
 
 ### Add your Branch Key to your project
 
