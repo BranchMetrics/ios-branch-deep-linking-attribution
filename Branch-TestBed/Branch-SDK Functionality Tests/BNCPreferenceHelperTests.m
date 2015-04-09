@@ -7,7 +7,9 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <Nocilla/Nocilla.h>
 #import "BNCPreferenceHelper.h"
+#import "BNCEncodingUtils.h"
 
 @interface BNCPreferenceHelperTests : XCTestCase
 
@@ -15,6 +17,55 @@
 
 @implementation BNCPreferenceHelperTests
 
++ (void)setUp {
+    [super setUp];
+
+    [[LSNocilla sharedInstance] start];
+}
+
++ (void)tearDown {
+    [super tearDown];
+
+    [BNCPreferenceHelper clearDebug];
+
+    [[LSNocilla sharedInstance] stop];
+}
+
+- (void)tearDown {
+    [super tearDown];
+
+    [[LSNocilla sharedInstance] clearStubs];
+}
+
+#pragma mark - Debugger tests
+- (void)testDebuggerSuccessfulConnect {
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"debug/connect"])
+    .andReturn(200);
+
+    [BNCPreferenceHelper setDebug];
+    
+    [NSThread sleepForTimeInterval:1]; // Allow request to complete
+    
+    XCTAssertTrue([BNCPreferenceHelper isRemoteDebug]);
+}
+
+- (void)testDebuggerConnectFailure {
+    NSDictionary *responseDict = @{@"error": @{@"code": @465, @"message": @"Server not listening"}};
+    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
+    
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"debug/connect"])
+    .andReturn(400)
+    .withHeaders(@{@"Content-Type": @"application/json"})
+    .withBody(responseData);
+
+    [BNCPreferenceHelper setDebug];
+
+    [NSThread sleepForTimeInterval:1]; // Allow request to complete
+    
+    XCTAssertFalse([BNCPreferenceHelper isRemoteDebug]);
+}
+
+#pragma mark - Default storage tests
 - (void)testPreferenceDefaults {
     BNCPreferenceHelper *prefHelper = [[BNCPreferenceHelper alloc] init];
     

@@ -78,7 +78,15 @@ static NSString *Branch_Key = nil;
     serverInterface = [[BranchServerInterface alloc] init];
     bnc_asyncLogQueue = dispatch_queue_create("bnc_log_queue", NULL);
 
-    [serverInterface connectToDebugWithCallback:NULL];
+    [serverInterface connectToDebugWithCallback:^(BNCServerResponse *response, NSError *error) {
+        if (error) {
+            NSLog(@"Failed to connect to debug: %@", error);
+        }
+        else {
+            BNC_Remote_Debug = YES;
+            [bnc_asyncDebugConnectionDelegate bnc_debugConnectionEstablished];
+        }
+    }];
 }
 
 + (void)setDevDebug {
@@ -494,33 +502,6 @@ static NSString *Branch_Key = nil;
 
 + (void)simulateInitFinished {
     [bnc_testDelegate simulateInitFinished];
-}
-
-#pragma mark - ServerInterface delegate
-
-- (void)serverCallback:(BNCServerResponse *)response {
-    if (response) {
-        NSInteger status = [response.statusCode integerValue];
-        NSString *requestTag = response.tag;
-        
-        if (status == 465) {    // server not listening
-            BNC_Remote_Debug = NO;
-            NSLog(@"======= Server is not listening =======");
-        } else if (status >= 400 && status < 500) {
-            if (response.data && [response.data objectForKey:@"error"]) {
-                NSLog(@"Branch API Error: %@", [[response.data objectForKey:@"error"] objectForKey:@"message"]);
-            }
-        } else if (status != 200) {
-            if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorNetworkConnectionLost || status == NSURLErrorCannotFindHost) {
-                NSLog(@"Branch API Error: Poor network connectivity. Please try again later.");
-            } else {
-                NSLog(@"Trouble reaching server. Please try again in a few minutes.");
-            }
-        } else if ([requestTag isEqualToString:REQ_TAG_DEBUG_CONNECT]) {
-            BNC_Remote_Debug = YES;
-            [bnc_asyncDebugConnectionDelegate bnc_debugConnectionEstablished];
-        }
-    }
 }
 
 @end
