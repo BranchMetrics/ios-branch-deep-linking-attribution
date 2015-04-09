@@ -409,6 +409,7 @@ static Branch *currInstance;
                 NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCIdentifyError];
                 callback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCIdentifyError userInfo:errorDict]);
             }
+            [self setIdentity:userId withCallback:NULL]; // Re-enqueue
             [self completeRequest];
             return;
         }
@@ -557,6 +558,13 @@ static Branch *currInstance;
     } mutableCopy];
     
     req.postData = post;
+    req.callback = ^(BNCServerResponse *response, NSError *error) {
+        if (error) {
+            [self userCompletedAction:action withState:state]; // re-enqueue
+        }
+
+        [self completeRequest];
+    };
 
     [self.requestQueue enqueue:req];
     
@@ -1486,9 +1494,7 @@ static Branch *currInstance;
 
 - (void)completeRequest {
     self.networkCount = 0;
-    
     [self.requestQueue dequeue];
-    
     [self processNextQueueItem];
 }
 
