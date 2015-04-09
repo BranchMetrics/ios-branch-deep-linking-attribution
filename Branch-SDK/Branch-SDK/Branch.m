@@ -86,18 +86,13 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 
 @property (strong, nonatomic) BranchServerInterface *bServerInterface;
 
-@property (nonatomic) BOOL isInit;
-
 @property (strong, nonatomic) NSTimer *sessionTimer;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
 @property (strong, nonatomic) callbackWithParams sessionInitWithParamsCallback;
 @property (assign, nonatomic) NSInteger networkCount;
-@property (assign, nonatomic) BOOL initFinished;
-@property (assign, nonatomic) BOOL initFailed;
-@property (assign, nonatomic) BOOL initNotCalled;
-@property (assign, nonatomic) BOOL lastRequestWasInit;
-@property (assign, nonatomic) BOOL hasNetwork;
+@property (assign, nonatomic) BOOL isInitialized;
+@property (assign, nonatomic) BOOL shouldCallSessionInitCallback;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 
 @end
@@ -154,15 +149,11 @@ static Branch *currInstance;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         currInstance = [[Branch alloc] init];
-        currInstance.isInit = NO;
         currInstance.bServerInterface = [[BranchServerInterface alloc] init];
         currInstance.requestQueue = [BNCServerRequestQueue getInstance];
         currInstance.processing_sema = dispatch_semaphore_create(1);
-        currInstance.initFinished = NO;
-        currInstance.initFailed = NO;
-        currInstance.hasNetwork = YES;
-        currInstance.initNotCalled = YES;
-        currInstance.lastRequestWasInit = YES;
+        currInstance.isInitialized = NO;
+        currInstance.shouldCallSessionInitCallback = YES;
         currInstance.linkCache = [[BNCLinkCache alloc] init];
         
         [[NSNotificationCenter defaultCenter] addObserver:currInstance
@@ -232,7 +223,7 @@ static Branch *currInstance;
 }
 
 - (void)resetUserSession {
-    self.isInit = NO;
+    self.isInitialized = NO;
 }
 
 - (void)setUriScheme:(NSString *)uriScheme {
@@ -278,7 +269,7 @@ static Branch *currInstance;
     }
     
     if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
-        [self initUserSessionWithCallbackInternal];
+        [self initUserSessionAndCallCallback:YES];
     }
 }
 
@@ -297,7 +288,7 @@ static Branch *currInstance;
         [BNCPreferenceHelper clearIsReferrable];
     }
     
-    [self initUserSessionWithCallbackInternal];
+    [self initUserSessionAndCallCallback:YES];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback {
@@ -317,7 +308,7 @@ static Branch *currInstance;
         [BNCPreferenceHelper clearIsReferrable];
     }
     
-    [self initUserSessionWithCallbackInternal];
+    [self initUserSessionAndCallCallback:YES];
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url {
@@ -337,35 +328,9 @@ static Branch *currInstance;
  
     [BNCPreferenceHelper setIsReferrable];
 
-    [self initUserSessionWithCallbackInternal];
+    [self initUserSessionAndCallCallback:YES];
 
     return handled;
-}
-
-- (void)initUserSessionWithCallbackInternal {
-    self.lastRequestWasInit = YES;
-    self.initFailed = NO;
-    self.initNotCalled = NO;
-
-    // If we haven't already started initialization, begin doing so
-    if (!self.isInit) {
-        self.isInit = YES;
-        [self initializeSession];
-    }
-    // If we've got a user and session, and there is not remaining install/open in the queue
-    else if ([self hasUser] && [self hasSession] && ![self.requestQueue containsInstallOrOpen]) {
-        if (self.sessionInitWithParamsCallback) {
-            self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
-        }
-    }
-    // If we have started init, but the queue doesn't contain the request, re-enqueue
-    else if (![self.requestQueue containsInstallOrOpen]) {
-        [self initializeSession];
-    }
-    // Otherwise, the init install/open is enqueued, just process it
-    else {
-        [self processNextQueueItem];
-    }
 }
 
 
@@ -383,11 +348,8 @@ static Branch *currInstance;
         return;
     }
     
-    if (self.initFailed || self.initNotCalled) {
-        if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCNotInitError userInfo:[BNCError getUserInfoDictForDomain:BNCNotInitError]]);
-        }
-        return;
+    if (self.isInitialized) {
+        [self initUserSessionAndCallCallback:NO];
     }
     
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
@@ -436,11 +398,7 @@ static Branch *currInstance;
     };
 
     [self.requestQueue enqueue:req];
-    
-    if (self.initFinished || !self.hasNetwork) {
-        self.lastRequestWasInit = NO;
-        [self processNextQueueItem];
-    }
+    [self processNextQueueItem];
 }
 
 - (void)logout {
@@ -469,22 +427,15 @@ static Branch *currInstance;
     };
 
     [self.requestQueue enqueue:req];
-    
-    if (self.initFinished || !self.hasNetwork) {
-        self.lastRequestWasInit = NO;
-        [self processNextQueueItem];
-    }
+    [self processNextQueueItem];
 }
 
 
 #pragma mark - User Action methods
 
 - (void)loadActionCountsWithCallback:(callbackWithStatus)callback {
-    if (self.initFailed || self.initNotCalled) {
-        if (callback) {
-            callback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCNotInitError userInfo:[BNCError getUserInfoDictForDomain:BNCNotInitError]]);
-        }
-        return;
+    if (self.isInitialized) {
+        [self initUserSessionAndCallCallback:NO];
     }
 
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
@@ -522,11 +473,7 @@ static Branch *currInstance;
     };
     
     [self.requestQueue enqueue:req];
-    
-    if (self.initFinished || !self.hasNetwork) {
-        self.lastRequestWasInit = NO;
-        [self processNextQueueItem];
-    }
+    [self processNextQueueItem];
 }
 
 - (NSInteger)getTotalCountsForAction:(NSString *)action {
@@ -544,6 +491,10 @@ static Branch *currInstance;
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
     if (!action) {
         return;
+    }
+    
+    if (self.isInitialized) {
+        [self initUserSessionAndCallCallback:NO];
     }
     
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
@@ -567,22 +518,15 @@ static Branch *currInstance;
     };
 
     [self.requestQueue enqueue:req];
-    
-    if (self.initFinished || !self.hasNetwork) {
-        self.lastRequestWasInit = NO;
-        [self processNextQueueItem];
-    }
+    [self processNextQueueItem];
 }
 
 
 #pragma mark - Credit methods
 
 - (void)loadRewardsWithCallback:(callbackWithStatus)callback {
-    if (self.initFailed || self.initNotCalled) {
-        if (callback) {
-            callback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCNotInitError userInfo:[BNCError getUserInfoDictForDomain:BNCNotInitError]]);
-        }
-        return;
+    if (self.isInitialized) {
+        [self initUserSessionAndCallCallback:NO];
     }
 
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
@@ -617,11 +561,7 @@ static Branch *currInstance;
     };
     
     [self.requestQueue enqueue:req];
-    
-    if (self.initFinished || !self.hasNetwork) {
-        self.lastRequestWasInit = NO;
-        [self processNextQueueItem];
-    }
+    [self processNextQueueItem];
 }
 
 - (NSInteger)getCredits {
@@ -663,11 +603,7 @@ static Branch *currInstance;
         req.postData = post;
 
         [self.requestQueue enqueue:req];
-        
-        if (self.initFinished || !self.hasNetwork) {
-            self.lastRequestWasInit = NO;
-            [self processNextQueueItem];
-        }
+        [self processNextQueueItem];
     }
 }
 
@@ -684,11 +620,8 @@ static Branch *currInstance;
 }
 
 - (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(CreditHistoryOrder)order andCallback:(callbackWithList)callback {
-    if (self.initFailed || self.initNotCalled) {
-        if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCNotInitError userInfo:[BNCError getUserInfoDictForDomain:BNCNotInitError]]);
-        }
-        return;
+    if (self.isInitialized) {
+        [self initUserSessionAndCallCallback:NO];
     }
 
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
@@ -740,11 +673,7 @@ static Branch *currInstance;
     };
 
     [self.requestQueue enqueue:req];
-    
-    if (self.initFinished || !self.hasNetwork) {
-        self.lastRequestWasInit = NO;
-        [self processNextQueueItem];
-    }
+    [self processNextQueueItem];
 }
 
 - (NSDictionary *)getFirstReferringParams {
@@ -935,11 +864,8 @@ static Branch *currInstance;
 }
 
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(ReferralCodeCalculation)calcType location:(ReferralCodeLocation)location andCallback:(callbackWithParams)callback {
-    if (self.initFailed || self.initNotCalled) {
-        if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCNotInitError userInfo:[BNCError getUserInfoDictForDomain:BNCNotInitError]]);
-        }
-        return;
+    if (self.isInitialized) {
+        [self initUserSessionAndCallCallback:NO];
     }
 
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
@@ -997,11 +923,7 @@ static Branch *currInstance;
     };
 
     [self.requestQueue enqueue:req];
-    
-    if (self.initFinished || !self.hasNetwork) {
-        self.lastRequestWasInit = NO;
-        [self processNextQueueItem];
-    }
+    [self processNextQueueItem];
 }
 
 - (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
@@ -1011,14 +933,11 @@ static Branch *currInstance;
         }
         return;
     }
-    
-    if (self.initFailed || self.initNotCalled) {
-        if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCNotInitError userInfo:[BNCError getUserInfoDictForDomain:BNCNotInitError]]);
-        }
-        return;
-    }
 
+    if (self.isInitialized) {
+        [self initUserSessionAndCallCallback:NO];
+    }
+    
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
     req.tag = REQ_TAG_VALIDATE_REFERRAL_CODE;
     NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:@[code,
@@ -1053,11 +972,7 @@ static Branch *currInstance;
     };
     
     [self.requestQueue enqueue:req];
-    
-    if (self.initFinished || !self.hasNetwork) {
-        self.lastRequestWasInit = NO;
-        [self processNextQueueItem];
-    }
+    [self processNextQueueItem];
 }
 
 - (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
@@ -1068,12 +983,10 @@ static Branch *currInstance;
         return;
     }
     
-    if (self.initFailed || self.initNotCalled) {
-        if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCNotInitError userInfo:[BNCError getUserInfoDictForDomain:BNCNotInitError]]);
-        }
-        return;
+    if (self.isInitialized) {
+        [self initUserSessionAndCallCallback:NO];
     }
+    
     
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
     req.tag = REQ_TAG_APPLY_REFERRAL_CODE;
@@ -1109,11 +1022,7 @@ static Branch *currInstance;
     };
 
     [self.requestQueue enqueue:req];
-    
-    if (self.initFinished || !self.hasNetwork) {
-        self.lastRequestWasInit = NO;
-        [self processNextQueueItem];
-    }
+    [self processNextQueueItem];
 }
 
 
@@ -1122,13 +1031,10 @@ static Branch *currInstance;
 
 #pragma mark - URL Generation methods
 - (void)generateShortUrl:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback {
-    if (self.initFailed || self.initNotCalled) {
-        if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCNotInitError userInfo:[BNCError getUserInfoDictForDomain:BNCNotInitError]]);
-        }
-        return;
+    if (self.isInitialized) {
+        [self initUserSessionAndCallCallback:NO];
     }
-
+    
     BNCLinkData *post = [self prepareLinkDataFor:tags andAlias:alias andType:type andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:params ignoreUAString:nil];
     
     if ([self.linkCache objectForKey:post]) {
@@ -1182,11 +1088,7 @@ static Branch *currInstance;
     };
     
     [self.requestQueue enqueue:req];
-    
-    if (self.initFinished || !self.hasNetwork) {
-        self.lastRequestWasInit = NO;
-        [self processNextQueueItem];
-    }
+    [self processNextQueueItem];
 }
 
 - (NSString *)generateShortUrl:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSDictionary *)params ignoreUAString:(NSString *)ignoreUAString {
@@ -1204,8 +1106,7 @@ static Branch *currInstance;
         req.postData = post.data;
         req.linkData = post;
         
-        if (self.initFinished && self.hasNetwork) {
-            self.lastRequestWasInit = NO;
+        if (self.isInitialized) {
             [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Created custom url synchronously"];
             BNCServerResponse *serverResponse = [self.bServerInterface createCustomUrl:req];
             shortURL = [serverResponse.data objectForKey:URL];
@@ -1215,7 +1116,7 @@ static Branch *currInstance;
                 [self.linkCache setObject:shortURL forKey:post];
             }
         }
-        else if (self.initFailed || self.initNotCalled) {
+        else {
             NSLog(@"Branch SDK Error: making request before init succeeded!");
         }
     }
@@ -1288,19 +1189,7 @@ static Branch *currInstance;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    if (!self.isInit) {
-        self.initFailed = NO;
-        self.initNotCalled = NO;
-        self.lastRequestWasInit = YES;
-        
-        self.isInit = YES;
-        if (![self hasUser]) {
-            [self registerInstall];
-        }
-        else {
-            [self registerOpen];
-        }
-    }
+    [self initUserSessionAndCallCallback:YES];
     
     [self bnc_addDebugGestureRecognizer];
 }
@@ -1319,27 +1208,16 @@ static Branch *currInstance;
 }
 
 - (void)callClose {
-    self.isInit = NO;
-    self.lastRequestWasInit = NO;
-    self.initNotCalled = YES;
-    if (!self.hasNetwork) {
-        // if there's no network connectivity, purge the old install/open
-        BNCServerRequest *req = [self.requestQueue peek];
-        if (req && ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN])) {
-            [self.requestQueue dequeue];
-        }
-    } else {
-        if (![self.requestQueue containsClose]) {
-            BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:REQ_TAG_REGISTER_CLOSE];
-            req.postData = [[NSMutableDictionary alloc] init];
+    self.isInitialized = NO;
 
-            [self.requestQueue enqueue:req];
-        }
-        
-        if (self.initFinished || !self.hasNetwork) {
-            [self processNextQueueItem];
-        }
+    if (![self.requestQueue containsClose]) {
+        BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:REQ_TAG_REGISTER_CLOSE];
+        req.postData = [[NSMutableDictionary alloc] init];
+
+        [self.requestQueue enqueue:req];
     }
+    
+    [self processNextQueueItem];
 }
 
 // TODO pull this out of the queue
@@ -1356,14 +1234,8 @@ static Branch *currInstance;
         [self completeRequest];
     };
     
-    if (!self.initFailed) {
-        [self.requestQueue enqueue:req];
-    }
-    
-    if (self.initFinished || !self.hasNetwork) {
-        self.lastRequestWasInit = NO;
-        [self processNextQueueItem];
-    }
+    [self.requestQueue enqueue:req];
+    [self processNextQueueItem];
 }
 
 
@@ -1523,6 +1395,24 @@ static Branch *currInstance;
 
 #pragma mark - Session Initialization
 
+- (void)initUserSessionAndCallCallback:(BOOL)callCallback {
+    self.shouldCallSessionInitCallback = callCallback;
+    
+    // If the session is not yet initialized
+    if (!self.isInitialized) {
+        // If the open/install request hasn't been added, do so.
+        if (![self.requestQueue containsInstallOrOpen]) {
+            [self initializeSession];
+        }
+    }
+    // If the session was initialized, but callCallback was specified, do so.
+    else if (callCallback) {
+        if (self.sessionInitWithParamsCallback) {
+            self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
+        }
+    }
+}
+
 - (void)initializeSession {
     if (![self hasBranchKey] && ![self hasAppKey]) {
         NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
@@ -1622,18 +1512,21 @@ static Branch *currInstance;
     
     [self updateAllRequestsInQueue];
     
-    self.initFinished = YES;
-    self.initFailed = NO;
+    self.isInitialized = YES;
     
-    if (self.sessionInitWithParamsCallback) {
+    if (self.shouldCallSessionInitCallback && self.sessionInitWithParamsCallback) {
         self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
     }
+    
+    // this is default, it's only cleared to handle the case of losing connectivity.
+    // after connectivity is restored, this should be brought back.
+    self.shouldCallSessionInitCallback = YES;
     
     [self completeRequest];
 }
 
 - (void)handleInitFailure {
-    self.initFailed = YES;
+    self.isInitialized = NO;
 
     if (self.sessionInitWithParamsCallback) {
         NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCInitError];
@@ -1730,7 +1623,7 @@ static Branch *currInstance;
 #pragma mark - BNCTestDelagate
 
 - (void)simulateInitFinished {
-    self.initFinished = YES;
+    self.isInitialized = YES;
 }
 
 @end
