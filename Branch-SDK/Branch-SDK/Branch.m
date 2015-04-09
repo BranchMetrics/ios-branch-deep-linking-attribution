@@ -377,6 +377,9 @@ static Branch *currInstance;
 
 - (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
     if (!userId || [[BNCPreferenceHelper getUserIdentity] isEqualToString:userId]) {
+        if (callback) {
+            callback([self getFirstReferringParams], nil);
+        }
         return;
     }
     
