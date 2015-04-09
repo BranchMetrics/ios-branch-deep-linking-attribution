@@ -116,13 +116,18 @@
             [self genericHTTPRequest:retryRequest withTag:requestTag andLinkData:linkData retryNumber:(retryNumber + 1) log:log callback:callback retryHandler:retryHandler];
         }
         else if (callback) {
-            // Wrap bad statuses up as errors if one hasn't already been set
-            if ((status < 200 || status > 399) && !error) {
+            // Wrap up bad statuses w/ specific error messages
+            if (status > 500) {
+                error = [NSError errorWithDomain:BNCErrorDomain code:BNCRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Trouble reaching the Branch servers, please try again shortly" }];
+            }
+            else if (status > 400) {
                 NSString *errorString = [serverResponse.data objectForKey:@"error"] ?: @"The request was unsuccessful.";
 
-                error = [NSError errorWithDomain:BNCErrorDomain code:BNCRequestError userInfo:@{
-                    NSLocalizedDescriptionKey: errorString
-                }];
+                error = [NSError errorWithDomain:BNCErrorDomain code:BNCRequestError userInfo:@{ NSLocalizedDescriptionKey: errorString }];
+            }
+            
+            if (error) {
+                NSLog(@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, error.localizedDescription);
             }
 
             callback(serverResponse, error);
