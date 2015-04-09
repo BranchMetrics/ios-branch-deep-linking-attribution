@@ -26,9 +26,9 @@
 + (void)tearDown {
     [super tearDown];
 
-    [BNCPreferenceHelper clearDebug];
-
     [[LSNocilla sharedInstance] stop];
+
+    [BNCPreferenceHelper clearDebug];
 }
 
 - (void)tearDown {

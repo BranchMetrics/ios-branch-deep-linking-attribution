@@ -40,10 +40,10 @@
     }];
     
     // Expect the postRequestAsync method to be called, verify the post params
-    [[serverInterfaceMock expect] postRequestAsync:paramCheckBlock url:[OCMArg any] andTag:[OCMArg any]];
+    [[serverInterfaceMock expect] postRequest:paramCheckBlock url:[OCMArg any] andTag:[OCMArg any] callback:[OCMArg any]];
     
     // Make the actual call
-    [serverInterface registerInstall:NO];
+    [serverInterface registerInstall:NO callback:NULL];
     
     // Verify post was called with correct params
     [serverInterfaceMock verify];
@@ -68,10 +68,10 @@
     }];
     
     // Expect the postRequestAsync method to be called, verify the post params
-    [[serverInterfaceMock expect] postRequestAsync:paramCheckBlock url:[OCMArg any] andTag:[OCMArg any]];
+    [[serverInterfaceMock expect] postRequest:paramCheckBlock url:[OCMArg any] andTag:[OCMArg any] callback:[OCMArg any]];
     
     // Make the actual call
-    [serverInterface registerInstall:NO];
+    [serverInterface registerInstall:NO callback:NULL];
     
     // Verify post was called with correct params
     [serverInterfaceMock verify];
@@ -100,10 +100,10 @@
     }];
     
     // Expect the postRequestAsync method to be called, verify the post params
-    [[serverInterfaceMock expect] postRequestAsync:paramCheckBlock url:[OCMArg any] andTag:[OCMArg any]];
+    [[serverInterfaceMock expect] postRequest:paramCheckBlock url:[OCMArg any] andTag:[OCMArg any] callback:[OCMArg any]];
     
     // Make the actual call
-    [serverInterface registerOpen:NO];
+    [serverInterface registerOpen:NO callback:NULL];
     
     // Verify post was called with correct params
     [serverInterfaceMock verify];
@@ -128,10 +128,10 @@
     }];
     
     // Expect the postRequestAsync method to be called, verify the post params
-    [[serverInterfaceMock expect] postRequestAsync:paramCheckBlock url:[OCMArg any] andTag:[OCMArg any]];
+    [[serverInterfaceMock expect] postRequest:paramCheckBlock url:[OCMArg any] andTag:[OCMArg any] callback:[OCMArg any]];
     
     // Make the actual call
-    [serverInterface registerOpen:NO];
+    [serverInterface registerOpen:NO callback:NULL];
     
     // Verify post was called with correct params
     [serverInterfaceMock verify];
