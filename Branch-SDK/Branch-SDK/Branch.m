@@ -348,7 +348,7 @@ static Branch *currInstance;
         return;
     }
     
-    if (self.isInitialized) {
+    if (!self.isInitialized) {
         [self initUserSessionAndCallCallback:NO];
     }
     
@@ -434,7 +434,7 @@ static Branch *currInstance;
 #pragma mark - User Action methods
 
 - (void)loadActionCountsWithCallback:(callbackWithStatus)callback {
-    if (self.isInitialized) {
+    if (!self.isInitialized) {
         [self initUserSessionAndCallCallback:NO];
     }
 
@@ -493,7 +493,7 @@ static Branch *currInstance;
         return;
     }
     
-    if (self.isInitialized) {
+    if (!self.isInitialized) {
         [self initUserSessionAndCallCallback:NO];
     }
     
@@ -525,7 +525,7 @@ static Branch *currInstance;
 #pragma mark - Credit methods
 
 - (void)loadRewardsWithCallback:(callbackWithStatus)callback {
-    if (self.isInitialized) {
+    if (!self.isInitialized) {
         [self initUserSessionAndCallCallback:NO];
     }
 
@@ -620,7 +620,7 @@ static Branch *currInstance;
 }
 
 - (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(CreditHistoryOrder)order andCallback:(callbackWithList)callback {
-    if (self.isInitialized) {
+    if (!self.isInitialized) {
         [self initUserSessionAndCallCallback:NO];
     }
 
@@ -864,7 +864,7 @@ static Branch *currInstance;
 }
 
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(ReferralCodeCalculation)calcType location:(ReferralCodeLocation)location andCallback:(callbackWithParams)callback {
-    if (self.isInitialized) {
+    if (!self.isInitialized) {
         [self initUserSessionAndCallCallback:NO];
     }
 
@@ -934,7 +934,7 @@ static Branch *currInstance;
         return;
     }
 
-    if (self.isInitialized) {
+    if (!self.isInitialized) {
         [self initUserSessionAndCallCallback:NO];
     }
     
@@ -983,7 +983,7 @@ static Branch *currInstance;
         return;
     }
     
-    if (self.isInitialized) {
+    if (!self.isInitialized) {
         [self initUserSessionAndCallCallback:NO];
     }
     
@@ -1031,7 +1031,7 @@ static Branch *currInstance;
 
 #pragma mark - URL Generation methods
 - (void)generateShortUrl:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback {
-    if (self.isInitialized) {
+    if (!self.isInitialized) {
         [self initUserSessionAndCallCallback:NO];
     }
     
@@ -1106,7 +1106,7 @@ static Branch *currInstance;
         req.postData = post.data;
         req.linkData = post;
         
-        if (self.isInitialized) {
+        if (!self.isInitialized) {
             [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Created custom url synchronously"];
             BNCServerResponse *serverResponse = [self.bServerInterface createCustomUrl:req];
             shortURL = [serverResponse.data objectForKey:URL];
