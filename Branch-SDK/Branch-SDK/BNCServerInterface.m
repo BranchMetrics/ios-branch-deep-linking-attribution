@@ -13,21 +13,7 @@
 #import "BNCEncodingUtils.h"
 #import "BNCError.h"
 
-@interface BNCServerInterface ()
-
-@property (strong, nonatomic) NSOperationQueue *operationQueue;
-
-@end
-
 @implementation BNCServerInterface
-
-- (id)init {
-    if (self = [super init]) {
-        self.operationQueue = [[NSOperationQueue alloc] init];
-    }
-    
-    return self;
-}
 
 #pragma mark - GET methods
 
@@ -98,7 +84,7 @@
 }
 
 - (void)genericHTTPRequest:(NSURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData retryNumber:(NSInteger)retryNumber log:(BOOL)log callback:(BNCServerCallback)callback retryHandler:(NSURLRequest *(^)(NSInteger))retryHandler {
-    [NSURLConnection sendAsynchronousRequest:request queue:self.operationQueue completionHandler:^(NSURLResponse *response, NSData *responseData, NSError *error) {
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *responseData, NSError *error) {
         BNCServerResponse *serverResponse = [self processServerResponse:response data:responseData error:error tag:requestTag andLinkData:linkData];
         NSInteger status = [serverResponse.statusCode integerValue];
         BOOL isRetryableStatusCode = status >= 500;
