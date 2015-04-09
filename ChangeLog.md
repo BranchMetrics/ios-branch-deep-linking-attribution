@@ -1,5 +1,12 @@
 Branch iOS SDK change log
 
+- v0.5.9: Revert of the URI Scheme updates.
+
+- v0.5.8:
+  * Fixing an issue with the creation of NSError userInfo dictionaries.
+  * Updating behavior of URI Scheme detection -- you should now name the scheme you want to use "io.branch.sdk." The previous behavior will be maintained for some time.
+  * You can additionally specify which scheme to use via `[[Branch getInstance] setUriScheme:@"myapp://"]`
+
 - v0.5.7: Adding handling around the Facebook share sheet to prevent incorrect link clicks. Removing `branch_key` warning message.
 
 - v0.5.6: Issue sending proper update to server if isReferrable not set

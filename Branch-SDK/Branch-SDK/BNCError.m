@@ -15,42 +15,39 @@ NSString * const BNCErrorDomain = @"io.branch";
 + (NSDictionary *)getUserInfoDictForDomain:(NSInteger)code {
     switch (code) {
         case BNCInitError:
-            return [NSDictionary dictionaryWithObject:@[@"Failed to initialize - are you using the right Branch key?"] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Failed to initialize" };
         case BNCCloseError:
-            return [NSDictionary dictionaryWithObject:@[@"Trouble closing the session."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Trouble closing the session" };
         case BNCEventError:
-            return [NSDictionary dictionaryWithObject:@[@"Trouble registering the event."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Trouble registering the event" };
         case BNCGetReferralsError:
-            return [NSDictionary dictionaryWithObject:@[@"Trouble getting the referral counts."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Trouble getting the referral counts" };
         case BNCGetCreditsError:
-            return [NSDictionary dictionaryWithObject:@[@"Trouble getting the credits."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Trouble getting the credits" };
         case BNCGetCreditHistoryError:
-            return [NSDictionary dictionaryWithObject:@[@"Trouble retrieving the credit history."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Trouble retrieving the credit history" };
         case BNCRedeemCreditsError:
-            return [NSDictionary dictionaryWithObject:@[@"Trouble redeeming the credits."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Trouble redeeming the credits" };
         case BNCCreateURLError:
-            return [NSDictionary dictionaryWithObject:@[@"Trouble creating the URL."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Trouble creating the URL" };
         case BNCIdentifyError:
-            return [NSDictionary dictionaryWithObject:@[@"Trouble assigning alias to user."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Trouble assigning alias to user" };
         case BNCLogoutError:
-            return [NSDictionary dictionaryWithObject:@[@"Trouble logging out."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Trouble logging out" };
         case BNCGetReferralCodeError:
-            return [NSDictionary dictionaryWithObject:@[@"Trouble creating that referral code."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Trouble creating that referral code" };
         case BNCDuplicateReferralCodeError:
-            return [NSDictionary dictionaryWithObject:@[@"That referral code is already taken for a different user and parameter set."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"That referral code is already taken for a different user and parameter set" };
         case BNCValidateReferralCodeError:
-            return [NSDictionary dictionaryWithObject:@[@"Trouble validating referral code."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Trouble validating referral code" };
         case BNCInvalidReferralCodeError:
-            return [NSDictionary dictionaryWithObject:@[@"Referral code is invalid."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Referral code is invalid - has it already been used or the code might not exist" };
         case BNCApplyReferralCodeError:
-            return [NSDictionary dictionaryWithObject:@[@"Troubling applying referral code."] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"Troubling applying referral code" };
         case BNCCreateURLDuplicateAliasError:
-            return [NSDictionary dictionaryWithObject:@[@"That link alias is already taken for your domain - please try a different one or adjust the parameters to retrieve one that's already been created."] forKey:NSLocalizedDescriptionKey];
-        case BNCNotInitError:
-            return [NSDictionary dictionaryWithObject:@[@"You can't make a Branch call without first initializing the session. Did you add the initSession call to the AppDelegate?"] forKey:NSLocalizedDescriptionKey];
+            return @{ NSLocalizedDescriptionKey: @"That link alias is already taken for your domain - please try a different one or adjust the parameters to retrieve on that's already been created" };
     }
-
-    return [NSDictionary dictionaryWithObject:@[@"Trouble reaching server. Please try again in a few minutes"] forKey:NSLocalizedDescriptionKey];
+    return @{ NSLocalizedDescriptionKey: @"Trouble reaching server. Please try again in a few minutes" };
 }
 
 @end

@@ -68,7 +68,7 @@ You can register your app to respond to direct deep links (yourapp:// in a mobil
 
 1. In Xcode, click on YourProject-Info.plist on the left.
 1. Find URL Types and click the right arrow. (If it doesn't exist, right click anywhere and choose Add Row. Scroll down and choose URL Types)
-1. Add "io.branch.sdk" as the URL Identifier and create an Array of URL Schems with an entry, "yourapp," where yourapp is a unique string for your app, as an item in URL Schemes as below:
+1. Add "yourapp", where yourapp is a unique string for your app, as an item in URL Schemes as below:
 
 ![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlScheme.png)
 
@@ -81,27 +81,13 @@ Alternatively, you can add the URI scheme in your project's Info page.
 
 ![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png)
 
-### Configure Branch Uri Scheme (optional)
-
-If you've already specified a Uri Scheme you would prefer to use in place of the Branch default, you can manually specify it via the `setUriScheme` method. Note that you should call this *before* initializing Branch; the install/open calls utilize this value, and will fall back to the default behavior if you don't set it ahead of time.
-
-###### Objective C
-```objc
-[[Branch getInstance] setUriScheme:@"myScheme"];
-```
-
-###### Swift
-```swift
-Branch = Branch.getInstance().setUriScheme("myScheme")
-```
-
 ### Add your Branch Key to your project
 
 After you register your app, your app key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift).
 
 1. In plist file, mouse hover "Information Property List" which is the root item under the Key column.
 1. After about half a second, you will see a "+" sign appear. Click it.
-1. In the newly added row, fill in "branch_key" for its key, leave type as String, and enter your Branch Key obtained in above steps in its value column.
+1. In the newly added row, fill in "bnc_app_key" for its key, leave type as String, and enter your Branch Key obtained in above steps in its value column.
 1. Save the plist file.
 
 For additional help configuring the SDK, including step-by-step instructions, please see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios_quickstart.md).
