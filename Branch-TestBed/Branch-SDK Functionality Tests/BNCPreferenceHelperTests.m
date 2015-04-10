@@ -44,7 +44,8 @@
 
     [BNCPreferenceHelper setDebug];
     
-    [NSThread sleepForTimeInterval:1]; // Allow request to complete
+    // Allow request to complete;
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     
     XCTAssertTrue([BNCPreferenceHelper isRemoteDebug]);
 }
