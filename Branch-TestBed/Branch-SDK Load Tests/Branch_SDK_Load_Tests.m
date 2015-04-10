@@ -12,6 +12,7 @@
 #import "BNCServerInterface.h"
 #import "Nocilla.h"
 #import "BNCEncodingUtils.h"
+#import "BNCServerRequestQueue.h"
 
 @interface Branch_SDK_Load_Tests : XCTestCase {
     
@@ -39,6 +40,8 @@
     [BNCPreferenceHelper simulateInitFinished];
     
     [[LSNocilla sharedInstance] start];
+    
+    [[BNCServerRequestQueue getInstance] clearQueue];
 }
 
 - (void)tearDown {
@@ -72,7 +75,7 @@
         [getShortURLExpectation fulfill];
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
     }];
 }
 
