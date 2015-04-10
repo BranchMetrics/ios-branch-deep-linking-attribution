@@ -105,35 +105,35 @@ This deep link routing callback is called 100% of the time on init, with your li
 ###### Objective-C
 ```objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-// your other init code
+    // your other init code
 
-Branch *branch = [Branch getInstance];
-[branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {		// previously initUserSessionWithCallback:withLaunchOptions:
-if (!error) {
-// params are the deep linked params associated with the link that the user clicked before showing up
-// params will be empty if no data found
+    Branch *branch = [Branch getInstance];
+    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {     // previously initUserSessionWithCallback:withLaunchOptions:
+        if (!error) {
+            // params are the deep linked params associated with the link that the user clicked before showing up
+            // params will be empty if no data found
 
 
-// here is the data from the example below if a new user clicked on Joe's link and installed the app
-NSString *name = [params objectForKey:@"user"]; // returns Joe
-NSString *profileUrl = [params objectForKey:@"profile_pic"]; // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
-NSString *description = [params objectForKey:@"description"]; // returns Joe likes long walks on the beach...
+            // here is the data from the example below if a new user clicked on Joe's link and installed the app
+            NSString *name = [params objectForKey:@"user"]; // returns Joe
+            NSString *profileUrl = [params objectForKey:@"profile_pic"]; // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
+            NSString *description = [params objectForKey:@"description"]; // returns Joe likes long walks on the beach...
 
-// route to a profile page in the app for Joe
-// show a customer welcome
-}
-}];
+            // route to a profile page in the app for Joe
+            // show a customer welcome
+        }
+    }];
 }
 ```
 
 ```objc
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-// pass the url to the handle deep link call
-// if handleDeepLink returns YES, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
-if (![[Branch getInstance] handleDeepLink:url]) {
-// do other deep link routing for the Facebook SDK, Pinterest SDK, etc
-}
-return YES;
+    // pass the url to the handle deep link call
+    // if handleDeepLink returns YES, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
+    if (![[Branch getInstance] handleDeepLink:url]) {
+        // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+    }
+    return YES;
 }
 ```
 
@@ -149,44 +149,44 @@ Or
 Branch *branch = [Branch getInstance:@"your test branch key"];  // replace with your actual branch key
 ```
 
-Either way, we recommend you put a #warning directive to remind you to change back to live app during deployment later. 
+Either way, we recommend you put a #warning directive to remind you to change back to live app during deployment later.
 Also, note the Branch object is singleton, so you can and should still use `[Branch getInstance]` in all the other places (see examples below).
 
 ###### Swift
 ```swift
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-// your other init code
+    // your other init code
 
-let branch: Branch = Branch.getInstance()
-branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
-if (error == nil) {
-// params are the deep linked params associated with the link that the user clicked before showing up
-// params will be empty if no data found
+    let branch: Branch = Branch.getInstance()
+    branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
+        if (error == nil) {
+            // params are the deep linked params associated with the link that the user clicked before showing up
+            // params will be empty if no data found
 
 
-// here is the data from the example below if a new user clicked on Joe's link and installed the app
-let name = params["user"] as? String                // returns Joe
-let profileUrl = params["profile_pic"] as? String   // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
-let description = params["description"] as? String  // returns Joe likes long walks on the beach...
+            // here is the data from the example below if a new user clicked on Joe's link and installed the app
+            let name = params["user"] as? String                // returns Joe
+            let profileUrl = params["profile_pic"] as? String   // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
+            let description = params["description"] as? String  // returns Joe likes long walks on the beach...
 
-// route to a profile page in the app for Joe
-// show a customer welcome
-}
-})
+            // route to a profile page in the app for Joe
+            // show a customer welcome
+        }
+    })
 
-return true
+    return true
 }
 ```
 
 ```swift
 func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
-// pass the url to the handle deep link call
-// if handleDeepLink returns true, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
-if (!Branch.getInstance().handleDeepLink(url)) {
-// do other deep link routing for the Facebook SDK, Pinterest SDK, etc
-}
+    // pass the url to the handle deep link call
+    // if handleDeepLink returns true, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
+    if (!Branch.getInstance().handleDeepLink(url)) {
+        // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+    }
 
-return true
+    return true
 }
 ```
 
@@ -202,7 +202,7 @@ Or
 let branch: Branch = Branch.getInstance("your test branch key");  // replace with your actual branch key
 ```
 
-Either way, we recommend you put a //TODO: or //FIXME landmark to remind you to change back to live app during deployment later. 
+Either way, we recommend you put a //TODO: or //FIXME landmark to remind you to change back to live app during deployment later.
 Also, note the Branch object is singleton, so you can and should still use `Branch.getInstance()` in all the other places (see examples below).
 
 #### Encoding Note
@@ -250,14 +250,14 @@ To identify a user, just call:
 
 ```objc
 // previously identifyUser:
-[[Branch getInstance] setIdentity:your user id];	// your user id should not exceed 127 characters
+[[Branch getInstance] setIdentity:your user id];    // your user id should not exceed 127 characters
 ```
 
 ###### Swift
 
 ```swift
 // previously identifyUser:
-Branch.getInstance().setIdentity(your user id)	// your user id should not exceed 127 characters
+Branch.getInstance().setIdentity(your user id)  // your user id should not exceed 127 characters
 ```
 
 #### Logout
@@ -269,13 +269,13 @@ If you provide a logout function in your app, be sure to clear the user when the
 ###### Objective-C
 
 ```objc
-[[Branch getInstance] logout];	// previously clearUser
+[[Branch getInstance] logout];  // previously clearUser
 ```
 
 ###### Swift
 
 ```swift
-Branch.getInstance().logout()	// previously clearUser
+Branch.getInstance().logout()   // previously clearUser
 ```
 
 ### Register custom events
@@ -356,7 +356,7 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 
 Branch *branch = [Branch getInstance];
 [branch getShortURLWithParams:params andTags:@[@"version1", @"trial6"] andChannel:@"text_message" andFeature:BRANCH_FEATURE_TAG_SHARE andStage:@"level_6" andAlias:@"AUSTIN68" andCallback:^(NSString *url, NSError *error) {
-// show the link to the user or share it immediately
+    // show the link to the user or share it immediately
 }];
 
 // The callback will return null if the link generation fails (or if the alias specified is aleady taken.)
@@ -395,9 +395,9 @@ params["$desktop_url"] = "http://myapp.com/desktop_splash"
 // The callback will return null if the link generation fails (or if the alias specified is aleady taken.)
 
 Branch.getInstance().getShortURLWithParams(params, andTags: ["version1", "trial6"], andChannel: "text_message", andFeature: BRANCH_FEATURE_TAG_SHARE, andStage: "level_6", andAlias: "AUSTIN68", andCallback: { (url: String!, error: NSError!) -> Void in
-if (error == nil) {
-// show the link to the user or share it immediately
-}
+    if (error == nil) {
+        // show the link to the user or share it immediately
+    }
 })
 ```
 
@@ -500,7 +500,7 @@ var items: Array = [AnyObject]()
 let shareString = "Super amazing thing I want to share!"
 items.append(shareString)
 if let amazingImage: UIImage = UIImage(named: "mada.png") {
-items.append(amazingImage)
+    items.append(amazingImage)
 }
 
 var params = ["user": "Joe"]
@@ -552,10 +552,10 @@ Reward balances change randomly on the backend when certain actions are taken (d
 
 ```objc
 [[Branch getInstance] loadRewardsWithCallback:^(BOOL changed, NSError *error) {
-// changed boolean will indicate if the balance changed from what is currently in memory
+    // changed boolean will indicate if the balance changed from what is currently in memory
 
-// will return the balance of the current user's credits
-NSInteger credits = [[Branch getInstance] getCredits];
+    // will return the balance of the current user's credits
+    NSInteger credits = [[Branch getInstance] getCredits];
 }];
 ```
 
@@ -563,10 +563,10 @@ NSInteger credits = [[Branch getInstance] getCredits];
 
 ```swift
 Branch().loadRewardsWithCallback { (changed: Bool, error: NSError!) -> Void in
-// changed boolean will indicate if the balance changed from what is currently in memory
+    // changed boolean will indicate if the balance changed from what is currently in memory
 
-// will return the balance of the current user's credits
-let credits = Branch().getCredits()
+    // will return the balance of the current user's credits
+    let credits = Branch().getCredits()
 }
 ```
 
@@ -596,9 +596,9 @@ This call will retrieve the entire history of credits and redemptions from the i
 
 ```objc
 [[Branch getInstance] getCreditHistoryWithCallback:^(NSArray *history, NSError *error) {
-if (!error) {
-// process history
-}
+    if (!error) {
+        // process history
+    }
 }];
 ```
 
@@ -606,9 +606,9 @@ if (!error) {
 
 ```swift
 Branch.getInstance().getCreditHistoryWithCallback { (history: [AnyObject]!, error: NSError!) -> Void in
-if (error == nil) {
-// process history
-}
+    if (error == nil) {
+        // process history
+    }
 }
 ```
 
@@ -616,28 +616,28 @@ The response will return an array that has been parsed from the following JSON:
 
 ```json
 [
-{
-"transaction": {
-"date": "2014-10-14T01:54:40.425Z",
-"id": "50388077461373184",
-"bucket": "default",
-"type": 0,
-"amount": 5
-},
-"referrer": "12345678",
-"referree": null
-},
-{
-"transaction": {
-"date": "2014-10-14T01:55:09.474Z",
-"id": "50388199301710081",
-"bucket": "default",
-"type": 2,
-"amount": -3
-},
-"referrer": null,
-"referree": "12345678"
-}
+    {
+        "transaction": {
+                           "date": "2014-10-14T01:54:40.425Z",
+                           "id": "50388077461373184",
+                           "bucket": "default",
+                           "type": 0,
+                           "amount": 5
+                       },
+        "referrer": "12345678",
+        "referree": null
+    },
+    {
+        "transaction": {
+                           "date": "2014-10-14T01:55:09.474Z",
+                           "id": "50388199301710081",
+                           "bucket": "default",
+                           "type": 2,
+                           "amount": -3
+                       },
+        "referrer": null,
+        "referree": "12345678"
+    }
 ]
 ```
 **referrer**
@@ -662,9 +662,9 @@ Retrieve the referral code created by current user
 
 ```objc
 [[Branch getInstance] getReferralCodeWithCallback:^(NSDictionary *params, NSError *error) {
-if (!error) {
-NSString *referralCode = [params objectForKey:@"referral_code"];
-}
+    if (!error) {
+        NSString *referralCode = [params objectForKey:@"referral_code"];
+    }
 }];
 ```
 
@@ -672,9 +672,9 @@ NSString *referralCode = [params objectForKey:@"referral_code"];
 
 ```swift
 Branch.getInstance().getReferralCodeWithCallback { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
-if (error == nil) {
-let referralCode: AnyObject? = params["referral_code"]
-}
+    if (error == nil) {
+        let referralCode: AnyObject? = params["referral_code"]
+    }
 }
 ```
 
@@ -693,12 +693,12 @@ The returned referral code is a 6 character long unique alpha-numeric string wra
 ```objc
 // Create a referral code of 5 credits
 [[Branch getInstance] getReferralCodeWithAmount:5
-andCallback:^(NSDictionary *params, NSError *error) {
-if (!error) {
-NSString *referralCode = [params objectForKey:@"referral_code"];
-// do whatever with referralCode
-}
-}
+                                    andCallback:^(NSDictionary *params, NSError *error) {
+                                        if (!error) {
+                                            NSString *referralCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with referralCode
+                                        }
+                                    }
 ];
 ```
 
@@ -707,10 +707,10 @@ NSString *referralCode = [params objectForKey:@"referral_code"];
 ```swift
 // Create a referral code of 5 credits
 Branch.getInstance().getReferralCodeWithAmount(5, andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
-if (error == nil) {
-let referralCode: AnyObject? = params["referral_code"]
-// do whatever with referralCode
-}
+    if (error == nil) {
+        let referralCode: AnyObject? = params["referral_code"]
+        // do whatever with referralCode
+    }
 })
 ```
 
@@ -725,13 +725,13 @@ The resulting code will have your prefix, concatenated with a 4 character long u
 ```objc
 // Create a referral code with prefix "BRANCH", 5 credits, and without an expiration date
 [[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-amount:5
-andCallback:^(NSDictionary *params, NSError *error) {
-if (!error) {
-NSString *referralCode = [params objectForKey:@"referral_code"];
-// do whatever with referralCode
-}
-}
+                                         amount:5
+                                    andCallback:^(NSDictionary *params, NSError *error) {
+                                        if (!error) {
+                                            NSString *referralCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with referralCode
+                                        }
+                                    }
 ];
 ```
 
@@ -741,10 +741,10 @@ NSString *referralCode = [params objectForKey:@"referral_code"];
 // Create a referral code with prefix "BRANCH", 5 credits, and without an expiration date
 // prefix should not exceed 48 characters
 Branch.getInstance().getReferralCodeWithPrefix("BRANCH", amount: 5, andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
-if (error == nil) {
-let referralCode: AnyObject? = params["referral_code"]
-// do whatever with referralCode
-}
+    if (error == nil) {
+        let referralCode: AnyObject? = params["referral_code"]
+        // do whatever with referralCode
+    }
 })
 ```
 
@@ -758,14 +758,14 @@ The prefix parameter is optional here, i.e. it could be getReferralCodeWithAmoun
 
 ```objc
 [[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-amount:5
-expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
-andCallback:^(NSDictionary *params, NSError *error) {
-if (!error) {
-NSString *referralCode = [params objectForKey:@"referral_code"];
-// do whatever with referralCode
-}
-}
+                                         amount:5
+                                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+                                    andCallback:^(NSDictionary *params, NSError *error) {
+                                        if (!error) {
+                                            NSString *referralCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with referralCode
+                                        }
+                                    }
 ];
 ```
 
@@ -774,10 +774,10 @@ NSString *referralCode = [params objectForKey:@"referral_code"];
 ```swift
 // prefix should not exceed 48 characters
 Branch.getInstance().getReferralCodeWithPrefix("BRANCH", amount: 5, expiration: NSDate().dateByAddingTimeInterval(60*60*24), andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
-if (error == nil) {
-let referralCode: AnyObject? = params["referral_code"]
-// do whatever with referralCode
-}
+    if (error == nil) {
+        let referralCode: AnyObject? = params["referral_code"]
+        // do whatever with referralCode
+    }
 })
 ```
 
@@ -803,17 +803,17 @@ You can also tune the referral code to the finest granularity, with the followin
 
 ```objc
 [[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-amount:5
-expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
-bucket:@"default"
-calculationType:BranchUniqueRewards
-location:BranchBothUsers
-andCallback:^(NSDictionary *params, NSError *error) {
-if (!error) {
-NSString *referralCode = [params objectForKey:@"referral_code"];
-// do whatever with referralCode
-}
-}
+                                         amount:5
+                                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+                                         bucket:@"default"
+                                calculationType:BranchUniqueRewards
+                                       location:BranchBothUsers
+                                    andCallback:^(NSDictionary *params, NSError *error) {
+                                        if (!error) {
+                                            NSString *referralCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with referralCode
+                                        }
+                                    }
 ];
 ```
 
@@ -822,16 +822,16 @@ NSString *referralCode = [params objectForKey:@"referral_code"];
 ```swift
 // prefix should not exceed 48 characters
 Branch.getInstance().getReferralCodeWithPrefix("BRANCH",
-amount: 5,
-expiration: NSDate().dateByAddingTimeInterval(60*60*24),
-bucket: "default",
-calculationType: BranchUniqueRewards,
-location: BranchBothUsers,
-andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
-if (error == nil) {
-let referralCode: AnyObject? = params["referral_code"]
-// do whatever with referralCode
-}
+    amount: 5,
+    expiration: NSDate().dateByAddingTimeInterval(60*60*24),
+    bucket: "default",
+    calculationType: BranchUniqueRewards,
+    location: BranchBothUsers,
+    andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+    if (error == nil) {
+        let referralCode: AnyObject? = params["referral_code"]
+        // do whatever with referralCode
+    }
 })
 ```
 
@@ -852,15 +852,15 @@ If valid, returns the referral code JSONObject in the call back.
 
 ```objc
 [[Branch getInstance] validateReferralCode:code andCallback:^(NSDictionary *params, NSError *error) {
-if (!error) {
-if ([code isEqualToString:[params objectForKey:@"referral_code"]]) {
-// valid
-} else {
-// invalid (should never happen)
-}
-} else {
-NSLog(@"Error in validating referral code: %@", error.localizedDescription);
-}
+    if (!error) {
+        if ([code isEqualToString:[params objectForKey:@"referral_code"]]) {
+            // valid
+        } else {
+            // invalid (should never happen)
+        }
+    } else {
+        NSLog(@"Error in validating referral code: %@", error.localizedDescription);
+    }
 }];
 ```
 
@@ -868,15 +868,15 @@ NSLog(@"Error in validating referral code: %@", error.localizedDescription);
 
 ```swift
 Branch.getInstance().validateReferralCode(code, andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
-if (error == nil) {
-if let returnedCode = params["referral_code"] as? String {
-// valid
-} else {
-// invalid (should never happen)
-}
-} else {
-NSLog("Error in validating referral code: %@", error.localizedDescription)
-}
+    if (error == nil) {
+        if let returnedCode = params["referral_code"] as? String {
+            // valid
+        } else {
+            // invalid (should never happen)
+        }
+    } else {
+        NSLog("Error in validating referral code: %@", error.localizedDescription)
+    }
 })
 ```
 
@@ -891,11 +891,11 @@ Apply a referral code if it exists in Branch system and is still valid (see abov
 
 ```objc
 [[Branch getInstance] applyReferralCode:code andCallback:^(NSDictionary *params, NSError *error) {
-if (!error) {
-// applied. you can get the referral code amount from the params and deduct it in your UI.
-} else {
-NSLog(@"Error in applying referral code: %@", error.localizedDescription);
-}
+    if (!error) {
+        // applied. you can get the referral code amount from the params and deduct it in your UI.
+    } else {
+        NSLog(@"Error in applying referral code: %@", error.localizedDescription);
+    }
 }];
 ```
 
@@ -903,10 +903,11 @@ NSLog(@"Error in applying referral code: %@", error.localizedDescription);
 
 ```swift
 Branch.getInstance().applyReferralCode(code, andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
-if (error == nil) {
-// applied. you can get the referral code amount from the params and deduct it in your UI.
-} else {
-NSLog("Error in applying referral code: %@", error.localizedDescription);
-}
+    if (error == nil) {
+        // applied. you can get the referral code amount from the params and deduct it in your UI.
+    } else {
+        NSLog("Error in applying referral code: %@", error.localizedDescription);
+    }
 })
 ```
+
