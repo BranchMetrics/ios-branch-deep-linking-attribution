@@ -10,15 +10,15 @@
 #import "BranchServerInterface.h"
 #import "BNCPreferenceHelper.h"
 
-#define STORAGE_KEY     @"BNCServerRequestQueue"
-
+NSString * const STORAGE_KEY = @"BNCServerRequestQueue";
+NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 
 @interface BNCServerRequestQueue()
 
 @property (nonatomic, strong) NSMutableArray *queue;
 @property (nonatomic) dispatch_queue_t asyncQueue;
+@property (strong, nonatomic) NSTimer *writeTimer;
 
-- (void)persist;
 + (NSMutableArray *)retrieve;
 
 @end
@@ -38,7 +38,7 @@
     @synchronized(self.queue) {
         if (request) {
             [self.queue addObject:request];
-            [self persist];
+            [self persistEventually];
         }
     }
 }
@@ -52,7 +52,7 @@
         
         if (request) {
             [self.queue insertObject:request atIndex:index];
-            [self persist];
+            [self persistEventually];
         }
     }
 }
@@ -64,7 +64,7 @@
         if (self.queue.count > 0) {
             request = [self.queue objectAtIndex:0];
             [self.queue removeObjectAtIndex:0];
-            [self persist];
+            [self persistEventually];
         }
     }
     
@@ -81,7 +81,7 @@
         
         request = [self.queue objectAtIndex:index];
         [self.queue removeObjectAtIndex:index];
-        [self persist];
+        [self persistEventually];
     }
     
     return request;
@@ -114,7 +114,7 @@
 
 - (void)clearQueue {
     [self.queue removeAllObjects];
-    [self persist];
+    [self persistEventually];
 }
 
 - (BOOL)containsInstallOrOpen {
@@ -157,9 +157,21 @@
 
 #pragma mark - Private method
 
-- (void)persist {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+- (void)persistEventually {
+    if (!self.writeTimer.valid) {
+        self.writeTimer = [NSTimer scheduledTimerWithTimeInterval:BATCH_WRITE_TIMEOUT target:self selector:@selector(persistToDisk) userInfo:nil repeats:NO];
+    }
+}
+
+- (void)persistImmediately {
+    [self.writeTimer invalidate];
+    
+    [self persistToDisk];
+}
+
+- (void)persistToDisk {
     dispatch_async(self.asyncQueue, ^{
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         @synchronized(self.queue) {
             NSMutableArray *arr = [[NSMutableArray alloc] init];
             for (BNCServerRequest *req in self.queue) {
