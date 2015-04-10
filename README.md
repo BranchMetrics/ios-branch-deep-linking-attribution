@@ -87,12 +87,16 @@ After you register your app, your Branch Key can be retrieved on the [Settings](
 
 1. In plist file, mouse hover "Information Property List" which is the root item under the Key column.
 1. After about half a second, you will see a "+" sign appear. Click it.
-1. In the newly added row, fill in "branch_key" for its key, leave type as String*, and enter your app's Branch Key obtained in above steps in the value column.
+1. In the newly added row, fill in "branch_key" for its key, leave type as String, and enter your app's Branch Key obtained in above steps in the value column.
 1. Save the plist file.
 
-* If you want to add key for both your live and test apps at the same time, you need change this type to Dictionary, and add two entries inside:
+![Branch Key Demo](docs/images/branch-key-plist.png)
+
+If you want to add key for both your live and test apps at the same time, you need change the type column to Dictionary, and add two entries inside:
 1. For live app, use "live" (without double quotes) for key, String for type, and your live branch key for value
 1. For test app, use "test" (without double quotes) for key, String for type, and your test branch key for value
+
+![Branch Multi Key Demo](docs/images/branch-multi-key-plist.png)
 
 For additional help configuring the SDK, including step-by-step instructions, please see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios_quickstart.md).
 
@@ -150,7 +154,7 @@ Branch *branch = [Branch getInstance:@"your test branch key"];  // replace with 
 ```
 
 Either way, we recommend you put a #warning directive to remind you to change back to live app during deployment later.
-Also, note the Branch object is singleton, so you can and should still use `[Branch getInstance]` in all the other places (see examples below).
+Also, note the Branch object is singleton, so calling `[Branch getInstance]` in all the other places will still get you the same test branch object instantiated here.
 
 ###### Swift
 ```swift
