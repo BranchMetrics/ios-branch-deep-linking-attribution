@@ -36,7 +36,7 @@ compiled SDK size: ~155kb
 
 Branch is available through [CocoaPods](http://cocoapods.org), to install it simply add the following line to your Podfile:
 
-pod "Branch"
+    pod "Branch"
 
 #### Or download the raw files
 
