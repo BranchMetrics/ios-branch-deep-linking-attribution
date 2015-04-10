@@ -971,10 +971,6 @@ static Branch *currInstance;
         if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
             NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
         }
-        NSString *appId = [BNCPreferenceHelper getAppKey];
-        if (!appId || [appId isEqualToString:NO_STRING_VALUE]) {
-            NSLog(@"Branch Warning: Please enter your bnc_app_key in the plist!");
-        }
         
         [Branch initInstance];
     }

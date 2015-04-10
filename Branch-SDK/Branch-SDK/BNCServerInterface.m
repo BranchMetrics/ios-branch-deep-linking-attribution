@@ -124,8 +124,7 @@
     NSString *branchKey = [BNCPreferenceHelper getBranchKey];
     if (![branchKey isEqualToString:NO_STRING_VALUE]) {
         fullParamDict[KEY_BRANCH_KEY] = branchKey;
-    }
-    if (![appId isEqualToString:NO_STRING_VALUE]) {
+    } else if (![appId isEqualToString:NO_STRING_VALUE]) {
         fullParamDict[@"app_id"] = appId;
     }
     
@@ -153,8 +152,7 @@
     NSString *branchKey = [BNCPreferenceHelper getBranchKey];
     if (![branchKey isEqualToString:NO_STRING_VALUE]) {
         fullParamDict[KEY_BRANCH_KEY] = branchKey;
-    }
-    if (![appId isEqualToString:NO_STRING_VALUE]) {
+    } else if (![appId isEqualToString:NO_STRING_VALUE]) {
         fullParamDict[@"app_id"] = appId;
     }
 
