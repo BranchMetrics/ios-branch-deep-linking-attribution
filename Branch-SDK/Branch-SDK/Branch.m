@@ -1199,17 +1199,41 @@ static Branch *currInstance;
     [self processNextQueueItem];
 }
 
-// TODO pull this out of the queue
-- (void)processListOfApps {
+- (void)getAppList {
+    BNCServerRequest *req = [[BNCServerRequest alloc] init];
+    req.tag = REQ_TAG_GET_LIST_OF_APPS;
+    req.callback = ^(BNCServerResponse *serverResponse, NSError *error) {
+        if (error) {
+            [self completeRequest];
+            return;
+        }
+
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned from app check with %@", serverResponse.data];
+
+        NSArray *apps = [serverResponse.data objectForKey:@"potential_apps"];
+        NSDictionary *appList = [BNCSystemObserver getOpenableAppDictFromList:apps];
+        [self processListOfApps:appList];
+        [self completeRequest];
+    };
+    
+    [self.requestQueue enqueue:req];
+    [self processNextQueueItem];
+}
+
+- (void)processListOfApps:(NSDictionary *)appList {
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
     req.tag = REQ_TAG_UPLOAD_LIST_OF_APPS;
-    NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
-    [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:DEVICE_FINGERPRINT_ID];
-    [post setObject:[BNCSystemObserver getOS] forKey:@"os"];
-    [post setObject:[BNCSystemObserver getListOfApps] forKey:@"apps_data"];
-    req.postData = post;
+    req.postData = @{
+        DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+        @"os": [BNCSystemObserver getOS],
+        @"apps_data": appList
+    };
+
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        [BNCPreferenceHelper setAppListCheckDone];
+        if (!error) {
+            [BNCPreferenceHelper setAppListCheckDone];
+        }
+
         [self completeRequest];
     };
     
@@ -1310,6 +1334,10 @@ static Branch *currInstance;
             else if ([req.tag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling apply referral code"];
                 [self.bServerInterface applyReferralCode:req.postData callback:req.callback];
+            }
+            else if ([req.tag isEqualToString:REQ_TAG_GET_LIST_OF_APPS] && [self hasSession]) {
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get apps"];
+                [self.bServerInterface retrieveAppsToCheckWithCallback:req.callback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_UPLOAD_LIST_OF_APPS] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling upload apps"];
@@ -1481,7 +1509,7 @@ static Branch *currInstance;
     }
     
     if ([BNCPreferenceHelper getNeedAppListCheck]) {
-        [self processListOfApps];
+        [self getAppList];
     }
     
     if ([data objectForKey:IDENTITY_ID]) {

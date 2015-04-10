@@ -93,8 +93,8 @@
     [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"applist"] andTag:REQ_TAG_UPLOAD_LIST_OF_APPS callback:callback];
 }
 
-- (BNCServerResponse *)retrieveAppsToCheck {
-    return [self getRequest:nil url:[BNCPreferenceHelper getAPIURL:@"applist"] andTag:REQ_TAG_GET_LIST_OF_APPS];
+- (void)retrieveAppsToCheckWithCallback:(BNCServerCallback)callback {
+    return [self getRequest:nil url:[BNCPreferenceHelper getAPIURL:@"applist"] andTag:REQ_TAG_GET_LIST_OF_APPS callback:callback];
 }
 
 - (void)userCompletedAction:(NSDictionary *)post callback:(BNCServerCallback)callback {
