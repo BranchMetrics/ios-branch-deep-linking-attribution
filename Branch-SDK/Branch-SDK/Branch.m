@@ -368,8 +368,7 @@ static Branch *currInstance;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
         if (error) {
             if (callback) {
-                NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCIdentifyError];
-                callback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCIdentifyError userInfo:errorDict]);
+                callback(nil, error);
             }
             [self setIdentity:userId withCallback:NULL]; // Re-enqueue
             [self completeRequest];
@@ -444,8 +443,7 @@ static Branch *currInstance;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
         if (error) {
             if (callback) {
-                NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCGetReferralsError];
-                callback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralsError userInfo:errorDict]);
+                callback(NO, error);
             }
             [self completeRequest];
             return;
@@ -535,8 +533,7 @@ static Branch *currInstance;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
         if (error) {
             if (callback) {
-                NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCGetCreditsError];
-                callback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditsError userInfo:errorDict]);
+                callback(NO, error);
             }
             [self completeRequest];
             return;
@@ -650,8 +647,7 @@ static Branch *currInstance;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
         if (error) {
             if (callback) {
-                NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCGetCreditHistoryError];
-                callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetCreditHistoryError userInfo:errorDict]);
+                callback(nil, error);
             }
             [self completeRequest];
             return;
@@ -903,16 +899,14 @@ static Branch *currInstance;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
         if (error) {
             if (callback) {
-                NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCGetReferralCodeError];
-                callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCGetReferralCodeError userInfo:errorDict]);
+                callback(nil, error);
             }
             [self completeRequest];
             return;
         }
         
         if (![response.data objectForKey:REFERRAL_CODE]) {
-            NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCDuplicateReferralCodeError];
-            error = [NSError errorWithDomain:BNCErrorDomain code:BNCDuplicateReferralCodeError userInfo:errorDict];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Referral code with specified parameter set is already taken for a different user" }];
         }
         
         if (callback) {
@@ -929,7 +923,7 @@ static Branch *currInstance;
 - (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
     if (!code) {
         if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:[BNCError getUserInfoDictForDomain:BNCInvalidReferralCodeError]]);
+            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"No code specified" }]);
         }
         return;
     }
@@ -952,16 +946,14 @@ static Branch *currInstance;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
         if (error) {
             if (callback) {
-                NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCValidateReferralCodeError];
-                callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCValidateReferralCodeError userInfo:errorDict]);
+                callback(nil, error);
             }
             [self completeRequest];
             return;
         }
         
         if (![response.data objectForKey:REFERRAL_CODE]) {
-            NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCInvalidReferralCodeError];
-            error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:errorDict];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Referral code is invalid - it may have already been used or the code might not exist" }];
         }
         
         if (callback) {
@@ -978,7 +970,7 @@ static Branch *currInstance;
 - (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
     if (!code) {
         if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:[BNCError getUserInfoDictForDomain:BNCInvalidReferralCodeError]]);
+            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"No code specified" }]);
         }
         return;
     }
@@ -1002,16 +994,14 @@ static Branch *currInstance;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
         if (error) {
             if (callback) {
-                NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCApplyReferralCodeError];
-                callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCApplyReferralCodeError userInfo:errorDict]);
+                callback(nil, error);
             }
             [self completeRequest];
             return;
         }
 
         if (![response.data objectForKey:REFERRAL_CODE]) {
-            NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCInvalidReferralCodeError];
-            error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:errorDict];
+            error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Referral code is invalid - it may have already been used or the code might not exist" }];
         }
         
         if (callback) {
@@ -1051,23 +1041,12 @@ static Branch *currInstance;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
         if (error) {
             if (callback) {
-                NSError *urlError;
                 NSString *failedUrl = nil;
-
-                // Special case -- duplicate url alias
-                if (error.code == 409 ) {
-                    urlError = [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLDuplicateAliasError userInfo:[BNCError getUserInfoDictForDomain:BNCCreateURLDuplicateAliasError]];
+                if (![[BNCPreferenceHelper getUserURL] isEqualToString:NO_STRING_VALUE]) {
+                    failedUrl = [BNCPreferenceHelper getUserURL];
                 }
-                // Generic url create failure
-                else {
-                    urlError = [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:[BNCError getUserInfoDictForDomain:BNCCreateURLError]];
 
-                    if (![[BNCPreferenceHelper getUserURL] isEqualToString:NO_STRING_VALUE]) {
-                        failedUrl = [BNCPreferenceHelper getUserURL];
-                    }
-                }
-                
-                callback(failedUrl, urlError);
+                callback(failedUrl, error);
             }
             [self completeRequest];
             return;
@@ -1268,8 +1247,7 @@ static Branch *currInstance;
 
             if (![req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] && ![self hasUser]) {
                 NSLog(@"Branch Error: User session has not been initialized!");
-                self.networkCount = 0;
-                req.callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCNotInitError userInfo:[BNCError getUserInfoDictForDomain:BNCNotInitError]]);
+                req.callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]);
                 return;
             }
             
@@ -1435,7 +1413,7 @@ static Branch *currInstance;
         BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:REQ_TAG_REGISTER_INSTALL];
         req.callback = ^(BNCServerResponse *response, NSError *error) {
             if (error) {
-                [self handleInitFailure];
+                [self handleInitFailure:error];
             }
             else {
                 [self processInitSuccess:response.data allowNoStringInstallParams:YES];
@@ -1456,7 +1434,7 @@ static Branch *currInstance;
         BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:REQ_TAG_REGISTER_OPEN];
         req.callback = ^(BNCServerResponse *response, NSError *error) {
             if (error) {
-                [self handleInitFailure];
+                [self handleInitFailure:error];
             }
             else {
                 [self processInitSuccess:response.data allowNoStringInstallParams:NO];
@@ -1525,12 +1503,11 @@ static Branch *currInstance;
     [self completeRequest];
 }
 
-- (void)handleInitFailure {
+- (void)handleInitFailure:(NSError *)error {
     self.isInitialized = NO;
 
     if (self.sessionInitWithParamsCallback) {
-        NSDictionary *errorDict = [BNCError getUserInfoDictForDomain:BNCInitError];
-        self.sessionInitWithParamsCallback(errorDict, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:errorDict]);
+        self.sessionInitWithParamsCallback(nil, error);
     }
     
     [self completeRequest];
