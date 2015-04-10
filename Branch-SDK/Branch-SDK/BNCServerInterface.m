@@ -121,12 +121,10 @@
     fullParamDict[@"retryNumber"] = @(retryNumber);
     
     NSString *appId = [BNCPreferenceHelper getAppKey];
-    // TODO re-add this
-    //    NSString *branchKey = [BNCPreferenceHelper getBranchKey];
-    //    if (![branchKey isEqualToString:NO_STRING_VALUE]) {
-    //        fullParamDict[KEY_BRANCH_KEY] = branchKey;
-    //    }
-    //    else if (![appId isEqualToString:NO_STRING_VALUE]) {
+    NSString *branchKey = [BNCPreferenceHelper getBranchKey];
+    if (![branchKey isEqualToString:NO_STRING_VALUE]) {
+        fullParamDict[KEY_BRANCH_KEY] = branchKey;
+    }
     if (![appId isEqualToString:NO_STRING_VALUE]) {
         fullParamDict[@"app_id"] = appId;
     }
@@ -152,16 +150,13 @@
     fullParamDict[@"retryNumber"] = @(retryNumber);
     
     NSString *appId = [BNCPreferenceHelper getAppKey];
-    // TODO re-add this
-//    NSString *branchKey = [BNCPreferenceHelper getBranchKey];
-//    if (![branchKey isEqualToString:NO_STRING_VALUE]) {
-//        fullParamDict[KEY_BRANCH_KEY] = branchKey;
-//    }
-//    else if (![appId isEqualToString:NO_STRING_VALUE]) {
+    NSString *branchKey = [BNCPreferenceHelper getBranchKey];
+    if (![branchKey isEqualToString:NO_STRING_VALUE]) {
+        fullParamDict[KEY_BRANCH_KEY] = branchKey;
+    }
     if (![appId isEqualToString:NO_STRING_VALUE]) {
         fullParamDict[@"app_id"] = appId;
     }
-
 
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:fullParamDict];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
