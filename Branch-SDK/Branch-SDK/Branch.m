@@ -1176,6 +1176,7 @@ static Branch *currInstance;
 - (void)applicationWillResignActive {
     [self clearTimer];
     self.sessionTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(callClose) userInfo:nil repeats:NO];
+    [self.requestQueue persistImmediately];
     
     if (BNCLongPress) {
         [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:BNCLongPress];
@@ -1367,7 +1368,7 @@ static Branch *currInstance;
         request.postData = mutablePostData;
     }
 
-    [self.requestQueue persist];
+    [self.requestQueue persistEventually];
 }
 
 - (void)completeRequest {

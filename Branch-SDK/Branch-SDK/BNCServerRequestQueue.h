@@ -18,7 +18,8 @@
 - (BNCServerRequest *)peekAt:(unsigned int)index;
 - (void)insert:(BNCServerRequest *)request at:(unsigned int)index;
 - (BNCServerRequest *)removeAt:(unsigned int)index;
-- (void)persist;
+- (void)persistEventually;
+- (void)persistImmediately;
 - (void)clearQueue;
 
 - (BOOL)containsInstallOrOpen;
