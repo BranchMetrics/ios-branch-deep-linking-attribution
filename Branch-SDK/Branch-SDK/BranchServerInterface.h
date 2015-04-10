@@ -48,7 +48,7 @@ static NSString *REQ_TAG_GET_LIST_OF_APPS = @"t_get_list_of_apps";
 - (void)validateReferralCode:(NSDictionary *)post callback:(BNCServerCallback)callback;
 - (void)applyReferralCode:(NSDictionary *)post callback:(BNCServerCallback)callback;
 - (void)uploadListOfApps:(NSDictionary *)post callback:(BNCServerCallback)callback;
-- (BNCServerResponse *)retrieveAppsToCheck;
+- (void)retrieveAppsToCheckWithCallback:(BNCServerCallback)callback;
 
 - (void)connectToDebugWithCallback:(BNCServerCallback)callback;
 - (void)sendLog:(NSString *)log callback:(BNCServerCallback)callback;
