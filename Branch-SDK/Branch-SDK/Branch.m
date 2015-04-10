@@ -1085,7 +1085,7 @@ static Branch *currInstance;
         req.postData = post.data;
         req.linkData = post;
         
-        if (!self.isInitialized) {
+        if (self.isInitialized) {
             [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Created custom url synchronously"];
             BNCServerResponse *serverResponse = [self.bServerInterface createCustomUrl:req];
             shortURL = [serverResponse.data objectForKey:URL];
