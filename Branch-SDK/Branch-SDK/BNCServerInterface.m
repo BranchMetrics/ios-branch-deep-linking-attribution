@@ -106,14 +106,17 @@
             if (status > 500) {
                 error = [NSError errorWithDomain:BNCErrorDomain code:BNCRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Trouble reaching the Branch servers, please try again shortly" }];
             }
+            else if (status == 409) {
+                error = [NSError errorWithDomain:BNCErrorDomain code:BNCDuplicateResourceError userInfo:@{ NSLocalizedDescriptionKey: @"A resource with this identifier already exists" }];
+            }
             else if (status > 400) {
-                NSString *errorString = [serverResponse.data objectForKey:@"error"] ?: @"The request was unsuccessful.";
+                NSString *errorString = [serverResponse.data objectForKey:@"error"] ?: @"The request was invalid.";
 
                 error = [NSError errorWithDomain:BNCErrorDomain code:BNCRequestError userInfo:@{ NSLocalizedDescriptionKey: errorString }];
             }
             
-            if (error) {
-                NSLog(@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, error.localizedDescription);
+            if (error && log) {
+                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, error.localizedDescription];
             }
 
             callback(serverResponse, error);
