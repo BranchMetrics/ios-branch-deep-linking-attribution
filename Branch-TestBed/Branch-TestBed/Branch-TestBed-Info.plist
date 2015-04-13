@@ -33,8 +33,6 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
-			<key>CFBundleURLName</key>
-			<string>io.branch.sdk</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>branchtest</string>
