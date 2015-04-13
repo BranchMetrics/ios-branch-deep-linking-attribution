@@ -379,7 +379,7 @@ You can customize the Facebook OG tags of each URL if you want to dynamically sh
 | "$og_image_url" | The URL for the image you'd like to appear for the link in social media
 | "$og_video" | The URL for the video
 | "$og_url" | The URL you'd like to appear
-| "$og_app_id" | Your OG app ID. Optional and rarely used.
+| "$og_redirect" | If you want to bypass our OG tags and use your own, use this key with the URL that contains your site's metadata.
 
 Also, you do custom redirection by inserting the following _optional keys in the dictionary_:
 
