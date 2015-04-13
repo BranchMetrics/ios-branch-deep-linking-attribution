@@ -1,5 +1,7 @@
 Branch iOS SDK change log
 
+- v0.6.0: We have deprecated the use of `bnc_app_key` and are now using `branch_key`, which can be obtained in the settings page of your Dashboard. The replacement in the SDK should happen in the plist, as well as in `+(Branch *)getInstance:(NSString *)branchKey;` if necessary.
+
 - v0.5.9: Revert of the URI Scheme updates.
 
 - v0.5.8:

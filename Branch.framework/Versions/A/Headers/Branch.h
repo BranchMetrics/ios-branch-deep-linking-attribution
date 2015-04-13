@@ -28,7 +28,6 @@ static NSString *FEATURE = @"feature";
 static NSString *STAGE = @"stage";
 static NSString *DURATION = @"duration";
 static NSString *DATA = @"data";
-static NSString *IGNORE_UA_STRING = @"ignore_ua_string";
 
 typedef enum {
     BranchMostRecentFirst,
@@ -54,31 +53,36 @@ typedef enum {
 @interface Branch : NSObject
 
 + (Branch *)getInstance;
-+ (Branch *)getInstance:(NSString *)branchKey;
-+ (Branch *)getTestInstance;
++ (Branch *)getInstance:(NSString *)appKey;
 
 // Branch Activity item providers for UIActivityViewController
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                   andParams:(NSDictionary *)params
                                                      andTags:(NSArray *)tags
                                                   andFeature:(NSString *)feature
                                                     andStage:(NSString *)stage
                                                     andAlias:(NSString *)alias;
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params;
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                          andParams:(NSDictionary *)params;
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                   andParams:(NSDictionary *)params
                                                   andFeature:(NSString *)feature;
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                   andParams:(NSDictionary *)params
                                                   andFeature:(NSString *)feature
                                                     andStage:(NSString *)stage;
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                          andParams:(NSDictionary *)params
                                                          andFeature:(NSString *)feature
                                                            andStage:(NSString *)stage
                                                            andTags:(NSArray *)tags;
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
++ (BranchActivityItemProvider *)getBranchActivityItemWithDefaultURL:(NSString *)url
+                                                          andParams:(NSDictionary *)params
                                                          andFeature:(NSString *)feature
                                                            andStage:(NSString *)stage
                                                            andAlias:(NSString *)alias;
@@ -131,7 +135,6 @@ typedef enum {
 - (NSString *)getReferralUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel;
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage;
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias ignoreUAString:(NSString *)ignoreUAString;
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type;
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage;
@@ -139,32 +142,6 @@ typedef enum {
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type;
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature;
-
-- (NSString *)getLongURLWithParams:(NSDictionary *)params
-                                                andChannel:(NSString *)channel
-                                                    andTags:(NSArray *)tags
-                                                 andFeature:(NSString *)feature
-                                                   andStage:(NSString *)stage
-                                                   andAlias:(NSString *)alias;
-
-- (NSString *)getLongURLWithParams:(NSDictionary *)params;
-
-- (NSString *)getLongURLWithParams:(NSDictionary *)params
-                                                 andFeature:(NSString *)feature;
-
-- (NSString *)getLongURLWithParams:(NSDictionary *)params
-                                                 andFeature:(NSString *)feature
-                                                   andStage:(NSString *)stage;
-
-- (NSString *)getLongURLWithParams:(NSDictionary *)params
-                                                 andFeature:(NSString *)feature
-                                                   andStage:(NSString *)stage
-                                                    andTags:(NSArray *)tags;
-
-- (NSString *)getLongURLWithParams:(NSDictionary *)params
-                                                 andFeature:(NSString *)feature
-                                                   andStage:(NSString *)stage
-                                                   andAlias:(NSString *)alias;
 
 - (void)getShortURLWithCallback:(callbackWithUrl)callback;
 - (void)getShortURLWithParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback;
