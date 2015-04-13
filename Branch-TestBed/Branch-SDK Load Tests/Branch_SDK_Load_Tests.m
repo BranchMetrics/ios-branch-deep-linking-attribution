@@ -26,7 +26,7 @@
 - (void)setUp {
     [super setUp];
     
-    branch = [Branch getInstance:@"5668720416392049"];
+    branch = [Branch getInstance:@"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx"];
     
     [BNCPreferenceHelper setSessionID:@"97141055400444225"];
     [BNCPreferenceHelper setDeviceFingerprintID:@"94938498586381084"];
