@@ -153,7 +153,7 @@ Or
 Branch *branch = [Branch getInstance:@"your test branch key"];  // replace with your actual branch key
 ```
 
-Either way, we recommend you put a #warning directive to remind you to change back to live app during deployment later.
+Either way, we recommend you put a `#warning` directive to remind you to change back to live app during deployment later.
 Also, note the Branch object is singleton, so calling `[Branch getInstance]` in all the other places will still get you the same test branch object instantiated here.
 
 ###### Swift
@@ -206,7 +206,7 @@ Or
 let branch: Branch = Branch.getInstance("your test branch key");  // replace with your actual branch key
 ```
 
-Either way, we recommend you put a //TODO: or //FIXME landmark to remind you to change back to live app during deployment later.
+Either way, we recommend you put a `//TODO:` or `//FIXME` landmark to remind you to change back to live app during deployment later.
 Also, note the Branch object is singleton, so you can and should still use `Branch.getInstance()` in all the other places (see examples below).
 
 #### Encoding Note
