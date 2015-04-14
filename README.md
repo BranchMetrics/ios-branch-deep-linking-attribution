@@ -98,7 +98,7 @@ If you want to add key for both your live and test apps at the same time, you ne
 
 ![Branch Multi Key Demo](docs/images/branch-multi-key-plist.png)
 
-For additional help configuring the SDK, including step-by-step instructions, please see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios_quickstart.md).
+For additional help configuring the SDK, including step-by-step instructions, please see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios-quickstart.md).
 
 ### Initialize SDK And Register Deep Link Routing Function
 
