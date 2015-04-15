@@ -33,8 +33,6 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
-			<key>CFBundleURLName</key>
-			<string>io.branch.sdk</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>branchtest</string>
@@ -47,14 +45,12 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-    <key>bnc_app_key</key>
-    <string>5668720416392049</string>
 	<key>branch_key</key>
 	<dict>
 		<key>live</key>
-		<string>key_live_78801a996de4287481fe73708cc95da2</string>
+		<string>key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx</string>
 		<key>test</key>
-		<string>key_test_fM8bpMUpxr8hQSmiXyKZZ2nEXgiBhwuT</string>
+		<string>key_test_jkptOCZtmtxhOMZ11ynbXecdDCd93cbr</string>
 	</dict>
 </dict>
 </plist>

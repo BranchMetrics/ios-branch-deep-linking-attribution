@@ -64,7 +64,7 @@ Our linking infrastructure will support anything you want to build. If it doesn'
 
 ### Register a URI scheme direct deep linking (optional but recommended)
 
-You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to keep this URI scheme as the first item (item 0) under URL schemes. Also, make sure to change **yourapp** to a unique string that represents your app name.
+You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to change **yourapp** to a unique string that represents your app name.
 
 1. In Xcode, click on YourProject-Info.plist on the left.
 1. Find URL Types and click the right arrow. (If it doesn't exist, right click anywhere and choose Add Row. Scroll down and choose URL Types)
@@ -83,14 +83,22 @@ Alternatively, you can add the URI scheme in your project's Info page.
 
 ### Add your Branch Key to your project
 
-After you register your app, your app key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift).
+After you register your app, your Branch Key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift).
 
 1. In plist file, mouse hover "Information Property List" which is the root item under the Key column.
 1. After about half a second, you will see a "+" sign appear. Click it.
-1. In the newly added row, fill in "bnc_app_key" for its key, leave type as String, and enter your Branch Key obtained in above steps in its value column.
+1. In the newly added row, fill in "branch_key" for its key, leave type as String, and enter your app's Branch Key obtained in above steps in the value column.
 1. Save the plist file.
 
-For additional help configuring the SDK, including step-by-step instructions, please see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios_quickstart.md).
+![Branch Key Demo](docs/images/branch-key-plist.png)
+
+If you want to add key for both your live and test apps at the same time, you need change the type column to Dictionary, and add two entries inside:
+1. For live app, use "live" (without double quotes) for key, String for type, and your live branch key for value
+1. For test app, use "test" (without double quotes) for key, String for type, and your test branch key for value
+
+![Branch Multi Key Demo](docs/images/branch-multi-key-plist.png)
+
+For additional help configuring the SDK, including step-by-step instructions, please see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios-quickstart.md).
 
 ### Initialize SDK And Register Deep Link Routing Function
 
@@ -101,10 +109,10 @@ This deep link routing callback is called 100% of the time on init, with your li
 ###### Objective-C
 ```objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-	// your other init code
+    // your other init code
 
-	Branch *branch = [Branch getInstance];
-	[branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {		// previously initUserSessionWithCallback:withLaunchOptions:
+    Branch *branch = [Branch getInstance];
+    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {     // previously initUserSessionWithCallback:withLaunchOptions:
         if (!error) {
             // params are the deep linked params associated with the link that the user clicked before showing up
             // params will be empty if no data found
@@ -118,20 +126,35 @@ This deep link routing callback is called 100% of the time on init, with your li
             // route to a profile page in the app for Joe
             // show a customer welcome
         }
-	}];
+    }];
 }
 ```
 
 ```objc
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-	// pass the url to the handle deep link call
-	// if handleDeepLink returns YES, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
-	if (![[Branch getInstance] handleDeepLink:url]) {
-		// do other deep link routing for the Facebook SDK, Pinterest SDK, etc
-	}
+    // pass the url to the handle deep link call
+    // if handleDeepLink returns YES, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
+    if (![[Branch getInstance] handleDeepLink:url]) {
+        // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+    }
     return YES;
 }
 ```
+
+If you want to use your test app during development, in application:didFinishLaunchingWithOptions: you can get the Branch object like this:
+
+```objc
+Branch *branch = [Branch getTestInstance];
+```
+
+Or
+
+```objc
+Branch *branch = [Branch getInstance:@"your test branch key"];  // replace with your actual branch key
+```
+
+Either way, we recommend you put a `#warning` directive to remind you to change back to live app during deployment later.
+Also, note the Branch object is singleton, so calling `[Branch getInstance]` in all the other places will still get you the same test branch object instantiated here.
 
 ###### Swift
 ```swift
@@ -170,6 +193,21 @@ func application(application: UIApplication, openURL url: NSURL, sourceApplicati
     return true
 }
 ```
+
+If you want to use your test app during development, in application:didFinishLaunchingWithOptions: you can get the Branch object like this:
+
+```swift
+let branch: Branch = Branch.getTestInstance()
+```
+
+Or
+
+```swift
+let branch: Branch = Branch.getInstance("your test branch key");  // replace with your actual branch key
+```
+
+Either way, we recommend you put a `//TODO:` or `//FIXME` landmark to remind you to change back to live app during deployment later.
+Also, note the Branch object is singleton, so you can and should still use `Branch.getInstance()` in all the other places (see examples below).
 
 #### Encoding Note
 One quick note about encoding. Since `NSJSONSerializaiton` supports a limited set of classes, we do some custom encoding to allow additional types. Current supported types include `NSDictionary`, `NSArray`, `NSURL`, `NSString`, `NSNumber`, `NSNull`, and `NSDate` (encoded as an ISO8601 string with timezone). If a parameter is of an unknown type, it will be ignored.
@@ -216,14 +254,14 @@ To identify a user, just call:
 
 ```objc
 // previously identifyUser:
-[[Branch getInstance] setIdentity:your user id];	// your user id should not exceed 127 characters
+[[Branch getInstance] setIdentity:your user id];    // your user id should not exceed 127 characters
 ```
 
 ###### Swift
 
 ```swift
 // previously identifyUser:
-Branch.getInstance().setIdentity(your user id)	// your user id should not exceed 127 characters
+Branch.getInstance().setIdentity(your user id)  // your user id should not exceed 127 characters
 ```
 
 #### Logout
@@ -235,13 +273,13 @@ If you provide a logout function in your app, be sure to clear the user when the
 ###### Objective-C
 
 ```objc
-[[Branch getInstance] logout];	// previously clearUser
+[[Branch getInstance] logout];  // previously clearUser
 ```
 
 ###### Swift
 
 ```swift
-Branch.getInstance().logout()	// previously clearUser
+Branch.getInstance().logout()   // previously clearUser
 ```
 
 ### Register custom events
@@ -322,7 +360,7 @@ NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
 
 Branch *branch = [Branch getInstance];
 [branch getShortURLWithParams:params andTags:@[@"version1", @"trial6"] andChannel:@"text_message" andFeature:BRANCH_FEATURE_TAG_SHARE andStage:@"level_6" andAlias:@"AUSTIN68" andCallback:^(NSString *url, NSError *error) {
-	// show the link to the user or share it immediately
+    // show the link to the user or share it immediately
 }];
 
 // The callback will return null if the link generation fails (or if the alias specified is aleady taken.)
@@ -379,7 +417,7 @@ You can customize the Facebook OG tags of each URL if you want to dynamically sh
 | "$og_image_url" | The URL for the image you'd like to appear for the link in social media
 | "$og_video" | The URL for the video
 | "$og_url" | The URL you'd like to appear
-| "$og_app_id" | Your OG app ID. Optional and rarely used.
+| "$og_redirect" | If you want to bypass our OG tags and use your own, use this key with the URL that contains your site's metadata.
 
 Also, you do custom redirection by inserting the following _optional keys in the dictionary_:
 
@@ -518,10 +556,10 @@ Reward balances change randomly on the backend when certain actions are taken (d
 
 ```objc
 [[Branch getInstance] loadRewardsWithCallback:^(BOOL changed, NSError *error) {
-	// changed boolean will indicate if the balance changed from what is currently in memory
+    // changed boolean will indicate if the balance changed from what is currently in memory
 
-	// will return the balance of the current user's credits
-	NSInteger credits = [[Branch getInstance] getCredits];
+    // will return the balance of the current user's credits
+    NSInteger credits = [[Branch getInstance] getCredits];
 }];
 ```
 
@@ -769,17 +807,17 @@ You can also tune the referral code to the finest granularity, with the followin
 
 ```objc
 [[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-				                         amount:5
-				                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
-				                         bucket:@"default"
-				                calculationType:BranchUniqueRewards
-				                       location:BranchBothUsers
-				                    andCallback:^(NSDictionary *params, NSError *error) {
-				                        if (!error) {
-				                            NSString *referralCode = [params objectForKey:@"referral_code"];
-				                            // do whatever with referralCode
-				                        }
-			                       	}
+                                         amount:5
+                                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+                                         bucket:@"default"
+                                calculationType:BranchUniqueRewards
+                                       location:BranchBothUsers
+                                    andCallback:^(NSDictionary *params, NSError *error) {
+                                        if (!error) {
+                                            NSString *referralCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with referralCode
+                                        }
+                                    }
 ];
 ```
 
@@ -876,3 +914,4 @@ Branch.getInstance().applyReferralCode(code, andCallback: { (params: [NSObject :
     }
 })
 ```
+

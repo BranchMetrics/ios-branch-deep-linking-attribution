@@ -55,7 +55,7 @@ static Branch *branch;
     .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
-    branch = [Branch getInstance:@"5668720416392049"];
+    branch = [Branch getInstance:@"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx"];
     [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         if (error) {
             NSLog(@"An error prevented Branch from initializing: %@", error);
@@ -243,7 +243,7 @@ static Branch *branch;
     XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test getReferralCode"];
     NSDictionary *getReferralResponseDict = @{
         @"id": @"85782843459895738",
-        @"app_id": @"5668720416392049",
+        @"branch_key": @"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx",
         @"calculation_type": @0,
         @"location": @0,
         @"type": @"credit",
@@ -282,7 +282,7 @@ static Branch *branch;
 - (void)test06ValidateReferralCode {
     NSDictionary *validateReferralResponseDict = @{
         @"id": @"85782843459895738",
-        @"app_id": @"5668720416392049",
+        @"branch_key": @"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx",
         @"calculation_type": @0,
         @"location": @0,
         @"type": @"credit",
@@ -330,7 +330,7 @@ static Branch *branch;
 - (void)test07ApplyReferralCode {
     NSDictionary *applyReferralResponseDict = @{
         @"id": @"85782843459895738",
-        @"app_id": @"5668720416392049",
+        @"branch_key": @"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx",
         @"calculation_type": @0,
         @"location": @0,
         @"type": @"credit",
