@@ -1,3 +1,7 @@
+## Important migration to v0.6.0
+
+We have deprecated the bnc_app_key and replaced that with the new branch_key. Please see [add branch key](#add-your-branch-key-to-your-project) for details.
+
 ## Callback changes since v0.3.0
 
 An NSError* is added to all callback signatures
@@ -148,7 +152,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 If you want to use your test app during development, in application:didFinishLaunchingWithOptions: you can get the Branch object like this:
 
 ```objc
-Branch *branch = [Branch getTestInstance];
+Branch *branch = [Branch getTestInstance];  // only available in SDK v0.6.0 or higher
 ```
 
 Or
