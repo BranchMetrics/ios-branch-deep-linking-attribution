@@ -106,23 +106,6 @@ static Branch *currInstance;
 
 #pragma mark - GetInstance methods
 
-+ (Branch *)getBranchInstance:(BOOL)isLive {
-    if (!currInstance) {
-        // TODO re-enable this
-//        NSString *branchKey = [BNCPreferenceHelper getBranchKey:isLive];
-//        if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
-//            NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
-//        }
-        NSString *appId = [BNCPreferenceHelper getAppKey];
-        if (!appId || [appId isEqualToString:NO_STRING_VALUE]) {
-            NSLog(@"Branch Warning: Please enter your bnc_app_key in the plist!");
-        }
-        
-        [Branch initInstance];
-    }
-    return currInstance;
-}
-
 + (Branch *)getInstance {
     return [Branch getBranchInstance:YES];
 }
@@ -1018,8 +1001,21 @@ static Branch *currInstance;
 
 #pragma mark - Private methods
 
++ (Branch *)getBranchInstance:(BOOL)isLive {
+    if (!currInstance) {
+        NSString *branchKey = [BNCPreferenceHelper getBranchKey:isLive];
+        if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
+            NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+        }
+        
+        [Branch initInstance];
+    }
+    return currInstance;
+}
+
 
 #pragma mark - URL Generation methods
+
 - (void)generateShortUrl:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback {
     if (!self.isInitialized) {
         [self initUserSessionAndCallCallback:NO];
