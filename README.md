@@ -28,6 +28,10 @@ Just call setDebug after you get a reference to the Branch singleton. We'll log 
 
 We do a lot of smart things to give you an accurate read on the number of installs you actually have. The most common one is associating the user with the actual hardware ID of the phone. If a user uninstalls the app, then reinstalls, we'll know it's the same person from before and just register and 'open' instead of an 'install'. To register an install on the same phone again, see FAQ #2 about debugging.
 
+4 __Facebook deep links seem to not work?__
+
+Branch uses the Facebook App Links protocol to pass the deep links through to your app from Facebook. Funny enough, if you also have a Facebook app configured in the developer portal and you choose 'Deep link from feed', Facebook ignores it's own protocol. Make sure to *uncheck* this option in your Facebook app.
+
 ## Installation
 
 compiled SDK size: ~155kb
