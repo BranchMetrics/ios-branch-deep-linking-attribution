@@ -574,13 +574,13 @@ static Branch *currInstance;
         BNCServerRequest *req = [[BNCServerRequest alloc] init];
         req.tag = REQ_TAG_COMPLETE_ACTION;
 
-        NSDictionary *post = @{
+        NSMutableDictionary *post = [@{
             EVENT: action,
             METADATA: state ?: [NSNull null],
             DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
             IDENTITY_ID: [BNCPreferenceHelper getIdentityID],
             SESSION_ID: [BNCPreferenceHelper getSessionID],
-        };
+        } mutableCopy];
 
         req.postData = post;
         [self.requestQueue enqueue:req];
@@ -1380,10 +1380,10 @@ static Branch *currInstance;
         
         for (NSString *key in [request.postData allKeys]) {
             if ([key isEqualToString:SESSION_ID]) {
-                [request.postData setValue:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
+                [request.postData setObject:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
             }
             else if ([key isEqualToString:IDENTITY_ID]) {
-                [request.postData setValue:[BNCPreferenceHelper getIdentityID] forKey:IDENTITY_ID];
+                [request.postData setObject:[BNCPreferenceHelper getIdentityID] forKey:IDENTITY_ID];
             }
         }
     }
