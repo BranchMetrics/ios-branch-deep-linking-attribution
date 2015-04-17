@@ -481,7 +481,7 @@ static Branch *currInstance;
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
     req.tag = REQ_TAG_COMPLETE_ACTION;
     
-    NSDictionary *post = [@{
+    NSMutableDictionary *post = [@{
         EVENT: action,
         METADATA: state ?: [NSNull null],
         DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
@@ -1220,11 +1220,11 @@ static Branch *currInstance;
 - (void)processListOfApps:(NSDictionary *)appList {
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
     req.tag = REQ_TAG_UPLOAD_LIST_OF_APPS;
-    req.postData = @{
+    req.postData = [@{
         DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
         @"os": [BNCSystemObserver getOS],
         @"apps_data": appList
-    };
+    } mutableCopy];
 
     req.callback = ^(BNCServerResponse *response, NSError *error) {
         if (!error) {
@@ -1351,7 +1351,7 @@ static Branch *currInstance;
         BNCServerRequest *request = [self.requestQueue peekAt:i];
         
 
-        for (NSString *key in [mutablePostData allKeys]) {
+        for (NSString *key in [request.postData allKeys]) {
             if ([key isEqualToString:SESSION_ID]) {
                 [request.postData setObject:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
             }
@@ -1359,8 +1359,6 @@ static Branch *currInstance;
                 [request.postData setObject:[BNCPreferenceHelper getIdentityID] forKey:IDENTITY_ID];
             }
         }
-        
-        request.postData = mutablePostData;
     }
 
     [self.requestQueue persistEventually];
