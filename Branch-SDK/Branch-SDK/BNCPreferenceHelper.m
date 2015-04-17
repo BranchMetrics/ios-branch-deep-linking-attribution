@@ -532,7 +532,10 @@ static NSString *Branch_Key = nil;
             }
         } else if ([requestTag isEqualToString:REQ_TAG_DEBUG_CONNECT]) {
             BNC_Remote_Debug = YES;
-            [bnc_asyncDebugConnectionDelegate bnc_debugConnectionEstablished];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [bnc_asyncDebugConnectionDelegate bnc_debugConnectionEstablished];
+            });
         }
     }
 }
