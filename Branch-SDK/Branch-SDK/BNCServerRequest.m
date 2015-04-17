@@ -45,7 +45,7 @@
     return [self initWithTag:tag andData:nil];
 }
 
-- (id)initWithTag:(NSString *)tag andData:(NSDictionary *)postData {
+- (id)initWithTag:(NSString *)tag andData:(NSMutableDictionary *)postData {
     if (!tag) {
         
         [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Invalid: server request missing tag!"];

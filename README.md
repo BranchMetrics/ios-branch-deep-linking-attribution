@@ -1,3 +1,7 @@
+## Important migration to v0.6.0
+
+We have deprecated the bnc_app_key and replaced that with the new branch_key. Please see [add branch key](#add-your-branch-key-to-your-project) for details.
+
 ## Callback changes since v0.3.0
 
 An NSError* is added to all callback signatures
@@ -27,6 +31,10 @@ Just call setDebug after you get a reference to the Branch singleton. We'll log 
 3 __Why do I not see any installs when I reinstall?__
 
 We do a lot of smart things to give you an accurate read on the number of installs you actually have. The most common one is associating the user with the actual hardware ID of the phone. If a user uninstalls the app, then reinstalls, we'll know it's the same person from before and just register and 'open' instead of an 'install'. To register an install on the same phone again, see FAQ #2 about debugging.
+
+4 __Facebook deep links seem to not work?__
+
+Branch uses the Facebook App Links protocol to pass the deep links through to your app from Facebook. Funny enough, if you also have a Facebook app configured in the developer portal and you choose 'Deep link from feed', Facebook ignores it's own protocol. Make sure to *uncheck* this option in your Facebook app.
 
 ## Installation
 
@@ -144,7 +152,7 @@ This deep link routing callback is called 100% of the time on init, with your li
 If you want to use your test app during development, in application:didFinishLaunchingWithOptions: you can get the Branch object like this:
 
 ```objc
-Branch *branch = [Branch getTestInstance];
+Branch *branch = [Branch getTestInstance];  // only available in SDK v0.6.0 or higher
 ```
 
 Or

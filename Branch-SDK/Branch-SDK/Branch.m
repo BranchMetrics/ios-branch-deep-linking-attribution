@@ -1350,14 +1350,13 @@ static Branch *currInstance;
     for (int i = 0; i < self.requestQueue.size; i++) {
         BNCServerRequest *request = [self.requestQueue peekAt:i];
         
-        // Ensure mutability
-        NSMutableDictionary *mutablePostData = [request.postData mutableCopy];
+
         for (NSString *key in [mutablePostData allKeys]) {
             if ([key isEqualToString:SESSION_ID]) {
-                [mutablePostData setValue:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
+                [request.postData setObject:[BNCPreferenceHelper getSessionID] forKey:SESSION_ID];
             }
             else if ([key isEqualToString:IDENTITY_ID]) {
-                [mutablePostData setValue:[BNCPreferenceHelper getIdentityID] forKey:IDENTITY_ID];
+                [request.postData setObject:[BNCPreferenceHelper getIdentityID] forKey:IDENTITY_ID];
             }
         }
         
