@@ -353,7 +353,12 @@ static Branch *currInstance;
             if (callback) {
                 callback(nil, error);
             }
-            [self setIdentity:userId withCallback:NULL]; // Re-enqueue
+            
+            // Re-enqueue requests that failed, but are valid (not 400s)
+            if (error.code < 400 || error.code >= 500) {
+                [self setIdentity:userId withCallback:NULL];
+            }
+
             [self completeRequest];
             return;
         }
@@ -384,6 +389,11 @@ static Branch *currInstance;
 }
 
 - (void)logout {
+    if (!self.isInitialized) {
+        NSLog(@"Branch is not initialized, cannot logout");
+        return;
+    }
+
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
     req.tag = REQ_TAG_LOGOUT;
     NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[
@@ -491,8 +501,9 @@ static Branch *currInstance;
     
     req.postData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        if (error) {
-            [self userCompletedAction:action withState:state]; // re-enqueue
+        // Re-enqueue requests that failed, but are valid (not 400s)
+        if (error && (error.code < 400 || error.code >= 500)) {
+            [self userCompletedAction:action withState:state];
         }
 
         [self completeRequest];
@@ -557,12 +568,16 @@ static Branch *currInstance;
 }
 
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket {
+    if (!self.isInitialized) {
+        [self initUserSessionAndCallCallback:NO];
+    }
+
     NSInteger amountToRedeem = count;
     NSInteger totalAvailableCredits = [BNCPreferenceHelper getCreditCountForBucket:bucket];
 
     if (count > totalAvailableCredits) {
         NSLog(@"Branch Warning: You're trying to redeem more credits than are available. Have you updated loaded rewards?");
-        amountToRedeem = totalAvailableCredits;
+        return;
     }
     
     if (amountToRedeem > 0) {
@@ -581,6 +596,15 @@ static Branch *currInstance;
                                                                                    IDENTITY_ID,
                                                                                    SESSION_ID]];
         req.postData = post;
+        req.callback = ^(BNCServerResponse *response, NSError *error) {
+            if (!error) {
+                // Update local balance
+                NSInteger updatedBalance = totalAvailableCredits - amountToRedeem;
+                [BNCPreferenceHelper setCreditCount:updatedBalance forBucket:bucket];
+            }
+            
+            [self completeRequest];
+        };
 
         [self.requestQueue enqueue:req];
         [self processNextQueueItem];
@@ -588,7 +612,7 @@ static Branch *currInstance;
 }
 
 - (void)getCreditHistoryWithCallback:(callbackWithList)callback {
-    [self getCreditHistoryAfter:nil number:100 order:BranchMostRecentFirst andCallback:callback];
+    [self getCreditHistoryForBucket:nil after:nil number:100 order:BranchMostRecentFirst andCallback:callback];
 }
 
 - (void)getCreditHistoryForBucket:(NSString *)bucket andCallback:(callbackWithList)callback {
@@ -1532,7 +1556,9 @@ static Branch *currInstance;
         self.sessionInitWithParamsCallback(nil, error);
     }
     
-    [self completeRequest];
+    // Complete the request, but don't trigger another.
+    self.networkCount = 0;
+    [self.requestQueue dequeue];
 }
 
 - (void)dealloc {
