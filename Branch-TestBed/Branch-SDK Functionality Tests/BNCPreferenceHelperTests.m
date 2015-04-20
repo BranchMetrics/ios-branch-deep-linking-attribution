@@ -24,17 +24,17 @@
 }
 
 + (void)tearDown {
-    [super tearDown];
-
     [[LSNocilla sharedInstance] stop];
 
     [BNCPreferenceHelper clearDebug];
+
+    [super tearDown];
 }
 
 - (void)tearDown {
-    [super tearDown];
-
     [[LSNocilla sharedInstance] clearStubs];
+
+    [super tearDown];
 }
 
 #pragma mark - Debugger tests
