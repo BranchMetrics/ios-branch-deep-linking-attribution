@@ -284,7 +284,9 @@ static const short _base64DecodingTable[256] = {
         [encodedDictionary appendString:@"}"];
     }
     
-    [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"encoded dictionary : %@", encodedDictionary];
+    if ([BNCPreferenceHelper isDebug]) {
+        NSLog(@"encoded dictionary : %@", encodedDictionary);
+    }
     
     return encodedDictionary;
 }
@@ -345,7 +347,9 @@ static const short _base64DecodingTable[256] = {
     [encodedArray deleteCharactersInRange:NSMakeRange([encodedArray length] - 1, 1)];
     [encodedArray appendString:@"]"];
     
-    [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"encoded array: %@", encodedArray];
+    if ([BNCPreferenceHelper isDebug]) {
+        NSLog(@"encoded array : %@", encodedArray);
+    }
     
     return encodedArray;
 }
