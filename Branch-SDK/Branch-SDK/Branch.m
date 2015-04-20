@@ -345,6 +345,8 @@ static Branch *currInstance;
                                                                                IDENTITY_ID]];
     req.postData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
+        [self completeRequest];
+
         if (error) {
             if (callback) {
                 callback(nil, error);
@@ -354,8 +356,8 @@ static Branch *currInstance;
             if (error.code < 400 || error.code >= 500) {
                 [self setIdentity:userId withCallback:NULL];
             }
-
-            [self completeRequest];
+            
+            [self processNextQueueItem];
             return;
         }
 
@@ -377,7 +379,7 @@ static Branch *currInstance;
             callback([self getFirstReferringParams], nil);
         }
         
-        [self completeRequest];
+        [self processNextQueueItem];
     };
 
     [self.requestQueue enqueue:req];
@@ -412,6 +414,7 @@ static Branch *currInstance;
         [BNCPreferenceHelper clearUserCreditsAndCounts];
         
         [self completeRequest];
+        [self processNextQueueItem];
     };
 
     [self.requestQueue enqueue:req];
@@ -430,11 +433,12 @@ static Branch *currInstance;
     req.tag = REQ_TAG_GET_REFERRAL_COUNTS;
     req.postData = [[NSMutableDictionary alloc] init];
     req.callback = ^(BNCServerResponse *response, NSError *error) {
+        [self completeRequest];
         if (error) {
             if (callback) {
                 callback(NO, error);
             }
-            [self completeRequest];
+            [self processNextQueueItem];
             return;
         }
 
@@ -456,7 +460,7 @@ static Branch *currInstance;
             callback(hasUpdated, nil);
         }
         
-        [self completeRequest];
+        [self processNextQueueItem];
     };
     
     [self.requestQueue enqueue:req];
@@ -497,12 +501,14 @@ static Branch *currInstance;
     
     req.postData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
+        [self completeRequest];
+
         // Re-enqueue requests that failed, but are valid (not 400s)
         if (error && (error.code < 400 || error.code >= 500)) {
             [self userCompletedAction:action withState:state];
         }
 
-        [self completeRequest];
+        [self processNextQueueItem];
     };
 
     [self.requestQueue enqueue:req];
@@ -521,11 +527,12 @@ static Branch *currInstance;
     req.postData = [[NSMutableDictionary alloc] init];
     req.tag = REQ_TAG_GET_REWARDS;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
+        [self completeRequest];
         if (error) {
             if (callback) {
                 callback(NO, error);
             }
-            [self completeRequest];
+            [self processNextQueueItem];
             return;
         }
 
@@ -544,7 +551,7 @@ static Branch *currInstance;
             callback(hasUpdated, nil);
         }
         
-        [self completeRequest];
+        [self processNextQueueItem];
     };
     
     [self.requestQueue enqueue:req];
@@ -600,6 +607,7 @@ static Branch *currInstance;
             }
             
             [self completeRequest];
+            [self processNextQueueItem];
         };
 
         [self.requestQueue enqueue:req];
@@ -648,11 +656,12 @@ static Branch *currInstance;
 
     req.postData = data;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
+        [self completeRequest];
         if (error) {
             if (callback) {
                 callback(nil, error);
             }
-            [self completeRequest];
+            [self processNextQueueItem];
             return;
         }
         for (NSMutableDictionary *transaction in response.data) {
@@ -668,7 +677,7 @@ static Branch *currInstance;
             callback(response.data, nil);
         }
         
-        [self completeRequest];
+        [self processNextQueueItem];
     };
 
     [self.requestQueue enqueue:req];
@@ -900,11 +909,12 @@ static Branch *currInstance;
     NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:values forKeys:keys];
     req.postData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
+        [self completeRequest];
         if (error) {
             if (callback) {
                 callback(nil, error);
             }
-            [self completeRequest];
+            [self processNextQueueItem];
             return;
         }
         
@@ -916,7 +926,7 @@ static Branch *currInstance;
             callback(response.data, error);
         }
         
-        [self completeRequest];
+        [self processNextQueueItem];
     };
 
     [self.requestQueue enqueue:req];
@@ -947,11 +957,12 @@ static Branch *currInstance;
                                                                              SESSION_ID]];
     req.postData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
+        [self completeRequest];
         if (error) {
             if (callback) {
                 callback(nil, error);
             }
-            [self completeRequest];
+            [self processNextQueueItem];
             return;
         }
         
@@ -963,7 +974,7 @@ static Branch *currInstance;
             callback(response.data, error);
         }
         
-        [self completeRequest];
+        [self processNextQueueItem];
     };
     
     [self.requestQueue enqueue:req];
@@ -995,11 +1006,12 @@ static Branch *currInstance;
                                                                              DEVICE_FINGERPRINT_ID]];
     req.postData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
+        [self completeRequest];
         if (error) {
             if (callback) {
                 callback(nil, error);
             }
-            [self completeRequest];
+            [self processNextQueueItem];
             return;
         }
 
@@ -1011,7 +1023,7 @@ static Branch *currInstance;
             callback(response.data, error);
         }
         
-        [self completeRequest];
+        [self processNextQueueItem];
     };
 
     [self.requestQueue enqueue:req];
@@ -1055,6 +1067,7 @@ static Branch *currInstance;
     req.postData = post.data;
     req.linkData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
+        [self completeRequest];
         if (error) {
             if (callback) {
                 NSString *failedUrl = nil;
@@ -1064,7 +1077,7 @@ static Branch *currInstance;
 
                 callback(failedUrl, error);
             }
-            [self completeRequest];
+            [self processNextQueueItem];
             return;
         }
         
@@ -1079,7 +1092,7 @@ static Branch *currInstance;
             callback(url, nil);
         }
         
-        [self completeRequest];
+        [self processNextQueueItem];
     };
     
     [self.requestQueue enqueue:req];
@@ -1220,8 +1233,9 @@ static Branch *currInstance;
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
     req.tag = REQ_TAG_GET_LIST_OF_APPS;
     req.callback = ^(BNCServerResponse *serverResponse, NSError *error) {
+        [self completeRequest];
         if (error) {
-            [self completeRequest];
+            [self processNextQueueItem];
             return;
         }
 
@@ -1230,7 +1244,7 @@ static Branch *currInstance;
         NSArray *apps = [serverResponse.data objectForKey:@"potential_apps"];
         NSDictionary *appList = [BNCSystemObserver getOpenableAppDictFromList:apps];
         [self processListOfApps:appList];
-        [self completeRequest];
+        [self processNextQueueItem];
     };
     
     [self.requestQueue enqueue:req];
@@ -1252,6 +1266,7 @@ static Branch *currInstance;
         }
 
         [self completeRequest];
+        [self processNextQueueItem];
     };
     
     [self.requestQueue enqueue:req];
@@ -1283,6 +1298,7 @@ static Branch *currInstance;
             if (!req.callback) {
                 req.callback = ^(BNCServerResponse *response, NSError *error) {
                     [self completeRequest];
+                    [self processNextQueueItem];
                 };
             }
 
@@ -1387,7 +1403,6 @@ static Branch *currInstance;
 - (void)completeRequest {
     self.networkCount = 0;
     [self.requestQueue dequeue];
-    [self processNextQueueItem];
 }
 
 
@@ -1533,6 +1548,7 @@ static Branch *currInstance;
     [self updateAllRequestsInQueue];
     
     self.isInitialized = YES;
+    [self completeRequest];
     
     if (self.shouldCallSessionInitCallback && self.sessionInitWithParamsCallback) {
         self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
@@ -1541,20 +1557,19 @@ static Branch *currInstance;
     // this is default, it's only cleared to handle the case of losing connectivity.
     // after connectivity is restored, this should be brought back.
     self.shouldCallSessionInitCallback = YES;
-    
-    [self completeRequest];
+
+    [self processNextQueueItem];
 }
 
 - (void)handleInitFailure:(NSError *)error {
     self.isInitialized = NO;
+    
+    // Complete the request, but don't trigger another.
+    [self completeRequest];
 
     if (self.sessionInitWithParamsCallback) {
         self.sessionInitWithParamsCallback(nil, error);
     }
-    
-    // Complete the request, but don't trigger another.
-    self.networkCount = 0;
-    [self.requestQueue dequeue];
 }
 
 - (void)dealloc {
