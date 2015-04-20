@@ -28,7 +28,6 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 
 @interface BNCPreferenceHelper : NSObject
 
-@property (strong, nonatomic) NSString *uriScheme;
 @property (assign, nonatomic) NSInteger retryCount;
 @property (assign, nonatomic) NSInteger retryInterval;
 @property (assign, nonatomic) NSInteger timeout;
@@ -81,9 +80,6 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 
 + (void)setUserIdentity:(NSString *)userIdentity;
 + (NSString *)getUserIdentity;
-
-+ (void)setUriScheme:(NSString *)uriScheme;
-+ (NSString *)getUriScheme;
 
 + (void)setAppListCheckDone;
 + (BOOL)getNeedAppListCheck;
