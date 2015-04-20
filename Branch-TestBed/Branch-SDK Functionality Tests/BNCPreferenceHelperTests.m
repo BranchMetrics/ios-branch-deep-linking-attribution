@@ -22,9 +22,6 @@
     XCTAssertGreaterThan(prefHelper.timeout, 0);
     XCTAssertGreaterThan(prefHelper.retryInterval, 0);
     XCTAssertGreaterThan(prefHelper.retryCount, 0);
-    
-    // URI Scheme defaults to nil
-    XCTAssertNil(prefHelper.uriScheme);
 }
 
 - (void)testPreferenceSets {
@@ -32,23 +29,19 @@
     NSInteger retryCount = [BNCPreferenceHelper getRetryCount];
     NSInteger retryInterval = [BNCPreferenceHelper getRetryInterval];
     NSInteger timeout = [BNCPreferenceHelper getTimeout];
-    NSString *uriScheme = [BNCPreferenceHelper getUriScheme];
     
     [BNCPreferenceHelper setRetryCount:NSIntegerMax];
     [BNCPreferenceHelper setRetryInterval:NSIntegerMax];
     [BNCPreferenceHelper setTimeout:NSIntegerMax];
-    [BNCPreferenceHelper setUriScheme:@"foo://"];
     
     XCTAssertEqual([BNCPreferenceHelper getRetryCount], NSIntegerMax);
     XCTAssertEqual([BNCPreferenceHelper getRetryInterval], NSIntegerMax);
     XCTAssertEqual([BNCPreferenceHelper getTimeout], NSIntegerMax);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUriScheme], @"foo://");
     
     // Restore
     [BNCPreferenceHelper setRetryCount:retryCount];
     [BNCPreferenceHelper setRetryInterval:retryInterval];
     [BNCPreferenceHelper setTimeout:timeout];
-    [BNCPreferenceHelper setUriScheme:uriScheme];
 }
 
 @end
