@@ -14,8 +14,6 @@
 #import <UIKit/UIScreen.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
-NSString * const BRANCH_URI_SCHEME_NAME = @"io.branch.sdk";
-
 @implementation BNCSystemObserver
 
 + (NSString *)getUniqueHardwareId:(BOOL *)isReal andIsDebug:(BOOL)debug {

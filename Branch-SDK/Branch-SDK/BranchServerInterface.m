@@ -36,7 +36,7 @@
     if (screenWidth) [post setObject:screenWidth forKey:@"screen_width"];
     NSNumber *screenHeight = [BNCSystemObserver getScreenHeight];
     if (screenHeight) [post setObject:screenHeight forKey:@"screen_height"];
-    NSString *uriScheme = [BNCPreferenceHelper getUriScheme] ?: [BNCSystemObserver getDefaultUriScheme];
+    NSString *uriScheme = [BNCSystemObserver getDefaultUriScheme];
     if (uriScheme) [post setObject:uriScheme forKey:@"uri_scheme"];
     NSNumber *updateState = [BNCSystemObserver getUpdateState:YES];
     if (updateState) [post setObject:updateState forKeyedSubscript:@"update"];
@@ -67,7 +67,7 @@
     if ([BNCSystemObserver getOS]) [post setObject:[BNCSystemObserver getOS] forKey:@"os"];
     NSString *osVersion = [BNCSystemObserver getOSVersion];
     if (osVersion) [post setObject:osVersion forKey:@"os_version"];
-    NSString *uriScheme = [BNCPreferenceHelper getUriScheme] ?: [BNCSystemObserver getDefaultUriScheme];
+    NSString *uriScheme = [BNCSystemObserver getDefaultUriScheme];
     if (uriScheme) [post setObject:uriScheme forKey:@"uri_scheme"];
     [post setObject:[NSNumber numberWithBool:[BNCSystemObserver adTrackingSafe]] forKey:@"ad_tracking_enabled"];
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
