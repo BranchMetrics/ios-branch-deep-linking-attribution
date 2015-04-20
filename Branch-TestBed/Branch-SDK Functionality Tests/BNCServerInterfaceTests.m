@@ -27,9 +27,9 @@
 }
 
 + (void)tearDown {
-    [super tearDown];
-    
     [[LSNocilla sharedInstance] stop];
+
+    [super tearDown];
 }
 
 - (void)setUp {
@@ -38,16 +38,16 @@
     self.originalRetryInterval = [BNCPreferenceHelper getRetryInterval];
     self.originalRetryCount = [BNCPreferenceHelper getRetryCount];
 
-    [BNCPreferenceHelper setRetryInterval:1]; // turn down sleep time
+    [BNCPreferenceHelper setRetryInterval:0]; // turn down sleep time
 }
 
 - (void)tearDown {
-    [super tearDown];
-
     [[LSNocilla sharedInstance] clearStubs];
 
     [BNCPreferenceHelper setRetryInterval:self.originalRetryInterval]; // set values back to original
     [BNCPreferenceHelper setRetryCount:self.originalRetryCount];
+
+    [super tearDown];
 }
 
 #pragma mark - Retry tests

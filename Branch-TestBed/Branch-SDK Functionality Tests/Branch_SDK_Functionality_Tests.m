@@ -46,9 +46,9 @@
 }
 
 + (void)tearDown {
-    [super tearDown];
-
     [[LSNocilla sharedInstance] stop];
+
+    [super tearDown];
 }
 
 - (void)setUp {
@@ -74,9 +74,9 @@
 }
 
 - (void)tearDown {
-    [super tearDown];
-
     [[LSNocilla sharedInstance] clearStubs];
+
+    [super tearDown];
 }
 
 - (void)initSession {
