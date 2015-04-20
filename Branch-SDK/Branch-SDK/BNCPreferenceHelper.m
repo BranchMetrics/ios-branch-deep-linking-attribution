@@ -179,14 +179,6 @@ static NSString *Branch_Key = nil;
     return [BNCPreferenceHelper getInstance].retryCount;
 }
 
-+ (void)setUriScheme:(NSString *)uriScheme {
-    [BNCPreferenceHelper getInstance].uriScheme = uriScheme;
-}
-
-+ (NSString *)getUriScheme {
-    return [BNCPreferenceHelper getInstance].uriScheme;
-}
-
 + (NSString *)getAppKey {
     NSString *ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:KEY_APP_KEY];
     if (!ret || ret.length == 0) {
