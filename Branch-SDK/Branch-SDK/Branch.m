@@ -1089,8 +1089,8 @@ static Branch *currInstance;
         [longUrl appendFormat:@"stage=%@&", stage];
     }
     
-    [longUrl appendFormat:@"type=%lld&", (long long)type];
-    [longUrl appendFormat:@"matchDuration=%lld&", (long long)duration];
+    [longUrl appendFormat:@"type=%ld&", (long)type];
+    [longUrl appendFormat:@"matchDuration=%ld&", (long)duration];
     
     NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:params];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
