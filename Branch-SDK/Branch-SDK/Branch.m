@@ -1566,10 +1566,31 @@ static Branch *currInstance;
     
     // Complete the request, but don't trigger another.
     [self completeRequest];
+    
+    NSError *initError = [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{
+        NSLocalizedDescriptionKey: @"Init Session failed, pending requests marked as failures",
+        NSUnderlyingErrorKey: error
+    }];
+    
+    // Fail all pending requests :(
+    // Note that we need to build up a separate array of items to fail here, because the process
+    // of failing them may or may not dequeue them, causing the loop to become out of sync...
+    NSMutableArray *requestsToFail = [[NSMutableArray alloc] init];
+    for (int i = 0; i < self.requestQueue.size; i++) {
+        [requestsToFail addObject:[self.requestQueue peekAt:i]];
+    }
+    
+    for (BNCServerRequest *request in requestsToFail) {
+        request.callback(nil, initError);
+    }
 
-    if (self.sessionInitWithParamsCallback) {
+    if (self.shouldCallSessionInitCallback && self.sessionInitWithParamsCallback) {
         self.sessionInitWithParamsCallback(nil, error);
     }
+    
+    // this is default, it's only cleared to handle the case of losing connectivity.
+    // after connectivity is restored, this should be brought back.
+    self.shouldCallSessionInitCallback = YES;
 }
 
 - (void)dealloc {
