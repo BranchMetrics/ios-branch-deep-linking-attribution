@@ -991,9 +991,11 @@ static Branch *currInstance;
             } else {
                 if (callback) {
                     NSString *failedUrl = nil;
-                    if (![[BNCPreferenceHelper getUserURL] isEqualToString:NO_STRING_VALUE]) {
-                        failedUrl = [BNCPreferenceHelper getUserURL];
+                    NSString *userUrl = [BNCPreferenceHelper getUserURL];
+                    if (![userUrl isEqualToString:NO_STRING_VALUE]) {
+                        failedUrl = [self longUrlWithBaseUrl:userUrl params:params tags:tags feature:feature channel:channel stage:stage alias:alias duration:duration type:type];
                     }
+
                     dispatch_async(dispatch_get_main_queue(), ^{
                         callback(failedUrl, [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:[BNCError getUserInfoDictForDomain:BNCCreateURLError]]);
                     });
@@ -1048,41 +1050,53 @@ static Branch *currInstance;
     return shortURL;
 }
 
-- (NSString *) generateLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
-    NSMutableString *longURL = [BNC_LINK_URL mutableCopy];
+- (NSString *)generateLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
+    NSString *appIdentifier = [BNCPreferenceHelper getBranchKey];
+    if ([appIdentifier isEqualToString:NO_STRING_VALUE]) {
+        appIdentifier = [BNCPreferenceHelper getAppKey];
+    }
     
-    [longURL appendString:[NSString stringWithFormat:@"/a/%@?", [BNCPreferenceHelper getAppKey]]];
+    if ([appIdentifier isEqualToString:NO_STRING_VALUE]) {
+        NSLog(@"No Branch Key specified, cannot create a long url");
+        return nil;
+    }
+    
+    NSString *baseLongUrl = [NSString stringWithFormat:@"%@/a/%@", BNC_LINK_URL, appIdentifier];
+
+    return [self longUrlWithBaseUrl:baseLongUrl params:params tags:tags feature:feature channel:nil stage:stage alias:alias duration:0 type:BranchLinkTypeUnlimitedUse];
+}
+
+- (NSString *)longUrlWithBaseUrl:(NSString *)baseUrl params:(NSDictionary *)params tags:(NSArray *)tags feature:(NSString *)feature channel:(NSString *)channel stage:(NSString *)stage alias:(NSString *)alias duration:(NSUInteger)duration type:(BranchLinkType)type {
+    NSMutableString *longUrl = [[NSMutableString alloc] initWithFormat:@"%@?", baseUrl];
+    
+    for (NSString *tag in tags) {
+        [longUrl appendFormat:@"tags=%@&", tag];
+    }
+    
+    if ([alias length]) {
+        [longUrl appendFormat:@"alias=%@&", alias];
+    }
+    
+    if ([channel length]) {
+        [longUrl appendFormat:@"channel=%@&", channel];
+    }
+    
+    if ([feature length]) {
+        [longUrl appendFormat:@"feature=%@&", feature];
+    }
+    
+    if ([stage length]) {
+        [longUrl appendFormat:@"stage=%@&", stage];
+    }
+    
+    [longUrl appendFormat:@"type=%lld&", (long long)type];
+    [longUrl appendFormat:@"matchDuration=%lld&", (long long)duration];
     
     NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:params];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
+    [longUrl appendFormat:@"data=%@", base64EncodedParams];
     
-    if (channel == nil) channel = @"";
-    if (feature == nil) feature = @"";
-    if (stage == nil) stage = @"";
-    if (alias == nil) alias = @"";
-    
-    NSMutableArray *urlParamStrings = [@[ @{ @"channel": channel },
-                                @{ @"feature": feature },
-                                @{ @"stage": stage },
-                                @{ @"alias": alias },
-                                 @{ @"data": base64EncodedParams} ] mutableCopy];
-    
-    for (NSString *tag in tags) {
-        [urlParamStrings addObject:@{ @"tags": tag}];
-    }
-    
-    for (NSDictionary *thisParam in urlParamStrings) {
-        NSString *paramName = [[thisParam allKeys] firstObject];
-        NSString *paramValue = [[thisParam allValues] firstObject];
-        if (paramValue.length > 0) {
-            if(![longURL hasSuffix:@"?"]) {
-                [longURL appendString:@"&"];
-            }
-            [longURL appendFormat:@"%@=%@", paramName, paramValue];
-        }
-    }
-    
-    return longURL;
+    return longUrl;
 }
 
 - (BNCLinkData *)prepareLinkDataFor:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSDictionary *)params ignoreUAString:(NSString *)ignoreUAString {
@@ -1321,12 +1335,8 @@ static Branch *currInstance;
             if (self.urlLoadCallback) {
                 if (!self.initNotCalled)
                     errorDict = [BNCError getUserInfoDictForDomain:BNCCreateURLError];
-                NSString *failedUrl = nil;
-                if (![[BNCPreferenceHelper getUserURL] isEqualToString:NO_STRING_VALUE]) {
-                    failedUrl = [BNCPreferenceHelper getUserURL];
-                }
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.urlLoadCallback(failedUrl, [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:errorDict]);
+                    self.urlLoadCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCCreateURLError userInfo:errorDict]);
                     self.urlLoadCallback = nil;
                 });
             }
