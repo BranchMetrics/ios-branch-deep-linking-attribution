@@ -232,7 +232,7 @@ static Branch *currInstance;
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback {
     self.sessionparamLoadCallback = callback;
-    if (![BNCSystemObserver getUpdateState:NO] && ![self hasUser]) {
+    if (![BNCSystemObserver getUpdateState] && ![self hasUser]) {
         [BNCPreferenceHelper setIsReferrable];
     } else {
         [BNCPreferenceHelper clearIsReferrable];
@@ -267,7 +267,7 @@ static Branch *currInstance;
 }
 
 - (void)initSessionAndRegisterDeepLinkHandler:(callbackWithParams)callback {
-    if (![BNCSystemObserver getUpdateState:NO] && ![self hasUser]) {
+    if (![BNCSystemObserver getUpdateState] && ![self hasUser]) {
         [BNCPreferenceHelper setIsReferrable];
     } else {
         [BNCPreferenceHelper clearIsReferrable];
@@ -1608,6 +1608,7 @@ static Branch *currInstance;
             [BNCPreferenceHelper setDeviceFingerprintID:[response.data objectForKey:DEVICE_FINGERPRINT_ID]];
             [BNCPreferenceHelper setUserURL:[response.data objectForKey:LINK]];
             [BNCPreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
+            [BNCSystemObserver setUpdateState];
             
             if ([BNCPreferenceHelper getIsReferrable]) {
                 if ([response.data objectForKey:DATA]) {
@@ -1644,6 +1645,8 @@ static Branch *currInstance;
         } else if ([requestTag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
             [BNCPreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
             [BNCPreferenceHelper setDeviceFingerprintID:[response.data objectForKey:DEVICE_FINGERPRINT_ID]];
+            [BNCSystemObserver setUpdateState];
+
             if ([response.data objectForKey:IDENTITY_ID]) {
                 [BNCPreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
             }
