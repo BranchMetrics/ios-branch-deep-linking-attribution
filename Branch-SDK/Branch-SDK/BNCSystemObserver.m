@@ -131,15 +131,15 @@
     // for creation date
     NSURL *documentsDirRoot = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
     NSDictionary *documentsDirAttributes = [manager attributesOfItemAtPath:documentsDirRoot.path error:nil];
-    int appCreationDay = (int)([[documentsDirAttributes fileCreationDate] timeIntervalSince1970]/(60*60*24));
-
+    NSDate *creationDate = [documentsDirAttributes fileCreationDate];
+    
     // for modification date
     NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
     NSDictionary *bundleAttributes = [manager attributesOfItemAtPath:bundleRoot error:nil];
-    int appModificationDay = (int)([[bundleAttributes fileModificationDate] timeIntervalSince1970]/(60*60*24));
-
+    NSDate *modificationDate = [bundleAttributes fileModificationDate];
+    
     if (!storedAppVersion) {
-        if ([documentsDirAttributes fileCreationDate] && [bundleAttributes fileModificationDate] && (appCreationDay != appModificationDay)) {
+        if (creationDate && modificationDate && [modificationDate timeIntervalSinceDate:creationDate] > 60) {
             return [NSNumber numberWithInt:2];
         }
         return nil;
