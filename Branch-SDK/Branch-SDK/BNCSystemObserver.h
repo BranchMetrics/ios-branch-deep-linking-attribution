@@ -20,7 +20,8 @@
 + (NSString *)getOSVersion;
 + (NSNumber *)getScreenWidth;
 + (NSNumber *)getScreenHeight;
-+ (NSNumber *)getUpdateState:(BOOL)updatePrefs;
++ (NSNumber *)getUpdateState;
++ (void)setUpdateState;
 + (NSString *)getDeviceName;
 + (NSDictionary *)getOpenableAppDictFromList:(NSArray *)apps;
 + (BOOL)isSimulator;

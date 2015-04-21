@@ -123,7 +123,7 @@
     }
 }
 
-+ (NSNumber *)getUpdateState:(BOOL)updatePrefs {
++ (NSNumber *)getUpdateState {
     NSString *storedAppVersion = [BNCPreferenceHelper getAppVersion];
     NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
     NSFileManager *manager = [NSFileManager defaultManager];
@@ -139,21 +139,20 @@
     int appModificationDay = (int)([[bundleAttributes fileModificationDate] timeIntervalSince1970]/(60*60*24));
 
     if (!storedAppVersion) {
-        if (updatePrefs) {
-            [BNCPreferenceHelper setAppVersion:currentAppVersion];
-        }
         if ([documentsDirAttributes fileCreationDate] && [bundleAttributes fileModificationDate] && (appCreationDay != appModificationDay)) {
             return [NSNumber numberWithInt:2];
         }
         return nil;
     } else if (![storedAppVersion isEqualToString:currentAppVersion]) {
-        if (updatePrefs) {
-            [BNCPreferenceHelper setAppVersion:currentAppVersion];
-        }
         return [NSNumber numberWithInt:2];
     } else {
         return [NSNumber numberWithInt:1];
     }
+}
+
++ (void)setUpdateState {
+    NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
+    [BNCPreferenceHelper setAppVersion:currentAppVersion];
 }
 
 + (NSString *)getOS {
