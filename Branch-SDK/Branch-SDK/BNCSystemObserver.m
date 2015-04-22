@@ -138,16 +138,27 @@
     NSDictionary *bundleAttributes = [manager attributesOfItemAtPath:bundleRoot error:nil];
     NSDate *modificationDate = [bundleAttributes fileModificationDate];
     
+    // No stored version
     if (!storedAppVersion) {
+        // Modification and Creation date are more than 60 seconds different indicates an update
+        // This would be the case that they had un-installed and re-installed the app, since this
+        // value isn't currently in NSDefaults.
         if (creationDate && modificationDate && [modificationDate timeIntervalSinceDate:creationDate] > 60) {
-            return [NSNumber numberWithInt:2];
+            return @2;
         }
-        return nil;
-    } else if (![storedAppVersion isEqualToString:currentAppVersion]) {
-        return [NSNumber numberWithInt:2];
-    } else {
-        return [NSNumber numberWithInt:1];
+        
+        // If we don't have one of the previous dates, or they're less than 60 apart,
+        // we understand this to be an install.
+        return @0;
     }
+    // Have a stored version, but it isn't the same as the current value indicates an update
+    else if (![storedAppVersion isEqualToString:currentAppVersion]) {
+        return @2;
+    }
+    
+    // Otherwise, we have a stored version, and it is equal.
+    // Not an update, not an install.
+    return @1;
 }
 
 + (void)setUpdateState {
