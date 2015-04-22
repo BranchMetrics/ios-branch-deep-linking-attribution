@@ -79,7 +79,7 @@
      ];
 }
 
-- (ReferralCodeCalculation)retrieveCalculationForSegment {
+- (BranchReferralCodeCalculation)retrieveCalculationForSegment {
     switch (self.segReferralCodeFreq.selectedSegmentIndex) {
         case 0:
             return BranchUnlimitedRewards;
@@ -90,7 +90,7 @@
     }
 }
 
-- (ReferralCodeLocation)retrieveLocationForSegment {
+- (BranchReferralCodeLocation)retrieveLocationForSegment {
     switch (self.segReferralCodeLocation.selectedSegmentIndex) {
         case 0:
             return BranchReferreeUser;
