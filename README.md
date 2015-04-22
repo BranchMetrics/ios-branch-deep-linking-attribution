@@ -639,6 +639,10 @@ The response will return an array that has been parsed from the following JSON:
                            "type": 0,
                            "amount": 5
                        },
+        "event" : {
+            "name": "event name",
+            "metadata": { your event metadata if present }
+        },
         "referrer": "12345678",
         "referree": null
     },
@@ -650,6 +654,10 @@ The response will return an array that has been parsed from the following JSON:
                            "type": 2,
                            "amount": -3
                        },
+        "event" : {
+            "name": "event name",
+            "metadata": { your event metadata if present }
+        },
         "referrer": null,
         "referree": "12345678"
     }
