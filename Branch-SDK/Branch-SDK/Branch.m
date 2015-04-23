@@ -1210,7 +1210,9 @@ static Branch *currInstance;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    [self initUserSessionAndCallCallback:YES];
+    if (!self.isInitialized) {
+        [self initUserSessionAndCallCallback:YES];
+    }
     
     [self bnc_addDebugGestureRecognizer];
 }
