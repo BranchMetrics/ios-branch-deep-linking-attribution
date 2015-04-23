@@ -99,58 +99,57 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 
 @implementation Branch
 
-static Branch *currInstance;
-
 #pragma mark - Public methods
 
 
 #pragma mark - GetInstance methods
 
 + (Branch *)getInstance {
-    return [Branch getBranchInstance:YES];
+    NSString *branchKey = [BNCPreferenceHelper getBranchKey:YES];
+    if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
+        NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+    }
+
+    return [Branch getInstanceInternal];
 }
 
 + (Branch *)getTestInstance {
-    return [Branch getBranchInstance:NO];
+    NSString *branchKey = [BNCPreferenceHelper getBranchKey:NO];
+    if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
+        NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+    }
+
+    return [Branch getInstanceInternal];
 }
 
 + (Branch *)getInstance:(NSString *)branchKey {
     if ([branchKey rangeOfString:@"key_"].location != NSNotFound) {
         [BNCPreferenceHelper setBranchKey:branchKey];
-    } else {
+    }
+    else {
         [BNCPreferenceHelper setAppKey:branchKey];
     }
     
-    if (!currInstance) {
-        [Branch initInstance];
-    }
-    
-    return currInstance;
+    return [Branch getInstanceInternal];
 }
 
-+ (void)initInstance {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        currInstance = [[Branch alloc] init];
-        currInstance.bServerInterface = [[BranchServerInterface alloc] init];
-        currInstance.requestQueue = [BNCServerRequestQueue getInstance];
-        currInstance.processing_sema = dispatch_semaphore_create(1);
-        currInstance.isInitialized = NO;
-        currInstance.shouldCallSessionInitCallback = YES;
-        currInstance.linkCache = [[BNCLinkCache alloc] init];
+- (id)initWithInterface:(BranchServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache {
+    if (self = [super init]) {
+        _bServerInterface = interface;
+        _requestQueue = queue;
+        _linkCache = cache;
         
-        [[NSNotificationCenter defaultCenter] addObserver:currInstance
-                                                 selector:@selector(applicationWillResignActive)
-                                                     name:UIApplicationWillResignActiveNotification
-                                                   object:nil];
+        _isInitialized = NO;
+        _shouldCallSessionInitCallback = YES;
+        _processing_sema = dispatch_semaphore_create(1);
+        _networkCount = 0;
         
-        [[NSNotificationCenter defaultCenter] addObserver:currInstance
-                                                 selector:@selector(applicationDidBecomeActive)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
-        
-        currInstance.networkCount = 0;
-    });
+        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+        [notificationCenter addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
+        [notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
+    }
+
+    return self;
 }
 
 
@@ -1033,16 +1032,15 @@ static Branch *currInstance;
 
 #pragma mark - Private methods
 
-+ (Branch *)getBranchInstance:(BOOL)isLive {
-    if (!currInstance) {
-        NSString *branchKey = [BNCPreferenceHelper getBranchKey:isLive];
-        if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
-            NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
-        }
-        
-        [Branch initInstance];
-    }
-    return currInstance;
++ (Branch *)getInstanceInternal {
+    static Branch *branch;
+    static dispatch_once_t onceToken;
+    
+    dispatch_once(&onceToken, ^{
+        branch = [[Branch alloc] initWithInterface:[[BranchServerInterface alloc] init] queue:[BNCServerRequestQueue getInstance] cache:[[BNCLinkCache alloc] init]];
+    });
+
+    return branch;
 }
 
 
