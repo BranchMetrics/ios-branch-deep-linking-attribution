@@ -141,9 +141,9 @@
     // No stored version
     if (!storedAppVersion) {
         // Modification and Creation date are more than 60 seconds different indicates an update
-        // This would be the case that they had un-installed and re-installed the app, since this
-        // value isn't currently in NSDefaults.
-        if (creationDate && modificationDate && [modificationDate timeIntervalSinceDate:creationDate] > 60) {
+        // This would be the case that they were installing a new version of the app that was
+        // adding Branch for the first time, where we don't already have an NSUserDefaults value.
+        if (ABS([modificationDate timeIntervalSinceDate:creationDate]) > 60) {
             return @2;
         }
         
