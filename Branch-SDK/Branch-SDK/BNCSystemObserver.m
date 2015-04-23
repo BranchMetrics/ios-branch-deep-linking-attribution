@@ -131,23 +131,34 @@
     // for creation date
     NSURL *documentsDirRoot = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
     NSDictionary *documentsDirAttributes = [manager attributesOfItemAtPath:documentsDirRoot.path error:nil];
-    int appCreationDay = (int)([[documentsDirAttributes fileCreationDate] timeIntervalSince1970]/(60*60*24));
-
+    NSDate *creationDate = [documentsDirAttributes fileCreationDate];
+    
     // for modification date
     NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
     NSDictionary *bundleAttributes = [manager attributesOfItemAtPath:bundleRoot error:nil];
-    int appModificationDay = (int)([[bundleAttributes fileModificationDate] timeIntervalSince1970]/(60*60*24));
-
+    NSDate *modificationDate = [bundleAttributes fileModificationDate];
+    
+    // No stored version
     if (!storedAppVersion) {
-        if ([documentsDirAttributes fileCreationDate] && [bundleAttributes fileModificationDate] && (appCreationDay != appModificationDay)) {
-            return [NSNumber numberWithInt:2];
+        // Modification and Creation date are more than 60 seconds different indicates an update
+        // This would be the case that they were installing a new version of the app that was
+        // adding Branch for the first time, where we don't already have an NSUserDefaults value.
+        if (ABS([modificationDate timeIntervalSinceDate:creationDate]) > 60) {
+            return @2;
         }
-        return nil;
-    } else if (![storedAppVersion isEqualToString:currentAppVersion]) {
-        return [NSNumber numberWithInt:2];
-    } else {
-        return [NSNumber numberWithInt:1];
+        
+        // If we don't have one of the previous dates, or they're less than 60 apart,
+        // we understand this to be an install.
+        return @0;
     }
+    // Have a stored version, but it isn't the same as the current value indicates an update
+    else if (![storedAppVersion isEqualToString:currentAppVersion]) {
+        return @2;
+    }
+    
+    // Otherwise, we have a stored version, and it is equal.
+    // Not an update, not an install.
+    return @1;
 }
 
 + (void)setUpdateState {
