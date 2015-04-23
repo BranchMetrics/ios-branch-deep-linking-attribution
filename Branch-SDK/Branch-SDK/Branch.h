@@ -53,9 +53,9 @@ typedef NS_ENUM(NSUInteger, BranchLinkType) {
 };
 
 // Backwards compat
-//typedef BranchCreditHistoryOrder CreditHistoryOrder;
-//typedef BranchReferralCodeLocation ReferralCodeLocation;
-//typedef BranchReferralCodeCalculation ReferralCodeCalculation;
+typedef BranchCreditHistoryOrder CreditHistoryOrder;
+typedef BranchReferralCodeLocation ReferralCodeLocation;
+typedef BranchReferralCodeCalculation ReferralCodeCalculation;
 
 @interface Branch : NSObject
 
