@@ -537,12 +537,12 @@ NSInteger const  TEST_CREDITS = 30;
     // Stub app list calls
     __block BNCServerCallback appListCallback;
     id appListCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-        callback([[BNCServerResponse alloc] init], nil);
+        appListCallback = callback;
         return YES;
     }];
     
     id appListInvocation = ^(NSInvocation *invocation) {
-        appListCallback(openInstallResponse, nil);
+        appListCallback([[BNCServerResponse alloc] init], nil);
     };
     
     [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO callback:openOrInstallCallbackCheckBlock];
