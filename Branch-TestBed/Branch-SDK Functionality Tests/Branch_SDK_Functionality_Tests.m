@@ -8,452 +8,551 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
 #import "Branch.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
 #import "BNCConfig.h"
-#import "Nocilla.h"
 #import "BNCEncodingUtils.h"
 #import "BNCServerRequestQueue.h"
 
-@interface Branch_SDK_Functionality_Tests : XCTestCase {
-    
-@private
-    __weak Branch *branch;
-    int credits;
-    NSString *branch_key;
-    NSString *device_fingerprint_id;
-    NSString *browser_fingerprint_id;
-    NSString *identity_id;
-    NSString *session_id;
-    NSString *identity_link;
-    NSString *short_link;
-    NSString *logout_identity_id;
-    NSString *new_identity_id;
-    NSString *new_session_id;
-    NSString *new_user_link;
-}
+NSString * const TEST_BRANCH_KEY = @"key_live_78801a996de4287481fe73708cc95da2";  //temp
+NSString * const TEST_DEVICE_FINGERPRINT_ID = @"94938498586381084";
+NSString * const TEST_BROWSER_FINGERPRINT_ID = @"69198153995256641";
+NSString * const TEST_IDENTITY_ID = @"95765863201768032";
+NSString * const TEST_SESSION_ID = @"97141055400444225";
+NSString * const TEST_IDENTITY_LINK = @"https://bnc.lt/i/3N-xr0E-_M";
+NSString * const TEST_SHORT_URL = @"https://bnc.lt/l/3PxZVFU-BK";
+NSString * const TEST_LOGOUT_IDENTITY_ID = @"98274447349252681";
+NSString * const TEST_NEW_IDENTITY_ID = @"85782216939930424";
+NSString * const TEST_NEW_SESSION_ID = @"98274447370224207";
+NSString * const TEST_NEW_USER_LINK = @"https://bnc.lt/i/2kkbX6k-As";
+NSString * const TEST_REFERRAL_CODE = @"LMDLDV";
+NSInteger const  TEST_CREDITS = 30;
+
+@interface Branch_SDK_Functionality_Tests : XCTestCase
+
+@property (assign, nonatomic) BOOL hasExceededExpectations;
 
 @end
 
 @implementation Branch_SDK_Functionality_Tests
 
-+ (void)setUp {
-    [super setUp];
-    [[LSNocilla sharedInstance] start];
+- (void)test00OpenOrInstall {
+    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
-    [[BNCServerRequestQueue getInstance] clearQueue];
-}
-
-+ (void)tearDown {
-    [[LSNocilla sharedInstance] stop];
-
-    [super tearDown];
-}
-
-- (void)setUp {
-    [super setUp];
-
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
     
-    branch_key = @"key_live_78801a996de4287481fe73708cc95da2";  //temp
-    device_fingerprint_id = @"94938498586381084";
-    browser_fingerprint_id = @"69198153995256641";
-    identity_id = @"95765863201768032";
-    session_id = @"97141055400444225";
-    identity_link = @"https://bnc.lt/i/3N-xr0E-_M";
-    short_link = @"https://bnc.lt/l/3PxZVFU-BK";
-    credits = 30;
-    logout_identity_id = @"98274447349252681";
-    new_identity_id = @"85782216939930424";
-    new_session_id = @"98274447370224207";
-    new_user_link = @"https://bnc.lt/i/2kkbX6k-As";
+    [BNCPreferenceHelper setCreditCount:NSIntegerMax forBucket:@"default"];
     
-    branch = [Branch getInstance:branch_key];
-}
-
-- (void)tearDown {
-    [[LSNocilla sharedInstance] clearStubs];
-
-    [super tearDown];
-}
-
-- (void)initSession {
-    [BNCPreferenceHelper setSessionID:session_id];
-    [BNCPreferenceHelper setDeviceFingerprintID:device_fingerprint_id];
-    [BNCPreferenceHelper setIdentityID:identity_id];
-    [BNCPreferenceHelper setLinkClickID:NO_STRING_VALUE];
-    [BNCPreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
-    [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
-    [BNCPreferenceHelper setTestDelegate:(id<BNCTestDelegate>)branch];
-    [BNCPreferenceHelper simulateInitFinished];
-}
-
-- (void)test99Open {
-    NSDictionary *responseDict = @{@"browser_fingerprint_id": browser_fingerprint_id,
-                                   @"device_fingerprint_id": device_fingerprint_id,
-                                   @"identity_id": identity_id,
-                                   @"link": identity_link,
-                                   @"session_id": session_id
-                                   };
-    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
+    BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
+    openInstallResponse.data = @{
+        @"browser_fingerprint_id": TEST_BROWSER_FINGERPRINT_ID,
+        @"device_fingerprint_id": TEST_DEVICE_FINGERPRINT_ID,
+        @"identity_id": TEST_IDENTITY_ID,
+        @"link": TEST_IDENTITY_LINK,
+        @"session_id": TEST_SESSION_ID
+    };
     
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"open"])
-    .andReturn(200)
-    .withHeaders(@{@"Content-Type": @"application/json"})
-    .withBody(responseData);
+    __block BNCServerCallback openOrInstallCallback;
+    id openOrInstallCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        openOrInstallCallback = callback;
+        return YES;
+    }];
+    
+    id openOrInstallInvocation = ^(NSInvocation *invocation) {
+        openOrInstallCallback(openInstallResponse, nil);
+    };
+    
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO callback:openOrInstallCallbackCheckBlock];
+
+    // Fake branch key
+    id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
+    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey];
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
-    
     [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         XCTAssertNotNil([BNCPreferenceHelper getSessionID]);
-        if ([[LSNocilla sharedInstance] isStarted]) {
-            XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], session_id);
-        } else {
-            XCTAssertNotEqualObjects([BNCPreferenceHelper getSessionID], NO_STRING_VALUE);
-        }
+        XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], TEST_SESSION_ID);
         
         [openExpectation fulfill];
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
+    [self waitForExpectationsWithTimeout:1 handler:NULL];
 }
 
-- (void)test01GetShortURLAsync {
-    [self initSession];
+- (void)test01SetIdentity {
+    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    NSDictionary *responseDict = @{@"url": short_link};
-    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
     
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
-    .andReturn(200)
-    .withHeaders(@{@"Content-Type": @"application/json"})
-    .withBody(responseData);
-    
-    XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
-    
-    [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *fbUrl, NSError *error) {
-        XCTAssertNil(error);
-        XCTAssertNotNil(fbUrl);
-        XCTAssertEqualObjects(fbUrl, short_link);
-        
-        [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *fbUrl2, NSError *error) {
-            XCTAssertNil(error);
-            XCTAssertNotNil(fbUrl2);
-            if ([[LSNocilla sharedInstance] isStarted]) {
-                XCTAssertEqualObjects(fbUrl, fbUrl2);
-            }
-        }];
-        
-        NSString *fbUrlSync = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
-        XCTAssertEqualObjects(fbUrl, fbUrlSync);
-        
-        if (![[LSNocilla sharedInstance] isStarted]) {
-            NSString *twUrl = [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil];
-            XCTAssertNotNil(twUrl);
-            XCTAssertNotEqualObjects(fbUrl, twUrl);
-        }
-        
-        [getShortURLExpectation fulfill];
-    }];
-    
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
-}
-
-- (void)test02GetShortURLSync {
-    [self initSession];
-    
-    NSDictionary *responseDict = @{@"url": short_link};
-    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
-    
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
-    .andReturn(200)
-    .withHeaders(@{@"Content-Type": @"application/json"})
-    .withBody(responseData);
-    
-    NSString *url1 = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
-    XCTAssertNotNil(url1);
-    if ([[LSNocilla sharedInstance] isStarted]) {
-        XCTAssertEqualObjects(url1, short_link);
-    }
-    
-    NSString *url2 = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
-    XCTAssertEqualObjects(url1, url2);
-    
-    if (![[LSNocilla sharedInstance] isStarted]) {
-        NSString *url3 = [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil];
-        XCTAssertNotNil(url3);
-        XCTAssertNotEqualObjects(url1, url3);
-    }
-}
-
-- (void)test03GetRewardsChanged {
-    [self initSession];
-    
-    [BNCPreferenceHelper setCreditCount:0 forBucket:@"default"];
-    
-    NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
-    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
-    
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"credits/%@", [BNCPreferenceHelper getIdentityID]]].regex)
-    .andReturn(200)
-    .withHeaders(@{@"Content-Type": @"application/json"})
-    .withBody(responseData);
-    
-    XCTestExpectation *getRewardExpectation = [self expectationWithDescription:@"Test getReward"];
-    
-    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
-        XCTAssertNil(error);
-        if ([[LSNocilla sharedInstance] isStarted]) {
-            XCTAssertTrue(changed);
-        }
-        
-        [getRewardExpectation fulfill];
-    }];
-    
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
-}
-
-- (void)test04GetRewardsUnchanged {
-    [self initSession];
-    
-    [BNCPreferenceHelper setCreditCount:credits forBucket:@"default"];
-    
-    NSDictionary *responseDict = @{@"default": [NSNumber numberWithInt:credits]};
-    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
-    
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"credits"].regex)
-    .andReturn(200)
-    .withHeaders(@{@"Content-Type": @"application/json"})
-    .withBody(responseData);
-    
-    XCTestExpectation *getRewardExpectation = [self expectationWithDescription:@"Test getReward"];
-    
-    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
-        XCTAssertNil(error);
-        if ([[LSNocilla sharedInstance] isStarted]) {
-            XCTAssertFalse(changed);
-        }
-        
-        [getRewardExpectation fulfill];
-    }];
-    
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
-}
-
-- (void)test05GetReferralCode {
-    [self initSession];
-    
-    NSDictionary *responseDict = @{@"referral_code": @"testRC",
-                                   @"calculation_type": @1,
-                                   @"event": @"$redeem_code-testRC",
-                                   @"location": @2,
-                                   @"metadata": @{@"amount": @7,
-                                                  @"bucket": @"default"
-                                                  }
-                                   };
-    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
-    
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"referralcode"])
-    .andReturn(200)
-    .withHeaders(@{@"Content-Type": @"application/json"})
-    .withBody(responseData);
-    
-    XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test getReferralCode"];
-    
-    [branch getReferralCodeWithPrefix:@"test" amount:7 expiration:nil bucket:@"default" calculationType:BranchUniqueRewards location:BranchReferringUser andCallback:^(NSDictionary *params, NSError *error) {
-        XCTAssertNil(error);
-        
-        NSString *code = params[@"referral_code"];
-        XCTAssertNotNil(code);
-        XCTAssertTrue([code hasPrefix:@"test"]);
-        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUniqueRewards);
-        XCTAssertEqual([params[@"location"] integerValue], BranchReferringUser);
-        XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 7);
-        
-        [getReferralCodeExpectation fulfill];
-    }];
-    
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
-}
-
-- (void)test06ValidateReferralCode {
-    [self initSession];
-    
-    NSDictionary *responseDict = @{@"referral_code": @"testRC",
-                                   @"calculation_type": @1,
-                                   @"event": @"$redeem_code-testRC",
-                                   @"location": @2,
-                                   @"metadata": @{@"amount": @7,
-                                                  @"bucket": @"default"
-                                                  }
-                                   };
-    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
-    
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referralcode", @"testRC"]])
-    .andReturn(200)
-    .withHeaders(@{@"Content-Type": @"application/json"})
-    .withBody(responseData);
-    
-    XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test validateReferralCode"];
-    
-    [branch validateReferralCode:@"testRC" andCallback:^(NSDictionary *params, NSError *error) {
-        XCTAssertNil(error);
-        
-        NSString *code = params[@"referral_code"];
-        XCTAssertNotNil(code);
-        XCTAssertTrue([code isEqualToString:@"testRC"]);
-        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUniqueRewards);
-        XCTAssertEqual([params[@"location"] integerValue], BranchReferringUser);
-        XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 7);
-        
-        [getReferralCodeExpectation fulfill];
-    }];
-    
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
-}
-
-- (void)test07ApplyReferralCode {
-    [self initSession];
-    
-    NSDictionary *responseDict = @{@"referral_code": @"testRC",
-                                   @"calculation_type": @1,
-                                   @"event": @"$redeem_code-testRC",
-                                   @"location": @2,
-                                   @"metadata": @{@"amount": @7,
-                                                  @"bucket": @"default"
-                                                  }
-                                   };
-    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
-    
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"applycode", @"testRC"]])
-    .andReturn(200)
-    .withHeaders(@{@"Content-Type": @"application/json"})
-    .withBody(responseData);
-    
-    XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test applyReferralCode"];
-    
-    [branch applyReferralCode:@"testRC" andCallback:^(NSDictionary *params, NSError *error) {
-        XCTAssertNil(error);
-        
-        NSString *code = params[@"referral_code"];
-        XCTAssertNotNil(code);
-        XCTAssertTrue([code isEqualToString:@"testRC"]);
-        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUniqueRewards);
-        XCTAssertEqual([params[@"location"] integerValue], BranchReferringUser);
-        XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 7);
-        
-        [getReferralCodeExpectation fulfill];
-    }];
-    
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
-}
-
-- (void)test08GetCreditHistory {
-    [self initSession];
-    
-    NSArray *responseArray = @[
-                               @{@"referree": @"<null>",
-                                 @"referrer": @"user_1",
-                                 @"transaction": @{@"amount": @7,
-                                                   @"bucket": @"default",
-                                                   @"date": @"2015-02-23T19:14:40.880Z",
-                                                   @"id": @"98485002198582256",
-                                                   @"type": @0
-                                                   }
-                                 },
-                               @{@"referree": @"<null>",
-                                 @"referrer": @"user_2",
-                                 @"transaction": @{@"amount": @8,
-                                                   @"bucket": @"default",
-                                                   @"date": @"2015-02-23T19:13:32.798Z",
-                                                   @"id": @"98484716641976809",
-                                                   @"type": @0
-                                                   }
-                                 }
-                               ];
-    NSError *err = nil;
-    NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseArray options:NSJSONWritingPrettyPrinted error:&err];
-    
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"credithistory"])
-    .andReturn(200)
-    .withHeaders(@{@"Content-Type": @"application/json"})
-    .withBody(responseData);
-    
-    XCTestExpectation *getCreditHistoryExpectation = [self expectationWithDescription:@"Test getCreditHistory"];
-    
-    [branch getCreditHistoryWithCallback:^(NSArray *list, NSError *error) {
-        XCTAssertNil(error);
-        XCTAssertNotNil(list);
-        XCTAssertEqual(list.count, 2);
-        
-        NSDictionary *xact = list[0];
-        XCTAssertEqualObjects(xact[@"referrer"], @"user_1");
-        XCTAssertEqualObjects(xact[@"transaction"][@"id"], @"98485002198582256");
-        XCTAssertEqualObjects(xact[@"transaction"][@"amount"], @7);
-        
-        xact = list[1];
-        XCTAssertEqualObjects(xact[@"referrer"], @"user_2");
-        XCTAssertEqualObjects(xact[@"transaction"][@"id"], @"98484716641976809");
-        XCTAssertEqualObjects(xact[@"transaction"][@"amount"], @8);
-        
-        [getCreditHistoryExpectation fulfill];
-    }];
-    
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-    }];
-}
-
-- (void)test09SetIdentity {
-    [self initSession];
-    
-    [BNCPreferenceHelper setIdentityID:logout_identity_id];
+    // mock logout synchronously
+    [BNCPreferenceHelper setIdentityID:@"98274447349252681"];
     [BNCPreferenceHelper setUserURL:@"https://bnc.lt/i/3R7_PIk-77"];
-    
     [BNCPreferenceHelper setUserIdentity:NO_STRING_VALUE];
     [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
     [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
     [BNCPreferenceHelper clearUserCreditsAndCounts];
     
-    NSDictionary *responseDict = @{@"identity_id": new_identity_id,
-                                   @"link": new_user_link,
-                                   @"link_click_id": @"87925296346431956",
-                                   @"referring_data": @"{ \"$og_title\":\"Kindred\",\"key\":\"test_object\" }"
-                                   };
-    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
+    BNCServerResponse *setIdentityResponse = [[BNCServerResponse alloc] init];
+    setIdentityResponse.data = @{
+        @"identity_id": @"98687515069776101",
+        @"link_click_id": @"87925296346431956",
+        @"link": @"https://bnc.lt/i/3SawKbU-1Z",
+        @"referring_data": @"{\"$og_title\":\"Kindred\",\"key1\":\"test_object\",\"key2\":\"here is another object!!\",\"$og_image_url\":\"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png\",\"source\":\"ios\"}"
+    };
     
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"profile"])
-    .andReturn(200)
-    .withHeaders(@{@"Content-Type": @"application/json"})
-    .withBody(responseData);
+    // Stub setIdentity server call, call callback immediately.
+    __block BNCServerCallback setIdentityCallback;
+    [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
+        setIdentityCallback(setIdentityResponse, nil);
+    }] identifyUser:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        setIdentityCallback = callback;
+        return YES;
+    }]];
     
     XCTestExpectation *setIdentityExpectation = [self expectationWithDescription:@"Test setIdentity"];
-    
+    __weak Branch *nonRetainedBranch = branch;
     [branch setIdentity:@"test_user_10" withCallback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         XCTAssertNotNil(params);
         
-        XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], new_identity_id);
-        XCTAssertEqualObjects([BNCPreferenceHelper getUserURL], new_user_link);
-        NSDictionary *installParams = [branch getFirstReferringParams];
+        XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], @"98687515069776101");
+        NSDictionary *installParams = [nonRetainedBranch getFirstReferringParams];
         
-        XCTAssertEqualObjects(installParams[@"$og_title"], @"Kindred");
-        XCTAssertEqualObjects(installParams[@"key"], @"test_object");
+        XCTAssertEqualObjects(installParams[@"$og_title"], @"Kindred"); //TODO: equal to params?
+        XCTAssertEqualObjects(installParams[@"key1"], @"test_object");
         
-        [setIdentityExpectation fulfill];
+        [self safelyFulfillExpectation:setIdentityExpectation];
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+    [self awaitExpectations];
+    
+    [serverInterfaceMock verify];
+}
+
+- (void)test02GetShortURLAsync {
+    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    
+    BNCServerResponse *fbLinkResponse = [[BNCServerResponse alloc] init];
+    fbLinkResponse.data = @{ @"url": @"https://bnc.lt/l/4BGtJj-03N" };
+    
+    BNCServerResponse *twLinkResponse = [[BNCServerResponse alloc] init];
+    twLinkResponse.data = @{ @"url": @"https://bnc.lt/l/-03N4BGtJj" };
+    
+    __block BNCServerCallback fbCallback;
+    [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
+        fbCallback(fbLinkResponse, nil);
+    }] createCustomUrl:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        fbCallback = callback;
+        return YES;
+    }]];
+    
+    [[serverInterfaceMock reject] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
+        return [request.postData[@"channel"] isEqualToString:@"facebook"];
+    }]];
+    
+    [[[serverInterfaceMock expect] andReturn:twLinkResponse] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
+        return [request.postData[@"channel"] isEqualToString:@"twitter"];
+    }]];
+    
+    XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
+    
+    [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *url, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(url);
+        
+        NSString *returnURL = url;
+        
+        [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil andCallback:^(NSString *url, NSError *error) {
+            XCTAssertNil(error);
+            XCTAssertNotNil(url);
+            XCTAssertEqualObjects(url, returnURL);
+        }];
+        
+        NSString *urlFB = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
+        XCTAssertEqualObjects(urlFB, url);
+        
+        NSString *urlTT = [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil];
+        XCTAssertNotNil(urlTT);
+        XCTAssertNotEqualObjects(urlTT, url);
+        
+        [self safelyFulfillExpectation:getShortURLExpectation];
     }];
+    
+    [self awaitExpectations];
+    
+    [serverInterfaceMock verify];
+}
+
+- (void)test03GetShortURLSync {
+    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    
+    XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL Sync"];
+    [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+        BNCServerResponse *fbLinkResponse = [[BNCServerResponse alloc] init];
+        fbLinkResponse.data = @{ @"url": @"https://bnc.lt/l/4BGtJj-03N" };
+        
+        BNCServerResponse *twLinkResponse = [[BNCServerResponse alloc] init];
+        twLinkResponse.data = @{ @"url": @"https://bnc.lt/l/-03N4BGtJj" };
+        
+        // FB should only be called once
+        [[[serverInterfaceMock expect] andReturn:fbLinkResponse] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
+            return [request.postData[@"channel"] isEqualToString:@"facebook"];
+        }]];
+        
+        [[serverInterfaceMock reject] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
+            return [request.postData[@"channel"] isEqualToString:@"facebook"];
+        }]];
+        
+        // TW should be allowed still
+        [[[serverInterfaceMock expect] andReturn:twLinkResponse] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
+            return [request.postData[@"channel"] isEqualToString:@"twitter"];
+        }]];
+        
+        NSString *url1 = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
+        XCTAssertNotNil(url1);
+        
+        NSString *url2 = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
+        XCTAssertEqualObjects(url1, url2);
+        
+        NSString *url3 = [branch getShortURLWithParams:nil andChannel:@"twitter" andFeature:nil];
+        XCTAssertNotNil(url3);
+        XCTAssertNotEqualObjects(url1, url3);
+        
+        [self safelyFulfillExpectation:getShortURLExpectation];
+    }];
+    
+    [self awaitExpectations];
+    
+    [serverInterfaceMock verify];
+}
+
+- (void)test04GetRewardsChanged {
+    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    
+    [BNCPreferenceHelper setCreditCount:NSIntegerMax forBucket:@"default"];
+    
+    BNCServerResponse *loadCreditsResponse = [[BNCServerResponse alloc] init];
+    loadCreditsResponse.data = @{ @"default": @(NSIntegerMin) };
+    
+    __block BNCServerCallback loadCreditsCallback;
+    [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
+        loadCreditsCallback(loadCreditsResponse, nil);
+    }] getRewardsWithCallback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        loadCreditsCallback = callback;
+        return YES;
+    }]];
+    
+    XCTestExpectation *getRewardExpectation = [self expectationWithDescription:@"Test getReward"];
+    
+    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertTrue(changed);
+        
+        [self safelyFulfillExpectation:getRewardExpectation];
+    }];
+    
+    [self awaitExpectations];
+}
+
+- (void)test05GetRewardsUnchanged {
+    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    
+    [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
+    
+    BNCServerResponse *loadRewardsResponse = [[BNCServerResponse alloc] init];
+    loadRewardsResponse.data = @{ @"default": @1 };
+    
+    __block BNCServerCallback loadRewardsCallback;
+    [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
+        loadRewardsCallback(loadRewardsResponse, nil);
+    }] getRewardsWithCallback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        loadRewardsCallback = callback;
+        return YES;
+    }]];
+    
+    XCTestExpectation *getRewardExpectation = [self expectationWithDescription:@"Test getReward"];
+    
+    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertFalse(changed);
+        
+        [self safelyFulfillExpectation:getRewardExpectation];
+    }];
+    
+    [self awaitExpectations];
+}
+
+- (void)test06GetReferralCode {
+    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    
+    [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
+    
+    BNCServerResponse *referralCodeResponse = [[BNCServerResponse alloc] init];
+    referralCodeResponse.data = @{
+        @"id": @"85782843459895738",
+        @"branch_key": @"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx",
+        @"calculation_type": @0,
+        @"location": @0,
+        @"type": @"credit",
+        @"event": @"$redeem_code-LMDLDV",
+        @"metadata": @{
+            @"bucket": @"default",
+            @"amount": @5
+        },
+        @"filter": [NSNull null],
+        @"link_id": [NSNull null],
+        @"identity_id": @"98687515069776101",
+        @"creation_source": @2,
+        @"expiration": [NSNull null],
+        @"date": @"2015-01-19T18:00:50.242Z",
+        @"referral_code": TEST_REFERRAL_CODE
+    };
+    
+    __block BNCServerCallback referralCodeCallback;
+    [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
+        referralCodeCallback(referralCodeResponse, nil);
+    }] getReferralCode:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        referralCodeCallback = callback;
+        return YES;
+    }]];
+    
+    XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test getReferralCode"];
+    [branch getReferralCodeWithPrefix:@"test" amount:7 expiration:nil bucket:@"default" calculationType:BranchUniqueRewards location:BranchReferringUser andCallback:^(NSDictionary *params, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(params[@"referral_code"]);
+        
+        [self safelyFulfillExpectation:getReferralCodeExpectation];
+    }];
+    
+    [self awaitExpectations];
+}
+
+- (void)test07ValidateReferralCode {
+    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    
+    [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
+    
+    BNCServerResponse *validateCodeResponse = [[BNCServerResponse alloc] init];
+    validateCodeResponse.data = @{
+        @"id": @"85782843459895738",
+        @"branch_key": @"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx",
+        @"calculation_type": @0,
+        @"location": @0,
+        @"type": @"credit",
+        @"event": @"$redeem_code-LMDLDV",
+        @"metadata": @{
+            @"bucket": @"default",
+            @"amount": @5
+        },
+        @"filter": [NSNull null],
+        @"link_id": [NSNull null],
+        @"identity_id": @"98687515069776101",
+        @"creation_source": @2,
+        @"expiration": [NSNull null],
+        @"date": @"2015-01-19T18:00:50.242Z",
+        @"referral_code": TEST_REFERRAL_CODE
+    };
+    
+    __block BNCServerCallback validateCodeCallback;
+    [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
+        validateCodeCallback(validateCodeResponse, nil);
+    }] validateReferralCode:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        validateCodeCallback = callback;
+        return YES;
+    }]];
+    
+    XCTestExpectation *validateCodeExpectation = [self expectationWithDescription:@"Test validateReferralCode"];
+    [branch validateReferralCode:TEST_REFERRAL_CODE andCallback:^(NSDictionary *params, NSError *error) {
+        XCTAssertNil(error);
+        
+        NSString *code = params[@"referral_code"];
+        XCTAssertNotNil(code);
+        XCTAssertTrue([code isEqualToString:TEST_REFERRAL_CODE]);
+        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUnlimitedRewards);
+        XCTAssertEqual([params[@"location"] integerValue], BranchReferreeUser);
+        XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 5);
+        
+        [self safelyFulfillExpectation:validateCodeExpectation];
+    }];
+    
+    [self awaitExpectations];
+}
+
+- (void)test08ApplyReferralCode {
+    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    
+    [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
+    
+    BNCServerResponse *applyCodeResponse = [[BNCServerResponse alloc] init];
+    applyCodeResponse.data = @{
+        @"id": @"85782843459895738",
+        @"branch_key": @"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx",
+        @"calculation_type": @0,
+        @"location": @0,
+        @"type": @"credit",
+        @"event": @"$redeem_code-LMDLDV",
+        @"metadata": @{
+            @"bucket": @"default",
+            @"amount": @5
+        },
+        @"filter": [NSNull null],
+        @"link_id": [NSNull null],
+        @"identity_id": @"98687515069776101",
+        @"creation_source": @2,
+        @"expiration": [NSNull null],
+        @"date": @"2015-01-19T18:00:50.242Z",
+        @"referral_code": TEST_REFERRAL_CODE
+    };
+    
+    __block BNCServerCallback applyCodeCallback;
+    [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
+        applyCodeCallback(applyCodeResponse, nil);
+    }] applyReferralCode:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        applyCodeCallback = callback;
+        return YES;
+    }]];
+    
+    XCTestExpectation *applyCodeExpectation = [self expectationWithDescription:@"Test applyReferralCode"];
+    [branch applyReferralCode:TEST_REFERRAL_CODE andCallback:^(NSDictionary *params, NSError *error) {
+        XCTAssertNil(error);
+        
+        NSString *code = params[@"referral_code"];
+        XCTAssertNotNil(code);
+        XCTAssertTrue([code isEqualToString:TEST_REFERRAL_CODE]);
+        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUnlimitedRewards);
+        XCTAssertEqual([params[@"location"] integerValue], BranchReferreeUser);
+        XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 5);
+        
+        [self safelyFulfillExpectation:applyCodeExpectation];
+    }];
+    
+    [self awaitExpectations];
+}
+
+- (void)test09GetCreditHistory {
+    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    
+    [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
+    
+    BNCServerResponse *creditHistoryResponse = [[BNCServerResponse alloc] init];
+    creditHistoryResponse.data = @[
+        [@{
+            @"transaction": @{
+                @"id": @"112281771218838351",
+                @"bucket": @"default",
+                @"type": @0,
+                @"amount": @5,
+                @"date": @"2015-04-02T20:58:06.946Z"
+            },
+            @"referrer": @"test_user_10",
+            @"referree": [NSNull null]
+        } mutableCopy]
+    ];
+    
+    __block BNCServerCallback creditHistoryCallback;
+    [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
+        creditHistoryCallback(creditHistoryResponse, nil);
+    }] getCreditHistory:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        creditHistoryCallback = callback;
+        return YES;
+    }]];
+    
+    XCTestExpectation *getCreditHistoryExpectation = [self expectationWithDescription:@"Test getCreditHistory"];
+    [branch getCreditHistoryWithCallback:^(NSArray *list, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(list);
+        XCTAssertGreaterThan(list.count, 0);
+        
+        [self safelyFulfillExpectation:getCreditHistoryExpectation];
+    }];
+    
+    [self awaitExpectations];
+}
+
+#pragma mark - Test Utility
+
+- (void)safelyFulfillExpectation:(XCTestExpectation *)expectation {
+    if (!self.hasExceededExpectations) {
+        [expectation fulfill];
+    }
+}
+
+- (void)awaitExpectations {
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+        self.hasExceededExpectations = YES;
+    }];
+}
+
+- (void)setupDefaultStubsForServerInterfaceMock:(id)serverInterfaceMock {
+    BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
+    openInstallResponse.data = @{
+        @"session_id": TEST_SESSION_ID,
+        @"identity_id": TEST_IDENTITY_ID,
+        @"device_fingerprint_id": TEST_DEVICE_FINGERPRINT_ID,
+        @"browser_fingerprint_id": TEST_BROWSER_FINGERPRINT_ID,
+        @"link": TEST_IDENTITY_LINK,
+        @"new_identity_id": TEST_NEW_IDENTITY_ID
+    };
+    
+    // Stub open / install
+    __block BNCServerCallback openOrInstallCallback;
+    id openOrInstallCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        openOrInstallCallback = callback;
+        return YES;
+    }];
+    
+    id openOrInstallInvocation = ^(NSInvocation *invocation) {
+        openOrInstallCallback(openInstallResponse, nil);
+    };
+    
+    // Stub app list calls
+    __block BNCServerCallback appListCallback;
+    id appListCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        callback([[BNCServerResponse alloc] init], nil);
+        return YES;
+    }];
+    
+    id appListInvocation = ^(NSInvocation *invocation) {
+        appListCallback(openInstallResponse, nil);
+    };
+    
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock stub] andDo:appListInvocation] uploadListOfApps:[OCMArg any] callback:appListCallbackCheckBlock];
+    [[[serverInterfaceMock stub] andDo:appListInvocation] retrieveAppsToCheckWithCallback:appListCallbackCheckBlock];
+    
+    // Fake branch key
+    id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
+    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey];
 }
 
 @end
