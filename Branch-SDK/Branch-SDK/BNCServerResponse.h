@@ -7,14 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "BNCLinkData.h"
 
 @interface BNCServerResponse : NSObject
 
 @property (nonatomic, strong) NSNumber *statusCode;
 @property (nonatomic, strong) NSString *tag;
 @property (nonatomic, strong) id data;
-@property (nonatomic, strong) BNCLinkData *linkData;
 
 - (id)initWithTag:(NSString *)tag;
 
