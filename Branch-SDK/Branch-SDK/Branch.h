@@ -8,6 +8,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "BranchActivityItemProvider.h"
+#import "BranchServerInterface.h"
+#import "BNCServerRequestQueue.h"
+#import "BNCLinkCache.h"
 
 typedef void (^callbackWithParams) (NSDictionary *params, NSError *error);
 typedef void (^callbackWithUrl) (NSString *url, NSError *error);
@@ -19,16 +22,6 @@ extern NSString * const BRANCH_FEATURE_TAG_REFERRAL;
 extern NSString * const BRANCH_FEATURE_TAG_INVITE;
 extern NSString * const BRANCH_FEATURE_TAG_DEAL;
 extern NSString * const BRANCH_FEATURE_TAG_GIFT;
-
-extern NSString * const TAGS;
-extern NSString * const LINK_TYPE;
-extern NSString * const ALIAS;
-extern NSString * const CHANNEL;
-extern NSString * const FEATURE;
-extern NSString * const STAGE;
-extern NSString * const DURATION;
-extern NSString * const DATA;
-extern NSString * const IGNORE_UA_STRING;
 
 typedef enum {
     BranchMostRecentFirst,
@@ -45,11 +38,6 @@ typedef enum {
     BranchUniqueRewards = 1,
     BranchUnlimitedRewards = 0
 } ReferralCodeCalculation;
-
-typedef enum {
-    BranchLinkTypeUnlimitedUse = 0,
-    BranchLinkTypeOneTimeUse = 1
-} BranchLinkType;
 
 @interface Branch : NSObject
 
@@ -190,5 +178,7 @@ typedef enum {
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(ReferralCodeCalculation)calcType location:(ReferralCodeLocation)location andCallback:(callbackWithParams)callback;
 - (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
 - (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
+
+- (id)initWithInterface:(BranchServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache;
 
 @end

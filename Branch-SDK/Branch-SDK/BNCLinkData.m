@@ -9,6 +9,16 @@
 #import "BNCLinkData.h"
 #import "BNCEncodingUtils.h"
 
+NSString * const BNC_LINK_DATA_TAGS = @"tags";
+NSString * const BNC_LINK_DATA_LINK_TYPE = @"type";
+NSString * const BNC_LINK_DATA_ALIAS = @"alias";
+NSString * const BNC_LINK_DATA_CHANNEL = @"channel";
+NSString * const BNC_LINK_DATA_FEATURE = @"feature";
+NSString * const BNC_LINK_DATA_STAGE = @"stage";
+NSString * const BNC_LINK_DATA_DURATION = @"duration";
+NSString * const BNC_LINK_DATA_DATA = @"data";
+NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
+
 @implementation BNCLinkData
 
 - (id)init {
@@ -38,62 +48,62 @@
 - (void)setupTags:(NSArray *)tags {
     if (tags) {
         _tags = tags;
-        [self.data setObject:tags forKey:TAGS];
+        [self.data setObject:tags forKey:BNC_LINK_DATA_TAGS];
     }
 }
 
 - (void)setupAlias:(NSString *)alias {
     if (alias) {
         _alias = alias;
-        [self.data setObject:alias forKey:ALIAS];
+        [self.data setObject:alias forKey:BNC_LINK_DATA_ALIAS];
     }
 }
 
 - (void)setupType:(BranchLinkType)type {
     if (type) {
         _type = type;
-        [self.data setObject:[NSNumber numberWithInt:type] forKey:LINK_TYPE];
+        [self.data setObject:[NSNumber numberWithInt:type] forKey:BNC_LINK_DATA_LINK_TYPE];
     }
 }
 
 - (void)setupMatchDuration:(NSUInteger)duration {
     if (duration > 0) {
         _duration = duration;
-        [self.data setObject:[NSNumber numberWithInteger:duration] forKey:DURATION];
+        [self.data setObject:[NSNumber numberWithInteger:duration] forKey:BNC_LINK_DATA_DURATION];
     }
 }
 
 - (void)setupChannel:(NSString *)channel {
     if (channel) {
         _channel = channel;
-        [self.data setObject:channel forKey:CHANNEL];
+        [self.data setObject:channel forKey:BNC_LINK_DATA_CHANNEL];
     }
 }
 
 - (void)setupFeature:(NSString *)feature {
     if (feature) {
         _feature = feature;
-        [self.data setObject:feature forKey:FEATURE];
+        [self.data setObject:feature forKey:BNC_LINK_DATA_FEATURE];
     }
 }
 
 - (void)setupStage:(NSString *)stage {
     if (stage) {
         _stage = stage;
-        [self.data setObject:stage forKey:STAGE];
+        [self.data setObject:stage forKey:BNC_LINK_DATA_STAGE];
     }
 }
 
 - (void)setupIgnoreUAString:(NSString *)ignoreUAString {
     if (ignoreUAString) {
         _ignoreUAString = ignoreUAString;
-        [self.data setObject:ignoreUAString forKey:IGNORE_UA_STRING];
+        [self.data setObject:ignoreUAString forKey:BNC_LINK_DATA_IGNORE_UA_STRING];
     }
 }
 
 - (void)setupParams:(NSString *)params {
     _params = params;
-    [self.data setObject:params forKey:DATA];
+    [self.data setObject:params forKey:BNC_LINK_DATA_DATA];
 }
 
 
@@ -103,10 +113,6 @@
 
 - (void)setObject:(id)anObject forKey:(id <NSCopying>)aKey {
     [self.data setObject:anObject forKey:aKey];
-}
-
-- (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key NS_AVAILABLE(10_8, 6_0) {
-    [self.data setObject:obj forKeyedSubscript:key];
 }
 
 - (id)objectForKey:(id)aKey {
@@ -134,41 +140,41 @@
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     if (self.tags) {
-        [coder encodeObject:self.tags forKey:TAGS];
+        [coder encodeObject:self.tags forKey:BNC_LINK_DATA_TAGS];
     }
     if (self.alias) {
-        [coder encodeObject:self.alias forKey:ALIAS];
+        [coder encodeObject:self.alias forKey:BNC_LINK_DATA_ALIAS];
     }
     if (self.type) {
-        [coder encodeObject:[NSNumber numberWithInteger:self.type] forKey:LINK_TYPE];
+        [coder encodeObject:[NSNumber numberWithInteger:self.type] forKey:BNC_LINK_DATA_LINK_TYPE];
     }
     if (self.channel) {
-        [coder encodeObject:self.channel forKey:CHANNEL];
+        [coder encodeObject:self.channel forKey:BNC_LINK_DATA_CHANNEL];
     }
     if (self.feature) {
-        [coder encodeObject:self.feature forKey:FEATURE];
+        [coder encodeObject:self.feature forKey:BNC_LINK_DATA_FEATURE];
     }
     if (self.stage) {
-        [coder encodeObject:self.stage forKey:STAGE];
+        [coder encodeObject:self.stage forKey:BNC_LINK_DATA_STAGE];
     }
     if (self.params) {
-        [coder encodeObject:self.params forKey:DATA];
+        [coder encodeObject:self.params forKey:BNC_LINK_DATA_DATA];
     }
     if (self.duration > 0) {
-        [coder encodeObject:[NSNumber numberWithInteger:self.duration] forKey:DURATION];
+        [coder encodeObject:[NSNumber numberWithInteger:self.duration] forKey:BNC_LINK_DATA_DURATION];
     }
 }
 
 - (id)initWithCoder:(NSCoder *)coder {
     if (self = [super init]) {
-        self.tags = [coder decodeObjectForKey:TAGS];
-        self.alias = [coder decodeObjectForKey:ALIAS];
-        self.type = [[coder decodeObjectForKey:LINK_TYPE] intValue];
-        self.channel = [coder decodeObjectForKey:CHANNEL];
-        self.feature = [coder decodeObjectForKey:FEATURE];
-        self.stage = [coder decodeObjectForKey:STAGE];
-        self.params = [coder decodeObjectForKey:DATA];
-        self.duration = [[coder decodeObjectForKey:DURATION] intValue];
+        self.tags = [coder decodeObjectForKey:BNC_LINK_DATA_TAGS];
+        self.alias = [coder decodeObjectForKey:BNC_LINK_DATA_ALIAS];
+        self.type = [[coder decodeObjectForKey:BNC_LINK_DATA_LINK_TYPE] intValue];
+        self.channel = [coder decodeObjectForKey:BNC_LINK_DATA_CHANNEL];
+        self.feature = [coder decodeObjectForKey:BNC_LINK_DATA_FEATURE];
+        self.stage = [coder decodeObjectForKey:BNC_LINK_DATA_STAGE];
+        self.params = [coder decodeObjectForKey:BNC_LINK_DATA_DATA];
+        self.duration = [[coder decodeObjectForKey:BNC_LINK_DATA_DURATION] intValue];
     }
     return self;
 }
