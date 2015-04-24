@@ -738,7 +738,7 @@ Branch.getInstance().getReferralCodeWithAmount(5, andCallback: { (params: [NSObj
 ```
 
 Alternatively, you can specify a prefix for the referral code.
-The resulting code will have your prefix, concatenated with a 4 character long unique alpha-numeric string wrapped in the same data structure.
+The resulting code will have your prefix, concatenated with a 2 character long unique alpha-numeric string wrapped in the same data structure.
 
 **prefix** _NSString*_
 : The prefix to the referral code that you desire
