@@ -41,6 +41,7 @@
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    [self setUpAppListStubs:serverInterfaceMock];
 
     XCTestExpectation *scenario1Expectation = [self expectationWithDescription:@"Scenario1 Expectation"];
 
@@ -78,7 +79,8 @@
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
-    
+    [self setUpAppListStubs:serverInterfaceMock];
+
     XCTestExpectation *scenario2Expectation = [self expectationWithDescription:@"Scenario2 Expectation"];
     
     // Start off with a bad connection
@@ -118,7 +120,8 @@
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
-    
+    [self setUpAppListStubs:serverInterfaceMock];
+
     XCTestExpectation *scenario3Expectation = [self expectationWithDescription:@"Scenario3 Expectation"];
     
     // Start off with a good connection
@@ -155,7 +158,8 @@
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
-    
+    [self setUpAppListStubs:serverInterfaceMock];
+
     XCTestExpectation *scenario4Expectation = [self expectationWithDescription:@"Scenario4 Expectation"];
     
     // Start off with a bad connection
@@ -335,40 +339,18 @@
     }];
 }
 
-- (void)setupDefaultStubsForServerInterfaceMock:(id)serverInterfaceMock {
-    BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
-    openInstallResponse.data = @{
-        @"session_id": @"11111",
-        @"identity_id": @"22222",
-        @"device_fingerprint_id": @"ae5adt6lkj08",
-        @"browser_fingerprint_id": @"ae5adt6lkj08",
-        @"link": @"https://bnc.lt/i/11111"
-    };
-    
-    // Stub open / install
-    __block BNCServerCallback openOrInstallCallback;
-    id openOrInstallCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-        openOrInstallCallback = callback;
-        return YES;
-    }];
-    
-    id openOrInstallInvocation = ^(NSInvocation *invocation) {
-        openOrInstallCallback(openInstallResponse, nil);
-    };
-    
+- (void)setUpAppListStubs:(id)serverInterfaceMock {
     // Stub app list calls
     __block BNCServerCallback appListCallback;
     id appListCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-        callback([[BNCServerResponse alloc] init], nil);
+        appListCallback = callback;
         return YES;
     }];
     
     id appListInvocation = ^(NSInvocation *invocation) {
-        appListCallback(openInstallResponse, nil);
+        appListCallback([[BNCServerResponse alloc] init], nil);
     };
-    
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO callback:openOrInstallCallbackCheckBlock];
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO callback:openOrInstallCallbackCheckBlock];
+
     [[[serverInterfaceMock stub] andDo:appListInvocation] uploadListOfApps:[OCMArg any] callback:appListCallbackCheckBlock];
     [[[serverInterfaceMock stub] andDo:appListInvocation] retrieveAppsToCheckWithCallback:appListCallbackCheckBlock];
 }
