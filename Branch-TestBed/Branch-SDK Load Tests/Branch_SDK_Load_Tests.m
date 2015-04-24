@@ -49,13 +49,20 @@
         return YES;
     }]];
     
-    id callbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    id openOrInstallCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         callback(openInstallResponse, nil);
         return YES;
     }];
     
-    [[serverInterfaceMock stub] registerInstall:NO callback:callbackCheckBlock];
-    [[serverInterfaceMock stub] registerOpen:NO callback:callbackCheckBlock];
+    id appListCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        callback([[BNCServerResponse alloc] init], nil);
+        return YES;
+    }];
+    
+    [[serverInterfaceMock stub] registerInstall:NO callback:openOrInstallCallbackCheckBlock];
+    [[serverInterfaceMock stub] registerOpen:NO callback:openOrInstallCallbackCheckBlock];
+    [[serverInterfaceMock stub] uploadListOfApps:[OCMArg any] callback:appListCallbackCheckBlock];
+    [[serverInterfaceMock stub] retrieveAppsToCheckWithCallback:appListCallbackCheckBlock];
     
     // Fake branch key
     [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey];
