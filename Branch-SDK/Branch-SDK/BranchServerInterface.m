@@ -118,11 +118,11 @@
 }
 
 - (void)createCustomUrl:(BNCServerRequest *)req callback:(BNCServerCallback)callback {
-    [self postRequest:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL andLinkData:req.linkData callback:callback];
+    [self postRequest:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL callback:callback];
 }
 
 - (BNCServerResponse *)createCustomUrl:(BNCServerRequest *)req {
-    return [self postRequest:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL andLinkData:req.linkData log:YES];
+    return [self postRequest:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL log:YES];
 }
 
 - (void)identifyUser:(NSDictionary *)post callback:(BNCServerCallback)callback {
@@ -213,7 +213,7 @@
     [request setHTTPBody:body];
     [request addValue:[NSString stringWithFormat:@"%lu", (unsigned long)[body length]] forHTTPHeaderField:@"Content-Length"];
 
-    [self genericHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN andLinkData:nil callback:callback];
+    [self genericHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN callback:callback];
 }
 
 - (void)getReferralCode:(NSDictionary *)post callback:(BNCServerCallback)callback {
