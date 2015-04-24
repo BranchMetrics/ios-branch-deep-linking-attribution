@@ -28,7 +28,7 @@
 - (void)getRequest:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag retryNumber:(NSInteger)retryNumber log:(BOOL)log callback:(BNCServerCallback)callback {
     NSURLRequest *request = [self prepareGetRequest:params url:url retryNumber:retryNumber log:log];
 
-    [self genericHTTPRequest:request withTag:requestTag andLinkData:nil retryNumber:retryNumber log:log callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
+    [self genericHTTPRequest:request withTag:requestTag retryNumber:retryNumber log:log callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
         return [self prepareGetRequest:params url:url retryNumber:++lastRetryNumber log:log];
     }];
 }
@@ -39,53 +39,45 @@
 
 - (BNCServerResponse *)getRequest:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
     NSURLRequest *request = [self prepareGetRequest:params url:url retryNumber:0 log:log];
-    return [self genericHTTPRequest:request withTag:requestTag andLinkData:nil];
+    return [self genericHTTPRequest:request withTag:requestTag];
 }
 
 
 #pragma mark - POST methods
 
 - (void)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag callback:(BNCServerCallback)callback {
-    [self postRequest:post url:url andTag:requestTag andLinkData:nil retryNumber:0 log:YES callback:callback];
+    [self postRequest:post url:url andTag:requestTag retryNumber:0 log:YES callback:callback];
 }
 
 - (void)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log callback:(BNCServerCallback)callback {
-    [self postRequest:post url:url andTag:requestTag andLinkData:nil retryNumber:0 log:log callback:callback];
+    [self postRequest:post url:url andTag:requestTag retryNumber:0 log:log callback:callback];
 }
 
-- (void)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData callback:(BNCServerCallback)callback {
-    [self postRequest:post url:url andTag:requestTag andLinkData:linkData retryNumber:0 log:YES callback:callback];
-}
-
-- (void)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log callback:(BNCServerCallback)callback {
-    [self postRequest:post url:url andTag:requestTag andLinkData:linkData retryNumber:0 log:log callback:callback];
-}
-
-- (void)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData retryNumber:(NSInteger)retryNumber log:(BOOL)log callback:(BNCServerCallback)callback {
+- (void)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag retryNumber:(NSInteger)retryNumber log:(BOOL)log callback:(BNCServerCallback)callback {
     NSURLRequest *request = [self preparePostRequest:post url:url retryNumber:retryNumber log:log];
 
-    [self genericHTTPRequest:request withTag:requestTag andLinkData:linkData retryNumber:retryNumber log:log callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
+    [self genericHTTPRequest:request withTag:requestTag retryNumber:retryNumber log:log callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
         return [self preparePostRequest:post url:url retryNumber:++lastRetryNumber log:log];
     }];
 }
 
-- (BNCServerResponse *)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log {
+- (BNCServerResponse *)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log {
     NSURLRequest *request = [self preparePostRequest:post url:url retryNumber:0 log:log];
-    return [self genericHTTPRequest:request withTag:requestTag andLinkData:linkData];
+    return [self genericHTTPRequest:request withTag:requestTag];
 }
 
 
 #pragma mark - Generic requests
 
-- (void)genericHTTPRequest:(NSURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData callback:(BNCServerCallback)callback {
-    [self genericHTTPRequest:request withTag:requestTag andLinkData:linkData retryNumber:0 log:YES callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
+- (void)genericHTTPRequest:(NSURLRequest *)request withTag:(NSString *)requestTag callback:(BNCServerCallback)callback {
+    [self genericHTTPRequest:request withTag:requestTag retryNumber:0 log:YES callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
         return request;
     }];
 }
 
-- (void)genericHTTPRequest:(NSURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData retryNumber:(NSInteger)retryNumber log:(BOOL)log callback:(BNCServerCallback)callback retryHandler:(NSURLRequest *(^)(NSInteger))retryHandler {
+- (void)genericHTTPRequest:(NSURLRequest *)request withTag:(NSString *)requestTag retryNumber:(NSInteger)retryNumber log:(BOOL)log callback:(BNCServerCallback)callback retryHandler:(NSURLRequest *(^)(NSInteger))retryHandler {
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *responseData, NSError *error) {
-        BNCServerResponse *serverResponse = [self processServerResponse:response data:responseData error:error tag:requestTag andLinkData:linkData];
+        BNCServerResponse *serverResponse = [self processServerResponse:response data:responseData error:error tag:requestTag];
         NSInteger status = [serverResponse.statusCode integerValue];
         BOOL isRetryableStatusCode = status >= 500;
         
@@ -99,7 +91,7 @@
             
             // Create the next request
             NSURLRequest *retryRequest = retryHandler(retryNumber);
-            [self genericHTTPRequest:retryRequest withTag:requestTag andLinkData:linkData retryNumber:(retryNumber + 1) log:log callback:callback retryHandler:retryHandler];
+            [self genericHTTPRequest:retryRequest withTag:requestTag retryNumber:(retryNumber + 1) log:log callback:callback retryHandler:retryHandler];
         }
         else if (callback) {
             // Wrap up bad statuses w/ specific error messages
@@ -124,12 +116,12 @@
     }];
 }
 
-- (BNCServerResponse *)genericHTTPRequest:(NSURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
+- (BNCServerResponse *)genericHTTPRequest:(NSURLRequest *)request withTag:(NSString *)requestTag {
     NSURLResponse *response = nil;
     NSError *error = nil;
     NSData *POSTReply = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
     
-    return [self processServerResponse:response data:POSTReply error:error tag:requestTag andLinkData:linkData];
+    return [self processServerResponse:response data:POSTReply error:error tag:requestTag];
 }
 
 
@@ -195,9 +187,8 @@
     return request;
 }
 
-- (BNCServerResponse *)processServerResponse:(NSURLResponse *)response data:(NSData *)data error:(NSError *)error tag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData {
+- (BNCServerResponse *)processServerResponse:(NSURLResponse *)response data:(NSData *)data error:(NSError *)error tag:(NSString *)requestTag {
     BNCServerResponse *serverResponse = [[BNCServerResponse alloc] initWithTag:requestTag];
-    serverResponse.linkData = linkData;
 
     if (!error) {
         serverResponse.statusCode = @([(NSHTTPURLResponse *)response statusCode]);

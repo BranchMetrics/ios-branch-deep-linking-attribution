@@ -1026,19 +1026,19 @@ static Branch *currInstance;
         [self initUserSessionAndCallCallback:NO];
     }
     
-    BNCLinkData *post = [self prepareLinkDataFor:tags andAlias:alias andType:type andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:params ignoreUAString:nil];
+    BNCLinkData *linkData = [self prepareLinkDataFor:tags andAlias:alias andType:type andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:params ignoreUAString:nil];
     
-    if ([self.linkCache objectForKey:post]) {
+    if ([self.linkCache objectForKey:linkData]) {
         if (callback) {
-            callback([self.linkCache objectForKey:post], nil);
+            callback([self.linkCache objectForKey:linkData], nil);
         }
         return;
     }
 
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
     req.tag = REQ_TAG_GET_CUSTOM_URL;
-    req.postData = post.data;
-    req.linkData = post;
+    req.postData = linkData.data;
+
     req.callback = ^(BNCServerResponse *response, NSError *error) {
         if (error) {
             if (callback) {
@@ -1058,7 +1058,7 @@ static Branch *currInstance;
         
         // cache the link
         if (url) {
-            [self.linkCache setObject:url forKey:response.linkData];
+            [self.linkCache setObject:url forKey:linkData];
         }
 
         if (callback) {
@@ -1075,15 +1075,14 @@ static Branch *currInstance;
     
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
     req.tag = REQ_TAG_GET_CUSTOM_URL;
-    BNCLinkData *post = [self prepareLinkDataFor:tags andAlias:alias andType:type andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:params ignoreUAString:ignoreUAString];
+    BNCLinkData *linkData = [self prepareLinkDataFor:tags andAlias:alias andType:type andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:params ignoreUAString:ignoreUAString];
     
     // If an ignore UA string is present, we always get a new url. Otherwise, if we've already seen this request, use the cached version
-    if (!ignoreUAString && [self.linkCache objectForKey:post]) {
-        shortURL = [self.linkCache objectForKey:post];
+    if (!ignoreUAString && [self.linkCache objectForKey:linkData]) {
+        shortURL = [self.linkCache objectForKey:linkData];
     }
     else {
-        req.postData = post.data;
-        req.linkData = post;
+        req.postData = linkData.data;
         
         if (self.isInitialized) {
             [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Created custom url synchronously"];
@@ -1092,7 +1091,7 @@ static Branch *currInstance;
             
             // cache the link
             if (shortURL) {
-                [self.linkCache setObject:shortURL forKey:post];
+                [self.linkCache setObject:shortURL forKey:linkData];
             }
         }
         else {
