@@ -7,60 +7,58 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
 #import "Branch.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
-#import "Nocilla.h"
 #import "BNCEncodingUtils.h"
 #import "BNCServerRequestQueue.h"
 
-@interface Branch_SDK_Load_Tests : XCTestCase {
-    
-@private
-    __weak Branch *branch;
-}
+@interface Branch_SDK_Load_Tests : XCTestCase
 
 @end
 
 @implementation Branch_SDK_Load_Tests
 
-- (void)setUp {
-    [super setUp];
-    
-    branch = [Branch getInstance:@"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx"];
-    
-    [BNCPreferenceHelper setSessionID:@"97141055400444225"];
-    [BNCPreferenceHelper setDeviceFingerprintID:@"94938498586381084"];
-    [BNCPreferenceHelper setIdentityID:@"95765863201768032"];
-    [BNCPreferenceHelper setLinkClickID:NO_STRING_VALUE];
-    [BNCPreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
-    [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
-    
-    [BNCPreferenceHelper setTestDelegate:(id<BNCTestDelegate>)branch];
-    [BNCPreferenceHelper simulateInitFinished];
-    
-    [[LSNocilla sharedInstance] start];
-    
-    [[BNCServerRequestQueue getInstance] clearQueue];
-}
-
-- (void)tearDown {
-    [[LSNocilla sharedInstance] clearStubs];
-    [[LSNocilla sharedInstance] stop];
-    
-    [super tearDown];
-}
-
 - (void)testLoad {
-    NSDictionary *responseDict = @{@"url": @"https://bnc.lt/l/3PxZVFU-BK"};
-    NSData *responseData = [BNCEncodingUtils encodeDictionaryToJsonData:responseDict];
+    id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
+    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
     
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"url"])
-    .andReturn(200)
-    .withHeaders(@{@"Content-Type": @"application/json"})
-    .withBody(responseData);
+    BNCServerResponse *linkResponse = [[BNCServerResponse alloc] init];
+    linkResponse.data = @{ @"url": @"https://bnc.lt/l/3PxZVFU-BK" };
     
-    XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
+    BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
+    openInstallResponse.data = @{
+        @"session_id": @"112263020234678596",
+        @"identity_id": @"98687515069776101",
+        @"device_fingerprint_id": @"94938498586381084",
+        @"browser_fingerprint_id": [NSNull null],
+        @"link": @"https://bnc.lt/i/3SawKbU-1Z",
+        @"new_identity_id": @"98687515069776101",
+        @"identity": @"test_user_10"
+    };
+    
+    // Stub all the requests
+    __block BNCServerCallback urlCallback;
+    [[[serverInterfaceMock stub] andDo:^(NSInvocation *invocation) {
+        urlCallback(linkResponse, nil);
+    }] createCustomUrl:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        urlCallback = callback;
+        return YES;
+    }]];
+    
+    id callbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        callback(openInstallResponse, nil);
+        return YES;
+    }];
+    
+    [[serverInterfaceMock stub] registerInstall:NO callback:callbackCheckBlock];
+    [[serverInterfaceMock stub] registerOpen:NO callback:callbackCheckBlock];
+    
+    // Fake branch key
+    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey];
     
     for (int i = 0; i < 1000; i++) {
         [branch getShortURLWithParams:nil andChannel:[NSString stringWithFormat:@"%d", i] andFeature:nil andCallback:^(NSString *url, NSError *error) {
@@ -69,6 +67,7 @@
         }];
     }
     
+    XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
     [branch getShortURLWithParams:nil andChannel:nil andFeature:@"feature" andCallback:^(NSString *url, NSError *error) {
         XCTAssertNil(error);
         XCTAssertEqualObjects(url, @"https://bnc.lt/l/3PxZVFU-BK");
