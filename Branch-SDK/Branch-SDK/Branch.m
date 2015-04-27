@@ -344,23 +344,29 @@ static Branch *currInstance;
                                                                                SESSION_ID,
                                                                                IDENTITY_ID]];
     req.postData = post;
+    
+    __block BOOL shouldCallCallback = YES;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        [self completeRequest];
 
         if (error) {
-            if (callback) {
+            if (callback && shouldCallCallback) {
                 callback(nil, error);
             }
             
-            // Re-enqueue requests that failed, but are valid (not 400s)
-            if (error.code < 400 || error.code >= 500) {
-                [self setIdentity:userId withCallback:NULL];
+            // Requests that fail w/ connection errors shouldn't be removed from the queue, and processing should not continue
+            // 400s shouldn't be replayed, but since it isn't a server error, continue processing other requests
+            if (error.code >= 400 && error.code < 500) {
+                [self completeRequest];
+                [self processNextQueueItem];
             }
-            
-            [self processNextQueueItem];
+            else {
+                self.networkCount = 0;
+                shouldCallCallback = NO; // don't call the callback next time around
+            }
             return;
         }
 
+        [self completeRequest];
         [BNCPreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
         [BNCPreferenceHelper setUserURL:[response.data objectForKey:LINK]];
         
@@ -404,6 +410,15 @@ static Branch *currInstance;
                                                                                IDENTITY_ID]];
     req.postData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
+        [self completeRequest];
+        if (error) {
+            // Only continue processing if this was a 4xx error
+            if (error.code >= 400 && error.code < 500) {
+                [self processNextQueueItem];
+            }
+            return;
+        }
+
         [BNCPreferenceHelper setSessionID:[response.data objectForKey:SESSION_ID]];
         [BNCPreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
         [BNCPreferenceHelper setUserURL:[response.data objectForKey:LINK]];
@@ -413,7 +428,6 @@ static Branch *currInstance;
         [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
         [BNCPreferenceHelper clearUserCreditsAndCounts];
         
-        [self completeRequest];
         [self processNextQueueItem];
     };
 
@@ -438,7 +452,12 @@ static Branch *currInstance;
             if (callback) {
                 callback(NO, error);
             }
-            [self processNextQueueItem];
+
+            // Only continue processing if this was a 4xx error
+            if (error.code >= 400 && error.code < 500) {
+                [self processNextQueueItem];
+            }
+
             return;
         }
 
@@ -501,14 +520,15 @@ static Branch *currInstance;
     
     req.postData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        [self completeRequest];
-
-        // Re-enqueue requests that failed, but are valid (not 400s)
+        // Bad connection, don't dequeue or continue processing
         if (error && (error.code < 400 || error.code >= 500)) {
-            [self userCompletedAction:action withState:state];
+            self.networkCount = 0; // request is completed, at least
         }
-
-        [self processNextQueueItem];
+        // Only dequeue requests that were successful or 400 errors
+        else {
+            [self completeRequest];
+            [self processNextQueueItem];
+        }
     };
 
     [self.requestQueue enqueue:req];
@@ -532,7 +552,12 @@ static Branch *currInstance;
             if (callback) {
                 callback(NO, error);
             }
-            [self processNextQueueItem];
+
+            // Only continue processing if this was a 4xx error
+            if (error.code >= 400 && error.code < 500) {
+                [self processNextQueueItem];
+            }
+
             return;
         }
 
@@ -600,13 +625,21 @@ static Branch *currInstance;
                                                                                    SESSION_ID]];
         req.postData = post;
         req.callback = ^(BNCServerResponse *response, NSError *error) {
-            if (!error) {
+            [self completeRequest];
+            
+            if (error) {
+                // Stop processing if this wasn't a 4xx error
+                if (error.code < 400 || error.code >= 500) {
+                    return;
+                }
+            }
+            // No error
+            else {
                 // Update local balance
                 NSInteger updatedBalance = totalAvailableCredits - amountToRedeem;
                 [BNCPreferenceHelper setCreditCount:updatedBalance forBucket:bucket];
             }
             
-            [self completeRequest];
             [self processNextQueueItem];
         };
 
@@ -661,9 +694,15 @@ static Branch *currInstance;
             if (callback) {
                 callback(nil, error);
             }
-            [self processNextQueueItem];
+
+            // Only continue processing if this was a 4xx error
+            if (error.code >= 400 && error.code < 500) {
+                [self processNextQueueItem];
+            }
+            
             return;
         }
+
         for (NSMutableDictionary *transaction in response.data) {
             if ([transaction objectForKey:REFERRER] == [NSNull null]) {
                 [transaction removeObjectForKey:REFERRER];
@@ -914,7 +953,12 @@ static Branch *currInstance;
             if (callback) {
                 callback(nil, error);
             }
-            [self processNextQueueItem];
+            
+            // Only continue processing if this was a 4xx error
+            if (error.code >= 400 && error.code < 500) {
+                [self processNextQueueItem];
+            }
+
             return;
         }
         
@@ -962,7 +1006,12 @@ static Branch *currInstance;
             if (callback) {
                 callback(nil, error);
             }
-            [self processNextQueueItem];
+
+            // Only continue processing if this was a 4xx error
+            if (error.code >= 400 && error.code < 500) {
+                [self processNextQueueItem];
+            }
+            
             return;
         }
         
@@ -1011,7 +1060,12 @@ static Branch *currInstance;
             if (callback) {
                 callback(nil, error);
             }
-            [self processNextQueueItem];
+            
+            // Only continue processing if this was a 4xx error
+            if (error.code >= 400 && error.code < 500) {
+                [self processNextQueueItem];
+            }
+
             return;
         }
 
@@ -1078,7 +1132,12 @@ static Branch *currInstance;
 
                 callback(failedUrl, error);
             }
-            [self processNextQueueItem];
+            
+            // Only continue processing if this was a 4xx error
+            if (error.code >= 400 && error.code < 500) {
+                [self processNextQueueItem];
+            }
+            
             return;
         }
         
@@ -1250,7 +1309,10 @@ static Branch *currInstance;
     req.callback = ^(BNCServerResponse *serverResponse, NSError *error) {
         [self completeRequest];
         if (error) {
-            [self processNextQueueItem];
+            // Only continue processing if this was a 4xx error
+            if (error.code >= 400 && error.code < 500) {
+                [self processNextQueueItem];
+            }
             return;
         }
 
@@ -1276,11 +1338,17 @@ static Branch *currInstance;
     } mutableCopy];
 
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        if (!error) {
+        [self completeRequest];
+        if (error) {
+            // Don't continue processing if this wasn't a 4xx error
+            if (error.code < 400 || error.code >= 500) {
+                return;
+            }
+        }
+        else {
             [BNCPreferenceHelper setAppListCheckDone];
         }
 
-        [self completeRequest];
         [self processNextQueueItem];
     };
     
@@ -1313,7 +1381,11 @@ static Branch *currInstance;
             if (!req.callback) {
                 req.callback = ^(BNCServerResponse *response, NSError *error) {
                     [self completeRequest];
-                    [self processNextQueueItem];
+
+                    // Only continue processing if this was a 4xx error
+                    if (error.code >= 400 && error.code < 500) {
+                        [self processNextQueueItem];
+                    }
                 };
             }
 
@@ -1597,7 +1669,9 @@ static Branch *currInstance;
     }
     
     for (BNCServerRequest *request in requestsToFail) {
-        request.callback(nil, initError);
+        if (request.callback) {
+            request.callback(nil, initError);
+        }
     }
 
     if (self.shouldCallSessionInitCallback && self.sessionInitWithParamsCallback) {
