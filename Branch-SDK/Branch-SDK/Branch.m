@@ -347,7 +347,6 @@ static Branch *currInstance;
     
     __block BOOL shouldCallCallback = YES;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-
         if (error) {
             if (callback && shouldCallCallback) {
                 callback(nil, error);
@@ -381,7 +380,7 @@ static Branch *currInstance;
             }
         }
         
-        if (callback) {
+        if (callback && shouldCallCallback) {
             callback([self getFirstReferringParams], nil);
         }
         
