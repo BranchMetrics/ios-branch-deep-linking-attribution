@@ -1383,7 +1383,7 @@ static Branch *currInstance;
                     [self completeRequest];
 
                     // Only continue processing if this was a 4xx error
-                    if (error.code >= 400 && error.code < 500) {
+                    if (!error || (error.code >= 400 && error.code < 500)) {
                         [self processNextQueueItem];
                     }
                 };
