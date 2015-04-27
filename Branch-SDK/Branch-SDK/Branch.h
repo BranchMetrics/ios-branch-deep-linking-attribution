@@ -30,26 +30,27 @@ extern NSString * const DURATION;
 extern NSString * const DATA;
 extern NSString * const IGNORE_UA_STRING;
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchMostRecentFirst,
     BranchLeastRecentFirst
-} CreditHistoryOrder;
+};
 
-typedef enum {
+
+typedef NS_ENUM(NSUInteger, BranchReferralCodeLocation) {
     BranchReferreeUser = 0,
     BranchReferringUser = 2,
     BranchBothUsers = 3
-} ReferralCodeLocation;
+};
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
     BranchUniqueRewards = 1,
     BranchUnlimitedRewards = 0
-} ReferralCodeCalculation;
+};
 
-typedef enum {
+typedef NS_ENUM(NSUInteger, BranchLinkType) {
     BranchLinkTypeUnlimitedUse = 0,
     BranchLinkTypeOneTimeUse = 1
-} BranchLinkType;
+};
 
 @interface Branch : NSObject
 
@@ -120,8 +121,8 @@ typedef enum {
 
 - (void)getCreditHistoryWithCallback:(callbackWithList)callback;
 - (void)getCreditHistoryForBucket:(NSString *)bucket andCallback:(callbackWithList)callback;
-- (void)getCreditHistoryAfter:(NSString *)creditTransactionId number:(NSInteger)length order:(CreditHistoryOrder)order andCallback:(callbackWithList)callback;
-- (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(CreditHistoryOrder)order andCallback:(callbackWithList)callback;
+- (void)getCreditHistoryAfter:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback;
+- (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback;
 
 - (NSString *)getShortURL;
 - (NSString *)getShortURLWithParams:(NSDictionary *)params;
@@ -187,7 +188,7 @@ typedef enum {
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback;
 - (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback;
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback;
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(ReferralCodeCalculation)calcType location:(ReferralCodeLocation)location andCallback:(callbackWithParams)callback;
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(BranchReferralCodeCalculation)calcType location:(BranchReferralCodeLocation)location andCallback:(callbackWithParams)callback;
 - (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
 - (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
 
