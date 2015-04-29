@@ -20,7 +20,7 @@
     
     NSString *url = [[Branch getInstance] getLongURLWithParams:params andChannel:nil andTags:tags andFeature:feature andStage:stage andAlias:alias];
     
-    self = [super initWithPlaceholderItem:url];
+    self = [super initWithPlaceholderItem:[NSURL URLWithString:url]];
     
     if (self) {
         self.params = params;
