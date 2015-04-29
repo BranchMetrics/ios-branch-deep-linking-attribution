@@ -37,21 +37,18 @@
 }
 
 - (id)item {
-    if ([self.placeholderItem isKindOfClass:[NSString class]]) {
-        NSString *channel = [BranchActivityItemProvider humanReadableChannelWithActivityType:self.activityType];
-        
-        // Because Facebook immediately scrapes URLs, we add an additional parameter to the existing list, telling the backend to ignore the first click
-        BOOL ignoreFirstClick = [channel isEqualToString:@"facebook"];
-        if (ignoreFirstClick) {
-            self.branchURL = [[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias ignoreUAString:self.userAgentString];
-        }
-        else {
-            self.branchURL = [[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias];
-        }
-
-        return [NSURL URLWithString:self.branchURL];
+    NSString *channel = [BranchActivityItemProvider humanReadableChannelWithActivityType:self.activityType];
+    
+    // Because Facebook immediately scrapes URLs, we add an additional parameter to the existing list, telling the backend to ignore the first click
+    BOOL ignoreFirstClick = [channel isEqualToString:@"facebook"];
+    if (ignoreFirstClick) {
+        self.branchURL = [[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias ignoreUAString:self.userAgentString];
     }
-    return self.placeholderItem;
+    else {
+        self.branchURL = [[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias];
+    }
+
+    return [NSURL URLWithString:self.branchURL];
 }
 
 // Human readable activity type string
