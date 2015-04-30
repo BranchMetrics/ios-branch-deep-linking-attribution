@@ -1260,12 +1260,12 @@ static Branch *currInstance;
             BNCServerCallback wrappedCallback = ^(BNCServerResponse *response, NSError *error) {
                 // If the request was successful, or was a 400 (bad user request), continue processing.
                 if (!error || (error.code >= 400 && error.code < 500)) {
-                    [self completeRequest];
-
                     if (req.callback) {
                         req.callback(response, error);
                     }
 
+                    [self.requestQueue dequeue];
+                    self.networkCount = 0;
                     [self processNextQueueItem];
                 }
                 // On network problems, or Branch down, call the other callbacks and stop processing.
@@ -1385,11 +1385,6 @@ static Branch *currInstance;
     }
 
     [self.requestQueue persistEventually];
-}
-
-- (void)completeRequest {
-    self.networkCount = 0;
-    [self.requestQueue dequeue];
 }
 
 
