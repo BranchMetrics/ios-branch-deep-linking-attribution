@@ -20,7 +20,7 @@
     
     NSString *url = [[Branch getInstance] getLongURLWithParams:params andChannel:nil andTags:tags andFeature:feature andStage:stage andAlias:alias];
     
-    self = [super initWithPlaceholderItem:url];
+    self = [super initWithPlaceholderItem:[NSURL URLWithString:url]];
     
     if (self) {
         self.params = params;
@@ -36,19 +36,15 @@
 }
 
 - (id)item {
-    if ([self.placeholderItem isKindOfClass:[NSString class]]) {
-        NSString *channel = [BranchActivityItemProvider humanReadableChannelWithActivityType:self.activityType];
-        
-        // Because Facebook immediately scrapes URLs, we add an additional parameter to the existing list, telling the backend to ignore the first click
-        BOOL ignoreFirstClick = [channel isEqualToString:@"facebook"];
-        if (ignoreFirstClick) {
-            return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias ignoreUAString:self.userAgentString]];
-        }
-        else {
-            return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias]];
-        }
+    NSString *channel = [BranchActivityItemProvider humanReadableChannelWithActivityType:self.activityType];
+    
+    // Because Facebook immediately scrapes URLs, we add an additional parameter to the existing list, telling the backend to ignore the first click
+    if ([channel isEqualToString:@"facebook"]) {
+        return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias ignoreUAString:self.userAgentString]];
     }
-    return self.placeholderItem;
+    else {
+        return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias]];
+    }
 }
 
 // Human readable activity type string
