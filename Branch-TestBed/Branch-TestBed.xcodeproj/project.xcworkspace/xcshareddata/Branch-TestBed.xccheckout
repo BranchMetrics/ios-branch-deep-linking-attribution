@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>F674B948-1373-4910-94FF-7970CA0F4AA1</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>Branch-TestBed</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>1929DBD069E43FB109A10D27981BC0AD82070E33</key>
 		<string>https://github.com/BranchMetrics/Branch-iOS-SDK.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Branch-TestBed/Branch-TestBed.xcodeproj/project.xcworkspace</string>
+	<string>Branch-TestBed/Branch-TestBed.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>1929DBD069E43FB109A10D27981BC0AD82070E33</key>

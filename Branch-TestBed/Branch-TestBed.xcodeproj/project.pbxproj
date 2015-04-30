@@ -12,6 +12,7 @@
 		461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */; };
 		464EA3981ACB1797000E4094 /* BNCServerInterfaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */; };
 		464EA39B1ACB38EC000E4094 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
+		4673094A1AF2C4FB005B8848 /* BranchTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 467309481AF2C4FB005B8848 /* BranchTest.m */; };
 		46D0B6FA1ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */; };
 		46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */; };
 		46FFCF101ACC317200039CE0 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
@@ -111,6 +112,8 @@
 		464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerInterfaceTests.m; sourceTree = "<group>"; };
 		464EA3991ACB38EC000E4094 /* BNCEncodingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCEncodingUtils.h; sourceTree = "<group>"; };
 		464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtils.m; sourceTree = "<group>"; };
+		467309471AF2C4FB005B8848 /* BranchTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchTest.h; sourceTree = "<group>"; };
+		467309481AF2C4FB005B8848 /* BranchTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchTest.m; sourceTree = "<group>"; };
 		46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCPreferenceHelperTests.m; sourceTree = "<group>"; };
 		46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserverTests.m; sourceTree = "<group>"; };
 		46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
@@ -339,6 +342,8 @@
 		7E6B3B521AA42D0E005F45BF /* Branch-SDK Functionality Tests */ = {
 			isa = PBXGroup;
 			children = (
+				467309471AF2C4FB005B8848 /* BranchTest.h */,
+				467309481AF2C4FB005B8848 /* BranchTest.m */,
 				7E6B3B551AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m */,
 				464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */,
 				46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */,
@@ -709,6 +714,7 @@
 				46FFCF121ACC317300039CE0 /* BNCEncodingUtils.m in Sources */,
 				7E6B3B5C1AA42EAF005F45BF /* BNCPreferenceHelper.m in Sources */,
 				7E6B3B5E1AA42EC7005F45BF /* BNCServerRequest.m in Sources */,
+				4673094A1AF2C4FB005B8848 /* BranchTest.m in Sources */,
 				7E6B3B621AA42F21005F45BF /* BNCServerResponse.m in Sources */,
 				7E6B3B5F1AA42ECD005F45BF /* BNCSystemObserver.m in Sources */,
 				46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */,

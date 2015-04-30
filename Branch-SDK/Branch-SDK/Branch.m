@@ -342,39 +342,21 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
                 callback(nil, error);
             }
             
-            // Requests that fail w/ connection errors shouldn't be removed from the queue, and processing should not continue
-            // 400s shouldn't be replayed, but since it isn't a server error, continue processing other requests
-            if (error.code >= 400 && error.code < 500) {
-                [self completeRequest];
-                [self processNextQueueItem];
-            }
-            else {
-                self.networkCount = 0;
-                shouldCallCallback = NO; // don't call the callback next time around
-            }
+            shouldCallCallback = NO; // don't call the callback next time around
             return;
         }
 
-        [self completeRequest];
         [BNCPreferenceHelper setIdentityID:[response.data objectForKey:IDENTITY_ID]];
         [BNCPreferenceHelper setUserURL:[response.data objectForKey:LINK]];
+        [BNCPreferenceHelper setUserIdentity:userId];
         
         if ([response.data objectForKey:REFERRING_DATA]) {
             [BNCPreferenceHelper setInstallParams:[response.data objectForKey:REFERRING_DATA]];
         }
         
-        if (self.requestQueue.size > 0) {
-            BNCServerRequest *req = [self.requestQueue peek];
-            if (req && req.postData && [req.postData objectForKey:IDENTITY]) {
-                [BNCPreferenceHelper setUserIdentity:[req.postData objectForKey:IDENTITY]];
-            }
-        }
-        
         if (callback && shouldCallCallback) {
             callback([self getFirstReferringParams], nil);
         }
-        
-        [self processNextQueueItem];
     };
 
     [self.requestQueue enqueue:req];
@@ -399,12 +381,7 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
                                                                                IDENTITY_ID]];
     req.postData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        [self completeRequest];
         if (error) {
-            // Only continue processing if this was a 4xx error
-            if (error.code >= 400 && error.code < 500) {
-                [self processNextQueueItem];
-            }
             return;
         }
 
@@ -416,8 +393,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
         [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
         [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
         [BNCPreferenceHelper clearUserCreditsAndCounts];
-        
-        [self processNextQueueItem];
     };
 
     [self.requestQueue enqueue:req];
@@ -436,17 +411,10 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
     req.tag = REQ_TAG_GET_REFERRAL_COUNTS;
     req.postData = [[NSMutableDictionary alloc] init];
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        [self completeRequest];
         if (error) {
             if (callback) {
                 callback(NO, error);
             }
-
-            // Only continue processing if this was a 4xx error
-            if (error.code >= 400 && error.code < 500) {
-                [self processNextQueueItem];
-            }
-
             return;
         }
 
@@ -467,8 +435,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
         if (callback) {
             callback(hasUpdated, nil);
         }
-        
-        [self processNextQueueItem];
     };
     
     [self.requestQueue enqueue:req];
@@ -508,17 +474,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
     } mutableCopy];
     
     req.postData = post;
-    req.callback = ^(BNCServerResponse *response, NSError *error) {
-        // Bad connection, don't dequeue or continue processing
-        if (error && (error.code < 400 || error.code >= 500)) {
-            self.networkCount = 0; // request is completed, at least
-        }
-        // Only dequeue requests that were successful or 400 errors
-        else {
-            [self completeRequest];
-            [self processNextQueueItem];
-        }
-    };
 
     [self.requestQueue enqueue:req];
     [self processNextQueueItem];
@@ -536,17 +491,10 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
     req.postData = [[NSMutableDictionary alloc] init];
     req.tag = REQ_TAG_GET_REWARDS;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        [self completeRequest];
         if (error) {
             if (callback) {
                 callback(NO, error);
             }
-
-            // Only continue processing if this was a 4xx error
-            if (error.code >= 400 && error.code < 500) {
-                [self processNextQueueItem];
-            }
-
             return;
         }
 
@@ -564,8 +512,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
         if (callback) {
             callback(hasUpdated, nil);
         }
-        
-        [self processNextQueueItem];
     };
     
     [self.requestQueue enqueue:req];
@@ -614,22 +560,13 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
                                                                                    SESSION_ID]];
         req.postData = post;
         req.callback = ^(BNCServerResponse *response, NSError *error) {
-            [self completeRequest];
-            
             if (error) {
-                // Stop processing if this wasn't a 4xx error
-                if (error.code < 400 || error.code >= 500) {
-                    return;
-                }
+                return;
             }
-            // No error
-            else {
-                // Update local balance
-                NSInteger updatedBalance = totalAvailableCredits - amountToRedeem;
-                [BNCPreferenceHelper setCreditCount:updatedBalance forBucket:bucket];
-            }
-            
-            [self processNextQueueItem];
+        
+            // Update local balance
+            NSInteger updatedBalance = totalAvailableCredits - amountToRedeem;
+            [BNCPreferenceHelper setCreditCount:updatedBalance forBucket:bucket];
         };
 
         [self.requestQueue enqueue:req];
@@ -678,17 +615,10 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 
     req.postData = data;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        [self completeRequest];
         if (error) {
             if (callback) {
                 callback(nil, error);
             }
-
-            // Only continue processing if this was a 4xx error
-            if (error.code >= 400 && error.code < 500) {
-                [self processNextQueueItem];
-            }
-            
             return;
         }
 
@@ -704,8 +634,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
         if (callback) {
             callback(response.data, nil);
         }
-        
-        [self processNextQueueItem];
     };
 
     [self.requestQueue enqueue:req];
@@ -937,17 +865,10 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
     NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObjects:values forKeys:keys];
     req.postData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        [self completeRequest];
         if (error) {
             if (callback) {
                 callback(nil, error);
             }
-            
-            // Only continue processing if this was a 4xx error
-            if (error.code >= 400 && error.code < 500) {
-                [self processNextQueueItem];
-            }
-
             return;
         }
         
@@ -958,8 +879,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
         if (callback) {
             callback(response.data, error);
         }
-        
-        [self processNextQueueItem];
     };
 
     [self.requestQueue enqueue:req];
@@ -990,17 +909,10 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
                                                                              SESSION_ID]];
     req.postData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        [self completeRequest];
         if (error) {
             if (callback) {
                 callback(nil, error);
             }
-
-            // Only continue processing if this was a 4xx error
-            if (error.code >= 400 && error.code < 500) {
-                [self processNextQueueItem];
-            }
-            
             return;
         }
         
@@ -1011,8 +923,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
         if (callback) {
             callback(response.data, error);
         }
-        
-        [self processNextQueueItem];
     };
     
     [self.requestQueue enqueue:req];
@@ -1044,17 +954,10 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
                                                                              DEVICE_FINGERPRINT_ID]];
     req.postData = post;
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        [self completeRequest];
         if (error) {
             if (callback) {
                 callback(nil, error);
             }
-            
-            // Only continue processing if this was a 4xx error
-            if (error.code >= 400 && error.code < 500) {
-                [self processNextQueueItem];
-            }
-
             return;
         }
 
@@ -1065,8 +968,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
         if (callback) {
             callback(response.data, error);
         }
-        
-        [self processNextQueueItem];
     };
 
     [self.requestQueue enqueue:req];
@@ -1109,7 +1010,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
     req.postData = linkData.data;
 
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        [self completeRequest];
         if (error) {
             if (callback) {
                 NSString *failedUrl = nil;
@@ -1119,11 +1019,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
                 }
 
                 callback(failedUrl, error);
-            }
-            
-            // Only continue processing if this was a 4xx error
-            if (error.code >= 400 && error.code < 500) {
-                [self processNextQueueItem];
             }
             
             return;
@@ -1139,8 +1034,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
         if (callback) {
             callback(url, nil);
         }
-        
-        [self processNextQueueItem];
     };
     
     [self.requestQueue enqueue:req];
@@ -1294,12 +1187,7 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
     BNCServerRequest *req = [[BNCServerRequest alloc] init];
     req.tag = REQ_TAG_GET_LIST_OF_APPS;
     req.callback = ^(BNCServerResponse *serverResponse, NSError *error) {
-        [self completeRequest];
         if (error) {
-            // Only continue processing if this was a 4xx error
-            if (error.code >= 400 && error.code < 500) {
-                [self processNextQueueItem];
-            }
             return;
         }
 
@@ -1308,7 +1196,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
         NSArray *apps = [serverResponse.data objectForKey:@"potential_apps"];
         NSDictionary *appList = [BNCSystemObserver getOpenableAppDictFromList:apps];
         [self processListOfApps:appList];
-        [self processNextQueueItem];
     };
     
     [self.requestQueue enqueue:req];
@@ -1325,18 +1212,11 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
     } mutableCopy];
 
     req.callback = ^(BNCServerResponse *response, NSError *error) {
-        [self completeRequest];
         if (error) {
-            // Don't continue processing if this wasn't a 4xx error
-            if (error.code < 400 || error.code >= 500) {
-                return;
-            }
+            return;
         }
-        else {
-            [BNCPreferenceHelper setAppListCheckDone];
-        }
-
-        [self processNextQueueItem];
+        
+        [BNCPreferenceHelper setAppListCheckDone];
     };
     
     [self.requestQueue enqueue:req];
@@ -1365,16 +1245,37 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
         BNCServerRequest *req = [self.requestQueue peek];
         
         if (req) {
-            if (!req.callback) {
-                req.callback = ^(BNCServerResponse *response, NSError *error) {
+            BNCServerCallback wrappedCallback = ^(BNCServerResponse *response, NSError *error) {
+                // If the request was successful, or was a 400 (bad user request), continue processing.
+                if (!error || (error.code >= 400 && error.code < 500)) {
                     [self completeRequest];
 
-                    // Only continue processing if this was a 4xx error
-                    if (!error || (error.code >= 400 && error.code < 500)) {
-                        [self processNextQueueItem];
+                    if (req.callback) {
+                        req.callback(response, error);
                     }
-                };
-            }
+
+                    [self processNextQueueItem];
+                }
+                // On network problems, or Branch down, call the other callbacks and stop processing.
+                else {
+                    NSMutableArray *requestsToFail = [[NSMutableArray alloc] init];
+                    for (int i = 0; i < self.requestQueue.size; i++) {
+                        [requestsToFail addObject:[self.requestQueue peekAt:i]];
+                    }
+                    
+                    for (BNCServerRequest *request in requestsToFail) {
+                        if (request.callback) {
+                            request.callback(nil, error);
+                        }
+                        
+                        if (![request.tag isEqualToString:REQ_TAG_COMPLETE_ACTION] && ![request.tag isEqualToString:REQ_TAG_IDENTIFY]) {
+                            [self.requestQueue remove:request];
+                        }
+                    }
+                    
+                    self.networkCount = 0;
+                }
+            };
 
             if (![req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] && ![self hasUser]) {
                 NSLog(@"Branch Error: User session has not been initialized!");
@@ -1388,67 +1289,67 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
             
             if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling register install"];
-                [self.bServerInterface registerInstall:[BNCPreferenceHelper isDebug] callback:req.callback];
+                [self.bServerInterface registerInstall:[BNCPreferenceHelper isDebug] callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling register open"];
-                [self.bServerInterface registerOpen:[BNCPreferenceHelper isDebug] callback:req.callback];
+                [self.bServerInterface registerOpen:[BNCPreferenceHelper isDebug] callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get referrals"];
-                [self.bServerInterface getReferralCountsWithCallback:req.callback];
+                [self.bServerInterface getReferralCountsWithCallback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get rewards"];
-                [self.bServerInterface getRewardsWithCallback:req.callback];
+                [self.bServerInterface getRewardsWithCallback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_REDEEM_REWARDS] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling redeem rewards"];
-                [self.bServerInterface redeemRewards:req.postData callback:req.callback];
+                [self.bServerInterface redeemRewards:req.postData callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_COMPLETE_ACTION] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling completed action"];
-                [self.bServerInterface userCompletedAction:req.postData callback:req.callback];
+                [self.bServerInterface userCompletedAction:req.postData callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling create custom url"];
-                [self.bServerInterface createCustomUrl:req callback:req.callback];
+                [self.bServerInterface createCustomUrl:req callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling identify user"];
-                [self.bServerInterface identifyUser:req.postData callback:req.callback];
+                [self.bServerInterface identifyUser:req.postData callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_LOGOUT] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling logout"];
-                [self.bServerInterface logoutUser:req.postData callback:req.callback];
+                [self.bServerInterface logoutUser:req.postData callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling close"];
-                [self.bServerInterface registerCloseWithCallback:req.callback];
+                [self.bServerInterface registerCloseWithCallback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get reward history"];
-                [self.bServerInterface getCreditHistory:req.postData callback:req.callback];
+                [self.bServerInterface getCreditHistory:req.postData callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_CODE] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get/create referral code"];
-                [self.bServerInterface getReferralCode:req.postData callback:req.callback];
+                [self.bServerInterface getReferralCode:req.postData callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling validate referral code"];
-                [self.bServerInterface validateReferralCode:req.postData callback:req.callback];
+                [self.bServerInterface validateReferralCode:req.postData callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling apply referral code"];
-                [self.bServerInterface applyReferralCode:req.postData callback:req.callback];
+                [self.bServerInterface applyReferralCode:req.postData callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_GET_LIST_OF_APPS] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get apps"];
-                [self.bServerInterface retrieveAppsToCheckWithCallback:req.callback];
+                [self.bServerInterface retrieveAppsToCheckWithCallback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_UPLOAD_LIST_OF_APPS] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling upload apps"];
-                [self.bServerInterface uploadListOfApps:req.postData callback:req.callback];
+                [self.bServerInterface uploadListOfApps:req.postData callback:wrappedCallback];
             }
         }
     } else {
@@ -1623,7 +1524,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
     [self updateAllRequestsInQueue];
     
     self.isInitialized = YES;
-    [self completeRequest];
     
     if (self.shouldCallSessionInitCallback && self.sessionInitWithParamsCallback) {
         self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
@@ -1632,34 +1532,10 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
     // this is default, it's only cleared to handle the case of losing connectivity.
     // after connectivity is restored, this should be brought back.
     self.shouldCallSessionInitCallback = YES;
-
-    [self processNextQueueItem];
 }
 
 - (void)handleInitFailure:(NSError *)error {
     self.isInitialized = NO;
-    
-    // Complete the request, but don't trigger another.
-    [self completeRequest];
-    
-    NSError *initError = [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{
-        NSLocalizedDescriptionKey: @"Init Session failed, pending requests marked as failures",
-        NSUnderlyingErrorKey: error
-    }];
-    
-    // Fail all pending requests :(
-    // Note that we need to build up a separate array of items to fail here, because the process
-    // of failing them may or may not dequeue them, causing the loop to become out of sync...
-    NSMutableArray *requestsToFail = [[NSMutableArray alloc] init];
-    for (int i = 0; i < self.requestQueue.size; i++) {
-        [requestsToFail addObject:[self.requestQueue peekAt:i]];
-    }
-    
-    for (BNCServerRequest *request in requestsToFail) {
-        if (request.callback) {
-            request.callback(nil, initError);
-        }
-    }
 
     if (self.shouldCallSessionInitCallback && self.sessionInitWithParamsCallback) {
         self.sessionInitWithParamsCallback(nil, error);

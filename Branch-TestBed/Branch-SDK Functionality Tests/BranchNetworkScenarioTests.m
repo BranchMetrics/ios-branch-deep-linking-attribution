@@ -7,13 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
+#import "BranchTest.h"
 #import <OCMock/OCMock.h>
 #import "Branch.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCPreferenceHelper.h"
 
-@interface BranchNetworkScenarioTests : XCTestCase
+@interface BranchNetworkScenarioTests : BranchTest
 
 @property (assign, nonatomic) BOOL hasExceededExpectations;
 
@@ -43,26 +43,31 @@
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
     [self setUpAppListStubs:serverInterfaceMock];
 
-    XCTestExpectation *scenario1Expectation = [self expectationWithDescription:@"Scenario1 Expectation"];
+    XCTestExpectation *scenario1Expectation1 = [self expectationWithDescription:@"Scenario1 Expectation1"];
 
     // Start off with a good connection
     [self initSessionExpectingSuccess:branch serverInterface:serverInterfaceMock callback:^{
         // Simulate connection drop
         // Expect failure
         [self makeFailingNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
-
-            // Simulate re-open, expect init to be called again
-            [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
-            
-            // Then make another request, which should play through fine
-            [self makeSuccessfulNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
-                [self safelyFulfillExpectation:scenario1Expectation];
-            }];
+            [self safelyFulfillExpectation:scenario1Expectation1];
         }];
     }];
     
     [self awaitExpectations];
+    [self resetExpectations];
+
+    XCTestExpectation *scenario1Expectation2 = [self expectationWithDescription:@"Scenario1 Expectation2"];
     
+    // Simulate re-open, expect init to be called again
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
+    
+    // Then make another request, which should play through fine
+    [self makeSuccessfulNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
+        [self safelyFulfillExpectation:scenario1Expectation2];
+    }];
+
+    [self awaitExpectations];
     [serverInterfaceMock verify];
 }
 
@@ -81,30 +86,39 @@
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
     [self setUpAppListStubs:serverInterfaceMock];
 
-    XCTestExpectation *scenario2Expectation = [self expectationWithDescription:@"Scenario2 Expectation"];
+    XCTestExpectation *scenario2Expectation1 = [self expectationWithDescription:@"Scenario2 Expectation1"];
     
     // Start off with a bad connection
     [self initSessionExpectingFailure:branch serverInterface:serverInterfaceMock callback:^{
-
-        // Request should fail
-        [self makeFailingNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
-
-            // Simulate re-open, expect init to be called again
-            [serverInterfaceMock stopMocking];
-            [self mockSuccesfulInit:serverInterfaceMock];
-
-            [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
-            [self overrideBranch:branch initHandler:[self callbackExpectingSuccess:NULL]];
-
-            // Then make another request, which should play through fine
-            [self makeSuccessfulNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
-                [self safelyFulfillExpectation:scenario2Expectation];
-            }];
-        }];
+        [self safelyFulfillExpectation:scenario2Expectation1];
     }];
-    
+
     [self awaitExpectations];
+    [self resetExpectations];
+
+    XCTestExpectation *scenario2Expectation2 = [self expectationWithDescription:@"Scenario2 Expectation2"];
+
+    // Request should fail
+    [self makeFailingNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
+        [serverInterfaceMock stopMocking];
+
+        [self safelyFulfillExpectation:scenario2Expectation2];
+    }];
+
+    [self awaitExpectations];
+    [self resetExpectations];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
+    [self overrideBranch:branch initHandler:[self callbackExpectingSuccess:NULL]];
+
+    XCTestExpectation *scenario2Expectation3 = [self expectationWithDescription:@"Scenario2 Expectation3"];
     
+    // Then make another request, which should play through fine
+    [self makeSuccessfulNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
+        [self safelyFulfillExpectation:scenario2Expectation3];
+    }];
+
+    [self awaitExpectations];
     [serverInterfaceMock verify];
 }
 
@@ -122,26 +136,31 @@
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
     [self setUpAppListStubs:serverInterfaceMock];
 
-    XCTestExpectation *scenario3Expectation = [self expectationWithDescription:@"Scenario3 Expectation"];
+    XCTestExpectation *scenario3Expectation1 = [self expectationWithDescription:@"Scenario3 Expectation1"];
     
     // Start off with a good connection
     [self initSessionExpectingSuccess:branch serverInterface:serverInterfaceMock callback:^{
         // Simulate connection drop
         // Expect failure
         [self makeFailingNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
-            
-            // Simulate network return, shouldn't call init!
-            [serverInterfaceMock stopMocking];
-            
-            // Request should just work
-            [self makeSuccessfulNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
-                [self safelyFulfillExpectation:scenario3Expectation];
-            }];
+            [self safelyFulfillExpectation:scenario3Expectation1];
         }];
     }];
 
     [self awaitExpectations];
+    [self resetExpectations];
     
+    XCTestExpectation *scenario3Expectation2 = [self expectationWithDescription:@"Scenario3 Expectation2"];
+    
+    // Simulate network return, shouldn't call init!
+    [serverInterfaceMock stopMocking];
+    
+    // Request should just work
+    [self makeSuccessfulNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
+        [self safelyFulfillExpectation:scenario3Expectation2];
+    }];
+
+    [self awaitExpectations];
     [serverInterfaceMock verify];
 }
 
@@ -160,29 +179,40 @@
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
     [self setUpAppListStubs:serverInterfaceMock];
 
-    XCTestExpectation *scenario4Expectation = [self expectationWithDescription:@"Scenario4 Expectation"];
+    XCTestExpectation *scenario4Expectation1 = [self expectationWithDescription:@"Scenario4 Expectation1"];
     
     // Start off with a bad connection
     [self initSessionExpectingFailure:branch serverInterface:serverInterfaceMock callback:^{
-        
-        // Request should fail
-        [self makeFailingNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
-            
-            // Simulate network return, shouldn't call init!
-            [serverInterfaceMock stopMocking];
-            
-            // However, making another request when not initialized should make an init
-            [self mockSuccesfulInit:serverInterfaceMock];
-            [self overrideBranch:branch initHandler:[self callbackExpectingSuccess:NULL]];
-            
-            [self makeSuccessfulNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
-                [self safelyFulfillExpectation:scenario4Expectation];
-            }];
-        }];
+        [self safelyFulfillExpectation:scenario4Expectation1];
     }];
     
     [self awaitExpectations];
+    [self resetExpectations];
+    
+    XCTestExpectation *scenario4Expectation2 = [self expectationWithDescription:@"Scenario4 Expectation2"];
 
+    // Request should fail
+    [self makeFailingNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
+        [self safelyFulfillExpectation:scenario4Expectation2];
+    }];
+    
+    [self awaitExpectations];
+    [self resetExpectations];
+    
+    XCTestExpectation *scenario4Expectation3 = [self expectationWithDescription:@"Scenario4 Expectation3"];
+
+    // Simulate network return, shouldn't call init!
+    [serverInterfaceMock stopMocking];
+    
+    // However, making another request when not initialized should make an init
+    [self mockSuccesfulInit:serverInterfaceMock];
+    [self overrideBranch:branch initHandler:[self callbackExpectingSuccess:NULL]];
+    
+    [self makeSuccessfulNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
+        [self safelyFulfillExpectation:scenario4Expectation3];
+    }];
+    
+    [self awaitExpectations];
     [serverInterfaceMock verify];
 }
 
@@ -260,7 +290,6 @@
     __block BOOL initCalled = NO;
     return ^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
-        
         if (!initCalled && callback) {
             initCalled = YES;
             callback();
