@@ -40,16 +40,20 @@
 - (void)testScenario1 {
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
+    NSLog(@"start scenario 1");
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
     [self setUpAppListStubs:serverInterfaceMock];
 
     XCTestExpectation *scenario1Expectation1 = [self expectationWithDescription:@"Scenario1 Expectation1"];
 
     // Start off with a good connection
+    NSLog(@"init session");
     [self initSessionExpectingSuccess:branch serverInterface:serverInterfaceMock callback:^{
+        NSLog(@"successful initSession, making failing request");
         // Simulate connection drop
         // Expect failure
         [self makeFailingNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
+            NSLog(@"bad request made");
             [self safelyFulfillExpectation:scenario1Expectation1];
         }];
     }];

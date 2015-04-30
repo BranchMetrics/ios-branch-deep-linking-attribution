@@ -1433,9 +1433,11 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
     }
     
     if ([self hasUser]) {
+        NSLog(@"register open");
         [self registerOpen];
     }
     else {
+        NSLog(@"register install");
         [self registerInstall];
     }
 }
@@ -1483,6 +1485,7 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 }
 
 - (void)processInitSuccess:(NSDictionary *)data allowNoStringInstallParams:(BOOL)allowNoStringInstallParams {
+    NSLog(@"processInitSuccess");
     [BNCPreferenceHelper setDeviceFingerprintID:[data objectForKey:DEVICE_FINGERPRINT_ID]];
     [BNCPreferenceHelper setUserURL:[data objectForKey:LINK]];
     [BNCPreferenceHelper setSessionID:[data objectForKey:SESSION_ID]];
@@ -1535,6 +1538,7 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 }
 
 - (void)handleInitFailure:(NSError *)error {
+    NSLog(@"handleInitFailure");
     self.isInitialized = NO;
 
     if (self.shouldCallSessionInitCallback && self.sessionInitWithParamsCallback) {
