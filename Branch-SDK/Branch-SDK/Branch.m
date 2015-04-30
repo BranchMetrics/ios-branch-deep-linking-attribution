@@ -1280,7 +1280,7 @@ static Branch *currInstance;
                             request.callback(nil, error);
                         }
                         
-                        if (![request.tag isEqualToString:REQ_TAG_COMPLETE_ACTION] && ![req.tag isEqualToString:REQ_TAG_IDENTIFY]) {
+                        if (![request.tag isEqualToString:REQ_TAG_COMPLETE_ACTION] && ![request.tag isEqualToString:REQ_TAG_IDENTIFY]) {
                             [self.requestQueue remove:request];
                         }
                     }
