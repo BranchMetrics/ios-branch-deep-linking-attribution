@@ -87,6 +87,10 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     return request;
 }
 
+- (void)remove:(BNCServerRequest *)request {
+    [self.queue removeObject:request];
+    [self persistEventually];
+}
 
 - (BNCServerRequest *)peek {
     return [self peekAt:0];
