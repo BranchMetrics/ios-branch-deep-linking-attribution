@@ -1,5 +1,13 @@
 Branch iOS SDK change log
 
+- v0.6.2:
+  * Fixing an issue with the newest Facebook app not working with the ShareSheet unless an NSURL is present.
+  * Fixing user url generation for `getShortUrl` failure callbacks.
+  * Fixing a couple issues with `setDebug`.
+  * Using NS_ENUMs.
+  * Removing remaining internal `setUriScheme` code.
+  * Cleaning up update state logic.
+
 - v0.6.1: Issue with requests in the queue having their data updated when they were immutable. Updating BNCServerRequest interface to prevent this from happening in the future.
 
 - v0.6.0: We have deprecated the use of `bnc_app_key` and are now using `branch_key`, which can be obtained in the settings page of your Dashboard. The replacement in the SDK should happen in the plist, as well as in `+(Branch *)getInstance:(NSString *)branchKey;` if necessary.
