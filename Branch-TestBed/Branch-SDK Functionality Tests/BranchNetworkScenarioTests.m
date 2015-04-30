@@ -270,9 +270,7 @@
     __block BOOL initCalled = NO;
     return ^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
-        NSLog(@"initCallback");
         if (!initCalled && callback) {
-            NSLog(@"calling callback");
             initCalled = YES;
             callback();
         }
