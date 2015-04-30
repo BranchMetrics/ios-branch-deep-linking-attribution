@@ -10,18 +10,6 @@
 
 @interface BranchActivityItemProvider : UIActivityItemProvider
 
-@property (strong, nonatomic) NSString *branchURL;
-@property (strong, nonatomic) NSDictionary *params;
-@property (strong, nonatomic) NSArray *tags;
-@property (strong, nonatomic) NSString *feature;
-@property (strong, nonatomic) NSString *stage;
-@property (strong, nonatomic) NSString *alias;
-@property (strong, nonatomic) NSString *userAgentString;
-
-- (id)initWithParams:(NSDictionary *)params
-             andTags:(NSArray *)tags
-          andFeature:(NSString *)feature
-            andStage:(NSString *)stage
-            andAlias:(NSString *)alias;
+- (id)initWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
 
 @end
