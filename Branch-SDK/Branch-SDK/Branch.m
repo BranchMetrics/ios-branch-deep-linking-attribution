@@ -1252,7 +1252,8 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
                         req.callback(response, error);
                     }
 
-                    [self completeRequest];
+                    [self.requestQueue dequeue];
+                    self.networkCount = 0;
                     [self processNextQueueItem];
                 }
                 // On network problems, or Branch down, call the other callbacks and stop processing.
@@ -1372,11 +1373,6 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
     }
 
     [self.requestQueue persistEventually];
-}
-
-- (void)completeRequest {
-    self.networkCount = 0;
-    [self.requestQueue dequeue];
 }
 
 
