@@ -10,19 +10,23 @@
 #import "Branch.h"
 #import "BNCSystemObserver.h"
 
+@interface BranchActivityItemProvider ()
+
+@property (strong, nonatomic) NSDictionary *params;
+@property (strong, nonatomic) NSArray *tags;
+@property (strong, nonatomic) NSString *feature;
+@property (strong, nonatomic) NSString *stage;
+@property (strong, nonatomic) NSString *alias;
+@property (strong, nonatomic) NSString *userAgentString;
+
+@end
+
 @implementation BranchActivityItemProvider
 
-- (id)initWithParams:(NSDictionary *)params
-             andTags:(NSArray *)tags
-          andFeature:(NSString *)feature
-            andStage:(NSString *)stage
-            andAlias:(NSString *)alias {
-    
+- (id)initWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
     NSString *url = [[Branch getInstance] getLongURLWithParams:params andChannel:nil andTags:tags andFeature:feature andStage:stage andAlias:alias];
     
-    self = [super initWithPlaceholderItem:[NSURL URLWithString:url]];
-    
-    if (self) {
+    if (self = [super initWithPlaceholderItem:[NSURL URLWithString:url]]) {
         self.params = params;
         self.tags = tags;
         self.feature = feature;
@@ -42,9 +46,8 @@
     if ([channel isEqualToString:@"facebook"]) {
         return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias ignoreUAString:self.userAgentString]];
     }
-    else {
-        return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias]];
-    }
+    
+    return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias]];
 }
 
 // Human readable activity type string
