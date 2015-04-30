@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
+#import "BranchTest.h"
 #import "Branch.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
@@ -19,9 +19,7 @@ NSString * const TEST_REFERRAL_CODE = @"LMDLDV";
 
 static Branch *branch;
 
-@interface Branch_SDK_Stubless_Tests : XCTestCase
-
-@property (assign, nonatomic) BOOL hasExceededExpectations;
+@interface Branch_SDK_Stubless_Tests : BranchTest
 
 @end
 
@@ -76,8 +74,6 @@ static Branch *branch;
 
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
     stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
-
-    self.hasExceededExpectations = NO;
 }
 
 - (void)tearDown {
@@ -406,19 +402,6 @@ static Branch *branch;
     }];
     
     [self awaitExpectations];
-}
-
-#pragma mark - Test Util
-- (void)safelyFulfillExpectation:(XCTestExpectation *)expectation {
-    if (!self.hasExceededExpectations) {
-        [expectation fulfill];
-    }
-}
-
-- (void)awaitExpectations {
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        self.hasExceededExpectations = YES;
-    }];
 }
 
 @end

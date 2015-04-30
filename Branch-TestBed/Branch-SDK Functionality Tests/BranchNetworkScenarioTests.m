@@ -7,13 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
+#import "BranchTest.h"
 #import <Nocilla/Nocilla.h>
 #import "Branch.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCPreferenceHelper.h"
 
-@interface BranchNetworkScenarioTests : XCTestCase
+@interface BranchNetworkScenarioTests : BranchTest
 
 @end
 
@@ -72,7 +72,7 @@
 - (void)testScenario1 {
     Branch *branch = [Branch getInstance:@"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx"];
     
-    XCTestExpectation *scenario1Expectation = [self expectationWithDescription:@"Scenario1 Expectation"];
+    XCTestExpectation *scenario1Expectation1 = [self expectationWithDescription:@"Scenario1 Expectation1"];
 
     // Start off with a good connection
     [self initSessionExpectingSuccess:branch callback:^{
@@ -81,20 +81,26 @@
 
         // Expect failure
         [self makeFailingNonReplayableRequest:branch callback:^{
-
-            // Simulate re-open, expect init to be called again
-            [[LSNocilla sharedInstance] clearStubs];
-            stubRequest(@"POST", @"v1/open".regex).andReturn(200).withBody([self openResponseData]);
-            [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
-            
-            // Then make another request, which should play through fine
-            [self makeSuccessfulNonReplayableRequest:branch callback:^{
-                [scenario1Expectation fulfill];
-            }];
+            [self safelyFulfillExpectation:scenario1Expectation1];
         }];
     }];
     
-    [self waitForExpectationsWithTimeout:3 handler:NULL];
+    [self awaitExpectations];
+    [self resetExpectations];
+
+    XCTestExpectation *scenario1Expectation2 = [self expectationWithDescription:@"Scenario1 Expectation2"];
+    
+    // Simulate re-open, expect init to be called again
+    [[LSNocilla sharedInstance] clearStubs];
+    stubRequest(@"POST", @"v1/open".regex).andReturn(200).withBody([self openResponseData]);
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
+    
+    // Then make another request, which should play through fine
+    [self makeSuccessfulNonReplayableRequest:branch callback:^{
+        [self safelyFulfillExpectation:scenario1Expectation2];
+    }];
+
+    [self awaitExpectations];
 }
 
 
@@ -109,28 +115,40 @@
 - (void)testScenario2 {
     Branch *branch = [Branch getInstance:@"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx"];
     
-    XCTestExpectation *scenario2Expectation = [self expectationWithDescription:@"Scenario2 Expectation"];
+    XCTestExpectation *scenario2Expectation1 = [self expectationWithDescription:@"Scenario2 Expectation1"];
     
     // Start off with a bad connection
     [self initSessionExpectingFailure:branch callback:^{
-
-        // Request should fail
-        [self makeFailingNonReplayableRequest:branch callback:^{
-
-            // Simulate re-open, expect init to be called again
-            [[LSNocilla sharedInstance] clearStubs];
-            stubRequest(@"POST", @"v1/open".regex).andReturn(200).withBody([self openResponseData]);
-            [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
-            [self overrideBranchInitHandler:[self callbackExpectingSuccess:NULL]];
-
-            // Then make another request, which should play through fine
-            [self makeSuccessfulNonReplayableRequest:branch callback:^{
-                [scenario2Expectation fulfill];
-            }];
-        }];
+        [self safelyFulfillExpectation:scenario2Expectation1];
     }];
+
+    [self awaitExpectations];
+    [self resetExpectations];
+
+    XCTestExpectation *scenario2Expectation2 = [self expectationWithDescription:@"Scenario2 Expectation2"];
+
+    // Request should fail
+    [self makeFailingNonReplayableRequest:branch callback:^{
+        [self safelyFulfillExpectation:scenario2Expectation2];
+    }];
+
+    [self awaitExpectations];
+    [self resetExpectations];
+
+    XCTestExpectation *scenario2Expectation3 = [self expectationWithDescription:@"Scenario2 Expectation3"];
     
-    [self waitForExpectationsWithTimeout:3 handler:NULL];
+    // Simulate re-open, expect init to be called again
+    [[LSNocilla sharedInstance] clearStubs];
+    stubRequest(@"POST", @"v1/open".regex).andReturn(200).withBody([self openResponseData]);
+    [self overrideBranchInitHandler:[self callbackExpectingSuccess:NULL]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
+    
+    // Then make another request, which should play through fine
+    [self makeSuccessfulNonReplayableRequest:branch callback:^{
+        [self safelyFulfillExpectation:scenario2Expectation3];
+    }];
+
+    [self awaitExpectations];
 }
 
 
@@ -144,7 +162,7 @@
 - (void)testScenario3 {
     Branch *branch = [Branch getInstance:@"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx"];
     
-    XCTestExpectation *scenario3Expectation = [self expectationWithDescription:@"Scenario3 Expectation"];
+    XCTestExpectation *scenario3Expectation1 = [self expectationWithDescription:@"Scenario3 Expectation1"];
     
     // Start off with a good connection
     [self initSessionExpectingSuccess:branch callback:^{
@@ -153,18 +171,24 @@
         
         // Expect failure
         [self makeFailingNonReplayableRequest:branch callback:^{
-            
-            // Simulate network return, shouldn't call init!
-            [[LSNocilla sharedInstance] clearStubs];
-            
-            // Request should just work
-            [self makeSuccessfulNonReplayableRequest:branch callback:^{
-                [scenario3Expectation fulfill];
-            }];
+            [self safelyFulfillExpectation:scenario3Expectation1];
         }];
     }];
 
-    [self waitForExpectationsWithTimeout:3 handler:NULL];
+    [self awaitExpectations];
+    [self resetExpectations];
+    
+    XCTestExpectation *scenario3Expectation2 = [self expectationWithDescription:@"Scenario3 Expectation2"];
+    
+    // Simulate network return, shouldn't call init!
+    [[LSNocilla sharedInstance] clearStubs];
+    
+    // Request should just work
+    [self makeSuccessfulNonReplayableRequest:branch callback:^{
+        [self safelyFulfillExpectation:scenario3Expectation2];
+    }];
+
+    [self awaitExpectations];
 }
 
 
@@ -179,28 +203,40 @@
 - (void)testScenario4 {
     Branch *branch = [Branch getInstance:@"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx"];
     
-    XCTestExpectation *scenario4Expectation = [self expectationWithDescription:@"Scenario4 Expectation"];
+    XCTestExpectation *scenario4Expectation1 = [self expectationWithDescription:@"Scenario4 Expectation1"];
     
     // Start off with a bad connection
     [self initSessionExpectingFailure:branch callback:^{
-        
-        // Request should fail
-        [self makeFailingNonReplayableRequest:branch callback:^{
-            
-            // Simulate network return, shouldn't call init!
-            [[LSNocilla sharedInstance] clearStubs];
-            
-            // However, making another request when not initialized should make an init
-            stubRequest(@"POST", @"v1/open".regex).andReturn(200).withBody([self openResponseData]);
-            [self overrideBranchInitHandler:[self callbackExpectingSuccess:NULL]];
-            
-            [self makeSuccessfulNonReplayableRequest:branch callback:^{
-                [scenario4Expectation fulfill];
-            }];
-        }];
+        [self safelyFulfillExpectation:scenario4Expectation1];
     }];
     
-    [self waitForExpectationsWithTimeout:3 handler:NULL];
+    [self awaitExpectations];
+    [self resetExpectations];
+    
+    XCTestExpectation *scenario4Expectation2 = [self expectationWithDescription:@"Scenario4 Expectation2"];
+
+    // Request should fail
+    [self makeFailingNonReplayableRequest:branch callback:^{
+        [self safelyFulfillExpectation:scenario4Expectation2];
+    }];
+    
+    [self awaitExpectations];
+    [self resetExpectations];
+    
+    XCTestExpectation *scenario4Expectation3 = [self expectationWithDescription:@"Scenario4 Expectation3"];
+
+    // Simulate network return, shouldn't call init!
+    [[LSNocilla sharedInstance] clearStubs];
+    
+    // However, making another request when not initialized should make an init
+    stubRequest(@"POST", @"v1/open".regex).andReturn(200).withBody([self openResponseData]);
+    [self overrideBranchInitHandler:[self callbackExpectingSuccess:NULL]];
+    
+    [self makeSuccessfulNonReplayableRequest:branch callback:^{
+        [self safelyFulfillExpectation:scenario4Expectation3];
+    }];
+    
+    [self awaitExpectations];
 }
 
 
@@ -234,8 +270,9 @@
     __block BOOL initCalled = NO;
     return ^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
-        
+        NSLog(@"initCallback");
         if (!initCalled && callback) {
+            NSLog(@"calling callback");
             initCalled = YES;
             callback();
         }
