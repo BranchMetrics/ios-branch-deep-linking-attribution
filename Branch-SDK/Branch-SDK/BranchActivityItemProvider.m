@@ -32,9 +32,8 @@
         self.feature = feature;
         self.stage = stage;
         self.alias = alias;
+        self.userAgentString = [[[UIWebView alloc] init] stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
     }
-    
-    self.userAgentString = [[[UIWebView alloc] init] stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
     
     return self;
 }
