@@ -43,9 +43,6 @@
     [[LSNocilla sharedInstance] start];
     
     [[BNCServerRequestQueue getInstance] clearQueue];
-    
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
 }
 
 + (void)tearDown {
@@ -72,6 +69,7 @@
     new_user_link = @"https://bnc.lt/i/2kkbX6k-As";
     
     branch = [Branch getInstance:branch_key];
+    [branch setAppListCheckEnabled:NO];
 }
 
 - (void)initSession {
