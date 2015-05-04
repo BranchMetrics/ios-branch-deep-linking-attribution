@@ -91,6 +91,7 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 @property (assign, nonatomic) BOOL initNotCalled;
 @property (assign, nonatomic) BOOL lastRequestWasInit;
 @property (assign, nonatomic) BOOL hasNetwork;
+@property (assign, nonatomic) BOOL appListCheckEnabled;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 
 @end
@@ -181,6 +182,7 @@ static Branch *currInstance;
         currInstance.initNotCalled = YES;
         currInstance.lastRequestWasInit = YES;
         currInstance.linkCache = [[BNCLinkCache alloc] init];
+        currInstance.appListCheckEnabled = YES;
     
         [[NSNotificationCenter defaultCenter] addObserver:currInstance
                                              selector:@selector(applicationWillResignActive)
@@ -1639,7 +1641,7 @@ static Branch *currInstance;
             } else {
                 [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
             }
-            if ([BNCPreferenceHelper getNeedAppListCheck]) {
+            if (self.appListCheckEnabled && [BNCPreferenceHelper getNeedAppListCheck]) {
                 [self processListOfApps];
             }
             [self updateAllRequestsInQueue];
