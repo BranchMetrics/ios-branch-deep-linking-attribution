@@ -25,6 +25,7 @@
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
 
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    [branch setAppListCheckEnabled:NO];
     
     BNCServerResponse *linkResponse = [[BNCServerResponse alloc] init];
     linkResponse.data = @{ @"url": @"https://bnc.lt/l/3PxZVFU-BK" };
@@ -54,15 +55,8 @@
         return YES;
     }];
     
-    id appListCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-        callback([[BNCServerResponse alloc] init], nil);
-        return YES;
-    }];
-    
     [[serverInterfaceMock stub] registerInstall:NO callback:openOrInstallCallbackCheckBlock];
     [[serverInterfaceMock stub] registerOpen:NO callback:openOrInstallCallbackCheckBlock];
-    [[serverInterfaceMock stub] uploadListOfApps:[OCMArg any] callback:appListCallbackCheckBlock];
-    [[serverInterfaceMock stub] retrieveAppsToCheckWithCallback:appListCallbackCheckBlock];
     
     // Fake branch key
     [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey];
