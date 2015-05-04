@@ -24,6 +24,7 @@
     
     [[BNCServerRequestQueue getInstance] clearQueue];
     [[LSNocilla sharedInstance] start];
+    [[Branch getInstance:@"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx"] setAppListCheckEnabled:NO];
 }
 
 + (void)tearDown {
@@ -34,9 +35,6 @@
 
 - (void)setUp {
     [super setUp];
-
-    stubRequest(@"POST", @"v1/applist".regex).andReturn(200);
-    stubRequest(@"GET", @"v1/applist".regex).andReturn(200);
 
     [BNCPreferenceHelper clearDebug];
 }

@@ -53,9 +53,6 @@
 
 - (void)setUp {
     [super setUp];
-
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
     
     branch_key = @"key_live_78801a996de4287481fe73708cc95da2";  //temp
     device_fingerprint_id = @"94938498586381084";
@@ -71,6 +68,7 @@
     new_user_link = @"https://bnc.lt/i/2kkbX6k-As";
     
     branch = [Branch getInstance:branch_key];
+    [branch setAppListCheckEnabled:NO];
 }
 
 - (void)tearDown {

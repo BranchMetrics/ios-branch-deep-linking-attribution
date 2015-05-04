@@ -33,9 +33,6 @@ static Branch *branch;
     
     [[BNCServerRequestQueue getInstance] clearQueue];
 
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
-
     NSDictionary *openResponseDict = @{
         @"session_id": @"112263020234678596",
         @"identity_id": @"98687515069776101",
@@ -54,6 +51,7 @@ static Branch *branch;
     .withBody(responseData);
     
     branch = [Branch getInstance:@"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx"];
+    [branch setAppListCheckEnabled:NO];
     [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         if (error) {
             NSLog(@"An error prevented Branch from initializing: %@", error);
@@ -67,13 +65,6 @@ static Branch *branch;
     [[LSNocilla sharedInstance] stop];
 
     [super tearDown];
-}
-
-- (void)setUp {
-    [super setUp];
-
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
-    stubRequest(@"GET", [BNCPreferenceHelper getAPIURL:@"applist"].regex).andReturn(200);
 }
 
 - (void)tearDown {
