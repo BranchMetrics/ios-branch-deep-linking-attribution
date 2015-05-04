@@ -1183,16 +1183,18 @@ static Branch *currInstance;
 }
 
 - (void)callClose {
-    self.isInitialized = NO;
+    if (self.isInitialized) {
+        self.isInitialized = NO;
 
-    if (![self.requestQueue containsClose]) {
-        BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:REQ_TAG_REGISTER_CLOSE];
-        req.postData = [[NSMutableDictionary alloc] init];
+        if (![self.requestQueue containsClose]) {
+            BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:REQ_TAG_REGISTER_CLOSE];
+            req.postData = [[NSMutableDictionary alloc] init];
 
-        [self.requestQueue enqueue:req];
+            [self.requestQueue enqueue:req];
+        }
+        
+        [self processNextQueueItem];
     }
-    
-    [self processNextQueueItem];
 }
 
 - (void)getAppList {
