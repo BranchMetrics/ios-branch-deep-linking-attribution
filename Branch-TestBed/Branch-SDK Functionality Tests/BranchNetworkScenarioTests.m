@@ -41,7 +41,7 @@
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
-    [self setUpAppListStubs:serverInterfaceMock];
+    [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario1Expectation1 = [self expectationWithDescription:@"Scenario1 Expectation1"];
 
@@ -84,7 +84,7 @@
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
-    [self setUpAppListStubs:serverInterfaceMock];
+    [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario2Expectation1 = [self expectationWithDescription:@"Scenario2 Expectation1"];
     
@@ -134,7 +134,7 @@
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
-    [self setUpAppListStubs:serverInterfaceMock];
+    [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario3Expectation1 = [self expectationWithDescription:@"Scenario3 Expectation1"];
     
@@ -177,7 +177,7 @@
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
-    [self setUpAppListStubs:serverInterfaceMock];
+    [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario4Expectation1 = [self expectationWithDescription:@"Scenario4 Expectation1"];
     
@@ -366,22 +366,6 @@
     [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
         self.hasExceededExpectations = YES;
     }];
-}
-
-- (void)setUpAppListStubs:(id)serverInterfaceMock {
-    // Stub app list calls
-    __block BNCServerCallback appListCallback;
-    id appListCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-        appListCallback = callback;
-        return YES;
-    }];
-    
-    id appListInvocation = ^(NSInvocation *invocation) {
-        appListCallback([[BNCServerResponse alloc] init], nil);
-    };
-
-    [[[serverInterfaceMock stub] andDo:appListInvocation] uploadListOfApps:[OCMArg any] callback:appListCallbackCheckBlock];
-    [[[serverInterfaceMock stub] andDo:appListInvocation] retrieveAppsToCheckWithCallback:appListCallbackCheckBlock];
 }
 
 @end
