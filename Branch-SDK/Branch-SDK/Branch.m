@@ -84,6 +84,7 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 @property (assign, nonatomic) NSInteger networkCount;
 @property (assign, nonatomic) BOOL isInitialized;
 @property (assign, nonatomic) BOOL shouldCallSessionInitCallback;
+@property (assign, nonatomic) BOOL appListCheckEnabled;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 
 @end
@@ -132,6 +133,7 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
         
         _isInitialized = NO;
         _shouldCallSessionInitCallback = YES;
+        _appListCheckEnabled = YES;
         _processing_sema = dispatch_semaphore_create(1);
         _networkCount = 0;
         
@@ -1171,16 +1173,18 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 }
 
 - (void)callClose {
-    self.isInitialized = NO;
+    if (self.isInitialized) {
+        self.isInitialized = NO;
 
-    if (![self.requestQueue containsClose]) {
-        BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:REQ_TAG_REGISTER_CLOSE];
-        req.postData = [[NSMutableDictionary alloc] init];
+        if (![self.requestQueue containsClose]) {
+            BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:REQ_TAG_REGISTER_CLOSE];
+            req.postData = [[NSMutableDictionary alloc] init];
 
-        [self.requestQueue enqueue:req];
+            [self.requestQueue enqueue:req];
+        }
+        
+        [self processNextQueueItem];
     }
-    
-    [self processNextQueueItem];
 }
 
 - (void)getAppList {
@@ -1508,7 +1512,7 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
         [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
     }
     
-    if ([BNCPreferenceHelper getNeedAppListCheck]) {
+    if (self.appListCheckEnabled && [BNCPreferenceHelper getNeedAppListCheck]) {
         [self getAppList];
     }
     

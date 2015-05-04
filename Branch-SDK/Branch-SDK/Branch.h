@@ -89,6 +89,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (void)setRetryInterval:(NSInteger)retryInterval;
 - (void)setMaxRetries:(NSInteger)maxRetries;
 - (void)setNetworkTimeout:(NSInteger)timeout;
+- (void)setAppListCheckEnabled:(BOOL)appListCheckEnabled;
 
 - (BOOL)handleDeepLink:(NSURL *)url;
 
