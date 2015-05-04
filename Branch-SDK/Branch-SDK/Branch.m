@@ -1674,7 +1674,7 @@ static Branch *currInstance;
                     [BNCPreferenceHelper setInstallParams:[response.data objectForKey:DATA]];
                 }
             }
-            if ([BNCPreferenceHelper getNeedAppListCheck]) {
+            if (self.appListCheckEnabled && [BNCPreferenceHelper getNeedAppListCheck]) {
                 [self processListOfApps];
             }
             if ([response.data objectForKey:DATA]) {
