@@ -166,7 +166,7 @@
 }
 
 - (void)testDecodeJsonStringToDictionaryWithNilDecodedString {
-    char badCStr[5] = { '{', '}' }; // not nil terminated
+    char badCStr[5] = { '{', 'f', ':', 'o', '}' }; // not nil terminated
     NSString *encodedString = [NSString stringWithUTF8String:badCStr];
     NSDictionary *expectedDataDict = @{ };
     
@@ -185,7 +185,7 @@
 }
 
 - (void)testDecodeBase64JsonStringToDictionaryWithNilDecodedString {
-    char badCStr[5] = { '{', '}' }; // not nil terminated
+    char badCStr[5] = { '{', 'f', ':', 'o', '}' }; // not nil terminated
     NSString *encodedString = [NSString stringWithUTF8String:badCStr];
     NSString *base64EncodedString = [BNCEncodingUtils base64EncodeStringToString:encodedString];
     NSDictionary *expectedDataDict = @{ };
