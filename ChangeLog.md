@@ -1,5 +1,9 @@
 Branch iOS SDK change log
 
+- v0.6.3:
+  * Addressing an issue identified by iHeartRadio where decoding a JSON string could cause crashes.
+  * Adding the ability to opt out of the app list check.
+
 - v0.6.2:
   * Fixing an issue with the newest Facebook app not working with the ShareSheet unless an NSURL is present.
   * Fixing user url generation for `getShortUrl` failure callbacks.
