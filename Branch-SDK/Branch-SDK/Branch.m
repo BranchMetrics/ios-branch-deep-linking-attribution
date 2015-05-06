@@ -588,12 +588,15 @@ static Branch *currInstance;
 
     req.callback = ^(BNCServerResponse *response, NSError *error) {
         if (error) {
+            callback(NO, error);
             return;
         }
         
         // Update local balance
         NSInteger updatedBalance = totalAvailableCredits - count;
         [BNCPreferenceHelper setCreditCount:updatedBalance forBucket:bucket];
+        
+        callback(YES, nil);
     };
     
     [self.requestQueue enqueue:req];
