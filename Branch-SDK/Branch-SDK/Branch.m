@@ -77,6 +77,7 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 @property (nonatomic) dispatch_semaphore_t processing_sema;
 @property (nonatomic) dispatch_queue_t asyncQueue;
 @property (nonatomic) NSInteger networkCount;
+@property (strong, nonatomic) callbackWithStatus redeemCallback;
 @property (strong, nonatomic) callbackWithStatus pointLoadCallback;
 @property (strong, nonatomic) callbackWithStatus rewardLoadCallback;
 @property (strong, nonatomic) callbackWithParams sessionparamLoadCallback;
@@ -449,7 +450,11 @@ static Branch *currInstance;
 }
 
 - (void)redeemRewards:(NSInteger)count {
-    [self redeemRewards:count forBucket:@"default"];
+    [self redeemRewards:count forBucket:@"default" callback:NULL];
+}
+
+- (void)redeemRewards:(NSInteger)count callback:(callbackWithStatus)callback {
+    [self redeemRewards:count forBucket:@"default" callback:callback];
 }
 
 - (NSInteger)getCreditsForBucket:(NSString *)bucket {
@@ -464,43 +469,53 @@ static Branch *currInstance;
 }
 
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket {
-    dispatch_async(self.asyncQueue, ^{
-        NSInteger redemptionsToAdd = 0;
-        NSInteger credits = [BNCPreferenceHelper getCreditCountForBucket:bucket];
-        if (count > credits) {
-            redemptionsToAdd = credits;
-            NSLog(@"Branch Warning: You're trying to redeem more credits than are available. Have you updated loaded rewards");
-        } else {
-            redemptionsToAdd = count;
+    [self redeemRewards:count forBucket:bucket callback:NULL];
+}
+
+- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket callback:(callbackWithStatus)callback {
+    if (count == 0) {
+        if (callback) {
+            callback(false, [NSError errorWithDomain:BNCErrorDomain code:BNCRedeemCreditsError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot redeem zero credits." }]);
         }
+        else {
+            NSLog(@"Branch Warning: Cannot redeem zero credits");
+        }
+        return;
+    }
+
+    NSInteger credits = [BNCPreferenceHelper getCreditCountForBucket:bucket];
+    if (count > credits) {
+        if (callback) {
+            callback(false, [NSError errorWithDomain:BNCErrorDomain code:BNCRedeemCreditsError userInfo:@{ NSLocalizedDescriptionKey: @"You're trying to redeem more credits than are available. Have you loaded rewards?" }]);
+        }
+        else {
+            NSLog(@"Branch Warning: You're trying to redeem more credits than are available. Have you loaded rewards?");
+        }
+        return;
+    }
+    
+    self.redeemCallback = callback;
+
+    dispatch_async(self.asyncQueue, ^{
+        BNCServerRequest *req = [[BNCServerRequest alloc] init];
+        req.tag = REQ_TAG_REDEEM_REWARDS;
+        req.postData = [@{
+            BUCKET: bucket,
+            AMOUNT: @(count),
+            DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+            IDENTITY_ID: [BNCPreferenceHelper getIdentityID],
+            SESSION_ID: [BNCPreferenceHelper getSessionID]
+        } mutableCopy];
+
+        [self.requestQueue enqueue:req];
         
-        if (redemptionsToAdd > 0) {
-            BNCServerRequest *req = [[BNCServerRequest alloc] init];
-            req.tag = REQ_TAG_REDEEM_REWARDS;
-            NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[
-                                                                                       bucket,
-                                                                                       [NSNumber numberWithInteger:redemptionsToAdd],
-                                                                                       [BNCPreferenceHelper getDeviceFingerprintID],
-                                                                                       [BNCPreferenceHelper getIdentityID],
-                                                                                       [BNCPreferenceHelper getSessionID]]
-                                                                             forKeys:@[
-                                                                                       BUCKET,
-                                                                                       AMOUNT,
-                                                                                       DEVICE_FINGERPRINT_ID,
-                                                                                       IDENTITY_ID,
-                                                                                       SESSION_ID]];
-            req.postData = post;
-            [self.requestQueue enqueue:req];
-            
-            if (self.initFinished || !self.hasNetwork) {
-                self.lastRequestWasInit = NO;
-                [self processNextQueueItem];
-            } else if (self.initFailed || self.initNotCalled) {
-                [self handleFailure:[self.requestQueue size]-1];
-            }
+        if (self.initFinished || !self.hasNetwork) {
+            self.lastRequestWasInit = NO;
+            [self processNextQueueItem];
+        } else if (self.initFailed || self.initNotCalled) {
+            [self handleFailure:[self.requestQueue size]-1];
         }
     });
-    
 }
 
 - (void)getCreditHistoryWithCallback:(callbackWithList)callback {
@@ -1351,6 +1366,17 @@ static Branch *currInstance;
                     self.installparamLoadCallback = nil;
                 });
             }
+        } else if ([req.tag isEqualToString:REQ_TAG_REDEEM_REWARDS]) {
+            if (!self.initNotCalled) {
+                errorDict = [BNCError getUserInfoDictForDomain:BNCRedeemCreditsError];
+            }
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.redeemCallback) {
+                    self.redeemCallback(NO, [NSError errorWithDomain:BNCErrorDomain code:BNCRedeemCreditsError userInfo:errorDict]);
+                    self.redeemCallback = nil;
+                }
+            });
         } else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_CODE]) {
             if (!self.initNotCalled)
                 errorDict = [BNCError getUserInfoDictForDomain:BNCGetReferralCodeError];
@@ -1690,6 +1716,13 @@ static Branch *currInstance;
             
             self.initFinished = YES;
             self.initFailed = NO;
+        } else if ([requestTag isEqualToString:REQ_TAG_REDEEM_REWARDS]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.redeemCallback) {
+                    self.redeemCallback(YES, nil);
+                    self.redeemCallback = nil;
+                }
+            });
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REWARDS]) {
             [self processReferralCredits:response.data];
         } else if ([requestTag isEqualToString:REQ_TAG_GET_REWARD_HISTORY]) {

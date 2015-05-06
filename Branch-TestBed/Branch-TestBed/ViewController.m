@@ -55,7 +55,14 @@
 }
 - (IBAction)cmdRedeemFive:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch redeemRewards:5];
+    [branch redeemRewards:5 callback:^(BOOL changed, NSError *error) {
+        if (error || !changed) {
+            NSLog(@"didn't redeem anything: %@", error);
+        }
+        else {
+            NSLog(@"redeemed 5 credits!");
+        }
+    }];
 }
 
 - (IBAction)cmdExecuteBuy:(id)sender {
