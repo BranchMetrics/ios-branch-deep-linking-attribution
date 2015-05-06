@@ -535,7 +535,11 @@ static Branch *currInstance;
 }
 
 - (void)redeemRewards:(NSInteger)count {
-    [self redeemRewards:count forBucket:@"default"];
+    [self redeemRewards:count forBucket:@"default" callback:NULL];
+}
+
+- (void)redeemRewards:(NSInteger)count callback:(callbackWithStatus)callback {
+    [self redeemRewards:count forBucket:@"default" callback:callback];
 }
 
 - (NSInteger)getCreditsForBucket:(NSString *)bucket {
@@ -543,47 +547,57 @@ static Branch *currInstance;
 }
 
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket {
+    [self redeemRewards:count forBucket:bucket callback:NULL];
+}
+
+- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket callback:(callbackWithStatus)callback {
+    if (count == 0) {
+        if (callback) {
+            callback(false, [NSError errorWithDomain:BNCErrorDomain code:BNCRedeemCreditsError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot redeem zero credits." }]);
+        }
+        else {
+            NSLog(@"Branch Warning: Cannot redeem zero credits");
+        }
+        return;
+    }
+
+    NSInteger totalAvailableCredits = [BNCPreferenceHelper getCreditCountForBucket:bucket];
+    if (count > totalAvailableCredits) {
+        if (callback) {
+            callback(false, [NSError errorWithDomain:BNCErrorDomain code:BNCRedeemCreditsError userInfo:@{ NSLocalizedDescriptionKey: @"You're trying to redeem more credits than are available. Have you loaded rewards?" }]);
+        }
+        else {
+            NSLog(@"Branch Warning: You're trying to redeem more credits than are available. Have you loaded rewards?");
+        }
+        return;
+    }
+    
     if (!self.isInitialized) {
         [self initUserSessionAndCallCallback:NO];
     }
 
-    NSInteger amountToRedeem = count;
-    NSInteger totalAvailableCredits = [BNCPreferenceHelper getCreditCountForBucket:bucket];
+    BNCServerRequest *req = [[BNCServerRequest alloc] init];
+    req.tag = REQ_TAG_REDEEM_REWARDS;
+    req.postData = [@{
+        BUCKET: bucket,
+        AMOUNT: @(count),
+        DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+        IDENTITY_ID: [BNCPreferenceHelper getIdentityID],
+        SESSION_ID: [BNCPreferenceHelper getSessionID]
+    } mutableCopy];
 
-    if (count > totalAvailableCredits) {
-        NSLog(@"Branch Warning: You're trying to redeem more credits than are available. Have you updated loaded rewards?");
-        return;
-    }
-    
-    if (amountToRedeem > 0) {
-        BNCServerRequest *req = [[BNCServerRequest alloc] init];
-        req.tag = REQ_TAG_REDEEM_REWARDS;
-        NSMutableDictionary *post = [[NSMutableDictionary alloc] initWithObjects:@[
-                                                                                   bucket,
-                                                                                   [NSNumber numberWithInteger:amountToRedeem],
-                                                                                   [BNCPreferenceHelper getDeviceFingerprintID],
-                                                                                   [BNCPreferenceHelper getIdentityID],
-                                                                                   [BNCPreferenceHelper getSessionID]]
-                                                                         forKeys:@[
-                                                                                   BUCKET,
-                                                                                   AMOUNT,
-                                                                                   DEVICE_FINGERPRINT_ID,
-                                                                                   IDENTITY_ID,
-                                                                                   SESSION_ID]];
-        req.postData = post;
-        req.callback = ^(BNCServerResponse *response, NSError *error) {
-            if (error) {
-                return;
-            }
+    req.callback = ^(BNCServerResponse *response, NSError *error) {
+        if (error) {
+            return;
+        }
         
-            // Update local balance
-            NSInteger updatedBalance = totalAvailableCredits - amountToRedeem;
-            [BNCPreferenceHelper setCreditCount:updatedBalance forBucket:bucket];
-        };
-
-        [self.requestQueue enqueue:req];
-        [self processNextQueueItem];
-    }
+        // Update local balance
+        NSInteger updatedBalance = totalAvailableCredits - count;
+        [BNCPreferenceHelper setCreditCount:updatedBalance forBucket:bucket];
+    };
+    
+    [self.requestQueue enqueue:req];
+    [self processNextQueueItem];
 }
 
 - (void)getCreditHistoryWithCallback:(callbackWithList)callback {
@@ -1368,7 +1382,8 @@ static Branch *currInstance;
                 [self.bServerInterface uploadListOfApps:req.postData callback:wrappedCallback];
             }
         }
-    } else {
+    }
+    else {
         dispatch_semaphore_signal(self.processing_sema);
     }
 }
