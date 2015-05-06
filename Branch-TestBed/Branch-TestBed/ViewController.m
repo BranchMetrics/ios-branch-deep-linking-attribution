@@ -60,7 +60,11 @@
             NSLog(@"didn't redeem anything: %@", error);
         }
         else {
-            NSLog(@"redeemed 5 credits!");
+            NSLog(@"redeemed 5 credits! updating count now");
+            
+            [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
+                [self.txtRewardCredits setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
+            }];
         }
     }];
 }
