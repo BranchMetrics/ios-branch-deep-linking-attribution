@@ -1291,6 +1291,8 @@ static Branch *currInstance;
                 }
                 // On network problems, or Branch down, call the other callbacks and stop processing.
                 else {
+                    self.networkCount = 0;
+
                     NSMutableArray *requestsToFail = [[NSMutableArray alloc] init];
                     for (int i = 0; i < self.requestQueue.size; i++) {
                         [requestsToFail addObject:[self.requestQueue peekAt:i]];
@@ -1305,8 +1307,6 @@ static Branch *currInstance;
                             [self.requestQueue remove:request];
                         }
                     }
-                    
-                    self.networkCount = 0;
                 }
             };
 
