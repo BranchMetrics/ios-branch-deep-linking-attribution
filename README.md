@@ -49,10 +49,10 @@ Branch is available through [CocoaPods](http://cocoapods.org), to install it sim
 #### Or download the raw files
 
 Download code from here:
-https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip
+[https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip](https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip)
 
 The testbed project:
-https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip
+[https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip](https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip)
 
 Or just clone this project!
 
