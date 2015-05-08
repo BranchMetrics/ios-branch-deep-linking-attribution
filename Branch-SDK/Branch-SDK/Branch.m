@@ -1291,20 +1291,27 @@ static Branch *currInstance;
                 }
                 // On network problems, or Branch down, call the other callbacks and stop processing.
                 else {
-                    self.networkCount = 0;
-
+                    // First, gather all the requests to fail
                     NSMutableArray *requestsToFail = [[NSMutableArray alloc] init];
                     for (int i = 0; i < self.requestQueue.size; i++) {
                         [requestsToFail addObject:[self.requestQueue peekAt:i]];
                     }
-                    
+
+                    // Next, remove all the requests that should not be replayed. Note, we do this before calling callbacks, in case any
+                    // of the callbacks try to kick off another request, which could potentially start another request (and call these callbacks again)
+                    for (BNCServerRequest *request in requestsToFail) {
+                        if (![request.tag isEqualToString:REQ_TAG_COMPLETE_ACTION] && ![request.tag isEqualToString:REQ_TAG_IDENTIFY]) {
+                            [self.requestQueue remove:request];
+                        }
+                    }
+
+                    // Then, set the network count to zero, indicating that requests can be started again
+                    self.networkCount = 0;
+
+                    // Finally, call all the requests callbacks with the error
                     for (BNCServerRequest *request in requestsToFail) {
                         if (request.callback) {
                             request.callback(nil, error);
-                        }
-                        
-                        if (![request.tag isEqualToString:REQ_TAG_COMPLETE_ACTION] && ![request.tag isEqualToString:REQ_TAG_IDENTIFY]) {
-                            [self.requestQueue remove:request];
                         }
                     }
                 }
