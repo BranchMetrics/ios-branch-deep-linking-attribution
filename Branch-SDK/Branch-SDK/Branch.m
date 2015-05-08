@@ -1564,10 +1564,6 @@ static Branch *currInstance;
     if (self.shouldCallSessionInitCallback && self.sessionInitWithParamsCallback) {
         self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
     }
-    
-    // this is default, it's only cleared to handle the case of losing connectivity.
-    // after connectivity is restored, this should be brought back.
-    self.shouldCallSessionInitCallback = YES;
 }
 
 - (void)handleInitFailure:(NSError *)error {
@@ -1576,10 +1572,6 @@ static Branch *currInstance;
     if (self.shouldCallSessionInitCallback && self.sessionInitWithParamsCallback) {
         self.sessionInitWithParamsCallback(nil, error);
     }
-    
-    // this is default, it's only cleared to handle the case of losing connectivity.
-    // after connectivity is restored, this should be brought back.
-    self.shouldCallSessionInitCallback = YES;
 }
 
 - (void)dealloc {
