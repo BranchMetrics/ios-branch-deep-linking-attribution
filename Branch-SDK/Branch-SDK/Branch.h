@@ -28,7 +28,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchLeastRecentFirst
 };
 
-
 typedef NS_ENUM(NSUInteger, BranchReferralCodeLocation) {
     BranchReferreeUser = 0,
     BranchReferringUser = 2,
