@@ -410,6 +410,9 @@ static const short _base64DecodingTable[256] = {
     
     // Just a basic decode, easy enough
     NSData *tempData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    if (!tempData) {
+        return @{};
+    }
     NSDictionary *plainDecodedDictionary = [NSJSONSerialization JSONObjectWithData:tempData options:NSJSONReadingMutableContainers error:nil];
     if (plainDecodedDictionary) {
         return plainDecodedDictionary;
@@ -418,6 +421,9 @@ static const short _base64DecodingTable[256] = {
     // If the first decode failed, it could be because the data was encoded. Try decoding first.
     NSString *decodedVersion = [BNCEncodingUtils base64DecodeStringToString:jsonString];
     tempData = [decodedVersion dataUsingEncoding:NSUTF8StringEncoding];
+    if (!tempData) {
+        return @{};
+    }
     NSDictionary *base64DecodedDictionary = [NSJSONSerialization JSONObjectWithData:tempData options:NSJSONReadingMutableContainers error:nil];
     if (base64DecodedDictionary) {
         return base64DecodedDictionary;

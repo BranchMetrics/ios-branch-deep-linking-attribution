@@ -165,11 +165,32 @@
     XCTAssertEqualObjects(decodedValue, expectedDataDict);
 }
 
+- (void)testDecodeJsonStringToDictionaryWithNilDecodedString {
+    char badCStr[5] = { '{', 'f', ':', 'o', '}' }; // not nil terminated
+    NSString *encodedString = [NSString stringWithUTF8String:badCStr];
+    NSDictionary *expectedDataDict = @{ };
+    
+    NSDictionary *decodedValue = [BNCEncodingUtils decodeJsonStringToDictionary:encodedString];
+    
+    XCTAssertEqualObjects(decodedValue, expectedDataDict);
+}
+
 - (void)testDecodeBase64EncodedJsonStringToDictionary {
     NSString *encodedString = [BNCEncodingUtils base64EncodeStringToString:@"{\"foo\":\"bar\"}"];
     NSDictionary *expectedDataDict = @{ @"foo": @"bar" };
     
     NSDictionary *decodedValue = [BNCEncodingUtils decodeJsonStringToDictionary:encodedString];
+    
+    XCTAssertEqualObjects(decodedValue, expectedDataDict);
+}
+
+- (void)testDecodeBase64JsonStringToDictionaryWithNilDecodedString {
+    char badCStr[5] = { '{', 'f', ':', 'o', '}' }; // not nil terminated
+    NSString *encodedString = [NSString stringWithUTF8String:badCStr];
+    NSString *base64EncodedString = [BNCEncodingUtils base64EncodeStringToString:encodedString];
+    NSDictionary *expectedDataDict = @{ };
+    
+    NSDictionary *decodedValue = [BNCEncodingUtils decodeJsonStringToDictionary:base64EncodedString];
     
     XCTAssertEqualObjects(decodedValue, expectedDataDict);
 }
