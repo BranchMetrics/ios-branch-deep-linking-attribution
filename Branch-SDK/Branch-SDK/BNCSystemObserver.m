@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #include <sys/utsname.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
