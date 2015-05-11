@@ -9,7 +9,6 @@
 #import "BNCServerInterface.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCConfig.h"
-#import "BNCLinkData.h"
 #import "BNCEncodingUtils.h"
 #import "BNCError.h"
 
