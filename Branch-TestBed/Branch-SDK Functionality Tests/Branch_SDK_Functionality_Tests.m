@@ -46,7 +46,6 @@
 }
 
 + (void)tearDown {
-    [[LSNocilla sharedInstance] clearStubs];
     [[LSNocilla sharedInstance] stop];
 
     [super tearDown];
@@ -70,6 +69,12 @@
     
     branch = [Branch getInstance:branch_key];
     [branch setAppListCheckEnabled:NO];
+}
+
+- (void)tearDown {
+    [[LSNocilla sharedInstance] clearStubs];
+
+    [super tearDown];
 }
 
 - (void)initSession {

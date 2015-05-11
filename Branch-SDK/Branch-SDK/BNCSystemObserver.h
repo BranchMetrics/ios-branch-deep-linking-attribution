@@ -23,7 +23,7 @@
 + (NSNumber *)getUpdateState;
 + (void)setUpdateState;
 + (NSString *)getDeviceName;
-+ (NSDictionary *)getListOfApps;
++ (NSDictionary *)getOpenableAppDictFromList:(NSArray *)apps;
 + (BOOL)isSimulator;
 + (BOOL)adTrackingSafe;
 

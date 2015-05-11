@@ -55,7 +55,6 @@
     if (self = [super init]) {
         self.tag = tag;
         self.postData = postData;
-        self.linkData = nil;
     }
     
     return self;

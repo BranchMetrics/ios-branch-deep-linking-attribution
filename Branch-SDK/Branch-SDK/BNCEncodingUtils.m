@@ -350,7 +350,7 @@ static const short _base64DecodingTable[256] = {
     if ([BNCPreferenceHelper isDebug]) {
         NSLog(@"encoded array : %@", encodedArray);
     }
-    
+
     return encodedArray;
 }
 
