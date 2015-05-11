@@ -101,8 +101,10 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (void)loadActionCountsWithCallback:(callbackWithStatus)callback;
 - (NSInteger)getCredits;
 - (void)redeemRewards:(NSInteger)count;
+- (void)redeemRewards:(NSInteger)count callback:(callbackWithStatus)callback;
 - (NSInteger)getCreditsForBucket:(NSString *)bucket;
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket;
+- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket callback:(callbackWithStatus)callback;
 - (void)userCompletedAction:(NSString *)action;
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state;
 - (NSInteger)getTotalCountsForAction:(NSString *)action;
