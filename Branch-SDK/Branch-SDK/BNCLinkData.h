@@ -6,7 +6,12 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "Branch.h"
+#import <Foundation/Foundation.h>
+
+typedef NS_ENUM(NSUInteger, BranchLinkType) {
+    BranchLinkTypeUnlimitedUse = 0,
+    BranchLinkTypeOneTimeUse = 1
+};
 
 @interface BNCLinkData : NSObject <NSCopying>
 
@@ -34,7 +39,6 @@
 - (void)setupIgnoreUAString:(NSString *)ignoreUAString;
 
 - (void)setObject:(id)anObject forKey:(id <NSCopying>)aKey;
-- (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key NS_AVAILABLE(10_8, 6_0);
 - (id)objectForKey:(id)aKey;
 
 @end

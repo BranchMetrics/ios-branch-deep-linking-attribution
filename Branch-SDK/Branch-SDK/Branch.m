@@ -25,16 +25,6 @@ NSString * const BRANCH_FEATURE_TAG_INVITE = @"invite";
 NSString * const BRANCH_FEATURE_TAG_DEAL = @"deal";
 NSString * const BRANCH_FEATURE_TAG_GIFT = @"gift";
 
-NSString * const TAGS = @"tags";
-NSString * const LINK_TYPE = @"type";
-NSString * const ALIAS = @"alias";
-NSString * const CHANNEL = @"channel";
-NSString * const FEATURE = @"feature";
-NSString * const STAGE = @"stage";
-NSString * const DURATION = @"duration";
-NSString * const DATA = @"data";
-NSString * const IGNORE_UA_STRING = @"ignore_ua_string";
-
 NSString * const IDENTITY = @"identity";
 NSString * const IDENTITY_ID = @"identity_id";
 NSString * const SESSION_ID = @"session_id";
@@ -47,6 +37,7 @@ NSString * const UNIQUE = @"unique";
 NSString * const MESSAGE = @"message";
 NSString * const ERROR = @"error";
 NSString * const DEVICE_FINGERPRINT_ID = @"device_fingerprint_id";
+NSString * const DATA = @"data";
 NSString * const LINK = @"link";
 NSString * const LINK_CLICK_ID = @"link_click_id";
 NSString * const URL = @"url";
