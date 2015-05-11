@@ -23,13 +23,11 @@ static NSString *REQ_TAG_DEBUG_DISCONNECT = @"t_debug_disconnect";
 - (void)getRequest:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag callback:(BNCServerCallback)callback;
 - (void)getRequest:(NSDictionary *)params url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log callback:(BNCServerCallback)callback;
 
-- (BNCServerResponse *)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log;
+- (BNCServerResponse *)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log;
 - (void)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag callback:(BNCServerCallback)callback;
 - (void)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag log:(BOOL)log callback:(BNCServerCallback)callback;
-- (void)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData callback:(BNCServerCallback)callback;
-- (void)postRequest:(NSDictionary *)post url:(NSString *)url andTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData log:(BOOL)log callback:(BNCServerCallback)callback;
 
-- (void)genericHTTPRequest:(NSURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData callback:(BNCServerCallback)callback;
-- (BNCServerResponse *)genericHTTPRequest:(NSURLRequest *)request withTag:(NSString *)requestTag andLinkData:(BNCLinkData *)linkData;
+- (void)genericHTTPRequest:(NSURLRequest *)request withTag:(NSString *)requestTag callback:(BNCServerCallback)callback;
+- (BNCServerResponse *)genericHTTPRequest:(NSURLRequest *)request withTag:(NSString *)requestTag;
 
 @end
