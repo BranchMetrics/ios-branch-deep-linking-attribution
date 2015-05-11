@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "BranchActivityItemProvider.h"
+#import "BNCLinkCache.h"
 
 typedef void (^callbackWithParams) (NSDictionary *params, NSError *error);
 typedef void (^callbackWithUrl) (NSString *url, NSError *error);
@@ -20,21 +21,10 @@ extern NSString * const BRANCH_FEATURE_TAG_INVITE;
 extern NSString * const BRANCH_FEATURE_TAG_DEAL;
 extern NSString * const BRANCH_FEATURE_TAG_GIFT;
 
-extern NSString * const TAGS;
-extern NSString * const LINK_TYPE;
-extern NSString * const ALIAS;
-extern NSString * const CHANNEL;
-extern NSString * const FEATURE;
-extern NSString * const STAGE;
-extern NSString * const DURATION;
-extern NSString * const DATA;
-extern NSString * const IGNORE_UA_STRING;
-
 typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchMostRecentFirst,
     BranchLeastRecentFirst
 };
-
 
 typedef NS_ENUM(NSUInteger, BranchReferralCodeLocation) {
     BranchReferreeUser = 0,
@@ -45,11 +35,6 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeLocation) {
 typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
     BranchUniqueRewards = 1,
     BranchUnlimitedRewards = 0
-};
-
-typedef NS_ENUM(NSUInteger, BranchLinkType) {
-    BranchLinkTypeUnlimitedUse = 0,
-    BranchLinkTypeOneTimeUse = 1
 };
 
 @interface Branch : NSObject
