@@ -8,30 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
-FOUNDATION_EXPORT NSString *const BNCErrorDomain;
+FOUNDATION_EXPORT NSString * const BNCErrorDomain;
 
 enum {
     BNCInitError = 1000,
-    BNCCloseError,
-    BNCEventError,
-    BNCGetReferralsError,
-    BNCGetCreditsError,
-    BNCGetCreditHistoryError,
-    BNCRedeemCreditsError,
-    BNCCreateURLError,
-    BNCIdentifyError,
-    BNCLogoutError,
-    BNCGetReferralCodeError,
-    BNCDuplicateReferralCodeError,
-    BNCValidateReferralCodeError,
+    BNCDuplicateResourceError,
     BNCInvalidReferralCodeError,
-    BNCApplyReferralCodeError,
-    BNCCreateURLDuplicateAliasError,
-    BNCNotInitError
+    BNCRedeemCreditsError,
+    BNCRequestError
 };
 
 @interface BNCError : NSObject
-
-+ (NSDictionary *)getUserInfoDictForDomain:(NSInteger)code;
 
 @end

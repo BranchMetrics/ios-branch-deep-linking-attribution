@@ -14,21 +14,21 @@ typedef void (^callbackWithUrl) (NSString *url, NSError *error);
 typedef void (^callbackWithStatus) (BOOL changed, NSError *error);
 typedef void (^callbackWithList) (NSArray *list, NSError *error);
 
-static NSString *BRANCH_FEATURE_TAG_SHARE = @"share";
-static NSString *BRANCH_FEATURE_TAG_REFERRAL = @"referral";
-static NSString *BRANCH_FEATURE_TAG_INVITE = @"invite";
-static NSString *BRANCH_FEATURE_TAG_DEAL = @"deal";
-static NSString *BRANCH_FEATURE_TAG_GIFT = @"gift";
+extern NSString * const BRANCH_FEATURE_TAG_SHARE;
+extern NSString * const BRANCH_FEATURE_TAG_REFERRAL;
+extern NSString * const BRANCH_FEATURE_TAG_INVITE;
+extern NSString * const BRANCH_FEATURE_TAG_DEAL;
+extern NSString * const BRANCH_FEATURE_TAG_GIFT;
 
-static NSString *TAGS = @"tags";
-static NSString *LINK_TYPE = @"type";
-static NSString *ALIAS = @"alias";
-static NSString *CHANNEL = @"channel";
-static NSString *FEATURE = @"feature";
-static NSString *STAGE = @"stage";
-static NSString *DURATION = @"duration";
-static NSString *DATA = @"data";
-static NSString *IGNORE_UA_STRING = @"ignore_ua_string";
+extern NSString * const TAGS;
+extern NSString * const LINK_TYPE;
+extern NSString * const ALIAS;
+extern NSString * const CHANNEL;
+extern NSString * const FEATURE;
+extern NSString * const STAGE;
+extern NSString * const DURATION;
+extern NSString * const DATA;
+extern NSString * const IGNORE_UA_STRING;
 
 typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchMostRecentFirst,
@@ -51,11 +51,6 @@ typedef NS_ENUM(NSUInteger, BranchLinkType) {
     BranchLinkTypeUnlimitedUse = 0,
     BranchLinkTypeOneTimeUse = 1
 };
-
-// Backwards compat
-typedef BranchCreditHistoryOrder CreditHistoryOrder;
-typedef BranchReferralCodeLocation ReferralCodeLocation;
-typedef BranchReferralCodeCalculation ReferralCodeCalculation;
 
 @interface Branch : NSObject
 

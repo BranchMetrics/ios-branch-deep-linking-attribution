@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
+#import "BranchTest.h"
 #import "Branch.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
@@ -15,13 +15,11 @@
 #import "BNCServerRequestQueue.h"
 #import <Nocilla/Nocilla.h>
 
-NSString * const REFERRAL_CODE = @"LMDLDV";
+NSString * const TEST_REFERRAL_CODE = @"LMDLDV";
 
 static Branch *branch;
 
-@interface Branch_SDK_Stubless_Tests : XCTestCase
-
-@property (assign, nonatomic) BOOL hasExceededExpectations;
+@interface Branch_SDK_Stubless_Tests : BranchTest
 
 @end
 
@@ -67,12 +65,6 @@ static Branch *branch;
     [[LSNocilla sharedInstance] stop];
 
     [super tearDown];
-}
-
-- (void)setUp {
-    [super setUp];
-
-    self.hasExceededExpectations = NO;
 }
 
 - (void)tearDown {
@@ -253,7 +245,7 @@ static Branch *branch;
         @"creation_source": @2,
         @"expiration": [NSNull null],
         @"date": @"2015-01-19T18:00:50.242Z",
-        @"referral_code": @"LMDLDV"
+        @"referral_code": TEST_REFERRAL_CODE
     };
     
     NSData *responseData = [NSJSONSerialization dataWithJSONObject:getReferralResponseDict options:kNilOptions error:nil];
@@ -292,24 +284,24 @@ static Branch *branch;
         @"creation_source": @2,
         @"expiration": [NSNull null],
         @"date": @"2015-01-19T18:00:50.242Z",
-        @"referral_code": REFERRAL_CODE
+        @"referral_code": TEST_REFERRAL_CODE
     };
     
     NSData *responseData = [NSJSONSerialization dataWithJSONObject:validateReferralResponseDict options:kNilOptions error:nil];
     
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"referralcode/%@", REFERRAL_CODE]].regex)
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"referralcode/%@", TEST_REFERRAL_CODE]].regex)
     .andReturn(200)
     .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test validateReferralCode"];
     
-    [branch validateReferralCode:REFERRAL_CODE andCallback:^(NSDictionary *params, NSError *error) {
+    [branch validateReferralCode:TEST_REFERRAL_CODE andCallback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         
         NSString *code = params[@"referral_code"];
         XCTAssertNotNil(code);
-        XCTAssertTrue([code isEqualToString:REFERRAL_CODE]);
+        XCTAssertTrue([code isEqualToString:TEST_REFERRAL_CODE]);
         XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUnlimitedRewards);
         XCTAssertEqual([params[@"location"] integerValue], BranchReferreeUser);
         XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 5);
@@ -340,24 +332,24 @@ static Branch *branch;
         @"creation_source": @2,
         @"expiration": [NSNull null],
         @"date": @"2015-01-19T18:00:50.242Z",
-        @"referral_code": REFERRAL_CODE
+        @"referral_code": TEST_REFERRAL_CODE
     };
     
     NSData *responseData = [NSJSONSerialization dataWithJSONObject:applyReferralResponseDict options:kNilOptions error:nil];
     
-    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"applycode/%@", REFERRAL_CODE]].regex)
+    stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"applycode/%@", TEST_REFERRAL_CODE]].regex)
     .andReturn(200)
     .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
     
     XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test applyReferralCode"];
 
-    [branch applyReferralCode:REFERRAL_CODE andCallback:^(NSDictionary *params, NSError *error) {
+    [branch applyReferralCode:TEST_REFERRAL_CODE andCallback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         
         NSString *code = params[@"referral_code"];
         XCTAssertNotNil(code);
-        XCTAssertTrue([code isEqualToString:REFERRAL_CODE]);
+        XCTAssertTrue([code isEqualToString:TEST_REFERRAL_CODE]);
         XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUnlimitedRewards);
         XCTAssertEqual([params[@"location"] integerValue], BranchReferreeUser);
         XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 5);
@@ -401,19 +393,6 @@ static Branch *branch;
     }];
     
     [self awaitExpectations];
-}
-
-#pragma mark - Test Util
-- (void)safelyFulfillExpectation:(XCTestExpectation *)expectation {
-    if (!self.hasExceededExpectations) {
-        [expectation fulfill];
-    }
-}
-
-- (void)awaitExpectations {
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
-        self.hasExceededExpectations = YES;
-    }];
 }
 
 @end

@@ -49,10 +49,6 @@ static id<BNCTestDelegate> bnc_testDelegate = nil;
 
 static NSString *Branch_Key = nil;
 
-@interface BNCPreferenceHelper() <BNCServerInterfaceDelegate>
-
-@end
-
 @implementation BNCPreferenceHelper
 
 - (id)init {
@@ -80,12 +76,17 @@ static NSString *Branch_Key = nil;
     BNC_Debug = YES;
     
     serverInterface = [[BranchServerInterface alloc] init];
-    serverInterface.delegate = [BNCPreferenceHelper getInstance];
     bnc_asyncLogQueue = dispatch_queue_create("bnc_log_queue", NULL);
 
-    dispatch_async(bnc_asyncLogQueue, ^{
-        [serverInterface connectToDebug];
-    });
+    [serverInterface connectToDebugWithCallback:^(BNCServerResponse *response, NSError *error) {
+        if (error) {
+            NSLog(@"Failed to connect to debug: %@", error);
+        }
+        else {
+            BNC_Remote_Debug = YES;
+            [bnc_asyncDebugConnectionDelegate bnc_debugConnectionEstablished];
+        }
+    }];
 }
 
 + (void)setDevDebug {
@@ -102,9 +103,7 @@ static NSString *Branch_Key = nil;
     if (BNC_Remote_Debug) {
         BNC_Remote_Debug = NO;
         
-        dispatch_async(bnc_asyncLogQueue, ^{
-            [serverInterface disconnectFromDebug];
-        });
+        [serverInterface disconnectFromDebugWithCallback:NULL];
     }
 }
 
@@ -125,26 +124,20 @@ static NSString *Branch_Key = nil;
         NSLog(@"%@", log);
         
         if (BNC_Remote_Debug) {
-            dispatch_async(bnc_asyncLogQueue, ^{
-                [serverInterface sendLog:log];
-            });
+            [serverInterface sendLog:log callback:NULL];
         }
     }
 }
 
 + (void)keepDebugAlive {
     if (BNC_Remote_Debug) {
-        dispatch_async(bnc_asyncLogQueue, ^{
-            [serverInterface sendLog:@""];
-        });
+        [serverInterface sendLog:@"" callback:NULL];
     }
 }
 
 + (void)sendScreenshot:(NSData *)data {
     if (BNC_Remote_Debug) {
-        dispatch_async(bnc_asyncLogQueue, ^{
-            [serverInterface sendScreenshot:data];
-        });
+        [serverInterface sendScreenshot:data callback:NULL];
     }
 }
 
@@ -500,36 +493,6 @@ static NSString *Branch_Key = nil;
 
 + (void)simulateInitFinished {
     [bnc_testDelegate simulateInitFinished];
-}
-
-#pragma mark - ServerInterface delegate
-
-- (void)serverCallback:(BNCServerResponse *)response {
-    if (response) {
-        NSInteger status = [response.statusCode integerValue];
-        NSString *requestTag = response.tag;
-        
-        if (status == 465) {    // server not listening
-            BNC_Remote_Debug = NO;
-            NSLog(@"======= Server is not listening =======");
-        } else if (status >= 400 && status < 500) {
-            if (response.data && [response.data objectForKey:@"error"]) {
-                NSLog(@"Branch API Error: %@", [[response.data objectForKey:@"error"] objectForKey:@"message"]);
-            }
-        } else if (status != 200) {
-            if (status == NSURLErrorNotConnectedToInternet || status == NSURLErrorNetworkConnectionLost || status == NSURLErrorCannotFindHost) {
-                NSLog(@"Branch API Error: Poor network connectivity. Please try again later.");
-            } else {
-                NSLog(@"Trouble reaching server. Please try again in a few minutes.");
-            }
-        } else if ([requestTag isEqualToString:REQ_TAG_DEBUG_CONNECT]) {
-            BNC_Remote_Debug = YES;
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [bnc_asyncDebugConnectionDelegate bnc_debugConnectionEstablished];
-            });
-        }
-    }
 }
 
 @end

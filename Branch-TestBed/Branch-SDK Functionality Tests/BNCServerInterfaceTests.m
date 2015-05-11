@@ -9,7 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "BNCServerInterface.h"
 #import "BNCPreferenceHelper.h"
-#import <OCMock/OCMock.h>
+#import <Nocilla/Nocilla.h>
 
 @interface BNCServerInterfaceTests : XCTestCase
 
@@ -20,144 +20,150 @@
 
 @implementation BNCServerInterfaceTests
 
++ (void)setUp {
+    [super setUp];
+
+    [[LSNocilla sharedInstance] start];
+}
+
++ (void)tearDown {
+    [[LSNocilla sharedInstance] stop];
+
+    [super tearDown];
+}
+
 - (void)setUp {
+    [super setUp];
+
     self.originalRetryInterval = [BNCPreferenceHelper getRetryInterval];
     self.originalRetryCount = [BNCPreferenceHelper getRetryCount];
 
-    [BNCPreferenceHelper setRetryInterval:1]; // turn down sleep time
+    [BNCPreferenceHelper setRetryInterval:0]; // turn down sleep time
 }
 
 - (void)tearDown {
+    [[LSNocilla sharedInstance] clearStubs];
+
     [BNCPreferenceHelper setRetryInterval:self.originalRetryInterval]; // set values back to original
     [BNCPreferenceHelper setRetryCount:self.originalRetryCount];
+
+    [super tearDown];
 }
 
 #pragma mark - Retry tests
 
 - (void)testGetRequestAsyncRetriesWhenAppropriate {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo"];
-    retryableResponse.statusCode = @500;
+    
+    stubRequest(@"GET", @"http://foo\?.*?retryNumber=0|1|2|3$".regex).andReturn(500);
     
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:3];
-
-    // Mock the actual request part, should happen 4 times (once through, 3 replays). Reject any more
-    id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[serverInterfaceMock reject] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
     
     // Make the request
-    [serverInterface getRequestAsync:nil url:@"http://foo" andTag:@"foo"];
+    XCTestExpectation *getRequestExpectation = [self expectationWithDescription:@"GET Request Expectation"];
+    [serverInterface getRequest:nil url:@"http://foo" andTag:@"foo" callback:^(BNCServerResponse *response, NSError *error) {
+        XCTAssertNotNil(error);
+
+        [getRequestExpectation fulfill];
+    }];
     
-    // Verify count of retries
-    [serverInterfaceMock verify];
+    [self waitForExpectationsWithTimeout:5 handler:NULL];
 }
 
 - (void)testGetRequestAsyncRetriesWhenInappropriateResponse {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *nonRetryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo"];
-    nonRetryableResponse.statusCode = @200;
-
+    
+    stubRequest(@"GET", @"http://foo?.*retryNumber=0".regex).andReturn(200);
+    
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:3];
     
-    // Mock the actual request part, reject any replays -- shouldn't be replayed.
-    id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
-    [[[serverInterfaceMock expect] andReturn:nonRetryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[serverInterfaceMock reject] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    
     // Make the request
-    [serverInterface getRequestAsync:nil url:@"http://foo" andTag:@"foo"];
+    XCTestExpectation *getRequestExpectation = [self expectationWithDescription:@"GET Request Expectation"];
+    [serverInterface getRequest:nil url:@"http://foo" andTag:@"foo" callback:^(BNCServerResponse *response, NSError *error) {
+        XCTAssertNil(error);
+        
+        [getRequestExpectation fulfill];
+    }];
     
-    // Verify count of retries
-    [serverInterfaceMock verify];
+    [self waitForExpectationsWithTimeout:1 handler:NULL];
 }
 
 - (void)testGetRequestAsyncRetriesWhenInappropriateRetryCount {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo"];
-    retryableResponse.statusCode = @500;
+    
+    stubRequest(@"GET", @"http://foo?.*retryNumber=0".regex).andReturn(500);
 
     // Specify retry count as 0
     [BNCPreferenceHelper setRetryCount:0];
     
-    // Mock the actual request part, reject any replays -- shouldn't be replayed.
-    id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[serverInterfaceMock reject] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    
     // Make the request
-    [serverInterface getRequestAsync:nil url:@"http://foo" andTag:@"foo"];
+    XCTestExpectation *getRequestExpectation = [self expectationWithDescription:@"GET Request Expectation"];
+    [serverInterface getRequest:nil url:@"http://foo" andTag:@"foo" callback:^(BNCServerResponse *response, NSError *error) {
+        XCTAssertNotNil(error);
+        
+        [getRequestExpectation fulfill];
+    }];
     
-    // Verify count of retries
-    [serverInterfaceMock verify];
+    [self waitForExpectationsWithTimeout:1 handler:NULL];
 }
 
 - (void)testPostRequestAsyncRetriesWhenAppropriate {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo"];
-    retryableResponse.statusCode = @500;
+    
+    stubRequest(@"POST", @"http://foo").withBody(@"\"retryNumber\":0|1|2|3".regex).andReturn(500);
 
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:3];
     
-    // Mock the actual request part, should happen 4 times (once through, 3 replays). Reject any more
-    id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[serverInterfaceMock reject] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    
     // Make the request
-    [serverInterface postRequestAsync:nil url:@"http://foo" andTag:@"foo"];
-    
-    // Verify count of retries
-    [serverInterfaceMock verify];
+    XCTestExpectation *postRequestExpectation = [self expectationWithDescription:@"POST Request Expectation"];
+    [serverInterface postRequest:nil url:@"http://foo" andTag:@"foo" callback:^(BNCServerResponse *response, NSError *error) {
+        XCTAssertNotNil(error);
+        
+        [postRequestExpectation fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:5 handler:NULL];
 }
 
 - (void)testPostRequestAsyncRetriesWhenInappropriateResponse {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *nonRetryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo"];
-    nonRetryableResponse.statusCode = @200;
+    
+    stubRequest(@"POST", @"http://foo").withBody(@"\"retryNumber\":0".regex).andReturn(200);
     
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:3];
     
-    // Mock the actual request part, reject any replays -- shouldn't be replayed.
-    id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
-    [[[serverInterfaceMock expect] andReturn:nonRetryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[serverInterfaceMock reject] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    
     // Make the request
-    [serverInterface postRequestAsync:nil url:@"http://foo" andTag:@"foo"];
+    XCTestExpectation *postRequestExpectation = [self expectationWithDescription:@"POST Request Expectation"];
+    [serverInterface postRequest:nil url:@"http://foo" andTag:@"foo" callback:^(BNCServerResponse *response, NSError *error) {
+        XCTAssertNil(error);
+        
+        [postRequestExpectation fulfill];
+    }];
     
-    // Verify count of retries
-    [serverInterfaceMock verify];
+    [self waitForExpectationsWithTimeout:1 handler:NULL];
 }
 
 - (void)testPostRequestAsyncRetriesWhenInappropriateRetryCount {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    BNCServerResponse *retryableResponse = [[BNCServerResponse alloc] initWithTag:@"foo"];
-    retryableResponse.statusCode = @500;
+    
+    stubRequest(@"POST", @"http://foo").withBody(@"\"retryNumber\":0".regex).andReturn(500);
 
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:0];
     
-    // Mock the actual request part, reject any replays -- shouldn't be replayed.
-    id serverInterfaceMock = [OCMockObject partialMockForObject:serverInterface];
-    [[[serverInterfaceMock expect] andReturn:retryableResponse] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    [[serverInterfaceMock reject] genericSyncHTTPRequest:[OCMArg any] withTag:[OCMArg any] andLinkData:[OCMArg any]];
-    
     // Make the request
-    [serverInterface postRequestAsync:nil url:@"http://foo" andTag:@"foo"];
+    XCTestExpectation *postRequestExpectation = [self expectationWithDescription:@"POST Request Expectation"];
+    [serverInterface postRequest:nil url:@"http://foo" andTag:@"foo" callback:^(BNCServerResponse *response, NSError *error) {
+        XCTAssertNotNil(error);
+        
+        [postRequestExpectation fulfill];
+    }];
     
-    // Verify count of retries
-    [serverInterfaceMock verify];
+    [self waitForExpectationsWithTimeout:1 handler:NULL];
 }
 
 @end
