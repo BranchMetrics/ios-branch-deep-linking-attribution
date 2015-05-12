@@ -45,6 +45,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 
 @interface Branch : NSObject
 
+#pragma mark - Global Instance Accessors
+
 ///--------------------------------
 /// @name Global Instance Accessors
 ///--------------------------------
@@ -69,19 +71,80 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  */
 + (Branch *)getInstance:(NSString *)branchKey;
 
+#pragma mark - BranchActivityItemProvider methods
+
 ///-----------------------------------------
 /// @name BranchActivityItemProvider methods
 ///-----------------------------------------
 
 /**
+ Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
  
+ Internally, this will create a short Branch Url that will be attached to the shared content.
+ 
+ @param params A dictionary to use while building up the Branch link
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params;
+
+/**
+ Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
+ 
+ Internally, this will create a short Branch Url that will be attached to the shared content.
+ 
+ @param params A dictionary to use while building up the Branch link
+ @param feature The feature the generated link will be associated with
+ */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature;
+
+/**
+ Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
+ 
+ Internally, this will create a short Branch Url that will be attached to the shared content.
+ 
+ @param params A dictionary to use while building up the Branch link
+ @param feature The feature the generated link will be associated with
+ @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in
+ */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage;
+
+/**
+ Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
+ 
+ Internally, this will create a short Branch Url that will be attached to the shared content.
+ 
+ @param params A dictionary to use while building up the Branch link
+ @param feature The feature the generated link will be associated with
+ @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in
+ @param tags An array of tag strings to be associated with the link
+ */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags;
+
+/**
+ Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
+ 
+ Internally, this will create a short Branch Url that will be attached to the shared content.
+ 
+ @param params A dictionary to use while building up the Branch link
+ @param feature The feature the generated link will be associated with
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param alias The alias for a link. This will have a two character suffix appended to it.
+ */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
+
+/**
+ Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
+ 
+ Internally, this will create a short Branch Url that will be attached to the shared content.
+ 
+ @param params A dictionary to use while building up the Branch link
+ @param tags An array of tag strings to be associated with the link
+ @param feature The feature the generated link will be associated with
+ @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in
+ @param alias The alias for a link. This will have a two character suffix appended to it.
+ */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
+
+#pragma mark - Initialization methods
 
 ///---------------------
 /// @name Initialization
@@ -97,6 +160,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback;
 - (BOOL)handleDeepLink:(NSURL *)url;
 
+#pragma mark - Configuration methods
+
 ///--------------------
 /// @name Configuration
 ///--------------------
@@ -106,6 +171,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (void)setMaxRetries:(NSInteger)maxRetries;
 - (void)setNetworkTimeout:(NSInteger)timeout;
 - (void)setAppListCheckEnabled:(BOOL)appListCheckEnabled;
+
+#pragma mark - Session Item methods
 
 ///--------------------
 /// @name Session Items
@@ -117,6 +184,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (void)setIdentity:(NSString *)userId;
 - (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback;
 - (void)logout;
+
+#pragma mark - Credit methods
 
 ///--------------
 /// @name Credits
@@ -134,6 +203,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (void)getCreditHistoryAfter:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback;
 - (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback;
 
+#pragma mark - Action methods
+
 ///--------------
 /// @name Actions
 ///--------------
@@ -143,6 +214,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state;
 - (NSInteger)getTotalCountsForAction:(NSString *)action;
 - (NSInteger)getUniqueCountsForAction:(NSString *)action;
+
+#pragma mark - Short Url Sync methods
 
 ///---------------------------------------
 /// @name Synchronous Short Url Generation
@@ -165,6 +238,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature;
 
+#pragma mark - Long Url generation
+
 ///--------------------------
 /// @name Long Url generation
 ///--------------------------
@@ -175,6 +250,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags;
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
+
+#pragma mark - Short Url Async methods
 
 ///----------------------------------------
 /// @name Asynchronous Short Url Generation
@@ -196,9 +273,11 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration andCallback:(callbackWithUrl)callback;
 - (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andCallback:(callbackWithUrl)callback;
 
-///---------------------------------------
-/// @name Referral code methods
-///---------------------------------------
+#pragma mark - Referral Code methods
+
+///----------------------------
+/// @name Referral Code methods
+///----------------------------
 
 - (void)getReferralCodeWithCallback:(callbackWithParams)callback;
 - (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback;
