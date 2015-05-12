@@ -227,6 +227,23 @@ static NSString *Branch_Key = nil;
 
 + (void)setBranchKey:(NSString *)branchKey {
     Branch_Key = branchKey;
+    
+    // If there was stored key isn't the same as the currently used (or doesn't exist), we need to clean up
+    // Note: Link Click Identifier is not cleared because of the potential for that to mess up a deep link
+    NSString *lastUsedKey = [BNCPreferenceHelper readStringFromDefaults:KEY_BRANCH_KEY];
+    if (![lastUsedKey isEqualToString:branchKey]) {
+        NSLog(@"The Branch Key has changed, clearing relevant items");
+
+        [BNCPreferenceHelper setAppVersion:nil];
+        [BNCPreferenceHelper setDeviceFingerprintID:nil];
+        [BNCPreferenceHelper setSessionID:nil];
+        [BNCPreferenceHelper setIdentityID:nil];
+        [BNCPreferenceHelper setUserURL:nil];
+        [BNCPreferenceHelper setInstallParams:nil];
+        [BNCPreferenceHelper setSessionParams:nil];
+        
+        [BNCPreferenceHelper writeObjectToDefaults:KEY_BRANCH_KEY value:branchKey];
+    }
 }
 
 +(NSString *)getAppVersion {
