@@ -271,11 +271,47 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 /// @name Session Items
 ///--------------------
 
+/**
+ Get the parameters used the first time this user was referred.
+ */
 - (NSDictionary *)getFirstReferringParams;
+
+/**
+ Get the parameters used the most recent time this user was referred (can be empty).
+ */
 - (NSDictionary *)getLatestReferringParams;
+
+/**
+ Tells Branch to act as though initSession hadn't been called. Will require another open call (this is done automatically, internally).
+ */
 - (void)resetUserSession;
+
+/**
+ Set the user's identity to an ID used by your system, so that it is identifiable by you elsewhere.
+ 
+ @param userId The ID Branch should use to identify this user.
+ @warning If you use the same ID between users on different sessions / devices, their actions will be merged.
+ @warning This request is not removed from the queue upon failure -- it will be retried until it succeeds.
+ @warning You should call `logout` before calling `setIdentity:` a second time.
+ */
 - (void)setIdentity:(NSString *)userId;
+
+/**
+ Set the user's identity to an ID used by your system, so that it is identifiable by you elsewhere. Receive a completion callback, notifying you whether it succeeded or failed.
+ 
+ @param userId The ID Branch should use to identify this user.
+ @param callback The callback to be called once the request has completed (success or failure).
+ @warning If you use the same ID between users on different sessions / devices, their actions will be merged.
+ @warning This request is not removed from the queue upon failure -- it will be retried until it succeeds. The callback will only ever be called once, though.
+ @warning You should call `logout` before calling `setIdentity:` a second time.
+ */
 - (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback;
+
+/**
+ Clear all of the current user's session items.
+ 
+ @warning If the request to logout fails, the items will not be cleared.
+ */
 - (void)logout;
 
 #pragma mark - Credit methods
