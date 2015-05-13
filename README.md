@@ -1,3 +1,5 @@
+## [New documentation portal](https://dev.branch.io)!
+
 ## Important migration to v0.6.0
 
 We have deprecated the bnc_app_key and replaced that with the new branch_key. Please see [add branch key](#add-your-branch-key-to-your-project) for details.
