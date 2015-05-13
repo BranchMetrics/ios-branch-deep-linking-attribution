@@ -320,16 +320,98 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 /// @name Credits
 ///--------------
 
+/**
+ Loads credit totals from the server locally.
+ 
+ @param callback The callback that is called once the request has completed.
+ */
 - (void)loadRewardsWithCallback:(callbackWithStatus)callback;
+
+/**
+ Redeem credits from the default bucket.
+ 
+ @param count The number of credits to redeem.
+ @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
+ */
 - (void)redeemRewards:(NSInteger)count;
+
+/**
+ Redeem credits from the default bucket.
+ 
+ @param count The number of credits to redeem.
+ @param callback The callback that is called once the request has completed.
+ @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
+ */
 - (void)redeemRewards:(NSInteger)count callback:(callbackWithStatus)callback;
+
+/**
+ Redeem credits from the specified bucket.
+ 
+ @param count The number of credits to redeem.
+ @param bucket The bucket to redeem credits from.
+ @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
+ */
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket;
+
+/**
+ Redeem credits from the specified bucket.
+ 
+ @param count The number of credits to redeem.
+ @param bucket The bucket to redeem credits from.
+ @param callback The callback that is called once the request has completed.
+ @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
+ */
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket callback:(callbackWithStatus)callback;
+
+/**
+ Get the local credit balance for the default bucket.
+ 
+ @warning You must `loadRewardsWithCallback:` before calling `getCredits`. This method does not make a request for the balance.
+ */
 - (NSInteger)getCredits;
+
+/**
+ Get the local credit balance for the specified bucket.
+ 
+ @param bucket The bucket to get credits balance from.
+ @warning You must `loadRewardsWithCallback:` before calling `getCredits`. This method does not make a request for the balance.
+ */
 - (NSInteger)getCreditsForBucket:(NSString *)bucket;
+
+/**
+ Loads the last 100 credit transaction history items for the default bucket.
+ 
+ @param callback The callback to call with the list of transactions.
+ */
 - (void)getCreditHistoryWithCallback:(callbackWithList)callback;
+
+/**
+ Loads the last 100 credit transaction history items for the specified bucket.
+ 
+ @param bucket The bucket to get transaction history for.
+ @param callback The callback to call with the list of transactions.
+ */
 - (void)getCreditHistoryForBucket:(NSString *)bucket andCallback:(callbackWithList)callback;
+
+/**
+ Loads the last n credit transaction history items after the specified transaction ID for the default.
+ 
+ @param creditTransactionId The ID of the transaction to start from.
+ @param length The number of transactions to pull.
+ @param order The direction to order transactions in the callback list. Least recent first means oldest items will be in the front of the response array, most recent means newest items will be front.
+ @param callback The callback to call with the list of transactions.
+ */
 - (void)getCreditHistoryAfter:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback;
+
+/**
+ Loads the last n credit transaction history items after the specified transaction ID for the specified bucket.
+ 
+ @param bucket The bucket to get transaction history for.
+ @param creditTransactionId The ID of the transaction to start from.
+ @param length The number of transactions to pull.
+ @param order The direction to order transactions in the callback list. Least recent first means oldest items will be in the front of the response array, most recent means newest items will be front.
+ @param callback The callback to call with the list of transactions.
+ */
 - (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback;
 
 #pragma mark - Action methods
