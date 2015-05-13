@@ -321,7 +321,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 ///--------------
 
 /**
- Loads credit totals from the server locally.
+ Loads credit totals from the server.
  
  @param callback The callback that is called once the request has completed.
  */
@@ -420,10 +420,46 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 /// @name Actions
 ///--------------
 
+/**
+ Load the action counts from the server.
+
+ @param callback The callback that is called once the request has completed.
+ */
 - (void)loadActionCountsWithCallback:(callbackWithStatus)callback;
+
+/**
+ Send a user action to the server. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
+ 
+ @param action The action string.
+ */
 - (void)userCompletedAction:(NSString *)action;
+
+/**
+ Send a user action to the server with additional state items. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
+ 
+ @param action The action string.
+ @param state The additional state items associated with the action.
+ */
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state;
+
+/**
+ Gets the total number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.
+ 
+ @param action The action string.
+ @warning You must `loadActionCountsWithCallback:` before calling `getTotalCountsForAction:`. This method does not make a request for the counts.
+ */
 - (NSInteger)getTotalCountsForAction:(NSString *)action;
+
+/**
+ Gets the distinct number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.
+
+ Distinct in this case can be explained as follows:
+ Scenario 1: User A completed action `buy`, User B completed action `buy` -- Total Actions: 2, Distinct Actions: 2
+ Scenario 2: User A completed action `buy`, User A completed action `buy` again -- Total Actions: 2, Distinct Actions: 1
+ 
+ @param action The action string.
+ @warning You must `loadActionCountsWithCallback:` before calling `getUniqueCountsForAction:`. This method does not make a request for the counts.
+ */
 - (NSInteger)getUniqueCountsForAction:(NSString *)action;
 
 #pragma mark - Short Url Sync methods
