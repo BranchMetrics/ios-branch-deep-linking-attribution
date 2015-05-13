@@ -230,10 +230,39 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 /// @name Configuration
 ///--------------------
 
+/**
+ Have Branch treat this device / session as a debug session, causing more information to be logged, and info to be available in the debug tab of the dashboard.
+ 
+ @warning This should not be used in production.
+ */
 + (void)setDebug;
+
+/**
+ Specify the time to wait in seconds between retries in the case of a Branch server error
+ 
+ @param retryInterval Number of seconds to wait between retries
+ */
 - (void)setRetryInterval:(NSInteger)retryInterval;
+
+/**
+ Specify the max number of times to retry in the case of a Branch server error
+ 
+ @param maxRetries Number of retries to make
+ */
 - (void)setMaxRetries:(NSInteger)maxRetries;
+
+/**
+ Specify the amount of time before a request should be considered "timed out"
+ 
+ @param timeout Number of seconds to before a request is considered timed out.
+ */
 - (void)setNetworkTimeout:(NSInteger)timeout;
+
+/**
+ Whether or not Branch should attempt to the devices list of apps
+ 
+ @param appListCheckEnabled Boolean indicating whether to perform the check.
+ */
 - (void)setAppListCheckEnabled:(BOOL)appListCheckEnabled;
 
 #pragma mark - Session Item methods
