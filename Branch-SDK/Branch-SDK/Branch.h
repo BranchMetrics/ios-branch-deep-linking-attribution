@@ -648,11 +648,60 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 /// @name Long Url generation
 ///--------------------------
 
+/**
+ Construct a long url with specified params. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ */
 - (NSString *)getLongURLWithParams:(NSDictionary *)params;
+
+/**
+ Get a long url with specified params and feature. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ */
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature;
+
+/**
+ Get a long url with specified params, feature, and stage. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ */
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage;
+
+/**
+ Get a long url with specified params. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param tags An array of tags to associate with this link, useful for tracking.
+ */
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags;
+
+/**
+ Get a long url with specified params. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param alias The alias for a link. This will have a two character suffix appended to it.
+ */
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
+
+/**
+ Get a long url with specified params. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param tags An array of tags to associate with this link, useful for tracking.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param alias The alias for a link. This will have a two character suffix appended to it.
+ */
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
 
 #pragma mark - Short Url Async methods
