@@ -82,7 +82,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  
  Internally, this will create a short Branch Url that will be attached to the shared content.
  
- @param params A dictionary to use while building up the Branch link
+ @param params A dictionary to use while building up the Branch link.
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params;
 
@@ -91,8 +91,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  
  Internally, this will create a short Branch Url that will be attached to the shared content.
  
- @param params A dictionary to use while building up the Branch link
- @param feature The feature the generated link will be associated with
+ @param params A dictionary to use while building up the Branch link.
+ @param feature The feature the generated link will be associated with.
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature;
 
@@ -101,9 +101,9 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  
  Internally, this will create a short Branch Url that will be attached to the shared content.
  
- @param params A dictionary to use while building up the Branch link
- @param feature The feature the generated link will be associated with
- @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in
+ @param params A dictionary to use while building up the Branch link.
+ @param feature The feature the generated link will be associated with.
+ @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage;
 
@@ -112,10 +112,10 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  
  Internally, this will create a short Branch Url that will be attached to the shared content.
  
- @param params A dictionary to use while building up the Branch link
- @param feature The feature the generated link will be associated with
- @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in
- @param tags An array of tag strings to be associated with the link
+ @param params A dictionary to use while building up the Branch link.
+ @param feature The feature the generated link will be associated with.
+ @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
+ @param tags An array of tag strings to be associated with the link.
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags;
 
@@ -124,9 +124,9 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  
  Internally, this will create a short Branch Url that will be attached to the shared content.
  
- @param params A dictionary to use while building up the Branch link
- @param feature The feature the generated link will be associated with
- @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param params A dictionary to use while building up the Branch link.
+ @param feature The feature the generated link will be associated with.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  @param alias The alias for a link. This will have a two character suffix appended to it.
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
@@ -136,10 +136,10 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  
  Internally, this will create a short Branch Url that will be attached to the shared content.
  
- @param params A dictionary to use while building up the Branch link
- @param tags An array of tag strings to be associated with the link
- @param feature The feature the generated link will be associated with
- @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in
+ @param params A dictionary to use while building up the Branch link.
+ @param tags An array of tag strings to be associated with the link.
+ @param feature The feature the generated link will be associated with.
+ @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
  @param alias The alias for a link. This will have a two character suffix appended to it.
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
@@ -240,14 +240,14 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 /**
  Specify the time to wait in seconds between retries in the case of a Branch server error
  
- @param retryInterval Number of seconds to wait between retries
+ @param retryInterval Number of seconds to wait between retries.
  */
 - (void)setRetryInterval:(NSInteger)retryInterval;
 
 /**
  Specify the max number of times to retry in the case of a Branch server error
  
- @param maxRetries Number of retries to make
+ @param maxRetries Number of retries to make.
  */
 - (void)setMaxRetries:(NSInteger)maxRetries;
 
@@ -497,7 +497,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
- @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  @warning This method makes a synchronous url request.
  */
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage;
@@ -508,7 +508,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
- @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  @param alias The alias for a link. This will have a two character suffix appended to it.
  @warning This method makes a synchronous url request.
  */
@@ -520,7 +520,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
- @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  @param type The type of link this is, one of Single Use or Unlimited Use. Single use means once *per user*, not once period.
  @warning This method makes a synchronous url request.
  */
@@ -532,7 +532,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
- @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  @param matchDuration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
  @warning This method makes a synchronous url request.
  */
@@ -542,10 +542,10 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  Get a short url with specified tags, params, channel, feature, and stage. The usage type will default to unlimited.
  
  @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking
+ @param tags An array of tags to associate with this link, useful for tracking.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
- @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  @warning This method makes a synchronous url request.
  */
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage;
@@ -554,10 +554,10 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  Get a short url with specified tags, params, channel, feature, stage, and alias. The usage type will default to unlimited.
  
  @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking
+ @param tags An array of tags to associate with this link, useful for tracking.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
- @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  @param alias The alias for a link. This will have a two character suffix appended to it.
  @warning This method makes a synchronous url request.
  */
@@ -567,10 +567,10 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  Get a short url with specified tags, params, channel, feature, and stage. The usage type will default to unlimited.
  
  @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking
+ @param tags An array of tags to associate with this link, useful for tracking.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
- @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  @param alias The alias for a link. This will have a two character suffix appended to it.
  @param ignoreUAString The User Agent string to tell the server to ignore the next request from, to prevent it from treating a preview scrape as a link click.
  @warning This method makes a synchronous url request.
@@ -582,7 +582,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  Get a short url with specified tags, params, channel, feature, stage, and type.
  
  @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking
+ @param tags An array of tags to associate with this link, useful for tracking.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
@@ -595,7 +595,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  Get a short url with specified tags, params, channel, feature, stage, and match duration. The usage type will default to unlimited.
  
  @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking
+ @param tags An array of tags to associate with this link, useful for tracking.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
@@ -617,7 +617,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
  
  @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking
+ @param tags An array of tags to associate with this link, useful for tracking.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @warning This method makes a synchronous url request.
  */
@@ -636,7 +636,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Referral Urls use the feature `BRANCH_FEATURE_TAG_REFERRAL`.
  
  @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking
+ @param tags An array of tags to associate with this link, useful for tracking.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @warning This method makes a synchronous url request.
  */
@@ -673,7 +673,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage;
 
 /**
- Get a long url with specified params. The usage type will default to unlimited.
+ Get a long url with specified params, feature, stage, and tags. The usage type will default to unlimited.
  
  @param params Dictionary of parameters to include in the link.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
@@ -683,7 +683,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags;
 
 /**
- Get a long url with specified params. The usage type will default to unlimited.
+ Get a long url with specified params, feature, stage, and alias. The usage type will default to unlimited.
  
  @param params Dictionary of parameters to include in the link.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
@@ -693,7 +693,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
 
 /**
- Get a long url with specified params. The usage type will default to unlimited.
+ Get a long url with specified params, channel, tags, feature, stage, and alias. The usage type will default to unlimited.
  
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
