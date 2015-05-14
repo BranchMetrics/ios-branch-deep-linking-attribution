@@ -877,13 +877,76 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 /// @name Referral Code methods
 ///----------------------------
 
+/**
+ Get a referral code without providing any parameters.
+ 
+ @param callback The callback that is called with the created referral code object.
+ */
 - (void)getReferralCodeWithCallback:(callbackWithParams)callback;
+
+/**
+ Get a referral code with an amount of credits the code will be worth.
+ 
+ @param amount Number of credits generating user will earn when a user is referred by this code.
+ @param callback The callback that is called with the created referral code object.
+ */
 - (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback;
+
+/**
+ Get a referral code with an amount of credits the code will be worth, and a prefix for the code.
+ 
+ @param prefix The string to prefix the code with.
+ @param amount Number of credits generating user will earn when a user is referred by this code.
+ @param callback The callback that is called with the created referral code object.
+ */
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback;
+
+/**
+ Get a referral code with an amount of credits the code will be worth, and an expiration date.
+ 
+ @param amount Number of credits generating user will earn when a user is referred by this code.
+ @param expiration The date when the code should be invalidated.
+ @param callback The callback that is called with the created referral code object.
+ */
 - (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback;
+
+/**
+ Get a referral code with an amount of credits the code will be worth, the prefix to put in front of it, and an expiration date.
+ 
+ @param prefix The string to prefix the code with.
+ @param amount Number of credits generating user will earn when a user is referred by this code.
+ @param expiration The date when the code should be invalidated.
+ @param callback The callback that is called with the created referral code object.
+ */
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback;
+
+/**
+ Get a referral code with an amount of credits the code will be worth, the prefix to put in front of it, an expiration date, the bucket it will be part of, the calculation method, and location of user earning credits.
+ 
+ @param prefix The string to prefix the code with.
+ @param amount Number of credits to be earned (by the user specified by location).
+ @param expiration The date when the code should be invalidated.
+ @param bucket A bucket the credits should be associated with.
+ @param type The type of this code will be, one of Single Use or Unlimited Use. Single use means once *per user*, not once period.
+ @param location The location of the user who earns credits for the referral, one of Referrer, Referree (the referred user), or Both.
+ @param callback The callback that is called with the created referral code object.
+ */
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(BranchReferralCodeCalculation)calcType location:(BranchReferralCodeLocation)location andCallback:(callbackWithParams)callback;
+
+/**
+ Validate a referral code. Will callback with the referral code object on success, or an error if it's invalid.
+ 
+ @param code The referral code to validate
+ @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
+ */
 - (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
+
+/**
+ Apply a referral code, awarding the referral points. Will callback with the referral code object on success, or an error if it's invalid.
+ 
+ @param code The referral code to validate
+ @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
+ */
 - (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
 
 @end
