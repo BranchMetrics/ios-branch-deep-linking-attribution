@@ -834,7 +834,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration andCallback:(callbackWithUrl)callback;
 
 /**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Referral Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
+ Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
  
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -843,7 +843,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (void)getContentUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback;
 
 /**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Referral Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
+ Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
  
  @param params Dictionary of parameters to include in the link.
  @param tags An array of tags to associate with this link, useful for tracking.
