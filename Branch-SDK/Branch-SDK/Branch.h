@@ -468,22 +468,179 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 /// @name Synchronous Short Url Generation
 ///---------------------------------------
 
+/**
+ Get a short url without any items specified. The usage type will default to unlimited.
+ */
 - (NSString *)getShortURL;
+
+/**
+ Get a short url with specified params. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @warning This method makes a synchronous url request.
+ */
 - (NSString *)getShortURLWithParams:(NSDictionary *)params;
-- (NSString *)getContentUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel;
-- (NSString *)getContentUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel;
-- (NSString *)getReferralUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel;
-- (NSString *)getReferralUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel;
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage;
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias ignoreUAString:(NSString *)ignoreUAString;
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type;
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage;
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type;
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
+
+/**
+ Get a short url with specified params, channel, and feature. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @warning This method makes a synchronous url request.
+ */
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature;
+
+/**
+ Get a short url with specified params, channel, feature, and stage. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @warning This method makes a synchronous url request.
+ */
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage;
+
+/**
+ Get a short url with specified params, channel, feature, stage, and alias. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param alias The alias for a link. This will have a two character suffix appended to it.
+ @warning This method makes a synchronous url request.
+ */
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
+
+/**
+ Get a short url with specified params, channel, feature, stage, and type.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param type The type of link this is, one of Single Use or Unlimited Use. Single use means once *per user*, not once period.
+ @warning This method makes a synchronous url request.
+ */
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type;
+
+/**
+ Get a short url with specified params, channel, feature, stage, and match duration. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param matchDuration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
+ @warning This method makes a synchronous url request.
+ */
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
+
+/**
+ Get a short url with specified tags, params, channel, feature, and stage. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param tags An array of tags to associate with this link, useful for tracking
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @warning This method makes a synchronous url request.
+ */
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage;
+
+/**
+ Get a short url with specified tags, params, channel, feature, stage, and alias. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param tags An array of tags to associate with this link, useful for tracking
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param alias The alias for a link. This will have a two character suffix appended to it.
+ @warning This method makes a synchronous url request.
+ */
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
+
+/**
+ Get a short url with specified tags, params, channel, feature, and stage. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param tags An array of tags to associate with this link, useful for tracking
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in
+ @param alias The alias for a link. This will have a two character suffix appended to it.
+ @param ignoreUAString The User Agent string to tell the server to ignore the next request from, to prevent it from treating a preview scrape as a link click.
+ @warning This method makes a synchronous url request.
+ @warning This method is primarily intended to be an internal Branch method, used to work around a bug with SLComposeViewController
+ */
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias ignoreUAString:(NSString *)ignoreUAString;
+
+/**
+ Get a short url with specified tags, params, channel, feature, stage, and type.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param tags An array of tags to associate with this link, useful for tracking
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param type The type of link this is, one of Single Use or Unlimited Use. Single use means once *per user*, not once period.
+ @warning This method makes a synchronous url request.
+ */
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type;
+
+/**
+ Get a short url with specified tags, params, channel, feature, stage, and match duration. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param tags An array of tags to associate with this link, useful for tracking
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param matchDuration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
+ @warning This method makes a synchronous url request.
+ */
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
+
+/**
+ Get a short url with specified params and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @warning This method makes a synchronous url request.
+ */
+- (NSString *)getContentUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel;
+
+/**
+ Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param tags An array of tags to associate with this link, useful for tracking
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @warning This method makes a synchronous url request.
+ */
+- (NSString *)getContentUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel;
+
+/**
+ Get a short url with specified params and channel. The usage type will default to unlimited. Referral Urls use the feature `BRANCH_FEATURE_TAG_REFERRAL`.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @warning This method makes a synchronous url request.
+ */
+- (NSString *)getReferralUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel;
+
+/**
+ Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Referral Urls use the feature `BRANCH_FEATURE_TAG_REFERRAL`.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param tags An array of tags to associate with this link, useful for tracking
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @warning This method makes a synchronous url request.
+ */
+- (NSString *)getReferralUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel;
 
 #pragma mark - Long Url generation
 
