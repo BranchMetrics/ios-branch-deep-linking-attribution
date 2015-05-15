@@ -1,14 +1,12 @@
-highlight-font: '"GT Walsheim", "gt_walsheim_regular", "Avant Garde Gothic ITCW01Dm", "Avant Garde", "Helvetica Neue", "Arial"'
-
+highlight-font: '"GT Walsheim", "gt_walsheim_regular", "Avant Garde Gothic ITCW01Dm", "Avant Garde", "Helvetica Neue", "Arial" '
 body: '"Helvetica Neue", "Arial", san-serif'
 code: '"Monaco", "Menlo", "Consolas", "Courier New", monospace'
 
-highlight-color: '#ED0015'
-highlight-dark-color: '#A90010'
+highlight-color: "#5691AD"
+highlight-dark-color: "#6EBADF"
+darker-color: "#205e72"
+darker-dark-color: "#0A3D49"
+background-color: "#5691AD"
+alt-link-color: "#7273B6"
+warning-color: "#B80E3D"
 
-darker-color: '#C6B7B2'
-darker-dark-color: '#A8A8A8'
-
-background-color: '#F2F2F2'
-alt-link-color: '#B7233F'
-warning-color: '#B80E3D'
