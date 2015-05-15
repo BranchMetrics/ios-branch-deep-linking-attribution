@@ -1,5 +1,13 @@
 Branch iOS SDK change log
 
+- v0.7.0
+  * Large rewrite of the internals of Branch.m to make things more stable, predictable, readable, and maintainable.
+  * Added callbacks to the `redeemRewards` methods.
+  * Updating Queue persistence to be non-immediate. Rather than persisting to disk on every change, it persists after time has elapsed to prevent hanging issues when in a loop.
+  * Making errors more specific -- now you actually get the error message back, instead of a generic one.
+  * Fixing issue with BranchActivityItemProvider when using the Twitter share sheet.
+  * Removing temporary backwards compat typedefs.
+
 - v0.6.3:
   * Addressing an issue identified by iHeartRadio where decoding a JSON string could cause crashes.
   * Adding the ability to opt out of the app list check.
