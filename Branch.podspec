@@ -15,7 +15,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.homepage         = "https://branch.io"
   s.screenshots      = "https://branch.io/img/branch-links/how-links-work-diagram.jpg"
   s.license          = 'Proprietary'
-  s.author           = { "Alex Austin" => "alex@branch.io" }
+  s.author           = { "Branch" => "support@branch.io" }
   s.source           = { :git => "https://github.com/BranchMetrics/Branch-iOS-SDK.git", :tag => s.version.to_s }
   s.social_media_url = 'https://www.linkedin.com/company/3813083'
 
