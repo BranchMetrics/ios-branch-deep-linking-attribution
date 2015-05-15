@@ -1,5 +1,7 @@
 Branch iOS SDK change log
 
+- v0.7.1 Adding a missing item to the pod spec headers.
+
 - v0.7.0
   * Large rewrite of the internals of Branch.m to make things more stable, predictable, readable, and maintainable.
   * Added callbacks to the `redeemRewards` methods.
