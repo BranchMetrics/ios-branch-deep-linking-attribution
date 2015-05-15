@@ -42,7 +42,7 @@
     NSString *channel = [BranchActivityItemProvider humanReadableChannelWithActivityType:self.activityType];
     
     // Because Facebook immediately scrapes URLs, we add an additional parameter to the existing list, telling the backend to ignore the first click
-    if ([channel isEqualToString:@"facebook"]) {
+    if ([channel isEqualToString:@"facebook"] || [channel isEqualToString:@"twitter"]) {
         return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:self.params andTags:self.tags andChannel:channel andFeature:self.feature andStage:self.stage andAlias:self.alias ignoreUAString:self.userAgentString]];
     }
     
