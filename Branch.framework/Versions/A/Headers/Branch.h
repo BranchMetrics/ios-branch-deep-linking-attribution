@@ -8,33 +8,23 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "BranchActivityItemProvider.h"
+#import "BNCLinkCache.h"
 
 typedef void (^callbackWithParams) (NSDictionary *params, NSError *error);
 typedef void (^callbackWithUrl) (NSString *url, NSError *error);
 typedef void (^callbackWithStatus) (BOOL changed, NSError *error);
 typedef void (^callbackWithList) (NSArray *list, NSError *error);
 
-static NSString *BRANCH_FEATURE_TAG_SHARE = @"share";
-static NSString *BRANCH_FEATURE_TAG_REFERRAL = @"referral";
-static NSString *BRANCH_FEATURE_TAG_INVITE = @"invite";
-static NSString *BRANCH_FEATURE_TAG_DEAL = @"deal";
-static NSString *BRANCH_FEATURE_TAG_GIFT = @"gift";
-
-static NSString *TAGS = @"tags";
-static NSString *LINK_TYPE = @"type";
-static NSString *ALIAS = @"alias";
-static NSString *CHANNEL = @"channel";
-static NSString *FEATURE = @"feature";
-static NSString *STAGE = @"stage";
-static NSString *DURATION = @"duration";
-static NSString *DATA = @"data";
-static NSString *IGNORE_UA_STRING = @"ignore_ua_string";
+extern NSString * const BRANCH_FEATURE_TAG_SHARE;
+extern NSString * const BRANCH_FEATURE_TAG_REFERRAL;
+extern NSString * const BRANCH_FEATURE_TAG_INVITE;
+extern NSString * const BRANCH_FEATURE_TAG_DEAL;
+extern NSString * const BRANCH_FEATURE_TAG_GIFT;
 
 typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchMostRecentFirst,
     BranchLeastRecentFirst
 };
-
 
 typedef NS_ENUM(NSUInteger, BranchReferralCodeLocation) {
     BranchReferreeUser = 0,
@@ -46,16 +36,6 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
     BranchUniqueRewards = 1,
     BranchUnlimitedRewards = 0
 };
-
-typedef NS_ENUM(NSUInteger, BranchLinkType) {
-    BranchLinkTypeUnlimitedUse = 0,
-    BranchLinkTypeOneTimeUse = 1
-};
-
-// Backwards compat
-typedef BranchCreditHistoryOrder CreditHistoryOrder;
-typedef BranchReferralCodeLocation ReferralCodeLocation;
-typedef BranchReferralCodeCalculation ReferralCodeCalculation;
 
 @interface Branch : NSObject
 
@@ -118,8 +98,10 @@ typedef BranchReferralCodeCalculation ReferralCodeCalculation;
 - (void)loadActionCountsWithCallback:(callbackWithStatus)callback;
 - (NSInteger)getCredits;
 - (void)redeemRewards:(NSInteger)count;
+- (void)redeemRewards:(NSInteger)count callback:(callbackWithStatus)callback;
 - (NSInteger)getCreditsForBucket:(NSString *)bucket;
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket;
+- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket callback:(callbackWithStatus)callback;
 - (void)userCompletedAction:(NSString *)action;
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state;
 - (NSInteger)getTotalCountsForAction:(NSString *)action;
