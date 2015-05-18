@@ -97,18 +97,35 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 #pragma mark - GetInstance methods
 
 + (Branch *)getInstance {
+    // If no Branch Key
     NSString *branchKey = [BNCPreferenceHelper getBranchKey:YES];
     if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
-        NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+        // If no app key
+        NSString *appKey = [BNCPreferenceHelper getAppKey];
+        if (!appKey || [appKey isEqualToString:NO_STRING_VALUE]) {
+            NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+        }
+        else {
+            NSLog(@"Usage of App Key is deprecated, please move toward using a Branch key");
+        }
     }
 
     return [Branch getInstanceInternal];
 }
 
 + (Branch *)getTestInstance {
+    // If no Branch Key
     NSString *branchKey = [BNCPreferenceHelper getBranchKey:NO];
     if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
-        NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+        // If no app key
+        NSString *appKey = [BNCPreferenceHelper getAppKey];
+        if (!appKey || [appKey isEqualToString:NO_STRING_VALUE]) {
+            NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+        }
+        // If they did provide an app key, show them a warning. Shouldn't use app key with a test instance.
+        else {
+            NSLog(@"Branch Warning: You requested the test instance, but provided an app key. App Keys cannot be used for test instances. Additionally, usage of App Key is deprecated, please move toward using a Branch key");
+        }
     }
 
     return [Branch getInstanceInternal];
