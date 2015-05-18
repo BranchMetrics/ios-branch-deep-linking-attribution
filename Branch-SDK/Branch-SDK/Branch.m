@@ -999,9 +999,30 @@ static Branch *currInstance;
 
 + (Branch *)getBranchInstance:(BOOL)isLive {
     if (!currInstance) {
+        // If no key is present, give a warning
         NSString *branchKey = [BNCPreferenceHelper getBranchKey:isLive];
         if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
             NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+        }
+        // If a key is present, check it
+        else {
+            // If there was stored key and it isn't the same as the currently used (or doesn't exist), we need to clean up
+            // Note: Link Click Identifier is not cleared because of the potential for that to mess up a deep link
+            NSString *lastKey = [BNCPreferenceHelper getLastRunBranchKey];
+            if (lastKey && ![branchKey isEqualToString:lastKey]) {
+                NSLog(@"Branch Warning: The Branch Key has changed, clearing relevant items");
+                
+                [BNCPreferenceHelper setAppVersion:nil];
+                [BNCPreferenceHelper setDeviceFingerprintID:nil];
+                [BNCPreferenceHelper setSessionID:nil];
+                [BNCPreferenceHelper setIdentityID:nil];
+                [BNCPreferenceHelper setUserURL:nil];
+                [BNCPreferenceHelper setInstallParams:nil];
+                [BNCPreferenceHelper setSessionParams:nil];
+                [[BNCServerRequestQueue getInstance] clearQueue];
+            }
+
+            [BNCPreferenceHelper setLastRunBranchKey:branchKey];
         }
         
         [Branch initInstance];

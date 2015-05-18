@@ -17,6 +17,7 @@ static const NSInteger APP_READ_INTERVAL = 520000;
 
 static NSString *KEY_APP_KEY = @"bnc_app_key";
 static NSString *KEY_APP_VERSION = @"bnc_app_version";
+static NSString *KEY_LAST_RUN_BRANCH_KEY = @"bnc_last_run_branch_key";
 
 static NSString *KEY_DEVICE_FINGERPRINT_ID = @"bnc_device_fingerprint_id";
 static NSString *KEY_SESSION_ID = @"bnc_session_id";
@@ -227,23 +228,14 @@ static NSString *Branch_Key = nil;
 
 + (void)setBranchKey:(NSString *)branchKey {
     Branch_Key = branchKey;
-    
-    // If there was stored key isn't the same as the currently used (or doesn't exist), we need to clean up
-    // Note: Link Click Identifier is not cleared because of the potential for that to mess up a deep link
-    NSString *lastUsedKey = [BNCPreferenceHelper readStringFromDefaults:KEY_BRANCH_KEY];
-    if (![lastUsedKey isEqualToString:branchKey]) {
-        NSLog(@"The Branch Key has changed, clearing relevant items");
+}
 
-        [BNCPreferenceHelper setAppVersion:nil];
-        [BNCPreferenceHelper setDeviceFingerprintID:nil];
-        [BNCPreferenceHelper setSessionID:nil];
-        [BNCPreferenceHelper setIdentityID:nil];
-        [BNCPreferenceHelper setUserURL:nil];
-        [BNCPreferenceHelper setInstallParams:nil];
-        [BNCPreferenceHelper setSessionParams:nil];
-        
-        [BNCPreferenceHelper writeObjectToDefaults:KEY_BRANCH_KEY value:branchKey];
-    }
++ (NSString *)getLastRunBranchKey {
+    return [BNCPreferenceHelper readStringFromDefaults:KEY_LAST_RUN_BRANCH_KEY];
+}
+
++ (void)setLastRunBranchKey:(NSString *)lastRunBranchKey {
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_LAST_RUN_BRANCH_KEY value:lastRunBranchKey];
 }
 
 +(NSString *)getAppVersion {
