@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "BranchActivityItemProvider.h"
+#import "BranchServerInterface.h"
+#import "BNCServerRequestQueue.h"
 #import "BNCLinkCache.h"
 
 /**
@@ -957,5 +959,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
  */
 - (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
+
+- (id)initWithInterface:(BranchServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache;
 
 @end
