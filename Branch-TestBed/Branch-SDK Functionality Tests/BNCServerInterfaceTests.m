@@ -52,7 +52,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     
     // Make the request
     XCTestExpectation *getRequestExpectation = [self expectationWithDescription:@"GET Request Expectation"];
-    [serverInterface getRequest:nil url:@"http://foo" andTag:@"foo" callback:^(BNCServerResponse *response, NSError *error) {
+    [serverInterface getRequest:nil url:@"http://foo" callback:^(BNCServerResponse *response, NSError *error) {
         XCTAssertNotNil(error);
 
         [getRequestExpectation fulfill];
@@ -75,7 +75,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     
     // Make the request
     XCTestExpectation *getRequestExpectation = [self expectationWithDescription:@"GET Request Expectation"];
-    [serverInterface getRequest:nil url:@"http://foo" andTag:@"foo" callback:^(BNCServerResponse *response, NSError *error) {
+    [serverInterface getRequest:nil url:@"http://foo" callback:^(BNCServerResponse *response, NSError *error) {
         XCTAssertNil(error);
         
         [getRequestExpectation fulfill];
@@ -96,7 +96,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     
     // Make the request
     XCTestExpectation *getRequestExpectation = [self expectationWithDescription:@"GET Request Expectation"];
-    [serverInterface getRequest:nil url:@"http://foo" andTag:@"foo" callback:^(BNCServerResponse *response, NSError *error) {
+    [serverInterface getRequest:nil url:@"http://foo" callback:^(BNCServerResponse *response, NSError *error) {
         XCTAssertNotNil(error);
         
         [getRequestExpectation fulfill];
@@ -117,7 +117,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     
     // Make the request
     XCTestExpectation *postRequestExpectation = [self expectationWithDescription:@"POST Request Expectation"];
-    [serverInterface postRequest:nil url:@"http://foo" andTag:@"foo" callback:^(BNCServerResponse *response, NSError *error) {
+    [serverInterface postRequest:nil url:@"http://foo" callback:^(BNCServerResponse *response, NSError *error) {
         XCTAssertNotNil(error);
         
         [postRequestExpectation fulfill];
@@ -138,7 +138,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     
     // Make the request
     XCTestExpectation *postRequestExpectation = [self expectationWithDescription:@"POST Request Expectation"];
-    [serverInterface postRequest:nil url:@"http://foo" andTag:@"foo" callback:^(BNCServerResponse *response, NSError *error) {
+    [serverInterface postRequest:nil url:@"http://foo" callback:^(BNCServerResponse *response, NSError *error) {
         XCTAssertNil(error);
         
         [postRequestExpectation fulfill];
@@ -159,7 +159,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     
     // Make the request
     XCTestExpectation *postRequestExpectation = [self expectationWithDescription:@"POST Request Expectation"];
-    [serverInterface postRequest:nil url:@"http://foo" andTag:@"foo" callback:^(BNCServerResponse *response, NSError *error) {
+    [serverInterface postRequest:nil url:@"http://foo" callback:^(BNCServerResponse *response, NSError *error) {
         XCTAssertNotNil(error);
         
         [postRequestExpectation fulfill];

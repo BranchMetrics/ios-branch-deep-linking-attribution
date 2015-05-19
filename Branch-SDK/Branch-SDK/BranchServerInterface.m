@@ -45,7 +45,7 @@
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"install"] andTag:REQ_TAG_REGISTER_INSTALL callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"install"] callback:callback];
 }
 
 - (void)registerOpen:(BOOL)debug callback:(BNCServerCallback)callback {
@@ -76,7 +76,7 @@
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
     if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"open"] andTag:REQ_TAG_REGISTER_OPEN callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"open"] callback:callback];
 }
 
 - (void)registerCloseWithCallback:(BNCServerCallback)callback{
@@ -86,51 +86,51 @@
     [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"close"] andTag:REQ_TAG_REGISTER_CLOSE callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"close"] callback:callback];
 }
 
 - (void)uploadListOfApps:(NSDictionary *)post callback:(BNCServerCallback)callback {
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"applist"] andTag:REQ_TAG_UPLOAD_LIST_OF_APPS callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"applist"] callback:callback];
 }
 
 - (void)retrieveAppsToCheckWithCallback:(BNCServerCallback)callback {
-    return [self getRequest:nil url:[BNCPreferenceHelper getAPIURL:@"applist"] andTag:REQ_TAG_GET_LIST_OF_APPS callback:callback];
+    return [self getRequest:nil url:[BNCPreferenceHelper getAPIURL:@"applist"] callback:callback];
 }
 
 - (void)userCompletedAction:(NSDictionary *)post callback:(BNCServerCallback)callback {
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"event"] andTag:REQ_TAG_COMPLETE_ACTION callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"event"] callback:callback];
 }
 
 - (void)getReferralCountsWithCallback:(BNCServerCallback)callback {
-    [self getRequest:nil url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referrals", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REFERRAL_COUNTS callback:callback];
+    [self getRequest:nil url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"referrals", [BNCPreferenceHelper getIdentityID]]] callback:callback];
 }
 
 - (void)getRewardsWithCallback:(BNCServerCallback)callback {
-    [self getRequest:nil url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", [BNCPreferenceHelper getIdentityID]]] andTag:REQ_TAG_GET_REWARDS callback:callback];
+    [self getRequest:nil url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", [BNCPreferenceHelper getIdentityID]]] callback:callback];
 }
 
 - (void)redeemRewards:(NSDictionary *)post callback:(BNCServerCallback)callback {
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"redeem"] andTag:REQ_TAG_REDEEM_REWARDS callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"redeem"] callback:callback];
 }
 
 - (void)getCreditHistory:(NSDictionary *)post callback:(BNCServerCallback)callback {
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"credithistory"] andTag:REQ_TAG_GET_REWARD_HISTORY callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"credithistory"] callback:callback];
 }
 
 - (void)createCustomUrl:(BNCServerRequest *)req callback:(BNCServerCallback)callback {
-    [self postRequest:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL callback:callback];
+    [self postRequest:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] callback:callback];
 }
 
 - (BNCServerResponse *)createCustomUrl:(BNCServerRequest *)req {
-    return [self postRequest:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] andTag:REQ_TAG_GET_CUSTOM_URL log:YES];
+    return [self postRequest:req.postData url:[BNCPreferenceHelper getAPIURL:@"url"] log:YES];
 }
 
 - (void)identifyUser:(NSDictionary *)post callback:(BNCServerCallback)callback {
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_IDENTIFY callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"profile"] callback:callback];
 }
 
 - (void)logoutUser:(NSDictionary *)post callback:(BNCServerCallback)callback {
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"logout"] andTag:REQ_TAG_LOGOUT callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"logout"] callback:callback];
 }
 
 - (void)addProfileParams:(NSDictionary *)post withParams:(NSDictionary *)params callback:(BNCServerCallback)callback {
@@ -158,7 +158,7 @@
 }
 
 - (void)updateProfileParams:(NSDictionary *)post callback:(BNCServerCallback)callback {
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"profile"] andTag:REQ_TAG_PROFILE_DATA callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"profile"] callback:callback];
 }
 
 - (void)connectToDebugWithCallback:(BNCServerCallback)callback {
@@ -170,21 +170,21 @@
     [post setObject:[BNCSystemObserver getModel] forKey:@"model"];
     [post setObject:[NSNumber numberWithBool:[BNCSystemObserver isSimulator]] forKey:@"is_simulator"];
     
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"debug/connect"] andTag:REQ_TAG_DEBUG_CONNECT log:NO callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"debug/connect"] log:NO callback:callback];
 }
 
 - (void)disconnectFromDebugWithCallback:(BNCServerCallback)callback {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"debug/disconnect"] andTag:REQ_TAG_DEBUG_DISCONNECT log:NO callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"debug/disconnect"] log:NO callback:callback];
 }
 
 - (void)sendLog:(NSString *)log callback:(BNCServerCallback)callback {
     NSMutableDictionary *post = [NSMutableDictionary dictionaryWithObject:log forKey:@"log"];
     [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
     
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"debug/log"] andTag:REQ_TAG_DEBUG_LOG log:NO callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"debug/log"] log:NO callback:callback];
 }
 
 - (void)sendScreenshot:(NSData *)data callback:(BNCServerCallback)callback {
@@ -213,20 +213,19 @@
     [request setHTTPBody:body];
     [request addValue:[NSString stringWithFormat:@"%lu", (unsigned long)[body length]] forHTTPHeaderField:@"Content-Length"];
 
-    [self genericHTTPRequest:request withTag:REQ_TAG_DEBUG_SCREEN callback:callback];
+    [self genericHTTPRequest:request log:YES callback:callback];
 }
 
 - (void)getReferralCode:(NSDictionary *)post callback:(BNCServerCallback)callback {
-    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"referralcode"] andTag:REQ_TAG_GET_REFERRAL_CODE callback:callback];
+    [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"referralcode"] callback:callback];
 }
 
 - (void)validateReferralCode:(NSDictionary *)post callback:(BNCServerCallback)callback {
-    [self postRequest:post url:[[BNCPreferenceHelper getAPIURL:@"referralcode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_VALIDATE_REFERRAL_CODE callback:callback];
+    [self postRequest:post url:[[BNCPreferenceHelper getAPIURL:@"referralcode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] callback:callback];
 }
 
 - (void)applyReferralCode:(NSDictionary *)post callback:(BNCServerCallback)callback {
-    [self postRequest:post url:[[BNCPreferenceHelper getAPIURL:@"applycode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] andTag:REQ_TAG_APPLY_REFERRAL_CODE callback:callback];
+    [self postRequest:post url:[[BNCPreferenceHelper getAPIURL:@"applycode/"] stringByAppendingString:[post objectForKey:@"referral_code"]] callback:callback];
 }
-
 
 @end
