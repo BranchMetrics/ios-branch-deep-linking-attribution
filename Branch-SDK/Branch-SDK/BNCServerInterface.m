@@ -82,7 +82,7 @@
         
         // Retry the request if appropriate
         if (retryNumber < [BNCPreferenceHelper getRetryCount] && isRetryableStatusCode) {
-            [NSThread sleepForTimeInterval:[BNCPreferenceHelper getRetryInterval]];
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:[BNCPreferenceHelper getRetryInterval]]];
             
             if (log) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Replaying request with url %@", request.URL.relativePath];
