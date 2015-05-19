@@ -10,16 +10,8 @@
 
 @implementation BNCServerResponse
 
-- (id)initWithTag:(NSString *)tag {
-    if (self = [super init]) {
-        self.tag = tag;
-    }
-    
-    return self;
-}
-
 - (NSString *)description {
-    return [NSString stringWithFormat:@"Tag: %@; Status: %@; Data: %@", self.tag, self.statusCode, self.data];
+    return [NSString stringWithFormat:@"Status: %@; Data: %@", self.statusCode, self.data];
 }
 
 @end
