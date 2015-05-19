@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "BranchActivityItemProvider.h"
+#import "BranchServerInterface.h"
+#import "BNCServerRequestQueue.h"
 #import "BNCLinkCache.h"
 
 /**
@@ -127,7 +129,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param params A dictionary to use while building up the Branch link.
  @param feature The feature the generated link will be associated with.
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
- @param alias The alias for a link. This will have a two character suffix appended to it.
+ @param alias The alias for a link.
+ @warning This can fail if the alias is already taken.
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
 
@@ -140,7 +143,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param tags An array of tag strings to be associated with the link.
  @param feature The feature the generated link will be associated with.
  @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
- @param alias The alias for a link. This will have a two character suffix appended to it.
+ @param alias The alias for a link.
+ @warning This can fail if the alias is already taken.
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
 
@@ -509,8 +513,9 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
- @param alias The alias for a link. This will have a two character suffix appended to it.
+ @param alias The alias for a link.
  @warning This method makes a synchronous url request.
+ @warning This can fail if the alias is already taken.
  */
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
 
@@ -558,8 +563,9 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
- @param alias The alias for a link. This will have a two character suffix appended to it.
+ @param alias The alias for a link.
  @warning This method makes a synchronous url request.
+ @warning This can fail if the alias is already taken.
  */
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
 
@@ -571,10 +577,11 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
- @param alias The alias for a link. This will have a two character suffix appended to it.
+ @param alias The alias for a link.
  @param ignoreUAString The User Agent string to tell the server to ignore the next request from, to prevent it from treating a preview scrape as a link click.
  @warning This method makes a synchronous url request.
  @warning This method is primarily intended to be an internal Branch method, used to work around a bug with SLComposeViewController
+ @warning This can fail if the alias is already taken.
  */
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias ignoreUAString:(NSString *)ignoreUAString;
 
@@ -688,7 +695,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param params Dictionary of parameters to include in the link.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
- @param alias The alias for a link. This will have a two character suffix appended to it.
+ @param alias The alias for a link.
+ @warning This can fail if the alias is already taken.
  */
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
 
@@ -700,7 +708,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param tags An array of tags to associate with this link, useful for tracking.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
- @param alias The alias for a link. This will have a two character suffix appended to it.
+ @param alias The alias for a link.
+ @warning This can fail if the alias is already taken.
  */
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
 
@@ -753,8 +762,9 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
- @param alias The alias for a link. This will have a two character suffix appended to it.
+ @param alias The alias for a link.
  @param callback Callback called with the url.
+ @warning This can fail if the alias is already taken.
  */
 - (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias andCallback:(callbackWithUrl)callback;
 
@@ -802,8 +812,9 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param tags An array of tags to associate with this link, useful for tracking.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
- @param alias The alias for a link. This will have a two character suffix appended to it.
+ @param alias The alias for a link.
  @param callback Callback called with the url.
+ @warning This can fail if the alias is already taken.
  */
 - (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias andCallback:(callbackWithUrl)callback;
 
@@ -948,5 +959,12 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
  */
 - (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
+
+/**
+ Method for creating a one of Branch instance and specifying its dependencies.
+
+ @warning This is meant for use internally only (exposed for the sake of testing) and should not be used by apps.
+ */
+- (id)initWithInterface:(BranchServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache;
 
 @end

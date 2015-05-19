@@ -9,7 +9,9 @@
 #import <XCTest/XCTest.h>
 #import "BNCServerInterface.h"
 #import "BNCPreferenceHelper.h"
-#import <Nocilla/Nocilla.h>
+#import <OCMock/OCMock.h>
+
+typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
 @interface BNCServerInterfaceTests : XCTestCase
 
@@ -19,18 +21,6 @@
 @end
 
 @implementation BNCServerInterfaceTests
-
-+ (void)setUp {
-    [super setUp];
-
-    [[LSNocilla sharedInstance] start];
-}
-
-+ (void)tearDown {
-    [[LSNocilla sharedInstance] stop];
-
-    [super tearDown];
-}
 
 - (void)setUp {
     [super setUp];
@@ -42,8 +32,6 @@
 }
 
 - (void)tearDown {
-    [[LSNocilla sharedInstance] clearStubs];
-
     [BNCPreferenceHelper setRetryInterval:self.originalRetryInterval]; // set values back to original
     [BNCPreferenceHelper setRetryCount:self.originalRetryCount];
 
@@ -54,11 +42,13 @@
 
 - (void)testGetRequestAsyncRetriesWhenAppropriate {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    
-    stubRequest(@"GET", @"http://foo\?.*?retryNumber=0|1|2|3$".regex).andReturn(500);
+    id urlConnectionMock = OCMClassMock([NSURLConnection class]);
     
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:3];
+
+    // 3 retries means 4 total requests
+    [self expectSendAsyncRequestForBranchError:urlConnectionMock times:4];
     
     // Make the request
     XCTestExpectation *getRequestExpectation = [self expectationWithDescription:@"GET Request Expectation"];
@@ -69,15 +59,19 @@
     }];
     
     [self waitForExpectationsWithTimeout:5 handler:NULL];
+    
+    [urlConnectionMock verify];
 }
 
 - (void)testGetRequestAsyncRetriesWhenInappropriateResponse {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    
-    stubRequest(@"GET", @"http://foo?.*retryNumber=0".regex).andReturn(200);
-    
+    id urlConnectionMock = OCMClassMock([NSURLConnection class]);
+
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:3];
+
+    // Should be no retries, just a single request
+    [self expectSendAsyncRequestForSuccessfulRequest:urlConnectionMock];
     
     // Make the request
     XCTestExpectation *getRequestExpectation = [self expectationWithDescription:@"GET Request Expectation"];
@@ -92,11 +86,13 @@
 
 - (void)testGetRequestAsyncRetriesWhenInappropriateRetryCount {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+    id urlConnectionMock = OCMClassMock([NSURLConnection class]);
     
-    stubRequest(@"GET", @"http://foo?.*retryNumber=0".regex).andReturn(500);
-
     // Specify retry count as 0
     [BNCPreferenceHelper setRetryCount:0];
+    
+    // 0 retries means 1 total requests
+    [self expectSendAsyncRequestForBranchError:urlConnectionMock times:1];
     
     // Make the request
     XCTestExpectation *getRequestExpectation = [self expectationWithDescription:@"GET Request Expectation"];
@@ -111,11 +107,13 @@
 
 - (void)testPostRequestAsyncRetriesWhenAppropriate {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+    id urlConnectionMock = OCMClassMock([NSURLConnection class]);
     
-    stubRequest(@"POST", @"http://foo").withBody(@"\"retryNumber\":0|1|2|3".regex).andReturn(500);
-
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:3];
+    
+    // 3 retries means 4 total requests
+    [self expectSendAsyncRequestForBranchError:urlConnectionMock times:4];
     
     // Make the request
     XCTestExpectation *postRequestExpectation = [self expectationWithDescription:@"POST Request Expectation"];
@@ -130,11 +128,13 @@
 
 - (void)testPostRequestAsyncRetriesWhenInappropriateResponse {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    
-    stubRequest(@"POST", @"http://foo").withBody(@"\"retryNumber\":0".regex).andReturn(200);
+    id urlConnectionMock = OCMClassMock([NSURLConnection class]);
     
     // Specify retry count as 3
     [BNCPreferenceHelper setRetryCount:3];
+    
+    // Should be no retries, just a single request
+    [self expectSendAsyncRequestForSuccessfulRequest:urlConnectionMock];
     
     // Make the request
     XCTestExpectation *postRequestExpectation = [self expectationWithDescription:@"POST Request Expectation"];
@@ -149,11 +149,13 @@
 
 - (void)testPostRequestAsyncRetriesWhenInappropriateRetryCount {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+    id urlConnectionMock = OCMClassMock([NSURLConnection class]);
     
-    stubRequest(@"POST", @"http://foo").withBody(@"\"retryNumber\":0".regex).andReturn(500);
-
-    // Specify retry count as 3
+    // Specify retry count as 0
     [BNCPreferenceHelper setRetryCount:0];
+    
+    // 0 retries means 1 total requests
+    [self expectSendAsyncRequestForBranchError:urlConnectionMock times:1];
     
     // Make the request
     XCTestExpectation *postRequestExpectation = [self expectationWithDescription:@"POST Request Expectation"];
@@ -164,6 +166,44 @@
     }];
     
     [self waitForExpectationsWithTimeout:1 handler:NULL];
+}
+
+#pragma mark - Internals
+- (void)expectSendAsyncRequestForBranchError:(id)connectionMock times:(NSInteger)times {
+    __block UrlConnectionCallback urlConnectionCallback;
+    
+    id urlConnectionBlock = [OCMArg checkWithBlock:^BOOL(UrlConnectionCallback callback) {
+        urlConnectionCallback = callback;
+        return YES;
+    }];
+    
+    void (^urlConnectionInvocation)(NSInvocation *) = ^(NSInvocation *invocation) {
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:504 HTTPVersion:nil headerFields:nil];
+        urlConnectionCallback(response, nil, nil);
+    };
+    
+    for (NSInteger i = 0; i < times; i++) {
+        [[[connectionMock expect] andDo:urlConnectionInvocation] sendAsynchronousRequest:[OCMArg any] queue:[OCMArg any] completionHandler:urlConnectionBlock];
+    }
+    
+    [[connectionMock reject] sendAsynchronousRequest:[OCMArg any] queue:[OCMArg any] completionHandler:[OCMArg any]];
+}
+
+- (void)expectSendAsyncRequestForSuccessfulRequest:(id)connectionMock {
+    __block UrlConnectionCallback urlConnectionCallback;
+    
+    id urlConnectionBlock = [OCMArg checkWithBlock:^BOOL(UrlConnectionCallback callback) {
+        urlConnectionCallback = callback;
+        return YES;
+    }];
+    
+    void (^urlConnectionInvocation)(NSInvocation *) = ^(NSInvocation *invocation) {
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:nil];
+        urlConnectionCallback(response, nil, nil);
+    };
+    
+    [[[connectionMock expect] andDo:urlConnectionInvocation] sendAsynchronousRequest:[OCMArg any] queue:[OCMArg any] completionHandler:urlConnectionBlock];
+    [[connectionMock reject] sendAsynchronousRequest:[OCMArg any] queue:[OCMArg any] completionHandler:[OCMArg any]];
 }
 
 @end
