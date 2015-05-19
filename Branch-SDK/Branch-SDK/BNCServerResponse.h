@@ -11,9 +11,6 @@
 @interface BNCServerResponse : NSObject
 
 @property (nonatomic, strong) NSNumber *statusCode;
-@property (nonatomic, strong) NSString *tag;
 @property (nonatomic, strong) id data;
-
-- (id)initWithTag:(NSString *)tag;
 
 @end
