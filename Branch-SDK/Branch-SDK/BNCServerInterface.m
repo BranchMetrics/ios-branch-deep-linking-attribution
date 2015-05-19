@@ -94,7 +94,7 @@
         }
         else if (callback) {
             // Wrap up bad statuses w/ specific error messages
-            if (status > 500) {
+            if (status >= 500) {
                 error = [NSError errorWithDomain:BNCErrorDomain code:BNCRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Trouble reaching the Branch servers, please try again shortly" }];
             }
             else if (status == 409) {
