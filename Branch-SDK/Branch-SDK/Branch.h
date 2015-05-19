@@ -960,6 +960,11 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  */
 - (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
 
+/**
+ Method for creating a one of Branch instance and specifying its dependencies.
+
+ @warning This is meant for use internally only (exposed for the sake of testing) and should not be used by apps.
+ */
 - (id)initWithInterface:(BranchServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache;
 
 @end
