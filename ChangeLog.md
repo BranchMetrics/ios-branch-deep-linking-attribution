@@ -1,5 +1,11 @@
 Branch iOS SDK change log
 
+- v0.7.3
+  * Fixing Branch down check (>= 500 instead of > 500).
+  * Removing tag from all BNCServerInterface methods.
+  * Moving request retry delay off the main thread.
+  * Removing committed CocoaPod files.
+
 - v0.7.2
   * Added docs to the header, compatible with [AppleDoc](https://github.com/tomaz/appledoc) and available on [cocoadocs.org](cocoadocs.org).
   * De-coupling all of the Branch dependencies to make them injectable. This will significantly improve test stability.
