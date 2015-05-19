@@ -99,36 +99,42 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 + (Branch *)getInstance {
     // If no Branch Key
     NSString *branchKey = [BNCPreferenceHelper getBranchKey:YES];
+    NSString *keyToUse = branchKey;
     if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
         // If no app key
         NSString *appKey = [BNCPreferenceHelper getAppKey];
         if (!appKey || [appKey isEqualToString:NO_STRING_VALUE]) {
             NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+            return nil;
         }
         else {
+            keyToUse = appKey;
             NSLog(@"Usage of App Key is deprecated, please move toward using a Branch key");
         }
     }
 
-    return [Branch getInstanceInternal];
+    return [Branch getInstanceInternal:keyToUse];
 }
 
 + (Branch *)getTestInstance {
     // If no Branch Key
     NSString *branchKey = [BNCPreferenceHelper getBranchKey:NO];
+    NSString *keyToUse = branchKey;
     if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
         // If no app key
         NSString *appKey = [BNCPreferenceHelper getAppKey];
         if (!appKey || [appKey isEqualToString:NO_STRING_VALUE]) {
             NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+            return nil;
         }
         // If they did provide an app key, show them a warning. Shouldn't use app key with a test instance.
         else {
             NSLog(@"Branch Warning: You requested the test instance, but provided an app key. App Keys cannot be used for test instances. Additionally, usage of App Key is deprecated, please move toward using a Branch key");
+            keyToUse = appKey;
         }
     }
 
-    return [Branch getInstanceInternal];
+    return [Branch getInstanceInternal:keyToUse];
 }
 
 + (Branch *)getInstance:(NSString *)branchKey {
@@ -139,7 +145,7 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
         [BNCPreferenceHelper setAppKey:branchKey];
     }
     
-    return [Branch getInstanceInternal];
+    return [Branch getInstanceInternal:branchKey];
 }
 
 - (id)initWithInterface:(BranchServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache {
@@ -1013,11 +1019,29 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 
 #pragma mark - Private methods
 
-+ (Branch *)getInstanceInternal {
++ (Branch *)getInstanceInternal:(NSString *)key {
     static Branch *branch;
     static dispatch_once_t onceToken;
     
     dispatch_once(&onceToken, ^{
+        // If there was stored key and it isn't the same as the currently used (or doesn't exist), we need to clean up
+        // Note: Link Click Identifier is not cleared because of the potential for that to mess up a deep link
+        NSString *lastKey = [BNCPreferenceHelper getLastRunBranchKey];
+        if (lastKey && ![key isEqualToString:lastKey]) {
+            NSLog(@"Branch Warning: The Branch Key has changed, clearing relevant items");
+            
+            [BNCPreferenceHelper setAppVersion:nil];
+            [BNCPreferenceHelper setDeviceFingerprintID:nil];
+            [BNCPreferenceHelper setSessionID:nil];
+            [BNCPreferenceHelper setIdentityID:nil];
+            [BNCPreferenceHelper setUserURL:nil];
+            [BNCPreferenceHelper setInstallParams:nil];
+            [BNCPreferenceHelper setSessionParams:nil];
+            [[BNCServerRequestQueue getInstance] clearQueue];
+        }
+        
+        [BNCPreferenceHelper setLastRunBranchKey:key];
+
         branch = [[Branch alloc] initWithInterface:[[BranchServerInterface alloc] init] queue:[BNCServerRequestQueue getInstance] cache:[[BNCLinkCache alloc] init]];
     });
 
