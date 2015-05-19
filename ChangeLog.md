@@ -1,5 +1,10 @@
 Branch iOS SDK change log
 
+- v0.7.2
+  * Added docs to the header, compatible with [AppleDoc](https://github.com/tomaz/appledoc) and available on [cocoadocs.org](cocoadocs.org).
+  * De-coupling all of the Branch dependencies to make them injectable. This will significantly improve test stability.
+  * Clearing all Branch related items when the Branch key being used in the app changes. This prevents invalid items from making it to the server.
+
 - v0.7.1 Adding a missing item to the pod spec headers.
 
 - v0.7.0

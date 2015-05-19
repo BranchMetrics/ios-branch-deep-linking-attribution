@@ -51,6 +51,9 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (NSString *)getBranchKey:(BOOL)isLive;
 + (void)setBranchKey:(NSString *)branchKey;
 
++ (NSString *)getLastRunBranchKey;
++ (void)setLastRunBranchKey:(NSString *)lastRunBranchKey;
+
 + (NSString *)getAppVersion;
 + (void)setAppVersion:(NSString *)appVersion;
 

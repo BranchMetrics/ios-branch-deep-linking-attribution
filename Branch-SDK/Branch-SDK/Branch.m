@@ -91,59 +91,81 @@ static UILongPressGestureRecognizer *BNCLongPress = nil;
 
 @implementation Branch
 
-static Branch *currInstance;
-
 #pragma mark - Public methods
 
 
 #pragma mark - GetInstance methods
 
 + (Branch *)getInstance {
-    return [Branch getBranchInstance:YES];
+    // If no Branch Key
+    NSString *branchKey = [BNCPreferenceHelper getBranchKey:YES];
+    NSString *keyToUse = branchKey;
+    if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
+        // If no app key
+        NSString *appKey = [BNCPreferenceHelper getAppKey];
+        if (!appKey || [appKey isEqualToString:NO_STRING_VALUE]) {
+            NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+            return nil;
+        }
+        else {
+            keyToUse = appKey;
+            NSLog(@"Usage of App Key is deprecated, please move toward using a Branch key");
+        }
+    }
+
+    return [Branch getInstanceInternal:keyToUse];
 }
 
 + (Branch *)getTestInstance {
-    return [Branch getBranchInstance:NO];
+    // If no Branch Key
+    NSString *branchKey = [BNCPreferenceHelper getBranchKey:NO];
+    NSString *keyToUse = branchKey;
+    if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
+        // If no app key
+        NSString *appKey = [BNCPreferenceHelper getAppKey];
+        if (!appKey || [appKey isEqualToString:NO_STRING_VALUE]) {
+            NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+            return nil;
+        }
+        // If they did provide an app key, show them a warning. Shouldn't use app key with a test instance.
+        else {
+            NSLog(@"Branch Warning: You requested the test instance, but provided an app key. App Keys cannot be used for test instances. Additionally, usage of App Key is deprecated, please move toward using a Branch key");
+            keyToUse = appKey;
+        }
+    }
+
+    return [Branch getInstanceInternal:keyToUse];
 }
 
 + (Branch *)getInstance:(NSString *)branchKey {
     if ([branchKey rangeOfString:@"key_"].location != NSNotFound) {
         [BNCPreferenceHelper setBranchKey:branchKey];
-    } else {
+    }
+    else {
         [BNCPreferenceHelper setAppKey:branchKey];
     }
     
-    if (!currInstance) {
-        [Branch initInstance];
-    }
-    
-    return currInstance;
+    return [Branch getInstanceInternal:branchKey];
 }
 
-+ (void)initInstance {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        currInstance = [[Branch alloc] init];
-        currInstance.bServerInterface = [[BranchServerInterface alloc] init];
-        currInstance.requestQueue = [BNCServerRequestQueue getInstance];
-        currInstance.processing_sema = dispatch_semaphore_create(1);
-        currInstance.isInitialized = NO;
-        currInstance.shouldCallSessionInitCallback = YES;
-        currInstance.appListCheckEnabled = YES;
-        currInstance.linkCache = [[BNCLinkCache alloc] init];
+- (id)initWithInterface:(BranchServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache {
+    if (self = [super init]) {
+        _bServerInterface = interface;
+        _requestQueue = queue;
+        _linkCache = cache;
         
-        [[NSNotificationCenter defaultCenter] addObserver:currInstance
-                                                 selector:@selector(applicationWillResignActive)
-                                                     name:UIApplicationWillResignActiveNotification
-                                                   object:nil];
+        _isInitialized = NO;
+        _shouldCallSessionInitCallback = YES;
+        _appListCheckEnabled = YES;
+        _processing_sema = dispatch_semaphore_create(1);
+        _networkCount = 0;
         
-        [[NSNotificationCenter defaultCenter] addObserver:currInstance
-                                                 selector:@selector(applicationDidBecomeActive)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
-        
-        currInstance.networkCount = 0;
-    });
+        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+        [notificationCenter addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
+        [notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
+    }
+
+    return self;
 }
 
 
@@ -997,16 +1019,33 @@ static Branch *currInstance;
 
 #pragma mark - Private methods
 
-+ (Branch *)getBranchInstance:(BOOL)isLive {
-    if (!currInstance) {
-        NSString *branchKey = [BNCPreferenceHelper getBranchKey:isLive];
-        if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
-            NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
++ (Branch *)getInstanceInternal:(NSString *)key {
+    static Branch *branch;
+    static dispatch_once_t onceToken;
+    
+    dispatch_once(&onceToken, ^{
+        // If there was stored key and it isn't the same as the currently used (or doesn't exist), we need to clean up
+        // Note: Link Click Identifier is not cleared because of the potential for that to mess up a deep link
+        NSString *lastKey = [BNCPreferenceHelper getLastRunBranchKey];
+        if (lastKey && ![key isEqualToString:lastKey]) {
+            NSLog(@"Branch Warning: The Branch Key has changed, clearing relevant items");
+            
+            [BNCPreferenceHelper setAppVersion:nil];
+            [BNCPreferenceHelper setDeviceFingerprintID:nil];
+            [BNCPreferenceHelper setSessionID:nil];
+            [BNCPreferenceHelper setIdentityID:nil];
+            [BNCPreferenceHelper setUserURL:nil];
+            [BNCPreferenceHelper setInstallParams:nil];
+            [BNCPreferenceHelper setSessionParams:nil];
+            [[BNCServerRequestQueue getInstance] clearQueue];
         }
         
-        [Branch initInstance];
-    }
-    return currInstance;
+        [BNCPreferenceHelper setLastRunBranchKey:key];
+
+        branch = [[Branch alloc] initWithInterface:[[BranchServerInterface alloc] init] queue:[BNCServerRequestQueue getInstance] cache:[[BNCLinkCache alloc] init]];
+    });
+
+    return branch;
 }
 
 

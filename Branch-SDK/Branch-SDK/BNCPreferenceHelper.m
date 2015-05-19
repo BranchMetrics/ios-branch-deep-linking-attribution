@@ -17,6 +17,7 @@ static const NSInteger APP_READ_INTERVAL = 520000;
 
 static NSString *KEY_APP_KEY = @"bnc_app_key";
 static NSString *KEY_APP_VERSION = @"bnc_app_version";
+static NSString *KEY_LAST_RUN_BRANCH_KEY = @"bnc_last_run_branch_key";
 
 static NSString *KEY_DEVICE_FINGERPRINT_ID = @"bnc_device_fingerprint_id";
 static NSString *KEY_SESSION_ID = @"bnc_session_id";
@@ -227,6 +228,14 @@ static NSString *Branch_Key = nil;
 
 + (void)setBranchKey:(NSString *)branchKey {
     Branch_Key = branchKey;
+}
+
++ (NSString *)getLastRunBranchKey {
+    return [BNCPreferenceHelper readStringFromDefaults:KEY_LAST_RUN_BRANCH_KEY];
+}
+
++ (void)setLastRunBranchKey:(NSString *)lastRunBranchKey {
+    [BNCPreferenceHelper writeObjectToDefaults:KEY_LAST_RUN_BRANCH_KEY value:lastRunBranchKey];
 }
 
 +(NSString *)getAppVersion {
