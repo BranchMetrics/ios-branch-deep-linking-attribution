@@ -23,6 +23,5 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.requires_arc = true
 
   s.source_files = "Branch-SDK/Branch-SDK/*.{h,m}"
-  s.public_header_files = 'Branch-SDK/Branch-SDK/Branch.h', 'Branch-SDK/Branch-SDK/BranchActivityItemProvider.h', 'Branch-SDK/Branch-SDK/BNCLinkCache.h','Branch-SDK/Branch-SDK/BNCLinkData.h', 'Branch-SDK/Branch-SDK/BranchServerInterface.h', 'Branch-SDK/Branch-SDK/BNCServerRequestQueue.h'
   s.frameworks = 'AdSupport', 'CoreTelephony'
 end
