@@ -21,6 +21,7 @@
     [super setUp];
 
     [[LSNocilla sharedInstance] start];
+    [BNCPreferenceHelper setBranchKey:@"foo"];
 }
 
 + (void)tearDown {
