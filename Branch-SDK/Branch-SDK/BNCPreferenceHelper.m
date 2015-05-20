@@ -79,6 +79,12 @@ static NSString *Branch_Key = nil;
     [BNCPreferenceHelper getInstance].isDebugMode = YES;
 }
 
++ (void)clearDebug {
+    [BNCPreferenceHelper getInstance].isDebugMode = NO;
+    
+    [self disconnectRemoteDebug];
+}
+
 + (void)connectRemoteDebug {
     serverInterface = [[BranchServerInterface alloc] init];
     bnc_asyncLogQueue = dispatch_queue_create("bnc_log_queue", NULL);

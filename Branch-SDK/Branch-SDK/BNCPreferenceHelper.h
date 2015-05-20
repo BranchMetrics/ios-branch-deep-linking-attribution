@@ -106,6 +106,7 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (NSInteger)getActionUniqueCount:(NSString *)action;
 
 + (void)setDebug;
++ (void)clearDebug;
 + (BOOL)isDebug;
 + (void)connectRemoteDebug;
 + (void)disconnectRemoteDebug;
