@@ -38,6 +38,40 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     [super tearDown];
 }
 
+
+#pragma mark - Key tests
+
+- (void)testParamAddForBranchKey {
+    BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+    id urlConnectionMock = OCMClassMock([NSURLConnection class]);
+    
+    // Expect the query to contain branch key
+    [[urlConnectionMock expect] sendAsynchronousRequest:[OCMArg checkWithBlock:^BOOL(NSURLRequest *request) {
+        return [request.URL.query rangeOfString:@"branch_key=key_foo"].location != NSNotFound;
+    }] queue:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    // Make the request
+    [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
+    
+    [urlConnectionMock verify];
+}
+
+- (void)testParamAddForAppKey {
+    BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+    id urlConnectionMock = OCMClassMock([NSURLConnection class]);
+    
+    // Expect the query to contain app id
+    [[urlConnectionMock expect] sendAsynchronousRequest:[OCMArg checkWithBlock:^BOOL(NSURLRequest *request) {
+        return [request.URL.query rangeOfString:@"app_id=non_branch_key"].location != NSNotFound;
+    }] queue:[OCMArg any] completionHandler:[OCMArg any]];
+    
+    // Make the request
+    [serverInterface getRequest:nil url:@"http://foo" key:@"non_branch_key" callback:NULL];
+    
+    [urlConnectionMock verify];
+}
+
+
 #pragma mark - Retry tests
 
 - (void)testGetRequestAsyncRetriesWhenAppropriate {
