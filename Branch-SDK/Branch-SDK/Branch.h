@@ -239,7 +239,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  
  @warning This should not be used in production.
  */
-+ (void)setDebug;
+- (void)setDebug;
 
 /**
  Specify the time to wait in seconds between retries in the case of a Branch server error

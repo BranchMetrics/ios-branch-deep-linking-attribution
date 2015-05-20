@@ -215,7 +215,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 #pragma mark - Configuration methods
 
-+ (void)setDebug {
+- (void)setDebug {
     [BNCPreferenceHelper setDebug];
 }
 
