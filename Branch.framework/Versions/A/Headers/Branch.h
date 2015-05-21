@@ -239,7 +239,15 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  
  @warning This should not be used in production.
  */
-+ (void)setDebug;
+- (void)setDebug;
+
+/**
+ Have Branch treat this device / session as a debug session, causing more information to be logged, and info to be available in the debug tab of the dashboard.
+ 
+ @warning Deprecated, use the instance method.
+ @warning This should not be used in production.
+ */
++ (void)setDebug __attribute__((deprecated(("Use the instance method instead"))));
 
 /**
  Specify the time to wait in seconds between retries in the case of a Branch server error
@@ -965,6 +973,6 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 
  @warning This is meant for use internally only (exposed for the sake of testing) and should not be used by apps.
  */
-- (id)initWithInterface:(BranchServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache;
+- (id)initWithInterface:(BranchServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache key:(NSString *)key;
 
 @end

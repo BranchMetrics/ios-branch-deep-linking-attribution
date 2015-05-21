@@ -1,5 +1,9 @@
 Branch iOS SDK change log
 
+- v0.7.4
+  * Fixing key usage throughout the SDK. When you call `getTestInstance` or `getInstance:`, the proper key will now make it through to requests.
+  * Cleaning up debug logic internally. The static usage of `setDebug` is now deprecated, please move toward using the instance method.
+
 - v0.7.3
   * Fixing Branch down check (>= 500 instead of > 500).
   * Removing tag from all BNCServerInterface methods.
