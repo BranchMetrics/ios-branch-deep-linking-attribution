@@ -41,7 +41,7 @@ NSInteger const  TEST_CREDITS = 30;
 - (void)test00OpenOrInstall {
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:[OCMArg any]];
     [branch setAppListCheckEnabled:NO];
     
     [BNCPreferenceHelper setCreditCount:NSIntegerMax forBucket:@"default"];
@@ -65,8 +65,8 @@ NSInteger const  TEST_CREDITS = 30;
         openOrInstallCallback(openInstallResponse, nil);
     };
     
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO callback:openOrInstallCallbackCheckBlock];
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
 
     // Fake branch key
     id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
@@ -88,7 +88,7 @@ NSInteger const  TEST_CREDITS = 30;
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:[OCMArg any]];
     [branch setAppListCheckEnabled:NO];
     
     // mock logout synchronously
@@ -111,7 +111,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback setIdentityCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         setIdentityCallback(setIdentityResponse, nil);
-    }] identifyUser:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] identifyUser:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         setIdentityCallback = callback;
         return YES;
     }]];
@@ -140,7 +140,7 @@ NSInteger const  TEST_CREDITS = 30;
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
 
     BNCServerResponse *fbLinkResponse = [[BNCServerResponse alloc] init];
@@ -152,18 +152,18 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback fbCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         fbCallback(fbLinkResponse, nil);
-    }] createCustomUrl:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] createCustomUrl:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         fbCallback = callback;
         return YES;
     }]];
     
     [[serverInterfaceMock reject] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
         return [request.postData[@"channel"] isEqualToString:@"facebook"];
-    }]];
+    }] key:[OCMArg any]];
     
     [[[serverInterfaceMock expect] andReturn:twLinkResponse] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
         return [request.postData[@"channel"] isEqualToString:@"twitter"];
-    }]];
+    }] key:[OCMArg any]];
     
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
     
@@ -198,7 +198,7 @@ NSInteger const  TEST_CREDITS = 30;
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL Sync"];
@@ -212,16 +212,16 @@ NSInteger const  TEST_CREDITS = 30;
         // FB should only be called once
         [[[serverInterfaceMock expect] andReturn:fbLinkResponse] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
             return [request.postData[@"channel"] isEqualToString:@"facebook"];
-        }]];
+        }] key:[OCMArg any]];
         
         [[serverInterfaceMock reject] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
             return [request.postData[@"channel"] isEqualToString:@"facebook"];
-        }]];
+        }] key:[OCMArg any]];
         
         // TW should be allowed still
         [[[serverInterfaceMock expect] andReturn:twLinkResponse] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
             return [request.postData[@"channel"] isEqualToString:@"twitter"];
-        }]];
+        }] key:[OCMArg any]];
         
         NSString *url1 = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
         XCTAssertNotNil(url1);
@@ -245,7 +245,7 @@ NSInteger const  TEST_CREDITS = 30;
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
 
     [BNCPreferenceHelper setCreditCount:NSIntegerMax forBucket:@"default"];
@@ -256,7 +256,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback loadCreditsCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         loadCreditsCallback(loadCreditsResponse, nil);
-    }] getRewardsWithCallback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] getRewardsWithKey:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         loadCreditsCallback = callback;
         return YES;
     }]];
@@ -277,7 +277,7 @@ NSInteger const  TEST_CREDITS = 30;
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
 
     [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
@@ -288,7 +288,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback loadRewardsCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         loadRewardsCallback(loadRewardsResponse, nil);
-    }] getRewardsWithCallback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] getRewardsWithKey:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         loadRewardsCallback = callback;
         return YES;
     }]];
@@ -309,7 +309,7 @@ NSInteger const  TEST_CREDITS = 30;
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
 
     [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
@@ -338,7 +338,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback referralCodeCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         referralCodeCallback(referralCodeResponse, nil);
-    }] getReferralCode:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] getReferralCode:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         referralCodeCallback = callback;
         return YES;
     }]];
@@ -358,7 +358,7 @@ NSInteger const  TEST_CREDITS = 30;
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
 
     [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
@@ -387,7 +387,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback validateCodeCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         validateCodeCallback(validateCodeResponse, nil);
-    }] validateReferralCode:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] validateReferralCode:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         validateCodeCallback = callback;
         return YES;
     }]];
@@ -413,7 +413,7 @@ NSInteger const  TEST_CREDITS = 30;
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
 
     [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
@@ -442,7 +442,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback applyCodeCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         applyCodeCallback(applyCodeResponse, nil);
-    }] applyReferralCode:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] applyReferralCode:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         applyCodeCallback = callback;
         return YES;
     }]];
@@ -468,7 +468,7 @@ NSInteger const  TEST_CREDITS = 30;
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
 
     [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
@@ -491,7 +491,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback creditHistoryCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         creditHistoryCallback(creditHistoryResponse, nil);
-    }] getCreditHistory:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] getCreditHistory:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         creditHistoryCallback = callback;
         return YES;
     }]];
@@ -544,8 +544,8 @@ NSInteger const  TEST_CREDITS = 30;
         openOrInstallCallback(openInstallResponse, nil);
     };
     
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO callback:openOrInstallCallbackCheckBlock];
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
     
     // Fake branch key
     id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);

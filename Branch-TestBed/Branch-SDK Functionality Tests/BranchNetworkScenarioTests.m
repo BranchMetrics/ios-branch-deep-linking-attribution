@@ -40,7 +40,7 @@
 - (void)testScenario1 {
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_live"];
     [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario1Expectation1 = [self expectationWithDescription:@"Scenario1 Expectation1"];
@@ -83,7 +83,7 @@
 - (void)testScenario2 {
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario2Expectation1 = [self expectationWithDescription:@"Scenario2 Expectation1"];
@@ -133,7 +133,7 @@
 - (void)testScenario3 {
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario3Expectation1 = [self expectationWithDescription:@"Scenario3 Expectation1"];
@@ -176,7 +176,7 @@
 - (void)testScenario4 {
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario4Expectation1 = [self expectationWithDescription:@"Scenario4 Expectation1"];
@@ -237,8 +237,8 @@
         openOrInstallCallback(nil, [NSError errorWithDomain:NSURLErrorDomain code:-1004 userInfo:nil]);
     };
 
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO callback:openOrInstallCallbackCheckBlock];
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
     
     [branch initSessionAndRegisterDeepLinkHandler:[self callbackExpectingFailure:callback]];
 }
@@ -254,7 +254,7 @@
         badRequestCallback(nil, [NSError errorWithDomain:NSURLErrorDomain code:-1004 userInfo:nil]);
     };
     
-    [[[serverInterfaceMock expect] andDo:badRequestInvocation] getReferralCountsWithCallback:badRequestCheckBlock];
+    [[[serverInterfaceMock expect] andDo:badRequestInvocation] getReferralCountsWithKey:[OCMArg any] callback:badRequestCheckBlock];
     
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNotNil(error);
@@ -276,7 +276,7 @@
         goodRequestCallback(goodResponse, nil);
     };
     
-    [[[serverInterfaceMock expect] andDo:goodRequestInvocation] getReferralCountsWithCallback:goodRequestCheckBlock];
+    [[[serverInterfaceMock expect] andDo:goodRequestInvocation] getReferralCountsWithKey:[OCMArg any] callback:goodRequestCheckBlock];
     
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNil(error);
@@ -330,8 +330,8 @@
         openOrInstallCallback(openInstallResponse, nil);
     };
     
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO callback:openOrInstallCallbackCheckBlock];
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
 }
 
 - (void)overrideBranch:(Branch *)branch initHandler:(callbackWithParams)initHandler {
