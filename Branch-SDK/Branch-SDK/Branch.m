@@ -85,6 +85,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) UILongPressGestureRecognizer *debugGestureRecognizer;
 @property (strong, nonatomic) NSTimer *debugHeartbeatTimer;
+@property (strong, nonatomic) NSString *branchKey;
 
 @end
 
@@ -147,11 +148,12 @@ static int BNCDebugTriggerFingersSimulator = 2;
     return [Branch getInstanceInternal:branchKey];
 }
 
-- (id)initWithInterface:(BranchServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache {
+- (id)initWithInterface:(BranchServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache key:(NSString *)key {
     if (self = [super init]) {
         _bServerInterface = interface;
         _requestQueue = queue;
         _linkCache = cache;
+        _branchKey = key;
         
         _isInitialized = NO;
         _shouldCallSessionInitCallback = YES;
@@ -1045,7 +1047,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         
         [BNCPreferenceHelper setLastRunBranchKey:key];
 
-        branch = [[Branch alloc] initWithInterface:[[BranchServerInterface alloc] init] queue:[BNCServerRequestQueue getInstance] cache:[[BNCLinkCache alloc] init]];
+        branch = [[Branch alloc] initWithInterface:[[BranchServerInterface alloc] init] queue:[BNCServerRequestQueue getInstance] cache:[[BNCLinkCache alloc] init] key:key];
     });
 
     return branch;
@@ -1119,7 +1121,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         
         if (self.isInitialized) {
             [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Created custom url synchronously"];
-            BNCServerResponse *serverResponse = [self.bServerInterface createCustomUrl:req];
+            BNCServerResponse *serverResponse = [self.bServerInterface createCustomUrl:req key:self.branchKey];
             shortURL = [serverResponse.data objectForKey:URL];
             
             // cache the link
@@ -1361,67 +1363,67 @@ static int BNCDebugTriggerFingersSimulator = 2;
             
             if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling register install"];
-                [self.bServerInterface registerInstall:[BNCPreferenceHelper isDebug] callback:wrappedCallback];
+                [self.bServerInterface registerInstall:[BNCPreferenceHelper isDebug] key:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling register open"];
-                [self.bServerInterface registerOpen:[BNCPreferenceHelper isDebug] callback:wrappedCallback];
+                [self.bServerInterface registerOpen:[BNCPreferenceHelper isDebug] key:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_COUNTS] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get referrals"];
-                [self.bServerInterface getReferralCountsWithCallback:wrappedCallback];
+                [self.bServerInterface getReferralCountsWithKey:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_GET_REWARDS] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get rewards"];
-                [self.bServerInterface getRewardsWithCallback:wrappedCallback];
+                [self.bServerInterface getRewardsWithKey:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_REDEEM_REWARDS] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling redeem rewards"];
-                [self.bServerInterface redeemRewards:req.postData callback:wrappedCallback];
+                [self.bServerInterface redeemRewards:req.postData key:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_COMPLETE_ACTION] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling completed action"];
-                [self.bServerInterface userCompletedAction:req.postData callback:wrappedCallback];
+                [self.bServerInterface userCompletedAction:req.postData key:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_GET_CUSTOM_URL] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling create custom url"];
-                [self.bServerInterface createCustomUrl:req callback:wrappedCallback];
+                [self.bServerInterface createCustomUrl:req key:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_IDENTIFY] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling identify user"];
-                [self.bServerInterface identifyUser:req.postData callback:wrappedCallback];
+                [self.bServerInterface identifyUser:req.postData key:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_LOGOUT] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling logout"];
-                [self.bServerInterface logoutUser:req.postData callback:wrappedCallback];
+                [self.bServerInterface logoutUser:req.postData key:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling close"];
-                [self.bServerInterface registerCloseWithCallback:wrappedCallback];
+                [self.bServerInterface registerCloseWithKey:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_GET_REWARD_HISTORY] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get reward history"];
-                [self.bServerInterface getCreditHistory:req.postData callback:wrappedCallback];
+                [self.bServerInterface getCreditHistory:req.postData key:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_GET_REFERRAL_CODE] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get/create referral code"];
-                [self.bServerInterface getReferralCode:req.postData callback:wrappedCallback];
+                [self.bServerInterface getReferralCode:req.postData key:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_VALIDATE_REFERRAL_CODE] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling validate referral code"];
-                [self.bServerInterface validateReferralCode:req.postData callback:wrappedCallback];
+                [self.bServerInterface validateReferralCode:req.postData key:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_APPLY_REFERRAL_CODE] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling apply referral code"];
-                [self.bServerInterface applyReferralCode:req.postData callback:wrappedCallback];
+                [self.bServerInterface applyReferralCode:req.postData key:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_GET_LIST_OF_APPS] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling get apps"];
-                [self.bServerInterface retrieveAppsToCheckWithCallback:wrappedCallback];
+                [self.bServerInterface retrieveAppsToCheckWithKey:self.branchKey callback:wrappedCallback];
             }
             else if ([req.tag isEqualToString:REQ_TAG_UPLOAD_LIST_OF_APPS] && [self hasSession]) {
                 [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"calling upload apps"];
-                [self.bServerInterface uploadListOfApps:req.postData callback:wrappedCallback];
+                [self.bServerInterface uploadListOfApps:req.postData key:self.branchKey callback:wrappedCallback];
             }
         }
     }

@@ -24,7 +24,7 @@
     id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
 
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
     
     BNCServerResponse *linkResponse = [[BNCServerResponse alloc] init];
@@ -45,7 +45,7 @@
     __block BNCServerCallback urlCallback;
     [[[serverInterfaceMock stub] andDo:^(NSInvocation *invocation) {
         urlCallback(linkResponse, nil);
-    }] createCustomUrl:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] createCustomUrl:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         urlCallback = callback;
         return YES;
     }]];
@@ -55,8 +55,8 @@
         return YES;
     }];
     
-    [[serverInterfaceMock stub] registerInstall:NO callback:openOrInstallCallbackCheckBlock];
-    [[serverInterfaceMock stub] registerOpen:NO callback:openOrInstallCallbackCheckBlock];
+    [[serverInterfaceMock stub] registerInstall:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    [[serverInterfaceMock stub] registerOpen:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
     
     // Fake branch key
     [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey];

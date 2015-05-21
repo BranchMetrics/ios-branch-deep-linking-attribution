@@ -16,52 +16,52 @@
 
 #pragma mark - GET methods
 
-- (void)getRequest:(NSDictionary *)params url:(NSString *)url callback:(BNCServerCallback)callback {
-    [self getRequest:params url:url retryNumber:0 log:YES callback:callback];
+- (void)getRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key callback:(BNCServerCallback)callback {
+    [self getRequest:params url:url key:key retryNumber:0 log:YES callback:callback];
 }
 
-- (void)getRequest:(NSDictionary *)params url:(NSString *)url log:(BOOL)log callback:(BNCServerCallback)callback {
-    [self getRequest:params url:url retryNumber:0 log:log callback:callback];
+- (void)getRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key log:(BOOL)log callback:(BNCServerCallback)callback {
+    [self getRequest:params url:url key:key retryNumber:0 log:log callback:callback];
 }
 
-- (void)getRequest:(NSDictionary *)params url:(NSString *)url retryNumber:(NSInteger)retryNumber log:(BOOL)log callback:(BNCServerCallback)callback {
-    NSURLRequest *request = [self prepareGetRequest:params url:url retryNumber:retryNumber log:log];
+- (void)getRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber log:(BOOL)log callback:(BNCServerCallback)callback {
+    NSURLRequest *request = [self prepareGetRequest:params url:url key:key retryNumber:retryNumber log:log];
 
     [self genericHTTPRequest:request retryNumber:retryNumber log:log callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
-        return [self prepareGetRequest:params url:url retryNumber:++lastRetryNumber log:log];
+        return [self prepareGetRequest:params url:url key:key retryNumber:++lastRetryNumber log:log];
     }];
 }
 
-- (BNCServerResponse *)getRequest:(NSDictionary *)params url:(NSString *)url {
-    return [self getRequest:params url:url log:YES];
+- (BNCServerResponse *)getRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key {
+    return [self getRequest:params url:url key:key log:YES];
 }
 
-- (BNCServerResponse *)getRequest:(NSDictionary *)params url:(NSString *)url log:(BOOL)log {
-    NSURLRequest *request = [self prepareGetRequest:params url:url retryNumber:0 log:log];
+- (BNCServerResponse *)getRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key log:(BOOL)log {
+    NSURLRequest *request = [self prepareGetRequest:params url:url key:key retryNumber:0 log:log];
     return [self genericHTTPRequest:request log:log];
 }
 
 
 #pragma mark - POST methods
 
-- (void)postRequest:(NSDictionary *)post url:(NSString *)url callback:(BNCServerCallback)callback {
-    [self postRequest:post url:url retryNumber:0 log:YES callback:callback];
+- (void)postRequest:(NSDictionary *)post url:(NSString *)url key:(NSString *)key callback:(BNCServerCallback)callback {
+    [self postRequest:post url:url retryNumber:0 key:key log:YES callback:callback];
 }
 
-- (void)postRequest:(NSDictionary *)post url:(NSString *)url log:(BOOL)log callback:(BNCServerCallback)callback {
-    [self postRequest:post url:url retryNumber:0 log:log callback:callback];
+- (void)postRequest:(NSDictionary *)post url:(NSString *)url key:(NSString *)key log:(BOOL)log callback:(BNCServerCallback)callback {
+    [self postRequest:post url:url retryNumber:0 key: key log:log callback:callback];
 }
 
-- (void)postRequest:(NSDictionary *)post url:(NSString *)url retryNumber:(NSInteger)retryNumber log:(BOOL)log callback:(BNCServerCallback)callback {
-    NSURLRequest *request = [self preparePostRequest:post url:url retryNumber:retryNumber log:log];
+- (void)postRequest:(NSDictionary *)post url:(NSString *)url retryNumber:(NSInteger)retryNumber key:(NSString *)key log:(BOOL)log callback:(BNCServerCallback)callback {
+    NSURLRequest *request = [self preparePostRequest:post url:url key:key retryNumber:retryNumber log:log];
 
     [self genericHTTPRequest:request retryNumber:retryNumber log:log callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
-        return [self preparePostRequest:post url:url retryNumber:++lastRetryNumber log:log];
+        return [self preparePostRequest:post url:url key:key retryNumber:++lastRetryNumber log:log];
     }];
 }
 
-- (BNCServerResponse *)postRequest:(NSDictionary *)post url:(NSString *)url log:(BOOL)log {
-    NSURLRequest *request = [self preparePostRequest:post url:url retryNumber:0 log:log];
+- (BNCServerResponse *)postRequest:(NSDictionary *)post url:(NSString *)url key:(NSString *)key log:(BOOL)log {
+    NSURLRequest *request = [self preparePostRequest:post url:url key:key retryNumber:0 log:log];
     return [self genericHTTPRequest:request log:log];
 }
 
@@ -127,21 +127,10 @@
 
 #pragma mark - Internals
 
-- (NSURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url retryNumber:(NSInteger)retryNumber log:(BOOL)log {
-    NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
-    [fullParamDict addEntriesFromDictionary:params];
-    fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
-    fullParamDict[@"retryNumber"] = @(retryNumber);
+- (NSURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber log:(BOOL)log {
+    NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber];
     
-    NSString *appId = [BNCPreferenceHelper getAppKey];
-    NSString *branchKey = [BNCPreferenceHelper getBranchKey];
-    if (![branchKey isEqualToString:NO_STRING_VALUE]) {
-        fullParamDict[KEY_BRANCH_KEY] = branchKey;
-    } else if (![appId isEqualToString:NO_STRING_VALUE]) {
-        fullParamDict[@"app_id"] = appId;
-    }
-    
-    NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:fullParamDict]];
+    NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:preparedParams]];
     
     if (log) {
         [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
@@ -155,26 +144,15 @@
     return request;
 }
 
-- (NSURLRequest *)preparePostRequest:(NSDictionary *)params url:(NSString *)url retryNumber:(NSInteger)retryNumber log:(BOOL)log {
-    NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
-    [fullParamDict addEntriesFromDictionary:params];
-    fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
-    fullParamDict[@"retryNumber"] = @(retryNumber);
-    
-    NSString *appId = [BNCPreferenceHelper getAppKey];
-    NSString *branchKey = [BNCPreferenceHelper getBranchKey];
-    if (![branchKey isEqualToString:NO_STRING_VALUE]) {
-        fullParamDict[KEY_BRANCH_KEY] = branchKey;
-    } else if (![appId isEqualToString:NO_STRING_VALUE]) {
-        fullParamDict[@"app_id"] = appId;
-    }
+- (NSURLRequest *)preparePostRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber log:(BOOL)log {
+    NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber];
 
-    NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:fullParamDict];
+    NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     
     if (log) {
         [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
-        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"body = %@", [fullParamDict description]];
+        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"body = %@", preparedParams];
     }
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
@@ -185,6 +163,22 @@
     [request setHTTPBody:postData];
     
     return request;
+}
+
+- (NSDictionary *)prepareParamDict:(NSDictionary *)params key:(NSString *)key retryNumber:(NSInteger)retryNumber {
+    NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
+    [fullParamDict addEntriesFromDictionary:params];
+    fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
+    fullParamDict[@"retryNumber"] = @(retryNumber);
+    
+    if ([key hasPrefix:@"key_"]) {
+        fullParamDict[KEY_BRANCH_KEY] = key;
+    }
+    else {
+        fullParamDict[@"app_id"] = key;
+    }
+    
+    return fullParamDict;
 }
 
 - (BNCServerResponse *)processServerResponse:(NSURLResponse *)response data:(NSData *)data error:(NSError *)error log:(BOOL)log {
