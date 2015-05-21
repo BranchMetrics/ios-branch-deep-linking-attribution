@@ -17,7 +17,7 @@
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
     BOOL isRealHardwareId;
-    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper getDevDebug]];
+    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper isDebug]];
     if (hardwareId) {
         [post setObject:hardwareId forKey:@"hardware_id"];
         [post setObject:[NSNumber numberWithBool:isRealHardwareId] forKey:@"is_hardware_id_real"];
@@ -53,7 +53,7 @@
     
     if ([[BNCPreferenceHelper getDeviceFingerprintID] isEqualToString:NO_STRING_VALUE]) {
         BOOL isRealHardwareId;
-        NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper getDevDebug]];
+        NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper isDebug]];
         if (hardwareId) {
             [post setObject:hardwareId forKey:@"hardware_id"];
             [post setObject:[NSNumber numberWithBool:isRealHardwareId] forKey:@"is_hardware_id_real"];

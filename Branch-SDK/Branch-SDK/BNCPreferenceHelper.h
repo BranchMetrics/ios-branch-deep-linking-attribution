@@ -16,7 +16,7 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 
 @protocol BNCDebugConnectionDelegate <NSObject>
 
-- (void)bnc_debugConnectionEstablished;
+- (void)debugConnectionEstablished;
 
 @end
 
@@ -28,6 +28,8 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 
 @interface BNCPreferenceHelper : NSObject
 
+@property (assign, nonatomic) BOOL isDebugMode;
+@property (assign, nonatomic) BOOL isConnectedToRemoteDebug;
 @property (assign, nonatomic) NSInteger retryCount;
 @property (assign, nonatomic) NSInteger retryInterval;
 @property (assign, nonatomic) NSInteger timeout;
@@ -103,11 +105,11 @@ static NSString *NO_STRING_VALUE = @"bnc_no_value";
 + (NSInteger)getActionTotalCount:(NSString *)action;
 + (NSInteger)getActionUniqueCount:(NSString *)action;
 
-+ (void)setDevDebug;
-+ (BOOL)getDevDebug;
 + (void)setDebug;
 + (void)clearDebug;
 + (BOOL)isDebug;
++ (void)connectRemoteDebug;
++ (void)disconnectRemoteDebug;
 + (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
 + (void)sendScreenshot:(NSData *)data;
 + (void)setDebugConnectionDelegate:(id<BNCDebugConnectionDelegate>) debugConnectionDelegate;

@@ -26,7 +26,7 @@
 
 + (void)tearDown {
     [[LSNocilla sharedInstance] stop];
-
+    
     [BNCPreferenceHelper clearDebug];
 
     [super tearDown];
@@ -43,7 +43,7 @@
     stubRequest(@"POST", [BNCPreferenceHelper getAPIURL:@"debug/connect"])
     .andReturn(200);
 
-    [BNCPreferenceHelper setDebug];
+    [BNCPreferenceHelper connectRemoteDebug];
     
     // Allow request to complete;
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
@@ -60,7 +60,7 @@
     .withHeaders(@{@"Content-Type": @"application/json"})
     .withBody(responseData);
 
-    [BNCPreferenceHelper setDebug];
+    [BNCPreferenceHelper connectRemoteDebug];
 
     [NSThread sleepForTimeInterval:1]; // Allow request to complete
     
