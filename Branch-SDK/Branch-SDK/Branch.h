@@ -242,6 +242,14 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (void)setDebug;
 
 /**
+ Have Branch treat this device / session as a debug session, causing more information to be logged, and info to be available in the debug tab of the dashboard.
+ 
+ @warning Deprecated, use the instance method.
+ @warning This should not be used in production.
+ */
++ (void)setDebug __attribute__((deprecated(("Use the instance method instead"))));
+
+/**
  Specify the time to wait in seconds between retries in the case of a Branch server error
  
  @param retryInterval Number of seconds to wait between retries.
