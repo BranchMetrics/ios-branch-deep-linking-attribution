@@ -12,7 +12,6 @@
 #define LINE_NUM    __LINE__
 
 static NSString *KEY_BRANCH_KEY = @"branch_key";
-static NSString *NO_STRING_VALUE = @"bnc_no_value";
 
 @protocol BNCDebugConnectionDelegate <NSObject>
 

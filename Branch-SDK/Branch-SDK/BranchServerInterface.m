@@ -40,7 +40,7 @@
     if (uriScheme) [post setObject:uriScheme forKey:@"uri_scheme"];
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     if (updateState) [post setObject:updateState forKey:@"update"];
-    if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
+    if ([BNCPreferenceHelper getLinkClickIdentifier]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     [post setObject:[NSNumber numberWithBool:[BNCSystemObserver adTrackingSafe]] forKey:@"ad_tracking_enabled"];
     [post setObject:[NSNumber numberWithInteger:[BNCPreferenceHelper getIsReferrable]] forKey:@"is_referrable"];
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
@@ -51,7 +51,7 @@
 - (void)registerOpen:(BOOL)debug key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *post = [[NSMutableDictionary alloc] init];
     
-    if ([[BNCPreferenceHelper getDeviceFingerprintID] isEqualToString:NO_STRING_VALUE]) {
+    if (![BNCPreferenceHelper getDeviceFingerprintID]) {
         BOOL isRealHardwareId;
         NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper getDevDebug]];
         if (hardwareId) {
@@ -74,7 +74,7 @@
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     if (updateState) [post setObject:updateState forKey:@"update"];
     [post setObject:[NSNumber numberWithBool:debug] forKey:@"debug"];
-    if (![[BNCPreferenceHelper getLinkClickIdentifier] isEqualToString:NO_STRING_VALUE]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
+    if ([BNCPreferenceHelper getLinkClickIdentifier]) [post setObject:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier"];
     
     [self postRequest:post url:[BNCPreferenceHelper getAPIURL:@"open"] key:key callback:callback];
 }
