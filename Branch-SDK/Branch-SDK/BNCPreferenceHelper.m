@@ -89,7 +89,7 @@ static NSString *Branch_Key = nil;
     serverInterface = [[BranchServerInterface alloc] init];
     bnc_asyncLogQueue = dispatch_queue_create("bnc_log_queue", NULL);
 
-    [serverInterface connectToDebugWithCallback:^(BNCServerResponse *response, NSError *error) {
+    [serverInterface connectToDebugWithKey:Branch_Key callback:^(BNCServerResponse *response, NSError *error) {
         if (error) {
             NSLog(@"Failed to connect to debug: %@", error);
         }
@@ -105,7 +105,7 @@ static NSString *Branch_Key = nil;
     if (preferenceHelper.isConnectedToRemoteDebug) {
         preferenceHelper.isConnectedToRemoteDebug = NO;
         
-        [serverInterface disconnectFromDebugWithCallback:NULL];
+        [serverInterface disconnectFromDebugWithKey:Branch_Key callback:NULL];
     }
 }
 
@@ -126,7 +126,7 @@ static NSString *Branch_Key = nil;
         NSLog(@"%@", log);
         
         if ([BNCPreferenceHelper getInstance].isConnectedToRemoteDebug) {
-            [serverInterface sendLog:log callback:NULL];
+            [serverInterface sendLog:log key:Branch_Key callback:NULL];
         }
     }
 }
@@ -134,13 +134,13 @@ static NSString *Branch_Key = nil;
 + (void)keepDebugAlive {
     if ([BNCPreferenceHelper getInstance].isConnectedToRemoteDebug) {
         NSLog(@"[Branch Debug] Sending Keep Alive");
-        [serverInterface sendLog:@"" callback:NULL];
+        [serverInterface sendLog:@"" key:Branch_Key callback:NULL];
     }
 }
 
 + (void)sendScreenshot:(NSData *)data {
     if ([BNCPreferenceHelper getInstance].isConnectedToRemoteDebug) {
-        [serverInterface sendScreenshot:data callback:NULL];
+        [serverInterface sendScreenshot:data key:Branch_Key callback:NULL];
     }
 }
 
