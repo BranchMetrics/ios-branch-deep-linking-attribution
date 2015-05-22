@@ -907,7 +907,7 @@ Branch.getInstance().validateReferralCode(code, andCallback: { (params: [NSObjec
             // invalid (should never happen)
         }
     } else {
-        NSLog("Error in validating referral code: %@", error.localizedDescription)
+        NSLog(@"Error in validating referral code: %@", error.localizedDescription)
     }
 })
 ```
@@ -938,7 +938,7 @@ Branch.getInstance().applyReferralCode(code, andCallback: { (params: [NSObject :
     if (error == nil) {
         // applied. you can get the referral code amount from the params and deduct it in your UI.
     } else {
-        NSLog("Error in applying referral code: %@", error.localizedDescription);
+        NSLog(@"Error in applying referral code: %@", error.localizedDescription);
     }
 })
 ```
