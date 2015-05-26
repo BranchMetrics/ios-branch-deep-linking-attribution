@@ -9,6 +9,8 @@
 #import "BNCServerRequestQueue.h"
 #import "BranchServerInterface.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchOpenRequest.h"
+#import "BranchCloseRequest.h"
 
 NSString * const STORAGE_KEY = @"BNCServerRequestQueue";
 NSUInteger const BATCH_WRITE_TIMEOUT = 3;
@@ -124,37 +126,40 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 - (BOOL)containsInstallOrOpen {
     for (int i = 0; i < self.queue.count; i++) {
         BNCServerRequest *req = [self.queue objectAtIndex:i];
-        if (req && ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) && req.callback) {
+        // Install extends open, so only need to check open.
+        if ([req isKindOfClass:[BranchOpenRequest class]]) {
             return YES;
         }
     }
     return NO;
 }
 
-- (void)moveInstallOrOpen:(NSString *)tag ToFront:(NSInteger)networkCount {
+- (void)moveInstallOrOpenToFront:(NSInteger)networkCount {
+    BNCServerRequest *openOrInstallRequest;
     for (int i = 0; i < self.queue.count; i++) {
         BNCServerRequest *req = [self.queue objectAtIndex:i];
-        if ([req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] || [req.tag isEqualToString:REQ_TAG_REGISTER_OPEN]) {
-            [self removeAt:i];
+        if ([req isKindOfClass:[BranchOpenRequest class]]) {
+            openOrInstallRequest = [self removeAt:i];
             break;
         }
     }
     
-    BNCServerRequest *req = [[BNCServerRequest alloc] initWithTag:tag];
     if (networkCount == 0) {
-        [self insert:req at:0];
-    } else {
-        [self insert:req at:1];
+        [self insert:openOrInstallRequest at:0];
+    }
+    else {
+        [self insert:openOrInstallRequest at:1];
     }
 }
 
 - (BOOL)containsClose {
     for (int i = 0; i < self.queue.count; i++) {
         BNCServerRequest *req = [self.queue objectAtIndex:i];
-        if ([req.tag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
+        if ([req isKindOfClass:[BranchCloseRequest class]]) {
             return YES;
         }
     }
+
     return NO;
 }
 
@@ -209,7 +214,10 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
         if (encodedRequest) {
             @try {
                 BNCServerRequest *request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
-                if (![request.tag isEqualToString:REQ_TAG_REGISTER_CLOSE]) {
+                
+                // TODO figure out loading from disk
+                
+                if (![request isKindOfClass:[BranchCloseRequest class]]) {
                     [queue addObject:request];
                 }
             }

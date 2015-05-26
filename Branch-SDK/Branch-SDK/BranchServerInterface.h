@@ -7,7 +7,6 @@
 //
 
 #import "BNCServerInterface.h"
-#import "BNCServerRequest.h"
 
 static NSString *REQ_TAG_REGISTER_INSTALL = @"t_register_install";
 static NSString *REQ_TAG_REGISTER_OPEN = @"t_register_open";
@@ -29,28 +28,11 @@ static NSString *REQ_TAG_GET_LIST_OF_APPS = @"t_get_list_of_apps";
 
 @interface BranchServerInterface : BNCServerInterface
 
-- (void)registerInstall:(BOOL)debug key:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)registerOpen:(BOOL)debug key:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)registerCloseWithKey:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)getReferralCountsWithKey:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)getCreditHistory:(NSDictionary *)query key:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)userCompletedAction:(NSDictionary *)post key:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)getRewardsWithKey:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)redeemRewards:(NSDictionary *)post key:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)createCustomUrl:(BNCServerRequest *)post key:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)identifyUser:(NSDictionary *)post key:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)logoutUser:(NSDictionary *)post key:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)getReferralCode:(NSDictionary *)post key:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)validateReferralCode:(NSDictionary *)post key:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)applyReferralCode:(NSDictionary *)post key:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)uploadListOfApps:(NSDictionary *)post key:(NSString *)key callback:(BNCServerCallback)callback;
-- (void)retrieveAppsToCheckWithKey:(NSString *)key callback:(BNCServerCallback)callback;
-
 - (void)connectToDebugWithKey:(NSString *)key callback:(BNCServerCallback)callback;
 - (void)sendLog:(NSString *)log key:(NSString *)key callback:(BNCServerCallback)callback;
 - (void)sendScreenshot:(NSData *)data key:(NSString *)key callback:(BNCServerCallback)callback;
 - (void)disconnectFromDebugWithKey:(NSString *)key callback:(BNCServerCallback)callback;
 
-- (BNCServerResponse *)createCustomUrl:(BNCServerRequest *)req key:(NSString *)key;
+- (BNCServerResponse *)createCustomUrl:(id)req key:(NSString *)key;
 
 @end

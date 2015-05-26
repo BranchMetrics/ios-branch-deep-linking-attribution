@@ -1,0 +1,65 @@
+//
+//  BranchInstallRequest.m
+//  Branch-TestBed
+//
+//  Created by Graham Mueller on 5/26/15.
+//  Copyright (c) 2015 Branch Metrics. All rights reserved.
+//
+
+#import "BranchInstallRequest.h"
+#import "BNCPreferenceHelper.h"
+#import "BNCSystemObserver.h"
+
+@implementation BranchInstallRequest
+
+- (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    
+    BOOL isRealHardwareId;
+    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper isDebug]];
+    if (hardwareId) {
+        params[@"hardware_id"] = hardwareId;
+        params[@"is_hardware_id_real"] = @(isRealHardwareId);
+    }
+    
+    [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:@"app_version" onDict:params];
+    [self safeSetValue:[BNCSystemObserver getCarrier] forKey:@"carrier" onDict:params];
+    [self safeSetValue:[BNCSystemObserver getBrand] forKey:@"branch" onDict:params];
+    [self safeSetValue:[BNCSystemObserver getModel] forKey:@"model" onDict:params];
+    [self safeSetValue:[BNCSystemObserver getOS] forKey:@"os" onDict:params];
+    [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:@"os_version" onDict:params];
+    [self safeSetValue:[BNCSystemObserver getScreenWidth] forKey:@"screen_width" onDict:params];
+    [self safeSetValue:[BNCSystemObserver getScreenHeight] forKey:@"screen_height" onDict:params];
+    [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:@"uri_scheme" onDict:params];
+    [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:@"update" onDict:params];
+    [self safeSetValue:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier" onDict:params];
+    
+    params[@"ad_tracking_enabled"] = @([BNCSystemObserver adTrackingSafe]);
+    params[@"is_referrable"] = @([BNCPreferenceHelper getIsReferrable]);
+    params[@"debug"] = @([BNCPreferenceHelper isDebug]);
+    
+    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"install"] key:key callback:callback];
+}
+
+- (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
+    if (value) {
+        dict[key] = value;
+    }
+}
+
+- (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
+    NSDictionary *data = response.data;
+    
+    if ([BNCPreferenceHelper getIsReferrable]) {
+        if (data[@"data"]) {
+            [BNCPreferenceHelper setInstallParams:data[@"data"]];
+        }
+        else {
+            [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
+        }
+    }
+    
+    [super processResponse:response error:error];
+}
+
+@end
