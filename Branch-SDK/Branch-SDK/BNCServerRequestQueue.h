@@ -25,7 +25,7 @@
 
 - (BOOL)containsInstallOrOpen;
 - (BOOL)containsClose;
-- (void)moveInstallOrOpen:(NSString *)tag ToFront:(NSInteger)networkCount;
+- (void)moveInstallOrOpenToFront:(NSInteger)networkCount;
 
 + (id)getInstance;
 

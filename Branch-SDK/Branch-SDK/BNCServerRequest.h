@@ -11,11 +11,7 @@
 
 @interface BNCServerRequest : NSObject
 
-@property (strong, nonatomic) NSString *tag;
-@property (strong, nonatomic) NSMutableDictionary *postData;
-@property (strong, nonatomic) BNCServerCallback callback;
-
-- (id)initWithTag:(NSString *)tag;
-- (id)initWithTag:(NSString *)tag andData:(NSMutableDictionary *)postData;
+- (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback;
+- (void)processResponse:(BNCServerResponse *)response error:(NSError *)error;
 
 @end
