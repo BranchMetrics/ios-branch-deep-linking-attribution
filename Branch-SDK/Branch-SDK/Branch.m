@@ -1313,8 +1313,8 @@ static int BNCDebugTriggerFingersSimulator = 2;
         
         if (req) {
             BNCServerCallback wrappedCallback = ^(BNCServerResponse *response, NSError *error) {
-                // If the request was successful, or was a 400 (bad user request), continue processing.
-                if (!error || (error.code >= 400 && error.code < 500)) {
+                // If the request was successful, or was a bad user request, continue processing.
+                if (!error || error.code == BNCBadRequestError || error.code == BNCDuplicateResourceError) {
                     if (req.callback) {
                         req.callback(response, error);
                     }
