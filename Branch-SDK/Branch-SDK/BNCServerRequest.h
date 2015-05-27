@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "BNCServerInterface.h"
 
-@interface BNCServerRequest : NSObject
+@interface BNCServerRequest : NSObject <NSCoding>
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback;
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error;

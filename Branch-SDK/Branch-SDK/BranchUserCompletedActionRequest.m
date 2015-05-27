@@ -46,4 +46,22 @@
     // Nothing to do here...
 }
 
+#pragma mark - NSCoding methods
+
+- (id)initWithCoder:(NSCoder *)decoder {
+    if (self = [super initWithCoder:decoder]) {
+        _action = [decoder decodeObjectForKey:@"action"];
+        _state = [decoder decodeObjectForKey:@"state"];
+    }
+    
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    
+    [coder encodeObject:self.action forKey:@"action"];
+    [coder encodeObject:self.state forKey:@"state"];
+}
+
 @end

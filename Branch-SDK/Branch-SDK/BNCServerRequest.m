@@ -18,4 +18,12 @@
     [NSException raise:@"Improper BNCServerRequest" format:@"BNCServerRequest subclasses must implement processResponse:error:"];
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    return self = [super init];
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    // Nothing going on here
+}
+
 @end
