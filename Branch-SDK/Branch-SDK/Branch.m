@@ -1039,7 +1039,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         NSLog(@"Branch Warning: You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment.");
     }
     
-    if ([self hasUser]) {
+    if (![self hasUser]) {
         [self registerInstallOrOpen:[BranchInstallRequest class]];
     }
     else {
