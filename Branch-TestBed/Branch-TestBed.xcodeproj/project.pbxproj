@@ -29,6 +29,57 @@
 		4659B3741B14F9A60019767C /* BranchUpdateAppListRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3731B14F9A60019767C /* BranchUpdateAppListRequest.m */; };
 		4659B3771B1507370019767C /* BranchOpenRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3761B1507370019767C /* BranchOpenRequest.m */; };
 		4659B37A1B1508B40019767C /* BranchInstallRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3791B1508B40019767C /* BranchInstallRequest.m */; };
+		466B57FB1B161E8100A69EDE /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3491B0FD4620019767C /* BNCServerRequest.m */; };
+		466B57FC1B161E8100A69EDE /* BranchSetIdentityRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B34C1B0FD5BF0019767C /* BranchSetIdentityRequest.m */; };
+		466B57FD1B161E8100A69EDE /* BranchLogoutRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B34F1B0FDAB70019767C /* BranchLogoutRequest.m */; };
+		466B57FE1B161E8100A69EDE /* BranchUserCompletedActionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3521B0FDD3C0019767C /* BranchUserCompletedActionRequest.m */; };
+		466B57FF1B161E8100A69EDE /* BranchLoadActionsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3551B0FE02E0019767C /* BranchLoadActionsRequest.m */; };
+		466B58001B161E8100A69EDE /* BranchLoadRewardsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3581B0FE0F70019767C /* BranchLoadRewardsRequest.m */; };
+		466B58011B161E8100A69EDE /* BranchRedeemRewardsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B35B1B0FE21A0019767C /* BranchRedeemRewardsRequest.m */; };
+		466B58021B161E8100A69EDE /* BranchCreditHistoryRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B35E1B0FE42D0019767C /* BranchCreditHistoryRequest.m */; };
+		466B58031B161E8100A69EDE /* BranchGetReferralCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3611B14CA890019767C /* BranchGetReferralCodeRequest.m */; };
+		466B58041B161E8100A69EDE /* BranchValidateReferralCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3641B14D1D20019767C /* BranchValidateReferralCodeRequest.m */; };
+		466B58051B161E8100A69EDE /* BranchApplyReferralCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3671B14D7290019767C /* BranchApplyReferralCodeRequest.m */; };
+		466B58061B161E8100A69EDE /* BranchShortUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B36A1B14DD870019767C /* BranchShortUrlRequest.m */; };
+		466B58071B161E8100A69EDE /* BranchCloseRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B36D1B14F6540019767C /* BranchCloseRequest.m */; };
+		466B58081B161E8100A69EDE /* BranchGetAppListRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3701B14F8200019767C /* BranchGetAppListRequest.m */; };
+		466B58091B161E8100A69EDE /* BranchUpdateAppListRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3731B14F9A60019767C /* BranchUpdateAppListRequest.m */; };
+		466B580A1B161E8100A69EDE /* BranchOpenRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3761B1507370019767C /* BranchOpenRequest.m */; };
+		466B580B1B161E8100A69EDE /* BranchInstallRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3791B1508B40019767C /* BranchInstallRequest.m */; };
+		466B580C1B161E8100A69EDE /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3491B0FD4620019767C /* BNCServerRequest.m */; };
+		466B580D1B161E8100A69EDE /* BranchSetIdentityRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B34C1B0FD5BF0019767C /* BranchSetIdentityRequest.m */; };
+		466B580E1B161E8100A69EDE /* BranchLogoutRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B34F1B0FDAB70019767C /* BranchLogoutRequest.m */; };
+		466B580F1B161E8100A69EDE /* BranchUserCompletedActionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3521B0FDD3C0019767C /* BranchUserCompletedActionRequest.m */; };
+		466B58101B161E8100A69EDE /* BranchLoadActionsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3551B0FE02E0019767C /* BranchLoadActionsRequest.m */; };
+		466B58111B161E8100A69EDE /* BranchLoadRewardsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3581B0FE0F70019767C /* BranchLoadRewardsRequest.m */; };
+		466B58121B161E8100A69EDE /* BranchRedeemRewardsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B35B1B0FE21A0019767C /* BranchRedeemRewardsRequest.m */; };
+		466B58131B161E8100A69EDE /* BranchCreditHistoryRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B35E1B0FE42D0019767C /* BranchCreditHistoryRequest.m */; };
+		466B58141B161E8100A69EDE /* BranchGetReferralCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3611B14CA890019767C /* BranchGetReferralCodeRequest.m */; };
+		466B58151B161E8100A69EDE /* BranchValidateReferralCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3641B14D1D20019767C /* BranchValidateReferralCodeRequest.m */; };
+		466B58161B161E8100A69EDE /* BranchApplyReferralCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3671B14D7290019767C /* BranchApplyReferralCodeRequest.m */; };
+		466B58171B161E8100A69EDE /* BranchShortUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B36A1B14DD870019767C /* BranchShortUrlRequest.m */; };
+		466B58181B161E8100A69EDE /* BranchCloseRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B36D1B14F6540019767C /* BranchCloseRequest.m */; };
+		466B58191B161E8100A69EDE /* BranchGetAppListRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3701B14F8200019767C /* BranchGetAppListRequest.m */; };
+		466B581A1B161E8100A69EDE /* BranchUpdateAppListRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3731B14F9A60019767C /* BranchUpdateAppListRequest.m */; };
+		466B581B1B161E8100A69EDE /* BranchOpenRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3761B1507370019767C /* BranchOpenRequest.m */; };
+		466B581C1B161E8100A69EDE /* BranchInstallRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3791B1508B40019767C /* BranchInstallRequest.m */; };
+		466B581D1B161E8200A69EDE /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3491B0FD4620019767C /* BNCServerRequest.m */; };
+		466B581E1B161E8200A69EDE /* BranchSetIdentityRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B34C1B0FD5BF0019767C /* BranchSetIdentityRequest.m */; };
+		466B581F1B161E8200A69EDE /* BranchLogoutRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B34F1B0FDAB70019767C /* BranchLogoutRequest.m */; };
+		466B58201B161E8200A69EDE /* BranchUserCompletedActionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3521B0FDD3C0019767C /* BranchUserCompletedActionRequest.m */; };
+		466B58211B161E8200A69EDE /* BranchLoadActionsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3551B0FE02E0019767C /* BranchLoadActionsRequest.m */; };
+		466B58221B161E8200A69EDE /* BranchLoadRewardsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3581B0FE0F70019767C /* BranchLoadRewardsRequest.m */; };
+		466B58231B161E8200A69EDE /* BranchRedeemRewardsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B35B1B0FE21A0019767C /* BranchRedeemRewardsRequest.m */; };
+		466B58241B161E8200A69EDE /* BranchCreditHistoryRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B35E1B0FE42D0019767C /* BranchCreditHistoryRequest.m */; };
+		466B58251B161E8200A69EDE /* BranchGetReferralCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3611B14CA890019767C /* BranchGetReferralCodeRequest.m */; };
+		466B58261B161E8200A69EDE /* BranchValidateReferralCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3641B14D1D20019767C /* BranchValidateReferralCodeRequest.m */; };
+		466B58271B161E8200A69EDE /* BranchApplyReferralCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3671B14D7290019767C /* BranchApplyReferralCodeRequest.m */; };
+		466B58281B161E8200A69EDE /* BranchShortUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B36A1B14DD870019767C /* BranchShortUrlRequest.m */; };
+		466B58291B161E8200A69EDE /* BranchCloseRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B36D1B14F6540019767C /* BranchCloseRequest.m */; };
+		466B582A1B161E8200A69EDE /* BranchGetAppListRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3701B14F8200019767C /* BranchGetAppListRequest.m */; };
+		466B582B1B161E8200A69EDE /* BranchUpdateAppListRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3731B14F9A60019767C /* BranchUpdateAppListRequest.m */; };
+		466B582C1B161E8200A69EDE /* BranchOpenRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3761B1507370019767C /* BranchOpenRequest.m */; };
+		466B582D1B161E8200A69EDE /* BranchInstallRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3791B1508B40019767C /* BranchInstallRequest.m */; };
 		4673094A1AF2C4FB005B8848 /* BranchTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 467309481AF2C4FB005B8848 /* BranchTest.m */; };
 		46D0B6FA1ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */; };
 		46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */; };
@@ -800,24 +851,41 @@
 			buildActionMask = 2147483647;
 			files = (
 				7E6B3B561AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m in Sources */,
+				466B58161B161E8100A69EDE /* BranchApplyReferralCodeRequest.m in Sources */,
+				466B580E1B161E8100A69EDE /* BranchLogoutRequest.m in Sources */,
+				466B581B1B161E8100A69EDE /* BranchOpenRequest.m in Sources */,
 				7E6B3B5D1AA42EBF005F45BF /* BNCServerInterface.m in Sources */,
+				466B58131B161E8100A69EDE /* BranchCreditHistoryRequest.m in Sources */,
 				461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */,
+				466B58141B161E8100A69EDE /* BranchGetReferralCodeRequest.m in Sources */,
 				46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */,
 				7E6B3B611AA42F1D005F45BF /* BNCError.m in Sources */,
+				466B58101B161E8100A69EDE /* BranchLoadActionsRequest.m in Sources */,
+				466B58181B161E8100A69EDE /* BranchCloseRequest.m in Sources */,
 				464EA3981ACB1797000E4094 /* BNCServerInterfaceTests.m in Sources */,
 				7E6B3B601AA42F19005F45BF /* BNCServerRequestQueue.m in Sources */,
+				466B58171B161E8100A69EDE /* BranchShortUrlRequest.m in Sources */,
 				46D0B6FA1ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m in Sources */,
 				7E6B3B5B1AA42E9A005F45BF /* BranchServerInterface.m in Sources */,
+				466B581A1B161E8100A69EDE /* BranchUpdateAppListRequest.m in Sources */,
+				466B58191B161E8100A69EDE /* BranchGetAppListRequest.m in Sources */,
 				7E6B3B651AA42F35005F45BF /* BranchActivityItemProvider.m in Sources */,
+				466B580D1B161E8100A69EDE /* BranchSetIdentityRequest.m in Sources */,
+				466B581C1B161E8100A69EDE /* BranchInstallRequest.m in Sources */,
 				7E6B3B661AA42F3B005F45BF /* AppDelegate.m in Sources */,
+				466B58121B161E8100A69EDE /* BranchRedeemRewardsRequest.m in Sources */,
 				46FFCF121ACC317300039CE0 /* BNCEncodingUtils.m in Sources */,
+				466B580F1B161E8100A69EDE /* BranchUserCompletedActionRequest.m in Sources */,
 				7E6B3B5C1AA42EAF005F45BF /* BNCPreferenceHelper.m in Sources */,
 				4673094A1AF2C4FB005B8848 /* BranchTest.m in Sources */,
+				466B58111B161E8100A69EDE /* BranchLoadRewardsRequest.m in Sources */,
 				7E6B3B621AA42F21005F45BF /* BNCServerResponse.m in Sources */,
 				7E6B3B5F1AA42ECD005F45BF /* BNCSystemObserver.m in Sources */,
 				46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */,
+				466B58151B161E8100A69EDE /* BranchValidateReferralCodeRequest.m in Sources */,
 				7E6B3B5A1AA42E90005F45BF /* Branch.m in Sources */,
 				7E6B3B641AA42F2B005F45BF /* BNCLinkCache.m in Sources */,
+				466B580C1B161E8100A69EDE /* BNCServerRequest.m in Sources */,
 				7E6B3B631AA42F25005F45BF /* BNCLinkData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -830,18 +898,35 @@
 				7E6B3B871AA4493A005F45BF /* BranchServerInterface.m in Sources */,
 				7E6B3B8C1AA4494C005F45BF /* BNCError.m in Sources */,
 				7E6B3B8B1AA44948005F45BF /* BNCServerRequestQueue.m in Sources */,
+				466B582A1B161E8200A69EDE /* BranchGetAppListRequest.m in Sources */,
 				7E6B3B931AA4496E005F45BF /* CreditHistoryViewController.m in Sources */,
 				7E6B3B861AA44934005F45BF /* Branch.m in Sources */,
 				7E6B3B901AA44958005F45BF /* BranchActivityItemProvider.m in Sources */,
 				7E6B3B941AA44972005F45BF /* ReferralCodeViewController.m in Sources */,
+				466B58231B161E8200A69EDE /* BranchRedeemRewardsRequest.m in Sources */,
 				46FFCF131ACC317300039CE0 /* BNCEncodingUtils.m in Sources */,
+				466B58211B161E8200A69EDE /* BranchLoadActionsRequest.m in Sources */,
 				7E6B3B911AA4495B005F45BF /* AppDelegate.m in Sources */,
+				466B58241B161E8200A69EDE /* BranchCreditHistoryRequest.m in Sources */,
+				466B582B1B161E8200A69EDE /* BranchUpdateAppListRequest.m in Sources */,
 				7E6B3B881AA4493D005F45BF /* BNCPreferenceHelper.m in Sources */,
 				7E6B3B851AA44922005F45BF /* BNCSystemObserver.m in Sources */,
 				7E6B3B921AA4496B005F45BF /* ViewController.m in Sources */,
+				466B582C1B161E8200A69EDE /* BranchOpenRequest.m in Sources */,
+				466B58271B161E8200A69EDE /* BranchApplyReferralCodeRequest.m in Sources */,
+				466B581F1B161E8200A69EDE /* BranchLogoutRequest.m in Sources */,
+				466B582D1B161E8200A69EDE /* BranchInstallRequest.m in Sources */,
 				7E6B3B8D1AA4494F005F45BF /* BNCServerResponse.m in Sources */,
 				7E6B3B7F1AA44845005F45BF /* Branch_SDK_UI_Tests.m in Sources */,
 				7E6B3B8F1AA44955005F45BF /* BNCLinkCache.m in Sources */,
+				466B58201B161E8200A69EDE /* BranchUserCompletedActionRequest.m in Sources */,
+				466B58291B161E8200A69EDE /* BranchCloseRequest.m in Sources */,
+				466B581D1B161E8200A69EDE /* BNCServerRequest.m in Sources */,
+				466B58261B161E8200A69EDE /* BranchValidateReferralCodeRequest.m in Sources */,
+				466B58251B161E8200A69EDE /* BranchGetReferralCodeRequest.m in Sources */,
+				466B581E1B161E8200A69EDE /* BranchSetIdentityRequest.m in Sources */,
+				466B58221B161E8200A69EDE /* BranchLoadRewardsRequest.m in Sources */,
+				466B58281B161E8200A69EDE /* BranchShortUrlRequest.m in Sources */,
 				7E6B3B8E1AA44952005F45BF /* BNCLinkData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -850,17 +935,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				466B58001B161E8100A69EDE /* BranchLoadRewardsRequest.m in Sources */,
+				466B58071B161E8100A69EDE /* BranchCloseRequest.m in Sources */,
 				7EC326E11A9D640F0083C5DF /* Branch_SDK_Load_Tests.m in Sources */,
+				466B58011B161E8100A69EDE /* BranchRedeemRewardsRequest.m in Sources */,
+				466B58091B161E8100A69EDE /* BranchUpdateAppListRequest.m in Sources */,
+				466B57FF1B161E8100A69EDE /* BranchLoadActionsRequest.m in Sources */,
 				7EC1A7A61A9D668000309B61 /* BNCServerInterface.m in Sources */,
+				466B57FE1B161E8100A69EDE /* BranchUserCompletedActionRequest.m in Sources */,
+				466B57FC1B161E8100A69EDE /* BranchSetIdentityRequest.m in Sources */,
+				466B580A1B161E8100A69EDE /* BranchOpenRequest.m in Sources */,
+				466B58081B161E8100A69EDE /* BranchGetAppListRequest.m in Sources */,
+				466B57FD1B161E8100A69EDE /* BranchLogoutRequest.m in Sources */,
 				7EC1A7AE1A9D669700309B61 /* BNCError.m in Sources */,
 				7EC1A7AC1A9D669200309B61 /* BNCServerRequestQueue.m in Sources */,
+				466B58051B161E8100A69EDE /* BranchApplyReferralCodeRequest.m in Sources */,
+				466B57FB1B161E8100A69EDE /* BNCServerRequest.m in Sources */,
 				7EC1A7A21A9D667800309B61 /* BranchServerInterface.m in Sources */,
 				7EC1A7B61A9D66A800309B61 /* BranchActivityItemProvider.m in Sources */,
+				466B58041B161E8100A69EDE /* BranchValidateReferralCodeRequest.m in Sources */,
 				7EC1A7B81A9D66B000309B61 /* AppDelegate.m in Sources */,
+				466B580B1B161E8100A69EDE /* BranchInstallRequest.m in Sources */,
 				7EC1A7A41A9D667C00309B61 /* BNCPreferenceHelper.m in Sources */,
+				466B58031B161E8100A69EDE /* BranchGetReferralCodeRequest.m in Sources */,
 				7EC1A7B01A9D669B00309B61 /* BNCServerResponse.m in Sources */,
 				7EC1A7AA1A9D668E00309B61 /* BNCSystemObserver.m in Sources */,
+				466B58021B161E8100A69EDE /* BranchCreditHistoryRequest.m in Sources */,
 				7EC1A7A01A9D667200309B61 /* Branch.m in Sources */,
+				466B58061B161E8100A69EDE /* BranchShortUrlRequest.m in Sources */,
 				7EC1A7B41A9D66A300309B61 /* BNCLinkCache.m in Sources */,
 				7EC1A7B21A9D669F00309B61 /* BNCLinkData.m in Sources */,
 				46FFCF101ACC317200039CE0 /* BNCEncodingUtils.m in Sources */,
