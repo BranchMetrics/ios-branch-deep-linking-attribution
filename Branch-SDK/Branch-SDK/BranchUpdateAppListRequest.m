@@ -9,6 +9,7 @@
 #import "BranchUpdateAppListRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
+#import "BNCEncodingUtils.h"
 
 @interface BranchUpdateAppListRequest ()
 
@@ -42,6 +43,22 @@
     }
     
     [BNCPreferenceHelper setAppListCheckDone];
+}
+
+#pragma mark - NSCoding methods
+
+- (id)initWithCoder:(NSCoder *)decoder {
+    if (self = [super initWithCoder:decoder]) {
+        _appList = [BNCEncodingUtils decodeJsonStringToDictionary:[decoder decodeObjectForKey:@"appList"]];
+    }
+    
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    
+    [coder encodeObject:[BNCEncodingUtils encodeDictionaryToJsonString:self.appList needSource:NO] forKey:@"appList"];
 }
 
 @end

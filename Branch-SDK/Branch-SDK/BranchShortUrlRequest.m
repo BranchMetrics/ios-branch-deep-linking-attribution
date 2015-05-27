@@ -110,4 +110,48 @@
     return longUrl;
 }
 
+#pragma mark - NSCoding methods
+
+- (id)initWithCoder:(NSCoder *)decoder {
+    if (self = [super initWithCoder:decoder]) {
+        _tags = [decoder decodeObjectForKey:@"tags"];
+        _alias = [decoder decodeObjectForKey:@"alias"];
+        _type = [decoder decodeIntegerForKey:@"type"];
+        _matchDuration = [decoder decodeIntegerForKey:@"duration"];
+        _channel = [decoder decodeObjectForKey:@"channel"];
+        _feature = [decoder decodeObjectForKey:@"feature"];
+        _stage = [decoder decodeObjectForKey:@"stage"];
+        _params = [BNCEncodingUtils decodeJsonStringToDictionary:[decoder decodeObjectForKey:@"params"]];
+        
+        // Set up link data
+        self.linkData = [[BNCLinkData alloc] init];
+        [self.linkData setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
+        [self.linkData setObject:[BNCPreferenceHelper getIdentityID] forKey:@"identity_id"];
+        [self.linkData setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
+        [self.linkData setupType:_type];
+        [self.linkData setupTags:_tags];
+        [self.linkData setupChannel:_channel];
+        [self.linkData setupFeature:_feature];
+        [self.linkData setupStage:_stage];
+        [self.linkData setupAlias:_alias];
+        [self.linkData setupMatchDuration:_matchDuration];
+        [self.linkData setupParams:[BNCEncodingUtils encodeDictionaryToJsonString:_params]];
+    }
+    
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    
+    [coder encodeObject:self.tags forKey:@"tags"];
+    [coder encodeObject:self.alias forKey:@"alias"];
+    [coder encodeInteger:self.type forKey:@"type"];
+    [coder encodeInteger:self.matchDuration forKey:@"duration"];
+    [coder encodeObject:self.channel forKey:@"channel"];
+    [coder encodeObject:self.feature forKey:@"feature"];
+    [coder encodeObject:self.stage forKey:@"stage"];
+    [coder encodeObject:[BNCEncodingUtils encodeDictionaryToJsonString:self.params needSource:NO] forKey:@"params"];
+}
+
 @end

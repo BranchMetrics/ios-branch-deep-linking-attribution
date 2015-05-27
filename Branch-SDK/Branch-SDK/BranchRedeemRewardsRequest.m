@@ -11,9 +11,9 @@
 
 @interface BranchRedeemRewardsRequest ()
 
-@property (strong, nonatomic) callbackWithStatus callback;
-@property (strong, nonatomic) NSString *bucket;
 @property (assign, nonatomic) NSInteger amount;
+@property (strong, nonatomic) NSString *bucket;
+@property (strong, nonatomic) callbackWithStatus callback;
 
 @end
 
@@ -53,6 +53,24 @@
     [BNCPreferenceHelper setCreditCount:updatedBalance forBucket:self.bucket];
     
     self.callback(YES, nil);
+}
+
+#pragma mark - NSCoding methods
+
+- (id)initWithCoder:(NSCoder *)decoder {
+    if (self = [super initWithCoder:decoder]) {
+        _amount = [decoder decodeIntegerForKey:@"amount"];
+        _bucket = [decoder decodeObjectForKey:@"bucket"];
+    }
+    
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    
+    [coder encodeInteger:self.amount forKey:@"amount"];
+    [coder encodeObject:self.bucket forKey:@"bucket"];
 }
 
 @end

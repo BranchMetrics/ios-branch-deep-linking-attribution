@@ -79,4 +79,30 @@
     }
 }
 
+#pragma mark - NSCoding methods
+
+- (id)initWithCoder:(NSCoder *)decoder {
+    if (self = [super initWithCoder:decoder]) {
+        _calcType = [decoder decodeIntegerForKey:@"calcType"];
+        _location = [decoder decodeIntegerForKey:@"location"];
+        _amount = [decoder decodeIntegerForKey:@"amount"];
+        _bucket = [decoder decodeObjectForKey:@"bucket"];
+        _prefix = [decoder decodeObjectForKey:@"prefix"];
+        _expiration = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:@"expiration"]];
+    }
+    
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    
+    [coder encodeInteger:self.calcType forKey:@"calcType"];
+    [coder encodeInteger:self.location forKey:@"location"];
+    [coder encodeInteger:self.amount forKey:@"amount"];
+    [coder encodeObject:self.bucket forKey:@"bucket"];
+    [coder encodeObject:self.prefix forKey:@"prefix"];
+    [coder encodeDouble:[self.expiration timeIntervalSince1970] forKey:@"expiration"];
+}
+
 @end
