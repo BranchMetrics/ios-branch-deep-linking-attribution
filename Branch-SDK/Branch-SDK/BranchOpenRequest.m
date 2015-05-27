@@ -63,6 +63,11 @@
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
+    if (error) {
+        self.callback(NO, error);
+        return;
+    }
+
     NSDictionary *data = response.data;
     [BNCPreferenceHelper setDeviceFingerprintID:data[@"device_fingerprint_id"]];
     [BNCPreferenceHelper setUserURL:data[@"link"]];

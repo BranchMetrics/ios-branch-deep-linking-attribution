@@ -48,14 +48,16 @@
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
-    NSDictionary *data = response.data;
-    
-    if ([BNCPreferenceHelper getIsReferrable]) {
-        if (data[@"data"]) {
-            [BNCPreferenceHelper setInstallParams:data[@"data"]];
-        }
-        else {
-            [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
+    if (!error) {
+        NSDictionary *data = response.data;
+        
+        if ([BNCPreferenceHelper getIsReferrable]) {
+            if (data[@"data"]) {
+                [BNCPreferenceHelper setInstallParams:data[@"data"]];
+            }
+            else {
+                [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
+            }
         }
     }
     
