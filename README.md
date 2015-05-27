@@ -29,13 +29,13 @@ Please look up BNCError.h for the list of error code.
 
 1 __What if you go down?! Or there is a poor connection?__
 
-At Branch, we live, breath uptime and performance. Just in case, we've got mechanisms internal to the SDK to deal with network issues. We always call the callbacks with the error parameter describing the issue. If the phone is in airplane mode and the connection is not available, the callbacks are called immediately. If there is a server latency, we timeout after 3 seconds and will retry 4 more times with a 3 second pause in between each. These timeouts are adjustable on the singleton instance by calling setNetworkTimeout (s), setRetryCount and setRetryInterval (s).
+At Branch, we live and breathe uptime and performance. Just in case, we've got mechanisms internal to the SDK to deal with network issues. We always call the callbacks with the error parameter describing the issue. If the phone is in airplane mode and the connection is not available, the callbacks are called immediately. If there is a server latency, we timeout after 3 seconds and will retry 4 more times with a 3 second pause in between each. These timeouts are adjustable on the singleton instance by calling setNetworkTimeout (s), setRetryCount and setRetryInterval (s).
 
 2 __How can I debug/test the SDK__
 
 Just call setDebug after you get a reference to the Branch singleton. We'll log all requests. Even more importantly, we won't reference the hardware ID of the phone so you can register installs after just uninstalling/reinstalling the app.
 
-**make sure to remove this line before releasing**
+_Make sure to remove `setDebug` before releasing._
 
 3 __Why do I not see any installs when I reinstall?__
 
@@ -43,7 +43,7 @@ We do a lot of smart things to give you an accurate read on the number of instal
 
 4 __Facebook deep links seem to not work?__
 
-Branch uses the Facebook App Links protocol to pass the deep links through to your app from Facebook. Funny enough, if you also have a Facebook app configured in the developer portal and you choose 'Deep link from feed', Facebook ignores it's own protocol. Make sure to *uncheck* this option in your Facebook app.
+Branch uses the Facebook App Links protocol to pass the deep links through to your app from Facebook. Funny enough, if you also have a Facebook app configured in the developer portal and you choose 'Deep link from feed', Facebook ignores its own protocol. Make sure to *uncheck* this option in your Facebook app.
 
 ## Installation
 
