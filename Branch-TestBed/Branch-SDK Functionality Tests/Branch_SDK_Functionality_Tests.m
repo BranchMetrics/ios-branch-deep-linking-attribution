@@ -64,9 +64,11 @@ NSInteger const  TEST_CREDITS = 30;
     id openOrInstallInvocation = ^(NSInvocation *invocation) {
         openOrInstallCallback(openInstallResponse, nil);
     };
-    
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+
+    id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
+        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+    }];
+    [[[serverInterfaceMock expect] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
 
     // Fake branch key
     id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
@@ -111,7 +113,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback setIdentityCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         setIdentityCallback(setIdentityResponse, nil);
-    }] identifyUser:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"profile"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         setIdentityCallback = callback;
         return YES;
     }]];
@@ -152,18 +154,18 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback fbCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         fbCallback(fbLinkResponse, nil);
-    }] createCustomUrl:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"url"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         fbCallback = callback;
         return YES;
     }]];
     
-    [[serverInterfaceMock reject] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
-        return [request.postData[@"channel"] isEqualToString:@"facebook"];
-    }] key:[OCMArg any]];
+    [[serverInterfaceMock reject] postRequest:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+        return [params[@"channel"] isEqualToString:@"facebook"];
+    }] url:[BNCPreferenceHelper getAPIURL:@"url"] key:[OCMArg any] log:YES];
     
-    [[[serverInterfaceMock expect] andReturn:twLinkResponse] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
-        return [request.postData[@"channel"] isEqualToString:@"twitter"];
-    }] key:[OCMArg any]];
+    [[[serverInterfaceMock expect] andReturn:twLinkResponse] postRequest:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+        return [params[@"channel"] isEqualToString:@"twitter"];
+    }] url:[BNCPreferenceHelper getAPIURL:@"url"] key:[OCMArg any] log:YES];
     
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
     
@@ -210,18 +212,18 @@ NSInteger const  TEST_CREDITS = 30;
         twLinkResponse.data = @{ @"url": @"https://bnc.lt/l/-03N4BGtJj" };
         
         // FB should only be called once
-        [[[serverInterfaceMock expect] andReturn:fbLinkResponse] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
-            return [request.postData[@"channel"] isEqualToString:@"facebook"];
-        }] key:[OCMArg any]];
+        [[[serverInterfaceMock expect] andReturn:fbLinkResponse] postRequest:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+            return [params[@"channel"] isEqualToString:@"facebook"];
+        }] url:[BNCPreferenceHelper getAPIURL:@"url"] key:[OCMArg any] log:YES];
         
-        [[serverInterfaceMock reject] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
-            return [request.postData[@"channel"] isEqualToString:@"facebook"];
-        }] key:[OCMArg any]];
+        [[serverInterfaceMock reject] postRequest:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+            return [params[@"channel"] isEqualToString:@"facebook"];
+        }] url:[BNCPreferenceHelper getAPIURL:@"url"] key:[OCMArg any] log:YES];
         
         // TW should be allowed still
-        [[[serverInterfaceMock expect] andReturn:twLinkResponse] createCustomUrl:[OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
-            return [request.postData[@"channel"] isEqualToString:@"twitter"];
-        }] key:[OCMArg any]];
+        [[[serverInterfaceMock expect] andReturn:twLinkResponse] postRequest:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+            return [params[@"channel"] isEqualToString:@"twitter"];
+        }] url:[BNCPreferenceHelper getAPIURL:@"url"] key:[OCMArg any] log:YES];
         
         NSString *url1 = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
         XCTAssertNotNil(url1);
@@ -256,7 +258,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback loadCreditsCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         loadCreditsCallback(loadCreditsResponse, nil);
-    }] getRewardsWithKey:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] getRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", [BNCPreferenceHelper getIdentityID]]] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         loadCreditsCallback = callback;
         return YES;
     }]];
@@ -288,7 +290,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback loadRewardsCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         loadRewardsCallback(loadRewardsResponse, nil);
-    }] getRewardsWithKey:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] getRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", [BNCPreferenceHelper getIdentityID]]] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         loadRewardsCallback = callback;
         return YES;
     }]];
@@ -338,7 +340,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback referralCodeCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         referralCodeCallback(referralCodeResponse, nil);
-    }] getReferralCode:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"referralcode"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         referralCodeCallback = callback;
         return YES;
     }]];
@@ -383,11 +385,11 @@ NSInteger const  TEST_CREDITS = 30;
         @"date": @"2015-01-19T18:00:50.242Z",
         @"referral_code": TEST_REFERRAL_CODE
     };
-    
+
     __block BNCServerCallback validateCodeCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         validateCodeCallback(validateCodeResponse, nil);
-    }] validateReferralCode:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"referralcode/LMDLDV"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         validateCodeCallback = callback;
         return YES;
     }]];
@@ -438,11 +440,11 @@ NSInteger const  TEST_CREDITS = 30;
         @"date": @"2015-01-19T18:00:50.242Z",
         @"referral_code": TEST_REFERRAL_CODE
     };
-    
+
     __block BNCServerCallback applyCodeCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         applyCodeCallback(applyCodeResponse, nil);
-    }] applyReferralCode:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"applycode/LMDLDV"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         applyCodeCallback = callback;
         return YES;
     }]];
@@ -491,7 +493,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback creditHistoryCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         creditHistoryCallback(creditHistoryResponse, nil);
-    }] getCreditHistory:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"credithistory"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         creditHistoryCallback = callback;
         return YES;
     }]];
@@ -544,8 +546,10 @@ NSInteger const  TEST_CREDITS = 30;
         openOrInstallCallback(openInstallResponse, nil);
     };
     
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
+        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+    }];
+    [[[serverInterfaceMock expect] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
     
     // Fake branch key
     id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
