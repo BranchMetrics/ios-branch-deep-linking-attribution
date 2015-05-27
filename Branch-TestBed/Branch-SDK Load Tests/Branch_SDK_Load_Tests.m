@@ -45,18 +45,26 @@
     __block BNCServerCallback urlCallback;
     [[[serverInterfaceMock stub] andDo:^(NSInvocation *invocation) {
         urlCallback(linkResponse, nil);
-    }] createCustomUrl:[OCMArg any] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"url"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         urlCallback = callback;
         return YES;
     }]];
     
+    
+    __block BNCServerCallback openOrInstallCallback;
     id openOrInstallCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-        callback(openInstallResponse, nil);
+        openOrInstallCallback = callback;
         return YES;
     }];
     
-    [[serverInterfaceMock stub] registerInstall:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
-    [[serverInterfaceMock stub] registerOpen:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    id openOrInstallInvocation = ^(NSInvocation *invocation) {
+        openOrInstallCallback(openInstallResponse, nil);
+    };
+    
+    id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
+        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+    }];
+    [[[serverInterfaceMock expect] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
     
     // Fake branch key
     [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey];
