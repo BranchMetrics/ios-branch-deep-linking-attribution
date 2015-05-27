@@ -29,6 +29,7 @@
 #import "BranchValidateReferralCodeRequest.h"
 #import "BranchApplyReferralCodeRequest.h"
 #import "BranchShortUrlRequest.h"
+#import "BranchShortUrlSyncRequest.h"
 #import "BranchCloseRequest.h"
 #import "BranchGetAppListRequest.h"
 #import "BranchUpdateAppListRequest.h"
@@ -765,12 +766,12 @@ static int BNCDebugTriggerFingersSimulator = 2;
     }
     else {
         // TODO still need to figure out sync here
-        BranchShortUrlRequest *req = [[BranchShortUrlRequest alloc] initWithTags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params linkData:linkData linkCache:self.linkCache callback:nil];
+        BranchShortUrlSyncRequest *req = [[BranchShortUrlSyncRequest alloc] initWithTags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params linkData:linkData linkCache:self.linkCache];
         
         if (self.isInitialized) {
             [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Created custom url synchronously"];
-            BNCServerResponse *serverResponse = [self.bServerInterface createCustomUrl:req key:self.branchKey];
-            shortURL = serverResponse.data[@"url"];
+            BNCServerResponse *serverResponse = [req makeRequest:self.bServerInterface key:self.branchKey];
+            shortURL = [req processResponse:serverResponse];
             
             // cache the link
             if (shortURL) {
