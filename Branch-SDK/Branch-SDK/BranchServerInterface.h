@@ -33,6 +33,4 @@ static NSString *REQ_TAG_GET_LIST_OF_APPS = @"t_get_list_of_apps";
 - (void)sendScreenshot:(NSData *)data key:(NSString *)key callback:(BNCServerCallback)callback;
 - (void)disconnectFromDebugWithKey:(NSString *)key callback:(BNCServerCallback)callback;
 
-- (BNCServerResponse *)createCustomUrl:(id)req key:(NSString *)key;
-
 @end
