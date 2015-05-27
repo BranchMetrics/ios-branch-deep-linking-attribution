@@ -22,6 +22,7 @@
 
 - (id)initWithUserId:(NSString *)userId callback:(callbackWithParams)callback {
     if (self = [super init]) {
+        _userId = userId;
         _callback = callback;
         _shouldCallCallback = YES;
     }
