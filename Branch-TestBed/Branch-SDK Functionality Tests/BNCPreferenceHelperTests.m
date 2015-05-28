@@ -22,6 +22,7 @@
 
     [[LSNocilla sharedInstance] start];
     [BNCPreferenceHelper setBranchKey:@"foo"];
+    [BNCPreferenceHelper setDeviceFingerprintID:@"foo"];
 }
 
 + (void)tearDown {
