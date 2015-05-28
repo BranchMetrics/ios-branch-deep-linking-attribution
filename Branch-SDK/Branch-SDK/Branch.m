@@ -100,10 +100,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
     // If no Branch Key
     NSString *branchKey = [BNCPreferenceHelper getBranchKey:YES];
     NSString *keyToUse = branchKey;
-    if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
+    if (!branchKey) {
         // If no app key
         NSString *appKey = [BNCPreferenceHelper getAppKey];
-        if (!appKey || [appKey isEqualToString:NO_STRING_VALUE]) {
+        if (!appKey) {
             NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
             return nil;
         }
@@ -120,10 +120,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
     // If no Branch Key
     NSString *branchKey = [BNCPreferenceHelper getBranchKey:NO];
     NSString *keyToUse = branchKey;
-    if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
+    if (!branchKey) {
         // If no app key
         NSString *appKey = [BNCPreferenceHelper getAppKey];
-        if (!appKey || [appKey isEqualToString:NO_STRING_VALUE]) {
+        if (!appKey) {
             NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
             return nil;
         }
@@ -419,9 +419,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
         [BNCPreferenceHelper setIdentityID:[response.data objectForKey:BRANCH_DATA_KEY_IDENTITY_ID]];
         [BNCPreferenceHelper setUserURL:[response.data objectForKey:BRANCH_DATA_KEY_LINK]];
         
-        [BNCPreferenceHelper setUserIdentity:NO_STRING_VALUE];
-        [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
-        [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
+        [BNCPreferenceHelper setUserIdentity:nil];
+        [BNCPreferenceHelper setInstallParams:nil];
+        [BNCPreferenceHelper setSessionParams:nil];
         [BNCPreferenceHelper clearUserCreditsAndCounts];
     };
 
@@ -1079,7 +1079,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
             if (callback) {
                 NSString *failedUrl = nil;
                 NSString *userUrl = [BNCPreferenceHelper getUserURL];
-                if (![userUrl isEqualToString:NO_STRING_VALUE]) {
+                if (userUrl) {
                     failedUrl = [self longUrlWithBaseUrl:userUrl params:params tags:tags feature:feature channel:channel stage:stage alias:alias duration:duration type:type];
                 }
 
@@ -1139,11 +1139,11 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 - (NSString *)generateLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
     NSString *appIdentifier = [BNCPreferenceHelper getBranchKey];
-    if ([appIdentifier isEqualToString:NO_STRING_VALUE]) {
+    if (!appIdentifier) {
         appIdentifier = [BNCPreferenceHelper getAppKey];
     }
     
-    if ([appIdentifier isEqualToString:NO_STRING_VALUE]) {
+    if (!appIdentifier) {
         NSLog(@"No Branch Key specified, cannot create a long url");
         return nil;
     }
@@ -1454,23 +1454,23 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - Branch State checks
 
 - (BOOL)hasIdentity {
-    return ![[BNCPreferenceHelper getUserIdentity] isEqualToString:NO_STRING_VALUE];
+    return [BNCPreferenceHelper getUserIdentity] != nil;
 }
 
 - (BOOL)hasUser {
-    return ![[BNCPreferenceHelper getIdentityID] isEqualToString:NO_STRING_VALUE];
+    return [BNCPreferenceHelper getIdentityID] != nil;
 }
 
 - (BOOL)hasSession {
-    return ![[BNCPreferenceHelper getSessionID] isEqualToString:NO_STRING_VALUE];
+    return [BNCPreferenceHelper getSessionID] != nil;
 }
 
 - (BOOL)hasBranchKey {
-    return ![[BNCPreferenceHelper getBranchKey] isEqualToString:NO_STRING_VALUE];
+    return [BNCPreferenceHelper getBranchKey] != nil;
 }
 
 - (BOOL)hasAppKey {
-    return ![[BNCPreferenceHelper getAppKey] isEqualToString:NO_STRING_VALUE];
+    return [BNCPreferenceHelper getAppKey] != nil;
 }
 
 #pragma mark - Session Initialization
@@ -1563,24 +1563,24 @@ static int BNCDebugTriggerFingersSimulator = 2;
             [BNCPreferenceHelper setInstallParams:[data objectForKey:BRANCH_DATA_KEY_DATA]];
         }
         else if (allowNoStringInstallParams) {
-            [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
+            [BNCPreferenceHelper setInstallParams:nil];
         }
     }
     
-    [BNCPreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
+    [BNCPreferenceHelper setLinkClickIdentifier:nil];
     
     if ([data objectForKey:BRANCH_DATA_KEY_LINK_CLICK_ID]) {
         [BNCPreferenceHelper setLinkClickID:[data objectForKey:BRANCH_DATA_KEY_LINK_CLICK_ID]];
     }
     else {
-        [BNCPreferenceHelper setLinkClickID:NO_STRING_VALUE];
+        [BNCPreferenceHelper setLinkClickID:nil];
     }
     
     if ([data objectForKey:BRANCH_DATA_KEY_DATA]) {
         [BNCPreferenceHelper setSessionParams:[data objectForKey:BRANCH_DATA_KEY_DATA]];
     }
     else {
-        [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
+        [BNCPreferenceHelper setSessionParams:nil];
     }
     
     if (self.appListCheckEnabled && [BNCPreferenceHelper getNeedAppListCheck]) {
