@@ -29,7 +29,7 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
-    if ([[BNCPreferenceHelper getDeviceFingerprintID] isEqualToString:NO_STRING_VALUE]) {
+    if (![BNCPreferenceHelper getDeviceFingerprintID]) {
         BOOL isRealHardwareId;
         NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper isDebug]];
         if (hardwareId) {
@@ -71,6 +71,7 @@
     NSDictionary *data = response.data;
     [BNCPreferenceHelper setDeviceFingerprintID:data[@"device_fingerprint_id"]];
     [BNCPreferenceHelper setUserURL:data[@"link"]];
+    [BNCPreferenceHelper setUserIdentity:data[@"identity"]];
     [BNCPreferenceHelper setSessionID:data[@"session_id"]];
     [BNCSystemObserver setUpdateState];
     
@@ -79,17 +80,17 @@
             [BNCPreferenceHelper setSessionParams:data[@"data"]];
         }
         else {
-            [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
+            [BNCPreferenceHelper setSessionParams:nil];
         }
     }
     
-    [BNCPreferenceHelper setLinkClickIdentifier:NO_STRING_VALUE];
+    [BNCPreferenceHelper setLinkClickIdentifier:nil];
     
     if (data[@"link_click_id"]) {
         [BNCPreferenceHelper setLinkClickID:data[@"link_click_id"]];
     }
     else {
-        [BNCPreferenceHelper setLinkClickID:NO_STRING_VALUE];
+        [BNCPreferenceHelper setLinkClickID:nil];
     }
     
     if (data[@"identity_id"]) {

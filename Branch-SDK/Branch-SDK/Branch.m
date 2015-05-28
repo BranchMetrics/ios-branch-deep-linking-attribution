@@ -76,10 +76,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
     // If no Branch Key
     NSString *branchKey = [BNCPreferenceHelper getBranchKey:YES];
     NSString *keyToUse = branchKey;
-    if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
+    if (!branchKey) {
         // If no app key
         NSString *appKey = [BNCPreferenceHelper getAppKey];
-        if (!appKey || [appKey isEqualToString:NO_STRING_VALUE]) {
+        if (!appKey) {
             NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
             return nil;
         }
@@ -96,10 +96,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
     // If no Branch Key
     NSString *branchKey = [BNCPreferenceHelper getBranchKey:NO];
     NSString *keyToUse = branchKey;
-    if (!branchKey || [branchKey isEqualToString:NO_STRING_VALUE]) {
+    if (!branchKey) {
         // If no app key
         NSString *appKey = [BNCPreferenceHelper getAppKey];
-        if (!appKey || [appKey isEqualToString:NO_STRING_VALUE]) {
+        if (!appKey) {
             NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
             return nil;
         }
@@ -203,6 +203,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 - (void)resetUserSession {
     self.isInitialized = NO;
+}
+
+- (BOOL)isUserIdentified {
+    return [BNCPreferenceHelper getUserIdentity] != nil;
 }
 
 - (void)setNetworkTimeout:(NSInteger)timeout {
@@ -788,11 +792,11 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 - (NSString *)generateLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
     NSString *appIdentifier = [BNCPreferenceHelper getBranchKey];
-    if ([appIdentifier isEqualToString:NO_STRING_VALUE]) {
+    if (!appIdentifier) {
         appIdentifier = [BNCPreferenceHelper getAppKey];
     }
     
-    if ([appIdentifier isEqualToString:NO_STRING_VALUE]) {
+    if (!appIdentifier) {
         NSLog(@"No Branch Key specified, cannot create a long url");
         return nil;
     }
@@ -935,8 +939,8 @@ static int BNCDebugTriggerFingersSimulator = 2;
         
         if (req) {
             BNCServerCallback callback = ^(BNCServerResponse *response, NSError *error) {
-                // If the request was successful, or was a 400 (bad user request), continue processing.
-                if (!error || (error.code >= 400 && error.code < 500)) {
+                // If the request was successful, or was a bad user request, continue processing.
+                if (!error || error.code == BNCBadRequestError || error.code == BNCDuplicateResourceError) {
                     [req processResponse:response error:error];
 
                     [self.requestQueue dequeue];
@@ -991,23 +995,23 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - Branch State checks
 
 - (BOOL)hasIdentity {
-    return ![[BNCPreferenceHelper getUserIdentity] isEqualToString:NO_STRING_VALUE];
+    return [BNCPreferenceHelper getUserIdentity] != nil;
 }
 
 - (BOOL)hasUser {
-    return ![[BNCPreferenceHelper getIdentityID] isEqualToString:NO_STRING_VALUE];
+    return [BNCPreferenceHelper getIdentityID] != nil;
 }
 
 - (BOOL)hasSession {
-    return ![[BNCPreferenceHelper getSessionID] isEqualToString:NO_STRING_VALUE];
+    return [BNCPreferenceHelper getSessionID] != nil;
 }
 
 - (BOOL)hasBranchKey {
-    return ![[BNCPreferenceHelper getBranchKey] isEqualToString:NO_STRING_VALUE];
+    return [BNCPreferenceHelper getBranchKey] != nil;
 }
 
 - (BOOL)hasAppKey {
-    return ![[BNCPreferenceHelper getAppKey] isEqualToString:NO_STRING_VALUE];
+    return [BNCPreferenceHelper getAppKey] != nil;
 }
 
 #pragma mark - Session Initialization

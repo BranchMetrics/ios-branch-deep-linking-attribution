@@ -29,10 +29,9 @@
     [BNCPreferenceHelper setSessionID:response.data[@"session_id"]];
     [BNCPreferenceHelper setIdentityID:response.data[@"identity_id"]];
     [BNCPreferenceHelper setUserURL:response.data[@"link"]];
-    
-    [BNCPreferenceHelper setUserIdentity:NO_STRING_VALUE];
-    [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
-    [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
+    [BNCPreferenceHelper setUserIdentity:nil];
+    [BNCPreferenceHelper setInstallParams:nil];
+    [BNCPreferenceHelper setSessionParams:nil];
     [BNCPreferenceHelper clearUserCreditsAndCounts];
 }
 

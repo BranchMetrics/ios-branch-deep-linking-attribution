@@ -56,7 +56,7 @@
                 [BNCPreferenceHelper setInstallParams:data[@"data"]];
             }
             else {
-                [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
+                [BNCPreferenceHelper setInstallParams:nil];
             }
         }
     }
