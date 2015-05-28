@@ -146,9 +146,11 @@ NSInteger const  TEST_CREDITS = 30;
     [branch setAppListCheckEnabled:NO];
 
     BNCServerResponse *fbLinkResponse = [[BNCServerResponse alloc] init];
+    fbLinkResponse.statusCode = @200;
     fbLinkResponse.data = @{ @"url": @"https://bnc.lt/l/4BGtJj-03N" };
     
     BNCServerResponse *twLinkResponse = [[BNCServerResponse alloc] init];
+    twLinkResponse.statusCode = @200;
     twLinkResponse.data = @{ @"url": @"https://bnc.lt/l/-03N4BGtJj" };
     
     __block BNCServerCallback fbCallback;
@@ -192,7 +194,6 @@ NSInteger const  TEST_CREDITS = 30;
     }];
     
     [self awaitExpectations];
-    
     [serverInterfaceMock verify];
 }
 
@@ -206,9 +207,11 @@ NSInteger const  TEST_CREDITS = 30;
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL Sync"];
     [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         BNCServerResponse *fbLinkResponse = [[BNCServerResponse alloc] init];
+        fbLinkResponse.statusCode = @200;
         fbLinkResponse.data = @{ @"url": @"https://bnc.lt/l/4BGtJj-03N" };
         
         BNCServerResponse *twLinkResponse = [[BNCServerResponse alloc] init];
+        twLinkResponse.statusCode = @200;
         twLinkResponse.data = @{ @"url": @"https://bnc.lt/l/-03N4BGtJj" };
         
         // FB should only be called once

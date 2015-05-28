@@ -190,32 +190,6 @@
     [self awaitExpectations];
     [self resetExpectations];
     
-<<<<<<< HEAD
-//    XCTestExpectation *scenario4Expectation2 = [self expectationWithDescription:@"Scenario4 Expectation2"];
-//
-//    // Request should fail
-//    [self makeFailingNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
-//        [self safelyFulfillExpectation:scenario4Expectation2];
-//    }];
-//    
-//    [self awaitExpectations];
-//    [self resetExpectations];
-//    
-//    XCTestExpectation *scenario4Expectation3 = [self expectationWithDescription:@"Scenario4 Expectation3"];
-//
-//    // Simulate network return, shouldn't call init!
-//    [serverInterfaceMock stopMocking];
-//    
-//    // However, making another request when not initialized should make an init
-//    [self mockSuccesfulInit:serverInterfaceMock];
-//    [self overrideBranch:branch initHandler:[self callbackExpectingSuccess:NULL]];
-//    
-//    [self makeSuccessfulNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
-//        [self safelyFulfillExpectation:scenario4Expectation3];
-//    }];
-//    
-//    [self awaitExpectations];
-=======
     XCTestExpectation *scenario4Expectation2 = [self expectationWithDescription:@"Scenario4 Expectation2"];
     
     // Request should fail
@@ -240,7 +214,6 @@
     }];
     
     [self awaitExpectations];
->>>>>>> d3366c9c7b7d7991c090d2bd064835c4237fbe38
     [serverInterfaceMock verify];
 }
 
@@ -365,8 +338,9 @@
     }];
     
     // Only one request should make it to the server
-    [[serverInterfaceMock expect] getReferralCountsWithKey:[OCMArg any] callback:badRequestCheckBlock];
-    [[serverInterfaceMock reject] getReferralCountsWithKey:[OCMArg any] callback:[OCMArg any]];
+    NSString *url = [[BNCPreferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]];
+    [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
+    [[serverInterfaceMock reject] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:[OCMArg any]];
     
     // Throw two requests in the queue, but the first failing w/ a 500 should trigger both to fail
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
@@ -396,8 +370,9 @@
     }];
     
     // Only one request should make it to the server
-    [[serverInterfaceMock expect] getReferralCountsWithKey:[OCMArg any] callback:badRequestCheckBlock];
-    [[serverInterfaceMock expect] getReferralCountsWithKey:[OCMArg any] callback:goodRequestCheckBlock];
+    NSString *url = [[BNCPreferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]];
+    [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
+    [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:goodRequestCheckBlock];
     
     // Throw two requests in the queue, but the first failing w/ a 500 should trigger both to fail
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
