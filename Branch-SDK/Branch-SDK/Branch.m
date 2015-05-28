@@ -229,6 +229,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
     self.isInitialized = NO;
 }
 
+- (BOOL)isUserIdentified {
+    return [BNCPreferenceHelper getUserIdentity] != nil;
+}
+
 - (void)setNetworkTimeout:(NSInteger)timeout {
     [BNCPreferenceHelper setTimeout:timeout];
 }
@@ -1589,6 +1593,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
     
     if ([data objectForKey:BRANCH_DATA_KEY_IDENTITY_ID]) {
         [BNCPreferenceHelper setIdentityID:[data objectForKey:BRANCH_DATA_KEY_IDENTITY_ID]];
+    }
+    
+    if ([data objectForKey:BRANCH_DATA_KEY_IDENTITY]) {
+        [BNCPreferenceHelper setUserIdentity:[data objectForKey:BRANCH_DATA_KEY_IDENTITY]];
     }
     
     [self updateAllRequestsInQueue];
