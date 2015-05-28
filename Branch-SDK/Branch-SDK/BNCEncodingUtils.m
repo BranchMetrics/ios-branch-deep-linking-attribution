@@ -403,16 +403,12 @@ static const short _base64DecodingTable[256] = {
 }
 
 + (NSDictionary *)decodeJsonStringToDictionary:(NSString *)jsonString {
-    // Nothing to do with this guy, just return an empty dictionary
-    if ([jsonString isEqualToString:NO_STRING_VALUE]) {
-        return @{};
-    }
-    
     // Just a basic decode, easy enough
     NSData *tempData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
     if (!tempData) {
         return @{};
     }
+
     NSDictionary *plainDecodedDictionary = [NSJSONSerialization JSONObjectWithData:tempData options:NSJSONReadingMutableContainers error:nil];
     if (plainDecodedDictionary) {
         return plainDecodedDictionary;
@@ -424,6 +420,7 @@ static const short _base64DecodingTable[256] = {
     if (!tempData) {
         return @{};
     }
+
     NSDictionary *base64DecodedDictionary = [NSJSONSerialization JSONObjectWithData:tempData options:NSJSONReadingMutableContainers error:nil];
     if (base64DecodedDictionary) {
         return base64DecodedDictionary;

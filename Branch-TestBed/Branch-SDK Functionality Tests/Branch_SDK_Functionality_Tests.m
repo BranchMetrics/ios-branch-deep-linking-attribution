@@ -94,9 +94,9 @@ NSInteger const  TEST_CREDITS = 30;
     // mock logout synchronously
     [BNCPreferenceHelper setIdentityID:@"98274447349252681"];
     [BNCPreferenceHelper setUserURL:@"https://bnc.lt/i/3R7_PIk-77"];
-    [BNCPreferenceHelper setUserIdentity:NO_STRING_VALUE];
-    [BNCPreferenceHelper setInstallParams:NO_STRING_VALUE];
-    [BNCPreferenceHelper setSessionParams:NO_STRING_VALUE];
+    [BNCPreferenceHelper setUserIdentity:nil];
+    [BNCPreferenceHelper setInstallParams:nil];
+    [BNCPreferenceHelper setSessionParams:nil];
     [BNCPreferenceHelper clearUserCreditsAndCounts];
     
     BNCServerResponse *setIdentityResponse = [[BNCServerResponse alloc] init];
