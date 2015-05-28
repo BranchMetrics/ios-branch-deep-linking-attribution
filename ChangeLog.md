@@ -1,5 +1,11 @@
 Branch iOS SDK change log
 
+- v0.7.6
+  * Exposing `isUserIdentified` to allow devs to understand if Branch has a User Identity set.
+  * Removing all instances of `bnc_no_value` from the SDK.
+  * Creating a separate error code for Branch being down vs a request failing
+  * Fixing a bug where and error would cause queue processing to stop, and pending request to be failed.
+
 - v0.7.5 Prefixing constants to avoid collisions with other frameworks.
 
 - v0.7.4
