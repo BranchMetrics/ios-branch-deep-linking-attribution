@@ -299,6 +299,12 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 - (void)resetUserSession;
 
 /**
+ Indicates whether or not this user has a custom identity specified for them. Note that this is *independent of installs*. If you call setIdentity, this device
+ will have that identity associated with this user until `logout` is called. This includes persisting through uninstalls, as we track device id.
+ */
+- (BOOL)isUserIdentified;
+
+/**
  Set the user's identity to an ID used by your system, so that it is identifiable by you elsewhere.
  
  @param userId The ID Branch should use to identify this user.

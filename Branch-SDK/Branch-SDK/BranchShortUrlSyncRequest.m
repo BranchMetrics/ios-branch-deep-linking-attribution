@@ -52,7 +52,7 @@
     if (![response.statusCode isEqualToNumber:@200]) {
         NSString *failedUrl = nil;
         NSString *userUrl = [BNCPreferenceHelper getUserURL];
-        if (![userUrl isEqualToString:NO_STRING_VALUE]) {
+        if (!userUrl) {
             failedUrl = [self createLongUrlForUserUrl:userUrl];
         }
         

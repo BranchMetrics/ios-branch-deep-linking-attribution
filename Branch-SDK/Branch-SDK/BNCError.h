@@ -15,7 +15,8 @@ enum {
     BNCDuplicateResourceError,
     BNCInvalidReferralCodeError,
     BNCRedeemCreditsError,
-    BNCRequestError
+    BNCBadRequestError,
+    BNCServerProblemError
 };
 
 @interface BNCError : NSObject
