@@ -141,10 +141,10 @@
     
     // No stored version
     if (!storedAppVersion) {
-        // Modification and Creation date are more than 60 seconds different indicates an update
-        // This would be the case that they were installing a new version of the app that was
+        // Modification and Creation date are more than one day's worth of seconds different indicates
+        // an update. This would be the case that they were installing a new version of the app that was
         // adding Branch for the first time, where we don't already have an NSUserDefaults value.
-        if (ABS([modificationDate timeIntervalSinceDate:creationDate]) > 60) {
+        if (ABS([modificationDate timeIntervalSinceDate:creationDate]) > 86400) {
             return @2;
         }
         
