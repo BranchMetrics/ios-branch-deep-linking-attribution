@@ -1,5 +1,7 @@
 Branch iOS SDK change log
 
+- v0.7.7 Changing the time for update state checks to give better install attribution.
+
 - v0.7.6
   * Exposing `isUserIdentified` to allow devs to understand if Branch has a User Identity set.
   * Removing all instances of `bnc_no_value` from the SDK.
