@@ -1185,7 +1185,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     
     NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:params];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
-    [longUrl appendFormat:@"data=%@", base64EncodedParams];
+    [longUrl appendFormat:@"source=ios&data=%@", base64EncodedParams];
     
     return longUrl;
 }
@@ -1204,13 +1204,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [post setupAlias:alias];
     [post setupMatchDuration:duration];
     [post setupIgnoreUAString:ignoreUAString];
-    
-    NSString *args = @"{\"source\":\"ios\"}";
-    if (params) {
-        args = [BNCEncodingUtils encodeDictionaryToJsonString:params];
-    }
-    
-    [post setupParams:args];
+    [post setupParams:[BNCEncodingUtils encodeDictionaryToJsonString:params]];
     return post;
 }
 
