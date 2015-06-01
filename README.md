@@ -7,6 +7,9 @@ This is the repository of our open source iOS SDK. There's a full demo app embed
 
 Check it out!
 
+## Important migration to v0.7.8
+The `source:iOS` attribute has been removed from the params dictionary for links.
+
 ## Important migration to v0.6.0
 
 We have deprecated the bnc_app_key and replaced that with the new branch_key. Please see [add branch key](#add-your-branch-key-to-your-project) for details.
