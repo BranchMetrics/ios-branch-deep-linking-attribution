@@ -28,7 +28,7 @@
     NSDictionary *dataDict = @{ @"foo": @"bar", @"num": @1, @"array": @[ @"array", @"items" ], @"dict": @{ @"sub": @1 }, @"url": someUrl, @"date": date };
     NSString *expectedEncodedString = [NSString stringWithFormat:@"{\"foo\":\"bar\",\"num\":1,\"array\":[\"array\",\"items\"],\"dict\":{\"sub\":1},\"url\":\"https://branch.io\",\"date\":\"%@\"}", formattedDateString];
     
-    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:dataDict needSource:NO];
+    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:dataDict];
     
     XCTAssertEqualObjects(expectedEncodedString, encodedValue);
 }
@@ -38,7 +38,7 @@
     NSDictionary *dataDict = @{ @"foo": @"bar", @"random": arbitraryObj };
     NSString *expectedEncodedString = @"{\"foo\":\"bar\"}";
     
-    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:dataDict needSource:NO];
+    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:dataDict];
     
     XCTAssertEqualObjects(expectedEncodedString, encodedValue);
 }
@@ -47,7 +47,7 @@
     NSDictionary *dataDict = @{ @"foo": [NSNull null] };
     NSString *expectedEncodedString = @"{\"foo\":null}";
     
-    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:dataDict needSource:NO];
+    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:dataDict];
     
     XCTAssertEqualObjects(expectedEncodedString, encodedValue);
 }
@@ -56,32 +56,14 @@
     NSDictionary *emptyDict = @{ };
     NSString *expectedEncodedString = @"{}";
     
-    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:emptyDict needSource:NO];
-    
-    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
-}
-
-- (void)testEncodeDictionaryToJsonStringWithNoKeysAndSource {
-    NSDictionary *emptyDict = @{ };
-    NSString *expectedEncodedString = @"{\"source\":\"ios\"}";
-    
-    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:emptyDict needSource:YES];
-    
-    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
-}
-
-- (void)testEncodeDictionaryToJsonStringWithSubDictWithNeedSource {
-    NSDictionary *dataDict = @{ @"root": @{ @"sub": @1 } };
-    NSString *expectedEncodedString = @"{\"root\":{\"sub\":1},\"source\":\"ios\"}";
-    
-    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:dataDict needSource:YES];
+    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:emptyDict];
     
     XCTAssertEqualObjects(expectedEncodedString, encodedValue);
 }
 
 - (void)testSimpleEncodeDictionaryToJsonData {
     NSDictionary *dataDict = @{ @"foo": @"bar" };
-    NSData *expectedEncodedData = [@"{\"foo\":\"bar\",\"source\":\"ios\"}" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *expectedEncodedData = [@"{\"foo\":\"bar\"}" dataUsingEncoding:NSUTF8StringEncoding];
     
     NSData *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonData:dataDict];
     
