@@ -25,8 +25,8 @@ cd $PROJECT_DIR
 
 rm -rf $BUILD_DIR
 
-xcode_build_target "iphoneos" $BUILDCONFIGURATION
-xcode_build_target "iphonesimulator" $BUILDCONFIGURATION
+xcode_build_target "iphoneos" $CONFIGURATION
+xcode_build_target "iphonesimulator" $CONFIGURATION
 
 cd ..
 
