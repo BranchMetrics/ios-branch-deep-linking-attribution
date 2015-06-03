@@ -7,6 +7,9 @@ This is the repository of our open source iOS SDK. There's a full demo app embed
 
 Check it out!
 
+## Important migration to v0.7.8
+The `source:iOS` attribute has been removed from the params dictionary for links. However, a bunch of constants have been added that are added by the Branch backend to link clicks and opens. If you were relying on the source attribute in the past, you can now find that via the `BRANCH_INIT_KEY_CREATION_SOURCE`.
+
 ## Important migration to v0.6.0
 
 We have deprecated the bnc_app_key and replaced that with the new branch_key. Please see [add branch key](#add-your-branch-key-to-your-project) for details.
@@ -29,7 +32,7 @@ Please look up BNCError.h for the list of error code.
 
 1 __What if you go down?! Or there is a poor connection?__
 
-At Branch, we live and breathe uptime and performance. Just in case, we've got mechanisms internal to the SDK to deal with network issues. We always call the callbacks with the error parameter describing the issue. If the phone is in airplane mode and the connection is not available, the callbacks are called immediately. If there is a server latency, we timeout after 3 seconds and will retry 4 more times with a 3 second pause in between each. These timeouts are adjustable on the singleton instance by calling setNetworkTimeout (s), setRetryCount and setRetryInterval (s).
+At Branch, we live and breathe uptime and performance. Just in case, we've got mechanisms internal to the SDK to deal with network issues. We always call the callbacks with the error parameter describing the issue. If the phone is in airplane mode and the connection is not available, the callbacks are called immediately. If there is a server latency, we timeout after 3 seconds and will retry 5 more times with a 3 second pause in between each. These timeouts are adjustable on the singleton instance by calling `setNetworkTimeout` (s), `setMaxRetries` and `setRetryInterval` (s).
 
 2 __How can I debug/test the SDK__
 
