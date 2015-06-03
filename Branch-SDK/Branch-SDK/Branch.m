@@ -1357,7 +1357,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
             if (![req.tag isEqualToString:REQ_TAG_REGISTER_INSTALL] && ![self hasUser]) {
                 NSLog(@"Branch Error: User session has not been initialized!");
-                req.callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]);
+                wrappedCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]);
                 return;
             }
             
