@@ -42,6 +42,17 @@ NSString * const BRANCH_FEATURE_TAG_INVITE = @"invite";
 NSString * const BRANCH_FEATURE_TAG_DEAL = @"deal";
 NSString * const BRANCH_FEATURE_TAG_GIFT = @"gift";
 
+NSString * const BRANCH_INIT_KEY_CHANNEL = @"~channel";
+NSString * const BRANCH_INIT_KEY_FEATURE = @"~feature";
+NSString * const BRANCH_INIT_KEY_TAGS = @"~tags";
+NSString * const BRANCH_INIT_KEY_CAMPAIGN = @"~campaign";
+NSString * const BRANCH_INIT_KEY_STAGE = @"~stage";
+NSString * const BRANCH_INIT_KEY_CREATION_SOURCE = @"~creation_source";
+NSString * const BRANCH_INIT_KEY_REFERRER = @"+referrer";
+NSString * const BRANCH_INIT_KEY_PHONE_NUMBER = @"+phone_number";
+NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
+NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
+
 static int BNCDebugTriggerDuration = 3;
 static int BNCDebugTriggerFingers = 4;
 static int BNCDebugTriggerFingersSimulator = 2;
@@ -834,7 +845,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     
     NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:params];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
-    [longUrl appendFormat:@"data=%@", base64EncodedParams];
+    [longUrl appendFormat:@"source=ios&data=%@", base64EncodedParams];
     
     return longUrl;
 }

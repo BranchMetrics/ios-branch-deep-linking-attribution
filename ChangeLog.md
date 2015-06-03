@@ -1,5 +1,14 @@
 Branch iOS SDK change log
 
+- v0.7.8
+  * Removing source attribute from `encodeDictionaryToJsonString`, only added to short url generation now.
+  * Fixing bad content type in `prepareGetRequest`.
+  * Creating scripts for an automated release process.
+  * Fixing a bad callback in `processNextQueueItem`, potentially causing a crash.
+  * Adding and documenting all of the new constants added in the Branch initSession callback.
+
+- v0.7.7 Changing the time for update state checks to give better install attribution.
+
 - v0.7.6
   * Exposing `isUserIdentified` to allow devs to understand if Branch has a User Identity set.
   * Removing all instances of `bnc_no_value` from the SDK.
