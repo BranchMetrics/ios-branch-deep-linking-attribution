@@ -23,12 +23,84 @@ typedef void (^callbackWithUrl) (NSString *url, NSError *error);
 typedef void (^callbackWithStatus) (BOOL changed, NSError *error);
 typedef void (^callbackWithList) (NSArray *list, NSError *error);
 
+///----------------
+/// @name Constants
+///----------------
+
+#pragma mark - Branch Link Features
+
+/**
+ ## Branch Link Features
+ The following are constants used for specifying a feature parameter on a call that creates a Branch link.
+
+ `BRANCH_FEATURE_SHARE`
+ Indicates this link was used for sharing content. Used by the `getContentUrl` methods.
+
+ `BRANCH_FEATURE_TAG_REFERRAL`
+ Indicates this link was used to refer users to this app. Used by the `getReferralUrl` methods.
+
+ `BRANCH_FEATURE_TAG_INVITE`
+ Indicates this link is used as an invitation.
+
+ `BRANCH_FEATURE_TAG_DEAL`
+ Indicates this link is being used to trigger a deal, like a discounted rate.
+
+ `BRANCH_FEATURE_TAG_GIFT`
+ Indicates this link is being used to sned a gift to another user.
+ */
 extern NSString * const BRANCH_FEATURE_TAG_SHARE;
 extern NSString * const BRANCH_FEATURE_TAG_REFERRAL;
 extern NSString * const BRANCH_FEATURE_TAG_INVITE;
 extern NSString * const BRANCH_FEATURE_TAG_DEAL;
 extern NSString * const BRANCH_FEATURE_TAG_GIFT;
 
+#pragma mark - Branch InitSession Dictionary Constants
+
+/**
+ ## Branch Link Features
+
+ `BRANCH_INIT_KEY_CHANNEL`
+ The channel on which the link was shared, specified at link creation time.
+ 
+ `BRANCH_INIT_KEY_FEATURE`
+ The feature, such as `invite` or `share`, specified at link creation time.
+
+ `BRANCH_INIT_KEY_TAGS`
+ Any tags, specified at link creation time.
+ 
+ `BRANCH_INIT_KEY_CAMPAIGN`
+ The campaign the link is associated with, specified at link creation time.
+ 
+ `BRANCH_INIT_KEY_STAGE`
+ The stage, specified at link creation time.
+ 
+ `BRANCH_INIT_KEY_CREATION_SOURCE`
+ Where the link was created ('API', 'Dashboard', 'SDK', 'iOS SDK', 'Android SDK', or 'Web SDK')
+ 
+ `BRANCH_INIT_KEY_REFERRER`
+ The referrer for the link click, if a link was clicked.
+ 
+ `BRANCH_INIT_KEY_PHONE_NUMBER`
+ The phone number of the user, if the user texted himself/herself the app.
+ 
+ `BRANCH_INIT_KEY_IS_FIRST_SESSION`
+ Denotes whether this is the first session (install) or any other session (open).
+ 
+ `BRANCH_INIT_KEY_CLICKED_BRANCH_LINK`
+ Denotes whether or not the user clicked a Branch link that triggered this session.
+ */
+extern NSString * const BRANCH_INIT_KEY_CHANNEL;
+extern NSString * const BRANCH_INIT_KEY_FEATURE;
+extern NSString * const BRANCH_INIT_KEY_TAGS;
+extern NSString * const BRANCH_INIT_KEY_CAMPAIGN;
+extern NSString * const BRANCH_INIT_KEY_STAGE;
+extern NSString * const BRANCH_INIT_KEY_CREATION_SOURCE;
+extern NSString * const BRANCH_INIT_KEY_REFERRER;
+extern NSString * const BRANCH_INIT_KEY_PHONE_NUMBER;
+extern NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION;
+extern NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK;
+
+#pragma mark - Branch Enums
 typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchMostRecentFirst,
     BranchLeastRecentFirst
