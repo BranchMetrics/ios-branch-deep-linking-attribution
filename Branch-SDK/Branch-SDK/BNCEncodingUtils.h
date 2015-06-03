@@ -18,7 +18,6 @@
 
 + (NSString *)encodeArrayToJsonString:(NSArray *)dictionary;
 + (NSString *)encodeDictionaryToJsonString:(NSDictionary *)dictionary;
-+ (NSString *)encodeDictionaryToJsonString:(NSDictionary *)dictionary needSource:(BOOL)source;
 + (NSData *)encodeDictionaryToJsonData:(NSDictionary *)dictionary;
 
 + (NSDictionary *)decodeJsonDataToDictionary:(NSData *)jsonData;

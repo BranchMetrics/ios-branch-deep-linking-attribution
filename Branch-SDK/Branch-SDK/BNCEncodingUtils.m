@@ -219,10 +219,6 @@ static const short _base64DecodingTable[256] = {
 }
 
 + (NSString *)encodeDictionaryToJsonString:(NSDictionary *)dictionary {
-    return [BNCEncodingUtils encodeDictionaryToJsonString:dictionary needSource:YES];
-}
-
-+ (NSString *)encodeDictionaryToJsonString:(NSDictionary *)dictionary needSource:(BOOL)source {
     NSMutableString *encodedDictionary = [[NSMutableString alloc] initWithString:@"{"];
     for (NSString *key in dictionary) {
         NSString *value = nil;
@@ -243,7 +239,7 @@ static const short _base64DecodingTable[256] = {
             string = NO;
         }
         else if ([obj isKindOfClass:[NSDictionary class]]) {
-            value = [BNCEncodingUtils encodeDictionaryToJsonString:obj needSource:NO]; // Sub dictionaries have no need for source
+            value = [BNCEncodingUtils encodeDictionaryToJsonString:obj];
             string = NO;
         }
         else if ([obj isKindOfClass:[NSNumber class]]) {
@@ -272,17 +268,11 @@ static const short _base64DecodingTable[256] = {
         }
     }
     
-    if (source) {
-        [encodedDictionary appendString:@"\"source\":\"ios\"}"];
+    if (encodedDictionary.length > 1) {
+        [encodedDictionary deleteCharactersInRange:NSMakeRange([encodedDictionary length] - 1, 1)];
     }
-    else {
-        // Delete the trailing comma. Not necessary for an empty dictionary
-        if (encodedDictionary.length > 1) {
-            [encodedDictionary deleteCharactersInRange:NSMakeRange([encodedDictionary length] - 1, 1)];
-        }
 
-        [encodedDictionary appendString:@"}"];
-    }
+    [encodedDictionary appendString:@"}"];
     
     if ([BNCPreferenceHelper isDebug]) {
         NSLog(@"encoded dictionary : %@", encodedDictionary);
@@ -316,7 +306,7 @@ static const short _base64DecodingTable[256] = {
             string = NO;
         }
         else if ([obj isKindOfClass:[NSDictionary class]]) {
-            value = [BNCEncodingUtils encodeDictionaryToJsonString:obj needSource:NO]; // Sub dictionaries have no need for source
+            value = [BNCEncodingUtils encodeDictionaryToJsonString:obj];
             string = NO;
         }
         else if ([obj isKindOfClass:[NSNumber class]]) {
