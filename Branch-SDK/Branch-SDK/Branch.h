@@ -511,7 +511,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 ///--------------
 
 /**
- Load the action counts from the server.
+ Load actions counts that have taken place for users referred by the current user.
 
  @param callback The callback that is called once the request has completed.
  */
