@@ -52,6 +52,15 @@
     XCTAssertEqualObjects(expectedEncodedString, encodedValue);
 }
 
+- (void)testEncodingNilDictionaryToJsonString {
+    NSDictionary *dataDict = nil;
+    NSString *expectedEncodedString = @"{}";
+    
+    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:dataDict];
+    
+    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
+}
+
 - (void)testEncodeDictionaryToJsonStringWithNoKeys {
     NSDictionary *emptyDict = @{ };
     NSString *expectedEncodedString = @"{}";
@@ -119,6 +128,15 @@
 
 - (void)testEncodeArrayToJsonStringWithNoValues {
     NSArray *emptyArray = @[ ];
+    NSString *expectedEncodedString = @"[]";
+    
+    NSString *encodedValue = [BNCEncodingUtils encodeArrayToJsonString:emptyArray];
+    
+    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
+}
+
+- (void)testEncodingEmptyArrayToJsonString {
+    NSArray *emptyArray = nil;
     NSString *expectedEncodedString = @"[]";
     
     NSString *encodedValue = [BNCEncodingUtils encodeArrayToJsonString:emptyArray];
