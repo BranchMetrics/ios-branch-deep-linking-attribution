@@ -25,6 +25,7 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
     self = [super init];
     if (self) {
         self.data = [[NSMutableDictionary alloc] init];
+        self.data[@"source"] = @"ios";
     }
     return self;
 }

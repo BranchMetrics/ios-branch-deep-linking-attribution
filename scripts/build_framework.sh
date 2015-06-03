@@ -41,7 +41,7 @@ lipo \
     || die "lipo failed -- could not create universal static library"
 
 
-# # Create .framework
+# Create .framework
 
 rm -rf $FRAMEWORK_DIR
 
@@ -53,6 +53,10 @@ mkdir -p $FRAMEWORK_DIR/Versions/A/Headers
 cp $PROJECT_DIR/$BUILD_DIR/$CONFIGURATION-iphoneos/Headers/* $FRAMEWORK_DIR/Versions/A/Headers/
 cp $PROJECT_DIR/$BUILD_DIR/$LIBRARY_BINARY_NAME $FRAMEWORK_DIR/Versions/A/$FRAMEWORK_BINARY_NAME
 
+# Clean up build dir. This must be done *before* the end of the script, otherwise it doesn't seem to do anything.
+rm -rf $PROJECT_DIR/$BUILD_DIR
+
+# Make symlinks
 cd $FRAMEWORK_DIR
 ln -s Versions/Current/Headers Headers
 ln -s Versions/Current/$FRAMEWORK_BINARY_NAME $FRAMEWORK_BINARY_NAME
