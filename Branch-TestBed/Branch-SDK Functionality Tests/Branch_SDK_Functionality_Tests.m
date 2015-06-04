@@ -305,7 +305,7 @@ NSInteger const  TEST_CREDITS = 30;
     [self awaitExpectations];
 }
 
-- (void)test06GetReferralCode {
+- (void)test06GetPromoCode {
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
@@ -354,7 +354,7 @@ NSInteger const  TEST_CREDITS = 30;
     [self awaitExpectations];
 }
 
-- (void)test07ValidateReferralCode {
+- (void)test07ValidatePromoCode {
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
@@ -400,7 +400,7 @@ NSInteger const  TEST_CREDITS = 30;
         XCTAssertNotNil(code);
         XCTAssertTrue([code isEqualToString:TEST_REFERRAL_CODE]);
         XCTAssertEqual([params[@"calculation_type"] integerValue], BranchPromoCodeUsageTypeUnlimitedUses);
-        XCTAssertEqual([params[@"location"] integerValue], BranchPromoCodeRewardReferringUser);
+        XCTAssertEqual([params[@"location"] integerValue], BranchPromoCodeRewardReferredUser);
         XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 5);
         
         [self safelyFulfillExpectation:validateCodeExpectation];
@@ -409,7 +409,7 @@ NSInteger const  TEST_CREDITS = 30;
     [self awaitExpectations];
 }
 
-- (void)test08ApplyReferralCode {
+- (void)test08ApplyPromoCode {
     id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
