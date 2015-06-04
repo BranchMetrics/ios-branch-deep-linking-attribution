@@ -22,7 +22,7 @@
 
 - (void)testLoad {
     id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
 
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
@@ -67,7 +67,7 @@
     [[[serverInterfaceMock expect] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
     
     // Fake branch key
-    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey];
+    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey:YES];
     
     for (int i = 0; i < 1000; i++) {
         [branch getShortURLWithParams:nil andChannel:[NSString stringWithFormat:@"%d", i] andFeature:nil andCallback:^(NSString *url, NSError *error) {

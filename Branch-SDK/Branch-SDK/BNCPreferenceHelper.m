@@ -41,11 +41,9 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 @interface BNCPreferenceHelper ()
 
 @property (strong, nonatomic) NSString *branchKey;
+@property (assign, nonatomic) BOOL isUsingLiveKey;
 @property (assign, nonatomic) BOOL isDebugMode;
 @property (assign, nonatomic) BOOL isConnectedToRemoteDebug;
-@property (assign, nonatomic) NSInteger retryCount;
-@property (assign, nonatomic) NSInteger retryInterval;
-@property (assign, nonatomic) NSInteger timeout;
 
 @end
 
@@ -157,7 +155,12 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 }
 
 + (NSString *)getBranchKey:(BOOL)isLive {
-    NSString *key = nil;
+    BNCPreferenceHelper *instance = [BNCPreferenceHelper getInstance];
+    NSString *key = instance.branchKey;
+    
+    if (key && isLive == instance.isUsingLiveKey) {
+        return key;
+    }
     
     id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
     if (ret) {
@@ -170,6 +173,7 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
     }
     
     [BNCPreferenceHelper setBranchKey:key];
+    instance.isUsingLiveKey = isLive;
     
     return key;
 }

@@ -70,6 +70,9 @@
 		4683F0751B20A73F00A432E7 /* CreditHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */; };
 		4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016731940F51400A9E103 /* AppDelegate.m */; };
 		4683F0771B20A73F00A432E7 /* ReferralCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E3882A21A37E42F004BDABE /* ReferralCodeViewController.m */; };
+		4683F0791B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4683F0781B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m */; };
+		4683F07A1B20AC5E00A432E7 /* libBranch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 466B58381B17773000A69EDE /* libBranch.a */; };
+		4683F07F1B20AD7A00A432E7 /* libBranch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 466B58381B17773000A69EDE /* libBranch.a */; };
 		46D0B6FA1ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */; };
 		46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */; };
 		46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */; };
@@ -89,6 +92,20 @@
 
 /* Begin PBXContainerItemProxy section */
 		466B586F1B1777DE00A69EDE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 670016581940F51400A9E103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 466B58371B17773000A69EDE;
+			remoteInfo = Branch;
+		};
+		4683F07B1B20AC6300A432E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 670016581940F51400A9E103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 466B58371B17773000A69EDE;
+			remoteInfo = Branch;
+		};
+		4683F07D1B20AD7700A432E7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 670016581940F51400A9E103 /* Project object */;
 			proxyType = 1;
@@ -161,6 +178,7 @@
 		466B58501B17776000A69EDE /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		467309471AF2C4FB005B8848 /* BranchTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchTest.h; sourceTree = "<group>"; };
 		467309481AF2C4FB005B8848 /* BranchTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchTest.m; sourceTree = "<group>"; };
+		4683F0781B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchConnectDebugRequestTests.m; sourceTree = "<group>"; };
 		46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCPreferenceHelperTests.m; sourceTree = "<group>"; };
 		46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserverTests.m; sourceTree = "<group>"; };
 		46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
@@ -260,6 +278,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4683F07A1B20AC5E00A432E7 /* libBranch.a in Frameworks */,
 				9F39B40CB05727D33A6E4895 /* libPods-Branch-SDK Functionality Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -276,6 +295,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4683F07F1B20AD7A00A432E7 /* libBranch.a in Frameworks */,
 				305D4960984D2647CB8ECCDB /* libPods-Branch-SDK Load Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -451,6 +471,7 @@
 				461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */,
 				46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */,
 				7E6B3B531AA42D0E005F45BF /* Supporting Files */,
+				4683F0781B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m */,
 			);
 			path = "Branch-SDK Functionality Tests";
 			sourceTree = "<group>";
@@ -598,6 +619,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4683F07C1B20AC6300A432E7 /* PBXTargetDependency */,
 			);
 			name = "Branch-SDK Functionality Tests";
 			productName = "Branch-SDK Functionality Tests";
@@ -637,6 +659,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				4683F07E1B20AD7700A432E7 /* PBXTargetDependency */,
 			);
 			name = "Branch-SDK Load Tests";
 			productName = "Branch-SDK Load Tests";
@@ -880,6 +903,7 @@
 				461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */,
 				46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */,
 				464EA3981ACB1797000E4094 /* BNCServerInterfaceTests.m in Sources */,
+				4683F0791B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m in Sources */,
 				46D0B6FA1ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m in Sources */,
 				4673094A1AF2C4FB005B8848 /* BranchTest.m in Sources */,
 				46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */,
@@ -909,6 +933,16 @@
 			isa = PBXTargetDependency;
 			target = 466B58371B17773000A69EDE /* Branch */;
 			targetProxy = 466B586F1B1777DE00A69EDE /* PBXContainerItemProxy */;
+		};
+		4683F07C1B20AC6300A432E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 466B58371B17773000A69EDE /* Branch */;
+			targetProxy = 4683F07B1B20AC6300A432E7 /* PBXContainerItemProxy */;
+		};
+		4683F07E1B20AD7700A432E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 466B58371B17773000A69EDE /* Branch */;
+			targetProxy = 4683F07D1B20AD7700A432E7 /* PBXContainerItemProxy */;
 		};
 		7E6B3B811AA44845005F45BF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
