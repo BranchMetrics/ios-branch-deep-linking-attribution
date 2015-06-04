@@ -172,7 +172,7 @@
     fullParamDict[@"retryNumber"] = @(retryNumber);
     
     if ([key hasPrefix:@"key_"]) {
-        fullParamDict[KEY_BRANCH_KEY] = key;
+        fullParamDict[@"branch_key"] = key;
     }
     else {
         fullParamDict[@"app_id"] = key;
