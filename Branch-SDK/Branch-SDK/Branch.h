@@ -970,12 +970,12 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 
 #pragma mark - Referral Code methods
 
-///----------------------------
-/// @name Referral Code methods
-///----------------------------
+///-------------------------
+/// @name Promo Code methods
+///-------------------------
 
 /**
- Get a referral code without providing any parameters.
+ Get a promo code without providing any parameters.
  
  @param callback The callback that is called with the created referral code object.
  */
@@ -983,7 +983,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)getReferralCodeWithCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeCallback: instead"))));;
 
 /**
- Get a referral code with an amount of credits the code will be worth.
+ Get a promo code with an amount of credits the code will be worth.
  
  @param amount Number of credits generating user will earn when a user is referred by this code.
  @param callback The callback that is called with the created referral code object.
@@ -992,7 +992,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithAmount:callback: instead"))));;
 
 /**
- Get a referral code with an amount of credits the code will be worth, and a prefix for the code.
+ Get a promo code with an amount of credits the code will be worth, and a prefix for the code.
  
  @param prefix The string to prefix the code with.
  @param amount Number of credits generating user will earn when a user is referred by this code.
@@ -1002,7 +1002,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithPrefix:amount:callback: instead"))));;
 
 /**
- Get a referral code with an amount of credits the code will be worth, and an expiration date.
+ Get a promo code with an amount of credits the code will be worth, and an expiration date.
  
  @param amount Number of credits generating user will earn when a user is referred by this code.
  @param expiration The date when the code should be invalidated.
@@ -1012,7 +1012,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithAmount:expiration:callback: instead"))));
 
 /**
- Get a referral code with an amount of credits the code will be worth, the prefix to put in front of it, and an expiration date.
+ Get a promo code with an amount of credits the code will be worth, the prefix to put in front of it, and an expiration date.
  
  @param prefix The string to prefix the code with.
  @param amount Number of credits generating user will earn when a user is referred by this code.
@@ -1023,7 +1023,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithPrefix:amount:expiration:callback: instead"))));
 
 /**
- Get a referral code with an amount of credits the code will be worth, the prefix to put in front of it, an expiration date, the bucket it will be part of, the calculation method, and location of user earning credits.
+ Get a promo code with an amount of credits the code will be worth, the prefix to put in front of it, an expiration date, the bucket it will be part of, the calculation method, and location of user earning credits.
  
  @param prefix The string to prefix the code with.
  @param amount Number of credits to be earned (by the user specified by location).
@@ -1037,7 +1037,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(BranchPromoCodeUsageType)calcType location:(BranchPromoCodeRewardLocation)location andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithPrefix:amount:expiration:bucket:usageType:rewardLocation:callback: instead"))));
 
 /**
- Validate a referral code. Will callback with the referral code object on success, or an error if it's invalid.
+ Validate a promo code. Will callback with the referral code object on success, or an error if it's invalid.
  
  @param code The referral code to validate
  @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
@@ -1046,7 +1046,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use validatePromoCode:callback: instead"))));
 
 /**
- Apply a referral code, awarding the referral points. Will callback with the referral code object on success, or an error if it's invalid.
+ Apply a promo code, awarding the referral points. Will callback with the referral code object on success, or an error if it's invalid.
  
  @param code The referral code to validate
  @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
