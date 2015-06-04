@@ -344,7 +344,7 @@ NSInteger const  TEST_CREDITS = 30;
     }]];
     
     XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test getReferralCode"];
-    [branch getReferralCodeWithPrefix:@"test" amount:7 expiration:nil bucket:@"default" calculationType:BranchUniqueRewards location:BranchReferringUser andCallback:^(NSDictionary *params, NSError *error) {
+    [branch getPromoCodeWithPrefix:@"test" amount:7 expiration:nil bucket:@"default" usageType:BranchPromoCodeUsageTypeOncePerUser rewardLocation:BranchPromoCodeRewardReferringUser callback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         XCTAssertNotNil(params[@"referral_code"]);
         
@@ -393,14 +393,14 @@ NSInteger const  TEST_CREDITS = 30;
     }]];
     
     XCTestExpectation *validateCodeExpectation = [self expectationWithDescription:@"Test validateReferralCode"];
-    [branch validateReferralCode:TEST_REFERRAL_CODE andCallback:^(NSDictionary *params, NSError *error) {
+    [branch validatePromoCode:TEST_REFERRAL_CODE callback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         
         NSString *code = params[@"referral_code"];
         XCTAssertNotNil(code);
         XCTAssertTrue([code isEqualToString:TEST_REFERRAL_CODE]);
-        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUnlimitedRewards);
-        XCTAssertEqual([params[@"location"] integerValue], BranchReferreeUser);
+        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchPromoCodeUsageTypeUnlimitedUses);
+        XCTAssertEqual([params[@"location"] integerValue], BranchPromoCodeRewardReferringUser);
         XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 5);
         
         [self safelyFulfillExpectation:validateCodeExpectation];
@@ -448,14 +448,14 @@ NSInteger const  TEST_CREDITS = 30;
     }]];
     
     XCTestExpectation *applyCodeExpectation = [self expectationWithDescription:@"Test applyReferralCode"];
-    [branch applyReferralCode:TEST_REFERRAL_CODE andCallback:^(NSDictionary *params, NSError *error) {
+    [branch applyPromoCode:TEST_REFERRAL_CODE callback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         
         NSString *code = params[@"referral_code"];
         XCTAssertNotNil(code);
         XCTAssertTrue([code isEqualToString:TEST_REFERRAL_CODE]);
-        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchUnlimitedRewards);
-        XCTAssertEqual([params[@"location"] integerValue], BranchReferreeUser);
+        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchPromoCodeUsageTypeUnlimitedUses);
+        XCTAssertEqual([params[@"location"] integerValue], BranchPromoCodeRewardReferredUser);
         XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 5);
         
         [self safelyFulfillExpectation:applyCodeExpectation];
