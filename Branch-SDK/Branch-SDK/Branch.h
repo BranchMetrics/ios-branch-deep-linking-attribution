@@ -106,15 +106,15 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchLeastRecentFirst
 };
 
-typedef NS_ENUM(NSUInteger, BranchReferralCodeLocation) {
-    BranchReferreeUser = 0,
-    BranchReferringUser = 2,
-    BranchBothUsers = 3
+typedef NS_ENUM(NSUInteger, BranchPromoCodeRewardLocation) {
+    BranchPromoCodeRewardReferredUser = 0,
+    BranchPromoCodeRewardReferringUser = 2,
+    BranchPromoCodeRewardReferredBothUsers = 3
 };
 
-typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
-    BranchUniqueRewards = 1,
-    BranchUnlimitedRewards = 0
+typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
+    BranchPromoCodeUsageTypeOncePerUser = 1,
+    BranchPromoCodeUsageTypeUnlimitedUses = 0
 };
 
 @interface Branch : NSObject
@@ -979,7 +979,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getReferralCodeWithCallback:(callbackWithParams)callback;
+- (void)getPromoCodeWithCallback:(callbackWithParams)callback;
+- (void)getReferralCodeWithCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeCallback: instead"))));;
 
 /**
  Get a referral code with an amount of credits the code will be worth.
@@ -987,7 +988,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param amount Number of credits generating user will earn when a user is referred by this code.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback;
+- (void)getPromoCodeWithAmount:(NSInteger)amount callback:(callbackWithParams)callback;
+- (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithAmount:callback: instead"))));;
 
 /**
  Get a referral code with an amount of credits the code will be worth, and a prefix for the code.
@@ -996,7 +998,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param amount Number of credits generating user will earn when a user is referred by this code.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback;
+- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount callback:(callbackWithParams)callback;
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithPrefix:amount:callback: instead"))));;
 
 /**
  Get a referral code with an amount of credits the code will be worth, and an expiration date.
@@ -1005,7 +1008,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param expiration The date when the code should be invalidated.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback;
+- (void)getPromoCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback;
+- (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithAmount:expiration:callback: instead"))));
 
 /**
  Get a referral code with an amount of credits the code will be worth, the prefix to put in front of it, and an expiration date.
@@ -1015,7 +1019,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param expiration The date when the code should be invalidated.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback;
+- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback;
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithPrefix:amount:expiration:callback: instead"))));
 
 /**
  Get a referral code with an amount of credits the code will be worth, the prefix to put in front of it, an expiration date, the bucket it will be part of, the calculation method, and location of user earning credits.
@@ -1028,7 +1033,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param location The location of the user who earns credits for the referral, one of Referrer, Referree (the referred user), or Both.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(BranchReferralCodeCalculation)calcType location:(BranchReferralCodeLocation)location andCallback:(callbackWithParams)callback;
+- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket usageType:(BranchPromoCodeUsageType)usageType rewardLocation:(BranchPromoCodeRewardLocation)rewardLocation callback:(callbackWithParams)callback;
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(BranchPromoCodeUsageType)calcType location:(BranchPromoCodeRewardLocation)location andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithPrefix:amount:expiration:bucket:usageType:rewardLocation:callback: instead"))));
 
 /**
  Validate a referral code. Will callback with the referral code object on success, or an error if it's invalid.
@@ -1036,7 +1042,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param code The referral code to validate
  @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
  */
-- (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
+- (void)validatePromoCode:(NSString *)code callback:(callbackWithParams)callback;
+- (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use validatePromoCode:callback: instead"))));
 
 /**
  Apply a referral code, awarding the referral points. Will callback with the referral code object on success, or an error if it's invalid.
@@ -1044,7 +1051,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param code The referral code to validate
  @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
  */
-- (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
+- (void)applyPromoCode:(NSString *)code callback:(callbackWithParams)callback;
+- (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use applyPromoCode:callback: instead"))));
 
 /**
  Method for creating a one of Branch instance and specifying its dependencies.

@@ -62,13 +62,13 @@
         expiration = self.expirationPicker.date;
     }
     Branch *branch = [Branch getInstance];
-    [branch getReferralCodeWithPrefix:self.txtReferralCodePrefix.text
-                               amount:amount
-                           expiration:expiration
-                               bucket:@"default"
-                      calculationType:[self retrieveCalculationForSegment]
-                             location:[self retrieveLocationForSegment]
-                          andCallback:^(NSDictionary *params, NSError *error) {
+    [branch getPromoCodeWithPrefix:self.txtReferralCodePrefix.text
+                            amount:amount
+                        expiration:expiration
+                            bucket:@"default"
+                         usageType:[self retrieveUsageTypeForSegment]
+                    rewardLocation:[self retrieveRewardLocationForSegment]
+                          callback:^(NSDictionary *params, NSError *error) {
                               if (!error) {
                                   self.txtReferralCodeResult.text = [params objectForKey:@"referral_code"];
                               } else {
@@ -79,27 +79,25 @@
      ];
 }
 
-- (BranchReferralCodeCalculation)retrieveCalculationForSegment {
+- (BranchPromoCodeUsageType)retrieveUsageTypeForSegment {
     switch (self.segReferralCodeFreq.selectedSegmentIndex) {
-        case 0:
-            return BranchUnlimitedRewards;
         case 1:
-            return BranchUniqueRewards;
+            return BranchPromoCodeUsageTypeOncePerUser;
+        case 0:
         default:
-            return BranchUnlimitedRewards;
+            return BranchPromoCodeUsageTypeUnlimitedUses;
     }
 }
 
-- (BranchReferralCodeLocation)retrieveLocationForSegment {
+- (BranchPromoCodeRewardLocation)retrieveRewardLocationForSegment {
     switch (self.segReferralCodeLocation.selectedSegmentIndex) {
         case 0:
-            return BranchReferreeUser;
-        case 1:
-            return BranchReferringUser;
+            return BranchPromoCodeRewardReferredUser;
         case 2:
-            return BranchBothUsers;
+            return BranchPromoCodeRewardReferredBothUsers;
+        case 1:
         default:
-            return BranchReferringUser;
+            return BranchPromoCodeRewardReferringUser;
     }
 }
 
@@ -107,7 +105,7 @@
     self.lblReferralCodeValidation.text = nil;
     if (self.txtReferralCodeResult.text.length > 0) {
         Branch *branch = [Branch getInstance];
-        [branch validateReferralCode:self.txtReferralCodeResult.text andCallback:^(NSDictionary *params, NSError *error) {
+        [branch validatePromoCode:self.txtReferralCodeResult.text callback:^(NSDictionary *params, NSError *error) {
             if (!error) {
                 if ([self.txtReferralCodeResult.text isEqualToString:[params objectForKey:@"referral_code"]]) {
                     self.lblReferralCodeValidation.text = @"Valid";
@@ -125,7 +123,7 @@
 - (IBAction)cmdApplyReferralCode:(UIButton *)sender {
     if (self.txtReferralCodeResult.text.length > 0) {
         Branch *branch = [Branch getInstance];
-        [branch applyReferralCode:self.txtReferralCodeResult.text andCallback:^(NSDictionary *params, NSError *error) {
+        [branch applyPromoCode:self.txtReferralCodeResult.text callback:^(NSDictionary *params, NSError *error) {
             if (!error) {
                 self.lblReferralCodeValidation.text = @"Applied";
             } else {

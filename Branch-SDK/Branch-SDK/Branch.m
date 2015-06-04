@@ -869,27 +869,51 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:params andCallback:callback];
 }
 
+- (void)getPromoCodeWithCallback:(callbackWithParams)callback {
+    [self getPromoCodeWithPrefix:nil amount:0 expiration:nil bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
+}
+
 - (void)getReferralCodeWithCallback:(callbackWithParams)callback {
-    [self getReferralCodeWithPrefix:nil amount:0 expiration:nil bucket:nil calculationType:BranchUnlimitedRewards location:BranchReferringUser andCallback:callback];
+    [self getPromoCodeWithPrefix:nil amount:0 expiration:nil bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
+}
+
+- (void)getPromoCodeWithAmount:(NSInteger)amount callback:(callbackWithParams)callback {
+    [self getPromoCodeWithPrefix:nil amount:amount expiration:nil bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
 }
 
 - (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback {
-    [self getReferralCodeWithPrefix:nil amount:amount expiration:nil bucket:@"default" calculationType:BranchUnlimitedRewards location:BranchReferringUser andCallback:callback];
+    [self getPromoCodeWithPrefix:nil amount:amount expiration:nil bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
+}
+
+- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount callback:(callbackWithParams)callback {
+    [self getPromoCodeWithPrefix:prefix amount:amount expiration:nil bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
 }
 
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback {
-    [self getReferralCodeWithPrefix:prefix amount:amount expiration:nil bucket:@"default" calculationType:BranchUnlimitedRewards location:BranchReferringUser andCallback:callback];
+    [self getPromoCodeWithPrefix:prefix amount:amount expiration:nil bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
+}
+
+- (void)getPromoCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback {
+    [self getPromoCodeWithPrefix:nil amount:amount expiration:expiration bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
 }
 
 - (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback {
-    [self getReferralCodeWithPrefix:nil amount:amount expiration:expiration bucket:@"default" calculationType:BranchUnlimitedRewards location:BranchReferringUser andCallback:callback];
+    [self getPromoCodeWithPrefix:nil amount:amount expiration:expiration bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
+}
+
+- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback {
+    [self getPromoCodeWithPrefix:prefix amount:amount expiration:expiration bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
 }
 
 - (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback {
-    [self getReferralCodeWithPrefix:prefix amount:amount expiration:expiration bucket:@"default" calculationType:BranchUnlimitedRewards location:BranchReferringUser andCallback:callback];
+    [self getPromoCodeWithPrefix:prefix amount:amount expiration:expiration bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
 }
 
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(BranchReferralCodeCalculation)calcType location:(BranchReferralCodeLocation)location andCallback:(callbackWithParams)callback {
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(BranchPromoCodeUsageType)calcType location:(BranchPromoCodeRewardLocation)location andCallback:(callbackWithParams)callback {
+    [self getPromoCodeWithPrefix:prefix amount:amount expiration:expiration bucket:bucket usageType:calcType rewardLocation:location callback:callback];
+}
+
+- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket usageType:(BranchPromoCodeUsageType)usageType rewardLocation:(BranchPromoCodeRewardLocation)rewardLocation callback:(callbackWithParams)callback {
     if (!self.isInitialized) {
         [self initUserSessionAndCallCallback:NO];
     }
@@ -908,8 +932,8 @@ static int BNCDebugTriggerFingersSimulator = 2;
     NSMutableArray *values = [NSMutableArray arrayWithArray:@[[BNCPreferenceHelper getDeviceFingerprintID],
                                                               [BNCPreferenceHelper getIdentityID],
                                                               [BNCPreferenceHelper getSessionID],
-                                                              [NSNumber numberWithLong:calcType],
-                                                              [NSNumber numberWithLong:location],
+                                                              [NSNumber numberWithLong:usageType],
+                                                              [NSNumber numberWithLong:rewardLocation],
                                                               BRANCH_DATA_KEY_CREDIT,
                                                               [NSNumber numberWithLong:REFERRAL_CREATION_SOURCE_SDK],
                                                               [NSNumber numberWithLong:amount],
@@ -948,6 +972,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
+    [self validatePromoCode:code callback:callback];
+}
+
+- (void)validatePromoCode:(NSString *)code callback:(callbackWithParams)callback {
     if (!code) {
         if (callback) {
             callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"No code specified" }]);
@@ -992,6 +1020,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
+    [self applyPromoCode:code callback:callback];
+}
+
+- (void)applyPromoCode:(NSString *)code callback:(callbackWithParams)callback {
     if (!code) {
         if (callback) {
             callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"No code specified" }]);
