@@ -10,7 +10,6 @@
 #include <sys/utsname.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
-#import "BranchServerInterface.h"
 #import <UIKit/UIDevice.h>
 #import <UIKit/UIScreen.h>
 #import <SystemConfiguration/SystemConfiguration.h>

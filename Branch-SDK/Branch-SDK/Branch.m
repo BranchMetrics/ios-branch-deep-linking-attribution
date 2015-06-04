@@ -7,7 +7,7 @@
 //
 
 #import "Branch.h"
-#import "BranchServerInterface.h"
+#import "BNCServerInterface.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCServerRequest.h"
 #import "BNCServerResponse.h"
@@ -35,6 +35,9 @@
 #import "BranchUpdateAppListRequest.h"
 #import "BranchOpenRequest.h"
 #import "BranchInstallRequest.h"
+#import "BranchConnectDebugRequest.h"
+#import "BranchDisconnectDebugRequest.h"
+#import "BranchLogRequest.h"
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
@@ -57,9 +60,9 @@ static int BNCDebugTriggerDuration = 3;
 static int BNCDebugTriggerFingers = 4;
 static int BNCDebugTriggerFingersSimulator = 2;
 
-@interface Branch() <BNCDebugConnectionDelegate, UIGestureRecognizerDelegate, BNCTestDelegate>
+@interface Branch() <UIGestureRecognizerDelegate>
 
-@property (strong, nonatomic) BranchServerInterface *bServerInterface;
+@property (strong, nonatomic) BNCServerInterface *bServerInterface;
 
 @property (strong, nonatomic) NSTimer *sessionTimer;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
@@ -135,7 +138,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     return [Branch getInstanceInternal:branchKey];
 }
 
-- (id)initWithInterface:(BranchServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache key:(NSString *)key {
+- (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache key:(NSString *)key {
     if (self = [super init]) {
         _bServerInterface = interface;
         _requestQueue = queue;
@@ -209,7 +212,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)setDebug {
-    [BNCPreferenceHelper setDebug];
+    [BNCPreferenceHelper setDebug:YES];
 }
 
 - (void)resetUserSession {
@@ -717,6 +720,14 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 
+#pragma mark - Logging
+- (void)log:(NSString *)log {
+    BranchLogRequest *request = [[BranchLogRequest alloc] initWithLog:log];
+    [self.requestQueue enqueue:request];
+    [self processNextQueueItem];
+}
+
+
 #pragma mark - Private methods
 
 + (Branch *)getInstanceInternal:(NSString *)key {
@@ -742,7 +753,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         
         [BNCPreferenceHelper setLastRunBranchKey:key];
 
-        branch = [[Branch alloc] initWithInterface:[[BranchServerInterface alloc] init] queue:[BNCServerRequestQueue getInstance] cache:[[BNCLinkCache alloc] init] key:key];
+        branch = [[Branch alloc] initWithInterface:[[BNCServerInterface alloc] init] queue:[BNCServerRequestQueue getInstance] cache:[[BNCLinkCache alloc] init] key:key];
     });
 
     return branch;
@@ -802,17 +813,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (NSString *)generateLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
-    NSString *appIdentifier = [BNCPreferenceHelper getBranchKey];
-    if (!appIdentifier) {
-        appIdentifier = [BNCPreferenceHelper getAppKey];
-    }
-    
-    if (!appIdentifier) {
-        NSLog(@"No Branch Key specified, cannot create a long url");
-        return nil;
-    }
-    
-    NSString *baseLongUrl = [NSString stringWithFormat:@"%@/a/%@", BNC_LINK_URL, appIdentifier];
+    NSString *baseLongUrl = [NSString stringWithFormat:@"%@/a/%@", BNC_LINK_URL, self.branchKey];
 
     return [self longUrlWithBaseUrl:baseLongUrl params:params tags:tags feature:feature channel:nil stage:stage alias:alias duration:0 type:BranchLinkTypeUnlimitedUse];
 }
@@ -1017,10 +1018,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
     return [BNCPreferenceHelper getSessionID] != nil;
 }
 
-- (BOOL)hasBranchKey {
-    return [BNCPreferenceHelper getBranchKey] != nil;
-}
-
 - (BOOL)hasAppKey {
     return [BNCPreferenceHelper getAppKey] != nil;
 }
@@ -1046,11 +1043,11 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)initializeSession {
-    if (![self hasBranchKey] && ![self hasAppKey]) {
+    if (!self.branchKey) {
         NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
         return;
     }
-    else if ([self hasBranchKey] && [[BNCPreferenceHelper getBranchKey] rangeOfString:@"key_test_"].location != NSNotFound) {
+    else if ([self.branchKey rangeOfString:@"key_test_"].location != NSNotFound) {
         NSLog(@"Branch Warning: You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment.");
     }
     
@@ -1137,8 +1134,12 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (void)connectToDebug:(UILongPressGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateBegan){
         NSLog(@"======= Start Debug Session =======");
-        [BNCPreferenceHelper setDebugConnectionDelegate:self];
-        [BNCPreferenceHelper connectRemoteDebug];
+        BranchConnectDebugRequest *request = [[BranchConnectDebugRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
+            [self startRemoteDebugging];
+        }];
+        
+        [self.requestQueue enqueue:request];
+        [self processNextQueueItem];
     }
 }
 
@@ -1158,31 +1159,23 @@ static int BNCDebugTriggerFingersSimulator = 2;
     NSLog(@"======= End Debug Session =======");
     
     [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:sender];
-    [BNCPreferenceHelper disconnectRemoteDebug];
+    BranchDisconnectDebugRequest *request = [[BranchDisconnectDebugRequest alloc] init];
+    [self.requestQueue enqueue:request];
+    [self processNextQueueItem];
+
     [self.debugHeartbeatTimer invalidate];
     [self addDebugGestureRecognizer];
 }
 
 - (void)keepDebugAlive {
-    [BNCPreferenceHelper keepDebugAlive];
-}
-
-#pragma mark - BNCDebugConnectionDelegate
-
-- (void)debugConnectionEstablished {
-    [self startRemoteDebugging];
+    NSLog(@"[Branch Debug] Sending Keep Alive");
+    [self log:@""];
 }
 
 #pragma mark - UIGestureRecognizerDelegate
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     return YES;
-}
-
-#pragma mark - BNCTestDelagate
-
-- (void)simulateInitFinished {
-    self.isInitialized = YES;
 }
 
 @end
