@@ -39,12 +39,10 @@ NSInteger const  TEST_CREDITS = 30;
 @implementation Branch_SDK_Functionality_Tests
 
 - (void)test00OpenOrInstall {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:[OCMArg any]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"foo"];
     [branch setAppListCheckEnabled:NO];
-    
-    [BNCPreferenceHelper setCreditCount:NSIntegerMax forBucket:@"default"];
     
     BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
     openInstallResponse.data = @{
@@ -72,7 +70,7 @@ NSInteger const  TEST_CREDITS = 30;
 
     // Fake branch key
     id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
-    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey];
+    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey:YES];
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
     [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
@@ -87,10 +85,10 @@ NSInteger const  TEST_CREDITS = 30;
 }
 
 - (void)test01SetIdentity {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:[OCMArg any]];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"foo"];
     [branch setAppListCheckEnabled:NO];
     
     // mock logout synchronously
@@ -139,7 +137,7 @@ NSInteger const  TEST_CREDITS = 30;
 }
 
 - (void)test02GetShortURLAsync {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
@@ -198,7 +196,7 @@ NSInteger const  TEST_CREDITS = 30;
 }
 
 - (void)test03GetShortURLSync {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
@@ -247,7 +245,7 @@ NSInteger const  TEST_CREDITS = 30;
 }
 
 - (void)test04GetRewardsChanged {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
@@ -279,7 +277,7 @@ NSInteger const  TEST_CREDITS = 30;
 }
 
 - (void)test05GetRewardsUnchanged {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
@@ -311,7 +309,7 @@ NSInteger const  TEST_CREDITS = 30;
 }
 
 - (void)test06GetReferralCode {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
@@ -360,7 +358,7 @@ NSInteger const  TEST_CREDITS = 30;
 }
 
 - (void)test07ValidateReferralCode {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
@@ -415,7 +413,7 @@ NSInteger const  TEST_CREDITS = 30;
 }
 
 - (void)test08ApplyReferralCode {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
@@ -470,7 +468,7 @@ NSInteger const  TEST_CREDITS = 30;
 }
 
 - (void)test09GetCreditHistory {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
@@ -556,7 +554,7 @@ NSInteger const  TEST_CREDITS = 30;
     
     // Fake branch key
     id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
-    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey];
+    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey:YES];
 }
 
 @end

@@ -27,7 +27,7 @@
 
     // Fake branch key
     id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
-    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey];
+    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey:YES];
 }
 
 #pragma mark - Scenario 1
@@ -39,7 +39,7 @@
 // InitSession should occur again
 // Subsequent requests should occur as normal
 - (void)testScenario1 {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_live"];
     [branch setAppListCheckEnabled:NO];
@@ -82,7 +82,7 @@
 // InitSession should occur again
 // Subsequent requests should occur as normal
 - (void)testScenario2 {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
@@ -132,7 +132,7 @@
 // Without closing the app (no re-open event to kick off InitSession), connection returns
 // Subsequent requests should occur as normal
 - (void)testScenario3 {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
@@ -175,7 +175,7 @@
 // Subsequent requests should cause an InitSession, which should succeed
 // Request should complete as normal
 - (void)testScenario4 {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
@@ -225,7 +225,7 @@
 // Two requests are enqueued
 // First request fails, second request should be cascade failed
 - (void)testScenario5 {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_live"];
     [branch setAppListCheckEnabled:NO];
@@ -256,7 +256,7 @@
 // Two requests are enqueued
 // First request fails because of a 400 (bad request), second request should not be affected
 - (void)testScenario6 {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_live"];
     [branch setAppListCheckEnabled:NO];

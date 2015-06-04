@@ -13,6 +13,10 @@
 
 @interface BNCPreferenceHelper : NSObject
 
+@property (assign, nonatomic) NSInteger retryCount;
+@property (assign, nonatomic) NSInteger retryInterval;
+@property (assign, nonatomic) NSInteger timeout;
+
 + (NSString *)getAPIBaseURL;
 + (NSString *)getAPIURL:(NSString *) endpoint;
 
@@ -85,6 +89,7 @@
 
 + (BOOL)isDebug;
 + (void)setDebug:(BOOL)debug;
++ (void)clearDebug;
 + (BOOL)isConnectedToRemoteDebug;
 + (void)setConnectedToRemoteDebug:(BOOL)connectedToRemoteDebug;
 
