@@ -58,7 +58,7 @@
 - (void)encodeWithCoder:(NSCoder *)coder {
     [super encodeWithCoder:coder];
     
-    [coder encodeObject:[BNCEncodingUtils encodeDictionaryToJsonString:self.appList needSource:NO] forKey:@"appList"];
+    [coder encodeObject:[BNCEncodingUtils encodeDictionaryToJsonString:self.appList] forKey:@"appList"];
 }
 
 @end

@@ -105,7 +105,7 @@
     
     NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:self.params];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
-    [longUrl appendFormat:@"data=%@", base64EncodedParams];
+    [longUrl appendFormat:@"source=ios&data=%@", base64EncodedParams];
     
     return longUrl;
 }
@@ -151,7 +151,7 @@
     [coder encodeObject:self.channel forKey:@"channel"];
     [coder encodeObject:self.feature forKey:@"feature"];
     [coder encodeObject:self.stage forKey:@"stage"];
-    [coder encodeObject:[BNCEncodingUtils encodeDictionaryToJsonString:self.params needSource:NO] forKey:@"params"];
+    [coder encodeObject:[BNCEncodingUtils encodeDictionaryToJsonString:self.params] forKey:@"params"];
 }
 
 @end
