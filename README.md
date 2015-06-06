@@ -14,19 +14,6 @@ The `source:iOS` attribute has been removed from the params dictionary for links
 
 We have deprecated the bnc_app_key and replaced that with the new branch_key. Please see [add branch key](#add-your-branch-key-to-your-project) for details.
 
-## Callback changes since v0.3.0
-
-An NSError* is added to all callback signatures
-
-typedef void (^callbackWithParams) (NSDictionary *params, NSError *error);
-
-typedef void (^callbackWithUrl) (NSString *url, NSError *error);
-
-typedef void (^callbackWithStatus) (BOOL changed, NSError *error);
-
-typedef void (^callbackWithList) (NSArray *list, NSError *error);
-
-Please look up BNCError.h for the list of error code.
 
 ## FAQ
 
@@ -123,92 +110,78 @@ If you want to add key for both your live and test apps at the same time, you ne
 
 For additional help configuring the SDK, including step-by-step instructions, please see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios-quickstart.md).
 
-### Initialize SDK And Register Deep Link Routing Function
+### Get A Singleton Branch Instance
 
-Called when app first initializes a session, ideally in the app delegate. If you created a custom link with your own custom dictionary data, you probably want to know when the user session init finishes, so you can check that data. Think of this callback as your "deep link router". If your app opens with some data, you want to route the user depending on the data you passed in. Otherwise, send them to a generic install flow.
+All Branch methods require an instance of the main Branch object. Here's how you grab one. It's stored statically and is accessible from any class.
 
-This deep link routing callback is called 100% of the time on init, with your link params or an empty dictionary if none present.
+#### Method
+
+**Live:** To retrieve the main instance, use this method.
+
+###### Objective-C
+```objc
+Branch *branch = [Branch getInstance];
+```
+###### Swift
+```swift
+let branch: Branch = Branch.getInstance()
+```
+
+**Test:** To retrieve and instance with the test key stored in plist, use this method. This will also enable debug and log all Branch requests to the console.
+
+###### Objective-C
+```objc
+#warning Remove for launch
+Branch *branch = [Branch getTestInstance];
+```
+###### Swift
+```swift
+//TODO: Remove for launch
+let branch: Branch = Branch.getTestInstance();
+```
+
+#### Arguments
+
+**Branch key** (NSString *) _optional_
+: If you don't store the Branch key in the plist file, you have the option of passing this key as an argument
+
+
+### Init Branch Session And Deep Link Routing Function
+
+To deep link, Branch must initialize a session to check if the user originated from a link. This call will initialize a new session _every time the app opens_. 100% of the time the app opens, it will call the deep link handling block to inform you whether the user came from a link. If your app opens with keys in the params, you'll want to route the user depending on the data you passed in. Otherwise, send them to a generic screen.
+
+Call this in 
+
+#### Method
 
 ###### Objective-C
 ```objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // your other init code
-
     Branch *branch = [Branch getInstance];
-    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {     // previously initUserSessionWithCallback:withLaunchOptions:
-        if (!error) {
-            // params are the deep linked params associated with the link that the user clicked before showing up
-            // params will be empty if no data found
-
-
-            // here is the data from the example below if a new user clicked on Joe's link and installed the app
-            NSString *name = [params objectForKey:@"user"]; // returns Joe
-            NSString *profileUrl = [params objectForKey:@"profile_pic"]; // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
-            NSString *description = [params objectForKey:@"description"]; // returns Joe likes long walks on the beach...
-
-            // route to a profile page in the app for Joe
-            // show a customer welcome
-        }
+    [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {    
+    	// route the user based on what's in params
     }];
+    return YES;
 }
-```
 
-```objc
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-    // pass the url to the handle deep link call
-    // if handleDeepLink returns YES, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
     if (![[Branch getInstance] handleDeepLink:url]) {
         // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
     }
     return YES;
 }
 ```
-
-If you want to use your test app during development, in application:didFinishLaunchingWithOptions: you can get the Branch object like this:
-
-```objc
-Branch *branch = [Branch getTestInstance];  // only available in SDK v0.6.0 or higher
-```
-
-Or
-
-```objc
-Branch *branch = [Branch getInstance:@"your test branch key"];  // replace with your actual branch key
-```
-
-Either way, we recommend you put a `#warning` directive to remind you to change back to live app during deployment later.
-Also, note the Branch object is singleton, so calling `[Branch getInstance]` in all the other places will still get you the same test branch object instantiated here.
-
 ###### Swift
 ```swift
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-    // your other init code
-
     let branch: Branch = Branch.getInstance()
-    branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
-        if (error == nil) {
-            // params are the deep linked params associated with the link that the user clicked before showing up
-            // params will be empty if no data found
-
-
-            // here is the data from the example below if a new user clicked on Joe's link and installed the app
-            let name = params["user"] as? String                // returns Joe
-            let profileUrl = params["profile_pic"] as? String   // returns https://s3-us-west-1.amazonaws.com/myapp/joes_pic.jpg
-            let description = params["description"] as? String  // returns Joe likes long walks on the beach...
-
-            // route to a profile page in the app for Joe
-            // show a customer welcome
-        }
+    branch.initSessionWithLaunchOptions(launchOptions, true, andRegisterDeepLinkHandler: { params, error in
+    	// route the user based on what's in params
     })
-
     return true
 }
-```
 
-```swift
 func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
-    // pass the url to the handle deep link call
-    // if handleDeepLink returns true, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
     if (!Branch.getInstance().handleDeepLink(url)) {
         // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
     }
@@ -217,23 +190,38 @@ func application(application: UIApplication, openURL url: NSURL, sourceApplicati
 }
 ```
 
-If you want to use your test app during development, in application:didFinishLaunchingWithOptions: you can get the Branch object like this:
+#### Arguments
 
-```swift
-let branch: Branch = Branch.getTestInstance()
-```
+###### initSession
 
-Or
+**launchOptions** (NSDictionary *) _required_
+: These launch options are passed to Branch through didFinishLaunchingWithOptions and will notify us if the user originated from a URI call or not. If the app was opened from a URI like myapp://, we need to follow a special initialization routine.
 
-```swift
-let branch: Branch = Branch.getInstance("your test branch key");  // replace with your actual branch key
-```
+**deepLinkHandler** ^(NSDictionary *params, NSError *error) _optional_
+: This is the callback block that Branch will execute after a network call to determine where the user comes from. It is called 100% of the time the app opens up since Branch registers for lifecycle notifications.
 
-Either way, we recommend you put a `//TODO:` or `//FIXME` landmark to remind you to change back to live app during deployment later.
-Also, note the Branch object is singleton, so you can and should still use `Branch.getInstance()` in all the other places (see examples below).
+- _NSDictionary *params_ : These params will contain any data associated with the Branch link that was clicked before the app session began. There are a few keys which are always present: 
+	- '+is_first_session' Denotes whether this is the first session (install) or any other session (open)
+	- '+clicked_branch_link' Denotes whether or not the user clicked a Branch link that triggered this session
+- _NSError *error_ : This error will be nil unless there is an error such as connectivity or otherwise. Check !error to confirm it was a valid link.
 
-#### Encoding Note
-One quick note about encoding. Since `NSJSONSerializaiton` supports a limited set of classes, we do some custom encoding to allow additional types. Current supported types include `NSDictionary`, `NSArray`, `NSURL`, `NSString`, `NSNumber`, `NSNull`, and `NSDate` (encoded as an ISO8601 string with timezone). If a parameter is of an unknown type, it will be ignored.
+**isReferrable** (BOOL) _optional_
+: This boolean lets you control whether or not the user is eligible to be 'referred'. This is applicable for credits and influencer tracking. If isReferrable is set to NO | false, and the user clicks a link before entering the app, deep link parameters will appear but that user will _not_ be considered referred. If isReferrable is set to YES | true, and the user clicks a link, deep link params will appear and the user _will_ be considered referred. Remove this argument to access the default, which only allows the user to be referred on a _fresh install_ but not on opens.
+
+###### handleDeepLink
+
+**url** (NSString *) _required_
+: This argument passes us the URI string so that we can parse the extra parameters. For example, 'myapp://open?link_click_id=12345'.
+
+#### Returns
+
+###### initSession
+
+Nothing
+
+###### handleDeepLink
+
+**BOOL** handleDeepLink will return a boolean indicating whether Branch has handled the URI. If the URI call is 'myapp://open?link_click_id=12345', then handleDeepLink will return YES because the Branch click object is present. If just 'myapp://', handleDeepLink will return NO.
 
 #### Retrieve session (install or open) parameters
 
@@ -242,14 +230,22 @@ These session parameters will be available at any point later on with this comma
 ###### Objective-C
 
 ```objc
-NSDictionary *sessionParams = [[Branch getInstance] getLatestReferringParams]; // previously getReferringParams
+NSDictionary *sessionParams = [[Branch getInstance] getLatestReferringParams];
 ```
 
 ###### Swift
 
 ```swift
-let sessionParams = Branch.getInstance().getLatestReferringParams() // previously getReferringParams()
+let sessionParams = Branch.getInstance().getLatestReferringParams()
 ```
+
+#### Arguments
+
+None
+
+#### Returns
+
+**NSDictionary *** When initSession returns a parameter set in the deep link callback, we store it in NSUserDefaults for the duration of the session in case you want to retrieve it later. Careful, once the app is minimized and the session ends, this will be cleared.
 
 #### Retrieve install (install only) parameters
 
@@ -346,6 +342,10 @@ Some example events you might want to track:
 ### Shortened links
 
 There are a bunch of options for creating these links. You can tag them for analytics in the dashboard, or you can even pass data to the new installs or opens that come from the link click. How awesome is that? You need to pass a callback for when you link is prepared (which should return very quickly, ~ 50 ms to process).
+
+#### Encoding Note
+One quick note about encoding. Since `NSJSONSerialization` supports a limited set of classes, we do some custom encoding to allow additional types. Current supported types include `NSDictionary`, `NSArray`, `NSURL`, `NSString`, `NSNumber`, `NSNull`, and `NSDate` (encoded as an ISO8601 string with timezone). If a parameter is of an unknown type, it will be ignored.
+
 
 For more details on how to create links, see the [Branch link creation guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/url-creation-guide.md)
 
