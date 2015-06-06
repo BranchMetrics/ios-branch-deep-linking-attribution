@@ -204,6 +204,8 @@ func application(application: UIApplication, openURL url: NSURL, sourceApplicati
 	- '+is_first_session' Denotes whether this is the first session (install) or any other session (open)
 	- '+clicked_branch_link' Denotes whether or not the user clicked a Branch link that triggered this session
 - _NSError *error_ : This error will be nil unless there is an error such as connectivity or otherwise. Check !error to confirm it was a valid link.
+    - BNCServerProblemError There was an issue connecting to the Branch service
+    - BNCBadRequestError The request was improperly formatted
 
 **isReferrable** (BOOL) _optional_
 : This boolean lets you control whether or not the user is eligible to be 'referred'. This is applicable for credits and influencer tracking. If isReferrable is set to NO | false, and the user clicks a link before entering the app, deep link parameters will appear but that user will _not_ be considered referred. If isReferrable is set to YES | true, and the user clicks a link, deep link params will appear and the user _will_ be considered referred. Remove this argument to access the default, which only allows the user to be referred on a _fresh install_ but not on opens.
