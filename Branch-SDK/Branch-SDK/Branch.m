@@ -791,7 +791,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
         shortURL = [self.linkCache objectForKey:linkData];
     }
     else {
-        // TODO still need to figure out sync here
         BranchShortUrlSyncRequest *req = [[BranchShortUrlSyncRequest alloc] initWithTags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params linkData:linkData linkCache:self.linkCache];
         
         if (self.isInitialized) {

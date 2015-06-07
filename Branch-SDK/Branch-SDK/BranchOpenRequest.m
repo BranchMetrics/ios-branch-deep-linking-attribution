@@ -48,7 +48,7 @@
 
     [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:@"app_version" onDict:params];
     [self safeSetValue:[BNCSystemObserver getOS] forKey:@"os" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:@"os_versionN" onDict:params];
+    [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:@"os_version" onDict:params];
     [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:@"uri_scheme" onDict:params];
     [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:@"update" onDict:params];
     [self safeSetValue:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier" onDict:params];
