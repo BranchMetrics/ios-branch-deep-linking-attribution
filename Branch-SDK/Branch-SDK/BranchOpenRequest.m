@@ -75,13 +75,11 @@
     [BNCPreferenceHelper setSessionID:data[@"session_id"]];
     [BNCSystemObserver setUpdateState];
     
-    if ([BNCPreferenceHelper getIsReferrable]) {
-        if (data[@"data"]) {
-            [BNCPreferenceHelper setSessionParams:data[@"data"]];
-        }
-        else {
-            [BNCPreferenceHelper setSessionParams:nil];
-        }
+    if (data[@"data"]) {
+        [BNCPreferenceHelper setSessionParams:data[@"data"]];
+    }
+    else {
+        [BNCPreferenceHelper setSessionParams:nil];
     }
     
     [BNCPreferenceHelper setLinkClickIdentifier:nil];
