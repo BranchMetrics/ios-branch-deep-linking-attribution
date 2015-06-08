@@ -13,14 +13,20 @@
 @interface BranchOpenRequest ()
 
 @property (strong, nonatomic) callbackWithStatus callback;
+@property (assign, nonatomic) BOOL allowInstallParamsToBeCleared;
 
 @end
 
 @implementation BranchOpenRequest
 
 - (id)initWithCallback:(callbackWithStatus)callback {
+    return [self initWithCallback:callback allowInstallParamsToBeCleared:NO];
+}
+
+- (id)initWithCallback:(callbackWithStatus)callback allowInstallParamsToBeCleared:(BOOL)allowInstallParamsToBeCleared {
     if (self = [super init]) {
         _callback = callback;
+        _allowInstallParamsToBeCleared = allowInstallParamsToBeCleared;
     }
     
     return self;
@@ -75,13 +81,24 @@
     [BNCPreferenceHelper setSessionID:data[@"session_id"]];
     [BNCSystemObserver setUpdateState];
     
-    if (data[@"data"]) {
-        [BNCPreferenceHelper setSessionParams:data[@"data"]];
-    }
-    else {
-        [BNCPreferenceHelper setSessionParams:nil];
+    NSString *sessionData = data[@"data"];
+    
+    // Update session params
+    [BNCPreferenceHelper setSessionParams:sessionData];
+    
+    // If referable, also se tup install params
+    if ([BNCPreferenceHelper getIsReferrable]) {
+        // If present, set it.
+        if (sessionData) {
+            [BNCPreferenceHelper setInstallParams:sessionData];
+        }
+        // If not present, only allow nil to be set if desired (don't clear otherwise)
+        else if (self.allowInstallParamsToBeCleared) {
+            [BNCPreferenceHelper setInstallParams:nil];
+        }
     }
     
+    // Clear link click so it doesn't get reused on the next open
     [BNCPreferenceHelper setLinkClickIdentifier:nil];
     
     if (data[@"link_click_id"]) {

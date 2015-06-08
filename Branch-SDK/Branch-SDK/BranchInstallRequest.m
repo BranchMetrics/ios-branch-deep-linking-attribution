@@ -12,6 +12,10 @@
 
 @implementation BranchInstallRequest
 
+- (id)initWithCallback:(callbackWithStatus)callback {
+    return [super initWithCallback:callback allowInstallParamsToBeCleared:YES];
+}
+
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
@@ -45,23 +49,6 @@
     if (value) {
         dict[key] = value;
     }
-}
-
-- (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
-    if (!error) {
-        NSDictionary *data = response.data;
-        
-        if ([BNCPreferenceHelper getIsReferrable]) {
-            if (data[@"data"]) {
-                [BNCPreferenceHelper setInstallParams:data[@"data"]];
-            }
-            else {
-                [BNCPreferenceHelper setInstallParams:nil];
-            }
-        }
-    }
-    
-    [super processResponse:response error:error];
 }
 
 @end
