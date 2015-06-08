@@ -7,7 +7,6 @@
 //
 
 #import "Branch.h"
-#import "BNCServerInterface.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCServerRequest.h"
 #import "BNCServerResponse.h"
