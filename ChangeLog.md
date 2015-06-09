@@ -1,5 +1,10 @@
 Branch iOS SDK change log
 
+- v0.8.0
+  * Split up all requests into their own classes to make them unit testable.
+  * Replace base64 implementation which could potentially crash.
+  * Remove most logic from the PreferenceHelper.
+
 - v0.7.8
   * Removing source attribute from `encodeDictionaryToJsonString`, only added to short url generation now.
   * Fixing bad content type in `prepareGetRequest`.
