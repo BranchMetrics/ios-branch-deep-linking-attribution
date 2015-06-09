@@ -5,7 +5,7 @@ This is the repository of our open source iOS SDK. There's a full demo app embed
 
 ## [New documentation portal](https://dev.branch.io)
 
-Check out our new doc portal!
+This document serves as a reference manual for our iOS SDK. Check out our new [doc portal](https//dev.branch.io) for detailed instructions and additional information.  
 
 ## Important migration to v0.7.8
 The `source:iOS` attribute has been removed from the params dictionary for links. However, a bunch of constants have been added that are added by the Branch backend to link clicks and opens. If you were relying on the source attribute in the past, you can now find that via the `BRANCH_INIT_KEY_CREATION_SOURCE`.
@@ -21,7 +21,7 @@ We have deprecated the bnc_app_key and replaced that with the new branch_key. Pl
 
 At Branch, we live and breathe uptime and performance. Just in case, we've got mechanisms internal to the SDK to deal with network issues. We always call the callbacks with the error parameter describing the issue. If the phone is in airplane mode and the connection is not available, the callbacks are called immediately. If there is a server latency, we timeout after 3 seconds and will retry 5 more times with a 3 second pause in between each. These timeouts are adjustable on the singleton instance by calling `setNetworkTimeout` (s), `setMaxRetries` and `setRetryInterval` (s).
 
-2 __How can I debug/test the SDK__
+2 __How can I debug/test the SDK?__
 
 Just call setDebug after you get a reference to the Branch singleton. We'll log all requests. Even more importantly, we won't reference the hardware ID of the phone so you can register installs after just uninstalling/reinstalling the app.
 
@@ -55,7 +55,7 @@ The testbed project:
 
 Or just clone this project!
 
-### Register you app
+### Register your app
 
 You can sign up for your own app id at [https://dashboard.branch.io](https://dashboard.branch.io)
 
@@ -67,42 +67,22 @@ Ideally, you want to use our links any time you have an external link pointing t
 1. Our links are the highest possible converting channel to new downloads and users
 1. You can pass that shared data across install to give new users a custom welcome or show them the content they expect to see
 
-Our linking infrastructure will support anything you want to build. If it doesn't, we'll fix it so that it does: just reach out to alex@branch.io with requests.
+Our linking infrastructure will support anything you want to build. If it doesn't, we'll fix it so that it does; just reach out to alex@branch.io with requests.
 
 ### Register a URI scheme direct deep linking (optional but recommended)
 
-You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to change **yourapp** to a unique string that represents your app name.
-
-1. In Xcode, click on YourProject-Info.plist on the left.
-1. Find URL Types and click the right arrow. (If it doesn't exist, right click anywhere and choose Add Row. Scroll down and choose URL Types)
-1. Add "yourapp", where yourapp is a unique string for your app, as an item in URL Schemes as below:
-
-![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlScheme.png)
-
-Alternatively, you can add the URI scheme in your project's Info page.
-
-1. In Xcode, click your project in the Navigator (on the left side).
-1. Select the "Info" tab.
-1. Expand the "URL Types" section at the bottom.
-1. Click the "+" sign to add a new URI Scheme, as below:
-
-![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png)
+You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to change **yourapp** to a unique string that represents your app name. For complete instructions, go to [Register a URI scheme for direct deep linking.] (https://dev.branch.io/references/ios_sdk/#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)
 
 ### Add your Branch Key to your project
 
-After you register your app, your Branch Key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift).
-
-1. In plist file, mouse hover "Information Property List" which is the root item under the Key column.
-1. After about half a second, you will see a "+" sign appear. Click it.
-1. In the newly added row, fill in "branch_key" for its key, leave type as String, and enter your app's Branch Key obtained in above steps in the value column.
-1. Save the plist file.
+After you register your app, your Branch Key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift). See [Add your Branch Key to your project] (https://dev.branch.io/references/ios_sdk/#add-your-branch-key-to-your-project) for step-by-step instructions.
 
 ###### URI Scheme Considerations
 The Branch SDK will pull the first URI Scheme from your list that is not one of `fb`, `db`, or `pin`. This value will be used one time to set the iOS URI Scheme under your Link Settings in the Branch Dashboard.
 
 ![Branch Key Demo](docs/images/branch-key-plist.png)
 
-If you want to add key for both your live and test apps at the same time, you need change the type column to Dictionary, and add two entries inside:
+If you want to add a key for both your live and test apps at the same time, you need change the type column to Dictionary, and add two entries inside:
 1. For live app, use "live" (without double quotes) for key, String for type, and your live branch key for value
 1. For test app, use "test" (without double quotes) for key, String for type, and your test branch key for value
 
@@ -114,9 +94,7 @@ For additional help configuring the SDK, including step-by-step instructions, pl
 
 All Branch methods require an instance of the main Branch object. Here's how you grab one. It's stored statically and is accessible from any class.
 
-#### Method
-
-**Live:** To retrieve the main instance, use this method.
+####getInstance
 
 ###### Objective-C
 ```objc
@@ -126,8 +104,10 @@ Branch *branch = [Branch getInstance];
 ```swift
 let branch: Branch = Branch.getInstance()
 ```
+#####Discussion
+Use this method to retrieve the main instance.
 
-**Test:** To retrieve and instance with the test key stored in plist, use this method. This will also enable debug and log all Branch requests to the console.
+####getTestInstance
 
 ###### Objective-C
 ```objc
@@ -139,20 +119,20 @@ Branch *branch = [Branch getTestInstance];
 //TODO: Remove for launch
 let branch: Branch = Branch.getTestInstance();
 ```
+#####Discussion
+To retrieve an instance with the test key stored in plist, use this method. This will also enable debug and log all Branch requests to the console.
 
-#### Arguments
+#####Parameters
 
 **Branch key** (NSString *) _optional_
-: If you don't store the Branch key in the plist file, you have the option of passing this key as an argument
+: If you don't store the Branch key in the plist file, you have the option of passing this key as an argument.
 
 
 ### Init Branch Session And Deep Link Routing Function
 
 To deep link, Branch must initialize a session to check if the user originated from a link. This call will initialize a new session _every time the app opens_. 100% of the time the app opens, it will call the deep link handling block to inform you whether the user came from a link. If your app opens with keys in the params, you'll want to route the user depending on the data you passed in. Otherwise, send them to a generic screen.
 
-Call this in 
-
-#### Method
+Call this in (Question: Is "Call this in" a complete sentence, or should there be more information?)
 
 ###### Objective-C
 ```objc
@@ -190,9 +170,9 @@ func application(application: UIApplication, openURL url: NSURL, sourceApplicati
 }
 ```
 
-#### Arguments
+####Parameters
 
-###### initSession
+######initSession
 
 **launchOptions** (NSDictionary *) _required_
 : These launch options are passed to Branch through didFinishLaunchingWithOptions and will notify us if the user originated from a URI call or not. If the app was opened from a URI like myapp://, we need to follow a special initialization routine.
@@ -227,7 +207,9 @@ Nothing
 
 #### Retrieve session (install or open) parameters
 
-These session parameters will be available at any point later on with this command. If no params, the dictionary will be empty. This refreshes with every new session (app installs AND app opens)
+These session parameters will be available at any point later on with this command. If no params, the dictionary will be empty. This refreshes with every new session (app installs AND app opens).
+
+#####getLatestReferringParams
 
 ###### Objective-C
 
@@ -241,11 +223,11 @@ NSDictionary *sessionParams = [[Branch getInstance] getLatestReferringParams];
 let sessionParams = Branch.getInstance().getLatestReferringParams()
 ```
 
-#### Arguments
+####Parameters
 
 None
 
-#### Returns
+####Returns
 
 **NSDictionary *** When initSession returns a parameter set in the deep link callback, we store it in NSUserDefaults for the duration of the session in case you want to retrieve it later. Careful, once the app is minimized and the session ends, this will be cleared.
 
@@ -270,6 +252,7 @@ let installParams = Branch.getInstance().getFirstReferringParams() // previously
 Often, you might have your own user IDs, or want referral and event data to persist across platforms or uninstall/reinstall. It's helpful if you know your users access your service from different devices. This where we introduce the concept of an 'identity'.
 
 To identify a user, just call:
+
 
 ###### Objective-C
 
@@ -304,6 +287,7 @@ Branch.getInstance().logout()   // previously clearUser
 ```
 
 ### Register custom events
+
 
 ###### Objective-C
 
@@ -350,6 +334,7 @@ One quick note about encoding. Since `NSJSONSerialization` supports a limited se
 
 
 For more details on how to create links, see the [Branch link creation guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/url-creation-guide.md)
+
 
 ###### Objective-C
 
@@ -477,6 +462,7 @@ The Branch iOS SDK includes a subclassed UIActivityItemProvider that can be pass
 **Note**: This method was formerly getBranchActivityItemWithDefaultURL:, which is now deprecated. Rather than requiring a default URL that acts as a placeholder for UIActivityItemProvider, a longURL is generated instantly and synchronously.
 
 The sample app included with the Branch iOS SDK shows a sample of this in ViewController.m:
+
 ###### Objective-C
 
 ```objc
@@ -561,7 +547,7 @@ self.navigationController?.presentViewController(shareViewController, animated: 
 
 ## Referral system rewarding functionality
 
-In a standard referral system, you have 2 parties: the original user and the invitee. Our system is flexible enough to handle rewards for all users for any actions. Here are a couple example scenarios:
+In a standard referral system, you have 2 parties: the original user and the invitee. Our system is flexible enough to handle rewards for all users for any actions. Here are a some example scenarios:
 
 1) Reward the original user for taking action (eg. inviting, purchasing, etc)
 
@@ -576,6 +562,7 @@ Warning: For a referral program, you should not use unique awards for custom eve
 ### Get reward balance
 
 Reward balances change randomly on the backend when certain actions are taken (defined by your rules), so you'll need to make an asynchronous call to retrieve the balance. Here is the syntax:
+
 
 ###### Objective-C
 
@@ -693,7 +680,7 @@ The response will return an array that has been parsed from the following JSON:
 
 ### Get referral code
 
-Retrieve the referral code created by current user
+Retrieve the referral code created by current user.
 
 ###### Objective-C
 
@@ -714,6 +701,8 @@ Branch.getInstance().getReferralCodeWithCallback { (params: [NSObject : AnyObjec
     }
 }
 ```
+####Arguments 
+
 
 ### Create referral code
 
