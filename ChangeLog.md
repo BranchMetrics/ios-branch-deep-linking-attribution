@@ -1,5 +1,8 @@
 Branch iOS SDK change log
 
+- v0.8.1
+  * Fix potential for bad reference when no callback is provided to `redeemRewards` call.
+
 - v0.8.0
   * Split up all requests into their own classes to make them unit testable.
   * Replace base64 implementation which could potentially crash.
