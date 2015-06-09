@@ -43,7 +43,9 @@
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     if (error) {
-        self.callback(NO, error);
+        if (self.callback) {
+            self.callback(NO, error);
+        }
         return;
     }
     
@@ -52,7 +54,9 @@
     NSInteger updatedBalance = currentAvailableCredits - self.amount;
     [BNCPreferenceHelper setCreditCount:updatedBalance forBucket:self.bucket];
     
-    self.callback(YES, nil);
+    if (self.callback) {
+        self.callback(YES, nil);
+    }
 }
 
 #pragma mark - NSCoding methods
