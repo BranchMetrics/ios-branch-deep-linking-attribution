@@ -31,13 +31,17 @@
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     if (error) {
-        self.callback(nil, error);
+        if (self.callback) {
+            self.callback(nil, error);
+        }
         return;
     }
     
     [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned from app check with %@", response.data];
     
-    self.callback(response.data[@"potential_apps"], nil);
+    if (self.callback) {
+        self.callback(response.data[@"potential_apps"], nil);
+    }
 }
 
 @end

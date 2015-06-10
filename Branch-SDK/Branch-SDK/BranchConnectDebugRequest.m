@@ -46,7 +46,9 @@
     else {
         [BNCPreferenceHelper setConnectedToRemoteDebug:YES];
 
-        self.callback(YES, nil);
+        if (self.callback) {
+            self.callback(YES, nil);
+        }
     }
 }
 
