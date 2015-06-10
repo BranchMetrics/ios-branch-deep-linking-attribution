@@ -9,6 +9,7 @@
 #import "BranchSetIdentityRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
+#import "BranchConstants.h"
 
 @interface BranchSetIdentityRequest ()
 
@@ -32,10 +33,10 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSDictionary *params = @{
-        @"identity": self.userId,
-        @"device_fingerprint_id": [BNCPreferenceHelper getDeviceFingerprintID],
-        @"session_id": [BNCPreferenceHelper getSessionID],
-        @"identity_id": [BNCPreferenceHelper getIdentityID]
+        BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY: self.userId,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID],
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID]
     };
 
     [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"profile"] key:key callback:callback];
@@ -51,12 +52,12 @@
         return;
     }
     
-    [BNCPreferenceHelper setIdentityID:response.data[@"identity_id"]];
-    [BNCPreferenceHelper setUserURL:response.data[@"link"]];
+    [BNCPreferenceHelper setIdentityID:response.data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]];
+    [BNCPreferenceHelper setUserURL:response.data[BRANCH_RESPONSE_KEY_USER_URL]];
     [BNCPreferenceHelper setUserIdentity:self.userId];
     
-    if (response.data[@"referring_data"]) {
-        [BNCPreferenceHelper setInstallParams:response.data[@"referring_data"]];
+    if (response.data[BRANCH_RESPONSE_KEY_INSTALL_PARAMS]) {
+        [BNCPreferenceHelper setInstallParams:response.data[BRANCH_RESPONSE_KEY_INSTALL_PARAMS]];
     }
     
     if (self.callback && self.shouldCallCallback) {
