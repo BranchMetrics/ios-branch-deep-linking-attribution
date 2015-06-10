@@ -1,5 +1,9 @@
 Branch iOS SDK change log
 
+- v0.8.2
+  * Fix issue with callbacks being lost on some of the internal requests.
+  * Fix issue with old requests not fitting the new request format, causing crsahes.
+
 - v0.8.1
   * Fix potential for bad reference when no callback is provided to `redeemRewards` call.
 
