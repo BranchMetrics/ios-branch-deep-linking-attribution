@@ -11,11 +11,11 @@
 @implementation BNCServerRequest
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    [NSException raise:@"Improper BNCServerRequest" format:@"BNCServerRequest subclasses must implement makeRequest:key:callback:"];
+    NSLog(@"[Improper BNCServerRequest] BNCServerRequest subclasses must implement makeRequest:key:callback:");
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
-    [NSException raise:@"Improper BNCServerRequest" format:@"BNCServerRequest subclasses must implement processResponse:error:"];
+    NSLog(@"[Improper BNCServerRequest] BNCServerRequest subclasses must implement processResponse:error:");
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
