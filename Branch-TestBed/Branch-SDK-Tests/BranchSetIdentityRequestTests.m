@@ -20,7 +20,7 @@ NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
 
 @implementation BranchSetIdentityRequestTests
 
-- (void)testMakeRequestBody {
+- (void)testRequestBody {
     NSDictionary * const expectedParams = @{
         BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY: IDENTITY_TEST_USER_ID,
         BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
