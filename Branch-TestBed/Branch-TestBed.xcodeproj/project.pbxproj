@@ -33,6 +33,7 @@
 		4665AF231B28965E00184037 /* Branch_SDK_Load_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4665AF1D1B28923900184037 /* Branch_SDK_Load_Tests.m */; };
 		4665AF241B28B7E000184037 /* BranchSetIdentityRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4665AF201B2892F700184037 /* BranchSetIdentityRequestTests.m */; };
 		4665AF261B28B9BB00184037 /* BranchConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 4665AF251B28B9BB00184037 /* BranchConstants.m */; };
+		4665AF281B28C1DE00184037 /* BranchLogoutRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4665AF271B28C1DE00184037 /* BranchLogoutRequestTests.m */; };
 		466B584F1B17775900A69EDE /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67BBCF271A69E49A009C7DAE /* AdSupport.framework */; };
 		466B58511B17776000A69EDE /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 466B58501B17776000A69EDE /* CoreTelephony.framework */; };
 		466B58521B17776500A69EDE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016631940F51400A9E103 /* Foundation.framework */; };
@@ -178,6 +179,7 @@
 		4665AF201B2892F700184037 /* BranchSetIdentityRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchSetIdentityRequestTests.m; sourceTree = "<group>"; };
 		4665AF221B28935700184037 /* BranchConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchConstants.h; sourceTree = "<group>"; };
 		4665AF251B28B9BB00184037 /* BranchConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchConstants.m; sourceTree = "<group>"; };
+		4665AF271B28C1DE00184037 /* BranchLogoutRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLogoutRequestTests.m; sourceTree = "<group>"; };
 		466B582E1B16227100A69EDE /* BranchShortUrlSyncRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchShortUrlSyncRequest.h; sourceTree = "<group>"; };
 		466B582F1B16227100A69EDE /* BranchShortUrlSyncRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShortUrlSyncRequest.m; sourceTree = "<group>"; };
 		466B58381B17773000A69EDE /* libBranch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBranch.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -340,6 +342,7 @@
 			isa = PBXGroup;
 			children = (
 				4665AF201B2892F700184037 /* BranchSetIdentityRequestTests.m */,
+				4665AF271B28C1DE00184037 /* BranchLogoutRequestTests.m */,
 				4683F0781B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m */,
 			);
 			name = BranchRequestsTests;
@@ -758,6 +761,7 @@
 				7E6B3B561AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m in Sources */,
 				461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */,
 				46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */,
+				4665AF281B28C1DE00184037 /* BranchLogoutRequestTests.m in Sources */,
 				464EA3981ACB1797000E4094 /* BNCServerInterfaceTests.m in Sources */,
 				4683F0791B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m in Sources */,
 				4665AF241B28B7E000184037 /* BranchSetIdentityRequestTests.m in Sources */,
