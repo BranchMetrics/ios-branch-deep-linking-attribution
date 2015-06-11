@@ -8,6 +8,7 @@
 
 #import "BranchUserCompletedActionRequest.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
 
 @interface BranchUserCompletedActionRequest ()
 
@@ -30,13 +31,13 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
-    params[@"event"] = self.action;
-    params[@"device_fingerprint_id"] = [BNCPreferenceHelper getDeviceFingerprintID];
-    params[@"identity_id"] = [BNCPreferenceHelper getIdentityID];
-    params[@"session_id"] = [BNCPreferenceHelper getSessionID];
+    params[BRANCH_REQUEST_KEY_ACTION] = self.action;
+    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = [BNCPreferenceHelper getDeviceFingerprintID];
+    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = [BNCPreferenceHelper getIdentityID];
+    params[BRANCH_REQUEST_KEY_SESSION_ID] = [BNCPreferenceHelper getSessionID];
     
     if (self.state) {
-        params[@"metadata"] = self.state;
+        params[BRANCH_REQUEST_KEY_STATE] = self.state;
     }
 
     [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"event"] key:key callback:callback];
