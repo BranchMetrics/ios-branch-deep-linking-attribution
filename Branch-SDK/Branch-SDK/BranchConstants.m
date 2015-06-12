@@ -14,6 +14,8 @@ NSString * const BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID = @"device_fingerprint
 NSString * const BRANCH_REQUEST_KEY_SESSION_ID = @"session_id";
 NSString * const BRANCH_REQUEST_KEY_ACTION = @"event";
 NSString * const BRANCH_REQUEST_KEY_STATE = @"metadata";
+NSString * const BRANCH_REQUEST_KEY_BUCKET = @"bucket";
+NSString * const BRANCH_REQUEST_KEY_AMOUNT = @"amount";
 
 NSString * const BRANCH_RESPONSE_KEY_BRANCH_IDENTITY = @"identity_id";
 NSString * const BRANCH_RESPONSE_KEY_SESSION_ID = @"session_id";
