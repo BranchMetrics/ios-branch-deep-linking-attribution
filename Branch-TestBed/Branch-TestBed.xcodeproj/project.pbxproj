@@ -98,6 +98,7 @@
 		46DC40781B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */; };
 		46DC407A1B2B694600D2D203 /* BranchGetReferralCodeRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC40791B2B694600D2D203 /* BranchGetReferralCodeRequestTests.m */; };
 		46DC407C1B2B81CA00D2D203 /* BranchValidateReferralCodeRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC407B1B2B81CA00D2D203 /* BranchValidateReferralCodeRequestTests.m */; };
+		46DC407E1B2B83B800D2D203 /* BranchApplyReferralCodeRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC407D1B2B83B800D2D203 /* BranchApplyReferralCodeRequestTests.m */; };
 		46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */; };
 		46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */; };
 		670016641940F51400A9E103 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016631940F51400A9E103 /* Foundation.framework */; };
@@ -202,6 +203,7 @@
 		46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchGetCreditHistoryRequestTests.m; sourceTree = "<group>"; };
 		46DC40791B2B694600D2D203 /* BranchGetReferralCodeRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchGetReferralCodeRequestTests.m; sourceTree = "<group>"; };
 		46DC407B1B2B81CA00D2D203 /* BranchValidateReferralCodeRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchValidateReferralCodeRequestTests.m; sourceTree = "<group>"; };
+		46DC407D1B2B83B800D2D203 /* BranchApplyReferralCodeRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchApplyReferralCodeRequestTests.m; sourceTree = "<group>"; };
 		46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserverTests.m; sourceTree = "<group>"; };
 		46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
 		556F7F2A4D139BFA019B2C92 /* Pods-Branch-SDK UI Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK UI Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK UI Tests/Pods-Branch-SDK UI Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -365,6 +367,7 @@
 				46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */,
 				46DC40791B2B694600D2D203 /* BranchGetReferralCodeRequestTests.m */,
 				46DC407B1B2B81CA00D2D203 /* BranchValidateReferralCodeRequestTests.m */,
+				46DC407D1B2B83B800D2D203 /* BranchApplyReferralCodeRequestTests.m */,
 			);
 			name = BranchRequestsTests;
 			sourceTree = "<group>";
@@ -780,6 +783,7 @@
 			files = (
 				4665AF231B28965E00184037 /* Branch_SDK_Load_Tests.m in Sources */,
 				46DC40761B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m in Sources */,
+				46DC407E1B2B83B800D2D203 /* BranchApplyReferralCodeRequestTests.m in Sources */,
 				7E6B3B561AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m in Sources */,
 				461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */,
 				46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */,

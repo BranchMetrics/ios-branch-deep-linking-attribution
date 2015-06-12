@@ -9,6 +9,7 @@
 #import "BranchApplyReferralCodeRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCError.h"
+#import "BranchConstants.h"
 
 @interface BranchApplyReferralCodeRequest ()
 
@@ -30,10 +31,10 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSDictionary *params = @{
-        @"referral_code": self.code,
-        @"identity_id": [BNCPreferenceHelper getIdentityID],
-        @"device_fingerprint_id": [BNCPreferenceHelper getDeviceFingerprintID],
-        @"session_id": [BNCPreferenceHelper getSessionID]
+        BRANCH_REQUEST_KEY_REFERRAL_CODE: self.code,
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID]
     };
     
     NSString *url = [[BNCPreferenceHelper getAPIURL:@"applycode/"] stringByAppendingString:self.code];
@@ -48,7 +49,7 @@
         return;
     }
     
-    if (!response.data[@"referral_code"]) {
+    if (!response.data[BRANCH_RESPONSE_KEY_REFERRAL_CODE]) {
         error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Referral code is invalid - it may have already been used or the code might not exist" }];
     }
     
