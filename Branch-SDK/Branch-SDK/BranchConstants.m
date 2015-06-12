@@ -25,6 +25,7 @@ NSString * const BRANCH_REQUEST_KEY_REFERRAL_TYPE = @"type";
 NSString * const BRANCH_REQUEST_KEY_REFERRAL_CREATION_SOURCE = @"creation_source";
 NSString * const BRANCH_REQUEST_KEY_REFERRAL_PREFIX = @"prefix";
 NSString * const BRANCH_REQUEST_KEY_REFERRAL_EXPIRATION = @"expiration";
+NSString * const BRANCH_REQUEST_KEY_REFERRAL_CODE = @"referral_code";
 
 NSString * const BRANCH_RESPONSE_KEY_BRANCH_IDENTITY = @"identity_id";
 NSString * const BRANCH_RESPONSE_KEY_SESSION_ID = @"session_id";
