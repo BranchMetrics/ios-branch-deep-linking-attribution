@@ -7,6 +7,7 @@
 //
 
 #import "BranchTest.h"
+#import "BNCPreferenceHelper.h"
 
 @interface BranchTest ()
 
@@ -15,6 +16,22 @@
 @end
 
 @implementation BranchTest
+
++ (void)setUp {
+    [super setUp];
+    
+    if (![BNCPreferenceHelper getDeviceFingerprintID]) {
+        [BNCPreferenceHelper setDeviceFingerprintID:@"foo_fingerprint"];
+    }
+
+    if (![BNCPreferenceHelper getIdentityID]) {
+        [BNCPreferenceHelper setIdentityID:@"foo_identity"];
+    }
+
+    if (![BNCPreferenceHelper getSessionID]) {
+        [BNCPreferenceHelper setSessionID:@"foo_sesion"];
+    }
+}
 
 - (void)setUp {
     [super setUp];

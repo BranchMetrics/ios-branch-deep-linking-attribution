@@ -9,6 +9,7 @@
 #import "BranchGetReferralCodeRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCError.h"
+#import "BranchConstants.h"
 
 @interface BranchGetReferralCodeRequest ()
 
@@ -41,22 +42,22 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
-    params[@"device_fingerprint_id"] = [BNCPreferenceHelper getDeviceFingerprintID];
-    params[@"identity_id"] = [BNCPreferenceHelper getIdentityID];
-    params[@"session_id"] = [BNCPreferenceHelper getSessionID];
-    params[@"calculation_type"] = @(self.calcType);
-    params[@"location"] = @(self.location);
-    params[@"type"] = @"credit";
-    params[@"creation_source"] = @2; // SDK = 2
-    params[@"amount"] = @(self.amount);
-    params[@"bucket"] = self.bucket;
+    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = [BNCPreferenceHelper getDeviceFingerprintID];
+    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = [BNCPreferenceHelper getIdentityID];
+    params[BRANCH_REQUEST_KEY_SESSION_ID] = [BNCPreferenceHelper getSessionID];
+    params[BRANCH_REQUEST_KEY_REFERRAL_CALCULATION_TYPE] = @(self.calcType);
+    params[BRANCH_REQUEST_KEY_REFERRAL_REWARD_LOCATION] = @(self.location);
+    params[BRANCH_REQUEST_KEY_REFERRAL_TYPE] = @"credit";
+    params[BRANCH_REQUEST_KEY_REFERRAL_CREATION_SOURCE] = @2; // iOS SDK = 2
+    params[BRANCH_REQUEST_KEY_AMOUNT] = @(self.amount);
+    params[BRANCH_REQUEST_KEY_BUCKET] = self.bucket;
     
     if (self.prefix.length) {
-        params[@"prefix"] = self.prefix;
+        params[BRANCH_REQUEST_KEY_REFERRAL_PREFIX] = self.prefix;
     }
     
     if (self.expiration) {
-        params[@"expiration"] = self.expiration;
+        params[BRANCH_REQUEST_KEY_REFERRAL_EXPIRATION] = self.expiration;
     }
     
     [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"referralcode"] key:key callback:callback];
@@ -70,7 +71,7 @@
         return;
     }
     
-    if (!response.data[@"referral_code"]) {
+    if (!response.data[BRANCH_RESPONSE_KEY_REFERRAL_CODE]) {
         error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Referral code with specified parameter set is already taken for a different user" }];
     }
     
