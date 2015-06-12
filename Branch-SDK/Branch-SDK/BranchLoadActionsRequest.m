@@ -8,6 +8,7 @@
 
 #import "BranchLoadActionsRequest.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
 
 @interface BranchLoadActionsRequest ()
 
@@ -41,8 +42,8 @@
     BOOL hasUpdated = NO;
     for (NSString *key in response.data) {
         NSDictionary *counts = response.data[key];
-        NSInteger total = [counts[@"total"] integerValue];
-        NSInteger unique = [counts[@"unique"] integerValue];
+        NSInteger total = [counts[BRANCH_RESPONSE_KEY_ACTION_COUNT_TOTAL] integerValue];
+        NSInteger unique = [counts[BRANCH_RESPONSE_KEY_ACTION_COUNT_UNIQUE] integerValue];
         
         if (total != [BNCPreferenceHelper getActionTotalCount:key] || unique != [BNCPreferenceHelper getActionUniqueCount:key]) {
             hasUpdated = YES;
