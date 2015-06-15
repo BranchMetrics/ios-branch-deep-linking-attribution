@@ -128,15 +128,15 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
 
     NSString *encodedParams = [BNCEncodingUtils encodeDictionaryToJsonString:self.params];
     result = prime * result + self.type;
-    result = prime * result + [[BNCEncodingUtils md5Encode:[self.alias lowercaseString]] hash];
-    result = prime * result + [[BNCEncodingUtils md5Encode:[self.channel lowercaseString]] hash];
-    result = prime * result + [[BNCEncodingUtils md5Encode:[self.feature lowercaseString]] hash];
-    result = prime * result + [[BNCEncodingUtils md5Encode:[self.stage lowercaseString]] hash];
-    result = prime * result + [[BNCEncodingUtils md5Encode:[encodedParams lowercaseString]] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:self.alias] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:self.channel] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:self.feature] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:self.stage] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:encodedParams] hash];
     result = prime * result + self.duration;
     
     for (NSString *tag in self.tags) {
-        result = prime * result + [[BNCEncodingUtils md5Encode:[tag lowercaseString]] hash];
+        result = prime * result + [[BNCEncodingUtils md5Encode:tag] hash];
     }
     
     return result;
