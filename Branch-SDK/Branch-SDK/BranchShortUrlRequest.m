@@ -135,7 +135,7 @@
         [self.linkData setupStage:_stage];
         [self.linkData setupAlias:_alias];
         [self.linkData setupMatchDuration:_matchDuration];
-        [self.linkData setupParams:[BNCEncodingUtils encodeDictionaryToJsonString:_params]];
+        [self.linkData setupParams:_params];
     }
     
     return self;
