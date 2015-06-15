@@ -10,9 +10,9 @@
 #import "BNCConfig.h"
 #import "Branch.h"
 
-static const NSInteger DEFAULT_TIMEOUT = 3;
-static const NSInteger DEFAULT_RETRY_INTERVAL = 3;
-static const NSInteger DEFAULT_RETRY_COUNT = 5;
+static const NSInteger DEFAULT_TIMEOUT = 5;
+static const NSInteger DEFAULT_RETRY_INTERVAL = 0;
+static const NSInteger DEFAULT_RETRY_COUNT = 1;
 static const NSInteger APP_READ_INTERVAL = 520000;
 
 static NSString *KEY_APP_KEY = @"bnc_app_key";
