@@ -94,7 +94,7 @@
         case 0:
             return BranchPromoCodeRewardReferredUser;
         case 2:
-            return BranchPromoCodeRewardReferredBothUsers;
+            return BranchPromoCodeRewardBothUsers;
         case 1:
         default:
             return BranchPromoCodeRewardReferringUser;
