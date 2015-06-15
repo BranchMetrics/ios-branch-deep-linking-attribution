@@ -863,7 +863,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [post setupAlias:alias];
     [post setupMatchDuration:duration];
     [post setupIgnoreUAString:ignoreUAString];
-    [post setupParams:[BNCEncodingUtils encodeDictionaryToJsonString:params]];
+    [post setupParams:params];
 
     return post;
 }
