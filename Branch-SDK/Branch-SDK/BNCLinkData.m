@@ -102,7 +102,7 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
     }
 }
 
-- (void)setupParams:(NSString *)params {
+- (void)setupParams:(NSDictionary *)params {
     _params = params;
     [self.data setObject:params forKey:BNC_LINK_DATA_DATA];
 }
@@ -124,12 +124,13 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
     NSUInteger result = 1;
     NSUInteger prime = 19;
 
+    NSString *encodedParams = [BNCEncodingUtils encodeDictionaryToJsonString:self.params];
     result = prime * result + self.type;
     result = prime * result + [[BNCEncodingUtils md5Encode:[self.alias lowercaseString]] hash];
     result = prime * result + [[BNCEncodingUtils md5Encode:[self.channel lowercaseString]] hash];
     result = prime * result + [[BNCEncodingUtils md5Encode:[self.feature lowercaseString]] hash];
     result = prime * result + [[BNCEncodingUtils md5Encode:[self.stage lowercaseString]] hash];
-    result = prime * result + [[BNCEncodingUtils md5Encode:[self.params lowercaseString]] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:[encodedParams lowercaseString]] hash];
     result = prime * result + self.duration;
     
     for (NSString *tag in self.tags) {
@@ -159,7 +160,8 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
         [coder encodeObject:self.stage forKey:BNC_LINK_DATA_STAGE];
     }
     if (self.params) {
-        [coder encodeObject:self.params forKey:BNC_LINK_DATA_DATA];
+        NSString *encodedParams = [BNCEncodingUtils encodeDictionaryToJsonString:self.params];
+        [coder encodeObject:encodedParams forKey:BNC_LINK_DATA_DATA];
     }
     if (self.duration > 0) {
         [coder encodeObject:[NSNumber numberWithInteger:self.duration] forKey:BNC_LINK_DATA_DURATION];
@@ -174,8 +176,10 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
         self.channel = [coder decodeObjectForKey:BNC_LINK_DATA_CHANNEL];
         self.feature = [coder decodeObjectForKey:BNC_LINK_DATA_FEATURE];
         self.stage = [coder decodeObjectForKey:BNC_LINK_DATA_STAGE];
-        self.params = [coder decodeObjectForKey:BNC_LINK_DATA_DATA];
         self.duration = [[coder decodeObjectForKey:BNC_LINK_DATA_DURATION] intValue];
+        
+        NSString *encodedParams = [coder decodeObjectForKey:BNC_LINK_DATA_DATA];
+        self.params = [BNCEncodingUtils decodeJsonStringToDictionary:encodedParams];
     }
     return self;
 }

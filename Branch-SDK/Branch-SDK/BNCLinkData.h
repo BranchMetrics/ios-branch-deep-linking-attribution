@@ -24,7 +24,7 @@ typedef NS_ENUM(NSUInteger, BranchLinkType) {
 @property (nonatomic, strong) NSString *channel;
 @property (nonatomic, strong) NSString *feature;
 @property (nonatomic, strong) NSString *stage;
-@property (nonatomic, strong) NSString *params;
+@property (nonatomic, strong) NSDictionary *params;
 @property (nonatomic, assign) NSUInteger duration;
 @property (nonatomic, strong) NSString *ignoreUAString;
 
@@ -34,7 +34,7 @@ typedef NS_ENUM(NSUInteger, BranchLinkType) {
 - (void)setupChannel:(NSString *)channel;
 - (void)setupFeature:(NSString *)feature;
 - (void)setupStage:(NSString *)stage;
-- (void)setupParams:(NSString *)params;
+- (void)setupParams:(NSDictionary *)params;
 - (void)setupMatchDuration:(NSUInteger)duration;
 - (void)setupIgnoreUAString:(NSString *)ignoreUAString;
 
