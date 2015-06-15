@@ -19,11 +19,24 @@ NSString * const BNC_LINK_DATA_DURATION = @"duration";
 NSString * const BNC_LINK_DATA_DATA = @"data";
 NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
 
+@interface BNCLinkData ()
+
+@property (strong, nonatomic) NSArray *tags;
+@property (strong, nonatomic) NSString *alias;
+@property (strong, nonatomic) NSString *channel;
+@property (strong, nonatomic) NSString *feature;
+@property (strong, nonatomic) NSString *stage;
+@property (strong, nonatomic) NSDictionary *params;
+@property (strong, nonatomic) NSString *ignoreUAString;
+@property (assign, nonatomic) BranchLinkType type;
+@property (assign, nonatomic) NSUInteger duration;
+
+@end
+
 @implementation BNCLinkData
 
 - (id)init {
-    self = [super init];
-    if (self) {
+    if (self = [super init]) {
         self.data = [[NSMutableDictionary alloc] init];
         self.data[@"source"] = @"ios";
     }
@@ -49,77 +62,83 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
 - (void)setupTags:(NSArray *)tags {
     if (tags) {
         _tags = tags;
-        [self.data setObject:tags forKey:BNC_LINK_DATA_TAGS];
+
+        self.data[BNC_LINK_DATA_TAGS] = tags;
     }
 }
 
 - (void)setupAlias:(NSString *)alias {
     if (alias) {
         _alias = alias;
-        [self.data setObject:alias forKey:BNC_LINK_DATA_ALIAS];
+
+        self.data[BNC_LINK_DATA_ALIAS] = alias;
     }
 }
 
 - (void)setupType:(BranchLinkType)type {
     if (type) {
         _type = type;
-        [self.data setObject:[NSNumber numberWithInt:type] forKey:BNC_LINK_DATA_LINK_TYPE];
+
+        self.data[BNC_LINK_DATA_LINK_TYPE] = @(type);
     }
 }
 
 - (void)setupMatchDuration:(NSUInteger)duration {
     if (duration > 0) {
         _duration = duration;
-        [self.data setObject:[NSNumber numberWithInteger:duration] forKey:BNC_LINK_DATA_DURATION];
+
+        self.data[BNC_LINK_DATA_DURATION] = @(duration);
     }
 }
 
 - (void)setupChannel:(NSString *)channel {
     if (channel) {
         _channel = channel;
-        [self.data setObject:channel forKey:BNC_LINK_DATA_CHANNEL];
+
+        self.data[BNC_LINK_DATA_CHANNEL] = channel;
     }
 }
 
 - (void)setupFeature:(NSString *)feature {
     if (feature) {
         _feature = feature;
-        [self.data setObject:feature forKey:BNC_LINK_DATA_FEATURE];
+
+        self.data[BNC_LINK_DATA_FEATURE] = feature;
     }
 }
 
 - (void)setupStage:(NSString *)stage {
     if (stage) {
         _stage = stage;
-        [self.data setObject:stage forKey:BNC_LINK_DATA_STAGE];
+
+        self.data[BNC_LINK_DATA_STAGE] = stage;
     }
 }
 
 - (void)setupIgnoreUAString:(NSString *)ignoreUAString {
     if (ignoreUAString) {
         _ignoreUAString = ignoreUAString;
-        [self.data setObject:ignoreUAString forKey:BNC_LINK_DATA_IGNORE_UA_STRING];
+        
+        self.data[BNC_LINK_DATA_IGNORE_UA_STRING] = ignoreUAString;
     }
 }
 
 - (void)setupParams:(NSDictionary *)params {
     if (params) {
         _params = params;
-        [self.data setObject:params forKey:BNC_LINK_DATA_DATA];
+
+        self.data[BNC_LINK_DATA_DATA] = params;
     }
 }
 
-
-- (NSArray *)allKeys {
-    return self.data.allKeys;
-}
-
 - (void)setObject:(id)anObject forKey:(id <NSCopying>)aKey {
-    [self.data setObject:anObject forKey:aKey];
+    if (anObject) {
+        self.data[aKey] = anObject;
+    }
 }
 
 - (id)objectForKey:(id)aKey {
-    return [self.data objectForKey:aKey];
+    return self.data[aKey];
 }
 
 - (NSUInteger)hash {
@@ -183,8 +202,8 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
         NSString *encodedParams = [coder decodeObjectForKey:BNC_LINK_DATA_DATA];
         self.params = [BNCEncodingUtils decodeJsonStringToDictionary:encodedParams];
     }
+
     return self;
 }
-
 
 @end
