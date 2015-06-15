@@ -79,6 +79,10 @@
     return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
 }
 
++ (NSString *)getBundleID {
+    return [[NSBundle mainBundle] bundleIdentifier];
+}
+
 + (NSString *)getCarrier {
     NSString *carrierName = nil;
     
