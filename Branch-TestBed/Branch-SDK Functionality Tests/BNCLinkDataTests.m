@@ -88,7 +88,7 @@
     BNCLinkData *a = [[BNCLinkData alloc] init];
     [a setupAlias:@"foo-alias"];
     BNCLinkData *b = [[BNCLinkData alloc] init];
-    [a setupAlias:@"FOO-ALIAS"];
+    [b setupAlias:@"FOO-ALIAS"];
     
     XCTAssertNotEqual([a hash], [b hash]);
 }
