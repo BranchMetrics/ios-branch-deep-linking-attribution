@@ -760,7 +760,7 @@ The resulting code will have your prefix, concatenated with a 2 character long u
 ```objc
 // Create a promo code with prefix "BRANCH", 5 credits, and without an expiration date
 [[Branch getInstance] getPromoCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-                                         amount:5
+                                      amount:5
                                     callback:^(NSDictionary *params, NSError *error) {
                                         if (!error) {
                                             NSString *promoCode = [params objectForKey:@"referral_code"];
@@ -793,8 +793,8 @@ The prefix parameter is optional here, i.e. it could be getPromoCodeWithAmount:e
 
 ```objc
 [[Branch getInstance] getPromoCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-                                         amount:5
-                                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+                                      amount:5
+                                  expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
                                     callback:^(NSDictionary *params, NSError *error) {
                                         if (!error) {
                                             NSString *promoCode = [params objectForKey:@"referral_code"];
@@ -838,11 +838,11 @@ You can also tune the promo code to the finest granularity, with the following a
 
 ```objc
 [[Branch getInstance] getPromoCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-                                         amount:5
-                                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
-                                         bucket:@"default"
-                                usageType:BranchPromoCodeUsageTypeOncePerUser
-                                       rewardLocation:BranchPromoCodeRewardBothUsers
+                                      amount:5
+                                  expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+                                      bucket:@"default"
+                                   usageType:BranchPromoCodeUsageTypeOncePerUser
+                              rewardLocation:BranchPromoCodeRewardBothUsers
                                     callback:^(NSDictionary *params, NSError *error) {
                                         if (!error) {
                                             NSString *promoCode = [params objectForKey:@"referral_code"];
