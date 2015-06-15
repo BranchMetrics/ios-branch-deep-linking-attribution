@@ -15,18 +15,7 @@ typedef NS_ENUM(NSUInteger, BranchLinkType) {
 
 @interface BNCLinkData : NSObject <NSCopying>
 
-@property (nonatomic, strong) NSMutableDictionary *data;
-@property (readonly, copy) NSArray *allKeys;
-
-@property (nonatomic, strong) NSArray *tags;
-@property (nonatomic, strong) NSString *alias;
-@property (nonatomic, assign) BranchLinkType type;
-@property (nonatomic, strong) NSString *channel;
-@property (nonatomic, strong) NSString *feature;
-@property (nonatomic, strong) NSString *stage;
-@property (nonatomic, strong) NSDictionary *params;
-@property (nonatomic, assign) NSUInteger duration;
-@property (nonatomic, strong) NSString *ignoreUAString;
+@property (strong, nonatomic) NSMutableDictionary *data;
 
 - (void)setupTags:(NSArray *)tags;
 - (void)setupAlias:(NSString *)alias;
@@ -37,8 +26,5 @@ typedef NS_ENUM(NSUInteger, BranchLinkType) {
 - (void)setupParams:(NSDictionary *)params;
 - (void)setupMatchDuration:(NSUInteger)duration;
 - (void)setupIgnoreUAString:(NSString *)ignoreUAString;
-
-- (void)setObject:(id)anObject forKey:(id <NSCopying>)aKey;
-- (id)objectForKey:(id)aKey;
 
 @end

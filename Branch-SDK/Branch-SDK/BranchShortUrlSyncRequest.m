@@ -45,7 +45,13 @@
 }
 
 - (BNCServerResponse *)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key {
-    return [serverInterface postRequest:self.linkData.data url:[BNCPreferenceHelper getAPIURL:@"url"] key:key log:YES];
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:self.linkData.data];
+    
+    params[@"device_fingerprint_id"] = [BNCPreferenceHelper getDeviceFingerprintID];
+    params[@"identity_id"] = [BNCPreferenceHelper getIdentityID];
+    params[@"session_id"] = [BNCPreferenceHelper getSessionID];
+
+    return [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"url"] key:key log:YES];
 }
 
 - (NSString *)processResponse:(BNCServerResponse *)response {
