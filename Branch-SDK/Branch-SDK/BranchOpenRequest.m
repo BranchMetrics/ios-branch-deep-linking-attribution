@@ -52,6 +52,7 @@
     params[@"is_referrable"] = @([BNCPreferenceHelper getIsReferrable]);
     params[@"debug"] = @([BNCPreferenceHelper isDebug]);
 
+    [self safeSetValue:[BNCSystemObserver getBundleID] forKey:@"bundleid" onDict:params];
     [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:@"app_version" onDict:params];
     [self safeSetValue:[BNCSystemObserver getOS] forKey:@"os" onDict:params];
     [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:@"os_version" onDict:params];
