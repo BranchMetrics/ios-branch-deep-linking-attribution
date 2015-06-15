@@ -109,7 +109,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 typedef NS_ENUM(NSUInteger, BranchPromoCodeRewardLocation) {
     BranchPromoCodeRewardReferredUser = 0,
     BranchPromoCodeRewardReferringUser = 2,
-    BranchPromoCodeRewardReferredBothUsers = 3
+    BranchPromoCodeRewardBothUsers = 3
 };
 
 typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
