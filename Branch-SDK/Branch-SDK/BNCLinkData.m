@@ -103,8 +103,10 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
 }
 
 - (void)setupParams:(NSDictionary *)params {
-    _params = params;
-    [self.data setObject:params forKey:BNC_LINK_DATA_DATA];
+    if (params) {
+        _params = params;
+        [self.data setObject:params forKey:BNC_LINK_DATA_DATA];
+    }
 }
 
 
