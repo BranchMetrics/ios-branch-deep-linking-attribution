@@ -852,9 +852,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (BNCLinkData *)prepareLinkDataFor:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSDictionary *)params ignoreUAString:(NSString *)ignoreUAString {
     BNCLinkData *post = [[BNCLinkData alloc] init];
 
-    [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
-    [post setObject:[BNCPreferenceHelper getIdentityID] forKey:@"identity_id"];
-    [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
     [post setupType:type];
     [post setupTags:tags];
     [post setupChannel:channel];
