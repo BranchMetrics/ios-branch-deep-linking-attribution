@@ -1,5 +1,17 @@
 Branch iOS SDK change log
 
+- v0.8.2
+  * Fix issue with callbacks being lost on some of the internal requests.
+  * Fix issue with old requests not fitting the new request format, causing crsahes.
+
+- v0.8.1
+  * Fix potential for bad reference when no callback is provided to `redeemRewards` call.
+
+- v0.8.0
+  * Split up all requests into their own classes to make them unit testable.
+  * Replace base64 implementation which could potentially crash.
+  * Remove most logic from the PreferenceHelper.
+
 - v0.7.8
   * Removing source attribute from `encodeDictionaryToJsonString`, only added to short url generation now.
   * Fixing bad content type in `prepareGetRequest`.
