@@ -70,6 +70,15 @@
     XCTAssertEqualObjects(expectedEncodedString, encodedValue);
 }
 
+- (void)testEncodeDictionaryToJsonStringWithQuotes {
+    NSDictionary *dictionaryWithQuotes = @{ @"my\"cool\"key": @"my\"cool\"value" };
+    NSString *expectedEncodedString = @"{\"my\\\"cool\\\"key\":\"my\\\"cool\\\"value\"}";
+ 
+    NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:dictionaryWithQuotes];
+    
+    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
+}
+
 - (void)testSimpleEncodeDictionaryToJsonData {
     NSDictionary *dataDict = @{ @"foo": @"bar" };
     NSData *expectedEncodedData = [@"{\"foo\":\"bar\"}" dataUsingEncoding:NSUTF8StringEncoding];
@@ -140,6 +149,15 @@
     NSString *expectedEncodedString = @"[]";
     
     NSString *encodedValue = [BNCEncodingUtils encodeArrayToJsonString:emptyArray];
+    
+    XCTAssertEqualObjects(expectedEncodedString, encodedValue);
+}
+
+- (void)testEncodeArrayToJsonStringWithQuotes {
+    NSArray *arrayWithQuotes = @[ @"my\"cool\"value1", @"my\"cool\"value2" ];
+    NSString *expectedEncodedString = @"[\"my\\\"cool\\\"value1\",\"my\\\"cool\\\"value2\"]";
+    
+    NSString *encodedValue = [BNCEncodingUtils encodeArrayToJsonString:arrayWithQuotes];
     
     XCTAssertEqualObjects(expectedEncodedString, encodedValue);
 }

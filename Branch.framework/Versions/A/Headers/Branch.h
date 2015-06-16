@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "BranchActivityItemProvider.h"
-#import "BranchServerInterface.h"
+#import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCLinkCache.h"
 
@@ -511,7 +511,7 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 ///--------------
 
 /**
- Load the action counts from the server.
+ Load actions counts that have taken place for users referred by the current user.
 
  @param callback The callback that is called once the request has completed.
  */
@@ -1048,9 +1048,16 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 
 /**
  Method for creating a one of Branch instance and specifying its dependencies.
-
+ 
  @warning This is meant for use internally only (exposed for the sake of testing) and should not be used by apps.
  */
-- (id)initWithInterface:(BranchServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache key:(NSString *)key;
+- (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache key:(NSString *)key;
+
+/**
+ Method for logging a message to the Branch server, used when remote debugging is enabled.
+ 
+ @warning This is meant for use internally only (exposed for the sake of testing) and should not be used by apps.
+ */
+- (void)log:(NSString *)log;
 
 @end

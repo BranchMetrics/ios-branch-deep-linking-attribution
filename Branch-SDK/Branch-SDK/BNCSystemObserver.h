@@ -13,6 +13,7 @@
 + (NSString *)getUniqueHardwareId:(BOOL *)isReal andIsDebug:(BOOL)debug;
 + (NSString *)getDefaultUriScheme;
 + (NSString *)getAppVersion;
++ (NSString *)getBundleID;
 + (NSString *)getCarrier;
 + (NSString *)getBrand;
 + (NSString *)getModel;
