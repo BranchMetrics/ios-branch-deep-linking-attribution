@@ -12,7 +12,6 @@
 
 @interface BranchOpenRequest ()
 
-@property (strong, nonatomic) callbackWithStatus callback;
 @property (assign, nonatomic) BOOL allowInstallParamsToBeCleared;
 
 @end
