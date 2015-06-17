@@ -8,13 +8,13 @@ Table of Contents|
 ------------- | 
 [Get the Demo App](#get-the-demo-app)| 
 [New Documentation Portal](#new-documentation-portal)|
-|[Class Reference Table](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#class-reference)|
-|[Important Migrations] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#important-migration-to-v078)      |  
-[Troubleshooting FAQ] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#faq) 		  |
-[Installation] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#installation)|
-[Configuration (for Tracking)] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#configuration-for-tracking)|
-[Register a URI scheme direct deep linking (optional, but recommended)] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)|
-[Add your Branch Key to your project](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#add-your-branch-key-to-your-project)|
+|[Class Reference Table](#class-reference)|
+|[Important Migrations] (#important-migration-to-v078)      |  
+[Troubleshooting FAQ] (#faq) 		  |
+[Installation] (#installation)|
+[Configuration (for Tracking)] (#configuration-for-tracking)|
+[Register a URI scheme direct deep linking (optional, but recommended)] (#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)|
+[Add your Branch Key to your project](#add-your-branch-key-to-your-project)|
 
 
 ## Get the Demo App
