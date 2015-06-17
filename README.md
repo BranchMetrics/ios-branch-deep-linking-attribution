@@ -1,8 +1,8 @@
 #Branch Metrics iOS SDK Reference
 
-This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a list of the content featured in this document.
+This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a complete list of the content featured in this document.
 
-**Note**: Check out our new [documentation portal](https://dev.branch.io)! Our new doc portal includes a [getting started guide](https://dev.branch.io/recipes/quickstart_guide/ios/), [deeplinked features](https://dev.branch.io/recipes/content_sharing/ios/), [customization](https://dev.branch.io/recipes/add_custom_link_data_and_routing/ios/), and much more. Our doc portal also provides detailed instructions and information on the sections listed in the table of contents below.  
+**Note:** Go to our new [**Documentation Portal**] (https://dev.branch.io) where you can find all of our latest documentation, as well as future documentation updates.  
             
 Table of Contents| 
 ------------- | 
@@ -13,14 +13,12 @@ Table of Contents|
 [Troubleshooting FAQ] (#faq) 		  |
 [Installation] (#installation)|
 [Configuration (for Tracking)] (#configuration-for-tracking)|
-[Register a URI scheme direct deep linking (optional, but recommended)] (#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)|
-[Add your Branch Key to your project](#add-your-branch-key-to-your-project)|
-
+[Register a URI Scheme Direct Deep Linking (Optional, but Recommended)] (#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)|
+[Add Your Branch Key to Your Project](#add-your-branch-key-to-your-project)|
 
 ## Get the Demo App
 
-There's a full demo app embedded in this repository, but you should also check out our live demo: [Branch Monster Factory](https://itunes.apple.com/us/app/id917737838). We've [open sourced the Branchster's app](https://github.com/BranchMetrics/Branchster-iOS) as well if you'd like to dig in.
-
+There's a full demo app embedded in this repository, but you can also check out our live demo: [Branch Monster Factory](https://itunes.apple.com/us/app/id917737838). We've [open sourced the Branchster's app](https://github.com/BranchMetrics/Branchster-iOS) as well if you're ready to dig in.
 
 
 ##Class Reference
@@ -30,29 +28,29 @@ For your reference, see the methods and parameters table below.
       
 | Tasks          | Methods          | Parameters     |
 |:------------- |:---------------:| -------------:|   
-[Get A Singleton Branch Instance](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#get-a-singleton-branch-instance)|[Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods)|[Parameter](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters)
-|[Init Branch Session And Deep Link Routing Function](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#init-branch-session-and-deep-link-routing-function)|[Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-2)|[Parameter](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-2)|
-|[Retrieve session (install or open) parameters](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#retrieve-session-install-or-open-parameters)|[Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-3)|[Parameter](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-3)| 
-|[Retrieve install (install only) parameters] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#retrieve-install-install-only-parameters)|[Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-4)| [Parameter](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-4)|
-[Persistent identities] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#persistent-identities)| [Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-5)| [Parameter] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-5)|
-[Register custom events](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#register-custom-events)| [Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-6)| [Parameter] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-6)|
-[Generate Tracked, Deep Linking URLs (pass data across install and open)](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#generate-tracked-deep-linking-urls-pass-data-across-install-and-open)|[Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-7)| [Parameter] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-7)|
-[UIActivityView Share Sheet](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#uiactivityview-share-sheet)|[Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-8)|[Parameter] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-8)| 
-|[Get reward balance](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#get-reward-balance)|[Method] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-9)|[Parameters] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-9)| 
-[Redeem all or some of the reward balance (store state)](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#redeem-all-or-some-of-the-reward-balance-store-state)| [Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-10)| [Parameter] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-10)|
-[Get credit history](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#get-credit-history)|[Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-11)|[Parameters] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-11)|
-[Get referral code](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#get-referral-code)|[Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-12)|[Parameter] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-12)|
-[Create referral code](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#create-referral-code)|[Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-13)|[Parameter] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-13)|
-[Validate referral code](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#validate-referral-code)|[Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-14)|[Parameter] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-14)|
-[Apply referral code](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#apply-referral-code)|[Method](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#methods-15)|[Parameter] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#parameters-15)|
+[Get a Singleton Branch Instance](#get-a-singleton-branch)|[Method](#methods)|[Parameter](#parameters)
+|[Init Branch Session and Deep Link Routing Function](#init- branch-session-and-deep-link-routing-function)|[Method](#methods-2)|[Parameter](#parameters-2)|
+|[Retrieve Session (Install or Open) Parameters](#retrieve-session-install-or-open-parameters)|[Method](#methods-3)|[Parameter](#parameters-3)| 
+|[Retrieve Install (Install Only) Parameters](#retrieve-install-install-only-parameters)|[Method](#methods-4)|[Parameter](#parameters-4)|
+[Persistent Identities](#persistent-identities)|[Method](#methods-5)|[Parameter](#parameters-5)|
+[Register Custom Events](#register-custom-events)|[Method](#methods-6)| [Parameter](#parameters-6)|
+[Generate Tracked, Deep Linking URLs (Pass Data Across Install and Open)](#generate-tracked-deep-linking-urls-pass-data-across-install-and-open)|[Method](#methods-7)|[Parameter](#parameters-7)|
+[UIActivityView Share Sheet](#uiactivityview-share-sheet)|[Method](#methods-8)|[Parameter](#parameters-8)| 
+|[Get Reward Balance](#get-reward-balance)|[Method] (#methods-9)|[Parameters] (#parameters-9)| 
+[Redeem All or Some of the Reward Balance (Store State)](#redeem-all-or-some-of-the-reward-balance-store-state)|[Method](#methods-10)|[Parameter](#parameters-10)|
+[Get Credit History](#get-credit-history)|[Method](#methods-11)|[Parameters] (#parameters-11)|
+[Get Referral Code](#get-referral-code)|[Method](#methods-12)|[Parameter] (#parameters-12)|
+[Create Referral Code](#create-referral-code)|[Method](#methods-13)|[Parameter] (#parameters-13)|
+[Validate Referral Code](#validate-referral-code)|[Method](#methods-14)|[Parameter](#parameters-14)|
+[Apply Referral Code](#apply-referral-code)|[Method](#methods-15)|[Parameter] (#parameters-15)|
 
 
-## Important migration to v0.7.8
+## Important Migration to v0.7.8
 The `source:iOS` attribute has been removed from the params dictionary for links. However, a bunch of constants have been added that are added by the Branch backend to link clicks and opens. If you were relying on the source attribute in the past, you can now find that via the `BRANCH_INIT_KEY_CREATION_SOURCE`.
 
-## Important migration to v0.6.0
+## Important Migration to v0.6.0
 
-We have deprecated the bnc_app_key and replaced that with the new branch_key. Please see [add branch key](#add-your-branch-key-to-your-project) for details.
+We have deprecated the bnc\_appkey and replaced that with the new branch_key. Please see [add branch key](#add-your-branch-key-to-your-project) for details.
 
 
 ## FAQ
@@ -61,7 +59,7 @@ Have questions? Need troubleshooting assistance? See our [FAQs]  (https://dev.br
 
 ## Installation
 
-compiled SDK size: ~155kb
+The compiled SDK size is ~155kb. You can clone this repository to keep up with the latest version, you can install via CocoaPods, or you can download the raw files.
 
 ### Available in CocoaPods
 
@@ -71,42 +69,41 @@ Branch is available through [CocoaPods](http://cocoapods.org). To install it, si
 pod "Branch"
 ```
 
-### Download the raw files
+### Download the Raw Files
 
 You can also install by downloading the raw files below.
 
-Download code from here:
+* Download code from here:
 [https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip](https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip)
 
-The testbed project:
+* The testbed project:
 [https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip](https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip)
 
-Or just clone this project!
 
-### Register your app
+### Register Your App
 
-You can sign up for your own app id at [https://dashboard.branch.io](https://dashboard.branch.io)
+You can sign up for your own app id at [https://dashboard.branch.io](https://dashboard.branch.io).
 
-## Configuration (for tracking)
+## Configuration (for Tracking)
 
-For help configuring the SDK, please see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios-quickstart.md).
+For help configuring the SDK, see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios-quickstart.md).
 
-**Note**: Our linking infrastructure will support anything you want to build. If it doesn't, we'll fix it so that it does; just reach out to alex@branch.io with requests.
+**Note**: Our linking infrastructure will support anything you want to build. If it doesn't, we'll fix it so that it does. Just reach out to alex@branch.io with requests.
 
-### Register a URI scheme direct deep linking (optional but recommended)
+### Register a URI Scheme Direct Deep Linking (Optional but Recommended)
 
-You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to change **yourapp** to a unique string that represents your app name. For complete instructions, go to [Register a URI scheme for direct deep linking.] (https://dev.branch.io/references/ios_sdk/#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)
+You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to change **yourapp** to a unique string that represents your app name. For complete instructions, go to [Register a URI Scheme for Direct Deep Linking.] (https://dev.branch.io/references/ios_sdk/#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)
 
-### Add your Branch Key to your project
+### Add Your Branch Key to Your Project
 
-After you register your app, your Branch Key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift). See [Add your Branch Key to your project] (https://dev.branch.io/references/ios_sdk/#add-your-branch-key-to-your-project) for step-by-step instructions.
+After you register your app, your Branch Key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift). See [Add Your Branch Key to Your Project] (https://dev.branch.io/references/ios_sdk/#add-your-branch-key-to-your-project) for step-by-step instructions.
 
 #### URI Scheme Considerations
-Go to the [new documentation portal](https://dev.branch.io) for information about [URI Scheme Considerations](https://dev.branch.io/references/ios_sdk/#uri-scheme-considerations).
+Go to the new [Documentation Portal](https://dev.branch.io) for information about [URI Scheme Considerations](https://dev.branch.io/references/ios_sdk/#uri-scheme-considerations).
 
-### Get A Singleton Branch Instance
+### Get a Singleton Branch Instance
 
-All Branch methods require an instance of the main Branch object. Here's how you grab one. It's stored statically and is accessible from any class.
+All Branch methods require an instance of the main Branch object. Here's how you can get one. It's stored statically and is accessible from any class.
 
 ####Methods
 
@@ -136,7 +133,7 @@ let branch: Branch = Branch.getTestInstance();
 : If you don't store the Branch key in the plist file, you have the option of passing this key as an argument.
 
 
-### Init Branch Session And Deep Link Routing Function
+### Init Branch Session and Deep Link Routing Function
 
 To deep link, Branch must initialize a session to check if the user originated from a link. This call will initialize a new session _every time the app opens_. 100% of the time the app opens, it will call the deep link handling block to inform you whether the user came from a link. If your app opens with keys in the params, you'll want to route the user depending on the data you passed in. Otherwise, send them to a generic screen.
 
@@ -196,7 +193,7 @@ func application(application: UIApplication, openURL url: NSURL, sourceApplicati
     - BNCBadRequestError The request was improperly formatted
 
 **isReferrable** (BOOL) _optional_
-: This boolean lets you control whether or not the user is eligible to be 'referred'. This is applicable for credits and influencer tracking. If isReferrable is set to NO | false, and the user clicks a link before entering the app, deep link parameters will appear but that user will _not_ be considered referred. If isReferrable is set to YES | true, and the user clicks a link, deep link params will appear and the user _will_ be considered referred. Remove this argument to access the default, which only allows the user to be referred on a _fresh install_ but not on opens.
+: This boolean lets you control whether or not the user is eligible to be 'referred'. This is applicable for credits and influencer tracking. If isReferrable is set to NO | false, and the user clicks a link before entering the app, deep link parameters will appear, but that user will _not_ be considered referred. If isReferrable is set to YES | true, and the user clicks a link, deep link params will appear and the user _will_ be considered referred. Remove this argument to access the default, which only allows the user to be referred on a _fresh install_, but not on opens.
 
 ###### handleDeepLink
 
@@ -239,9 +236,9 @@ None
 
 **NSDictionary *** When initSession returns a parameter set in the deep link callback, we store it in NSUserDefaults for the duration of the session in case you want to retrieve it later. Careful, once the app is minimized and the session ends, this will be cleared.
 
-###Retrieve install (install only) parameters
+###Retrieve Install (Install Only) Parameters
 
-If you ever want to access the original session params (the parameters passed in for the first install event only), you can use this line. This is useful if you only want to reward users who newly installed the app from a referral link or something.
+If you ever want to access the original session params (the parameters passed in for the first install event only), you can use this line. This is useful if you only want to reward users who newly installed the app from a referral link.
 
 ####Methods
 
@@ -260,7 +257,7 @@ let installParams = Branch.getInstance().getFirstReferringParams() // previously
 
 None
 
-### Persistent identities
+### Persistent Identities
 
 Often, you might have your own user IDs, or want referral and event data to persist across platforms or uninstall/reinstall. It's helpful if you know your users access your service from different devices. This where we introduce the concept of an 'identity'.
 
@@ -308,7 +305,7 @@ Branch.getInstance().logout()   // previously clearUser
 ####Parameters
 None
 
-###Register custom events
+###Register Custom Events
 
 ####Methods
 
@@ -349,9 +346,9 @@ Some example events you might want to track:
 ####Parameters
 None
 
-## Generate Tracked, Deep Linking URLs (pass data across install and open)
+## Generate Tracked, Deep Linking URLs (Pass Data Across Install and Open)
 
-### Shortened links
+### Shortened Links
 
 There are a bunch of options for creating these links. You can tag them for analytics in the dashboard, or you can even pass data to the new installs or opens that come from the link click. How awesome is that? You need to pass a callback for when you link is prepared (which should return very quickly, ~ 50 ms to process).
 
@@ -463,42 +460,42 @@ There are other methods which exclude tag and data if you don't want to pass tho
 
 
 **Note**:
-You can customize the Facebook OG tags of each URL if you want to dynamically share content by using the following _optional keys in the data dictionary_. Please use this [Facebook tool](https://developers.facebook.com/tools/debug/og/object) to debug your OG tags!
+You can customize the Facebook OG tags of each URL if you want to dynamically share content by using the following _optional keys in the data dictionary_. Please use this [Facebook tool](https://developers.facebook.com/tools/debug/og/object) to debug your OG tags.
 
 | Key | Value
 | --- | ---
-| "$og_title" | The title you'd like to appear for the link in social media
-| "$og_description" | The description you'd like to appear for the link in social media
-| "$og_image_url" | The URL for the image you'd like to appear for the link in social media
-| "$og_video" | The URL for the video
-| "$og_url" | The URL you'd like to appear
+| "$og_title" | The title you'd like to appear for the link in social media.
+| "$og_description" | The description you'd like to appear for the link in social media.
+| "$og_image_url" | The URL for the image you'd like to appear for the link in social media.
+| "$og_video" | The URL for the video.
+| "$og_url" | The URL you'd like to appear.
 | "$og_redirect" | If you want to bypass our OG tags and use your own, use this key with the URL that contains your site's metadata.
 
 You can do custom redirection by inserting the following _optional keys in the dictionary_:
 
 | Key | Value
 | --- | ---
-| "$desktop_url" | Where to send the user on a desktop or laptop. By default it is the Branch-hosted text-me service
-| "$android_url" | The replacement URL for the Play Store to send the user if they don't have the app. _Only necessary if you want a mobile web splash_
-| "$ios_url" | The replacement URL for the App Store to send the user if they don't have the app. _Only necessary if you want a mobile web splash_
-| "$ipad_url" | Same as above but for iPad Store
-| "$fire_url" | Same as above but for Amazon Fire Store
-| "$blackberry_url" | Same as above but for Blackberry Store
-| "$windows_phone_url" | Same as above but for Windows Store
-| "$after_click_url" | When a user returns to the browser after going to the app, take them to this URL. _iOS only; Android coming soon_
+| "$desktop_url" | Where to send the user on a desktop or laptop. By default it is the Branch-hosted text-me service.
+| "$android_url" | The replacement URL for the Play Store to send the user if they don't have the app. _Only necessary if you want a mobile web splash_.
+| "$ios_url" | The replacement URL for the App Store to send the user if they don't have the app. _Only necessary if you want a mobile web splash_.
+| "$ipad_url" | Same as above, but for iPad Store.
+| "$fire_url" | Same as above, but for Amazon Fire Store.
+| "$blackberry_url" | Same as above, but for Blackberry Store.
+| "$windows_phone_url" | Same as above, but for Windows Store.
+| "$after_click_url" | When a user returns to the browser after going to the app, take them to this URL. _iOS only; Android coming soon_.
 
 You have the ability to control the direct deep linking of each link by inserting the following _optional keys in the dictionary_:
 
 | Key | Value
 | --- | ---
 | "$deeplink_path" | The value of the deep link path that you'd like us to append to your URI. For example, you could specify "$deeplink_path": "radio/station/456" and we'll open the app with the URI "yourapp://radio/station/456?link_click_id=branch-identifier". This is primarily for supporting legacy deep linking infrastructure.
-| "$always_deeplink" | true or false. (default is not to deep link first) This key can be specified to have our linking service force try to open the app, even if we're not sure the user has the app installed. If the app is not installed, we fall back to the respective app store or $platform_url key. By default, we only open the app if we've seen a user initiate a session in your app from a Branch link (has been cookied and deep linked by Branch)
+| "$always_deeplink" | true or false. (default is not to deep link first) This key can be specified to have our linking service force try to open the app, even if we're not sure the user has the app installed. If the app is not installed, we fall back to the respective app store or $platform_url key. By default, we only open the app if we've seen a user initiate a session in your app from a Branch link (has been cookied and deep linked by Branch).
 
 ### UIActivityView Share Sheet
 
 UIActivityView is the standard way of allowing users to share content from your app. A common use case is a user sharing a referral code, or a content URL with their friends. If you want to give your users a way of sharing content from your app, this is the simplest way to implement Branch.
 
-**Sample UIActivityView Share sheet**
+**Sample UIActivityView Share Sheet**
 
 ![UIActivityView Share Sheet](https://s3-us-west-1.amazonaws.com/branchhost/iOSShareSheet.png )
 
@@ -601,21 +598,21 @@ self.navigationController?.presentViewController(shareViewController, animated: 
 
 **tags**: An array of tag strings to be associated with the link.
 
-## Referral system rewarding functionality
+## Referral System Rewarding Functionality
 
-In a standard referral system, you have 2 parties: the original user and the invitee. Our system is flexible enough to handle rewards for all users for any actions. Here are a some example scenarios:
+In a standard referral system, you have two parties: the original user and the invitee. Our system is flexible enough to handle rewards for all users for any actions. Here are a some example scenarios:
 
-1) Reward the original user for taking action (eg. inviting, purchasing, etc.).
+* Reward the original user for taking action (e.g. inviting, purchasing, etc.).
 
-2) Reward the invitee for installing the app from the original user's referral link.
+* Reward the invitee for installing the app from the original user's referral link.
 
-3) Reward the original user when the invitee takes action (eg. give the original user credit when their the invitee buys something).
+* Reward the original user when the invitee takes action (e.g. give the original user credit when their invitee buys something).
 
-These reward definitions are created on the dashboard, under the 'Reward Rules' section in the 'Referrals' tab on the dashboard.
+These reward definitions are created on the dashboard, under the 'Reward Rules' section in the 'Referrals' tab on the dashboard. For more information, see the [Rewards] (https://dev.branch.io/recipes/referral_links_with_incentives/#rewards) section in the [documentation portal](https://dev.branch.io/recipes/referral_links_with_incentives/#rewards).
 
 **Warning**: For a referral program, you should not use unique awards for custom events and redeem pre-identify call. This can allow users to cheat the system.
 
-### Get reward balance
+### Get Reward Balance
 
 Reward balances change randomly on the backend when certain actions are taken (defined by your rules), so you'll need to make an asynchronous call to retrieve the balance. Here is the syntax:
 
@@ -647,7 +644,7 @@ Branch().loadRewardsWithCallback { (changed: Bool, error: NSError!) -> Void in
 
 **callback**: The callback that is called once the request has completed.
 
-### Redeem all or some of the reward balance (store state)
+### Redeem All or Some of the Reward Balance (Store State)
 
 We will store how many of the rewards have been deployed so that you don't have to track it on your end. In order to save that you gave the credits to the user, you can call redeem. Redemptions will reduce the balance of outstanding credits permanently.
 
@@ -668,9 +665,9 @@ Branch.getInstance().redeemRewards(5)
 ```
 
 ####Parameters
-Fill This In: Cocoadocs lists and defines the Parameter as "count," but I don't see "count" in our code.
+None.
 
-### Get credit history
+### Get Credit History
 
 This call will retrieve the entire history of credits and redemptions from the individual user. To use this call, implement like so:
 
@@ -735,10 +732,10 @@ The response will return an array that has been parsed from the following JSON:
 ####Parameters
 
 **referrer**
-: The id of the referring user for this credit transaction. Returns null if no referrer is involved. Note this id is the user id in developer's own system that's previously passed to Branch's identify user API call.
+: The id of the referring user for this credit transaction. Returns null if no referrer is involved. Note this id is the user id in a developer's own system that's previously passed to Branch's identify user API call.
 
 **referree**
-: The id of the user who was referred for this credit transaction. Returns null if no referree is involved. Note this id is the user id in developer's own system that's previously passed to Branch's identify user API call.
+: The id of the user who was referred for this credit transaction. Returns null if no referree is involved. Note this id is the user id in a developer's own system that's previously passed to Branch's identify user API call.
 
 **type**
 : This is the type of credit transaction.
@@ -748,7 +745,7 @@ The response will return an array that has been parsed from the following JSON:
 2. _2_ - A redemption of credits that occurred through our API or SDKs.
 3. _3_ - This is a very unique case where we will subtract credits automatically when we detect fraud.
 
-### Get referral code
+### Get Referral Code
 
 Retrieve the referral code created by current user.
 
@@ -777,12 +774,12 @@ Branch.getInstance().getReferralCodeWithCallback { (params: [NSObject : AnyObjec
 **callback**: The callback that is called with the created referral code object. 
 
 
-### Create referral code
+### Create Referral Code
 
 Create a new referral code for the current user, only if this user doesn't have any existing non-expired referral code.
 
 In the simplest form, just specify an amount for the referral code.
-The returned referral code is a 6 character long unique alpha-numeric string wrapped inside the params dictionary with key @"referral_code".
+The returned referral code is a six character long unique alpha-numeric string wrapped inside the params dictionary with key @"referral_code".
 
 
 ####Methods
@@ -818,7 +815,7 @@ Branch.getInstance().getReferralCodeWithAmount(5, andCallback: { (params: [NSObj
 **amount** _NSInteger_: The amount of credit to redeem when a user applies the referral code.
 
 Alternatively, you can specify a prefix for the referral code.
-The resulting code will have your prefix, concatenated with a 2 character long unique alpha-numeric string wrapped in the same data structure.
+The resulting code will have your prefix, concatenated with a two character long unique alpha-numeric string wrapped in the same data structure.
 
 
 ####Methods
@@ -952,13 +949,13 @@ You can also tune the referral code to the finest granularity, with the followin
 1. _BranchBothUsers_ - both the creator and applicant receive credit.
 
 
-### Validate referral code
+### Validate Referral Code
 
 Validate if a referral code exists in Branch system and is still valid.
 A code is vaild if:
 
-1. It hasn't expired.
-1. If its calculation type is uniqe, it hasn't been applied by current user.
+* It hasn't expired.
+* If its calculation type is uniqe, it hasn't been applied by current user.
 
 If valid, returns the referral code JSONObject in the call back.
 
@@ -1001,9 +998,9 @@ Branch.getInstance().validateReferralCode(code, andCallback: { (params: [NSObjec
 **code** _NSString*_
 : The referral code to validate.
 
-### Apply referral code
+### Apply Referral Code
 
-Apply a referral code if it exists in Branch system and is still valid (see above). If the code is valid, returns the referral code JSONObject in the call back.
+Apply a referral code if it exists in Branch system and is still valid (see above). If the code is valid, it returns the referral code JSONObject in the call back.
 
 ####Methods
 
