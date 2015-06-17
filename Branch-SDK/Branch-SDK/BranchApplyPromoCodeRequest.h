@@ -11,6 +11,6 @@
 
 @interface BranchApplyPromoCodeRequest : BNCServerRequest
 
-- (id)initWithCode:(NSString *)code callback:(callbackWithParams)callback;
+- (id)initWithCode:(NSString *)code useOld:(BOOL)useOld callback:(callbackWithParams)callback;
 
 @end

@@ -20,11 +20,13 @@
 @property (strong, nonatomic) NSDate *expiration;
 @property (strong, nonatomic) callbackWithParams callback;
 
+@property (assign, nonatomic) BOOL useOld;
+
 @end
 
 @implementation BranchGetPromoCodeRequest
 
-- (id)initWithUsageType:(BranchPromoCodeUsageType)usageType rewardLocation:(BranchPromoCodeRewardLocation)rewardLocation amount:(NSInteger)amount bucket:(NSString *)bucket prefix:(NSString *)prefix expiration:(NSDate *)expiration callback:(callbackWithParams)callback {
+- (id)initWithUsageType:(BranchPromoCodeUsageType)usageType rewardLocation:(BranchPromoCodeRewardLocation)rewardLocation amount:(NSInteger)amount bucket:(NSString *)bucket prefix:(NSString *)prefix expiration:(NSDate *)expiration useOld:(BOOL)useOld callback:(callbackWithParams)callback {
     if (self = [super init]) {
         _usageType = usageType;
         _rewardLocation = rewardLocation;
@@ -33,6 +35,7 @@
         _prefix = prefix;
         _expiration = expiration;
         _callback = callback;
+        _useOld = useOld;
     }
 
     return self;
@@ -59,7 +62,9 @@
         params[@"expiration"] = self.expiration;
     }
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"referralcode"] key:key callback:callback];
+    NSString *endpoint = self.useOld ? @"referralcode" : @"promocode";
+    
+    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:endpoint] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -70,7 +75,9 @@
         return;
     }
     
-    if (!response.data[@"referral_code"]) {
+    NSString *responseKey = self.useOld ? @"referral_code" : @"promo_code";
+    
+    if (!response.data[responseKey]) {
         error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Promo code with specified parameter set is already taken for a different user" }];
     }
     
@@ -89,6 +96,7 @@
         _bucket = [decoder decodeObjectForKey:@"bucket"];
         _prefix = [decoder decodeObjectForKey:@"prefix"];
         _expiration = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:@"expiration"]];
+        _useOld = [decoder decodeBoolForKey:@"useOld"];
     }
     
     return self;
@@ -103,6 +111,7 @@
     [coder encodeObject:self.bucket forKey:@"bucket"];
     [coder encodeObject:self.prefix forKey:@"prefix"];
     [coder encodeDouble:[self.expiration timeIntervalSince1970] forKey:@"expiration"];
+    [coder encodeBool:self.useOld forKey:@"useOld"];
 }
 
 @end
