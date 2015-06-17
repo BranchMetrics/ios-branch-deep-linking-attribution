@@ -21,9 +21,6 @@ Table of Contents|
 
 There's a full demo app embedded in this repository, but you should also check out our live demo: [Branch Monster Factory](https://itunes.apple.com/us/app/id917737838). We've [open sourced the Branchster's app](https://github.com/BranchMetrics/Branchster-iOS) as well if you'd like to dig in.
 
-##[New Documentation Portal](https://dev.branch.io)
-
-Check out our new [doc portal](https//dev.branch.io) for detailed, step-by-step instructions and additional information.
 
 
 ##Class Reference
