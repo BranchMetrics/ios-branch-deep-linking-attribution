@@ -134,16 +134,30 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 }
 
 - (void)moveInstallOrOpenToFront:(NSInteger)networkCount {
+    BOOL requestAlreadyInProgress = networkCount > 0;
+
     BNCServerRequest *openOrInstallRequest;
     for (int i = 0; i < self.queue.count; i++) {
         BNCServerRequest *req = [self.queue objectAtIndex:i];
         if ([req isKindOfClass:[BranchOpenRequest class]]) {
+            
+            // Already in front, nothing to do
+            if (i == 0 || (i == 1 && requestAlreadyInProgress)) {
+                return;
+            }
+
+            // Otherwise, pull this request out and stop early
             openOrInstallRequest = [self removeAt:i];
             break;
         }
     }
     
-    if (networkCount == 0 || !self.queue.count) {
+    if (!openOrInstallRequest) {
+        NSLog(@"[Branch Warning] No install or open request in queue while trying to move it to the front");
+        return;
+    }
+    
+    if (!requestAlreadyInProgress || !self.queue.count) {
         [self insert:openOrInstallRequest at:0];
     }
     else {
