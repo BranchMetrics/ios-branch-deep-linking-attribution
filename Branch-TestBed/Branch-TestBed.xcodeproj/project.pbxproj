@@ -595,7 +595,7 @@
 						CreatedOnToolsVersion = 6.3.2;
 					};
 					6700165F1940F51400A9E103 = {
-						DevelopmentTeam = 6F3Q27CVFQ;
+						DevelopmentTeam = T5TQ36Q2SQ;
 					};
 					7E6B3B501AA42D0E005F45BF = {
 						CreatedOnToolsVersion = 6.1.1;
