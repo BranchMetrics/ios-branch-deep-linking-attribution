@@ -1024,10 +1024,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     
     // If the session is not yet initialized
     if (!self.isInitialized) {
-        // If the open/install request hasn't been added, do so.
-        if (![self.requestQueue containsInstallOrOpen]) {
-            [self initializeSession];
-        }
+        [self initializeSession];
     }
     // If the session was initialized, but callCallback was specified, do so.
     else if (callCallback) {
