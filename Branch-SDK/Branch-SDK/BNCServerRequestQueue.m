@@ -8,8 +8,8 @@
 
 #import "BNCServerRequestQueue.h"
 #import "BNCPreferenceHelper.h"
-#import "BranchOpenRequest.h"
 #import "BranchCloseRequest.h"
+#import "BranchOpenRequest.h"
 
 NSString * const STORAGE_KEY = @"BNCServerRequestQueue";
 NSUInteger const BATCH_WRITE_TIMEOUT = 3;
@@ -133,7 +133,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     return NO;
 }
 
-- (void)moveInstallOrOpenToFront:(NSInteger)networkCount {
+- (BranchOpenRequest *)moveInstallOrOpenToFront:(NSInteger)networkCount {
     BOOL requestAlreadyInProgress = networkCount > 0;
 
     BNCServerRequest *openOrInstallRequest;
@@ -143,7 +143,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
             
             // Already in front, nothing to do
             if (i == 0 || (i == 1 && requestAlreadyInProgress)) {
-                return;
+                return (BranchOpenRequest *)req;
             }
 
             // Otherwise, pull this request out and stop early
@@ -154,7 +154,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     
     if (!openOrInstallRequest) {
         NSLog(@"[Branch Warning] No install or open request in queue while trying to move it to the front");
-        return;
+        return nil;
     }
     
     if (!requestAlreadyInProgress || !self.queue.count) {
@@ -163,6 +163,8 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     else {
         [self insert:openOrInstallRequest at:1];
     }
+    
+    return (BranchOpenRequest *)openOrInstallRequest;
 }
 
 - (BOOL)containsClose {
