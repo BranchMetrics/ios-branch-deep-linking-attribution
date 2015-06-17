@@ -143,7 +143,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
         }
     }
     
-    if (networkCount == 0) {
+    if (networkCount == 0 || !self.queue.count) {
         [self insert:openOrInstallRequest at:0];
     }
     else {
