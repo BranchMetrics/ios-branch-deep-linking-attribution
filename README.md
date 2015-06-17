@@ -2,12 +2,12 @@
 
 This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a list of the content featured in this document.
 
-**Note**: Check out our new [documentation portal](https://dev.branch.io)! Our new doc portal includes a [getting started guide](https://dev.branch.io/recipes/your_first_marketing_link/ios/), [deeplinked features](https://dev.branch.io/recipes/content_sharing/ios/), [customization](https://dev.branch.io/recipes/matching_accuracy/), and much more. Our doc portal also provides detailed instructions and information on the sections listed in the table of contents below.  
+**Note**: Check out our new [documentation portal](https://dev.branch.io)! Our new doc portal includes a [getting started guide](https://dev.branch.io/recipes/quickstart_guide/ios/), [deeplinked features](https://dev.branch.io/recipes/content_sharing/ios/), [customization](https://dev.branch.io/recipes/add_custom_link_data_and_routing/ios/), and much more. Our doc portal also provides detailed instructions and information on the sections listed in the table of contents below.  
             
 Table of Contents| 
 ------------- | 
-[Get the Demo App](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#get-the-deomo-app)| 
-[New Documentation Portal](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#new-documentation-portal)|
+[Get the Demo App](#get-the-demo-app)| 
+[New Documentation Portal](#new-documentation-portal)|
 |[Class Reference Table](https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#class-reference)|
 |[Important Migrations] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#important-migration-to-v078)      |  
 [Troubleshooting FAQ] (https://github.com/BranchMetrics/Branch-iOS-SDK/blob/doc_updates/README.md#faq) 		  |
@@ -70,7 +70,9 @@ compiled SDK size: ~155kb
 
 Branch is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your Podfile:
 
-    pod "Branch"
+```
+pod "Branch"
+```
 
 ### Download the raw files
 
