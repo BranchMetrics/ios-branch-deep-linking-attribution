@@ -1071,9 +1071,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     // Make sure a callback is associated with this request. This callback can
     // be cleared if the app is terminated while an Open/Install is pending.
     else {
-        [self.requestQueue moveInstallOrOpenToFront:self.networkCount];
-        
-        BranchOpenRequest *req = (BranchOpenRequest *)[self.requestQueue peek];
+        BranchOpenRequest *req = [self.requestQueue moveInstallOrOpenToFront:self.networkCount];
         req.callback = initSessionCallback;
     }
     

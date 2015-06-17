@@ -316,6 +316,7 @@
             BranchOpenRequest *openRequest = (BranchOpenRequest *)request;
             openRequest.callback = nil;
             [[[queueMock stub] andReturn:request] peek];
+            [[[queueMock stub] andReturn:openRequest] moveInstallOrOpenToFront:0];
             return YES;
         }
         
