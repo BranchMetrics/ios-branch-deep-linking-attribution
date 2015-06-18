@@ -11,6 +11,7 @@
 #import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCLinkCache.h"
+#import "BranchDeepLinkingController.h"
 
 /**
  `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.
@@ -299,6 +300,14 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param url The url that caused the app to be opened.
  */
 - (BOOL)handleDeepLink:(NSURL *)url;
+
+#pragma mark - Deep Link Controller methods
+
+///---------------------------
+/// @name Deep Link Controller
+///---------------------------
+
+- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key;
 
 #pragma mark - Configuration methods
 
