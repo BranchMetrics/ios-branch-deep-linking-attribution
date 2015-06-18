@@ -852,9 +852,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (BNCLinkData *)prepareLinkDataFor:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSDictionary *)params ignoreUAString:(NSString *)ignoreUAString {
     BNCLinkData *post = [[BNCLinkData alloc] init];
 
-    [post setObject:[BNCPreferenceHelper getDeviceFingerprintID] forKey:@"device_fingerprint_id"];
-    [post setObject:[BNCPreferenceHelper getIdentityID] forKey:@"identity_id"];
-    [post setObject:[BNCPreferenceHelper getSessionID] forKey:@"session_id"];
     [post setupType:type];
     [post setupTags:tags];
     [post setupChannel:channel];
@@ -863,7 +860,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [post setupAlias:alias];
     [post setupMatchDuration:duration];
     [post setupIgnoreUAString:ignoreUAString];
-    [post setupParams:[BNCEncodingUtils encodeDictionaryToJsonString:params]];
+    [post setupParams:params];
 
     return post;
 }
@@ -1027,10 +1024,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     
     // If the session is not yet initialized
     if (!self.isInitialized) {
-        // If the open/install request hasn't been added, do so.
-        if (![self.requestQueue containsInstallOrOpen]) {
-            [self initializeSession];
-        }
+        [self initializeSession];
     }
     // If the session was initialized, but callCallback was specified, do so.
     else if (callCallback) {
@@ -1058,20 +1052,27 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)registerInstallOrOpen:(Class)clazz {
+    callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
+        if (error) {
+            [self handleInitFailure:error];
+        }
+        else {
+            [self handleInitSuccess];
+        }
+    };
+
+    // If there isn't already an Open / Install request, add one to the queue
     if (![self.requestQueue containsInstallOrOpen]) {
-        BranchOpenRequest *req = [[clazz alloc] initWithCallback:^(BOOL success, NSError *error) {
-            if (error) {
-                [self handleInitFailure:error];
-            }
-            else {
-                [self handleInitSuccess];
-            }
-        }];
+        BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
 
         [self insertRequestAtFront:req];
     }
+    // If there is already one in the queue, make sure it's in the front.
+    // Make sure a callback is associated with this request. This callback can
+    // be cleared if the app is terminated while an Open/Install is pending.
     else {
-        [self.requestQueue moveInstallOrOpenToFront:self.networkCount];
+        BranchOpenRequest *req = [self.requestQueue moveInstallOrOpenToFront:self.networkCount];
+        req.callback = initSessionCallback;
     }
     
     [self processNextQueueItem];

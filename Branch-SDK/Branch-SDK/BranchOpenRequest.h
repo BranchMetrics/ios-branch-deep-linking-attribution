@@ -11,6 +11,8 @@
 
 @interface BranchOpenRequest : BNCServerRequest
 
+@property (strong, nonatomic) callbackWithStatus callback;
+
 - (id)initWithCallback:(callbackWithStatus)callback;
 - (id)initWithCallback:(callbackWithStatus)callback allowInstallParamsToBeCleared:(BOOL)allowInstallParamsToBeCleared;
 
