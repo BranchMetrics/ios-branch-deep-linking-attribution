@@ -27,7 +27,7 @@ NSString * const TEST_LOGOUT_IDENTITY_ID = @"98274447349252681";
 NSString * const TEST_NEW_IDENTITY_ID = @"85782216939930424";
 NSString * const TEST_NEW_SESSION_ID = @"98274447370224207";
 NSString * const TEST_NEW_USER_LINK = @"https://bnc.lt/i/2kkbX6k-As";
-NSString * const TEST_REFERRAL_CODE = @"LMDLDV";
+NSString * const TEST_PROMO_CODE = @"LMDLDV";
 NSInteger const  TEST_CREDITS = 30;
 
 @interface Branch_SDK_Functionality_Tests : XCTestCase
@@ -314,7 +314,7 @@ NSInteger const  TEST_CREDITS = 30;
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
-
+    
     [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
     
     BNCServerResponse *referralCodeResponse = [[BNCServerResponse alloc] init];
@@ -335,7 +335,56 @@ NSInteger const  TEST_CREDITS = 30;
         @"creation_source": @2,
         @"expiration": [NSNull null],
         @"date": @"2015-01-19T18:00:50.242Z",
-        @"referral_code": TEST_REFERRAL_CODE
+        @"promo_code": TEST_PROMO_CODE
+    };
+    
+    __block BNCServerCallback referralCodeCallback;
+    [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
+        referralCodeCallback(referralCodeResponse, nil);
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"promocode"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        referralCodeCallback = callback;
+        return YES;
+    }]];
+    
+    XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test getPromoCode"];
+    [branch getPromoCodeWithPrefix:@"test" amount:7 expiration:nil bucket:@"default" usageType:BranchPromoCodeUsageTypeOncePerUser rewardLocation:BranchPromoCodeRewardReferringUser callback:^(NSDictionary *params, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(params[@"promo_code"]);
+        
+        [self safelyFulfillExpectation:getReferralCodeExpectation];
+    }];
+    
+    [self awaitExpectations];
+}
+
+- (void)test06DeprecatedGetReferralCode {
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
+    [branch setAppListCheckEnabled:NO];
+    
+    [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
+    
+    BNCServerResponse *referralCodeResponse = [[BNCServerResponse alloc] init];
+    referralCodeResponse.data = @{
+        @"id": @"85782843459895738",
+        @"branch_key": @"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx",
+        @"calculation_type": @0,
+        @"location": @0,
+        @"type": @"credit",
+        @"event": @"$redeem_code-LMDLDV",
+        @"metadata": @{
+            @"bucket": @"default",
+            @"amount": @5
+        },
+        @"filter": [NSNull null],
+        @"link_id": [NSNull null],
+        @"identity_id": @"98687515069776101",
+        @"creation_source": @2,
+        @"expiration": [NSNull null],
+        @"date": @"2015-01-19T18:00:50.242Z",
+        @"referral_code": TEST_PROMO_CODE
     };
     
     __block BNCServerCallback referralCodeCallback;
@@ -347,12 +396,15 @@ NSInteger const  TEST_CREDITS = 30;
     }]];
     
     XCTestExpectation *getReferralCodeExpectation = [self expectationWithDescription:@"Test getReferralCode"];
-    [branch getPromoCodeWithPrefix:@"test" amount:7 expiration:nil bucket:@"default" usageType:BranchPromoCodeUsageTypeOncePerUser rewardLocation:BranchPromoCodeRewardReferringUser callback:^(NSDictionary *params, NSError *error) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    [branch getReferralCodeWithPrefix:@"test" amount:7 expiration:nil bucket:@"default" calculationType:BranchPromoCodeUsageTypeOncePerUser location:BranchPromoCodeRewardReferringUser andCallback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         XCTAssertNotNil(params[@"referral_code"]);
         
         [self safelyFulfillExpectation:getReferralCodeExpectation];
     }];
+#pragma GCC diagnostic pop
     
     [self awaitExpectations];
 }
@@ -384,24 +436,24 @@ NSInteger const  TEST_CREDITS = 30;
         @"creation_source": @2,
         @"expiration": [NSNull null],
         @"date": @"2015-01-19T18:00:50.242Z",
-        @"referral_code": TEST_REFERRAL_CODE
+        @"promo_code": TEST_PROMO_CODE
     };
 
     __block BNCServerCallback validateCodeCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         validateCodeCallback(validateCodeResponse, nil);
-    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"referralcode/LMDLDV"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"promocode/LMDLDV"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         validateCodeCallback = callback;
         return YES;
     }]];
     
-    XCTestExpectation *validateCodeExpectation = [self expectationWithDescription:@"Test validateReferralCode"];
-    [branch validatePromoCode:TEST_REFERRAL_CODE callback:^(NSDictionary *params, NSError *error) {
+    XCTestExpectation *validateCodeExpectation = [self expectationWithDescription:@"Test validatePromoCode"];
+    [branch validatePromoCode:TEST_PROMO_CODE callback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         
-        NSString *code = params[@"referral_code"];
+        NSString *code = params[@"promo_code"];
         XCTAssertNotNil(code);
-        XCTAssertTrue([code isEqualToString:TEST_REFERRAL_CODE]);
+        XCTAssertTrue([code isEqualToString:TEST_PROMO_CODE]);
         XCTAssertEqual([params[@"calculation_type"] integerValue], BranchPromoCodeUsageTypeUnlimitedUses);
         XCTAssertEqual([params[@"location"] integerValue], BranchPromoCodeRewardReferredUser);
         XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 5);
@@ -412,13 +464,71 @@ NSInteger const  TEST_CREDITS = 30;
     [self awaitExpectations];
 }
 
+- (void)test07DeprecatedValidateReferralCode {
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
+    [branch setAppListCheckEnabled:NO];
+    
+    [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
+    
+    BNCServerResponse *validateCodeResponse = [[BNCServerResponse alloc] init];
+    validateCodeResponse.data = @{
+        @"id": @"85782843459895738",
+        @"branch_key": @"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx",
+        @"calculation_type": @0,
+        @"location": @0,
+        @"type": @"credit",
+        @"event": @"$redeem_code-LMDLDV",
+        @"metadata": @{
+            @"bucket": @"default",
+            @"amount": @5
+        },
+        @"filter": [NSNull null],
+        @"link_id": [NSNull null],
+        @"identity_id": @"98687515069776101",
+        @"creation_source": @2,
+        @"expiration": [NSNull null],
+        @"date": @"2015-01-19T18:00:50.242Z",
+        @"referral_code": TEST_PROMO_CODE
+    };
+    
+    __block BNCServerCallback validateCodeCallback;
+    [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
+        validateCodeCallback(validateCodeResponse, nil);
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"referralcode/LMDLDV"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        validateCodeCallback = callback;
+        return YES;
+    }]];
+    
+    XCTestExpectation *validateCodeExpectation = [self expectationWithDescription:@"Test validateReferralCode"];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    [branch validateReferralCode:TEST_PROMO_CODE andCallback:^(NSDictionary *params, NSError *error) {
+        XCTAssertNil(error);
+        
+        NSString *code = params[@"referral_code"];
+        XCTAssertNotNil(code);
+        XCTAssertTrue([code isEqualToString:TEST_PROMO_CODE]);
+        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchPromoCodeUsageTypeUnlimitedUses);
+        XCTAssertEqual([params[@"location"] integerValue], BranchPromoCodeRewardReferredUser);
+        XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 5);
+        
+        [self safelyFulfillExpectation:validateCodeExpectation];
+    }];
+#pragma GCC diagnostic push
+   
+    [self awaitExpectations];
+}
+
 - (void)test08ApplyPromoCode {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
-
+    
     [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
     
     BNCServerResponse *applyCodeResponse = [[BNCServerResponse alloc] init];
@@ -439,7 +549,62 @@ NSInteger const  TEST_CREDITS = 30;
         @"creation_source": @2,
         @"expiration": [NSNull null],
         @"date": @"2015-01-19T18:00:50.242Z",
-        @"referral_code": TEST_REFERRAL_CODE
+        @"promo_code": TEST_PROMO_CODE
+    };
+    
+    __block BNCServerCallback applyCodeCallback;
+    [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
+        applyCodeCallback(applyCodeResponse, nil);
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"applypromocode/LMDLDV"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        applyCodeCallback = callback;
+        return YES;
+    }]];
+    
+    XCTestExpectation *applyCodeExpectation = [self expectationWithDescription:@"Test applyPromoCode"];
+    [branch applyPromoCode:TEST_PROMO_CODE callback:^(NSDictionary *params, NSError *error) {
+        XCTAssertNil(error);
+        
+        NSString *code = params[@"promo_code"];
+        XCTAssertNotNil(code);
+        XCTAssertTrue([code isEqualToString:TEST_PROMO_CODE]);
+        XCTAssertEqual([params[@"calculation_type"] integerValue], BranchPromoCodeUsageTypeUnlimitedUses);
+        XCTAssertEqual([params[@"location"] integerValue], BranchPromoCodeRewardReferredUser);
+        XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 5);
+        
+        [self safelyFulfillExpectation:applyCodeExpectation];
+    }];
+    
+    [self awaitExpectations];
+}
+
+- (void)test09DeprecatedApplyReferralCode {
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
+    [branch setAppListCheckEnabled:NO];
+    
+    [BNCPreferenceHelper setCreditCount:1 forBucket:@"default"];
+    
+    BNCServerResponse *applyCodeResponse = [[BNCServerResponse alloc] init];
+    applyCodeResponse.data = @{
+        @"id": @"85782843459895738",
+        @"branch_key": @"key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx",
+        @"calculation_type": @0,
+        @"location": @0,
+        @"type": @"credit",
+        @"event": @"$redeem_code-LMDLDV",
+        @"metadata": @{
+            @"bucket": @"default",
+            @"amount": @5
+        },
+        @"filter": [NSNull null],
+        @"link_id": [NSNull null],
+        @"identity_id": @"98687515069776101",
+        @"creation_source": @2,
+        @"expiration": [NSNull null],
+        @"date": @"2015-01-19T18:00:50.242Z",
+        @"referral_code": TEST_PROMO_CODE
     };
 
     __block BNCServerCallback applyCodeCallback;
@@ -451,18 +616,21 @@ NSInteger const  TEST_CREDITS = 30;
     }]];
     
     XCTestExpectation *applyCodeExpectation = [self expectationWithDescription:@"Test applyReferralCode"];
-    [branch applyPromoCode:TEST_REFERRAL_CODE callback:^(NSDictionary *params, NSError *error) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    [branch applyReferralCode:TEST_PROMO_CODE andCallback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         
         NSString *code = params[@"referral_code"];
         XCTAssertNotNil(code);
-        XCTAssertTrue([code isEqualToString:TEST_REFERRAL_CODE]);
+        XCTAssertTrue([code isEqualToString:TEST_PROMO_CODE]);
         XCTAssertEqual([params[@"calculation_type"] integerValue], BranchPromoCodeUsageTypeUnlimitedUses);
         XCTAssertEqual([params[@"location"] integerValue], BranchPromoCodeRewardReferredUser);
         XCTAssertEqual([params[@"metadata"][@"amount"] integerValue], 5);
         
         [self safelyFulfillExpectation:applyCodeExpectation];
     }];
+#pragma GCC diagnostic pop
     
     [self awaitExpectations];
 }
