@@ -37,7 +37,7 @@
         @"session_id": [BNCPreferenceHelper getSessionID]
     };
     
-    NSString *endpoint = self.useOld ? @"referralcode/" : @"promocode/";
+    NSString *endpoint = self.useOld ? @"referralcode/" : @"promo-code/";
     NSString *url = [[BNCPreferenceHelper getAPIURL:endpoint] stringByAppendingString:self.code];
     [serverInterface postRequest:params url:url key:key callback:callback];
 }
