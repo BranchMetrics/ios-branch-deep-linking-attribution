@@ -41,8 +41,8 @@ For your reference, see the methods and parameters table below.
 [Get Credit History](#get-credit-history)|[Method](#methods-11)|[Parameters] (#parameters-11)|
 [Get Referral Code](#get-referral-code)|[Method](#methods-12)|[Parameter] (#parameters-12)|
 [Create Referral Code](#create-referral-code)|[Method](#methods-13)|[Parameter] (#parameters-13)|
-[Validate Referral Code](#validate-referral-code)|[Method](#methods-14)|[Parameter](#parameters-14)|
-[Apply Referral Code](#apply-referral-code)|[Method](#methods-15)|[Parameter] (#parameters-15)|
+[Validate Referral Code](#validate-referral-code)|[Method](#methods-17)|[Parameter](#parameters-17)|
+[Apply Referral Code](#apply-referral-code)|[Method](#methods-18)|[Parameter] (#parameters-18)|
 
 
 ## Important Migration to v0.7.8
