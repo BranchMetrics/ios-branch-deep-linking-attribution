@@ -62,7 +62,7 @@
         params[@"expiration"] = self.expiration;
     }
     
-    NSString *endpoint = self.useOld ? @"referralcode" : @"promocode";
+    NSString *endpoint = self.useOld ? @"referralcode" : @"promo-code";
     
     [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:endpoint] key:key callback:callback];
 }
