@@ -75,6 +75,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 @property (strong, nonatomic) UILongPressGestureRecognizer *debugGestureRecognizer;
 @property (strong, nonatomic) NSTimer *debugHeartbeatTimer;
 @property (strong, nonatomic) NSString *branchKey;
+@property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
 
 @end
 
@@ -149,6 +150,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         _appListCheckEnabled = YES;
         _processing_sema = dispatch_semaphore_create(1);
         _networkCount = 0;
+        _deepLinkControllers = [[NSMutableDictionary alloc] init];
         
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
@@ -323,6 +325,13 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [self initUserSessionAndCallCallback:YES];
 
     return handled;
+}
+
+
+#pragma mark - Deep Link Controller methods
+
+- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key {
+    self.deepLinkControllers[key] = controller;
 }
 
 
@@ -1085,9 +1094,27 @@ static int BNCDebugTriggerFingersSimulator = 2;
         [self getAppList];
     }
     
+    NSDictionary *latestReferringParams = [self getLatestReferringParams];
     if (self.shouldCallSessionInitCallback && self.sessionInitWithParamsCallback) {
-        self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
+        self.sessionInitWithParamsCallback(latestReferringParams, nil);
     }
+    
+    // Find any matched keys, then launch any controllers that match
+    // TODO which one to launch if more than one match?
+    NSMutableSet *keysInParams = [NSMutableSet setWithArray:[latestReferringParams allKeys]];
+    NSSet *desiredKeysSet = [NSSet setWithArray:[self.deepLinkControllers allKeys]];
+    [keysInParams intersectSet:desiredKeysSet];
+
+    // If we find a matching key, configure and show the controller
+    if ([keysInParams count]) {
+        NSString *key = [[keysInParams allObjects] firstObject];
+        UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
+        [branchSharingController configureControlWithData:latestReferringParams];
+        
+        UIViewController *topController = [[[UIApplication sharedApplication].delegate window] rootViewController];
+        [topController presentViewController:branchSharingController animated:YES completion:NULL];
+    }
+    
 }
 
 - (void)handleInitFailure:(NSError *)error {
