@@ -7,6 +7,15 @@ This is the repository of our open source iOS SDK. There's a full demo app embed
 
 Check it out!
 
+## Important migration to v0.9.0
+We are renaming Referral Codes to Promo Codes to better indicate their purpose. Promo Codes do *not* establish a referred/referring user install relationship, which is unclear when called "referral codes." Consequently, all of the ReferralCode methods have been deprecated in favor of their PromoCode counterparts.
+
+Additionally the enums around these items have been renamed to better represent their meaning. You may need to rename your usages to account for this.
+
+Lastly, when migrating to the PromoCode methods, note that the response dictionary will now contain `promo_code` instead of `referral_code`.
+
+Note that all of these changes are temporarily backwards compatible (with the exception of the enum rename). Compatability will be removed with the eventual 1.0.0 release.
+
 ## Important migration to v0.7.8
 The `source:iOS` attribute has been removed from the params dictionary for links. However, a bunch of constants have been added that are added by the Branch backend to link clicks and opens. If you were relying on the source attribute in the past, you can now find that via the `BRANCH_INIT_KEY_CREATION_SOURCE`.
 

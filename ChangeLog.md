@@ -1,5 +1,8 @@
 Branch iOS SDK change log
 
+- v0.9.0
+  * Renaming Referral Codes to Promo Codes.
+
 - v0.8.4
   * Fixing an issue with getShortUrl.
 
