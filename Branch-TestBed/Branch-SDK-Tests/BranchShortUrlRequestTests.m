@@ -63,6 +63,22 @@
 }
 
 - (void)testBasicSuccess {
+    NSString * URL = @"http://foo";
+    NSDictionary * const REFERRAL_RESPONSE_DATA = @{ BRANCH_RESPONSE_KEY_URL: URL };
+    BNCServerResponse *response = [[BNCServerResponse alloc] init];
+    response.data = REFERRAL_RESPONSE_DATA;
+    
+    XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Get Referral Code Request Expectation"];
+    BranchShortUrlRequest *request = [[BranchShortUrlRequest alloc] initWithTags:nil alias:nil type:BranchLinkTypeOneTimeUse matchDuration:1 channel:nil feature:nil stage:nil params:nil linkData:nil linkCache:nil callback:^(NSString *url, NSError *error) {
+        XCTAssertEqualObjects(url, URL);
+        XCTAssertNil(error);
+        [self safelyFulfillExpectation:requestExpecation];
+    }];
+    
+    [request processResponse:response error:nil];
+    
+    [self awaitExpectations];
+    
 }
 
 @end
