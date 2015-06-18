@@ -1,5 +1,15 @@
 Branch iOS SDK change log
 
+- v0.8.4
+  * Fixing an issue with getShortUrl.
+
+- v0.8.3
+  * Fixing an issue with Open / Install requests losing their callbacks, but not being dequeued.
+  * Updating default config values (timeout: 5, retries: 1, sleep: 0).
+  * Cleaning up the Link Cache.
+  * Adding Bundle ID to Open / Install requests.
+  * Fixing an issue causing double escaped params.
+
 - v0.8.2
   * Fix issue with callbacks being lost on some of the internal requests.
   * Fix issue with old requests not fitting the new request format, causing crsahes.
