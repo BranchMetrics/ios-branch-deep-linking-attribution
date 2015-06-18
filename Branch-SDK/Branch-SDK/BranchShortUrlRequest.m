@@ -72,7 +72,7 @@
         return;
     }
     
-    NSString *url = response.data[@"url"];
+    NSString *url = response.data[BRANCH_RESPONSE_KEY_URL];
     
     // cache the link
     if (url) {

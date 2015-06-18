@@ -46,3 +46,4 @@ NSString * const BRANCH_RESPONSE_KEY_ACTION_COUNT_UNIQUE = @"unique";
 NSString * const BRANCH_RESPONSE_KEY_REFERRER = @"referrer";
 NSString * const BRANCH_RESPONSE_KEY_REFERREE = @"referree";
 NSString * const BRANCH_RESPONSE_KEY_REFERRAL_CODE = @"referral_code";
+NSString * const BRANCH_RESPONSE_KEY_URL = @"url";
