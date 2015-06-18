@@ -53,7 +53,7 @@
     params[@"identity_id"] = [BNCPreferenceHelper getIdentityID];
     params[@"session_id"] = [BNCPreferenceHelper getSessionID];
     
-    [serverInterface postRequest:self.linkData.data url:[BNCPreferenceHelper getAPIURL:@"url"] key:key callback:callback];
+    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"url"] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
