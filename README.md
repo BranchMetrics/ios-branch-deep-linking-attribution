@@ -2,7 +2,7 @@
 
 This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a complete list of the content featured in this document.
 
-**Note:** Go to our new [**Documentation Portal**] (https://dev.branch.io) where you can find all of our latest documentation, as well as future documentation updates.  
+**Note:** Go to our new [**Documentation Portal**] (https://dev.branch.io) where you can find all of our latest documentation and future documentation updates.  
             
 Table of Contents| 
 ------------- | 
@@ -28,21 +28,21 @@ For your reference, see the methods and parameters table below.
       
 | Tasks          | Methods          | Parameters     |
 |:------------- |:---------------:| -------------:|   
-[Get a Singleton Branch Instance](#get-a-singleton-branch)|[Method](#methods)|[Parameter](#parameters)
-|[Init Branch Session and Deep Link Routing Function](#init- branch-session-and-deep-link-routing-function)|[Method](#methods-2)|[Parameter](#parameters-2)|
-|[Retrieve Session (Install or Open) Parameters](#retrieve-session-install-or-open-parameters)|[Method](#methods-3)|[Parameter](#parameters-3)| 
-|[Retrieve Install (Install Only) Parameters](#retrieve-install-install-only-parameters)|[Method](#methods-4)|[Parameter](#parameters-4)|
-[Persistent Identities](#persistent-identities)|[Method](#methods-5)|[Parameter](#parameters-5)|
-[Register Custom Events](#register-custom-events)|[Method](#methods-6)| [Parameter](#parameters-6)|
-[Generate Tracked, Deep Linking URLs (Pass Data Across Install and Open)](#generate-tracked-deep-linking-urls-pass-data-across-install-and-open)|[Method](#methods-7)|[Parameter](#parameters-7)|
-[UIActivityView Share Sheet](#uiactivityview-share-sheet)|[Method](#methods-8)|[Parameter](#parameters-8)| 
-|[Get Reward Balance](#get-reward-balance)|[Method] (#methods-9)|[Parameters] (#parameters-9)| 
-[Redeem All or Some of the Reward Balance (Store State)](#redeem-all-or-some-of-the-reward-balance-store-state)|[Method](#methods-10)|[Parameter](#parameters-10)|
-[Get Credit History](#get-credit-history)|[Method](#methods-11)|[Parameters] (#parameters-11)|
-[Get Referral Code](#get-referral-code)|[Method](#methods-12)|[Parameter] (#parameters-12)|
-[Create Referral Code](#create-referral-code)|[Method](#methods-13)|[Parameter] (#parameters-13)|
-[Validate Referral Code](#validate-referral-code)|[Method](#methods-14)|[Parameter](#parameters-14)|
-[Apply Referral Code](#apply-referral-code)|[Method](#methods-15)|[Parameter] (#parameters-15)|
+[Get a Singleton Branch Instance](#get-a-singleton-branch-instance)|[Method](#methods)|[Parameter](#parameters)
+|[Init Branch Session and Deep Link Routing Function](#init-branch-session-and-deep-link-routing-function)|[Method](#methods-1)|[Parameter](#parameters-1)|
+|[Retrieve Session (Install or Open) Parameters](#retrieve-session-install-or-open-parameters)|[Method](#methods-2)|[Parameter](#parameters-2)| 
+|[Retrieve Install (Install Only) Parameters](#retrieve-install-install-only-parameters)|[Method](#methods-3)|[Parameter](#parameters-3)|
+[Persistent Identities](#persistent-identities)|[Method](#methods-4)|[Parameter](#parameters-4)|
+[Register Custom Events](#register-custom-events)|[Method](#methods-5)| [Parameter](#parameters-5)|
+[Generate Tracked, Deep Linking URLs (Pass Data Across Install and Open)](#generate-tracked-deep-linking-urls-pass-data-across-install-and-open)|[Method](#methods-6)|[Parameter](#parameters-6)|
+[UIActivityView Share Sheet](#uiactivityview-share-sheet)|[Method](#methods-7)|[Parameter](#parameters-7)| 
+|[Get Reward Balance](#get-reward-balance)|[Method] (#methods-8)|[Parameters] (#parameters-8)| 
+[Redeem All or Some of the Reward Balance (Store State)](#redeem-all-or-some-of-the-reward-balance-store-state)|[Method](#methods-9)|[Parameter](#parameters-9)|
+[Get Credit History](#get-credit-history)|[Method](#methods-10)|[Parameters] (#parameters-10)|
+[Get Referral Code](#get-referral-code)|[Method](#methods-111)|[Parameter] (#parameters-11)|
+[Create Referral Code](#create-referral-code)|[Method](#methods-12)|[Parameter] (#parameters-12)|
+[Validate Referral Code](#validate-referral-code)|[Method](#methods-13)|[Parameter](#parameters-13)|
+[Apply Referral Code](#apply-referral-code)|[Method](#methods-14)|[Parameter] (#parameters-14)|
 
 
 ## Important Migration to v0.7.8
