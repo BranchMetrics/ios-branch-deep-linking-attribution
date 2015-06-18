@@ -341,7 +341,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback referralCodeCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         referralCodeCallback(referralCodeResponse, nil);
-    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"promocode"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"promo-code"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         referralCodeCallback = callback;
         return YES;
     }]];
@@ -442,7 +442,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback validateCodeCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         validateCodeCallback(validateCodeResponse, nil);
-    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"promocode/LMDLDV"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"promo-code/LMDLDV"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         validateCodeCallback = callback;
         return YES;
     }]];
@@ -555,7 +555,7 @@ NSInteger const  TEST_CREDITS = 30;
     __block BNCServerCallback applyCodeCallback;
     [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
         applyCodeCallback(applyCodeResponse, nil);
-    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"applypromocode/LMDLDV"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"apply-promo-code/LMDLDV"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         applyCodeCallback = callback;
         return YES;
     }]];
