@@ -706,6 +706,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
         [self initUserSessionAndCallCallback:NO];
     }
     
+    if (!bucket) {
+        bucket = @"default";
+    }
+    
     BranchGetPromoCodeRequest *req = [[BranchGetPromoCodeRequest alloc] initWithUsageType:usageType rewardLocation:rewardLocation amount:amount bucket:bucket prefix:prefix expiration:expiration useOld:useOld callback:callback];
     [self.requestQueue enqueue:req];
     [self processNextQueueItem];
