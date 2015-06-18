@@ -464,7 +464,7 @@ You have the ability to control the direct deep linking of each link by insertin
 
 ### UIActivityView Share Sheet
 
-UIActivityView is the standard way of allowing users to share content from your app. A common use case is a user sharing a referral code, or a content URL with their friends. If you want to give your users a way of sharing content from your app, this is the simplest way to implement Branch.
+UIActivityView is the standard way of allowing users to share content from your app. A common use case is a user sharing a referral link, or a content URL with their friends. If you want to give your users a way of sharing content from your app, this is the simplest way to implement Branch.
 
 **Sample UIActivityView Share sheet**
 
@@ -689,16 +689,16 @@ The response will return an array that has been parsed from the following JSON:
 2. _2_ - A redemption of credits that occurred through our API or SDKs
 3. _3_ - This is a very unique case where we will subtract credits automatically when we detect fraud
 
-### Get referral code
+### Get promo code
 
-Retrieve the referral code created by current user
+Retrieve the promo code created by current user
 
 ###### Objective-C
 
 ```objc
-[[Branch getInstance] getReferralCodeWithCallback:^(NSDictionary *params, NSError *error) {
+[[Branch getInstance] getPromoCodeWithCallback:^(NSDictionary *params, NSError *error) {
     if (!error) {
-        NSString *referralCode = [params objectForKey:@"referral_code"];
+        NSString *promoCode = [params objectForKey:@"referral_code"];
     }
 }];
 ```
@@ -706,32 +706,32 @@ Retrieve the referral code created by current user
 ###### Swift
 
 ```swift
-Branch.getInstance().getReferralCodeWithCallback { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+Branch.getInstance().getPromoCodeWithCallback { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
     if (error == nil) {
-        let referralCode: AnyObject? = params["referral_code"]
+        let promoCode: AnyObject? = params["referral_code"]
     }
 }
 ```
 
-### Create referral code
+### Create promo code
 
-Create a new referral code for the current user, only if this user doesn't have any existing non-expired referral code.
+Create a new promo code for the current user, only if this user doesn't have any existing non-expired promo code.
 
-In the simplest form, just specify an amount for the referral code.
-The returned referral code is a 6 character long unique alpha-numeric string wrapped inside the params dictionary with key @"referral_code".
+In the simplest form, just specify an amount for the promo code.
+The returned promo code is a 6 character long unique alpha-numeric string wrapped inside the params dictionary with key @"referral_code".
 
 **amount** _NSInteger_
-: The amount of credit to redeem when user applies the referral code
+: The amount of credit to redeem when user applies the promo code
 
 ###### Objective-C
 
 ```objc
-// Create a referral code of 5 credits
-[[Branch getInstance] getReferralCodeWithAmount:5
-                                    andCallback:^(NSDictionary *params, NSError *error) {
+// Create a promo code of 5 credits
+[[Branch getInstance] getPromoCodeWithAmount:5
+                                    callback:^(NSDictionary *params, NSError *error) {
                                         if (!error) {
-                                            NSString *referralCode = [params objectForKey:@"referral_code"];
-                                            // do whatever with referralCode
+                                            NSString *promoCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with promoCode
                                         }
                                     }
 ];
@@ -740,31 +740,31 @@ The returned referral code is a 6 character long unique alpha-numeric string wra
 ###### Swift
 
 ```swift
-// Create a referral code of 5 credits
-Branch.getInstance().getReferralCodeWithAmount(5, andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+// Create a promo code of 5 credits
+Branch.getInstance().getPromoCodeWithAmount(5, callback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
     if (error == nil) {
-        let referralCode: AnyObject? = params["referral_code"]
-        // do whatever with referralCode
+        let promoCode: AnyObject? = params["referral_code"]
+        // do whatever with promoCode
     }
 })
 ```
 
-Alternatively, you can specify a prefix for the referral code.
+Alternatively, you can specify a prefix for the promo code.
 The resulting code will have your prefix, concatenated with a 2 character long unique alpha-numeric string wrapped in the same data structure.
 
 **prefix** _NSString*_
-: The prefix to the referral code that you desire
+: The prefix to the promo code that you desire
 
 ###### Objective-C
 
 ```objc
-// Create a referral code with prefix "BRANCH", 5 credits, and without an expiration date
-[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-                                         amount:5
-                                    andCallback:^(NSDictionary *params, NSError *error) {
+// Create a promo code with prefix "BRANCH", 5 credits, and without an expiration date
+[[Branch getInstance] getPromoCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
+                                      amount:5
+                                    callback:^(NSDictionary *params, NSError *error) {
                                         if (!error) {
-                                            NSString *referralCode = [params objectForKey:@"referral_code"];
-                                            // do whatever with referralCode
+                                            NSString *promoCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with promoCode
                                         }
                                     }
 ];
@@ -773,32 +773,32 @@ The resulting code will have your prefix, concatenated with a 2 character long u
 ###### Swift
 
 ```swift
-// Create a referral code with prefix "BRANCH", 5 credits, and without an expiration date
+// Create a promo code with prefix "BRANCH", 5 credits, and without an expiration date
 // prefix should not exceed 48 characters
-Branch.getInstance().getReferralCodeWithPrefix("BRANCH", amount: 5, andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+Branch.getInstance().getPromoCodeWithPrefix("BRANCH", amount: 5, callback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
     if (error == nil) {
-        let referralCode: AnyObject? = params["referral_code"]
-        // do whatever with referralCode
+        let promoCode: AnyObject? = params["referral_code"]
+        // do whatever with promoCode
     }
 })
 ```
 
-If you want to specify an expiration date for the referral code, you can add an "expiration:" parameter.
-The prefix parameter is optional here, i.e. it could be getReferralCodeWithAmount:expiration:andCallback.
+If you want to specify an expiration date for the promo code, you can add an "expiration:" parameter.
+The prefix parameter is optional here, i.e. it could be getPromoCodeWithAmount:expiration:andCallback.
 
 **expiration** _NSDate*_
-: The expiration date of the referral code
+: The expiration date of the promo code
 
 ###### Objective-C
 
 ```objc
-[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-                                         amount:5
-                                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
-                                    andCallback:^(NSDictionary *params, NSError *error) {
+[[Branch getInstance] getPromoCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
+                                      amount:5
+                                  expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+                                    callback:^(NSDictionary *params, NSError *error) {
                                         if (!error) {
-                                            NSString *referralCode = [params objectForKey:@"referral_code"];
-                                            // do whatever with referralCode
+                                            NSString *promoCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with promoCode
                                         }
                                     }
 ];
@@ -808,45 +808,45 @@ The prefix parameter is optional here, i.e. it could be getReferralCodeWithAmoun
 
 ```swift
 // prefix should not exceed 48 characters
-Branch.getInstance().getReferralCodeWithPrefix("BRANCH", amount: 5, expiration: NSDate().dateByAddingTimeInterval(60*60*24), andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+Branch.getInstance().getPromoCodeWithPrefix("BRANCH", amount: 5, expiration: NSDate().dateByAddingTimeInterval(60*60*24), callback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
     if (error == nil) {
-        let referralCode: AnyObject? = params["referral_code"]
-        // do whatever with referralCode
+        let promoCode: AnyObject? = params["referral_code"]
+        // do whatever with promoCode
     }
 })
 ```
 
-You can also tune the referral code to the finest granularity, with the following additional parameters:
+You can also tune the promo code to the finest granularity, with the following additional parameters:
 
-**bucket** _NSString*_
+**bucket** _NSString *_
 : The name of the bucket to use. If none is specified, defaults to 'default'
 
-**calculation_type**  _ReferralCodeCalculation_
-: This defines whether the referral code can be applied indefinitely, or only once per user
+**calculation_type**  _BranchPromoCodeUsageType_
+: This defines whether the promo code can be applied indefinitely, or only once per user
 
-1. _BranchUnlimitedRewards_ - referral code can be applied continually
-1. _BranchUniqueRewards_ - a user can only apply a specific referral code once
+1. _BranchPromoCodeUsageTypeUnlimitedUses_ - promo code can be applied continually
+1. _BranchPromoCodeUsageTypeOncePerUser_ - promo code can only be applied once per user
 
-**location** _ReferralCodeLocation_
-: The user to reward for applying the referral code
+**location** _BranchPromoCodeRewardLocation_
+: The user to reward for applying the promo code
 
-1. _BranchReferreeUser_ - the user applying the referral code receives credit
-1. _BranchReferringUser_ - the user who created the referral code receives credit
-1. _BranchBothUsers_ - both the creator and applicant receive credit
+1. _BranchPromoCodeRewardReferredUser_ - the user applying the promo code receives credit
+1. _BranchPromoCodeRewardReferringUser_ - the user who created the promo code receives credit
+1. _BranchPromoCodeRewardBothUsers_ - both the creator and applicant receive credit
 
 ###### Objective-C
 
 ```objc
-[[Branch getInstance] getReferralCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-                                         amount:5
-                                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
-                                         bucket:@"default"
-                                calculationType:BranchUniqueRewards
-                                       location:BranchBothUsers
-                                    andCallback:^(NSDictionary *params, NSError *error) {
+[[Branch getInstance] getPromoCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
+                                      amount:5
+                                  expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+                                      bucket:@"default"
+                                   usageType:BranchPromoCodeUsageTypeOncePerUser
+                              rewardLocation:BranchPromoCodeRewardBothUsers
+                                    callback:^(NSDictionary *params, NSError *error) {
                                         if (!error) {
-                                            NSString *referralCode = [params objectForKey:@"referral_code"];
-                                            // do whatever with referralCode
+                                            NSString *promoCode = [params objectForKey:@"referral_code"];
+                                            // do whatever with promoCode
                                         }
                                     }
 ];
@@ -856,37 +856,37 @@ You can also tune the referral code to the finest granularity, with the followin
 
 ```swift
 // prefix should not exceed 48 characters
-Branch.getInstance().getReferralCodeWithPrefix("BRANCH",
+Branch.getInstance().getPromoCodeWithPrefix("BRANCH",
     amount: 5,
     expiration: NSDate().dateByAddingTimeInterval(60*60*24),
     bucket: "default",
-    calculationType: BranchUniqueRewards,
-    location: BranchBothUsers,
-    andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+    usageType:BranchPromoCodeUsageTypeOncePerUser
+    rewardLocation:BranchPromoCodeRewardBothUsers,
+    callback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
     if (error == nil) {
-        let referralCode: AnyObject? = params["referral_code"]
-        // do whatever with referralCode
+        let promoCode: AnyObject? = params["referral_code"]
+        // do whatever with promoCode
     }
 })
 ```
 
-### Validate referral code
+### Validate promo code
 
-Validate if a referral code exists in Branch system and is still valid.
+Validate if a promo code exists in Branch system and is still valid.
 A code is vaild if:
 
 1. It hasn't expired.
-1. If its calculation type is uniqe, it hasn't been applied by current user.
+1. If its calculation type is unique, and it hasn't been applied by current user.
 
-If valid, returns the referral code JSONObject in the call back.
+If valid, returns the promo code JSONObject in the call back.
 
-**code** _NSString*_
-: The referral code to validate
+**code** _NSString *_
+: The promo code to validate
 
 ###### Objective-C
 
 ```objc
-[[Branch getInstance] validateReferralCode:code andCallback:^(NSDictionary *params, NSError *error) {
+[[Branch getInstance] validatePromoCode:code callback:^(NSDictionary *params, NSError *error) {
     if (!error) {
         if ([code isEqualToString:[params objectForKey:@"referral_code"]]) {
             // valid
@@ -894,7 +894,7 @@ If valid, returns the referral code JSONObject in the call back.
             // invalid (should never happen)
         }
     } else {
-        NSLog(@"Error in validating referral code: %@", error.localizedDescription);
+        NSLog(@"Error in validating promo code: %@", error.localizedDescription);
     }
 }];
 ```
@@ -902,7 +902,7 @@ If valid, returns the referral code JSONObject in the call back.
 ###### Swift
 
 ```swift
-Branch.getInstance().validateReferralCode(code, andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+Branch.getInstance().validatePromoCode(code, andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
     if (error == nil) {
         if let returnedCode = params["referral_code"] as? String {
             // valid
@@ -910,26 +910,26 @@ Branch.getInstance().validateReferralCode(code, andCallback: { (params: [NSObjec
             // invalid (should never happen)
         }
     } else {
-        NSLog(@"Error in validating referral code: %@", error.localizedDescription)
+        NSLog(@"Error in validating promo code: %@", error.localizedDescription)
     }
 })
 ```
 
-### Apply referral code
+### Apply promo code
 
-Apply a referral code if it exists in Branch system and is still valid (see above). If the code is valid, returns the referral code JSONObject in the call back.
+Apply a promo code if it exists in Branch system and is still valid (see above). If the code is valid, returns the promo code JSONObject in the call back.
 
-**code** _NSString*_
-: The referral code to apply
+**code** _NSString *_
+: The promo code to apply
 
 ###### Objective-C
 
 ```objc
-[[Branch getInstance] applyReferralCode:code andCallback:^(NSDictionary *params, NSError *error) {
+[[Branch getInstance] applyPromoCode:code callback:^(NSDictionary *params, NSError *error) {
     if (!error) {
-        // applied. you can get the referral code amount from the params and deduct it in your UI.
+        // applied. you can get the promo code amount from the params and deduct it in your UI.
     } else {
-        NSLog(@"Error in applying referral code: %@", error.localizedDescription);
+        NSLog(@"Error in applying promo code: %@", error.localizedDescription);
     }
 }];
 ```
@@ -937,11 +937,11 @@ Apply a referral code if it exists in Branch system and is still valid (see abov
 ###### Swift
 
 ```swift
-Branch.getInstance().applyReferralCode(code, andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+Branch.getInstance().applyPromoCode(code, callback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
     if (error == nil) {
-        // applied. you can get the referral code amount from the params and deduct it in your UI.
+        // applied. you can get the promo code amount from the params and deduct it in your UI.
     } else {
-        NSLog(@"Error in applying referral code: %@", error.localizedDescription);
+        NSLog(@"Error in applying promo code: %@", error.localizedDescription);
     }
 })
 ```
