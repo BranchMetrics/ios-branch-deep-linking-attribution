@@ -357,7 +357,7 @@ NSInteger const  TEST_CREDITS = 30;
     [self awaitExpectations];
 }
 
-- (void)test06DeprecatedGetReferralCode {
+- (void)test07DeprecatedGetReferralCode {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
@@ -409,7 +409,7 @@ NSInteger const  TEST_CREDITS = 30;
     [self awaitExpectations];
 }
 
-- (void)test07ValidatePromoCode {
+- (void)test08ValidatePromoCode {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
@@ -464,7 +464,7 @@ NSInteger const  TEST_CREDITS = 30;
     [self awaitExpectations];
 }
 
-- (void)test07DeprecatedValidateReferralCode {
+- (void)test09DeprecatedValidateReferralCode {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
@@ -522,7 +522,7 @@ NSInteger const  TEST_CREDITS = 30;
     [self awaitExpectations];
 }
 
-- (void)test08ApplyPromoCode {
+- (void)test10ApplyPromoCode {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
@@ -577,7 +577,7 @@ NSInteger const  TEST_CREDITS = 30;
     [self awaitExpectations];
 }
 
-- (void)test09DeprecatedApplyReferralCode {
+- (void)test11DeprecatedApplyReferralCode {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
@@ -635,7 +635,7 @@ NSInteger const  TEST_CREDITS = 30;
     [self awaitExpectations];
 }
 
-- (void)test09GetCreditHistory {
+- (void)test12GetCreditHistory {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
