@@ -7,7 +7,6 @@ This is a repository of our open source iOS SDK, and the information presented h
 Table of Contents| 
 ------------- | 
 [Get the Demo App](#get-the-demo-app)| 
-[New Documentation Portal](#new-documentation-portal)|
 |[Class Reference Table](#class-reference)|
 |[Important Migrations] (#important-migration-to-v078)      |  
 [Troubleshooting FAQ] (#faq) 		  |
@@ -33,16 +32,17 @@ For your reference, see the methods and parameters table below.
 |[Retrieve Session (Install or Open) Parameters](#retrieve-session-install-or-open-parameters)|[Method](#methods-2)|[Parameter](#parameters-2)| 
 |[Retrieve Install (Install Only) Parameters](#retrieve-install-install-only-parameters)|[Method](#methods-3)|[Parameter](#parameters-3)|
 [Persistent Identities](#persistent-identities)|[Method](#methods-4)|[Parameter](#parameters-4)|
-[Register Custom Events](#register-custom-events)|[Method](#methods-5)| [Parameter](#parameters-5)|
-[Generate Tracked, Deep Linking URLs (Pass Data Across Install and Open)](#generate-tracked-deep-linking-urls-pass-data-across-install-and-open)|[Method](#methods-6)|[Parameter](#parameters-6)|
-[UIActivityView Share Sheet](#uiactivityview-share-sheet)|[Method](#methods-7)|[Parameter](#parameters-7)| 
-|[Get Reward Balance](#get-reward-balance)|[Method] (#methods-8)|[Parameters] (#parameters-8)| 
-[Redeem All or Some of the Reward Balance (Store State)](#redeem-all-or-some-of-the-reward-balance-store-state)|[Method](#methods-9)|[Parameter](#parameters-9)|
-[Get Credit History](#get-credit-history)|[Method](#methods-10)|[Parameters] (#parameters-10)|
-[Get Referral Code](#get-referral-code)|[Method](#methods-111)|[Parameter] (#parameters-11)|
-[Create Referral Code](#create-referral-code)|[Method](#methods-12)|[Parameter] (#parameters-12)|
-[Validate Referral Code](#validate-referral-code)|[Method](#methods-13)|[Parameter](#parameters-13)|
-[Apply Referral Code](#apply-referral-code)|[Method](#methods-14)|[Parameter] (#parameters-14)|
+[Logout](#logout)|[Method](#methods-5)|[Parameter](#parameters-5)|
+[Register Custom Events](#register-custom-events)|[Method](#methods-6)| [Parameter](#parameters-6)|
+[Generate Tracked, Deep Linking URLs (Pass Data Across Install and Open)](#generate-tracked-deep-linking-urls-pass-data-across-install-and-open)|[Method](#methods-7)|[Parameter](#parameters-7)|
+[UIActivityView Share Sheet](#uiactivityview-share-sheet)|[Method](#methods-8)|[Parameter](#parameters-8)| 
+|[Get Reward Balance](#get-reward-balance)|[Method](#methods-9)|[Parameters] (#parameters-9)| 
+[Redeem All or Some of the Reward Balance (Store State)](#redeem-all-or-some-of-the-reward-balance-store-state)|[Method](#methods-10)|[Parameter](#parameters-10)|
+[Get Credit History](#get-credit-history)|[Method](#methods-11)|[Parameters] (#parameters-11)|
+[Get Referral Code](#get-referral-code)|[Method](#methods-12)|[Parameter] (#parameters-12)|
+[Create Referral Code](#create-referral-code)|[Method](#methods-13)|[Parameter] (#parameters-13)|
+[Validate Referral Code](#validate-referral-code)|[Method](#methods-14)|[Parameter](#parameters-14)|
+[Apply Referral Code](#apply-referral-code)|[Method](#methods-15)|[Parameter] (#parameters-15)|
 
 
 ## Important Migration to v0.7.8
