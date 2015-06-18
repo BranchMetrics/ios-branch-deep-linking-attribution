@@ -8,6 +8,8 @@
 
 #import "BNCServerRequest.h"
 
+@class BranchOpenRequest;
+
 @interface BNCServerRequestQueue : NSObject
 
 @property (nonatomic, readonly) unsigned int size;
@@ -25,7 +27,7 @@
 
 - (BOOL)containsInstallOrOpen;
 - (BOOL)containsClose;
-- (void)moveInstallOrOpenToFront:(NSInteger)networkCount;
+- (BranchOpenRequest *)moveInstallOrOpenToFront:(NSInteger)networkCount;
 
 + (id)getInstance;
 

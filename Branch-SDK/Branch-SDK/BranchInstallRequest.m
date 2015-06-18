@@ -26,6 +26,7 @@
         params[@"is_hardware_id_real"] = @(isRealHardwareId);
     }
     
+    [self safeSetValue:[BNCSystemObserver getBundleID] forKey:@"ios_bundle_id" onDict:params];
     [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:@"app_version" onDict:params];
     [self safeSetValue:[BNCSystemObserver getCarrier] forKey:@"carrier" onDict:params];
     [self safeSetValue:[BNCSystemObserver getBrand] forKey:@"branch" onDict:params];

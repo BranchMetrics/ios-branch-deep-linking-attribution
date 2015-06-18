@@ -33,10 +33,10 @@
 - (void)testPreferenceDefaults {
     BNCPreferenceHelper *prefHelper = [[BNCPreferenceHelper alloc] init];
     
-    // Retry items all have a default value, non-zero
-    XCTAssertGreaterThan(prefHelper.timeout, 0);
-    XCTAssertGreaterThan(prefHelper.retryInterval, 0);
-    XCTAssertGreaterThan(prefHelper.retryCount, 0);
+    // Defaults
+    XCTAssertEqual(prefHelper.timeout, 5);
+    XCTAssertEqual(prefHelper.retryInterval, 0);
+    XCTAssertEqual(prefHelper.retryCount, 1);
 }
 
 - (void)testPreferenceSets {
