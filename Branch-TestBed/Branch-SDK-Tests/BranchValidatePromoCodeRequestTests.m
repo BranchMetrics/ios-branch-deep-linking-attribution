@@ -1,5 +1,5 @@
 //
-//  BranchValidateReferralCodeRequestTests.m
+//  BranchValidatePromoCodeRequestTests.m
 //  Branch-TestBed
 //
 //  Created by Graham Mueller on 6/12/15.
@@ -7,29 +7,28 @@
 //
 
 #import "BranchTest.h"
-#import "BranchValidateReferralCodeRequest.h"
+#import "BranchValidatePromoCodeRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
 #import "BNCError.h"
 #import <OCMock/OCMock.h>
 
-@interface BranchValidateReferralCodeRequestTests : BranchTest
+@interface BranchValidatePromoCodeRequestTests : BranchTest
 
 @end
 
-@implementation BranchValidateReferralCodeRequestTests
+@implementation BranchValidatePromoCodeRequestTests
 
 - (void)testRequestBodyWithAllItemsSpecified {
     NSString * const CODE = @"foo_code";
     
     NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_REFERRAL_CODE: CODE,
         BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
         BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
         BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID],
     };
     
-    BranchValidateReferralCodeRequest *request = [[BranchValidateReferralCodeRequest alloc] initWithCode:CODE callback:NULL];
+    BranchValidatePromoCodeRequest *request = [[BranchValidatePromoCodeRequest alloc] initWithCode:CODE useOld:NO callback:NULL];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect] postRequest:expectedParams url:[OCMArg any] key:[OCMArg any] callback:[OCMArg any]];
     
@@ -38,14 +37,32 @@
     [serverInterfaceMock verify];
 }
 
-- (void)testBasicSuccess {
+- (void)testBasicSuccessWithPromoCode {
+    NSString * CODE = @"foo_code";
+    NSDictionary * const REFERRAL_RESPONSE_DATA = @{ BRANCH_RESPONSE_KEY_PROMO_CODE: CODE };
+    BNCServerResponse *response = [[BNCServerResponse alloc] init];
+    response.data = REFERRAL_RESPONSE_DATA;
+    
+    XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Validate Promo Code Request Expectation"];
+    BranchValidatePromoCodeRequest *request = [[BranchValidatePromoCodeRequest alloc] initWithCode:CODE useOld:NO callback:^(NSDictionary *params, NSError *error) {
+        XCTAssertEqualObjects(params, REFERRAL_RESPONSE_DATA);
+        XCTAssertNil(error);
+        [self safelyFulfillExpectation:requestExpecation];
+    }];
+    
+    [request processResponse:response error:nil];
+    
+    [self awaitExpectations];
+}
+
+- (void)testBasicSuccessWithReferralCode {
     NSString * CODE = @"foo_code";
     NSDictionary * const REFERRAL_RESPONSE_DATA = @{ BRANCH_RESPONSE_KEY_REFERRAL_CODE: CODE };
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = REFERRAL_RESPONSE_DATA;
     
-    XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Get Referral Code Request Expectation"];
-    BranchValidateReferralCodeRequest *request = [[BranchValidateReferralCodeRequest alloc] initWithCode:CODE callback:^(NSDictionary *params, NSError *error) {
+    XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Validate Promo Code Request Expectation"];
+    BranchValidatePromoCodeRequest *request = [[BranchValidatePromoCodeRequest alloc] initWithCode:CODE useOld:YES callback:^(NSDictionary *params, NSError *error) {
         XCTAssertEqualObjects(params, REFERRAL_RESPONSE_DATA);
         XCTAssertNil(error);
         [self safelyFulfillExpectation:requestExpecation];
@@ -62,8 +79,8 @@
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = RESPONSE_DATA;
     
-    XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Get Referral Code Request Expectation"];
-    BranchValidateReferralCodeRequest *request = [[BranchValidateReferralCodeRequest alloc] initWithCode:CODE callback:^(NSDictionary *params, NSError *error) {
+    XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Validate Promo Code Request Expectation"];
+    BranchValidatePromoCodeRequest *request = [[BranchValidatePromoCodeRequest alloc] initWithCode:CODE useOld:NO callback:^(NSDictionary *params, NSError *error) {
         XCTAssertEqualObjects(params, RESPONSE_DATA);
         XCTAssertEqualObjects(error.domain, BNCErrorDomain);
         XCTAssertEqual(error.code, BNCInvalidReferralCodeError);
@@ -79,8 +96,8 @@
     NSString * CODE = @"foo_code";
     NSError * const REQUEST_ERROR = [NSError errorWithDomain:@"foo" code:1 userInfo:nil];
     
-    XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Get Referral Code Request Expectation"];
-    BranchValidateReferralCodeRequest *request = [[BranchValidateReferralCodeRequest alloc] initWithCode:CODE callback:^(NSDictionary *params, NSError *error) {
+    XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Validate Promo Code Request Expectation"];
+    BranchValidatePromoCodeRequest *request = [[BranchValidatePromoCodeRequest alloc] initWithCode:CODE useOld:NO callback:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(params);
         XCTAssertEqualObjects(error, REQUEST_ERROR);
         [self safelyFulfillExpectation:requestExpecation];
