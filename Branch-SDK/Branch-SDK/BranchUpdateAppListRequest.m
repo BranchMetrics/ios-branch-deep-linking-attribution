@@ -10,6 +10,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BNCEncodingUtils.h"
+#import "BranchConstants.h"
 
 @interface BranchUpdateAppListRequest ()
 
@@ -29,9 +30,9 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSDictionary *params = @{
-        @"device_fingerprint_id": [BNCPreferenceHelper getDeviceFingerprintID],
-        @"os": [BNCSystemObserver getOS],
-        @"apps_data": self.appList
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+        BRANCH_REQUEST_KEY_OS: [BNCSystemObserver getOS],
+        BRANCH_REQUEST_KEY_APP_LIST: self.appList
     };
 
     [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"applist"] key:key callback:callback];

@@ -9,6 +9,7 @@
 #import "BranchOpenRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
+#import "BranchConstants.h"
 
 @interface BranchOpenRequest ()
 
@@ -34,30 +35,31 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
-    if (![BNCPreferenceHelper getDeviceFingerprintID]) {
+    NSString *fingerprintId = [BNCPreferenceHelper getDeviceFingerprintID];
+    if (!fingerprintId) {
         BOOL isRealHardwareId;
         NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper isDebug]];
         if (hardwareId) {
-            params[@"hardware_id"] = hardwareId;
-            params[@"is_hardware_id_real"] = @(isRealHardwareId);
+            params[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
+            params[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = @(isRealHardwareId);
         }
     }
     else {
-        params[@"device_fingerprint_id"] = [BNCPreferenceHelper getDeviceFingerprintID];
+        params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = fingerprintId;
     }
 
-    params[@"identity_id"] = [BNCPreferenceHelper getIdentityID];
-    params[@"ad_tracking_enabled"] = @([BNCSystemObserver adTrackingSafe]);
-    params[@"is_referrable"] = @([BNCPreferenceHelper getIsReferrable]);
-    params[@"debug"] = @([BNCPreferenceHelper isDebug]);
+    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = [BNCPreferenceHelper getIdentityID];
+    params[BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED] = @([BNCSystemObserver adTrackingSafe]);
+    params[BRANCH_REQUEST_KEY_IS_REFERRABLE] = @([BNCPreferenceHelper getIsReferrable]);
+    params[BRANCH_REQUEST_KEY_DEBUG] = @([BNCPreferenceHelper isDebug]);
 
-    [self safeSetValue:[BNCSystemObserver getBundleID] forKey:@"ios_bundle_id" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:@"app_version" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getOS] forKey:@"os" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:@"os_version" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:@"uri_scheme" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:@"update" onDict:params];
-    [self safeSetValue:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier" onDict:params];
+    [self safeSetValue:[BNCSystemObserver getBundleID] forKey:BRANCH_REQUEST_KEY_BUNDLE_ID onDict:params];
+    [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];
+    [self safeSetValue:[BNCSystemObserver getOS] forKey:BRANCH_REQUEST_KEY_OS onDict:params];
+    [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:params];
+    [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:params];
+    [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:BRANCH_REQUEST_KEY_UPDATE onDict:params];
+    [self safeSetValue:[BNCPreferenceHelper getLinkClickIdentifier] forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:params];
     
     [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"open"] key:key callback:callback];
 }
