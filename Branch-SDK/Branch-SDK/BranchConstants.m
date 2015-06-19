@@ -48,3 +48,4 @@ NSString * const BRANCH_RESPONSE_KEY_REFERREE = @"referree";
 NSString * const BRANCH_RESPONSE_KEY_REFERRAL_CODE = @"referral_code";
 NSString * const BRANCH_RESPONSE_KEY_PROMO_CODE = @"promo_code";
 NSString * const BRANCH_RESPONSE_KEY_URL = @"url";
+NSString * const BRANCH_RESPONSE_KEY_POTENTIAL_APPS = @"potential_apps";
