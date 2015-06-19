@@ -7,13 +7,19 @@
 //
 #import "Branch.h"
 #import "AppDelegate.h"
+#import "ExampleDeepLinkingController.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    ExampleDeepLinkingController *controller = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"DeepLinkingController"];
+    
     Branch *branch = [Branch getInstance];
     [branch setDebug];
+    
+    [branch registerDeepLinkController:controller forKey:@"gravatar_email"];
+
     [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         if (!error) {
             NSLog(@"finished init with params = %@", [params description]);
