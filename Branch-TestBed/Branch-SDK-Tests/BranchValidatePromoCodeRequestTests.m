@@ -83,7 +83,7 @@
     BranchValidatePromoCodeRequest *request = [[BranchValidatePromoCodeRequest alloc] initWithCode:CODE useOld:NO callback:^(NSDictionary *params, NSError *error) {
         XCTAssertEqualObjects(params, RESPONSE_DATA);
         XCTAssertEqualObjects(error.domain, BNCErrorDomain);
-        XCTAssertEqual(error.code, BNCInvalidReferralCodeError);
+        XCTAssertEqual(error.code, BNCInvalidPromoCodeError);
         [self safelyFulfillExpectation:requestExpecation];
     }];
     
