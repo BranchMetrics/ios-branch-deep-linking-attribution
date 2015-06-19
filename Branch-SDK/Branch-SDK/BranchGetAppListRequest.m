@@ -8,6 +8,7 @@
 
 #import "BranchGetAppListRequest.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
 
 @interface BranchGetAppListRequest ()
 
@@ -40,7 +41,7 @@
     [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned from app check with %@", response.data];
     
     if (self.callback) {
-        self.callback(response.data[@"potential_apps"], nil);
+        self.callback(response.data[BRANCH_RESPONSE_KEY_POTENTIAL_APPS], nil);
     }
 }
 

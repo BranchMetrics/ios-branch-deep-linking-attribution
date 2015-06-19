@@ -94,6 +94,7 @@
 		46DBB42E1B330CF300642FC8 /* BNCServerRequestQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DBB42C1B330CF300642FC8 /* BNCServerRequestQueueTests.m */; };
 		46DBB4371B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DBB4361B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m */; };
 		46DBB4391B34B22F00642FC8 /* BranchCloseRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DBB4381B34B22F00642FC8 /* BranchCloseRequestTests.m */; };
+		46DBB43B1B34B2D500642FC8 /* BranchGetAppListRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DBB43A1B34B2D500642FC8 /* BranchGetAppListRequestTests.m */; };
 		46DC406E1B2A328900D2D203 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67BBCF271A69E49A009C7DAE /* AdSupport.framework */; };
 		46DC40701B2A34EE00D2D203 /* BranchUserCompletedActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC406F1B2A34EE00D2D203 /* BranchUserCompletedActionTests.m */; };
 		46DC40721B2B285900D2D203 /* BranchLoadActionsRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC40711B2B285900D2D203 /* BranchLoadActionsRequestTests.m */; };
@@ -205,6 +206,7 @@
 		46DBB42C1B330CF300642FC8 /* BNCServerRequestQueueTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerRequestQueueTests.m; sourceTree = "<group>"; };
 		46DBB4361B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShortUrlSyncRequestTests.m; sourceTree = "<group>"; };
 		46DBB4381B34B22F00642FC8 /* BranchCloseRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchCloseRequestTests.m; sourceTree = "<group>"; };
+		46DBB43A1B34B2D500642FC8 /* BranchGetAppListRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchGetAppListRequestTests.m; sourceTree = "<group>"; };
 		46DC406F1B2A34EE00D2D203 /* BranchUserCompletedActionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUserCompletedActionTests.m; sourceTree = "<group>"; };
 		46DC40711B2B285900D2D203 /* BranchLoadActionsRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLoadActionsRequestTests.m; sourceTree = "<group>"; };
 		46DC40731B2B31A300D2D203 /* BranchLoadRewardsRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLoadRewardsRequestTests.m; sourceTree = "<group>"; };
@@ -382,6 +384,7 @@
 				46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */,
 				46DBB4361B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m */,
 				46DBB4381B34B22F00642FC8 /* BranchCloseRequestTests.m */,
+				46DBB43A1B34B2D500642FC8 /* BranchGetAppListRequestTests.m */,
 			);
 			name = BranchRequestsTests;
 			sourceTree = "<group>";
@@ -807,6 +810,7 @@
 				46DC40781B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m in Sources */,
 				464EA3981ACB1797000E4094 /* BNCServerInterfaceTests.m in Sources */,
 				4683F0791B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m in Sources */,
+				46DBB43B1B34B2D500642FC8 /* BranchGetAppListRequestTests.m in Sources */,
 				4665AF241B28B7E000184037 /* BranchSetIdentityRequestTests.m in Sources */,
 				46DBB42D1B330CF300642FC8 /* BNCLinkDataTests.m in Sources */,
 				46DC40741B2B31A300D2D203 /* BranchLoadRewardsRequestTests.m in Sources */,
