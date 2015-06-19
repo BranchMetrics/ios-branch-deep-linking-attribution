@@ -116,7 +116,7 @@
     BranchGetPromoCodeRequest *request = [[BranchGetPromoCodeRequest alloc] initWithUsageType:0 rewardLocation:0 amount:0 bucket:nil prefix:nil expiration:nil useOld:NO callback:^(NSDictionary *params, NSError *error) {
         XCTAssertEqualObjects(params, RESPONSE_DATA);
         XCTAssertEqualObjects(error.domain, BNCErrorDomain);
-        XCTAssertEqual(error.code, BNCInvalidReferralCodeError);
+        XCTAssertEqual(error.code, BNCInvalidPromoCodeError);
         [self safelyFulfillExpectation:requestExpecation];
     }];
     

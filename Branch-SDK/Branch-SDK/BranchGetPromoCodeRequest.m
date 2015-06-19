@@ -77,7 +77,7 @@
     
     NSString *responseKey = self.useOld ? BRANCH_RESPONSE_KEY_REFERRAL_CODE : BRANCH_RESPONSE_KEY_PROMO_CODE;
     if (!response.data[responseKey]) {
-        error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Promo code with specified parameter set is already taken for a different user" }];
+        error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidPromoCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Promo code with specified parameter set is already taken for a different user" }];
     }
     
     if (self.callback) {
