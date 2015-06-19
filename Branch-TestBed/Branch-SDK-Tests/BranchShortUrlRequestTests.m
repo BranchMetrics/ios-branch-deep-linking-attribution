@@ -10,6 +10,8 @@
 #import "BranchConstants.h"
 #import "BNCPreferenceHelper.h"
 #import <OCMock/OCMock.h>
+#import "BNCPreferenceHelper.h"
+#import "BNCEncodingUtils.h"
 
 @interface BranchShortUrlRequestTests : BranchTest
 
@@ -62,6 +64,30 @@
     [serverInterfaceMock verify];
 }
 
+- (void)testRequestBodyWhenOptionalValuesArentProvided {
+    BranchLinkType const LINK_TYPE = BranchLinkTypeOneTimeUse;
+    BNCLinkData * const LINK_DATA = [[BNCLinkData alloc] init];
+    BNCLinkCache * const LINK_CACHE = [[BNCLinkCache alloc] init];
+    
+    [LINK_DATA setupType:LINK_TYPE];
+    
+    NSDictionary * const expectedParams = @{
+        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID],
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+        BRANCH_REQUEST_KEY_URL_SOURCE: @"ios",
+        BRANCH_REQUEST_KEY_URL_LINK_TYPE: @(LINK_TYPE)
+    };
+    
+    BranchShortUrlRequest *request = [[BranchShortUrlRequest alloc] initWithTags:nil alias:nil type:LINK_TYPE matchDuration:0 channel:nil feature:nil stage:nil params:nil linkData:LINK_DATA linkCache:LINK_CACHE callback:NULL];
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    [[serverInterfaceMock expect] postRequest:expectedParams url:[OCMArg any] key:[OCMArg any] callback:[OCMArg any]];
+    
+    [request makeRequest:serverInterfaceMock key:nil callback:NULL];
+    
+    [serverInterfaceMock verify];
+}
+
 - (void)testBasicSuccess {
     NSString * URL = @"http://foo";
     NSDictionary * const REFERRAL_RESPONSE_DATA = @{ BRANCH_RESPONSE_KEY_URL: URL };
@@ -78,7 +104,69 @@
     [request processResponse:response error:nil];
     
     [self awaitExpectations];
+}
+
+- (void)testFailureWithUserUrlAvailable {
+    NSError * RESPONSE_ERROR = [NSError errorWithDomain:@"foo" code:1 userInfo:nil];
+    NSString * USER_URL = @"http://foo";
+
+    NSString * TAG1 = @"foo-tag";
+    NSString * TAG2 = @"bar-tag";
+    NSArray * const TAGS = @[ TAG1, TAG2 ];
+    NSString * const ALIAS = @"foo-alias";
+    BranchLinkType const LINK_TYPE = BranchLinkTypeOneTimeUse;
+    NSInteger const DURATION = 1;
+    NSString * const CHANNEL = @"foo-channel";
+    NSString * const FEATURE = @"foo-feature";
+    NSString * const STAGE = @"foo-stage";
+    NSDictionary * const PARAMS = @{ @"foo-param": @"bar-value" };
+    NSData * const PARAMS_DATA = [BNCEncodingUtils encodeDictionaryToJsonData:PARAMS];
+    NSString * const ENCODED_PARAMS = [BNCEncodingUtils base64EncodeData:PARAMS_DATA];
     
+    NSString * EXPECTED_URL = [NSString stringWithFormat:@"%@?tags=%@&tags=%@&alias=%@&channel=%@&feature=%@&stage=%@&type=%ld&matchDuration=%ld&source=ios&data=%@", USER_URL, TAG1, TAG2, ALIAS, CHANNEL, FEATURE, STAGE, (long)LINK_TYPE, (long)DURATION, ENCODED_PARAMS];
+
+    id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
+    [[[preferenceHelperMock stub] andReturn:USER_URL] getUserURL];
+    
+    XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Get Referral Code Request Expectation"];
+    BranchShortUrlRequest *request = [[BranchShortUrlRequest alloc] initWithTags:TAGS alias:ALIAS type:LINK_TYPE matchDuration:DURATION channel:CHANNEL feature:FEATURE stage:STAGE params:PARAMS linkData:nil linkCache:nil callback:^(NSString *url, NSError *error) {
+        XCTAssertEqualObjects(url, EXPECTED_URL);
+        XCTAssertNotNil(error);
+        [self safelyFulfillExpectation:requestExpecation];
+    }];
+    
+    [request processResponse:nil error:RESPONSE_ERROR];
+    
+    [self awaitExpectations];
+}
+
+- (void)testFailureWithoutUserUrlAvailable {
+    NSError * RESPONSE_ERROR = [NSError errorWithDomain:@"foo" code:1 userInfo:nil];
+    
+    NSString * TAG1 = @"foo-tag";
+    NSString * TAG2 = @"bar-tag";
+    NSArray * const TAGS = @[ TAG1, TAG2 ];
+    NSString * const ALIAS = @"foo-alias";
+    BranchLinkType const LINK_TYPE = BranchLinkTypeOneTimeUse;
+    NSInteger const DURATION = 1;
+    NSString * const CHANNEL = @"foo-channel";
+    NSString * const FEATURE = @"foo-feature";
+    NSString * const STAGE = @"foo-stage";
+    NSDictionary * const PARAMS = @{ @"foo-param": @"bar-value" };
+    
+    id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
+    [[[preferenceHelperMock stub] andReturn:nil] getUserURL];
+    
+    XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Get Referral Code Request Expectation"];
+    BranchShortUrlRequest *request = [[BranchShortUrlRequest alloc] initWithTags:TAGS alias:ALIAS type:LINK_TYPE matchDuration:DURATION channel:CHANNEL feature:FEATURE stage:STAGE params:PARAMS linkData:nil linkCache:nil callback:^(NSString *url, NSError *error) {
+        XCTAssertNil(url);
+        XCTAssertNotNil(error);
+        [self safelyFulfillExpectation:requestExpecation];
+    }];
+    
+    [request processResponse:nil error:RESPONSE_ERROR];
+    
+    [self awaitExpectations];
 }
 
 @end

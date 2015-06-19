@@ -62,7 +62,7 @@
         if (self.callback) {
             NSString *failedUrl = nil;
             NSString *userUrl = [BNCPreferenceHelper getUserURL];
-            if (!userUrl) {
+            if (userUrl) {
                 failedUrl = [self createLongUrlForUserUrl:userUrl];
             }
             
