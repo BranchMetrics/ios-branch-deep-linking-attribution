@@ -59,7 +59,7 @@ static int BNCDebugTriggerDuration = 3;
 static int BNCDebugTriggerFingers = 4;
 static int BNCDebugTriggerFingersSimulator = 2;
 
-@interface Branch() <UIGestureRecognizerDelegate>
+@interface Branch() <UIGestureRecognizerDelegate, BranchDeepLinkingControllerCompletionDelegate>
 
 @property (strong, nonatomic) BNCServerInterface *bServerInterface;
 
@@ -76,6 +76,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 @property (strong, nonatomic) NSTimer *debugHeartbeatTimer;
 @property (strong, nonatomic) NSString *branchKey;
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
+@property (weak, nonatomic) UIViewController *deepLinkPresentingController;
 
 @end
 
@@ -1110,9 +1111,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
         NSString *key = [[keysInParams allObjects] firstObject];
         UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
         [branchSharingController configureControlWithData:latestReferringParams];
+        branchSharingController.completionDelegate = self;
         
-        UIViewController *topController = [[[UIApplication sharedApplication].delegate window] rootViewController];
-        [topController presentViewController:branchSharingController animated:YES completion:NULL];
+        self.deepLinkPresentingController = [[[UIApplication sharedApplication].delegate window] rootViewController];
+        [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
     }
     
 }
@@ -1128,6 +1130,14 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
+
+
+#pragma mark - BranchDeepLinkingControllerCompletionDelegate methods
+
+- (void)deepLinkingControllerCompleted {
+    [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
+}
+
 
 #pragma mark - Debugger functions
 
