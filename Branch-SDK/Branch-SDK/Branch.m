@@ -70,6 +70,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 @property (assign, nonatomic) NSInteger networkCount;
 @property (assign, nonatomic) BOOL isInitialized;
 @property (assign, nonatomic) BOOL shouldCallSessionInitCallback;
+@property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (assign, nonatomic) BOOL appListCheckEnabled;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) UILongPressGestureRecognizer *debugGestureRecognizer;
@@ -164,46 +165,28 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 #pragma mark - BrachActivityItemProvider methods
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
-                                                     andTags:(NSArray *)tags
-                                                  andFeature:(NSString *)feature
-                                                    andStage:(NSString *)stage
-                                                    andAlias:(NSString *)alias {
-    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:tags andFeature:feature andStage:stage andAlias:alias];
-}
-
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params {
-    
     return [[BranchActivityItemProvider alloc] initWithParams:params andTags:nil andFeature:nil andStage:nil andAlias:nil];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
-                                                         andFeature:(NSString *)feature {
-    
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature {
     return [[BranchActivityItemProvider alloc] initWithParams:params andTags:nil andFeature:feature andStage:nil andAlias:nil];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
-                                                         andFeature:(NSString *)feature
-                                                           andStage:(NSString *)stage {
-    
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage {
     return [[BranchActivityItemProvider alloc] initWithParams:params andTags:nil andFeature:feature andStage:stage andAlias:nil];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
-                                                         andFeature:(NSString *)feature
-                                                           andStage:(NSString *)stage
-                                                            andTags:(NSArray *)tags {
-    
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags {
     return [[BranchActivityItemProvider alloc] initWithParams:params andTags:tags andFeature:feature andStage:stage andAlias:nil];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
-                                                            andFeature:(NSString *)feature
-                                                           andStage:(NSString *)stage
-                                                           andAlias:(NSString *)alias {
-    
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
     return [[BranchActivityItemProvider alloc] initWithParams:params andTags:nil andFeature:feature andStage:stage andAlias:alias];
+}
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
+    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:tags andFeature:feature andStage:stage andAlias:alias];
 }
 
 
@@ -238,72 +221,93 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 
-#pragma mark - InitSession methods
+#pragma mark - InitSession Permutation methods
 
 - (void)initSession {
-    [self initSessionAndRegisterDeepLinkHandler:nil];
+    BOOL isReferrable = ![BNCSystemObserver getUpdateState] && ![self hasUser];
+    [self initSessionWithLaunchOptions:nil automaticallyDisplayDeepLinkController:NO isReferrable:isReferrable deepLinkHandler:nil];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options {
-    if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
-        [self initSessionAndRegisterDeepLinkHandler:nil];
-    }
+    BOOL isReferrable = ![BNCSystemObserver getUpdateState] && ![self hasUser];
+    [self initSessionWithLaunchOptions:options automaticallyDisplayDeepLinkController:NO isReferrable:isReferrable deepLinkHandler:nil];
 }
 
 - (void)initSession:(BOOL)isReferrable {
-    [self initSession:isReferrable andRegisterDeepLinkHandler:nil];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback {
-    self.sessionInitWithParamsCallback = callback;
-
-    if (![BNCSystemObserver getUpdateState] && ![self hasUser]) {
-        [BNCPreferenceHelper setIsReferrable];
-    } else {
-        [BNCPreferenceHelper clearIsReferrable];
-    }
-    
-    if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
-        [self initUserSessionAndCallCallback:YES];
-    }
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable {
-    if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
-        [self initSession:isReferrable andRegisterDeepLinkHandler:nil];
-    }
-}
-
-- (void)initSession:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback {
-    self.sessionInitWithParamsCallback = callback;
-
-    if (isReferrable) {
-        [BNCPreferenceHelper setIsReferrable];
-    } else {
-        [BNCPreferenceHelper clearIsReferrable];
-    }
-    
-    [self initUserSessionAndCallCallback:YES];
-}
-
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback {
-    self.sessionInitWithParamsCallback = callback;
-
-    if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
-        [self initSession:isReferrable andRegisterDeepLinkHandler:callback];
-    }
+    [self initSessionWithLaunchOptions:nil automaticallyDisplayDeepLinkController:NO isReferrable:isReferrable deepLinkHandler:nil];
 }
 
 - (void)initSessionAndRegisterDeepLinkHandler:(callbackWithParams)callback {
-    self.sessionInitWithParamsCallback = callback;
+    BOOL isReferrable = ![BNCSystemObserver getUpdateState] && ![self hasUser];
+    [self initSessionWithLaunchOptions:nil automaticallyDisplayDeepLinkController:NO isReferrable:isReferrable deepLinkHandler:callback];
+}
 
-    if (![BNCSystemObserver getUpdateState] && ![self hasUser]) {
+- (void)initSessionAndAutomaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController {
+    BOOL isReferrable = ![BNCSystemObserver getUpdateState] && ![self hasUser];
+    [self initSessionWithLaunchOptions:nil automaticallyDisplayDeepLinkController:automaticallyDisplayController isReferrable:isReferrable deepLinkHandler:nil];
+}
+
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback {
+    BOOL isReferrable = ![BNCSystemObserver getUpdateState] && ![self hasUser];
+    [self initSessionWithLaunchOptions:options automaticallyDisplayDeepLinkController:NO isReferrable:isReferrable deepLinkHandler:callback];
+}
+
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable {
+    [self initSessionWithLaunchOptions:options automaticallyDisplayDeepLinkController:NO isReferrable:isReferrable deepLinkHandler:nil];
+}
+
+- (void)initSession:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback {
+    [self initSessionWithLaunchOptions:nil automaticallyDisplayDeepLinkController:NO isReferrable:isReferrable deepLinkHandler:callback];
+}
+
+- (void)initSession:(BOOL)isReferrable automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController {
+    [self initSessionWithLaunchOptions:nil automaticallyDisplayDeepLinkController:automaticallyDisplayController isReferrable:isReferrable deepLinkHandler:nil];
+}
+
+- (void)initSessionAndAutomaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController deepLinkHandler:(callbackWithParams)callback {
+    BOOL isReferrable = ![BNCSystemObserver getUpdateState] && ![self hasUser];
+    [self initSessionWithLaunchOptions:nil automaticallyDisplayDeepLinkController:automaticallyDisplayController isReferrable:isReferrable deepLinkHandler:callback];
+}
+
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController {
+    BOOL isReferrable = ![BNCSystemObserver getUpdateState] && ![self hasUser];
+    [self initSessionWithLaunchOptions:options automaticallyDisplayDeepLinkController:automaticallyDisplayController isReferrable:isReferrable deepLinkHandler:nil];
+}
+
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback {
+    [self initSessionWithLaunchOptions:options automaticallyDisplayDeepLinkController:NO isReferrable:isReferrable deepLinkHandler:callback];
+}
+
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController {
+    [self initSessionWithLaunchOptions:options automaticallyDisplayDeepLinkController:automaticallyDisplayController isReferrable:isReferrable deepLinkHandler:nil];
+}
+
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController deepLinkHandler:(callbackWithParams)callback {
+    BOOL isReferrable = ![BNCSystemObserver getUpdateState] && ![self hasUser];
+    [self initSessionWithLaunchOptions:options automaticallyDisplayDeepLinkController:automaticallyDisplayController isReferrable:isReferrable deepLinkHandler:callback];
+}
+
+- (void)initSessionAndAutomaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(callbackWithParams)callback {
+    [self initSessionWithLaunchOptions:nil automaticallyDisplayDeepLinkController:automaticallyDisplayController isReferrable:isReferrable deepLinkHandler:callback];
+}
+
+
+#pragma mark - Actual Init Session
+
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(callbackWithParams)callback {
+    self.sessionInitWithParamsCallback = callback;
+    self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
+    
+    if (isReferrable) {
         [BNCPreferenceHelper setIsReferrable];
-    } else {
+    }
+    else {
         [BNCPreferenceHelper clearIsReferrable];
     }
-    
-    [self initUserSessionAndCallCallback:YES];
+
+    if (!options[UIApplicationLaunchOptionsURLKey]) {
+        [self initUserSessionAndCallCallback:YES];
+    }
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url {
@@ -1100,23 +1104,24 @@ static int BNCDebugTriggerFingersSimulator = 2;
         self.sessionInitWithParamsCallback(latestReferringParams, nil);
     }
     
-    // Find any matched keys, then launch any controllers that match
-    // TODO which one to launch if more than one match?
-    NSMutableSet *keysInParams = [NSMutableSet setWithArray:[latestReferringParams allKeys]];
-    NSSet *desiredKeysSet = [NSSet setWithArray:[self.deepLinkControllers allKeys]];
-    [keysInParams intersectSet:desiredKeysSet];
+    if (self.shouldAutomaticallyDeepLink) {
+        // Find any matched keys, then launch any controllers that match
+        // TODO which one to launch if more than one match?
+        NSMutableSet *keysInParams = [NSMutableSet setWithArray:[latestReferringParams allKeys]];
+        NSSet *desiredKeysSet = [NSSet setWithArray:[self.deepLinkControllers allKeys]];
+        [keysInParams intersectSet:desiredKeysSet];
 
-    // If we find a matching key, configure and show the controller
-    if ([keysInParams count]) {
-        NSString *key = [[keysInParams allObjects] firstObject];
-        UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
-        [branchSharingController configureControlWithData:latestReferringParams];
-        branchSharingController.completionDelegate = self;
-        
-        self.deepLinkPresentingController = [[[UIApplication sharedApplication].delegate window] rootViewController];
-        [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
+        // If we find a matching key, configure and show the controller
+        if ([keysInParams count]) {
+            NSString *key = [[keysInParams allObjects] firstObject];
+            UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
+            [branchSharingController configureControlWithData:latestReferringParams];
+            branchSharingController.completionDelegate = self;
+            
+            self.deepLinkPresentingController = [[[UIApplication sharedApplication].delegate window] rootViewController];
+            [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
+        }
     }
-    
 }
 
 - (void)handleInitFailure:(NSError *)error {
