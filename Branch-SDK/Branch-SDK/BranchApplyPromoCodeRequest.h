@@ -1,5 +1,5 @@
 //
-//  BranchApplyReferralCodeRequest.h
+//  BranchApplyPromoCodeRequest.h
 //  Branch-TestBed
 //
 //  Created by Graham Mueller on 5/26/15.
@@ -9,8 +9,8 @@
 #import "BNCServerRequest.h"
 #import "Branch.h"
 
-@interface BranchApplyReferralCodeRequest : BNCServerRequest
+@interface BranchApplyPromoCodeRequest : BNCServerRequest
 
-- (id)initWithCode:(NSString *)code callback:(callbackWithParams)callback;
+- (id)initWithCode:(NSString *)code useOld:(BOOL)useOld callback:(callbackWithParams)callback;
 
 @end

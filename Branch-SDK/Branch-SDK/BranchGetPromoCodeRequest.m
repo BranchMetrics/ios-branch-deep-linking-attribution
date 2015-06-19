@@ -6,34 +6,37 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BranchGetReferralCodeRequest.h"
+#import "BranchGetPromoCodeRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCError.h"
 #import "BranchConstants.h"
 
-@interface BranchGetReferralCodeRequest ()
+@interface BranchGetPromoCodeRequest ()
 
-@property (assign, nonatomic) BranchReferralCodeCalculation calcType;
-@property (assign, nonatomic) BranchReferralCodeLocation location;
+@property (assign, nonatomic) BranchPromoCodeUsageType usageType;
+@property (assign, nonatomic) BranchPromoCodeRewardLocation rewardLocation;
 @property (assign, nonatomic) NSInteger amount;
 @property (strong, nonatomic) NSString *bucket;
 @property (strong, nonatomic) NSString *prefix;
 @property (strong, nonatomic) NSDate *expiration;
 @property (strong, nonatomic) callbackWithParams callback;
 
+@property (assign, nonatomic) BOOL useOld;
+
 @end
 
-@implementation BranchGetReferralCodeRequest
+@implementation BranchGetPromoCodeRequest
 
-- (id)initWithCalcType:(BranchReferralCodeCalculation)calcType location:(BranchReferralCodeLocation)location amount:(NSInteger)amount bucket:(NSString *)bucket prefix:(NSString *)prefix expiration:(NSDate *)expiration callback:(callbackWithParams)callback {
+- (id)initWithUsageType:(BranchPromoCodeUsageType)usageType rewardLocation:(BranchPromoCodeRewardLocation)rewardLocation amount:(NSInteger)amount bucket:(NSString *)bucket prefix:(NSString *)prefix expiration:(NSDate *)expiration useOld:(BOOL)useOld callback:(callbackWithParams)callback {
     if (self = [super init]) {
-        _calcType = calcType;
-        _location = location;
+        _usageType = usageType;
+        _rewardLocation = rewardLocation;
         _amount = amount;
         _bucket = bucket;
         _prefix = prefix;
         _expiration = expiration;
         _callback = callback;
+        _useOld = useOld;
     }
 
     return self;
@@ -45,8 +48,8 @@
     params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = [BNCPreferenceHelper getDeviceFingerprintID];
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = [BNCPreferenceHelper getIdentityID];
     params[BRANCH_REQUEST_KEY_SESSION_ID] = [BNCPreferenceHelper getSessionID];
-    params[BRANCH_REQUEST_KEY_REFERRAL_CALCULATION_TYPE] = @(self.calcType);
-    params[BRANCH_REQUEST_KEY_REFERRAL_REWARD_LOCATION] = @(self.location);
+    params[BRANCH_REQUEST_KEY_REFERRAL_USAGE_TYPE] = @(self.usageType);
+    params[BRANCH_REQUEST_KEY_REFERRAL_REWARD_LOCATION] = @(self.rewardLocation);
     params[BRANCH_REQUEST_KEY_REFERRAL_TYPE] = @"credit";
     params[BRANCH_REQUEST_KEY_REFERRAL_CREATION_SOURCE] = @2; // iOS SDK = 2
     params[BRANCH_REQUEST_KEY_AMOUNT] = @(self.amount);
@@ -60,7 +63,8 @@
         params[BRANCH_REQUEST_KEY_REFERRAL_EXPIRATION] = self.expiration;
     }
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"referralcode"] key:key callback:callback];
+    NSString *endpoint = self.useOld ? @"referralcode" : @"promo-code";
+    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:endpoint] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -71,8 +75,9 @@
         return;
     }
     
-    if (!response.data[BRANCH_RESPONSE_KEY_REFERRAL_CODE]) {
-        error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Referral code with specified parameter set is already taken for a different user" }];
+    NSString *responseKey = self.useOld ? BRANCH_RESPONSE_KEY_REFERRAL_CODE : BRANCH_RESPONSE_KEY_PROMO_CODE;
+    if (!response.data[responseKey]) {
+        error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Promo code with specified parameter set is already taken for a different user" }];
     }
     
     if (self.callback) {
@@ -84,12 +89,13 @@
 
 - (id)initWithCoder:(NSCoder *)decoder {
     if (self = [super initWithCoder:decoder]) {
-        _calcType = [decoder decodeIntegerForKey:@"calcType"];
-        _location = [decoder decodeIntegerForKey:@"location"];
+        _usageType = [decoder decodeIntegerForKey:@"usageType"];
+        _rewardLocation = [decoder decodeIntegerForKey:@"rewardLocation"];
         _amount = [decoder decodeIntegerForKey:@"amount"];
         _bucket = [decoder decodeObjectForKey:@"bucket"];
         _prefix = [decoder decodeObjectForKey:@"prefix"];
         _expiration = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:@"expiration"]];
+        _useOld = [decoder decodeBoolForKey:@"useOld"];
     }
     
     return self;
@@ -98,12 +104,13 @@
 - (void)encodeWithCoder:(NSCoder *)coder {
     [super encodeWithCoder:coder];
     
-    [coder encodeInteger:self.calcType forKey:@"calcType"];
-    [coder encodeInteger:self.location forKey:@"location"];
+    [coder encodeInteger:self.usageType forKey:@"usageType"];
+    [coder encodeInteger:self.rewardLocation forKey:@"rewardLocation"];
     [coder encodeInteger:self.amount forKey:@"amount"];
     [coder encodeObject:self.bucket forKey:@"bucket"];
     [coder encodeObject:self.prefix forKey:@"prefix"];
     [coder encodeDouble:[self.expiration timeIntervalSince1970] forKey:@"expiration"];
+    [coder encodeBool:self.useOld forKey:@"useOld"];
 }
 
 @end
