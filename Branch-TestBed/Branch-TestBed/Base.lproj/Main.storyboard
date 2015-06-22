@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="Yig-ca-Udb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="Yig-ca-Udb">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -169,7 +169,7 @@
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mAL-3s-Zyv">
                                 <rect key="frame" x="163" y="384" width="115" height="30"/>
-                                <state key="normal" title="Referral code">
+                                <state key="normal" title="Promo Code">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -206,16 +206,16 @@
             </objects>
             <point key="canvasLocation" x="671" y="136"/>
         </scene>
-        <!--Referral Code-->
+        <!--Promo Code-->
         <scene sceneID="lLX-n3-iOU">
             <objects>
-                <viewController storyboardIdentifier="ReferralCodeVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="NBd-ng-CiI" customClass="ReferralCodeViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ReferralCodeVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="NBd-ng-CiI" customClass="PromoCodeViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="FGR-nl-9ii"/>
                         <viewControllerLayoutGuide type="bottom" id="U34-Yt-k3k"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="zaH-Zp-jhQ">
-                        <rect key="frame" x="0.0" y="94" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Code prefix" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Zdg-AP-syb">
@@ -223,7 +223,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Referral code" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="QKd-tB-hnn">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Promo code" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="QKd-tB-hnn">
                                 <rect key="frame" x="96" y="20" width="130" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
@@ -278,7 +278,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="cmdGetReferralCode:" destination="NBd-ng-CiI" eventType="touchUpInside" id="cKI-jj-19z"/>
+                                    <action selector="cmdGetCode:" destination="NBd-ng-CiI" eventType="touchUpInside" id="B5A-Au-qLH"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oyh-BL-Wth">
@@ -288,7 +288,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="cmdValidateReferralCode:" destination="NBd-ng-CiI" eventType="touchUpInside" id="sxd-nC-xEM"/>
+                                    <action selector="cmdValidateCode:" destination="NBd-ng-CiI" eventType="touchUpInside" id="Yp3-Da-OHG"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="naB-vq-FW9">
@@ -298,7 +298,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="cmdApplyReferralCode:" destination="NBd-ng-CiI" eventType="touchUpInside" id="89t-PV-Sz0"/>
+                                    <action selector="cmdApplyCode:" destination="NBd-ng-CiI" eventType="touchUpInside" id="UEC-bq-JJa"/>
                                 </connections>
                             </button>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="5" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9If-uu-rHe">
@@ -315,15 +315,16 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Referral Code" id="Kph-Mj-byg"/>
+                    <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
+                    <navigationItem key="navigationItem" title="Promo Code" id="Kph-Mj-byg"/>
                     <connections>
-                        <outlet property="lblReferralCodeValidation" destination="jbD-tO-N5p" id="Y1N-rI-Evg"/>
-                        <outlet property="segReferralCodeFreq" destination="qew-JZ-uua" id="vNq-iG-vir"/>
-                        <outlet property="segReferralCodeLocation" destination="Ift-cW-JHL" id="Zzc-Q9-kCl"/>
-                        <outlet property="txtReferralCodeAmount" destination="9If-uu-rHe" id="Tb6-qQ-I9v"/>
-                        <outlet property="txtReferralCodeExpiration" destination="ELA-qZ-nbU" id="1za-Rl-65T"/>
-                        <outlet property="txtReferralCodePrefix" destination="Zdg-AP-syb" id="jiM-cA-fJn"/>
-                        <outlet property="txtReferralCodeResult" destination="QKd-tB-hnn" id="IwU-qd-zHz"/>
+                        <outlet property="lblCodeValidation" destination="jbD-tO-N5p" id="uiM-tz-PAk"/>
+                        <outlet property="segCodeFreq" destination="qew-JZ-uua" id="XLQ-LG-Zfy"/>
+                        <outlet property="segCodeLocation" destination="Ift-cW-JHL" id="FM2-Si-Tjc"/>
+                        <outlet property="txtCodeAmount" destination="9If-uu-rHe" id="W3Q-57-Ac1"/>
+                        <outlet property="txtCodeExpiration" destination="ELA-qZ-nbU" id="UhD-6W-WAM"/>
+                        <outlet property="txtCodePrefix" destination="Zdg-AP-syb" id="I22-Uf-8v1"/>
+                        <outlet property="txtCodeResult" destination="QKd-tB-hnn" id="l9v-Ck-KTX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xgW-rd-YmN" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -11,24 +11,8 @@
 #define FILE_NAME   [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
 #define LINE_NUM    __LINE__
 
-static NSString *KEY_BRANCH_KEY = @"branch_key";
-
-@protocol BNCDebugConnectionDelegate <NSObject>
-
-- (void)debugConnectionEstablished;
-
-@end
-
-@protocol BNCTestDelegate <NSObject>
-
-- (void)simulateInitFinished;
-
-@end
-
 @interface BNCPreferenceHelper : NSObject
 
-@property (assign, nonatomic) BOOL isDebugMode;
-@property (assign, nonatomic) BOOL isConnectedToRemoteDebug;
 @property (assign, nonatomic) NSInteger retryCount;
 @property (assign, nonatomic) NSInteger retryInterval;
 @property (assign, nonatomic) NSInteger timeout;
@@ -48,7 +32,6 @@ static NSString *KEY_BRANCH_KEY = @"branch_key";
 + (NSString *)getAppKey;
 + (void)setAppKey:(NSString *)appKey;
 
-+ (NSString *)getBranchKey;
 + (NSString *)getBranchKey:(BOOL)isLive;
 + (void)setBranchKey:(NSString *)branchKey;
 
@@ -104,17 +87,12 @@ static NSString *KEY_BRANCH_KEY = @"branch_key";
 + (NSInteger)getActionTotalCount:(NSString *)action;
 + (NSInteger)getActionUniqueCount:(NSString *)action;
 
-+ (void)setDebug;
-+ (void)clearDebug;
 + (BOOL)isDebug;
-+ (void)connectRemoteDebug;
-+ (void)disconnectRemoteDebug;
++ (void)setDebug:(BOOL)debug;
++ (void)clearDebug;
++ (BOOL)isConnectedToRemoteDebug;
++ (void)setConnectedToRemoteDebug:(BOOL)connectedToRemoteDebug;
+
 + (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
-+ (void)sendScreenshot:(NSData *)data;
-+ (void)setDebugConnectionDelegate:(id<BNCDebugConnectionDelegate>) debugConnectionDelegate;
-+ (void)keepDebugAlive;
-+ (void)setTestDelegate:(id<BNCTestDelegate>) testDelegate;
-+ (void)simulateInitFinished;
-+ (BOOL)isRemoteDebug;
 
 @end

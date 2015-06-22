@@ -8,22 +8,28 @@
 
 #import "BNCLinkCache.h"
 
+@interface BNCLinkCache ()
+
+@property (nonatomic, strong) NSMutableDictionary *cache;
+
+@end
+
 @implementation BNCLinkCache
 
 - (id)init {
-    self = [super init];
-    if (self) {
+    if (self = [super init]) {
         self.cache = [[NSMutableDictionary alloc] init];
     }
+
     return self;
 }
 
 - (void)setObject:(NSString *)anObject forKey:(BNCLinkData *)aKey {
-    [self.cache setObject:anObject forKey:[NSNumber numberWithUnsignedInteger:[aKey hash]]];
+    self.cache[@([aKey hash])] = anObject;
 }
 
 - (NSString *)objectForKey:(BNCLinkData *)aKey {
-    return [self.cache objectForKey:[NSNumber numberWithUnsignedInteger:[aKey hash]]];
+    return self.cache[@([aKey hash])];
 }
 
 @end
