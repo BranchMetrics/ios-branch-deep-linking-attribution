@@ -7,12 +7,12 @@
 //
 
 #import "BNCPreferenceHelper.h"
-#import "BranchServerInterface.h"
 #import "BNCConfig.h"
+#import "Branch.h"
 
-static const NSInteger DEFAULT_TIMEOUT = 3;
-static const NSInteger DEFAULT_RETRY_INTERVAL = 3;
-static const NSInteger DEFAULT_RETRY_COUNT = 5;
+static const NSInteger DEFAULT_TIMEOUT = 5;
+static const NSInteger DEFAULT_RETRY_INTERVAL = 0;
+static const NSInteger DEFAULT_RETRY_COUNT = 1;
 static const NSInteger APP_READ_INTERVAL = 520000;
 
 static NSString *KEY_APP_KEY = @"bnc_app_key";
@@ -38,13 +38,14 @@ static NSString *KEY_COUNTS = @"bnc_counts";
 static NSString *KEY_TOTAL_BASE = @"bnc_total_base_";
 static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
-static dispatch_queue_t bnc_asyncLogQueue = nil;
-static id<BNCDebugConnectionDelegate> bnc_asyncDebugConnectionDelegate = nil;
-static BranchServerInterface *serverInterface = nil;
+@interface BNCPreferenceHelper ()
 
-static id<BNCTestDelegate> bnc_testDelegate = nil;
+@property (strong, nonatomic) NSString *branchKey;
+@property (assign, nonatomic) BOOL isUsingLiveKey;
+@property (assign, nonatomic) BOOL isDebugMode;
+@property (assign, nonatomic) BOOL isConnectedToRemoteDebug;
 
-static NSString *Branch_Key = nil;
+@end
 
 @implementation BNCPreferenceHelper
 
@@ -75,45 +76,24 @@ static NSString *Branch_Key = nil;
 
 #pragma mark - Debug methods
 
-+ (void)setDebug {
-    [BNCPreferenceHelper getInstance].isDebugMode = YES;
++ (void)setDebug:(BOOL)debug {
+    [BNCPreferenceHelper getInstance].isDebugMode = debug;
 }
 
 + (void)clearDebug {
     [BNCPreferenceHelper getInstance].isDebugMode = NO;
-    
-    [self disconnectRemoteDebug];
-}
-
-+ (void)connectRemoteDebug {
-    serverInterface = [[BranchServerInterface alloc] init];
-    bnc_asyncLogQueue = dispatch_queue_create("bnc_log_queue", NULL);
-
-    [serverInterface connectToDebugWithKey:Branch_Key callback:^(BNCServerResponse *response, NSError *error) {
-        if (error) {
-            NSLog(@"Failed to connect to debug: %@", error);
-        }
-        else {
-            [BNCPreferenceHelper getInstance].isConnectedToRemoteDebug = YES;
-            [bnc_asyncDebugConnectionDelegate debugConnectionEstablished];
-        }
-    }];
-}
-
-+ (void)disconnectRemoteDebug {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper getInstance];
-    if (preferenceHelper.isConnectedToRemoteDebug) {
-        preferenceHelper.isConnectedToRemoteDebug = NO;
-        
-        [serverInterface disconnectFromDebugWithKey:Branch_Key callback:NULL];
-    }
+    [BNCPreferenceHelper getInstance].isConnectedToRemoteDebug = NO;
 }
 
 + (BOOL)isDebug {
     return [BNCPreferenceHelper getInstance].isDebugMode;
 }
 
-+ (BOOL)isRemoteDebug {
++ (void)setConnectedToRemoteDebug:(BOOL)connectedToRemoteDebug {
+    [BNCPreferenceHelper getInstance].isConnectedToRemoteDebug = connectedToRemoteDebug;
+}
+
++ (BOOL)isConnectedToRemoteDebug {
     return [BNCPreferenceHelper getInstance].isConnectedToRemoteDebug;
 }
 
@@ -126,26 +106,9 @@ static NSString *Branch_Key = nil;
         NSLog(@"%@", log);
         
         if ([BNCPreferenceHelper getInstance].isConnectedToRemoteDebug) {
-            [serverInterface sendLog:log key:Branch_Key callback:NULL];
+            [[Branch getInstance] log:log];
         }
     }
-}
-
-+ (void)keepDebugAlive {
-    if ([BNCPreferenceHelper getInstance].isConnectedToRemoteDebug) {
-        NSLog(@"[Branch Debug] Sending Keep Alive");
-        [serverInterface sendLog:@"" key:Branch_Key callback:NULL];
-    }
-}
-
-+ (void)sendScreenshot:(NSData *)data {
-    if ([BNCPreferenceHelper getInstance].isConnectedToRemoteDebug) {
-        [serverInterface sendScreenshot:data key:Branch_Key callback:NULL];
-    }
-}
-
-+ (void)setDebugConnectionDelegate:(id<BNCDebugConnectionDelegate>) debugConnectionDelegate {
-    bnc_asyncDebugConnectionDelegate = debugConnectionDelegate;
 }
 
 + (NSString *)getAPIBaseURL {
@@ -191,33 +154,32 @@ static NSString *Branch_Key = nil;
     [BNCPreferenceHelper writeObjectToDefaults:KEY_APP_KEY value:appKey];
 }
 
-+ (NSString *)getBranchKey {
-    if (!Branch_Key) {
-        Branch_Key = [BNCPreferenceHelper getBranchKey:YES];
++ (NSString *)getBranchKey:(BOOL)isLive {
+    BNCPreferenceHelper *instance = [BNCPreferenceHelper getInstance];
+    NSString *key = instance.branchKey;
+    
+    if (key && isLive == instance.isUsingLiveKey) {
+        return key;
     }
     
-    return Branch_Key;
-}
-
-+ (NSString *)getBranchKey:(BOOL)isLive {
-    NSString *key = nil;
-    
-    id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:KEY_BRANCH_KEY];
+    id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
     if (ret) {
         if ([ret isKindOfClass:[NSString class]]) {
             key = ret;
-        } else if ([ret isKindOfClass:[NSDictionary class]]) {
+        }
+        else if ([ret isKindOfClass:[NSDictionary class]]) {
             key = isLive ? ret[@"live"] : ret[@"test"];
         }
     }
     
     [BNCPreferenceHelper setBranchKey:key];
+    instance.isUsingLiveKey = isLive;
     
     return key;
 }
 
 + (void)setBranchKey:(NSString *)branchKey {
-    Branch_Key = branchKey;
+    [BNCPreferenceHelper getInstance].branchKey = branchKey;
 }
 
 + (NSString *)getLastRunBranchKey {
@@ -462,14 +424,6 @@ static NSString *Branch_Key = nil;
     }
     
     return NSNotFound;
-}
-
-+ (void)setTestDelegate:(id<BNCTestDelegate>) testDelegate {
-    bnc_testDelegate = testDelegate;
-}
-
-+ (void)simulateInitFinished {
-    [bnc_testDelegate simulateInitFinished];
 }
 
 @end

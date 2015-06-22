@@ -1,5 +1,30 @@
 Branch iOS SDK change log
 
+- v0.9.0
+  * Renaming Referral Codes to Promo Codes.
+
+- v0.8.4
+  * Fixing an issue with getShortUrl.
+
+- v0.8.3
+  * Fixing an issue with Open / Install requests losing their callbacks, but not being dequeued.
+  * Updating default config values (timeout: 5, retries: 1, sleep: 0).
+  * Cleaning up the Link Cache.
+  * Adding Bundle ID to Open / Install requests.
+  * Fixing an issue causing double escaped params.
+
+- v0.8.2
+  * Fix issue with callbacks being lost on some of the internal requests.
+  * Fix issue with old requests not fitting the new request format, causing crsahes.
+
+- v0.8.1
+  * Fix potential for bad reference when no callback is provided to `redeemRewards` call.
+
+- v0.8.0
+  * Split up all requests into their own classes to make them unit testable.
+  * Replace base64 implementation which could potentially crash.
+  * Remove most logic from the PreferenceHelper.
+
 - v0.7.8
   * Removing source attribute from `encodeDictionaryToJsonString`, only added to short url generation now.
   * Fixing bad content type in `prepareGetRequest`.

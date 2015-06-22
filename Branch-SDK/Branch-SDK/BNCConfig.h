@@ -9,7 +9,7 @@
 #ifndef Branch_SDK_Config_h
 #define Branch_SDK_Config_h
 
-#define SDK_VERSION             @"0.7.8"
+#define SDK_VERSION             @"0.9.0"
 
 #define BNC_PROD_ENV
 //#define BNC_STAGE_ENV

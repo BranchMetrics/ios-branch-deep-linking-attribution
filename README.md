@@ -45,6 +45,15 @@ For your reference, see the methods and parameters table below.
 [Apply Promo Code](#apply-promo-code)|[Method](#methods-18)|[Parameter] (#parameters-18)|
 
 
+## Important Migration to v0.9.0
+We are renaming Referral Codes to Promo Codes to better indicate their purpose. Promo Codes do *not* establish a referred/referring user install relationship, which is unclear when called "referral codes." Consequently, all of the ReferralCode methods have been deprecated in favor of their PromoCode counterparts.
+
+Additionally the enums around these items have been renamed to better represent their meaning. You may need to rename your usages to account for this.
+
+Lastly, when migrating to the PromoCode methods, note that the response dictionary will now contain `promo_code` instead of `referral_code`.
+
+Note that all of these changes are temporarily backwards compatible (with the exception of the enum rename). Compatability will be removed with the eventual 1.0.0 release.
+
 ## Important Migration to v0.7.8
 The `source:iOS` attribute has been removed from the params dictionary for links. However, a bunch of constants have been added that are added by the Branch backend to link clicks and opens. If you were relying on the source attribute in the past, you can now find that via the `BRANCH_INIT_KEY_CREATION_SOURCE`.
 
@@ -786,7 +795,7 @@ The returned promo code is a six character long unique alpha-numeric string wrap
 ```objc
 // Create a promo code of 5 credits
 [[Branch getInstance] getPromoCodeWithAmount:5
-                                    andCallback:^(NSDictionary *params, NSError *error) {
+                                    callback:^(NSDictionary *params, NSError *error) {
                                         if (!error) {
                                             NSString *promoCode = [params objectForKey:@"promo_code"];
                                             // do whatever with promoCode
@@ -799,7 +808,7 @@ The returned promo code is a six character long unique alpha-numeric string wrap
 
 ```swift
 // Create a promo code of 5 credits
-Branch.getInstance().getPromoCodeWithAmount(5, andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+Branch.getInstance().getPromoCodeWithAmount(5, callback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
     if (error == nil) {
         let promoCode: AnyObject? = params["promo_code"]
         // do whatever with promoCode
@@ -823,12 +832,12 @@ The resulting code will have your prefix, concatenated with a two character long
 // Create a promo code with prefix "BRANCH", 5 credits, and without an expiration date
 [[Branch getInstance] getPromoCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
                                          amount:5
-                                    andCallback:^(NSDictionary *params, NSError *error) {
-                                        if (!error) {
-                                            NSString *promoCode = [params objectForKey:@"promo_code"];
-                                            // do whatever with promoCode
-                                        }
-                                    }
+                                       callback:^(NSDictionary *params, NSError *error) {
+                                           if (!error) {
+                                               NSString *promoCode = [params objectForKey:@"promo_code"];
+                                               // do whatever with promoCode
+                                           }
+                                       }
 ];
 ```
 
@@ -837,7 +846,7 @@ The resulting code will have your prefix, concatenated with a two character long
 ```swift
 // Create a promo code with prefix "BRANCH", 5 credits, and without an expiration date
 // prefix should not exceed 48 characters
-Branch.getInstance().getPromoCodeWithPrefix("BRANCH", amount: 5, andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+Branch.getInstance().getPromoCodeWithPrefix("BRANCH", amount: 5, callback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
     if (error == nil) {
         let promoCode: AnyObject? = params["promo_code"]
         // do whatever with promoCode
@@ -859,14 +868,14 @@ The prefix parameter is optional here, i.e. it could be getPromoCodeWithAmount:e
 
 ```objc
 [[Branch getInstance] getPromoCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-                                         amount:5
-                                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
-                                    andCallback:^(NSDictionary *params, NSError *error) {
-                                        if (!error) {
-                                            NSString *promoCode = [params objectForKey:@"promo_code"];
-                                            // do whatever with promoCode
-                                        }
-                                    }
+                                      amount:5
+                                  expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+                                   callback:^(NSDictionary *params, NSError *error) {
+                                       if (!error) {
+                                           NSString *promoCode = [params objectForKey:@"promo_code"];
+                                           // do whatever with promoCode
+                                       }
+                                   }
 ];
 ```
 
@@ -874,7 +883,7 @@ The prefix parameter is optional here, i.e. it could be getPromoCodeWithAmount:e
 
 ```swift
 // prefix should not exceed 48 characters
-Branch.getInstance().getPromoCodeWithPrefix("BRANCH", amount: 5, expiration: NSDate().dateByAddingTimeInterval(60*60*24), andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+Branch.getInstance().getPromoCodeWithPrefix("BRANCH", amount: 5, expiration: NSDate().dateByAddingTimeInterval(60*60*24), callback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
     if (error == nil) {
         let promoCode: AnyObject? = params["promo_code"]
         // do whatever with promoCode
@@ -893,14 +902,14 @@ Branch.getInstance().getPromoCodeWithPrefix("BRANCH", amount: 5, expiration: NSD
 
 ```objc
 [[Branch getInstance] getPromoCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-                                         amount:5
-                                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
-                                         bucket:@"default"
-                                calculationType:BranchUniqueRewards
-                                       location:BranchBothUsers
-                                    andCallback:^(NSDictionary *params, NSError *error) {
+                                      amount:5
+                                  expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+                                      bucket:@"default"
+                                   usageType:BranchPromoCodeUsageTypeOncePerUser
+                              rewardLocation:BranchPromoCodeRewardBothUsers
+                                    callback:^(NSDictionary *params, NSError *error) {
                                         if (!error) {
-                                            NSString *promoCode = [params objectForKey:@"promo_code"];
+                                            NSString *promoCode = [params objectForKey:@"referral_code"];
                                             // do whatever with promoCode
                                         }
                                     }
@@ -915,13 +924,13 @@ Branch.getInstance().getPromoCodeWithPrefix("BRANCH",
     amount: 5,
     expiration: NSDate().dateByAddingTimeInterval(60*60*24),
     bucket: "default",
-    calculationType: BranchUniqueRewards,
-    location: BranchBothUsers,
-    andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
-    if (error == nil) {
-        let promoCode: AnyObject? = params["promo_code"]
-        // do whatever with promoCode
-    }
+    usageType:BranchPromoCodeUsageTypeOncePerUser
+    rewardLocation:BranchPromoCodeRewardBothUsers,
+    callback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+        if (error == nil) {
+            let promoCode: AnyObject? = params["promo_code"]
+            // do whatever with promoCode
+        }
 })
 ```
 
@@ -963,7 +972,7 @@ If valid, returns the promo code JSONObject in the call back.
 ###### Objective-C
 
 ```objc
-[[Branch getInstance] validatePromoCode:code andCallback:^(NSDictionary *params, NSError *error) {
+[[Branch getInstance] validatePromoCode:code callback:^(NSDictionary *params, NSError *error) {
     if (!error) {
         if ([code isEqualToString:[params objectForKey:@"promo_code"]]) {
             // valid
@@ -1005,7 +1014,7 @@ Apply a promo code if it exists in Branch system and is still valid (see above).
 ###### Objective-C
 
 ```objc
-[[Branch getInstance] applyPromoCode:code andCallback:^(NSDictionary *params, NSError *error) {
+[[Branch getInstance] applyPromoCode:code callback:^(NSDictionary *params, NSError *error) {
     if (!error) {
         // applied. you can get the promo code amount from the params and deduct it in your UI.
     } else {
@@ -1017,7 +1026,7 @@ Apply a promo code if it exists in Branch system and is still valid (see above).
 ###### Swift
 
 ```swift
-Branch.getInstance().applyPromoCode(code, andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+Branch.getInstance().applyPromoCode(code, callback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
     if (error == nil) {
         // applied. you can get the promo code amount from the params and deduct it in your UI.
     } else {

@@ -13,6 +13,7 @@
 #import "BNCServerRequestQueue.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCError.h"
+#import "BranchOpenRequest.h"
 
 @interface BranchNetworkScenarioTests : BranchTest
 
@@ -27,7 +28,7 @@
 
     // Fake branch key
     id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
-    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey];
+    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey:YES];
 }
 
 #pragma mark - Scenario 1
@@ -39,7 +40,7 @@
 // InitSession should occur again
 // Subsequent requests should occur as normal
 - (void)testScenario1 {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_live"];
     [branch setAppListCheckEnabled:NO];
@@ -82,7 +83,7 @@
 // InitSession should occur again
 // Subsequent requests should occur as normal
 - (void)testScenario2 {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
@@ -132,7 +133,7 @@
 // Without closing the app (no re-open event to kick off InitSession), connection returns
 // Subsequent requests should occur as normal
 - (void)testScenario3 {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
@@ -175,7 +176,7 @@
 // Subsequent requests should cause an InitSession, which should succeed
 // Request should complete as normal
 - (void)testScenario4 {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
@@ -225,7 +226,7 @@
 // Two requests are enqueued
 // First request fails, second request should be cascade failed
 - (void)testScenario5 {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_live"];
     [branch setAppListCheckEnabled:NO];
@@ -256,7 +257,7 @@
 // Two requests are enqueued
 // First request fails because of a 400 (bad request), second request should not be affected
 - (void)testScenario6 {
-    id serverInterfaceMock = OCMClassMock([BranchServerInterface class]);
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_live"];
     [branch setAppListCheckEnabled:NO];
@@ -281,6 +282,79 @@
 }
 
 
+#pragma mark - Scenario 7
+
+// While an Open / Install request is pending, the app is killed, causing the callback to be lost.
+// When InitSession is called again (next launch), the request should still complete.
+- (void)testScenario7 {
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    id queueMock = OCMClassMock([BNCServerRequestQueue class]);
+    
+    // Ugly server interface set up
+    __block BNCServerCallback openOrInstallCallback;
+    id openOrInstallCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        openOrInstallCallback = callback;
+        return YES;
+    }];
+    
+    id openOrInstallInvocation = ^(NSInvocation *invocation) {
+        openOrInstallCallback([[BNCServerResponse alloc] init], nil);
+    };
+    
+    id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
+        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+    }];
+    
+    // Ignore first request, don't call callback (simulate failure)
+    [[serverInterfaceMock expect] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:[OCMArg any]];
+    // Second request execute as normal
+    [[[serverInterfaceMock expect] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    
+    // Queue mocking. Request should only be inserted once
+    id openRequestCheck = [OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
+        if ([request isKindOfClass:[BranchOpenRequest class]]) {
+            BranchOpenRequest *openRequest = (BranchOpenRequest *)request;
+            openRequest.callback = nil;
+            [[[queueMock stub] andReturn:request] peek];
+            [[[queueMock stub] andReturn:openRequest] moveInstallOrOpenToFront:0];
+            return YES;
+        }
+        
+        return NO;
+    }];
+
+    [[queueMock expect] insert:openRequestCheck at:0];
+    [[queueMock reject] insert:openRequestCheck at:0];
+    
+    [[[queueMock expect] andReturnValue:@NO] containsInstallOrOpen];
+    [[[queueMock expect] andReturnValue:@YES] containsInstallOrOpen];
+    [(BNCServerRequestQueue *)[[queueMock stub] andReturnValue:@1] size];
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:queueMock cache:nil key:@"key_live"];
+    
+    __block NSInteger initCallbackCount = 0;
+    [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+        initCallbackCount++;
+    }];
+
+    // Override Branch network requests by setting internals *shudder*
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+    [branch performSelector:@selector(setNetworkCount:) withObject:0];
+#pragma clang diagnostic pop
+
+    XCTestExpectation *initExpectation = [self expectationWithDescription:@"Init expectation"];
+    [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+        initCallbackCount++;
+
+        [self safelyFulfillExpectation:initExpectation];
+    }];
+    
+    [self awaitExpectations];
+    XCTAssertEqual(initCallbackCount, 1);
+}
+
+
 #pragma mark - Internals
 
 
@@ -301,8 +375,11 @@
         openOrInstallCallback(nil, [NSError errorWithDomain:NSURLErrorDomain code:-1004 userInfo:nil]);
     };
 
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
+        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+    }];
+
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
     
     [branch initSessionAndRegisterDeepLinkHandler:[self callbackExpectingFailure:callback]];
 }
@@ -318,7 +395,8 @@
         badRequestCallback(nil, [NSError errorWithDomain:NSURLErrorDomain code:-1004 userInfo:nil]);
     };
     
-    [[[serverInterfaceMock expect] andDo:badRequestInvocation] getReferralCountsWithKey:[OCMArg any] callback:badRequestCheckBlock];
+    NSString *url = [[BNCPreferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]];
+    [[[serverInterfaceMock expect] andDo:badRequestInvocation] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
     
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNotNil(error);
@@ -334,8 +412,9 @@
     }];
     
     // Only one request should make it to the server
-    [[serverInterfaceMock expect] getReferralCountsWithKey:[OCMArg any] callback:badRequestCheckBlock];
-    [[serverInterfaceMock reject] getReferralCountsWithKey:[OCMArg any] callback:[OCMArg any]];
+    NSString *url = [[BNCPreferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]];
+    [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
+    [[serverInterfaceMock reject] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:[OCMArg any]];
     
     // Throw two requests in the queue, but the first failing w/ a 500 should trigger both to fail
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
@@ -365,8 +444,9 @@
     }];
     
     // Only one request should make it to the server
-    [[serverInterfaceMock expect] getReferralCountsWithKey:[OCMArg any] callback:badRequestCheckBlock];
-    [[serverInterfaceMock expect] getReferralCountsWithKey:[OCMArg any] callback:goodRequestCheckBlock];
+    NSString *url = [[BNCPreferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]];
+    [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
+    [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:goodRequestCheckBlock];
     
     // Throw two requests in the queue, but the first failing w/ a 500 should trigger both to fail
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
@@ -397,7 +477,8 @@
         goodRequestCallback(goodResponse, nil);
     };
     
-    [[[serverInterfaceMock expect] andDo:goodRequestInvocation] getReferralCountsWithKey:[OCMArg any] callback:goodRequestCheckBlock];
+    NSString *url = [[BNCPreferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]];
+    [[[serverInterfaceMock expect] andDo:goodRequestInvocation] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:goodRequestCheckBlock];
     
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNil(error);
@@ -451,8 +532,11 @@
         openOrInstallCallback(openInstallResponse, nil);
     };
     
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerInstall:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] registerOpen:NO key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
+        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+    }];
+
+    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
 }
 
 - (void)overrideBranch:(Branch *)branch initHandler:(callbackWithParams)initHandler {
