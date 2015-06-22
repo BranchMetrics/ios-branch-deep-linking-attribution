@@ -194,23 +194,17 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 }
 
 - (void)persistToDisk {
+    NSArray *requestsToPersist = [self.queue copy];
     dispatch_async(self.asyncQueue, ^{
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        @synchronized(self.queue) {
-            NSMutableArray *arr = [[NSMutableArray alloc] init];
-            for (BNCServerRequest *req in self.queue) {
-                if (req) {
-                    @try {
-                        NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
-                        [arr addObject:encodedReq];
-                    }
-                    @catch (NSException* exception) {
-                    }
-                }
-            }
-            
-            [defaults setObject:arr forKey:STORAGE_KEY];
+        NSMutableArray *arr = [[NSMutableArray alloc] init];
+        
+        for (BNCServerRequest *req in requestsToPersist) {
+            NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
+            [arr addObject:encodedReq];
         }
+        
+        [defaults setObject:arr forKey:STORAGE_KEY];
         [defaults synchronize];
     });
 }
