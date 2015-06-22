@@ -1,5 +1,10 @@
 Branch iOS SDK change log
 
+- v0.9.1
+  * Fixing an issue with archiving requests when requests are allocated too early.
+  * Fixing a potential crash while calling close without a session.
+  * Lots of readme updates.
+
 - v0.9.0
   * Renaming Referral Codes to Promo Codes.
 
