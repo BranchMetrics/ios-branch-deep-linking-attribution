@@ -942,7 +942,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     if (self.isInitialized) {
         self.isInitialized = NO;
 
-        if (![self.requestQueue containsClose]) {
+        if ([self hasSession] && ![self.requestQueue containsClose]) {
             BranchCloseRequest *req = [[BranchCloseRequest alloc] init];
             [self.requestQueue enqueue:req];
         }
