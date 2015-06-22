@@ -12,10 +12,15 @@
 @implementation BranchCloseRequest
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    // TODO remove this hack.
+    id identityId = [BNCPreferenceHelper getIdentityID] ?: [NSNull null];
+    id sessionId = [BNCPreferenceHelper getSessionID] ?: [NSNull null];
+    id fingerprintId = [BNCPreferenceHelper getDeviceFingerprintID] ?: [NSNull null];
+
     NSDictionary *params = @{
-        @"identity_id": [BNCPreferenceHelper getIdentityID],
-        @"session_id": [BNCPreferenceHelper getSessionID],
-        @"device_fingerprint_id": [BNCPreferenceHelper getDeviceFingerprintID]
+        @"identity_id": identityId,
+        @"session_id": sessionId,
+        @"device_fingerprint_id": fingerprintId
     };
     
     [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"close"] key:key callback:callback];
