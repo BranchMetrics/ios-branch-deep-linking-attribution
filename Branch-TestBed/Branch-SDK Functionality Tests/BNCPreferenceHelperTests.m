@@ -7,7 +7,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <Nocilla/Nocilla.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
 
@@ -16,28 +15,6 @@
 @end
 
 @implementation BNCPreferenceHelperTests
-
-+ (void)setUp {
-    [super setUp];
-
-    [[LSNocilla sharedInstance] start];
-    [BNCPreferenceHelper setBranchKey:@"foo"];
-    [BNCPreferenceHelper setDeviceFingerprintID:@"foo"];
-}
-
-+ (void)tearDown {
-    [[LSNocilla sharedInstance] stop];
-    
-    [BNCPreferenceHelper clearDebug];
-
-    [super tearDown];
-}
-
-- (void)tearDown {
-    [[LSNocilla sharedInstance] clearStubs];
-
-    [super tearDown];
-}
 
 #pragma mark - Default storage tests
 - (void)testPreferenceDefaults {

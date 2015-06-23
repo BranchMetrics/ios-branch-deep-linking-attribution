@@ -1,16 +1,7 @@
-target 'Branch-TestBed' do
-
-end
-
 target 'Branch-SDK Functionality Tests' do
   pod 'OCMock'
-  pod 'Nocilla', :inhibit_warnings => true
 end
 
 target 'Branch-SDK Load Tests' do
   pod 'OCMock'
-end
-
-target 'Branch-SDK UI Tests' do
-  pod 'Nocilla', :inhibit_warnings => true
 end
