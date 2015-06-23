@@ -2,13 +2,13 @@
 
 This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a complete list of the content featured in this document.
 
-**Note:** Go to our new [**Documentation Portal**] (https://dev.branch.io) where you can find all of our latest documentation and future documentation updates.  
-            
-Table of Contents| 
-------------- | 
-[Get the Demo App](#get-the-demo-app)| 
+**Note:** Go to our new [**Documentation Portal**] (https://dev.branch.io) where you can find all of our latest documentation and future documentation updates.
+
+Table of Contents|
+------------- |
+[Get the Demo App](#get-the-demo-app)|
 |[Class Reference Table](#class-reference)|
-|[Important Migrations] (#important-migration-to-v078)      |  
+|[Important Migrations] (#important-migration-to-v078)      |
 [Troubleshooting FAQ] (#faq) 		  |
 [Installation] (#installation)|
 [Configuration (for Tracking)] (#configuration-for-tracking)|
@@ -21,22 +21,22 @@ There's a full demo app embedded in this repository, but you can also check out 
 
 
 ##Class Reference
-For your reference, see the methods and parameters table below.   
-  
-**Class Reference Table**  
-      
+For your reference, see the methods and parameters table below.
+
+**Class Reference Table**
+
 | Tasks          | Methods          | Parameters     |
-|:------------- |:---------------:| -------------:|   
+|:------------- |:---------------:| -------------:|
 [Get a Singleton Branch Instance](#get-a-singleton-branch-instance)|[Method](#methods)|[Parameter](#parameters)
 |[Init Branch Session and Deep Link Routing Function](#init-branch-session-and-deep-link-routing-function)|[Method](#methods-1)|[Parameter](#parameters-1)|
-|[Retrieve Session (Install or Open) Parameters](#retrieve-session-install-or-open-parameters)|[Method](#methods-2)|[Parameter](#parameters-2)| 
+|[Retrieve Session (Install or Open) Parameters](#retrieve-session-install-or-open-parameters)|[Method](#methods-2)|[Parameter](#parameters-2)|
 |[Retrieve Install (Install Only) Parameters](#retrieve-install-install-only-parameters)|[Method](#methods-3)|[Parameter](#parameters-3)|
 [Persistent Identities](#persistent-identities)|[Method](#methods-4)|[Parameter](#parameters-4)|
 [Logout](#logout)|[Method](#methods-5)|[Parameter](#parameters-5)|
 [Register Custom Events](#register-custom-events)|[Method](#methods-6)| [Parameter](#parameters-6)|
 [Generate Tracked, Deep Linking URLs (Pass Data Across Install and Open)](#generate-tracked-deep-linking-urls-pass-data-across-install-and-open)|[Method](#methods-7)|[Parameter](#parameters-7)|
-[UIActivityView Share Sheet](#uiactivityview-share-sheet)|[Method](#methods-8)|[Parameter](#parameters-8)| 
-|[Get Reward Balance](#get-reward-balance)|[Method](#methods-9)|[Parameters] (#parameters-9)| 
+[UIActivityView Share Sheet](#uiactivityview-share-sheet)|[Method](#methods-8)|[Parameter](#parameters-8)|
+|[Get Reward Balance](#get-reward-balance)|[Method](#methods-9)|[Parameters] (#parameters-9)|
 [Redeem All or Some of the Reward Balance (Store State)](#redeem-all-or-some-of-the-reward-balance-store-state)|[Method](#methods-10)|[Parameter](#parameters-10)|
 [Get Credit History](#get-credit-history)|[Method](#methods-11)|[Parameters] (#parameters-11)|
 [Get Promo Code](#get-promo-code)|[Method](#methods-12)|[Parameter] (#parameters-12)|
@@ -74,7 +74,7 @@ The compiled SDK size is ~155kb. You can clone this repository to keep up with t
 
 Branch is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your Podfile:
 
-```
+```objc
 pod "Branch"
 ```
 
@@ -152,7 +152,7 @@ To deep link, Branch must initialize a session to check if the user originated f
 ```objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     Branch *branch = [Branch getInstance];
-    [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {    
+    [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
     	// route the user based on what's in params
     }];
     return YES;
@@ -194,7 +194,7 @@ func application(application: UIApplication, openURL url: NSURL, sourceApplicati
 **deepLinkHandler** ^(NSDictionary *params, NSError *error) _optional_
 : This is the callback block that Branch will execute after a network call to determine where the user comes from. It is called 100% of the time the app opens up since Branch registers for lifecycle notifications.
 
-- _NSDictionary *params_ : These params will contain any data associated with the Branch link that was clicked before the app session began. There are a few keys which are always present: 
+- _NSDictionary *params_ : These params will contain any data associated with the Branch link that was clicked before the app session began. There are a few keys which are always present:
 	- '+is_first_session' Denotes whether this is the first session (install) or any other session (open)
 	- '+clicked_branch_link' Denotes whether or not the user clicked a Branch link that triggered this session
 - _NSError *error_ : This error will be nil unless there is an error such as connectivity or otherwise. Check !error to confirm it was a valid link.
@@ -455,7 +455,7 @@ There are other methods which exclude tag and data if you don't want to pass tho
 
 **callback**: The callback that is called with the promo code object on success, or an error if it’s invalid.
 
-**channel**: The channel for the link. Examples could be Facebook, Twitter, SMS, etc., depending on where it will be shared. 
+**channel**: The channel for the link. Examples could be Facebook, Twitter, SMS, etc., depending on where it will be shared.
 
 **feature**: The feature the generated link will be associated with.
 
@@ -777,7 +777,7 @@ Branch.getInstance().getPromoCodeWithCallback { (params: [NSObject : AnyObject]!
 }
 ```
 ####Parameters
-**callback**: The callback that is called with the created promo code object. 
+**callback**: The callback that is called with the created promo code object.
 
 
 ### Create Promo Code
@@ -934,7 +934,7 @@ Branch.getInstance().getPromoCodeWithPrefix("BRANCH",
 })
 ```
 
-####Parameters 
+####Parameters
 
 You can also tune the promo code to the finest granularity, with the following additional parameters:
 
