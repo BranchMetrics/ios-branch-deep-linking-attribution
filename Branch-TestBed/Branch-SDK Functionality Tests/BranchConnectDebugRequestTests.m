@@ -24,7 +24,7 @@
     
     [request processResponse:response error:nil];
     
-    XCTAssertTrue([BNCPreferenceHelper isConnectedToRemoteDebug]);
+    XCTAssertTrue([[BNCPreferenceHelper preferenceHelper] isConnectedToRemoteDebug]);
 }
 
 - (void)testDebuggerConnectFailure {
@@ -35,7 +35,7 @@
     
     [request processResponse:response error:connectError];
     
-    XCTAssertFalse([BNCPreferenceHelper isConnectedToRemoteDebug]);
+    XCTAssertFalse([[BNCPreferenceHelper preferenceHelper] isConnectedToRemoteDebug]);
 }
 
 @end
