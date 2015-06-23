@@ -12,13 +12,15 @@
 @implementation BranchLogoutRequest
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+
     NSDictionary *params = @{
-        @"device_fingerprint_id": [BNCPreferenceHelper getDeviceFingerprintID],
-        @"session_id": [BNCPreferenceHelper getSessionID],
-        @"identity_id": [BNCPreferenceHelper getIdentityID]
+        @"device_fingerprint_id": preferenceHelper.deviceFingerprintID,
+        @"session_id": preferenceHelper.sessionID,
+        @"identity_id": preferenceHelper.identityID
     };
 
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"logout"] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"logout"] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -26,13 +28,14 @@
         return;
     }
 
-    [BNCPreferenceHelper setSessionID:response.data[@"session_id"]];
-    [BNCPreferenceHelper setIdentityID:response.data[@"identity_id"]];
-    [BNCPreferenceHelper setUserURL:response.data[@"link"]];
-    [BNCPreferenceHelper setUserIdentity:nil];
-    [BNCPreferenceHelper setInstallParams:nil];
-    [BNCPreferenceHelper setSessionParams:nil];
-    [BNCPreferenceHelper clearUserCreditsAndCounts];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.sessionID = response.data[@"session_id"];
+    preferenceHelper.identityID = response.data[@"identity_id"];
+    preferenceHelper.userUrl = response.data[@"link"];
+    preferenceHelper.userIdentity = nil;
+    preferenceHelper.installParams = nil;
+    preferenceHelper.sessionParams = nil;
+    [preferenceHelper clearUserCreditsAndCounts];
 }
 
 @end

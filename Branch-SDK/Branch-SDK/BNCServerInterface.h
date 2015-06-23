@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "BNCServerResponse.h"
+#import "BNCPreferenceHelper.h"
 
 typedef void (^BNCServerCallback)(BNCServerResponse *response, NSError *error);
 
@@ -17,6 +18,8 @@ static NSString *REQ_TAG_DEBUG_SCREEN = @"t_debug_screen";
 static NSString *REQ_TAG_DEBUG_DISCONNECT = @"t_debug_disconnect";
 
 @interface BNCServerInterface : NSObject
+
+@property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
 
 - (BNCServerResponse *)getRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key;
 - (BNCServerResponse *)getRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key log:(BOOL)log;

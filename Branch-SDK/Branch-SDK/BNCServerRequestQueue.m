@@ -47,7 +47,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 - (void)insert:(BNCServerRequest *)request at:(unsigned int)index {
     @synchronized(self.queue) {
         if (index > self.queue.count) {
-            [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
+            [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
             return;
         }
         
@@ -76,7 +76,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     BNCServerRequest *request = nil;
     @synchronized(self.queue) {
         if (index >= self.queue.count) {
-            [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
+            [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
             return nil;
         }
         
@@ -99,7 +99,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 
 - (BNCServerRequest *)peekAt:(unsigned int)index {
     if (index >= self.queue.count) {
-        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
+        [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
         return nil;
     }
     
@@ -247,7 +247,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     dispatch_once(&onceToken, ^{
         sharedQueue = [[BNCServerRequestQueue alloc] init];
         sharedQueue.queue = [BNCServerRequestQueue retrieve];
-        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Retrieved from Persist: %@", sharedQueue];
+        [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Retrieved from Persist: %@", sharedQueue];
     });
     
     return sharedQueue;

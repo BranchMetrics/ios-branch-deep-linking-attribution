@@ -128,7 +128,7 @@
 }
 
 + (NSNumber *)getUpdateState {
-    NSString *storedAppVersion = [BNCPreferenceHelper getAppVersion];
+    NSString *storedAppVersion = [BNCPreferenceHelper preferenceHelper].appVersion;
     NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
     NSFileManager *manager = [NSFileManager defaultManager];
     
@@ -167,7 +167,7 @@
 
 + (void)setUpdateState {
     NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
-    [BNCPreferenceHelper setAppVersion:currentAppVersion];
+    [BNCPreferenceHelper preferenceHelper].appVersion = currentAppVersion;
 }
 
 + (NSString *)getOS {

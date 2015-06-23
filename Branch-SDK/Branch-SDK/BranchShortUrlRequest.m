@@ -49,18 +49,19 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:self.linkData.data];
 
-    params[@"device_fingerprint_id"] = [BNCPreferenceHelper getDeviceFingerprintID];
-    params[@"identity_id"] = [BNCPreferenceHelper getIdentityID];
-    params[@"session_id"] = [BNCPreferenceHelper getSessionID];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    params[@"device_fingerprint_id"] = preferenceHelper.deviceFingerprintID;
+    params[@"identity_id"] = preferenceHelper.identityID;
+    params[@"session_id"] = preferenceHelper.sessionID;
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"url"] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"url"] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     if (error) {
         if (self.callback) {
             NSString *failedUrl = nil;
-            NSString *userUrl = [BNCPreferenceHelper getUserURL];
+            NSString *userUrl = [BNCPreferenceHelper preferenceHelper].userUrl;
             if (!userUrl) {
                 failedUrl = [self createLongUrlForUserUrl:userUrl];
             }

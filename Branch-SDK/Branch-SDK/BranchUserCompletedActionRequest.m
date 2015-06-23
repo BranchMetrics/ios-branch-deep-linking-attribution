@@ -30,16 +30,17 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     params[@"event"] = self.action;
-    params[@"device_fingerprint_id"] = [BNCPreferenceHelper getDeviceFingerprintID];
-    params[@"identity_id"] = [BNCPreferenceHelper getIdentityID];
-    params[@"session_id"] = [BNCPreferenceHelper getSessionID];
+    params[@"device_fingerprint_id"] = preferenceHelper.deviceFingerprintID;
+    params[@"identity_id"] = preferenceHelper.identityID;
+    params[@"session_id"] = preferenceHelper.sessionID;
     
     if (self.state) {
         params[@"metadata"] = self.state;
     }
 
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"event"] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"event"] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
