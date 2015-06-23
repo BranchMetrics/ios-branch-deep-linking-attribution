@@ -238,12 +238,12 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - InitSession methods
 
 - (void)initSession {
-    BOOL isReferrable = ![[BNCSystemObserver getUpdateState] isEqualToNumber:@1] && ![self hasUser];
+    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && ![self hasUser];
     [self initSessionWithLaunchOptions:nil isReferrable:isReferrable andRegisterDeepLinkHandler:nil];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options {
-    BOOL isReferrable = ![[BNCSystemObserver getUpdateState] isEqualToNumber:@1] && ![self hasUser];
+    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && ![self hasUser];
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable andRegisterDeepLinkHandler:nil];
 }
 
@@ -252,12 +252,12 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)initSessionAndRegisterDeepLinkHandler:(callbackWithParams)callback {
-    BOOL isReferrable = ![[BNCSystemObserver getUpdateState] isEqualToNumber:@1] && ![self hasUser];
+    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && ![self hasUser];
     [self initSessionWithLaunchOptions:nil isReferrable:isReferrable andRegisterDeepLinkHandler:callback];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback {
-    BOOL isReferrable = ![[BNCSystemObserver getUpdateState] isEqualToNumber:@1] && ![self hasUser];
+    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && ![self hasUser];
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable andRegisterDeepLinkHandler:callback];
 }
 
