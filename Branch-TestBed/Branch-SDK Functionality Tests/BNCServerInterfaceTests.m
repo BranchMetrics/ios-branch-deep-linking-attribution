@@ -15,28 +15,9 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
 @interface BNCServerInterfaceTests : XCTestCase
 
-@property (assign, nonatomic) NSInteger originalRetryInterval;
-@property (assign, nonatomic) NSInteger originalRetryCount;
-
 @end
 
 @implementation BNCServerInterfaceTests
-
-- (void)setUp {
-    [super setUp];
-
-    self.originalRetryInterval = [BNCPreferenceHelper getRetryInterval];
-    self.originalRetryCount = [BNCPreferenceHelper getRetryCount];
-
-    [BNCPreferenceHelper setRetryInterval:0]; // turn down sleep time
-}
-
-- (void)tearDown {
-    [BNCPreferenceHelper setRetryInterval:self.originalRetryInterval]; // set values back to original
-    [BNCPreferenceHelper setRetryCount:self.originalRetryCount];
-
-    [super tearDown];
-}
 
 
 #pragma mark - Key tests
@@ -76,10 +57,11 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
 - (void)testGetRequestAsyncRetriesWhenAppropriate {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+    serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
     id urlConnectionMock = OCMClassMock([NSURLConnection class]);
     
     // Specify retry count as 3
-    [BNCPreferenceHelper setRetryCount:3];
+    serverInterface.preferenceHelper.retryCount = 3;
 
     // 3 retries means 4 total requests
     [self expectSendAsyncRequestForBranchError:urlConnectionMock times:4];
@@ -99,10 +81,11 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
 - (void)testGetRequestAsyncRetriesWhenInappropriateResponse {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+    serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
     id urlConnectionMock = OCMClassMock([NSURLConnection class]);
 
     // Specify retry count as 3
-    [BNCPreferenceHelper setRetryCount:3];
+    serverInterface.preferenceHelper.retryCount = 3;
 
     // Should be no retries, just a single request
     [self expectSendAsyncRequestForSuccessfulRequest:urlConnectionMock];
@@ -120,10 +103,11 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
 - (void)testGetRequestAsyncRetriesWhenInappropriateRetryCount {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+    serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
     id urlConnectionMock = OCMClassMock([NSURLConnection class]);
     
     // Specify retry count as 0
-    [BNCPreferenceHelper setRetryCount:0];
+    serverInterface.preferenceHelper.retryCount = 0;
     
     // 0 retries means 1 total requests
     [self expectSendAsyncRequestForBranchError:urlConnectionMock times:1];
@@ -141,10 +125,11 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
 - (void)testPostRequestAsyncRetriesWhenAppropriate {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+    serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
     id urlConnectionMock = OCMClassMock([NSURLConnection class]);
     
     // Specify retry count as 3
-    [BNCPreferenceHelper setRetryCount:3];
+    serverInterface.preferenceHelper.retryCount = 3;
     
     // 3 retries means 4 total requests
     [self expectSendAsyncRequestForBranchError:urlConnectionMock times:4];
@@ -162,10 +147,11 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
 - (void)testPostRequestAsyncRetriesWhenInappropriateResponse {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+    serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
     id urlConnectionMock = OCMClassMock([NSURLConnection class]);
     
     // Specify retry count as 3
-    [BNCPreferenceHelper setRetryCount:3];
+    serverInterface.preferenceHelper.retryCount = 3;
     
     // Should be no retries, just a single request
     [self expectSendAsyncRequestForSuccessfulRequest:urlConnectionMock];
@@ -183,10 +169,11 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
 - (void)testPostRequestAsyncRetriesWhenInappropriateRetryCount {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+    serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
     id urlConnectionMock = OCMClassMock([NSURLConnection class]);
     
     // Specify retry count as 0
-    [BNCPreferenceHelper setRetryCount:0];
+    serverInterface.preferenceHelper.retryCount = 0;
     
     // 0 retries means 1 total requests
     [self expectSendAsyncRequestForBranchError:urlConnectionMock times:1];
