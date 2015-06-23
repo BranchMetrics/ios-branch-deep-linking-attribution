@@ -280,7 +280,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     }
 
     if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
-        [self initSession:isReferrable andRegisterDeepLinkHandler:callback];
+        [self initUserSessionAndCallCallback:YES];
     }
 }
 
