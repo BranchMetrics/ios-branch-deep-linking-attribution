@@ -147,6 +147,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache preferenceHelper:(BNCPreferenceHelper *)preferenceHelper key:(NSString *)key {
     if (self = [super init]) {
         _bServerInterface = interface;
+        _bServerInterface.preferenceHelper = preferenceHelper;
         _requestQueue = queue;
         _linkCache = cache;
         _preferenceHelper = preferenceHelper;
