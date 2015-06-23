@@ -13,11 +13,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     Branch *branch = [Branch getInstance];
-//    [branch setDebug];
+    [branch setDebug];
     [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
-        NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-        [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-
         if (!error) {
             NSLog(@"finished init with params = %@", [params description]);
         } else {
