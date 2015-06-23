@@ -73,14 +73,7 @@
 }
 - (IBAction)cmdIdentifyUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch setIdentity:@"test_user_10" withCallback:^(NSDictionary *params, NSError *error) {
-        if (error) {
-            NSLog(@"err: %@", error);
-        }
-        else {
-            NSLog(@"updated");
-        }
-    }];
+    [branch setIdentity:@"test_user_10"];
 }
 - (IBAction)cmdClearUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
