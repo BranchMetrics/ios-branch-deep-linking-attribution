@@ -238,69 +238,50 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - InitSession methods
 
 - (void)initSession {
-    [self initSessionAndRegisterDeepLinkHandler:nil];
+    BOOL isReferrable = ![[BNCSystemObserver getUpdateState] isEqualToNumber:@1] && ![self hasUser];
+    [self initSessionWithLaunchOptions:nil isReferrable:isReferrable andRegisterDeepLinkHandler:nil];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options {
-    if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
-        [self initSessionAndRegisterDeepLinkHandler:nil];
-    }
+    BOOL isReferrable = ![[BNCSystemObserver getUpdateState] isEqualToNumber:@1] && ![self hasUser];
+    [self initSessionWithLaunchOptions:options isReferrable:isReferrable andRegisterDeepLinkHandler:nil];
 }
 
 - (void)initSession:(BOOL)isReferrable {
-    [self initSession:isReferrable andRegisterDeepLinkHandler:nil];
+    [self initSessionWithLaunchOptions:nil isReferrable:isReferrable andRegisterDeepLinkHandler:nil];
+}
+
+- (void)initSessionAndRegisterDeepLinkHandler:(callbackWithParams)callback {
+    BOOL isReferrable = ![[BNCSystemObserver getUpdateState] isEqualToNumber:@1] && ![self hasUser];
+    [self initSessionWithLaunchOptions:nil isReferrable:isReferrable andRegisterDeepLinkHandler:callback];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback {
-    self.sessionInitWithParamsCallback = callback;
-
-    if (![BNCSystemObserver getUpdateState] && ![self hasUser]) {
-        [BNCPreferenceHelper setIsReferrable];
-    } else {
-        [BNCPreferenceHelper clearIsReferrable];
-    }
-    
-    if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
-        [self initUserSessionAndCallCallback:YES];
-    }
+    BOOL isReferrable = ![[BNCSystemObserver getUpdateState] isEqualToNumber:@1] && ![self hasUser];
+    [self initSessionWithLaunchOptions:options isReferrable:isReferrable andRegisterDeepLinkHandler:callback];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable {
-    if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
-        [self initSession:isReferrable andRegisterDeepLinkHandler:nil];
-    }
+    [self initSessionWithLaunchOptions:options isReferrable:isReferrable andRegisterDeepLinkHandler:nil];
 }
 
 - (void)initSession:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback {
-    self.sessionInitWithParamsCallback = callback;
-
-    if (isReferrable) {
-        [BNCPreferenceHelper setIsReferrable];
-    } else {
-        [BNCPreferenceHelper clearIsReferrable];
-    }
-    
-    [self initUserSessionAndCallCallback:YES];
+    [self initSessionWithLaunchOptions:nil isReferrable:isReferrable andRegisterDeepLinkHandler:callback];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback {
     self.sessionInitWithParamsCallback = callback;
+    
+    if (isReferrable) {
+        [BNCPreferenceHelper setIsReferrable];
+    }
+    else {
+        [BNCPreferenceHelper clearIsReferrable];
+    }
 
     if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
         [self initSession:isReferrable andRegisterDeepLinkHandler:callback];
     }
-}
-
-- (void)initSessionAndRegisterDeepLinkHandler:(callbackWithParams)callback {
-    self.sessionInitWithParamsCallback = callback;
-
-    if (![BNCSystemObserver getUpdateState] && ![self hasUser]) {
-        [BNCPreferenceHelper setIsReferrable];
-    } else {
-        [BNCPreferenceHelper clearIsReferrable];
-    }
-    
-    [self initUserSessionAndCallCallback:YES];
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url {
