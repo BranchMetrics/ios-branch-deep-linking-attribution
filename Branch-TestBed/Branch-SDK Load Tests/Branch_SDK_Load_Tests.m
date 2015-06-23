@@ -21,10 +21,10 @@
 @implementation Branch_SDK_Load_Tests
 
 - (void)testLoad {
-    id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
 
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
     
     BNCServerResponse *linkResponse = [[BNCServerResponse alloc] init];
@@ -45,7 +45,7 @@
     __block BNCServerCallback urlCallback;
     [[[serverInterfaceMock stub] andDo:^(NSInvocation *invocation) {
         urlCallback(linkResponse, nil);
-    }] postRequest:[OCMArg any] url:[BNCPreferenceHelper getAPIURL:@"url"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+    }] postRequest:[OCMArg any] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         urlCallback = callback;
         return YES;
     }]];
@@ -67,7 +67,7 @@
     [[[serverInterfaceMock expect] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
     
     // Fake branch key
-    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey:YES];
+    preferenceHelper.branchKey = @"foo";
     
     for (int i = 0; i < 1000; i++) {
         [branch getShortURLWithParams:nil andChannel:[NSString stringWithFormat:@"%d", i] andFeature:nil andCallback:^(NSString *url, NSError *error) {
