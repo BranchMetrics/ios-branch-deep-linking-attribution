@@ -27,8 +27,10 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+
     NSDictionary *params = @{
-        @"device_fingerprint_id": [BNCPreferenceHelper getDeviceFingerprintID],
+        @"device_fingerprint_id": preferenceHelper.deviceFingerprintID,
         @"device_name": [BNCSystemObserver getDeviceName],
         @"os": [BNCSystemObserver getOS],
         @"os_version": [BNCSystemObserver getOSVersion],
@@ -36,7 +38,7 @@
         @"is_simulator": @([BNCSystemObserver isSimulator])
     };
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"debug/connect"] key:key log:NO callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"debug/connect"] key:key log:NO callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -44,7 +46,7 @@
         NSLog(@"Failed to connect to debug: %@", error);
     }
     else {
-        [BNCPreferenceHelper setConnectedToRemoteDebug:YES];
+        [BNCPreferenceHelper preferenceHelper].isConnectedToRemoteDebug = YES;
 
         if (self.callback) {
             self.callback(YES, nil);

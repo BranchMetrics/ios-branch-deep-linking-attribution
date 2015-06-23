@@ -26,8 +26,9 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    NSString *endpoint = [NSString stringWithFormat:@"referrals/%@", [BNCPreferenceHelper getIdentityID]];
-    [serverInterface getRequest:nil url:[BNCPreferenceHelper getAPIURL:endpoint] key:key callback:callback];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    NSString *endpoint = [NSString stringWithFormat:@"referrals/%@", preferenceHelper.identityID];
+    [serverInterface getRequest:nil url:[preferenceHelper getAPIURL:endpoint] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -44,12 +45,13 @@
         NSInteger total = [counts[@"total"] integerValue];
         NSInteger unique = [counts[@"unique"] integerValue];
         
-        if (total != [BNCPreferenceHelper getActionTotalCount:key] || unique != [BNCPreferenceHelper getActionUniqueCount:key]) {
+        BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+        if (total != [preferenceHelper getActionTotalCount:key] || unique != [preferenceHelper getActionUniqueCount:key]) {
             hasUpdated = YES;
         }
         
-        [BNCPreferenceHelper setActionTotalCount:key withCount:total];
-        [BNCPreferenceHelper setActionUniqueCount:key withCount:unique];
+        [preferenceHelper setActionTotalCount:key withCount:total];
+        [preferenceHelper setActionUniqueCount:key withCount:unique];
     }
     
     if (self.callback) {

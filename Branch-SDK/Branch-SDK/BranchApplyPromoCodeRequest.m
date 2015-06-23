@@ -31,14 +31,15 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary *params = @{
-        @"identity_id": [BNCPreferenceHelper getIdentityID],
-        @"device_fingerprint_id": [BNCPreferenceHelper getDeviceFingerprintID],
-        @"session_id": [BNCPreferenceHelper getSessionID]
+        @"identity_id": preferenceHelper.identityID,
+        @"device_fingerprint_id": preferenceHelper.deviceFingerprintID,
+        @"session_id": preferenceHelper.sessionID
     };
     
     NSString *endpoint = self.useOld ? @"applycode/" : @"apply-promo-code/";
-    NSString *url = [[BNCPreferenceHelper getAPIURL:endpoint] stringByAppendingString:self.code];
+    NSString *url = [[preferenceHelper getAPIURL:endpoint] stringByAppendingString:self.code];
     [serverInterface postRequest:params url:url key:key callback:callback];
 }
 

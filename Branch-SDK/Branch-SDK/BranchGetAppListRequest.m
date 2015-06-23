@@ -26,7 +26,7 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    [serverInterface getRequest:nil url:[BNCPreferenceHelper getAPIURL:@"applist"] key:key callback:callback];
+    [serverInterface getRequest:nil url:[[BNCPreferenceHelper preferenceHelper] getAPIURL:@"applist"] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -37,7 +37,7 @@
         return;
     }
     
-    [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned from app check with %@", response.data];
+    [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"returned from app check with %@", response.data];
     
     if (self.callback) {
         self.callback(response.data[@"potential_apps"], nil);
