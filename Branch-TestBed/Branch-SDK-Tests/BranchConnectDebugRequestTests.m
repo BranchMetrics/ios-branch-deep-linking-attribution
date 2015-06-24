@@ -6,16 +6,50 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import <XCTest/XCTest.h>
+#import "BranchTest.h"
 #import "BranchConnectDebugRequest.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
+#import "BNCSystemObserver.h"
+#import <OCMock/OCMock.h>
 
-@interface BranchConnectDebugRequestTests : XCTestCase
+@interface BranchConnectDebugRequestTests : BranchTest
 
 @end
 
 @implementation BranchConnectDebugRequestTests
+
+- (void)testRequestBody {
+    NSString * const DEVICE_NAME = @"foo-name";
+    NSString * const OS = @"foo-os";
+    NSString * const OS_VERSION = @"foo-os-version";
+    NSString * const MODEL = @"foo-model";
+    NSNumber * const IS_SIMULATOR = @YES;
+    
+    NSDictionary * const expectedParams = @{
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+        BRANCH_REQUEST_KEY_DEVICE_NAME: DEVICE_NAME,
+        BRANCH_REQUEST_KEY_OS: OS,
+        BRANCH_REQUEST_KEY_OS_VERSION: OS_VERSION,
+        BRANCH_REQUEST_KEY_MODEL: MODEL,
+        BRANCH_REQUEST_KEY_IS_SIMULATOR: IS_SIMULATOR
+    };
+
+    id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
+    [[[systemObserverMock stub] andReturn:DEVICE_NAME] getDeviceName];
+    [[[systemObserverMock stub] andReturn:OS] getOS];
+    [[[systemObserverMock stub] andReturn:OS_VERSION] getOSVersion];
+    [[[systemObserverMock stub] andReturn:MODEL] getModel];
+    [[[systemObserverMock stub] andReturnValue:IS_SIMULATOR] isSimulator];
+    
+    BranchConnectDebugRequest *request = [[BranchConnectDebugRequest alloc] init];
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    [[serverInterfaceMock expect] postRequest:expectedParams url:[OCMArg any] key:[OCMArg any] log:NO callback:[OCMArg any]];
+    
+    [request makeRequest:serverInterfaceMock key:nil callback:NULL];
+    
+    [serverInterfaceMock verify];
+}
 
 - (void)testDebuggerSuccessfulConnect {
     BranchConnectDebugRequest *request = [[BranchConnectDebugRequest alloc] initWithCallback:^(BOOL changed, NSError *error) { }];
