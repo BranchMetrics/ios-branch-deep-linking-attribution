@@ -664,9 +664,6 @@
 					466B58371B17773000A69EDE = {
 						CreatedOnToolsVersion = 6.3.2;
 					};
-					6700165F1940F51400A9E103 = {
-						DevelopmentTeam = 6F3Q27CVFQ;
-					};
 					7E6B3B501AA42D0E005F45BF = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
