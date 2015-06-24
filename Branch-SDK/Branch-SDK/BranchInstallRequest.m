@@ -44,8 +44,6 @@
     params[BRANCH_REQUEST_KEY_IS_REFERRABLE] = @([BNCPreferenceHelper getIsReferrable]);
     params[BRANCH_REQUEST_KEY_DEBUG] = @([BNCPreferenceHelper isDebug]);
     
-    NSLog(@"Making request with %@", params);
-    
     [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"install"] key:key callback:callback];
 }
 
