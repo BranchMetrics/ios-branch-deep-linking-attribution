@@ -79,13 +79,13 @@
     }
 
     NSDictionary *data = response.data;
-    [BNCPreferenceHelper setDeviceFingerprintID:data[@"device_fingerprint_id"]];
-    [BNCPreferenceHelper setUserURL:data[@"link"]];
-    [BNCPreferenceHelper setUserIdentity:data[@"identity"]];
-    [BNCPreferenceHelper setSessionID:data[@"session_id"]];
+    [BNCPreferenceHelper setDeviceFingerprintID:data[BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID]];
+    [BNCPreferenceHelper setUserURL:data[BRANCH_RESPONSE_KEY_USER_URL]];
+    [BNCPreferenceHelper setUserIdentity:data[BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY]];
+    [BNCPreferenceHelper setSessionID:data[BRANCH_RESPONSE_KEY_SESSION_ID]];
     [BNCSystemObserver setUpdateState];
     
-    NSString *sessionData = data[@"data"];
+    NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
     
     // Update session params
     [BNCPreferenceHelper setSessionParams:sessionData];
@@ -105,15 +105,8 @@
     // Clear link click so it doesn't get reused on the next open
     [BNCPreferenceHelper setLinkClickIdentifier:nil];
     
-    if (data[@"link_click_id"]) {
-        [BNCPreferenceHelper setLinkClickID:data[@"link_click_id"]];
-    }
-    else {
-        [BNCPreferenceHelper setLinkClickID:nil];
-    }
-    
-    if (data[@"identity_id"]) {
-        [BNCPreferenceHelper setIdentityID:data[@"identity_id"]];
+    if (data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]) {
+        [BNCPreferenceHelper setIdentityID:data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]];
     }
     
     if (self.callback) {

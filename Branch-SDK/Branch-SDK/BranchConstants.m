@@ -62,3 +62,6 @@ NSString * const BRANCH_RESPONSE_KEY_REFERRAL_CODE = @"referral_code";
 NSString * const BRANCH_RESPONSE_KEY_PROMO_CODE = @"promo_code";
 NSString * const BRANCH_RESPONSE_KEY_URL = @"url";
 NSString * const BRANCH_RESPONSE_KEY_POTENTIAL_APPS = @"potential_apps";
+NSString * const BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY = @"identity";
+NSString * const BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID = @"device_fingerprint_id";
+NSString * const BRANCH_RESPONSE_KEY_SESSION_DATA = @"data";
