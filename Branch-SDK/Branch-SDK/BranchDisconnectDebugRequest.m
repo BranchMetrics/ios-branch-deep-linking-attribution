@@ -8,12 +8,13 @@
 
 #import "BranchDisconnectDebugRequest.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
 
 @implementation BranchDisconnectDebugRequest
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSDictionary *params = @{
-        @"device_fingerprint_id": [BNCPreferenceHelper getDeviceFingerprintID]
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID]
     };
 
     [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"debug/disconnect"] key:key log:NO callback:callback];
