@@ -118,14 +118,6 @@ After you register your app, your Branch Key can be retrieved on the [Settings](
 1. In the newly added row, fill in "branch_key" for its key, leave type as String, and enter your app's Branch Key obtained in above steps in the value column.
 1. Save the plist file.
 
-![Branch Key Demo](docs/images/branch-key-plist.png)
-
-If you want to add a key for both your live and test apps at the same time, you need change the type column to Dictionary, and add two entries inside:
-1. For live app, use "live" (without double quotes) for key, String for type, and your live branch key for value.
-2. For test app, use "test" (without double quotes) for key, String for type, and your test branch key for value.
-
-![Branch Multi Key Demo](docs/images/branch-multi-key-plist.png)
-
 #### URI Scheme Considerations
 
 The Branch SDK will pull the first URI Scheme from your list that is not one of `fb`, `db`, or `pin`. This value will be used one time to set the iOS URI Scheme under your Link Settings in the Branch Dashboard.
