@@ -54,6 +54,8 @@ NSString * const BRANCH_REQUEST_KEY_BRAND = @"brand";
 NSString * const BRANCH_REQUEST_KEY_MODEL = @"model";
 NSString * const BRANCH_REQUEST_KEY_SCREEN_WIDTH = @"screen_width";
 NSString * const BRANCH_REQUEST_KEY_SCREEN_HEIGHT = @"screen_height";
+NSString * const BRANCH_REQUEST_KEY_DEVICE_NAME = @"device_name";
+NSString * const BRANCH_REQUEST_KEY_IS_SIMULATOR = @"is_simulator";
 
 NSString * const BRANCH_RESPONSE_KEY_BRANCH_IDENTITY = @"identity_id";
 NSString * const BRANCH_RESPONSE_KEY_SESSION_ID = @"session_id";

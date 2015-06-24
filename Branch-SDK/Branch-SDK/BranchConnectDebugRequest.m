@@ -9,6 +9,7 @@
 #import "BranchConnectDebugRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
+#import "BranchConstants.h"
 
 @interface BranchConnectDebugRequest ()
 
@@ -28,12 +29,12 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSDictionary *params = @{
-        @"device_fingerprint_id": [BNCPreferenceHelper getDeviceFingerprintID],
-        @"device_name": [BNCSystemObserver getDeviceName],
-        @"os": [BNCSystemObserver getOS],
-        @"os_version": [BNCSystemObserver getOSVersion],
-        @"model": [BNCSystemObserver getModel],
-        @"is_simulator": @([BNCSystemObserver isSimulator])
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+        BRANCH_REQUEST_KEY_DEVICE_NAME: [BNCSystemObserver getDeviceName],
+        BRANCH_REQUEST_KEY_OS: [BNCSystemObserver getOS],
+        BRANCH_REQUEST_KEY_OS_VERSION: [BNCSystemObserver getOSVersion],
+        BRANCH_REQUEST_KEY_MODEL: [BNCSystemObserver getModel],
+        BRANCH_REQUEST_KEY_IS_SIMULATOR: @([BNCSystemObserver isSimulator])
     };
     
     [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"debug/connect"] key:key log:NO callback:callback];

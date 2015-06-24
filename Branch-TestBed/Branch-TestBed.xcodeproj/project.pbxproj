@@ -384,13 +384,13 @@
 				46DC40791B2B694600D2D203 /* BranchGetPromoCodeRequestTests.m */,
 				46DC407B1B2B81CA00D2D203 /* BranchValidatePromoCodeRequestTests.m */,
 				46DC407D1B2B83B800D2D203 /* BranchApplyPromoCodeRequestTests.m */,
-				4683F0781B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m */,
 				46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */,
 				46DBB4361B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m */,
 				46DBB4381B34B22F00642FC8 /* BranchCloseRequestTests.m */,
 				46DBB43A1B34B2D500642FC8 /* BranchGetAppListRequestTests.m */,
 				46DBB43C1B34B7A300642FC8 /* BranchOpenRequestTests.m */,
 				4677EB501B3B384C00A13964 /* BranchInstallRequestTests.m */,
+				4683F0781B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m */,
 			);
 			name = BranchRequestsTests;
 			sourceTree = "<group>";
