@@ -15,28 +15,28 @@ static const NSInteger DEFAULT_RETRY_INTERVAL = 0;
 static const NSInteger DEFAULT_RETRY_COUNT = 1;
 static const NSInteger APP_READ_INTERVAL = 520000;
 
-static NSString *KEY_APP_KEY = @"bnc_app_key";
-static NSString *KEY_APP_VERSION = @"bnc_app_version";
-static NSString *KEY_LAST_RUN_BRANCH_KEY = @"bnc_last_run_branch_key";
+NSString * const BRANCH_PREFS_KEY_APP_KEY = @"bnc_app_key";
+NSString * const BRANCH_PREFS_KEY_APP_VERSION = @"bnc_app_version";
+NSString * const BRANCH_PREFS_KEY_LAST_RUN_BRANCH_KEY = @"bnc_last_run_branch_key";
 
-static NSString *KEY_DEVICE_FINGERPRINT_ID = @"bnc_device_fingerprint_id";
-static NSString *KEY_SESSION_ID = @"bnc_session_id";
-static NSString *KEY_IDENTITY_ID = @"bnc_identity_id";
-static NSString *KEY_IDENTITY = @"bnc_identity";
-static NSString *KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
-static NSString *KEY_LINK_CLICK_ID = @"bnc_link_click_id";
-static NSString *KEY_SESSION_PARAMS = @"bnc_session_params";
-static NSString *KEY_INSTALL_PARAMS = @"bnc_install_params";
-static NSString *KEY_USER_URL = @"bnc_user_url";
-static NSString *KEY_IS_REFERRABLE = @"bnc_is_referrable";
-static NSString *KEY_APP_LIST_CHECK = @"bnc_app_list_check";
+NSString * const BRANCH_PREFS_KEY_DEVICE_FINGERPRINT_ID = @"bnc_device_fingerprint_id";
+NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
+NSString * const BRANCH_PREFS_KEY_IDENTITY_ID = @"bnc_identity_id";
+NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
+NSString * const BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
+NSString * const BRANCH_PREFS_KEY_LINK_CLICK_ID = @"bnc_link_click_id";
+NSString * const BRANCH_PREFS_KEY_SESSION_PARAMS = @"bnc_session_params";
+NSString * const BRANCH_PREFS_KEY_INSTALL_PARAMS = @"bnc_install_params";
+NSString * const BRANCH_PREFS_KEY_USER_URL = @"bnc_user_url";
+NSString * const BRANCH_PREFS_KEY_IS_REFERRABLE = @"bnc_is_referrable";
+NSString * const BRANCH_PREFS_KEY_APP_LIST_CHECK = @"bnc_app_list_check";
 
-static NSString *KEY_CREDITS = @"bnc_credits";
-static NSString *KEY_CREDIT_BASE = @"bnc_credit_base_";
+NSString * const BRANCH_PREFS_KEY_CREDITS = @"bnc_credits";
+NSString * const BRANCH_PREFS_KEY_CREDIT_BASE = @"bnc_credit_base_";
 
-static NSString *KEY_COUNTS = @"bnc_counts";
-static NSString *KEY_TOTAL_BASE = @"bnc_total_base_";
-static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
+NSString * const BRANCH_PREFS_KEY_COUNTS = @"bnc_counts";
+NSString * const BRANCH_PREFS_KEY_TOTAL_BASE = @"bnc_total_base_";
+NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 @interface BNCPreferenceHelper ()
 
