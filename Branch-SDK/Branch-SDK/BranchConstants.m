@@ -49,6 +49,11 @@ NSString * const BRANCH_REQUEST_KEY_OS_VERSION = @"os_version";
 NSString * const BRANCH_REQUEST_KEY_URI_SCHEME = @"uri_scheme";
 NSString * const BRANCH_REQUEST_KEY_UPDATE = @"update";
 NSString * const BRANCH_REQUEST_KEY_LINK_IDENTIFIER = @"link_identifier";
+NSString * const BRANCH_REQUEST_KEY_CARRIER = @"carrier";
+NSString * const BRANCH_REQUEST_KEY_BRAND = @"brand";
+NSString * const BRANCH_REQUEST_KEY_MODEL = @"model";
+NSString * const BRANCH_REQUEST_KEY_SCREEN_WIDTH = @"screen_width";
+NSString * const BRANCH_REQUEST_KEY_SCREEN_HEIGHT = @"screen_height";
 
 NSString * const BRANCH_RESPONSE_KEY_BRANCH_IDENTITY = @"identity_id";
 NSString * const BRANCH_RESPONSE_KEY_SESSION_ID = @"session_id";
