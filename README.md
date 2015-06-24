@@ -101,14 +101,45 @@ For help configuring the SDK, see the [iOS Quickstart Guide](https://github.com/
 
 ### Register a URI Scheme Direct Deep Linking (Optional but Recommended)
 
-You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to change **yourapp** to a unique string that represents your app name. For complete instructions, go to [Register a URI Scheme for Direct Deep Linking.] (https://dev.branch.io/references/ios_sdk/#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)
+You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to change **yourapp** to a unique string that represents your app name. 
+
+1. In Xcode, click on YourProject-Info.plist on the left.
+1. Find URL Types and click the right arrow. (If it doesn't exist, right click anywhere and choose Add Row. Scroll down and choose URL Types).
+1. Add "yourapp," where yourapp is a unique string for your app, as an item in URL Schemes as below:
+
+![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlScheme.png)
+
+Alternatively, you can add the URI scheme in your project's Info page.
+
+1. In Xcode, click your project in the Navigator (on the left side).
+1. Select the "Info" tab.
+1. Expand the "URL Types" section at the bottom.
+1. Click the "+" sign to add a new URI Scheme, as below:
+
+	![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png)
 
 ### Add Your Branch Key to Your Project
 
-After you register your app, your Branch Key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift). See [Add Your Branch Key to Your Project] (https://dev.branch.io/references/ios_sdk/#add-your-branch-key-to-your-project) for step-by-step instructions.
+After you register your app, your Branch Key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift). 
+
+1. In plist file, mouse hover "Information Property List," which is the root item under the Key column.
+1. After about half a second, you will see a "+" sign appear. Click it.
+1. In the newly added row, fill in "branch_key" for its key, leave type as String, and enter your app's Branch Key obtained in above steps in the value column.
+1. Save the plist file.
 
 #### URI Scheme Considerations
-Go to the new [Documentation Portal](https://dev.branch.io) for information about [URI Scheme Considerations](https://dev.branch.io/references/ios_sdk/#uri-scheme-considerations).
+
+The Branch SDK will pull the first URI Scheme from your list that is not one of `fb`, `db`, or `pin`. This value will be used one time to set the iOS URI Scheme under your Link Settings in the Branch Dashboard.
+
+![Branch Key Demo](docs/images/branch-key-plist.png)
+
+If you want to add a key for both your live and test apps at the same time, you need change the type column to Dictionary, and add two entries inside:
+1. For live app, use "live" (without double quotes) for key, String for type, and your live branch key for value.
+2. For test app, use "test" (without double quotes) for key, String for type, and your test branch key for value.
+
+![Branch Multi Key Demo](docs/images/branch-multi-key-plist.png)
+
+For additional help configuring the SDK, including step-by-step instructions, please see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios-quickstart.md).
 
 ### Get a Singleton Branch Instance
 
