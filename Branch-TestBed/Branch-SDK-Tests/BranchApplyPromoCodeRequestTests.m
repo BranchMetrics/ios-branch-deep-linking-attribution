@@ -30,7 +30,25 @@
     
     BranchApplyPromoCodeRequest *request = [[BranchApplyPromoCodeRequest alloc] initWithCode:CODE useOld:NO callback:NULL];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] postRequest:expectedParams url:[OCMArg any] key:[OCMArg any] callback:[OCMArg any]];
+    [[serverInterfaceMock expect] postRequest:expectedParams url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_APPLY_PROMO_CODE] key:[OCMArg any] callback:[OCMArg any]];
+    
+    [request makeRequest:serverInterfaceMock key:nil callback:NULL];
+    
+    [serverInterfaceMock verify];
+}
+
+- (void)testRequestBodyWithOldSpecified {
+    NSString * const CODE = @"foo_code";
+    
+    NSDictionary * const expectedParams = @{
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID],
+    };
+    
+    BranchApplyPromoCodeRequest *request = [[BranchApplyPromoCodeRequest alloc] initWithCode:CODE useOld:YES callback:NULL];
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    [[serverInterfaceMock expect] postRequest:expectedParams url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_APPLY_REFERRAL_CODE] key:[OCMArg any] callback:[OCMArg any]];
     
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
     

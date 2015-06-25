@@ -31,7 +31,7 @@
     
     BranchRedeemRewardsRequest *request = [[BranchRedeemRewardsRequest alloc] initWithAmount:AMOUNT bucket:BUCKET callback:NULL];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] postRequest:expectedParams url:[OCMArg any] key:[OCMArg any] callback:[OCMArg any]];
+    [[serverInterfaceMock expect] postRequest:expectedParams url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_REDEEM_REWARDS] key:[OCMArg any] callback:[OCMArg any]];
     
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
     

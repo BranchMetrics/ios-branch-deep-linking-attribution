@@ -57,7 +57,7 @@
     
     BranchShortUrlSyncRequest *request = [[BranchShortUrlSyncRequest alloc] initWithTags:TAGS alias:ALIAS type:LINK_TYPE matchDuration:DURATION channel:CHANNEL feature:FEATURE stage:STAGE params:PARAMS linkData:LINK_DATA linkCache:LINK_CACHE];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] postRequest:expectedParams url:[OCMArg any] key:[OCMArg any] log:YES];
+    [[serverInterfaceMock expect] postRequest:expectedParams url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL] key:[OCMArg any] log:YES];
     
     [request makeRequest:serverInterfaceMock key:nil];
     

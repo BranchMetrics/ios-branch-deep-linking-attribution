@@ -30,7 +30,7 @@ NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
 
     BranchSetIdentityRequest *request = [[BranchSetIdentityRequest alloc] initWithUserId:IDENTITY_TEST_USER_ID callback:NULL];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] postRequest:expectedParams url:[OCMArg any] key:[OCMArg any] callback:[OCMArg any]];
+    [[serverInterfaceMock expect] postRequest:expectedParams url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_SET_IDENTITY] key:[OCMArg any] callback:[OCMArg any]];
     
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
     
