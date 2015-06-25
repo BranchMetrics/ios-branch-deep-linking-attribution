@@ -8,7 +8,7 @@ Table of Contents|
 ------------- | 
 [Get the Demo App](#get-the-demo-app)| 
 |[Class Reference Table](#class-reference)|
-|[Important Migrations] (#important-migration-to-v078)      |  
+|[Important Migrations] (#important-migration-to-v090)      |  
 [Troubleshooting FAQ] (#faq) 		  |
 [Installation] (#installation)|
 [Configuration (for Tracking)] (#configuration-for-tracking)|
