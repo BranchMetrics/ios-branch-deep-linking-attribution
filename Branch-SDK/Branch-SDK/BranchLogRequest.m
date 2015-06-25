@@ -8,6 +8,7 @@
 
 #import "BranchLogRequest.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
 
 @interface BranchLogRequest ()
 
@@ -27,8 +28,8 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSDictionary *params = @{
-        @"log": self.log,
-        @"device_fingerprint_id": [BNCPreferenceHelper getDeviceFingerprintID]
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+        BRANCH_REQUEST_KEY_LOG: self.log
     };
     
     [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"debug/log"] key:key log:NO callback:callback];
