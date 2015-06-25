@@ -74,6 +74,8 @@
 + (BOOL)getIsReferrable;
 + (void)setIsReferrable;
 + (void)clearIsReferrable;
++ (BOOL)explicitlyRequestedReferrable;
++ (void)setExplicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable;
 
 + (void)clearUserCreditsAndCounts;
 
