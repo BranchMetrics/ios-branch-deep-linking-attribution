@@ -22,7 +22,7 @@
 - (void)testRequestBody {
     BranchGetAppListRequest *request = [[BranchGetAppListRequest alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] getRequest:nil url:[OCMArg any] key:[OCMArg any] callback:[OCMArg any]];
+    [[serverInterfaceMock expect] getRequest:nil url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_GET_APP_LIST] key:[OCMArg any] callback:[OCMArg any]];
     
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
     

@@ -79,7 +79,7 @@
     
     BranchInstallRequest *request = [[BranchInstallRequest alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] postRequest:EXPECTED_PARAMS url:[OCMArg any] key:[OCMArg any] callback:[OCMArg any]];
+    [[serverInterfaceMock expect] postRequest:EXPECTED_PARAMS url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_INSTALL] key:[OCMArg any] callback:[OCMArg any]];
     
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
     

@@ -7,11 +7,14 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
 
 @interface BranchTest : XCTestCase
 
 - (void)safelyFulfillExpectation:(XCTestExpectation *)expectation;
 - (void)awaitExpectations;
 - (void)resetExpectations;
+
+- (id)stringMatchingPattern:(NSString *)pattern;
 
 @end

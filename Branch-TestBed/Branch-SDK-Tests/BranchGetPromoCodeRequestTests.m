@@ -41,7 +41,7 @@
     
     BranchGetPromoCodeRequest *request = [[BranchGetPromoCodeRequest alloc] initWithUsageType:BranchPromoCodeUsageTypeOncePerUser rewardLocation:BranchPromoCodeRewardReferringUser amount:AMOUNT bucket:BUCKET prefix:PREFIX expiration:EXPIRATION useOld:NO callback:NULL];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] postRequest:expectedParams url:[OCMArg any] key:[OCMArg any] callback:[OCMArg any]];
+    [[serverInterfaceMock expect] postRequest:expectedParams url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_GET_PROMO_CODE] key:[OCMArg any] callback:[OCMArg any]];
     
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
     
@@ -64,9 +64,9 @@
         BRANCH_REQUEST_KEY_REFERRAL_CREATION_SOURCE: @2
     };
     
-    BranchGetPromoCodeRequest *request = [[BranchGetPromoCodeRequest alloc] initWithUsageType:BranchPromoCodeUsageTypeOncePerUser rewardLocation:BranchPromoCodeRewardReferringUser amount:AMOUNT bucket:BUCKET prefix:nil expiration:nil useOld:NO callback:NULL];
+    BranchGetPromoCodeRequest *request = [[BranchGetPromoCodeRequest alloc] initWithUsageType:BranchPromoCodeUsageTypeOncePerUser rewardLocation:BranchPromoCodeRewardReferringUser amount:AMOUNT bucket:BUCKET prefix:nil expiration:nil useOld:YES callback:NULL];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] postRequest:expectedParams url:[OCMArg any] key:[OCMArg any] callback:[OCMArg any]];
+    [[serverInterfaceMock expect] postRequest:expectedParams url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_GET_REFERRAL_CODE] key:[OCMArg any] callback:[OCMArg any]];
     
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
     

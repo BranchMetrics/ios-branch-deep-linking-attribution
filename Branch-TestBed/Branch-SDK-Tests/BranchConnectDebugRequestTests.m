@@ -44,7 +44,7 @@
     
     BranchConnectDebugRequest *request = [[BranchConnectDebugRequest alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] postRequest:expectedParams url:[OCMArg any] key:[OCMArg any] log:NO callback:[OCMArg any]];
+    [[serverInterfaceMock expect] postRequest:expectedParams url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_CONNECT_DEBUG] key:[OCMArg any] log:NO callback:[OCMArg any]];
     
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
     

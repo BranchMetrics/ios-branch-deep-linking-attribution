@@ -21,7 +21,7 @@
 - (void)testRequestBody {
     BranchLoadRewardsRequest *request = [[BranchLoadRewardsRequest alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] getRequest:nil url:[OCMArg any] key:[OCMArg any] callback:[OCMArg any]];
+    [[serverInterfaceMock expect] getRequest:nil url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_LOAD_REWARDS] key:[OCMArg any] callback:[OCMArg any]];
     
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
     
