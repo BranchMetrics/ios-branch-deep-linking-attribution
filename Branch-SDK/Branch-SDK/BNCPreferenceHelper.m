@@ -44,6 +44,7 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 @property (assign, nonatomic) BOOL isUsingLiveKey;
 @property (assign, nonatomic) BOOL isDebugMode;
 @property (assign, nonatomic) BOOL isConnectedToRemoteDebug;
+@property (assign, nonatomic) BOOL explicitlyRequestedReferrable;
 
 @end
 
@@ -57,6 +58,7 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
         
         _isDebugMode = NO;
         _isConnectedToRemoteDebug = NO;
+        _explicitlyRequestedReferrable = NO;
     }
     
     return self;
@@ -271,7 +273,17 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 }
 
 + (BOOL)getIsReferrable {
-    return [BNCPreferenceHelper readBoolFromDefaults:KEY_IS_REFERRABLE];
+    BOOL isReferrable = [BNCPreferenceHelper readBoolFromDefaults:KEY_IS_REFERRABLE];
+    BOOL hasIdentity = [BNCPreferenceHelper getIdentityID] != nil;
+    
+    // If referrable is set, but they already have an identity, they should only
+    // still be referrable if the dev has explicitly set always referrable.
+    if (isReferrable && hasIdentity) {
+        return [BNCPreferenceHelper getInstance].explicitlyRequestedReferrable;
+    }
+    
+    // If not referrable, or no identity yet, whatever isReferrable has is fine to return.
+    return isReferrable;
 }
 
 + (void)setIsReferrable {
@@ -284,6 +296,14 @@ static NSString *KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 + (void)setAppListCheckDone {
     [BNCPreferenceHelper writeObjectToDefaults:KEY_APP_LIST_CHECK value:[NSDate date]];
+}
+
++ (BOOL)explicitlyRequestedReferrable {
+    return [BNCPreferenceHelper getInstance].explicitlyRequestedReferrable;
+}
+
++ (void)setExplicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable {
+    [BNCPreferenceHelper getInstance].explicitlyRequestedReferrable = explicitlyRequestedReferrable;
 }
 
 + (BOOL)getNeedAppListCheck {
