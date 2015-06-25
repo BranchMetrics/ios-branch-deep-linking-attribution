@@ -931,12 +931,12 @@ Branch.getInstance().getPromoCodeWithPrefix("BRANCH", amount: 5, expiration: NSD
 
 ```objc
 [[Branch getInstance] getPromoCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-                                         amount:5
-                                     expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
-                                         bucket:@"default"
-                                      usageType:BranchPromoCodeUsageTypeOncePerUser
-                                 rewardLocation:BranchPromoCodeRewardBothUsers
-                                       callback:^(NSDictionary *params, NSError *error) {
+                                      amount:5
+                                  expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
+                                      bucket:@"default"
+                                   usageType:BranchPromoCodeUsageTypeOncePerUser
+                              rewardLocation:BranchPromoCodeRewardBothUsers
+                                    callback:^(NSDictionary *params, NSError *error) {
                                         if (!error) {
                                             NSString *promoCode = [params objectForKey:@"promo_code"];
                                             // do whatever with promoCode
