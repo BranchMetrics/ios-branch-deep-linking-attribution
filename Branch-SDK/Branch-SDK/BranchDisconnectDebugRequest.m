@@ -17,7 +17,7 @@
         BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID]
     };
 
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"debug/disconnect"] key:key log:NO callback:callback];
+    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_DISCONNECT_DEBUG] key:key log:NO callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

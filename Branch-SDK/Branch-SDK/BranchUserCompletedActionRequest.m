@@ -40,7 +40,7 @@
         params[BRANCH_REQUEST_KEY_STATE] = self.state;
     }
 
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"event"] key:key callback:callback];
+    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CREDIT_HISTORY] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

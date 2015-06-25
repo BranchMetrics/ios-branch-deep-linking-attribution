@@ -8,6 +8,7 @@
 
 #import "BranchLoadRewardsRequest.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
 
 @interface BranchLoadRewardsRequest ()
 
@@ -26,7 +27,7 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    NSString *endpoint = [NSString stringWithFormat:@"credits/%@", [BNCPreferenceHelper getIdentityID]];
+    NSString *endpoint = [BRANCH_REQUEST_ENDPOINT_LOAD_REWARDS stringByAppendingPathComponent:[BNCPreferenceHelper getIdentityID]];
     [serverInterface getRequest:nil url:[BNCPreferenceHelper getAPIURL:endpoint] key:key callback:callback];
 }
 

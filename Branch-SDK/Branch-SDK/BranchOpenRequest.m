@@ -61,7 +61,7 @@
     [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:BRANCH_REQUEST_KEY_UPDATE onDict:params];
     [self safeSetValue:[BNCPreferenceHelper getLinkClickIdentifier] forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:params];
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"open"] key:key callback:callback];
+    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
 }
 
 - (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {

@@ -35,7 +35,7 @@
         BRANCH_REQUEST_KEY_APP_LIST: self.appList
     };
 
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"applist"] key:key callback:callback];
+    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_UPDATE_APP_LIST] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

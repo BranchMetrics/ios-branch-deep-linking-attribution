@@ -32,7 +32,7 @@
         BRANCH_REQUEST_KEY_LOG: self.log
     };
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"debug/log"] key:key log:NO callback:callback];
+    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_LOG] key:key log:NO callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

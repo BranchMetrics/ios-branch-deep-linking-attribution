@@ -39,7 +39,7 @@
         BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID]
     };
 
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"redeem"] key:key callback:callback];
+    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_REDEEM_REWARDS] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

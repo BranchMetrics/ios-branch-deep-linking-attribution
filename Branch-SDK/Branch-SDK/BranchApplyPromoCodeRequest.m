@@ -38,8 +38,8 @@
         BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID]
     };
     
-    NSString *endpoint = self.useOld ? @"applycode/" : @"apply-promo-code/";
-    NSString *url = [[BNCPreferenceHelper getAPIURL:endpoint] stringByAppendingString:self.code];
+    NSString *endpoint = self.useOld ? BRANCH_REQUEST_ENDPOINT_APPLY_REFERRAL_CODE : BRANCH_REQUEST_ENDPOINT_APPLY_PROMO_CODE;
+    NSString *url = [NSString stringWithFormat:@"%@/%@", [BNCPreferenceHelper getAPIURL:endpoint], self.code];
     [serverInterface postRequest:params url:url key:key callback:callback];
 }
 

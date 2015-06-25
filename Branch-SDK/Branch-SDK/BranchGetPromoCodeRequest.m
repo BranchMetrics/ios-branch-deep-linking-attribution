@@ -63,7 +63,7 @@
         params[BRANCH_REQUEST_KEY_REFERRAL_EXPIRATION] = self.expiration;
     }
     
-    NSString *endpoint = self.useOld ? @"referralcode" : @"promo-code";
+    NSString *endpoint = self.useOld ? BRANCH_REQUEST_ENDPOINT_GET_REFERRAL_CODE : BRANCH_REQUEST_ENDPOINT_GET_PROMO_CODE;
     [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:endpoint] key:key callback:callback];
 }
 

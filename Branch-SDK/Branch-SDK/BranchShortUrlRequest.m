@@ -54,7 +54,7 @@
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = [BNCPreferenceHelper getIdentityID];
     params[BRANCH_REQUEST_KEY_SESSION_ID] = [BNCPreferenceHelper getSessionID];
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"url"] key:key callback:callback];
+    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
