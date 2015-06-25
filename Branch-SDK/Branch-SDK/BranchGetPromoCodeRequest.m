@@ -44,9 +44,10 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
-    params[@"device_fingerprint_id"] = [BNCPreferenceHelper getDeviceFingerprintID];
-    params[@"identity_id"] = [BNCPreferenceHelper getIdentityID];
-    params[@"session_id"] = [BNCPreferenceHelper getSessionID];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    params[@"device_fingerprint_id"] = preferenceHelper.deviceFingerprintID;
+    params[@"identity_id"] = preferenceHelper.identityID;
+    params[@"session_id"] = preferenceHelper.sessionID;
     params[@"calculation_type"] = @(self.usageType);
     params[@"location"] = @(self.rewardLocation);
     params[@"type"] = @"credit";
@@ -64,7 +65,7 @@
     
     NSString *endpoint = self.useOld ? @"referralcode" : @"promo-code";
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:endpoint] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:endpoint] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

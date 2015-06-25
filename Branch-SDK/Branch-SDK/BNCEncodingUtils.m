@@ -257,7 +257,7 @@ static const short _base64DecodingTable[256] = {
 
     [encodedDictionary appendString:@"}"];
     
-    if ([BNCPreferenceHelper isDebug]) {
+    if ([[BNCPreferenceHelper preferenceHelper] isDebug]) {
         NSLog(@"encoded dictionary : %@", encodedDictionary);
     }
     
@@ -320,7 +320,7 @@ static const short _base64DecodingTable[256] = {
     [encodedArray deleteCharactersInRange:NSMakeRange([encodedArray length] - 1, 1)];
     [encodedArray appendString:@"]"];
     
-    if ([BNCPreferenceHelper isDebug]) {
+    if ([[BNCPreferenceHelper preferenceHelper] isDebug]) {
         NSLog(@"encoded array : %@", encodedArray);
     }
 
