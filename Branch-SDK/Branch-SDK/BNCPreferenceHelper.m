@@ -74,6 +74,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
         
         _isDebug = NO;
         _isConnectedToRemoteDebug = NO;
+        _explicitlyRequestedReferrable = NO;
         _isReferrable = [self readBoolFromDefaults:BRANCH_PREFS_KEY_IS_REFERRABLE];
     }
     
@@ -311,6 +312,15 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 }
 
 - (BOOL)isReferrable {
+    BOOL hasIdentity = self.identityID != nil;
+    
+    // If referrable is set, but they already have an identity, they should only
+    // still be referrable if the dev has explicitly set always referrable.
+    if (_isReferrable && hasIdentity) {
+        return _explicitlyRequestedReferrable;
+    }
+    
+    // If not referrable, or no identity yet, whatever isReferrable has is fine to return.
     return _isReferrable;
 }
 
