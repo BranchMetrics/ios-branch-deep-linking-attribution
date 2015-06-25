@@ -72,6 +72,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 @property (assign, nonatomic) BOOL shouldCallSessionInitCallback;
 @property (assign, nonatomic) BOOL appListCheckEnabled;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
+@property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
 @property (strong, nonatomic) UILongPressGestureRecognizer *debugGestureRecognizer;
 @property (strong, nonatomic) NSTimer *debugHeartbeatTimer;
 @property (strong, nonatomic) NSString *branchKey;
@@ -86,12 +87,14 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - GetInstance methods
 
 + (Branch *)getInstance {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+
     // If no Branch Key
-    NSString *branchKey = [BNCPreferenceHelper getBranchKey:YES];
+    NSString *branchKey = [preferenceHelper getBranchKey:YES];
     NSString *keyToUse = branchKey;
     if (!branchKey) {
         // If no app key
-        NSString *appKey = [BNCPreferenceHelper getAppKey];
+        NSString *appKey = preferenceHelper.appKey;
         if (!appKey) {
             NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
             return nil;
@@ -106,12 +109,14 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 + (Branch *)getTestInstance {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+
     // If no Branch Key
-    NSString *branchKey = [BNCPreferenceHelper getBranchKey:NO];
+    NSString *branchKey = [preferenceHelper getBranchKey:NO];
     NSString *keyToUse = branchKey;
     if (!branchKey) {
         // If no app key
-        NSString *appKey = [BNCPreferenceHelper getAppKey];
+        NSString *appKey = preferenceHelper.appKey;
         if (!appKey) {
             NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
             return nil;
@@ -127,21 +132,25 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 + (Branch *)getInstance:(NSString *)branchKey {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+
     if ([branchKey rangeOfString:@"key_"].location != NSNotFound) {
-        [BNCPreferenceHelper setBranchKey:branchKey];
+        preferenceHelper.branchKey = branchKey;
     }
     else {
-        [BNCPreferenceHelper setAppKey:branchKey];
+        preferenceHelper.appKey = branchKey;
     }
     
     return [Branch getInstanceInternal:branchKey];
 }
 
-- (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache key:(NSString *)key {
+- (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache preferenceHelper:(BNCPreferenceHelper *)preferenceHelper key:(NSString *)key {
     if (self = [super init]) {
         _bServerInterface = interface;
+        _bServerInterface.preferenceHelper = preferenceHelper;
         _requestQueue = queue;
         _linkCache = cache;
+        _preferenceHelper = preferenceHelper;
         _branchKey = key;
         
         _isInitialized = NO;
@@ -211,7 +220,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)setDebug {
-    [BNCPreferenceHelper setDebug:YES];
+    self.preferenceHelper.isDebug = YES;
 }
 
 - (void)resetUserSession {
@@ -219,19 +228,19 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (BOOL)isUserIdentified {
-    return [BNCPreferenceHelper getUserIdentity] != nil;
+    return self.preferenceHelper.userIdentity != nil;
 }
 
 - (void)setNetworkTimeout:(NSInteger)timeout {
-    [BNCPreferenceHelper setTimeout:timeout];
+    self.preferenceHelper.timeout = timeout;
 }
 
 - (void)setMaxRetries:(NSInteger)maxRetries {
-    [BNCPreferenceHelper setRetryCount:maxRetries];
+    self.preferenceHelper.retryCount = maxRetries;
 }
 
 - (void)setRetryInterval:(NSInteger)retryInterval {
-    [BNCPreferenceHelper setRetryInterval:retryInterval];
+    self.preferenceHelper.retryInterval = retryInterval;
 }
 
 
@@ -276,14 +285,8 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback {
     self.sessionInitWithParamsCallback = callback;
     
-    if (isReferrable) {
-        [BNCPreferenceHelper setIsReferrable];
-    }
-    else {
-        [BNCPreferenceHelper clearIsReferrable];
-    }
-    
-    [BNCPreferenceHelper setExplicitlyRequestedReferrable:explicitlyRequestedReferrable];
+    self.preferenceHelper.isReferrable = isReferrable;
+    self.preferenceHelper.explicitlyRequestedReferrable = explicitlyRequestedReferrable;
     
     if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
         [self initUserSessionAndCallCallback:YES];
@@ -299,9 +302,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
         }
 
         NSDictionary *params = [BNCEncodingUtils decodeQueryStringToDictionary:query];
-        if ([params objectForKey:@"link_click_id"]) {
+        if (params[@"link_click_id"]) {
             handled = YES;
-            [BNCPreferenceHelper setLinkClickIdentifier:[params objectForKey:@"link_click_id"]];
+            self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
  
@@ -318,7 +321,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback {
-    if (!userId || [[BNCPreferenceHelper getUserIdentity] isEqualToString:userId]) {
+    if (!userId || [self.preferenceHelper.userIdentity isEqualToString:userId]) {
         if (callback) {
             callback([self getFirstReferringParams], nil);
         }
@@ -360,11 +363,11 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (NSInteger)getTotalCountsForAction:(NSString *)action {
-    return [BNCPreferenceHelper getActionTotalCount:action];
+    return [self.preferenceHelper getActionTotalCount:action];
 }
 
 - (NSInteger)getUniqueCountsForAction:(NSString *)action {
-    return [BNCPreferenceHelper getActionUniqueCount:action];
+    return [self.preferenceHelper getActionUniqueCount:action];
 }
 
 - (void)userCompletedAction:(NSString *)action {
@@ -399,7 +402,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (NSInteger)getCredits {
-    return [BNCPreferenceHelper getCreditCount];
+    return [self.preferenceHelper getCreditCount];
 }
 
 - (void)redeemRewards:(NSInteger)count {
@@ -411,7 +414,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (NSInteger)getCreditsForBucket:(NSString *)bucket {
-    return [BNCPreferenceHelper getCreditCountForBucket:bucket];
+    return [self.preferenceHelper getCreditCountForBucket:bucket];
 }
 
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket {
@@ -429,7 +432,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         return;
     }
 
-    NSInteger totalAvailableCredits = [BNCPreferenceHelper getCreditCountForBucket:bucket];
+    NSInteger totalAvailableCredits = [self.preferenceHelper getCreditCountForBucket:bucket];
     if (count > totalAvailableCredits) {
         if (callback) {
             callback(false, [NSError errorWithDomain:BNCErrorDomain code:BNCRedeemCreditsError userInfo:@{ NSLocalizedDescriptionKey: @"You're trying to redeem more credits than are available. Have you loaded rewards?" }]);
@@ -472,13 +475,11 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (NSDictionary *)getFirstReferringParams {
-    NSString *storedParam = [BNCPreferenceHelper getInstallParams];
-    return [BNCEncodingUtils decodeJsonStringToDictionary:storedParam];
+    return [BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.installParams];
 }
 
 - (NSDictionary *)getLatestReferringParams {
-    NSString *storedParam = [BNCPreferenceHelper getSessionParams];
-    return [BNCEncodingUtils decodeJsonStringToDictionary:storedParam];
+    return [BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams];
 }
 
 
@@ -767,25 +768,27 @@ static int BNCDebugTriggerFingersSimulator = 2;
     static dispatch_once_t onceToken;
     
     dispatch_once(&onceToken, ^{
+        BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+
         // If there was stored key and it isn't the same as the currently used (or doesn't exist), we need to clean up
         // Note: Link Click Identifier is not cleared because of the potential for that to mess up a deep link
-        NSString *lastKey = [BNCPreferenceHelper getLastRunBranchKey];
-        if (lastKey && ![key isEqualToString:lastKey]) {
+        if (preferenceHelper.lastRunBranchKey && ![key isEqualToString:preferenceHelper.lastRunBranchKey]) {
             NSLog(@"Branch Warning: The Branch Key has changed, clearing relevant items");
             
-            [BNCPreferenceHelper setAppVersion:nil];
-            [BNCPreferenceHelper setDeviceFingerprintID:nil];
-            [BNCPreferenceHelper setSessionID:nil];
-            [BNCPreferenceHelper setIdentityID:nil];
-            [BNCPreferenceHelper setUserURL:nil];
-            [BNCPreferenceHelper setInstallParams:nil];
-            [BNCPreferenceHelper setSessionParams:nil];
+            preferenceHelper.appVersion = nil;
+            preferenceHelper.deviceFingerprintID = nil;
+            preferenceHelper.sessionID = nil;
+            preferenceHelper.identityID = nil;
+            preferenceHelper.userUrl = nil;
+            preferenceHelper.installParams = nil;
+            preferenceHelper.sessionParams = nil;
+
             [[BNCServerRequestQueue getInstance] clearQueue];
         }
         
-        [BNCPreferenceHelper setLastRunBranchKey:key];
+        preferenceHelper.lastRunBranchKey = key;
 
-        branch = [[Branch alloc] initWithInterface:[[BNCServerInterface alloc] init] queue:[BNCServerRequestQueue getInstance] cache:[[BNCLinkCache alloc] init] key:key];
+        branch = [[Branch alloc] initWithInterface:[[BNCServerInterface alloc] init] queue:[BNCServerRequestQueue getInstance] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:key];
     });
 
     return branch;
@@ -826,7 +829,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         BranchShortUrlSyncRequest *req = [[BranchShortUrlSyncRequest alloc] initWithTags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params linkData:linkData linkCache:self.linkCache];
         
         if (self.isInitialized) {
-            [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Created custom url synchronously"];
+            [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"Created custom url synchronously"];
             BNCServerResponse *serverResponse = [req makeRequest:self.bServerInterface key:self.branchKey];
             shortURL = [req processResponse:serverResponse];
             
@@ -1035,19 +1038,19 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - Branch State checks
 
 - (BOOL)hasIdentity {
-    return [BNCPreferenceHelper getUserIdentity] != nil;
+    return self.preferenceHelper.userIdentity != nil;
 }
 
 - (BOOL)hasUser {
-    return [BNCPreferenceHelper getIdentityID] != nil;
+    return self.preferenceHelper.identityID != nil;
 }
 
 - (BOOL)hasSession {
-    return [BNCPreferenceHelper getSessionID] != nil;
+    return self.preferenceHelper.sessionID != nil;
 }
 
 - (BOOL)hasAppKey {
-    return [BNCPreferenceHelper getAppKey] != nil;
+    return self.preferenceHelper.appKey != nil;
 }
 
 #pragma mark - Session Initialization
@@ -1114,7 +1117,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (void)handleInitSuccess {
     self.isInitialized = YES;
 
-    if (self.appListCheckEnabled && [BNCPreferenceHelper getNeedAppListCheck]) {
+    if (self.appListCheckEnabled && [self.preferenceHelper getNeedAppListCheck]) {
         [self getAppList];
     }
     

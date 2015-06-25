@@ -29,12 +29,12 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSDictionary *params = @{
-        @"device_fingerprint_id": [BNCPreferenceHelper getDeviceFingerprintID],
+        @"device_fingerprint_id": [BNCPreferenceHelper preferenceHelper].deviceFingerprintID,
         @"os": [BNCSystemObserver getOS],
         @"apps_data": self.appList
     };
 
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"applist"] key:key callback:callback];
+    [serverInterface postRequest:params url:[[BNCPreferenceHelper preferenceHelper] getAPIURL:@"applist"] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -42,7 +42,7 @@
         return;
     }
     
-    [BNCPreferenceHelper setAppListCheckDone];
+    [[BNCPreferenceHelper preferenceHelper] setAppListCheckDone];
 }
 
 #pragma mark - NSCoding methods

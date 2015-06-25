@@ -34,22 +34,23 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
-    if (![BNCPreferenceHelper getDeviceFingerprintID]) {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    if (!preferenceHelper.deviceFingerprintID) {
         BOOL isRealHardwareId;
-        NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper isDebug]];
+        NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:preferenceHelper.isDebug];
         if (hardwareId) {
             params[@"hardware_id"] = hardwareId;
             params[@"is_hardware_id_real"] = @(isRealHardwareId);
         }
     }
     else {
-        params[@"device_fingerprint_id"] = [BNCPreferenceHelper getDeviceFingerprintID];
+        params[@"device_fingerprint_id"] = preferenceHelper.deviceFingerprintID;
     }
 
-    params[@"identity_id"] = [BNCPreferenceHelper getIdentityID];
+    params[@"identity_id"] = preferenceHelper.identityID;
     params[@"ad_tracking_enabled"] = @([BNCSystemObserver adTrackingSafe]);
-    params[@"is_referrable"] = @([BNCPreferenceHelper getIsReferrable]);
-    params[@"debug"] = @([BNCPreferenceHelper isDebug]);
+    params[@"is_referrable"] = @(preferenceHelper.isReferrable);
+    params[@"debug"] = @(preferenceHelper.isDebug);
 
     [self safeSetValue:[BNCSystemObserver getBundleID] forKey:@"ios_bundle_id" onDict:params];
     [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:@"app_version" onDict:params];
@@ -57,9 +58,9 @@
     [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:@"os_version" onDict:params];
     [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:@"uri_scheme" onDict:params];
     [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:@"update" onDict:params];
-    [self safeSetValue:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier" onDict:params];
+    [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:@"link_identifier" onDict:params];
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"open"] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"open"] key:key callback:callback];
 }
 
 - (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
@@ -75,43 +76,38 @@
         }
         return;
     }
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     NSDictionary *data = response.data;
-    [BNCPreferenceHelper setDeviceFingerprintID:data[@"device_fingerprint_id"]];
-    [BNCPreferenceHelper setUserURL:data[@"link"]];
-    [BNCPreferenceHelper setUserIdentity:data[@"identity"]];
-    [BNCPreferenceHelper setSessionID:data[@"session_id"]];
+    preferenceHelper.deviceFingerprintID = data[@"device_fingerprint_id"];
+    preferenceHelper.userUrl = data[@"link"];
+    preferenceHelper.userIdentity = data[@"identity"];
+    preferenceHelper.sessionID = data[@"session_id"];
     [BNCSystemObserver setUpdateState];
     
     NSString *sessionData = data[@"data"];
     
     // Update session params
-    [BNCPreferenceHelper setSessionParams:sessionData];
+    preferenceHelper.sessionParams = sessionData;
     
     // If referable, also se tup install params
-    if ([BNCPreferenceHelper getIsReferrable]) {
+    if (preferenceHelper.isReferrable) {
         // If present, set it.
         if (sessionData) {
-            [BNCPreferenceHelper setInstallParams:sessionData];
+            preferenceHelper.installParams = sessionData;
         }
         // If not present, only allow nil to be set if desired (don't clear otherwise)
         else if (self.allowInstallParamsToBeCleared) {
-            [BNCPreferenceHelper setInstallParams:nil];
+            preferenceHelper.installParams = nil;
         }
     }
     
     // Clear link click so it doesn't get reused on the next open
-    [BNCPreferenceHelper setLinkClickIdentifier:nil];
-    
-    if (data[@"link_click_id"]) {
-        [BNCPreferenceHelper setLinkClickID:data[@"link_click_id"]];
-    }
-    else {
-        [BNCPreferenceHelper setLinkClickID:nil];
-    }
+    preferenceHelper.linkClickIdentifier = nil;
     
     if (data[@"identity_id"]) {
-        [BNCPreferenceHelper setIdentityID:data[@"identity_id"]];
+        preferenceHelper.identityID = data[@"identity_id"];
     }
     
     if (self.callback) {

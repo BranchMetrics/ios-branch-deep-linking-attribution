@@ -36,9 +36,10 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
-    params[@"device_fingerprint_id"] = [BNCPreferenceHelper getDeviceFingerprintID];
-    params[@"identity_id"] = [BNCPreferenceHelper getIdentityID];
-    params[@"session_id"] = [BNCPreferenceHelper getSessionID];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    params[@"device_fingerprint_id"] = preferenceHelper.deviceFingerprintID;
+    params[@"identity_id"] = preferenceHelper.identityID;
+    params[@"session_id"] = preferenceHelper.sessionID;
     params[@"length"] = @(self.length);
     params[@"direction"] = self.order == BranchMostRecentFirst ? @"desc" : @"asc";
 
@@ -50,7 +51,7 @@
         params[@"begin_after_id"] = self.creditTransactionId;
     }
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"credithistory"] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"credithistory"] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

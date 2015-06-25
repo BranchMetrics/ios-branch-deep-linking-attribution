@@ -75,8 +75,7 @@
 
 - (void)testGetUpdateStateWithEqualStoredAndCurrentVersion {
     NSString *version = @"1";
-    id preferenceHelperMock = [OCMockObject mockForClass:[BNCPreferenceHelper class]];
-    [[[preferenceHelperMock stub] andReturn:version] getAppVersion];
+    [BNCPreferenceHelper preferenceHelper].appVersion = version;
     
     id bundleMock = OCMClassMock([NSBundle class]);
     [[[bundleMock stub] andReturn:bundleMock] mainBundle];
@@ -90,8 +89,7 @@
 - (void)testGetUpdateStateWithNonEqualStoredAndCurrentVersion {
     NSString *currentVersion = @"2";
     NSString *storedVersion = @"1";
-    id preferenceHelperMock = [OCMockObject mockForClass:[BNCPreferenceHelper class]];
-    [[[preferenceHelperMock stub] andReturn:storedVersion] getAppVersion];
+    [BNCPreferenceHelper preferenceHelper].appVersion = storedVersion;
     
     id bundleMock = OCMClassMock([NSBundle class]);
     [[[bundleMock stub] andReturn:bundleMock] mainBundle];
@@ -117,8 +115,7 @@
 }
 
 - (void)stubNilValuesForStoredAndCurrentVersions {
-    id preferenceHelperMock = [OCMockObject mockForClass:[BNCPreferenceHelper class]];
-    [[[preferenceHelperMock stub] andReturn:nil] getAppVersion];
+    [BNCPreferenceHelper preferenceHelper].appVersion = nil;
 
     id bundleMock = OCMClassMock([NSBundle class]);
     [[[bundleMock stub] andReturn:nil] mainBundle];

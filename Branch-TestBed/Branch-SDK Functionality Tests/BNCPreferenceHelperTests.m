@@ -7,7 +7,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <Nocilla/Nocilla.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
 
@@ -16,28 +15,6 @@
 @end
 
 @implementation BNCPreferenceHelperTests
-
-+ (void)setUp {
-    [super setUp];
-
-    [[LSNocilla sharedInstance] start];
-    [BNCPreferenceHelper setBranchKey:@"foo"];
-    [BNCPreferenceHelper setDeviceFingerprintID:@"foo"];
-}
-
-+ (void)tearDown {
-    [[LSNocilla sharedInstance] stop];
-    
-    [BNCPreferenceHelper clearDebug];
-
-    [super tearDown];
-}
-
-- (void)tearDown {
-    [[LSNocilla sharedInstance] clearStubs];
-
-    [super tearDown];
-}
 
 #pragma mark - Default storage tests
 - (void)testPreferenceDefaults {
@@ -50,23 +27,15 @@
 }
 
 - (void)testPreferenceSets {
-    // Save original values
-    NSInteger retryCount = [BNCPreferenceHelper getRetryCount];
-    NSInteger retryInterval = [BNCPreferenceHelper getRetryInterval];
-    NSInteger timeout = [BNCPreferenceHelper getTimeout];
+    BNCPreferenceHelper *prefHelper = [[BNCPreferenceHelper alloc] init];
     
-    [BNCPreferenceHelper setRetryCount:NSIntegerMax];
-    [BNCPreferenceHelper setRetryInterval:NSIntegerMax];
-    [BNCPreferenceHelper setTimeout:NSIntegerMax];
+    prefHelper.retryCount = NSIntegerMax;
+    prefHelper.retryInterval = NSIntegerMax;
+    prefHelper.timeout = NSIntegerMax;
     
-    XCTAssertEqual([BNCPreferenceHelper getRetryCount], NSIntegerMax);
-    XCTAssertEqual([BNCPreferenceHelper getRetryInterval], NSIntegerMax);
-    XCTAssertEqual([BNCPreferenceHelper getTimeout], NSIntegerMax);
-    
-    // Restore
-    [BNCPreferenceHelper setRetryCount:retryCount];
-    [BNCPreferenceHelper setRetryInterval:retryInterval];
-    [BNCPreferenceHelper setTimeout:timeout];
+    XCTAssertEqual(prefHelper.retryCount, NSIntegerMax);
+    XCTAssertEqual(prefHelper.retryInterval, NSIntegerMax);
+    XCTAssertEqual(prefHelper.timeout, NSIntegerMax);
 }
 
 @end
