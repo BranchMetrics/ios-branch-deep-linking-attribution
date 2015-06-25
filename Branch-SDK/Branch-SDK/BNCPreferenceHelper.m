@@ -340,7 +340,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 #pragma mark - Credit Storage
 
-- (NSDictionary *)getCreditsDictionary {
+- (NSMutableDictionary *)getCreditsDictionary {
     if (!_creditsDictionary) {
         _creditsDictionary = [[self readObjectFromDefaults:BRANCH_PREFS_KEY_CREDITS] mutableCopy];
         
@@ -372,7 +372,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 #pragma mark - Count Storage
 
-- (NSDictionary *)getCountsDictionary {
+- (NSMutableDictionary *)getCountsDictionary {
     if (!_countsDictionary) {
         _countsDictionary = [[self readObjectFromDefaults:BRANCH_PREFS_KEY_COUNTS] mutableCopy];
         
