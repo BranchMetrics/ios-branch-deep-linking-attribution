@@ -348,7 +348,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     if (!_creditsDictionary) {
         _creditsDictionary = [[self readObjectFromDefaults:BRANCH_PREFS_KEY_CREDITS] mutableCopy];
         
-        if (_creditsDictionary) {
+        if (!_creditsDictionary) {
             _creditsDictionary = [[NSMutableDictionary alloc] init];
         }
     }
@@ -380,7 +380,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     if (!_countsDictionary) {
         _countsDictionary = [[self readObjectFromDefaults:BRANCH_PREFS_KEY_COUNTS] mutableCopy];
         
-        if (_countsDictionary) {
+        if (!_countsDictionary) {
             _countsDictionary = [[NSMutableDictionary alloc] init];
         }
     }
