@@ -9,6 +9,7 @@
 #import "BranchShortUrlSyncRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
+#import "BranchConstants.h"
 
 @interface BranchShortUrlSyncRequest ()
 
@@ -51,7 +52,7 @@
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = [BNCPreferenceHelper getIdentityID];
     params[BRANCH_REQUEST_KEY_SESSION_ID] = [BNCPreferenceHelper getSessionID];
 
-    return [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"url"] key:key log:YES];
+    return [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL] key:key log:YES];
 }
 
 - (NSString *)processResponse:(BNCServerResponse *)response {
@@ -65,7 +66,7 @@
         return failedUrl;
     }
     
-    NSString *url = response.data[@"url"];
+    NSString *url = response.data[BRANCH_RESPONSE_KEY_URL];
     
     // cache the link
     if (url) {

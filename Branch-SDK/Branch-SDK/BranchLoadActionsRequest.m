@@ -27,7 +27,7 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    NSString *endpoint = [NSString stringWithFormat:@"referrals/%@", [BNCPreferenceHelper getIdentityID]];
+    NSString *endpoint = [BRANCH_REQUEST_ENDPOINT_LOAD_ACTIONS stringByAppendingPathComponent:[BNCPreferenceHelper getIdentityID]];
     [serverInterface getRequest:nil url:[BNCPreferenceHelper getAPIURL:endpoint] key:key callback:callback];
 }
 

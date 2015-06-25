@@ -27,7 +27,7 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    [serverInterface getRequest:nil url:[BNCPreferenceHelper getAPIURL:@"applist"] key:key callback:callback];
+    [serverInterface getRequest:nil url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_APP_LIST] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

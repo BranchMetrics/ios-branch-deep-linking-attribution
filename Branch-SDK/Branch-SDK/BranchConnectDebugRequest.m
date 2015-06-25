@@ -37,7 +37,7 @@
         BRANCH_REQUEST_KEY_IS_SIMULATOR: @([BNCSystemObserver isSimulator])
     };
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"debug/connect"] key:key log:NO callback:callback];
+    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CONNECT_DEBUG] key:key log:NO callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
