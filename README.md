@@ -2,13 +2,13 @@
 
 This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a complete list of the content featured in this document.
 
-**Note:** Go to our new [**Documentation Portal**] (https://dev.branch.io) where you can find all of our latest documentation and future documentation updates.
-
-Table of Contents|
-------------- |
-[Get the Demo App](#get-the-demo-app)|
+**Note:** Go to our new [**Documentation Portal**] (https://dev.branch.io) where you can find all of our latest documentation and future documentation updates.  
+            
+Table of Contents| 
+------------- | 
+[Get the Demo App](#get-the-demo-app)| 
 |[Class Reference Table](#class-reference)|
-|[Important Migrations] (#important-migration-to-v078)      |
+|[Important Migrations] (#important-migration-to-v090)      |  
 [Troubleshooting FAQ] (#faq) 		  |
 [Installation] (#installation)|
 [Configuration (for Tracking)] (#configuration-for-tracking)|
@@ -21,29 +21,28 @@ There's a full demo app embedded in this repository, but you can also check out 
 
 
 ##Class Reference
-For your reference, see the methods and parameters table below.
-
-**Class Reference Table**
-
+For your reference, see the methods and parameters table below.   
+  
+**Class Reference Table**  
+      
 | Tasks          | Methods          | Parameters     |
-|:------------- |:---------------:| -------------:|
+|:------------- |:---------------:| -------------:|   
 [Get a Singleton Branch Instance](#get-a-singleton-branch-instance)|[Method](#methods)|[Parameter](#parameters)
 |[Init Branch Session and Deep Link Routing Function](#init-branch-session-and-deep-link-routing-function)|[Method](#methods-1)|[Parameter](#parameters-1)|
-|[Retrieve Session (Install or Open) Parameters](#retrieve-session-install-or-open-parameters)|[Method](#methods-2)|[Parameter](#parameters-2)|
+|[Retrieve Session (Install or Open) Parameters](#retrieve-session-install-or-open-parameters)|[Method](#methods-2)|[Parameter](#parameters-2)| 
 |[Retrieve Install (Install Only) Parameters](#retrieve-install-install-only-parameters)|[Method](#methods-3)|[Parameter](#parameters-3)|
 [Persistent Identities](#persistent-identities)|[Method](#methods-4)|[Parameter](#parameters-4)|
 [Logout](#logout)|[Method](#methods-5)|[Parameter](#parameters-5)|
 [Register Custom Events](#register-custom-events)|[Method](#methods-6)| [Parameter](#parameters-6)|
 [Generate Tracked, Deep Linking URLs (Pass Data Across Install and Open)](#generate-tracked-deep-linking-urls-pass-data-across-install-and-open)|[Method](#methods-7)|[Parameter](#parameters-7)|
-[UIActivityView Share Sheet](#uiactivityview-share-sheet)|[Method](#methods-8)|[Parameter](#parameters-8)|
-|[Get Reward Balance](#get-reward-balance)|[Method](#methods-9)|[Parameters] (#parameters-9)|
+[UIActivityView Share Sheet](#uiactivityview-share-sheet)|[Method](#methods-8)|[Parameter](#parameters-8)| 
+|[Get Reward Balance](#get-reward-balance)|[Method](#methods-9)|[Parameters] (#parameters-9)| 
 [Redeem All or Some of the Reward Balance (Store State)](#redeem-all-or-some-of-the-reward-balance-store-state)|[Method](#methods-10)|[Parameter](#parameters-10)|
 [Get Credit History](#get-credit-history)|[Method](#methods-11)|[Parameters] (#parameters-11)|
 [Get Promo Code](#get-promo-code)|[Method](#methods-12)|[Parameter] (#parameters-12)|
 [Create Promo Code](#create-promo-code)|[Method](#methods-13)|[Parameter] (#parameters-13)|
 [Validate Promo Code](#validate-promo-code)|[Method](#methods-17)|[Parameter](#parameters-17)|
 [Apply Promo Code](#apply-promo-code)|[Method](#methods-18)|[Parameter] (#parameters-18)|
-
 
 ## Important Migration to v0.9.0
 We are renaming Referral Codes to Promo Codes to better indicate their purpose. Promo Codes do *not* establish a referred/referring user install relationship, which is unclear when called "referral codes." Consequently, all of the ReferralCode methods have been deprecated in favor of their PromoCode counterparts.
@@ -74,7 +73,7 @@ The compiled SDK size is ~155kb. You can clone this repository to keep up with t
 
 Branch is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your Podfile:
 
-```objc
+```
 pod "Branch"
 ```
 
@@ -101,14 +100,44 @@ For help configuring the SDK, see the [iOS Quickstart Guide](https://github.com/
 
 ### Register a URI Scheme Direct Deep Linking (Optional but Recommended)
 
-You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to change **yourapp** to a unique string that represents your app name. For complete instructions, go to [Register a URI Scheme for Direct Deep Linking.] (https://dev.branch.io/references/ios_sdk/#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)
+You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to change **yourapp** to a unique string that represents your app name. 
+
+1. In Xcode, click on YourProject-Info.plist on the left.
+1. Find URL Types and click the right arrow. (If it doesn't exist, right click anywhere and choose Add Row. Scroll down and choose URL Types).
+1. Add "yourapp," where yourapp is a unique string for your app, as an item in URL Schemes as below:
+
+![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlScheme.png)
+
+Alternatively, you can add the URI scheme in your project's Info page.
+
+1. In Xcode, click your project in the Navigator (on the left side).
+1. Select the "Info" tab.
+1. Expand the "URL Types" section at the bottom.
+1. Click the "+" sign to add a new URI Scheme, as below:
+
+	![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png)
 
 ### Add Your Branch Key to Your Project
 
-After you register your app, your Branch Key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift). See [Add Your Branch Key to Your Project] (https://dev.branch.io/references/ios_sdk/#add-your-branch-key-to-your-project) for step-by-step instructions.
+After you register your app, your Branch Key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift). 
+
+1. In plist file, mouse hover "Information Property List," which is the root item under the Key column.
+1. After about half a second, you will see a "+" sign appear. Click it.
+1. In the newly added row, fill in "branch_key" for its key, leave type as String, and enter your app's Branch Key obtained in above steps in the value column.
+1. Save the plist file.
+
+![Branch Key Demo](docs/images/branch-key-plist.png)
+If you want to add a key for both your live and test apps at the same time, you need change the type column to Dictionary, and add two entries inside:
+1. For live app, use "live" (without double quotes) for key, String for type, and your live branch key for value.
+2. For test app, use "test" (without double quotes) for key, String for type, and your test branch key for value.
+
+![Branch Multi Key Demo](docs/images/branch-multi-key-plist.png)
 
 #### URI Scheme Considerations
-Go to the new [Documentation Portal](https://dev.branch.io) for information about [URI Scheme Considerations](https://dev.branch.io/references/ios_sdk/#uri-scheme-considerations).
+
+The Branch SDK will pull the first URI Scheme from your list that is not one of `fb`, `db`, or `pin`. This value will be used one time to set the iOS URI Scheme under your Link Settings in the Branch Dashboard.
+
+For additional help configuring the SDK, including step-by-step instructions, please see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios-quickstart.md).
 
 ### Get a Singleton Branch Instance
 
@@ -152,7 +181,7 @@ To deep link, Branch must initialize a session to check if the user originated f
 ```objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     Branch *branch = [Branch getInstance];
-    [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+    [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {    
     	// route the user based on what's in params
     }];
     return YES;
@@ -194,7 +223,7 @@ func application(application: UIApplication, openURL url: NSURL, sourceApplicati
 **deepLinkHandler** ^(NSDictionary *params, NSError *error) _optional_
 : This is the callback block that Branch will execute after a network call to determine where the user comes from. It is called 100% of the time the app opens up since Branch registers for lifecycle notifications.
 
-- _NSDictionary *params_ : These params will contain any data associated with the Branch link that was clicked before the app session began. There are a few keys which are always present:
+- _NSDictionary *params_ : These params will contain any data associated with the Branch link that was clicked before the app session began. There are a few keys which are always present: 
 	- '+is_first_session' Denotes whether this is the first session (install) or any other session (open)
 	- '+clicked_branch_link' Denotes whether or not the user clicked a Branch link that triggered this session
 - _NSError *error_ : This error will be nil unless there is an error such as connectivity or otherwise. Check !error to confirm it was a valid link.
@@ -455,7 +484,7 @@ There are other methods which exclude tag and data if you don't want to pass tho
 
 **callback**: The callback that is called with the promo code object on success, or an error if it’s invalid.
 
-**channel**: The channel for the link. Examples could be Facebook, Twitter, SMS, etc., depending on where it will be shared.
+**channel**: The channel for the link. Examples could be Facebook, Twitter, SMS, etc., depending on where it will be shared. 
 
 **feature**: The feature the generated link will be associated with.
 
@@ -777,7 +806,7 @@ Branch.getInstance().getPromoCodeWithCallback { (params: [NSObject : AnyObject]!
 }
 ```
 ####Parameters
-**callback**: The callback that is called with the created promo code object.
+**callback**: The callback that is called with the created promo code object. 
 
 
 ### Create Promo Code
@@ -831,13 +860,13 @@ The resulting code will have your prefix, concatenated with a two character long
 ```objc
 // Create a promo code with prefix "BRANCH", 5 credits, and without an expiration date
 [[Branch getInstance] getPromoCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
-                                         amount:5
-                                       callback:^(NSDictionary *params, NSError *error) {
-                                           if (!error) {
-                                               NSString *promoCode = [params objectForKey:@"promo_code"];
-                                               // do whatever with promoCode
-                                           }
-                                       }
+                                      amount:5
+                                    callback:^(NSDictionary *params, NSError *error) {
+                                        if (!error) {
+                                            NSString *promoCode = [params objectForKey:@"promo_code"];
+                                            // do whatever with promoCode
+                                        }
+                                    }
 ];
 ```
 
@@ -870,12 +899,12 @@ The prefix parameter is optional here, i.e. it could be getPromoCodeWithAmount:e
 [[Branch getInstance] getPromoCodeWithPrefix:@"BRANCH"   // prefix should not exceed 48 characters
                                       amount:5
                                   expiration:[[NSDate date] dateByAddingTimeInterval:60 * 60 * 24]
-                                   callback:^(NSDictionary *params, NSError *error) {
-                                       if (!error) {
-                                           NSString *promoCode = [params objectForKey:@"promo_code"];
-                                           // do whatever with promoCode
-                                       }
-                                   }
+                                    callback:^(NSDictionary *params, NSError *error) {
+                                        if (!error) {
+                                            NSString *promoCode = [params objectForKey:@"promo_code"];
+                                            // do whatever with promoCode
+                                        }
+                                    }
 ];
 ```
 
@@ -909,7 +938,7 @@ Branch.getInstance().getPromoCodeWithPrefix("BRANCH", amount: 5, expiration: NSD
                               rewardLocation:BranchPromoCodeRewardBothUsers
                                     callback:^(NSDictionary *params, NSError *error) {
                                         if (!error) {
-                                            NSString *promoCode = [params objectForKey:@"referral_code"];
+                                            NSString *promoCode = [params objectForKey:@"promo_code"];
                                             // do whatever with promoCode
                                         }
                                     }
@@ -934,7 +963,7 @@ Branch.getInstance().getPromoCodeWithPrefix("BRANCH",
 })
 ```
 
-####Parameters
+####Parameters 
 
 You can also tune the promo code to the finest granularity, with the following additional parameters:
 
@@ -988,7 +1017,7 @@ If valid, returns the promo code JSONObject in the call back.
 ###### Swift
 
 ```swift
-Branch.getInstance().validatePromoCode(code, andCallback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
+Branch.getInstance().validatePromoCode(code, callback: { (params: [NSObject : AnyObject]!, error: NSError!) -> Void in
     if (error == nil) {
         if let returnedCode = params["promo_code"] as? String {
             // valid
