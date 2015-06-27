@@ -7,7 +7,10 @@
 //
 
 #import "BNCServerRequest.h"
+#import "Branch.h"
 
 @interface BranchLogoutRequest : BNCServerRequest
+
+- (id)initWithCallback:(callbackWithStatus)callback;
 
 @end
