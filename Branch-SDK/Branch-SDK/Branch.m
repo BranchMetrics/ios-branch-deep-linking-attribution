@@ -344,7 +344,13 @@ static int BNCDebugTriggerFingersSimulator = 2;
         return;
     }
 
-    BranchLogoutRequest *req = [[BranchLogoutRequest alloc] init];
+    BranchLogoutRequest *req = [[BranchLogoutRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
+        if (success) {
+            // Clear cached links
+            self.linkCache = [[BNCLinkCache alloc] init];
+        }
+    }];
+
     [self.requestQueue enqueue:req];
     [self processNextQueueItem];
 }

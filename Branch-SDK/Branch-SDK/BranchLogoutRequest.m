@@ -9,7 +9,21 @@
 #import "BranchLogoutRequest.h"
 #import "BNCPreferenceHelper.h"
 
+@interface BranchLogoutRequest ()
+
+@property (strong, nonatomic) callbackWithStatus callback;
+
+@end
+
 @implementation BranchLogoutRequest
+
+- (id)initWithCallback:(callbackWithStatus)callback {
+    if (self = [super init]) {
+        _callback = callback;
+    }
+    
+    return self;
+}
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
@@ -25,6 +39,9 @@
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     if (error) {
+        if (self.callback) {
+            self.callback(NO, error);
+        }
         return;
     }
 
@@ -36,6 +53,10 @@
     preferenceHelper.installParams = nil;
     preferenceHelper.sessionParams = nil;
     [preferenceHelper clearUserCreditsAndCounts];
+    
+    if (self.callback) {
+        self.callback(YES, nil);
+    }
 }
 
 @end
