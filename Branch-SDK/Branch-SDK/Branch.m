@@ -170,48 +170,49 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 #pragma mark - BrachActivityItemProvider methods
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
-                                                     andTags:(NSArray *)tags
-                                                  andFeature:(NSString *)feature
-                                                    andStage:(NSString *)stage
-                                                    andAlias:(NSString *)alias {
-    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:tags andFeature:feature andStage:stage andAlias:alias];
-}
-
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params {
-    
-    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:nil andFeature:nil andStage:nil andAlias:nil];
+    return [[BranchActivityItemProvider alloc] initWithParams:params tags:nil feature:nil stage:nil alias:nil delegate:nil];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
-                                                         andFeature:(NSString *)feature {
-    
-    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:nil andFeature:feature andStage:nil andAlias:nil];
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature {
+    return [[BranchActivityItemProvider alloc] initWithParams:params tags:nil feature:feature stage:nil alias:nil delegate:nil];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
-                                                         andFeature:(NSString *)feature
-                                                           andStage:(NSString *)stage {
-    
-    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:nil andFeature:feature andStage:stage andAlias:nil];
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage {
+    return [[BranchActivityItemProvider alloc] initWithParams:params tags:nil feature:feature stage:stage alias:nil delegate:nil];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
-                                                         andFeature:(NSString *)feature
-                                                           andStage:(NSString *)stage
-                                                            andTags:(NSArray *)tags {
-    
-    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:tags andFeature:feature andStage:stage andAlias:nil];
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags {
+    return [[BranchActivityItemProvider alloc] initWithParams:params tags:tags feature:feature stage:stage alias:nil delegate:nil];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params
-                                                            andFeature:(NSString *)feature
-                                                           andStage:(NSString *)stage
-                                                           andAlias:(NSString *)alias {
-    
-    return [[BranchActivityItemProvider alloc] initWithParams:params andTags:nil andFeature:feature andStage:stage andAlias:alias];
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags alias:(NSString *)alias {
+    return [[BranchActivityItemProvider alloc] initWithParams:params tags:tags feature:feature stage:stage alias:alias delegate:nil];
 }
 
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags alias:(NSString *)alias delegate:(id <BranchActivityItemProviderDelegate>)delegate {
+    return [[BranchActivityItemProvider alloc] initWithParams:params tags:tags feature:feature stage:stage alias:alias delegate:delegate];
+}
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature {
+    return [[BranchActivityItemProvider alloc] initWithParams:params tags:nil feature:feature stage:nil alias:nil delegate:nil];
+}
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage {
+    return [[BranchActivityItemProvider alloc] initWithParams:params tags:nil feature:feature stage:stage alias:nil delegate:nil];
+}
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags {
+    return [[BranchActivityItemProvider alloc] initWithParams:params tags:tags feature:feature stage:stage alias:nil delegate:nil];
+}
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
+    return [[BranchActivityItemProvider alloc] initWithParams:params tags:nil feature:feature stage:stage alias:alias delegate:nil];
+}
+
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
+    return [[BranchActivityItemProvider alloc] initWithParams:params tags:tags feature:feature stage:stage alias:alias delegate:nil];
+}
 
 #pragma mark - Configuration methods
 
