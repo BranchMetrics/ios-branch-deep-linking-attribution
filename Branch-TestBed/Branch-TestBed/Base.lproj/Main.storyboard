@@ -5,6 +5,99 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
     <scenes>
+        <!--Create Deep Link Controller-->
+        <scene sceneID="PWE-5k-wwg">
+            <objects>
+                <viewController id="sGa-0z-x28" customClass="CreateDeepLinkController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="IOS-qo-kpf"/>
+                        <viewControllerLayoutGuide type="bottom" id="7HC-mN-iYc"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="oP9-cV-QnN">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Gravatar Email Address" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="uFu-1y-pJZ">
+                                <rect key="frame" x="16" y="141" width="288" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="sGa-0z-x28" id="oDU-8Q-fxX"/>
+                                </connections>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6zc-Tk-J5i">
+                                <rect key="frame" x="62" y="179" width="164" height="30"/>
+                                <state key="normal" title="Send Deep Linking URL">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="sendLinkPressed:" destination="sGa-0z-x28" eventType="touchUpInside" id="ekk-7Z-kl0"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="YdG-y6-ZV2"/>
+                    <connections>
+                        <outlet property="emailField" destination="uFu-1y-pJZ" id="GnK-IB-irZ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="EIA-31-P61" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1130" y="-558"/>
+        </scene>
+        <!--Example Deep Linking Controller-->
+        <scene sceneID="FSb-7R-3Ws">
+            <objects>
+                <viewController storyboardIdentifier="DeepLinkingController" id="WoF-5F-nCI" customClass="ExampleDeepLinkingController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="R2n-7C-qwY"/>
+                        <viewControllerLayoutGuide type="bottom" id="etk-aW-hN7"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="VpS-RS-Wov">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="hUU-IE-nsx">
+                                <rect key="frame" x="32" y="28" width="256" height="256"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="256" id="Lsc-ag-D5F"/>
+                                    <constraint firstAttribute="height" constant="256" id="iN4-Ka-vre"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jth-Kn-cfl">
+                                <rect key="frame" x="137" y="361" width="40" height="30"/>
+                                <state key="normal" title="Close">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="closePressed" destination="WoF-5F-nCI" eventType="touchUpInside" id="BMS-K9-Y0l"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This controller was launched because a gravatar_email was present in the Branch open dictionary" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="288" translatesAutoresizingMaskIntoConstraints="NO" id="tCf-6m-Vmc">
+                                <rect key="frame" x="16" y="292" width="288" height="61"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="hUU-IE-nsx" firstAttribute="top" secondItem="R2n-7C-qwY" secondAttribute="bottom" constant="8" id="5Gz-Mh-npE"/>
+                            <constraint firstAttribute="trailing" secondItem="tCf-6m-Vmc" secondAttribute="trailing" constant="16" id="9DK-WI-v85"/>
+                            <constraint firstItem="tCf-6m-Vmc" firstAttribute="top" secondItem="hUU-IE-nsx" secondAttribute="bottom" constant="8" id="V3I-ID-36i"/>
+                            <constraint firstAttribute="centerX" secondItem="hUU-IE-nsx" secondAttribute="centerX" id="rnF-8u-Vi3"/>
+                            <constraint firstItem="tCf-6m-Vmc" firstAttribute="leading" secondItem="VpS-RS-Wov" secondAttribute="leading" constant="16" id="yCE-Q6-5su"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="profileImageView" destination="hUU-IE-nsx" id="xL6-bB-cXn"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cIl-Ee-L87" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="671" y="-558"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
@@ -183,6 +276,15 @@
                                 </state>
                                 <connections>
                                     <action selector="cmdShareSheet:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="3R1-pW-Orr"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IPP-x0-l4i">
+                                <rect key="frame" x="163" y="422" width="69" height="30"/>
+                                <state key="normal" title="Deep Link">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="sGa-0z-x28" kind="push" id="1iO-PO-fsg"/>
                                 </connections>
                             </button>
                         </subviews>

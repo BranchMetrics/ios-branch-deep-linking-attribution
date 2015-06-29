@@ -29,20 +29,21 @@ For your reference, see the methods and parameters table below.
 |:------------- |:---------------:| -------------:|   
 [Get a Singleton Branch Instance](#get-a-singleton-branch-instance)|[Method](#methods)|[Parameter](#parameters)
 |[Init Branch Session and Deep Link Routing Function](#init-branch-session-and-deep-link-routing-function)|[Method](#methods-1)|[Parameter](#parameters-1)|
-|[Retrieve Session (Install or Open) Parameters](#retrieve-session-install-or-open-parameters)|[Method](#methods-2)|[Parameter](#parameters-2)| 
-|[Retrieve Install (Install Only) Parameters](#retrieve-install-install-only-parameters)|[Method](#methods-3)|[Parameter](#parameters-3)|
-[Persistent Identities](#persistent-identities)|[Method](#methods-4)|[Parameter](#parameters-4)|
-[Logout](#logout)|[Method](#methods-5)|[Parameter](#parameters-5)|
-[Register Custom Events](#register-custom-events)|[Method](#methods-6)| [Parameter](#parameters-6)|
-[Generate Tracked, Deep Linking URLs (Pass Data Across Install and Open)](#generate-tracked-deep-linking-urls-pass-data-across-install-and-open)|[Method](#methods-7)|[Parameter](#parameters-7)|
-[UIActivityView Share Sheet](#uiactivityview-share-sheet)|[Method](#methods-8)|[Parameter](#parameters-8)| 
-|[Get Reward Balance](#get-reward-balance)|[Method](#methods-9)|[Parameters] (#parameters-9)| 
-[Redeem All or Some of the Reward Balance (Store State)](#redeem-all-or-some-of-the-reward-balance-store-state)|[Method](#methods-10)|[Parameter](#parameters-10)|
-[Get Credit History](#get-credit-history)|[Method](#methods-11)|[Parameters] (#parameters-11)|
-[Get Promo Code](#get-promo-code)|[Method](#methods-12)|[Parameter] (#parameters-12)|
-[Create Promo Code](#create-promo-code)|[Method](#methods-13)|[Parameter] (#parameters-13)|
-[Validate Promo Code](#validate-promo-code)|[Method](#methods-17)|[Parameter](#parameters-17)|
-[Apply Promo Code](#apply-promo-code)|[Method](#methods-18)|[Parameter] (#parameters-18)|
+|[Register Deep Link Controller](#register-a-deep-link-controller)|[Method](#methods-2)|[Parameter](#parameters-2)|
+|[Retrieve Session (Install or Open) Parameters](#retrieve-session-install-or-open-parameters)|[Method](#methods-3)|[Parameter](#parameters-3)| 
+|[Retrieve Install (Install Only) Parameters](#retrieve-install-install-only-parameters)|[Method](#methods-4)|[Parameter](#parameters-4)|
+[Persistent Identities](#persistent-identities)|[Method](#methods-5)|[Parameter](#parameters-5)|
+[Logout](#logout)|[Method](#methods-6)|[Parameter](#parameters-6)|
+[Register Custom Events](#register-custom-events)|[Method](#methods-7)| [Parameter](#parameters-7)|
+[Generate Tracked, Deep Linking URLs (Pass Data Across Install and Open)](#generate-tracked-deep-linking-urls-pass-data-across-install-and-open)|[Method](#methods-8)|[Parameter](#parameters-8)|
+[UIActivityView Share Sheet](#uiactivityview-share-sheet)|[Method](#methods-9)|[Parameter](#parameters-9)| 
+|[Get Reward Balance](#get-reward-balance)|[Method](#methods-10)|[Parameters] (#parameters-10)| 
+[Redeem All or Some of the Reward Balance (Store State)](#redeem-all-or-some-of-the-reward-balance-store-state)|[Method](#methods-11)|[Parameter](#parameters-11)|
+[Get Credit History](#get-credit-history)|[Method](#methods-12)|[Parameters] (#parameters-12)|
+[Get Promo Code](#get-promo-code)|[Method](#methods-13)|[Parameter] (#parameters-13)|
+[Create Promo Code](#create-promo-code)|[Method](#methods-14)|[Parameter] (#parameters-14)|
+[Validate Promo Code](#validate-promo-code)|[Method](#methods-18)|[Parameter](#parameters-18)|
+[Apply Promo Code](#apply-promo-code)|[Method](#methods-19)|[Parameter] (#parameters-19)|
 
 ## Important Migration to v0.9.0
 We are renaming Referral Codes to Promo Codes to better indicate their purpose. Promo Codes do *not* establish a referred/referring user install relationship, which is unclear when called "referral codes." Consequently, all of the ReferralCode methods have been deprecated in favor of their PromoCode counterparts.
@@ -115,7 +116,7 @@ Alternatively, you can add the URI scheme in your project's Info page.
 1. Expand the "URL Types" section at the bottom.
 1. Click the "+" sign to add a new URI Scheme, as below:
 
-	![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png)
+![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png)
 
 ### Add Your Branch Key to Your Project
 
@@ -233,6 +234,9 @@ func application(application: UIApplication, openURL url: NSURL, sourceApplicati
 **isReferrable** (BOOL) _optional_
 : This boolean lets you control whether or not the user is eligible to be 'referred'. This is applicable for credits and influencer tracking. If isReferrable is set to NO | false, and the user clicks a link before entering the app, deep link parameters will appear, but that user will _not_ be considered referred. If isReferrable is set to YES | true, and the user clicks a link, deep link params will appear and the user _will_ be considered referred. Remove this argument to access the default, which only allows the user to be referred on a _fresh install_, but not on opens.
 
+**automaticallyDisplayDeepLinkController** (BOOL) _optional_
+: This boolean lets you control whether or not the Branch should attempt to launch Deep Linked controllers (based on those registered with `[branch registerDeepLinkController:forKey:]`). The default is NO | false.
+
 ###### handleDeepLink
 
 **url** (NSString *) _required_
@@ -247,6 +251,36 @@ Nothing
 ###### handleDeepLink
 
 **BOOL** handleDeepLink will return a boolean indicating whether Branch has handled the URI. If the URI call is 'myapp://open?link_click_id=12345', then handleDeepLink will return YES because the Branch click object is present. If just 'myapp://', handleDeepLink will return NO.
+
+###Register a Deep Link Controller
+
+Register a controller for Branch to show when specific keys are present in the Branch open / install dictionary.
+
+####Methods
+
+###### Objective-C
+
+```objc
+[[Branch getInstance] registerDeepLinkController:myController forKey:@"my-key"];
+```
+
+###### Swift
+
+```swift
+Branch.getInstance().registerDeepLinkController(myController forKey:"my-key")
+```
+
+####Parameters
+
+**controller** (UIViewController <BranchDeepLinkingController> *) _required_
+: The controller to display when the key is present in the dictionary.
+
+**key** (NSString *) _required_
+: The key checked for in open / install dictionaries.
+
+####Returns
+
+Nothing
 
 ###Retrieve session (install or open) parameters
 
