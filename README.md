@@ -267,7 +267,7 @@ Register a controller for Branch to show when specific keys are present in the B
 ###### Swift
 
 ```swift
-Branch.getInstance()registerDeepLinkController(myController forKey:"my-key")
+Branch.getInstance().registerDeepLinkController(myController forKey:"my-key")
 ```
 
 ####Parameters
@@ -275,7 +275,7 @@ Branch.getInstance()registerDeepLinkController(myController forKey:"my-key")
 **controller** (UIViewController <BranchDeepLinkingController> *) _required_
 : The controller to display when the key is present in the dictionary.
 
-**forKey** (NSString *) _required_
+**key** (NSString *) _required_
 : The key checked for in open / install dictionaries.
 
 ####Returns
