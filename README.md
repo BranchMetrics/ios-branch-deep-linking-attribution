@@ -536,7 +536,9 @@ UIActivityView is the standard way of allowing users to share content from your 
 
 The Branch iOS SDK includes a subclassed UIActivityItemProvider that can be passed into a UIActivityViewController, that will generate a Branch short URL and automatically tag it with the channel the user selects (Facebook, Twitter, etc.).
 
-**Note**: This method was formerly getBranchActivityItemWithDefaultURL:, which is now deprecated. Rather than requiring a default URL that acts as a placeholder for UIActivityItemProvider, a longURL is generated instantly and synchronously.
+You can optionally provide a delegate that conforms to the `BranchActivityItemProviderDelegate` which allows you to customize the content of the short url actually used to shared depending on which platform the user has chosen to share with.
+
+As [mentioned in the docs](https://dev.branch.io/recipes/dynamic_link_creation/#parameters-1), you can customize generated links to provide an `$og_image_url` if the user is posting to Facebook, or `twitter:image` if the user chose Twitter, for example.
 
 The sample app included with the Branch iOS SDK shows a sample of this in ViewController.m:
 
