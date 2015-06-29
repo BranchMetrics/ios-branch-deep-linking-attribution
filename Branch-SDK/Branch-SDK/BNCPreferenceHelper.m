@@ -443,7 +443,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 - (void)persistPrefsToDisk {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (![NSKeyedArchiver archiveRootObject:self.persistenceDict toFile:[self prefsFile]]) {
+        if (![NSKeyedArchiver archiveRootObject:[self.persistenceDict copy] toFile:[self prefsFile]]) {
             NSLog(@"[Branch Warning] Failed to persist preferences to disk");
         }
     });
