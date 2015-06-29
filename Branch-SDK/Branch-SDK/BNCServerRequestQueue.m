@@ -11,7 +11,7 @@
 #import "BranchCloseRequest.h"
 #import "BranchOpenRequest.h"
 
-NSString * const STORAGE_KEY = @"BNCServerRequestQueue";
+NSString * const BRANCH_QUEUE_FILE = @"BNCServerRequestQueue";
 NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 
 @interface BNCServerRequestQueue()
@@ -19,8 +19,6 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 @property (nonatomic, strong) NSMutableArray *queue;
 @property (nonatomic) dispatch_queue_t asyncQueue;
 @property (strong, nonatomic) NSTimer *writeTimer;
-
-+ (NSMutableArray *)retrieve;
 
 @end
 
@@ -47,7 +45,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 - (void)insert:(BNCServerRequest *)request at:(unsigned int)index {
     @synchronized(self.queue) {
         if (index > self.queue.count) {
-            [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
+            [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
             return;
         }
         
@@ -76,7 +74,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     BNCServerRequest *request = nil;
     @synchronized(self.queue) {
         if (index >= self.queue.count) {
-            [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
+            [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
             return nil;
         }
         
@@ -99,7 +97,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 
 - (BNCServerRequest *)peekAt:(unsigned int)index {
     if (index >= self.queue.count) {
-        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
+        [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
         return nil;
     }
     
@@ -194,54 +192,39 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 }
 
 - (void)persistToDisk {
+    NSArray *requestsToPersist = [self.queue copy];
     dispatch_async(self.asyncQueue, ^{
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        @synchronized(self.queue) {
-            NSMutableArray *arr = [[NSMutableArray alloc] init];
-            for (BNCServerRequest *req in self.queue) {
-                if (req) {
-                    @try {
-                        NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
-                        [arr addObject:encodedReq];
-                    }
-                    @catch (NSException* exception) {
-                    }
-                }
-            }
-            
-            [defaults setObject:arr forKey:STORAGE_KEY];
+        NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
+        
+        for (BNCServerRequest *req in requestsToPersist) {
+            NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
+            [encodedRequests addObject:encodedReq];
         }
-        [defaults synchronize];
+        
+        if (![NSKeyedArchiver archiveRootObject:encodedRequests toFile:[self queueFile]]) {
+            NSLog(@"[Branch Warning] Failed to persist queue to disk");
+        }
     });
 }
 
-+ (NSMutableArray *)retrieve {
+- (void)retrieve {
     NSMutableArray *queue = [[NSMutableArray alloc] init];
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    id data = [defaults objectForKey:STORAGE_KEY];
-    if (!data) {
-        return queue;
-    }
-    
-    NSArray *arr = (NSArray *)data;
-    for (NSData *encodedRequest in arr) {
-        if (encodedRequest) {
-            @try {
-                BNCServerRequest *request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
-                
-                // TODO figure out loading from disk
-                
-                if (![request isKindOfClass:[BranchCloseRequest class]]) {
-                    [queue addObject:request];
-                }
-            }
-            @catch (NSException* exception) {
-            }
+    NSArray *encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithFile:[self queueFile]];
+
+    for (NSData *encodedRequest in encodedRequests) {
+        BNCServerRequest *request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
+        
+        // Throw out persisted close requests
+        if (![request isKindOfClass:[BranchCloseRequest class]]) {
+            [queue addObject:request];
         }
     }
     
-    return queue;
+    self.queue = queue;
+}
+
+- (NSString *)queueFile {
+    return [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject] stringByAppendingPathComponent:BRANCH_QUEUE_FILE];
 }
 
 #pragma mark - Singleton method
@@ -252,8 +235,8 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     
     dispatch_once(&onceToken, ^{
         sharedQueue = [[BNCServerRequestQueue alloc] init];
-        sharedQueue.queue = [BNCServerRequestQueue retrieve];
-        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Retrieved from Persist: %@", sharedQueue];
+        [sharedQueue retrieve];
+        [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Retrieved from Persist: %@", sharedQueue];
     });
     
     return sharedQueue;

@@ -17,10 +17,11 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
     BOOL isRealHardwareId;
-    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper isDebug]];
+    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:preferenceHelper.isDebug];
     if (hardwareId) {
         params[@"hardware_id"] = hardwareId;
         params[@"is_hardware_id_real"] = @(isRealHardwareId);
@@ -37,13 +38,13 @@
     [self safeSetValue:[BNCSystemObserver getScreenHeight] forKey:@"screen_height" onDict:params];
     [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:@"uri_scheme" onDict:params];
     [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:@"update" onDict:params];
-    [self safeSetValue:[BNCPreferenceHelper getLinkClickIdentifier] forKey:@"link_identifier" onDict:params];
+    [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:@"link_identifier" onDict:params];
     
     params[@"ad_tracking_enabled"] = @([BNCSystemObserver adTrackingSafe]);
-    params[@"is_referrable"] = @([BNCPreferenceHelper getIsReferrable]);
-    params[@"debug"] = @([BNCPreferenceHelper isDebug]);
+    params[@"is_referrable"] = @(preferenceHelper.isReferrable);
+    params[@"debug"] = @(preferenceHelper.isDebug);
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:@"install"] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"install"] key:key callback:callback];
 }
 
 - (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {

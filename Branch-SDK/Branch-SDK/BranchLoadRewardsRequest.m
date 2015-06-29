@@ -26,8 +26,9 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    NSString *endpoint = [NSString stringWithFormat:@"credits/%@", [BNCPreferenceHelper getIdentityID]];
-    [serverInterface getRequest:nil url:[BNCPreferenceHelper getAPIURL:endpoint] key:key callback:callback];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    NSString *endpoint = [NSString stringWithFormat:@"credits/%@", preferenceHelper.identityID];
+    [serverInterface getRequest:nil url:[preferenceHelper getAPIURL:endpoint] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -42,11 +43,12 @@
     for (NSString *key in response.data) {
         NSInteger credits = [response.data[key] integerValue];
         
-        if (credits != [BNCPreferenceHelper getCreditCountForBucket:key]) {
+        BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+        if (credits != [preferenceHelper getCreditCountForBucket:key]) {
             hasUpdated = YES;
         }
         
-        [BNCPreferenceHelper setCreditCount:credits forBucket:key];
+        [preferenceHelper setCreditCount:credits forBucket:key];
     }
     
     if (self.callback) {

@@ -12,6 +12,7 @@
 #import "BNCServerRequestQueue.h"
 #import "BNCLinkCache.h"
 #import "BranchDeepLinkingController.h"
+#import "BNCPreferenceHelper.h"
 
 /**
  `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.
@@ -107,15 +108,15 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchLeastRecentFirst
 };
 
-typedef NS_ENUM(NSUInteger, BranchReferralCodeLocation) {
-    BranchReferreeUser = 0,
-    BranchReferringUser = 2,
-    BranchBothUsers = 3
+typedef NS_ENUM(NSUInteger, BranchPromoCodeRewardLocation) {
+    BranchPromoCodeRewardReferredUser = 0,
+    BranchPromoCodeRewardReferringUser = 2,
+    BranchPromoCodeRewardBothUsers = 3
 };
 
-typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
-    BranchUniqueRewards = 1,
-    BranchUnlimitedRewards = 0
+typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
+    BranchPromoCodeUsageTypeOncePerUser = 1,
+    BranchPromoCodeUsageTypeUnlimitedUses = 0
 };
 
 @interface Branch : NSObject
@@ -163,13 +164,14 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
- 
+
  Internally, this will create a short Branch Url that will be attached to the shared content.
- 
+
  @param params A dictionary to use while building up the Branch link.
  @param feature The feature the generated link will be associated with.
- */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature;
+*/
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature  __attribute__((deprecated(("Use methods without 'and'"))));
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -180,7 +182,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param feature The feature the generated link will be associated with.
  @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage __attribute__((deprecated(("Use methods without 'and'"))));
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -192,7 +195,8 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
  @param tags An array of tag strings to be associated with the link.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags __attribute__((deprecated(("Use methods without 'and'"))));
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -205,7 +209,9 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param alias The alias for a link.
  @warning This can fail if the alias is already taken.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags alias:(NSString *)alias;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias __attribute__((deprecated(("Use methods without 'and'"))));
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias __attribute__((deprecated(("Use methods without 'and'"))));
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -213,13 +219,16 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  Internally, this will create a short Branch Url that will be attached to the shared content.
  
  @param params A dictionary to use while building up the Branch link.
- @param tags An array of tag strings to be associated with the link.
  @param feature The feature the generated link will be associated with.
  @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
+ @param tags An array of tag strings to be associated with the link.
  @param alias The alias for a link.
+ @params delegate A delegate allowing you to override any of the parameters provided here based on the user-selected channel
  @warning This can fail if the alias is already taken.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags alias:(NSString *)alias delegate:(id <BranchActivityItemProviderDelegate>)delegate;
+
+
 
 #pragma mark - Initialization methods
 
@@ -1050,55 +1059,60 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
 
 #pragma mark - Referral Code methods
 
-///----------------------------
-/// @name Referral Code methods
-///----------------------------
+///-------------------------
+/// @name Promo Code methods
+///-------------------------
 
 /**
- Get a referral code without providing any parameters.
+ Get a promo code without providing any parameters.
  
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getReferralCodeWithCallback:(callbackWithParams)callback;
+- (void)getPromoCodeWithCallback:(callbackWithParams)callback;
+- (void)getReferralCodeWithCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeCallback: instead"))));;
 
 /**
- Get a referral code with an amount of credits the code will be worth.
+ Get a promo code with an amount of credits the code will be worth.
  
  @param amount Number of credits generating user will earn when a user is referred by this code.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback;
+- (void)getPromoCodeWithAmount:(NSInteger)amount callback:(callbackWithParams)callback;
+- (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithAmount:callback: instead"))));;
 
 /**
- Get a referral code with an amount of credits the code will be worth, and a prefix for the code.
+ Get a promo code with an amount of credits the code will be worth, and a prefix for the code.
  
  @param prefix The string to prefix the code with.
  @param amount Number of credits generating user will earn when a user is referred by this code.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback;
+- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount callback:(callbackWithParams)callback;
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithPrefix:amount:callback: instead"))));;
 
 /**
- Get a referral code with an amount of credits the code will be worth, and an expiration date.
+ Get a promo code with an amount of credits the code will be worth, and an expiration date.
  
  @param amount Number of credits generating user will earn when a user is referred by this code.
  @param expiration The date when the code should be invalidated.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback;
+- (void)getPromoCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback;
+- (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithAmount:expiration:callback: instead"))));
 
 /**
- Get a referral code with an amount of credits the code will be worth, the prefix to put in front of it, and an expiration date.
+ Get a promo code with an amount of credits the code will be worth, the prefix to put in front of it, and an expiration date.
  
  @param prefix The string to prefix the code with.
  @param amount Number of credits generating user will earn when a user is referred by this code.
  @param expiration The date when the code should be invalidated.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback;
+- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback;
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithPrefix:amount:expiration:callback: instead"))));
 
 /**
- Get a referral code with an amount of credits the code will be worth, the prefix to put in front of it, an expiration date, the bucket it will be part of, the calculation method, and location of user earning credits.
+ Get a promo code with an amount of credits the code will be worth, the prefix to put in front of it, an expiration date, the bucket it will be part of, the calculation method, and location of user earning credits.
  
  @param prefix The string to prefix the code with.
  @param amount Number of credits to be earned (by the user specified by location).
@@ -1108,30 +1122,33 @@ typedef NS_ENUM(NSUInteger, BranchReferralCodeCalculation) {
  @param location The location of the user who earns credits for the referral, one of Referrer, Referree (the referred user), or Both.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(BranchReferralCodeCalculation)calcType location:(BranchReferralCodeLocation)location andCallback:(callbackWithParams)callback;
+- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket usageType:(BranchPromoCodeUsageType)usageType rewardLocation:(BranchPromoCodeRewardLocation)rewardLocation callback:(callbackWithParams)callback;
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(BranchPromoCodeUsageType)calcType location:(BranchPromoCodeRewardLocation)location andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithPrefix:amount:expiration:bucket:usageType:rewardLocation:callback: instead"))));
 
 /**
- Validate a referral code. Will callback with the referral code object on success, or an error if it's invalid.
+ Validate a promo code. Will callback with the referral code object on success, or an error if it's invalid.
  
  @param code The referral code to validate
  @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
  */
-- (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
+- (void)validatePromoCode:(NSString *)code callback:(callbackWithParams)callback;
+- (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use validatePromoCode:callback: instead"))));
 
 /**
- Apply a referral code, awarding the referral points. Will callback with the referral code object on success, or an error if it's invalid.
+ Apply a promo code, awarding the referral points. Will callback with the referral code object on success, or an error if it's invalid.
  
  @param code The referral code to validate
  @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
  */
-- (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback;
+- (void)applyPromoCode:(NSString *)code callback:(callbackWithParams)callback;
+- (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use applyPromoCode:callback: instead"))));
 
 /**
  Method for creating a one of Branch instance and specifying its dependencies.
  
  @warning This is meant for use internally only (exposed for the sake of testing) and should not be used by apps.
  */
-- (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache key:(NSString *)key;
+- (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache preferenceHelper:(BNCPreferenceHelper *)preferenceHelper key:(NSString *)key;
 
 /**
  Method for logging a message to the Branch server, used when remote debugging is enabled.

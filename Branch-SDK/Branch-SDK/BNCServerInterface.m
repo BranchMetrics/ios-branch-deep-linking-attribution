@@ -7,7 +7,6 @@
 //
 
 #import "BNCServerInterface.h"
-#import "BNCPreferenceHelper.h"
 #import "BNCConfig.h"
 #import "BNCEncodingUtils.h"
 #import "BNCError.h"
@@ -81,11 +80,11 @@
         BOOL isRetryableStatusCode = status >= 500;
         
         // Retry the request if appropriate
-        if (retryNumber < [BNCPreferenceHelper getRetryCount] && isRetryableStatusCode) {
-            dispatch_time_t dispatchTime = dispatch_time(DISPATCH_TIME_NOW, [BNCPreferenceHelper getRetryInterval] * NSEC_PER_SEC);
+        if (retryNumber < self.preferenceHelper.retryCount && isRetryableStatusCode) {
+            dispatch_time_t dispatchTime = dispatch_time(DISPATCH_TIME_NOW, self.preferenceHelper.retryInterval * NSEC_PER_SEC);
             dispatch_after(dispatchTime, dispatch_get_main_queue(), ^{
                 if (log) {
-                    [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"Replaying request with url %@", request.URL.relativePath];
+                    [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"Replaying request with url %@", request.URL.relativePath];
                 }
                 
                 // Create the next request
@@ -108,7 +107,7 @@
             }
             
             if (error && log) {
-                [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, error.localizedDescription];
+                [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, error.localizedDescription];
             }
 
             callback(serverResponse, error);
@@ -133,7 +132,7 @@
     NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:preparedParams]];
     
     if (log) {
-        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
+        [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
     }
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
@@ -151,12 +150,12 @@
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     
     if (log) {
-        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
-        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"body = %@", preparedParams];
+        [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
+        [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"body = %@", preparedParams];
     }
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    [request setTimeoutInterval:[BNCPreferenceHelper getTimeout]];
+    [request setTimeoutInterval:self.preferenceHelper.timeout];
     [request setHTTPMethod:@"POST"];
     [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
@@ -194,7 +193,7 @@
     }
 
     if (log) {
-        [BNCPreferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned = %@", serverResponse];
+        [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned = %@", serverResponse];
     }
     
     return serverResponse;
