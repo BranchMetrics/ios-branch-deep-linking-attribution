@@ -1079,6 +1079,11 @@ static int BNCDebugTriggerFingersSimulator = 2;
                 [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
                 return;
             }
+            else if (![req isKindOfClass:[BranchOpenRequest class]] && (!self.preferenceHelper.deviceFingerprintID || !self.preferenceHelper.sessionID)) {
+                NSLog(@"[Branch Error] Missing session items!");
+                [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
+                return;
+            }
             
             if (![req isKindOfClass:[BranchCloseRequest class]]) {
                 [self clearTimer];
