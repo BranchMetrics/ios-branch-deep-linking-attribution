@@ -347,6 +347,34 @@
 }
 
 
+#pragma mark - Scenario 8
+
+// Somehow, betweeen initSession and the next call, all preference items are cleared.
+// Shouldn't crash in this case, but can't do much besides "you need to re-init"
+- (void)testScenario8 {
+    BNCPreferenceHelper *preferenceHelper = [[BNCPreferenceHelper alloc] init];
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_live"];
+    [branch setAppListCheckEnabled:NO];
+    
+    XCTestExpectation *expecation = [self expectationWithDescription:@"Scenario8 Expectation"];
+    [self initSessionExpectingSuccess:branch serverInterface:serverInterfaceMock callback:^{
+        preferenceHelper.sessionID = nil;
+        preferenceHelper.deviceFingerprintID = nil;
+        
+        [branch getShortURLWithCallback:^(NSString *url, NSError *error) {
+            XCTAssertNotNil(error);
+            XCTAssertEqual(error.code, BNCInitError);
+            
+            [self safelyFulfillExpectation:expecation];
+        }];
+    }];
+    
+    [self awaitExpectations];
+}
+
+
 #pragma mark - Internals
 
 
