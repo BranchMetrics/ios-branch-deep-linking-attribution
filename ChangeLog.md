@@ -82,9 +82,6 @@ Branch iOS SDK change log
 - v0.7.0
   * Large rewrite of the internals of Branch.m to make things more stable, predictable, readable, and maintainable.
   * Added callbacks to the `redeemRewards` methods.
-- v0.7.0
-  * Large rewrite of the internals of Branch.m to make things more stable, predictable, readable, and maintainable.
-  * Added callbacks to the `redeemRewards` methods.
   * Updating Queue persistence to be non-immediate. Rather than persisting to disk on every change, it persists after time has elapsed to prevent hanging issues when in a loop.
   * Making errors more specific -- now you actually get the error message back, instead of a generic one.
   * Fixing issue with BranchActivityItemProvider when using the Twitter share sheet.
@@ -193,3 +190,6 @@ Branch iOS SDK change log
 
 - v0.3.2: Added API for referral code
 
+- v0.3.1: Fixed synchronization issue in queue persistence
+
+- v0.3.0: Added NSError to callbacks
