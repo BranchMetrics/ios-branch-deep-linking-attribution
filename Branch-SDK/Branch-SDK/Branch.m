@@ -99,7 +99,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         // If no app key
         NSString *appKey = preferenceHelper.appKey;
         if (!appKey) {
-            NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+            NSLog(@"[Branch Warning] Please enter your branch_key in the plist!");
             return nil;
         }
         else {
@@ -121,12 +121,12 @@ static int BNCDebugTriggerFingersSimulator = 2;
         // If no app key
         NSString *appKey = preferenceHelper.appKey;
         if (!appKey) {
-            NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+            NSLog(@"[Branch Warning] Please enter your branch_key in the plist!");
             return nil;
         }
         // If they did provide an app key, show them a warning. Shouldn't use app key with a test instance.
         else {
-            NSLog(@"Branch Warning: You requested the test instance, but provided an app key. App Keys cannot be used for test instances. Additionally, usage of App Key is deprecated, please move toward using a Branch key");
+            NSLog(@"[Branch Warning] You requested the test instance, but provided an app key. App Keys cannot be used for test instances. Additionally, usage of App Key is deprecated, please move toward using a Branch key");
             keyToUse = appKey;
         }
     }
@@ -485,7 +485,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
             callback(false, [NSError errorWithDomain:BNCErrorDomain code:BNCRedeemCreditsError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot redeem zero credits." }]);
         }
         else {
-            NSLog(@"Branch Warning: Cannot redeem zero credits");
+            NSLog(@"[Branch Warning] Cannot redeem zero credits");
         }
         return;
     }
@@ -496,7 +496,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
             callback(false, [NSError errorWithDomain:BNCErrorDomain code:BNCRedeemCreditsError userInfo:@{ NSLocalizedDescriptionKey: @"You're trying to redeem more credits than are available. Have you loaded rewards?" }]);
         }
         else {
-            NSLog(@"Branch Warning: You're trying to redeem more credits than are available. Have you loaded rewards?");
+            NSLog(@"[Branch Warning] You're trying to redeem more credits than are available. Have you loaded rewards?");
         }
         return;
     }
@@ -831,7 +831,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         // If there was stored key and it isn't the same as the currently used (or doesn't exist), we need to clean up
         // Note: Link Click Identifier is not cleared because of the potential for that to mess up a deep link
         if (preferenceHelper.lastRunBranchKey && ![key isEqualToString:preferenceHelper.lastRunBranchKey]) {
-            NSLog(@"Branch Warning: The Branch Key has changed, clearing relevant items");
+            NSLog(@"[Branch Warning] The Branch Key has changed, clearing relevant items");
             
             preferenceHelper.appVersion = nil;
             preferenceHelper.deviceFingerprintID = nil;
@@ -1075,7 +1075,12 @@ static int BNCDebugTriggerFingersSimulator = 2;
             };
 
             if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.identityID) {
-                NSLog(@"Branch Error: User session has not been initialized!");
+                NSLog(@"[Branch Error] User session has not been initialized!");
+                [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
+                return;
+            }
+            else if (![req isKindOfClass:[BranchOpenRequest class]] && (!self.preferenceHelper.deviceFingerprintID || !self.preferenceHelper.sessionID)) {
+                NSLog(@"[Branch Error] Missing session items!");
                 [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
                 return;
             }
@@ -1112,11 +1117,11 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 - (void)initializeSession {
     if (!self.branchKey) {
-        NSLog(@"Branch Warning: Please enter your branch_key in the plist!");
+        NSLog(@"[Branch Warning] Please enter your branch_key in the plist!");
         return;
     }
     else if ([self.branchKey rangeOfString:@"key_test_"].location != NSNotFound) {
-        NSLog(@"Branch Warning: You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment.");
+        NSLog(@"[Branch Warning] You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment.");
     }
     
     if (!self.preferenceHelper.identityID) {
