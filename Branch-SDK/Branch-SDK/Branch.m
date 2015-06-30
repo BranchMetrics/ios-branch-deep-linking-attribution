@@ -252,17 +252,17 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - InitSession Permutation methods
 
 - (void)initSession {
-    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && ![self hasUser];
+    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && !self.preferenceHelper.sessionID;
     [self initSessionWithLaunchOptions:nil isReferrable:isReferrable explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:nil];
 }
 
 - (void)initSessionAndAutomaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController {
-    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && ![self hasUser];
+    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && !self.preferenceHelper.sessionID;
     [self initSessionWithLaunchOptions:nil isReferrable:isReferrable explicitlyRequestedReferrable:NO automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:nil];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options {
-    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && ![self hasUser];
+    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && !self.preferenceHelper.sessionID;
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:nil];
 }
 
@@ -271,12 +271,12 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)initSessionAndRegisterDeepLinkHandler:(callbackWithParams)callback {
-    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && ![self hasUser];
+    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && !self.preferenceHelper.sessionID;
     [self initSessionWithLaunchOptions:nil isReferrable:isReferrable explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:callback];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback {
-    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && ![self hasUser];
+    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && !self.preferenceHelper.sessionID;
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:callback];
 }
 
@@ -285,7 +285,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController {
-    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && ![self hasUser];
+    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && !self.preferenceHelper.sessionID;
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:NO automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:nil];
 }
 
@@ -298,7 +298,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)initSessionAndAutomaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController deepLinkHandler:(callbackWithParams)callback {
-    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && ![self hasUser];
+    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && !self.preferenceHelper.sessionID;
     [self initSessionWithLaunchOptions:nil isReferrable:isReferrable explicitlyRequestedReferrable:NO automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:callback];
 }
 
@@ -307,7 +307,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController deepLinkHandler:(callbackWithParams)callback {
-    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && ![self hasUser];
+    BOOL isReferrable = [[BNCSystemObserver getUpdateState] isEqualToNumber:@0] && !self.preferenceHelper.sessionID;
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:NO automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:callback];
 }
 
@@ -988,7 +988,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     if (self.isInitialized) {
         self.isInitialized = NO;
 
-        if ([self hasSession] && ![self.requestQueue containsClose]) {
+        if (self.preferenceHelper.sessionID && ![self.requestQueue containsClose]) {
             BranchCloseRequest *req = [[BranchCloseRequest alloc] init];
             [self.requestQueue enqueue:req];
         }
@@ -1074,7 +1074,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
                 }
             };
 
-            if (![req isKindOfClass:[BranchInstallRequest class]] && ![self hasUser]) {
+            if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.identityID) {
                 NSLog(@"Branch Error: User session has not been initialized!");
                 [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
                 return;
@@ -1092,24 +1092,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
     }
 }
 
-
-#pragma mark - Branch State checks
-
-- (BOOL)hasIdentity {
-    return self.preferenceHelper.userIdentity != nil;
-}
-
-- (BOOL)hasUser {
-    return self.preferenceHelper.identityID != nil;
-}
-
-- (BOOL)hasSession {
-    return self.preferenceHelper.sessionID != nil;
-}
-
-- (BOOL)hasAppKey {
-    return self.preferenceHelper.appKey != nil;
-}
 
 #pragma mark - Session Initialization
 
@@ -1137,7 +1119,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         NSLog(@"Branch Warning: You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment.");
     }
     
-    if (![self hasUser]) {
+    if (!self.preferenceHelper.identityID) {
         [self registerInstallOrOpen:[BranchInstallRequest class]];
     }
     else {
