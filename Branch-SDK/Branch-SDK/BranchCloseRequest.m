@@ -14,15 +14,10 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
-    // TODO remove this hack.
-    id identityId = preferenceHelper.identityID ?: [NSNull null];
-    id sessionId = preferenceHelper.sessionID ?: [NSNull null];
-    id fingerprintId = preferenceHelper.deviceFingerprintID ?: [NSNull null];
-
     NSDictionary *params = @{
-        @"identity_id": identityId,
-        @"session_id": sessionId,
-        @"device_fingerprint_id": fingerprintId
+        @"identity_id": preferenceHelper.identityID,
+        @"session_id": preferenceHelper.sessionID,
+        @"device_fingerprint_id": preferenceHelper.deviceFingerprintID
     };
     
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"close"] key:key callback:callback];
