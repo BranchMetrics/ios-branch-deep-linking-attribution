@@ -1,5 +1,13 @@
 Branch iOS SDK change log
 
+- v0.10.0
+  * Adding an automatic deep linking feature, allowing devs to register a controller to be displayed based on keys in the open dictionary.
+  * Adding a delegate to the `BranchActivityItemProvider`, allowing devs to override link items based on selected sharing network.
+  * Fixed a potential crash w/ the persistence item if modified while saving.
+  * Deprecated some additional functions for the `getActivityItem:` methods, trying to move away from using "and" in method naming.
+  * Adding a check to prevent requests from being made when the SDK is in a bad state (missing device fingerprint or session).
+  * Exposed the `BNCConfig` header in the framework.
+
 - v0.9.3
   * Clearing the Link Cache on logout; links shouldn't be shared between users.
 
@@ -71,6 +79,9 @@ Branch iOS SDK change log
 
 - v0.7.1 Adding a missing item to the pod spec headers.
 
+- v0.7.0
+  * Large rewrite of the internals of Branch.m to make things more stable, predictable, readable, and maintainable.
+  * Added callbacks to the `redeemRewards` methods.
 - v0.7.0
   * Large rewrite of the internals of Branch.m to make things more stable, predictable, readable, and maintainable.
   * Added callbacks to the `redeemRewards` methods.
@@ -182,6 +193,3 @@ Branch iOS SDK change log
 
 - v0.3.2: Added API for referral code
 
-- v0.3.1: Fixed synchronization issue in queue persistence
-
-- v0.3.0: Added NSError to callbacks
