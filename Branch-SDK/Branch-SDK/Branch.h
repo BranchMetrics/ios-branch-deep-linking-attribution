@@ -11,6 +11,8 @@
 #import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCLinkCache.h"
+#import "BranchDeepLinkingController.h"
+#import "BNCPreferenceHelper.h"
 
 /**
  `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.
@@ -162,13 +164,14 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
- 
+
  Internally, this will create a short Branch Url that will be attached to the shared content.
- 
+
  @param params A dictionary to use while building up the Branch link.
  @param feature The feature the generated link will be associated with.
- */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature;
+*/
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature  __attribute__((deprecated(("Use methods without 'and'"))));
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -179,7 +182,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param feature The feature the generated link will be associated with.
  @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage __attribute__((deprecated(("Use methods without 'and'"))));
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -191,7 +195,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
  @param tags An array of tag strings to be associated with the link.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags __attribute__((deprecated(("Use methods without 'and'"))));
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -204,7 +209,9 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param alias The alias for a link.
  @warning This can fail if the alias is already taken.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags alias:(NSString *)alias;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias __attribute__((deprecated(("Use methods without 'and'"))));
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias __attribute__((deprecated(("Use methods without 'and'"))));
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -212,13 +219,16 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  Internally, this will create a short Branch Url that will be attached to the shared content.
  
  @param params A dictionary to use while building up the Branch link.
- @param tags An array of tag strings to be associated with the link.
  @param feature The feature the generated link will be associated with.
  @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
+ @param tags An array of tag strings to be associated with the link.
  @param alias The alias for a link.
+ @params delegate A delegate allowing you to override any of the parameters provided here based on the user-selected channel
  @warning This can fail if the alias is already taken.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags alias:(NSString *)alias delegate:(id <BranchActivityItemProviderDelegate>)delegate;
+
+
 
 #pragma mark - Initialization methods
 
@@ -250,13 +260,12 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)initSession:(BOOL)isReferrable;
 
 /**
- Just initialize the Branch session with the app launch options, specifying whether to allow it to be treated as a referral.
+ Just initialize the Branch session, specifying whether to allow it to automatically display matching deep linked controllers
  
- @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
- @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
- @warning This is not the recommended method of initializing Branch. While Branch is able to properly attribute deep linking info with the launch options, you lose the ability to do anything with a callback.
+ @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
+ @warning This is not the recommended method of initializing Branch, as you potentially lose deep linking info by not passing the launch options.
  */
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable;
+- (void)initSessionAndAutomaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController;
 
 /**
  Initialize the Branch session and handle the completion with a callback
@@ -265,6 +274,15 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @warning This is not the recommended method of initializing Branch, as you potentially lose deep linking info by not passing the launch options.
  */
 - (void)initSessionAndRegisterDeepLinkHandler:(callbackWithParams)callback;
+
+/**
+ Just initialize the Branch session with the app launch options, specifying whether to allow it to be treated as a referral.
+ 
+ @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
+ @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
+ @warning This is not the recommended method of initializing Branch. While Branch is able to properly attribute deep linking info with the launch options, you lose the ability to do anything with a callback.
+ */
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable;
 
 /**
  Initialize the Branch session and handle the completion with a callback
@@ -287,11 +305,74 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  Initialize the Branch session with the app launch options and handle the completion with a callback
  
  @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
+ @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
+ */
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController;
+
+/**
+ Initialize the Branch session and handle the completion with a callback
+ 
+ @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
+ @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
+ @warning This is not the recommended method of initializing Branch, as you potentially lose deep linking info by not passing the launch options.
+ */
+- (void)initSession:(BOOL)isReferrable automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController;
+
+/**
+ Initialize the Branch session and handle the completion with a callback
+ 
+ @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
+ @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
+ @warning This is not the recommended method of initializing Branch, as you potentially lose deep linking info by not passing the launch options.
+ */
+- (void)initSessionAndAutomaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController deepLinkHandler:(callbackWithParams)callback;
+
+/**
+ Initialize the Branch session with the app launch options and handle the completion with a callback
+ 
+ @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
  @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
  @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
  */
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback;
 
+/**
+ Initialize the Branch session with the app launch options and handle the completion with a callback
+ 
+ @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
+ @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
+ @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
+ */
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController;
+
+/**
+ Initialize the Branch session with the app launch options and handle the completion with a callback
+ 
+ @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
+ @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
+ @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
+ */
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController deepLinkHandler:(callbackWithParams)callback;
+
+/**
+ Initialize the Branch session with the app launch options and handle the completion with a callback
+ 
+ @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
+ @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
+ @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
+ @warning This is not the recommended method of initializing Branch, as you potentially lose deep linking info by not passing the launch options.
+ */
+- (void)initSessionAndAutomaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(callbackWithParams)callback;
+
+/**
+ Initialize the Branch session with the app launch options and handle the completion with a callback
+ 
+ @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
+ @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
+ @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
+ @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
+ */
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(callbackWithParams)callback;
 
 /**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
@@ -299,6 +380,14 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param url The url that caused the app to be opened.
  */
 - (BOOL)handleDeepLink:(NSURL *)url;
+
+#pragma mark - Deep Link Controller methods
+
+///---------------------------
+/// @name Deep Link Controller
+///---------------------------
+
+- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key;
 
 #pragma mark - Configuration methods
 
@@ -1059,7 +1148,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  
  @warning This is meant for use internally only (exposed for the sake of testing) and should not be used by apps.
  */
-- (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache key:(NSString *)key;
+- (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache preferenceHelper:(BNCPreferenceHelper *)preferenceHelper key:(NSString *)key;
 
 /**
  Method for logging a message to the Branch server, used when remote debugging is enabled.

@@ -13,7 +13,7 @@ typedef NS_ENUM(NSUInteger, BranchLinkType) {
     BranchLinkTypeOneTimeUse = 1
 };
 
-@interface BNCLinkData : NSObject <NSCopying>
+@interface BNCLinkData : NSObject
 
 @property (strong, nonatomic) NSMutableDictionary *data;
 

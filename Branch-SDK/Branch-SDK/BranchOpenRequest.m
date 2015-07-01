@@ -35,23 +35,23 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
-    NSString *fingerprintId = [BNCPreferenceHelper getDeviceFingerprintID];
-    if (!fingerprintId) {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    if (!preferenceHelper.deviceFingerprintID) {
         BOOL isRealHardwareId;
-        NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:[BNCPreferenceHelper isDebug]];
+        NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:preferenceHelper.isDebug];
         if (hardwareId) {
             params[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
             params[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = @(isRealHardwareId);
         }
     }
     else {
-        params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = fingerprintId;
+        params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
     }
 
-    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = [BNCPreferenceHelper getIdentityID];
+    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
     params[BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED] = @([BNCSystemObserver adTrackingSafe]);
-    params[BRANCH_REQUEST_KEY_IS_REFERRABLE] = @([BNCPreferenceHelper getIsReferrable]);
-    params[BRANCH_REQUEST_KEY_DEBUG] = @([BNCPreferenceHelper isDebug]);
+    params[BRANCH_REQUEST_KEY_IS_REFERRABLE] = @(preferenceHelper.isReferrable);
+    params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
 
     [self safeSetValue:[BNCSystemObserver getBundleID] forKey:BRANCH_REQUEST_KEY_BUNDLE_ID onDict:params];
     [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];
@@ -59,9 +59,9 @@
     [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:params];
     [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:params];
     [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:BRANCH_REQUEST_KEY_UPDATE onDict:params];
-    [self safeSetValue:[BNCPreferenceHelper getLinkClickIdentifier] forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:params];
+    [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:params];
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
 }
 
 - (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
@@ -77,36 +77,38 @@
         }
         return;
     }
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     NSDictionary *data = response.data;
-    [BNCPreferenceHelper setDeviceFingerprintID:data[BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID]];
-    [BNCPreferenceHelper setUserURL:data[BRANCH_RESPONSE_KEY_USER_URL]];
-    [BNCPreferenceHelper setUserIdentity:data[BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY]];
-    [BNCPreferenceHelper setSessionID:data[BRANCH_RESPONSE_KEY_SESSION_ID]];
+    preferenceHelper.deviceFingerprintID = data[BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID];
+    preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
+    preferenceHelper.userIdentity = data[BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY];
+    preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
     [BNCSystemObserver setUpdateState];
     
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
     
     // Update session params
-    [BNCPreferenceHelper setSessionParams:sessionData];
+    preferenceHelper.sessionParams = sessionData;
     
     // If referable, also se tup install params
-    if ([BNCPreferenceHelper getIsReferrable]) {
+    if (preferenceHelper.isReferrable) {
         // If present, set it.
         if (sessionData) {
-            [BNCPreferenceHelper setInstallParams:sessionData];
+            preferenceHelper.installParams = sessionData;
         }
         // If not present, only allow nil to be set if desired (don't clear otherwise)
         else if (self.allowInstallParamsToBeCleared) {
-            [BNCPreferenceHelper setInstallParams:nil];
+            preferenceHelper.installParams = nil;
         }
     }
     
     // Clear link click so it doesn't get reused on the next open
-    [BNCPreferenceHelper setLinkClickIdentifier:nil];
+    preferenceHelper.linkClickIdentifier = nil;
     
     if (data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]) {
-        [BNCPreferenceHelper setIdentityID:data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]];
+        preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
     }
     
     if (self.callback) {

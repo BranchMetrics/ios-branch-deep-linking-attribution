@@ -23,14 +23,6 @@
 
 @implementation BranchNetworkScenarioTests
 
-- (void)setUp {
-    [super setUp];
-
-    // Fake branch key
-    id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
-    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey:YES];
-}
-
 #pragma mark - Scenario 1
 
 // Connection starts good -- InitSession completes
@@ -42,7 +34,7 @@
 - (void)testScenario1 {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_live"];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_live"];
     [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario1Expectation1 = [self expectationWithDescription:@"Scenario1 Expectation1"];
@@ -85,7 +77,7 @@
 - (void)testScenario2 {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario2Expectation1 = [self expectationWithDescription:@"Scenario2 Expectation1"];
@@ -135,7 +127,7 @@
 - (void)testScenario3 {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario3Expectation1 = [self expectationWithDescription:@"Scenario3 Expectation1"];
@@ -178,7 +170,7 @@
 - (void)testScenario4 {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_foo"];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_foo"];
     [branch setAppListCheckEnabled:NO];
     
     XCTestExpectation *scenario4Expectation1 = [self expectationWithDescription:@"Scenario4 Expectation1"];
@@ -228,7 +220,7 @@
 - (void)testScenario5 {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_live"];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_live"];
     [branch setAppListCheckEnabled:NO];
     
     XCTestExpectation *scenario5Expectation1 = [self expectationWithDescription:@"Scenario5 Expectation1"];
@@ -259,7 +251,7 @@
 - (void)testScenario6 {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] key:@"key_live"];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_live"];
     [branch setAppListCheckEnabled:NO];
     
     XCTestExpectation *scenario6Expectation1 = [self expectationWithDescription:@"Scenario5 Expectation1"];
@@ -330,7 +322,7 @@
     [[[queueMock expect] andReturnValue:@YES] containsInstallOrOpen];
     [(BNCServerRequestQueue *)[[queueMock stub] andReturnValue:@1] size];
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:queueMock cache:nil key:@"key_live"];
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:queueMock cache:nil preferenceHelper:nil key:@"key_live"];
     
     __block NSInteger initCallbackCount = 0;
     [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
@@ -352,6 +344,34 @@
     
     [self awaitExpectations];
     XCTAssertEqual(initCallbackCount, 1);
+}
+
+
+#pragma mark - Scenario 8
+
+// Somehow, betweeen initSession and the next call, all preference items are cleared.
+// Shouldn't crash in this case, but can't do much besides "you need to re-init"
+- (void)testScenario8 {
+    BNCPreferenceHelper *preferenceHelper = [[BNCPreferenceHelper alloc] init];
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    
+    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_live"];
+    [branch setAppListCheckEnabled:NO];
+    
+    XCTestExpectation *expecation = [self expectationWithDescription:@"Scenario8 Expectation"];
+    [self initSessionExpectingSuccess:branch serverInterface:serverInterfaceMock callback:^{
+        preferenceHelper.sessionID = nil;
+        preferenceHelper.deviceFingerprintID = nil;
+        
+        [branch getShortURLWithCallback:^(NSString *url, NSError *error) {
+            XCTAssertNotNil(error);
+            XCTAssertEqual(error.code, BNCInitError);
+            
+            [self safelyFulfillExpectation:expecation];
+        }];
+    }];
+    
+    [self awaitExpectations];
 }
 
 
@@ -395,7 +415,8 @@
         badRequestCallback(nil, [NSError errorWithDomain:NSURLErrorDomain code:-1004 userInfo:nil]);
     };
     
-    NSString *url = [[BNCPreferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
     [[[serverInterfaceMock expect] andDo:badRequestInvocation] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
     
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
@@ -412,7 +433,8 @@
     }];
     
     // Only one request should make it to the server
-    NSString *url = [[BNCPreferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
     [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
     [[serverInterfaceMock reject] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:[OCMArg any]];
     
@@ -444,7 +466,8 @@
     }];
     
     // Only one request should make it to the server
-    NSString *url = [[BNCPreferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
     [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
     [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:goodRequestCheckBlock];
     
@@ -477,7 +500,8 @@
         goodRequestCallback(goodResponse, nil);
     };
     
-    NSString *url = [[BNCPreferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:[BNCPreferenceHelper getIdentityID]];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
     [[[serverInterfaceMock expect] andDo:goodRequestInvocation] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:goodRequestCheckBlock];
     
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
