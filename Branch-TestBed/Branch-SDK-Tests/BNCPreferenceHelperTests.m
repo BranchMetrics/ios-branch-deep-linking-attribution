@@ -16,19 +16,6 @@
 
 @implementation BNCPreferenceHelperTests
 
-+ (void)setUp {
-    [super setUp];
-
-    [BNCPreferenceHelper setBranchKey:@"foo"];
-    [BNCPreferenceHelper setDeviceFingerprintID:@"foo"];
-}
-
-+ (void)tearDown {
-    [BNCPreferenceHelper clearDebug];
-
-    [super tearDown];
-}
-
 #pragma mark - Default storage tests
 - (void)testPreferenceDefaults {
     BNCPreferenceHelper *prefHelper = [[BNCPreferenceHelper alloc] init];
@@ -40,23 +27,15 @@
 }
 
 - (void)testPreferenceSets {
-    // Save original values
-    NSInteger retryCount = [BNCPreferenceHelper getRetryCount];
-    NSInteger retryInterval = [BNCPreferenceHelper getRetryInterval];
-    NSInteger timeout = [BNCPreferenceHelper getTimeout];
+    BNCPreferenceHelper *prefHelper = [[BNCPreferenceHelper alloc] init];
     
-    [BNCPreferenceHelper setRetryCount:NSIntegerMax];
-    [BNCPreferenceHelper setRetryInterval:NSIntegerMax];
-    [BNCPreferenceHelper setTimeout:NSIntegerMax];
+    prefHelper.retryCount = NSIntegerMax;
+    prefHelper.retryInterval = NSIntegerMax;
+    prefHelper.timeout = NSIntegerMax;
     
-    XCTAssertEqual([BNCPreferenceHelper getRetryCount], NSIntegerMax);
-    XCTAssertEqual([BNCPreferenceHelper getRetryInterval], NSIntegerMax);
-    XCTAssertEqual([BNCPreferenceHelper getTimeout], NSIntegerMax);
-    
-    // Restore
-    [BNCPreferenceHelper setRetryCount:retryCount];
-    [BNCPreferenceHelper setRetryInterval:retryInterval];
-    [BNCPreferenceHelper setTimeout:timeout];
+    XCTAssertEqual(prefHelper.retryCount, NSIntegerMax);
+    XCTAssertEqual(prefHelper.retryInterval, NSIntegerMax);
+    XCTAssertEqual(prefHelper.timeout, NSIntegerMax);
 }
 
 @end

@@ -34,22 +34,6 @@
     return self;
 }
 
-- (id)copyWithZone:(NSZone *)zone {
-    BNCLinkData *copy = [[BNCLinkData alloc] init];
-    copy.data = [_data copyWithZone:zone];
-    copy.tags = [_tags copyWithZone:zone];
-    copy.alias = [_alias copyWithZone:zone];
-    copy.channel = [_channel copyWithZone:zone];
-    copy.feature = [_feature copyWithZone:zone];
-    copy.stage = [_stage copyWithZone:zone];
-    copy.params = [_params copyWithZone:zone];
-    copy.ignoreUAString = [_ignoreUAString copyWithZone:zone];
-    copy.type = _type;
-    copy.duration = _duration;
-
-    return copy;
-}
-
 - (void)setupTags:(NSArray *)tags {
     if (tags) {
         _tags = tags;
@@ -120,16 +104,6 @@
 
         self.data[BRANCH_REQUEST_KEY_URL_DATA] = params;
     }
-}
-
-- (void)setObject:(id)anObject forKey:(id <NSCopying>)aKey {
-    if (anObject) {
-        self.data[aKey] = anObject;
-    }
-}
-
-- (id)objectForKey:(id)aKey {
-    return self.data[aKey];
 }
 
 - (NSUInteger)hash {

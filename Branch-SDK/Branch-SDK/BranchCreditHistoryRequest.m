@@ -37,9 +37,10 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
-    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = [BNCPreferenceHelper getDeviceFingerprintID];
-    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = [BNCPreferenceHelper getIdentityID];
-    params[BRANCH_REQUEST_KEY_SESSION_ID] = [BNCPreferenceHelper getSessionID];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     params[BRANCH_REQUEST_KEY_LENGTH] = @(self.length);
     params[BRANCH_REQUEST_KEY_DIRECTION] = self.order == BranchMostRecentFirst ? @"desc" : @"asc";
 
@@ -51,7 +52,7 @@
         params[BRANCH_REQUEST_KEY_STARTING_TRANSACTION_ID] = self.creditTransactionId;
     }
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CREDIT_HISTORY] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CREDIT_HISTORY] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

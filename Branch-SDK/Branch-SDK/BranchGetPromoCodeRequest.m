@@ -45,9 +45,10 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
-    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = [BNCPreferenceHelper getDeviceFingerprintID];
-    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = [BNCPreferenceHelper getIdentityID];
-    params[BRANCH_REQUEST_KEY_SESSION_ID] = [BNCPreferenceHelper getSessionID];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     params[BRANCH_REQUEST_KEY_REFERRAL_USAGE_TYPE] = @(self.usageType);
     params[BRANCH_REQUEST_KEY_REFERRAL_REWARD_LOCATION] = @(self.rewardLocation);
     params[BRANCH_REQUEST_KEY_REFERRAL_TYPE] = @"credit";
@@ -64,7 +65,7 @@
     }
     
     NSString *endpoint = self.useOld ? BRANCH_REQUEST_ENDPOINT_GET_REFERRAL_CODE : BRANCH_REQUEST_ENDPOINT_GET_PROMO_CODE;
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:endpoint] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:endpoint] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

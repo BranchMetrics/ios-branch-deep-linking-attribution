@@ -32,14 +32,15 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary *params = @{
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID]
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID
     };
     
     NSString *endpoint = self.useOld ? BRANCH_REQUEST_ENDPOINT_VALIDATE_REFERRAL_CODE : BRANCH_REQUEST_ENDPOINT_VALIDATE_PROMO_CODE;
-    NSString *url = [NSString stringWithFormat:@"%@/%@", [BNCPreferenceHelper getAPIURL:endpoint], self.code];
+    NSString *url = [NSString stringWithFormat:@"%@/%@", [preferenceHelper getAPIURL:endpoint], self.code];
     [serverInterface postRequest:params url:url key:key callback:callback];
 }
 

@@ -123,7 +123,7 @@
     NSString *stage = @"2";
     
     // Branch UIActivityItemProvider
-    UIActivityItemProvider *itemProvider = [Branch getBranchActivityItemWithParams:params andFeature:feature andStage:stage andTags:tags];
+    UIActivityItemProvider *itemProvider = [Branch getBranchActivityItemWithParams:params feature:feature stage:stage tags:tags];
     
     // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
     UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareString, itemProvider] applicationActivities:nil];

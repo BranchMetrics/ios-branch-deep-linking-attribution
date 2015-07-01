@@ -32,14 +32,15 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary *params = @{
         BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY: self.userId,
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID],
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID]
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID
     };
 
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_SET_IDENTITY] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_SET_IDENTITY] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -52,16 +53,17 @@
         return;
     }
     
-    [BNCPreferenceHelper setIdentityID:response.data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]];
-    [BNCPreferenceHelper setUserURL:response.data[BRANCH_RESPONSE_KEY_USER_URL]];
-    [BNCPreferenceHelper setUserIdentity:self.userId];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.identityID = response.data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
+    preferenceHelper.userUrl = response.data[BRANCH_RESPONSE_KEY_USER_URL];
+    preferenceHelper.userIdentity = self.userId;
     
     if (response.data[BRANCH_RESPONSE_KEY_INSTALL_PARAMS]) {
-        [BNCPreferenceHelper setInstallParams:response.data[BRANCH_RESPONSE_KEY_INSTALL_PARAMS]];
+        preferenceHelper.installParams = response.data[BRANCH_RESPONSE_KEY_INSTALL_PARAMS];
     }
     
     if (self.callback && self.shouldCallCallback) {
-        NSString *storedParams = [BNCPreferenceHelper getInstallParams];
+        NSString *storedParams = preferenceHelper.installParams;
         NSDictionary *installParams = [BNCEncodingUtils decodeJsonStringToDictionary:storedParams];
         self.callback(installParams, nil);
     }

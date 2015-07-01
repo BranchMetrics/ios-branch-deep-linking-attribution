@@ -14,14 +14,14 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSDictionary *params = @{
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID]
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper preferenceHelper].deviceFingerprintID
     };
 
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_DISCONNECT_DEBUG] key:key log:NO callback:callback];
+    [serverInterface postRequest:params url:[[BNCPreferenceHelper preferenceHelper] getAPIURL:BRANCH_REQUEST_ENDPOINT_DISCONNECT_DEBUG] key:key log:NO callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
-    [BNCPreferenceHelper setConnectedToRemoteDebug:NO];
+    [BNCPreferenceHelper preferenceHelper].isConnectedToRemoteDebug = NO;
 }
 
 @end

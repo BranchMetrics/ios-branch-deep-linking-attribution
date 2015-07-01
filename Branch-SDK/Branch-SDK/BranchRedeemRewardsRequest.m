@@ -31,15 +31,16 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary *params = @{
         BRANCH_REQUEST_KEY_BUCKET: self.bucket,
         BRANCH_REQUEST_KEY_AMOUNT: @(self.amount),
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID]
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID
     };
 
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_REDEEM_REWARDS] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_REDEEM_REWARDS] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -51,9 +52,10 @@
     }
     
     // Update local balance
-    NSInteger currentAvailableCredits = [BNCPreferenceHelper getCreditCountForBucket:self.bucket];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    NSInteger currentAvailableCredits = [preferenceHelper getCreditCountForBucket:self.bucket];
     NSInteger updatedBalance = currentAvailableCredits - self.amount;
-    [BNCPreferenceHelper setCreditCount:updatedBalance forBucket:self.bucket];
+    [preferenceHelper setCreditCount:updatedBalance forBucket:self.bucket];
     
     if (self.callback) {
         self.callback(YES, nil);

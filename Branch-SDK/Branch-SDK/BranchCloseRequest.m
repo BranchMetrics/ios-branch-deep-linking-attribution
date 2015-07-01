@@ -13,18 +13,15 @@
 @implementation BranchCloseRequest
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    // TODO remove this hack.
-    id identityId = [BNCPreferenceHelper getIdentityID] ?: [NSNull null];
-    id sessionId = [BNCPreferenceHelper getSessionID] ?: [NSNull null];
-    id fingerprintId = [BNCPreferenceHelper getDeviceFingerprintID] ?: [NSNull null];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     NSDictionary *params = @{
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: identityId,
-        BRANCH_REQUEST_KEY_SESSION_ID: sessionId,
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: fingerprintId
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID
     };
     
-    [serverInterface postRequest:params url:[BNCPreferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CLOSE] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CLOSE] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
