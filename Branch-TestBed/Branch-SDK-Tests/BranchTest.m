@@ -20,17 +20,20 @@
 + (void)setUp {
     [super setUp];
     
-    if (![BNCPreferenceHelper getDeviceFingerprintID]) {
-        [BNCPreferenceHelper setDeviceFingerprintID:@"foo_fingerprint"];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    if (!preferenceHelper.deviceFingerprintID) {
+        preferenceHelper.deviceFingerprintID = @"foo_fingerprint";
     }
 
-    if (![BNCPreferenceHelper getIdentityID]) {
-        [BNCPreferenceHelper setIdentityID:@"foo_identity"];
+    if (!preferenceHelper.identityID) {
+        preferenceHelper.identityID = @"foo_identity";
     }
 
-    if (![BNCPreferenceHelper getSessionID]) {
-        [BNCPreferenceHelper setSessionID:@"foo_sesion"];
+    if (!preferenceHelper.sessionID) {
+        preferenceHelper.sessionID = @"foo_sesion";
     }
+    
+    preferenceHelper.isDebug = NO;
 }
 
 - (void)setUp {

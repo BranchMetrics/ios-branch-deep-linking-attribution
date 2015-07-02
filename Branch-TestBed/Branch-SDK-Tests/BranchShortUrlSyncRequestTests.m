@@ -40,10 +40,11 @@
     [LINK_DATA setupMatchDuration:DURATION];
     [LINK_DATA setupParams:PARAMS];
     
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID],
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
         BRANCH_REQUEST_KEY_URL_ALIAS: ALIAS,
         BRANCH_REQUEST_KEY_URL_CHANNEL: CHANNEL,
         BRANCH_REQUEST_KEY_URL_DATA: PARAMS,
@@ -71,10 +72,11 @@
     
     [LINK_DATA setupType:LINK_TYPE];
     
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID],
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
         BRANCH_REQUEST_KEY_URL_SOURCE: @"ios",
         BRANCH_REQUEST_KEY_URL_LINK_TYPE: @(LINK_TYPE)
     };
@@ -121,8 +123,8 @@
     
     NSString * EXPECTED_URL = [NSString stringWithFormat:@"%@?tags=%@&tags=%@&alias=%@&channel=%@&feature=%@&stage=%@&type=%ld&matchDuration=%ld&source=ios&data=%@", USER_URL, TAG1, TAG2, ALIAS, CHANNEL, FEATURE, STAGE, (long)LINK_TYPE, (long)DURATION, ENCODED_PARAMS];
     
-    id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
-    [[[preferenceHelperMock stub] andReturn:USER_URL] getUserURL];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.userUrl = USER_URL;
     
     BranchShortUrlSyncRequest *request = [[BranchShortUrlSyncRequest alloc] initWithTags:TAGS alias:ALIAS type:LINK_TYPE matchDuration:DURATION channel:CHANNEL feature:FEATURE stage:STAGE params:PARAMS linkData:nil linkCache:nil];
     NSString *url = [request processResponse:response];
@@ -145,8 +147,8 @@
     NSString * const STAGE = @"foo-stage";
     NSDictionary * const PARAMS = @{ @"foo-param": @"bar-value" };
     
-    id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
-    [[[preferenceHelperMock stub] andReturn:nil] getUserURL];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.userUrl = nil;
     
     BranchShortUrlSyncRequest *request = [[BranchShortUrlSyncRequest alloc] initWithTags:TAGS alias:ALIAS type:LINK_TYPE matchDuration:DURATION channel:CHANNEL feature:FEATURE stage:STAGE params:PARAMS linkData:nil linkCache:nil];
     NSString *url = [request processResponse:response];

@@ -19,10 +19,11 @@
 @implementation BranchLogoutRequestTests
 
 - (void)testRequestBody {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID]
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID
     };
     
     BranchLogoutRequest *request = [[BranchLogoutRequest alloc] init];
@@ -45,14 +46,14 @@
     NSString * const RESPONSE_IDENTITY = @"bar";
     NSString * const RESPONSE_USER_URL = @"http://bar";
     
-    
-    [BNCPreferenceHelper setSessionID:PRE_RESPONSE_SESSION_ID];
-    [BNCPreferenceHelper setIdentityID:PRE_RESPONSE_IDENTITY];
-    [BNCPreferenceHelper setUserURL:PRE_RESPONSE_USER_URL];
-    [BNCPreferenceHelper setUserIdentity:PRE_RESPONSE_USER_IDENTITY];
-    [BNCPreferenceHelper setInstallParams:PRE_RESPONSE_INSTALL_PARAMS];
-    [BNCPreferenceHelper setSessionParams:PRE_RESPONSE_SESSION_PARAMS];
-    [BNCPreferenceHelper setCreditCount:5 forBucket:@"foo"];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.sessionID = PRE_RESPONSE_SESSION_ID;
+    preferenceHelper.identityID = PRE_RESPONSE_IDENTITY;
+    preferenceHelper.userUrl = PRE_RESPONSE_USER_URL;
+    preferenceHelper.userIdentity = PRE_RESPONSE_USER_IDENTITY;
+    preferenceHelper.installParams = PRE_RESPONSE_INSTALL_PARAMS;
+    preferenceHelper.sessionParams = PRE_RESPONSE_SESSION_PARAMS;
+    [preferenceHelper setCreditCount:5 forBucket:@"foo"];
     
     BNCServerResponse * const goodResponse = [[BNCServerResponse alloc] init];
     goodResponse.data = @{
@@ -65,13 +66,13 @@
     
     [request processResponse:goodResponse error:nil];
     
-    XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], RESPONSE_IDENTITY);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserURL], RESPONSE_USER_URL);
-    XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], RESPONSE_SESSION_ID);
-    XCTAssertNil([BNCPreferenceHelper getUserIdentity]);
-    XCTAssertNil([BNCPreferenceHelper getInstallParams]);
-    XCTAssertNil([BNCPreferenceHelper getSessionParams]);
-    XCTAssertEqual([BNCPreferenceHelper getCreditCountForBucket:@"foo"], 0);
+    XCTAssertEqualObjects(preferenceHelper.identityID, RESPONSE_IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.userUrl, RESPONSE_USER_URL);
+    XCTAssertEqualObjects(preferenceHelper.sessionID, RESPONSE_SESSION_ID);
+    XCTAssertNil(preferenceHelper.userIdentity);
+    XCTAssertNil(preferenceHelper.installParams);
+    XCTAssertNil(preferenceHelper.sessionParams);
+    XCTAssertEqual([preferenceHelper getCreditCountForBucket:@"foo"], 0);
 }
 
 - (void)testFailureSuccess {
@@ -83,27 +84,27 @@
     NSString * const PRE_RESPONSE_SESSION_PARAMS = @"{\"foo\":\"bar\"}";
     NSError * const requestError = [NSError errorWithDomain:@"foo" code:1 userInfo:nil];
     
-    
-    [BNCPreferenceHelper setSessionID:PRE_RESPONSE_SESSION_ID];
-    [BNCPreferenceHelper setIdentityID:PRE_RESPONSE_IDENTITY];
-    [BNCPreferenceHelper setUserURL:PRE_RESPONSE_USER_URL];
-    [BNCPreferenceHelper setUserIdentity:PRE_RESPONSE_USER_IDENTITY];
-    [BNCPreferenceHelper setInstallParams:PRE_RESPONSE_INSTALL_PARAMS];
-    [BNCPreferenceHelper setSessionParams:PRE_RESPONSE_SESSION_PARAMS];
-    [BNCPreferenceHelper setCreditCount:5 forBucket:@"foo"];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.sessionID = PRE_RESPONSE_SESSION_ID;
+    preferenceHelper.identityID = PRE_RESPONSE_IDENTITY;
+    preferenceHelper.userUrl = PRE_RESPONSE_USER_URL;
+    preferenceHelper.userIdentity = PRE_RESPONSE_USER_IDENTITY;
+    preferenceHelper.installParams = PRE_RESPONSE_INSTALL_PARAMS;
+    preferenceHelper.sessionParams = PRE_RESPONSE_SESSION_PARAMS;
+    [preferenceHelper setCreditCount:5 forBucket:@"foo"];
     
     
     BranchLogoutRequest *request = [[BranchLogoutRequest alloc] init];
     
     [request processResponse:nil error:requestError];
     
-    XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], PRE_RESPONSE_IDENTITY);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserURL], PRE_RESPONSE_USER_URL);
-    XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], PRE_RESPONSE_SESSION_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserIdentity], PRE_RESPONSE_USER_IDENTITY);
-    XCTAssertEqualObjects([BNCPreferenceHelper getInstallParams], PRE_RESPONSE_INSTALL_PARAMS);
-    XCTAssertEqualObjects([BNCPreferenceHelper getSessionParams], PRE_RESPONSE_SESSION_PARAMS);
-    XCTAssertEqual([BNCPreferenceHelper getCreditCountForBucket:@"foo"], 5);
+    XCTAssertEqualObjects(preferenceHelper.identityID, PRE_RESPONSE_IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.userUrl, PRE_RESPONSE_USER_URL);
+    XCTAssertEqualObjects(preferenceHelper.sessionID, PRE_RESPONSE_SESSION_ID);
+    XCTAssertEqualObjects(preferenceHelper.userIdentity, PRE_RESPONSE_USER_IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.installParams, PRE_RESPONSE_INSTALL_PARAMS);
+    XCTAssertEqualObjects(preferenceHelper.sessionParams, PRE_RESPONSE_SESSION_PARAMS);
+    XCTAssertEqual([preferenceHelper getCreditCountForBucket:@"foo"], 5);
 }
 
 @end

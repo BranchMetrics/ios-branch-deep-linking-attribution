@@ -21,12 +21,14 @@
 - (void)testRequestBody {
     NSString * const BUCKET = @"foo_bucket";
     NSInteger const AMOUNT = 5;
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
         BRANCH_REQUEST_KEY_BUCKET: BUCKET,
         BRANCH_REQUEST_KEY_AMOUNT: @(AMOUNT),
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID]
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID
     };
     
     BranchRedeemRewardsRequest *request = [[BranchRedeemRewardsRequest alloc] initWithAmount:AMOUNT bucket:BUCKET callback:NULL];
@@ -43,7 +45,7 @@
     NSInteger const REDEEM_AMOUNT = 5;
     NSString * const BUCKET = @"foo_bucket";
     
-    [BNCPreferenceHelper setCreditCount:STARTING_AMOUNT forBucket:BUCKET];
+    [[BNCPreferenceHelper preferenceHelper] setCreditCount:STARTING_AMOUNT forBucket:BUCKET];
     
     XCTestExpectation *requestExpectation = [self expectationWithDescription:@"Redeem Request Expectation"];
     BranchRedeemRewardsRequest *request = [[BranchRedeemRewardsRequest alloc] initWithAmount:REDEEM_AMOUNT bucket:BUCKET callback:^(BOOL success, NSError *error) {
@@ -56,7 +58,7 @@
     [request processResponse:[[BNCServerResponse alloc] init] error:nil];
     
     [self awaitExpectations];
-    XCTAssertEqual([BNCPreferenceHelper getCreditCountForBucket:BUCKET], STARTING_AMOUNT - REDEEM_AMOUNT);
+    XCTAssertEqual([[BNCPreferenceHelper preferenceHelper] getCreditCountForBucket:BUCKET], STARTING_AMOUNT - REDEEM_AMOUNT);
 }
 
 - (void)testBasicFailure {
@@ -65,7 +67,7 @@
     NSString * const BUCKET = @"foo_bucket";
     NSError * REQUEST_ERROR = [NSError errorWithDomain:@"foo" code:1 userInfo:nil];
     
-    [BNCPreferenceHelper setCreditCount:STARTING_AMOUNT forBucket:BUCKET];
+    [[BNCPreferenceHelper preferenceHelper] setCreditCount:STARTING_AMOUNT forBucket:BUCKET];
     
     XCTestExpectation *requestExpectation = [self expectationWithDescription:@"Redeem Request Expectation"];
     BranchRedeemRewardsRequest *request = [[BranchRedeemRewardsRequest alloc] initWithAmount:REDEEM_AMOUNT bucket:BUCKET callback:^(BOOL success, NSError *error) {
@@ -78,7 +80,7 @@
     [request processResponse:nil error:REQUEST_ERROR];
     
     [self awaitExpectations];
-    XCTAssertEqual([BNCPreferenceHelper getCreditCountForBucket:BUCKET], STARTING_AMOUNT);
+    XCTAssertEqual([[BNCPreferenceHelper preferenceHelper] getCreditCountForBucket:BUCKET], STARTING_AMOUNT);
 }
 
 @end

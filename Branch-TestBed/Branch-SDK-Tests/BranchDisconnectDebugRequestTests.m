@@ -20,7 +20,7 @@
 
 - (void)testRequestBody {
     NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID]
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper preferenceHelper].deviceFingerprintID
     };
     
     BranchDisconnectDebugRequest *request = [[BranchDisconnectDebugRequest alloc] init];
@@ -37,7 +37,7 @@
     
     [request processResponse:nil error:nil];
     
-    XCTAssertFalse([BNCPreferenceHelper isConnectedToRemoteDebug]);
+    XCTAssertFalse([BNCPreferenceHelper preferenceHelper].isConnectedToRemoteDebug);
 }
 
 @end

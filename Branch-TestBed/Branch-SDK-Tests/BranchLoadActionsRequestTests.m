@@ -45,8 +45,9 @@
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = ACTION_DICT;
     
-    [BNCPreferenceHelper setActionTotalCount:ACTION_KEY withCount:OLD_TOTAL_VALUE];
-    [BNCPreferenceHelper setActionUniqueCount:ACTION_KEY withCount:OLD_UNIQUE_VALUE];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    [preferenceHelper setActionTotalCount:ACTION_KEY withCount:OLD_TOTAL_VALUE];
+    [preferenceHelper setActionUniqueCount:ACTION_KEY withCount:OLD_UNIQUE_VALUE];
     
     XCTestExpectation *requestCallbackExpectation = [self expectationWithDescription:@"Request Callback Expectation"];
     BranchLoadActionsRequest *request = [[BranchLoadActionsRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
@@ -59,8 +60,8 @@
     [request processResponse:response error:nil];
     
     [self awaitExpectations];
-    XCTAssertEqual([BNCPreferenceHelper getActionTotalCount:ACTION_KEY], NEW_TOTAL_VALUE);
-    XCTAssertEqual([BNCPreferenceHelper getActionUniqueCount:ACTION_KEY], NEW_UNIQUE_VALUE);
+    XCTAssertEqual([preferenceHelper getActionTotalCount:ACTION_KEY], NEW_TOTAL_VALUE);
+    XCTAssertEqual([preferenceHelper getActionUniqueCount:ACTION_KEY], NEW_UNIQUE_VALUE);
 }
 
 - (void)testSuccessWithSameValues {
@@ -80,8 +81,9 @@
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = ACTION_DICT;
     
-    [BNCPreferenceHelper setActionTotalCount:ACTION_KEY withCount:OLD_TOTAL_VALUE];
-    [BNCPreferenceHelper setActionUniqueCount:ACTION_KEY withCount:OLD_UNIQUE_VALUE];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    [preferenceHelper setActionTotalCount:ACTION_KEY withCount:OLD_TOTAL_VALUE];
+    [preferenceHelper setActionUniqueCount:ACTION_KEY withCount:OLD_UNIQUE_VALUE];
     
     XCTestExpectation *requestCallbackExpectation = [self expectationWithDescription:@"Request Callback Expectation"];
     BranchLoadActionsRequest *request = [[BranchLoadActionsRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
@@ -94,8 +96,8 @@
     [request processResponse:response error:nil];
     
     [self awaitExpectations];
-    XCTAssertEqual([BNCPreferenceHelper getActionTotalCount:ACTION_KEY], OLD_TOTAL_VALUE);
-    XCTAssertEqual([BNCPreferenceHelper getActionUniqueCount:ACTION_KEY], OLD_UNIQUE_VALUE);
+    XCTAssertEqual([preferenceHelper getActionTotalCount:ACTION_KEY], OLD_TOTAL_VALUE);
+    XCTAssertEqual([preferenceHelper getActionUniqueCount:ACTION_KEY], OLD_UNIQUE_VALUE);
 }
 
 - (void)testRequestWithError {
@@ -104,8 +106,9 @@
     NSInteger const OLD_UNIQUE_VALUE = 25;
     NSError * const REQUEST_ERROR = [NSError errorWithDomain:@"foo" code:1 userInfo:nil];
     
-    [BNCPreferenceHelper setActionTotalCount:ACTION_KEY withCount:OLD_TOTAL_VALUE];
-    [BNCPreferenceHelper setActionUniqueCount:ACTION_KEY withCount:OLD_UNIQUE_VALUE];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    [preferenceHelper setActionTotalCount:ACTION_KEY withCount:OLD_TOTAL_VALUE];
+    [preferenceHelper setActionUniqueCount:ACTION_KEY withCount:OLD_UNIQUE_VALUE];
     
     XCTestExpectation *requestCallbackExpectation = [self expectationWithDescription:@"Request Callback Expectation"];
     BranchLoadActionsRequest *request = [[BranchLoadActionsRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
@@ -118,8 +121,8 @@
     [request processResponse:nil error:REQUEST_ERROR];
     
     [self awaitExpectations];
-    XCTAssertEqual([BNCPreferenceHelper getActionTotalCount:ACTION_KEY], OLD_TOTAL_VALUE);
-    XCTAssertEqual([BNCPreferenceHelper getActionUniqueCount:ACTION_KEY], OLD_UNIQUE_VALUE);
+    XCTAssertEqual([preferenceHelper getActionTotalCount:ACTION_KEY], OLD_TOTAL_VALUE);
+    XCTAssertEqual([preferenceHelper getActionUniqueCount:ACTION_KEY], OLD_UNIQUE_VALUE);
 }
 
 @end

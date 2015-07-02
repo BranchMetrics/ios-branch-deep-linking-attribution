@@ -21,11 +21,12 @@ NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
 @implementation BranchSetIdentityRequestTests
 
 - (void)testRequestBody {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
         BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY: IDENTITY_TEST_USER_ID,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID]
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID
     };
 
     BranchSetIdentityRequest *request = [[BranchSetIdentityRequest alloc] initWithUserId:IDENTITY_TEST_USER_ID callback:NULL];
@@ -48,10 +49,12 @@ NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     NSDictionary * const RESPONSE_INSTALL_PARAMS_DICT = @{ @"bar": @"foo" };
     __block NSInteger callbackCount = 0;
     
-    [BNCPreferenceHelper setUserIdentity:PRE_RESPONSE_USER_IDENTITY];
-    [BNCPreferenceHelper setIdentityID:PRE_RESPONSE_IDENTITY];
-    [BNCPreferenceHelper setUserURL:PRE_RESPONSE_USER_URL];
-    [BNCPreferenceHelper setInstallParams:PRE_RESPONSE_INSTALL_PARAMS];
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.userIdentity = PRE_RESPONSE_USER_IDENTITY;
+    preferenceHelper.identityID = PRE_RESPONSE_IDENTITY;
+    preferenceHelper.userUrl = PRE_RESPONSE_USER_URL;
+    preferenceHelper.installParams = PRE_RESPONSE_INSTALL_PARAMS;
     
     BNCServerResponse * const goodResponse = [[BNCServerResponse alloc] init];
     goodResponse.data = @{
@@ -69,10 +72,10 @@ NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     [request processResponse:goodResponse error:nil];
     
     XCTAssertEqual(callbackCount, 1);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserIdentity], IDENTITY_TEST_USER_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], RESPONSE_IDENTITY);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserURL], RESPONSE_USER_URL);
-    XCTAssertEqualObjects([BNCPreferenceHelper getInstallParams], RESPONSE_INSTALL_PARAMS);
+    XCTAssertEqualObjects(preferenceHelper.userIdentity, IDENTITY_TEST_USER_ID);
+    XCTAssertEqualObjects(preferenceHelper.identityID, RESPONSE_IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.userUrl, RESPONSE_USER_URL);
+    XCTAssertEqualObjects(preferenceHelper.installParams, RESPONSE_INSTALL_PARAMS);
 }
 
 - (void)testBasicErrorHandling {
@@ -117,10 +120,11 @@ NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     NSString * const RESPONSE_INSTALL_PARAMS = @"{\"bar\":\"foo\"}";
     __block NSInteger callbackCount = 0;
     
-    [BNCPreferenceHelper setUserIdentity:PRE_RESPONSE_USER_IDENTITY];
-    [BNCPreferenceHelper setIdentityID:PRE_RESPONSE_IDENTITY];
-    [BNCPreferenceHelper setUserURL:PRE_RESPONSE_USER_URL];
-    [BNCPreferenceHelper setInstallParams:PRE_RESPONSE_INSTALL_PARAMS];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.userIdentity = PRE_RESPONSE_USER_IDENTITY;
+    preferenceHelper.identityID = PRE_RESPONSE_IDENTITY;
+    preferenceHelper.userUrl = PRE_RESPONSE_USER_URL;
+    preferenceHelper.installParams = PRE_RESPONSE_INSTALL_PARAMS;
 
     BNCServerResponse * const goodResponse = [[BNCServerResponse alloc] init];
     goodResponse.data = @{
@@ -139,10 +143,10 @@ NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     [request processResponse:goodResponse error:nil];
     
     XCTAssertEqual(callbackCount, 1); // callback should have only been called once, but preferences should be updated
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserIdentity], IDENTITY_TEST_USER_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], RESPONSE_IDENTITY);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserURL], RESPONSE_USER_URL);
-    XCTAssertEqualObjects([BNCPreferenceHelper getInstallParams], RESPONSE_INSTALL_PARAMS);
+    XCTAssertEqualObjects(preferenceHelper.userIdentity, IDENTITY_TEST_USER_ID);
+    XCTAssertEqualObjects(preferenceHelper.identityID, RESPONSE_IDENTITY);
+    XCTAssertEqualObjects(preferenceHelper.userUrl, RESPONSE_USER_URL);
+    XCTAssertEqualObjects(preferenceHelper.installParams, RESPONSE_INSTALL_PARAMS);
 }
 
 @end

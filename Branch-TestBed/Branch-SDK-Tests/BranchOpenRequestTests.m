@@ -33,9 +33,10 @@
     NSString * const URI_SCHEME = @"foo-uri-scheme";
     NSNumber * const UPDATE_STATE = @1;
     NSString * const LINK_IDENTIFIER = @"foo-link-id";
-
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
-    [[[[systemObserverMock stub] ignoringNonObjectArgs] andReturn:HARDWARE_ID] getUniqueHardwareId:0 andIsDebug:[BNCPreferenceHelper isDebug]];
+    [[[[systemObserverMock stub] ignoringNonObjectArgs] andReturn:HARDWARE_ID] getUniqueHardwareId:0 andIsDebug:preferenceHelper.isDebug];
     [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingSafe];
     [[[systemObserverMock stub] andReturn:BUNDLE_ID] getBundleID];
     [[[systemObserverMock stub] andReturn:APP_VERSION] getAppVersion];
@@ -44,18 +45,17 @@
     [[[systemObserverMock stub] andReturn:URI_SCHEME] getDefaultUriScheme];
     [[[systemObserverMock stub] andReturn:UPDATE_STATE] getUpdateState];
     
-    id preferenceMock = OCMClassMock([BNCPreferenceHelper class]);
-    [[[preferenceMock stub] andReturnValue:IS_REFERRABLE] getIsReferrable];
-    [[[preferenceMock stub] andReturnValue:IS_DEBUG] isDebug];
-    [[[preferenceMock stub] andReturn:LINK_IDENTIFIER] getLinkClickIdentifier];
-    [[[preferenceMock stub] andReturn:nil] getDeviceFingerprintID];
+    preferenceHelper.isReferrable = IS_REFERRABLE;
+    preferenceHelper.isDebug = IS_DEBUG;
+    preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
+    preferenceHelper.deviceFingerprintID = nil;
 
     NSDictionary * const EXPECTED_PARAMS = @{
         BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED: AD_TRACKING_SAFE,
         BRANCH_REQUEST_KEY_APP_VERSION: APP_VERSION,
         BRANCH_REQUEST_KEY_DEBUG: IS_DEBUG,
         BRANCH_REQUEST_KEY_HARDWARE_ID: HARDWARE_ID,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
         BRANCH_REQUEST_KEY_BUNDLE_ID: BUNDLE_ID,
         BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL: @YES,
         BRANCH_REQUEST_KEY_IS_REFERRABLE: IS_REFERRABLE,
@@ -89,8 +89,9 @@
     NSString * const LINK_IDENTIFIER = @"foo-link-id";
     NSString * const FINGERPRINT_ID = @"foo-fingerprint";
     
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
-    [[[[systemObserverMock stub] ignoringNonObjectArgs] andReturn:HARDWARE_ID] getUniqueHardwareId:0 andIsDebug:[BNCPreferenceHelper isDebug]];
+    [[[[systemObserverMock stub] ignoringNonObjectArgs] andReturn:HARDWARE_ID] getUniqueHardwareId:0 andIsDebug:preferenceHelper.isDebug];
     [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingSafe];
     [[[systemObserverMock stub] andReturn:BUNDLE_ID] getBundleID];
     [[[systemObserverMock stub] andReturn:APP_VERSION] getAppVersion];
@@ -99,17 +100,17 @@
     [[[systemObserverMock stub] andReturn:URI_SCHEME] getDefaultUriScheme];
     [[[systemObserverMock stub] andReturn:UPDATE_STATE] getUpdateState];
     
-    id preferenceMock = OCMClassMock([BNCPreferenceHelper class]);
-    [[[preferenceMock stub] andReturnValue:IS_REFERRABLE] getIsReferrable];
-    [[[preferenceMock stub] andReturnValue:IS_DEBUG] isDebug];
-    [[[preferenceMock stub] andReturn:LINK_IDENTIFIER] getLinkClickIdentifier];
-    [[[preferenceMock stub] andReturn:FINGERPRINT_ID] getDeviceFingerprintID];
+    preferenceHelper.isReferrable = IS_REFERRABLE;
+    preferenceHelper.explicitlyRequestedReferrable = YES;
+    preferenceHelper.isDebug = IS_DEBUG;
+    preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
+    preferenceHelper.deviceFingerprintID = FINGERPRINT_ID;
     
     NSDictionary * const EXPECTED_PARAMS = @{
         BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED: AD_TRACKING_SAFE,
         BRANCH_REQUEST_KEY_APP_VERSION: APP_VERSION,
         BRANCH_REQUEST_KEY_DEBUG: IS_DEBUG,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
         BRANCH_REQUEST_KEY_BUNDLE_ID: BUNDLE_ID,
         BRANCH_REQUEST_KEY_IS_REFERRABLE: IS_REFERRABLE,
         BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: FINGERPRINT_ID,
@@ -148,8 +149,9 @@
         BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: IDENTITY
     };
     
-    [BNCPreferenceHelper setIsReferrable];
-    [BNCPreferenceHelper setInstallParams:INSTALL_PARAMS];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.isReferrable = YES;
+    preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
     BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
@@ -162,14 +164,14 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects([BNCPreferenceHelper getDeviceFingerprintID], FINGERPRINT_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserURL], USER_URL);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserIdentity], DEVELOPER_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], SESSION_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getSessionParams], SESSION_PARAMS);
-    XCTAssertEqualObjects([BNCPreferenceHelper getInstallParams], SESSION_PARAMS);
-    XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], IDENTITY);
-    XCTAssertNil([BNCPreferenceHelper getLinkClickIdentifier]);
+    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
+    XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
+    XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
+    XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
+    XCTAssertEqualObjects(preferenceHelper.sessionParams, SESSION_PARAMS);
+    XCTAssertEqualObjects(preferenceHelper.installParams, SESSION_PARAMS);
+    XCTAssertEqualObjects(preferenceHelper.identityID, IDENTITY);
+    XCTAssertNil(preferenceHelper.linkClickIdentifier);
 }
 
 - (void)testSuccessWithAllKeysAndIsNotReferrable {
@@ -191,8 +193,9 @@
         BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: IDENTITY
     };
     
-    [BNCPreferenceHelper clearIsReferrable];
-    [BNCPreferenceHelper setInstallParams:INSTALL_PARAMS];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.isReferrable = NO;
+    preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
     BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
@@ -205,14 +208,14 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects([BNCPreferenceHelper getDeviceFingerprintID], FINGERPRINT_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserURL], USER_URL);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserIdentity], DEVELOPER_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], SESSION_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getSessionParams], SESSION_PARAMS);
-    XCTAssertEqualObjects([BNCPreferenceHelper getInstallParams], INSTALL_PARAMS);
-    XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], IDENTITY);
-    XCTAssertNil([BNCPreferenceHelper getLinkClickIdentifier]);
+    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
+    XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
+    XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
+    XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
+    XCTAssertEqualObjects(preferenceHelper.sessionParams, SESSION_PARAMS);
+    XCTAssertEqualObjects(preferenceHelper.installParams, INSTALL_PARAMS);
+    XCTAssertEqualObjects(preferenceHelper.identityID, IDENTITY);
+    XCTAssertNil(preferenceHelper.linkClickIdentifier);
 }
 
 - (void)testSuccessWithNoSessionParamsAndIsNotReferrable {
@@ -232,8 +235,9 @@
         BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: IDENTITY
     };
     
-    [BNCPreferenceHelper clearIsReferrable];
-    [BNCPreferenceHelper setInstallParams:INSTALL_PARAMS];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.isReferrable = NO;
+    preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
     BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
@@ -246,14 +250,14 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects([BNCPreferenceHelper getDeviceFingerprintID], FINGERPRINT_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserURL], USER_URL);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserIdentity], DEVELOPER_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], SESSION_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getInstallParams], INSTALL_PARAMS);
-    XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], IDENTITY);
-    XCTAssertNil([BNCPreferenceHelper getSessionParams]);
-    XCTAssertNil([BNCPreferenceHelper getLinkClickIdentifier]);
+    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
+    XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
+    XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
+    XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
+    XCTAssertEqualObjects(preferenceHelper.installParams, INSTALL_PARAMS);
+    XCTAssertEqualObjects(preferenceHelper.identityID, IDENTITY);
+    XCTAssertNil(preferenceHelper.sessionParams);
+    XCTAssertNil(preferenceHelper.linkClickIdentifier);
 }
 
 - (void)testSuccessWithNoSessionParamsAndIsReferrableAndAllowToBeClearIsNotSet {
@@ -273,8 +277,9 @@
         BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: IDENTITY
     };
     
-    [BNCPreferenceHelper setIsReferrable];
-    [BNCPreferenceHelper setInstallParams:INSTALL_PARAMS];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.isReferrable = YES;
+    preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
     BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
@@ -287,14 +292,14 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects([BNCPreferenceHelper getDeviceFingerprintID], FINGERPRINT_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserURL], USER_URL);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserIdentity], DEVELOPER_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], SESSION_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getInstallParams], INSTALL_PARAMS);
-    XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], IDENTITY);
-    XCTAssertNil([BNCPreferenceHelper getSessionParams]);
-    XCTAssertNil([BNCPreferenceHelper getLinkClickIdentifier]);
+    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
+    XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
+    XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
+    XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
+    XCTAssertEqualObjects(preferenceHelper.installParams, INSTALL_PARAMS);
+    XCTAssertEqualObjects(preferenceHelper.identityID, IDENTITY);
+    XCTAssertNil(preferenceHelper.sessionParams);
+    XCTAssertNil(preferenceHelper.linkClickIdentifier);
 }
 
 - (void)testSuccessWithNoSessionParamsAndIsReferrableAndAllowToBeClearIsSet {
@@ -314,8 +319,9 @@
         BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: IDENTITY
     };
     
-    [BNCPreferenceHelper setIsReferrable];
-    [BNCPreferenceHelper setInstallParams:INSTALL_PARAMS];
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.isReferrable = YES;
+    preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
     BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
@@ -328,14 +334,14 @@
     
     [self awaitExpectations];
     
-    XCTAssertEqualObjects([BNCPreferenceHelper getDeviceFingerprintID], FINGERPRINT_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserURL], USER_URL);
-    XCTAssertEqualObjects([BNCPreferenceHelper getUserIdentity], DEVELOPER_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getSessionID], SESSION_ID);
-    XCTAssertEqualObjects([BNCPreferenceHelper getIdentityID], IDENTITY);
-    XCTAssertNil([BNCPreferenceHelper getSessionParams]);
-    XCTAssertNil([BNCPreferenceHelper getLinkClickIdentifier]);
-    XCTAssertNil([BNCPreferenceHelper getInstallParams]);
+    XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
+    XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
+    XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
+    XCTAssertEqualObjects(preferenceHelper.sessionID, SESSION_ID);
+    XCTAssertEqualObjects(preferenceHelper.identityID, IDENTITY);
+    XCTAssertNil(preferenceHelper.sessionParams);
+    XCTAssertNil(preferenceHelper.linkClickIdentifier);
+    XCTAssertNil(preferenceHelper.installParams);
 }
 
 @end
