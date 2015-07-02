@@ -21,10 +21,12 @@
     NSString * const BUCKET = @"foo_bucket";
     NSString * const CREDIT_TRANSACTION_ID = @"foo_transaction_id";
     NSInteger const LENGTH = 5;
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID],
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
         BRANCH_REQUEST_KEY_STARTING_TRANSACTION_ID: CREDIT_TRANSACTION_ID,
         BRANCH_REQUEST_KEY_BUCKET: BUCKET,
         BRANCH_REQUEST_KEY_LENGTH: @(LENGTH),
@@ -42,10 +44,12 @@
 
 - (void)testRequestBodyWithItemsMissing {
     NSInteger const LENGTH = 5;
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID],
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
         BRANCH_REQUEST_KEY_LENGTH: @(LENGTH),
         BRANCH_REQUEST_KEY_DIRECTION: @"asc"
     };

@@ -24,13 +24,14 @@
     NSInteger const AMOUNT = 5;
     NSString * const PREFIX = @"foo_prefix";
     NSDate * const EXPIRATION = [NSDate date];
-
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
         BRANCH_REQUEST_KEY_BUCKET: BUCKET,
         BRANCH_REQUEST_KEY_AMOUNT: @(AMOUNT),
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID],
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
         BRANCH_REQUEST_KEY_REFERRAL_USAGE_TYPE: @(BranchPromoCodeUsageTypeOncePerUser),
         BRANCH_REQUEST_KEY_REFERRAL_REWARD_LOCATION: @(BranchPromoCodeRewardReferringUser),
         BRANCH_REQUEST_KEY_REFERRAL_TYPE: @"credit",
@@ -52,12 +53,13 @@
     NSString * const BUCKET = @"foo_bucket";
     NSInteger const AMOUNT = 5;
     
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
         BRANCH_REQUEST_KEY_BUCKET: BUCKET,
         BRANCH_REQUEST_KEY_AMOUNT: @(AMOUNT),
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID],
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
         BRANCH_REQUEST_KEY_REFERRAL_USAGE_TYPE: @(BranchPromoCodeUsageTypeOncePerUser),
         BRANCH_REQUEST_KEY_REFERRAL_REWARD_LOCATION: @(BranchPromoCodeRewardReferringUser),
         BRANCH_REQUEST_KEY_REFERRAL_TYPE: @"credit",

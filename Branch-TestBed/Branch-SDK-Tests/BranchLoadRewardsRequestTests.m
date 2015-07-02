@@ -40,7 +40,7 @@
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = ACTION_DICT;
     
-    [BNCPreferenceHelper setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
+    [[BNCPreferenceHelper preferenceHelper] setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
     
     XCTestExpectation *requestCallbackExpectation = [self expectationWithDescription:@"Request Callback Expectation"];
     BranchLoadRewardsRequest *request = [[BranchLoadRewardsRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
@@ -53,7 +53,7 @@
     [request processResponse:response error:nil];
     
     [self awaitExpectations];
-    XCTAssertEqual([BNCPreferenceHelper getCreditCountForBucket:BUCKET], NEW_REWARD_VALUE);
+    XCTAssertEqual([[BNCPreferenceHelper preferenceHelper] getCreditCountForBucket:BUCKET], NEW_REWARD_VALUE);
 }
 
 - (void)testSuccessWithSameValues {
@@ -68,7 +68,7 @@
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = ACTION_DICT;
     
-    [BNCPreferenceHelper setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
+    [[BNCPreferenceHelper preferenceHelper] setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
     
     XCTestExpectation *requestCallbackExpectation = [self expectationWithDescription:@"Request Callback Expectation"];
     BranchLoadRewardsRequest *request = [[BranchLoadRewardsRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
@@ -81,7 +81,7 @@
     [request processResponse:response error:nil];
     
     [self awaitExpectations];
-    XCTAssertEqual([BNCPreferenceHelper getCreditCountForBucket:BUCKET], OLD_REWARD_VALUE);
+    XCTAssertEqual([[BNCPreferenceHelper preferenceHelper] getCreditCountForBucket:BUCKET], OLD_REWARD_VALUE);
 }
 
 - (void)testRequestWithError {
@@ -89,7 +89,7 @@
     NSInteger const OLD_REWARD_VALUE = 25;
     NSError * const REQUEST_ERROR = [NSError errorWithDomain:@"foo" code:1 userInfo:nil];
     
-    [BNCPreferenceHelper setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
+    [[BNCPreferenceHelper preferenceHelper] setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
     
     XCTestExpectation *requestCallbackExpectation = [self expectationWithDescription:@"Request Callback Expectation"];
     BranchLoadRewardsRequest *request = [[BranchLoadRewardsRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
@@ -102,7 +102,7 @@
     [request processResponse:nil error:REQUEST_ERROR];
     
     [self awaitExpectations];
-    XCTAssertEqual([BNCPreferenceHelper getCreditCountForBucket:BUCKET], OLD_REWARD_VALUE);
+    XCTAssertEqual([[BNCPreferenceHelper preferenceHelper] getCreditCountForBucket:BUCKET], OLD_REWARD_VALUE);
 }
 
 @end

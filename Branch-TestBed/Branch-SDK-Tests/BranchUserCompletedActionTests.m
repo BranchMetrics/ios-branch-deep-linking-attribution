@@ -21,11 +21,12 @@
 - (void)testRequestBodyWithoutState {
     NSString * const USER_ACTION_TEST_ACTION = @"foo-action";
     
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
         BRANCH_REQUEST_KEY_ACTION: USER_ACTION_TEST_ACTION,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID]
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID
     };
     
     BranchUserCompletedActionRequest *request = [[BranchUserCompletedActionRequest alloc] initWithAction:USER_ACTION_TEST_ACTION state:nil];
@@ -41,12 +42,13 @@
     NSString * const USER_ACTION_TEST_ACTION = @"foo-action";
     NSDictionary * const USER_ACTION_TEST_STATE = @{ @"foo": @"bar" };
     
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
         BRANCH_REQUEST_KEY_ACTION: USER_ACTION_TEST_ACTION,
         BRANCH_REQUEST_KEY_STATE: USER_ACTION_TEST_STATE,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: [BNCPreferenceHelper getIdentityID],
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
-        BRANCH_REQUEST_KEY_SESSION_ID: [BNCPreferenceHelper getSessionID]
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID
     };
     
     BranchUserCompletedActionRequest *request = [[BranchUserCompletedActionRequest alloc] initWithAction:USER_ACTION_TEST_ACTION state:USER_ACTION_TEST_STATE];

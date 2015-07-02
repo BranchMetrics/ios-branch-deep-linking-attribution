@@ -50,7 +50,6 @@
         return YES;
     }]];
     
-    
     __block BNCServerCallback openOrInstallCallback;
     id openOrInstallCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         openOrInstallCallback = callback;

@@ -25,9 +25,10 @@
     NSString * const OS_VERSION = @"foo-os-version";
     NSString * const MODEL = @"foo-model";
     NSNumber * const IS_SIMULATOR = @YES;
-    
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper getDeviceFingerprintID],
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
         BRANCH_REQUEST_KEY_DEVICE_NAME: DEVICE_NAME,
         BRANCH_REQUEST_KEY_OS: OS,
         BRANCH_REQUEST_KEY_OS_VERSION: OS_VERSION,
@@ -58,7 +59,7 @@
     
     [request processResponse:response error:nil];
     
-    XCTAssertTrue([BNCPreferenceHelper isConnectedToRemoteDebug]);
+    XCTAssertTrue([[BNCPreferenceHelper preferenceHelper] isConnectedToRemoteDebug]);
 }
 
 - (void)testDebuggerConnectFailure {
@@ -69,7 +70,7 @@
     
     [request processResponse:response error:connectError];
     
-    XCTAssertFalse([BNCPreferenceHelper isConnectedToRemoteDebug]);
+    XCTAssertFalse([[BNCPreferenceHelper preferenceHelper] isConnectedToRemoteDebug]);
 }
 
 @end
