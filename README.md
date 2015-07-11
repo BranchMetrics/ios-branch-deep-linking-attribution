@@ -650,7 +650,7 @@ let feature = "invite"
 let stage = "2"
 
 // Branch UIActivityItemProvider
-let itemProvider = Branch.getBranchActivityItemWithParams(params, andFeature: feature, andStage: stage, andTags: tags)
+let itemProvider = Branch.getInstance().getBranchActivityItemWithParams(params, andFeature: feature, andStage: stage, andTags: tags)
 items.append(itemProvider)
 
 // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
@@ -703,7 +703,7 @@ Reward balances change randomly on the backend when certain actions are taken (d
 ###### Swift
 
 ```swift
-Branch().loadRewardsWithCallback { (changed: Bool, error: NSError!) -> Void in
+Branch.getInstance().loadRewardsWithCallback { (changed: Bool, error: NSError!) -> Void in
     // changed boolean will indicate if the balance changed from what is currently in memory
 
     // will return the balance of the current user's credits
