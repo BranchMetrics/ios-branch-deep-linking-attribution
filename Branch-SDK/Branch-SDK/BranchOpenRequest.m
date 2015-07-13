@@ -80,9 +80,16 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     NSDictionary *data = response.data;
+
+    // Handle possibly mis-parsed identity.
+    id userIdentity = data[@"identity"];
+    if ([userIdentity isKindOfClass:[NSNumber class]]) {
+        userIdentity = [userIdentity stringValue];
+    }
+    
     preferenceHelper.deviceFingerprintID = data[@"device_fingerprint_id"];
     preferenceHelper.userUrl = data[@"link"];
-    preferenceHelper.userIdentity = data[@"identity"];
+    preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[@"session_id"];
     [BNCSystemObserver setUpdateState];
     
