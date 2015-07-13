@@ -64,7 +64,7 @@
     
     for (NSMutableDictionary *transaction in response.data) {
         if (transaction[@"referrer"] == [NSNull null]) {
-            [transaction removeObjectForKey:transaction[@"referrer"]];
+            [transaction removeObjectForKey:@"referrer"];
         }
         if (transaction[@"referree"] == [NSNull null]) {
             [transaction removeObjectForKey:@"referree"];
