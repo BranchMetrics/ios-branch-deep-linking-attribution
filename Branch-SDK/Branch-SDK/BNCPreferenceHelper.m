@@ -473,7 +473,12 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 }
 
 - (NSString *)readStringFromDefaults:(NSString *)key {
-    NSString *str = self.persistenceDict[key];
+    id str = self.persistenceDict[key];
+    
+    if ([str isKindOfClass:[NSNumber class]]) {
+        str = [str stringValue];
+    }
+    
     return str;
 }
 
