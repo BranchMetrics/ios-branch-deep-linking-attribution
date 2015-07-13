@@ -1,5 +1,8 @@
 Branch iOS SDK change log
 
+- v0.10.1
+  * Fixing a bad key check in the CreditHistory callback, allowing NSNulls through.
+
 - v0.10.0
   * Adding an automatic deep linking feature, allowing devs to register a controller to be displayed based on keys in the open dictionary.
   * Adding a delegate to the `BranchActivityItemProvider`, allowing devs to override link items based on selected sharing network.
