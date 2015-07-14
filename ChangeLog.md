@@ -1,5 +1,8 @@
 Branch iOS SDK change log
 
+- v0.10.2
+  * Fixing potential for bad types to come through in UserIdentity (number rather than string).
+
 - v0.10.1
   * Fixing a bad key check in the CreditHistory callback, allowing NSNulls through.
 
