@@ -431,13 +431,6 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)setNetworkTimeout:(NSInteger)timeout;
 
-/**
- Whether or not Branch should attempt to the devices list of apps
- 
- @param appListCheckEnabled Boolean indicating whether to perform the check.
- */
-- (void)setAppListCheckEnabled:(BOOL)appListCheckEnabled;
-
 #pragma mark - Session Item methods
 
 ///--------------------
