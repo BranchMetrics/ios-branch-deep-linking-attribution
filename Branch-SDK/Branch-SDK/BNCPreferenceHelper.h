@@ -39,9 +39,6 @@
 - (NSString *)getAPIURL:(NSString *)endpoint;
 - (NSString *)getBranchKey:(BOOL)isLive;
 
-- (void)setAppListCheckDone;
-- (BOOL)getNeedAppListCheck;
-
 - (void)clearUserCreditsAndCounts;
 
 - (void)setCreditCount:(NSInteger)count;
