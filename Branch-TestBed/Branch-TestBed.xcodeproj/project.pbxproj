@@ -25,8 +25,6 @@
 		463F0A3C1B20A663004235D2 /* BranchShortUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B36A1B14DD870019767C /* BranchShortUrlRequest.m */; };
 		463F0A3D1B20A663004235D2 /* BranchShortUrlSyncRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 466B582F1B16227100A69EDE /* BranchShortUrlSyncRequest.m */; };
 		463F0A3E1B20A663004235D2 /* BranchCloseRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B36D1B14F6540019767C /* BranchCloseRequest.m */; };
-		463F0A3F1B20A663004235D2 /* BranchGetAppListRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3701B14F8200019767C /* BranchGetAppListRequest.m */; };
-		463F0A401B20A663004235D2 /* BranchUpdateAppListRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3731B14F9A60019767C /* BranchUpdateAppListRequest.m */; };
 		463F0A411B20A663004235D2 /* BranchOpenRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3761B1507370019767C /* BranchOpenRequest.m */; };
 		463F0A421B20A663004235D2 /* BranchInstallRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3791B1508B40019767C /* BranchInstallRequest.m */; };
 		463F0A431B20A663004235D2 /* BranchConnectDebugRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4642E6A61B1FA1DB006E4C1F /* BranchConnectDebugRequest.m */; };
@@ -82,8 +80,6 @@
 		46946B9E1B2689A100627BCC /* BranchShortUrlRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B3691B14DD870019767C /* BranchShortUrlRequest.h */; };
 		46946B9F1B2689A100627BCC /* BranchShortUrlSyncRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 466B582E1B16227100A69EDE /* BranchShortUrlSyncRequest.h */; };
 		46946BA01B2689A100627BCC /* BranchCloseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B36C1B14F6540019767C /* BranchCloseRequest.h */; };
-		46946BA11B2689A100627BCC /* BranchGetAppListRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B36F1B14F8200019767C /* BranchGetAppListRequest.h */; };
-		46946BA21B2689A100627BCC /* BranchUpdateAppListRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B3721B14F9A60019767C /* BranchUpdateAppListRequest.h */; };
 		46946BA31B2689A100627BCC /* BranchOpenRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B3751B1507370019767C /* BranchOpenRequest.h */; };
 		46946BA41B2689A100627BCC /* BranchInstallRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B3781B1508B40019767C /* BranchInstallRequest.h */; };
 		46946BA51B2689A100627BCC /* BranchConnectDebugRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4642E6A51B1FA1DB006E4C1F /* BranchConnectDebugRequest.h */; };
@@ -185,10 +181,6 @@
 		4659B36A1B14DD870019767C /* BranchShortUrlRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShortUrlRequest.m; sourceTree = "<group>"; };
 		4659B36C1B14F6540019767C /* BranchCloseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchCloseRequest.h; sourceTree = "<group>"; };
 		4659B36D1B14F6540019767C /* BranchCloseRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchCloseRequest.m; sourceTree = "<group>"; };
-		4659B36F1B14F8200019767C /* BranchGetAppListRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchGetAppListRequest.h; sourceTree = "<group>"; };
-		4659B3701B14F8200019767C /* BranchGetAppListRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchGetAppListRequest.m; sourceTree = "<group>"; };
-		4659B3721B14F9A60019767C /* BranchUpdateAppListRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchUpdateAppListRequest.h; sourceTree = "<group>"; };
-		4659B3731B14F9A60019767C /* BranchUpdateAppListRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUpdateAppListRequest.m; sourceTree = "<group>"; };
 		4659B3751B1507370019767C /* BranchOpenRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchOpenRequest.h; sourceTree = "<group>"; };
 		4659B3761B1507370019767C /* BranchOpenRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchOpenRequest.m; sourceTree = "<group>"; };
 		4659B3781B1508B40019767C /* BranchInstallRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchInstallRequest.h; sourceTree = "<group>"; };
@@ -363,10 +355,6 @@
 				466B582F1B16227100A69EDE /* BranchShortUrlSyncRequest.m */,
 				4659B36C1B14F6540019767C /* BranchCloseRequest.h */,
 				4659B36D1B14F6540019767C /* BranchCloseRequest.m */,
-				4659B36F1B14F8200019767C /* BranchGetAppListRequest.h */,
-				4659B3701B14F8200019767C /* BranchGetAppListRequest.m */,
-				4659B3721B14F9A60019767C /* BranchUpdateAppListRequest.h */,
-				4659B3731B14F9A60019767C /* BranchUpdateAppListRequest.m */,
 				4659B3751B1507370019767C /* BranchOpenRequest.h */,
 				4659B3761B1507370019767C /* BranchOpenRequest.m */,
 				4659B3781B1508B40019767C /* BranchInstallRequest.h */,
@@ -595,13 +583,11 @@
 				46946B851B26898800627BCC /* BNCServerRequest.h in Headers */,
 				466B58741B17780A00A69EDE /* BNCPreferenceHelper.h in Headers */,
 				466B58791B17780A00A69EDE /* BNCConfig.h in Headers */,
-				46946BA21B2689A100627BCC /* BranchUpdateAppListRequest.h in Headers */,
 				46946BA71B2689A100627BCC /* BranchLogRequest.h in Headers */,
 				46946B9F1B2689A100627BCC /* BranchShortUrlSyncRequest.h in Headers */,
 				46946B9E1B2689A100627BCC /* BranchShortUrlRequest.h in Headers */,
 				46946B9D1B2689A100627BCC /* BranchApplyPromoCodeRequest.h in Headers */,
 				466B58781B17780A00A69EDE /* BNCServerRequestQueue.h in Headers */,
-				46946BA11B2689A100627BCC /* BranchGetAppListRequest.h in Headers */,
 				466B58751B17780A00A69EDE /* BNCServerInterface.h in Headers */,
 				46946B981B2689A100627BCC /* BranchLoadRewardsRequest.h in Headers */,
 				466B587B1B17780A00A69EDE /* BNCServerResponse.h in Headers */,
@@ -900,7 +886,6 @@
 				463F0A311B20A663004235D2 /* BNCServerRequest.m in Sources */,
 				463F0A441B20A663004235D2 /* BranchDisconnectDebugRequest.m in Sources */,
 				466B58551B17779C00A69EDE /* Branch.m in Sources */,
-				463F0A401B20A663004235D2 /* BranchUpdateAppListRequest.m in Sources */,
 				463F0A3D1B20A663004235D2 /* BranchShortUrlSyncRequest.m in Sources */,
 				463F0A391B20A663004235D2 /* BranchGetPromoCodeRequest.m in Sources */,
 				463F0A451B20A663004235D2 /* BranchLogRequest.m in Sources */,
@@ -908,7 +893,6 @@
 				463F0A3C1B20A663004235D2 /* BranchShortUrlRequest.m in Sources */,
 				466B58591B17779C00A69EDE /* BNCPreferenceHelper.m in Sources */,
 				466B585B1B17779C00A69EDE /* BNCServerInterface.m in Sources */,
-				463F0A3F1B20A663004235D2 /* BranchGetAppListRequest.m in Sources */,
 				463F0A411B20A663004235D2 /* BranchOpenRequest.m in Sources */,
 				463F0A341B20A663004235D2 /* BranchUserCompletedActionRequest.m in Sources */,
 				463F0A3E1B20A663004235D2 /* BranchCloseRequest.m in Sources */,

@@ -35,7 +35,6 @@
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_live"];
-    [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario1Expectation1 = [self expectationWithDescription:@"Scenario1 Expectation1"];
 
@@ -78,7 +77,6 @@
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario2Expectation1 = [self expectationWithDescription:@"Scenario2 Expectation1"];
     
@@ -128,7 +126,6 @@
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *scenario3Expectation1 = [self expectationWithDescription:@"Scenario3 Expectation1"];
     
@@ -171,7 +168,6 @@
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
     
     XCTestExpectation *scenario4Expectation1 = [self expectationWithDescription:@"Scenario4 Expectation1"];
     
@@ -221,7 +217,6 @@
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_live"];
-    [branch setAppListCheckEnabled:NO];
     
     XCTestExpectation *scenario5Expectation1 = [self expectationWithDescription:@"Scenario5 Expectation1"];
     
@@ -252,7 +247,6 @@
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_live"];
-    [branch setAppListCheckEnabled:NO];
     
     XCTestExpectation *scenario6Expectation1 = [self expectationWithDescription:@"Scenario5 Expectation1"];
     
@@ -356,7 +350,6 @@
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_live"];
-    [branch setAppListCheckEnabled:NO];
     
     XCTestExpectation *expecation = [self expectationWithDescription:@"Scenario8 Expectation"];
     [self initSessionExpectingSuccess:branch serverInterface:serverInterfaceMock callback:^{

@@ -45,7 +45,6 @@ NSInteger const  TEST_CREDITS = 30;
     preferenceHelper.branchKey = @"foo";
     
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"foo"];
-    [branch setAppListCheckEnabled:NO];
     
     BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
     openInstallResponse.data = @{
@@ -88,7 +87,6 @@ NSInteger const  TEST_CREDITS = 30;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"foo"];
-    [branch setAppListCheckEnabled:NO];
     
     // mock logout synchronously
     preferenceHelper.identityID = @"98274447349252681";
@@ -141,7 +139,6 @@ NSInteger const  TEST_CREDITS = 30;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
 
     BNCServerResponse *fbLinkResponse = [[BNCServerResponse alloc] init];
     fbLinkResponse.statusCode = @200;
@@ -201,7 +198,6 @@ NSInteger const  TEST_CREDITS = 30;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL Sync"];
     [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
@@ -251,7 +247,6 @@ NSInteger const  TEST_CREDITS = 30;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
 
     [preferenceHelper setCreditCount:NSIntegerMax forBucket:@"default"];
     
@@ -284,7 +279,6 @@ NSInteger const  TEST_CREDITS = 30;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
 
     [preferenceHelper setCreditCount:1 forBucket:@"default"];
     
@@ -317,7 +311,6 @@ NSInteger const  TEST_CREDITS = 30;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
     
     [preferenceHelper setCreditCount:1 forBucket:@"default"];
     
@@ -367,7 +360,6 @@ NSInteger const  TEST_CREDITS = 30;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
     
     [preferenceHelper setCreditCount:1 forBucket:@"default"];
     
@@ -420,7 +412,6 @@ NSInteger const  TEST_CREDITS = 30;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
 
     [preferenceHelper setCreditCount:1 forBucket:@"default"];
     
@@ -476,7 +467,6 @@ NSInteger const  TEST_CREDITS = 30;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
     
     [preferenceHelper setCreditCount:1 forBucket:@"default"];
     
@@ -535,7 +525,6 @@ NSInteger const  TEST_CREDITS = 30;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
     
     [preferenceHelper setCreditCount:1 forBucket:@"default"];
     
@@ -591,7 +580,6 @@ NSInteger const  TEST_CREDITS = 30;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
     
     [preferenceHelper setCreditCount:1 forBucket:@"default"];
     
@@ -650,7 +638,6 @@ NSInteger const  TEST_CREDITS = 30;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
 
     [preferenceHelper setCreditCount:1 forBucket:@"default"];
     
@@ -695,7 +682,6 @@ NSInteger const  TEST_CREDITS = 30;
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
 
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL Sync"];
     [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
