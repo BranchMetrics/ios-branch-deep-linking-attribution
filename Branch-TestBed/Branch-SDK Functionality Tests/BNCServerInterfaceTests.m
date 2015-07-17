@@ -199,7 +199,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     }];
     
     void (^urlConnectionInvocation)(NSInvocation *) = ^(NSInvocation *invocation) {
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:504 HTTPVersion:nil headerFields:nil];
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] init] statusCode:504 HTTPVersion:nil headerFields:nil];
         urlConnectionCallback(response, nil, nil);
     };
     
@@ -219,7 +219,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     }];
     
     void (^urlConnectionInvocation)(NSInvocation *) = ^(NSInvocation *invocation) {
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:nil];
+        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[[NSURL alloc] init] statusCode:200 HTTPVersion:nil headerFields:nil];
         urlConnectionCallback(response, nil, nil);
     };
     

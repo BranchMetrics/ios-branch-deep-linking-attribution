@@ -14,6 +14,6 @@
 @property (strong, nonatomic) callbackWithStatus callback;
 
 - (id)initWithCallback:(callbackWithStatus)callback;
-- (id)initWithCallback:(callbackWithStatus)callback allowInstallParamsToBeCleared:(BOOL)allowInstallParamsToBeCleared;
+- (id)initWithCallback:(callbackWithStatus)callback isInstall:(BOOL)isInstall;
 
 @end
