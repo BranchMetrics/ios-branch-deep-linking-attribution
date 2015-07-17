@@ -66,6 +66,27 @@
     [self awaitExpectations];
 }
 
+- (void)testInstallWhenReferrableAndNoInstallParamsAndNonLinkClickData {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.isReferrable = YES;
+    
+    NSString * const OPEN_PARAMS = @"{\"+clicked_branch_link\":0}";
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];
+    BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertNil(preferenceHelper.installParams);
+        
+        [self safelyFulfillExpectation:expectation];
+    }];
+    
+    BNCServerResponse *response = [[BNCServerResponse alloc] init];
+    response.data = @{ @"data": OPEN_PARAMS };
+    [request processResponse:response error:nil];
+    
+    [self awaitExpectations];
+}
+
 - (void)testInstallWhenNotReferrable {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.isReferrable = NO;
@@ -122,6 +143,27 @@
     
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{ };
+    [request processResponse:response error:nil];
+    
+    [self awaitExpectations];
+}
+
+- (void)testOpenWhenReferrableAndNoInstallParamsAndNonLinkClickData {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.isReferrable = YES;
+
+    NSString * const OPEN_PARAMS = @"{\"+clicked_branch_link\":0}";
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];
+    BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertNil(preferenceHelper.installParams);
+        
+        [self safelyFulfillExpectation:expectation];
+    }];
+    
+    BNCServerResponse *response = [[BNCServerResponse alloc] init];
+    response.data = @{ @"data": OPEN_PARAMS };
     [request processResponse:response error:nil];
     
     [self awaitExpectations];

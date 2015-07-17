@@ -100,16 +100,14 @@
     
     // Scenarios:
     // If isReferrable is false, don't set, period.
-    // Otherwise, if isReferrable and
+    // Otherwise, if isReferrable, is from a link click, and
     // * Install: set to whatever we get.
     // * Open and installParams set: don't set.
     // * Open and not installParams and isReferrable: set if not null.
-    if (preferenceHelper.isReferrable) {
-        BOOL storedParamsAreEmptyAndRequestValueIsNonNull = !preferenceHelper.installParams.length && sessionData.length;
-
-        if (self.isInstall || storedParamsAreEmptyAndRequestValueIsNonNull) {
-            preferenceHelper.installParams = sessionData;
-        }
+    BOOL dataIsFromALinkClick = [sessionData rangeOfString:@"\"+clicked_branch_link\":0"].location == NSNotFound;
+    BOOL storedParamsAreEmptyAndRequestValueIsNonNull = !preferenceHelper.installParams.length && sessionData.length;
+    if (preferenceHelper.isReferrable && dataIsFromALinkClick && (self.isInstall || storedParamsAreEmptyAndRequestValueIsNonNull)) {
+        preferenceHelper.installParams = sessionData;
     }
     
     // Clear link click so it doesn't get reused on the next open
