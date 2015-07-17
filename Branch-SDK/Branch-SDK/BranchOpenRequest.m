@@ -12,20 +12,20 @@
 
 @interface BranchOpenRequest ()
 
-@property (assign, nonatomic) BOOL allowInstallParamsToBeCleared;
+@property (assign, nonatomic) BOOL isInstall;
 
 @end
 
 @implementation BranchOpenRequest
 
 - (id)initWithCallback:(callbackWithStatus)callback {
-    return [self initWithCallback:callback allowInstallParamsToBeCleared:NO];
+    return [self initWithCallback:callback isInstall:NO];
 }
 
-- (id)initWithCallback:(callbackWithStatus)callback allowInstallParamsToBeCleared:(BOOL)allowInstallParamsToBeCleared {
+- (id)initWithCallback:(callbackWithStatus)callback isInstall:(BOOL)isInstall {
     if (self = [super init]) {
         _callback = callback;
-        _allowInstallParamsToBeCleared = allowInstallParamsToBeCleared;
+        _isInstall = isInstall;
     }
     
     return self;
@@ -98,15 +98,17 @@
     // Update session params
     preferenceHelper.sessionParams = sessionData;
     
-    // If referable, also se tup install params
+    // Scenarios:
+    // If isReferrable is false, don't set, period.
+    // Otherwise, if isReferrable and
+    // * Install: set to whatever we get.
+    // * Open and installParams set: don't set.
+    // * Open and not installParams and isReferrable: set if not null.
     if (preferenceHelper.isReferrable) {
-        // If present, set it.
-        if (sessionData) {
+        BOOL storedParamsAreEmptyAndRequestValueIsNonNull = !preferenceHelper.installParams.length && sessionData.length;
+
+        if (self.isInstall || storedParamsAreEmptyAndRequestValueIsNonNull) {
             preferenceHelper.installParams = sessionData;
-        }
-        // If not present, only allow nil to be set if desired (don't clear otherwise)
-        else if (self.allowInstallParamsToBeCleared) {
-            preferenceHelper.installParams = nil;
         }
     }
     
