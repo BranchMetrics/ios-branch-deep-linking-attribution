@@ -35,6 +35,7 @@
 #import "BranchConnectDebugRequest.h"
 #import "BranchDisconnectDebugRequest.h"
 #import "BranchLogRequest.h"
+#import "BNCContentDiscoveryManager.h"
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
@@ -71,6 +72,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
+@property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
 @property (strong, nonatomic) UILongPressGestureRecognizer *debugGestureRecognizer;
 @property (strong, nonatomic) NSTimer *debugHeartbeatTimer;
 @property (strong, nonatomic) NSString *branchKey;
@@ -673,6 +675,32 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
     return [self generateLongURLWithParams:params andChannel:nil andTags:nil andFeature:feature andStage:stage andAlias:alias];
+}
+
+#pragma mark - Discoverable content methods
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description callback:(callbackWithUrl)callback {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description callback:callback];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable callback:(callbackWithUrl)callback {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable callback:callback];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type callback:(callbackWithUrl)callback {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type callback:callback];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl callback:(callbackWithUrl)callback {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl callback:callback];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords callback:(callbackWithUrl)callback {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords callback:callback];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords userInfo:(NSDictionary *)userInfo callback:(callbackWithUrl)callback {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:userInfo callback:callback];
 }
 
 #pragma mark - Referral methods
