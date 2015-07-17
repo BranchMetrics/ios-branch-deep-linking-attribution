@@ -23,5 +23,5 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.requires_arc = true
 
   s.source_files = "Branch-SDK/Branch-SDK/*.{h,m}"
-  s.frameworks = 'AdSupport', 'CoreTelephony'
+  s.frameworks = 'AdSupport', 'CoreTelephony', 'CoreSpotlight', 'MobileCoreServices'
 end
