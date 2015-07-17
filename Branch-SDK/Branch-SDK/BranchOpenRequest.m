@@ -100,17 +100,17 @@
     preferenceHelper.sessionParams = sessionData;
     
     // Scenarios:
-    // If isReferrable is false, don't set, period.
-    // Otherwise, if isReferrable, is from a link click, and
-    // * Install: set to whatever we get.
-    // * Open and installParams set: don't set.
-    // * Open and not installParams and isReferrable: set if not null.
-    if (sessionData) {
+    // If no data, data isn't from a link click, or isReferrable is false, don't set, period.
+    // Otherwise,
+    // * On Install: set.
+    // * On Open and installParams set: don't set.
+    // * On Open and stored installParams are empty: set.
+    if (sessionData.length && preferenceHelper.isReferrable) {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
-
         BOOL dataIsFromALinkClick = [sessionDataDict[@"+clicked_branch_link"] isEqual:@1];
-        BOOL storedParamsAreEmptyAndRequestValueIsNonNull = !preferenceHelper.installParams.length && sessionData.length;
-        if (preferenceHelper.isReferrable && dataIsFromALinkClick && (self.isInstall || storedParamsAreEmptyAndRequestValueIsNonNull)) {
+        BOOL storedParamsAreEmpty = !preferenceHelper.installParams.length;
+
+        if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {
             preferenceHelper.installParams = sessionData;
         }
     }
