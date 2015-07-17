@@ -361,6 +361,7 @@
 				4642E6AE1B1FA303006E4C1F /* BranchLogRequest.m */,
 			);
 			name = BranchRequests;
+			path = Requests;
 			sourceTree = "<group>";
 		};
 		466D5A0E1B599123009DB845 /* ContentDiscovery */ = {
@@ -370,6 +371,7 @@
 				466D5A101B5991E3009DB845 /* BNCContentDiscoveryManager.m */,
 			);
 			name = ContentDiscovery;
+			path = ../ContentDiscovery;
 			sourceTree = "<group>";
 		};
 		670016571940F51400A9E103 = {
@@ -482,7 +484,7 @@
 				46DBB42F1B335A9B00642FC8 /* BranchDeepLinkingController.h */,
 			);
 			name = "Branch-SDK";
-			path = "../Branch-SDK/Branch-SDK";
+			path = "../Branch-SDK/Branch-SDK/Core";
 			sourceTree = "<group>";
 		};
 		7E6B3B521AA42D0E005F45BF /* Branch-SDK Functionality Tests */ = {
