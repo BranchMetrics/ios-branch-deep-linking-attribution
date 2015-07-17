@@ -49,7 +49,7 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.isReferrable = YES;
     
-    NSString * const INSTALL_PARAMS = @"{\"foo\":\"bar\"}";
+    NSString * const INSTALL_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];
     BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
@@ -91,7 +91,7 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.isReferrable = NO;
     
-    NSString * const INSTALL_PARAMS = @"{\"foo\":\"bar\"}";
+    NSString * const INSTALL_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];
     BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
@@ -112,7 +112,7 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.isReferrable = YES;
     
-    NSString * const OPEN_PARAMS = @"{\"foo\":\"bar\"}";
+    NSString * const OPEN_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];
     BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
@@ -173,8 +173,8 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.isReferrable = YES;
     
-    NSString * const INSTALL_PARAMS = @"{\"foo\":\"bar\"}";
-    NSString * const OPEN_PARAMS = @"{\"bar\":\"foo\"}";
+    NSString * const INSTALL_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
+    NSString * const OPEN_PARAMS = @"{\"+clicked_branch_link\":1,\"bar\":\"foo\"}";
 
     preferenceHelper.installParams = INSTALL_PARAMS;
     
@@ -197,7 +197,7 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.isReferrable = NO;
     
-    NSString * const OPEN_PARAMS = @"{\"foo\":\"bar\"}";
+    NSString * const OPEN_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];
     BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {

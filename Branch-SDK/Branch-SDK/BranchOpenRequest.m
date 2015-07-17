@@ -9,6 +9,7 @@
 #import "BranchOpenRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
+#import "BNCEncodingUtils.h"
 
 @interface BranchOpenRequest ()
 
@@ -104,10 +105,14 @@
     // * Install: set to whatever we get.
     // * Open and installParams set: don't set.
     // * Open and not installParams and isReferrable: set if not null.
-    BOOL dataIsFromALinkClick = [sessionData rangeOfString:@"\"+clicked_branch_link\":0"].location == NSNotFound;
-    BOOL storedParamsAreEmptyAndRequestValueIsNonNull = !preferenceHelper.installParams.length && sessionData.length;
-    if (preferenceHelper.isReferrable && dataIsFromALinkClick && (self.isInstall || storedParamsAreEmptyAndRequestValueIsNonNull)) {
-        preferenceHelper.installParams = sessionData;
+    if (sessionData) {
+        NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
+
+        BOOL dataIsFromALinkClick = [sessionDataDict[@"+clicked_branch_link"] isEqual:@1];
+        BOOL storedParamsAreEmptyAndRequestValueIsNonNull = !preferenceHelper.installParams.length && sessionData.length;
+        if (preferenceHelper.isReferrable && dataIsFromALinkClick && (self.isInstall || storedParamsAreEmptyAndRequestValueIsNonNull)) {
+            preferenceHelper.installParams = sessionData;
+        }
     }
     
     // Clear link click so it doesn't get reused on the next open
