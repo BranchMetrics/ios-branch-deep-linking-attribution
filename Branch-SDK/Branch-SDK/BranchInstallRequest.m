@@ -13,7 +13,7 @@
 @implementation BranchInstallRequest
 
 - (id)initWithCallback:(callbackWithStatus)callback {
-    return [super initWithCallback:callback allowInstallParamsToBeCleared:YES];
+    return [super initWithCallback:callback isInstall:YES];
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
