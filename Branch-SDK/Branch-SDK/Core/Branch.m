@@ -155,6 +155,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         _preferenceHelper = preferenceHelper;
         _branchKey = key;
         
+        _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
         _isInitialized = NO;
         _shouldCallSessionInitCallback = YES;
         _processing_sema = dispatch_semaphore_create(1);
@@ -354,6 +355,16 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [self initUserSessionAndCallCallback:YES];
 
     return handled;
+}
+
+- (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
+    NSString *linkIdentifier = [self.contentDiscoveryManager spotlightLinkIdentifierFromActivity:userActivity];
+    
+    if (linkIdentifier) {
+        [self initUserSessionAndCallCallback:YES];
+    }
+    
+    return linkIdentifier != nil;
 }
 
 
@@ -678,6 +689,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 #pragma mark - Discoverable content methods
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description];
+}
 
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description callback:(callbackWithUrl)callback {
     [self.contentDiscoveryManager indexContentWithTitle:title description:description callback:callback];

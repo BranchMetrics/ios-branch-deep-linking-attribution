@@ -381,6 +381,13 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (BOOL)handleDeepLink:(NSURL *)url;
 
+/**
+ Allow Branch to handle restoration from an NSUserActivity, returning whether or not it was from a Branch link.
+ 
+ @param userActivity The NSUserActivity that caused the app to be opened.
+*/
+- (BOOL)continueUserActivity:(NSUserActivity *)userActivity;
+
 #pragma mark - Deep Link Controller methods
 
 ///---------------------------
