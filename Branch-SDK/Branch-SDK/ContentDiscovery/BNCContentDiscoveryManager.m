@@ -30,23 +30,25 @@
 #pragma mark - Launch handling
 
 - (NSString *)spotlightLinkIdentifierFromActivity:(NSUserActivity *)userActivity {
-    NSString *spotlightIdentifier = [self spotlightIdentifierForApp];
-    
-    // NSUserActivity method. We should just be able to pull this from the contentAttributeSet, but this property is being cleared (iOS 9 Beta 3)
-    // Instead we just pull the URL's last path component for the time being.
-    if ([userActivity.activityType isEqualToString:spotlightIdentifier]) {
-        return [userActivity.webpageURL lastPathComponent];
-    }
-
-    // CoreSpotlight version. Matched if it has our prefix, then the link identifier is just the last piece of the identifier.
-    if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
-        NSString *activityIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
-        BOOL isBranchIdentifier = [activityIdentifier hasPrefix:spotlightIdentifier];
-
-        if (isBranchIdentifier) {
-            return [activityIdentifier substringFromIndex:spotlightIdentifier.length + 1];
+    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+        NSString *spotlightIdentifier = [self spotlightIdentifierForApp];
+        
+        // NSUserActivity method. We should just be able to pull this from the contentAttributeSet, but this property is being cleared (iOS 9 Beta 3)
+        // Instead we just pull the URL's last path component for the time being.
+        if ([userActivity.activityType isEqualToString:spotlightIdentifier]) {
+            return [userActivity.webpageURL lastPathComponent];
         }
-    }
+
+        // CoreSpotlight version. Matched if it has our prefix, then the link identifier is just the last piece of the identifier.
+        if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
+            NSString *activityIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
+            BOOL isBranchIdentifier = [activityIdentifier hasPrefix:spotlightIdentifier];
+
+            if (isBranchIdentifier) {
+                return [activityIdentifier substringFromIndex:spotlightIdentifier.length + 1];
+            }
+        }
+    #endif
     
     return nil;
 }
