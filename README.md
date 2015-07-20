@@ -2,17 +2,17 @@
 
 This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a complete list of the content featured in this document.
 
-**Note:** Go to our new [**Documentation Portal**] (https://dev.branch.io) where you can find all of our latest documentation and future documentation updates.
+**Note:** Go to our new [**Documentation Portal**](https://dev.branch.io) where you can find all of our latest documentation and future documentation updates.
 
 Table of Contents|
 ------------- |
 [Get the Demo App](#get-the-demo-app)|
-|[Class Reference Table](#class-reference)|
-|[Important Migrations] (#important-migration-to-v090)      |
-[Troubleshooting FAQ] (#faq) 		  |
-[Installation] (#installation)|
-[Configuration (for Tracking)] (#configuration-for-tracking)|
-[Register a URI Scheme Direct Deep Linking (Optional, but Recommended)] (#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)|
+[Class Reference Table](#class-reference)|
+[Important Migrations](#important-migration-to-v090)      |
+[Troubleshooting FAQ](#faq) 		  |
+[Installation](#installation)|
+[Configuration (for Tracking)](#configuration-for-tracking)|
+[Register a URI Scheme Direct Deep Linking (Optional, but Recommended)](#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)|
 [Add Your Branch Key to Your Project](#add-your-branch-key-to-your-project)|
 
 ## Get the Demo App
@@ -37,13 +37,13 @@ For your reference, see the methods and parameters table below.
 [Register Custom Events](#register-custom-events)|[Method](#methods-7)| [Parameter](#parameters-7)|
 [Generate Tracked, Deep Linking URLs (Pass Data Across Install and Open)](#generate-tracked-deep-linking-urls-pass-data-across-install-and-open)|[Method](#methods-8)|[Parameter](#parameters-8)|
 [UIActivityView Share Sheet](#uiactivityview-share-sheet)|[Method](#methods-9)|[Parameter](#parameters-9)|
-|[Get Reward Balance](#get-reward-balance)|[Method](#methods-10)|[Parameters] (#parameters-10)|
+|[Get Reward Balance](#get-reward-balance)|[Method](#methods-10)|[Parameters](#parameters-10)|
 [Redeem All or Some of the Reward Balance (Store State)](#redeem-all-or-some-of-the-reward-balance-store-state)|[Method](#methods-11)|[Parameter](#parameters-11)|
-[Get Credit History](#get-credit-history)|[Method](#methods-12)|[Parameters] (#parameters-12)|
-[Get Promo Code](#get-promo-code)|[Method](#methods-13)|[Parameter] (#parameters-13)|
-[Create Promo Code](#create-promo-code)|[Method](#methods-14)|[Parameter] (#parameters-14)|
+[Get Credit History](#get-credit-history)|[Method](#methods-12)|[Parameters](#parameters-12)|
+[Get Promo Code](#get-promo-code)|[Method](#methods-13)|[Parameter](#parameters-13)|
+[Create Promo Code](#create-promo-code)|[Method](#methods-14)|[Parameter](#parameters-14)|
 [Validate Promo Code](#validate-promo-code)|[Method](#methods-18)|[Parameter](#parameters-18)|
-[Apply Promo Code](#apply-promo-code)|[Method](#methods-19)|[Parameter] (#parameters-19)|
+[Apply Promo Code](#apply-promo-code)|[Method](#methods-19)|[Parameter](#parameters-19)|
 
 ## Important Migration to v0.9.0
 We are renaming Referral Codes to Promo Codes to better indicate their purpose. Promo Codes do *not* establish a referred/referring user install relationship, which is unclear when called "referral codes." Consequently, all of the ReferralCode methods have been deprecated in favor of their PromoCode counterparts.
@@ -144,12 +144,13 @@ For additional help configuring the SDK, including step-by-step instructions, pl
 
 All Branch methods require an instance of the main Branch object. Here's how you can get one. It's stored statically and is accessible from any class.
 
-####Methods
+#### Methods
 
 ###### Objective-C
 ```objc
 Branch *branch = [Branch getInstance];
 ```
+
 ###### Swift
 ```swift
 let branch: Branch = Branch.getInstance()
@@ -160,13 +161,14 @@ let branch: Branch = Branch.getInstance()
 #warning Remove for launch
 Branch *branch = [Branch getTestInstance];
 ```
+
 ###### Swift
 ```swift
 //TODO: Remove for launch
 let branch: Branch = Branch.getTestInstance();
 ```
 
-####Parameters
+#### Parameters
 
 **Branch key** (NSString *) _optional_
 : If you don't store the Branch key in the plist file, you have the option of passing this key as an argument.
@@ -195,6 +197,7 @@ To deep link, Branch must initialize a session to check if the user originated f
     return YES;
 }
 ```
+
 ###### Swift
 ```swift
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
@@ -325,6 +328,7 @@ NSDictionary *installParams = [[Branch getInstance] getFirstReferringParams]; //
 ```swift
 let installParams = Branch.getInstance().getFirstReferringParams() // previously getInstallReferringParams
 ```
+
 #### Parameters
 
 None
@@ -351,6 +355,7 @@ To identify a user, just call:
 // previously identifyUser:
 Branch.getInstance().setIdentity(your user id)  // your user id should not exceed 127 characters
 ```
+
 #### Parameters
 None
 
@@ -841,6 +846,7 @@ Branch.getInstance().getPromoCodeWithCallback { (params: [NSObject : AnyObject]!
     }
 }
 ```
+
 #### Parameters
 **callback**: The callback that is called with the created promo code object.
 
@@ -1099,6 +1105,7 @@ Branch.getInstance().applyPromoCode(code, callback: { (params: [NSObject : AnyOb
     }
 })
 ```
+
 #### Parameters
 
 **code** _NSString*_
