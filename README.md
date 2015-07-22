@@ -655,7 +655,7 @@ let feature = "invite"
 let stage = "2"
 
 // Branch UIActivityItemProvider
-let itemProvider = Branch.getInstance().getBranchActivityItemWithParams(params, andFeature: feature, andStage: stage, andTags: tags)
+let itemProvider = Branch.getBranchActivityItemWithParams(params, feature: feature, stage: stage, tags: tags)
 items.append(itemProvider)
 
 // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
