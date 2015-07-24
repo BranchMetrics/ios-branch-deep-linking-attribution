@@ -10,23 +10,24 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
+#import "BNCEncodingUtils.h"
 
 @interface BranchOpenRequest ()
 
-@property (assign, nonatomic) BOOL allowInstallParamsToBeCleared;
+@property (assign, nonatomic) BOOL isInstall;
 
 @end
 
 @implementation BranchOpenRequest
 
 - (id)initWithCallback:(callbackWithStatus)callback {
-    return [self initWithCallback:callback allowInstallParamsToBeCleared:NO];
+    return [self initWithCallback:callback isInstall:NO];
 }
 
-- (id)initWithCallback:(callbackWithStatus)callback allowInstallParamsToBeCleared:(BOOL)allowInstallParamsToBeCleared {
+- (id)initWithCallback:(callbackWithStatus)callback isInstall:(BOOL)isInstall {
     if (self = [super init]) {
         _callback = callback;
-        _allowInstallParamsToBeCleared = allowInstallParamsToBeCleared;
+        _isInstall = isInstall;
     }
     
     return self;
@@ -81,10 +82,18 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     NSDictionary *data = response.data;
+
+    // Handle possibly mis-parsed identity.
+    id userIdentity = data[BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY];
+    if ([userIdentity isKindOfClass:[NSNumber class]]) {
+        userIdentity = [userIdentity stringValue];
+    }
+
     preferenceHelper.deviceFingerprintID = data[BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID];
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
-    preferenceHelper.userIdentity = data[BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY];
+    preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
+
     [BNCSystemObserver setUpdateState];
     
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
@@ -92,15 +101,19 @@
     // Update session params
     preferenceHelper.sessionParams = sessionData;
     
-    // If referable, also se tup install params
-    if (preferenceHelper.isReferrable) {
-        // If present, set it.
-        if (sessionData) {
+    // Scenarios:
+    // If no data, data isn't from a link click, or isReferrable is false, don't set, period.
+    // Otherwise,
+    // * On Install: set.
+    // * On Open and installParams set: don't set.
+    // * On Open and stored installParams are empty: set.
+    if (sessionData.length && preferenceHelper.isReferrable) {
+        NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
+        BOOL dataIsFromALinkClick = [sessionDataDict[@"+clicked_branch_link"] isEqual:@1];
+        BOOL storedParamsAreEmpty = !preferenceHelper.installParams.length;
+
+        if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {
             preferenceHelper.installParams = sessionData;
-        }
-        // If not present, only allow nil to be set if desired (don't clear otherwise)
-        else if (self.allowInstallParamsToBeCleared) {
-            preferenceHelper.installParams = nil;
         }
     }
     
