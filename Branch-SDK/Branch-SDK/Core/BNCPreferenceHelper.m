@@ -25,7 +25,7 @@ NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
 NSString * const BRANCH_PREFS_KEY_IDENTITY_ID = @"bnc_identity_id";
 NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
 NSString * const BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
-NSString * const BRANCH_PREFS_KEY_LINK_CLICK_ID = @"bnc_link_click_id";
+NSString * const BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER = @"bnc_spotlight_identifier";
 NSString * const BRANCH_PREFS_KEY_SESSION_PARAMS = @"bnc_session_params";
 NSString * const BRANCH_PREFS_KEY_INSTALL_PARAMS = @"bnc_install_params";
 NSString * const BRANCH_PREFS_KEY_USER_URL = @"bnc_user_url";
@@ -49,7 +49,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 @implementation BNCPreferenceHelper
 
-@synthesize branchKey = _branchKey, appKey = _appKey, lastRunBranchKey = _lastRunBranchKey, appVersion = _appVersion, deviceFingerprintID = _deviceFingerprintID, sessionID = _sessionID,
+@synthesize branchKey = _branchKey, appKey = _appKey, lastRunBranchKey = _lastRunBranchKey, appVersion = _appVersion, deviceFingerprintID = _deviceFingerprintID, sessionID = _sessionID, spotlightIdentifier = _spotlightIdentifier,
             identityID = _identityID, linkClickIdentifier = _linkClickIdentifier, userUrl = _userUrl, userIdentity = _userIdentity, sessionParams = _sessionParams, installParams = _installParams,
             isReferrable = _isReferrable, isDebug = _isDebug, isConnectedToRemoteDebug = _isConnectedToRemoteDebug, retryCount = _retryCount, retryInterval = _retryInterval, timeout = _timeout;
 
@@ -261,6 +261,21 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     if (![_linkClickIdentifier isEqualToString:linkClickIdentifier]) {
         _linkClickIdentifier = linkClickIdentifier;
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER value:linkClickIdentifier];
+    }
+}
+
+- (NSString *)spotlightIdentifier {
+    if (!_spotlightIdentifier) {
+        _spotlightIdentifier = [self readStringFromDefaults:BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER];
+    }
+    
+    return _spotlightIdentifier;
+}
+
+- (void)setSpotlightLink:(NSString *)spotlightIdentifier {
+    if (![_spotlightIdentifier isEqualToString:spotlightIdentifier]) {
+        _spotlightIdentifier = spotlightIdentifier;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER value:spotlightIdentifier];
     }
 }
 

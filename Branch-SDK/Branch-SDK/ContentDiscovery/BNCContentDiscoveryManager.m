@@ -19,6 +19,8 @@
 #define kUTTypeImage @"public.image"
 #endif
 
+NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
+
 @interface BNCContentDiscoveryManager ()
 
 @property (strong, nonatomic) NSUserActivity *currentUserActivity;
@@ -29,23 +31,19 @@
 
 #pragma mark - Launch handling
 
-- (NSString *)spotlightLinkIdentifierFromActivity:(NSUserActivity *)userActivity {
+- (NSString *)spotlightIdentifierFromActivity:(NSUserActivity *)userActivity {
     #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-        NSString *spotlightIdentifier = [self spotlightIdentifierForApp];
-        
-        // NSUserActivity method. We should just be able to pull this from the contentAttributeSet, but this property is being cleared (iOS 9 Beta 3)
-        // Instead we just pull the URL's last path component for the time being.
-        if ([userActivity.activityType isEqualToString:spotlightIdentifier]) {
-            return [userActivity.webpageURL lastPathComponent];
+        if ([userActivity.activityType hasPrefix:SPOTLIGHT_PREFIX]) {
+            return userActivity.activityType;
         }
 
         // CoreSpotlight version. Matched if it has our prefix, then the link identifier is just the last piece of the identifier.
         if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
             NSString *activityIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
-            BOOL isBranchIdentifier = [activityIdentifier hasPrefix:spotlightIdentifier];
+            BOOL isBranchIdentifier = [activityIdentifier hasPrefix:SPOTLIGHT_PREFIX];
 
             if (isBranchIdentifier) {
-                return [activityIdentifier substringFromIndex:spotlightIdentifier.length + 1];
+                return activityIdentifier;
             }
         }
     #endif
@@ -89,33 +87,33 @@
     }
 
     #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-        [[Branch getInstance] getShortURLWithParams:userInfo andChannel:@"spotlight" andFeature:BRANCH_FEATURE_TAG_SHARE andCallback:^(NSString *url, NSError *error) {
-            NSString *spotlightIdentifier = [self spotlightIdentifierForApp];
-            NSString *identifier = [NSString stringWithFormat:@"%@.%@", spotlightIdentifier, [url lastPathComponent]];
+        [[Branch getInstance] getSpotlightUrlWithParams:userInfo callback:^(NSDictionary *data, NSError *error) {
+            NSString *url = data[@"url"];
+            NSString *spotlightIdentifier = data[@"spotlight_identifier"];
 
             CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:type];
-            attributes.identifier = identifier;
-            attributes.relatedUniqueIdentifier = identifier;
+            attributes.identifier = spotlightIdentifier;
+            attributes.relatedUniqueIdentifier = spotlightIdentifier;
             attributes.title = title;
             attributes.contentDescription = description;
             attributes.thumbnailURL = thumbnailUrl;
             attributes.contentURL = [NSURL URLWithString:url]; // The content url links back to our web content
             
             // Index via the NSUserActivity strategy
-            // Currently (iOS 9 Beta 3) we need a strong reference to this, or it isn't indexed
+            // Currently (iOS 9 Beta 4) we need a strong reference to this, or it isn't indexed
             self.currentUserActivity = [[NSUserActivity alloc] initWithActivityType:spotlightIdentifier];
             self.currentUserActivity.title = title;
-            self.currentUserActivity.webpageURL = [NSURL URLWithString:url]; // This should allow indexed content to fall back to the web if user doesn't have the app installed. Doesn't work as of iOS 9 Beta 3.
+            self.currentUserActivity.webpageURL = [NSURL URLWithString:url]; // This should allow indexed content to fall back to the web if user doesn't have the app installed. Unable to test as of iOS 9 Beta 4
             self.currentUserActivity.eligibleForSearch = YES;
             self.currentUserActivity.eligibleForPublicIndexing = publiclyIndexable;
             self.currentUserActivity.contentAttributeSet = attributes;
-            self.currentUserActivity.userInfo = userInfo; // As of iOS 9 Beta 3, this gets lost and never makes it through to application:continueActivity:restorationHandler:
+            self.currentUserActivity.userInfo = userInfo; // As of iOS 9 Beta 4, this gets lost and never makes it through to application:continueActivity:restorationHandler:
             self.currentUserActivity.requiredUserInfoKeys = [NSSet setWithArray:userInfo.allKeys]; // This, however, seems to force the userInfo to come through.
             self.currentUserActivity.keywords = keywords;
             [self.currentUserActivity becomeCurrent];
             
             // Index via the CoreSpotlight strategy
-            CSSearchableItem *item = [[CSSearchableItem alloc] initWithUniqueIdentifier:identifier domainIdentifier:spotlightIdentifier attributeSet:attributes];
+            CSSearchableItem *item = [[CSSearchableItem alloc] initWithUniqueIdentifier:spotlightIdentifier domainIdentifier:SPOTLIGHT_PREFIX attributeSet:attributes];
             [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[ item ] completionHandler:^(NSError *indexError) {
                 if (callback) {
                     if (!error) {
@@ -128,10 +126,6 @@
             }];
         }];
     #endif
-}
-
-- (NSString *)spotlightIdentifierForApp {
-    return [NSString stringWithFormat:@"%@.branch.spotlightlink", [BNCSystemObserver getBundleID]];
 }
 
 @end

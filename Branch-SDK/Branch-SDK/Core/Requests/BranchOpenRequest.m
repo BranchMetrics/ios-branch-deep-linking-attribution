@@ -60,6 +60,7 @@
     [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:@"uri_scheme" onDict:params];
     [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:@"update" onDict:params];
     [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:@"link_identifier" onDict:params];
+    [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:@"spotlight_identifier" onDict:params];
     
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"open"] key:key callback:callback];
 }

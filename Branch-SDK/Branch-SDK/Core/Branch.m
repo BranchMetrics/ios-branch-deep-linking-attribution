@@ -36,6 +36,7 @@
 #import "BranchDisconnectDebugRequest.h"
 #import "BranchLogRequest.h"
 #import "BNCContentDiscoveryManager.h"
+#import "BranchSpotlightUrlRequest.h"
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
@@ -358,13 +359,15 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
-    NSString *linkIdentifier = [self.contentDiscoveryManager spotlightLinkIdentifierFromActivity:userActivity];
+    NSString *spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     
-    if (linkIdentifier) {
+    if (spotlightIdentifier) {
+        self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
+
         [self initUserSessionAndCallCallback:YES];
     }
     
-    return linkIdentifier != nil;
+    return spotlightIdentifier != nil;
 }
 
 
@@ -661,6 +664,16 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 - (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andCallback:(callbackWithUrl)callback {
     [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:nil andParams:params andCallback:callback];
+}
+
+- (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback {
+    if (!self.isInitialized) {
+        [self initUserSessionAndCallCallback:NO];
+    }
+    
+    BranchSpotlightUrlRequest *req = [[BranchSpotlightUrlRequest alloc] initWithParams:params callback:callback];
+    [self.requestQueue enqueue:req];
+    [self processNextQueueItem];
 }
 
 #pragma mark - LongUrl methods

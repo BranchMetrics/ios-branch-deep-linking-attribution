@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		305D4960984D2647CB8ECCDB /* libPods-Branch-SDK Load Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D85A06FB422AB22B126B40DE /* libPods-Branch-SDK Load Tests.a */; };
 		320BCD424E4C15B69E7C61F0 /* libPods-Branch-SDK UI Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B58005CFA323382EAD1E0A48 /* libPods-Branch-SDK UI Tests.a */; };
+		460F4FA71B618A38002E84D6 /* BranchSpotlightUrlRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 460F4FA51B618A38002E84D6 /* BranchSpotlightUrlRequest.h */; };
+		460F4FA81B618A38002E84D6 /* BranchSpotlightUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 460F4FA61B618A38002E84D6 /* BranchSpotlightUrlRequest.m */; };
 		461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */; };
 		462B50461B449DF000967B81 /* BranchDeepLinkingController.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DBB42F1B335A9B00642FC8 /* BranchDeepLinkingController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		463F0A311B20A663004235D2 /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3491B0FD4620019767C /* BNCServerRequest.m */; };
@@ -146,6 +148,8 @@
 		07B39CB81662D4F15521759A /* Pods-Branch-SDK Load Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK Load Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK Load Tests/Pods-Branch-SDK Load Tests.release.xcconfig"; sourceTree = "<group>"; };
 		0ADE9EFB8E31411D9E84C8F1 /* Pods-Branch-SDK Functionality Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK Functionality Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK Functionality Tests/Pods-Branch-SDK Functionality Tests.release.xcconfig"; sourceTree = "<group>"; };
 		404E2B2AF41159D3BBB79669 /* libPods-Branch-SDK Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		460F4FA51B618A38002E84D6 /* BranchSpotlightUrlRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchSpotlightUrlRequest.h; sourceTree = "<group>"; };
+		460F4FA61B618A38002E84D6 /* BranchSpotlightUrlRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchSpotlightUrlRequest.m; sourceTree = "<group>"; };
 		461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchNetworkScenarioTests.m; sourceTree = "<group>"; };
 		4642E6A51B1FA1DB006E4C1F /* BranchConnectDebugRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchConnectDebugRequest.h; sourceTree = "<group>"; };
 		4642E6A61B1FA1DB006E4C1F /* BranchConnectDebugRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchConnectDebugRequest.m; sourceTree = "<group>"; };
@@ -359,6 +363,8 @@
 				4642E6AA1B1FA2AA006E4C1F /* BranchDisconnectDebugRequest.m */,
 				4642E6AD1B1FA303006E4C1F /* BranchLogRequest.h */,
 				4642E6AE1B1FA303006E4C1F /* BranchLogRequest.m */,
+				460F4FA51B618A38002E84D6 /* BranchSpotlightUrlRequest.h */,
+				460F4FA61B618A38002E84D6 /* BranchSpotlightUrlRequest.m */,
 			);
 			name = BranchRequests;
 			path = Requests;
@@ -590,6 +596,7 @@
 				46946B971B2689A100627BCC /* BranchLoadActionsRequest.h in Headers */,
 				466B587F1B17780A00A69EDE /* BNCEncodingUtils.h in Headers */,
 				46946B9B1B2689A100627BCC /* BranchGetPromoCodeRequest.h in Headers */,
+				460F4FA71B618A38002E84D6 /* BranchSpotlightUrlRequest.h in Headers */,
 				46946BA31B2689A100627BCC /* BranchOpenRequest.h in Headers */,
 				46946B9C1B2689A100627BCC /* BranchValidatePromoCodeRequest.h in Headers */,
 				46946BA51B2689A100627BCC /* BranchConnectDebugRequest.h in Headers */,
@@ -909,6 +916,7 @@
 				466B586C1B17779C00A69EDE /* BranchActivityItemProvider.m in Sources */,
 				466B586E1B17779C00A69EDE /* BNCEncodingUtils.m in Sources */,
 				463F0A371B20A663004235D2 /* BranchRedeemRewardsRequest.m in Sources */,
+				460F4FA81B618A38002E84D6 /* BranchSpotlightUrlRequest.m in Sources */,
 				463F0A351B20A663004235D2 /* BranchLoadActionsRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1057,6 +1057,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)getReferralUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback;
 
+- (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback;
+
 #pragma mark - Content Discovery methods
 
 ///--------------------------------
