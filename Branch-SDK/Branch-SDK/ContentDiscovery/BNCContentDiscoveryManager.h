@@ -10,7 +10,7 @@
 
 @interface BNCContentDiscoveryManager : NSObject
 
-- (NSString *)spotlightLinkIdentifierFromActivity:(NSUserActivity *)userActivity;
+- (NSString *)spotlightIdentifierFromActivity:(NSUserActivity *)userActivity;
 
 - (void)indexContentWithTitle:(NSString *)title description:(NSString *)description;
 - (void)indexContentWithTitle:(NSString *)title description:(NSString *)description callback:(callbackWithUrl)callback;

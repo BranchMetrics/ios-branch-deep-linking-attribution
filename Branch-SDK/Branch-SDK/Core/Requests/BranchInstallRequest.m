@@ -39,7 +39,8 @@
     [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:@"uri_scheme" onDict:params];
     [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:@"update" onDict:params];
     [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:@"link_identifier" onDict:params];
-    
+    [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:@"spotlight_identifier" onDict:params];
+
     params[@"ad_tracking_enabled"] = @([BNCSystemObserver adTrackingSafe]);
     params[@"is_referrable"] = @(preferenceHelper.isReferrable);
     params[@"debug"] = @(preferenceHelper.isDebug);
