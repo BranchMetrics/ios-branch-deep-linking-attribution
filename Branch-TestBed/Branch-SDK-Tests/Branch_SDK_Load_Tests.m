@@ -25,7 +25,6 @@
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
 
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
-    [branch setAppListCheckEnabled:NO];
     
     BNCServerResponse *linkResponse = [[BNCServerResponse alloc] init];
     linkResponse.data = @{ @"url": @"https://bnc.lt/l/3PxZVFU-BK" };

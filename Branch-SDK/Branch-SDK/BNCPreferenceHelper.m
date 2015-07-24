@@ -13,7 +13,6 @@
 static const NSInteger DEFAULT_TIMEOUT = 5;
 static const NSInteger DEFAULT_RETRY_INTERVAL = 0;
 static const NSInteger DEFAULT_RETRY_COUNT = 1;
-static const NSInteger APP_READ_INTERVAL = 520000;
 
 NSString * const BRANCH_PREFS_FILE = @"BNCPreferences";
 
@@ -31,7 +30,6 @@ NSString * const BRANCH_PREFS_KEY_SESSION_PARAMS = @"bnc_session_params";
 NSString * const BRANCH_PREFS_KEY_INSTALL_PARAMS = @"bnc_install_params";
 NSString * const BRANCH_PREFS_KEY_USER_URL = @"bnc_user_url";
 NSString * const BRANCH_PREFS_KEY_IS_REFERRABLE = @"bnc_is_referrable";
-NSString * const BRANCH_PREFS_KEY_APP_LIST_CHECK = @"bnc_app_list_check";
 
 NSString * const BRANCH_PREFS_KEY_CREDITS = @"bnc_credits";
 NSString * const BRANCH_PREFS_KEY_CREDIT_BASE = @"bnc_credit_base_";
@@ -331,22 +329,6 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     }
 }
 
-- (void)setAppListCheckDone {
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_APP_LIST_CHECK value:[NSDate date]];
-}
-
-- (BOOL)getNeedAppListCheck {
-    NSDate *lastDate = (NSDate *)[self readObjectFromDefaults:BRANCH_PREFS_KEY_APP_LIST_CHECK];
-    if (lastDate) {
-        NSDate *currDate = [NSDate date];
-        NSTimeInterval diff = [currDate timeIntervalSinceDate:lastDate];
-        if (diff < APP_READ_INTERVAL) {
-            return NO;
-        }
-    }
-    return YES;
-}
-
 - (void)clearUserCreditsAndCounts {
     self.creditsDictionary = [[NSMutableDictionary alloc] init];
     self.countsDictionary = [[NSMutableDictionary alloc] init];
@@ -473,7 +455,12 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 }
 
 - (NSString *)readStringFromDefaults:(NSString *)key {
-    NSString *str = self.persistenceDict[key];
+    id str = self.persistenceDict[key];
+    
+    if ([str isKindOfClass:[NSNumber class]]) {
+        str = [str stringValue];
+    }
+    
     return str;
 }
 

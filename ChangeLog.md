@@ -1,5 +1,19 @@
 Branch iOS SDK change log
 
+- v0.10.3
+  * Removing the AppListing functionality, as it is explicitly disallowed on iOS 9.
+  * Updating behavior for when installParams / getFirstReferringParams are set. Specifically, it will now only happen when
+    * If isReferrable is false, it will not be set.
+    * If the session data returned from the API call is empty, it will not be set.
+    * If the session data is not from a link click, it will not be set.
+    * If the request is an open request, it will only be set if install params are empty.  
+
+- v0.10.2
+  * Fixing potential for bad types to come through in UserIdentity (number rather than string).
+
+- v0.10.1
+  * Fixing a bad key check in the CreditHistory callback, allowing NSNulls through.
+
 - v0.10.0
   * Adding an automatic deep linking feature, allowing devs to register a controller to be displayed based on keys in the open dictionary.
   * Adding a delegate to the `BranchActivityItemProvider`, allowing devs to override link items based on selected sharing network.

@@ -30,8 +30,6 @@
 #import "BranchShortUrlRequest.h"
 #import "BranchShortUrlSyncRequest.h"
 #import "BranchCloseRequest.h"
-#import "BranchGetAppListRequest.h"
-#import "BranchUpdateAppListRequest.h"
 #import "BranchOpenRequest.h"
 #import "BranchInstallRequest.h"
 #import "BranchConnectDebugRequest.h"
@@ -71,7 +69,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
 @property (assign, nonatomic) BOOL isInitialized;
 @property (assign, nonatomic) BOOL shouldCallSessionInitCallback;
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
-@property (assign, nonatomic) BOOL appListCheckEnabled;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
 @property (strong, nonatomic) UILongPressGestureRecognizer *debugGestureRecognizer;
@@ -158,7 +155,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
         
         _isInitialized = NO;
         _shouldCallSessionInitCallback = YES;
-        _appListCheckEnabled = YES;
         _processing_sema = dispatch_semaphore_create(1);
         _networkCount = 0;
         _deepLinkControllers = [[NSMutableDictionary alloc] init];
@@ -997,26 +993,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
     }
 }
 
-- (void)getAppList {
-    BranchGetAppListRequest *req = [[BranchGetAppListRequest alloc] initWithCallback:^(NSArray *apps, NSError *error) {
-        if (error) {
-            return;
-        }
-
-        NSDictionary *appList = [BNCSystemObserver getOpenableAppDictFromList:apps];
-        [self processListOfApps:appList];
-    }];
-    
-    [self.requestQueue enqueue:req];
-    [self processNextQueueItem];
-}
-
-- (void)processListOfApps:(NSDictionary *)appList {
-    BranchUpdateAppListRequest *req = [[BranchUpdateAppListRequest alloc] initWithAppList:appList];
-    [self.requestQueue enqueue:req];
-    [self processNextQueueItem];
-}
-
 
 #pragma mark - Queue management
 
@@ -1162,10 +1138,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (void)handleInitSuccess {
     self.isInitialized = YES;
 
-    if (self.appListCheckEnabled && [self.preferenceHelper getNeedAppListCheck]) {
-        [self getAppList];
-    }
-    
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
     if (self.shouldCallSessionInitCallback && self.sessionInitWithParamsCallback) {
         self.sessionInitWithParamsCallback(latestReferringParams, nil);
