@@ -109,7 +109,7 @@
     // * On Open and stored installParams are empty: set.
     if (sessionData.length && preferenceHelper.isReferrable) {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
-        BOOL dataIsFromALinkClick = [sessionDataDict[@"+clicked_branch_link"] isEqual:@1];
+        BOOL dataIsFromALinkClick = [sessionDataDict[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] isEqual:@1];
         BOOL storedParamsAreEmpty = !preferenceHelper.installParams.length;
 
         if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {

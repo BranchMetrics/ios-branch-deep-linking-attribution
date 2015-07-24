@@ -96,3 +96,4 @@ NSString * const BRANCH_RESPONSE_KEY_POTENTIAL_APPS = @"potential_apps";
 NSString * const BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY = @"identity";
 NSString * const BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID = @"device_fingerprint_id";
 NSString * const BRANCH_RESPONSE_KEY_SESSION_DATA = @"data";
+NSString * const BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
