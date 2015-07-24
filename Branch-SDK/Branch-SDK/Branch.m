@@ -232,7 +232,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     return self.preferenceHelper.userIdentity != nil;
 }
 
-- (void)setNetworkTimeout:(NSInteger)timeout {
+- (void)setNetworkTimeout:(NSTimeInterval)timeout {
     self.preferenceHelper.timeout = timeout;
 }
 
@@ -240,7 +240,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     self.preferenceHelper.retryCount = maxRetries;
 }
 
-- (void)setRetryInterval:(NSInteger)retryInterval {
+- (void)setRetryInterval:(NSTimeInterval)retryInterval {
     self.preferenceHelper.retryInterval = retryInterval;
 }
 

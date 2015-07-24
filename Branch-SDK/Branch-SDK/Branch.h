@@ -415,7 +415,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  
  @param retryInterval Number of seconds to wait between retries.
  */
-- (void)setRetryInterval:(NSInteger)retryInterval;
+- (void)setRetryInterval:(NSTimeInterval)retryInterval;
 
 /**
  Specify the max number of times to retry in the case of a Branch server error
@@ -429,7 +429,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  
  @param timeout Number of seconds to before a request is considered timed out.
  */
-- (void)setNetworkTimeout:(NSInteger)timeout;
+- (void)setNetworkTimeout:(NSTimeInterval)timeout;
 
 #pragma mark - Session Item methods
 
