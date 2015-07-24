@@ -87,7 +87,14 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
     }
 
     #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-        [[Branch getInstance] getSpotlightUrlWithParams:userInfo callback:^(NSDictionary *data, NSError *error) {
+        [[Branch getInstance] getSpotlightUrlWithParams:userInfo callback:^(NSDictionary *data, NSError *urlError) {
+            if (urlError) {
+                if (callback) {
+                    callback(nil, urlError);
+                }
+                return;
+            }
+
             NSString *url = data[@"url"];
             NSString *spotlightIdentifier = data[@"spotlight_identifier"];
 
@@ -116,7 +123,7 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
             CSSearchableItem *item = [[CSSearchableItem alloc] initWithUniqueIdentifier:spotlightIdentifier domainIdentifier:SPOTLIGHT_PREFIX attributeSet:attributes];
             [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[ item ] completionHandler:^(NSError *indexError) {
                 if (callback) {
-                    if (!error) {
+                    if (indexError) {
                         callback(nil, indexError);
                     }
                     else {
