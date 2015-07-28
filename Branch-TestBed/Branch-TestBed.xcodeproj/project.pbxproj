@@ -360,6 +360,8 @@
 				4642E6AA1B1FA2AA006E4C1F /* BranchDisconnectDebugRequest.m */,
 				4642E6AD1B1FA303006E4C1F /* BranchLogRequest.h */,
 				4642E6AE1B1FA303006E4C1F /* BranchLogRequest.m */,
+				67830B491B676147008990EC /* BranchUpdateAppListRequest.h */,
+				67830B461B6760D4008990EC /* BranchUpdateAppListRequest.m */,
 			);
 			name = BranchRequests;
 			sourceTree = "<group>";
@@ -450,8 +452,6 @@
 				670016BD1946309100A9E103 /* Branch.h */,
 				670016BE1946309100A9E103 /* Branch.m */,
 				670016C11946309100A9E103 /* BNCPreferenceHelper.h */,
-				67830B491B676147008990EC /* BranchUpdateAppListRequest.h */,
-				67830B461B6760D4008990EC /* BranchUpdateAppListRequest.m */,
 				670016C21946309100A9E103 /* BNCPreferenceHelper.m */,
 				670016C31946309100A9E103 /* BNCServerInterface.h */,
 				670016C41946309100A9E103 /* BNCServerInterface.m */,
