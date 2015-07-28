@@ -1,5 +1,8 @@
 Branch iOS SDK change log
 
+- v0.10.5
+  * Added back BranchGetAppListRequest class too
+
 - v0.10.4
   * Added back BranchUpdateAppListRequest class to fix crashes
 
