@@ -129,6 +129,7 @@
         [archiverMock verify];
     });
 }
+
 - (void)testRetrieveWhenUnarchiveFails {
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
     
@@ -137,6 +138,40 @@
     [[[unarchiverMock expect] andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]] unarchiveObjectWithData:[OCMArg any]];
     
     [queue performSelector:@selector(retrieve)];
+    
+    [unarchiverMock verify];
+}
+
+- (void)testRetrieveWhenUnarchiveFailsAfterOneSuccessful {
+    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
+    BNCServerRequest *request = [[BNCServerRequest alloc] init];
+    
+    id unarchiverMock = OCMClassMock([NSKeyedUnarchiver class]);
+    [[[unarchiverMock expect] andReturn:@[ [@"foo" dataUsingEncoding:NSUTF8StringEncoding], [@"foo" dataUsingEncoding:NSUTF8StringEncoding] ]] unarchiveObjectWithFile:[OCMArg any]];
+    [[[unarchiverMock expect] andReturn:request] unarchiveObjectWithData:[OCMArg any]];
+    [[[unarchiverMock expect] andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]] unarchiveObjectWithData:[OCMArg any]];
+    
+    [queue performSelector:@selector(retrieve)];
+    
+    XCTAssertEqual([queue size], 1);
+    XCTAssertEqualObjects([queue peek], request);
+    
+    [unarchiverMock verify];
+}
+
+- (void)testRetrieveWhenUnarchiveFailsThenHasOneSuccess {
+    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
+    BNCServerRequest *request = [[BNCServerRequest alloc] init];
+    
+    id unarchiverMock = OCMClassMock([NSKeyedUnarchiver class]);
+    [[[unarchiverMock expect] andReturn:@[ [@"foo" dataUsingEncoding:NSUTF8StringEncoding], [@"foo" dataUsingEncoding:NSUTF8StringEncoding] ]] unarchiveObjectWithFile:[OCMArg any]];
+    [[[unarchiverMock expect] andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]] unarchiveObjectWithData:[OCMArg any]];
+    [[[unarchiverMock expect] andReturn:request] unarchiveObjectWithData:[OCMArg any]];
+    
+    [queue performSelector:@selector(retrieve)];
+    
+    XCTAssertEqual([queue size], 1);
+    XCTAssertEqualObjects([queue peek], request);
     
     [unarchiverMock verify];
 }
