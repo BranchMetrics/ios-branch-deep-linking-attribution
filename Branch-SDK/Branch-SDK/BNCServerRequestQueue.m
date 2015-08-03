@@ -194,15 +194,19 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 - (void)persistToDisk {
     NSArray *requestsToPersist = [self.queue copy];
     dispatch_async(self.asyncQueue, ^{
-        NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
-        
-        for (BNCServerRequest *req in requestsToPersist) {
-            NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
-            [encodedRequests addObject:encodedReq];
+        @try {
+            NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
+            for (BNCServerRequest *req in requestsToPersist) {
+                NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
+                [encodedRequests addObject:encodedReq];
+            }
+            
+            if (![NSKeyedArchiver archiveRootObject:encodedRequests toFile:[self queueFile]]) {
+                NSLog(@"[Branch Warning] Failed to persist queue to disk");
+            }
         }
-        
-        if (![NSKeyedArchiver archiveRootObject:encodedRequests toFile:[self queueFile]]) {
-            NSLog(@"[Branch Warning] Failed to persist queue to disk");
+        @catch (NSException *exception) {
+            NSLog(@"[Branch Warning] An exception occurred while attempting to save the queue. Exception information:\n\n%@", [self exceptionString:exception]);
         }
     });
 }
@@ -228,10 +232,14 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
         }
     }
     @catch (NSException *exception) {
-        NSLog(@"[Branch Warning] An error occurred while attempting to load the queue, proceeding without requests. Exception information:\n\nName: %@\nReason: %@\nStack:\n\t%@\n\n", exception.name, exception.reason, [exception.callStackSymbols componentsJoinedByString:@"\n\t"]);
+        NSLog(@"[Branch Warning] An exception occurred while attempting to load the queue, proceeding without requests. Exception information:\n\n%@", [self exceptionString:exception]);
     }
     
     self.queue = queue;
+}
+
+- (NSString *)exceptionString:(NSException *)exception {
+    return [NSString stringWithFormat:@"Name: %@\nReason: %@\nStack:\n\t%@\n\n", exception.name, exception.reason, [exception.callStackSymbols componentsJoinedByString:@"\n\t"]];
 }
 
 - (NSString *)queueFile {
