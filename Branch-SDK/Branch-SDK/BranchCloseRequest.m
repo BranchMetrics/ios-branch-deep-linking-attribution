@@ -8,6 +8,7 @@
 
 #import "BranchCloseRequest.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
 
 @implementation BranchCloseRequest
 
@@ -15,12 +16,12 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     NSDictionary *params = @{
-        @"identity_id": preferenceHelper.identityID,
-        @"session_id": preferenceHelper.sessionID,
-        @"device_fingerprint_id": preferenceHelper.deviceFingerprintID
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID
     };
     
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"close"] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CLOSE] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

@@ -198,7 +198,8 @@ static const short _base64DecodingTable[256] = {
 }
 
 + (NSData *)encodeDictionaryToJsonData:(NSDictionary *)dictionary {
-    return [[BNCEncodingUtils encodeDictionaryToJsonString:dictionary] dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *jsonString = [BNCEncodingUtils encodeDictionaryToJsonString:dictionary];
+    return [NSData dataWithBytes:[jsonString UTF8String] length:jsonString.length];
 }
 
 + (NSString *)encodeDictionaryToJsonString:(NSDictionary *)dictionary {

@@ -8,6 +8,7 @@
 
 #import "BranchLoadActionsRequest.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
 
 @interface BranchLoadActionsRequest ()
 
@@ -27,7 +28,7 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSString *endpoint = [NSString stringWithFormat:@"referrals/%@", preferenceHelper.identityID];
+    NSString *endpoint = [BRANCH_REQUEST_ENDPOINT_LOAD_ACTIONS stringByAppendingPathComponent:preferenceHelper.identityID];
     [serverInterface getRequest:nil url:[preferenceHelper getAPIURL:endpoint] key:key callback:callback];
 }
 
@@ -42,8 +43,8 @@
     BOOL hasUpdated = NO;
     for (NSString *key in response.data) {
         NSDictionary *counts = response.data[key];
-        NSInteger total = [counts[@"total"] integerValue];
-        NSInteger unique = [counts[@"unique"] integerValue];
+        NSInteger total = [counts[BRANCH_RESPONSE_KEY_ACTION_COUNT_TOTAL] integerValue];
+        NSInteger unique = [counts[BRANCH_RESPONSE_KEY_ACTION_COUNT_UNIQUE] integerValue];
         
         BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
         if (total != [preferenceHelper getActionTotalCount:key] || unique != [preferenceHelper getActionUniqueCount:key]) {

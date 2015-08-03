@@ -9,6 +9,7 @@
 #import "BranchShortUrlRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
+#import "BranchConstants.h"
 
 @interface BranchShortUrlRequest ()
 
@@ -50,11 +51,11 @@
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:self.linkData.data];
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    params[@"device_fingerprint_id"] = preferenceHelper.deviceFingerprintID;
-    params[@"identity_id"] = preferenceHelper.identityID;
-    params[@"session_id"] = preferenceHelper.sessionID;
+    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"url"] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -62,7 +63,7 @@
         if (self.callback) {
             NSString *failedUrl = nil;
             NSString *userUrl = [BNCPreferenceHelper preferenceHelper].userUrl;
-            if (!userUrl) {
+            if (userUrl) {
                 failedUrl = [self createLongUrlForUserUrl:userUrl];
             }
             
@@ -72,7 +73,7 @@
         return;
     }
     
-    NSString *url = response.data[@"url"];
+    NSString *url = response.data[BRANCH_RESPONSE_KEY_URL];
     
     // cache the link
     if (url) {
