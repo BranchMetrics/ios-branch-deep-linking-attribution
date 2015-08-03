@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7E6B3B501AA42D0E005F45BF"
-               BuildableName = "Branch-SDK Functionality Tests.xctest"
-               BlueprintName = "Branch-SDK Functionality Tests"
+               BuildableName = "Branch-SDK-Tests.xctest"
+               BlueprintName = "Branch-SDK-Tests"
                ReferencedContainer = "container:Branch-TestBed.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -33,8 +33,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7E6B3B501AA42D0E005F45BF"
-               BuildableName = "Branch-SDK Functionality Tests.xctest"
-               BlueprintName = "Branch-SDK Functionality Tests"
+               BuildableName = "Branch-SDK-Tests.xctest"
+               BlueprintName = "Branch-SDK-Tests"
                ReferencedContainer = "container:Branch-TestBed.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -43,8 +43,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7E6B3B501AA42D0E005F45BF"
-            BuildableName = "Branch-SDK Functionality Tests.xctest"
-            BlueprintName = "Branch-SDK Functionality Tests"
+            BuildableName = "Branch-SDK-Tests.xctest"
+            BlueprintName = "Branch-SDK-Tests"
             ReferencedContainer = "container:Branch-TestBed.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7E6B3B501AA42D0E005F45BF"
-            BuildableName = "Branch-SDK Functionality Tests.xctest"
-            BlueprintName = "Branch-SDK Functionality Tests"
+            BuildableName = "Branch-SDK-Tests.xctest"
+            BlueprintName = "Branch-SDK-Tests"
             ReferencedContainer = "container:Branch-TestBed.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -80,8 +80,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7E6B3B501AA42D0E005F45BF"
-            BuildableName = "Branch-SDK Functionality Tests.xctest"
-            BlueprintName = "Branch-SDK Functionality Tests"
+            BuildableName = "Branch-SDK-Tests.xctest"
+            BlueprintName = "Branch-SDK-Tests"
             ReferencedContainer = "container:Branch-TestBed.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

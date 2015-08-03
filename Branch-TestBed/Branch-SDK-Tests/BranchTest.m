@@ -19,7 +19,7 @@
 
 + (void)setUp {
     [super setUp];
-
+    
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     if (!preferenceHelper.deviceFingerprintID) {
         preferenceHelper.deviceFingerprintID = @"foo_fingerprint";
@@ -32,6 +32,8 @@
     if (!preferenceHelper.sessionID) {
         preferenceHelper.sessionID = @"foo_sesion";
     }
+    
+    preferenceHelper.isDebug = NO;
 }
 
 - (void)setUp {
@@ -53,6 +55,14 @@
 - (void)awaitExpectations {
     [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
         self.hasExceededExpectations = YES;
+    }];
+}
+
+- (id)stringMatchingPattern:(NSString *)pattern {
+    NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:nil];
+
+    return [OCMArg checkWithBlock:^BOOL(NSString *param) {
+        return [regex numberOfMatchesInString:param options:kNilOptions range:NSMakeRange(0, param.length)] > 0;
     }];
 }
 

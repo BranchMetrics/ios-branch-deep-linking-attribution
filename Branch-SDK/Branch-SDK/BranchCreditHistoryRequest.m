@@ -8,6 +8,7 @@
 
 #import "BranchCreditHistoryRequest.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
 
 @interface BranchCreditHistoryRequest ()
 
@@ -37,21 +38,21 @@
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    params[@"device_fingerprint_id"] = preferenceHelper.deviceFingerprintID;
-    params[@"identity_id"] = preferenceHelper.identityID;
-    params[@"session_id"] = preferenceHelper.sessionID;
-    params[@"length"] = @(self.length);
-    params[@"direction"] = self.order == BranchMostRecentFirst ? @"desc" : @"asc";
+    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
+    params[BRANCH_REQUEST_KEY_LENGTH] = @(self.length);
+    params[BRANCH_REQUEST_KEY_DIRECTION] = self.order == BranchMostRecentFirst ? @"desc" : @"asc";
 
     if (self.bucket) {
-        params[@"bucket"] = self.bucket;
+        params[BRANCH_REQUEST_KEY_BUCKET] = self.bucket;
     }
     
     if (self.creditTransactionId) {
-        params[@"begin_after_id"] = self.creditTransactionId;
+        params[BRANCH_REQUEST_KEY_STARTING_TRANSACTION_ID] = self.creditTransactionId;
     }
     
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"credithistory"] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CREDIT_HISTORY] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -63,11 +64,11 @@
     }
     
     for (NSMutableDictionary *transaction in response.data) {
-        if (transaction[@"referrer"] == [NSNull null]) {
-            [transaction removeObjectForKey:@"referrer"];
+        if ([transaction[BRANCH_RESPONSE_KEY_REFERRER] isEqual:[NSNull null]]) {
+            [transaction removeObjectForKey:BRANCH_RESPONSE_KEY_REFERRER];
         }
-        if (transaction[@"referree"] == [NSNull null]) {
-            [transaction removeObjectForKey:@"referree"];
+        if ([transaction[BRANCH_RESPONSE_KEY_REFERREE] isEqual:[NSNull null]]) {
+            [transaction removeObjectForKey:BRANCH_RESPONSE_KEY_REFERREE];
         }
     }
     

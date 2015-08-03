@@ -9,6 +9,7 @@
 #import "BranchConnectDebugRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
+#import "BranchConstants.h"
 
 @interface BranchConnectDebugRequest ()
 
@@ -30,15 +31,15 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     NSDictionary *params = @{
-        @"device_fingerprint_id": preferenceHelper.deviceFingerprintID,
-        @"device_name": [BNCSystemObserver getDeviceName],
-        @"os": [BNCSystemObserver getOS],
-        @"os_version": [BNCSystemObserver getOSVersion],
-        @"model": [BNCSystemObserver getModel],
-        @"is_simulator": @([BNCSystemObserver isSimulator])
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_DEVICE_NAME: [BNCSystemObserver getDeviceName],
+        BRANCH_REQUEST_KEY_OS: [BNCSystemObserver getOS],
+        BRANCH_REQUEST_KEY_OS_VERSION: [BNCSystemObserver getOSVersion],
+        BRANCH_REQUEST_KEY_MODEL: [BNCSystemObserver getModel],
+        BRANCH_REQUEST_KEY_IS_SIMULATOR: @([BNCSystemObserver isSimulator])
     };
     
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"debug/connect"] key:key log:NO callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CONNECT_DEBUG] key:key log:NO callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
