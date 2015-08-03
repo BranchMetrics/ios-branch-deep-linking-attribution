@@ -105,11 +105,12 @@
 
 - (void)stubCreationDate:(NSDate *)creationDate modificationDate:(NSDate *)modificationDate {
     id fileManagerMock = OCMClassMock([NSFileManager class]);
+    id defaultFileManagerNiceMock = OCMPartialMock([NSFileManager defaultManager]);
     id docDirAttributesMock = OCMClassMock([NSDictionary class]);
     id bundleAttributesMock = OCMClassMock([NSDictionary class]);
-    [[[fileManagerMock stub] andReturn:fileManagerMock] defaultManager];
-    [[[fileManagerMock expect] andReturn:docDirAttributesMock] attributesOfItemAtPath:[OCMArg any] error:(NSError __autoreleasing **)[OCMArg anyPointer]];
-    [[[fileManagerMock expect] andReturn:bundleAttributesMock] attributesOfItemAtPath:[OCMArg any] error:(NSError __autoreleasing **)[OCMArg anyPointer]];
+    [[[fileManagerMock stub] andReturn:defaultFileManagerNiceMock] defaultManager];
+    [[[defaultFileManagerNiceMock expect] andReturn:docDirAttributesMock] attributesOfItemAtPath:[OCMArg any] error:(NSError __autoreleasing **)[OCMArg anyPointer]];
+    [[[defaultFileManagerNiceMock expect] andReturn:bundleAttributesMock] attributesOfItemAtPath:[OCMArg any] error:(NSError __autoreleasing **)[OCMArg anyPointer]];
     [[[docDirAttributesMock stub] andReturn:creationDate] fileCreationDate];
     [[[bundleAttributesMock stub] andReturn:modificationDate] fileModificationDate];
 }
