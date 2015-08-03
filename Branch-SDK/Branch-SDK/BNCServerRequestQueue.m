@@ -213,26 +213,40 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 
 - (void)retrieve {
     NSMutableArray *queue = [[NSMutableArray alloc] init];
+    NSArray *encodedRequests;
     
+    // Capture exception while loading the queue file
     @try {
-        NSArray *encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithFile:[self queueFile]];
-
-        for (NSData *encodedRequest in encodedRequests) {
-            BNCServerRequest *request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
-            
-            if (![request isKindOfClass:[BNCServerRequest class]]) {
-                NSLog(@"[Branch Warning] Found an invalid request object, discarding.");
-                continue;
-            }
-            
-            // Throw out persisted close requests
-            if (![request isKindOfClass:[BranchCloseRequest class]]) {
-                [queue addObject:request];
-            }
-        }
+        encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithFile:[self queueFile]];
     }
     @catch (NSException *exception) {
-        NSLog(@"[Branch Warning] An exception occurred while attempting to load the queue, proceeding without requests. Exception information:\n\n%@", [self exceptionString:exception]);
+        NSLog(@"[Branch Warning] An exception occurred while attempting to load the queue file, proceeding without requests. Exception information:\n\n%@", [self exceptionString:exception]);
+        self.queue = queue;
+        return;
+    }
+
+    for (NSData *encodedRequest in encodedRequests) {
+        BNCServerRequest *request;
+
+        // Capture exceptions while parsing individual request objects
+        @try {
+            request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
+        }
+        @catch (NSException *exception) {
+            NSLog(@"[Branch Warning] An exception occurred while attempting to parse a queued request, discarding. Exception information:\n\n%@", [self exceptionString:exception]);
+            continue;
+        }
+        
+        // Throw out invalid request types
+        if (![request isKindOfClass:[BNCServerRequest class]]) {
+            NSLog(@"[Branch Warning] Found an invalid request object, discarding.");
+            continue;
+        }
+        
+        // Throw out persisted close requests
+        if (![request isKindOfClass:[BranchCloseRequest class]]) {
+            [queue addObject:request];
+        }
     }
     
     self.queue = queue;
