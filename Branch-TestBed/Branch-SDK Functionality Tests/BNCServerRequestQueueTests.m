@@ -113,4 +113,20 @@
     [requestQueueMock verify];
 }
 
+#pragma mark - Retrive Tests
+- (void)testRetrieveWhenUnarchiveFails {
+    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
+    
+    id unarchiverMock = OCMClassMock([NSKeyedUnarchiver class]);
+    [[[unarchiverMock expect] andReturn:@[ [@"foo" dataUsingEncoding:NSUTF8StringEncoding] ]] unarchiveObjectWithFile:[OCMArg any]];
+    [[[unarchiverMock expect] andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]] unarchiveObjectWithData:[OCMArg any]];
+    
+    [queue performSelector:@selector(retrieve)];
+    
+    [unarchiverMock verify];
+}
+
+// Fool compiler.
+- (void)retrieve { }
+
 @end

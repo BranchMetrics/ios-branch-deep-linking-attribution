@@ -209,15 +209,26 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 
 - (void)retrieve {
     NSMutableArray *queue = [[NSMutableArray alloc] init];
-    NSArray *encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithFile:[self queueFile]];
+    
+    @try {
+        NSArray *encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithFile:[self queueFile]];
 
-    for (NSData *encodedRequest in encodedRequests) {
-        BNCServerRequest *request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
-        
-        // Throw out persisted close requests
-        if (![request isKindOfClass:[BranchCloseRequest class]]) {
-            [queue addObject:request];
+        for (NSData *encodedRequest in encodedRequests) {
+            BNCServerRequest *request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
+            
+            if (![request isKindOfClass:[BNCServerRequest class]]) {
+                NSLog(@"[Branch Warning] Found an invalid request object, discarding.");
+                continue;
+            }
+            
+            // Throw out persisted close requests
+            if (![request isKindOfClass:[BranchCloseRequest class]]) {
+                [queue addObject:request];
+            }
         }
+    }
+    @catch (NSException *exception) {
+        NSLog(@"[Branch Warning] An error occurred while attempting to load the queue, proceeding without requests. Exception information:\n\nName: %@\nReason: %@\nStack:\n\t%@\n\n", exception.name, exception.reason, [exception.callStackSymbols componentsJoinedByString:@"\n\t"]);
     }
     
     self.queue = queue;
