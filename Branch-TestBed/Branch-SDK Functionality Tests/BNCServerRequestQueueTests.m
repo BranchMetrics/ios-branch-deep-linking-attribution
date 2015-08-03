@@ -114,6 +114,21 @@
 }
 
 #pragma mark - Retrive Tests
+- (void)testPersistWhenArchiveFails {
+    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
+    [queue enqueue:[[BNCServerRequest alloc] init]];
+    
+    id archiverMock = OCMClassMock([NSKeyedArchiver class]);
+    [[[archiverMock expect] andReturn:[NSData data]] archivedDataWithRootObject:[OCMArg any]];
+    [[[archiverMock expect] andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
+    
+    [queue persistImmediately];
+    
+    // Wait for operation to occur
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [archiverMock verify];
+    });
+}
 - (void)testRetrieveWhenUnarchiveFails {
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
     
