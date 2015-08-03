@@ -1,5 +1,11 @@
 Branch iOS SDK change log
 
+- v0.10.5
+  * Added back BranchGetAppListRequest class too
+
+- v0.10.4
+  * Added back BranchUpdateAppListRequest class to fix crashes
+
 - v0.10.3
   * Removing the AppListing functionality, as it is explicitly disallowed on iOS 9.
   * Updating behavior for when installParams / getFirstReferringParams are set. Specifically, it will now only happen when

@@ -194,25 +194,54 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 - (void)persistToDisk {
     NSArray *requestsToPersist = [self.queue copy];
     dispatch_async(self.asyncQueue, ^{
-        NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
-        
-        for (BNCServerRequest *req in requestsToPersist) {
-            NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
-            [encodedRequests addObject:encodedReq];
+        @try {
+            NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
+            for (BNCServerRequest *req in requestsToPersist) {
+                NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
+                [encodedRequests addObject:encodedReq];
+            }
+            
+            if (![NSKeyedArchiver archiveRootObject:encodedRequests toFile:[self queueFile]]) {
+                NSLog(@"[Branch Warning] Failed to persist queue to disk");
+            }
         }
-        
-        if (![NSKeyedArchiver archiveRootObject:encodedRequests toFile:[self queueFile]]) {
-            NSLog(@"[Branch Warning] Failed to persist queue to disk");
+        @catch (NSException *exception) {
+            NSLog(@"[Branch Warning] An exception occurred while attempting to save the queue. Exception information:\n\n%@", [self exceptionString:exception]);
         }
     });
 }
 
 - (void)retrieve {
     NSMutableArray *queue = [[NSMutableArray alloc] init];
-    NSArray *encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithFile:[self queueFile]];
+    NSArray *encodedRequests;
+    
+    // Capture exception while loading the queue file
+    @try {
+        encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithFile:[self queueFile]];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"[Branch Warning] An exception occurred while attempting to load the queue file, proceeding without requests. Exception information:\n\n%@", [self exceptionString:exception]);
+        self.queue = queue;
+        return;
+    }
 
     for (NSData *encodedRequest in encodedRequests) {
-        BNCServerRequest *request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
+        BNCServerRequest *request;
+
+        // Capture exceptions while parsing individual request objects
+        @try {
+            request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
+        }
+        @catch (NSException *exception) {
+            NSLog(@"[Branch Warning] An exception occurred while attempting to parse a queued request, discarding. Exception information:\n\n%@", [self exceptionString:exception]);
+            continue;
+        }
+        
+        // Throw out invalid request types
+        if (![request isKindOfClass:[BNCServerRequest class]]) {
+            NSLog(@"[Branch Warning] Found an invalid request object, discarding.");
+            continue;
+        }
         
         // Throw out persisted close requests
         if (![request isKindOfClass:[BranchCloseRequest class]]) {
@@ -221,6 +250,10 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     }
     
     self.queue = queue;
+}
+
+- (NSString *)exceptionString:(NSException *)exception {
+    return [NSString stringWithFormat:@"Name: %@\nReason: %@\nStack:\n\t%@\n\n", exception.name, exception.reason, [exception.callStackSymbols componentsJoinedByString:@"\n\t"]];
 }
 
 - (NSString *)queueFile {
