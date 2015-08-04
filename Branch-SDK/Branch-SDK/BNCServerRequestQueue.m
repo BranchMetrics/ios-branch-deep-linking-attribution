@@ -10,6 +10,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchCloseRequest.h"
 #import "BranchOpenRequest.h"
+#import "BNCDebugRequest.h"
 
 NSString * const BRANCH_QUEUE_FILE = @"BNCServerRequestQueue";
 NSUInteger const BATCH_WRITE_TIMEOUT = 3;
@@ -197,6 +198,11 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
         @try {
             NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
             for (BNCServerRequest *req in requestsToPersist) {
+                // Don't persist these requests
+                if ([req isKindOfClass:[BranchCloseRequest class]] || [req isKindOfClass:[BNCDebugRequest class]]) {
+                    continue;
+                }
+
                 NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
                 [encodedRequests addObject:encodedReq];
             }
@@ -244,9 +250,11 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
         }
         
         // Throw out persisted close requests
-        if (![request isKindOfClass:[BranchCloseRequest class]]) {
-            [queue addObject:request];
+        if ([request isKindOfClass:[BranchCloseRequest class]] || [request isKindOfClass:[BNCDebugRequest class]]) {
+            continue;
         }
+
+        [queue addObject:request];
     }
     
     self.queue = queue;

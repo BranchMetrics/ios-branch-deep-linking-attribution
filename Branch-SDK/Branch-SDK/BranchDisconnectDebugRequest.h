@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BNCServerRequest.h"
+#import "BNCDebugRequest.h"
 
-@interface BranchDisconnectDebugRequest : BNCServerRequest
+@interface BranchDisconnectDebugRequest : BNCDebugRequest
 
 @end
