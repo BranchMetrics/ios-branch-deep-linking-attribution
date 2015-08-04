@@ -9,6 +9,8 @@
 #import "BranchTest.h"
 #import "BNCServerRequestQueue.h"
 #import "BranchOpenRequest.h"
+#import "BranchCloseRequest.h"
+#import "BNCDebugRequest.h"
 #import <OCMock/OCMock.h>
 
 @interface BNCServerRequestQueueTests : BranchTest
@@ -125,9 +127,60 @@
     [queue persistImmediately];
     
     // Wait for operation to occur
+    XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        [archiverMock verify];
+        [self safelyFulfillExpectation:expectation];
     });
+    
+    [self awaitExpectations];
+    [archiverMock verify];
+    [archiverMock stopMocking];
+}
+
+- (void)testCloseRequestsArentPersisted {
+    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
+    BranchCloseRequest *closeRequest = [[BranchCloseRequest alloc] init];
+    
+    [requestQueue enqueue:closeRequest];
+    
+    id archiverMock = OCMClassMock([NSKeyedArchiver class]);
+    [[archiverMock reject] archivedDataWithRootObject:[OCMArg any]];
+    [[archiverMock expect] archiveRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) { return [reqs count] == 0; }] toFile:[OCMArg any]];
+
+    [requestQueue persistImmediately];
+    
+    // Wait for operation to occur
+    XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [self safelyFulfillExpectation:expectation];
+    });
+    
+    [self awaitExpectations];
+    [archiverMock verify];
+    [archiverMock stopMocking];
+}
+
+- (void)testDebugRequestsArentPersisted {
+    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
+    BNCDebugRequest *debugRequest = [[BNCDebugRequest alloc] init];
+    
+    [requestQueue enqueue:debugRequest];
+    
+    id archiverMock = OCMClassMock([NSKeyedArchiver class]);
+    [[archiverMock reject] archivedDataWithRootObject:[OCMArg any]];
+    [[archiverMock expect] archiveRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) { return [reqs count] == 0; }] toFile:[OCMArg any]];
+
+    [requestQueue persistImmediately];
+    
+    // Wait for operation to occur
+    XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [self safelyFulfillExpectation:expectation];
+    });
+    
+    [self awaitExpectations];
+    [archiverMock verify];
+    [archiverMock stopMocking];
 }
 
 - (void)testRetrieveWhenUnarchiveFails {
@@ -172,6 +225,36 @@
     
     XCTAssertEqual([queue size], 1);
     XCTAssertEqualObjects([queue peek], request);
+    
+    [unarchiverMock verify];
+}
+
+- (void)testPersistedCloseRequestsArentLoaded {
+    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
+    BranchCloseRequest *closeRequest = [[BranchCloseRequest alloc] init];
+
+    id unarchiverMock = OCMClassMock([NSKeyedUnarchiver class]);
+    [[[unarchiverMock expect] andReturn:@[ [@"foo" dataUsingEncoding:NSUTF8StringEncoding] ]] unarchiveObjectWithFile:[OCMArg any]];
+    [[[unarchiverMock expect] andReturn:closeRequest] unarchiveObjectWithData:[OCMArg any]];
+
+    [queue performSelector:@selector(retrieve)];
+    
+    XCTAssertEqual([queue size], 0);
+    
+    [unarchiverMock verify];
+}
+
+- (void)testPersistedDebugRequestsArentLoaded {
+    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
+    BNCDebugRequest *debugRequest = [[BNCDebugRequest alloc] init];
+    
+    id unarchiverMock = OCMClassMock([NSKeyedUnarchiver class]);
+    [[[unarchiverMock expect] andReturn:@[ [@"foo" dataUsingEncoding:NSUTF8StringEncoding] ]] unarchiveObjectWithFile:[OCMArg any]];
+    [[[unarchiverMock expect] andReturn:debugRequest] unarchiveObjectWithData:[OCMArg any]];
+    
+    [queue performSelector:@selector(retrieve)];
+    
+    XCTAssertEqual([queue size], 0);
     
     [unarchiverMock verify];
 }
