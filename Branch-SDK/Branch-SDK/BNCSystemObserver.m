@@ -133,7 +133,7 @@
     NSFileManager *manager = [NSFileManager defaultManager];
     
     // for creation date
-    NSURL *documentsDirRoot = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    NSURL *documentsDirRoot = [[manager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
     NSDictionary *documentsDirAttributes = [manager attributesOfItemAtPath:documentsDirRoot.path error:nil];
     NSDate *creationDate = [documentsDirAttributes fileCreationDate];
     
