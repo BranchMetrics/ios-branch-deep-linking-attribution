@@ -8,16 +8,7 @@
 
 #import "BNCLinkData.h"
 #import "BNCEncodingUtils.h"
-
-NSString * const BNC_LINK_DATA_TAGS = @"tags";
-NSString * const BNC_LINK_DATA_LINK_TYPE = @"type";
-NSString * const BNC_LINK_DATA_ALIAS = @"alias";
-NSString * const BNC_LINK_DATA_CHANNEL = @"channel";
-NSString * const BNC_LINK_DATA_FEATURE = @"feature";
-NSString * const BNC_LINK_DATA_STAGE = @"stage";
-NSString * const BNC_LINK_DATA_DURATION = @"duration";
-NSString * const BNC_LINK_DATA_DATA = @"data";
-NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
+#import "BranchConstants.h"
 
 @interface BNCLinkData ()
 
@@ -47,7 +38,7 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
     if (tags) {
         _tags = tags;
 
-        self.data[BNC_LINK_DATA_TAGS] = tags;
+        self.data[BRANCH_REQUEST_KEY_URL_TAGS] = tags;
     }
 }
 
@@ -55,7 +46,7 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
     if (alias) {
         _alias = alias;
 
-        self.data[BNC_LINK_DATA_ALIAS] = alias;
+        self.data[BRANCH_REQUEST_KEY_URL_ALIAS] = alias;
     }
 }
 
@@ -63,7 +54,7 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
     if (type) {
         _type = type;
 
-        self.data[BNC_LINK_DATA_LINK_TYPE] = @(type);
+        self.data[BRANCH_REQUEST_KEY_URL_LINK_TYPE] = @(type);
     }
 }
 
@@ -71,7 +62,7 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
     if (duration > 0) {
         _duration = duration;
 
-        self.data[BNC_LINK_DATA_DURATION] = @(duration);
+        self.data[BRANCH_REQUEST_KEY_URL_DURATION] = @(duration);
     }
 }
 
@@ -79,7 +70,7 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
     if (channel) {
         _channel = channel;
 
-        self.data[BNC_LINK_DATA_CHANNEL] = channel;
+        self.data[BRANCH_REQUEST_KEY_URL_CHANNEL] = channel;
     }
 }
 
@@ -87,7 +78,7 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
     if (feature) {
         _feature = feature;
 
-        self.data[BNC_LINK_DATA_FEATURE] = feature;
+        self.data[BRANCH_REQUEST_KEY_URL_FEATURE] = feature;
     }
 }
 
@@ -95,7 +86,7 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
     if (stage) {
         _stage = stage;
 
-        self.data[BNC_LINK_DATA_STAGE] = stage;
+        self.data[BRANCH_REQUEST_KEY_URL_STAGE] = stage;
     }
 }
 
@@ -103,7 +94,7 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
     if (ignoreUAString) {
         _ignoreUAString = ignoreUAString;
         
-        self.data[BNC_LINK_DATA_IGNORE_UA_STRING] = ignoreUAString;
+        self.data[BRANCH_REQUEST_KEY_URL_IGNORE_UA_STRING] = ignoreUAString;
     }
 }
 
@@ -111,7 +102,7 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
     if (params) {
         _params = params;
 
-        self.data[BNC_LINK_DATA_DATA] = params;
+        self.data[BRANCH_REQUEST_KEY_URL_DATA] = params;
     }
 }
 
@@ -137,43 +128,43 @@ NSString * const BNC_LINK_DATA_IGNORE_UA_STRING = @"ignore_ua_string";
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     if (self.tags) {
-        [coder encodeObject:self.tags forKey:BNC_LINK_DATA_TAGS];
+        [coder encodeObject:self.tags forKey:BRANCH_REQUEST_KEY_URL_TAGS];
     }
     if (self.alias) {
-        [coder encodeObject:self.alias forKey:BNC_LINK_DATA_ALIAS];
+        [coder encodeObject:self.alias forKey:BRANCH_REQUEST_KEY_URL_ALIAS];
     }
     if (self.type) {
-        [coder encodeObject:[NSNumber numberWithInteger:self.type] forKey:BNC_LINK_DATA_LINK_TYPE];
+        [coder encodeObject:@(self.type) forKey:BRANCH_REQUEST_KEY_URL_LINK_TYPE];
     }
     if (self.channel) {
-        [coder encodeObject:self.channel forKey:BNC_LINK_DATA_CHANNEL];
+        [coder encodeObject:self.channel forKey:BRANCH_REQUEST_KEY_URL_CHANNEL];
     }
     if (self.feature) {
-        [coder encodeObject:self.feature forKey:BNC_LINK_DATA_FEATURE];
+        [coder encodeObject:self.feature forKey:BRANCH_REQUEST_KEY_URL_FEATURE];
     }
     if (self.stage) {
-        [coder encodeObject:self.stage forKey:BNC_LINK_DATA_STAGE];
+        [coder encodeObject:self.stage forKey:BRANCH_REQUEST_KEY_URL_STAGE];
     }
     if (self.params) {
         NSString *encodedParams = [BNCEncodingUtils encodeDictionaryToJsonString:self.params];
-        [coder encodeObject:encodedParams forKey:BNC_LINK_DATA_DATA];
+        [coder encodeObject:encodedParams forKey:BRANCH_REQUEST_KEY_URL_DATA];
     }
     if (self.duration > 0) {
-        [coder encodeObject:[NSNumber numberWithInteger:self.duration] forKey:BNC_LINK_DATA_DURATION];
+        [coder encodeObject:@(self.duration) forKey:BRANCH_REQUEST_KEY_URL_DURATION];
     }
 }
 
 - (id)initWithCoder:(NSCoder *)coder {
     if (self = [super init]) {
-        self.tags = [coder decodeObjectForKey:BNC_LINK_DATA_TAGS];
-        self.alias = [coder decodeObjectForKey:BNC_LINK_DATA_ALIAS];
-        self.type = [[coder decodeObjectForKey:BNC_LINK_DATA_LINK_TYPE] intValue];
-        self.channel = [coder decodeObjectForKey:BNC_LINK_DATA_CHANNEL];
-        self.feature = [coder decodeObjectForKey:BNC_LINK_DATA_FEATURE];
-        self.stage = [coder decodeObjectForKey:BNC_LINK_DATA_STAGE];
-        self.duration = [[coder decodeObjectForKey:BNC_LINK_DATA_DURATION] intValue];
+        self.tags = [coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_TAGS];
+        self.alias = [coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_ALIAS];
+        self.type = [[coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_LINK_TYPE] integerValue];
+        self.channel = [coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_CHANNEL];
+        self.feature = [coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_FEATURE];
+        self.stage = [coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_STAGE];
+        self.duration = [[coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_DURATION] integerValue];
         
-        NSString *encodedParams = [coder decodeObjectForKey:BNC_LINK_DATA_DATA];
+        NSString *encodedParams = [coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_DATA];
         self.params = [BNCEncodingUtils decodeJsonStringToDictionary:encodedParams];
     }
 

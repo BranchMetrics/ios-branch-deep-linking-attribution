@@ -6,10 +6,10 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BNCServerRequest.h"
+#import "BNCDebugRequest.h"
 #import "Branch.h"
 
-@interface BranchConnectDebugRequest : BNCServerRequest
+@interface BranchConnectDebugRequest : BNCDebugRequest
 
 - (id)initWithCallback:(callbackWithStatus)callback;
 

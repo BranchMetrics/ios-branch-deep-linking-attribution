@@ -9,6 +9,7 @@
 #import "BranchSetIdentityRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
+#import "BranchConstants.h"
 
 @interface BranchSetIdentityRequest ()
 
@@ -33,13 +34,13 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary *params = @{
-        @"identity": self.userId,
-        @"device_fingerprint_id": preferenceHelper.deviceFingerprintID,
-        @"session_id": preferenceHelper.sessionID,
-        @"identity_id": preferenceHelper.identityID
+        BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY: self.userId,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID
     };
 
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"profile"] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_SET_IDENTITY] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -53,12 +54,12 @@
     }
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.identityID = response.data[@"identity_id"];
-    preferenceHelper.userUrl = response.data[@"link"];
+    preferenceHelper.identityID = response.data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
+    preferenceHelper.userUrl = response.data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = self.userId;
     
-    if (response.data[@"referring_data"]) {
-        preferenceHelper.installParams = response.data[@"referring_data"];
+    if (response.data[BRANCH_RESPONSE_KEY_INSTALL_PARAMS]) {
+        preferenceHelper.installParams = response.data[BRANCH_RESPONSE_KEY_INSTALL_PARAMS];
     }
     
     if (self.callback && self.shouldCallCallback) {

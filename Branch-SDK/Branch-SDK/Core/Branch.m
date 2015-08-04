@@ -236,7 +236,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     return self.preferenceHelper.userIdentity != nil;
 }
 
-- (void)setNetworkTimeout:(NSInteger)timeout {
+- (void)setNetworkTimeout:(NSTimeInterval)timeout {
     self.preferenceHelper.timeout = timeout;
 }
 
@@ -244,7 +244,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     self.preferenceHelper.retryCount = maxRetries;
 }
 
-- (void)setRetryInterval:(NSInteger)retryInterval {
+- (void)setRetryInterval:(NSTimeInterval)retryInterval {
     self.preferenceHelper.retryInterval = retryInterval;
 }
 
@@ -822,7 +822,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (void)validatePromoCode:(NSString *)code useOld:(BOOL)useOld callback:(callbackWithParams)callback {
     if (!code.length) {
         if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"No code specified" }]);
+            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidPromoCodeError userInfo:@{ NSLocalizedDescriptionKey: @"No code specified" }]);
         }
         return;
     }
@@ -847,7 +847,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (void)applyPromoCode:(NSString *)code useOld:(BOOL)useOld callback:(callbackWithParams)callback {
     if (!code.length) {
         if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"No code specified" }]);
+            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidPromoCodeError userInfo:@{ NSLocalizedDescriptionKey: @"No code specified" }]);
         }
         return;
     }

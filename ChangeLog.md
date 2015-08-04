@@ -1,5 +1,22 @@
 Branch iOS SDK change log
 
+- v0.10.7
+  * Updating debugging requests so they aren't persisted (and aren't loaded) from the queue.
+
+- v0.10.6
+  * Fix queue handling for any future issues with requests.
+  * Allow for NSTimeInterval instead of NSInteger timeout / retry, for subsequent preferences.
+  * Fix missing symbols on iOS 6.
+  * Fix an issue with the fallback url creation for shortUrl.
+  * Added a ton of tests around the new requests.
+  * Fixing deployment target for Branch library.
+
+- v0.10.5
+  * Added back BranchGetAppListRequest class too
+
+- v0.10.4
+  * Added back BranchUpdateAppListRequest class to fix crashes
+
 - v0.10.3
   * Removing the AppListing functionality, as it is explicitly disallowed on iOS 9.
   * Updating behavior for when installParams / getFirstReferringParams are set. Specifically, it will now only happen when

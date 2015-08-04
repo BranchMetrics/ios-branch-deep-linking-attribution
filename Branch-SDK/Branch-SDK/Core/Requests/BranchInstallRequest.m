@@ -9,6 +9,7 @@
 #import "BranchInstallRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
+#import "BranchConstants.h"
 
 @implementation BranchInstallRequest
 
@@ -23,29 +24,29 @@
     BOOL isRealHardwareId;
     NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:preferenceHelper.isDebug];
     if (hardwareId) {
-        params[@"hardware_id"] = hardwareId;
-        params[@"is_hardware_id_real"] = @(isRealHardwareId);
+        params[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
+        params[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = @(isRealHardwareId);
     }
     
-    [self safeSetValue:[BNCSystemObserver getBundleID] forKey:@"ios_bundle_id" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:@"app_version" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getCarrier] forKey:@"carrier" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getBrand] forKey:@"branch" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getModel] forKey:@"model" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getOS] forKey:@"os" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:@"os_version" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getScreenWidth] forKey:@"screen_width" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getScreenHeight] forKey:@"screen_height" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:@"uri_scheme" onDict:params];
-    [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:@"update" onDict:params];
-    [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:@"link_identifier" onDict:params];
-    [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:@"spotlight_identifier" onDict:params];
-
-    params[@"ad_tracking_enabled"] = @([BNCSystemObserver adTrackingSafe]);
-    params[@"is_referrable"] = @(preferenceHelper.isReferrable);
-    params[@"debug"] = @(preferenceHelper.isDebug);
+    [self safeSetValue:[BNCSystemObserver getBundleID] forKey:BRANCH_REQUEST_KEY_BUNDLE_ID onDict:params];
+    [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];
+    [self safeSetValue:[BNCSystemObserver getCarrier] forKey:BRANCH_REQUEST_KEY_CARRIER onDict:params];
+    [self safeSetValue:[BNCSystemObserver getBrand] forKey:BRANCH_REQUEST_KEY_BRAND onDict:params];
+    [self safeSetValue:[BNCSystemObserver getModel] forKey:BRANCH_REQUEST_KEY_MODEL onDict:params];
+    [self safeSetValue:[BNCSystemObserver getOS] forKey:BRANCH_REQUEST_KEY_OS onDict:params];
+    [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:params];
+    [self safeSetValue:[BNCSystemObserver getScreenWidth] forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:params];
+    [self safeSetValue:[BNCSystemObserver getScreenHeight] forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:params];
+    [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:params];
+    [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:BRANCH_REQUEST_KEY_UPDATE onDict:params];
+    [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:params];
+    [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
     
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"install"] key:key callback:callback];
+    params[BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED] = @([BNCSystemObserver adTrackingSafe]);
+    params[BRANCH_REQUEST_KEY_IS_REFERRABLE] = @(preferenceHelper.isReferrable);
+    params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
+    
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_INSTALL] key:key callback:callback];
 }
 
 - (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
