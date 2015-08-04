@@ -359,6 +359,14 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
+    if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+        self.preferenceHelper.univeralLinkUrl = [userActivity.webpageURL absoluteString];
+
+        [self initUserSessionAndCallCallback:YES];
+        
+        return YES;
+    }
+    
     NSString *spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     
     if (spotlightIdentifier) {

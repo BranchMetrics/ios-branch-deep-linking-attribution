@@ -62,6 +62,7 @@
     [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:BRANCH_REQUEST_KEY_UPDATE onDict:params];
     [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
+    [self safeSetValue:preferenceHelper.univeralLinkUrl forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
     
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
 }
@@ -118,8 +119,10 @@
         }
     }
     
-    // Clear link click so it doesn't get reused on the next open
+    // Clear link identifiers so they don't get reused on the next open
     preferenceHelper.linkClickIdentifier = nil;
+    preferenceHelper.spotlightIdentifier = nil;
+    preferenceHelper.univeralLinkUrl = nil;
     
     if (data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]) {
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];

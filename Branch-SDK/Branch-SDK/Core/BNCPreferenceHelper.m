@@ -26,6 +26,7 @@ NSString * const BRANCH_PREFS_KEY_IDENTITY_ID = @"bnc_identity_id";
 NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
 NSString * const BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
 NSString * const BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER = @"bnc_spotlight_identifier";
+NSString * const BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL = @"bnc_universal_link_url";
 NSString * const BRANCH_PREFS_KEY_SESSION_PARAMS = @"bnc_session_params";
 NSString * const BRANCH_PREFS_KEY_INSTALL_PARAMS = @"bnc_install_params";
 NSString * const BRANCH_PREFS_KEY_USER_URL = @"bnc_user_url";
@@ -50,7 +51,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 @implementation BNCPreferenceHelper
 
 @synthesize branchKey = _branchKey, appKey = _appKey, lastRunBranchKey = _lastRunBranchKey, appVersion = _appVersion, deviceFingerprintID = _deviceFingerprintID, sessionID = _sessionID, spotlightIdentifier = _spotlightIdentifier,
-            identityID = _identityID, linkClickIdentifier = _linkClickIdentifier, userUrl = _userUrl, userIdentity = _userIdentity, sessionParams = _sessionParams, installParams = _installParams,
+            identityID = _identityID, linkClickIdentifier = _linkClickIdentifier, userUrl = _userUrl, userIdentity = _userIdentity, sessionParams = _sessionParams, installParams = _installParams, univeralLinkUrl = _univeralLinkUrl,
             isReferrable = _isReferrable, isDebug = _isDebug, isConnectedToRemoteDebug = _isConnectedToRemoteDebug, retryCount = _retryCount, retryInterval = _retryInterval, timeout = _timeout;
 
 + (BNCPreferenceHelper *)preferenceHelper {
@@ -276,6 +277,21 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     if (![_spotlightIdentifier isEqualToString:spotlightIdentifier]) {
         _spotlightIdentifier = spotlightIdentifier;
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER value:spotlightIdentifier];
+    }
+}
+
+- (NSString *)univeralLinkUrl {
+    if (!_univeralLinkUrl) {
+        _univeralLinkUrl = [self readStringFromDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL];
+    }
+    
+    return _univeralLinkUrl;
+}
+
+- (void)setUniveralLinkUrl:(NSString *)univeralLinkUrl {
+    if (![_univeralLinkUrl isEqualToString:univeralLinkUrl]) {
+        _univeralLinkUrl = univeralLinkUrl;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL value:univeralLinkUrl];
     }
 }
 
