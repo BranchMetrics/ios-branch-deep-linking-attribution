@@ -64,6 +64,8 @@
 		4673094A1AF2C4FB005B8848 /* BranchTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 467309481AF2C4FB005B8848 /* BranchTest.m */; };
 		4677EB511B3B384C00A13964 /* BranchInstallRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4677EB501B3B384C00A13964 /* BranchInstallRequestTests.m */; };
 		4677EB531B3B4A6400A13964 /* BranchDisconnectDebugRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4677EB521B3B4A6400A13964 /* BranchDisconnectDebugRequestTests.m */; };
+		467BA3551B713287003E458B /* BNCDebugRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 467BA3531B713287003E458B /* BNCDebugRequest.h */; };
+		467BA3561B713287003E458B /* BNCDebugRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 467BA3541B713287003E458B /* BNCDebugRequest.m */; };
 		4683F0751B20A73F00A432E7 /* CreditHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */; };
 		4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016731940F51400A9E103 /* AppDelegate.m */; };
 		4683F0771B20A73F00A432E7 /* PromoCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E3882A21A37E42F004BDABE /* PromoCodeViewController.m */; };
@@ -195,6 +197,8 @@
 		467309481AF2C4FB005B8848 /* BranchTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchTest.m; sourceTree = "<group>"; };
 		4677EB501B3B384C00A13964 /* BranchInstallRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchInstallRequestTests.m; sourceTree = "<group>"; };
 		4677EB521B3B4A6400A13964 /* BranchDisconnectDebugRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchDisconnectDebugRequestTests.m; sourceTree = "<group>"; };
+		467BA3531B713287003E458B /* BNCDebugRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDebugRequest.h; sourceTree = "<group>"; };
+		467BA3541B713287003E458B /* BNCDebugRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDebugRequest.m; sourceTree = "<group>"; };
 		4683F0781B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchConnectDebugRequestTests.m; sourceTree = "<group>"; };
 		46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCPreferenceHelperTests.m; sourceTree = "<group>"; };
 		46DBB42B1B330CF300642FC8 /* BNCLinkDataTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLinkDataTests.m; sourceTree = "<group>"; };
@@ -309,8 +313,56 @@
 		4659B3471B0FD4430019767C /* BranchRequests */ = {
 			isa = PBXGroup;
 			children = (
+				467BA3581B7132A0003E458B /* CoreRequests */,
+				467BA3571B71329A003E458B /* DebugRequests */,
 				4659B3481B0FD4620019767C /* BNCServerRequest.h */,
 				4659B3491B0FD4620019767C /* BNCServerRequest.m */,
+				467BA3531B713287003E458B /* BNCDebugRequest.h */,
+				467BA3541B713287003E458B /* BNCDebugRequest.m */,
+			);
+			name = BranchRequests;
+			sourceTree = "<group>";
+		};
+		4665AF1F1B2892CF00184037 /* BranchRequestsTests */ = {
+			isa = PBXGroup;
+			children = (
+				4665AF201B2892F700184037 /* BranchSetIdentityRequestTests.m */,
+				4665AF271B28C1DE00184037 /* BranchLogoutRequestTests.m */,
+				46DC406F1B2A34EE00D2D203 /* BranchUserCompletedActionTests.m */,
+				46DC40711B2B285900D2D203 /* BranchLoadActionsRequestTests.m */,
+				46DC40731B2B31A300D2D203 /* BranchLoadRewardsRequestTests.m */,
+				46DC40751B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m */,
+				46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */,
+				46DC40791B2B694600D2D203 /* BranchGetPromoCodeRequestTests.m */,
+				46DC407B1B2B81CA00D2D203 /* BranchValidatePromoCodeRequestTests.m */,
+				46DC407D1B2B83B800D2D203 /* BranchApplyPromoCodeRequestTests.m */,
+				46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */,
+				46DBB4361B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m */,
+				46DBB4381B34B22F00642FC8 /* BranchCloseRequestTests.m */,
+				46DBB43C1B34B7A300642FC8 /* BranchOpenRequestTests.m */,
+				4677EB501B3B384C00A13964 /* BranchInstallRequestTests.m */,
+				4683F0781B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m */,
+				4677EB521B3B4A6400A13964 /* BranchDisconnectDebugRequestTests.m */,
+			);
+			name = BranchRequestsTests;
+			sourceTree = "<group>";
+		};
+		467BA3571B71329A003E458B /* DebugRequests */ = {
+			isa = PBXGroup;
+			children = (
+				4642E6A51B1FA1DB006E4C1F /* BranchConnectDebugRequest.h */,
+				4642E6A61B1FA1DB006E4C1F /* BranchConnectDebugRequest.m */,
+				4642E6A91B1FA2AA006E4C1F /* BranchDisconnectDebugRequest.h */,
+				4642E6AA1B1FA2AA006E4C1F /* BranchDisconnectDebugRequest.m */,
+				4642E6AD1B1FA303006E4C1F /* BranchLogRequest.h */,
+				4642E6AE1B1FA303006E4C1F /* BranchLogRequest.m */,
+			);
+			name = DebugRequests;
+			sourceTree = "<group>";
+		};
+		467BA3581B7132A0003E458B /* CoreRequests */ = {
+			isa = PBXGroup;
+			children = (
 				4659B34B1B0FD5BF0019767C /* BranchSetIdentityRequest.h */,
 				4659B34C1B0FD5BF0019767C /* BranchSetIdentityRequest.m */,
 				4659B34E1B0FDAB70019767C /* BranchLogoutRequest.h */,
@@ -341,38 +393,8 @@
 				4659B3761B1507370019767C /* BranchOpenRequest.m */,
 				4659B3781B1508B40019767C /* BranchInstallRequest.h */,
 				4659B3791B1508B40019767C /* BranchInstallRequest.m */,
-				4642E6A51B1FA1DB006E4C1F /* BranchConnectDebugRequest.h */,
-				4642E6A61B1FA1DB006E4C1F /* BranchConnectDebugRequest.m */,
-				4642E6A91B1FA2AA006E4C1F /* BranchDisconnectDebugRequest.h */,
-				4642E6AA1B1FA2AA006E4C1F /* BranchDisconnectDebugRequest.m */,
-				4642E6AD1B1FA303006E4C1F /* BranchLogRequest.h */,
-				4642E6AE1B1FA303006E4C1F /* BranchLogRequest.m */,
 			);
-			name = BranchRequests;
-			sourceTree = "<group>";
-		};
-		4665AF1F1B2892CF00184037 /* BranchRequestsTests */ = {
-			isa = PBXGroup;
-			children = (
-				4665AF201B2892F700184037 /* BranchSetIdentityRequestTests.m */,
-				4665AF271B28C1DE00184037 /* BranchLogoutRequestTests.m */,
-				46DC406F1B2A34EE00D2D203 /* BranchUserCompletedActionTests.m */,
-				46DC40711B2B285900D2D203 /* BranchLoadActionsRequestTests.m */,
-				46DC40731B2B31A300D2D203 /* BranchLoadRewardsRequestTests.m */,
-				46DC40751B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m */,
-				46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */,
-				46DC40791B2B694600D2D203 /* BranchGetPromoCodeRequestTests.m */,
-				46DC407B1B2B81CA00D2D203 /* BranchValidatePromoCodeRequestTests.m */,
-				46DC407D1B2B83B800D2D203 /* BranchApplyPromoCodeRequestTests.m */,
-				46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */,
-				46DBB4361B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m */,
-				46DBB4381B34B22F00642FC8 /* BranchCloseRequestTests.m */,
-				46DBB43C1B34B7A300642FC8 /* BranchOpenRequestTests.m */,
-				4677EB501B3B384C00A13964 /* BranchInstallRequestTests.m */,
-				4683F0781B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m */,
-				4677EB521B3B4A6400A13964 /* BranchDisconnectDebugRequestTests.m */,
-			);
-			name = BranchRequestsTests;
+			name = CoreRequests;
 			sourceTree = "<group>";
 		};
 		670016571940F51400A9E103 = {
@@ -552,6 +574,7 @@
 				46946B971B2689A100627BCC /* BranchLoadActionsRequest.h in Headers */,
 				466B587F1B17780A00A69EDE /* BNCEncodingUtils.h in Headers */,
 				46946B9B1B2689A100627BCC /* BranchGetPromoCodeRequest.h in Headers */,
+				467BA3551B713287003E458B /* BNCDebugRequest.h in Headers */,
 				46946BA31B2689A100627BCC /* BranchOpenRequest.h in Headers */,
 				46946B9C1B2689A100627BCC /* BranchValidatePromoCodeRequest.h in Headers */,
 				46946BA51B2689A100627BCC /* BranchConnectDebugRequest.h in Headers */,
@@ -733,6 +756,7 @@
 				463F0A3E1B20A663004235D2 /* BranchCloseRequest.m in Sources */,
 				463F0A381B20A663004235D2 /* BranchCreditHistoryRequest.m in Sources */,
 				466B585F1B17779C00A69EDE /* BNCSystemObserver.m in Sources */,
+				467BA3561B713287003E458B /* BNCDebugRequest.m in Sources */,
 				466B58611B17779C00A69EDE /* BNCServerRequestQueue.m in Sources */,
 				463F0A431B20A663004235D2 /* BranchConnectDebugRequest.m in Sources */,
 				463F0A331B20A663004235D2 /* BranchLogoutRequest.m in Sources */,
