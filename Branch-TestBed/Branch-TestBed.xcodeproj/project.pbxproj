@@ -321,7 +321,7 @@
 		4659B3471B0FD4430019767C /* BranchRequests */ = {
 			isa = PBXGroup;
 			children = (
-				467BA3581B7132A0003E458B /* CoreRequests */,
+				467BA3581B7132A0003E458B /* Core */,
 				467BA3571B71329A003E458B /* DebugRequests */,
 				4659B3481B0FD4620019767C /* BNCServerRequest.h */,
 				4659B3491B0FD4620019767C /* BNCServerRequest.m */,
@@ -329,6 +329,7 @@
 				467BA3541B713287003E458B /* BNCDebugRequest.m */,
 			);
 			name = BranchRequests;
+			path = Requests;
 			sourceTree = "<group>";
 		};
 		4665AF1F1B2892CF00184037 /* BranchRequestsTests */ = {
@@ -355,6 +356,16 @@
 			name = BranchRequestsTests;
 			sourceTree = "<group>";
 		};
+		466D5A0E1B599123009DB845 /* ContentDiscovery */ = {
+			isa = PBXGroup;
+			children = (
+				466D5A0F1B5991E3009DB845 /* BNCContentDiscoveryManager.h */,
+				466D5A101B5991E3009DB845 /* BNCContentDiscoveryManager.m */,
+			);
+			name = ContentDiscovery;
+			path = ../ContentDiscovery;
+			sourceTree = "<group>";
+		};
 		467BA3571B71329A003E458B /* DebugRequests */ = {
 			isa = PBXGroup;
 			children = (
@@ -368,7 +379,7 @@
 			name = DebugRequests;
 			sourceTree = "<group>";
 		};
-		467BA3581B7132A0003E458B /* CoreRequests */ = {
+		467BA3581B7132A0003E458B /* Core */ = {
 			isa = PBXGroup;
 			children = (
 				4659B34B1B0FD5BF0019767C /* BranchSetIdentityRequest.h */,
@@ -404,18 +415,7 @@
 				460F4FA51B618A38002E84D6 /* BranchSpotlightUrlRequest.h */,
 				460F4FA61B618A38002E84D6 /* BranchSpotlightUrlRequest.m */,
 			);
-			name = BranchRequests;
-			path = Requests;
-			sourceTree = "<group>";
-		};
-		466D5A0E1B599123009DB845 /* ContentDiscovery */ = {
-			isa = PBXGroup;
-			children = (
-				466D5A0F1B5991E3009DB845 /* BNCContentDiscoveryManager.h */,
-				466D5A101B5991E3009DB845 /* BNCContentDiscoveryManager.m */,
-			);
-			name = ContentDiscovery;
-			path = ../ContentDiscovery;
+			name = Core;
 			sourceTree = "<group>";
 		};
 		670016571940F51400A9E103 = {
