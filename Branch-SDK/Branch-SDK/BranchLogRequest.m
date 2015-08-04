@@ -41,4 +41,20 @@
     // Nothing to do here
 }
 
+#pragma mark - NSCoding methods
+
+- (id)initWithCoder:(NSCoder *)decoder {
+    if (self = [super initWithCoder:decoder]) {
+        _log = [decoder decodeObjectForKey:@"log"];
+    }
+    
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    [super encodeWithCoder:coder];
+    
+    [coder encodeObject:self.log forKey:@"log"];
+}
+
 @end
