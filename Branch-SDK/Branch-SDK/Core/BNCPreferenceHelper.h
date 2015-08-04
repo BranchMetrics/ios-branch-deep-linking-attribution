@@ -22,6 +22,7 @@
 @property (strong, nonatomic) NSString *identityID;
 @property (strong, nonatomic) NSString *linkClickIdentifier;
 @property (strong, nonatomic) NSString *spotlightIdentifier;
+@property (strong, nonatomic) NSString *univeralLinkUrl;
 @property (strong, nonatomic) NSString *userUrl;
 @property (strong, nonatomic) NSString *userIdentity;
 @property (strong, nonatomic) NSString *sessionParams;
