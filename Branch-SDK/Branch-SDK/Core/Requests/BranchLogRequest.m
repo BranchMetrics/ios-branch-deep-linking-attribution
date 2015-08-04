@@ -8,6 +8,8 @@
 
 #import "BranchLogRequest.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
+#import "BNCError.h"
 
 @interface BranchLogRequest ()
 
@@ -26,12 +28,19 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    if (!self.log) {
+        callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCNilLogError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot log nil to server." }]);
+        return;
+    }
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+
     NSDictionary *params = @{
-        @"log": self.log,
-        @"device_fingerprint_id": [BNCPreferenceHelper preferenceHelper].deviceFingerprintID
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_LOG: self.log
     };
     
-    [serverInterface postRequest:params url:[[BNCPreferenceHelper preferenceHelper] getAPIURL:@"debug/log"] key:key log:NO callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_LOG] key:key log:NO callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

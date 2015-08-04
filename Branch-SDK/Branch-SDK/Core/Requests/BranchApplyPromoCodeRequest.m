@@ -9,6 +9,7 @@
 #import "BranchApplyPromoCodeRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCError.h"
+#import "BranchConstants.h"
 
 @interface BranchApplyPromoCodeRequest ()
 
@@ -33,13 +34,13 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary *params = @{
-        @"identity_id": preferenceHelper.identityID,
-        @"device_fingerprint_id": preferenceHelper.deviceFingerprintID,
-        @"session_id": preferenceHelper.sessionID
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID
     };
     
-    NSString *endpoint = self.useOld ? @"applycode/" : @"apply-promo-code/";
-    NSString *url = [[preferenceHelper getAPIURL:endpoint] stringByAppendingString:self.code];
+    NSString *endpoint = self.useOld ? BRANCH_REQUEST_ENDPOINT_APPLY_REFERRAL_CODE : BRANCH_REQUEST_ENDPOINT_APPLY_PROMO_CODE;
+    NSString *url = [NSString stringWithFormat:@"%@/%@", [preferenceHelper getAPIURL:endpoint], self.code];
     [serverInterface postRequest:params url:url key:key callback:callback];
 }
 
@@ -51,9 +52,9 @@
         return;
     }
 
-    NSString *codeKey = self.useOld ? @"referral_code" : @"promo_code";
+    NSString *codeKey = self.useOld ? BRANCH_RESPONSE_KEY_REFERRAL_CODE : BRANCH_RESPONSE_KEY_PROMO_CODE;
     if (!response.data[codeKey]) {
-        error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Promo code is invalid - it may have already been used or the code might not exist" }];
+        error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidPromoCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Promo code is invalid - it may have already been used or the code might not exist" }];
     }
     
     if (self.callback) {

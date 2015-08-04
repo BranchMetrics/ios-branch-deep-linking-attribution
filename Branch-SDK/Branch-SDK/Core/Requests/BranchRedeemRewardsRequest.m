@@ -8,6 +8,7 @@
 
 #import "BranchRedeemRewardsRequest.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
 
 @interface BranchRedeemRewardsRequest ()
 
@@ -32,14 +33,14 @@
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary *params = @{
-        @"bucket": self.bucket,
-        @"amount": @(self.amount),
-        @"device_fingerprint_id": preferenceHelper.deviceFingerprintID,
-        @"identity_id": preferenceHelper.identityID,
-        @"session_id": preferenceHelper.sessionID
+        BRANCH_REQUEST_KEY_BUCKET: self.bucket,
+        BRANCH_REQUEST_KEY_AMOUNT: @(self.amount),
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID
     };
 
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"redeem"] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_REDEEM_REWARDS] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

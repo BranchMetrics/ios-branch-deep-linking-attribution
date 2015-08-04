@@ -9,6 +9,7 @@
 #import "BranchGetPromoCodeRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCError.h"
+#import "BranchConstants.h"
 
 @interface BranchGetPromoCodeRequest ()
 
@@ -45,26 +46,25 @@
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    params[@"device_fingerprint_id"] = preferenceHelper.deviceFingerprintID;
-    params[@"identity_id"] = preferenceHelper.identityID;
-    params[@"session_id"] = preferenceHelper.sessionID;
-    params[@"calculation_type"] = @(self.usageType);
-    params[@"location"] = @(self.rewardLocation);
-    params[@"type"] = @"credit";
-    params[@"creation_source"] = @2; // SDK = 2
-    params[@"amount"] = @(self.amount);
-    params[@"bucket"] = self.bucket;
+    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
+    params[BRANCH_REQUEST_KEY_REFERRAL_USAGE_TYPE] = @(self.usageType);
+    params[BRANCH_REQUEST_KEY_REFERRAL_REWARD_LOCATION] = @(self.rewardLocation);
+    params[BRANCH_REQUEST_KEY_REFERRAL_TYPE] = @"credit";
+    params[BRANCH_REQUEST_KEY_REFERRAL_CREATION_SOURCE] = @2; // iOS SDK = 2
+    params[BRANCH_REQUEST_KEY_AMOUNT] = @(self.amount);
+    params[BRANCH_REQUEST_KEY_BUCKET] = self.bucket;
     
     if (self.prefix.length) {
-        params[@"prefix"] = self.prefix;
+        params[BRANCH_REQUEST_KEY_REFERRAL_PREFIX] = self.prefix;
     }
     
     if (self.expiration) {
-        params[@"expiration"] = self.expiration;
+        params[BRANCH_REQUEST_KEY_REFERRAL_EXPIRATION] = self.expiration;
     }
     
-    NSString *endpoint = self.useOld ? @"referralcode" : @"promo-code";
-    
+    NSString *endpoint = self.useOld ? BRANCH_REQUEST_ENDPOINT_GET_REFERRAL_CODE : BRANCH_REQUEST_ENDPOINT_GET_PROMO_CODE;
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:endpoint] key:key callback:callback];
 }
 
@@ -76,10 +76,9 @@
         return;
     }
     
-    NSString *responseKey = self.useOld ? @"referral_code" : @"promo_code";
-    
+    NSString *responseKey = self.useOld ? BRANCH_RESPONSE_KEY_REFERRAL_CODE : BRANCH_RESPONSE_KEY_PROMO_CODE;
     if (!response.data[responseKey]) {
-        error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidReferralCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Promo code with specified parameter set is already taken for a different user" }];
+        error = [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidPromoCodeError userInfo:@{ NSLocalizedDescriptionKey: @"Promo code with specified parameter set is already taken for a different user" }];
     }
     
     if (self.callback) {

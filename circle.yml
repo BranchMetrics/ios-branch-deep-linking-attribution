@@ -1,4 +1,3 @@
 test:
   override:
-    - xctool -scheme "Branch-SDK Functionality Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
-    - xctool -scheme "Branch-SDK Load Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test
+    - xctool -scheme "Branch-SDK-Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test

@@ -8,6 +8,7 @@
 
 #import "BranchLogoutRequest.h"
 #import "BNCPreferenceHelper.h"
+#import "BranchConstants.h"
 
 @interface BranchLogoutRequest ()
 
@@ -29,12 +30,12 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     NSDictionary *params = @{
-        @"device_fingerprint_id": preferenceHelper.deviceFingerprintID,
-        @"session_id": preferenceHelper.sessionID,
-        @"identity_id": preferenceHelper.identityID
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID
     };
 
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:@"logout"] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_LOGOUT] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -46,9 +47,9 @@
     }
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.sessionID = response.data[@"session_id"];
-    preferenceHelper.identityID = response.data[@"identity_id"];
-    preferenceHelper.userUrl = response.data[@"link"];
+    preferenceHelper.sessionID = response.data[BRANCH_RESPONSE_KEY_SESSION_ID];
+    preferenceHelper.identityID = response.data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
+    preferenceHelper.userUrl = response.data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = nil;
     preferenceHelper.installParams = nil;
     preferenceHelper.sessionParams = nil;
