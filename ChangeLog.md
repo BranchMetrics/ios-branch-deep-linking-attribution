@@ -1,5 +1,8 @@
 Branch iOS SDK change log
 
+- v0.10.7
+  * Updating debugging requests so they aren't persisted (and aren't loaded) from the queue.
+
 - v0.10.6
   * Fix queue handling for any future issues with requests.
   * Allow for NSTimeInterval instead of NSInteger timeout / retry, for subsequent preferences.
