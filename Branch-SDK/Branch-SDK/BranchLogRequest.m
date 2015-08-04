@@ -9,6 +9,7 @@
 #import "BranchLogRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
+#import "BNCError.h"
 
 @interface BranchLogRequest ()
 
@@ -27,6 +28,11 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+    if (!self.log) {
+        callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCNilLogError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot log nil to server." }]);
+        return;
+    }
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     NSDictionary *params = @{

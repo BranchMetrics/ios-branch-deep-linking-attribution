@@ -16,7 +16,8 @@ enum {
     BNCInvalidPromoCodeError,
     BNCRedeemCreditsError,
     BNCBadRequestError,
-    BNCServerProblemError
+    BNCServerProblemError,
+    BNCNilLogError
 };
 
 @interface BNCError : NSObject
