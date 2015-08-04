@@ -29,7 +29,7 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     if (!self.log) {
-        callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCNilLogError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot log nil to server." }])
+        callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCNilLogError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot log nil to server." }]);
         return;
     }
 
