@@ -51,7 +51,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 @implementation BNCPreferenceHelper
 
 @synthesize branchKey = _branchKey, appKey = _appKey, lastRunBranchKey = _lastRunBranchKey, appVersion = _appVersion, deviceFingerprintID = _deviceFingerprintID, sessionID = _sessionID, spotlightIdentifier = _spotlightIdentifier,
-            identityID = _identityID, linkClickIdentifier = _linkClickIdentifier, userUrl = _userUrl, userIdentity = _userIdentity, sessionParams = _sessionParams, installParams = _installParams, univeralLinkUrl = _univeralLinkUrl,
+            identityID = _identityID, linkClickIdentifier = _linkClickIdentifier, userUrl = _userUrl, userIdentity = _userIdentity, sessionParams = _sessionParams, installParams = _installParams, universalLinkUrl = _universalLinkUrl,
             isReferrable = _isReferrable, isDebug = _isDebug, isConnectedToRemoteDebug = _isConnectedToRemoteDebug, retryCount = _retryCount, retryInterval = _retryInterval, timeout = _timeout;
 
 + (BNCPreferenceHelper *)preferenceHelper {
@@ -280,18 +280,18 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     }
 }
 
-- (NSString *)univeralLinkUrl {
-    if (!_univeralLinkUrl) {
-        _univeralLinkUrl = [self readStringFromDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL];
+- (NSString *)universalLinkUrl {
+    if (!_universalLinkUrl) {
+        _universalLinkUrl = [self readStringFromDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL];
     }
     
-    return _univeralLinkUrl;
+    return _universalLinkUrl;
 }
 
-- (void)setUniveralLinkUrl:(NSString *)univeralLinkUrl {
-    if (![_univeralLinkUrl isEqualToString:univeralLinkUrl]) {
-        _univeralLinkUrl = univeralLinkUrl;
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL value:univeralLinkUrl];
+- (void)setUniversalLinkUrl:(NSString *)universalLinkUrl {
+    if (![_universalLinkUrl isEqualToString:universalLinkUrl]) {
+        _universalLinkUrl = universalLinkUrl;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL value:universalLinkUrl];
     }
 }
 
