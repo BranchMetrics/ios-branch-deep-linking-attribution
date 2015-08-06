@@ -163,6 +163,20 @@
 }
 
 
+#pragma mark - Character Length tests
+
+- (void)testChineseCharactersWithLengthGreaterThanOne {
+    NSString *multiCharacterString = @"𥑮";
+    NSDictionary *jsonDict = @{ @"foo": multiCharacterString };
+    NSString *expectedEncoding = @"{\"foo\":\"𥑮\"}";
+    NSInteger expectedLength = [expectedEncoding lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSData *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonData:jsonDict];
+    
+    XCTAssertEqual(expectedLength, [encodedValue length]);
+}
+
+
 #pragma mark - DecodeToDictionary tests
 
 - (void)testDecodeJsonDataToDictionary {
