@@ -43,6 +43,7 @@ extern NSString * const BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED;
 extern NSString * const BRANCH_REQUEST_KEY_IS_REFERRABLE;
 extern NSString * const BRANCH_REQUEST_KEY_DEBUG;
 extern NSString * const BRANCH_REQUEST_KEY_BUNDLE_ID;
+extern NSString * const BRANCH_REQUEST_KEY_TEAM_ID;
 extern NSString * const BRANCH_REQUEST_KEY_APP_VERSION;
 extern NSString * const BRANCH_REQUEST_KEY_OS;
 extern NSString * const BRANCH_REQUEST_KEY_OS_VERSION;

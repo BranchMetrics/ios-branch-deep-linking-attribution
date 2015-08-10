@@ -83,6 +83,35 @@
     return [[NSBundle mainBundle] bundleIdentifier];
 }
 
+// The technique here is basically to throw an arbitrary item into the
+// keychain, pull it back out, and see what identifier was assigned to it.
+// This is largely taken from http://stackoverflow.com/a/11841898/1252541
++ (NSString *)getTeamIdentifier {
+    NSDictionary *query = @{
+        (__bridge NSString *)kSecClass: (__bridge NSString *)kSecClassGenericPassword,
+        (__bridge NSString *)kSecAttrAccount: @"arbitrary-bnc-account",
+        (__bridge NSString *)kSecAttrService: @"",
+        (__bridge NSString *)kSecReturnAttributes: (id)kCFBooleanTrue
+    };
+
+    CFDictionaryRef result = nil;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, (CFTypeRef *)&result);
+
+    if (status == errSecItemNotFound) {
+        status = SecItemAdd((__bridge CFDictionaryRef)query, (CFTypeRef *)&result);
+    }
+
+    if (status != errSecSuccess) {
+        return nil;
+    }
+
+    NSString *accessGroup = [(__bridge NSDictionary *)result objectForKey:(__bridge NSString *)kSecAttrAccessGroup];
+    NSString *teamId = [accessGroup substringToIndex:[accessGroup rangeOfString:@"."].location];
+    CFRelease(result);
+
+    return teamId;
+}
+
 + (NSString *)getCarrier {
     NSString *carrierName = nil;
     

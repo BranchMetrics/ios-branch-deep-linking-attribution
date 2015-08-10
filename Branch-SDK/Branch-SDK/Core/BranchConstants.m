@@ -43,6 +43,7 @@ NSString * const BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED = @"ad_tracking_enabled"
 NSString * const BRANCH_REQUEST_KEY_IS_REFERRABLE = @"is_referrable";
 NSString * const BRANCH_REQUEST_KEY_DEBUG = @"debug";
 NSString * const BRANCH_REQUEST_KEY_BUNDLE_ID = @"ios_bundle_id";
+NSString * const BRANCH_REQUEST_KEY_TEAM_ID = @"ios_team_id";
 NSString * const BRANCH_REQUEST_KEY_APP_VERSION = @"app_version";
 NSString * const BRANCH_REQUEST_KEY_OS = @"os";
 NSString * const BRANCH_REQUEST_KEY_OS_VERSION = @"os_version";

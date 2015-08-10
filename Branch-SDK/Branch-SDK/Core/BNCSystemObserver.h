@@ -14,6 +14,7 @@
 + (NSString *)getDefaultUriScheme;
 + (NSString *)getAppVersion;
 + (NSString *)getBundleID;
++ (NSString *)getTeamIdentifier;
 + (NSString *)getCarrier;
 + (NSString *)getBrand;
 + (NSString *)getModel;
