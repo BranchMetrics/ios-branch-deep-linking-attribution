@@ -1,3 +1,14 @@
 test:
   override:
-    - xctool -scheme "Branch-SDK-Tests" -workspace Branch-TestBed/Branch-TestBed.xcworkspace -sdk iphonesimulator test -reporter pretty -reporter plain:$CIRCLE_ARTIFACTS/xctool.log
+    - set -o pipefail &&
+      xcodebuild
+        CODE_SIGNING_REQUIRED=NO
+        CODE_SIGN_IDENTITY=
+        PROVISIONING_PROFILE=
+        -sdk iphonesimulator
+        -destination 'platform=iOS Simulator,OS=8.1,name=iPhone 6'
+        -workspace "Branch-TestBed/Branch-TestBed.xcworkspace"
+        -scheme "Branch-SDK-Tests"
+        clean build test |
+      tee $CIRCLE_ARTIFACTS/xcode_raw.log |
+      xcpretty --color --report junit --output $CIRCLE_TEST_REPORTS/xcode/results.xml
