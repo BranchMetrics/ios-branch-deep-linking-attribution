@@ -2,14 +2,13 @@
 
 This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a complete list of the content featured in this document.
 
-**Note:** Go to our new [**Documentation Portal**](https://dev.branch.io) where you can find all of our latest documentation and future documentation updates.
+## [New documentation portal](https://dev.branch.io) and [support portal with user forums](http://support.branch.io)
 
 Table of Contents|
 ------------- |
 [Get the Demo App](#get-the-demo-app)|
 [Class Reference Table](#class-reference)|
 [Important Migrations](#important-migration-to-v090)      |
-[Troubleshooting FAQ](#faq) 		  |
 [Installation](#installation)|
 [Configuration (for Tracking)](#configuration-for-tracking)|
 [Register a URI Scheme Direct Deep Linking (Optional, but Recommended)](#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)|
@@ -60,11 +59,6 @@ The `source:iOS` attribute has been removed from the params dictionary for links
 ## Important Migration to v0.6.0
 
 We have deprecated the bnc\_appkey and replaced that with the new branch_key. Please see [add branch key](#add-your-branch-key-to-your-project) for details.
-
-
-## FAQ
-
-Have questions? Need troubleshooting assistance? See our [FAQs]  (https://dev.branch.io/references/ios_sdk/#faq) for in depth answers.
 
 ## Installation
 
