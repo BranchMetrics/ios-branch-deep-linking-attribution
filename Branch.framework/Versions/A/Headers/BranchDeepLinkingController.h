@@ -15,6 +15,6 @@
 @protocol BranchDeepLinkingController <NSObject>
 
 - (void)configureControlWithData:(NSDictionary *)data;
-@property (weak, nonatomic) id <BranchDeepLinkingControllerCompletionDelegate> completionDelegate;
+@property (weak, nonatomic) id <BranchDeepLinkingControllerCompletionDelegate> deepLinkingCompletionDelegate;
 
 @end
