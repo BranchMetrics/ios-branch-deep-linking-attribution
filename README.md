@@ -108,6 +108,26 @@ Alternatively, you can add the URI scheme in your project's Info page.
 
 ![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png)
 
+### Support Universal Linking (iOS 9)
+
+With iOS 9, Apple has added the ability to allow http links to directly open your app, rather than using the URI Schemes. This can be a pain to set up, as it involves a complicated process on your server. The good news is that Branch does this work for you with just two steps!
+
+1. In Xcode, click on your project in the Navigator (on the left side).
+1. Select the "Capabilities" tab.
+1. Expand the "Associated Domains" tab.
+1. Enable the setting (toggle the switch).
+1. Add "applinks:bnc.lt" to the list.
+1. Add any additional custom domains you have (e.g. applinks:vng.io)
+
+![Xcode Enable UL](docs/images/xcode-ul-enable.png)
+
+1. On the Dashboard, navigate to your app's link settings page.
+1. Check the "Enable Universal Links
+1. Ensure that your Apple Team ID and app Bundle ID are correct (we try to auto-harvest these for you).
+1. Be sure to save these settings updates.
+
+![Dashboard Enable UL](docs/images/dashboard-ul-enable.png)
+
 ### Add Your Branch Key to Your Project
 
 After you register your app, your Branch Key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift).
