@@ -810,8 +810,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - Private methods
 
 + (void)load {
-    [super load];
-    
      // Force load / registration of notification listener, allowing for codeless install
     [Branch getInstance];
 }
