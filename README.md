@@ -39,10 +39,6 @@ For your reference, see the methods and parameters table below.
 |[Get Reward Balance](#get-reward-balance)|[Method](#methods-10)|[Parameters](#parameters-10)|
 [Redeem All or Some of the Reward Balance (Store State)](#redeem-all-or-some-of-the-reward-balance-store-state)|[Method](#methods-11)|[Parameter](#parameters-11)|
 [Get Credit History](#get-credit-history)|[Method](#methods-12)|[Parameters](#parameters-12)|
-[Get Promo Code](#get-promo-code)|[Method](#methods-13)|[Parameter](#parameters-13)|
-[Create Promo Code](#create-promo-code)|[Method](#methods-14)|[Parameter](#parameters-14)|
-[Validate Promo Code](#validate-promo-code)|[Method](#methods-18)|[Parameter](#parameters-18)|
-[Apply Promo Code](#apply-promo-code)|[Method](#methods-19)|[Parameter](#parameters-19)|
 
 ## Important Migration to v0.9.0
 We are renaming Referral Codes to Promo Codes to better indicate their purpose. Promo Codes do *not* establish a referred/referring user install relationship, which is unclear when called "referral codes." Consequently, all of the ReferralCode methods have been deprecated in favor of their PromoCode counterparts.
