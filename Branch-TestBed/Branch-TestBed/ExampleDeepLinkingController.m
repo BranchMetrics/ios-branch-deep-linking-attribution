@@ -17,7 +17,7 @@
 
 @implementation ExampleDeepLinkingController
 
-@synthesize completionDelegate;
+@synthesize deepLinkingCompletionDelegate;
 
 - (void)configureControlWithData:(NSDictionary *)data {
     NSString *email = data[@"gravatar_email"];
@@ -49,7 +49,7 @@
 }
 
 - (IBAction)closePressed {
-    [self.completionDelegate deepLinkingControllerCompleted];
+    [self.deepLinkingCompletionDelegate deepLinkingControllerCompleted];
 }
 
 @end

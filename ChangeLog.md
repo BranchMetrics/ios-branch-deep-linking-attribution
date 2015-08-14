@@ -1,5 +1,13 @@
 Branch iOS SDK change log
 
+- v0.10.9
+  * Renaming `completionDelegate` to `deepLinkingCompletionDelegate` to avoid conflicts with Apple internals.
+  * Changing behavior of `isReferrable` to default to true, unless otherwise specified.
+
+- v0.10.8
+  * Thanks @allenhsu for noticing and fixing our character encoding length issues!
+  * Less verbose logging for queue processing failures.
+
 - v0.10.7
   * Updating debugging requests so they aren't persisted (and aren't loaded) from the queue.
 

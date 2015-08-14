@@ -239,7 +239,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
             request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
         }
         @catch (NSException *exception) {
-            NSLog(@"[Branch Warning] An exception occurred while attempting to parse a queued request, discarding. Exception information:\n\n%@", [self exceptionString:exception]);
+            NSLog(@"[Branch Warning] An exception occurred while attempting to parse a queued request, discarding.");
             continue;
         }
         
