@@ -106,16 +106,15 @@
     }
 
     NSString *accessGroup = [(__bridge NSDictionary *)result objectForKey:(__bridge NSString *)kSecAttrAccessGroup];
+    CFRelease(result);
+
     NSInteger firstDotIndex = [accessGroup rangeOfString:@"."].location;
 
     if (firstDotIndex == NSNotFound) {
         return nil;
     }
-    
-    NSString *teamId = [accessGroup substringToIndex:firstDotIndex];
-    CFRelease(result);
 
-    return teamId;
+    return [accessGroup substringToIndex:firstDotIndex];
 }
 
 + (NSString *)getCarrier {
