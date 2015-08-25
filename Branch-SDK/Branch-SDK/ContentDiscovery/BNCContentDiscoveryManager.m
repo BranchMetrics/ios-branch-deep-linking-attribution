@@ -96,36 +96,39 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     // Type cannot be null
     NSString *typeOrDefault = type;
-    if (!typeOrDefault) typeOrDefault = (NSString *)kUTTypeImage;
+    if (!typeOrDefault) {
+        typeOrDefault = (NSString *)kUTTypeImage;
+    }
     
     // Include spotlight info in params
     NSMutableDictionary *spotlightSearchInfo = [NSMutableDictionary dictionary];
-    if (userInfo) [spotlightSearchInfo addEntriesFromDictionary:userInfo];
+    if (userInfo) {
+        [spotlightSearchInfo addEntriesFromDictionary:userInfo];
+    }
     if (title) {
-        [spotlightSearchInfo setObject:title forKey:SPOTLIGHT_TITLE];
-        if (!spotlightSearchInfo[@"$og_title"]) [spotlightSearchInfo setObject:title forKey:@"og_title"];
+        spotlightSearchInfo[SPOTLIGHT_TITLE] = title;
+        if (!spotlightSearchInfo[@"$og_title"]) {
+            spotlightSearchInfo[@"$og_title"] = title;
+        }
     }
     if (description) {
-        [spotlightSearchInfo setObject:description forKey:SPOTLIGHT_DESCRIPTION];
-        if (!spotlightSearchInfo[@"$og_description"]) [spotlightSearchInfo setObject:description forKey:@"$og_description"];
+        spotlightSearchInfo[SPOTLIGHT_DESCRIPTION] = description;
+        if (!spotlightSearchInfo[@"$og_description"]) {
+            spotlightSearchInfo[@"$og_description"] = description;
+        }
     }
-    if (publiclyIndexable) {
-        [spotlightSearchInfo setObject:@YES forKey:SPOTLIGHT_PUBLICLY_INDEXABLE];
-    } else {
-        [spotlightSearchInfo setObject:@NO forKey:SPOTLIGHT_PUBLICLY_INDEXABLE];
-    }
-    [spotlightSearchInfo setObject:typeOrDefault forKey:SPOTLIGHT_TYPE];
+    spotlightSearchInfo[SPOTLIGHT_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
+    spotlightSearchInfo[SPOTLIGHT_TYPE] = typeOrDefault;
     if (thumbnailUrl) {
-        [spotlightSearchInfo setObject:[thumbnailUrl absoluteString] forKey:SPOTLIGHT_THUMBNAIL_URL];
+        spotlightSearchInfo[SPOTLIGHT_THUMBNAIL_URL] = [thumbnailUrl absoluteString];
         if ([[[thumbnailUrl absoluteString] substringToIndex:4] isEqualToString:@"http"] && !spotlightSearchInfo[@"$og_image_url"]) {
             spotlightSearchInfo[@"$og_image_url"] = [thumbnailUrl absoluteString];
         }
     }
     if (keywords && [keywords isKindOfClass:[NSSet class]]) {
-        NSArray *keywordsAsArray = [keywords allObjects];
-        if (keywordsAsArray) [spotlightSearchInfo setObject:keywordsAsArray forKey:SPOTLIGHT_KEYWORDS];
+        spotlightSearchInfo[SPOTLIGHT_KEYWORDS] = [keywords allObjects];
     }
-    
+
     [[Branch getInstance] getSpotlightUrlWithParams:spotlightSearchInfo callback:^(NSDictionary *data, NSError *urlError) {
         if (urlError) {
             if (callback) {
@@ -133,15 +136,15 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
             }
             return;
         }
-        
+
         NSData *thumbnailData;
         if ([[[thumbnailUrl absoluteString] substringToIndex:4] isEqualToString:@"http"]) {
             thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
         }
-        
+
         NSString *url = data[@"url"];
         NSString *spotlightIdentifier = data[@"spotlight_identifier"];
-        
+
         CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:typeOrDefault];
         attributes.identifier = spotlightIdentifier;
         attributes.relatedUniqueIdentifier = spotlightIdentifier;
@@ -150,7 +153,7 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
         attributes.thumbnailURL = thumbnailUrl;
         attributes.thumbnailData = thumbnailData;
         attributes.contentURL = [NSURL URLWithString:url]; // The content url links back to our web content
-        
+
         // Index via the NSUserActivity strategy
         // Currently (iOS 9 Beta 4) we need a strong reference to this, or it isn't indexed
         self.currentUserActivity = [[NSUserActivity alloc] initWithActivityType:spotlightIdentifier];
