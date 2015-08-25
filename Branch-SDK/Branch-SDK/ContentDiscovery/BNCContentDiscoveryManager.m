@@ -101,8 +101,14 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
         // Include spotlight info in params
         NSMutableDictionary *spotlightSearchInfo = [NSMutableDictionary dictionary];
         if (userInfo) [spotlightSearchInfo addEntriesFromDictionary:userInfo];
-        if (title) [spotlightSearchInfo setObject:title forKey:SPOTLIGHT_TITLE];
-        if (description) [spotlightSearchInfo setObject:description forKey:SPOTLIGHT_DESCRIPTION];
+        if (title) {
+            [spotlightSearchInfo setObject:title forKey:SPOTLIGHT_TITLE];
+            if (!spotlightSearchInfo[@"$og_title"]) [spotlightSearchInfo setObject:title forKey:@"og_title"];
+        }
+        if (description) {
+            [spotlightSearchInfo setObject:description forKey:SPOTLIGHT_DESCRIPTION];
+            if (!spotlightSearchInfo[@"$og_description"]) [spotlightSearchInfo setObject:description forKey:@"$og_description"]
+        }
         if (publiclyIndexable) {
             [spotlightSearchInfo setObject:@YES forKey:SPOTLIGHT_PUBLICLY_INDEXABLE];
         } else {
