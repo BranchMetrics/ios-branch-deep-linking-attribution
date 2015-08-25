@@ -11,13 +11,20 @@
 #import "BNCError.h"
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-    #import <CoreSpotlight/CoreSpotlight.h>
-    #import <MobileCoreServices/MobileCoreServices.h>
+#import <CoreSpotlight/CoreSpotlight.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
 #ifndef kUTTypeImage
 #define kUTTypeImage @"public.image"
 #endif
+
+NSString * const SPOTLIGHT_TITLE = @"+spotlight_title";
+NSString * const SPOTLIGHT_DESCRIPTION = @"+spotlight_description";
+NSString * const SPOTLIGHT_PUBLICLY_INDEXABLE = @"+spotlight_publicly_indexable";
+NSString * const SPOTLIGHT_TYPE = @"+spotlight_type";
+NSString * const SPOTLIGHT_THUMBNAIL_URL = @"+spotlight_thumbnail_url";
+NSString * const SPOTLIGHT_KEYWORDS = @"+spotlight_keywords";
 
 NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
 
@@ -47,7 +54,7 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
             }
         }
     #endif
-    
+
     return nil;
 }
 
@@ -87,7 +94,28 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
     }
 
     #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-        [[Branch getInstance] getSpotlightUrlWithParams:userInfo callback:^(NSDictionary *data, NSError *urlError) {
+        // Type cannot be null
+        NSString *typeOrDefault = type;
+        if (!typeOrDefault) typeOrDefault = (NSString *)kUTTypeImage;
+        
+        // Include spotlight info in params
+        NSMutableDictionary *spotlightSearchInfo = [NSMutableDictionary dictionary];
+        if (userInfo) [spotlightSearchInfo addEntriesFromDictionary:userInfo];
+        if (title) [spotlightSearchInfo setObject:title forKey:SPOTLIGHT_TITLE];
+        if (description) [spotlightSearchInfo setObject:description forKey:SPOTLIGHT_DESCRIPTION];
+        if (publiclyIndexable) {
+            [spotlightSearchInfo setObject:@YES forKey:SPOTLIGHT_PUBLICLY_INDEXABLE];
+        } else {
+            [spotlightSearchInfo setObject:@NO forKey:SPOTLIGHT_PUBLICLY_INDEXABLE];
+        }
+        [spotlightSearchInfo setObject:typeOrDefault forKey:SPOTLIGHT_TYPE];
+        if (thumbnailUrl) [spotlightSearchInfo setObject:thumbnailUrl forKey:SPOTLIGHT_THUMBNAIL_URL];
+        if (keywords && [keywords isKindOfClass:[NSSet class]]) {
+            NSArray *keywordsAsArray = [keywords allObjects];
+            if (keywordsAsArray) [spotlightSearchInfo setObject:keywordsAsArray forKey:SPOTLIGHT_KEYWORDS];
+        }
+        
+        [[Branch getInstance] getSpotlightUrlWithParams:spotlightSearchInfo callback:^(NSDictionary *data, NSError *urlError) {
             if (urlError) {
                 if (callback) {
                     callback(nil, urlError);
@@ -97,10 +125,7 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
 
             NSString *url = data[@"url"];
             NSString *spotlightIdentifier = data[@"spotlight_identifier"];
-            
-            NSString *typeOrDefault = type;
-            if (!typeOrDefault) typeOrDefault = (NSString *)kUTTypeImage;
-            
+
             CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:typeOrDefault];
             attributes.identifier = spotlightIdentifier;
             attributes.relatedUniqueIdentifier = spotlightIdentifier;
@@ -108,7 +133,7 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
             attributes.contentDescription = description;
             attributes.thumbnailURL = thumbnailUrl;
             attributes.contentURL = [NSURL URLWithString:url]; // The content url links back to our web content
-            
+
             // Index via the NSUserActivity strategy
             // Currently (iOS 9 Beta 4) we need a strong reference to this, or it isn't indexed
             self.currentUserActivity = [[NSUserActivity alloc] initWithActivityType:spotlightIdentifier];
@@ -121,7 +146,7 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
             self.currentUserActivity.requiredUserInfoKeys = [NSSet setWithArray:userInfo.allKeys]; // This, however, seems to force the userInfo to come through.
             self.currentUserActivity.keywords = keywords;
             [self.currentUserActivity becomeCurrent];
-            
+
             // Index via the CoreSpotlight strategy
             CSSearchableItem *item = [[CSSearchableItem alloc] initWithUniqueIdentifier:spotlightIdentifier domainIdentifier:SPOTLIGHT_PREFIX attributeSet:attributes];
             [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[ item ] completionHandler:^(NSError *indexError) {
