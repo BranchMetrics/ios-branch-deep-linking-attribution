@@ -100,3 +100,10 @@ NSString * const BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY = @"identity";
 NSString * const BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID = @"device_fingerprint_id";
 NSString * const BRANCH_RESPONSE_KEY_SESSION_DATA = @"data";
 NSString * const BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
+
+NSString * const BRANCH_SPOTLIGHT_TITLE = @"+spotlight_title";
+NSString * const BRANCH_SPOTLIGHT_DESCRIPTION = @"+spotlight_description";
+NSString * const BRANCH_SPOTLIGHT_PUBLICLY_INDEXABLE = @"+spotlight_publicly_indexable";
+NSString * const BRANCH_SPOTLIGHT_TYPE = @"+spotlight_type";
+NSString * const BRANCH_SPOTLIGHT_THUMBNAIL_URL = @"+spotlight_thumbnail_url";
+NSString * const BRANCH_SPOTLIGHT_KEYWORDS = @"+spotlight_keywords";

@@ -9,6 +9,7 @@
 #import "BNCContentDiscoveryManager.h"
 #import "BNCSystemObserver.h"
 #import "BNCError.h"
+#import "BranchConstants.h"
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 #import <CoreSpotlight/CoreSpotlight.h>
@@ -18,13 +19,6 @@
 #ifndef kUTTypeImage
 #define kUTTypeImage @"public.image"
 #endif
-
-NSString * const SPOTLIGHT_TITLE = @"+spotlight_title";
-NSString * const SPOTLIGHT_DESCRIPTION = @"+spotlight_description";
-NSString * const SPOTLIGHT_PUBLICLY_INDEXABLE = @"+spotlight_publicly_indexable";
-NSString * const SPOTLIGHT_TYPE = @"+spotlight_type";
-NSString * const SPOTLIGHT_THUMBNAIL_URL = @"+spotlight_thumbnail_url";
-NSString * const SPOTLIGHT_KEYWORDS = @"+spotlight_keywords";
 
 NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
 
@@ -106,29 +100,29 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
         [spotlightSearchInfo addEntriesFromDictionary:userInfo];
     }
     if (title) {
-        spotlightSearchInfo[SPOTLIGHT_TITLE] = title;
+        spotlightSearchInfo[BRANCH_SPOTLIGHT_TITLE] = title;
         if (!spotlightSearchInfo[@"$og_title"]) {
             spotlightSearchInfo[@"$og_title"] = title;
         }
     }
     if (description) {
-        spotlightSearchInfo[SPOTLIGHT_DESCRIPTION] = description;
+        spotlightSearchInfo[BRANCH_SPOTLIGHT_DESCRIPTION] = description;
         if (!spotlightSearchInfo[@"$og_description"]) {
             spotlightSearchInfo[@"$og_description"] = description;
         }
     }
-    spotlightSearchInfo[SPOTLIGHT_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
-    spotlightSearchInfo[SPOTLIGHT_TYPE] = typeOrDefault;
+    spotlightSearchInfo[BRANCH_SPOTLIGHT_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
+    spotlightSearchInfo[BRANCH_SPOTLIGHT_TYPE] = typeOrDefault;
     if (thumbnailUrl) {
-        spotlightSearchInfo[SPOTLIGHT_THUMBNAIL_URL] = [thumbnailUrl absoluteString];
+        spotlightSearchInfo[BRANCH_SPOTLIGHT_THUMBNAIL_URL] = [thumbnailUrl absoluteString];
         if ([[[thumbnailUrl absoluteString] substringToIndex:4] isEqualToString:@"http"] && !spotlightSearchInfo[@"$og_image_url"]) {
             spotlightSearchInfo[@"$og_image_url"] = [thumbnailUrl absoluteString];
         }
     }
     if (keywords && [keywords isKindOfClass:[NSSet class]]) {
-        spotlightSearchInfo[SPOTLIGHT_KEYWORDS] = [keywords allObjects];
+        spotlightSearchInfo[BRANCH_SPOTLIGHT_KEYWORDS] = [keywords allObjects];
     }
-
+    
     [[Branch getInstance] getSpotlightUrlWithParams:spotlightSearchInfo callback:^(NSDictionary *data, NSError *urlError) {
         if (urlError) {
             if (callback) {
@@ -136,15 +130,15 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
             }
             return;
         }
-
+        
         NSData *thumbnailData;
         if ([[[thumbnailUrl absoluteString] substringToIndex:4] isEqualToString:@"http"]) {
             thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
         }
-
+        
         NSString *url = data[@"url"];
         NSString *spotlightIdentifier = data[@"spotlight_identifier"];
-
+        
         CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:typeOrDefault];
         attributes.identifier = spotlightIdentifier;
         attributes.relatedUniqueIdentifier = spotlightIdentifier;
@@ -153,7 +147,7 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
         attributes.thumbnailURL = thumbnailUrl;
         attributes.thumbnailData = thumbnailData;
         attributes.contentURL = [NSURL URLWithString:url]; // The content url links back to our web content
-
+        
         // Index via the NSUserActivity strategy
         // Currently (iOS 9 Beta 4) we need a strong reference to this, or it isn't indexed
         self.currentUserActivity = [[NSUserActivity alloc] initWithActivityType:spotlightIdentifier];
