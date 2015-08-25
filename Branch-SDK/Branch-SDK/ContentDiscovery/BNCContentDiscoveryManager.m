@@ -97,8 +97,11 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
 
             NSString *url = data[@"url"];
             NSString *spotlightIdentifier = data[@"spotlight_identifier"];
-
-            CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:type];
+            
+            NSString *typeOrDefault = type;
+            if (!typeOrDefault) typeOrDefault = (NSString *)kUTTypeImage;
+            
+            CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:typeOrDefault];
             attributes.identifier = spotlightIdentifier;
             attributes.relatedUniqueIdentifier = spotlightIdentifier;
             attributes.title = title;
