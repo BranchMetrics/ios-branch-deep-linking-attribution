@@ -43,7 +43,6 @@
 
 - (void)presentSafariVCWithBranchKey:(NSString *)branchKey {
     NSString *urlString = [NSString stringWithFormat:@"%@/_strong_match?os=iOS", BNC_LINK_URL];
-    NSLog(@"Branch Key!: %@", branchKey);
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     BOOL isRealHardwareId;
