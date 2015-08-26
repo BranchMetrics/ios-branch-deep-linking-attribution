@@ -1176,7 +1176,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     };
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-    [[BNCStrongMatchHelper strongMatchHelper] createStrongMatch];
+    [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
 #endif
 
     // If there isn't already an Open / Install request, add one to the queue

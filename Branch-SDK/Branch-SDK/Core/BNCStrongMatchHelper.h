@@ -11,6 +11,6 @@
 @interface BNCStrongMatchHelper : NSObject
 
 + (BNCStrongMatchHelper *)strongMatchHelper;
-- (void)createStrongMatch;
+- (void)createStrongMatchWithBranchKey:(NSString *)branchKey;
 
 @end
