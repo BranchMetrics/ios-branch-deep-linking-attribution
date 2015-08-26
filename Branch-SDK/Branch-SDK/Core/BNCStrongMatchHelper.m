@@ -63,7 +63,6 @@
         urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"&%@=%@", BRANCH_REQUEST_KEY_APP_VERSION, [BNCSystemObserver getAppVersion]]];
     }
     if (branchKey && branchKey.length >= 4) {
-        NSLog(@"substring: %@", [branchKey substringToIndex:3]);
         if ([branchKey hasPrefix:@"key_"]) {
             urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"&branch_key=%@", branchKey]];
         } else {
