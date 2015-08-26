@@ -37,6 +37,7 @@
 #import "BranchLogRequest.h"
 #import "BNCContentDiscoveryManager.h"
 #import "BranchSpotlightUrlRequest.h"
+#import "BNCStrongMatchHelper.h"
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
@@ -1173,6 +1174,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
             [self handleInitSuccess];
         }
     };
+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+    [[BNCStrongMatchHelper strongMatchHelper] createStrongMatch];
+#endif
 
     // If there isn't already an Open / Install request, add one to the queue
     if (![self.requestQueue containsInstallOrOpen]) {
