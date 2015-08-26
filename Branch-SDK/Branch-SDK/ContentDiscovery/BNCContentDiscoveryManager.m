@@ -79,6 +79,9 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
     [self indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:nil callback:callback];
 }
 
+
+
+
 - (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords userInfo:(NSDictionary *)userInfo callback:(callbackWithUrl)callback {
     if ([BNCSystemObserver getOSVersion].integerValue < 9) {
         if (callback) {
@@ -131,48 +134,53 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
             return;
         }
         
-        NSData *thumbnailData;
-        if ([[[thumbnailUrl absoluteString] substringToIndex:4] isEqualToString:@"http"]) {
-            thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
-        }
-        
-        NSString *url = data[@"url"];
-        NSString *spotlightIdentifier = data[@"spotlight_identifier"];
-        
-        CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:typeOrDefault];
-        attributes.identifier = spotlightIdentifier;
-        attributes.relatedUniqueIdentifier = spotlightIdentifier;
-        attributes.title = title;
-        attributes.contentDescription = description;
-        attributes.thumbnailURL = thumbnailUrl;
-        attributes.thumbnailData = thumbnailData;
-        attributes.contentURL = [NSURL URLWithString:url]; // The content url links back to our web content
-        
-        // Index via the NSUserActivity strategy
-        // Currently (iOS 9 Beta 4) we need a strong reference to this, or it isn't indexed
-        self.currentUserActivity = [[NSUserActivity alloc] initWithActivityType:spotlightIdentifier];
-        self.currentUserActivity.title = title;
-        self.currentUserActivity.webpageURL = [NSURL URLWithString:url]; // This should allow indexed content to fall back to the web if user doesn't have the app installed. Unable to test as of iOS 9 Beta 4
-        self.currentUserActivity.eligibleForSearch = YES;
-        self.currentUserActivity.eligibleForPublicIndexing = publiclyIndexable;
-        self.currentUserActivity.contentAttributeSet = attributes;
-        self.currentUserActivity.userInfo = userInfo; // As of iOS 9 Beta 4, this gets lost and never makes it through to application:continueActivity:restorationHandler:
-        self.currentUserActivity.requiredUserInfoKeys = [NSSet setWithArray:userInfo.allKeys]; // This, however, seems to force the userInfo to come through.
-        self.currentUserActivity.keywords = keywords;
-        [self.currentUserActivity becomeCurrent];
-        
-        // Index via the CoreSpotlight strategy
-        CSSearchableItem *item = [[CSSearchableItem alloc] initWithUniqueIdentifier:spotlightIdentifier domainIdentifier:SPOTLIGHT_PREFIX attributeSet:attributes];
-        [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[ item ] completionHandler:^(NSError *indexError) {
-            if (callback) {
-                if (indexError) {
-                    callback(nil, indexError);
-                }
-                else {
-                    callback(url, nil);
-                }
+        // TODO: refactor so we only go off the main thread if necessary
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSData *thumbnailData;
+            if ([[[thumbnailUrl absoluteString] substringToIndex:4] isEqualToString:@"http"]) {
+                thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
             }
-        }];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSString *url = data[@"url"];
+                NSString *spotlightIdentifier = data[@"spotlight_identifier"];
+                
+                CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:typeOrDefault];
+                attributes.identifier = spotlightIdentifier;
+                attributes.relatedUniqueIdentifier = spotlightIdentifier;
+                attributes.title = title;
+                attributes.contentDescription = description;
+                attributes.thumbnailURL = thumbnailUrl;
+                attributes.thumbnailData = thumbnailData;
+                attributes.contentURL = [NSURL URLWithString:url]; // The content url links back to our web content
+                
+                // Index via the NSUserActivity strategy
+                // Currently (iOS 9 Beta 4) we need a strong reference to this, or it isn't indexed
+                self.currentUserActivity = [[NSUserActivity alloc] initWithActivityType:spotlightIdentifier];
+                self.currentUserActivity.title = title;
+                self.currentUserActivity.webpageURL = [NSURL URLWithString:url]; // This should allow indexed content to fall back to the web if user doesn't have the app installed. Unable to test as of iOS 9 Beta 4
+                self.currentUserActivity.eligibleForSearch = YES;
+                self.currentUserActivity.eligibleForPublicIndexing = publiclyIndexable;
+                self.currentUserActivity.contentAttributeSet = attributes;
+                self.currentUserActivity.userInfo = userInfo; // As of iOS 9 Beta 4, this gets lost and never makes it through to application:continueActivity:restorationHandler:
+                self.currentUserActivity.requiredUserInfoKeys = [NSSet setWithArray:userInfo.allKeys]; // This, however, seems to force the userInfo to come through.
+                self.currentUserActivity.keywords = keywords;
+                [self.currentUserActivity becomeCurrent];
+                
+                // Index via the CoreSpotlight strategy
+                CSSearchableItem *item = [[CSSearchableItem alloc] initWithUniqueIdentifier:spotlightIdentifier domainIdentifier:SPOTLIGHT_PREFIX attributeSet:attributes];
+                [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[ item ] completionHandler:^(NSError *indexError) {
+                    if (callback) {
+                        if (indexError) {
+                            callback(nil, indexError);
+                        }
+                        else {
+                            callback(url, nil);
+                        }
+                    }
+                }];
+            });
+        });
     }];
 #endif
 }
