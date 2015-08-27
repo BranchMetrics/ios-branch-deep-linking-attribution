@@ -13,7 +13,7 @@
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
 
-#define BRANCH_STRONG_MATCH_CREATED @"bnc_strong_match_created"
+#define BRANCH_STRONG_MATCH_CREATED_DATE @"bnc_strong_match_created_date"
 
 @interface BNCStrongMatchHelper () <SFSafariViewControllerDelegate>
 @property (nonatomic, strong) UIWindow *secondWindow;
@@ -38,12 +38,15 @@
     if (_requestInProgress) {
         return;
     }
-    // setting immediately because the NSUserDefaults lookup might not be the fastest
     _requestInProgress = YES;
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:BRANCH_STRONG_MATCH_CREATED] isEqualToNumber:@YES]) {
+    
+    NSDate *thirtyDaysAgo = [NSDate dateWithTimeIntervalSinceNow:-(60*60*24*30)];
+    NSDate *lastCheck = [[NSUserDefaults standardUserDefaults] objectForKey:BRANCH_STRONG_MATCH_CREATED_DATE];
+    if ([lastCheck compare:thirtyDaysAgo] == NSOrderedDescending) {
         _requestInProgress = NO;
         return;
     }
+    
     [self presentSafariVCWithBranchKey:branchKey];
 #endif
 }
@@ -92,7 +95,7 @@
 - (void)safariViewController:(SFSafariViewController *)controller didCompleteInitialLoad:(BOOL)didLoadSuccessfully {
     [_secondWindow.rootViewController dismissViewControllerAnimated:NO completion:nil];
     if (didLoadSuccessfully) {
-        [[NSUserDefaults standardUserDefaults] setObject:@YES forKey:BRANCH_STRONG_MATCH_CREATED];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:BRANCH_STRONG_MATCH_CREATED_DATE];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     _requestInProgress = NO;
