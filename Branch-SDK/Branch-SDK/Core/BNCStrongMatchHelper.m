@@ -13,6 +13,8 @@
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
 
+#define BRANCH_STRONG_MATCH_CREATED @"bnc_strong_match_created"
+
 @interface BNCStrongMatchHelper () <SFSafariViewControllerDelegate>
 @property (nonatomic, strong) UIWindow *secondWindow;
 @property (nonatomic) BOOL requestInProgress;
@@ -36,7 +38,12 @@
     if (_requestInProgress) {
         return;
     }
+    // setting immediately because the NSUserDefaults lookup might not be the fastest
     _requestInProgress = YES;
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:BRANCH_STRONG_MATCH_CREATED] isEqualToNumber:@YES]) {
+        _requestInProgress = NO;
+        return;
+    }
     [self presentSafariVCWithBranchKey:branchKey];
 #endif
 }
@@ -84,8 +91,11 @@
 
 - (void)safariViewController:(SFSafariViewController *)controller didCompleteInitialLoad:(BOOL)didLoadSuccessfully {
     [_secondWindow.rootViewController dismissViewControllerAnimated:NO completion:nil];
+    if (didLoadSuccessfully) {
+        [[NSUserDefaults standardUserDefaults] setObject:@YES forKey:BRANCH_STRONG_MATCH_CREATED];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
     _requestInProgress = NO;
 }
-
 
 @end
