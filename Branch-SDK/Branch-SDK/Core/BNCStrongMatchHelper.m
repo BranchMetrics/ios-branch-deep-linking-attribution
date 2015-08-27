@@ -83,7 +83,7 @@
 }
 
 - (void)safariViewController:(SFSafariViewController *)controller didCompleteInitialLoad:(BOOL)didLoadSuccessfully {
-    [[[[[UIApplication sharedApplication] delegate] window] rootViewController] dismissViewControllerAnimated:controller completion:nil];
+    [_secondWindow.rootViewController dismissViewControllerAnimated:NO completion:nil];
     _requestInProgress = NO;
 }
 
