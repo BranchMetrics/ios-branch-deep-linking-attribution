@@ -62,13 +62,10 @@
         return;
     }
     
+    urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"&%@=%@", BRANCH_REQUEST_KEY_HARDWARE_ID, hardwareId]];
     if (preferenceHelper.deviceFingerprintID) {
         urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"&%@=%@", BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID, preferenceHelper.deviceFingerprintID]];
-        
-    } else {
-        urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"&%@=%@", BRANCH_REQUEST_KEY_HARDWARE_ID, hardwareId]];
     }
-    
     if ([BNCSystemObserver getAppVersion]) {
         urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"&%@=%@", BRANCH_REQUEST_KEY_APP_VERSION, [BNCSystemObserver getAppVersion]]];
     }
@@ -88,7 +85,6 @@
     _secondWindow.rootViewController = [[UIViewController alloc] init];
     [_secondWindow makeKeyAndVisible];
     [_secondWindow setAlpha:0];
-    
     [_secondWindow.rootViewController presentViewController:vc animated:NO completion:nil];
 }
 
