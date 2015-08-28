@@ -106,11 +106,9 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
     if (userInfo) {
         [spotlightSearchInfo addEntriesFromDictionary:userInfo];
     }
-    if (title) {
-        spotlightSearchInfo[BRANCH_SPOTLIGHT_TITLE] = title;
-        if (!spotlightSearchInfo[@"$og_title"]) {
-            spotlightSearchInfo[@"$og_title"] = title;
-        }
+    spotlightSearchInfo[BRANCH_SPOTLIGHT_TITLE] = title;
+    if (!spotlightSearchInfo[@"$og_title"]) {
+        spotlightSearchInfo[@"$og_title"] = title;
     }
     if (description) {
         spotlightSearchInfo[BRANCH_SPOTLIGHT_DESCRIPTION] = description;
