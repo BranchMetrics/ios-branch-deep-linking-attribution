@@ -80,12 +80,16 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
 }
 
 
-
-
 - (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords userInfo:(NSDictionary *)userInfo callback:(callbackWithUrl)callback {
     if ([BNCSystemObserver getOSVersion].integerValue < 9) {
         if (callback) {
             callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service prior to iOS 9" }]);
+        }
+        return;
+    }
+    if (!title) {
+        if (callback) {
+            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"'title' is required for indexing" }]);
         }
         return;
     }
