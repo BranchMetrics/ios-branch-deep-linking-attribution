@@ -123,6 +123,9 @@
 		670016771940F51400A9E103 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 670016751940F51400A9E103 /* Main.storyboard */; };
 		6700167A1940F51400A9E103 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016791940F51400A9E103 /* ViewController.m */; };
 		6700167C1940F51400A9E103 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6700167B1940F51400A9E103 /* Images.xcassets */; };
+		67486B8D1B93B48A0044D872 /* BNCStrongMatchHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 67486B8B1B93B48A0044D872 /* BNCStrongMatchHelper.h */; };
+		67486B8E1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */; };
+		67486B8F1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */; };
 		7E6B3B561AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6B3B551AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m */; };
 		9F4BE02E2EFA48B94EB8CEAD /* libPods-Branch-SDK-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA508DAFBC70E7B594A5D76C /* libPods-Branch-SDK-Tests.a */; };
 /* End PBXBuildFile section */
@@ -256,6 +259,8 @@
 		670016C41946309100A9E103 /* BNCServerInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerInterface.m; sourceTree = "<group>"; };
 		670016C71946309100A9E103 /* BNCSystemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSystemObserver.h; sourceTree = "<group>"; };
 		670016C81946309100A9E103 /* BNCSystemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserver.m; sourceTree = "<group>"; };
+		67486B8B1B93B48A0044D872 /* BNCStrongMatchHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCStrongMatchHelper.h; sourceTree = "<group>"; };
+		67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCStrongMatchHelper.m; sourceTree = "<group>"; };
 		67BBCF271A69E49A009C7DAE /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		7E30BCF21A71EEEE00AC7402 /* BNCLinkData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLinkData.h; sourceTree = "<group>"; };
 		7E30BCF31A71EEEE00AC7402 /* BNCLinkData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLinkData.m; sourceTree = "<group>"; };
@@ -501,6 +506,8 @@
 		670016BB1946309100A9E103 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
+				67486B8B1B93B48A0044D872 /* BNCStrongMatchHelper.h */,
+				67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */,
 				466D5A0E1B599123009DB845 /* ContentDiscovery */,
 				4659B3471B0FD4430019767C /* BranchRequests */,
 				670016BD1946309100A9E103 /* Branch.h */,
@@ -603,6 +610,7 @@
 				46946B9B1B2689A100627BCC /* BranchGetPromoCodeRequest.h in Headers */,
 				460F4FA71B618A38002E84D6 /* BranchSpotlightUrlRequest.h in Headers */,
 				467BA3551B713287003E458B /* BNCDebugRequest.h in Headers */,
+				67486B8D1B93B48A0044D872 /* BNCStrongMatchHelper.h in Headers */,
 				46946BA31B2689A100627BCC /* BranchOpenRequest.h in Headers */,
 				46946B9C1B2689A100627BCC /* BranchValidatePromoCodeRequest.h in Headers */,
 				46946BA51B2689A100627BCC /* BranchConnectDebugRequest.h in Headers */,
@@ -803,6 +811,7 @@
 				463F0A371B20A663004235D2 /* BranchRedeemRewardsRequest.m in Sources */,
 				460F4FA81B618A38002E84D6 /* BranchSpotlightUrlRequest.m in Sources */,
 				463F0A351B20A663004235D2 /* BranchLoadActionsRequest.m in Sources */,
+				67486B8E1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -816,6 +825,7 @@
 				4683F0771B20A73F00A432E7 /* PromoCodeViewController.m in Sources */,
 				4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,
+				67486B8F1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */,
 				46DBB4351B34792300642FC8 /* CreateDeepLinkController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
