@@ -1196,9 +1196,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
         }
     };
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-    [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
-#endif
+    if ([BNCSystemObserver getOSVersion].integerValue < 9) {
+        [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
+    }
 
     // If there isn't already an Open / Install request, add one to the queue
     if (![self.requestQueue containsInstallOrOpen]) {
