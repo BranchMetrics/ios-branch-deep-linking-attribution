@@ -95,7 +95,6 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
     [self indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:kUTTypeGeneric thumbnailUrl:thumbnailUrl keywords:keywords userInfo:userInfo callback:NULL];
 }
 
-
 - (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords userInfo:(NSDictionary *)userInfo callback:(callbackWithUrl)callback {
     if ([BNCSystemObserver getOSVersion].integerValue < 9) {
         if (callback) {
@@ -116,42 +115,43 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
         NSString *typeOrDefault = type ?: (NSString *)kUTTypeGeneric;
         
         // Include spotlight info in params
-        NSMutableDictionary *spotlightSearchInfo = [[NSMutableDictionary alloc] init];
-        spotlightSearchInfo[BRANCH_SPOTLIGHT_TITLE] = title;
-        spotlightSearchInfo[BRANCH_SPOTLIGHT_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
-        spotlightSearchInfo[BRANCH_SPOTLIGHT_TYPE] = typeOrDefault;
+        NSMutableDictionary *spotlightLinkData = [[NSMutableDictionary alloc] init];
+        spotlightLinkData[BRANCH_LINK_DATA_KEY_TITLE] = title;
+        spotlightLinkData[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
+        spotlightLinkData[BRANCH_LINK_DATA_KEY_TYPE] = typeOrDefault;
 
         if (userInfo) {
-            [spotlightSearchInfo addEntriesFromDictionary:userInfo];
+            [spotlightLinkData addEntriesFromDictionary:userInfo];
         }
 
         // Default the OG Title, Description, and Image Url if necessary
-        if (!spotlightSearchInfo[@"$og_title"]) {
-            spotlightSearchInfo[@"$og_title"] = title;
+        if (!spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_TITLE]) {
+            spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_TITLE] = title;
         }
 
         if (description) {
-            spotlightSearchInfo[BRANCH_SPOTLIGHT_DESCRIPTION] = description;
-            if (!spotlightSearchInfo[@"$og_description"]) {
-                spotlightSearchInfo[@"$og_description"] = description;
+            spotlightLinkData[BRANCH_LINK_DATA_KEY_DESCRIPTION] = description;
+            if (!spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION]) {
+                spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION] = description;
             }
         }
-
-        if (thumbnailUrl) {
-            NSString *thumbnailUrlString = [thumbnailUrl absoluteString];
-            spotlightSearchInfo[BRANCH_SPOTLIGHT_THUMBNAIL_URL] = thumbnailUrlString;
+    
+        NSString *thumbnailUrlString = [thumbnailUrl absoluteString];
+        BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
+        if (thumbnailUrlString) {
+            spotlightLinkData[BRANCH_LINK_DATA_KEY_THUMBNAIL_URL] = thumbnailUrlString;
 
             // Only use the thumbnail url if it is a remote url, not a file system url
-            if (![thumbnailUrl isFileURL] && !spotlightSearchInfo[@"$og_image_url"]) {
-                spotlightSearchInfo[@"$og_image_url"] = thumbnailUrlString;
+            if (thumbnailIsRemote && !spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL]) {
+                spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL] = thumbnailUrlString;
             }
         }
 
         if (keywords) {
-            spotlightSearchInfo[BRANCH_SPOTLIGHT_KEYWORDS] = [keywords allObjects];
+            spotlightLinkData[BRANCH_LINK_DATA_KEY_KEYWORDS] = [keywords allObjects];
         }
         
-        [[Branch getInstance] getSpotlightUrlWithParams:spotlightSearchInfo callback:^(NSDictionary *data, NSError *urlError) {
+        [[Branch getInstance] getSpotlightUrlWithParams:spotlightLinkData callback:^(NSDictionary *data, NSError *urlError) {
             if (urlError) {
                 if (callback) {
                     callback(nil, urlError);
