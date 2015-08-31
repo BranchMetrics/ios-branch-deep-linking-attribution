@@ -159,55 +159,56 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
                 return;
             }
             
-            // TODO: refactor so we only go off the main thread if necessary
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                NSData *thumbnailData;
-                if ([[[thumbnailUrl absoluteString] substringToIndex:4] isEqualToString:@"http"]) {
-                    thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    NSString *url = data[@"url"];
-                    NSString *spotlightIdentifier = data[@"spotlight_identifier"];
-                    
-                    CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:typeOrDefault];
-                    attributes.identifier = spotlightIdentifier;
-                    attributes.relatedUniqueIdentifier = spotlightIdentifier;
-                    attributes.title = title;
-                    attributes.contentDescription = description;
-                    attributes.thumbnailURL = thumbnailUrl;
-                    attributes.thumbnailData = thumbnailData;
-                    attributes.contentURL = [NSURL URLWithString:url]; // The content url links back to our web content
-                    
-                    // Index via the NSUserActivity strategy
-                    // Currently (iOS 9 Beta 4) we need a strong reference to this, or it isn't indexed
-                    self.currentUserActivity = [[NSUserActivity alloc] initWithActivityType:spotlightIdentifier];
-                    self.currentUserActivity.title = title;
-                    self.currentUserActivity.webpageURL = [NSURL URLWithString:url]; // This should allow indexed content to fall back to the web if user doesn't have the app installed. Unable to test as of iOS 9 Beta 4
-                    self.currentUserActivity.eligibleForSearch = YES;
-                    self.currentUserActivity.eligibleForPublicIndexing = publiclyIndexable;
-                    self.currentUserActivity.contentAttributeSet = attributes;
-                    self.currentUserActivity.userInfo = userInfo; // As of iOS 9 Beta 4, this gets lost and never makes it through to application:continueActivity:restorationHandler:
-                    self.currentUserActivity.requiredUserInfoKeys = [NSSet setWithArray:userInfo.allKeys]; // This, however, seems to force the userInfo to come through.
-                    self.currentUserActivity.keywords = keywords;
-                    [self.currentUserActivity becomeCurrent];
-                    
-                    // Index via the CoreSpotlight strategy
-                    CSSearchableItem *item = [[CSSearchableItem alloc] initWithUniqueIdentifier:spotlightIdentifier domainIdentifier:SPOTLIGHT_PREFIX attributeSet:attributes];
-                    [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[ item ] completionHandler:^(NSError *indexError) {
-                        if (callback) {
-                            if (indexError) {
-                                callback(nil, indexError);
-                            }
-                            else {
-                                callback(url, nil);
-                            }
-                        }
-                    }];
+            if (thumbnailIsRemote) {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    NSData *thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:thumbnailData publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords callback:callback];
+                    });
                 });
-            });
+            }
+            else {
+                [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:nil publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords callback:callback];
+            }
         }];
     #endif
+}
+
+- (void)indexContentWithUrl:(NSString *)url spotlightIdentifier:(NSString *)spotlightIdentifier title:(NSString *)title description:(NSString *)description type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl thumbnailData:(NSData *)thumbnailData publiclyIndexable:(BOOL)publiclyIndexable userInfo:(NSDictionary *)userInfo keywords:(NSSet *)keywords callback:(callbackWithUrl)callback {
+    CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:type];
+    attributes.identifier = spotlightIdentifier;
+    attributes.relatedUniqueIdentifier = spotlightIdentifier;
+    attributes.title = title;
+    attributes.contentDescription = description;
+    attributes.thumbnailURL = thumbnailUrl;
+    attributes.thumbnailData = thumbnailData;
+    attributes.contentURL = [NSURL URLWithString:url]; // The content url links back to our web content
+    
+    // Index via the NSUserActivity strategy
+    // Currently (iOS 9 Beta 4) we need a strong reference to this, or it isn't indexed
+    self.currentUserActivity = [[NSUserActivity alloc] initWithActivityType:spotlightIdentifier];
+    self.currentUserActivity.title = title;
+    self.currentUserActivity.webpageURL = [NSURL URLWithString:url]; // This should allow indexed content to fall back to the web if user doesn't have the app installed. Unable to test as of iOS 9 Beta 4
+    self.currentUserActivity.eligibleForSearch = YES;
+    self.currentUserActivity.eligibleForPublicIndexing = publiclyIndexable;
+    self.currentUserActivity.contentAttributeSet = attributes;
+    self.currentUserActivity.userInfo = userInfo; // As of iOS 9 Beta 4, this gets lost and never makes it through to application:continueActivity:restorationHandler:
+    self.currentUserActivity.requiredUserInfoKeys = [NSSet setWithArray:userInfo.allKeys]; // This, however, seems to force the userInfo to come through.
+    self.currentUserActivity.keywords = keywords;
+    [self.currentUserActivity becomeCurrent];
+    
+    // Index via the CoreSpotlight strategy
+    CSSearchableItem *item = [[CSSearchableItem alloc] initWithUniqueIdentifier:spotlightIdentifier domainIdentifier:SPOTLIGHT_PREFIX attributeSet:attributes];
+    [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[ item ] completionHandler:^(NSError *indexError) {
+        if (callback) {
+            if (indexError) {
+                callback(nil, indexError);
+            }
+            else {
+                callback(url, nil);
+            }
+        }
+    }];
 }
 
 @end
