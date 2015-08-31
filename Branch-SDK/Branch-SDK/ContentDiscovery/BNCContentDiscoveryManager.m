@@ -111,103 +111,103 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
         return;
     }
     
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-    // Type cannot be null
-    NSString *typeOrDefault = type ?: (NSString *)kUTTypeGeneric;
-    
-    // Include spotlight info in params
-    NSMutableDictionary *spotlightSearchInfo = [[NSMutableDictionary alloc] init];
-    spotlightSearchInfo[BRANCH_SPOTLIGHT_TITLE] = title;
-    spotlightSearchInfo[BRANCH_SPOTLIGHT_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
-    spotlightSearchInfo[BRANCH_SPOTLIGHT_TYPE] = typeOrDefault;
+    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+        // Type cannot be null
+        NSString *typeOrDefault = type ?: (NSString *)kUTTypeGeneric;
+        
+        // Include spotlight info in params
+        NSMutableDictionary *spotlightSearchInfo = [[NSMutableDictionary alloc] init];
+        spotlightSearchInfo[BRANCH_SPOTLIGHT_TITLE] = title;
+        spotlightSearchInfo[BRANCH_SPOTLIGHT_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
+        spotlightSearchInfo[BRANCH_SPOTLIGHT_TYPE] = typeOrDefault;
 
-    if (userInfo) {
-        [spotlightSearchInfo addEntriesFromDictionary:userInfo];
-    }
-
-    // Default the OG Title, Description, and Image Url if necessary
-    if (!spotlightSearchInfo[@"$og_title"]) {
-        spotlightSearchInfo[@"$og_title"] = title;
-    }
-
-    if (description) {
-        spotlightSearchInfo[BRANCH_SPOTLIGHT_DESCRIPTION] = description;
-        if (!spotlightSearchInfo[@"$og_description"]) {
-            spotlightSearchInfo[@"$og_description"] = description;
+        if (userInfo) {
+            [spotlightSearchInfo addEntriesFromDictionary:userInfo];
         }
-    }
 
-    if (thumbnailUrl) {
-        NSString *thumbnailUrlString = [thumbnailUrl absoluteString];
-        spotlightSearchInfo[BRANCH_SPOTLIGHT_THUMBNAIL_URL] = thumbnailUrlString;
-
-        // Only use the thumbnail url if it is a remote url, not a file system url
-        if (![thumbnailUrl isFileURL] && !spotlightSearchInfo[@"$og_image_url"]) {
-            spotlightSearchInfo[@"$og_image_url"] = thumbnailUrlString;
+        // Default the OG Title, Description, and Image Url if necessary
+        if (!spotlightSearchInfo[@"$og_title"]) {
+            spotlightSearchInfo[@"$og_title"] = title;
         }
-    }
 
-    if (keywords) {
-        spotlightSearchInfo[BRANCH_SPOTLIGHT_KEYWORDS] = [keywords allObjects];
-    }
-    
-    [[Branch getInstance] getSpotlightUrlWithParams:spotlightSearchInfo callback:^(NSDictionary *data, NSError *urlError) {
-        if (urlError) {
-            if (callback) {
-                callback(nil, urlError);
+        if (description) {
+            spotlightSearchInfo[BRANCH_SPOTLIGHT_DESCRIPTION] = description;
+            if (!spotlightSearchInfo[@"$og_description"]) {
+                spotlightSearchInfo[@"$og_description"] = description;
             }
-            return;
+        }
+
+        if (thumbnailUrl) {
+            NSString *thumbnailUrlString = [thumbnailUrl absoluteString];
+            spotlightSearchInfo[BRANCH_SPOTLIGHT_THUMBNAIL_URL] = thumbnailUrlString;
+
+            // Only use the thumbnail url if it is a remote url, not a file system url
+            if (![thumbnailUrl isFileURL] && !spotlightSearchInfo[@"$og_image_url"]) {
+                spotlightSearchInfo[@"$og_image_url"] = thumbnailUrlString;
+            }
+        }
+
+        if (keywords) {
+            spotlightSearchInfo[BRANCH_SPOTLIGHT_KEYWORDS] = [keywords allObjects];
         }
         
-        // TODO: refactor so we only go off the main thread if necessary
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSData *thumbnailData;
-            if ([[[thumbnailUrl absoluteString] substringToIndex:4] isEqualToString:@"http"]) {
-                thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
+        [[Branch getInstance] getSpotlightUrlWithParams:spotlightSearchInfo callback:^(NSDictionary *data, NSError *urlError) {
+            if (urlError) {
+                if (callback) {
+                    callback(nil, urlError);
+                }
+                return;
             }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                NSString *url = data[@"url"];
-                NSString *spotlightIdentifier = data[@"spotlight_identifier"];
-                
-                CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:typeOrDefault];
-                attributes.identifier = spotlightIdentifier;
-                attributes.relatedUniqueIdentifier = spotlightIdentifier;
-                attributes.title = title;
-                attributes.contentDescription = description;
-                attributes.thumbnailURL = thumbnailUrl;
-                attributes.thumbnailData = thumbnailData;
-                attributes.contentURL = [NSURL URLWithString:url]; // The content url links back to our web content
-                
-                // Index via the NSUserActivity strategy
-                // Currently (iOS 9 Beta 4) we need a strong reference to this, or it isn't indexed
-                self.currentUserActivity = [[NSUserActivity alloc] initWithActivityType:spotlightIdentifier];
-                self.currentUserActivity.title = title;
-                self.currentUserActivity.webpageURL = [NSURL URLWithString:url]; // This should allow indexed content to fall back to the web if user doesn't have the app installed. Unable to test as of iOS 9 Beta 4
-                self.currentUserActivity.eligibleForSearch = YES;
-                self.currentUserActivity.eligibleForPublicIndexing = publiclyIndexable;
-                self.currentUserActivity.contentAttributeSet = attributes;
-                self.currentUserActivity.userInfo = userInfo; // As of iOS 9 Beta 4, this gets lost and never makes it through to application:continueActivity:restorationHandler:
-                self.currentUserActivity.requiredUserInfoKeys = [NSSet setWithArray:userInfo.allKeys]; // This, however, seems to force the userInfo to come through.
-                self.currentUserActivity.keywords = keywords;
-                [self.currentUserActivity becomeCurrent];
-                
-                // Index via the CoreSpotlight strategy
-                CSSearchableItem *item = [[CSSearchableItem alloc] initWithUniqueIdentifier:spotlightIdentifier domainIdentifier:SPOTLIGHT_PREFIX attributeSet:attributes];
-                [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[ item ] completionHandler:^(NSError *indexError) {
-                    if (callback) {
-                        if (indexError) {
-                            callback(nil, indexError);
+            
+            // TODO: refactor so we only go off the main thread if necessary
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                NSData *thumbnailData;
+                if ([[[thumbnailUrl absoluteString] substringToIndex:4] isEqualToString:@"http"]) {
+                    thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    NSString *url = data[@"url"];
+                    NSString *spotlightIdentifier = data[@"spotlight_identifier"];
+                    
+                    CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:typeOrDefault];
+                    attributes.identifier = spotlightIdentifier;
+                    attributes.relatedUniqueIdentifier = spotlightIdentifier;
+                    attributes.title = title;
+                    attributes.contentDescription = description;
+                    attributes.thumbnailURL = thumbnailUrl;
+                    attributes.thumbnailData = thumbnailData;
+                    attributes.contentURL = [NSURL URLWithString:url]; // The content url links back to our web content
+                    
+                    // Index via the NSUserActivity strategy
+                    // Currently (iOS 9 Beta 4) we need a strong reference to this, or it isn't indexed
+                    self.currentUserActivity = [[NSUserActivity alloc] initWithActivityType:spotlightIdentifier];
+                    self.currentUserActivity.title = title;
+                    self.currentUserActivity.webpageURL = [NSURL URLWithString:url]; // This should allow indexed content to fall back to the web if user doesn't have the app installed. Unable to test as of iOS 9 Beta 4
+                    self.currentUserActivity.eligibleForSearch = YES;
+                    self.currentUserActivity.eligibleForPublicIndexing = publiclyIndexable;
+                    self.currentUserActivity.contentAttributeSet = attributes;
+                    self.currentUserActivity.userInfo = userInfo; // As of iOS 9 Beta 4, this gets lost and never makes it through to application:continueActivity:restorationHandler:
+                    self.currentUserActivity.requiredUserInfoKeys = [NSSet setWithArray:userInfo.allKeys]; // This, however, seems to force the userInfo to come through.
+                    self.currentUserActivity.keywords = keywords;
+                    [self.currentUserActivity becomeCurrent];
+                    
+                    // Index via the CoreSpotlight strategy
+                    CSSearchableItem *item = [[CSSearchableItem alloc] initWithUniqueIdentifier:spotlightIdentifier domainIdentifier:SPOTLIGHT_PREFIX attributeSet:attributes];
+                    [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[ item ] completionHandler:^(NSError *indexError) {
+                        if (callback) {
+                            if (indexError) {
+                                callback(nil, indexError);
+                            }
+                            else {
+                                callback(url, nil);
+                            }
                         }
-                        else {
-                            callback(url, nil);
-                        }
-                    }
-                }];
+                    }];
+                });
             });
-        });
-    }];
-#endif
+        }];
+    #endif
 }
 
 @end
