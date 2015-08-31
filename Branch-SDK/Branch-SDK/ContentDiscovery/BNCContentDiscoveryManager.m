@@ -33,21 +33,21 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
 #pragma mark - Launch handling
 
 - (NSString *)spotlightIdentifierFromActivity:(NSUserActivity *)userActivity {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-    if ([userActivity.activityType hasPrefix:SPOTLIGHT_PREFIX]) {
-        return userActivity.activityType;
-    }
-    
-    // CoreSpotlight version. Matched if it has our prefix, then the link identifier is just the last piece of the identifier.
-    if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
-        NSString *activityIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
-        BOOL isBranchIdentifier = [activityIdentifier hasPrefix:SPOTLIGHT_PREFIX];
-        
-        if (isBranchIdentifier) {
-            return activityIdentifier;
+    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+        if ([userActivity.activityType hasPrefix:SPOTLIGHT_PREFIX]) {
+            return userActivity.activityType;
         }
-    }
-#endif
+        
+        // CoreSpotlight version. Matched if it has our prefix, then the link identifier is just the last piece of the identifier.
+        if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
+            NSString *activityIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
+            BOOL isBranchIdentifier = [activityIdentifier hasPrefix:SPOTLIGHT_PREFIX];
+            
+            if (isBranchIdentifier) {
+                return activityIdentifier;
+            }
+        }
+    #endif
     
     return nil;
 }
