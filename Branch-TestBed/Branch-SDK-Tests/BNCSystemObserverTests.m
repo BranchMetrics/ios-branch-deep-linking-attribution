@@ -119,6 +119,23 @@
 }
 
 
+#pragma mark - URI Scheme tests
+
+- (void)testGetDefaultUriSchemeWithSingleCharacterScheme {
+    NSString * const SINGLE_CHARACTER_SCEHEME = @"a";
+    id bundleMock = OCMClassMock([NSBundle class]);
+    [[[bundleMock expect] andReturn:bundleMock] mainBundle];
+    [[[bundleMock expect] andReturn:@[ @{ @"CFBundleURLSchemes": @[ SINGLE_CHARACTER_SCEHEME ] } ]] objectForInfoDictionaryKey:[OCMArg any]];
+
+    NSString *uriScheme = [BNCSystemObserver getDefaultUriScheme];
+    
+    XCTAssertEqualObjects(SINGLE_CHARACTER_SCEHEME, uriScheme);
+    
+    [bundleMock verify];
+    [bundleMock stopMocking];
+}
+
+
 #pragma mark - Internals
 
 - (void)stubCreationDate:(NSDate *)creationDate modificationDate:(NSDate *)modificationDate {
