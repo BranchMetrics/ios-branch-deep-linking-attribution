@@ -125,7 +125,6 @@
 		6700167C1940F51400A9E103 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6700167B1940F51400A9E103 /* Images.xcassets */; };
 		67486B8D1B93B48A0044D872 /* BNCStrongMatchHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 67486B8B1B93B48A0044D872 /* BNCStrongMatchHelper.h */; };
 		67486B8E1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */; };
-		67486B8F1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */; };
 		7E6B3B561AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6B3B551AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m */; };
 		9F4BE02E2EFA48B94EB8CEAD /* libPods-Branch-SDK-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA508DAFBC70E7B594A5D76C /* libPods-Branch-SDK-Tests.a */; };
 /* End PBXBuildFile section */
@@ -825,7 +824,6 @@
 				4683F0771B20A73F00A432E7 /* PromoCodeViewController.m in Sources */,
 				4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,
-				67486B8F1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */,
 				46DBB4351B34792300642FC8 /* CreateDeepLinkController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
