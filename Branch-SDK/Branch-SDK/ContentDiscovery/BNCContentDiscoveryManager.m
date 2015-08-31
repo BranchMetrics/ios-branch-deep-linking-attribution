@@ -103,44 +103,51 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
         }
         return;
     }
+
     if (!title) {
         if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"'title' is required for indexing" }]);
+            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title" }]);
         }
         return;
     }
     
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     // Type cannot be null
-    NSString *typeOrDefault = type;
-    if (!typeOrDefault) {
-        typeOrDefault = (NSString *)kUTTypeGeneric;
-    }
+    NSString *typeOrDefault = type ?: (NSString *)kUTTypeGeneric;
     
     // Include spotlight info in params
-    NSMutableDictionary *spotlightSearchInfo = [NSMutableDictionary dictionary];
+    NSMutableDictionary *spotlightSearchInfo = [[NSMutableDictionary alloc] init];
+    spotlightSearchInfo[BRANCH_SPOTLIGHT_TITLE] = title;
+    spotlightSearchInfo[BRANCH_SPOTLIGHT_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
+    spotlightSearchInfo[BRANCH_SPOTLIGHT_TYPE] = typeOrDefault;
+
     if (userInfo) {
         [spotlightSearchInfo addEntriesFromDictionary:userInfo];
     }
-    spotlightSearchInfo[BRANCH_SPOTLIGHT_TITLE] = title;
+
+    // Default the OG Title, Description, and Image Url if necessary
     if (!spotlightSearchInfo[@"$og_title"]) {
         spotlightSearchInfo[@"$og_title"] = title;
     }
+
     if (description) {
         spotlightSearchInfo[BRANCH_SPOTLIGHT_DESCRIPTION] = description;
         if (!spotlightSearchInfo[@"$og_description"]) {
             spotlightSearchInfo[@"$og_description"] = description;
         }
     }
-    spotlightSearchInfo[BRANCH_SPOTLIGHT_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
-    spotlightSearchInfo[BRANCH_SPOTLIGHT_TYPE] = typeOrDefault;
+
     if (thumbnailUrl) {
-        spotlightSearchInfo[BRANCH_SPOTLIGHT_THUMBNAIL_URL] = [thumbnailUrl absoluteString];
-        if ([[[thumbnailUrl absoluteString] substringToIndex:4] isEqualToString:@"http"] && !spotlightSearchInfo[@"$og_image_url"]) {
-            spotlightSearchInfo[@"$og_image_url"] = [thumbnailUrl absoluteString];
+        NSString *thumbnailUrlString = [thumbnailUrl absoluteString];
+        spotlightSearchInfo[BRANCH_SPOTLIGHT_THUMBNAIL_URL] = thumbnailUrlString;
+
+        // Only use the thumbnail url if it is a remote url, not a file system url
+        if (![thumbnailUrl isFileURL] && !spotlightSearchInfo[@"$og_image_url"]) {
+            spotlightSearchInfo[@"$og_image_url"] = thumbnailUrlString;
         }
     }
-    if (keywords && [keywords isKindOfClass:[NSSet class]]) {
+
+    if (keywords) {
         spotlightSearchInfo[BRANCH_SPOTLIGHT_KEYWORDS] = [keywords allObjects];
     }
     
