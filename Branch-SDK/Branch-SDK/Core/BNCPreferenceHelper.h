@@ -16,6 +16,7 @@
 @property (strong, nonatomic) NSString *branchKey;
 @property (strong, nonatomic) NSString *appKey;
 @property (strong, nonatomic) NSString *lastRunBranchKey;
+@property (strong, nonatomic) NSDate *lastStrongMatchDate;
 @property (strong, nonatomic) NSString *appVersion;
 @property (strong, nonatomic) NSString *deviceFingerprintID;
 @property (strong, nonatomic) NSString *sessionID;

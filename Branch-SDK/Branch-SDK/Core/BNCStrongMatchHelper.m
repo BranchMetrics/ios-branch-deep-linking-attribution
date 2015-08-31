@@ -7,17 +7,22 @@
 //
 
 #import "BNCStrongMatchHelper.h"
-#import <SafariServices/SafariServices.h>
 #import "BNCConfig.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
 
-#define BRANCH_STRONG_MATCH_CREATED_DATE @"bnc_strong_match_created_date"
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+#import <SafariServices/SafariServices.h>
+#endif
+
+NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
 
 @interface BNCStrongMatchHelper () <SFSafariViewControllerDelegate>
-@property (nonatomic, strong) UIWindow *secondWindow;
-@property (nonatomic) BOOL requestInProgress;
+
+@property (strong, nonatomic) UIWindow *secondWindow;
+@property (assign, nonatomic) BOOL requestInProgress;
+
 @end
 
 @implementation BNCStrongMatchHelper
@@ -34,67 +39,79 @@
 }
 
 - (void)createStrongMatchWithBranchKey:(NSString *)branchKey {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-    if (_requestInProgress) {
+    if (self.requestInProgress) {
         return;
     }
-    _requestInProgress = YES;
+
+    self.requestInProgress = YES;
     
-    NSDate *thirtyDaysAgo = [NSDate dateWithTimeIntervalSinceNow:-(60*60*24*30)];
-    NSDate *lastCheck = [[NSUserDefaults standardUserDefaults] objectForKey:BRANCH_STRONG_MATCH_CREATED_DATE];
+    NSDate *thirtyDaysAgo = [NSDate dateWithTimeIntervalSinceNow:-ABOUT_30_DAYS_TIME_IN_SECONDS];
+    NSDate *lastCheck = [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate;
     if ([lastCheck compare:thirtyDaysAgo] == NSOrderedDescending) {
-        _requestInProgress = NO;
+        self.requestInProgress = NO;
         return;
     }
     
     [self presentSafariVCWithBranchKey:branchKey];
-#endif
 }
 
 - (void)presentSafariVCWithBranchKey:(NSString *)branchKey {
-    NSString *urlString = [NSString stringWithFormat:@"%@/_strong_match?os=iOS", BNC_LINK_URL];
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+    NSMutableString *urlString = [[NSMutableString alloc] initWithFormat:@"%@/_strong_match?os=%@", BNC_LINK_URL, [BNCSystemObserver getOS]];
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     BOOL isRealHardwareId;
     NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:preferenceHelper.isDebug];
     if (!hardwareId || !isRealHardwareId) {
-        _requestInProgress = NO;
+        self.requestInProgress = NO;
         return;
     }
     
-    urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"&%@=%@", BRANCH_REQUEST_KEY_HARDWARE_ID, hardwareId]];
+    [urlString appendFormat:@"&%@=%@", BRANCH_REQUEST_KEY_HARDWARE_ID, hardwareId];
+
     if (preferenceHelper.deviceFingerprintID) {
-        urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"&%@=%@", BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID, preferenceHelper.deviceFingerprintID]];
+        [urlString appendFormat:@"&%@=%@", BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID, preferenceHelper.deviceFingerprintID];
     }
+
     if ([BNCSystemObserver getAppVersion]) {
-        urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"&%@=%@", BRANCH_REQUEST_KEY_APP_VERSION, [BNCSystemObserver getAppVersion]]];
+        [urlString appendFormat:@"&%@=%@", BRANCH_REQUEST_KEY_APP_VERSION, [BNCSystemObserver getAppVersion]];
     }
-    if (branchKey && branchKey.length >= 4) {
+
+    if (branchKey) {
         if ([branchKey hasPrefix:@"key_"]) {
-            urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"&branch_key=%@", branchKey]];
-        } else {
-            urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"&app_id=%@", branchKey]];
+            [urlString appendFormat:@"&branch_key=%@", branchKey];
+        }
+        else {
+            [urlString appendFormat:@"&app_id=%@", branchKey];
         }
     }
-    urlString = [urlString stringByAppendingString:[NSString stringWithFormat:@"&sdk=ios%@", SDK_VERSION]];
+
+    [urlString appendFormat:@"&sdk=ios%@", SDK_VERSION];
     
-    SFSafariViewController *vc = [[SFSafariViewController alloc] initWithURL:[NSURL URLWithString:urlString]];
-    vc.delegate = self;
+    SFSafariViewController *safController = [[SFSafariViewController alloc] initWithURL:[NSURL URLWithString:urlString]];
+    safController.delegate = self;
     
-    _secondWindow = [[UIWindow alloc] initWithFrame:[[[[UIApplication sharedApplication] delegate] window] frame]];
-    _secondWindow.rootViewController = [[UIViewController alloc] init];
-    [_secondWindow makeKeyAndVisible];
-    [_secondWindow setAlpha:0];
-    [_secondWindow.rootViewController presentViewController:vc animated:NO completion:nil];
+    UIViewController *windowRootController = [[UIViewController alloc] init];
+    
+    self.secondWindow = [[UIWindow alloc] initWithFrame:CGRectZero];
+    self.secondWindow.rootViewController = windowRootController;
+    [self.secondWindow makeKeyAndVisible];
+    [self.secondWindow setAlpha:0];
+
+    [windowRootController presentViewController:safController animated:NO completion:NULL];
+#else
+    self.requestInProgress = NO;
+#endif
 }
 
 - (void)safariViewController:(SFSafariViewController *)controller didCompleteInitialLoad:(BOOL)didLoadSuccessfully {
-    [_secondWindow.rootViewController dismissViewControllerAnimated:NO completion:nil];
+    [self.secondWindow.rootViewController dismissViewControllerAnimated:NO completion:NULL];
+
     if (didLoadSuccessfully) {
-        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:BRANCH_STRONG_MATCH_CREATED_DATE];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+        [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
     }
-    _requestInProgress = NO;
+
+    self.requestInProgress = NO;
 }
 
 @end

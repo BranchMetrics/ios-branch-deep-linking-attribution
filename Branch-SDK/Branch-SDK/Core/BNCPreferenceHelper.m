@@ -19,7 +19,7 @@ NSString * const BRANCH_PREFS_FILE = @"BNCPreferences";
 NSString * const BRANCH_PREFS_KEY_APP_KEY = @"bnc_app_key";
 NSString * const BRANCH_PREFS_KEY_APP_VERSION = @"bnc_app_version";
 NSString * const BRANCH_PREFS_KEY_LAST_RUN_BRANCH_KEY = @"bnc_last_run_branch_key";
-
+NSString * const BRANCH_PREFS_KEY_LAST_STRONG_MATCH_DATE = @"bnc_strong_match_created_date";
 NSString * const BRANCH_PREFS_KEY_DEVICE_FINGERPRINT_ID = @"bnc_device_fingerprint_id";
 NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
 NSString * const BRANCH_PREFS_KEY_IDENTITY_ID = @"bnc_identity_id";
@@ -52,7 +52,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 @synthesize branchKey = _branchKey, appKey = _appKey, lastRunBranchKey = _lastRunBranchKey, appVersion = _appVersion, deviceFingerprintID = _deviceFingerprintID, sessionID = _sessionID, spotlightIdentifier = _spotlightIdentifier,
             identityID = _identityID, linkClickIdentifier = _linkClickIdentifier, userUrl = _userUrl, userIdentity = _userIdentity, sessionParams = _sessionParams, installParams = _installParams, universalLinkUrl = _universalLinkUrl,
-            isReferrable = _isReferrable, isDebug = _isDebug, isConnectedToRemoteDebug = _isConnectedToRemoteDebug, retryCount = _retryCount, retryInterval = _retryInterval, timeout = _timeout;
+            isReferrable = _isReferrable, isDebug = _isDebug, isConnectedToRemoteDebug = _isConnectedToRemoteDebug, retryCount = _retryCount, retryInterval = _retryInterval, timeout = _timeout, lastStrongMatchDate = _lastStrongMatchDate;
 
 + (BNCPreferenceHelper *)preferenceHelper {
     static BNCPreferenceHelper *preferenceHelper;
@@ -172,6 +172,21 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     if (![_lastRunBranchKey isEqualToString:lastRunBranchKey]) {
         _lastRunBranchKey = lastRunBranchKey;
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_LAST_RUN_BRANCH_KEY value:lastRunBranchKey];
+    }
+}
+
+- (NSDate *)lastStrongMatchDate {
+    if (!_lastStrongMatchDate) {
+        _lastStrongMatchDate = (NSDate *)[self readObjectFromDefaults:BRANCH_PREFS_KEY_LAST_STRONG_MATCH_DATE];
+    }
+    
+    return _lastStrongMatchDate;
+}
+
+- (void)setLastStrongMatchDate:(NSDate *)lastStrongMatchDate {
+    if (![_lastStrongMatchDate isEqualToDate:lastStrongMatchDate]) {
+        _lastStrongMatchDate = lastStrongMatchDate;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_LAST_STRONG_MATCH_DATE value:lastStrongMatchDate];
     }
 }
 
