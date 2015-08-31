@@ -110,71 +110,70 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
         return;
     }
     
-    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-        // Type cannot be null
-        NSString *typeOrDefault = type ?: (NSString *)kUTTypeGeneric;
-        
-        // Include spotlight info in params
-        NSMutableDictionary *spotlightLinkData = [[NSMutableDictionary alloc] init];
-        spotlightLinkData[BRANCH_LINK_DATA_KEY_TITLE] = title;
-        spotlightLinkData[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
-        spotlightLinkData[BRANCH_LINK_DATA_KEY_TYPE] = typeOrDefault;
-
-        if (userInfo) {
-            [spotlightLinkData addEntriesFromDictionary:userInfo];
-        }
-
-        // Default the OG Title, Description, and Image Url if necessary
-        if (!spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_TITLE]) {
-            spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_TITLE] = title;
-        }
-
-        if (description) {
-            spotlightLinkData[BRANCH_LINK_DATA_KEY_DESCRIPTION] = description;
-            if (!spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION]) {
-                spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION] = description;
-            }
-        }
+    // Type cannot be null
+    NSString *typeOrDefault = type ?: (NSString *)kUTTypeGeneric;
     
-        NSString *thumbnailUrlString = [thumbnailUrl absoluteString];
-        BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
-        if (thumbnailUrlString) {
-            spotlightLinkData[BRANCH_LINK_DATA_KEY_THUMBNAIL_URL] = thumbnailUrlString;
+    // Include spotlight info in params
+    NSMutableDictionary *spotlightLinkData = [[NSMutableDictionary alloc] init];
+    spotlightLinkData[BRANCH_LINK_DATA_KEY_TITLE] = title;
+    spotlightLinkData[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
+    spotlightLinkData[BRANCH_LINK_DATA_KEY_TYPE] = typeOrDefault;
 
-            // Only use the thumbnail url if it is a remote url, not a file system url
-            if (thumbnailIsRemote && !spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL]) {
-                spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL] = thumbnailUrlString;
-            }
+    if (userInfo) {
+        [spotlightLinkData addEntriesFromDictionary:userInfo];
+    }
+
+    // Default the OG Title, Description, and Image Url if necessary
+    if (!spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_TITLE]) {
+        spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_TITLE] = title;
+    }
+
+    if (description) {
+        spotlightLinkData[BRANCH_LINK_DATA_KEY_DESCRIPTION] = description;
+        if (!spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION]) {
+            spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION] = description;
         }
+    }
 
-        if (keywords) {
-            spotlightLinkData[BRANCH_LINK_DATA_KEY_KEYWORDS] = [keywords allObjects];
+    NSString *thumbnailUrlString = [thumbnailUrl absoluteString];
+    BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
+    if (thumbnailUrlString) {
+        spotlightLinkData[BRANCH_LINK_DATA_KEY_THUMBNAIL_URL] = thumbnailUrlString;
+
+        // Only use the thumbnail url if it is a remote url, not a file system url
+        if (thumbnailIsRemote && !spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL]) {
+            spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL] = thumbnailUrlString;
+        }
+    }
+
+    if (keywords) {
+        spotlightLinkData[BRANCH_LINK_DATA_KEY_KEYWORDS] = [keywords allObjects];
+    }
+    
+    [[Branch getInstance] getSpotlightUrlWithParams:spotlightLinkData callback:^(NSDictionary *data, NSError *urlError) {
+        if (urlError) {
+            if (callback) {
+                callback(nil, urlError);
+            }
+            return;
         }
         
-        [[Branch getInstance] getSpotlightUrlWithParams:spotlightLinkData callback:^(NSDictionary *data, NSError *urlError) {
-            if (urlError) {
-                if (callback) {
-                    callback(nil, urlError);
-                }
-                return;
-            }
-            
-            if (thumbnailIsRemote) {
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    NSData *thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:thumbnailData publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords callback:callback];
-                    });
+        if (thumbnailIsRemote) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                NSData *thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:thumbnailData publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords callback:callback];
                 });
-            }
-            else {
-                [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:nil publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords callback:callback];
-            }
-        }];
-    #endif
+            });
+        }
+        else {
+            [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:nil publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords callback:callback];
+        }
+    }];
 }
 
 - (void)indexContentWithUrl:(NSString *)url spotlightIdentifier:(NSString *)spotlightIdentifier title:(NSString *)title description:(NSString *)description type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl thumbnailData:(NSData *)thumbnailData publiclyIndexable:(BOOL)publiclyIndexable userInfo:(NSDictionary *)userInfo keywords:(NSSet *)keywords callback:(callbackWithUrl)callback {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:type];
     attributes.identifier = spotlightIdentifier;
     attributes.relatedUniqueIdentifier = spotlightIdentifier;
@@ -209,6 +208,7 @@ NSString * const SPOTLIGHT_PREFIX = @"io.branch.link.v1";
             }
         }
     }];
+#endif
 }
 
 @end
