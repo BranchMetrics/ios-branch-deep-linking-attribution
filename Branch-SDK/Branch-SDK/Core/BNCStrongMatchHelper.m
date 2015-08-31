@@ -12,17 +12,23 @@
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+// Stub the class for older Xcode versions, methods don't actually do anything.
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
+
+@implementation BNCStrongMatchHelper
+
++ (BNCStrongMatchHelper *)strongMatchHelper { return nil; }
+- (void)createStrongMatchWithBranchKey:(NSString *)branchKey { }
+
+@end
+
+#else
+
 #import <SafariServices/SafariServices.h>
-#endif
 
 NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 @interface BNCStrongMatchHelper () <SFSafariViewControllerDelegate>
-#else
-@interface BNCStrongMatchHelper ()
-#endif
 
 @property (strong, nonatomic) UIWindow *secondWindow;
 @property (assign, nonatomic) BOOL requestInProgress;
@@ -60,7 +66,6 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
 }
 
 - (void)presentSafariVCWithBranchKey:(NSString *)branchKey {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     NSMutableString *urlString = [[NSMutableString alloc] initWithFormat:@"%@/_strong_match?os=%@", BNC_LINK_URL, [BNCSystemObserver getOS]];
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
@@ -103,9 +108,6 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
     [self.secondWindow setAlpha:0];
 
     [windowRootController presentViewController:safController animated:NO completion:NULL];
-#else
-    self.requestInProgress = NO;
-#endif
 }
 
 - (void)safariViewController:(SFSafariViewController *)controller didCompleteInitialLoad:(BOOL)didLoadSuccessfully {
@@ -119,3 +121,5 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
 }
 
 @end
+
+#endif
