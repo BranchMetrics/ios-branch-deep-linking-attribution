@@ -22,10 +22,12 @@
     [branch initSessionWithLaunchOptions:launchOptions automaticallyDisplayDeepLinkController:YES deepLinkHandler:^(NSDictionary *params, NSError *error) {
         if (!error) {
             NSLog(@"finished init with params = %@", [params description]);
-        } else {
+        }
+        else {
             NSLog(@"failed init: %@", error);
         }
     }];
+
     return YES;
 }
 
@@ -35,10 +37,7 @@
     return [[Branch getInstance] handleDeepLink:url];
 }
 
-- (BOOL)application:(UIApplication *)application
-continueUserActivity:(NSUserActivity *)userActivity
- restorationHandler:(void (^)(NSArray * __nullable))restorationHandler {
-    
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *))restorationHandler {
     BOOL handledByBranch = [[Branch getInstance] continueUserActivity:userActivity];
     
     return handledByBranch;
