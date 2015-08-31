@@ -18,7 +18,11 @@
 
 NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 @interface BNCStrongMatchHelper () <SFSafariViewControllerDelegate>
+#else
+@interface BNCStrongMatchHelper ()
+#endif
 
 @property (strong, nonatomic) UIWindow *secondWindow;
 @property (assign, nonatomic) BOOL requestInProgress;
