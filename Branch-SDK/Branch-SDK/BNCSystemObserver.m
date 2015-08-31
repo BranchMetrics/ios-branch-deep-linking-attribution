@@ -58,16 +58,14 @@
 
     for (NSDictionary *urlType in urlTypes) {
         NSArray *urlSchemes = [urlType objectForKey:@"CFBundleURLSchemes"];
-        for (NSString *urlScheme in urlSchemes) {
-            NSString *firstTwoCharacters = [urlScheme substringWithRange:NSMakeRange(0, 2)];
-            NSString *firstThreeCharacters = [urlScheme substringWithRange:NSMakeRange(0, 3)];
-            BOOL isFBScheme = [firstTwoCharacters isEqualToString:@"fb"];
-            BOOL isDBScheme = [firstTwoCharacters isEqualToString:@"db"];
-            BOOL isPinScheme = [firstThreeCharacters isEqualToString:@"pin"];
+        for (NSString *uriScheme in urlSchemes) {
+            BOOL isFBScheme = [uriScheme hasPrefix:@"fb"];
+            BOOL isDBScheme = [uriScheme hasPrefix:@"db"];
+            BOOL isPinScheme = [uriScheme hasPrefix:@"pin"];
             
             // Don't use the schemes set aside for other integrations.
             if (!isFBScheme && !isDBScheme && !isPinScheme) {
-                return urlScheme;
+                return uriScheme;
             }
         }
     }
