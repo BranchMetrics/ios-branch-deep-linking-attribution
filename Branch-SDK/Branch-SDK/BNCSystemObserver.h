@@ -25,7 +25,6 @@
 + (NSNumber *)getUpdateState;
 + (void)setUpdateState;
 + (NSString *)getDeviceName;
-+ (NSDictionary *)getOpenableAppDictFromList:(NSArray *)apps;
 + (BOOL)isSimulator;
 + (BOOL)adTrackingSafe;
 

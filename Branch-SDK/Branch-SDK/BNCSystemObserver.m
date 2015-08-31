@@ -225,29 +225,4 @@
     return [NSNumber numberWithInteger:(NSInteger)height];
 }
 
-+ (NSDictionary *)getOpenableAppDictFromList:(NSArray *)apps {
-    NSMutableArray *appsPresent = [[NSMutableArray alloc] init];
-    NSMutableArray *appsNotPresent = [[NSMutableArray alloc] init];
-    NSDictionary *appsData = @{ @"canOpen": appsPresent, @"notOpen": appsNotPresent };
-
-    UIApplication *application = [UIApplication sharedApplication];
-    for (NSString *app in apps) {
-        NSString *uriScheme = app;
-        if ([uriScheme rangeOfString:@"://"].location != NSNotFound) {
-            uriScheme = [uriScheme stringByAppendingString:@"://"];
-        }
-
-        NSURL *url = [NSURL URLWithString:uriScheme];
-        if ([application canOpenURL:url]) {
-            [appsPresent addObject:app];
-        }
-        else {
-            [appsNotPresent addObject:app];
-        }
-    }
-
-    return appsData;
-}
-
-
 @end
