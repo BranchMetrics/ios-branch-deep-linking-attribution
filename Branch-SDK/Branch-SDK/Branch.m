@@ -1196,7 +1196,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         }
     };
 
-    if ([BNCSystemObserver getOSVersion].integerValue > 9) {
+    if ([BNCSystemObserver getOSVersion].integerValue >= 9) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
     }
 
