@@ -288,7 +288,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     return _spotlightIdentifier;
 }
 
-- (void)setSpotlightLink:(NSString *)spotlightIdentifier {
+- (void)setSpotlightIdentifier:(NSString *)spotlightIdentifier {
     if (![_spotlightIdentifier isEqualToString:spotlightIdentifier]) {
         _spotlightIdentifier = spotlightIdentifier;
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER value:spotlightIdentifier];
