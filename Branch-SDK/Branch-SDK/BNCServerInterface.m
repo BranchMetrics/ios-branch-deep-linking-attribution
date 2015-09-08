@@ -100,7 +100,7 @@
             else if (status == 409) {
                 error = [NSError errorWithDomain:BNCErrorDomain code:BNCDuplicateResourceError userInfo:@{ NSLocalizedDescriptionKey: @"A resource with this identifier already exists" }];
             }
-            else if (status > 400) {
+            else if (status >= 400) {
                 NSString *errorString = [serverResponse.data objectForKey:@"error"] ?: @"The request was invalid.";
 
                 error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: errorString }];
