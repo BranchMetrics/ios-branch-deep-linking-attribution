@@ -11,13 +11,14 @@
 
 @interface BranchCSSearchableItemAttributeSet : CSSearchableItemAttributeSet
 
-- (id)initWithParams:(NSDictionary *)params andTitle:(NSString *)title;
-- (id)initWithParams:(NSDictionary *)params andTitle:(NSString *)title andContentType:(NSString *)type;
+- (id)init;
+- (id)initWithContentType:(NSString *)type;
+
+@property (nonatomic, strong) NSDictionary *params;
+@property (nonatomic, strong) NSSet *keywords;
 
 // Defaults to YES
-- (void)setPubliclyIndexable:(BOOL)publiclyIndexable;
-
-- (void)setKeywords:(NSSet *)keywords;
+@property (nonatomic) BOOL publiclyIndexable;
 
 - (void)indexWithCallback:(callbackWithUrlAndSpotlightIdentifier)callback;
 
