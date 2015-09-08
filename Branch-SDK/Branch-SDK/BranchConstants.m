@@ -111,3 +111,5 @@ NSString * const BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE = @"$publicly_indexable
 NSString * const BRANCH_LINK_DATA_KEY_TYPE = @"+spotlight_type";
 NSString * const BRANCH_LINK_DATA_KEY_THUMBNAIL_URL = @"+spotlight_thumbnail_url";
 NSString * const BRANCH_LINK_DATA_KEY_KEYWORDS = @"+spotlight_keywords";
+
+NSString * const BRANCH_SPOTLIGHT_PREFIX = @"io.branch.link.v1";
