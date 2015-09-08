@@ -21,26 +21,20 @@
 #endif
 
 @interface BranchCSSearchableItemAttributeSet()
-@property (nonatomic, strong) NSDictionary *params;
-@property (nonatomic, strong) NSUserActivity *activity;
-@property (nonatomic) BOOL publiclyIndexable;
-@property (nonatomic, strong) NSSet *keywords;
 @property (nonatomic, strong) NSUserActivity *userActivity;
 @end
 
 @implementation BranchCSSearchableItemAttributeSet
 
-- (id)initWithParams:(NSDictionary *)params andTitle:(NSString *)title {
-    return [self initWithParams:params andTitle:title andContentType:nil];
+- (id)init {
+    return [self initWithContentType:nil];
 }
 
-- (id)initWithParams:(NSDictionary *)params andTitle:(NSString *)title andContentType:(NSString *)type {
+- (id)initWithContentType:(NSString *)type {
     NSString *typeOrDefault = type ?: (NSString *)kUTTypeGeneric;
     
     if (self = [super initWithItemContentType:typeOrDefault]) {
-        self.title = title;
         self.publiclyIndexable = YES;
-        _params = params;
     }
     
     return self;
@@ -50,14 +44,6 @@
     if (![identifier hasPrefix:BRANCH_SPOTLIGHT_PREFIX]) {
         NSLog(@"Warning: setting BranchCSSearchableItemAttributeSet's identifier directly will break Branch functionality");
     }
-}
-
-- (void)setPubliclyIndexable:(BOOL)publiclyIndexable {
-    _publiclyIndexable = publiclyIndexable;
-}
-
-- (void)setKeywords:(NSSet *)keywords {
-    _keywords = keywords;
 }
 
 - (void)indexWithCallback:(callbackWithUrlAndSpotlightIdentifier)callback {
