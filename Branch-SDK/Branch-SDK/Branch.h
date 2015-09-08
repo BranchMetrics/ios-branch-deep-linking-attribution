@@ -24,6 +24,7 @@ typedef void (^callbackWithParams) (NSDictionary *params, NSError *error);
 typedef void (^callbackWithUrl) (NSString *url, NSError *error);
 typedef void (^callbackWithStatus) (BOOL changed, NSError *error);
 typedef void (^callbackWithList) (NSArray *list, NSError *error);
+typedef void (^callbackWithUrlAndSpotlightIdentifier) (NSString *url, NSString *spotlightIdentifier, NSError *error);
 
 ///----------------
 /// @name Constants

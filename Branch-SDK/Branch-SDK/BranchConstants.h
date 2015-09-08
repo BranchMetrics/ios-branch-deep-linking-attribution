@@ -111,3 +111,5 @@ extern NSString * const BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE;
 extern NSString * const BRANCH_LINK_DATA_KEY_TYPE;
 extern NSString * const BRANCH_LINK_DATA_KEY_THUMBNAIL_URL;
 extern NSString * const BRANCH_LINK_DATA_KEY_KEYWORDS;
+
+extern NSString * const BRANCH_SPOTLIGHT_PREFIX;
