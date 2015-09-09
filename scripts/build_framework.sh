@@ -16,6 +16,7 @@ function xcode_build_target() {
         -sdk $1 \
         -configuration $2 \
         clean build \
+        OTHER_CFLAGS="-fembed-bitcode" \
         || die "Xcode build failed for platform: ${1}"
 }
 
