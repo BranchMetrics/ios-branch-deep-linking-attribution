@@ -364,8 +364,14 @@ static int BNCDebugTriggerFingersSimulator = 2;
     
     if (spotlightIdentifier) {
         self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
-
+        
         [self initUserSessionAndCallCallback:YES];
+    }
+    else {
+        NSString *nonBranchSpotlightIdentifier = [self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
+        if (nonBranchSpotlightIdentifier) {
+            self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
+        }
     }
     
     return spotlightIdentifier != nil;
