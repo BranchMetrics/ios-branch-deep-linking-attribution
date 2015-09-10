@@ -357,7 +357,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
         [self initUserSessionAndCallCallback:YES];
         
-        return YES;
+        return [[userActivity.webpageURL absoluteString] containsString:@"bnc.lt"];
     }
     
     NSString *spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
