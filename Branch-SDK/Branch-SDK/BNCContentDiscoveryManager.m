@@ -50,6 +50,17 @@
     return nil;
 }
 
+- (NSString *)standardSpotlightIdentifierFromActivity:(NSUserActivity *)userActivity {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+    // CoreSpotlight version. Matched if it has our prefix, then the link identifier is just the last piece of the identifier.
+    if ([userActivity.activityType isEqualToString:CSSearchableItemActionType] && userActivity.userInfo[CSSearchableItemActivityIdentifier]) {
+        return userActivity.userInfo[CSSearchableItemActivityIdentifier];
+    }
+#endif
+    
+    return nil;
+}
+
 
 #pragma mark - Content Indexing
 
