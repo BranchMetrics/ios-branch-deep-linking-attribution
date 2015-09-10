@@ -53,7 +53,12 @@
         }
         return;
     }
-
+    if (![CSSearchableIndex isIndexingAvailable]) {
+        if (callback) {
+            callback(nil, nil, [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service on this device" }]);
+        }
+        return;
+    }
     if (!self.title) {
         if (callback) {
             callback(nil, nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title" }]);
