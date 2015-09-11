@@ -74,10 +74,13 @@
 }
 
 - (void)genericHTTPRequest:(NSURLRequest *)request retryNumber:(NSInteger)retryNumber log:(BOOL)log callback:(BNCServerCallback)callback retryHandler:(NSURLRequest *(^)(NSInteger))retryHandler {
-    
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    NSURLSessionDataTask *task = [session dataTaskWithRequest:request.copy completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        BNCServerResponse *serverResponse = [self processServerResponse:response data:data error:error log:log];
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request.copy completionHandler:^(NSData * _Nullable responseData, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+#else
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *responseData, NSError *error) {
+#endif
+        BNCServerResponse *serverResponse = [self processServerResponse:response data:responseData error:error log:log];
         NSInteger status = [serverResponse.statusCode integerValue];
         BOOL isRetryableStatusCode = status >= 500;
         
@@ -111,14 +114,18 @@
             if (error && log) {
                 [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, error.localizedDescription];
             }
-            
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
             dispatch_async(dispatch_get_main_queue(), ^{
                 callback(serverResponse, error);
             });
         }
     }];
-    
     [task resume];
+#else
+            callback(serverResponse, error);
+        }
+    }];
+#endif
 }
 
 - (BNCServerResponse *)genericHTTPRequest:(NSURLRequest *)request log:(BOOL)log {
@@ -126,20 +133,20 @@
     __block NSError *_error = nil;
     __block NSData *_respData = nil;
     
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        _response = response;
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable urlResp, NSError * _Nullable error) {
+        _response = urlResp;
         _error = error;
         _respData = data;
         dispatch_semaphore_signal(semaphore);
     }];
-    
     [task resume];
-    
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-
+#else
+    _respData = [NSURLConnection sendSynchronousRequest:request returningResponse:&_response error:&_error];
+#endif
     return [self processServerResponse:_response data:_respData error:_error log:log];
 }
 
