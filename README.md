@@ -46,7 +46,7 @@ This library is now compiled for Xcode 7 / iOS 9. If you are still working in Xc
 
 Alternatively, if you're using Cocoapods, update your Podfile to:
 
-```
+```objc
 pod 'Branch', '0.10.9'
 ```
 
