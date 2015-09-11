@@ -81,7 +81,7 @@ pod "Branch"
 
 If you are working in an older version of Xcode, you may need to use an older version of our SDK. Please try:
 
-```
+```objc
 pod 'Branch', '0.10.9'
 ```
 
