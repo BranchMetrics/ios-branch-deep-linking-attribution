@@ -330,7 +330,9 @@ static const short _base64DecodingTable[256] = {
 }
 
 + (NSString *)urlEncodedString:(NSString *)string {
-    return [string stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    NSMutableCharacterSet *charSet = [[NSCharacterSet URLQueryAllowedCharacterSet] mutableCopy];
+    [charSet removeCharactersInString:@"!*'\"();:@&=+$,/?%#[]% "];
+    return [string stringByAddingPercentEncodingWithAllowedCharacters:charSet];
 }
 
 + (NSString *)encodeDictionaryToQueryString:(NSDictionary *)dictionary {
