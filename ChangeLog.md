@@ -1,5 +1,11 @@
 Branch iOS SDK change log
 
+- v0.11.0
+  * iOS 9 compatibility. Makes use of CoreSpotlight, SafariServices, etc.
+  * Universal Links
+  * Indexing content with Spotlight
+  * Various improvements
+
 - v0.10.9
   * Renaming `completionDelegate` to `deepLinkingCompletionDelegate` to avoid conflicts with Apple internals.
   * Changing behavior of `isReferrable` to default to true, unless otherwise specified.
