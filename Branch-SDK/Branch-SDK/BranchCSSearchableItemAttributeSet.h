@@ -6,9 +6,7 @@
 //  Copyright © 2015 Branch Metrics. All rights reserved.
 //
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 #import <CoreSpotlight/CoreSpotlight.h>
-#endif
 #import "Branch.h"
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
