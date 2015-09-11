@@ -1,6 +1,6 @@
 # Branch Metrics iOS SDK Reference
 
-**Important note for iOS 9**: we are working to get the Cocoapod / zip files deployed with this latest release. Currently the latest Branch pod / zip files available are for version `0.10.9`. Please use the .framework or source files in this repo if you wish to use `0.11.0`.
+**Important note for iOS 9**: we are working to get the Cocoapod deployed with this latest release. Currently the latest Branch pod has available is version `0.10.9`. Please use the .framework or source files in this repo if you wish to use `0.11.0`.
 
 -----
 
@@ -93,7 +93,7 @@ pod 'Branch', '0.10.9'
 
 You can also install by downloading the raw files below.
 
-* Download code from here (this is `v0.10.9` -- see note at top for `v0.11.0`):
+* Download code from here:
 [https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip](https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip)
 
 * The testbed project:
