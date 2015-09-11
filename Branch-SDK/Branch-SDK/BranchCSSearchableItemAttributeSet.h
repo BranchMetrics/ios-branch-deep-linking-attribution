@@ -9,11 +9,7 @@
 #import <CoreSpotlight/CoreSpotlight.h>
 #import "Branch.h"
 
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 @interface BranchCSSearchableItemAttributeSet : CSSearchableItemAttributeSet
-#else
-@interface BranchCSSearchableItemAttributeSet : NSObject
-#endif
 
 - (id)init;
 - (id)initWithContentType:(NSString *)type;
