@@ -40,6 +40,17 @@ For your reference, see the methods and parameters table below.
 [Redeem All or Some of the Reward Balance (Store State)](#redeem-all-or-some-of-the-reward-balance-store-state)|[Method](#methods-11)|[Parameter](#parameters-11)|
 [Get Credit History](#get-credit-history)|[Method](#methods-12)|[Parameters](#parameters-12)|
 
+## Important Migration to v0.11.0
+
+This library is now compiled for Xcode 7 / iOS 9. If you are still working in Xcode 6 / pre-iOS 9, please use our old library. It can be found on a [separate branch](https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK/tree/pre_ios_9).
+
+Alternatively, if you're using Cocoapods, update your Podfile to:
+
+```
+pod 'Branch', '0.10.9'
+```
+
+
 ## Important Migration to v0.9.0
 We are renaming Referral Codes to Promo Codes to better indicate their purpose. Promo Codes do *not* establish a referred/referring user install relationship, which is unclear when called "referral codes." Consequently, all of the ReferralCode methods have been deprecated in favor of their PromoCode counterparts.
 
@@ -66,6 +77,12 @@ Branch is available through [CocoaPods](http://cocoapods.org). To install it, si
 
 ```objc
 pod "Branch"
+```
+
+If you are working in an older version of Xcode, you may need to use an older version of our SDK. Please try:
+
+```
+pod 'Branch', '0.10.9'
 ```
 
 ### Download the Raw Files
@@ -123,6 +140,42 @@ Alternatively, you can add the URI scheme in your project's Info page.
 1. Click the "+" sign to add a new URI Scheme, as below:
 
 ![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png)
+
+### Support Universal Linking (iOS 9)
+
+With iOS 9, Apple has added the ability to allow http links to directly open your app, rather than using the URI Schemes. This can be a pain to set up, as it involves a complicated process on your server. The good news is that Branch does this work for you with just two steps!
+
+1. In Xcode, click on your project in the Navigator (on the left side).
+1. Select the "Capabilities" tab.
+1. Expand the "Associated Domains" tab.
+1. Enable the setting (toggle the switch).
+1. Add "applinks:bnc.lt" to the list.
+1. Add any additional custom domains you have (e.g. applinks:vng.io)
+
+![Xcode Enable UL](docs/images/xcode-ul-enable.png)
+
+1. On the Dashboard, navigate to your app's link settings page.
+1. Check the "Enable Universal Links
+1. Ensure that your Apple Team ID and app Bundle ID are correct (we try to auto-harvest these for you).
+1. Be sure to save these settings updates.
+
+![Dashboard Enable UL](docs/images/dashboard-ul-enable.png)
+
+### Add Your Branch Key to Your Project
+
+After you register your app, your Branch Key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift).
+
+1. In plist file, mouse hover "Information Property List," which is the root item under the Key column.
+1. After about half a second, you will see a "+" sign appear. Click it.
+1. In the newly added row, fill in "branch_key" for its key, leave type as String, and enter your app's Branch Key obtained in above steps in the value column.
+1. Save the plist file.
+
+![Branch Key Demo](docs/images/branch-key-plist.png)
+If you want to add a key for both your live and test apps at the same time, you need change the type column to Dictionary, and add two entries inside:
+1. For live app, use "live" (without double quotes) for key, String for type, and your live branch key for value.
+2. For test app, use "test" (without double quotes) for key, String for type, and your test branch key for value.
+
+![Branch Multi Key Demo](docs/images/branch-multi-key-plist.png)
 
 #### URI Scheme Considerations
 
