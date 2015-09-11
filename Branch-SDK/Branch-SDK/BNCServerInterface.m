@@ -112,7 +112,9 @@
                 [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, error.localizedDescription];
             }
             
-            callback(serverResponse, error);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                callback(serverResponse, error);
+            });
         }
     }];
     
