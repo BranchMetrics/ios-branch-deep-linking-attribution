@@ -35,6 +35,9 @@
 #import "BranchConnectDebugRequest.h"
 #import "BranchDisconnectDebugRequest.h"
 #import "BranchLogRequest.h"
+#import "BNCContentDiscoveryManager.h"
+#import "BranchSpotlightUrlRequest.h"
+#import "BNCStrongMatchHelper.h"
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
@@ -71,6 +74,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
+@property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
 @property (strong, nonatomic) UILongPressGestureRecognizer *debugGestureRecognizer;
 @property (strong, nonatomic) NSTimer *debugHeartbeatTimer;
 @property (strong, nonatomic) NSString *branchKey;
@@ -153,6 +157,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         _preferenceHelper = preferenceHelper;
         _branchKey = key;
         
+        _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
         _isInitialized = NO;
         _shouldCallSessionInitCallback = YES;
         _processing_sema = dispatch_semaphore_create(1);
@@ -344,6 +349,32 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [self initUserSessionAndCallCallback:YES];
 
     return handled;
+}
+
+- (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
+    if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+        self.preferenceHelper.universalLinkUrl = [userActivity.webpageURL absoluteString];
+
+        [self initUserSessionAndCallCallback:YES];
+        
+        return [[userActivity.webpageURL absoluteString] containsString:@"bnc.lt"];
+    }
+    
+    NSString *spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
+    
+    if (spotlightIdentifier) {
+        self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
+        
+        [self initUserSessionAndCallCallback:YES];
+    }
+    else {
+        NSString *nonBranchSpotlightIdentifier = [self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
+        if (nonBranchSpotlightIdentifier) {
+            self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
+        }
+    }
+    
+    return spotlightIdentifier != nil;
 }
 
 
@@ -642,6 +673,16 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:nil andParams:params andCallback:callback];
 }
 
+- (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback {
+    if (!self.isInitialized) {
+        [self initUserSessionAndCallCallback:NO];
+    }
+    
+    BranchSpotlightUrlRequest *req = [[BranchSpotlightUrlRequest alloc] initWithParams:params callback:callback];
+    [self.requestQueue enqueue:req];
+    [self processNextQueueItem];
+}
+
 #pragma mark - LongUrl methods
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
     return [self generateLongURLWithParams:params andChannel:channel andTags:tags andFeature:feature andStage:stage andAlias:alias];
@@ -665,6 +706,52 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 - (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
     return [self generateLongURLWithParams:params andChannel:nil andTags:nil andFeature:feature andStage:stage andAlias:alias];
+}
+
+#pragma mark - Discoverable content methods
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description callback:(callbackWithUrl)callback {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description callback:callback];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable callback:(callbackWithUrl)callback {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable callback:callback];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable callback:(callbackWithUrl)callback {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type callback:callback];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable callback:(callbackWithUrl)callback {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl callback:callback];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords callback:(callbackWithUrl)callback {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords callback:callback];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams publiclyIndexable:(BOOL)publiclyIndexable {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable thumbnailUrl:thumbnailUrl userInfo:linkParams];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable thumbnailUrl:thumbnailUrl keywords:keywords userInfo:linkParams];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:linkParams];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords];
+}
+
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords callback:(callbackWithUrl)callback {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:linkParams callback:callback];
 }
 
 #pragma mark - Referral methods
@@ -1114,6 +1201,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
             [self handleInitSuccess];
         }
     };
+
+    if ([BNCSystemObserver getOSVersion].integerValue >= 9) {
+        [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
+    }
 
     // If there isn't already an Open / Install request, add one to the queue
     if (![self.requestQueue containsInstallOrOpen]) {

@@ -14,6 +14,7 @@
 + (NSString *)getDefaultUriScheme;
 + (NSString *)getAppVersion;
 + (NSString *)getBundleID;
++ (NSString *)getTeamIdentifier;
 + (NSString *)getCarrier;
 + (NSString *)getBrand;
 + (NSString *)getModel;
@@ -24,7 +25,6 @@
 + (NSNumber *)getUpdateState;
 + (void)setUpdateState;
 + (NSString *)getDeviceName;
-+ (NSDictionary *)getOpenableAppDictFromList:(NSArray *)apps;
 + (BOOL)isSimulator;
 + (BOOL)adTrackingSafe;
 

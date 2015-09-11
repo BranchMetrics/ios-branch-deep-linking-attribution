@@ -31,6 +31,12 @@
     [[Branch getInstance] getShortURLWithParams:params andTags:@[@"tag1", @"tag2"] andChannel:@"facebook" andFeature:@"invite" andStage:@"2" andCallback:^(NSString *url, NSError *err) {
         [self.editRefShortUrl setText:url];
     }];
+    Branch *branch = [Branch getInstance];
+    [branch createDiscoverableContentWithTitle:@"MyApp"
+                                   description:@"My app is disrupting apps"
+                                  thumbnailUrl:[NSURL URLWithString:@"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png"]
+                                    linkParams:@{@"object_id": @"1234"}
+                             publiclyIndexable:YES];
 }
 - (IBAction)cmdRefreshPoints:(id)sender {
     Branch *branch = [Branch getInstance];
