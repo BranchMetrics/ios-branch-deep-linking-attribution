@@ -93,7 +93,7 @@ pod 'Branch', '0.10.9'
 
 You can also install by downloading the raw files below.
 
-* Download code from here:
+* Download code from here (this is `v0.10.9` -- see note at top for `v0.11.0`):
 [https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip](https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip)
 
 * The testbed project:
