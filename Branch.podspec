@@ -18,7 +18,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.source           = { :git => "https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK.git", :tag => s.version.to_s }
   s.social_media_url = 'https://www.linkedin.com/company/3813083'
 
-  s.platform     = :ios, '9.0'
+  s.platform     = :ios, '6.0'
   s.requires_arc = true
 
   s.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Branch-SDK/Requests/*.{h,m}"
