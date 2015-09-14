@@ -326,7 +326,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     self.preferenceHelper.isReferrable = isReferrable;
     self.preferenceHelper.explicitlyRequestedReferrable = explicitlyRequestedReferrable;
     
-    if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
+    if (![options objectForKey:UIApplicationLaunchOptionsURLKey] && ![options objectForKey:UIApplicationLaunchOptionsUserActivityTypeKey]) {
         [self initUserSessionAndCallCallback:YES];
     }
 }
