@@ -326,7 +326,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     self.preferenceHelper.isReferrable = isReferrable;
     self.preferenceHelper.explicitlyRequestedReferrable = explicitlyRequestedReferrable;
     
-    if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
+    if (![options objectForKey:UIApplicationLaunchOptionsURLKey] && ![options objectForKey:UIApplicationLaunchOptionsUserActivityTypeKey]) {
         [self initUserSessionAndCallCallback:YES];
     }
 }
@@ -364,8 +364,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
     
     if (spotlightIdentifier) {
         self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
-        
-        [self initUserSessionAndCallCallback:YES];
     }
     else {
         NSString *nonBranchSpotlightIdentifier = [self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
@@ -373,6 +371,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
             self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
         }
     }
+    [self initUserSessionAndCallCallback:YES];
     
     return spotlightIdentifier != nil;
 }
