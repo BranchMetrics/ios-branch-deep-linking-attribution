@@ -1,5 +1,10 @@
 Branch iOS SDK change log
 
+- v0.11.1
+  * fixed issue where Universal Links are not handled on cold launch
+  * removed deprecated methods
+  * podspec allows iOS 6
+
 - v0.11.0
   * iOS 9 compatibility. Makes use of CoreSpotlight, SafariServices, etc.
   * Universal Links
