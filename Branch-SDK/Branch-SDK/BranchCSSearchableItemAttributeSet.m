@@ -6,14 +6,13 @@
 //  Copyright © 2015 Branch Metrics. All rights reserved.
 //
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+
 #import "BranchCSSearchableItemAttributeSet.h"
 #import "BNCSystemObserver.h"
 #import "BNCError.h"
 #import "BranchConstants.h"
-
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 #import <MobileCoreServices/MobileCoreServices.h>
-#endif
 
 #ifndef kUTTypeGeneric
 #define kUTTypeGeneric @"public.content"
@@ -30,16 +29,10 @@
 }
 
 - (id)initWithContentType:(NSString *)type {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     NSString *typeOrDefault = type ?: (NSString *)kUTTypeGeneric;
     if (self = [super initWithItemContentType:typeOrDefault]) {
         self.publiclyIndexable = YES;
     }
-#else
-    NSLog(@"Warning: cannot use BranchCSSearchableItemAttributeSet prior to iOS 9");
-    return nil;
-#endif
-    
     return self;
 }
 
@@ -56,7 +49,6 @@
         }
         return;
     }
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     if (![CSSearchableIndex isIndexingAvailable]) {
         if (callback) {
             callback(nil, nil, [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service on this device" }]);
@@ -129,11 +121,9 @@
             [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] callback:callback];
         }
     }];
-#endif
 }
 
 - (void)indexContentWithUrl:(NSString *)url spotlightIdentifier:(NSString *)spotlightIdentifier callback:(callbackWithUrlAndSpotlightIdentifier)callback {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     self.identifier = spotlightIdentifier;
     self.relatedUniqueIdentifier = spotlightIdentifier;
     self.contentURL = [NSURL URLWithString:url]; // The content url links back to our web content
@@ -163,7 +153,8 @@
             }
         }
     }];
-#endif
 }
 
 @end
+
+#endif
