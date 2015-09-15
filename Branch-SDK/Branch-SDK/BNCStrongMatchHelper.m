@@ -24,11 +24,9 @@
 
 #else
 
-#import <SafariServices/SafariServices.h>
-
 NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
 
-@interface BNCStrongMatchHelper () <SFSafariViewControllerDelegate>
+@interface BNCStrongMatchHelper ()
 
 @property (strong, nonatomic) UIWindow *secondWindow;
 @property (assign, nonatomic) BOOL requestInProgress;
@@ -97,27 +95,28 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
 
     [urlString appendFormat:@"&sdk=ios%@", SDK_VERSION];
     
-    SFSafariViewController *safController = [[SFSafariViewController alloc] initWithURL:[NSURL URLWithString:urlString]];
-    safController.delegate = self;
-    
-    UIViewController *windowRootController = [[UIViewController alloc] init];
-    
-    self.secondWindow = [[UIWindow alloc] initWithFrame:CGRectZero];
-    self.secondWindow.rootViewController = windowRootController;
-    [self.secondWindow makeKeyAndVisible];
-    [self.secondWindow setAlpha:0];
+    Class SFSafariViewControllerClass = NSClassFromString(@"SFSafariViewController");
+    if (SFSafariViewControllerClass) {
+        id safController = [[SFSafariViewControllerClass alloc] initWithURL:[NSURL URLWithString:urlString]];
+        
+        UIViewController *windowRootController = [[UIViewController alloc] init];
+        
+        self.secondWindow = [[UIWindow alloc] initWithFrame:CGRectZero];
+        self.secondWindow.rootViewController = windowRootController;
+        [self.secondWindow makeKeyAndVisible];
+        [self.secondWindow setAlpha:0];
+        
+        [windowRootController presentViewController:safController animated:NO completion:NULL];
 
-    [windowRootController presentViewController:safController animated:NO completion:NULL];
-}
-
-- (void)safariViewController:(SFSafariViewController *)controller didCompleteInitialLoad:(BOOL)didLoadSuccessfully {
-    [self.secondWindow.rootViewController dismissViewControllerAnimated:NO completion:NULL];
-
-    if (didLoadSuccessfully) {
-        [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.secondWindow.rootViewController dismissViewControllerAnimated:NO completion:NULL];
+            [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
+            self.requestInProgress = NO;
+        });
     }
-
-    self.requestInProgress = NO;
+    else {
+        self.requestInProgress = NO;
+    }
 }
 
 @end
