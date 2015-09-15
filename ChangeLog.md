@@ -1,5 +1,8 @@
 Branch iOS SDK change log
 
+- v0.11.2
+  * fixes issue for compiling against iOS 6 and iOS 7
+
 - v0.11.1
   * fixed issue where Universal Links are not handled on cold launch
   * removed deprecated methods
