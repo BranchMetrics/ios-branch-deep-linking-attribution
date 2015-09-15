@@ -1,5 +1,8 @@
 Branch iOS SDK change log
 
+- v0.11.3
+  * fixed more compatibility issues with older iOS versions
+
 - v0.11.2
   * fixes issue for compiling against iOS 6 and iOS 7
 
