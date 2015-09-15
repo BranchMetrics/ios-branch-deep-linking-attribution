@@ -40,17 +40,6 @@ For your reference, see the methods and parameters table below.
 [Redeem All or Some of the Reward Balance (Store State)](#redeem-all-or-some-of-the-reward-balance-store-state)|[Method](#methods-11)|[Parameter](#parameters-11)|
 [Get Credit History](#get-credit-history)|[Method](#methods-12)|[Parameters](#parameters-12)|
 
-## Important Migration to v0.11.0
-
-This library is now compiled for Xcode 7 / iOS 9. If you are still working in Xcode 6 / pre-iOS 9, please use our old library. It can be found on a [separate branch](https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK/tree/pre_ios_9).
-
-Alternatively, if you're using Cocoapods, update your Podfile to:
-
-```objc
-pod 'Branch', '0.10.9'
-```
-
-
 ## Important Migration to v0.9.0
 We are renaming Referral Codes to Promo Codes to better indicate their purpose. Promo Codes do *not* establish a referred/referring user install relationship, which is unclear when called "referral codes." Consequently, all of the ReferralCode methods have been deprecated in favor of their PromoCode counterparts.
 
@@ -77,12 +66,6 @@ Branch is available through [CocoaPods](http://cocoapods.org). To install it, si
 
 ```objc
 pod "Branch"
-```
-
-If you are working in an older version of Xcode, you may need to use an older version of our SDK. Please try:
-
-```objc
-pod 'Branch', '0.10.9'
 ```
 
 ### Download the Raw Files
