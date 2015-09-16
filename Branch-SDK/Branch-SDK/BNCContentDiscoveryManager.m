@@ -246,7 +246,7 @@
     SEL defaultSearchableIndexSelector = NSSelectorFromString(@"defaultSearchableIndex");
     id defaultSearchableIndex = ((id (*)(id, SEL))[CSSearchableIndexClass methodForSelector:defaultSearchableIndexSelector])(CSSearchableIndexClass, defaultSearchableIndexSelector);
     SEL indexSearchableItemsSelector = NSSelectorFromString(@"indexSearchableItems:completionHandler:");
-    void (^__nullable myBlock)(NSError *indexError) = ^void(NSError *__nullable indexError) {
+    void (^__nullable completionBlock)(NSError *indexError) = ^void(NSError *__nullable indexError) {
             if (callback) {
                 if (indexError) {
                     callback(nil, indexError);
@@ -256,7 +256,7 @@
                 }
             }
     };
-    ((void (*)(id, SEL, NSArray *, void (^ __nullable)(NSError * __nullable error)))[defaultSearchableIndex methodForSelector:indexSearchableItemsSelector])(defaultSearchableIndex, indexSearchableItemsSelector, @[item], myBlock);
+    ((void (*)(id, SEL, NSArray *, void (^ __nullable)(NSError * __nullable error)))[defaultSearchableIndex methodForSelector:indexSearchableItemsSelector])(defaultSearchableIndex, indexSearchableItemsSelector, @[item], completionBlock);
 #endif
 }
 
