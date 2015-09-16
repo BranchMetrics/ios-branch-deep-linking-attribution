@@ -166,7 +166,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
         
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
-        [notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];            
+        });
     }
 
     return self;
@@ -327,7 +329,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
     self.preferenceHelper.explicitlyRequestedReferrable = explicitlyRequestedReferrable;
     
     if ([BNCSystemObserver getOSVersion].integerValue >= 8) {
-        if (![options objectForKey:UIApplicationLaunchOptionsURLKey] && ![options objectForKey:UIApplicationLaunchOptionsUserActivityTypeKey]) {
+        if (![options objectForKey:UIApplicationLaunchOptionsURLKey] && ![options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             [self initUserSessionAndCallCallback:YES];
         }
     }
