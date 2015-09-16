@@ -118,7 +118,6 @@
         }
         return;
     }
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     BOOL isIndexingAvailable = NO;
     Class CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
     SEL isIndexingAvailableSelector = NSSelectorFromString(@"isIndexingAvailable");
@@ -130,7 +129,6 @@
         }
         return;
     }
-#endif
     if (!title) {
         if (callback) {
             callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title" }]);
@@ -257,7 +255,11 @@
             }
     };
     ((void (*)(id, SEL, NSArray *, void (^ __nullable)(NSError * __nullable error)))[defaultSearchableIndex methodForSelector:indexSearchableItemsSelector])(defaultSearchableIndex, indexSearchableItemsSelector, @[item], completionBlock);
+    return;
 #endif
+    if (callback) {
+        callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"CoreSpotlight is not available because the base SDK for this project is less than 9.0" }]);
+    }
 }
 
 @end
