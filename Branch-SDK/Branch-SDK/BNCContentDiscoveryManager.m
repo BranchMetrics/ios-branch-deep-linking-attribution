@@ -38,21 +38,21 @@
 #pragma mark - Launch handling
 
 - (NSString *)spotlightIdentifierFromActivity:(NSUserActivity *)userActivity {
-    #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-        if ([userActivity.activityType hasPrefix:BRANCH_SPOTLIGHT_PREFIX]) {
-            return userActivity.activityType;
-        }
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+    if ([userActivity.activityType hasPrefix:BRANCH_SPOTLIGHT_PREFIX]) {
+        return userActivity.activityType;
+    }
     
-        // CoreSpotlight version. Matched if it has our prefix, then the link identifier is just the last piece of the identifier.
-        if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
-            NSString *activityIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
-            BOOL isBranchIdentifier = [activityIdentifier hasPrefix:BRANCH_SPOTLIGHT_PREFIX];
-            
-            if (isBranchIdentifier) {
-                return activityIdentifier;
-            }
+    // CoreSpotlight version. Matched if it has our prefix, then the link identifier is just the last piece of the identifier.
+    if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
+        NSString *activityIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
+        BOOL isBranchIdentifier = [activityIdentifier hasPrefix:BRANCH_SPOTLIGHT_PREFIX];
+        
+        if (isBranchIdentifier) {
+            return activityIdentifier;
         }
-    #endif
+    }
+#endif
     
     return nil;
 }
@@ -118,11 +118,17 @@
         }
         return;
     }
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
+    if (callback) {
+        callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"CoreSpotlight is not available because the base SDK for this project is less than 9.0" }]);
+    }
+    return;
+#endif
     BOOL isIndexingAvailable = NO;
     Class CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
     SEL isIndexingAvailableSelector = NSSelectorFromString(@"isIndexingAvailable");
     isIndexingAvailable = ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])(CSSearchableIndexClass, isIndexingAvailableSelector);
-
+    
     if (!isIndexingAvailable) {
         if (callback) {
             callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service on this device/OS" }]);
@@ -144,34 +150,34 @@
     spotlightLinkData[BRANCH_LINK_DATA_KEY_TITLE] = title;
     spotlightLinkData[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
     spotlightLinkData[BRANCH_LINK_DATA_KEY_TYPE] = typeOrDefault;
-
+    
     if (userInfo) {
         [spotlightLinkData addEntriesFromDictionary:userInfo];
     }
-
+    
     // Default the OG Title, Description, and Image Url if necessary
     if (!spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_TITLE]) {
         spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_TITLE] = title;
     }
-
+    
     if (description) {
         spotlightLinkData[BRANCH_LINK_DATA_KEY_DESCRIPTION] = description;
         if (!spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION]) {
             spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION] = description;
         }
     }
-
+    
     NSString *thumbnailUrlString = [thumbnailUrl absoluteString];
     BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
     if (thumbnailUrlString) {
         spotlightLinkData[BRANCH_LINK_DATA_KEY_THUMBNAIL_URL] = thumbnailUrlString;
-
+        
         // Only use the thumbnail url if it is a remote url, not a file system url
         if (thumbnailIsRemote && !spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL]) {
             spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL] = thumbnailUrlString;
         }
     }
-
+    
     if (keywords) {
         spotlightLinkData[BRANCH_LINK_DATA_KEY_KEYWORDS] = [keywords allObjects];
     }
@@ -199,8 +205,8 @@
 }
 
 - (void)indexContentWithUrl:(NSString *)url spotlightIdentifier:(NSString *)spotlightIdentifier title:(NSString *)title description:(NSString *)description type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl thumbnailData:(NSData *)thumbnailData publiclyIndexable:(BOOL)publiclyIndexable userInfo:(NSDictionary *)userInfo keywords:(NSSet *)keywords callback:(callbackWithUrl)callback {
-
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+    
     id CSSearchableItemAttributeSetClass = NSClassFromString(@"CSSearchableItemAttributeSet");
     id attributes = [CSSearchableItemAttributeSetClass alloc];
     SEL initAttributesSelector = NSSelectorFromString(@"initWithItemContentType:");
@@ -245,21 +251,17 @@
     id defaultSearchableIndex = ((id (*)(id, SEL))[CSSearchableIndexClass methodForSelector:defaultSearchableIndexSelector])(CSSearchableIndexClass, defaultSearchableIndexSelector);
     SEL indexSearchableItemsSelector = NSSelectorFromString(@"indexSearchableItems:completionHandler:");
     void (^__nullable completionBlock)(NSError *indexError) = ^void(NSError *__nullable indexError) {
-            if (callback) {
-                if (indexError) {
-                    callback(nil, indexError);
-                }
-                else {
-                    callback(url, nil);
-                }
+        if (callback) {
+            if (indexError) {
+                callback(nil, indexError);
             }
+            else {
+                callback(url, nil);
+            }
+        }
     };
     ((void (*)(id, SEL, NSArray *, void (^ __nullable)(NSError * __nullable error)))[defaultSearchableIndex methodForSelector:indexSearchableItemsSelector])(defaultSearchableIndex, indexSearchableItemsSelector, @[item], completionBlock);
-    return;
 #endif
-    if (callback) {
-        callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"CoreSpotlight is not available because the base SDK for this project is less than 9.0" }]);
-    }
 }
 
 @end
