@@ -32,6 +32,7 @@
 @property (assign, nonatomic) BOOL isReferrable;
 @property (assign, nonatomic) BOOL isDebug;
 @property (assign, nonatomic) BOOL isConnectedToRemoteDebug;
+@property (assign, nonatomic) BOOL isContinuingUserActivity;
 @property (assign, nonatomic) NSInteger retryCount;
 @property (assign, nonatomic) NSTimeInterval retryInterval;
 @property (assign, nonatomic) NSTimeInterval timeout;
