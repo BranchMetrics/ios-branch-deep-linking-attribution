@@ -166,7 +166,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
-        [notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
+        [notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];            
     }
 
     return self;
@@ -327,8 +327,11 @@ static int BNCDebugTriggerFingersSimulator = 2;
     self.preferenceHelper.explicitlyRequestedReferrable = explicitlyRequestedReferrable;
     
     if ([BNCSystemObserver getOSVersion].integerValue >= 8) {
-        if (![options objectForKey:UIApplicationLaunchOptionsURLKey] && ![options objectForKey:UIApplicationLaunchOptionsUserActivityTypeKey]) {
+        if (![options objectForKey:UIApplicationLaunchOptionsURLKey] && ![options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             [self initUserSessionAndCallCallback:YES];
+        }
+        else if ([options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
+            self.preferenceHelper.isContinuingUserActivity = YES;
         }
     }
     else {
@@ -363,7 +366,8 @@ static int BNCDebugTriggerFingersSimulator = 2;
         self.preferenceHelper.universalLinkUrl = [userActivity.webpageURL absoluteString];
 
         [self initUserSessionAndCallCallback:YES];
-        
+        self.preferenceHelper.isContinuingUserActivity = NO;
+
         return [[userActivity.webpageURL absoluteString] containsString:@"bnc.lt"];
     }
     
@@ -379,7 +383,8 @@ static int BNCDebugTriggerFingersSimulator = 2;
         }
     }
     [self initUserSessionAndCallCallback:YES];
-    
+    self.preferenceHelper.isContinuingUserActivity = NO;
+
     return spotlightIdentifier != nil;
 }
 
@@ -1049,7 +1054,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    if (!self.isInitialized) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:YES];
     }
     
