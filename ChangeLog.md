@@ -1,5 +1,9 @@
 Branch iOS SDK change log
 
+- v0.11.4
+  * removes the need to include CoreSpotlight
+  * addresses issues where SDK would not compile against iOS 8.x base SDKs
+
 - v0.11.3
   * fixed more compatibility issues with older iOS versions
 
