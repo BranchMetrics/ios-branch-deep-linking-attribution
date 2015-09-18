@@ -166,12 +166,6 @@ The Branch SDK will pull the first URI Scheme from your list that is not one of 
 
 For additional help configuring the SDK, including step-by-step instructions, please see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios-quickstart.md).
 
-### Codeless Install
-
-We now support installation without any changes to your actual codebase, if you just want to get the very minimum (open / install attribution). You won't be able to take advantage of the context data provided from the init, and you won't really be able to take action, but it's enough to just get things working! After you've added your key, there is just one more step -- forcing the framework to load. If you're using Cocoapods, this just works! If you're including the Branch framework, you need to add a flag to force load of the framework in your Linker Settings. You can do this by just adding `-ObjC` for Other Linker Flags, but this causes conflicts in some projects. Alternatively, you can load *just* the Branch framework by adding `-force_load /path/to/Branch.framework/Branch`.
-
-![Force Load Flag](docs/images/force_load_framework.png)
-
 ### Get a Singleton Branch Instance
 
 All Branch methods require an instance of the main Branch object. Here's how you can get one. It's stored statically and is accessible from any class.
