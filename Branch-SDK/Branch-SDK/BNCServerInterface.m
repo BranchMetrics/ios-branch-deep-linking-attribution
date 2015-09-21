@@ -121,6 +121,7 @@
         }
     }];
     [task resume];
+    [session finishTasksAndInvalidate];
 #else
             callback(serverResponse, error);
         }
@@ -143,6 +144,7 @@
         dispatch_semaphore_signal(semaphore);
     }];
     [task resume];
+    [session finishTasksAndInvalidate];
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 #else
     _respData = [NSURLConnection sendSynchronousRequest:request returningResponse:&_response error:&_error];
