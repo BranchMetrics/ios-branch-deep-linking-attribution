@@ -1255,9 +1255,16 @@ static int BNCDebugTriggerFingersSimulator = 2;
             UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
             [branchSharingController configureControlWithData:latestReferringParams];
             branchSharingController.deepLinkingCompletionDelegate = self;
-            
             self.deepLinkPresentingController = [[[UIApplication sharedApplication].delegate window] rootViewController];
-            [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
+            
+            if ([self.deepLinkPresentingController presentedViewController]) {
+                [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
+                    [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
+                }];
+            }
+            else {
+                [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
+            }
         }
     }
 }
