@@ -55,6 +55,7 @@
     }
     else {
         [preferenceHelper clearUserCreditsAndCounts];
+        [preferenceHelper setCreditCount:0 forBucket:@"default"];
     }
 
     if (self.callback) {
