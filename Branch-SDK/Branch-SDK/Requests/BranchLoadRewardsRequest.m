@@ -42,14 +42,12 @@
 
     BOOL hasUpdated = NO;
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    if ([[response.data allKeys] count]) {
+    if ([response.data count]) {
         for (NSString *key in response.data) {
             NSInteger credits = [response.data[key] integerValue];
-        
             if (credits != [preferenceHelper getCreditCountForBucket:key]) {
                 hasUpdated = YES;
             }
-        
             [preferenceHelper setCreditCount:credits forBucket:key];
         }
     }
