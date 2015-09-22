@@ -10,6 +10,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
 #import "BranchConstants.h"
+#import "BNCConfig.h"
 
 @interface BranchShortUrlSyncRequest ()
 
@@ -78,36 +79,44 @@
 }
 
 - (NSString *)createLongUrlForUserUrl:(NSString *)userUrl {
-    NSMutableString *longUrl = [[NSMutableString alloc] initWithFormat:@"%@?", userUrl];
-    
-    for (NSString *tag in self.tags) {
-        [longUrl appendFormat:@"tags=%@&", tag];
+    NSMutableString *baseUrl = [[NSMutableString alloc] initWithFormat:@"%@?", userUrl];
+    return [BranchShortUrlSyncRequest createLongUrlWithBaseUrl:baseUrl tags:self.tags alias:self.alias type:self.type matchDuration:self.matchDuration channel:self.channel feature:self.feature stage:self.stage params:self.params];
+}
+
++ (NSString *)createLinkFromBranchKey:(NSString *)branchKey tags:(NSArray *)tags alias:(NSString *)alias type:(BranchLinkType)type matchDuration:(NSInteger)duration channel:(NSString *)channel feature:(NSString *)feature stage:(NSString *)stage params:(NSDictionary *)params {
+    NSMutableString *baseUrl = [[NSMutableString alloc] initWithFormat:@"%@/a/%@?", BNC_LINK_URL, branchKey];
+    return [BranchShortUrlSyncRequest createLongUrlWithBaseUrl:baseUrl tags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params];
+}
+
++ (NSString *)createLongUrlWithBaseUrl:(NSMutableString *)baseUrl tags:(NSArray *)tags alias:(NSString *)alias type:(BranchLinkType)type matchDuration:(NSInteger)duration channel:(NSString *)channel feature:(NSString *)feature stage:(NSString *)stage params:(NSDictionary *)params {
+    for (NSString *tag in tags) {
+        [baseUrl appendFormat:@"tags=%@&", tag];
     }
     
-    if ([self.alias length]) {
-        [longUrl appendFormat:@"alias=%@&", self.alias];
+    if ([alias length]) {
+        [baseUrl appendFormat:@"alias=%@&", alias];
     }
     
-    if ([self.channel length]) {
-        [longUrl appendFormat:@"channel=%@&", self.channel];
+    if ([channel length]) {
+        [baseUrl appendFormat:@"channel=%@&", channel];
     }
     
-    if ([self.feature length]) {
-        [longUrl appendFormat:@"feature=%@&", self.feature];
+    if ([feature length]) {
+        [baseUrl appendFormat:@"feature=%@&", feature];
     }
     
-    if ([self.stage length]) {
-        [longUrl appendFormat:@"stage=%@&", self.stage];
+    if ([stage length]) {
+        [baseUrl appendFormat:@"stage=%@&", stage];
     }
     
-    [longUrl appendFormat:@"type=%ld&", (long)self.type];
-    [longUrl appendFormat:@"matchDuration=%ld&", (long)self.matchDuration];
+    [baseUrl appendFormat:@"type=%ld&", (long)type];
+    [baseUrl appendFormat:@"matchDuration=%ld&", (long)duration];
     
-    NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:self.params];
+    NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:params];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
-    [longUrl appendFormat:@"source=ios&data=%@", base64EncodedParams];
+    [baseUrl appendFormat:@"source=ios&data=%@", base64EncodedParams];
     
-    return longUrl;
+    return baseUrl;
 }
 
 @end
