@@ -412,6 +412,11 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     return [self.creditsDictionary[[BRANCH_PREFS_KEY_CREDIT_BASE stringByAppendingString:bucket]] integerValue];
 }
 
+- (void)clearUserCredits {
+    self.creditsDictionary = [[NSMutableDictionary alloc] init];
+    [self setCreditCount:0 forBucket:@"default"];
+}
+
 #pragma mark - Count Storage
 
 - (NSMutableDictionary *)countsDictionary {

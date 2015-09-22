@@ -44,6 +44,7 @@
 - (NSString *)getBranchKey:(BOOL)isLive;
 
 - (void)clearUserCreditsAndCounts;
+- (void)clearUserCredits;
 
 - (void)setCreditCount:(NSInteger)count;
 - (void)setCreditCount:(NSInteger)count forBucket:(NSString *)bucket;
