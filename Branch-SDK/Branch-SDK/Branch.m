@@ -993,9 +993,8 @@ static int BNCDebugTriggerFingersSimulator = 2;
         }
         else {
             if (forceLinkCreation) {
-                NSString *branchKey = [[BNCPreferenceHelper preferenceHelper] branchKey];
-                if (branchKey) {
-                    return [BranchShortUrlSyncRequest createLinkFromBranchKey:branchKey tags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params];
+                if (self.branchKey) {
+                    return [BranchShortUrlSyncRequest createLinkFromBranchKey:self.branchKey tags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params];
                 }
             }
             NSLog(@"Branch SDK Error: making request before init succeeded!");
