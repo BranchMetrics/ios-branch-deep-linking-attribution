@@ -442,7 +442,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 /**
  Specify that Branch should not use an invisible SFSafariViewController to attempt cookie-based matching.
  */
-- (void)disableCookieBasedMatching;
+- (void)enableCookieBasedMatching;
 
 #pragma mark - Session Item methods
 

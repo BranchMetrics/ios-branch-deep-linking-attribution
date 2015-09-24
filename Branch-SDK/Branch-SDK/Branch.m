@@ -80,7 +80,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 @property (strong, nonatomic) NSString *branchKey;
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
 @property (weak, nonatomic) UIViewController *deepLinkPresentingController;
-@property (nonatomic) BOOL cookieBasedMatchingDisabled;
+@property (nonatomic) BOOL cookieBasedMatchingEnabled;
 
 @end
 
@@ -250,8 +250,8 @@ static int BNCDebugTriggerFingersSimulator = 2;
     self.preferenceHelper.retryInterval = retryInterval;
 }
 
-- (void)disableCookieBasedMatching {
-    self.cookieBasedMatchingDisabled = YES;
+- (void)enableCookieBasedMatching {
+    self.cookieBasedMatchingEnabled = YES;
 }
 
 
@@ -1218,7 +1218,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         }
     };
 
-    if ([BNCSystemObserver getOSVersion].integerValue >= 9 && !self.cookieBasedMatchingDisabled) {
+    if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.cookieBasedMatchingEnabled) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
     }
 
