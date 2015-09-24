@@ -24,5 +24,4 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Branch-SDK/Requests/*.{h,m}"
 
   s.frameworks = 'AdSupport', 'CoreTelephony', 'MobileCoreServices'
-  s.weak_frameworks = 'CoreSpotlight', 'SafariServices'
 end
