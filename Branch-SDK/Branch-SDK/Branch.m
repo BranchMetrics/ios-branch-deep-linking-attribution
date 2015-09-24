@@ -916,11 +916,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 #pragma mark - Private methods
 
-+ (void)load {
-     // Force load / registration of notification listener, allowing for codeless install
-    [Branch getInstance];
-}
-
 + (Branch *)getInstanceInternal:(NSString *)key {
     static Branch *branch;
     static dispatch_once_t onceToken;
