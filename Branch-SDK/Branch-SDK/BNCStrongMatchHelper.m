@@ -106,13 +106,11 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
         [self.secondWindow makeKeyAndVisible];
         [self.secondWindow setAlpha:0];
         
-        [windowRootController presentViewController:safController animated:NO completion:NULL];
-
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [windowRootController presentViewController:safController animated:YES completion:^{
             [self.secondWindow.rootViewController dismissViewControllerAnimated:NO completion:NULL];
             [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
             self.requestInProgress = NO;
-        });
+        }];
     }
     else {
         self.requestInProgress = NO;
