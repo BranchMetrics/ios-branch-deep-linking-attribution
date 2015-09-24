@@ -42,17 +42,32 @@
 
     BOOL hasUpdated = NO;
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    if ([response.data count]) {
+    NSDictionary *currentCreditDictionary = [preferenceHelper getCreditDictionary];
+    NSArray *responseKeys = [response.data allKeys];
+    NSArray *storedKeys = [currentCreditDictionary allKeys];
+
+    if ([responseKeys count]) {
         for (NSString *key in response.data) {
-            NSInteger credits = [response.data[key] integerValue];
-            if (credits != [preferenceHelper getCreditCountForBucket:key]) {
+             NSInteger credits = [response.data[key] integerValue];
+
+             BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+             if (credits != [preferenceHelper getCreditCountForBucket:key]) {
+                 hasUpdated = YES;
+             }
+
+             [preferenceHelper setCreditCount:credits forBucket:key];
+        }
+        for(NSString *key in storedKeys) {
+            if(![response.data objectForKey:key]) {
+                [preferenceHelper removeCreditCountForBucket:key];
                 hasUpdated = YES;
             }
-            [preferenceHelper setCreditCount:credits forBucket:key];
         }
-    }
-    else {
-        [preferenceHelper clearUserCredits];
+    } else {
+        if ([storedKeys count]) {
+            [preferenceHelper clearUserCredits];
+            hasUpdated = YES;
+        }
     }
 
     if (self.callback) {
