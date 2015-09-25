@@ -39,19 +39,37 @@
         }
         return;
     }
-    
+
     BOOL hasUpdated = NO;
-    for (NSString *key in response.data) {
-        NSInteger credits = [response.data[key] integerValue];
-        
-        BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-        if (credits != [preferenceHelper getCreditCountForBucket:key]) {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    NSDictionary *currentCreditDictionary = [preferenceHelper getCreditDictionary];
+    NSArray *responseKeys = [response.data allKeys];
+    NSArray *storedKeys = [currentCreditDictionary allKeys];
+
+    if ([responseKeys count]) {
+        for (NSString *key in response.data) {
+             NSInteger credits = [response.data[key] integerValue];
+
+             BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+             if (credits != [preferenceHelper getCreditCountForBucket:key]) {
+                 hasUpdated = YES;
+             }
+
+             [preferenceHelper setCreditCount:credits forBucket:key];
+        }
+        for(NSString *key in storedKeys) {
+            if(![response.data objectForKey:key]) {
+                [preferenceHelper removeCreditCountForBucket:key];
+                hasUpdated = YES;
+            }
+        }
+    } else {
+        if ([storedKeys count]) {
+            [preferenceHelper clearUserCredits];
             hasUpdated = YES;
         }
-        
-        [preferenceHelper setCreditCount:credits forBucket:key];
     }
-    
+
     if (self.callback) {
         self.callback(hasUpdated, nil);
     }

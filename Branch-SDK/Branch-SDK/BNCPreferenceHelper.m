@@ -404,12 +404,34 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_CREDITS value:self.creditsDictionary];
 }
 
+- (void)removeCreditCountForBucket:(NSString *)bucket {
+    NSMutableDictionary *dictToWrite = self.creditsDictionary;
+    [dictToWrite removeObjectForKey:[BRANCH_PREFS_KEY_CREDIT_BASE stringByAppendingString:bucket]];
+
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_CREDITS value:self.creditsDictionary];
+}
+
+- (NSDictionary *)getCreditDictionary {
+    NSMutableDictionary *returnDictionary = [[NSMutableDictionary alloc] init];
+    for(NSString *key in self.creditsDictionary) {
+        NSString *cleanKey = [key stringByReplacingOccurrencesOfString:BRANCH_PREFS_KEY_CREDIT_BASE
+                                                                                     withString:@""];
+        returnDictionary[cleanKey] = self.creditsDictionary[key];
+    }
+    return returnDictionary;
+}
+
 - (NSInteger)getCreditCount {
     return [self getCreditCountForBucket:@"default"];
 }
 
 - (NSInteger)getCreditCountForBucket:(NSString *)bucket {
     return [self.creditsDictionary[[BRANCH_PREFS_KEY_CREDIT_BASE stringByAppendingString:bucket]] integerValue];
+}
+
+- (void)clearUserCredits {
+    self.creditsDictionary = [[NSMutableDictionary alloc] init];
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_CREDITS value:self.creditsDictionary];
 }
 
 #pragma mark - Count Storage
