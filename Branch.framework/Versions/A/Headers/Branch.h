@@ -439,6 +439,11 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)setNetworkTimeout:(NSTimeInterval)timeout;
 
+/**
+ Specify that Branch should not use an invisible SFSafariViewController to attempt cookie-based matching.
+ */
+- (void)enableCookieBasedMatching;
+
 #pragma mark - Session Item methods
 
 ///--------------------
@@ -760,6 +765,23 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @warning This can fail if the alias is already taken.
  */
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias ignoreUAString:(NSString *)ignoreUAString;
+
+/**
+ Get a short url with specified tags, params, channel, feature, and stage. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param tags An array of tags to associate with this link, useful for tracking.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param alias The alias for a link.
+ @param ignoreUAString The User Agent string to tell the server to ignore the next request from, to prevent it from treating a preview scrape as a link click.
+ @param forceLinkCreation Whether we should create a link from the Branch Key even if initSession failed. Defaults to NO.
+ @warning This method makes a synchronous url request.
+ @warning This method is primarily intended to be an internal Branch method, used to work around a bug with SLComposeViewController
+ @warning This can fail if the alias is already taken.
+ */
+- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias ignoreUAString:(NSString *)ignoreUAString forceLinkCreation:(BOOL)forceLinkCreation;
 
 /**
  Get a short url with specified tags, params, channel, feature, stage, and type.
