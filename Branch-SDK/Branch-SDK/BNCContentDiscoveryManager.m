@@ -135,14 +135,17 @@
         }
         return;
     }
-    if (!title) {
+    if (!title || ![title isKindOfClass:[NSString class]]) {
         if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title" }]);
+            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title (NSString *)" }]);
         }
         return;
     }
     
     // Type cannot be null
+    if (type && ![type isKindOfClass:[NSString class]]) {
+        type = nil;
+    }
     NSString *typeOrDefault = type ?: (NSString *)kUTTypeGeneric;
     
     // Include spotlight info in params
@@ -151,7 +154,7 @@
     spotlightLinkData[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
     spotlightLinkData[BRANCH_LINK_DATA_KEY_TYPE] = typeOrDefault;
     
-    if (userInfo) {
+    if (userInfo && [userInfo isKindOfClass:[NSDictionary class]]) {
         [spotlightLinkData addEntriesFromDictionary:userInfo];
     }
     
@@ -160,32 +163,39 @@
         spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_TITLE] = title;
     }
     
-    if (description) {
+    if (description && [description isKindOfClass:[NSString class]]) {
         spotlightLinkData[BRANCH_LINK_DATA_KEY_DESCRIPTION] = description;
         if (!spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION]) {
             spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION] = description;
         }
     }
     
-    NSString *thumbnailUrlString = [thumbnailUrl absoluteString];
-    BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
-    if (thumbnailUrlString) {
-        spotlightLinkData[BRANCH_LINK_DATA_KEY_THUMBNAIL_URL] = thumbnailUrlString;
-        
-        // Only use the thumbnail url if it is a remote url, not a file system url
-        if (thumbnailIsRemote && !spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL]) {
-            spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL] = thumbnailUrlString;
+    BOOL thumbnailIsRemote = NO;
+    if (thumbnailUrl && [thumbnailUrl isKindOfClass:[NSURL class]]) {
+        thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
+        NSString *thumbnailUrlString = [thumbnailUrl absoluteString];
+        if (thumbnailUrlString) {
+            spotlightLinkData[BRANCH_LINK_DATA_KEY_THUMBNAIL_URL] = thumbnailUrlString;
+            
+            // Only use the thumbnail url if it is a remote url, not a file system url
+            if (thumbnailIsRemote && !spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL]) {
+                spotlightLinkData[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL] = thumbnailUrlString;
+            }
         }
     }
     
-    if (keywords) {
+    if (keywords && [keywords isKindOfClass:[NSSet class]]) {
         spotlightLinkData[BRANCH_LINK_DATA_KEY_KEYWORDS] = [keywords allObjects];
     }
     
     [[Branch getInstance] getSpotlightUrlWithParams:spotlightLinkData callback:^(NSDictionary *data, NSError *urlError) {
-        if (urlError) {
+        if (urlError || !data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] || !data[BRANCH_RESPONSE_KEY_URL]) {
             if (callback) {
-                callback(nil, urlError);
+                if (urlError) {
+                    callback(nil, urlError);
+                    return;
+                }
+                callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Failed to generate a spotlight identifier or content URL." }]);
             }
             return;
         }
@@ -217,12 +227,18 @@
     ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setRelatedUniqueIdentifierSelector])(attributes, setRelatedUniqueIdentifierSelector, spotlightIdentifier);
     SEL setTitleSelector = NSSelectorFromString(@"setTitle:");
     ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setTitleSelector])(attributes, setTitleSelector, title);
-    SEL setContentDescriptionSelector = NSSelectorFromString(@"setContentDescription:");
-    ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setContentDescriptionSelector])(attributes, setContentDescriptionSelector, description);
-    SEL setThumbnailURLSelector = NSSelectorFromString(@"setThumbnailURL:");
-    ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setThumbnailURLSelector])(attributes, setThumbnailURLSelector, thumbnailUrl);
-    SEL setThumbnailDataSelector = NSSelectorFromString(@"setThumbnailData:");
-    ((void (*)(id, SEL, NSData *))[attributes methodForSelector:setThumbnailDataSelector])(attributes, setThumbnailDataSelector, thumbnailData);
+    if (description && [description isKindOfClass:[NSString class]]) {
+        SEL setContentDescriptionSelector = NSSelectorFromString(@"setContentDescription:");
+        ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setContentDescriptionSelector])(attributes, setContentDescriptionSelector, description);
+    }
+    if (thumbnailUrl && [thumbnailUrl isKindOfClass:[NSURL class]]) {
+        SEL setThumbnailURLSelector = NSSelectorFromString(@"setThumbnailURL:");
+        ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setThumbnailURLSelector])(attributes, setThumbnailURLSelector, thumbnailUrl);
+    }
+    if (thumbnailData && [thumbnailData isKindOfClass:[NSData class]]) {
+        SEL setThumbnailDataSelector = NSSelectorFromString(@"setThumbnailData:");
+        ((void (*)(id, SEL, NSData *))[attributes methodForSelector:setThumbnailDataSelector])(attributes, setThumbnailDataSelector, thumbnailData);
+    }
     SEL setContentURLSelector = NSSelectorFromString(@"setContentURL:");
     ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setContentURLSelector])(attributes, setContentURLSelector, [NSURL URLWithString:url]);
     
