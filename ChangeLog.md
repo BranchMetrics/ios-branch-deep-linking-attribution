@@ -1,5 +1,13 @@
 Branch iOS SDK change log
 
+- v0.11.5
+  * makes cookie-based matching using SFSafariViewController opt-in
+  * BranchActivityItemProvider now provides link even if initSession fails multiple times
+  * BranchDeepLinkingController now includes a check for modal already presented
+  * Fixed small memory leaks created by NSURLSession
+  * Changed podspec to remove optional links to iOS 9 frameworks
+  * Fixed race conditions caused by initializing the SDK on framework load
+
 - v0.11.4
   * removes the need to include CoreSpotlight
   * addresses issues where SDK would not compile against iOS 8.x base SDKs
