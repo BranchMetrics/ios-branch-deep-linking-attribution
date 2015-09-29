@@ -415,7 +415,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         return;
     }
     
-    if (!self.isInitialized) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:NO];
     }
     
@@ -446,7 +446,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - User Action methods
 
 - (void)loadActionCountsWithCallback:(callbackWithStatus)callback {
-    if (!self.isInitialized) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:NO];
     }
 
@@ -472,7 +472,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         return;
     }
     
-    if (!self.isInitialized) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:NO];
     }
     
@@ -485,7 +485,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - Credit methods
 
 - (void)loadRewardsWithCallback:(callbackWithStatus)callback {
-    if (!self.isInitialized) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:NO];
     }
 
@@ -536,7 +536,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         return;
     }
     
-    if (!self.isInitialized) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:NO];
     }
 
@@ -558,7 +558,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback {
-    if (!self.isInitialized) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:NO];
     }
 
@@ -694,7 +694,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback {
-    if (!self.isInitialized) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:NO];
     }
     
@@ -841,7 +841,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket usageType:(BranchPromoCodeUsageType)usageType rewardLocation:(BranchPromoCodeRewardLocation)rewardLocation useOld:(BOOL)useOld callback:(callbackWithParams)callback {
-    if (!self.isInitialized) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:NO];
     }
     
@@ -870,7 +870,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         return;
     }
 
-    if (!self.isInitialized) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:NO];
     }
     
@@ -895,7 +895,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         return;
     }
     
-    if (!self.isInitialized) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:NO];
     }
     
@@ -951,7 +951,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - URL Generation methods
 
 - (void)generateShortUrl:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback {
-    if (!self.isInitialized) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:NO];
     }
     
