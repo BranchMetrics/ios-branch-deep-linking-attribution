@@ -1,5 +1,8 @@
 Branch iOS SDK change log
 
+- v0.11.6
+  * fix race condition if certain methods are invoked before initSession
+
 - v0.11.5
   * makes cookie-based matching using SFSafariViewController opt-in
   * BranchActivityItemProvider now provides link even if initSession fails multiple times
