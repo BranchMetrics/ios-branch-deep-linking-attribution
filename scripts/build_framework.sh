@@ -8,6 +8,10 @@ export CONFIGURATION=Release
 export FRAMEWORK_DIR=Branch.framework
 export FRAMEWORK_BINARY_NAME=Branch
 
+export DEPLOYMENT_POSTPROCESSING=YES;
+export GCC_GENERATE_DEBUGGING_SYMBOLS=NO;
+export GCC_SYMBOLS_PRIVATE_EXTERN=YES;
+
 function xcode_build_target() {
     echo "Compiling for platform ${1}"
 
