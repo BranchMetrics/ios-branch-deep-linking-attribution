@@ -29,7 +29,7 @@
         uid = [uuid UUIDString];
     }
 
-    if (!uid && NSClassFromString(@"UIDevice")) {
+    if (!uid && NSClassFromString(@"UIDevice") && !debug) {
         uid = [[UIDevice currentDevice].identifierForVendor UUIDString];
     }
 
