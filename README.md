@@ -846,3 +846,20 @@ The response will return an array that has been parsed from the following JSON:
 1. _1_ - A reward that was added manually.
 2. _2_ - A redemption of credits that occurred through our API or SDKs.
 3. _3_ - This is a very unique case where we will subtract credits automatically when we detect fraud.
+
+## Deprecation Notice - Action Counts
+
+Currently, the following methods are deprecated for retrieving referred Action counts by a referree:
+
+1. `loadActionCountsWithCallback`
+2. `getTotalCountsForAction`
+3. `getUniqueCountsForAction`
+
+In order to retrieve the same data, you must go through [Reward Rules](https://dev.branch.io/recipes/advanced_referral_incentives/ios/). We suggest the following design when needing to track the number of events a referree's network of referred users have completed:
+
+1. Set up a reward rule that rewards referring and/or referred users for driving/taking certain actions.
+2. Call the method `getCreditHistoryWithCallback` (or the one specifically for your bucket), and examine your credit history - all people you referred who completed a certain action will display here.
+
+Example: let's say you're interested in knowing how many installs User A drove, and of those installs, you want to know how many completed the "purchase" event. You'd set up two reward rules, one for the install event, that gives the referring user any arbitrary credit amount for an arbitrary bucket. The other reward rule will be tied to the "purchase event", again, credit and bucket amounts don't matter.
+
+When User A is logged in, and you call `getCreditHistoryWithCallback`, or `getCreditHistoryForBucket` (for that bucket tied to that specific reward rule), you will see the list of completed events by User A's referrals.
