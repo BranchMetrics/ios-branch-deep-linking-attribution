@@ -608,7 +608,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 /**
  Load actions counts that have taken place for users referred by the current user.
 
- @deprecated Method is no longer supported. See dev.branch.io for an alternative.
+ @deprecated Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of
+ actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events.
 
  @param callback The callback that is called once the request has completed.
  */
@@ -632,7 +633,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 /**
  Gets the total number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.
  
- @deprecated Method is no longer supported. See dev.branch.io for an alternative.
+ @deprecated Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of
+ actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events.
 
  @param action The action string.
  @warning You must `loadActionCountsWithCallback:` before calling `getTotalCountsForAction:`. This method does not make a request for the counts.
@@ -642,7 +644,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 /**
  Gets the distinct number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.
 
- @deprecated Method is no longer supported. See dev.branch.io for an alternative.
+ @deprecated Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of
+ actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events.
 
  Distinct in this case can be explained as follows:
  Scenario 1: User A completed action `buy`, User B completed action `buy` -- Total Actions: 2, Distinct Actions: 2
