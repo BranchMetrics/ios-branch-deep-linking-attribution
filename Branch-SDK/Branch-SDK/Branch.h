@@ -608,9 +608,11 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 /**
  Load actions counts that have taken place for users referred by the current user.
 
+ @deprecated Method is no longer supported. See dev.branch.io for an alternative.
+
  @param callback The callback that is called once the request has completed.
  */
-- (void)loadActionCountsWithCallback:(callbackWithStatus)callback;
+- (void)loadActionCountsWithCallback:(callbackWithStatus)callback __attribute__((deprecated(("No longer supported. Check dev.branch.io."))));
 
 /**
  Send a user action to the server. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
@@ -630,13 +632,17 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 /**
  Gets the total number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.
  
+ @deprecated Method is no longer supported. See dev.branch.io for an alternative.
+
  @param action The action string.
  @warning You must `loadActionCountsWithCallback:` before calling `getTotalCountsForAction:`. This method does not make a request for the counts.
  */
-- (NSInteger)getTotalCountsForAction:(NSString *)action;
+- (NSInteger)getTotalCountsForAction:(NSString *)action __attribute__((deprecated(("No longer supported. Check dev.branch.io."))));
 
 /**
  Gets the distinct number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.
+
+ @deprecated Method is no longer supported. See dev.branch.io for an alternative.
 
  Distinct in this case can be explained as follows:
  Scenario 1: User A completed action `buy`, User B completed action `buy` -- Total Actions: 2, Distinct Actions: 2
@@ -645,7 +651,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param action The action string.
  @warning You must `loadActionCountsWithCallback:` before calling `getUniqueCountsForAction:`. This method does not make a request for the counts.
  */
-- (NSInteger)getUniqueCountsForAction:(NSString *)action;
+- (NSInteger)getUniqueCountsForAction:(NSString *)action __attribute__((deprecated(("No longer supported. Check dev.branch.io."))));
 
 #pragma mark - Short Url Sync methods
 
