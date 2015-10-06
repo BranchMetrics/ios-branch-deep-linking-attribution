@@ -608,9 +608,12 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 /**
  Load actions counts that have taken place for users referred by the current user.
 
+ @deprecated Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of
+ actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts
+
  @param callback The callback that is called once the request has completed.
  */
-- (void)loadActionCountsWithCallback:(callbackWithStatus)callback;
+- (void)loadActionCountsWithCallback:(callbackWithStatus)callback __attribute__((deprecated(("Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts"))));
 
 /**
  Send a user action to the server. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
@@ -630,13 +633,19 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 /**
  Gets the total number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.
  
+ @deprecated Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of
+ actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts
+
  @param action The action string.
  @warning You must `loadActionCountsWithCallback:` before calling `getTotalCountsForAction:`. This method does not make a request for the counts.
  */
-- (NSInteger)getTotalCountsForAction:(NSString *)action;
+- (NSInteger)getTotalCountsForAction:(NSString *)action __attribute__((deprecated(("Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts"))));
 
 /**
  Gets the distinct number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.
+
+ @deprecated Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of
+ actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts
 
  Distinct in this case can be explained as follows:
  Scenario 1: User A completed action `buy`, User B completed action `buy` -- Total Actions: 2, Distinct Actions: 2
@@ -645,7 +654,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param action The action string.
  @warning You must `loadActionCountsWithCallback:` before calling `getUniqueCountsForAction:`. This method does not make a request for the counts.
  */
-- (NSInteger)getUniqueCountsForAction:(NSString *)action;
+- (NSInteger)getUniqueCountsForAction:(NSString *)action __attribute__((deprecated(("Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts"))));
 
 #pragma mark - Short Url Sync methods
 
