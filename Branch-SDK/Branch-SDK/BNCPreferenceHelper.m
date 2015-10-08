@@ -504,7 +504,13 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 - (NSMutableDictionary *)persistenceDict {
     if (!_persistenceDict) {
-        NSDictionary *persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithFile:[self prefsFile]];
+        NSDictionary *persistenceDict = nil;
+        @try {
+            persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithFile:[self prefsFile]];
+        }
+        @catch (NSException *exception) {
+            NSLog(@"[Branch Warning] Failed to load preferences from disk");
+        }
 
         if (persistenceDict) {
             _persistenceDict = [persistenceDict mutableCopy];
