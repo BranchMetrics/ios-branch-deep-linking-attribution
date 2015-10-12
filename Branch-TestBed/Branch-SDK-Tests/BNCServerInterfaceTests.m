@@ -10,6 +10,7 @@
 #import "BNCServerInterface.h"
 #import "BNCPreferenceHelper.h"
 #import <OCMock/OCMock.h>
+#import <OHHTTPStubs/OHHTTPStubs.h>
 
 typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
@@ -19,12 +20,19 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
 @implementation BNCServerInterfaceTests
 
+#pragma mark - Tear Down
+- (void) tearDown {
+    [super tearDown];
+    [OHHTTPStubs removeAllStubs];
+}
+
 
 #pragma mark - Key tests
 
 - (void)testParamAddForBranchKey {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    id urlConnectionMock = OCMClassMock([NSURLConnection class]);
+    // temporarily commented out due to iOS 9 testing only.
+    /*id urlConnectionMock = OCMClassMock([NSURLConnection class]);
     
     // Expect the query to contain branch key
     [[urlConnectionMock expect] sendAsynchronousRequest:[OCMArg checkWithBlock:^BOOL(NSURLRequest *request) {
@@ -33,13 +41,31 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     
     // Make the request
     [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
-    
-    [urlConnectionMock verify];
+
+    [urlConnectionMock verify];*/
+
+    XCTestExpectation* expectation = [self expectationWithDescription:@"NSURLSessionDataTask completed"];
+
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        // We're not sending a request, just verifying a "branch_key=key_foo" is present.
+        XCTAssertTrue([request.URL.query rangeOfString:@"branch_key=key_foo"].location != NSNotFound, @"Branch Key not added");
+        [expectation fulfill];
+        return [request.URL.query rangeOfString:@"branch_key=key_foo"].location != NSNotFound;
+    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+        NSDictionary* dummyJSONResponse = @{@"key": @"value"};
+        return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+    }];
+
+    [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
+
+    [self waitForExpectationsWithTimeout:5.0 /* 5 seconds */ handler:nil];
+
 }
 
 - (void)testParamAddForAppKey {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-    id urlConnectionMock = OCMClassMock([NSURLConnection class]);
+    // temporarily commented out due to iOS 9 testing only.
+    /*id urlConnectionMock = OCMClassMock([NSURLConnection class]);
     
     // Expect the query to contain app id
     [[urlConnectionMock expect] sendAsynchronousRequest:[OCMArg checkWithBlock:^BOOL(NSURLRequest *request) {
@@ -49,7 +75,23 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     // Make the request
     [serverInterface getRequest:nil url:@"http://foo" key:@"non_branch_key" callback:NULL];
     
-    [urlConnectionMock verify];
+    [urlConnectionMock verify];*/
+
+    XCTestExpectation* expectation = [self expectationWithDescription:@"NSURLSessionDataTask completed"];
+
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        // We're not sending a request, just verifying a "branch_key=key_foo" is present.
+        XCTAssertTrue([request.URL.query rangeOfString:@"app_id=non_branch_key"].location != NSNotFound, @"Branch App ID not added");
+        [expectation fulfill];
+        return [request.URL.query rangeOfString:@"app_id=key_foo"].location != NSNotFound;
+    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+        NSDictionary* dummyJSONResponse = @{@"key": @"value"};
+        return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+    }];
+
+    [serverInterface getRequest:nil url:@"http://foo" key:@"non_branch_key" callback:NULL];
+
+    [self waitForExpectationsWithTimeout:5.0 /* 5 seconds */ handler:nil];
 }
 
 
