@@ -9,6 +9,7 @@
 #import "BranchDisconnectDebugRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
+#import "BNCConfig.h"
 
 @implementation BranchDisconnectDebugRequest
 
@@ -18,7 +19,8 @@
     NSDictionary *params = @{
         BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
         BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        @"sdk": [NSString stringWithFormat:@"ios%@", SDK_VERSION]
     };
 
     [serverInterface postRequest:params url:[[BNCPreferenceHelper preferenceHelper] getAPIURL:BRANCH_REQUEST_ENDPOINT_DISCONNECT_DEBUG] key:key log:NO callback:callback];
