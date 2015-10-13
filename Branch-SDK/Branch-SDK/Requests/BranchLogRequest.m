@@ -10,6 +10,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
 #import "BNCError.h"
+#import "BNCConfig.h"
 
 @interface BranchLogRequest ()
 
@@ -39,7 +40,8 @@
         BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
         BRANCH_REQUEST_KEY_LOG: self.log,
         BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        @"sdk": [NSString stringWithFormat:@"ios%@", SDK_VERSION]
     };
     
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_LOG] key:key log:NO callback:callback];

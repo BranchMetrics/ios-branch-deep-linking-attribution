@@ -10,6 +10,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
+#import "BNCConfig.h"
 
 @interface BranchConnectDebugRequest ()
 
@@ -38,7 +39,8 @@
         BRANCH_REQUEST_KEY_MODEL: [BNCSystemObserver getModel],
         BRANCH_REQUEST_KEY_IS_SIMULATOR: @([BNCSystemObserver isSimulator]),
         BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        @"sdk": [NSString stringWithFormat:@"ios%@", SDK_VERSION]
     };
     
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CONNECT_DEBUG] key:key log:NO callback:callback];
