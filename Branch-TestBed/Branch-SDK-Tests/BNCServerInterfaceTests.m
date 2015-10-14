@@ -100,7 +100,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 - (void)testGetRequestAsyncRetriesWhenAppropriate {
     BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
     serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
-    id urlConnectionMock = OCMClassMock([NSURLConnection class]);
+    /*id urlConnectionMock = OCMClassMock([NSURLConnection class]);
     
     // Specify retry count as 3
     serverInterface.preferenceHelper.retryCount = 3;
@@ -118,7 +118,33 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     
     [self waitForExpectationsWithTimeout:5 handler:NULL];
     
-    [urlConnectionMock verify];
+    [urlConnectionMock verify];*/
+
+    // gangster block
+    OHHTTPStubsResponse* (^datResponse)(NSURLRequest *) = ^OHHTTPStubsResponse*(NSURLRequest* request) {
+        NSDictionary* dummyJSONResponse = @{@"key": @"value"};
+        return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:504 headers:nil];
+    };
+
+    // Specify retry count as 3
+    serverInterface.preferenceHelper.retryCount = 3;
+
+    // 3 retries means 4 total requests
+    [self expectSendAsyncRequestForBranchError:urlConnectionMock times:4];
+
+    XCTestExpectation* expectation = [self expectationWithDescription:@"Get Request Expectation"];
+
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        // We're not sending a request, just verifying a "branch_key=key_foo" is present.
+        return [request.URL.query rangeOfString:@"branch_key=key_foo"].location != NSNotFound;
+    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+        NSDictionary* dummyJSONResponse = @{@"key": @"value"};
+        return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+    }];
+
+    [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
+
+    [self waitForExpectationsWithTimeout:5.0 /* 5 seconds */ handler:nil];
 }
 
 - (void)testGetRequestAsyncRetriesWhenInappropriateResponse {
@@ -200,9 +226,8 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     
     // Make the request
     XCTestExpectation *postRequestExpectation = [self expectationWithDescription:@"POST Request Expectation"];
-    [serverInterface postRequest:nil url:@"http://foo" key:@"key_foo" callback:^(BNCServerResponse *response, NSError *error) {
+    [serverInterface postRequest:nil url:@"https://foo.com" key:@"key_foo" callback:^(BNCServerResponse *response, NSError *error) {
         XCTAssertNil(error);
-        
         [postRequestExpectation fulfill];
     }];
     
