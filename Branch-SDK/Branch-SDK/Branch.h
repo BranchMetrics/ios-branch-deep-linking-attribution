@@ -148,6 +148,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 + (Branch *)getInstance:(NSString *)branchKey;
 
+
 #pragma mark - BranchActivityItemProvider methods
 
 ///-----------------------------------------
@@ -819,6 +820,21 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
 
 /**
+ Get a short url with specified tags, params, channel, feature, stage, and match duration. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param tags An array of tags to associate with this link, useful for tracking.
+ @param alias The alias for a link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param matchDuration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
+ @warning This method makes a synchronous url request.
+ @warning This can fail if the alias is already taken.
+ */
+- (NSString *)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
+    
+/**
  Get a short url with specified params and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
  
  @param params Dictionary of parameters to include in the link.
@@ -1050,6 +1066,21 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param callback Callback called with the url.
  */
 - (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration andCallback:(callbackWithUrl)callback;
+
+/**
+ Get a short url with the specified params, tags, channel, feature, stage, and match duration. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param tags An array of tags to associate with this link, useful for tracking.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param matchDuration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
+ @param callback Callback called with the url.
+ @param alias The alias for a link.
+ @warning This can fail if the alias is already taken.
+ */
+- (void)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback;
 
 /**
  Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
@@ -1333,5 +1364,20 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @warning This is meant for use internally only (exposed for the sake of testing) and should not be used by apps.
  */
 - (void)log:(NSString *)log;
+
+/**
+ Method used by BranchUniversalObject to register a view on content
+ 
+ @warning This is meant for use internally only and should not be used by apps.
+ */
+- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
+
+/**
+ Gets the global Branch instance, whether live or test, but only if a key has been specified.
+ 
+ @warning This is meant for use internally only and should not be used by apps. Invoking this method could result
+ in broken functionality.
+ */
++ (Branch *)getCurrentInstanceIfAny;
 
 @end

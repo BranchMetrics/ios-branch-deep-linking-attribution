@@ -17,6 +17,8 @@
 #import "BNCLinkData.h"
 #import "BNCLinkCache.h"
 #import "BNCEncodingUtils.h"
+#import "BNCContentDiscoveryManager.h"
+#import "BNCStrongMatchHelper.h"
 #import "BranchSetIdentityRequest.h"
 #import "BranchLogoutRequest.h"
 #import "BranchLoadActionsRequest.h"
@@ -35,9 +37,8 @@
 #import "BranchConnectDebugRequest.h"
 #import "BranchDisconnectDebugRequest.h"
 #import "BranchLogRequest.h"
-#import "BNCContentDiscoveryManager.h"
 #import "BranchSpotlightUrlRequest.h"
-#import "BNCStrongMatchHelper.h"
+#import "BranchRegisterViewRequest.h"
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
@@ -110,7 +111,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         }
     }
 
-    return [Branch getInstanceInternal:keyToUse];
+    return [Branch getInstanceInternal:keyToUse returnNilIfNoCurrentInstance:NO];
 }
 
 + (Branch *)getTestInstance {
@@ -133,7 +134,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         }
     }
 
-    return [Branch getInstanceInternal:keyToUse];
+    return [Branch getInstanceInternal:keyToUse returnNilIfNoCurrentInstance:NO];
 }
 
 + (Branch *)getInstance:(NSString *)branchKey {
@@ -146,7 +147,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         preferenceHelper.appKey = branchKey;
     }
     
-    return [Branch getInstanceInternal:branchKey];
+    return [Branch getInstanceInternal:branchKey returnNilIfNoCurrentInstance:NO];
 }
 
 - (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache preferenceHelper:(BNCPreferenceHelper *)preferenceHelper key:(NSString *)key {
@@ -649,6 +650,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
     return [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:nil andParams:params ignoreUAString:nil forceLinkCreation:NO];
 }
 
+- (NSString *)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration {
+    return [self generateShortUrl:tags andAlias:alias andType:BranchLinkTypeUnlimitedUse andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:params ignoreUAString:nil forceLinkCreation:NO];
+}
+
 - (void)getShortURLWithCallback:(callbackWithUrl)callback {
     [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:nil andFeature:nil andStage:nil andParams:nil andCallback:callback];
 }
@@ -691,6 +696,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 - (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andCallback:(callbackWithUrl)callback {
     [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:feature andStage:nil andParams:params andCallback:callback];
+}
+
+- (void)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback {
+    [self generateShortUrl:tags andAlias:alias andType:BranchLinkTypeUnlimitedUse andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:params andCallback:callback];
 }
 
 - (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback {
@@ -916,10 +925,14 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 #pragma mark - Private methods
 
-+ (Branch *)getInstanceInternal:(NSString *)key {
++ (Branch *)getInstanceInternal:(NSString *)key returnNilIfNoCurrentInstance:(BOOL)returnNilIfNoCurrentInstance {
     static Branch *branch;
-    static dispatch_once_t onceToken;
     
+    if (!branch && returnNilIfNoCurrentInstance) {
+        return nil;
+    }
+    
+    static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
@@ -1057,6 +1070,24 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [post setupParams:params];
 
     return post;
+}
+
+
+#pragma mark - BranchUniversalObject methods
+
++ (Branch *)getCurrentInstanceIfAny {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    return [Branch getInstanceInternal:preferenceHelper.lastRunBranchKey returnNilIfNoCurrentInstance:NO];
+}
+
+- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
+        [self initUserSessionAndCallCallback:NO];
+    }
+    
+    BranchRegisterViewRequest *req = [[BranchRegisterViewRequest alloc] initWithParams:params andCallback:callback];
+    [self.requestQueue enqueue:req];
+    [self processNextQueueItem];
 }
 
 
