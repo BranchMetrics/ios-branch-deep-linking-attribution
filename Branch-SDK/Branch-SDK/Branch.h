@@ -1372,12 +1372,4 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
 
-/**
- Gets the global Branch instance, whether live or test, but only if a key has been specified.
- 
- @warning This is meant for use internally only and should not be used by apps. Invoking this method could result
- in broken functionality.
- */
-+ (Branch *)getCurrentInstanceIfAny;
-
 @end

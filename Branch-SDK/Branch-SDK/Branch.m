@@ -1075,11 +1075,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 #pragma mark - BranchUniversalObject methods
 
-+ (Branch *)getCurrentInstanceIfAny {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    return [Branch getInstanceInternal:preferenceHelper.lastRunBranchKey returnNilIfNoCurrentInstance:NO];
-}
-
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback {
     if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:NO];
