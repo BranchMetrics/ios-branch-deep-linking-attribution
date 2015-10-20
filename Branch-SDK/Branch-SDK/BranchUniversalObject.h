@@ -34,7 +34,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties;
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback;
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties;
-
-// TODO V2: Core Spotlight Indexing
+- (void)indexForCoreSpotlight;
+- (void)indexForCoreSpotlightWithCallback:(callbackWithUrl)callback;
 
 @end

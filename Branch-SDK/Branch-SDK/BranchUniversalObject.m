@@ -32,13 +32,16 @@
         return;
     }
     
-    [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest] andCallback:nil];
+    [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest]
+                                     andCallback:nil];
 }
 
 - (void)registerViewWithCallback:(callbackWithParams)callback {
     if (!self.canonicalIdentifier && !self.title) {
         if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"A canonicalIdentifier or title are required to uniquely identify content, so could not register view." }]);
+            callback(nil, [NSError errorWithDomain:BNCErrorDomain
+                                              code:BNCInitError
+                                          userInfo:@{ NSLocalizedDescriptionKey: @"A canonicalIdentifier or title are required to uniquely identify content, so could not register view." }]);
         }
         else {
             NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not register view.");
@@ -55,7 +58,13 @@
         return nil;
     }
     
-    return [[Branch getInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties] andTags:linkProperties.tags andAlias:linkProperties.alias andChannel:linkProperties.channel andFeature:linkProperties.feature andStage:linkProperties.stage andMatchDuration:linkProperties.matchDuration];
+    return [[Branch getInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
+                                               andTags:linkProperties.tags
+                                              andAlias:linkProperties.alias
+                                            andChannel:linkProperties.channel
+                                            andFeature:linkProperties.feature
+                                              andStage:linkProperties.stage
+                                      andMatchDuration:linkProperties.matchDuration];
 }
 
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback {
@@ -69,7 +78,14 @@
         return;
     }
 
-    [[Branch getInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties] andTags:linkProperties.tags andAlias:linkProperties.alias andMatchDuration:linkProperties.matchDuration andChannel:linkProperties.channel andFeature:linkProperties.feature andStage:linkProperties.stage andCallback:callback];
+    [[Branch getInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
+                                        andTags:linkProperties.tags
+                                       andAlias:linkProperties.alias
+                               andMatchDuration:linkProperties.matchDuration
+                                     andChannel:linkProperties.channel
+                                     andFeature:linkProperties.feature
+                                       andStage:linkProperties.stage
+                                    andCallback:callback];
 }
 
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties {
@@ -81,7 +97,33 @@
     if (linkProperties.matchDuration) {
         [params setObject:@(linkProperties.matchDuration) forKey:BRANCH_REQUEST_KEY_URL_DURATION];
     }
-    return [Branch getBranchActivityItemWithParams:params feature:linkProperties.feature stage:linkProperties.stage tags:linkProperties.tags alias:linkProperties.alias];
+    return [Branch getBranchActivityItemWithParams:params
+                                           feature:linkProperties.feature
+                                             stage:linkProperties.stage
+                                              tags:linkProperties.tags
+                                             alias:linkProperties.alias];
+}
+
+- (void)indexForCoreSpotlight {
+    [self indexForCoreSpotlightWithCallback:nil];
+}
+
+- (void)indexForCoreSpotlightWithCallback:(callbackWithUrl)callback {
+    NSNumber *publiclyIndexable;
+    if (self.contentIndexMode == ContentIndexModePrivate) {
+        publiclyIndexable = @0;
+    }
+    else {
+        publiclyIndexable = @1;
+    }
+    
+    [[Branch getInstance] createDiscoverableContentWithTitle:self.title
+                                                 description:self.contentDescription
+                                                thumbnailUrl:[NSURL URLWithString:self.imageUrl]
+                                                        type:self.type
+                                           publiclyIndexable:publiclyIndexable
+                                                    keywords:[NSSet setWithArray:self.keywords]
+                                                    callback:callback];
 }
 
 
