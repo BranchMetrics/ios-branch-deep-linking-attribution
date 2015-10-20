@@ -33,8 +33,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 - (void)registerViewWithCallback:(callbackWithParams)callback;
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties;
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback;
-
-// TODO: Share Sheet
+- (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties;
 
 // TODO V2: Core Spotlight Indexing
 
