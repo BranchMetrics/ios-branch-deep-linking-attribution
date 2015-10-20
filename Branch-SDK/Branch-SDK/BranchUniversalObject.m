@@ -27,27 +27,15 @@
 }
 
 - (void)registerView {
-    Branch *branch = [Branch getCurrentInstanceIfAny];
-    if (!branch) {
-        NSLog(@"[Branch Warning] getInstance has not yet been invoked, so could not register view.");
-        return;
-    }
     if (!self.canonicalIdentifier && !self.title) {
         NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not register view.");
         return;
     }
     
-    [branch registerViewWithParams:[self getParamsForServerRequest] andCallback:nil];
+    [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest] andCallback:nil];
 }
 
 - (void)registerViewWithCallback:(callbackWithParams)callback {
-    Branch *branch = [Branch getCurrentInstanceIfAny];
-    if (!branch) {
-        if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"getInstance has not yet been invoked, so could not register view." }]);
-        }
-        return;
-    }
     if (!self.canonicalIdentifier && !self.title) {
         if (callback) {
             callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"A canonicalIdentifier or title are required to uniquely identify content, so could not register view." }]);
@@ -58,31 +46,19 @@
         return;
     }
     
-    [branch registerViewWithParams:[self getParamsForServerRequest] andCallback:callback];
+    [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest] andCallback:callback];
 }
 
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties {
-    Branch *branch = [Branch getCurrentInstanceIfAny];
-    if (!branch) {
-        NSLog(@"[Branch Warning] getInstance has not yet been invoked, so could not generate a URL.");
-        return nil;
-    }
     if (!self.canonicalIdentifier && !self.title) {
         NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.");
         return nil;
     }
     
-    return [branch getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties] andTags:linkProperties.tags andAlias:linkProperties.alias andChannel:linkProperties.channel andFeature:linkProperties.feature andStage:linkProperties.stage andMatchDuration:linkProperties.matchDuration];
+    return [[Branch getInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties] andTags:linkProperties.tags andAlias:linkProperties.alias andChannel:linkProperties.channel andFeature:linkProperties.feature andStage:linkProperties.stage andMatchDuration:linkProperties.matchDuration];
 }
 
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback {
-    Branch *branch = [Branch getCurrentInstanceIfAny];
-    if (!branch) {
-        if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"getInstance has not yet been invoked, so could not generate a URL." }]);
-        }
-        return;
-    }
     if (!self.canonicalIdentifier && !self.title) {
         if (callback) {
             callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL." }]);
@@ -93,10 +69,14 @@
         return;
     }
 
-    [branch getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties] andTags:linkProperties.tags andAlias:linkProperties.alias andMatchDuration:linkProperties.matchDuration andChannel:linkProperties.channel andFeature:linkProperties.feature andStage:linkProperties.stage andCallback:callback];
+    [[Branch getInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties] andTags:linkProperties.tags andAlias:linkProperties.alias andMatchDuration:linkProperties.matchDuration andChannel:linkProperties.channel andFeature:linkProperties.feature andStage:linkProperties.stage andCallback:callback];
 }
 
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties {
+    if (!self.canonicalIdentifier && !self.title) {
+        NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content. In order to not break the end user experience with sharing, Branch SDK will proceed to create a URL, but content analytics may not properly include this URL.");
+    }
+
     NSMutableDictionary *params = [[self getParamsForServerRequestWithAddedLinkProperties:linkProperties] mutableCopy];
     if (linkProperties.matchDuration) {
         [params setObject:@(linkProperties.matchDuration) forKey:BRANCH_REQUEST_KEY_URL_DURATION];
