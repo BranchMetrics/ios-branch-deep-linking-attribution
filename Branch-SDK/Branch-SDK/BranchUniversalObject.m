@@ -96,6 +96,14 @@
     [branch getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties] andTags:linkProperties.tags andAlias:linkProperties.alias andMatchDuration:linkProperties.matchDuration andChannel:linkProperties.channel andFeature:linkProperties.feature andStage:linkProperties.stage andCallback:callback];
 }
 
+- (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties {
+    NSMutableDictionary *params = [[self getParamsForServerRequestWithAddedLinkProperties:linkProperties] mutableCopy];
+    if (linkProperties.matchDuration) {
+        [params setObject:@(linkProperties.matchDuration) forKey:BRANCH_REQUEST_KEY_URL_DURATION];
+    }
+    return [Branch getBranchActivityItemWithParams:params feature:linkProperties.feature stage:linkProperties.stage tags:linkProperties.tags alias:linkProperties.alias];
+}
+
 
 #pragma mark - Private methods
 
