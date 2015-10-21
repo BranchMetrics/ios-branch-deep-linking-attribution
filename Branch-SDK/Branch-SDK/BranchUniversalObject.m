@@ -31,7 +31,7 @@
         NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not register view.");
         return;
     }
-    
+
     [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest]
                                      andCallback:nil];
 }
@@ -48,7 +48,7 @@
         }
         return;
     }
-    
+
     [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest] andCallback:callback];
 }
 
@@ -57,7 +57,7 @@
         NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.");
         return nil;
     }
-    
+
     return [[Branch getInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
                                                andTags:linkProperties.tags
                                               andAlias:linkProperties.alias
@@ -104,11 +104,26 @@
                                              alias:linkProperties.alias];
 }
 
-- (void)indexForCoreSpotlight {
-    [self indexForCoreSpotlightWithCallback:nil];
+- (void)showShareSheetWithShareText:(NSString *)shareText {
+    [self showShareSheetWithLinkProperties:nil andShareText:shareText fromViewController:nil];
 }
 
-- (void)indexForCoreSpotlightWithCallback:(callbackWithUrl)callback {
+- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController {
+    UIActivityItemProvider *itemProvider = [self getBranchActivityItemWithLinkProperties:linkProperties];
+    UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareText, itemProvider] applicationActivities:nil];
+    if (viewController && [viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+        [viewController presentViewController:shareViewController animated:YES completion:nil];
+    }
+    else {
+        [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:shareViewController animated:YES completion:nil];
+    }
+}
+
+- (void)listOnSpotlight {
+    [self listOnSpotlightWithCallback:nil];
+}
+
+- (void)listOnSpotlightWithCallback:(callbackWithUrl)callback {
     NSNumber *publiclyIndexable;
     if (self.contentIndexMode == ContentIndexModePrivate) {
         publiclyIndexable = @0;
@@ -116,7 +131,6 @@
     else {
         publiclyIndexable = @1;
     }
-    
     [[Branch getInstance] createDiscoverableContentWithTitle:self.title
                                                  description:self.contentDescription
                                                 thumbnailUrl:[NSURL URLWithString:self.imageUrl]
@@ -146,15 +160,12 @@
     [self safeSetValue:self.type forKey:BRANCH_LINK_DATA_KEY_CONTENT_TYPE onDict:temp];
 
     [temp addEntriesFromDictionary:[self.metatdata copy]];
-
     return [temp copy];
 }
 
 - (NSDictionary *)getParamsForServerRequestWithAddedLinkProperties:(BranchLinkProperties *)linkProperties {
     NSMutableDictionary *temp = [[self getParamsForServerRequest] mutableCopy];
-
     [temp addEntriesFromDictionary:[linkProperties.controlParams copy]]; // TODO: Add warnings if controlParams contains non-control params
-
     return [temp copy];
 }
 
