@@ -110,12 +110,19 @@
 
 - (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController {
     UIActivityItemProvider *itemProvider = [self getBranchActivityItemWithLinkProperties:linkProperties];
-    UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareText, itemProvider] applicationActivities:nil];
+    NSMutableArray *items = [NSMutableArray arrayWithObject:itemProvider];
+    if (shareText) {
+        [items addObject:shareText];
+    }
+    UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     if (viewController && [viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
         [viewController presentViewController:shareViewController animated:YES completion:nil];
     }
+    else if ([[[[UIApplication sharedApplication].delegate window] rootViewController] respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+        [[[[UIApplication sharedApplication].delegate window] rootViewController] presentViewController:shareViewController animated:YES completion:nil];
+    }
     else {
-        [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:shareViewController animated:YES completion:nil];
+        NSLog(@"[Branch warning, fatal] No view controller is present to show the share sheet. Aborting.");
     }
 }
 
