@@ -34,7 +34,9 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties;
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback;
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties;
-- (void)indexForCoreSpotlight;
-- (void)indexForCoreSpotlightWithCallback:(callbackWithUrl)callback;
+- (void)showShareSheetWithShareText:(NSString *)shareText;
+- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController;
+- (void)listOnSpotlight;
+- (void)listOnSpotlightWithCallback:(callbackWithUrl)callback;
 
 @end
