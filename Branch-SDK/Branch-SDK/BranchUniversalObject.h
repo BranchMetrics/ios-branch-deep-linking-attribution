@@ -21,7 +21,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *contentDescription;
 @property (nonatomic, strong) NSString *imageUrl;
-@property (nonatomic, strong) NSDictionary *metatdata;
+@property (nonatomic, strong) NSDictionary *metadata;
 @property (nonatomic, strong) NSString *type;
 @property (nonatomic) ContentIndexMode contentIndexMode;
 @property (nonatomic, strong) NSArray *keywords;
