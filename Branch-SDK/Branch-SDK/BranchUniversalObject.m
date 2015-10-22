@@ -166,7 +166,7 @@
     [self safeSetValue:@(self.expirationInMilliSec) forKey:BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE onDict:temp];
     [self safeSetValue:self.type forKey:BRANCH_LINK_DATA_KEY_CONTENT_TYPE onDict:temp];
 
-    [temp addEntriesFromDictionary:[self.metatdata copy]];
+    [temp addEntriesFromDictionary:[self.metadata copy]];
     return [temp copy];
 }
 
