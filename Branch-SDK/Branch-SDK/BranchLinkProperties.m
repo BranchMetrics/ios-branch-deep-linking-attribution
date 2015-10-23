@@ -7,6 +7,7 @@
 //
 
 #import "BranchLinkProperties.h"
+#import "BranchConstants.h"
 
 @implementation BranchLinkProperties
 
@@ -24,6 +25,46 @@
     NSMutableDictionary *temp = [_controlParams mutableCopy];
     temp[controlParam] = value;
     _controlParams = [temp copy];
+}
+
++ (BranchLinkProperties *)transformDictionaryToBranchUniversalObject:(NSDictionary *)dictionary {
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    
+    if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_TAGS]]) {
+        linkProperties.tags = dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_TAGS]];
+    }
+    if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_FEATURE]]) {
+        linkProperties.feature = dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_FEATURE]];
+    }
+    if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_ALIAS]]) {
+        linkProperties.alias = dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_ALIAS]];
+    }
+    if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_CHANNEL]]) {
+        linkProperties.channel = dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_CHANNEL]];
+    }
+    if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_STAGE]]) {
+        linkProperties.stage = dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_STAGE]];
+    }
+    if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_DURATION]]) {
+        linkProperties.matchDuration = [dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_DURATION]] intValue];
+    }
+    if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_STAGE]]) {
+        linkProperties.stage = dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_STAGE]];
+    }
+    
+    NSMutableDictionary *controlParams = [[NSMutableDictionary alloc] init];
+    for (NSString *oneKey in dictionary.allKeys) {
+        if ([oneKey hasPrefix:@"$"]) {
+            controlParams[oneKey] = dictionary[oneKey];
+        }
+    }
+    linkProperties.controlParams = controlParams;
+    
+    return linkProperties;
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"BranchLinkProperties | tags: %@ \n feature: %@ \n alias: %@ \n channel: %@ \n stage: %@ \n matchDuration: %lu \n controlParams: %@", self.tags, self.feature, self.alias, self.channel, self.stage, (long)self.matchDuration, self.controlParams];
 }
 
 @end
