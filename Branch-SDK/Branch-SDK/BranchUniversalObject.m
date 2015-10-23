@@ -163,7 +163,7 @@
                                                     callback:callback];
 }
 
-+ (BranchUniversalObject *)transformDictionaryToBranchUniversalObject:(NSDictionary *)dictionary {
++ (BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(NSDictionary *)dictionary {
     BranchUniversalObject *universalObject = [[BranchUniversalObject alloc] init];
     
     // Build BranchUniversalObject base properties

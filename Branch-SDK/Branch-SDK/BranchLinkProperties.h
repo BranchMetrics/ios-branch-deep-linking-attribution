@@ -19,6 +19,8 @@
 @property (nonatomic, strong) NSDictionary *controlParams;
 
 - (void)addControlParam:(NSString *)controlParam withValue:(NSString *)value;
-+ (BranchLinkProperties *)transformDictionaryToBranchUniversalObject:(NSDictionary *)dictionary;
++ (BranchLinkProperties *)getBranchLinkPropertiesFromDictionary:(NSDictionary *)dictionary;
+
+- (NSString *)description;
 
 @end

@@ -584,11 +584,19 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (BranchUniversalObject *)getFirstReferringBranchUniversalObject {
-    return [BranchUniversalObject transformDictionaryToBranchUniversalObject:[self getFirstReferringParams]];
+    NSDictionary *params = [self getFirstReferringParams];
+    if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {
+        return [BranchUniversalObject getBranchUniversalObjectFromDictionary:params];
+    }
+    return nil;
 }
 
 - (BranchLinkProperties *)getFirstReferringBranchLinkProperties {
-    return [BranchLinkProperties transformDictionaryToBranchUniversalObject:[self getFirstReferringParams]];
+    NSDictionary *params = [self getFirstReferringParams];
+    if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {
+        return [BranchLinkProperties getBranchLinkPropertiesFromDictionary:params];
+    }
+    return nil;
 }
 
 - (NSDictionary *)getFirstReferringParams {
@@ -600,11 +608,19 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (BranchUniversalObject *)getLatestReferringBranchUniversalObject {
-    return [BranchUniversalObject transformDictionaryToBranchUniversalObject:[self getLatestReferringParams]];
+    NSDictionary *params = [self getLatestReferringParams];
+    if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {
+        return [BranchUniversalObject getBranchUniversalObjectFromDictionary:params];
+    }
+    return nil;
 }
 
 - (BranchLinkProperties *)getLatestReferringBranchLinkProperties {
-    return [BranchLinkProperties transformDictionaryToBranchUniversalObject:[self getLatestReferringParams]];
+    NSDictionary *params = [self getLatestReferringParams];
+    if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {
+        return [BranchLinkProperties getBranchLinkPropertiesFromDictionary:params];
+    }
+    return nil;
 }
 
 #pragma mark - ContentUrl methods
