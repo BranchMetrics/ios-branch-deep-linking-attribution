@@ -110,34 +110,6 @@
     }];
 }
 
-// Share Sheet example
-- (IBAction)cmdShareSheet:(id)sender {
-    
-    // Setup up the content you want to share, and the Branch
-    // params and properties, as you would for any branch link
-    
-    // No need to set the channel, that is done automatically based
-    // on the share activity the user selects
-    NSString *shareString = @"Super amazing thing I want to share!";
-    
-    NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!", @"Kindred", @"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png"] forKeys:@[@"key1", @"key2", @"$og_title", @"$og_image_url"]];
-    
-    NSArray *tags = @[@"tag1", @"tag2"];
-    
-    NSString *feature = @"invite";
-    
-    NSString *stage = @"2";
-    
-    // Branch UIActivityItemProvider
-    UIActivityItemProvider *itemProvider = [Branch getBranchActivityItemWithParams:params feature:feature stage:stage tags:tags];
-    
-    // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
-    UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareString, itemProvider] applicationActivities:nil];
-    
-    // Present the share sheet!
-    [self.navigationController presentViewController:shareViewController animated:YES completion:nil];
-}
-
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"ShowCreditHistory"]) {
         ((CreditHistoryViewController *)segue.destinationViewController).creditTransactions = sender;

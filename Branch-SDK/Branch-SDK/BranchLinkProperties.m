@@ -19,10 +19,10 @@
 }
 
 - (void)addControlParam:(NSString *)controlParam withValue:(NSString *)value {
-    if (!controlParam || ! value) {
+    if (!controlParam || !value) {
         return;
     }
-    NSMutableDictionary *temp = [_controlParams mutableCopy];
+    NSMutableDictionary *temp = [self.controlParams mutableCopy];
     temp[controlParam] = value;
     _controlParams = [temp copy];
 }
