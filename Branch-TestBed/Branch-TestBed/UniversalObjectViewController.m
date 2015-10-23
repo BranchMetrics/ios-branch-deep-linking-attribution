@@ -18,8 +18,24 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [self.canonicalIdentifierTextField addTarget:self
+                                          action:@selector(textFieldChanged:)
+                                forControlEvents:UIControlEventEditingChanged];
+    [self.titleTextField addTarget:self
+                            action:@selector(textFieldChanged:)
+                  forControlEvents:UIControlEventEditingChanged];
+    
     UITapGestureRecognizer *hideKeyboard = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard)];
     [self.view addGestureRecognizer:hideKeyboard];
+}
+
+- (void)textFieldChanged:(UITextField *)textField {
+    if (textField == self.canonicalIdentifierTextField) {
+        self.myContent.canonicalIdentifier = self.canonicalIdentifierTextField.text;
+    }
+    else if (textField == self.titleTextField) {
+        self.myContent.title = self.titleTextField.text;
+    }
 }
 
 - (void)hideKeyboard {
@@ -42,8 +58,6 @@
     
     NSLog(@"You've initialized a %@", self.myContent);
 
-    self.canonicalIdentifierTextField.text = nil;
-    self.titleTextField.text = nil;
     [self hideKeyboard];
 }
 
