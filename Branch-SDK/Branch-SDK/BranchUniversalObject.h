@@ -10,6 +10,7 @@
 #import "BranchLinkProperties.h"
 #import "Branch.h"
 
+
 @interface BranchUniversalObject : NSObject
 
 typedef NS_ENUM(NSInteger, ContentIndexMode) {
@@ -42,6 +43,8 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback;
 
 // Convenience method for initSession methods that return BranchUniversalObject, but can be used safely by anyone.
-+ (BranchUniversalObject *)transformDictionaryToBranchUniversalObject:(NSDictionary *)dictionary;
++ (BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(NSDictionary *)dictionary;
+
+- (NSString *)description;
 
 @end

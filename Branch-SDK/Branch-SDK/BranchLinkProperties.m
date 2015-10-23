@@ -27,7 +27,7 @@
     _controlParams = [temp copy];
 }
 
-+ (BranchLinkProperties *)transformDictionaryToBranchUniversalObject:(NSDictionary *)dictionary {
++ (BranchLinkProperties *)getBranchLinkPropertiesFromDictionary:(NSDictionary *)dictionary {
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     
     if (dictionary[[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_TAGS]]) {
