@@ -147,6 +147,46 @@
                                                     callback:callback];
 }
 
++ (BranchUniversalObject *)transformDictionaryToBranchUniversalObject:(NSDictionary *)dictionary {
+    BranchUniversalObject *universalObject = [[BranchUniversalObject alloc] init];
+    
+    // Build BranchUniversalObject base properties
+    universalObject.metadata = [dictionary copy];
+    if (dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER]) {
+        universalObject.canonicalIdentifier = dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER];
+    }
+    if (dictionary[BRANCH_LINK_DATA_KEY_OG_TITLE]) {
+        universalObject.title = dictionary[BRANCH_LINK_DATA_KEY_OG_TITLE];
+    }
+    if (dictionary[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION]) {
+        universalObject.contentDescription = dictionary[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION];
+    }
+    if (dictionary[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL]) {
+        universalObject.imageUrl = dictionary[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL];
+    }
+    if (dictionary[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE]) {
+        if (dictionary[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] == 0) {
+            universalObject.contentIndexMode = ContentIndexModePrivate;
+        }
+        else {
+            universalObject.contentIndexMode = ContentIndexModePublic;
+        }
+    }
+
+    if (dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE] && [dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE] isKindOfClass:[NSNumber class]]) {
+        NSNumber *millisecondsSince1970 = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE];
+        universalObject.expirationDate = [NSDate dateWithTimeIntervalSince1970:millisecondsSince1970.integerValue/1000];
+    }
+    if (dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS]) {
+        universalObject.keywords = dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS];
+    }
+
+    return universalObject;
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"BranchUniversalObject \n canonicalIdentifier: %@ \n title: %@ \n contentDescription: %@ \n imageUrl: %@ \n metatdata: %@ \n type: %@ \n contentIndexMode: %ld \n keywords: %@ \n expirationDate: %@", self.canonicalIdentifier, self.title, self.contentDescription, self.imageUrl, self.metadata, self.type, (long)self.contentIndexMode, self.keywords, self.expirationDate];
+}
 
 #pragma mark - Private methods
 
