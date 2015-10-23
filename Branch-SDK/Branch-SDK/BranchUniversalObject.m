@@ -26,6 +26,22 @@
     return self;
 }
 
+- (NSDictionary *)metadata {
+    if (!_metadata) {
+        _metadata = [[NSDictionary alloc] init];
+    }
+    return _metadata;
+}
+
+- (void)addMetadataKey:(NSString *)key value:(NSString *)value {
+    if (!key || !value) {
+        return;
+    }
+    NSMutableDictionary *temp = [self.metadata mutableCopy];
+    temp[key] = value;
+    _metadata = [temp copy];
+}
+
 - (void)registerView {
     if (!self.canonicalIdentifier && !self.title) {
         NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not register view.");

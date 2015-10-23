@@ -30,6 +30,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier;
 - (instancetype)initWithTitle:(NSString *)title;
+- (void)addMetadataKey:(NSString *)key value:(NSString *)value;
 - (void)registerView;
 - (void)registerViewWithCallback:(callbackWithParams)callback;
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties;
