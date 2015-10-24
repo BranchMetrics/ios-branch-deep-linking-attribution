@@ -147,12 +147,12 @@
 }
 
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback {
-    NSNumber *publiclyIndexable;
+    BOOL publiclyIndexable;
     if (self.contentIndexMode == ContentIndexModePrivate) {
-        publiclyIndexable = @0;
+        publiclyIndexable = NO;
     }
     else {
-        publiclyIndexable = @1;
+        publiclyIndexable = YES;
     }
     [[Branch getInstance] createDiscoverableContentWithTitle:self.title
                                                  description:self.contentDescription
