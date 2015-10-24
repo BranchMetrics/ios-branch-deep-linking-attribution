@@ -10,6 +10,7 @@
 #import "BranchLinkProperties.h"
 #import "Branch.h"
 
+typedef void (^callback) ();
 
 @interface BranchUniversalObject : NSObject
 
@@ -37,8 +38,8 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties;
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback;
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties;
-- (void)showShareSheetWithShareText:(NSString *)shareText;
-- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController;
+- (void)showShareSheetWithShareText:(NSString *)shareText andCallback:(callback)callback;
+- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController andCallback:(callback)callback;
 - (void)listOnSpotlight;
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback;
 

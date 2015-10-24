@@ -128,12 +128,14 @@
 
 - (IBAction)cmdShowShareSheet {
     [self ensureUniversalObjectIsInitialized];
-    [self.myContent showShareSheetWithLinkProperties:[self exampleLinkProperties] andShareText:@"Super amazing thing I want to share!" fromViewController:self];
+    [self.myContent showShareSheetWithLinkProperties:[self exampleLinkProperties] andShareText:@"Super amazing thing I want to share!" fromViewController:self andCallback:^{
+        NSLog(@"finished presenting");
+    }];
     
     /**
      Simple alternative:
      
-    [self.myContent showShareSheetWithShareText:@"Super amazing thing I want to share!"];
+    [self.myContent showShareSheetWithShareText:@"Super amazing thing I want to share!" andCallback:nil];
      */
 }
 

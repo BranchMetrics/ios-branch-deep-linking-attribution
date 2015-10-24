@@ -120,11 +120,11 @@
                                              alias:linkProperties.alias];
 }
 
-- (void)showShareSheetWithShareText:(NSString *)shareText {
-    [self showShareSheetWithLinkProperties:nil andShareText:shareText fromViewController:nil];
+- (void)showShareSheetWithShareText:(NSString *)shareText andCallback:(callback)callback {
+    [self showShareSheetWithLinkProperties:nil andShareText:shareText fromViewController:nil andCallback:callback];
 }
 
-- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController {
+- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController andCallback:(callback)callback {
     UIActivityItemProvider *itemProvider = [self getBranchActivityItemWithLinkProperties:linkProperties];
     NSMutableArray *items = [NSMutableArray arrayWithObject:itemProvider];
     if (shareText) {
@@ -132,10 +132,10 @@
     }
     UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     if (viewController && [viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-        [viewController presentViewController:shareViewController animated:YES completion:nil];
+        [viewController presentViewController:shareViewController animated:YES completion:callback];
     }
     else if ([[[[UIApplication sharedApplication].delegate window] rootViewController] respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-        [[[[UIApplication sharedApplication].delegate window] rootViewController] presentViewController:shareViewController animated:YES completion:nil];
+        [[[[UIApplication sharedApplication].delegate window] rootViewController] presentViewController:shareViewController animated:YES completion:callback];
     }
     else {
         NSLog(@"[Branch warning, fatal] No view controller is present to show the share sheet. Aborting.");
