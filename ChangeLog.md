@@ -1,6 +1,6 @@
 Branch iOS SDK change log
 
-- v0.11.7
+- v0.11.8
   * added support for the brand new BranchUniversalObject
     * easy tracking of views on content
     * easy creation of links
