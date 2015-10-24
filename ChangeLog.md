@@ -1,5 +1,15 @@
 Branch iOS SDK change log
 
+- v0.11.7
+  * added support for the brand new BranchUniversalObject
+    * easy tracking of views on content
+    * easy creation of links
+    * easy sharing
+    * easy listing for Spotlight search
+  * fixed bugs / made additions for debug mode
+  * squashed annoying warnings that some users saw
+  * safer unarchiving of saved info (BNCPreferenceHelper) 
+
 - v0.11.6
   * fix race condition if certain methods are invoked before initSession
 
