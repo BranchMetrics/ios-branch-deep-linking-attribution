@@ -8,7 +8,7 @@ We've [open sourced the Branchster's app](https://github.com/BranchMetrics/Branc
 
 ## Integration Checklist
 
-- Create Branch Account and get your [Branch Key]((https://dashboard.branch.io/#/settings)
+- Create Branch Account and get your [Branch Key](https://dashboard.branch.io/#/settings)
 - Install SDK
 - Configure Manifest
 - Set up routing for incoming deep links
@@ -19,8 +19,8 @@ We've [open sourced the Branchster's app](https://github.com/BranchMetrics/Branc
 - Set up referrals (optional)
 
 ## Additional Resources
-- [Integration guide](https://dev.branch.io/recipes/quickstart_guide/ios/)
-- Technical Reference (in this repo)
-- Changelog (in this repo)
+- [Integration guide](https://dev.branch.io/recipes/quickstart_guide/ios/) *start here*
+- [Technical Reference](https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK/blob/master/Reference.md)
+- [Changelog](https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK/blob/master/ChangeLog.md)
 - [Testing](https://dev.branch.io/recipes/testing_your_integration/ios/)
 - [Support portal, FAQ, and user forums](http://support.branch.io)
