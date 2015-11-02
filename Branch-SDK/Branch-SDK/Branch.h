@@ -452,7 +452,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)setNetworkTimeout:(NSTimeInterval)timeout;
 
 /**
- Specify that Branch should not use an invisible SFSafariViewController to attempt cookie-based matching.
+ Specify that Branch should use an invisible SFSafariViewController to attempt cookie-based matching. Default is NO.
  */
 - (void)enableCookieBasedMatching;
 
