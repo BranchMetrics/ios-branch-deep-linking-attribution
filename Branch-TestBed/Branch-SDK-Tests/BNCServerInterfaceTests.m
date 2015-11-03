@@ -250,7 +250,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 //==================================================================================
 //TEST 07
 // This test checks to make sure that POST retries are not attempted when they have a retry
-// count == 0, but retries aren't needed. Based on Test #4 above
+// count == 0, and retries aren't needed. Based on Test #4 above
 
 - (void)testPostRequestAsyncRetriesWhenInappropriateResponse {
   
@@ -286,7 +286,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 //==================================================================================
 //TEST 08
 // This test checks to make sure that GET retries are not attempted when they have a retry
-// count == 0, but retries aren't needed. Based on Test #4 above
+// count == 0, and retries aren't needed. Based on Test #4 above
 
 - (void)testPostRequestAsyncRetriesWhenInappropriateRetryCount {
   BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
