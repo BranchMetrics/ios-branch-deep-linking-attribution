@@ -1300,15 +1300,16 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 
 ///-------------------------
 /// @name Promo Code methods
-///-------------------------
+///-------------------------This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality.
+
 
 /**
  Get a promo code without providing any parameters.
  
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getPromoCodeWithCallback:(callbackWithParams)callback;
-- (void)getReferralCodeWithCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeCallback: instead"))));;
+- (void)getPromoCodeWithCallback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide improvements or modifications to referral/promo code functionality."))));
+- (void)getReferralCodeWithCallback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide improvements or modifications to referral/promo code functionality."))));
 
 /**
  Get a promo code with an amount of credits the code will be worth.
@@ -1316,8 +1317,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param amount Number of credits generating user will earn when a user is referred by this code.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getPromoCodeWithAmount:(NSInteger)amount callback:(callbackWithParams)callback;
-- (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithAmount:callback: instead"))));;
+- (void)getPromoCodeWithAmount:(NSInteger)amount callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
+- (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback  __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
 
 /**
  Get a promo code with an amount of credits the code will be worth, and a prefix for the code.
@@ -1326,8 +1327,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param amount Number of credits generating user will earn when a user is referred by this code.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount callback:(callbackWithParams)callback;
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithPrefix:amount:callback: instead"))));;
+- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback  __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
 
 /**
  Get a promo code with an amount of credits the code will be worth, and an expiration date.
@@ -1336,8 +1337,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param expiration The date when the code should be invalidated.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getPromoCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback;
-- (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithAmount:expiration:callback: instead"))));
+- (void)getPromoCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
+- (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback  __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
 
 /**
  Get a promo code with an amount of credits the code will be worth, the prefix to put in front of it, and an expiration date.
@@ -1347,8 +1348,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param expiration The date when the code should be invalidated.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback;
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithPrefix:amount:expiration:callback: instead"))));
+- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
 
 /**
  Get a promo code with an amount of credits the code will be worth, the prefix to put in front of it, an expiration date, the bucket it will be part of, the calculation method, and location of user earning credits.
@@ -1361,8 +1362,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param location The location of the user who earns credits for the referral, one of Referrer, Referree (the referred user), or Both.
  @param callback The callback that is called with the created referral code object.
  */
-- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket usageType:(BranchPromoCodeUsageType)usageType rewardLocation:(BranchPromoCodeRewardLocation)rewardLocation callback:(callbackWithParams)callback;
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(BranchPromoCodeUsageType)calcType location:(BranchPromoCodeRewardLocation)location andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use getPromoCodeWithPrefix:amount:expiration:bucket:usageType:rewardLocation:callback: instead"))));
+- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket usageType:(BranchPromoCodeUsageType)usageType rewardLocation:(BranchPromoCodeRewardLocation)rewardLocation callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
+- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(BranchPromoCodeUsageType)calcType location:(BranchPromoCodeRewardLocation)location andCallback:(callbackWithParams)callback  __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
 
 /**
  Validate a promo code. Will callback with the referral code object on success, or an error if it's invalid.
@@ -1370,8 +1371,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param code The referral code to validate
  @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
  */
-- (void)validatePromoCode:(NSString *)code callback:(callbackWithParams)callback;
-- (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use validatePromoCode:callback: instead"))));
+- (void)validatePromoCode:(NSString *)code callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
+- (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback  __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
 
 /**
  Apply a promo code, awarding the referral points. Will callback with the referral code object on success, or an error if it's invalid.
@@ -1379,8 +1380,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param code The referral code to validate
  @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
  */
-- (void)applyPromoCode:(NSString *)code callback:(callbackWithParams)callback;
-- (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback __attribute__((deprecated(("Use applyPromoCode:callback: instead"))));
+- (void)applyPromoCode:(NSString *)code callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
+- (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback  __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
 
 /**
  Method for creating a one of Branch instance and specifying its dependencies.
