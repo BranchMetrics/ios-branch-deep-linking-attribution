@@ -112,15 +112,15 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchLeastRecentFirst
 };
 
-typedef NS_ENUM(NSUInteger, BranchPromoCodeRewardLocation) {
-    BranchPromoCodeRewardReferredUser = 0,
-    BranchPromoCodeRewardReferringUser = 2,
-    BranchPromoCodeRewardBothUsers = 3
+typedef NS_ENUM(NSUInteger, BranchPromoCodeRewardLocation ) {
+    BranchPromoCodeRewardReferredUser __attribute__((deprecated(("This property has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality.")))) = 0,
+    BranchPromoCodeRewardReferringUser __attribute__((deprecated(("This property has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality.")))) = 2,
+    BranchPromoCodeRewardBothUsers __attribute__((deprecated(("This property has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality.")))) = 3
 };
 
 typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
-    BranchPromoCodeUsageTypeOncePerUser = 1,
-    BranchPromoCodeUsageTypeUnlimitedUses = 0
+    BranchPromoCodeUsageTypeOncePerUser __attribute__((deprecated(("This property has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality.")))) = 1,
+    BranchPromoCodeUsageTypeUnlimitedUses __attribute__((deprecated(("This property has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality.")))) = 0
 };
 
 @interface Branch : NSObject
