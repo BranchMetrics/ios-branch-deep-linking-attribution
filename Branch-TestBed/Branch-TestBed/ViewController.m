@@ -59,6 +59,7 @@
         }
     }];
 }
+
 - (IBAction)cmdRedeemFive:(id)sender {
     Branch *branch = [Branch getInstance];
     [branch redeemRewards:5 callback:^(BOOL changed, NSError *error) {
@@ -77,11 +78,13 @@
     Branch *branch = [Branch getInstance];
     [branch userCompletedAction:@"buy"];
 }
+
 - (IBAction)cmdIdentifyUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
     [branch setIdentity:@"test_user_10"];
 }
-- (IBAction)cmdClearUserClick:(id)sender {
+
+- (IBAction)cmdClearUserClick:(id)sender {  //AKA logout
     Branch *branch = [Branch getInstance];
     [branch logout];
     
@@ -91,6 +94,27 @@
     self.txtInstallUniques.text = @"";
     self.txtRewardCredits.text = @"";
 }
+
+
+-   (IBAction)logoutWithCallback {
+    Branch *branch = [Branch getInstance];
+    [branch logoutWithCallback:^(BOOL changed, NSError *error) {
+        if (error || !changed) {
+          NSLog(@"Failed to logout, error: %@", error);
+        } else {
+          NSLog(@"Successful logout!");
+        }
+    }];
+  
+    self.txtBuyCount.text = @"";
+    self.txtBuyUniques.text = @"";
+    self.txtInstallTotal.text = @"";
+    self.txtInstallUniques.text = @"";
+    self.txtRewardCredits.text = @"";
+
+  
+}
+
 - (IBAction)cmdPrintInstall:(id)sender {
     Branch *branch = [Branch getInstance];
     NSLog(@"found params = %@", [[branch getFirstReferringParams] description]);
