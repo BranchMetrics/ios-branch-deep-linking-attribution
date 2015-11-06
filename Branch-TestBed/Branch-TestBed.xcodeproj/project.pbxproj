@@ -116,13 +116,13 @@
 		46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */; };
 		54391A151BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 54391A131BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54391A161BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 54391A141BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m */; };
-		54C3097B1BD9DE6600C4DA45 /* UniversalObjectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 54C3097A1BD9DE6600C4DA45 /* UniversalObjectViewController.m */; settings = {ASSET_TAGS = (); }; };
-		54FF1F8D1BD1D4AE0004CE2E /* BranchUniversalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF1F8B1BD1D4AE0004CE2E /* BranchUniversalObject.h */; settings = {ASSET_TAGS = (); }; };
-		54FF1F8E1BD1D4AE0004CE2E /* BranchUniversalObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F8C1BD1D4AE0004CE2E /* BranchUniversalObject.m */; settings = {ASSET_TAGS = (); }; };
-		54FF1F911BD1DC320004CE2E /* BranchLinkProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF1F8F1BD1DC320004CE2E /* BranchLinkProperties.h */; settings = {ASSET_TAGS = (); }; };
-		54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */; settings = {ASSET_TAGS = (); }; };
-		54FF1F951BD20EB50004CE2E /* BranchRegisterViewRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF1F931BD20EB50004CE2E /* BranchRegisterViewRequest.h */; settings = {ASSET_TAGS = (); }; };
-		54FF1F961BD20EB50004CE2E /* BranchRegisterViewRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F941BD20EB50004CE2E /* BranchRegisterViewRequest.m */; settings = {ASSET_TAGS = (); }; };
+		54C3097B1BD9DE6600C4DA45 /* UniversalObjectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 54C3097A1BD9DE6600C4DA45 /* UniversalObjectViewController.m */; };
+		54FF1F8D1BD1D4AE0004CE2E /* BranchUniversalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF1F8B1BD1D4AE0004CE2E /* BranchUniversalObject.h */; };
+		54FF1F8E1BD1D4AE0004CE2E /* BranchUniversalObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F8C1BD1D4AE0004CE2E /* BranchUniversalObject.m */; };
+		54FF1F911BD1DC320004CE2E /* BranchLinkProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF1F8F1BD1DC320004CE2E /* BranchLinkProperties.h */; };
+		54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */; };
+		54FF1F951BD20EB50004CE2E /* BranchRegisterViewRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF1F931BD20EB50004CE2E /* BranchRegisterViewRequest.h */; };
+		54FF1F961BD20EB50004CE2E /* BranchRegisterViewRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F941BD20EB50004CE2E /* BranchRegisterViewRequest.m */; };
 		670016641940F51400A9E103 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016631940F51400A9E103 /* Foundation.framework */; };
 		670016661940F51400A9E103 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016651940F51400A9E103 /* CoreGraphics.framework */; };
 		670016681940F51400A9E103 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016671940F51400A9E103 /* UIKit.framework */; };
@@ -698,6 +698,7 @@
 				7E6B3B4E1AA42D0E005F45BF /* Frameworks */,
 				7E6B3B4F1AA42D0E005F45BF /* Resources */,
 				996D01EACA3CA503DA9A0E81 /* Copy Pods Resources */,
+				DB51EF68897D5F1C69A3A50B /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -780,6 +781,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Branch-SDK-Tests/Pods-Branch-SDK-Tests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DB51EF68897D5F1C69A3A50B /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Branch-SDK-Tests/Pods-Branch-SDK-Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F7D291A58C55B729B55D4D11 /* Check Pods Manifest.lock */ = {
