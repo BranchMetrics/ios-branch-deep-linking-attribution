@@ -1,5 +1,55 @@
 Branch iOS SDK change log
 
+- v0.11.8
+  * added support for the brand new BranchUniversalObject
+    * easy tracking of views on content
+    * easy creation of links
+    * easy sharing
+    * easy listing for Spotlight search
+  * fixed bugs / made additions for debug mode
+  * squashed annoying warnings that some users saw
+  * safer unarchiving of saved info (BNCPreferenceHelper) 
+
+- v0.11.6
+  * fix race condition if certain methods are invoked before initSession
+
+- v0.11.5
+  * makes cookie-based matching using SFSafariViewController opt-in
+  * BranchActivityItemProvider now provides link even if initSession fails multiple times
+  * BranchDeepLinkingController now includes a check for modal already presented
+  * Fixed small memory leaks created by NSURLSession
+  * Changed podspec to remove optional links to iOS 9 frameworks
+  * Fixed race conditions caused by initializing the SDK on framework load
+
+- v0.11.4
+  * removes the need to include CoreSpotlight
+  * addresses issues where SDK would not compile against iOS 8.x base SDKs
+
+- v0.11.3
+  * fixed more compatibility issues with older iOS versions
+
+- v0.11.2
+  * fixes issue for compiling against iOS 6 and iOS 7
+
+- v0.11.1
+  * fixed issue where Universal Links are not handled on cold launch
+  * removed deprecated methods
+  * podspec allows iOS 6
+
+- v0.11.0
+  * iOS 9 compatibility. Makes use of CoreSpotlight, SafariServices, etc.
+  * Universal Links
+  * Indexing content with Spotlight
+  * Various improvements
+
+- v0.10.9
+  * Renaming `completionDelegate` to `deepLinkingCompletionDelegate` to avoid conflicts with Apple internals.
+  * Changing behavior of `isReferrable` to default to true, unless otherwise specified.
+
+- v0.10.8
+  * Thanks @allenhsu for noticing and fixing our character encoding length issues!
+  * Less verbose logging for queue processing failures.
+
 - v0.10.7
   * Updating debugging requests so they aren't persisted (and aren't loaded) from the queue.
 

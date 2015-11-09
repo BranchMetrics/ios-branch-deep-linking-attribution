@@ -16,11 +16,14 @@
 @property (strong, nonatomic) NSString *branchKey;
 @property (strong, nonatomic) NSString *appKey;
 @property (strong, nonatomic) NSString *lastRunBranchKey;
+@property (strong, nonatomic) NSDate *lastStrongMatchDate;
 @property (strong, nonatomic) NSString *appVersion;
 @property (strong, nonatomic) NSString *deviceFingerprintID;
 @property (strong, nonatomic) NSString *sessionID;
 @property (strong, nonatomic) NSString *identityID;
 @property (strong, nonatomic) NSString *linkClickIdentifier;
+@property (strong, nonatomic) NSString *spotlightIdentifier;
+@property (strong, nonatomic) NSString *universalLinkUrl;
 @property (strong, nonatomic) NSString *userUrl;
 @property (strong, nonatomic) NSString *userIdentity;
 @property (strong, nonatomic) NSString *sessionParams;
@@ -29,6 +32,7 @@
 @property (assign, nonatomic) BOOL isReferrable;
 @property (assign, nonatomic) BOOL isDebug;
 @property (assign, nonatomic) BOOL isConnectedToRemoteDebug;
+@property (assign, nonatomic) BOOL isContinuingUserActivity;
 @property (assign, nonatomic) NSInteger retryCount;
 @property (assign, nonatomic) NSTimeInterval retryInterval;
 @property (assign, nonatomic) NSTimeInterval timeout;
@@ -40,9 +44,12 @@
 - (NSString *)getBranchKey:(BOOL)isLive;
 
 - (void)clearUserCreditsAndCounts;
+- (void)clearUserCredits;
 
 - (void)setCreditCount:(NSInteger)count;
 - (void)setCreditCount:(NSInteger)count forBucket:(NSString *)bucket;
+- (void)removeCreditCountForBucket:(NSString *)bucket;
+- (NSDictionary *)getCreditDictionary;
 - (NSInteger)getCreditCount;
 - (NSInteger)getCreditCountForBucket:(NSString *)bucket;
 
