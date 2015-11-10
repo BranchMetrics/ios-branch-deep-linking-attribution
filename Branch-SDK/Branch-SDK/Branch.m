@@ -459,6 +459,27 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 
+- (void)logoutWithCallback:(callbackWithStatus)callback {
+  if (!self.isInitialized) {
+    NSLog(@"Branch is not initialized, cannot logout");
+    callback(NO, nil);
+  }
+  
+  BranchLogoutRequest *req = [[BranchLogoutRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
+    if (success) {
+      // Clear cached links
+      self.linkCache = [[BNCLinkCache alloc] init];
+      callback(YES, nil);
+    } else {
+      callback(NO, error);
+    }
+  }];
+  
+  [self.requestQueue enqueue:req];
+  [self processNextQueueItem];
+}
+
+
 #pragma mark - User Action methods
 
 - (void)loadActionCountsWithCallback:(callbackWithStatus)callback {
