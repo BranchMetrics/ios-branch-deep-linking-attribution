@@ -83,6 +83,7 @@ NSString * const BRANCH_REQUEST_ENDPOINT_INSTALL = @"install";
 NSString * const BRANCH_REQUEST_ENDPOINT_CONNECT_DEBUG = @"debug/connect";
 NSString * const BRANCH_REQUEST_ENDPOINT_DISCONNECT_DEBUG = @"debug/disconnect";
 NSString * const BRANCH_REQUEST_ENDPOINT_LOG = @"debug/log";
+NSString * const BRANCH_REQUEST_ENDPOINT_REGISTER_VIEW = @"register-view";
 
 NSString * const BRANCH_RESPONSE_KEY_BRANCH_IDENTITY = @"identity_id";
 NSString * const BRANCH_RESPONSE_KEY_SESSION_ID = @"session_id";
@@ -110,6 +111,9 @@ NSString * const BRANCH_LINK_DATA_KEY_DESCRIPTION = @"+spotlight_description";
 NSString * const BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE = @"$publicly_indexable";
 NSString * const BRANCH_LINK_DATA_KEY_TYPE = @"+spotlight_type";
 NSString * const BRANCH_LINK_DATA_KEY_THUMBNAIL_URL = @"+spotlight_thumbnail_url";
-NSString * const BRANCH_LINK_DATA_KEY_KEYWORDS = @"+spotlight_keywords";
+NSString * const BRANCH_LINK_DATA_KEY_KEYWORDS = @"$keywords";
+NSString * const BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER = @"$canonical_identifier";
+NSString * const BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE = @"$exp_date";
+NSString * const BRANCH_LINK_DATA_KEY_CONTENT_TYPE = @"$content_type";
 
 NSString * const BRANCH_SPOTLIGHT_PREFIX = @"io.branch.link.v1";
