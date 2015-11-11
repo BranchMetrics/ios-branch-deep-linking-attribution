@@ -41,7 +41,11 @@ static const short _base64DecodingTable[256] = {
 }
 
 + (NSString *)base64DecodeStringToString:(NSString *)strData {
-    return [[NSString alloc] initWithData:[BNCEncodingUtils base64DecodeString:strData] encoding:NSUTF8StringEncoding];
+    NSData* data =[BNCEncodingUtils base64DecodeString:strData];
+    if (data == nil) {
+        return nil;
+    }
+    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 }
 
 + (NSString *)base64EncodeData:(NSData *)data {
@@ -78,6 +82,9 @@ static const short _base64DecodingTable[256] = {
 
 + (NSData *)base64DecodeString:(NSString *)strBase64 {
     const char * objPointer = [strBase64 cStringUsingEncoding:NSASCIIStringEncoding];
+    if (objPointer == NULL) {
+        return nil;
+    }
     long intLength = strlen(objPointer);
     int intCurrent;
     int i = 0, j = 0, k;
