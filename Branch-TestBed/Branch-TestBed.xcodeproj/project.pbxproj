@@ -117,9 +117,9 @@
 		54391A151BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 54391A131BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54391A161BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 54391A141BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m */; };
 		54C3097B1BD9DE6600C4DA45 /* UniversalObjectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 54C3097A1BD9DE6600C4DA45 /* UniversalObjectViewController.m */; };
-		54FF1F8D1BD1D4AE0004CE2E /* BranchUniversalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF1F8B1BD1D4AE0004CE2E /* BranchUniversalObject.h */; };
+		54FF1F8D1BD1D4AE0004CE2E /* BranchUniversalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF1F8B1BD1D4AE0004CE2E /* BranchUniversalObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54FF1F8E1BD1D4AE0004CE2E /* BranchUniversalObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F8C1BD1D4AE0004CE2E /* BranchUniversalObject.m */; };
-		54FF1F911BD1DC320004CE2E /* BranchLinkProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF1F8F1BD1DC320004CE2E /* BranchLinkProperties.h */; };
+		54FF1F911BD1DC320004CE2E /* BranchLinkProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF1F8F1BD1DC320004CE2E /* BranchLinkProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */; };
 		54FF1F951BD20EB50004CE2E /* BranchRegisterViewRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF1F931BD20EB50004CE2E /* BranchRegisterViewRequest.h */; };
 		54FF1F961BD20EB50004CE2E /* BranchRegisterViewRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F941BD20EB50004CE2E /* BranchRegisterViewRequest.m */; };
