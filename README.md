@@ -533,7 +533,7 @@ None
 
 ### Shortened Links
 
-Once you've created your `Branch Universal Object`, which is the reference to the content you're interested in. You can then get a link back to it with the mechanisms described below.
+Once you've created your `Branch Universal Object`, which is the reference to the content you're interested in, you can then get a link back to it with the mechanisms described below.
 
 #### Encoding Note
 
@@ -630,7 +630,7 @@ UIActivityView is the standard way of allowing users to share content from your 
 
 **Sample UIActivityView Share Sheet**
 
-![UIActivityView Share Sheet](https://s3-us-west-1.amazonaws.com/branchhost/iOSShareSheet.png )
+![UIActivityView Share Sheet](https://dev.branch.io/img/ingredients/sdk_links/ios_share_sheet.jpg)
 
 The Branch iOS SDK includes a wrapper on the UIActivityViewController, that will generate a Branch short URL and automatically tag it with the channel the user selects (Facebook, Twitter, etc.).
 
