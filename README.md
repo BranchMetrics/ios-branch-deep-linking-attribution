@@ -449,7 +449,7 @@ None
 
 ## Branch Universal Object (for deep links, content analytics and indexing)
 
-As more methods have evolved in iOS, we've found that it was increasingly hard to manage all of the methods needed for most developers. We abstracted them all into the concept of a Branch Universal Object. This is the object that is associated with the thing you want to share (content or user). You can set all the metadata associated with the object and then call action methods on it to get a link or index in Spotlight.
+As more methods have evolved in iOS, we've found that it was increasingly hard to manage them all. We abstracted as many as we could into the concept of a Branch Universal Object. This is the object that is associated with the thing you want to share (content or user). You can set all the metadata associated with the object and then call action methods on it to get a link or index in Spotlight.
 
 ### Branch Universal Object
 
