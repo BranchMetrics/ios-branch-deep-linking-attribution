@@ -131,11 +131,21 @@
         [items addObject:shareText];
     }
     UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    
+    UIViewController *presentingViewController;
     if (viewController && [viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-        [viewController presentViewController:shareViewController animated:YES completion:callback];
+        presentingViewController = viewController;
     }
     else if ([[[[UIApplication sharedApplication].delegate window] rootViewController] respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-        [[[[UIApplication sharedApplication].delegate window] rootViewController] presentViewController:shareViewController animated:YES completion:callback];
+        presentingViewController = [[[UIApplication sharedApplication].delegate window] rootViewController];
+    }
+    
+    if (presentingViewController) {
+        // Required for iPad/Universal apps on iOS 8+
+        if ([presentingViewController respondsToSelector:@selector(popoverPresentationController)]) {
+            shareViewController.popoverPresentationController.sourceView = presentingViewController.view;
+        }
+        [presentingViewController presentViewController:shareViewController animated:YES completion:callback];
     }
     else {
         NSLog(@"[Branch warning, fatal] No view controller is present to show the share sheet. Aborting.");
