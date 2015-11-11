@@ -216,6 +216,12 @@
     XCTAssertEqualObjects(decodedValue, expectedDataDict);
 }
 
+- (void)testDecodeNonASCIIString {
+    // Should fail, but not crash.
+    NSString* result = [BNCEncodingUtils base64DecodeStringToString:@"𝄞"];
+    XCTAssertNil(result);
+}
+
 - (void)testDecodeBase64JsonStringToDictionaryWithNilDecodedString {
     char badCStr[5] = { '{', 'f', ':', 'o', '}' }; // not nil terminated
     NSString *encodedString = [NSString stringWithUTF8String:badCStr];

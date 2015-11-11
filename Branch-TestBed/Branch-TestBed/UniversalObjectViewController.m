@@ -168,6 +168,11 @@
     // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
     UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:@[shareString, itemProvider] applicationActivities:nil];
     
+    // Required for iPad/Universal apps on iOS 8+
+    if ([shareViewController respondsToSelector:@selector(popoverPresentationController)]) {
+        shareViewController.popoverPresentationController.sourceView = self.view;
+    }
+
     // Present the share sheet!
     [self.navigationController presentViewController:shareViewController animated:YES completion:nil];
 }
