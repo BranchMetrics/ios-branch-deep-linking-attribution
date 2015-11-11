@@ -81,15 +81,22 @@
     Branch *branch = [Branch getInstance];
     [branch setIdentity:@"test_user_10"];
 }
-- (IBAction)cmdClearUserClick:(id)sender {
-    Branch *branch = [Branch getInstance];
-    [branch logout];
-    
-    self.txtBuyCount.text = @"";
-    self.txtBuyUniques.text = @"";
-    self.txtInstallTotal.text = @"";
-    self.txtInstallUniques.text = @"";
-    self.txtRewardCredits.text = @"";
+- (IBAction)logoutWithCallback {
+  Branch *branch = [Branch getInstance];
+  [branch logoutWithCallback:^(BOOL changed, NSError *error) {
+    if (error || !changed) {
+      NSLog(@"logout failed: %@", error);
+    } else {
+      NSLog(@"logout");
+    }
+  }];
+  
+  self.txtBuyCount.text = @"";
+  self.txtBuyUniques.text = @"";
+  self.txtInstallTotal.text = @"";
+  self.txtInstallUniques.text = @"";
+  self.txtRewardCredits.text = @"";
+  
 }
 - (IBAction)cmdPrintInstall:(id)sender {
     Branch *branch = [Branch getInstance];
