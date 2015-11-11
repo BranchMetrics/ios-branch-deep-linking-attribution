@@ -1300,7 +1300,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 
 ///-------------------------
 /// @name Promo Code methods
-///-------------------------This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality.
+///-------------------------
 
 
 /**
