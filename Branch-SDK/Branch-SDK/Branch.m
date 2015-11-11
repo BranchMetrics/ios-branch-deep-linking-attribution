@@ -456,13 +456,18 @@ static int BNCDebugTriggerFingersSimulator = 2;
     if (success) {
       // Clear cached links
       self.linkCache = [[BNCLinkCache alloc] init];
+      
       if (callback) {
         callback(YES, nil);
+      }
+      if (self.preferenceHelper.isDebug) {
         NSLog(@"Logout Success");
       }
     } else /*failure*/ {
       if (callback) {
         callback(NO, error);
+      }
+      if (self.preferenceHelper.isDebug) {
         NSLog(@"Logout Failure");
       }
     }
