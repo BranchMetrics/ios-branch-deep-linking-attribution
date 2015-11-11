@@ -442,21 +442,36 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)logout {
-    if (!self.isInitialized) {
-        NSLog(@"Branch is not initialized, cannot logout");
-        return;
+    [self logoutWithCallback:nil];
     }
-    
-    BranchLogoutRequest *req = [[BranchLogoutRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
-        if (success) {
-            // Clear cached links
-            self.linkCache = [[BNCLinkCache alloc] init];
-        }
-    }];
-    
-    [self.requestQueue enqueue:req];
-    [self processNextQueueItem];
+
+
+- (void)logoutWithCallback:(callbackWithStatus)callback {
+  if (!self.isInitialized) {
+    NSLog(@"Branch is not initialized, cannot logout");
+    if (callback) {callback(NO, nil);}
+  }
+  
+  BranchLogoutRequest *req = [[BranchLogoutRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
+    if (success) {
+      // Clear cached links
+      self.linkCache = [[BNCLinkCache alloc] init];
+      if (callback) {
+        callback(YES, nil);
+        NSLog(@"Logout Success");
+      }
+    } else /*failure*/ {
+      if (callback) {
+        callback(NO, error);
+        NSLog(@"Logout Failure");
+      }
+    }
+  }];
+  
+  [self.requestQueue enqueue:req];
+  [self processNextQueueItem];
 }
+
 
 
 #pragma mark - User Action methods
