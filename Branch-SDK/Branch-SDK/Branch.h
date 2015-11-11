@@ -13,10 +13,12 @@
 #import "BNCLinkCache.h"
 #import "BranchDeepLinkingController.h"
 #import "BNCPreferenceHelper.h"
+@class BranchUniversalObject;
+@class BranchLinkProperties;
 
 /**
  `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.
-
+ 
   Note, when `getInstance` is called, it assumes that you have already placed a Branch Key in your main `Info.plist` file for your project. For additional information on configuring the Branch SDK, check out the getting started guides in the Readme.
  */
 
@@ -25,6 +27,7 @@ typedef void (^callbackWithUrl) (NSString *url, NSError *error);
 typedef void (^callbackWithStatus) (BOOL changed, NSError *error);
 typedef void (^callbackWithList) (NSArray *list, NSError *error);
 typedef void (^callbackWithUrlAndSpotlightIdentifier) (NSString *url, NSString *spotlightIdentifier, NSError *error);
+typedef void (^callbackWithBranchUniversalObject) (BranchUniversalObject *universalObject, BranchLinkProperties *linkProperties, NSError *error);
 
 ///----------------
 /// @name Constants
@@ -35,19 +38,19 @@ typedef void (^callbackWithUrlAndSpotlightIdentifier) (NSString *url, NSString *
 /**
  ## Branch Link Features
  The following are constants used for specifying a feature parameter on a call that creates a Branch link.
-
+ 
  `BRANCH_FEATURE_SHARE`
  Indicates this link was used for sharing content. Used by the `getContentUrl` methods.
-
+ 
  `BRANCH_FEATURE_TAG_REFERRAL`
  Indicates this link was used to refer users to this app. Used by the `getReferralUrl` methods.
-
+ 
  `BRANCH_FEATURE_TAG_INVITE`
  Indicates this link is used as an invitation.
-
+ 
  `BRANCH_FEATURE_TAG_DEAL`
  Indicates this link is being used to trigger a deal, like a discounted rate.
-
+ 
  `BRANCH_FEATURE_TAG_GIFT`
  Indicates this link is being used to sned a gift to another user.
  */
@@ -61,13 +64,13 @@ extern NSString * const BRANCH_FEATURE_TAG_GIFT;
 
 /**
  ## Branch Link Features
-
+ 
  `BRANCH_INIT_KEY_CHANNEL`
  The channel on which the link was shared, specified at link creation time.
  
  `BRANCH_INIT_KEY_FEATURE`
  The feature, such as `invite` or `share`, specified at link creation time.
-
+ 
  `BRANCH_INIT_KEY_TAGS`
  Any tags, specified at link creation time.
  
@@ -135,18 +138,19 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 
 /**
  Gets the global, test Branch instance.
-
- @warning This method is not meant to be used in production! 
+ 
+ @warning This method is not meant to be used in production!
  */
 + (Branch *)getTestInstance;
 
 /**
  Gets the global Branch instance, configures using the specified key
-
+ 
  @param branchKey The Branch key to be used by the Branch instance. This can be any live or test key.
  @warning This method is not the recommended way of using Branch. Try using your project's `Info.plist` if possible.
  */
 + (Branch *)getInstance:(NSString *)branchKey;
+
 
 #pragma mark - BranchActivityItemProvider methods
 
@@ -165,12 +169,12 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
-
+ 
  Internally, this will create a short Branch Url that will be attached to the shared content.
-
+ 
  @param params A dictionary to use while building up the Branch link.
  @param feature The feature the generated link will be associated with.
-*/
+ */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature;
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature  __attribute__((deprecated(("Use methods without 'and'"))));
 
@@ -306,6 +310,14 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  Initialize the Branch session with the app launch options and handle the completion with a callback
  
  @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
+ @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
+ */
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback;
+
+/**
+ Initialize the Branch session with the app launch options and handle the completion with a callback
+ 
+ @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
  @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
  */
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController;
@@ -386,7 +398,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  Allow Branch to handle restoration from an NSUserActivity, returning whether or not it was from a Branch link.
  
  @param userActivity The NSUserActivity that caused the app to be opened.
-*/
+ */
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity;
 
 #pragma mark - Deep Link Controller methods
@@ -440,7 +452,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)setNetworkTimeout:(NSTimeInterval)timeout;
 
 /**
- Specify that Branch should not use an invisible SFSafariViewController to attempt cookie-based matching.
+ Specify that Branch should use an invisible SFSafariViewController to attempt cookie-based matching. Default is NO.
  */
 - (void)enableCookieBasedMatching;
 
@@ -451,9 +463,29 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 ///--------------------
 
 /**
- Get the parameters used the first time this user was referred.
+ Get the BranchUniversalObject from the first time this user was referred (can be empty).
+ */
+- (BranchUniversalObject *)getFirstReferringBranchUniversalObject;
+
+/**
+ Get the BranchLinkProperties from the first time this user was referred (can be empty).
+ */
+- (BranchLinkProperties *)getFirstReferringBranchLinkProperties;
+
+/**
+ Get the parameters used the first time this user was referred (can be empty).
  */
 - (NSDictionary *)getFirstReferringParams;
+
+/**
+ Get the BranchUniversalObject from the most recent time this user was referred (can be empty).
+ */
+- (BranchUniversalObject *)getLatestReferringBranchUniversalObject;
+
+/**
+ Get the BranchLinkProperties from the most recent time this user was referred (can be empty).
+ */
+- (BranchLinkProperties *)getLatestReferringBranchLinkProperties;
 
 /**
  Get the parameters used the most recent time this user was referred (can be empty).
@@ -498,6 +530,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @warning If the request to logout fails, the items will not be cleared.
  */
 - (void)logout;
+
+- (void)logoutWithCallback:(callbackWithStatus)callback;
 
 #pragma mark - Credit methods
 
@@ -607,10 +641,10 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 
 /**
  Load actions counts that have taken place for users referred by the current user.
-
+ 
  @deprecated Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of
  actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts
-
+ 
  @param callback The callback that is called once the request has completed.
  */
 - (void)loadActionCountsWithCallback:(callbackWithStatus)callback __attribute__((deprecated(("Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts"))));
@@ -635,7 +669,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  
  @deprecated Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of
  actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts
-
+ 
  @param action The action string.
  @warning You must `loadActionCountsWithCallback:` before calling `getTotalCountsForAction:`. This method does not make a request for the counts.
  */
@@ -643,10 +677,10 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 
 /**
  Gets the distinct number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.
-
+ 
  @deprecated Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of
  actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts
-
+ 
  Distinct in this case can be explained as follows:
  Scenario 1: User A completed action `buy`, User B completed action `buy` -- Total Actions: 2, Distinct Actions: 2
  Scenario 2: User A completed action `buy`, User A completed action `buy` again -- Total Actions: 2, Distinct Actions: 1
@@ -817,6 +851,21 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @warning This method makes a synchronous url request.
  */
 - (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
+
+/**
+ Get a short url with specified tags, params, channel, feature, stage, and match duration. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param tags An array of tags to associate with this link, useful for tracking.
+ @param alias The alias for a link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param matchDuration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
+ @warning This method makes a synchronous url request.
+ @warning This can fail if the alias is already taken.
+ */
+- (NSString *)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
 
 /**
  Get a short url with specified params and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
@@ -1050,6 +1099,21 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param callback Callback called with the url.
  */
 - (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration andCallback:(callbackWithUrl)callback;
+
+/**
+ Get a short url with the specified params, tags, channel, feature, stage, and match duration. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param tags An array of tags to associate with this link, useful for tracking.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param matchDuration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
+ @param callback Callback called with the url.
+ @param alias The alias for a link.
+ @warning This can fail if the alias is already taken.
+ */
+- (void)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback;
 
 /**
  Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
@@ -1333,5 +1397,12 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @warning This is meant for use internally only (exposed for the sake of testing) and should not be used by apps.
  */
 - (void)log:(NSString *)log;
+
+/**
+ Method used by BranchUniversalObject to register a view on content
+ 
+ @warning This is meant for use internally only and should not be used by apps.
+ */
+- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
 
 @end
