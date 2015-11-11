@@ -531,6 +531,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)logout;
 
+- (void)logoutWithCallback:(callbackWithStatus)callback;
+
 #pragma mark - Credit methods
 
 ///--------------
