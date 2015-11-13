@@ -26,7 +26,8 @@ vim +4 +star $CHANGELOG_LOC
 sh $SCRIPT_DIR/build_framework.sh
 
 # Commit and tag
-git commit -am "Updates for $1 release."
+git add .
+git commit -m "Updates for $1 release."
 git tag $1
 git push --tags origin master
 
