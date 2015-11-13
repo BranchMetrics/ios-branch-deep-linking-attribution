@@ -1,5 +1,15 @@
 Branch iOS SDK change log
 
+- v0.11.9
+  * updated BNCServerInterface tests
+  * deprecated promo/referral codes
+  * added logoutWithCallback method
+  * small change to update session id if necessary
+  * fixed race condition if SDK methods are invoked while initSession is in progress
+  * updated license
+  * added missing headers to framework
+  * made BUO share sheet method safe for iPads
+
 - v0.11.8
   * added support for the brand new BranchUniversalObject
     * easy tracking of views on content
