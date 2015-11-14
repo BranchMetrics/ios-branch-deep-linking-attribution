@@ -1,5 +1,8 @@
 Branch iOS SDK change log
 
+- v0.11.10
+  * revert fix for race condition until we can test with more partners
+
 - v0.11.9
   * updated BNCServerInterface tests
   * deprecated promo/referral codes
