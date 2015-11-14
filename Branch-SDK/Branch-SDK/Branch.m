@@ -431,7 +431,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
         return;
     }
     
-    [self initSessionIfNeededAndNotInProgress];
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
+        [self initUserSessionAndCallCallback:NO];
+    }
     
     
     BranchSetIdentityRequest *req = [[BranchSetIdentityRequest alloc] initWithUserId:userId callback:callback];
@@ -480,7 +482,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - User Action methods
 
 - (void)loadActionCountsWithCallback:(callbackWithStatus)callback {
-    [self initSessionIfNeededAndNotInProgress];
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
+        [self initUserSessionAndCallCallback:NO];
+    }
     
     BranchLoadActionsRequest *req = [[BranchLoadActionsRequest alloc] initWithCallback:callback];
     [self.requestQueue enqueue:req];
@@ -504,7 +508,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
         return;
     }
     
-    [self initSessionIfNeededAndNotInProgress];
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
+        [self initUserSessionAndCallCallback:NO];
+    }
     
     BranchUserCompletedActionRequest *req = [[BranchUserCompletedActionRequest alloc] initWithAction:action state:state];
     [self.requestQueue enqueue:req];
@@ -515,7 +521,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - Credit methods
 
 - (void)loadRewardsWithCallback:(callbackWithStatus)callback {
-    [self initSessionIfNeededAndNotInProgress];
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
+        [self initUserSessionAndCallCallback:NO];
+    }
     
     BranchLoadRewardsRequest *req = [[BranchLoadRewardsRequest alloc] initWithCallback:callback];
     [self.requestQueue enqueue:req];
@@ -564,7 +572,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
         return;
     }
     
-    [self initSessionIfNeededAndNotInProgress];
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
+        [self initUserSessionAndCallCallback:NO];
+    }
     
     BranchRedeemRewardsRequest *req = [[BranchRedeemRewardsRequest alloc] initWithAmount:count bucket:bucket callback:callback];
     [self.requestQueue enqueue:req];
@@ -584,7 +594,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback {
-    [self initSessionIfNeededAndNotInProgress];
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
+        [self initUserSessionAndCallCallback:NO];
+    }
     
     BranchCreditHistoryRequest *req = [[BranchCreditHistoryRequest alloc] initWithBucket:bucket creditTransactionId:creditTransactionId length:length order:order callback:callback];
     [self.requestQueue enqueue:req];
@@ -757,7 +769,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback {
-    [self initSessionIfNeededAndNotInProgress];
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
+        [self initUserSessionAndCallCallback:NO];
+    }
     
     BranchSpotlightUrlRequest *req = [[BranchSpotlightUrlRequest alloc] initWithParams:params callback:callback];
     [self.requestQueue enqueue:req];
@@ -902,7 +916,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket usageType:(BranchPromoCodeUsageType)usageType rewardLocation:(BranchPromoCodeRewardLocation)rewardLocation useOld:(BOOL)useOld callback:(callbackWithParams)callback {
-    [self initSessionIfNeededAndNotInProgress];
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
+        [self initUserSessionAndCallCallback:NO];
+    }
     
     if (!bucket) {
         bucket = @"default";
@@ -929,7 +945,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
         return;
     }
     
-    [self initSessionIfNeededAndNotInProgress];
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
+        [self initUserSessionAndCallCallback:NO];
+    }
     
     BranchValidatePromoCodeRequest *req = [[BranchValidatePromoCodeRequest alloc] initWithCode:code useOld:useOld callback:callback];
     [self.requestQueue enqueue:req];
@@ -952,8 +970,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
         return;
     }
     
-    [self initSessionIfNeededAndNotInProgress];
-    
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
+        [self initUserSessionAndCallCallback:NO];
+    }
     
     BranchApplyPromoCodeRequest *req = [[BranchApplyPromoCodeRequest alloc] initWithCode:code useOld:useOld callback:callback];
     [self.requestQueue enqueue:req];
@@ -1010,7 +1029,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - URL Generation methods
 
 - (void)generateShortUrl:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback {
-    [self initSessionIfNeededAndNotInProgress];
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
+        [self initUserSessionAndCallCallback:NO];
+    }
     
     BNCLinkData *linkData = [self prepareLinkDataFor:tags andAlias:alias andType:type andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andParams:params ignoreUAString:nil];
     
@@ -1120,7 +1141,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - BranchUniversalObject methods
 
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback {
-    [self initSessionIfNeededAndNotInProgress];
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
+        [self initUserSessionAndCallCallback:NO];
+    }
     
     BranchRegisterViewRequest *req = [[BranchRegisterViewRequest alloc] initWithParams:params andCallback:callback];
     [self.requestQueue enqueue:req];
@@ -1131,7 +1154,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity && ![self.requestQueue containsInstallOrOpen]) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity) {
         [self initUserSessionAndCallCallback:YES];
     }
     
@@ -1247,13 +1270,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 
 #pragma mark - Session Initialization
-
-// appears to fix race condition on startup, when initSession is still in progress - DAW
-- (void)initSessionIfNeededAndNotInProgress {
-  if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity && ![self.requestQueue containsInstallOrOpen]) {
-    [self initUserSessionAndCallCallback:NO];
-  }
-}
 
 - (void)initUserSessionAndCallCallback:(BOOL)callCallback {
     self.shouldCallSessionInitCallback = callCallback;
