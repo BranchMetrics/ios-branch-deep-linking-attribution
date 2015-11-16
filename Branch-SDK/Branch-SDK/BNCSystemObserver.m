@@ -146,6 +146,9 @@
 
 + (BOOL)isSimulator {
     UIDevice *currentDevice = [UIDevice currentDevice];
+    if ([BNCSystemObserver getOSVersion].integerValue >= 9) {
+        return [currentDevice.name rangeOfString:@"Simulator"].location != NSNotFound;
+    }
     return [currentDevice.model rangeOfString:@"Simulator"].location != NSNotFound;
 }
 
