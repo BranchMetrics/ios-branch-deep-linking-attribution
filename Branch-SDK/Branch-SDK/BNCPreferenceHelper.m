@@ -492,8 +492,8 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 }
 
 - (void)persistPrefsToDisk {
-    NSDictionary *persistenceDict = [self.persistenceDict copy];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSDictionary *persistenceDict = [self.persistenceDict copy];
         if (![NSKeyedArchiver archiveRootObject:persistenceDict toFile:[self prefsFile]]) {
             NSLog(@"[Branch Warning] Failed to persist preferences to disk");
         }
