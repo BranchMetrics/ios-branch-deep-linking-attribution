@@ -123,7 +123,7 @@
     // Clear link identifiers so they don't get reused on the next open
     preferenceHelper.linkClickIdentifier = nil;
     preferenceHelper.spotlightIdentifier = nil;
-    preferenceHelper.universalLinkUrl = nil;
+    preferenceHelper.universalLinkUrl = nil;    
     
     if (data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]) {
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
