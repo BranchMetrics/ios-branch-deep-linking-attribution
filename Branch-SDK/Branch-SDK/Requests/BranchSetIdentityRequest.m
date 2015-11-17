@@ -57,7 +57,9 @@
     preferenceHelper.identityID = response.data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
     preferenceHelper.userUrl = response.data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = self.userId;
-    preferenceHelper.sessionID = response.data[BRANCH_RESPONSE_KEY_SESSION_ID];
+    if (response.data[BRANCH_RESPONSE_KEY_SESSION_ID]) {
+        preferenceHelper.sessionID = response.data[BRANCH_RESPONSE_KEY_SESSION_ID];
+    }
   
     if (response.data[BRANCH_RESPONSE_KEY_INSTALL_PARAMS]) {
         preferenceHelper.installParams = response.data[BRANCH_RESPONSE_KEY_INSTALL_PARAMS];
