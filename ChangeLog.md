@@ -1,5 +1,12 @@
 Branch iOS SDK change log
 
+- v0.11.11
+  * fixed dashboard debug mode for iOS 9
+  * fixed default value of userIdentity
+  * fixed race condition in PrefererencesHelper
+  * fixed race condition in initSession
+  * added check for non-nil sessionID
+
 - v0.11.10
   * revert fix for race condition until we can test with more partners
 
