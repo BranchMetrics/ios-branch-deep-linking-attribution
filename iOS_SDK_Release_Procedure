@@ -1,0 +1,30 @@
+iOS SDK Release Procedure   18/11/2015
+======================================
+
+Steps to release the iOS:
+
+1) Decide which Pull Requests (changes) will be included in the release
+	• are they fixing a partner issue?
+	• are there tests that verify the correctness of the change?
+
+2) Accept the pull requests and merge them into the project.  
+	• get a thumbs-up from at least one person
+	• merge them one at a time, to verify no conflicts
+	• delete the branches you merge (they can be restored later if necessary)
+
+2) Run the pre-release script
+	• from the root directory of the iOS SDK, run 'sh scripts/pre-release.sh'
+	• verifies our cocoapod definition file
+	• (more details! What to do if it fails?)
+
+3) Run the release script
+	• this script requires a new version number as an argument (ex: 0.8.5)	
+	• from the root directory of the iOS SDK, run  'sh scripts/release.sh <version>'  (ex 0.8.5)
+	• this script does several things:
+		• it opens the changelog on the command line.  add release notes here and save them
+		• it builds the framework and cocoapod
+		• it commits everything to github, including cocoapod tags
+		• it pushes the pod to Cocoapods.org
+		• it uploads the build to amazon s3
+		• it opens the google group where we announce releases; have your work browser open and logged in to gmail
+		• announce the release!
