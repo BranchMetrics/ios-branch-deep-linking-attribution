@@ -262,7 +262,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 }
 
 - (NSString *)userIdentity {
-    if (_userIdentity) {
+    if (!_userIdentity) {
         _userIdentity = [self readStringFromDefaults:BRANCH_PREFS_KEY_IDENTITY];
     }
 
