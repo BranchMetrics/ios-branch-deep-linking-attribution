@@ -29,7 +29,6 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 @property (nonatomic) ContentIndexMode contentIndexMode;
 @property (nonatomic, strong) NSArray *keywords;
 @property (nonatomic, strong) NSDate *expirationDate;
-@property (nonatomic, strong) NSString *emailSubject;
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier;
 - (instancetype)initWithTitle:(NSString *)title;
@@ -41,6 +40,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties;
 - (void)showShareSheetWithShareText:(NSString *)shareText andCallback:(callback)callback;
 - (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController andCallback:(callback)callback;
+- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties shareText:(NSString *)shareText andEmailSubject:(NSString *)emailSubject fromViewController:(UIViewController *)viewController andCallback:(callback)callback;
 - (void)listOnSpotlight;
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback;
 
