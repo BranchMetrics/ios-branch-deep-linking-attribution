@@ -132,6 +132,16 @@
     }
     UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     
+    if (self.emailSubject)
+    {
+        @try {
+            [shareViewController setValue:self.emailSubject forKey:@"subject"];
+        }
+        @catch (NSException *exception) {
+            NSLog(@"[Branch warning] Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController.");
+        }
+    }
+    
     UIViewController *presentingViewController;
     if (viewController && [viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
         presentingViewController = viewController;

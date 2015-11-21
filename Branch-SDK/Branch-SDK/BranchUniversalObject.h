@@ -29,6 +29,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 @property (nonatomic) ContentIndexMode contentIndexMode;
 @property (nonatomic, strong) NSArray *keywords;
 @property (nonatomic, strong) NSDate *expirationDate;
+@property (nonatomic, strong) NSDate *emailSubject;
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier;
 - (instancetype)initWithTitle:(NSString *)title;
