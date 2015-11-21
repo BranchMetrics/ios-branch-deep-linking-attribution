@@ -125,12 +125,27 @@
 }
 
 - (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController andCallback:(callback)callback {
+    [self showShareSheetWithLinkProperties:linkProperties shareText:shareText andEmailSubject:nil fromViewController:viewController andCallback:callback];
+}
+
+- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties shareText:(NSString *)shareText andEmailSubject:(NSString *)emailSubject fromViewController:(UIViewController *)viewController andCallback:(callback)callback
+{
     UIActivityItemProvider *itemProvider = [self getBranchActivityItemWithLinkProperties:linkProperties];
     NSMutableArray *items = [NSMutableArray arrayWithObject:itemProvider];
     if (shareText) {
         [items addObject:shareText];
     }
     UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    
+    if (emailSubject)
+    {
+        @try {
+            [shareViewController setValue:emailSubject forKey:@"subject"];
+        }
+        @catch (NSException *exception) {
+            NSLog(@"[Branch warning] Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController.");
+        }
+    }
     
     UIViewController *presentingViewController;
     if (viewController && [viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
