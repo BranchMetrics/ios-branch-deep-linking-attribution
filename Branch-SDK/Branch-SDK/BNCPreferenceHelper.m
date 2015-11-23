@@ -10,9 +10,9 @@
 #import "BNCConfig.h"
 #import "Branch.h"
 
-static const NSTimeInterval DEFAULT_TIMEOUT = 5;
+static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
-static const NSInteger DEFAULT_RETRY_COUNT = 1;
+static const NSInteger DEFAULT_RETRY_COUNT = 3;
 
 NSString * const BRANCH_PREFS_FILE = @"BNCPreferences";
 

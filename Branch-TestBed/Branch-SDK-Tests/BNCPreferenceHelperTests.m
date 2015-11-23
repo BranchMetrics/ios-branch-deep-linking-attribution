@@ -21,9 +21,9 @@
     BNCPreferenceHelper *prefHelper = [[BNCPreferenceHelper alloc] init];
     
     // Defaults
-    XCTAssertEqual(prefHelper.timeout, 5);
+    XCTAssertEqual(prefHelper.timeout, 5.5);
     XCTAssertEqual(prefHelper.retryInterval, 0);
-    XCTAssertEqual(prefHelper.retryCount, 1);
+    XCTAssertEqual(prefHelper.retryCount, 3);
 }
 
 - (void)testPreferenceSets {
