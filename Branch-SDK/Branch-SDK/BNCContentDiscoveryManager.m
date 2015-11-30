@@ -245,40 +245,39 @@
     self.currentUserActivity.keywords = keywords;
     [self.currentUserActivity becomeCurrent];
     
-  // Index via the CoreSpotlight strategy
-  //get the CSSearchableItem Class object
-  id CSSearchableItemClass = NSClassFromString(@"CSSearchableItem");
-  //alloc an empty instance
-  id searchableItem = [CSSearchableItemClass alloc];
-  //create-by-name a selector fot the init method we want
-  SEL initItemSelector = NSSelectorFromString(@"initWithUniqueIdentifier:domainIdentifier:attributeSet:");
-  //call the selector on the searchableItem with appropriate arguments
-  searchableItem = ((id (*)(id, SEL, NSString *, NSString *, id))[searchableItem methodForSelector:initItemSelector])(searchableItem, initItemSelector, spotlightIdentifier, BRANCH_SPOTLIGHT_PREFIX, attributes);
+    // Index via the CoreSpotlight strategy
+    //get the CSSearchableItem Class object
+    id CSSearchableItemClass = NSClassFromString(@"CSSearchableItem");
+    //alloc an empty instance
+    id searchableItem = [CSSearchableItemClass alloc];
+    //create-by-name a selector fot the init method we want
+    SEL initItemSelector = NSSelectorFromString(@"initWithUniqueIdentifier:domainIdentifier:attributeSet:");
+    //call the selector on the searchableItem with appropriate arguments
+    searchableItem = ((id (*)(id, SEL, NSString *, NSString *, id))[searchableItem methodForSelector:initItemSelector])(searchableItem, initItemSelector, spotlightIdentifier, BRANCH_SPOTLIGHT_PREFIX, attributes);
   
-  //create an assignment method to set the expiration date on the searchableItem
-  //OLD WAY OF CALLING: SEL expirationSelector = NSSelectorFromString(@"setExpirationDate:");
-  //now invoke it on the searchableItem, providing the expirationdate
-  //((void (*)(id, SEL, NSDate *))[searchableItem methodForSelector:expirationSelector])(searchableItem, expirationSelector, expirationDate);
+    //create an assignment method to set the expiration date on the searchableItem
+    //OLD WAY OF CALLING: SEL expirationSelector = NSSelectorFromString(@"setExpirationDate:");
+    //now invoke it on the searchableItem, providing the expirationdate
+    //((void (*)(id, SEL, NSDate *))[searchableItem methodForSelector:expirationSelector])(searchableItem, expirationSelector, expirationDate);
   
-  //NEW, EASIER WAY OF CALLING.  HAVE NOT TESTED ON XCode6 OR EARLIER
-  [searchableItem setExpirationDate:expirationDate];
-  NSLog(@"%@", searchableItem);
-  
-  Class CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
-  SEL defaultSearchableIndexSelector = NSSelectorFromString(@"defaultSearchableIndex");
-  id defaultSearchableIndex = ((id (*)(id, SEL))[CSSearchableIndexClass methodForSelector:defaultSearchableIndexSelector])(CSSearchableIndexClass, defaultSearchableIndexSelector);
-  SEL indexSearchableItemsSelector = NSSelectorFromString(@"indexSearchableItems:completionHandler:");
-  void (^__nullable completionBlock)(NSError *indexError) = ^void(NSError *__nullable indexError) {
-    if (callback) {
-      if (indexError) {
-        callback(nil, indexError);
-      }
-      else {
-        callback(url, nil);
-      }
-    }
-  };
-  ((void (*)(id, SEL, NSArray *, void (^ __nullable)(NSError * __nullable error)))[defaultSearchableIndex methodForSelector:indexSearchableItemsSelector])(defaultSearchableIndex, indexSearchableItemsSelector, @[searchableItem], completionBlock);
+    //NEW, EASIER WAY OF CALLING.  HAVE NOT TESTED ON XCode6 OR EARLIER
+    [searchableItem setExpirationDate:expirationDate];
+
+    Class CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
+    SEL defaultSearchableIndexSelector = NSSelectorFromString(@"defaultSearchableIndex");
+    id defaultSearchableIndex = ((id (*)(id, SEL))[CSSearchableIndexClass methodForSelector:defaultSearchableIndexSelector])(CSSearchableIndexClass, defaultSearchableIndexSelector);
+    SEL indexSearchableItemsSelector = NSSelectorFromString(@"indexSearchableItems:completionHandler:");
+    void (^__nullable completionBlock)(NSError *indexError) = ^void(NSError *__nullable indexError) {
+        if (callback) {
+            if (indexError) {
+                callback(nil, indexError);
+            }
+            else {
+                callback(url, nil);
+            }
+        }
+    };
+    ((void (*)(id, SEL, NSArray *, void (^ __nullable)(NSError * __nullable error)))[defaultSearchableIndex methodForSelector:indexSearchableItemsSelector])(defaultSearchableIndex, indexSearchableItemsSelector, @[searchableItem], completionBlock);
 #endif
 }
 
