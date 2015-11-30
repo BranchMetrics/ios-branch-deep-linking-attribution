@@ -96,7 +96,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 + (Branch *)getInstance {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-
+    
     // If no Branch Key
     NSString *branchKey = [preferenceHelper getBranchKey:YES];
     NSString *keyToUse = branchKey;
@@ -112,13 +112,13 @@ static int BNCDebugTriggerFingersSimulator = 2;
             NSLog(@"Usage of App Key is deprecated, please move toward using a Branch key");
         }
     }
-
+    
     return [Branch getInstanceInternal:keyToUse returnNilIfNoCurrentInstance:NO];
 }
 
 + (Branch *)getTestInstance {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-
+    
     // If no Branch Key
     NSString *branchKey = [preferenceHelper getBranchKey:NO];
     NSString *keyToUse = branchKey;
@@ -135,13 +135,13 @@ static int BNCDebugTriggerFingersSimulator = 2;
             keyToUse = appKey;
         }
     }
-
+    
     return [Branch getInstanceInternal:keyToUse returnNilIfNoCurrentInstance:NO];
 }
 
 + (Branch *)getInstance:(NSString *)branchKey {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-
+    
     if ([branchKey rangeOfString:@"key_"].location != NSNotFound) {
         preferenceHelper.branchKey = branchKey;
     }
@@ -443,38 +443,38 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 - (void)logout {
     [self logoutWithCallback:nil];
-    }
+}
 
 
 - (void)logoutWithCallback:(callbackWithStatus)callback {
-  if (!self.isInitialized) {
-    NSLog(@"Branch is not initialized, cannot logout");
-    if (callback) {callback(NO, nil);}
-  }
-  
-  BranchLogoutRequest *req = [[BranchLogoutRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
-    if (success) {
-      // Clear cached links
-      self.linkCache = [[BNCLinkCache alloc] init];
-      
-      if (callback) {
-        callback(YES, nil);
-      }
-      if (self.preferenceHelper.isDebug) {
-        NSLog(@"Logout Success");
-      }
-    } else /*failure*/ {
-      if (callback) {
-        callback(NO, error);
-      }
-      if (self.preferenceHelper.isDebug) {
-        NSLog(@"Logout Failure");
-      }
+    if (!self.isInitialized) {
+        NSLog(@"Branch is not initialized, cannot logout");
+        if (callback) {callback(NO, nil);}
     }
-  }];
-  
-  [self.requestQueue enqueue:req];
-  [self processNextQueueItem];
+    
+    BranchLogoutRequest *req = [[BranchLogoutRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
+        if (success) {
+            // Clear cached links
+            self.linkCache = [[BNCLinkCache alloc] init];
+            
+            if (callback) {
+                callback(YES, nil);
+            }
+            if (self.preferenceHelper.isDebug) {
+                NSLog(@"Logout Success");
+            }
+        } else /*failure*/ {
+            if (callback) {
+                callback(NO, error);
+            }
+            if (self.preferenceHelper.isDebug) {
+                NSLog(@"Logout Failure");
+            }
+        }
+    }];
+    
+    [self.requestQueue enqueue:req];
+    [self processNextQueueItem];
 }
 
 

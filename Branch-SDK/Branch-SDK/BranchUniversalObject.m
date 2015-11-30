@@ -47,7 +47,7 @@
         NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not register view.");
         return;
     }
-
+    
     [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest]
                                      andCallback:nil];
 }
@@ -64,7 +64,7 @@
         }
         return;
     }
-
+    
     [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest] andCallback:callback];
 }
 
@@ -73,7 +73,7 @@
         NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.");
         return nil;
     }
-
+    
     return [[Branch getInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
                                                andTags:linkProperties.tags
                                               andAlias:linkProperties.alias
@@ -93,7 +93,7 @@
         }
         return;
     }
-
+    
     [[Branch getInstance] getShortUrlWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
                                         andTags:linkProperties.tags
                                        andAlias:linkProperties.alias
@@ -108,7 +108,7 @@
     if (!self.canonicalIdentifier && !self.title) {
         NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content. In order to not break the end user experience with sharing, Branch SDK will proceed to create a URL, but content analytics may not properly include this URL.");
     }
-
+    
     NSMutableDictionary *params = [[self getParamsForServerRequestWithAddedLinkProperties:linkProperties] mutableCopy];
     if (linkProperties.matchDuration) {
         [params setObject:@(linkProperties.matchDuration) forKey:BRANCH_REQUEST_KEY_URL_DURATION];
@@ -200,7 +200,7 @@
             universalObject.contentIndexMode = ContentIndexModePublic;
         }
     }
-
+    
     if (dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE] && [dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE] isKindOfClass:[NSNumber class]]) {
         NSNumber *millisecondsSince1970 = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE];
         universalObject.expirationDate = [NSDate dateWithTimeIntervalSince1970:millisecondsSince1970.integerValue/1000];
@@ -208,7 +208,7 @@
     if (dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS]) {
         universalObject.keywords = dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS];
     }
-
+    
     return universalObject;
 }
 
@@ -233,7 +233,7 @@
     [self safeSetValue:self.keywords forKey:BRANCH_LINK_DATA_KEY_KEYWORDS onDict:temp];
     [self safeSetValue:@(1000 * [self.expirationDate timeIntervalSince1970]) forKey:BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE onDict:temp];
     [self safeSetValue:self.type forKey:BRANCH_LINK_DATA_KEY_CONTENT_TYPE onDict:temp];
-
+    
     [temp addEntriesFromDictionary:[self.metadata copy]];
     return [temp copy];
 }
