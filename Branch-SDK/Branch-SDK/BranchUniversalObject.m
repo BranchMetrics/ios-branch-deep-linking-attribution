@@ -168,7 +168,8 @@
                                                  description:self.contentDescription
                                                 thumbnailUrl:[NSURL URLWithString:self.imageUrl]
                                                   linkParams:self.metadata.copy
-                                                        type:self.type publiclyIndexable:publiclyIndexable
+                                                        type:self.type
+                                           publiclyIndexable:publiclyIndexable
                                                     keywords:[NSSet setWithArray:self.keywords]
                                               expirationDate:self.expirationDate
                                                     callback:callback];
