@@ -256,12 +256,10 @@
     searchableItem = ((id (*)(id, SEL, NSString *, NSString *, id))[searchableItem methodForSelector:initItemSelector])(searchableItem, initItemSelector, spotlightIdentifier, BRANCH_SPOTLIGHT_PREFIX, attributes);
   
     //create an assignment method to set the expiration date on the searchableItem
-    //OLD WAY OF CALLING: SEL expirationSelector = NSSelectorFromString(@"setExpirationDate:");
+    SEL expirationSelector = NSSelectorFromString(@"setExpirationDate:");
     //now invoke it on the searchableItem, providing the expirationdate
-    //((void (*)(id, SEL, NSDate *))[searchableItem methodForSelector:expirationSelector])(searchableItem, expirationSelector, expirationDate);
+    ((void (*)(id, SEL, NSDate *))[searchableItem methodForSelector:expirationSelector])(searchableItem, expirationSelector, expirationDate);
   
-    //NEW, EASIER WAY OF CALLING.  HAVE NOT TESTED ON XCode6 OR EARLIER
-    [searchableItem setExpirationDate:expirationDate];
 
     Class CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
     SEL defaultSearchableIndexSelector = NSSelectorFromString(@"defaultSearchableIndex");
