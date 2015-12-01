@@ -140,6 +140,15 @@
         presentingViewController = [[[UIApplication sharedApplication].delegate window] rootViewController];
     }
     
+    if (linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT]) {
+        @try {
+            [shareViewController setValue:linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT] forKey:@"subject"];
+        }
+        @catch (NSException *exception) {
+            NSLog(@"[Branch warning] Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController.");
+        }
+    }
+    
     if (presentingViewController) {
         // Required for iPad/Universal apps on iOS 8+
         if ([presentingViewController respondsToSelector:@selector(popoverPresentationController)]) {
