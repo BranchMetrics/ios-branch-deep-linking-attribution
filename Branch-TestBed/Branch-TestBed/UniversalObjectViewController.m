@@ -86,6 +86,7 @@
     props.channel = @"Twitter";
     props.stage = @"2";
     [props addControlParam:@"$desktop_url" withValue:@"http://example.com"];
+    [props addControlParam:@"$email_subject" withValue:@"Custom email subject!"];
     return props;
 }
 
