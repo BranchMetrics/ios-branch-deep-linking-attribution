@@ -13,5 +13,6 @@
 
 + (BNCStrongMatchHelper *)strongMatchHelper;
 - (void)createStrongMatchWithBranchKey:(NSString *)branchKey;
+- (BOOL)shouldDelayInstallRequest;
 
 @end

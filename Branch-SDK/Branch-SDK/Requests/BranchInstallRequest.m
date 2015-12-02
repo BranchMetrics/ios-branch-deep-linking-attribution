@@ -10,6 +10,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
+#import "BNCStrongMatchHelper.h"
 
 @implementation BranchInstallRequest
 
@@ -48,7 +49,14 @@
     params[BRANCH_REQUEST_KEY_IS_REFERRABLE] = @(preferenceHelper.isReferrable);
     params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
     
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_INSTALL] key:key callback:callback];
+    if ([[BNCStrongMatchHelper strongMatchHelper] shouldDelayInstallRequest]) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+            [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_INSTALL] key:key callback:callback];
+        });
+    }
+    else {
+        [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_INSTALL] key:key callback:callback];
+    }
 }
 
 - (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {

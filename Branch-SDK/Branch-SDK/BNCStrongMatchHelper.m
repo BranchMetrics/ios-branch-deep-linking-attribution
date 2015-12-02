@@ -19,6 +19,7 @@
 
 + (BNCStrongMatchHelper *)strongMatchHelper { return nil; }
 - (void)createStrongMatchWithBranchKey:(NSString *)branchKey { }
+- (BOOL)shouldDelayInstallRequest { return NO; }
 
 @end
 
@@ -30,6 +31,7 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
 
 @property (strong, nonatomic) UIWindow *secondWindow;
 @property (assign, nonatomic) BOOL requestInProgress;
+@property (assign, nonatomic) BOOL shouldDelayInstallRequest;
 
 @end
 
@@ -60,6 +62,7 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
         return;
     }
     
+    self.shouldDelayInstallRequest = YES;
     [self presentSafariVCWithBranchKey:branchKey];
 }
 
@@ -70,6 +73,8 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
     BOOL isRealHardwareId;
     NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:preferenceHelper.isDebug];
     if (!hardwareId || !isRealHardwareId) {
+        NSLog(@"[Branch Warning] Cannot use cookie-based matching while setDebug is enabled");
+        self.shouldDelayInstallRequest = NO;
         self.requestInProgress = NO;
         return;
     }
@@ -100,13 +105,16 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
         id safController = [[SFSafariViewControllerClass alloc] initWithURL:[NSURL URLWithString:urlString]];
         
         UIViewController *windowRootController = [[UIViewController alloc] init];
+        UIWindow *mainWindow = [[[UIApplication sharedApplication] delegate] window];
         
-        self.secondWindow = [[UIWindow alloc] initWithFrame:CGRectZero];
+        
+        self.secondWindow = [[UIWindow alloc] initWithFrame:[mainWindow bounds]];
         self.secondWindow.rootViewController = windowRootController;
         [self.secondWindow makeKeyAndVisible];
         [self.secondWindow setAlpha:0];
         
         [windowRootController presentViewController:safController animated:YES completion:^{
+            [mainWindow makeKeyAndVisible];
             [self.secondWindow.rootViewController dismissViewControllerAnimated:NO completion:NULL];
             [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
             self.requestInProgress = NO;
@@ -116,6 +124,11 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
         self.requestInProgress = NO;
     }
 }
+
+- (BOOL)shouldDelayInstallRequest {
+    return _shouldDelayInstallRequest;
+}
+
 
 @end
 
