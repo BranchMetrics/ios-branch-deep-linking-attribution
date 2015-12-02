@@ -104,21 +104,20 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
     if (SFSafariViewControllerClass) {
         id safController = [[SFSafariViewControllerClass alloc] initWithURL:[NSURL URLWithString:urlString]];
         
+        self.secondWindow = [[UIWindow alloc] initWithFrame:[[[[UIApplication sharedApplication] delegate] window] bounds]];
         UIViewController *windowRootController = [[UIViewController alloc] init];
-        UIWindow *mainWindow = [[[UIApplication sharedApplication] delegate] window];
-        
-        
-        self.secondWindow = [[UIWindow alloc] initWithFrame:[mainWindow bounds]];
         self.secondWindow.rootViewController = windowRootController;
-        [self.secondWindow makeKeyAndVisible];
+        [self.secondWindow setHidden:NO];
         [self.secondWindow setAlpha:0];
         
-        [windowRootController presentViewController:safController animated:YES completion:^{
-            [mainWindow makeKeyAndVisible];
-            [self.secondWindow.rootViewController dismissViewControllerAnimated:NO completion:NULL];
-            [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
-            self.requestInProgress = NO;
-        }];
+        // Must be on next run loop to avoid a warning
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [windowRootController presentViewController:safController animated:YES completion:^{
+                [self.secondWindow.rootViewController dismissViewControllerAnimated:YES completion:NULL];
+                [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
+                self.requestInProgress = NO;
+            }];
+        });
     }
     else {
         self.requestInProgress = NO;
