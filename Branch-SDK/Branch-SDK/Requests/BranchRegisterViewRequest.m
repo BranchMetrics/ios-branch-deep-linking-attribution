@@ -33,29 +33,32 @@
 }
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    NSMutableDictionary *params = [self.params mutableCopy];
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    if (self.params) {
+        data[BRANCH_REQUEST_KEY_URL_DATA] = [self.params copy];
+    }
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    [self safeSetValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID onDict:params];
-    [self safeSetValue:preferenceHelper.identityID forKey:BRANCH_REQUEST_KEY_BRANCH_IDENTITY onDict:params];
-    [self safeSetValue:preferenceHelper.sessionID forKey:BRANCH_REQUEST_KEY_SESSION_ID onDict:params];
-    [self safeSetValue:@([BNCSystemObserver adTrackingSafe]) forKey:BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED onDict:params];
-    [self safeSetValue:@(preferenceHelper.isDebug) forKey:BRANCH_REQUEST_KEY_DEBUG onDict:params];
-    [self safeSetValue:[BNCSystemObserver getOS] forKey:BRANCH_REQUEST_KEY_OS onDict:params];
-    [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:params];
-    [self safeSetValue:[BNCSystemObserver getModel] forKey:BRANCH_REQUEST_KEY_MODEL onDict:params];
-    [self safeSetValue:@([BNCSystemObserver isSimulator]) forKey:BRANCH_REQUEST_KEY_IS_SIMULATOR onDict:params];
+    [self safeSetValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID onDict:data];
+    [self safeSetValue:preferenceHelper.identityID forKey:BRANCH_REQUEST_KEY_BRANCH_IDENTITY onDict:data];
+    [self safeSetValue:preferenceHelper.sessionID forKey:BRANCH_REQUEST_KEY_SESSION_ID onDict:data];
+    [self safeSetValue:@([BNCSystemObserver adTrackingSafe]) forKey:BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED onDict:data];
+    [self safeSetValue:@(preferenceHelper.isDebug) forKey:BRANCH_REQUEST_KEY_DEBUG onDict:data];
+    [self safeSetValue:[BNCSystemObserver getOS] forKey:BRANCH_REQUEST_KEY_OS onDict:data];
+    [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:data];
+    [self safeSetValue:[BNCSystemObserver getModel] forKey:BRANCH_REQUEST_KEY_MODEL onDict:data];
+    [self safeSetValue:@([BNCSystemObserver isSimulator]) forKey:BRANCH_REQUEST_KEY_IS_SIMULATOR onDict:data];
 
-    [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];
-    [self safeSetValue:[BNCSystemObserver getDeviceName] forKey:BRANCH_REQUEST_KEY_DEVICE_NAME onDict:params];
+    [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:data];
+    [self safeSetValue:[BNCSystemObserver getDeviceName] forKey:BRANCH_REQUEST_KEY_DEVICE_NAME onDict:data];
 
     BOOL isRealHardwareId;
     NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:preferenceHelper.isDebug];
     if (hardwareId && isRealHardwareId) {
-        params[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
+        data[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
     }
     
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_REGISTER_VIEW] key:key callback:callback];
+    [serverInterface postRequest:data url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_REGISTER_VIEW] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
