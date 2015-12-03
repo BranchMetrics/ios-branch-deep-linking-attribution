@@ -50,6 +50,7 @@
     }
     
     self.myContent = [[BranchUniversalObject alloc] initWithCanonicalIdentifier:self.canonicalIdentifierTextField.text];
+    self.myContent.canonicalUrl = @"https://branch.io/deepviews";
     self.myContent.title = self.titleTextField.text;
     self.myContent.contentDescription = @"My awesome piece of content!";
     self.myContent.imageUrl = @"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png";

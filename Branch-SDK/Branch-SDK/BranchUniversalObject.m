@@ -181,6 +181,9 @@
     if (dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER]) {
         universalObject.canonicalIdentifier = dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER];
     }
+    if (dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_URL]) {
+        universalObject.canonicalUrl = dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_URL];
+    }
     if (dictionary[BRANCH_LINK_DATA_KEY_OG_TITLE]) {
         universalObject.title = dictionary[BRANCH_LINK_DATA_KEY_OG_TITLE];
     }
@@ -219,6 +222,7 @@
 - (NSDictionary *)getParamsForServerRequest {
     NSMutableDictionary *temp = [[NSMutableDictionary alloc] init];
     [self safeSetValue:self.canonicalIdentifier forKey:BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER onDict:temp];
+    [self safeSetValue:self.canonicalUrl forKey:BRANCH_LINK_DATA_KEY_CANONICAL_URL onDict:temp];
     [self safeSetValue:self.title forKey:BRANCH_LINK_DATA_KEY_OG_TITLE onDict:temp];
     [self safeSetValue:self.contentDescription forKey:BRANCH_LINK_DATA_KEY_OG_DESCRIPTION onDict:temp];
     [self safeSetValue:self.imageUrl forKey:BRANCH_LINK_DATA_KEY_OG_IMAGE_URL onDict:temp];
