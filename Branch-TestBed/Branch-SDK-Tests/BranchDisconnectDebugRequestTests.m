@@ -11,6 +11,7 @@
 #import "BranchConstants.h"
 #import "BNCPreferenceHelper.h"
 #import <OCMock/OCMock.h>
+#import "BNCConfig.h"
 
 @interface BranchDisconnectDebugRequestTests : BranchTest
 
@@ -19,8 +20,12 @@
 @implementation BranchDisconnectDebugRequestTests
 
 - (void)testRequestBody {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: [BNCPreferenceHelper preferenceHelper].deviceFingerprintID
+        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
+        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
+        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
+        @"sdk": [NSString stringWithFormat:@"ios%@", SDK_VERSION]
     };
     
     BranchDisconnectDebugRequest *request = [[BranchDisconnectDebugRequest alloc] init];
