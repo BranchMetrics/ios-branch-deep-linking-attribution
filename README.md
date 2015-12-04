@@ -14,7 +14,7 @@ There's a full demo app embedded in this repository, but you can also check out 
 
 ## Installation
 
-There are a number of ways to integrate the iOS SDK into your project. **All in, the Branch iOS SDK is a tight 180kb with extensive use**
+**The compiled iOS SDK footprint is 180kb**
 
 ### Available in CocoaPods
 
