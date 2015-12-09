@@ -83,7 +83,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 @property (strong, nonatomic) NSString *branchKey;
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
 @property (weak, nonatomic) UIViewController *deepLinkPresentingController;
-@property (nonatomic) BOOL cookieBasedMatchingEnabled;
+@property (assign, nonatomic) BOOL useCookieBasedMatching;
 
 @end
 
@@ -167,6 +167,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         _processing_sema = dispatch_semaphore_create(1);
         _networkCount = 0;
         _deepLinkControllers = [[NSMutableDictionary alloc] init];
+        _useCookieBasedMatching = YES;
         
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
@@ -253,8 +254,8 @@ static int BNCDebugTriggerFingersSimulator = 2;
     self.preferenceHelper.retryInterval = retryInterval;
 }
 
-- (void)enableCookieBasedMatching {
-    self.cookieBasedMatchingEnabled = YES;
+- (void)disableCookieBasedMatching {
+    self.useCookieBasedMatching = NO;
 }
 
 
@@ -1297,7 +1298,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         }
     };
     
-    if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.cookieBasedMatchingEnabled) {
+    if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.useCookieBasedMatching) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
     }
     
