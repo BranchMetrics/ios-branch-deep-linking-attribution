@@ -70,9 +70,7 @@
 		4677EB531B3B4A6400A13964 /* BranchDisconnectDebugRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4677EB521B3B4A6400A13964 /* BranchDisconnectDebugRequestTests.m */; };
 		467BA3551B713287003E458B /* BNCDebugRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 467BA3531B713287003E458B /* BNCDebugRequest.h */; };
 		467BA3561B713287003E458B /* BNCDebugRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 467BA3541B713287003E458B /* BNCDebugRequest.m */; };
-		4683F0751B20A73F00A432E7 /* CreditHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */; };
 		4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016731940F51400A9E103 /* AppDelegate.m */; };
-		4683F0771B20A73F00A432E7 /* PromoCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E3882A21A37E42F004BDABE /* PromoCodeViewController.m */; };
 		4683F0791B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4683F0781B20A9ED00A432E7 /* BranchConnectDebugRequestTests.m */; };
 		4683F07A1B20AC5E00A432E7 /* libBranch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 466B58381B17773000A69EDE /* libBranch.a */; };
 		46946B851B26898800627BCC /* BNCServerRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B3481B0FD4620019767C /* BNCServerRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -97,7 +95,6 @@
 		46D0B6FA1ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */; };
 		46DBB42D1B330CF300642FC8 /* BNCLinkDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DBB42B1B330CF300642FC8 /* BNCLinkDataTests.m */; };
 		46DBB42E1B330CF300642FC8 /* BNCServerRequestQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DBB42C1B330CF300642FC8 /* BNCServerRequestQueueTests.m */; };
-		46DBB4321B346DE300642FC8 /* ExampleDeepLinkingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DBB4311B346DE300642FC8 /* ExampleDeepLinkingController.m */; };
 		46DBB4351B34792300642FC8 /* CreateDeepLinkController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DBB4341B34792300642FC8 /* CreateDeepLinkController.m */; };
 		46DBB4371B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DBB4361B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m */; };
 		46DBB4391B34B22F00642FC8 /* BranchCloseRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DBB4381B34B22F00642FC8 /* BranchCloseRequestTests.m */; };
@@ -225,8 +222,6 @@
 		46DBB42B1B330CF300642FC8 /* BNCLinkDataTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLinkDataTests.m; sourceTree = "<group>"; };
 		46DBB42C1B330CF300642FC8 /* BNCServerRequestQueueTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerRequestQueueTests.m; sourceTree = "<group>"; };
 		46DBB42F1B335A9B00642FC8 /* BranchDeepLinkingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchDeepLinkingController.h; sourceTree = "<group>"; };
-		46DBB4301B346DE300642FC8 /* ExampleDeepLinkingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExampleDeepLinkingController.h; sourceTree = "<group>"; };
-		46DBB4311B346DE300642FC8 /* ExampleDeepLinkingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExampleDeepLinkingController.m; sourceTree = "<group>"; };
 		46DBB4331B34792300642FC8 /* CreateDeepLinkController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateDeepLinkController.h; sourceTree = "<group>"; };
 		46DBB4341B34792300642FC8 /* CreateDeepLinkController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateDeepLinkController.m; sourceTree = "<group>"; };
 		46DBB4361B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShortUrlSyncRequestTests.m; sourceTree = "<group>"; };
@@ -288,16 +283,12 @@
 		7E30BCF61A72FE7900AC7402 /* BNCLinkCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLinkCache.m; sourceTree = "<group>"; };
 		7E38829E1A37E22A004BDABE /* BNCError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCError.h; sourceTree = "<group>"; };
 		7E38829F1A37E22A004BDABE /* BNCError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCError.m; sourceTree = "<group>"; };
-		7E3882A11A37E42F004BDABE /* PromoCodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PromoCodeViewController.h; sourceTree = "<group>"; };
-		7E3882A21A37E42F004BDABE /* PromoCodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PromoCodeViewController.m; sourceTree = "<group>"; };
 		7E6ACAF619E324090066913E /* BNCServerRequestQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCServerRequestQueue.h; sourceTree = "<group>"; };
 		7E6ACAF719E324090066913E /* BNCServerRequestQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerRequestQueue.m; sourceTree = "<group>"; };
 		7E6ACAF919E324120066913E /* BNCConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCConfig.h; sourceTree = "<group>"; };
 		7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E6B3B541AA42D0E005F45BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7E6B3B551AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_SDK_Functionality_Tests.m; sourceTree = "<group>"; };
-		7EAA790019E89F67008D4A83 /* CreditHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreditHistoryViewController.h; sourceTree = "<group>"; };
-		7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreditHistoryViewController.m; sourceTree = "<group>"; };
 		7EAA790819E90B9F008D4A83 /* BNCServerResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCServerResponse.h; sourceTree = "<group>"; };
 		7EAA790919E90B9F008D4A83 /* BNCServerResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerResponse.m; sourceTree = "<group>"; };
 		9AF2E312FE4B66A29C94A06C /* libPods-Branch-TestBed Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-TestBed Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -492,14 +483,8 @@
 				670016751940F51400A9E103 /* Main.storyboard */,
 				670016781940F51400A9E103 /* ViewController.h */,
 				670016791940F51400A9E103 /* ViewController.m */,
-				7EAA790019E89F67008D4A83 /* CreditHistoryViewController.h */,
-				7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */,
-				46DBB4301B346DE300642FC8 /* ExampleDeepLinkingController.h */,
-				46DBB4311B346DE300642FC8 /* ExampleDeepLinkingController.m */,
 				46DBB4331B34792300642FC8 /* CreateDeepLinkController.h */,
 				46DBB4341B34792300642FC8 /* CreateDeepLinkController.m */,
-				7E3882A11A37E42F004BDABE /* PromoCodeViewController.h */,
-				7E3882A21A37E42F004BDABE /* PromoCodeViewController.m */,
 				54C309791BD9DE6600C4DA45 /* UniversalObjectViewController.h */,
 				54C3097A1BD9DE6600C4DA45 /* UniversalObjectViewController.m */,
 				6700167B1940F51400A9E103 /* Images.xcassets */,
@@ -798,21 +783,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Branch-SDK-Tests/Pods-Branch-SDK-Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DB51EF68897D5F1C69A3A50B /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Branch-SDK-Tests/Pods-Branch-SDK-Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		F7D291A58C55B729B55D4D11 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -883,9 +853,6 @@
 			files = (
 				6700167A1940F51400A9E103 /* ViewController.m in Sources */,
 				54C3097B1BD9DE6600C4DA45 /* UniversalObjectViewController.m in Sources */,
-				46DBB4321B346DE300642FC8 /* ExampleDeepLinkingController.m in Sources */,
-				4683F0751B20A73F00A432E7 /* CreditHistoryViewController.m in Sources */,
-				4683F0771B20A73F00A432E7 /* PromoCodeViewController.m in Sources */,
 				4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,
 				46DBB4351B34792300642FC8 /* CreateDeepLinkController.m in Sources */,

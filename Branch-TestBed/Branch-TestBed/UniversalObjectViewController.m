@@ -46,7 +46,8 @@
 
 - (IBAction)cmdInitUniversalObject {
     if (!self.canonicalIdentifierTextField.text.length && !self.titleTextField.text.length) {
-        self.canonicalIdentifierTextField.text = @"id12345";
+        //generate a unique ID
+        self.canonicalIdentifierTextField.text = [NSString stringWithFormat:@"ID%u", arc4random_uniform(100000)];
     }
     
     self.myContent = [[BranchUniversalObject alloc] initWithCanonicalIdentifier:self.canonicalIdentifierTextField.text];
