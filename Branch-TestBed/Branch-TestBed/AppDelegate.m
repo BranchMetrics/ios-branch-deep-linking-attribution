@@ -18,15 +18,23 @@
     [branch setDebug];
     
     [branch registerDeepLinkController:controller forKey:@"gravatar_email"];
-
-    [branch initSessionWithLaunchOptions:launchOptions automaticallyDisplayDeepLinkController:YES deepLinkHandler:^(NSDictionary *params, NSError *error) {
+    
+    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandlerUsingBranchUniversalObject:^(BranchUniversalObject *receivedBUO, BranchLinkProperties *linkProperties, NSError * error) {
+        
+        NSLog(@"\n\nJust retrieved data from server: %@\n\n", receivedBUO);
+        
         if (!error) {
-            NSLog(@"finished init with params = %@", [params description]);
-        }
-        else {
+            if (receivedBUO) {
+                //got a BUO
+                //maybe put up a share screen
+            }
+        } else {
             NSLog(@"failed init: %@", error);
         }
     }];
+
+
+
 
     return YES;
 }
