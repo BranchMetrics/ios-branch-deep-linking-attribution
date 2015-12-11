@@ -13,4 +13,5 @@
 @property (weak, nonatomic) IBOutlet UITextField *shortUrlTextField;
 @property (weak, nonatomic) IBOutlet UITextField *canonicalIdentifierTextField;
 @property (weak, nonatomic) IBOutlet UITextField *titleTextField;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *expires;
 @end

@@ -10,9 +10,9 @@
 #import "BNCConfig.h"
 #import "Branch.h"
 
-static const NSTimeInterval DEFAULT_TIMEOUT = 5;
+static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
-static const NSInteger DEFAULT_RETRY_COUNT = 1;
+static const NSInteger DEFAULT_RETRY_COUNT = 3;
 
 NSString * const BRANCH_PREFS_FILE = @"BNCPreferences";
 
@@ -31,6 +31,7 @@ NSString * const BRANCH_PREFS_KEY_SESSION_PARAMS = @"bnc_session_params";
 NSString * const BRANCH_PREFS_KEY_INSTALL_PARAMS = @"bnc_install_params";
 NSString * const BRANCH_PREFS_KEY_USER_URL = @"bnc_user_url";
 NSString * const BRANCH_PREFS_KEY_IS_REFERRABLE = @"bnc_is_referrable";
+NSString * const BRANCH_PREFS_KEY_BRANCH_UNIVERSAL_LINK_DOMAINS = @"branch_universal_link_domains";
 
 NSString * const BRANCH_PREFS_KEY_CREDITS = @"bnc_credits";
 NSString * const BRANCH_PREFS_KEY_CREDIT_BASE = @"bnc_credit_base_";
@@ -351,7 +352,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     }
 }
 
-- (NSString *)userURL {
+- (NSString *)userUrl {
     if (!_userUrl) {
         _userUrl = [self readStringFromDefaults:BRANCH_PREFS_KEY_USER_URL];
     }
@@ -359,7 +360,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     return _userUrl;
 }
 
-- (void)setUserURL:(NSString *)userUrl {
+- (void)setUserUrl:(NSString *)userUrl {
     if (![_userUrl isEqualToString:userUrl]) {
         _userUrl = userUrl;
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_USER_URL value:userUrl];
@@ -389,6 +390,10 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 - (void)clearUserCreditsAndCounts {
     self.creditsDictionary = [[NSMutableDictionary alloc] init];
     self.countsDictionary = [[NSMutableDictionary alloc] init];
+}
+
+- (id)getBranchUniversalLinkDomains {
+    return [[[NSBundle mainBundle] infoDictionary] objectForKey:BRANCH_PREFS_KEY_BRANCH_UNIVERSAL_LINK_DOMAINS];
 }
 
 #pragma mark - Credit Storage

@@ -113,7 +113,9 @@ NSString * const BRANCH_LINK_DATA_KEY_TYPE = @"+spotlight_type";
 NSString * const BRANCH_LINK_DATA_KEY_THUMBNAIL_URL = @"+spotlight_thumbnail_url";
 NSString * const BRANCH_LINK_DATA_KEY_KEYWORDS = @"$keywords";
 NSString * const BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER = @"$canonical_identifier";
+NSString * const BRANCH_LINK_DATA_KEY_CANONICAL_URL = @"$canonical_url";
 NSString * const BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE = @"$exp_date";
 NSString * const BRANCH_LINK_DATA_KEY_CONTENT_TYPE = @"$content_type";
+NSString * const BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT = @"$email_subject";
 
 NSString * const BRANCH_SPOTLIGHT_PREFIX = @"io.branch.link.v1";
