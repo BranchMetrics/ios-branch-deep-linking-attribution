@@ -18,6 +18,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.expires.selectedSegmentIndex = 0;
+    
     [self.canonicalIdentifierTextField addTarget:self
                                           action:@selector(textFieldChanged:)
                                 forControlEvents:UIControlEventEditingChanged];
@@ -53,11 +55,27 @@
     self.myContent.title = self.titleTextField.text;
     self.myContent.contentDescription = @"My awesome piece of content!";
     self.myContent.imageUrl = @"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png";
-    
     [self.myContent addMetadataKey:@"foo" value:@"bar"];
+    NSDate* timeout = nil;
+    
+    if ([self.expires selectedSegmentIndex] == 0) {
+        timeout =[[NSDate date] dateByAddingTimeInterval:(60)];  //1 minute
+        NSLog(@"\n\n##### one minute expiration time in spotlight\n");
+    } else if ([self.expires selectedSegmentIndex] == 1) {
+        timeout = [[NSDate date] dateByAddingTimeInterval:(60*10)]; // 10 minutes
+        NSLog(@"\n\n##### ten minute expiration time in spotlight\n");
+    } else {
+        timeout = [[NSDate date] dateByAddingTimeInterval:(60*60)]; //1 hour
+        NSLog(@"\n\n##### one hour expiration time in spotlight\n");
+    }
+    
+    if (timeout) {
+        self.myContent.expirationDate = timeout;
+        NSLog(@"%@", timeout);
+    }
     
     NSLog(@"You've initialized a %@", self.myContent);
-
+    
     [self hideKeyboard];
 }
 
@@ -104,7 +122,7 @@
     /**
      Synchronous call (not recommended):
      
-    [self.myContent getShortUrlWithLinkProperties:[self exampleLinkProperties]];
+     [self.myContent getShortUrlWithLinkProperties:[self exampleLinkProperties]];
      */
 }
 
@@ -122,7 +140,7 @@
     /**
      Simple Alternative:
      
-    [self.myContent listOnSpotlight];
+     [self.myContent listOnSpotlight];
      */
 }
 
@@ -135,7 +153,7 @@
     /**
      Simple alternative:
      
-    [self.myContent showShareSheetWithShareText:@"Super amazing thing I want to share!" andCallback:nil];
+     [self.myContent showShareSheetWithShareText:@"Super amazing thing I want to share!" andCallback:nil];
      */
 }
 
@@ -162,7 +180,7 @@
     /**
      If you really love the itemProvider, here's a way to get one derived from a BranchUniversalObject:
      
-    UIActivityItemProvider *itemProvider = [self.myContent getBranchActivityItemWithLinkProperties:[self exampleLinkProperties]];
+     UIActivityItemProvider *itemProvider = [self.myContent getBranchActivityItemWithLinkProperties:[self exampleLinkProperties]];
      */
     
     // Pass this in the NSArray of ActivityItems when initializing a UIActivityViewController
@@ -172,7 +190,7 @@
     if ([shareViewController respondsToSelector:@selector(popoverPresentationController)]) {
         shareViewController.popoverPresentationController.sourceView = self.view;
     }
-
+    
     // Present the share sheet!
     [self.navigationController presentViewController:shareViewController animated:YES completion:nil];
 }
