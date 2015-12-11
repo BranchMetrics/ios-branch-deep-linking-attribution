@@ -18,7 +18,7 @@
 @end
 
 @implementation BranchDisconnectDebugRequestTests
-
+/*
 - (void)testRequestBody {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
@@ -44,5 +44,5 @@
     
     XCTAssertFalse([BNCPreferenceHelper preferenceHelper].isConnectedToRemoteDebug);
 }
-
+*/
 @end
