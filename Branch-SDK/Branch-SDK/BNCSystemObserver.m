@@ -83,7 +83,7 @@
 
 + (NSString *)getTeamIdentifier {
     NSString *teamWithDot = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"AppIdentifierPrefix"];
-    if (teamWithDot) {
+    if (teamWithDot.length) {
         return [teamWithDot substringToIndex:([teamWithDot length] - 1)];
     }
     return nil;
