@@ -8,7 +8,6 @@
         <!--Example Deep Linking Controller-->
         <scene sceneID="FSb-7R-3Ws">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="cIl-Ee-L87" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="DeepLinkingController" id="WoF-5F-nCI" customClass="ExampleDeepLinkingController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="R2n-7C-qwY"/>
@@ -54,6 +53,7 @@
                         <outlet property="profileImageView" destination="hUU-IE-nsx" id="xL6-bB-cXn"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cIl-Ee-L87" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1319" y="-342"/>
         </scene>
@@ -71,7 +71,6 @@
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YZH-w5-wo1">
                                 <rect key="frame" x="171" y="262" width="129" height="30"/>
-
                                 <state key="normal" title="Old share sheet">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -81,7 +80,6 @@
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bMa-mu-g3R">
                                 <rect key="frame" x="20" y="262" width="129" height="30"/>
-
                                 <state key="normal" title="New share sheet">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -91,7 +89,6 @@
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AsD-k6-yAR">
                                 <rect key="frame" x="171" y="186" width="129" height="30"/>
-
                                 <state key="normal" title="register view">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -101,7 +98,6 @@
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kVv-zr-igE">
                                 <rect key="frame" x="20" y="224" width="129" height="30"/>
-
                                 <state key="normal" title="get short url">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -142,29 +138,12 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="expires after" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CGr-JP-OHF">
-                                <rect key="frame" x="157" y="265" width="133" height="26"/>
-                                <animations/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Cc1-Wa-JQd">
-                                <rect key="frame" x="154" y="307" width="158" height="29"/>
-                                <animations/>
-                                <segments>
-                                    <segment title="1 min"/>
-                                    <segment title="10 mins"/>
-                                    <segment title="1 hour"/>
-                                </segments>
-                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Branch Universal Object" id="S2g-0D-B8T"/>
                     <connections>
                         <outlet property="canonicalIdentifierTextField" destination="n5M-Rp-h0z" id="mZg-1U-TXE"/>
-                        <outlet property="expires" destination="Cc1-Wa-JQd" id="OCh-Nm-DvF"/>
                         <outlet property="shortUrlTextField" destination="PhK-Cb-jar" id="i3T-Y5-OF0"/>
                         <outlet property="titleTextField" destination="4fC-Hc-8tb" id="Oyr-TI-0cc"/>
                     </connections>
