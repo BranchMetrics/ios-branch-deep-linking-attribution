@@ -116,5 +116,6 @@ NSString * const BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER = @"$canonical_identi
 NSString * const BRANCH_LINK_DATA_KEY_CANONICAL_URL = @"$canonical_url";
 NSString * const BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE = @"$exp_date";
 NSString * const BRANCH_LINK_DATA_KEY_CONTENT_TYPE = @"$content_type";
+NSString * const BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT = @"$email_subject";
 
 NSString * const BRANCH_SPOTLIGHT_PREFIX = @"io.branch.link.v1";
