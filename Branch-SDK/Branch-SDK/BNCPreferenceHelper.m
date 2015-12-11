@@ -352,7 +352,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     }
 }
 
-- (NSString *)userURL {
+- (NSString *)userUrl {
     if (!_userUrl) {
         _userUrl = [self readStringFromDefaults:BRANCH_PREFS_KEY_USER_URL];
     }
@@ -360,7 +360,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     return _userUrl;
 }
 
-- (void)setUserURL:(NSString *)userUrl {
+- (void)setUserUrl:(NSString *)userUrl {
     if (![_userUrl isEqualToString:userUrl]) {
         _userUrl = userUrl;
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_USER_URL value:userUrl];
