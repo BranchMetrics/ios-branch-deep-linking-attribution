@@ -19,7 +19,7 @@
 @end
 
 @implementation BranchConnectDebugRequestTests
-
+/*
 - (void)testRequestBody {
     NSString * const DEVICE_NAME = @"foo-name";
     NSString * const OS = @"foo-os";
@@ -78,5 +78,5 @@
     
     XCTAssertFalse([[BNCPreferenceHelper preferenceHelper] isConnectedToRemoteDebug]);
 }
-
+*/
 @end
