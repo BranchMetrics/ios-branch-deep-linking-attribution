@@ -1373,6 +1373,8 @@ static int BNCDebugTriggerFingersSimulator = 2;
             }
         }
     }
+    
+    [self closeAppIfInBackground];
 }
 
 - (void)handleInitFailure:(NSError *)error {
@@ -1385,6 +1387,15 @@ static int BNCDebugTriggerFingersSimulator = 2;
         else if (self.sessionInitWithBranchUniversalObjectCallback) {
             self.sessionInitWithBranchUniversalObjectCallback(nil, nil, error);
         }
+    }
+    
+    [self closeAppIfInBackground];
+}
+
+- (void)closeAppIfInBackground {
+    UIApplicationState state = [[UIApplication sharedApplication] applicationState];
+    if (state == UIApplicationStateBackground || state == UIApplicationStateInactive) {
+        [self applicationWillResignActive];
     }
 }
 
