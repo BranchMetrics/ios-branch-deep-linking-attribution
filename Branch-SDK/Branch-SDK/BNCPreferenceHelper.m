@@ -31,6 +31,7 @@ NSString * const BRANCH_PREFS_KEY_SESSION_PARAMS = @"bnc_session_params";
 NSString * const BRANCH_PREFS_KEY_INSTALL_PARAMS = @"bnc_install_params";
 NSString * const BRANCH_PREFS_KEY_USER_URL = @"bnc_user_url";
 NSString * const BRANCH_PREFS_KEY_IS_REFERRABLE = @"bnc_is_referrable";
+NSString * const BRANCH_PREFS_KEY_BRANCH_UNIVERSAL_LINK_DOMAINS = @"branch_universal_link_domains";
 
 NSString * const BRANCH_PREFS_KEY_CREDITS = @"bnc_credits";
 NSString * const BRANCH_PREFS_KEY_CREDIT_BASE = @"bnc_credit_base_";
@@ -389,6 +390,10 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 - (void)clearUserCreditsAndCounts {
     self.creditsDictionary = [[NSMutableDictionary alloc] init];
     self.countsDictionary = [[NSMutableDictionary alloc] init];
+}
+
+- (id)getBranchUniversalLinkDomains {
+    return [[[NSBundle mainBundle] infoDictionary] objectForKey:BRANCH_PREFS_KEY_BRANCH_UNIVERSAL_LINK_DOMAINS];
 }
 
 #pragma mark - Credit Storage
