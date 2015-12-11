@@ -81,22 +81,13 @@
     return [[NSBundle mainBundle] bundleIdentifier];
 }
 
-
-//this method uses the fact that the OS will expand symbols at runtime with their actual values
-
 + (NSString *)getTeamIdentifier {
     NSString *teamWithDot = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"AppIdentifierPrefix"];
-    
-    //remove the trailing dot
     if (teamWithDot) {
-        NSString* teamWithoutDot = [teamWithDot substringToIndex:[teamWithDot length]-1];
-        NSLog(@"TeamIdentifier: %@", teamWithoutDot);
-        return teamWithoutDot;
+        return [teamWithDot substringToIndex:([teamWithDot length] - 1)];
     }
-    return @"TeamIdentifier not found";
+    return nil;
 }
-
-
 
 + (NSString *)getCarrier {
     NSString *carrierName = nil;
