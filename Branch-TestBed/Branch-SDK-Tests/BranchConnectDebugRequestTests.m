@@ -26,8 +26,8 @@
     NSString * const OS_VERSION = @"foo-os-version";
     NSString * const MODEL = @"foo-model";
     NSNumber * const IS_SIMULATOR = @YES;
-    NSString * const SESSION_ID = @"11111";
-    NSString * const BRANCH_IDENTITY = @"22222";
+    NSString * const SESSION_ID = @"foo";
+    NSString * const BRANCH_IDENTITY = @"foo";
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary * const expectedParams = @{
