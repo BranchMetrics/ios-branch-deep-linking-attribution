@@ -389,6 +389,18 @@ static int BNCDebugTriggerFingersSimulator = 2;
         [self initUserSessionAndCallCallback:YES];
         self.preferenceHelper.isContinuingUserActivity = NO;
         
+        id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
+        if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] && [[userActivity.webpageURL absoluteString] containsString:branchUniversalLinkDomains]) {
+            return YES;
+        }
+        else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
+            for (id oneDomain in branchUniversalLinkDomains) {
+                if ([oneDomain isKindOfClass:[NSString class]] && [[userActivity.webpageURL absoluteString] containsString:oneDomain]) {
+                    return YES;
+                }
+            }
+        }
+        
         return [[userActivity.webpageURL absoluteString] containsString:@"bnc.lt"];
     }
     
