@@ -105,8 +105,8 @@
 }
 
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties {
-    if (!self.canonicalIdentifier && !self.title) {
-        NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content. In order to not break the end user experience with sharing, Branch SDK will proceed to create a URL, but content analytics may not properly include this URL.");
+    if (!self.canonicalIdentifier && !self.canonicalUrl && !self.title) {
+        NSLog(@"[Branch Warning] a canonicalIdentifier, canonicalURL, or title are required to uniquely identify content. In order to not break the end user experience with sharing, Branch SDK will proceed to create a URL, but content analytics may not properly include this URL.");
     }
     
     NSMutableDictionary *params = [[self getParamsForServerRequestWithAddedLinkProperties:linkProperties] mutableCopy];
@@ -183,6 +183,9 @@
     if (dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER]) {
         universalObject.canonicalIdentifier = dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER];
     }
+    if (dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_URL]) {
+        universalObject.canonicalUrl = dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_URL];
+    }
     if (dictionary[BRANCH_LINK_DATA_KEY_OG_TITLE]) {
         universalObject.title = dictionary[BRANCH_LINK_DATA_KEY_OG_TITLE];
     }
@@ -221,6 +224,7 @@
 - (NSDictionary *)getParamsForServerRequest {
     NSMutableDictionary *temp = [[NSMutableDictionary alloc] init];
     [self safeSetValue:self.canonicalIdentifier forKey:BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER onDict:temp];
+    [self safeSetValue:self.canonicalUrl forKey:BRANCH_LINK_DATA_KEY_CANONICAL_URL onDict:temp];
     [self safeSetValue:self.title forKey:BRANCH_LINK_DATA_KEY_OG_TITLE onDict:temp];
     [self safeSetValue:self.contentDescription forKey:BRANCH_LINK_DATA_KEY_OG_DESCRIPTION onDict:temp];
     [self safeSetValue:self.imageUrl forKey:BRANCH_LINK_DATA_KEY_OG_IMAGE_URL onDict:temp];
