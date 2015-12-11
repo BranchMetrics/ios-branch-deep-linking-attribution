@@ -1359,7 +1359,12 @@ static int BNCDebugTriggerFingersSimulator = 2;
         if ([keysInParams count]) {
             NSString *key = [[keysInParams allObjects] firstObject];
             UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
-            [branchSharingController configureControlWithData:latestReferringParams];
+            if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
+                [branchSharingController configureControlWithData:latestReferringParams];
+            }
+            else {
+                [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"[Branch Warning] View controller does not implement configureControlWithData:"];
+            }
             branchSharingController.deepLinkingCompletionDelegate = self;
             self.deepLinkPresentingController = [[[UIApplication sharedApplication].delegate window] rootViewController];
             
