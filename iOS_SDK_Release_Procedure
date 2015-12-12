@@ -1,4 +1,4 @@
-iOS SDK Release Procedure   18/11/2015
+suiOS SDK Release Procedure   18/11/2015
 ======================================
 
 Steps to release the iOS:
@@ -9,8 +9,9 @@ Steps to release the iOS:
 
 2) Accept the pull requests and merge them into the project.  
 	• get a thumbs-up from at least one person
-	• merge them one at a time, to verify no conflicts
+	• merge them one at a time, to in case there are conflicts
 	• delete the branches you merge (they can be restored later if necessary)
+	• DO NOT forget to deintegrate cocoapods
 
 2) Run the pre-release script
 	• from the root directory of the iOS SDK, run 'sh scripts/pre-release.sh'
