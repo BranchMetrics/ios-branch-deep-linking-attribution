@@ -1,5 +1,20 @@
 Branch iOS SDK change log
 
+- v0.11.12
+  * After initsession, close the app if now in background
+  * Add support for setting email subject when using BranchUniversalObject
+  * Client network timeouts increased
+  * Pass content expiration date through to spotlight index
+  * Warn if easy deeplinking view controllerdoes not implement configure ControlWithData:
+  * Set email subject on share sheet
+  * 100% matching prototype. Woo!
+  * BRanchUniversalObject with only canonical url allowed
+  * Update register-view call so it's no longer a flat object  
+  * Fix debug tests
+  * Fix setUserUrl capitalization
+  * TeamID can be gotten from plist or original way
+  * allow users to specify branch_universal_link_domains
+
 - v0.11.11
   * fixed dashboard debug mode for iOS 9
   * fixed default value of userIdentity
