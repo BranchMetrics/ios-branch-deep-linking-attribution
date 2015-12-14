@@ -7,7 +7,7 @@ This is a repository of our open source iOS SDK, and the information presented h
 There's a full demo app embedded in this repository, but you can also check out our live demo: [Branch Monster Factory](https://itunes.apple.com/us/app/id917737838). We've [open sourced the Branchster's app](https://github.com/BranchMetrics/Branchster-iOS) as well if you're ready to dig in.
 
 ## Additional Resources
-- [Integration guide](https://dev.branch.io/recipes/quickstart_guide/ios/) *Start Here*
+- [Integration guide](https://dev.branch.io/recipes/add_the_sdk/ios/) *Start Here*
 - [Changelog](https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK/blob/master/ChangeLog.md)
 - [Testing](https://dev.branch.io/recipes/testing_your_integration/ios/)
 - [Support portal, FAQ](http://support.branch.io)
