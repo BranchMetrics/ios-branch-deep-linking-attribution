@@ -9,46 +9,65 @@
 #import "Branch.h"
 #import "ViewController.h"
 #import "CreditHistoryViewController.h"
+#import "BranchUniversalObject.h"
+#import "BranchLinkProperties.h"
 
 @interface ViewController ()
 
 @property (nonatomic, weak) IBOutlet UIButton *refreshUrlButton;
 @property (weak, nonatomic) IBOutlet UITextField *editRefShortUrl;
 @property (weak, nonatomic) IBOutlet UILabel *txtRewardCredits;
-@property (weak, nonatomic) IBOutlet UILabel *txtInstallTotal;
-@property (weak, nonatomic) IBOutlet UILabel *txtInstallUniques;
-@property (weak, nonatomic) IBOutlet UILabel *txtBuyCount;
-@property (weak, nonatomic) IBOutlet UILabel *txtBuyUniques;
 
-
+@property (strong, nonatomic) BranchUniversalObject *branchUniversalObject;
 
 @end
 
 @implementation ViewController
 
+- (void)viewDidLoad {
+    self.navigationController.navigationBar.translucent = NO;
+    [self.editRefShortUrl addTarget:self action:@selector(textFieldFinished:) forControlEvents:UIControlEventEditingDidEndOnExit];
+    [super viewDidLoad];
+    
+    self.branchUniversalObject = [[BranchUniversalObject alloc] initWithCanonicalIdentifier:@"item/12345"];
+    self.branchUniversalObject.title = @"My Content Title";
+    self.branchUniversalObject.contentDescription = @"My Content Description";
+    self.branchUniversalObject.imageUrl = @"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png";
+    [self.branchUniversalObject addMetadataKey:@"custom_key1" value:@"some custom data"];
+    [self.branchUniversalObject addMetadataKey:@"custom_key2" value:@"more custom data"];
+}
+
 - (IBAction)cmdRefreshShort:(id)sender {
-    NSDictionary*params = [[NSDictionary alloc] initWithObjects:@[@"test_object", @"here is another object!!", @"Kindred", @"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png"] forKeys:@[@"key1", @"key2", @"$og_title", @"$og_image_url"]];
-    [[Branch getInstance] getShortURLWithParams:params andTags:@[@"tag1", @"tag2"] andChannel:@"facebook" andFeature:@"invite" andStage:@"2" andCallback:^(NSString *url, NSError *err) {
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.feature = @"sharing";
+    linkProperties.channel = @"facebook";
+    [linkProperties addControlParam:@"$desktop_url" withValue:@"http://example.com/home"];
+    [linkProperties addControlParam:@"$ios_url" withValue:@"http://example.com/ios"];
+    
+    [self.branchUniversalObject getShortUrlWithLinkProperties:linkProperties andCallback:^(NSString *url, NSError *err) {
         [self.editRefShortUrl setText:url];
     }];
-    Branch *branch = [Branch getInstance];
-    [branch createDiscoverableContentWithTitle:@"MyApp"
-                                   description:@"My app is disrupting apps"
-                                  thumbnailUrl:[NSURL URLWithString:@"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png"]
-                                    linkParams:@{@"object_id": @"1234"}
-                             publiclyIndexable:YES];
 }
-- (IBAction)cmdRefreshPoints:(id)sender {
-    Branch *branch = [Branch getInstance];
-    [branch loadActionCountsWithCallback:^(BOOL changed, NSError *err){
-        if (!err) {
-            NSLog(@"load points callback, balance install = %ld, balance buy = %ld", (long)[branch getTotalCountsForAction:@"install"], (long)[branch getTotalCountsForAction:@"buy"]);
-            [self.txtInstallTotal setText:[NSString stringWithFormat:@"%ld",(long)[branch getTotalCountsForAction:@"install"]]];
-            [self.txtInstallUniques setText:[NSString stringWithFormat:@"%ld",(long)[branch getUniqueCountsForAction:@"install"]]];
-            [self.txtBuyCount setText:[NSString stringWithFormat:@"%ld",(long)[branch getTotalCountsForAction:@"buy"]]];
-            [self.txtBuyUniques setText:[NSString stringWithFormat:@"%ld",(long)[branch getUniqueCountsForAction:@"buy"]]];
-        }
+
+- (IBAction)cmdShareLink:(id)sender {
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.feature = @"sharing";
+    [linkProperties addControlParam:@"$desktop_url" withValue:@"http://example.com/home"];
+    [linkProperties addControlParam:@"$ios_url" withValue:@"http://example.com/ios"];
+
+    
+    [self.branchUniversalObject showShareSheetWithLinkProperties:linkProperties
+                                                    andShareText:@"Super amazing thing I want to share"
+                                              fromViewController:self
+                                                     andCallback:^{
+        NSLog(@"Finished showing the share sheet!!");
     }];
+}
+- (IBAction)cmdRegisterView:(id)sender {
+    [self.branchUniversalObject registerView];
+}
+- (IBAction)cmdIndexSpotlight:(id)sender {
+    [self.branchUniversalObject listOnSpotlight];
 }
 
 - (IBAction)cmdRefreshRewards:(id)sender {
@@ -90,22 +109,25 @@
       NSLog(@"logout");
     }
   }];
-  
-  self.txtBuyCount.text = @"";
-  self.txtBuyUniques.text = @"";
-  self.txtInstallTotal.text = @"";
-  self.txtInstallUniques.text = @"";
+
   self.txtRewardCredits.text = @"";
-  
 }
+
 - (IBAction)cmdPrintInstall:(id)sender {
     Branch *branch = [Branch getInstance];
     NSLog(@"found params = %@", [[branch getFirstReferringParams] description]);
 }
+
+- (IBAction)cmdSessionParams:(id)sender {
+    Branch *branch = [Branch getInstance];
+    NSLog(@"found params = %@", [[branch getLatestReferringParams] description]);
+}
+
 - (IBAction)cmdBuyWithState:(id)sender {
     Branch *branch = [Branch getInstance];
     [branch userCompletedAction:@"buy" withState:[[NSDictionary alloc] initWithObjects:@[@"Alex", [NSNumber numberWithInt:1], [NSNumber numberWithBool:YES], [NSNumber numberWithFloat:0.01240123],@"hello"] forKeys:@[@"name",@"integer",@"boolean",@"float",@"test_key"]]];
 }
+
 - (IBAction)cmdGetCreditHistory:(id)sender {
     Branch *branch = [Branch getInstance];
     [branch getCreditHistoryWithCallback:^(NSArray *creditHistory, NSError *err) {
@@ -121,12 +143,6 @@
     if ([segue.identifier isEqualToString:@"ShowCreditHistory"]) {
         ((CreditHistoryViewController *)segue.destinationViewController).creditTransactions = sender;
     }
-}
-
-- (void)viewDidLoad {
-    self.navigationController.navigationBar.translucent = NO;
-    [self.editRefShortUrl addTarget:self action:@selector(textFieldFinished:) forControlEvents:UIControlEventEditingDidEndOnExit];
-    [super viewDidLoad];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
