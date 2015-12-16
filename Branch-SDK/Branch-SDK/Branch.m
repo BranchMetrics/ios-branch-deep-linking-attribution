@@ -384,6 +384,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
+    //always save the incoming url in the preferenceHelper, as the externalIntentURI
+    self.preferenceHelper.externalIntentURI = [userActivity.webpageURL absoluteString];
+
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         self.preferenceHelper.universalLinkUrl = [userActivity.webpageURL absoluteString];
         
