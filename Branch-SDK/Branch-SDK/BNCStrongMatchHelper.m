@@ -102,7 +102,7 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
     
     Class SFSafariViewControllerClass = NSClassFromString(@"SFSafariViewController");
     if (SFSafariViewControllerClass) {
-        id safController = [[SFSafariViewControllerClass alloc] initWithURL:[NSURL URLWithString:urlString]];
+        UIViewController * safController = [[SFSafariViewControllerClass alloc] initWithURL:[NSURL URLWithString:urlString]];
         
         self.secondWindow = [[UIWindow alloc] initWithFrame:[[[[UIApplication sharedApplication] delegate] window] bounds]];
         UIViewController *windowRootController = [[UIViewController alloc] init];
