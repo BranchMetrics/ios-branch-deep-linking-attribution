@@ -1,5 +1,10 @@
 Branch iOS SDK change log
 
+- v0.11.13
+  * fixed race condition when Universal Link is clicked (introduced in 0.11.12 only)
+  * updated TestBed app to use Branch Universal Object
+  * made cookie-based matching safer (thanks to @joshuafeldman)
+
 - v0.11.12
   * After initsession, close the app if now in background
   * Add support for setting email subject when using BranchUniversalObject
