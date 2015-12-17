@@ -84,7 +84,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
 @property (weak, nonatomic) UIViewController *deepLinkPresentingController;
 @property (assign, nonatomic) BOOL useCookieBasedMatching;
-
+@property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @end
 
 @implementation Branch
@@ -363,9 +363,38 @@ static int BNCDebugTriggerFingersSimulator = 2;
     }
 }
 
+
+
+//these params will be added
+- (void) setDeepLinkDebugMode:(NSDictionary *)debugParams {
+    self.deepLinkDebugParams = debugParams;
+}
+
+
+//This code shouldn't need to exist, there should be methods on preferencehelper,
+// or an http_params object (a dictionary) with methods for adding/removing params and dealing with the converting back and forth between json and NSObject
+- (void) includeDebugParams {
+    //needs unit tests
+    if (self.deepLinkDebugParams) {
+        //let's put the debugParams in both at once...
+        NSMutableDictionary *newSessionParams = [[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams] mutableCopy];
+        NSMutableDictionary *newInstallParams = [[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.installParams] mutableCopy];
+        
+        [newSessionParams addEntriesFromDictionary:self.deepLinkDebugParams];
+        [newInstallParams addEntriesFromDictionary:self.deepLinkDebugParams];
+        
+        self.preferenceHelper.sessionParams = [BNCEncodingUtils encodeDictionaryToJsonString:newSessionParams];
+        self.preferenceHelper.installParams = [BNCEncodingUtils encodeDictionaryToJsonString:newInstallParams];
+    }
+}
+
+
+
 - (BOOL)handleDeepLink:(NSURL *)url {
     BOOL handled = NO;
     if (url) {
+        [self includeDebugParams];
+        
         NSString *query = [url fragment];
         if (!query) {
             query = [url query];
@@ -386,7 +415,8 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         self.preferenceHelper.universalLinkUrl = [userActivity.webpageURL absoluteString];
-        
+        [self includeDebugParams];
+
         [self initUserSessionAndCallCallback:YES];
         self.preferenceHelper.isContinuingUserActivity = NO;
         

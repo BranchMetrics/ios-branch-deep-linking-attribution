@@ -431,6 +431,14 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 + (void)setDebug __attribute__((deprecated(("Use the instance method instead"))));
 
 /**
+ Specify additional constant parameters to be included in the response
+ 
+ @param debugParams dictionary of keystrings/valuestrings that will be added to response 
+ */
+- (void) setDeepLinkDebugMode:(NSDictionary *)debugParams;
+
+
+/**
  Specify the time to wait in seconds between retries in the case of a Branch server error
  
  @param retryInterval Number of seconds to wait between retries.
