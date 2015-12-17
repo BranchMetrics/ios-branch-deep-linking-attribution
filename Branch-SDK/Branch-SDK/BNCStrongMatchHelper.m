@@ -107,6 +107,7 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
         self.secondWindow = [[UIWindow alloc] initWithFrame:[[[[UIApplication sharedApplication] delegate] window] bounds]];
         UIViewController *windowRootController = [[UIViewController alloc] init];
         self.secondWindow.rootViewController = windowRootController;
+        self.secondWindow.windowLevel = UIWindowLevelNormal - 1;
         [self.secondWindow setHidden:NO];
         [self.secondWindow setAlpha:0];
         
@@ -117,18 +118,21 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
             [windowRootController.view addSubview:safController.view];
             [safController didMoveToParentViewController:windowRootController];
             
-            // Remove the safari view controller from view controller containment
-            [safController willMoveToParentViewController:nil];
-            [safController.view removeFromSuperview];
-            [safController removeFromParentViewController];
-            
-            // Remove the window and release it's strong reference. This is important to ensure that
-            // applications using view controller based status bar appearance are restored.
-            [self.secondWindow removeFromSuperview];
-            self.secondWindow = nil;
-            
-            [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
-            self.requestInProgress = NO;
+            // Give a little bit of time for safari to load the request.
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                // Remove the safari view controller from view controller containment
+                [safController willMoveToParentViewController:nil];
+                [safController.view removeFromSuperview];
+                [safController removeFromParentViewController];
+                
+                // Remove the window and release it's strong reference. This is important to ensure that
+                // applications using view controller based status bar appearance are restored.
+                [self.secondWindow removeFromSuperview];
+                self.secondWindow = nil;
+                
+                [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
+                self.requestInProgress = NO;
+            });
         });
     }
     else {
