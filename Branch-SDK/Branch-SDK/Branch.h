@@ -458,6 +458,12 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)disableCookieBasedMatching;
 
+/**
+ Disable four finger touch listener for debugging. Default is enabled.
+
+ */
+- (void)disableFourFingerTouchObserver;
+
 #pragma mark - Session Item methods
 
 ///--------------------
