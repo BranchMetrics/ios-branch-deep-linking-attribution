@@ -258,6 +258,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
     self.useCookieBasedMatching = NO;
 }
 
+- (void)disableFourFingerTouchObserver {
+    self.preferenceHelper.fourFingerTouchListenerEnabled = NO;
+}
 
 #pragma mark - InitSession Permutation methods
 
@@ -1150,8 +1153,11 @@ static int BNCDebugTriggerFingersSimulator = 2;
     if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity && ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:YES];
     }
-    
-    [self addDebugGestureRecognizer];
+
+    if (self.preferenceHelper.fourFingerTouchListenerEnabled) {
+        [self addDebugGestureRecognizer];
+    }
+
 }
 
 - (void)applicationWillResignActive {

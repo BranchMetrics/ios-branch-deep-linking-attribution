@@ -53,7 +53,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 @synthesize branchKey = _branchKey, appKey = _appKey, lastRunBranchKey = _lastRunBranchKey, appVersion = _appVersion, deviceFingerprintID = _deviceFingerprintID, sessionID = _sessionID, spotlightIdentifier = _spotlightIdentifier,
             identityID = _identityID, linkClickIdentifier = _linkClickIdentifier, userUrl = _userUrl, userIdentity = _userIdentity, sessionParams = _sessionParams, installParams = _installParams, universalLinkUrl = _universalLinkUrl,
-            isReferrable = _isReferrable, isDebug = _isDebug, isConnectedToRemoteDebug = _isConnectedToRemoteDebug, isContinuingUserActivity = _isContinuingUserActivity, retryCount = _retryCount, retryInterval = _retryInterval, timeout = _timeout, lastStrongMatchDate = _lastStrongMatchDate;
+            isReferrable = _isReferrable, isDebug = _isDebug, isConnectedToRemoteDebug = _isConnectedToRemoteDebug, isContinuingUserActivity = _isContinuingUserActivity, retryCount = _retryCount, retryInterval = _retryInterval, timeout = _timeout, lastStrongMatchDate = _lastStrongMatchDate, fourFingerTouchListenerEnabled = _fourFingerTouchListenerEnabled;
 
 + (BNCPreferenceHelper *)preferenceHelper {
     static BNCPreferenceHelper *preferenceHelper;
@@ -75,6 +75,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
         _isDebug = NO;
         _isConnectedToRemoteDebug = NO;
         _explicitlyRequestedReferrable = NO;
+        _fourFingerTouchListenerEnabled = YES;
         _isReferrable = [self readBoolFromDefaults:BRANCH_PREFS_KEY_IS_REFERRABLE];
     }
     
