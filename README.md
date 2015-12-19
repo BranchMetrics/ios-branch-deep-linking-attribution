@@ -751,7 +751,7 @@ Branch.getInstance().loadRewardsWithCallback { (changed: Bool, error: NSError!) 
     // changed boolean will indicate if the balance changed from what is currently in memory
 
     // will return the balance of the current user's credits
-    let credits = Branch().getCredits()
+    let credits = Branch.getInstance().getCredits()
 }
 ```
 
