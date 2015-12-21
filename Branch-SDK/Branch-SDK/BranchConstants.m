@@ -60,7 +60,6 @@ NSString * const BRANCH_REQUEST_KEY_SCREEN_HEIGHT = @"screen_height";
 NSString * const BRANCH_REQUEST_KEY_DEVICE_NAME = @"device_name";
 NSString * const BRANCH_REQUEST_KEY_IS_SIMULATOR = @"is_simulator";
 NSString * const BRANCH_REQUEST_KEY_LOG = @"log";
-NSString * const BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI = @"external_intent_uri";
 
 NSString * const BRANCH_REQUEST_ENDPOINT_SET_IDENTITY = @"profile";
 NSString * const BRANCH_REQUEST_ENDPOINT_LOGOUT = @"logout";
