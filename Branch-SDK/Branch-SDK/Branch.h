@@ -435,7 +435,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  
  @param debugParams dictionary of keystrings/valuestrings that will be added to response 
  */
-- (void) setDeepLinkDebugMode:(NSDictionary *)debugParams;
+-(void) setDeepLinkDebugMode:(NSDictionary *)debugParams;
 
 
 /**
