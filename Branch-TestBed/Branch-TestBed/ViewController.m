@@ -67,7 +67,13 @@
     [self.branchUniversalObject registerView];
 }
 - (IBAction)cmdIndexSpotlight:(id)sender {
-    [self.branchUniversalObject listOnSpotlight];
+    [self.branchUniversalObject listOnSpotlightWithCallback:^(NSString *url, NSString *spotlightIdentifier,  NSError *error) {
+        if (!error) {
+            NSLog(@"spotlight ID: %@", spotlightIdentifier);
+        } else {
+            NSLog(@"error: %@", error);
+        }
+    }];
 }
 
 - (IBAction)cmdRefreshRewards:(id)sender {
