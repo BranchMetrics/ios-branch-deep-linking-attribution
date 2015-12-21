@@ -371,30 +371,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 
-//This code shouldn't need to exist, there should be methods on preferencehelper,
-// or an http_params object (a dictionary) with methods for adding/removing params and dealing with the converting back and forth between json and NSObject
-- (void) includeDebugParams {
-    //needs unit tests
-    if (self.deepLinkDebugParams) {
-        //let's put the debugParams in both at once...
-        NSMutableDictionary *newSessionParams = [[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams] mutableCopy];
-        NSMutableDictionary *newInstallParams = [[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.installParams] mutableCopy];
-        
-        [newSessionParams addEntriesFromDictionary:self.deepLinkDebugParams];
-        [newInstallParams addEntriesFromDictionary:self.deepLinkDebugParams];
-        
-        self.preferenceHelper.sessionParams = [BNCEncodingUtils encodeDictionaryToJsonString:newSessionParams];
-        self.preferenceHelper.installParams = [BNCEncodingUtils encodeDictionaryToJsonString:newInstallParams];
-    }
-}
-
-
-
 - (BOOL)handleDeepLink:(NSURL *)url {
     BOOL handled = NO;
     if (url) {
-        [self includeDebugParams];
-        
         NSString *query = [url fragment];
         if (!query) {
             query = [url query];
@@ -415,8 +394,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         self.preferenceHelper.universalLinkUrl = [userActivity.webpageURL absoluteString];
-        [self includeDebugParams];
-
         [self initUserSessionAndCallCallback:YES];
         self.preferenceHelper.isContinuingUserActivity = NO;
         
@@ -650,11 +627,25 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (NSDictionary *)getFirstReferringParams {
-    return [BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.installParams];
+    NSDictionary *origInstallParams = [BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.installParams];
+    
+    if (self.deepLinkDebugParams) {
+        NSMutableDictionary* debugInstallParams = [[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams] mutableCopy];
+        [debugInstallParams addEntriesFromDictionary:self.deepLinkDebugParams];
+        return debugInstallParams;
+    }
+    return origInstallParams;
 }
 
 - (NSDictionary *)getLatestReferringParams {
-    return [BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams];
+    NSDictionary *origSessionParams = [BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams];
+    
+    if (self.deepLinkDebugParams) {
+        NSMutableDictionary* debugSessionParams = [origSessionParams mutableCopy];
+        [debugSessionParams addEntriesFromDictionary:self.deepLinkDebugParams];
+        return debugSessionParams;
+    }
+    return origSessionParams;
 }
 
 - (BranchUniversalObject *)getLatestReferringBranchUniversalObject {
