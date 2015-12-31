@@ -360,7 +360,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
         else if ([options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             self.preferenceHelper.isContinuingUserActivity = YES;
             if (self.accountForFacebookSDK) {
-                [self continueUserActivity:[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]];
+                id activity = [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
+                if (activity && [activity isKindOfClass:[NSUserActivity class]]) {
+                    [self continueUserActivity:activity];
+                }
             }
         }
     }
