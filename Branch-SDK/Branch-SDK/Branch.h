@@ -458,6 +458,12 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)disableCookieBasedMatching;
 
+/**
+ If you're using a version of the Facebook SDK that prevents application:didFinishLaunchingWithOptions: from returning
+ YES/true when a Universal Link is clicked, you should enable this option.
+ */
+- (void)accountForFacebookSDKPreventingAppLaunch;
+
 #pragma mark - Session Item methods
 
 ///--------------------
