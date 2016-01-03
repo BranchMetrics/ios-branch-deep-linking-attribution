@@ -42,7 +42,7 @@
     linkProperties.feature = @"sharing";
     linkProperties.channel = @"facebook";
     [linkProperties addControlParam:@"$desktop_url" withValue:@"http://example.com/home"];
-    [linkProperties addControlParam:@"$ios_url" withValue:@"http://example.com/ios"];
+    [linkProperties addControlParam:@"$android_url" withValue:@"http://example.com/ios"];
     
     [self.branchUniversalObject getShortUrlWithLinkProperties:linkProperties andCallback:^(NSString *url, NSError *err) {
         [self.editRefShortUrl setText:url];

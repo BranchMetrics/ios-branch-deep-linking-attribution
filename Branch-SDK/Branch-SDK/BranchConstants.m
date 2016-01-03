@@ -118,4 +118,9 @@ NSString * const BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE = @"$exp_date";
 NSString * const BRANCH_LINK_DATA_KEY_CONTENT_TYPE = @"$content_type";
 NSString * const BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT = @"$email_subject";
 
+NSString * const BRANCH_WALLET_PASS_MAIN_KEY = @"wallet_passes";
+NSString * const BRANCH_WALLET_PASS_KEY_SERIAL = @"wallet_serial";
+NSString * const BRANCH_WALLET_PASS_KEY_TYPE_IDENT = @"wallet_type_ident";
+NSString * const BRANCH_WALLET_PASS_KEY_USER_INFO = @"wallet_user_info";
+
 NSString * const BRANCH_SPOTLIGHT_PREFIX = @"io.branch.link.v1";

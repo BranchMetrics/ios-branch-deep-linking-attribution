@@ -10,6 +10,7 @@
 #include <sys/utsname.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
+#import "BranchConstants.h"
 #import <UIKit/UIDevice.h>
 #import <UIKit/UIScreen.h>
 #import <SystemConfiguration/SystemConfiguration.h>
@@ -204,6 +205,55 @@
     float scaleFactor = mainScreen.scale;
     CGFloat height = mainScreen.bounds.size.height * scaleFactor;
     return [NSNumber numberWithInteger:(NSInteger)height];
+}
+
++ (NSArray *)getWalletPasses {
+    NSMutableArray *walletPasses = [[NSMutableArray alloc] init];
+
+    Class PKPassLibraryClass = NSClassFromString(@"PKPassLibrary");
+    if (PKPassLibraryClass) {
+        SEL isPassLibraryAvailableSelector = NSSelectorFromString(@"isPassLibraryAvailable");
+        
+        // check if pass library is available
+        if (((BOOL
+              (*)(id, SEL))[PKPassLibraryClass
+                                 methodForSelector:isPassLibraryAvailableSelector])
+            (PKPassLibraryClass, isPassLibraryAvailableSelector)) {
+            SEL newPassLibrarySelector = NSSelectorFromString(@"new");
+
+            // get a reference to the pass libray
+            id passLib = ((id (*)(id, SEL))[PKPassLibraryClass methodForSelector:newPassLibrarySelector])(PKPassLibraryClass, newPassLibrarySelector);
+            
+            SEL passesSelector = NSSelectorFromString(@"passes");
+            NSArray *passes = ((NSArray * (*)(id, SEL))[passLib methodForSelector:passesSelector])(passLib, passesSelector);
+            
+            // loop through available passes
+            for (id pass in passes) {
+                SEL serialSelector = NSSelectorFromString(@"serialNumber");
+                SEL typeIdentSelector = NSSelectorFromString(@"passTypeIdentifier");
+                SEL userInfoSelector = NSSelectorFromString(@"userInfo");
+                
+                NSString *serialNumber = ((NSString * (*)(id, SEL))[pass methodForSelector:serialSelector])(pass, serialSelector);
+                NSString *typeIdent = ((NSString * (*)(id, SEL))[pass methodForSelector:serialSelector])(pass, typeIdentSelector);
+                NSString *userInfo = ((NSString * (*)(id, SEL))[pass methodForSelector:serialSelector])(pass, userInfoSelector);
+                
+                NSMutableDictionary *walletPass = [[NSMutableDictionary alloc] init];
+                if (serialNumber) {
+                    [walletPass setObject:serialNumber forKey:BRANCH_WALLET_PASS_KEY_SERIAL];
+                }
+                if (typeIdent) {
+                    [walletPass setObject:typeIdent forKey:BRANCH_WALLET_PASS_KEY_TYPE_IDENT];
+                }
+                if (userInfo) {
+                    [walletPass setObject:userInfo forKey:BRANCH_WALLET_PASS_KEY_USER_INFO];
+                }
+                
+                [walletPasses addObject:walletPass];
+            }
+        }
+    }
+    
+    return walletPasses;
 }
 
 @end

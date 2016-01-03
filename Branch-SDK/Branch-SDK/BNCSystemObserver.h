@@ -27,5 +27,6 @@
 + (NSString *)getDeviceName;
 + (BOOL)isSimulator;
 + (BOOL)adTrackingSafe;
++ (NSArray *)getWalletPasses;
 
 @end
