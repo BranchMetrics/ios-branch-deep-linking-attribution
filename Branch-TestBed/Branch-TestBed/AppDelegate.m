@@ -17,7 +17,7 @@
     Branch *branch = [Branch getInstance];
     [branch setDebug];
     
-    [branch setDeepLinkDebugMode:@{@"DEBUG_PARAM" : @"MONKEY"}];
+    [branch setDeepLinkDebugMode:@{@"example_debug_param" : @"foo"}];
     
     [branch registerDeepLinkController:controller forKey:@"gravatar_email"];
 
