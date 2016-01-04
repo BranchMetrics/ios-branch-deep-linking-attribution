@@ -120,17 +120,27 @@
                                              alias:linkProperties.alias];
 }
 
-- (void)showShareSheetWithShareText:(NSString *)shareText andCallback:(callback)callback {
-    [self showShareSheetWithLinkProperties:nil andShareText:shareText fromViewController:nil andCallback:callback];
+- (void)showShareSheetWithShareText:(NSString *)shareText completion:(shareCompletion)completion {
+    [self showShareSheetWithLinkProperties:nil andShareText:shareText fromViewController:nil completion:completion];
 }
 
-- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController andCallback:(callback)callback {
+- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController completion:(shareCompletion)completion {
     UIActivityItemProvider *itemProvider = [self getBranchActivityItemWithLinkProperties:linkProperties];
     NSMutableArray *items = [NSMutableArray arrayWithObject:itemProvider];
     if (shareText) {
         [items addObject:shareText];
     }
     UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    
+    if ([shareViewController respondsToSelector:@selector(completionWithItemsHandler)]) {
+        shareViewController.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+            if (completion) {
+                completion(activityType, completed);
+            }
+        };
+    } else {
+        shareViewController.completionHandler = completion;
+    }
     
     UIViewController *presentingViewController;
     if (viewController && [viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
@@ -154,11 +164,24 @@
         if ([presentingViewController respondsToSelector:@selector(popoverPresentationController)]) {
             shareViewController.popoverPresentationController.sourceView = presentingViewController.view;
         }
-        [presentingViewController presentViewController:shareViewController animated:YES completion:callback];
+        [presentingViewController presentViewController:shareViewController animated:YES completion:nil];
     }
     else {
         NSLog(@"[Branch warning, fatal] No view controller is present to show the share sheet. Aborting.");
     }
+}
+
+
+- (void)showShareSheetWithShareText:(NSString *)shareText andCallback:(callback)callback {
+    [self showShareSheetWithLinkProperties:nil andShareText:shareText fromViewController:nil andCallback:callback];
+}
+
+- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController andCallback:(callback)callback {
+    [self showShareSheetWithLinkProperties:linkProperties andShareText:shareText fromViewController:viewController completion:^(NSString *activityType, BOOL completed) {
+        if (callback) {
+            callback();
+        }
+    }];
 }
 
 - (void)listOnSpotlight {
