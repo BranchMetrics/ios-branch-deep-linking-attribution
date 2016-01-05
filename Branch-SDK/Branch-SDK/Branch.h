@@ -1330,7 +1330,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param callback Callback called with the Branch url this will fallback to.
  @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
-- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate spotlightIdentifier:(NSString *)spotlightIdentifier callback:(callbackWithUrlAndSpotlightIdentifier)callback;
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)callback;
 
 #pragma mark - Referral Code methods
 

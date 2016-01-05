@@ -166,10 +166,6 @@
 }
 
 
-
-//typedef void (^callbackWithUrlAndSpotlightIdentifier) (NSString *url, NSString *spotlightIdentifier, NSError *error);
-
-
 - (void)listOnSpotlightWithCallback:(callbackWithUrlAndSpotlightIdentifier)callback {
     BOOL publiclyIndexable;
     if (self.contentIndexMode == ContentIndexModePrivate) {
@@ -186,8 +182,7 @@
                                            publiclyIndexable:publiclyIndexable
                                                     keywords:[NSSet setWithArray:self.keywords]
                                               expirationDate:self.expirationDate
-                                         spotlightIdentifier:self.spotlightIdentifier
-                                                    callback:callback];
+                                           spotlightCallback:callback];
 }
 
 + (BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(NSDictionary *)dictionary {
