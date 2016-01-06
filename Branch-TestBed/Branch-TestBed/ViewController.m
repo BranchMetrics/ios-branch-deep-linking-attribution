@@ -67,7 +67,7 @@
     [self.branchUniversalObject registerView];
 }
 - (IBAction)cmdIndexSpotlight:(id)sender {
-    [self.branchUniversalObject listOnSpotlightWithCallback:^(NSString *url, NSString *spotlightIdentifier,  NSError *error) {
+    [self.branchUniversalObject listOnSpotlightWithIdentifierCallback:^(NSString *url, NSString *spotlightIdentifier,  NSError *error) {
         if (!error) {
             NSLog(@"spotlight ID: %@", spotlightIdentifier);
         } else {
