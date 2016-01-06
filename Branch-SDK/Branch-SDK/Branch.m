@@ -855,10 +855,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:linkParams expirationDate:expirationDate spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)callback];
 }
 
-
-
-
-
 #pragma mark - Referral methods
 
 - (NSString *)getReferralUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel {
