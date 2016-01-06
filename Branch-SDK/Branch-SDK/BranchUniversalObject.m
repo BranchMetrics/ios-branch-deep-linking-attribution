@@ -165,8 +165,28 @@
     [self listOnSpotlightWithCallback:nil];
 }
 
+- (void)listOnSpotlightWithCallback:(callbackWithUrl)callback {
+    BOOL publiclyIndexable;
+    if (self.contentIndexMode == ContentIndexModePrivate) {
+        publiclyIndexable = NO;
+    } else {
+        publiclyIndexable = YES;
+    }
+    
+    [[Branch getInstance] createDiscoverableContentWithTitle:self.title
+                                                 description:self.contentDescription
+                                                thumbnailUrl:[NSURL URLWithString:self.imageUrl]
+                                                  linkParams:self.metadata.copy
+                                                        type:self.type
+                                           publiclyIndexable:publiclyIndexable
+                                                    keywords:[NSSet setWithArray:self.keywords]
+                                              expirationDate:self.expirationDate
+                                                    callback:callback];
+}
 
-- (void)listOnSpotlightWithCallback:(callbackWithUrlAndSpotlightIdentifier)callback {
+
+//This one uses a callback that returns the SpotlightIdentifier
+- (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)callback {
     BOOL publiclyIndexable;
     if (self.contentIndexMode == ContentIndexModePrivate) {
         publiclyIndexable = NO;

@@ -43,7 +43,8 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 - (void)showShareSheetWithShareText:(NSString *)shareText andCallback:(callback)callback;
 - (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController andCallback:(callback)callback;
 - (void)listOnSpotlight;
-- (void)listOnSpotlightWithCallback:(callbackWithUrlAndSpotlightIdentifier)callback;
+- (void)listOnSpotlightWithCallback:(callbackWithUrl)callback;
+- (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)callback;
 
 // Convenience method for initSession methods that return BranchUniversalObject, but can be used safely by anyone.
 + (BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(NSDictionary *)dictionary;
