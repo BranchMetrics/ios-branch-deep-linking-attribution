@@ -66,10 +66,22 @@
 - (IBAction)cmdRegisterView:(id)sender {
     [self.branchUniversalObject registerView];
 }
+
 - (IBAction)cmdIndexSpotlight:(id)sender {
+    [self.branchUniversalObject listOnSpotlightWithCallback:^(NSString *url, NSError *error) {
+        if (!error) {
+            NSLog(@"shortURL: %@", url);
+        } else {
+            NSLog(@"error: %@", error);
+        }
+    }];
+}
+
+//example using callbackWithURLandSpotlightIdentifier
+- (IBAction)cmdIndexSpotlightWithIdentifier:(id)sender {
     [self.branchUniversalObject listOnSpotlightWithIdentifierCallback:^(NSString *url, NSString *spotlightIdentifier,  NSError *error) {
         if (!error) {
-            NSLog(@"spotlight ID: %@", spotlightIdentifier);
+            NSLog(@"shortURL: %@   spotlight ID: %@", url, spotlightIdentifier);
         } else {
             NSLog(@"error: %@", error);
         }

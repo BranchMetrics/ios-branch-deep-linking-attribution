@@ -71,65 +71,255 @@
 
 #pragma mark - Content Indexing
 
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description {
-    [self indexContentWithTitle:title description:description publiclyIndexable:NO type:(NSString *)kUTTypeGeneric thumbnailUrl:nil keywords:nil userInfo:nil expirationDate:nil callback:NULL];
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description {
+    [self indexContentWithTitle:title
+                    description:description
+              publiclyIndexable:NO
+                           type:(NSString *)kUTTypeGeneric
+                   thumbnailUrl:nil
+                       keywords:nil
+                       userInfo:nil
+                 expirationDate:nil
+                       callback:NULL];
 }
 
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description callback:(callbackWithUrl)callback {
-    [self indexContentWithTitle:title description:description publiclyIndexable:NO type:(NSString *)kUTTypeGeneric thumbnailUrl:nil keywords:nil userInfo:nil expirationDate:nil callback:callback];
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+                     callback:(callbackWithUrl)callback {
+    [self indexContentWithTitle:title
+                    description:description
+              publiclyIndexable:NO
+                           type:(NSString *)kUTTypeGeneric
+                   thumbnailUrl:nil
+                       keywords:nil
+                       userInfo:nil
+                 expirationDate:nil
+                       callback:callback];
 }
 
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable callback:(callbackWithUrl)callback {
-    [self indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:(NSString *)kUTTypeGeneric thumbnailUrl:nil keywords:nil userInfo:nil expirationDate:nil callback:callback];
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+            publiclyIndexable:(BOOL)publiclyIndexable
+                     callback:(callbackWithUrl)callback {
+    [self indexContentWithTitle:title
+                    description:description
+              publiclyIndexable:publiclyIndexable
+                           type:(NSString *)kUTTypeGeneric
+                   thumbnailUrl:nil
+                       keywords:nil userInfo:nil
+                 expirationDate:nil
+                       callback:callback];
 }
 
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type callback:(callbackWithUrl)callback {
-    [self indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:nil keywords:nil userInfo:nil expirationDate:nil callback: callback];
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+            publiclyIndexable:(BOOL)publiclyIndexable
+                         type:(NSString *)type
+                     callback:(callbackWithUrl)callback {
+    [self indexContentWithTitle:title
+                    description:description
+              publiclyIndexable:publiclyIndexable
+                           type:type
+                   thumbnailUrl:nil
+                       keywords:nil
+                       userInfo:nil
+                 expirationDate:nil
+                       callback: callback];
 }
 
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl callback:(callbackWithUrl)callback {
-    [self indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:nil userInfo:nil expirationDate:nil callback:callback];
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+            publiclyIndexable:(BOOL)publiclyIndexable
+                         type:(NSString *)type
+                 thumbnailUrl:(NSURL *)thumbnailUrl
+                     callback:(callbackWithUrl)callback {
+    [self indexContentWithTitle:title
+                    description:description
+              publiclyIndexable:publiclyIndexable
+                           type:type
+                   thumbnailUrl:thumbnailUrl
+                       keywords:nil
+                       userInfo:nil
+                 expirationDate:nil
+                       callback:callback];
 }
 
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords callback:(callbackWithUrl)callback {
-    [self indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:nil expirationDate:nil callback:callback];
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+            publiclyIndexable:(BOOL)publiclyIndexable
+                         type:(NSString *)type
+                 thumbnailUrl:(NSURL *)thumbnailUrl
+                     keywords:(NSSet *)keywords
+                     callback:(callbackWithUrl)callback {
+    [self indexContentWithTitle:title
+                    description:description
+              publiclyIndexable:publiclyIndexable
+                           type:type
+                   thumbnailUrl:thumbnailUrl
+                       keywords:keywords
+                       userInfo:nil
+                 expirationDate:nil
+                       callback:callback];
 }
 
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords {
-    [self indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:nil expirationDate:nil callback:NULL];
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+            publiclyIndexable:(BOOL)publiclyIndexable
+                         type:(NSString *)type
+                 thumbnailUrl:(NSURL *)thumbnailUrl
+                     keywords:(NSSet *)keywords {
+    [self indexContentWithTitle:title
+                    description:description
+              publiclyIndexable:publiclyIndexable
+                           type:type
+                   thumbnailUrl:thumbnailUrl
+                       keywords:keywords
+                       userInfo:nil
+                 expirationDate:nil
+                       callback:NULL];
 }
 
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords userInfo:(NSDictionary *)userInfo {
-    [self indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:userInfo expirationDate:nil callback:NULL];
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+            publiclyIndexable:(BOOL)publiclyIndexable
+                         type:(NSString *)type
+                 thumbnailUrl:(NSURL *)thumbnailUrl
+                     keywords:(NSSet *)keywords
+                     userInfo:(NSDictionary *)userInfo {
+    [self indexContentWithTitle:title
+                    description:description
+              publiclyIndexable:publiclyIndexable
+                           type:type
+                   thumbnailUrl:thumbnailUrl
+                       keywords:keywords
+                       userInfo:userInfo
+                 expirationDate:nil
+                       callback:NULL];
 }
 
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable thumbnailUrl:(NSURL *)thumbnailUrl userInfo:(NSDictionary *)userInfo {
-    [self indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:kUTTypeGeneric thumbnailUrl:thumbnailUrl keywords:nil userInfo:userInfo expirationDate:nil callback:NULL];
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+            publiclyIndexable:(BOOL)publiclyIndexable
+                 thumbnailUrl:(NSURL *)thumbnailUrl
+                     userInfo:(NSDictionary *)userInfo {
+    [self indexContentWithTitle:title
+                    description:description
+              publiclyIndexable:publiclyIndexable
+                           type:kUTTypeGeneric
+                   thumbnailUrl:thumbnailUrl
+                       keywords:nil
+                       userInfo:userInfo
+                 expirationDate:nil
+                       callback:NULL];
 }
 
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords userInfo:(NSDictionary *)userInfo {
-    [self indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:kUTTypeGeneric thumbnailUrl:thumbnailUrl keywords:keywords userInfo:userInfo expirationDate:nil callback:NULL];
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+            publiclyIndexable:(BOOL)publiclyIndexable
+                 thumbnailUrl:(NSURL *)thumbnailUrl
+                     keywords:(NSSet *)keywords
+                     userInfo:(NSDictionary *)userInfo {
+    [self indexContentWithTitle:title
+                    description:description
+              publiclyIndexable:publiclyIndexable
+                           type:kUTTypeGeneric
+                   thumbnailUrl:thumbnailUrl
+                       keywords:keywords
+                       userInfo:userInfo
+                 expirationDate:nil
+                       callback:NULL];
 }
 
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords userInfo:(NSDictionary *)userInfo expirationDate:(NSDate*)expirationDate callback:(callbackWithUrl)callback {
-    [self indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:userInfo expirationDate:nil callback:callback];
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+            publiclyIndexable:(BOOL)publiclyIndexable
+                         type:(NSString *)type
+                 thumbnailUrl:(NSURL *)thumbnailUrl
+                     keywords:(NSSet *)keywords
+                     userInfo:(NSDictionary *)userInfo
+               expirationDate:(NSDate*)expirationDate
+                     callback:(callbackWithUrl)callback {
+    [self indexContentWithTitle:title
+                    description:description
+              publiclyIndexable:publiclyIndexable
+                           type:type
+                   thumbnailUrl:thumbnailUrl
+                       keywords:keywords
+                       userInfo:userInfo
+                 expirationDate:nil
+                       callback:callback
+              spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)callback];
 }
 
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords userInfo:(NSDictionary *)userInfo callback:(callbackWithUrl)callback {
-    [self indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:userInfo expirationDate:nil callback:callback];
+
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+            publiclyIndexable:(BOOL)publiclyIndexable
+                         type:(NSString *)type
+                 thumbnailUrl:(NSURL *)thumbnailUrl
+                     keywords:(NSSet *)keywords
+                     userInfo:(NSDictionary *)userInfo
+                     callback:(callbackWithUrl)callback {
+    [self indexContentWithTitle:title
+                    description:description
+              publiclyIndexable:publiclyIndexable
+                           type:type
+                   thumbnailUrl:thumbnailUrl
+                       keywords:keywords
+                       userInfo:userInfo
+                 expirationDate:nil
+                       callback:callback
+              spotlightCallback:nil];
 }
 
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords userInfo:(NSDictionary *)userInfo expirationDate:(NSDate *)expirationDate spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)callback {
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+            publiclyIndexable:(BOOL)publiclyIndexable
+                         type:(NSString *)type
+                 thumbnailUrl:(NSURL *)thumbnailUrl
+                     keywords:(NSSet *)keywords
+                     userInfo:(NSDictionary *)userInfo
+            spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
+    [self indexContentWithTitle:title
+                    description:description
+              publiclyIndexable:publiclyIndexable
+                           type:type
+                   thumbnailUrl:thumbnailUrl
+                       keywords:keywords
+                       userInfo:userInfo
+                 expirationDate:nil
+                       callback:nil
+              spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback];
+}
+
+//This is the final one, which figures out which callback to use, if any
+// The simpler callbackWithURL overrides spotlightCallback, so don't send both
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+            publiclyIndexable:(BOOL)publiclyIndexable
+                         type:(NSString *)type
+                 thumbnailUrl:(NSURL *)thumbnailUrl
+                     keywords:(NSSet *)keywords
+                     userInfo:(NSDictionary *)userInfo
+               expirationDate:(NSDate *)expirationDate
+                     callback:(callbackWithUrl)callback
+            spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
 
     if ([BNCSystemObserver getOSVersion].integerValue < 9) {
         if (callback) {
-            callback(nil, nil, [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service prior to iOS 9" }]);
+            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service prior to iOS 9" }]);
+        } else if (spotlightCallback) {
+            spotlightCallback(nil, nil,[NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service prior to iOS 9" }]);
         }
         return;
     }
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
     if (callback) {
         callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"CoreSpotlight is not available because the base SDK for this project is less than 9.0" }]);
+ 
+    } else if (spotlightCallback) {
+        spotlightCallback(nil, nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"CoreSpotlight is not available because the base SDK for this project is less than 9.0" }]);
     }
     return;
 #endif
@@ -140,14 +330,20 @@
     
     if (!isIndexingAvailable) {
         if (callback) {
-            callback(nil, nil, [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service on this device/OS" }]);
+            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service on this device/OS" }]);
+        } else if (spotlightCallback) {
+            spotlightCallback(nil, nil, [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service on this device/OS" }]);
         }
+
         return;
     }
     if (!title) {
         if (callback) {
-            callback(nil, nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title" }]);
+            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title" }]);
+        } else if (spotlightCallback) {
+            spotlightCallback(nil, nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title" }]);
         }
+
         return;
     }
     
@@ -194,8 +390,11 @@
     [[Branch getInstance] getSpotlightUrlWithParams:spotlightLinkData callback:^(NSDictionary *data, NSError *urlError) {
         if (urlError) {
             if (callback) {
-                callback(nil, nil, urlError);
+                callback(nil, urlError);
+            } else if (spotlightCallback) {
+                spotlightCallback(nil, nil, urlError);
             }
+
             return;
         }
         
