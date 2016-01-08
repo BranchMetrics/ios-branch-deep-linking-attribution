@@ -423,6 +423,21 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 
+#pragma mark - Push Notification support
+
+- (BOOL)handlePushNotification:(NSDictionary*) userInfo {
+    //look for a branch shortlink in the payload (shortlink because iOS7 only supports 256 bytes)
+    NSString *urlStr = [userInfo objectForKey:@"branch"];
+    if (urlStr) {
+        NSLog(@"received push notification containing URL: %@", urlStr);
+        NSURL *branchURL = [NSURL URLWithString:urlStr]; //need to check for errors here
+        BOOL success = [[Branch getInstance] handleDeepLink:branchURL];
+        return success;
+    }
+    return NO;
+}
+
+
 #pragma mark - Deep Link Controller methods
 
 - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key {
