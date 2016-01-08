@@ -12,6 +12,13 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    //check to see if we been launched from cold-start by a url, which coms in through this option
+    NSURL *url = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
+    if (url) {
+        [self application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:nil annotation:@"launch"];
+        NSLog(@"Got url:  \"%@\"  in UIApplicationLaunchOptionsURLKey", url);
+    }
+    
     ExampleDeepLinkingController *controller = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"DeepLinkingController"];
     
     
@@ -53,19 +60,12 @@
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    NSLog(@"Push received: %@", userInfo);
-    //check a branch shortlink in the payload (shortlink because iOS7 only supports 256 bytes)
-    NSString *urlStr = [userInfo objectForKey:@"branchURL"];
-    if (urlStr) {
-        NSURL *branchURL = [NSURL URLWithString:urlStr];
-        [[Branch getInstance] handleDeepLink:branchURL];
-    }
+   /* BOOL success = */ [[Branch getInstance] handlePushNotification:userInfo];
     
-    //process your other payload items...
+    //process your other notification payload items...
 }
 
--(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
-{
+-(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"Error registering for remote notifications:%@",error);
 }
 //end APNS support
