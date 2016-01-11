@@ -12,12 +12,6 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    //check to see if we been launched from cold-start by a url, which coms in through this option
-    NSURL *url = [launchOptions objectForKey:UIApplicationLaunchOptionsURLKey];
-    if (url) {
-        [self application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:nil annotation:@"launch"];
-        NSLog(@"Got url:  \"%@\"  in UIApplicationLaunchOptionsURLKey", url);
-    }
     
     ExampleDeepLinkingController *controller = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"DeepLinkingController"];
     
@@ -60,7 +54,7 @@
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-   /* BOOL success = */ [[Branch getInstance] handlePushNotification:userInfo];
+    [[Branch getInstance] handlePushNotification:userInfo];
     
     //process your other notification payload items...
 }
@@ -69,7 +63,6 @@
     NSLog(@"Error registering for remote notifications:%@",error);
 }
 //end APNS support
-
 
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
