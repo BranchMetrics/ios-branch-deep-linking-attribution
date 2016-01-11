@@ -342,26 +342,42 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
 }
 
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController {
+
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options
+                        isReferrable:(BOOL)isReferrable
+       explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable
+      automaticallyDisplayController:(BOOL)automaticallyDisplayController
+{
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
     
     self.preferenceHelper.isReferrable = isReferrable;
     self.preferenceHelper.explicitlyRequestedReferrable = explicitlyRequestedReferrable;
     
-    if ([BNCSystemObserver getOSVersion].integerValue >= 8) {
-        if (![options objectForKey:UIApplicationLaunchOptionsURLKey] && ![options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
+    //compute these once
+    BOOL hasLaunchOptionsURLKey = ([options objectForKey:UIApplicationLaunchOptionsURLKey] != NULL);
+    BOOL hasUserActivityKey = ([options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] != NULL);
+    BOOL hasUniversalLink = self.preferenceHelper.universalLinkUrl != NULL;
+    if ([BNCSystemObserver getOSVersion].integerValue >= 8)
+    {
+        if (!hasLaunchOptionsURLKey && !hasUserActivityKey)
+        {
             [self initUserSessionAndCallCallback:YES];
         }
-        else if ([options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
+        else if (hasUserActivityKey)
+        {
             self.preferenceHelper.isContinuingUserActivity = YES;
         }
     }
-    else {
-        if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
-            [self initUserSessionAndCallCallback:YES];
-        }
+    else if (!hasLaunchOptionsURLKey && !hasUniversalLink)
+    {
+        [self initUserSessionAndCallCallback:YES];
+    }
+    else
+    {
+        //probably another case here eventually
     }
 }
+
 
 - (BOOL)handleDeepLink:(NSURL *)url {
     BOOL handled = NO;
@@ -425,16 +441,14 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 #pragma mark - Push Notification support
 
-- (BOOL)handlePushNotification:(NSDictionary*) userInfo {
+- (void)handlePushNotification:(NSDictionary*) userInfo {
     //look for a branch shortlink in the payload (shortlink because iOS7 only supports 256 bytes)
     NSString *urlStr = [userInfo objectForKey:@"branch"];
     if (urlStr) {
         NSLog(@"received push notification containing URL: %@", urlStr);
-        NSURL *branchURL = [NSURL URLWithString:urlStr]; //need to check for errors here
-        BOOL success = [[Branch getInstance] handleDeepLink:branchURL];
-        return success;
+        //reusing this field, so as not to create yet another url slot on prefshelper
+        self.preferenceHelper.universalLinkUrl = urlStr;
     }
-    return NO;
 }
 
 

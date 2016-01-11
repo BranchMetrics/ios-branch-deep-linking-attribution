@@ -408,7 +408,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 #pragma mark - Push Notification support
 
 /* Extract the short URL if there is one */
-- (BOOL)handlePushNotification:(NSDictionary*) userInfo;
+- (void)handlePushNotification:(NSDictionary*) userInfo;
 
 #pragma mark - Deep Link Controller methods
 
