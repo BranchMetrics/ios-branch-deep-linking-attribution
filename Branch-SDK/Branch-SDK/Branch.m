@@ -367,7 +367,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         if (![options objectForKey:UIApplicationLaunchOptionsURLKey] && ![options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             [self initUserSessionAndCallCallback:YES];
         }
-        else if (![options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
+        else if ([options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             self.preferenceHelper.isContinuingUserActivity = YES;
         }
     }
