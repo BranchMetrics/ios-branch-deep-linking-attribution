@@ -478,7 +478,7 @@
     id defaultSearchableIndex = ((id (*)(id, SEL))[CSSearchableIndexClass methodForSelector:defaultSearchableIndexSelector])(CSSearchableIndexClass, defaultSearchableIndexSelector);
     SEL indexSearchableItemsSelector = NSSelectorFromString(@"indexSearchableItems:completionHandler:");
     void (^__nullable completionBlock)(NSError *indexError) = ^void(NSError *__nullable indexError) {
-        if (callback) {
+        if (callback || spotlightCallback) {
             if (indexError) {
                 if (callback) {
                     callback(nil, indexError);
