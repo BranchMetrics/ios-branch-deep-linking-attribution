@@ -35,9 +35,6 @@
 #import "BranchCloseRequest.h"
 #import "BranchOpenRequest.h"
 #import "BranchInstallRequest.h"
-#import "BranchConnectDebugRequest.h"
-#import "BranchDisconnectDebugRequest.h"
-#import "BranchLogRequest.h"
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchRegisterViewRequest.h"
 
@@ -968,14 +965,6 @@ NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
     
     BranchApplyPromoCodeRequest *req = [[BranchApplyPromoCodeRequest alloc] initWithCode:code useOld:useOld callback:callback];
     [self.requestQueue enqueue:req];
-    [self processNextQueueItem];
-}
-
-
-#pragma mark - Logging
-- (void)log:(NSString *)log {
-    BranchLogRequest *request = [[BranchLogRequest alloc] initWithLog:log];
-    [self.requestQueue enqueue:request];
     [self processNextQueueItem];
 }
 
