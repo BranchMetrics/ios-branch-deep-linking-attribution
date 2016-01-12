@@ -345,11 +345,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options
-                        isReferrable:(BOOL)isReferrable
-       explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable
-      automaticallyDisplayController:(BOOL)automaticallyDisplayController
-{
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController {
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
     
     self.preferenceHelper.isReferrable = isReferrable;
