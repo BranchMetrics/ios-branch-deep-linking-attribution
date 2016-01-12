@@ -249,7 +249,7 @@
                        userInfo:userInfo
                  expirationDate:nil
                        callback:callback
-              spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)callback];
+              spotlightCallback:nil];
 }
 
 
@@ -290,7 +290,7 @@
                        userInfo:userInfo
                  expirationDate:nil
                        callback:nil
-              spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback];
+              spotlightCallback:spotlightCallback];
 }
 
 //This is the final one, which figures out which callback to use, if any
@@ -307,19 +307,22 @@
             spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
 
     if ([BNCSystemObserver getOSVersion].integerValue < 9) {
+        NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service prior to iOS 9" }];
         if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service prior to iOS 9" }]);
-        } else if (spotlightCallback) {
-            spotlightCallback(nil, nil,[NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service prior to iOS 9" }]);
+            callback(nil, error);
+        }
+        else if (spotlightCallback) {
+            spotlightCallback(nil, nil, error);
         }
         return;
     }
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
+    NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"CoreSpotlight is not available because the base SDK for this project is less than 9.0" }];
     if (callback) {
-        callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"CoreSpotlight is not available because the base SDK for this project is less than 9.0" }]);
- 
-    } else if (spotlightCallback) {
-        spotlightCallback(nil, nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"CoreSpotlight is not available because the base SDK for this project is less than 9.0" }]);
+        callback(nil, error);
+    }
+    else if (spotlightCallback) {
+        spotlightCallback(nil, nil, error);
     }
     return;
 #endif
@@ -329,19 +332,23 @@
     isIndexingAvailable = ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])(CSSearchableIndexClass, isIndexingAvailableSelector);
     
     if (!isIndexingAvailable) {
+        NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service on this device/OS" }];
         if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service on this device/OS" }]);
-        } else if (spotlightCallback) {
-            spotlightCallback(nil, nil, [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service on this device/OS" }]);
+            callback(nil, error);
+        }
+        else if (spotlightCallback) {
+            spotlightCallback(nil, nil, error);
         }
 
         return;
     }
     if (!title) {
+        NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title" }];
         if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title" }]);
-        } else if (spotlightCallback) {
-            spotlightCallback(nil, nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title" }]);
+            callback(nil, error);
+        }
+        else if (spotlightCallback) {
+            spotlightCallback(nil, nil, error);
         }
 
         return;
@@ -391,7 +398,8 @@
         if (urlError) {
             if (callback) {
                 callback(nil, urlError);
-            } else if (spotlightCallback) {
+            }
+            else if (spotlightCallback) {
                 spotlightCallback(nil, nil, urlError);
             }
 
@@ -402,18 +410,18 @@
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 NSData *thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:thumbnailData publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords expirationDate:expirationDate callback:(callbackWithUrlAndSpotlightIdentifier)callback];
+                    [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:thumbnailData publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords expirationDate:expirationDate callback:callback spotlightCallback:spotlightCallback];
                 });
             });
         }
         else {
-            [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:nil publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords expirationDate:expirationDate callback:(callbackWithUrlAndSpotlightIdentifier)callback];
+            [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:nil publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords expirationDate:expirationDate callback:callback spotlightCallback:spotlightCallback];
         }
     }];
 }
 
 
-- (void)indexContentWithUrl:(NSString *)url spotlightIdentifier:(NSString *)spotlightIdentifier title:(NSString *)title description:(NSString *)description type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl thumbnailData:(NSData *)thumbnailData publiclyIndexable:(BOOL)publiclyIndexable userInfo:(NSDictionary *)userInfo keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate callback:(callbackWithUrlAndSpotlightIdentifier)callback {
+- (void)indexContentWithUrl:(NSString *)url spotlightIdentifier:(NSString *)spotlightIdentifier title:(NSString *)title description:(NSString *)description type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl thumbnailData:(NSData *)thumbnailData publiclyIndexable:(BOOL)publiclyIndexable userInfo:(NSDictionary *)userInfo keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate callback:(callbackWithUrl)callback spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     
     id CSSearchableItemAttributeSetClass = NSClassFromString(@"CSSearchableItemAttributeSet");
@@ -472,10 +480,20 @@
     void (^__nullable completionBlock)(NSError *indexError) = ^void(NSError *__nullable indexError) {
         if (callback) {
             if (indexError) {
-                callback(nil, spotlightIdentifier, indexError);
+                if (callback) {
+                    callback(nil, indexError);
+                }
+                else if (spotlightCallback) {
+                    spotlightCallback(nil, nil, indexError);
+                }
             }
             else {
-                callback(url, spotlightIdentifier, nil);
+                if (callback) {
+                    callback(url, nil);
+                }
+                else if (spotlightCallback) {
+                    spotlightCallback(url, spotlightIdentifier, nil);
+                }
             }
         }
     };
