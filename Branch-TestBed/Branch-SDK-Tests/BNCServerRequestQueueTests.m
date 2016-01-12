@@ -10,7 +10,6 @@
 #import "BNCServerRequestQueue.h"
 #import "BranchOpenRequest.h"
 #import "BranchCloseRequest.h"
-#import "BNCDebugRequest.h"
 #import <OCMock/OCMock.h>
 
 @interface BNCServerRequestQueueTests : BranchTest
@@ -162,9 +161,6 @@
 
 - (void)testDebugRequestsArentPersisted {
     BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    BNCDebugRequest *debugRequest = [[BNCDebugRequest alloc] init];
-    
-    [requestQueue enqueue:debugRequest];
     
     id archiverMock = OCMClassMock([NSKeyedArchiver class]);
     [[archiverMock reject] archivedDataWithRootObject:[OCMArg any]];
@@ -246,11 +242,9 @@
 
 - (void)testPersistedDebugRequestsArentLoaded {
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
-    BNCDebugRequest *debugRequest = [[BNCDebugRequest alloc] init];
     
     id unarchiverMock = OCMClassMock([NSKeyedUnarchiver class]);
     [[[unarchiverMock expect] andReturn:@[ [@"foo" dataUsingEncoding:NSUTF8StringEncoding] ]] unarchiveObjectWithFile:[OCMArg any]];
-    [[[unarchiverMock expect] andReturn:debugRequest] unarchiveObjectWithData:[OCMArg any]];
     
     [queue performSelector:@selector(retrieve)];
     
