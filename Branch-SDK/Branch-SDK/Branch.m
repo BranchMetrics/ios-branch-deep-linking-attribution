@@ -86,6 +86,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
 @property (weak, nonatomic) UIViewController *deepLinkPresentingController;
 @property (assign, nonatomic) BOOL useCookieBasedMatching;
+@property (assign, nonatomic) BOOL accountForFacebookSDK;
 
 @end
 
@@ -260,6 +261,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
     self.useCookieBasedMatching = NO;
 }
 
+- (void)accountForFacebookSDKPreventingAppLaunch {
+    self.accountForFacebookSDK = YES;
+}
+
 
 #pragma mark - InitSession Permutation methods
 
@@ -365,6 +370,12 @@ static int BNCDebugTriggerFingersSimulator = 2;
         }
         else if ([options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             self.preferenceHelper.isContinuingUserActivity = YES;
+            if (self.accountForFacebookSDK) {
+                id activity = [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
+                if (activity && [activity isKindOfClass:[NSUserActivity class]]) {
+                    [self continueUserActivity:activity];
+                }
+            }
         }
     }
     else if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
