@@ -440,11 +440,21 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 // handle push notification if app is already launched
 - (void)handlePushNotification:(NSDictionary *) userInfo {
+    // If app is active, then close out the session and start a new one
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+        [self callClose];
+    }
+
     // look for a branch shortlink in the payload (shortlink because iOS7 only supports 256 bytes)
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
     if (urlStr) {
         // reusing this field, so as not to create yet another url slot on prefshelper
         self.preferenceHelper.universalLinkUrl = urlStr;
+    }
+
+    // Again, if app is active, then close out the session and start a new one
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+        [self applicationDidBecomeActive];
     }
 }
 
