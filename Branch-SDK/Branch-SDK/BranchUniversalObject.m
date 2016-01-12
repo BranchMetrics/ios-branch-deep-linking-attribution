@@ -191,7 +191,8 @@
     BOOL publiclyIndexable;
     if (self.contentIndexMode == ContentIndexModePrivate) {
         publiclyIndexable = NO;
-    } else {
+    }
+    else {
         publiclyIndexable = YES;
     }
     
