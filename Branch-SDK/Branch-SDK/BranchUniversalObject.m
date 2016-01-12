@@ -169,7 +169,8 @@
     BOOL publiclyIndexable;
     if (self.contentIndexMode == ContentIndexModePrivate) {
         publiclyIndexable = NO;
-    } else {
+    }
+    else {
         publiclyIndexable = YES;
     }
     
@@ -186,7 +187,7 @@
 
 
 //This one uses a callback that returns the SpotlightIdentifier
-- (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)callback {
+- (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
     BOOL publiclyIndexable;
     if (self.contentIndexMode == ContentIndexModePrivate) {
         publiclyIndexable = NO;
@@ -202,7 +203,7 @@
                                            publiclyIndexable:publiclyIndexable
                                                     keywords:[NSSet setWithArray:self.keywords]
                                               expirationDate:self.expirationDate
-                                           spotlightCallback:callback];
+                                           spotlightCallback:spotlightCallback];
 }
 
 + (BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(NSDictionary *)dictionary {
