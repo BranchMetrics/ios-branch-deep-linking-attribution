@@ -386,6 +386,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (BOOL)handleDeepLink:(NSURL *)url {
     BOOL handled = NO;
     if (url) {
+        //always save the incoming url in the preferenceHelper in the externalIntentURI field
+        self.preferenceHelper.externalIntentURI = [url absoluteString];
+
         NSString *query = [url fragment];
         if (!query) {
             query = [url query];
@@ -404,6 +407,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
+    //check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         self.preferenceHelper.universalLinkUrl = [userActivity.webpageURL absoluteString];
         
@@ -425,6 +429,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
         return [[userActivity.webpageURL absoluteString] containsString:@"bnc.lt"];
     }
     
+    //check to see if a spotlight activity needs to be handled
     NSString *spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     
     if (spotlightIdentifier) {
