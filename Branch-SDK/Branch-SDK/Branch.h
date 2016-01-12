@@ -401,6 +401,15 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity;
 
+///--------------------------------
+/// @name Push Notification Support
+///--------------------------------
+
+#pragma mark - Push Notification support
+
+/* Extract the short URL if there is one */
+- (void)handlePushNotification:(NSDictionary*) userInfo;
+
 #pragma mark - Deep Link Controller methods
 
 ///---------------------------

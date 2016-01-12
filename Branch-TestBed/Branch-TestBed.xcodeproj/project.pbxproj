@@ -713,6 +713,9 @@
 					6700165F1940F51400A9E103 = {
 						DevelopmentTeam = R63EM248DP;
 						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
 							com.apple.SafariKeychain = {
 								enabled = 1;
 							};
