@@ -354,18 +354,24 @@ static int BNCDebugTriggerFingersSimulator = 2;
     
     self.preferenceHelper.isReferrable = isReferrable;
     self.preferenceHelper.explicitlyRequestedReferrable = explicitlyRequestedReferrable;
+
+    // Handle push notification on app launch
+    if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
+        id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
+        if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
+            self.preferenceHelper.universalLinkUrl = branchUrlFromPush;
+        }
+    }
     
-    BOOL hasLaunchOptionsURLKey = ([options objectForKey:UIApplicationLaunchOptionsURLKey] != NULL);
-    BOOL hasPushNotificationsKey = ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] != NULL);
     if ([BNCSystemObserver getOSVersion].integerValue >= 8) {
-        if (!hasLaunchOptionsURLKey && !hasPushNotificationsKey && [options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] != NULL) {
+        if (![options objectForKey:UIApplicationLaunchOptionsURLKey] && [options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] != NULL) {
             [self initUserSessionAndCallCallback:YES];
         }
-        else if (hasUserActivityKey) {
+        else if ([options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] != NULL) {
             self.preferenceHelper.isContinuingUserActivity = YES;
         }
     }
-    else if (!hasLaunchOptionsURLKey && !hasPushNotificationsKey) {
+    else if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
         [self initUserSessionAndCallCallback:YES];
     }
 }
@@ -432,6 +438,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 #pragma mark - Push Notification support
 
+// handle push notification if app is already launched
 - (void)handlePushNotification:(NSDictionary *) userInfo {
     // look for a branch shortlink in the payload (shortlink because iOS7 only supports 256 bytes)
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
