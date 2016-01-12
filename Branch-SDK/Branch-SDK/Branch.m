@@ -58,6 +58,8 @@ NSString * const BRANCH_INIT_KEY_PHONE_NUMBER = @"+phone_number";
 NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
 NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 
+NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
+
 static int BNCDebugTriggerDuration = 3;
 static int BNCDebugTriggerFingers = 4;
 static int BNCDebugTriggerFingersSimulator = 2;
@@ -342,11 +344,20 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
 }
 
+
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController {
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
     
     self.preferenceHelper.isReferrable = isReferrable;
     self.preferenceHelper.explicitlyRequestedReferrable = explicitlyRequestedReferrable;
+
+    // Handle push notification on app launch
+    if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
+        id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
+        if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
+            self.preferenceHelper.universalLinkUrl = branchUrlFromPush;
+        }
+    }
     
     if ([BNCSystemObserver getOSVersion].integerValue >= 8) {
         if (![options objectForKey:UIApplicationLaunchOptionsURLKey] && ![options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
@@ -356,10 +367,8 @@ static int BNCDebugTriggerFingersSimulator = 2;
             self.preferenceHelper.isContinuingUserActivity = YES;
         }
     }
-    else {
-        if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
-            [self initUserSessionAndCallCallback:YES];
-        }
+    else if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
+        [self initUserSessionAndCallCallback:YES];
     }
 }
 
@@ -420,6 +429,29 @@ static int BNCDebugTriggerFingersSimulator = 2;
     self.preferenceHelper.isContinuingUserActivity = NO;
     
     return spotlightIdentifier != nil;
+}
+
+
+#pragma mark - Push Notification support
+
+// handle push notification if app is already launched
+- (void)handlePushNotification:(NSDictionary *) userInfo {
+    // If app is active, then close out the session and start a new one
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+        [self callClose];
+    }
+
+    // look for a branch shortlink in the payload (shortlink because iOS7 only supports 256 bytes)
+    NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
+    if (urlStr) {
+        // reusing this field, so as not to create yet another url slot on prefshelper
+        self.preferenceHelper.universalLinkUrl = urlStr;
+    }
+
+    // Again, if app is active, then close out the session and start a new one
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+        [self applicationDidBecomeActive];
+    }
 }
 
 
