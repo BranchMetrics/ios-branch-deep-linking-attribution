@@ -1158,10 +1158,12 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [self clearTimer];
     self.sessionTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(callClose) userInfo:nil repeats:NO];
     [self.requestQueue persistImmediately];
-    
+
+#ifndef BRANCH_EXTENSION
     if (self.debugGestureRecognizer) {
         [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:self.debugGestureRecognizer];
     }
+#endif
 }
 
 - (void)clearTimer {
@@ -1348,7 +1350,8 @@ static int BNCDebugTriggerFingersSimulator = 2;
             self.sessionInitWithBranchUniversalObjectCallback([self getLatestReferringBranchUniversalObject], [self getLatestReferringBranchLinkProperties], nil);
         }
     }
-    
+	
+#ifndef BRANCH_EXTENSION
     if (self.shouldAutomaticallyDeepLink) {
         // Find any matched keys, then launch any controllers that match
         // TODO which one to launch if more than one match?
@@ -1367,8 +1370,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
                 [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"[Branch Warning] View controller does not implement configureControlWithData:"];
             }
             branchSharingController.deepLinkingCompletionDelegate = self;
+
             self.deepLinkPresentingController = [[[UIApplication sharedApplication].delegate window] rootViewController];
-            
+			
             if ([self.deepLinkPresentingController presentedViewController]) {
                 [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
                     [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
@@ -1379,6 +1383,7 @@ static int BNCDebugTriggerFingersSimulator = 2;
             }
         }
     }
+#endif
 }
 
 - (void)handleInitFailure:(NSError *)error {
@@ -1417,7 +1422,13 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (void)addGesterRecognizer:(SEL)action {
-    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+#ifndef BRANCH_EXTENSION
+	UIWindow *window = [UIApplication sharedApplication].keyWindow;
+#else
+	// Using window in App Extension does not make sense, so let it be nil.
+	// Putting all method's code into conditional compilation would case some warnings
+	UIWindow *window = nil;
+#endif
     [window removeGestureRecognizer:self.debugGestureRecognizer]; // Remove existing gesture
     
     self.debugGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:action];
@@ -1448,8 +1459,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 - (void)startRemoteDebugging {
     NSLog(@"======= Connected to Branch Remote Debugger =======");
-    
+	
+#ifndef BRANCH_EXTENSION
     [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:self.debugGestureRecognizer];
+#endif
     [self addCancelDebugGestureRecognizer];
     
     //TODO: change to send screenshots instead in future
@@ -1460,8 +1473,10 @@ static int BNCDebugTriggerFingersSimulator = 2;
 
 - (void)endRemoteDebugging:(UILongPressGestureRecognizer *)sender {
     NSLog(@"======= End Debug Session =======");
-    
+	
+#ifndef BRANCH_EXTENSION
     [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:sender];
+#endif
     BranchDisconnectDebugRequest *request = [[BranchDisconnectDebugRequest alloc] init];
     [self.requestQueue enqueue:request];
     [self processNextQueueItem];
