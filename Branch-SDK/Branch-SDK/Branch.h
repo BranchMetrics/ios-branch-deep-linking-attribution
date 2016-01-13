@@ -401,6 +401,15 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity;
 
+///--------------------------------
+/// @name Push Notification Support
+///--------------------------------
+
+#pragma mark - Push Notification support
+
+/* Extract the short URL if there is one */
+- (void)handlePushNotification:(NSDictionary*) userInfo;
+
 #pragma mark - Deep Link Controller methods
 
 ///---------------------------
@@ -457,6 +466,12 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @warning Please import SafariServices in order for this to work.
  */
 - (void)disableCookieBasedMatching;
+
+/**
+ If you're using a version of the Facebook SDK that prevents application:didFinishLaunchingWithOptions: from returning
+ YES/true when a Universal Link is clicked, you should enable this option.
+ */
+- (void)accountForFacebookSDKPreventingAppLaunch;
 
 #pragma mark - Session Item methods
 
@@ -1315,6 +1330,22 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate callback:(callbackWithUrl)callback;
+
+/**
+ Take the current screen and make it discoverable, adding it to Apple's Core Spotlight index. Will be public if specified. You can override the type as desired, using one of the types provided in MobileCoreServices.
+ 
+ @param title Title for the spotlight preview item.
+ @param description Description for the spotlight preview item.
+ @param thumbnailUrl Url to an image to be used for the thumnbail in spotlight.
+ @param linkParams Additional params to be added to the NSUserActivity. These will also be added to the Branch link.
+ @param publiclyIndexable Whether or not this item should be added to Apple's public search index.
+ @param type The type to use for the NSUserActivity, taken from the list of constants provided in the MobileCoreServices framework.
+ @param keywords A set of keywords to be used in Apple's search index.
+ @param expirationDate ExpirationDate after which this will not appear in Apple's search index.
+ @param callback Callback called with the Branch url this will fallback to.
+ @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
+ */
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
 
 #pragma mark - Referral Code methods
 

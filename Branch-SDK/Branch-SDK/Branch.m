@@ -54,11 +54,12 @@ NSString * const BRANCH_INIT_KEY_REFERRER = @"+referrer";
 NSString * const BRANCH_INIT_KEY_PHONE_NUMBER = @"+phone_number";
 NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
 NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
+NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate>
 
-@property (strong, nonatomic) BNCServerInterface *bServerInterface;
 
+@property (strong, nonatomic) BNCServerInterface *bServerInterface;
 @property (strong, nonatomic) NSTimer *sessionTimer;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
@@ -77,6 +78,7 @@ NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
 @property (weak, nonatomic) UIViewController *deepLinkPresentingController;
 @property (assign, nonatomic) BOOL useCookieBasedMatching;
+@property (assign, nonatomic) BOOL accountForFacebookSDK;
 
 @end
 
@@ -251,6 +253,10 @@ NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
     self.useCookieBasedMatching = NO;
 }
 
+- (void)accountForFacebookSDKPreventingAppLaunch {
+    self.accountForFacebookSDK = YES;
+}
+
 #pragma mark - InitSession Permutation methods
 
 - (void)initSession {
@@ -334,11 +340,20 @@ NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
 }
 
+
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController {
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
     
     self.preferenceHelper.isReferrable = isReferrable;
     self.preferenceHelper.explicitlyRequestedReferrable = explicitlyRequestedReferrable;
+
+    // Handle push notification on app launch
+    if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
+        id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
+        if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
+            self.preferenceHelper.universalLinkUrl = branchUrlFromPush;
+        }
+    }
     
     if ([BNCSystemObserver getOSVersion].integerValue >= 8) {
         if (![options objectForKey:UIApplicationLaunchOptionsURLKey] && ![options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
@@ -346,18 +361,25 @@ NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
         }
         else if ([options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             self.preferenceHelper.isContinuingUserActivity = YES;
+            if (self.accountForFacebookSDK) {
+                id activity = [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
+                if (activity && [activity isKindOfClass:[NSUserActivity class]]) {
+                    [self continueUserActivity:activity];
+                }
+            }
         }
     }
-    else {
-        if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
-            [self initUserSessionAndCallCallback:YES];
-        }
+    else if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
+        [self initUserSessionAndCallCallback:YES];
     }
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url {
     BOOL handled = NO;
     if (url) {
+        //always save the incoming url in the preferenceHelper in the externalIntentURI field
+        self.preferenceHelper.externalIntentURI = [url absoluteString];
+
         NSString *query = [url fragment];
         if (!query) {
             query = [url query];
@@ -376,6 +398,7 @@ NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
+    //check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         self.preferenceHelper.universalLinkUrl = [userActivity.webpageURL absoluteString];
         
@@ -397,6 +420,7 @@ NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
         return [[userActivity.webpageURL absoluteString] containsString:@"bnc.lt"];
     }
     
+    //check to see if a spotlight activity needs to be handled
     NSString *spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     
     if (spotlightIdentifier) {
@@ -412,6 +436,29 @@ NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
     self.preferenceHelper.isContinuingUserActivity = NO;
     
     return spotlightIdentifier != nil;
+}
+
+
+#pragma mark - Push Notification support
+
+// handle push notification if app is already launched
+- (void)handlePushNotification:(NSDictionary *) userInfo {
+    // If app is active, then close out the session and start a new one
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+        [self callClose];
+    }
+
+    // look for a branch shortlink in the payload (shortlink because iOS7 only supports 256 bytes)
+    NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
+    if (urlStr) {
+        // reusing this field, so as not to create yet another url slot on prefshelper
+        self.preferenceHelper.universalLinkUrl = urlStr;
+    }
+
+    // Again, if app is active, then close out the session and start a new one
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+        [self applicationDidBecomeActive];
+    }
 }
 
 
@@ -838,11 +885,14 @@ NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords callback:(callbackWithUrl)callback {
     [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:linkParams callback:callback];
 }
-
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate callback:(callbackWithUrl)callback {
     [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:linkParams expirationDate:expirationDate callback:callback];
 }
 
+//Use this with iOS 9+ only
+- (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
+    [self.contentDiscoveryManager indexContentWithTitle:title description:description publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:linkParams expirationDate:expirationDate callback:nil spotlightCallback:spotlightCallback];
+}
 
 #pragma mark - Referral methods
 

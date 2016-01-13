@@ -35,6 +35,7 @@
 @property (assign, nonatomic) NSInteger retryCount;
 @property (assign, nonatomic) NSTimeInterval retryInterval;
 @property (assign, nonatomic) NSTimeInterval timeout;
+@property (strong, nonatomic) NSString *externalIntentURI;
 
 + (BNCPreferenceHelper *)preferenceHelper;
 
