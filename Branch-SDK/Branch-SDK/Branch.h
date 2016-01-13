@@ -1450,13 +1450,6 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache preferenceHelper:(BNCPreferenceHelper *)preferenceHelper key:(NSString *)key;
 
 /**
- Method for logging a message to the Branch server, used when remote debugging is enabled.
- 
- @warning This is meant for use internally only (exposed for the sake of testing) and should not be used by apps.
- */
-- (void)log:(NSString *)log;
-
-/**
  Method used by BranchUniversalObject to register a view on content
  
  @warning This is meant for use internally only and should not be used by apps.

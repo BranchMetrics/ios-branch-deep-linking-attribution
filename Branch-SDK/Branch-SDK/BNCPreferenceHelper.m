@@ -52,9 +52,28 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 @implementation BNCPreferenceHelper
 
-@synthesize branchKey = _branchKey, appKey = _appKey, lastRunBranchKey = _lastRunBranchKey, appVersion = _appVersion, deviceFingerprintID = _deviceFingerprintID, sessionID = _sessionID, spotlightIdentifier = _spotlightIdentifier,
-            identityID = _identityID, linkClickIdentifier = _linkClickIdentifier, userUrl = _userUrl, userIdentity = _userIdentity, sessionParams = _sessionParams, installParams = _installParams, universalLinkUrl = _universalLinkUrl, externalIntentURI = _externalIntentURI,
-            isReferrable = _isReferrable, isDebug = _isDebug, isConnectedToRemoteDebug = _isConnectedToRemoteDebug, isContinuingUserActivity = _isContinuingUserActivity, retryCount = _retryCount, retryInterval = _retryInterval, timeout = _timeout, lastStrongMatchDate = _lastStrongMatchDate;
+@synthesize branchKey = _branchKey,
+            appKey = _appKey,
+            lastRunBranchKey = _lastRunBranchKey,
+            appVersion = _appVersion,
+            deviceFingerprintID = _deviceFingerprintID,
+            sessionID = _sessionID,
+            spotlightIdentifier = _spotlightIdentifier,
+            identityID = _identityID,
+            linkClickIdentifier = _linkClickIdentifier,
+            userUrl = _userUrl,
+            userIdentity = _userIdentity,
+            sessionParams = _sessionParams,
+            installParams = _installParams,
+            universalLinkUrl = _universalLinkUrl,
+            externalIntentURI = _externalIntentURI,
+            isReferrable = _isReferrable,
+            isDebug = _isDebug,
+            isContinuingUserActivity = _isContinuingUserActivity,
+            retryCount = _retryCount,
+            retryInterval = _retryInterval,
+            timeout = _timeout,
+            lastStrongMatchDate = _lastStrongMatchDate;
 
 + (BNCPreferenceHelper *)preferenceHelper {
     static BNCPreferenceHelper *preferenceHelper;
@@ -74,7 +93,6 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
         _retryInterval = DEFAULT_RETRY_INTERVAL;
         
         _isDebug = NO;
-        _isConnectedToRemoteDebug = NO;
         _explicitlyRequestedReferrable = NO;
         _isReferrable = [self readBoolFromDefaults:BRANCH_PREFS_KEY_IS_REFERRABLE];
     }
@@ -114,10 +132,6 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
         NSString *log = [NSString stringWithFormat:@"[%@:%d] %@", filename, line, [[NSString alloc] initWithFormat:format arguments:args]];
         va_end(args);
         NSLog(@"%@", log);
-        
-        if (self.isConnectedToRemoteDebug) {
-            [[Branch getInstance] log:log];
-        }
     }
 }
 

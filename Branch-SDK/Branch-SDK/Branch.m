@@ -35,9 +35,6 @@
 #import "BranchCloseRequest.h"
 #import "BranchOpenRequest.h"
 #import "BranchInstallRequest.h"
-#import "BranchConnectDebugRequest.h"
-#import "BranchDisconnectDebugRequest.h"
-#import "BranchLogRequest.h"
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchRegisterViewRequest.h"
 
@@ -57,17 +54,12 @@ NSString * const BRANCH_INIT_KEY_REFERRER = @"+referrer";
 NSString * const BRANCH_INIT_KEY_PHONE_NUMBER = @"+phone_number";
 NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
 NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
-
 NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
-static int BNCDebugTriggerDuration = 3;
-static int BNCDebugTriggerFingers = 4;
-static int BNCDebugTriggerFingersSimulator = 2;
+@interface Branch() <BranchDeepLinkingControllerCompletionDelegate>
 
-@interface Branch() <UIGestureRecognizerDelegate, BranchDeepLinkingControllerCompletionDelegate>
 
 @property (strong, nonatomic) BNCServerInterface *bServerInterface;
-
 @property (strong, nonatomic) NSTimer *sessionTimer;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
@@ -266,7 +258,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
 - (void)accountForFacebookSDKPreventingAppLaunch {
     self.accountForFacebookSDK = YES;
 }
-
 
 #pragma mark - InitSession Permutation methods
 
@@ -1051,14 +1042,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 
-#pragma mark - Logging
-- (void)log:(NSString *)log {
-    BranchLogRequest *request = [[BranchLogRequest alloc] initWithLog:log];
-    [self.requestQueue enqueue:request];
-    [self processNextQueueItem];
-}
-
-
 #pragma mark - Private methods
 
 + (Branch *)getInstanceInternal:(NSString *)key returnNilIfNoCurrentInstance:(BOOL)returnNilIfNoCurrentInstance {
@@ -1224,8 +1207,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
     if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity && ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:YES];
     }
-    
-    [self addDebugGestureRecognizer];
 }
 
 - (void)applicationWillResignActive {
@@ -1479,80 +1460,5 @@ static int BNCDebugTriggerFingersSimulator = 2;
     [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
 }
 
-
-#pragma mark - Debugger functions
-
-- (void)addDebugGestureRecognizer {
-    [self addGesterRecognizer:@selector(connectToDebug:)];
-}
-
-- (void)addCancelDebugGestureRecognizer {
-    [self addGesterRecognizer:@selector(endRemoteDebugging:)];
-}
-
-- (void)addGesterRecognizer:(SEL)action {
-    UIWindow *window = [UIApplication sharedApplication].keyWindow;
-    [window removeGestureRecognizer:self.debugGestureRecognizer]; // Remove existing gesture
-    
-    self.debugGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:action];
-    self.debugGestureRecognizer.delegate = self;
-    self.debugGestureRecognizer.minimumPressDuration = BNCDebugTriggerDuration;
-    
-    if ([BNCSystemObserver isSimulator]) {
-        self.debugGestureRecognizer.numberOfTouchesRequired = BNCDebugTriggerFingersSimulator;
-    }
-    else {
-        self.debugGestureRecognizer.numberOfTouchesRequired = BNCDebugTriggerFingers;
-    }
-    
-    [window addGestureRecognizer:self.debugGestureRecognizer];
-}
-
-- (void)connectToDebug:(UILongPressGestureRecognizer *)sender {
-    if (sender.state == UIGestureRecognizerStateBegan){
-        NSLog(@"======= Start Debug Session =======");
-        BranchConnectDebugRequest *request = [[BranchConnectDebugRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
-            [self startRemoteDebugging];
-        }];
-        
-        [self.requestQueue enqueue:request];
-        [self processNextQueueItem];
-    }
-}
-
-- (void)startRemoteDebugging {
-    NSLog(@"======= Connected to Branch Remote Debugger =======");
-    
-    [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:self.debugGestureRecognizer];
-    [self addCancelDebugGestureRecognizer];
-    
-    //TODO: change to send screenshots instead in future
-    if (!self.debugHeartbeatTimer || !self.debugHeartbeatTimer.isValid) {
-        self.debugHeartbeatTimer = [NSTimer scheduledTimerWithTimeInterval:20 target:self selector:@selector(keepDebugAlive) userInfo:nil repeats:YES];
-    }
-}
-
-- (void)endRemoteDebugging:(UILongPressGestureRecognizer *)sender {
-    NSLog(@"======= End Debug Session =======");
-    
-    [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:sender];
-    BranchDisconnectDebugRequest *request = [[BranchDisconnectDebugRequest alloc] init];
-    [self.requestQueue enqueue:request];
-    [self processNextQueueItem];
-    
-    [self.debugHeartbeatTimer invalidate];
-    [self addDebugGestureRecognizer];
-}
-
-- (void)keepDebugAlive {
-    NSLog(@"[Branch Debug] Sending Keep Alive");
-    [self log:@""];
-}
-
-#pragma mark - UIGestureRecognizerDelegate
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    return YES;
-}
 
 @end
