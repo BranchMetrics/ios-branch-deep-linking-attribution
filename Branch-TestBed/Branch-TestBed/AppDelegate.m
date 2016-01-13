@@ -33,6 +33,8 @@
     Branch *branch = [Branch getInstance];
     [branch setDebug];
     
+    [branch setDeepLinkDebugMode:@{@"example_debug_param" : @"foo"}];
+    
     [branch registerDeepLinkController:controller forKey:@"gravatar_email"];
     
     [branch initSessionWithLaunchOptions:launchOptions automaticallyDisplayDeepLinkController:YES deepLinkHandler:^(NSDictionary *params, NSError *error) {
