@@ -86,7 +86,9 @@ static int BNCDebugTriggerFingersSimulator = 2;
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
 @property (weak, nonatomic) UIViewController *deepLinkPresentingController;
 @property (assign, nonatomic) BOOL useCookieBasedMatching;
+@property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (assign, nonatomic) BOOL accountForFacebookSDK;
+
 
 @end
 
@@ -383,6 +385,14 @@ static int BNCDebugTriggerFingersSimulator = 2;
     }
 }
 
+
+
+//these params will be added
+- (void) setDeepLinkDebugMode:(NSDictionary *)debugParams {
+    self.deepLinkDebugParams = debugParams;
+}
+
+
 - (BOOL)handleDeepLink:(NSURL *)url {
     BOOL handled = NO;
     if (url) {
@@ -410,7 +420,6 @@ static int BNCDebugTriggerFingersSimulator = 2;
     //check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         self.preferenceHelper.universalLinkUrl = [userActivity.webpageURL absoluteString];
-        
         [self initUserSessionAndCallCallback:YES];
         self.preferenceHelper.isContinuingUserActivity = NO;
         
@@ -668,11 +677,25 @@ static int BNCDebugTriggerFingersSimulator = 2;
 }
 
 - (NSDictionary *)getFirstReferringParams {
-    return [BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.installParams];
+    NSDictionary *origInstallParams = [BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.installParams];
+    
+    if (self.deepLinkDebugParams) {
+        NSMutableDictionary* debugInstallParams = [[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams] mutableCopy];
+        [debugInstallParams addEntriesFromDictionary:self.deepLinkDebugParams];
+        return debugInstallParams;
+    }
+    return origInstallParams;
 }
 
 - (NSDictionary *)getLatestReferringParams {
-    return [BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams];
+    NSDictionary *origSessionParams = [BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams];
+    
+    if (self.deepLinkDebugParams) {
+        NSMutableDictionary* debugSessionParams = [origSessionParams mutableCopy];
+        [debugSessionParams addEntriesFromDictionary:self.deepLinkDebugParams];
+        return debugSessionParams;
+    }
+    return origSessionParams;
 }
 
 - (BranchUniversalObject *)getLatestReferringBranchUniversalObject {
