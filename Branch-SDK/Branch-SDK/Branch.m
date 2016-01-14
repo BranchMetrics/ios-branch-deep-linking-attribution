@@ -452,6 +452,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
 // handle push notification if app is already launched
 - (void)handlePushNotification:(NSDictionary *) userInfo {
+#ifndef BRANCH_EXTENSION
     // If app is active, then close out the session and start a new one
     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
         [self callClose];
@@ -468,6 +469,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
         [self applicationDidBecomeActive];
     }
+#endif
 }
 
 

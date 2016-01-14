@@ -19,6 +19,12 @@
 
 @implementation KeyboardViewController
 
+
+//
+// If you are trying to use [UIApplication sharedApplication] and get errors for TestExtension target,
+// you should wrap this method call into #ifndef BRANCH_EXTENSION condition compilation preprocessor directive
+//
+
 - (void)updateViewConstraints {
     [super updateViewConstraints];
 }
