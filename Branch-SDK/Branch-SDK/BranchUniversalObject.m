@@ -175,6 +175,7 @@
     else {
         publiclyIndexable = YES;
     }
+    
     [[Branch getInstance] createDiscoverableContentWithTitle:self.title
                                                  description:self.contentDescription
                                                 thumbnailUrl:[NSURL URLWithString:self.imageUrl]
@@ -184,6 +185,28 @@
                                                     keywords:[NSSet setWithArray:self.keywords]
                                               expirationDate:self.expirationDate
                                                     callback:callback];
+}
+
+
+//This one uses a callback that returns the SpotlightIdentifier
+- (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
+    BOOL publiclyIndexable;
+    if (self.contentIndexMode == ContentIndexModePrivate) {
+        publiclyIndexable = NO;
+    }
+    else {
+        publiclyIndexable = YES;
+    }
+    
+    [[Branch getInstance] createDiscoverableContentWithTitle:self.title
+                                                 description:self.contentDescription
+                                                thumbnailUrl:[NSURL URLWithString:self.imageUrl]
+                                                  linkParams:self.metadata.copy
+                                                        type:self.type
+                                           publiclyIndexable:publiclyIndexable
+                                                    keywords:[NSSet setWithArray:self.keywords]
+                                              expirationDate:self.expirationDate
+                                           spotlightCallback:spotlightCallback];
 }
 
 + (BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(NSDictionary *)dictionary {
