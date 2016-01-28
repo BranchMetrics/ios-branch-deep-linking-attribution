@@ -444,7 +444,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  
  @param debugParams dictionary of keystrings/valuestrings that will be added to response 
  */
--(void) setDeepLinkDebugMode:(NSDictionary *)debugParams;
+-(void)setDeepLinkDebugMode:(NSDictionary *)debugParams;
 
 
 /**
@@ -480,6 +480,11 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  YES/true when a Universal Link is clicked, you should enable this option.
  */
 - (void)accountForFacebookSDKPreventingAppLaunch;
+
+/**
+ TODO: Add comment
+ */
+- (void)allowDelayedInitialization;
 
 #pragma mark - Session Item methods
 

@@ -32,19 +32,25 @@
     
     Branch *branch = [Branch getInstance];
     [branch setDebug];
+    [branch allowDelayedInitialization];
     
     [branch setDeepLinkDebugMode:@{@"example_debug_param" : @"foo"}];
     
     [branch registerDeepLinkController:controller forKey:@"gravatar_email"];
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2000 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+        NSLog(@"finally calling initSession: %@", launchOptions);
+        [branch initSessionWithLaunchOptions:launchOptions automaticallyDisplayDeepLinkController:YES deepLinkHandler:^(NSDictionary *params, NSError *error) {
+            if (!error) {
+                NSLog(@"finished init with params = %@", [params description]);
+            }
+            else {
+                NSLog(@"failed init: %@", error);
+            }
+        }];
+        
+    });
     
-    [branch initSessionWithLaunchOptions:launchOptions automaticallyDisplayDeepLinkController:YES deepLinkHandler:^(NSDictionary *params, NSError *error) {
-        if (!error) {
-            NSLog(@"finished init with params = %@", [params description]);
-        }
-        else {
-            NSLog(@"failed init: %@", error);
-        }
-    }];
     
     return YES;
 }
@@ -74,6 +80,8 @@
 }
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *))restorationHandler {
+    NSLog(@"opened app from a user activity with activityType: %@", userActivity.activityType);
+    
     BOOL handledByBranch = [[Branch getInstance] continueUserActivity:userActivity];
     
     return handledByBranch;

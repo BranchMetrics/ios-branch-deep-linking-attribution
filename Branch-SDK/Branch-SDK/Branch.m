@@ -80,6 +80,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 @property (assign, nonatomic) BOOL useCookieBasedMatching;
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (assign, nonatomic) BOOL accountForFacebookSDK;
+@property (assign, nonatomic) BOOL delayedInitInProgress;
 
 
 @end
@@ -259,6 +260,11 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     self.accountForFacebookSDK = YES;
 }
 
+- (void)allowDelayedInitialization {
+    self.delayedInitInProgress = YES;
+}
+
+
 #pragma mark - InitSession Permutation methods
 
 - (void)initSession {
@@ -342,13 +348,22 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
 }
 
+- (void)handleDelayedInitWithURL:(NSURL *)url {
+    self.delayedInitInProgress = NO;
+    if (url) {
+        [self handleDeepLink:url];
+    }
+    else {
+        [self initUserSessionAndCallCallback:YES];
+    }
+}
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController {
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
     
     self.preferenceHelper.isReferrable = isReferrable;
     self.preferenceHelper.explicitlyRequestedReferrable = explicitlyRequestedReferrable;
-
+    
     // Handle push notification on app launch
     if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
         id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
@@ -358,19 +373,34 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     }
     
     if ([BNCSystemObserver getOSVersion].integerValue >= 8) {
+        // Base case: no userActivity or URI, iOS 8+
         if (![options objectForKey:UIApplicationLaunchOptionsURLKey] && ![options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             [self initUserSessionAndCallCallback:YES];
         }
+        // userActivity, iOS 8+
         else if ([options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             self.preferenceHelper.isContinuingUserActivity = YES;
-            if (self.accountForFacebookSDK) {
+            
+            // Edge case: handle Facebook SDK "bug" -OR- delayed init, iOS 8+
+            if (self.accountForFacebookSDK || self.delayedInitInProgress) {
+                self.delayedInitInProgress = NO;
+                
                 id activity = [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
                 if (activity && [activity isKindOfClass:[NSUserActivity class]]) {
                     [self continueUserActivity:activity];
                 }
             }
         }
+        // Edge case: handle delayed init, iOS 8+
+        else if (self.delayedInitInProgress) {
+            [self handleDelayedInitWithURL:[options objectForKey:UIApplicationLaunchOptionsURLKey]];
+        }
     }
+    // Edge case: handle delayed init, pre-iOS 8
+    else if (self.delayedInitInProgress) {
+        [self handleDelayedInitWithURL:[options objectForKey:UIApplicationLaunchOptionsURLKey]];
+    }
+    // Base case: no URI, pre-iOS 8
     else if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
         [self initUserSessionAndCallCallback:YES];
     }
@@ -411,8 +441,11 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     //check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         self.preferenceHelper.universalLinkUrl = [userActivity.webpageURL absoluteString];
-        [self initUserSessionAndCallCallback:YES];
-        self.preferenceHelper.isContinuingUserActivity = NO;
+        
+        if (!self.delayedInitInProgress) {
+            [self initUserSessionAndCallCallback:YES];
+            self.preferenceHelper.isContinuingUserActivity = NO;
+        }
         
         id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
         if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] && [[userActivity.webpageURL absoluteString] containsString:branchUniversalLinkDomains]) {
@@ -441,8 +474,11 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
             self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
         }
     }
-    [self initUserSessionAndCallCallback:YES];
-    self.preferenceHelper.isContinuingUserActivity = NO;
+    
+    if (!self.delayedInitInProgress) {
+        [self initUserSessionAndCallCallback:YES];
+        self.preferenceHelper.isContinuingUserActivity = NO;        
+    }
     
     return spotlightIdentifier != nil;
 }
@@ -1204,7 +1240,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity && ![self.requestQueue containsInstallOrOpen]) {
+    if (!self.isInitialized && !self.preferenceHelper.isContinuingUserActivity && ![self.requestQueue containsInstallOrOpen] && !self.delayedInitInProgress) {
         [self initUserSessionAndCallCallback:YES];
     }
 }
@@ -1369,7 +1405,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
             [self handleInitSuccess];
         }
     };
-    
+
     if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.useCookieBasedMatching) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
     }
