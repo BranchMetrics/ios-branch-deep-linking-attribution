@@ -383,10 +383,9 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
             
             // Edge case: handle Facebook SDK "bug" -OR- delayed init, iOS 8+
             if (self.accountForFacebookSDK || self.delayedInitInProgress) {
-                self.delayedInitInProgress = NO;
-                
                 id activity = [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
                 if (activity && [activity isKindOfClass:[NSUserActivity class]]) {
+                    self.delayedInitInProgress = NO;
                     [self continueUserActivity:activity];
                 }
             }
@@ -404,6 +403,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     else if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
         [self initUserSessionAndCallCallback:YES];
     }
+    self.delayedInitInProgress = NO;
 }
 
 
@@ -431,8 +431,9 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-    
-    [self initUserSessionAndCallCallback:YES];
+    if (!self.delayedInitInProgress) {
+        [self initUserSessionAndCallCallback:YES];
+    }
     
     return handled;
 }

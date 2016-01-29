@@ -482,7 +482,9 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)accountForFacebookSDKPreventingAppLaunch;
 
 /**
- TODO: Add comment
+ Invoke this method at the beginning of application:didFinishLaunchingWithOptions: if you do not immediately invoke
+ initSession in that method. Please note that this is not the standard way of using the Branch SDK and we highly recommend 
+ not delaying initSession.
  */
 - (void)allowDelayedInitialization;
 
