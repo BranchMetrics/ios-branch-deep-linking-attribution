@@ -449,7 +449,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
 #pragma mark - Generic Request support
 
-- (void)handleGenericRequest:(BNCServerRequest*)request {
+- (void)executeGenericRequest:(BNCServerRequest*)request {
     [self initSessionIfNeededAndNotInProgress];
     [self.requestQueue enqueue:request];
     [self processNextQueueItem];
