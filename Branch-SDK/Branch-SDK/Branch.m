@@ -447,6 +447,14 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     return spotlightIdentifier != nil;
 }
 
+#pragma mark - Generic Request support
+
+- (void)handleGenericRequest:(BNCServerRequest*)request {
+    [self initSessionIfNeededAndNotInProgress];
+    [self.requestQueue enqueue:request];
+    [self processNextQueueItem];
+}
+
 
 #pragma mark - Push Notification support
 
