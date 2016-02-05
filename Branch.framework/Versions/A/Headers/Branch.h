@@ -407,8 +407,14 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 
 #pragma mark - Push Notification support
 
-/* Extract the short URL if there is one */
-- (void)handlePushNotification:(NSDictionary*) userInfo;
+/**
+ Allow Branch to handle a push notification with a Branch link.
+ 
+ To make use of this, when creating a push notification, specify the Branch Link as an NSString, for key @"branch".
+ 
+ NSDictionary userInfo = @{@"branch": @"https://bnc.lt/...", ... };
+ */
+- (void)handlePushNotification:(NSDictionary *)userInfo;
 
 #pragma mark - Deep Link Controller methods
 
@@ -1455,5 +1461,10 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @warning This is meant for use internally only and should not be used by apps.
  */
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
+
+/**
+ Method used by external Branch libs to initiate server requests
+ */
+- (void)executeGenericRequest:(BNCServerRequest*)request;
 
 @end

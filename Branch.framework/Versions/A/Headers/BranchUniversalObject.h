@@ -11,6 +11,7 @@
 #import "Branch.h"
 
 typedef void (^callback) ();
+typedef void (^shareCompletion) (NSString *activityType, BOOL completed);
 
 @interface BranchUniversalObject : NSObject
 
@@ -40,8 +41,11 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties;
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback;
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties;
-- (void)showShareSheetWithShareText:(NSString *)shareText andCallback:(callback)callback;
-- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController andCallback:(callback)callback;
+- (void)showShareSheetWithShareText:(NSString *)shareText andCallback:(callback)callback __attribute__((deprecated(("This method has been deprecated. Use -[showShareSheetWithShareText:completion:] instead."))));
+- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController andCallback:(callback)callback __attribute__((deprecated(("This method has been deprecated. Use -[showShareSheetWithLinkProperties:andShareText:fromViewController:viewController:completion:] instead."))));
+- (void)showShareSheetWithShareText:(NSString *)shareText completion:(shareCompletion)completion;
+- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController completion:(shareCompletion)completion;
+
 - (void)listOnSpotlight;
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback;
 - (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
