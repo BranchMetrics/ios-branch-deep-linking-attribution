@@ -1462,4 +1462,9 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
 
+/**
+ Method used by external Branch libs to initiate server requests
+ */
+- (void)executeGenericRequest:(BNCServerRequest*)request;
+
 @end
