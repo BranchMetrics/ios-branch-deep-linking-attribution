@@ -1,5 +1,10 @@
 Branch iOS SDK change log
 
+- v0.11.15
+  * improvements on share sheet
+  * Slack bug fix
+  * new completion handler for share sheet
+
 - v0.11.14
   * include channel when generating spotlight link
   * push notification support
