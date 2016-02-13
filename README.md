@@ -166,6 +166,10 @@ To deep link, Branch must initialize a session to check if the user originated f
     
     return handledByBranch;
 }
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    [[Branch getInstance] handlePushNotification:userInfo];
+}
 ```
 
 ###### Swift
@@ -191,6 +195,10 @@ func application(application: UIApplication, continueUserActivity userActivity: 
     Branch.getInstance().continueUserActivity(userActivity);
 
     return true
+}
+
+func application(application: UIApplication, didReceiveRemoteNotification launchOptions: [NSObject: AnyObject]?) -> Void {
+    Branch.getInstance().handlePushNotification(launchOptions)
 }
 ```
 
