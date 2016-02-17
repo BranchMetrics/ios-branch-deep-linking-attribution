@@ -104,6 +104,21 @@
                                     andCallback:callback];
 }
 
+- (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties ignoreUAString:(NSString *)UAString {
+    if (!self.canonicalIdentifier && !self.title) {
+        NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.");
+        return nil;
+    }
+
+    return [[Branch getInstance] getShortURLWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
+                                        andTags:linkProperties.tags
+                                     andChannel:linkProperties.channel
+                                     andFeature:linkProperties.feature
+                                       andStage:linkProperties.stage
+                                       andAlias:linkProperties.alias
+                                 ignoreUAString:UAString];
+}
+
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.canonicalUrl && !self.title) {
         NSLog(@"[Branch Warning] a canonicalIdentifier, canonicalURL, or title are required to uniquely identify content. In order to not break the end user experience with sharing, Branch SDK will proceed to create a URL, but content analytics may not properly include this URL.");
