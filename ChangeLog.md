@@ -1,5 +1,9 @@
 Branch iOS SDK change log
 
+- v0.11.16
+  * increased timeout for SFSafariViewController
+  * removed init session methods that do not use launchOptions
+
 - v0.11.15
   * improvements on share sheet
   * Slack bug fix
