@@ -119,7 +119,7 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
             [safController didMoveToParentViewController:windowRootController];
             
             // Give a little bit of time for safari to load the request.
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 // Remove the safari view controller from view controller containment
                 [safController willMoveToParentViewController:nil];
                 [safController.view removeFromSuperview];
