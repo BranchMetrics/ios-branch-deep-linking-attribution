@@ -68,6 +68,8 @@
     [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest] andCallback:callback];
 }
 
+#pragma mark - Link Creation Methods
+
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.title) {
         NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.");
@@ -104,11 +106,13 @@
                                     andCallback:callback];
 }
 
-- (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties ignoreUAString:(NSString *)UAString {
+- (NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.title) {
         NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.");
         return nil;
     }
+    // keep this operation outside of sync operation below.
+    NSString *UAString = [[[UIWebView alloc] init] stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
 
     return [[Branch getInstance] getShortURLWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
                                         andTags:linkProperties.tags
@@ -116,7 +120,8 @@
                                      andFeature:linkProperties.feature
                                        andStage:linkProperties.stage
                                        andAlias:linkProperties.alias
-                                 ignoreUAString:UAString];
+                                 ignoreUAString:UAString
+                              forceLinkCreation:YES];
 }
 
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties {
