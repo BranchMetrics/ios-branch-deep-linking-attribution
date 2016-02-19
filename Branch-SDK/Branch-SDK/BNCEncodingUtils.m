@@ -165,7 +165,7 @@ static const short _base64DecodingTable[256] = {
     if (!input) {
         return @"";
     }
-
+    
     const char *cStr = [input UTF8String];
     unsigned char digest[CC_MD5_DIGEST_LENGTH];
     CC_MD5(cStr, (CC_LONG)strlen(cStr), digest);
@@ -175,7 +175,7 @@ static const short _base64DecodingTable[256] = {
     for (int i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
         [output appendFormat:@"%02x", digest[i]];
     }
-
+    
     return  output;
 }
 
@@ -197,10 +197,10 @@ static const short _base64DecodingTable[256] = {
 
 + (NSString *)sanitizedStringFromString:(NSString *)dirtyString {
     NSString *cleanString = [[[[dirtyString stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""]
-                                            stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"]
-                                            stringByReplacingOccurrencesOfString:@"’" withString:@"'"]
-                                            stringByReplacingOccurrencesOfString:@"\r" withString:@"\\r"];
-
+                               stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"]
+                              stringByReplacingOccurrencesOfString:@"’" withString:@"'"]
+                             stringByReplacingOccurrencesOfString:@"\r" withString:@"\\r"];
+    
     return cleanString;
 }
 
@@ -263,7 +263,7 @@ static const short _base64DecodingTable[256] = {
     if (encodedDictionary.length > 1) {
         [encodedDictionary deleteCharactersInRange:NSMakeRange([encodedDictionary length] - 1, 1)];
     }
-
+    
     [encodedDictionary appendString:@"}"];
     
     if ([[BNCPreferenceHelper preferenceHelper] isDebug]) {
@@ -278,7 +278,7 @@ static const short _base64DecodingTable[256] = {
     if (![array count]) {
         return @"[]";
     }
-
+    
     NSMutableString *encodedArray = [[NSMutableString alloc] initWithString:@"["];
     for (id obj in array) {
         NSString *value = nil;
@@ -332,7 +332,7 @@ static const short _base64DecodingTable[256] = {
     if ([[BNCPreferenceHelper preferenceHelper] isDebug]) {
         NSLog(@"encoded array : %@", encodedArray);
     }
-
+    
     return encodedArray;
 }
 
@@ -344,7 +344,7 @@ static const short _base64DecodingTable[256] = {
 
 + (NSString *)encodeDictionaryToQueryString:(NSDictionary *)dictionary {
     NSMutableString *queryString = [[NSMutableString alloc] initWithString:@"?"];
-
+    
     for (NSString *key in [dictionary allKeys]) {
         // No empty keys, please.
         if (key.length) {
@@ -372,7 +372,7 @@ static const short _base64DecodingTable[256] = {
             [queryString appendFormat:@"%@=%@&", [BNCEncodingUtils urlEncodedString:key], value];
         }
     }
-
+    
     // Delete last character (either trailing & or ? if no params present)
     [queryString deleteCharactersInRange:NSMakeRange(queryString.length - 1, 1)];
     
@@ -392,24 +392,24 @@ static const short _base64DecodingTable[256] = {
     if (!tempData) {
         return @{};
     }
-
+    
     NSDictionary *plainDecodedDictionary = [NSJSONSerialization JSONObjectWithData:tempData options:NSJSONReadingMutableContainers error:nil];
     if (plainDecodedDictionary) {
         return plainDecodedDictionary;
     }
-
+    
     // If the first decode failed, it could be because the data was encoded. Try decoding first.
     NSString *decodedVersion = [BNCEncodingUtils base64DecodeStringToString:jsonString];
     tempData = [decodedVersion dataUsingEncoding:NSUTF8StringEncoding];
     if (!tempData) {
         return @{};
     }
-
+    
     NSDictionary *base64DecodedDictionary = [NSJSONSerialization JSONObjectWithData:tempData options:NSJSONReadingMutableContainers error:nil];
     if (base64DecodedDictionary) {
         return base64DecodedDictionary;
     }
-
+    
     // Apparently this data was not parsible into a dictionary, so we'll just return an empty one
     return @{};
 }
@@ -417,20 +417,25 @@ static const short _base64DecodingTable[256] = {
 + (NSDictionary *)decodeQueryStringToDictionary:(NSString *)queryString {
     NSArray *pairs = [queryString componentsSeparatedByString:@"&"];
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-
+    
     for (NSString *pair in pairs) {
         NSArray *kv = [pair componentsSeparatedByString:@"="];
         if (kv.count > 1) { // If this key has a value (so, not foo&bar=...)
             NSString *key = kv[0];
-            NSString *val = [kv[1] stringByRemovingPercentEncoding]; // uses the default UTF-8 encoding
-            
+            //iOS 6 and before
+            NSString *val;
+            if (floor(NSFoundationVersionNumber) < NSFoundationVersionNumber_iOS_7_0) {
+                val = [kv[1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            } else {
+                val = [kv[1] stringByRemovingPercentEncoding]; // uses the default UTF-8 encoding
+            }
             // Don't add empty items
             if (val.length) {
                 params[key] = val;
             }
         }
     }
-
+    
     return params;
 }
 

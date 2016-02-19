@@ -118,11 +118,11 @@
 		670016771940F51400A9E103 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 670016751940F51400A9E103 /* Main.storyboard */; };
 		6700167A1940F51400A9E103 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016791940F51400A9E103 /* ViewController.m */; };
 		6700167C1940F51400A9E103 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6700167B1940F51400A9E103 /* Images.xcassets */; };
-		67163AAE1B9A036F007A8AB1 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67163AAD1B9A036F007A8AB1 /* SafariServices.framework */; };
+		67163AAE1B9A036F007A8AB1 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67163AAD1B9A036F007A8AB1 /* SafariServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		67486B8D1B93B48A0044D872 /* BNCStrongMatchHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 67486B8B1B93B48A0044D872 /* BNCStrongMatchHelper.h */; };
 		67486B8E1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */; };
 		677F4CB51C1FB1910029F2B3 /* Branch-TestBed.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 677F4CB41C1FB0FA0029F2B3 /* Branch-TestBed.entitlements */; };
-		67F270891BA9FCFF002546A7 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; };
+		67F270891BA9FCFF002546A7 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		7E6B3B561AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6B3B551AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m */; };
 		9F4BE02E2EFA48B94EB8CEAD /* libPods-Branch-SDK-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA508DAFBC70E7B594A5D76C /* libPods-Branch-SDK-Tests.a */; };
 /* End PBXBuildFile section */
@@ -768,7 +768,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "#diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\n#if [[ $? != 0 ]] ; then\n#    cat << EOM\n#error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\n#EOM\n#    exit 1\n#fi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

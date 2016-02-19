@@ -8,6 +8,7 @@
 
 #import "BranchTest.h"
 #import "BNCPreferenceHelper.h"
+#import <OCMock/OCMock.h>
 
 @interface BranchTest ()
 
