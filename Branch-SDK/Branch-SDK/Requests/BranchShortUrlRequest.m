@@ -109,7 +109,7 @@
     }
     
     [longUrl appendFormat:@"type=%ld&", (long)self.type];
-    [longUrl appendFormat:@"matchDuration=%ld&", (long)self.matchDuration];
+    [longUrl appendFormat:@"duration=%ld&", (long)self.matchDuration];
     
     NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:self.params];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
