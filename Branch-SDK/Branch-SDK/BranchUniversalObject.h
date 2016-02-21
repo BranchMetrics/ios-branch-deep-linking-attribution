@@ -45,6 +45,8 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 - (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController andCallback:(callback)callback __attribute__((deprecated(("This method has been deprecated. Use -[showShareSheetWithLinkProperties:andShareText:fromViewController:viewController:completion:] instead."))));
 - (void)showShareSheetWithShareText:(NSString *)shareText completion:(shareCompletion)completion;
 - (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController completion:(shareCompletion)completion;
+//iPad
+- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController anchor:(UIBarButtonItem *)anchor completion:(shareCompletion)completion;
 
 - (void)listOnSpotlight;
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback;
