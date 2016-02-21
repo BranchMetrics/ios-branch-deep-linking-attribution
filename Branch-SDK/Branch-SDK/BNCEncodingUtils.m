@@ -422,13 +422,7 @@ static const short _base64DecodingTable[256] = {
         NSArray *kv = [pair componentsSeparatedByString:@"="];
         if (kv.count > 1) { // If this key has a value (so, not foo&bar=...)
             NSString *key = kv[0];
-            //iOS 6 and before
-            NSString *val;
-            if (floor(NSFoundationVersionNumber) < NSFoundationVersionNumber_iOS_7_0) {
-                val = [kv[1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            } else {
-                val = [kv[1] stringByRemovingPercentEncoding]; // uses the default UTF-8 encoding
-            }
+            NSString *val = [kv[1] stringByRemovingPercentEncoding]; // uses the default UTF-8 encoding
             // Don't add empty items
             if (val.length) {
                 params[key] = val;
