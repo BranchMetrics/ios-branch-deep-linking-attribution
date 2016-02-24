@@ -159,7 +159,11 @@
             }
         };
     } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        // Deprecated in iOS 8.  Safe to hide deprecation warnings as the new completion handler is checked for above
         shareViewController.completionHandler = completion;
+#pragma clang diagnostic pop
     }
     
     UIViewController *presentingViewController;
