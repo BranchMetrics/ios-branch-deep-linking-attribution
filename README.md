@@ -466,7 +466,7 @@ branchUniversalObject.imageUrl = @"https://example.com/mycontent-12345.png";
 ###### Swift
 
 ```swift
-let branchUniversalObject: BranchUniversalObject = BranchUniversalObject(string: "item/12345")
+let branchUniversalObject: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "item/12345")
 branchUniversalObject.title = "My Content Title"
 branchUniversalObject.contentDescription = "My Content Description"
 branchUniversalObject.imageUrl = "https://example.com/mycontent-12345.png"
