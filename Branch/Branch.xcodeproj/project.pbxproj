@@ -34,7 +34,7 @@
 		92CB5AC61C847FD500659CE4 /* Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 92CB5A7D1C847FD500659CE4 /* Branch.m */; };
 		92CB5AC71C847FD500659CE4 /* BranchActivityItemProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 92CB5A7E1C847FD500659CE4 /* BranchActivityItemProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		92CB5AC81C847FD500659CE4 /* BranchActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 92CB5A7F1C847FD500659CE4 /* BranchActivityItemProvider.m */; };
-		92CB5AC91C847FD500659CE4 /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 92CB5A801C847FD500659CE4 /* BranchConstants.h */; };
+		92CB5AC91C847FD500659CE4 /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 92CB5A801C847FD500659CE4 /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		92CB5ACA1C847FD500659CE4 /* BranchConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 92CB5A811C847FD500659CE4 /* BranchConstants.m */; };
 		92CB5ACB1C847FD500659CE4 /* BranchCSSearchableItemAttributeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 92CB5A821C847FD500659CE4 /* BranchCSSearchableItemAttributeSet.h */; };
 		92CB5ACC1C847FD500659CE4 /* BranchCSSearchableItemAttributeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 92CB5A831C847FD500659CE4 /* BranchCSSearchableItemAttributeSet.m */; };
