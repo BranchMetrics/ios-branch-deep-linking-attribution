@@ -71,7 +71,7 @@ NSInteger const  TEST_CREDITS = 30;
     [[[serverInterfaceMock expect] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
-    [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         XCTAssertNil(error);
         XCTAssertEqualObjects(preferenceHelper.sessionID, TEST_SESSION_ID);
         
@@ -200,7 +200,7 @@ NSInteger const  TEST_CREDITS = 30;
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
 
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL Sync"];
-    [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         BNCServerResponse *fbLinkResponse = [[BNCServerResponse alloc] init];
         fbLinkResponse.statusCode = @200;
         fbLinkResponse.data = @{ @"url": @"https://bnc.lt/l/4BGtJj-03N" };
@@ -684,7 +684,7 @@ NSInteger const  TEST_CREDITS = 30;
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
 
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL Sync"];
-    [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         BNCServerResponse *urlResp = [[BNCServerResponse alloc] init];
         urlResp.statusCode = @200;
         urlResp.data = @{ @"url": @"https://bnc.lt/l/4BGtJj-03N" };

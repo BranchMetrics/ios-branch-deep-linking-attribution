@@ -1,4 +1,4 @@
-framework module Fabric {
+framework module Branch {
     umbrella header "BranchSDK.h"
     header "Branch.h"
 //    header "Fabric+FABKits.h"

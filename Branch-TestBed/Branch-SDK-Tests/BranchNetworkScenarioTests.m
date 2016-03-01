@@ -319,7 +319,7 @@
     Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:queueMock cache:nil preferenceHelper:nil key:@"key_live"];
     
     __block NSInteger initCallbackCount = 0;
-    [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         initCallbackCount++;
     }];
 
@@ -330,7 +330,7 @@
 #pragma clang diagnostic pop
 
     XCTestExpectation *initExpectation = [self expectationWithDescription:@"Init expectation"];
-    [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         initCallbackCount++;
 
         [self safelyFulfillExpectation:initExpectation];
@@ -374,7 +374,7 @@
 - (void)initSessionExpectingSuccess:(Branch *)branch serverInterface:(id)serverInterfaceMock callback:(void (^)(void))callback {
     [self mockSuccesfulInit:serverInterfaceMock];
 
-    [branch initSessionAndRegisterDeepLinkHandler:[self callbackExpectingSuccess:callback]];
+    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:[self callbackExpectingSuccess:callback]];
 }
 
 - (void)initSessionExpectingFailure:(Branch *)branch serverInterface:(id)serverInterfaceMock callback:(void (^)(void))callback {
@@ -394,7 +394,7 @@
 
     [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
     
-    [branch initSessionAndRegisterDeepLinkHandler:[self callbackExpectingFailure:callback]];
+    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:[self callbackExpectingFailure:callback]];
 }
 
 - (void)makeFailingNonReplayableRequest:(Branch *)branch serverInterface:(id)serverInterfaceMock callback:(void (^)(void))callback {

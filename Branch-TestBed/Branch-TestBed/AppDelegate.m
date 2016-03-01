@@ -31,7 +31,7 @@
     
     
     Branch *branch = [Branch getInstance];
-    [branch setDebug];
+    //[branch setDebug];
     
     [branch setDeepLinkDebugMode:@{@"example_debug_param" : @"foo"}];
     
