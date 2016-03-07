@@ -198,8 +198,10 @@
     }
     
     NSMutableDictionary *metadataAndProperties = [self.metadata mutableCopy];
-    metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER] = self.canonicalIdentifier;
-    metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_URL] = self.canonicalUrl;
+    if (self.canonicalIdentifier)
+        metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER] = self.canonicalIdentifier;
+    if (self.canonicalUrl)
+        metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_URL] = self.canonicalUrl;
 
     [[Branch getInstance] createDiscoverableContentWithTitle:self.title
                                                  description:self.contentDescription
@@ -223,8 +225,10 @@
         publiclyIndexable = YES;
     }
     NSMutableDictionary *metadataAndProperties = [self.metadata mutableCopy];
-    metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER] = self.canonicalIdentifier;
-    metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_URL] = self.canonicalUrl;
+    if (self.canonicalIdentifier)
+        metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER] = self.canonicalIdentifier;
+    if (self.canonicalUrl)
+        metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_URL] = self.canonicalUrl;
     
     [[Branch getInstance] createDiscoverableContentWithTitle:self.title
                                                  description:self.contentDescription
