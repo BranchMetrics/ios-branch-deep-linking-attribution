@@ -197,10 +197,14 @@
         publiclyIndexable = YES;
     }
     
+    NSMutableDictionary *metadataAndProperties = [self.metadata mutableCopy];
+    metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER] = self.canonicalIdentifier;
+    metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_URL] = self.canonicalUrl;
+
     [[Branch getInstance] createDiscoverableContentWithTitle:self.title
                                                  description:self.contentDescription
                                                 thumbnailUrl:[NSURL URLWithString:self.imageUrl]
-                                                  linkParams:self.metadata.copy
+                                                  linkParams:metadataAndProperties.copy
                                                         type:self.type
                                            publiclyIndexable:publiclyIndexable
                                                     keywords:[NSSet setWithArray:self.keywords]
@@ -218,11 +222,14 @@
     else {
         publiclyIndexable = YES;
     }
+    NSMutableDictionary *metadataAndProperties = [self.metadata mutableCopy];
+    metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER] = self.canonicalIdentifier;
+    metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_URL] = self.canonicalUrl;
     
     [[Branch getInstance] createDiscoverableContentWithTitle:self.title
                                                  description:self.contentDescription
                                                 thumbnailUrl:[NSURL URLWithString:self.imageUrl]
-                                                  linkParams:self.metadata.copy
+                                                  linkParams:metadataAndProperties.copy
                                                         type:self.type
                                            publiclyIndexable:publiclyIndexable
                                                     keywords:[NSSet setWithArray:self.keywords]
