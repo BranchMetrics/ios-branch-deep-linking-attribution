@@ -1,3 +1,6 @@
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hyperium/hyper/master/LICENSE)
+
 # Branch Metrics iOS SDK Reference
 
 This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a complete list of the content featured in this document.
@@ -23,6 +26,14 @@ Branch is available through [CocoaPods](http://cocoapods.org). To install it, si
 ```objc
 pod "Branch"
 ```
+### Carthage
+
+To integrate Branch into your project using Carthage add the following to your `Cartfile`:
+
+```ruby
+github "BranchMetrics/iOS-Deferred-Deep-Linking-SDK"
+```
+
 
 ### Download the Raw Files
 
