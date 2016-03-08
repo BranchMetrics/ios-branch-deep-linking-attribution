@@ -382,7 +382,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  
  @param debugParams dictionary of keystrings/valuestrings that will be added to response 
  */
--(void) setDeepLinkDebugMode:(NSDictionary *)debugParams;
+-(void)setDeepLinkDebugMode:(NSDictionary *)debugParams;
 
 
 /**
@@ -418,6 +418,13 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  YES/true when a Universal Link is clicked, you should enable this option.
  */
 - (void)accountForFacebookSDKPreventingAppLaunch;
+
+/**
+ Invoke this method at the beginning of application:didFinishLaunchingWithOptions: if you do not immediately invoke
+ initSession in that method. Please note that this is not the standard way of using the Branch SDK and we highly recommend 
+ not delaying initSession.
+ */
+- (void)allowDelayedInitialization;
 
 #pragma mark - Session Item methods
 

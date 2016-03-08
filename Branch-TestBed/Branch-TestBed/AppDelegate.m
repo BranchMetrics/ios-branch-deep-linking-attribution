@@ -12,71 +12,66 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
-    ExampleDeepLinkingController *controller = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"DeepLinkingController"];
-    
-    
-    //APNS support: different between ios7 and ios8+
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
-    {
+     // Include the following lines of code if you make use of Apple Push Notification Service (optional)
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
         
         [application registerForRemoteNotifications];
     }
-    else
-    {
+    else {
         [application registerForRemoteNotificationTypes: (UIRemoteNotificationTypeNewsstandContentAvailability| UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
     }
-    //end APNS support
-    
     
     Branch *branch = [Branch getInstance];
+    
+    // Enable logging and simulate a fresh install on every launch (optional)
     [branch setDebug];
     
-    [branch setDeepLinkDebugMode:@{@"example_debug_param" : @"foo"}];
-    
+    // Easy Deeplinking Example (optional)
+    ExampleDeepLinkingController *controller = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"DeepLinkingController"];
     [branch registerDeepLinkController:controller forKey:@"gravatar_email"];
-    
+
+    // Initialize the session (required)
     [branch initSessionWithLaunchOptions:launchOptions automaticallyDisplayDeepLinkController:YES deepLinkHandler:^(NSDictionary *params, NSError *error) {
         if (!error) {
-            NSLog(@"finished init with params = %@", [params description]);
+            NSLog(@"finished init with params: %@", [params description]);
         }
         else {
-            NSLog(@"failed init: %@", error);
+            NSLog(@"failed init with error: %@", [error description]);
         }
     }];
     
     return YES;
 }
 
-
-//APNS support
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    NSLog(@"APN device token: %@", deviceToken);
-}
-
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [[Branch getInstance] handlePushNotification:userInfo];
-    
-    //process your other notification payload items...
-}
-
--(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
-    NSLog(@"Error registering for remote notifications:%@",error);
-}
-//end APNS support
-
-
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     NSLog(@"opened app from URL %@", [url description]);
     
-    return [[Branch getInstance] handleDeepLink:url];
+    // Allow Branch to handle the URL (required)
+    BOOL handledByBranch = [[Branch getInstance] handleDeepLink:url];
+
+    return handledByBranch;
 }
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *))restorationHandler {
-    BOOL handledByBranch = [[Branch getInstance] continueUserActivity:userActivity];
+    NSLog(@"opened app from a user activity with activityType: %@", userActivity.activityType);
     
+    // Allow Branch to handle the user activity (required on iOS 8+)
+    BOOL handledByBranch = [[Branch getInstance] continueUserActivity:userActivity];
+
     return handledByBranch;
+}
+
+// Include the following lines of code if you make use of Apple Push Notification Service (optional)
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    NSLog(@"APN device token: %@", deviceToken);
+}
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    // Allow Branch to handle the push notification (optional)
+    [[Branch getInstance] handlePushNotification:userInfo];
+}
+-(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    NSLog(@"Error registering for remote notifications: %@", error);
 }
 
 
