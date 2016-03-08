@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>OHHTTPStubsResponse Class Reference</title>
+
+	<link rel="stylesheet" href="../css/style.css">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
+	<meta name="generator" content="appledoc 2.2.1 (build 1334)">
+</head>
+<body class="appledoc">
+	<header>
+		<div class="container" class="hide-in-xcode">
+			
+			<h1 id="library-title">
+				<a href="../index.html">b </a>
+			</h1>
+
+			<p id="developer-home">
+				<a href="../index.html">b</a>
+			</p>
+			
+		</div>
+	</header>
+
+	<aside>
+		<div class="container">
+			<nav>
+				<ul id="header-buttons" role="toolbar">
+					<li><a href="../index.html">Index</a></li>
+<li><a href="../hierarchy.html">Hierarchy</a></li>
+
+					<li id="on-this-page" role="navigation">
+						<label>
+							On This Page
+
+							<div class="chevron">
+								<div class="chevy chevron-left"></div>
+								<div class="chevy chevron-right"></div>
+							</div>
+
+							<select id="jump-to">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+
+	
+	
+	<optgroup label="Properties">
+		
+		<option value="//api/name/dataSize">dataSize</option>
+		
+		<option value="//api/name/error">error</option>
+		
+		<option value="//api/name/httpHeaders">httpHeaders</option>
+		
+		<option value="//api/name/inputStream">inputStream</option>
+		
+		<option value="//api/name/requestTime">requestTime</option>
+		
+		<option value="//api/name/responseTime">responseTime</option>
+		
+		<option value="//api/name/statusCode">statusCode</option>
+		
+	</optgroup>
+	
+
+	
+	<optgroup label="Class Methods">
+		
+		<option value="//api/name/responseWithData:statusCode:headers:">+ responseWithData:statusCode:headers:</option>
+		
+		<option value="//api/name/responseWithError:">+ responseWithError:</option>
+		
+		<option value="//api/name/responseWithFileAtPath:statusCode:headers:">+ responseWithFileAtPath:statusCode:headers:</option>
+		
+		<option value="//api/name/responseWithFileURL:statusCode:headers:">+ responseWithFileURL:statusCode:headers:</option>
+		
+		<option value="//api/name/responseWithJSONObject:statusCode:headers:">+ responseWithJSONObject:statusCode:headers:</option>
+		
+	</optgroup>
+	
+
+	
+	<optgroup label="Instance Methods">
+		
+		<option value="//api/name/init">- init</option>
+		
+		<option value="//api/name/initWithData:statusCode:headers:">- initWithData:statusCode:headers:</option>
+		
+		<option value="//api/name/initWithError:">- initWithError:</option>
+		
+		<option value="//api/name/initWithFileAtPath:statusCode:headers:">- initWithFileAtPath:statusCode:headers:</option>
+		
+		<option value="//api/name/initWithFileURL:statusCode:headers:">- initWithFileURL:statusCode:headers:</option>
+		
+		<option value="//api/name/initWithInputStream:dataSize:statusCode:headers:">- initWithInputStream:dataSize:statusCode:headers:</option>
+		
+		<option value="//api/name/requestTime:responseTime:">- requestTime:responseTime:</option>
+		
+		<option value="//api/name/responseTime:">- responseTime:</option>
+		
+	</optgroup>
+	
+	
+</select>
+						</label>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</aside>
+
+	<article>
+		<div id="overview_contents" class="container">
+			<div id="content">
+				<main role="main">
+					<h1 class="title">OHHTTPStubsResponse Class Reference</h1>
+
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<th>Inherits from</th>
+	<td>NSObject</td>
+</tr><tr>
+	<th>Declared in</th>
+	<td>OHHTTPStubsResponse.h<br />OHHTTPStubsResponse.m</td>
+</tr>
+						</tbody></table></div>
+					
+
+                    
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>Stubs Response. This describes a stubbed response to be returned by the URL Loading System,
+including its HTTP headers, body, <a href="#//api/name/statusCode">statusCode</a> and response time.</p>
+
+<p>Adds convenience methods to manipulate JSON objects directly.
+Pass in an <code>NSDictionary</code> or <code>NSArray</code> to generate a corresponding JSON output.</p>
+					</div>
+					
+					
+
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						
+
+						
+						<h2 class="task-title">Other Methods</h2>
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/httpHeaders" title="httpHeaders"></a>
+	<h3 class="method-title"><code><a href="#//api/name/httpHeaders">&nbsp;&nbsp;httpHeaders</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>The headers to use for the fake response</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, nullable) NSDictionary *httpHeaders</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>The headers to use for the fake response</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/statusCode" title="statusCode"></a>
+	<h3 class="method-title"><code><a href="#//api/name/statusCode">&nbsp;&nbsp;statusCode</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>The HTTP status code to use for the fake response</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) int statusCode</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>The HTTP status code to use for the fake response</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/inputStream" title="inputStream"></a>
+	<h3 class="method-title"><code><a href="#//api/name/inputStream">&nbsp;&nbsp;inputStream</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>The inputStream used when sending the response.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, nullable) NSInputStream *inputStream</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>The inputStream used when sending the response.</p><div class="note"><p><strong>Note:</strong> You generally don&rsquo;t manipulate this directly.</p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/dataSize" title="dataSize"></a>
+	<h3 class="method-title"><code><a href="#//api/name/dataSize">&nbsp;&nbsp;dataSize</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>The size of the fake response body, in bytes.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) unsigned long long dataSize</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>The size of the fake response body, in bytes.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/requestTime" title="requestTime"></a>
+	<h3 class="method-title"><code><a href="#//api/name/requestTime">&nbsp;&nbsp;requestTime</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>The duration to wait before faking receiving the response headers.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) NSTimeInterval requestTime</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>The duration to wait before faking receiving the response headers.</p>
+
+<p>Defaults to 0.0.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/responseTime" title="responseTime"></a>
+	<h3 class="method-title"><code><a href="#//api/name/responseTime">&nbsp;&nbsp;responseTime</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>The duration to use to send the fake response body.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) NSTimeInterval responseTime</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>The duration to use to send the fake response body.</p><div class="note"><p><strong>Note:</strong> if responseTime&lt;0, it is interpreted as a download speed in KBps ( -200 => 200KB/s )</p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/error" title="error"></a>
+	<h3 class="method-title"><code><a href="#//api/name/error">&nbsp;&nbsp;error</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>The fake error to generate to simulate a network error.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, nullable) NSError *error</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>The fake error to generate to simulate a network error.</p>
+
+<p>If <code>error</code> is non-<code>nil</code>, the request will result in a failure and no response will be sent.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/responseWithData:statusCode:headers:" title="responseWithData:statusCode:headers:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/responseWithData:statusCode:headers:">+&nbsp;responseWithData:statusCode:headers:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Builds a response given raw data.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (instancetype)responseWithData:(NSData *)<em>data</em> statusCode:(int)<em>statusCode</em> headers:(nullable NSDictionary *)<em>httpHeaders</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>data</code></th>
+						<td><p>The raw data to return in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>statusCode</code></th>
+						<td><p>The HTTP Status Code to use in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>httpHeaders</code></th>
+						<td><p>The HTTP Headers to return in the response</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>An <code>OHHTTPStubsResponse</code> describing the corresponding response to return by the stub</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Builds a response given raw data.</p><div class="note"><p><strong>Note:</strong> Internally calls <a href="#//api/name/initWithInputStream:dataSize:statusCode:headers:"><code>initWithInputStream:dataSize:statusCode:headers:</code></a> with and <a href="#//api/name/inputStream">inputStream</a> built from the NSData.</p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/responseWithFileAtPath:statusCode:headers:" title="responseWithFileAtPath:statusCode:headers:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/responseWithFileAtPath:statusCode:headers:">+&nbsp;responseWithFileAtPath:statusCode:headers:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Builds a response given a file path, the status code and headers.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (instancetype)responseWithFileAtPath:(NSString *)<em>filePath</em> statusCode:(int)<em>statusCode</em> headers:(nullable NSDictionary *)<em>httpHeaders</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>filePath</code></th>
+						<td><p>The file path that contains the response body to return.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>statusCode</code></th>
+						<td><p>The HTTP Status Code to use in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>httpHeaders</code></th>
+						<td><p>The HTTP Headers to return in the response</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>An <code>OHHTTPStubsResponse</code> describing the corresponding response to return by the stub</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Builds a response given a file path, the status code and headers.</p><div class="note"><p><strong>Note:</strong> It is encouraged to use the OHPathHelpers functions &amp; macros to build
+the filePath parameter easily</p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/responseWithFileURL:statusCode:headers:" title="responseWithFileURL:statusCode:headers:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/responseWithFileURL:statusCode:headers:">+&nbsp;responseWithFileURL:statusCode:headers:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Builds a response given a URL, the status code, and headers.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (instancetype)responseWithFileURL:(NSURL *)<em>fileURL</em> statusCode:(int)<em>statusCode</em> headers:(nullable NSDictionary *)<em>httpHeaders</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>fileURL</code></th>
+						<td><p>The URL for the data to return in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>statusCode</code></th>
+						<td><p>The HTTP Status Code to use in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>httpHeaders</code></th>
+						<td><p>The HTTP Headers to return in the response</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>An <code>OHHTTPStubsResponse</code> describing the corresponding response to return by the stub</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Builds a response given a URL, the status code, and headers.</p><div class="note"><p><strong>Note:</strong> This method applies only to URLs that represent file system resources</p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/responseWithError:" title="responseWithError:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/responseWithError:">+&nbsp;responseWithError:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Builds a response that corresponds to the given <a href="#//api/name/error">error</a></p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (instancetype)responseWithError:(NSError *)<em>error</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>error</code></th>
+						<td><p>The <a href="#//api/name/error">error</a> to use in the stubbed response.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>An <code>OHHTTPStubsResponse</code> describing the corresponding response to return by the stub</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Builds a response that corresponds to the given <a href="#//api/name/error">error</a></p><div class="note"><p><strong>Note:</strong> For example you could use an <a href="#//api/name/error">error</a> like <code>[NSError errorWithDomain:NSURLErrorDomain code:kCFURLErrorNotConnectedToInternet userInfo:nil]</code></p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/responseTime:" title="responseTime:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/responseTime:">&ndash;&nbsp;responseTime:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set the <a href="#//api/name/responseTime"><code>responseTime</code></a> of the <code>OHHTTPStubsResponse</code> and return <code>self</code>. Useful for chaining method calls.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (instancetype)responseTime:(NSTimeInterval)<em>responseTime</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>responseTime</code></th>
+						<td><p>If positive, the amount of time used to send the entire response.
+If negative, the rate in KB/s at which to send the response data.
+Useful to simulate slow networks for example. You may use the
+<em>OHHTTPStubsDownloadSpeed…</em> constants here.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p><code>self</code> (= the same <code>OHHTTPStubsResponse</code> that was the target of this method).
+Returning <code>self</code> is useful for chaining method calls.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set the <a href="#//api/name/responseTime"><code>responseTime</code></a> of the <code>OHHTTPStubsResponse</code> and return <code>self</code>. Useful for chaining method calls.</p>
+
+<p><em>Usage example:</em></p>
+
+<pre>return [[OHHTTPStubsReponse responseWithData:data statusCode:200 headers:nil] responseTime:5.0];</pre>
+
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/requestTime:responseTime:" title="requestTime:responseTime:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/requestTime:responseTime:">&ndash;&nbsp;requestTime:responseTime:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set both the <a href="#//api/name/requestTime"><code>requestTime</code></a> and the <a href="#//api/name/responseTime"><code>responseTime</code></a> of the <code>OHHTTPStubsResponse</code> at once.
+Useful for chaining method calls.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (instancetype)requestTime:(NSTimeInterval)<em>requestTime</em> responseTime:(NSTimeInterval)<em>responseTime</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>requestTime</code></th>
+						<td><p>The time to wait before the response begins to send. This value must be greater than or equal to zero.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>responseTime</code></th>
+						<td><p>If positive, the amount of time used to send the entire response.
+If negative, the rate in KB/s at which to send the response data.
+Useful to simulate slow networks for example. You may use the
+<em>OHHTTPStubsDownloadSpeed…</em> constants here.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p><code>self</code> (= the same <code>OHHTTPStubsResponse</code> that was the target of this method). Useful for chaining method calls.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set both the <a href="#//api/name/requestTime"><code>requestTime</code></a> and the <a href="#//api/name/responseTime"><code>responseTime</code></a> of the <code>OHHTTPStubsResponse</code> at once.
+Useful for chaining method calls.</p>
+
+<p><em>Usage example:</em></p>
+
+<pre>return [[OHHTTPStubsReponse responseWithData:data statusCode:200 headers:nil]
+requestTime:1.0 responseTime:5.0];</pre>
+
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+
+						<a title="Initializers" name="task_Initializers"></a>
+						<h2 class="task-title">Initializers</h2>
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/init" title="init"></a>
+	<h3 class="method-title"><code><a href="#//api/name/init">&ndash;&nbsp;init</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Designated empty initializer</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (instancetype)init</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>An empty <code>OHHTTPStubsResponse</code> on which you need to set either an <a href="#//api/name/error">error</a> or a <a href="#//api/name/statusCode">statusCode</a>, <a href="#//api/name/httpHeaders">httpHeaders</a>, <a href="#//api/name/inputStream">inputStream</a> and <a href="#//api/name/dataSize">dataSize</a>.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Designated empty initializer</p><div class="note"><p><strong>Note:</strong> This is not recommended to use this method directly. You should use <a href="#//api/name/initWithInputStream:dataSize:statusCode:headers:"><code>initWithInputStream:dataSize:statusCode:headers:</code></a> instead.</p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/initWithInputStream:dataSize:statusCode:headers:" title="initWithInputStream:dataSize:statusCode:headers:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/initWithInputStream:dataSize:statusCode:headers:">&ndash;&nbsp;initWithInputStream:dataSize:statusCode:headers:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Designed initializer. Initialize a response with the given input stream, <a href="#//api/name/dataSize">dataSize</a>,
+<a href="#//api/name/statusCode">statusCode</a> and headers.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (instancetype)initWithInputStream:(NSInputStream *)<em>inputStream</em> dataSize:(unsigned long long)<em>dataSize</em> statusCode:(int)<em>statusCode</em> headers:(nullable NSDictionary *)<em>httpHeaders</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>inputStream</code></th>
+						<td><p>The input stream that will provide the data to return in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>dataSize</code></th>
+						<td><p>The size of the data in the stream.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>statusCode</code></th>
+						<td><p>The HTTP Status Code to use in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>httpHeaders</code></th>
+						<td><p>The HTTP Headers to return in the response</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>An <code>OHHTTPStubsResponse</code> describing the corresponding response to return by the stub</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Designed initializer. Initialize a response with the given input stream, <a href="#//api/name/dataSize">dataSize</a>,
+<a href="#//api/name/statusCode">statusCode</a> and headers.</p><div class="note"><p><strong>Note:</strong> You will probably never need to call this method yourself. Prefer the other initializers (that will call this method eventually)</p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/initWithFileAtPath:statusCode:headers:" title="initWithFileAtPath:statusCode:headers:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/initWithFileAtPath:statusCode:headers:">&ndash;&nbsp;initWithFileAtPath:statusCode:headers:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Initialize a response with a given file path, <a href="#//api/name/statusCode">statusCode</a> and headers.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (instancetype)initWithFileAtPath:(NSString *)<em>filePath</em> statusCode:(int)<em>statusCode</em> headers:(nullable NSDictionary *)<em>httpHeaders</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>filePath</code></th>
+						<td><p>The file path of the data to return in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>statusCode</code></th>
+						<td><p>The HTTP Status Code to use in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>httpHeaders</code></th>
+						<td><p>The HTTP Headers to return in the response</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>An <code>OHHTTPStubsResponse</code> describing the corresponding response to return by the stub</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Initialize a response with a given file path, <a href="#//api/name/statusCode">statusCode</a> and headers.</p><div class="note"><p><strong>Note:</strong> This method simply builds the NSInputStream, compute the file size, and then call <a href="#//api/name/initWithInputStream:dataSize:statusCode:headers:"><code>initWithInputStream:dataSize:statusCode:headers:</code></a></p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/initWithFileURL:statusCode:headers:" title="initWithFileURL:statusCode:headers:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/initWithFileURL:statusCode:headers:">&ndash;&nbsp;initWithFileURL:statusCode:headers:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Initialize a response with a given URL, <a href="#//api/name/statusCode">statusCode</a> and headers.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (instancetype)initWithFileURL:(NSURL *)<em>fileURL</em> statusCode:(int)<em>statusCode</em> headers:(nullable NSDictionary *)<em>httpHeaders</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>fileURL</code></th>
+						<td><p>The URL for the data to return in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>statusCode</code></th>
+						<td><p>The HTTP Status Code to use in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>httpHeaders</code></th>
+						<td><p>The HTTP Headers to return in the response</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>An <code>OHHTTPStubsResponse</code> describing the corresponding response to return by the stub</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Initialize a response with a given URL, <a href="#//api/name/statusCode">statusCode</a> and headers.</p><div class="note"><p><strong>Note:</strong> This method applies only to URLs that represent file system resources</p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/initWithData:statusCode:headers:" title="initWithData:statusCode:headers:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/initWithData:statusCode:headers:">&ndash;&nbsp;initWithData:statusCode:headers:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Initialize a response with the given data, <a href="#//api/name/statusCode">statusCode</a> and headers.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (instancetype)initWithData:(NSData *)<em>data</em> statusCode:(int)<em>statusCode</em> headers:(nullable NSDictionary *)<em>httpHeaders</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>data</code></th>
+						<td><p>The raw data to return in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>statusCode</code></th>
+						<td><p>The HTTP Status Code to use in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>httpHeaders</code></th>
+						<td><p>The HTTP Headers to return in the response</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>An <code>OHHTTPStubsResponse</code> describing the corresponding response to return by the stub</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Initialize a response with the given data, <a href="#//api/name/statusCode">statusCode</a> and headers.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/initWithError:" title="initWithError:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/initWithError:">&ndash;&nbsp;initWithError:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Designed initializer. Initialize a response with the given <a href="#//api/name/error">error</a>.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (instancetype)initWithError:(NSError *)<em>error</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>error</code></th>
+						<td><p>The <a href="#//api/name/error">error</a> to use in the stubbed response.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>An <code>OHHTTPStubsResponse</code> describing the corresponding response to return by the stub</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Designed initializer. Initialize a response with the given <a href="#//api/name/error">error</a>.</p><div class="note"><p><strong>Note:</strong> For example you could use an <a href="#//api/name/error">error</a> like <code>[NSError errorWithDomain:NSURLErrorDomain code:kCFURLErrorNotConnectedToInternet userInfo:nil]</code></p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+
+						<a title="JSON Methods" name="task_JSON Methods"></a>
+						<h2 class="task-title">JSON Methods</h2>
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/responseWithJSONObject:statusCode:headers:" title="responseWithJSONObject:statusCode:headers:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/responseWithJSONObject:statusCode:headers:">+&nbsp;responseWithJSONObject:statusCode:headers:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Builds a response given a JSON object for the response body, status code, and headers.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (instancetype)responseWithJSONObject:(id)<em>jsonObject</em> statusCode:(int)<em>statusCode</em> headers:(nullable NSDictionary *)<em>httpHeaders</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>jsonObject</code></th>
+						<td><p>Object representing the response body.
+Typically a <code>NSDictionary</code>; may be any object accepted by <code>[NSJSONSerialization dataWithJSONObject:options:error:]</code></p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>statusCode</code></th>
+						<td><p>The HTTP Status Code to use in the response</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>httpHeaders</code></th>
+						<td><p>The HTTP Headers to return in the response
+If a &ldquo;Content-Type&rdquo; header is not included, &ldquo;Content-Type: application/json&rdquo; will be added.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>An <code>OHHTTPStubsResponse</code> describing the corresponding response to return by the stub</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Builds a response given a JSON object for the response body, status code, and headers.</p><div class="note"><p><strong>Note:</strong> This method typically calls <a href="#//api/name/responseWithData:statusCode:headers:"><code>responseWithData:statusCode:headers:</code></a>, passing the serialized JSON
+object as the data parameter and adding the Content-Type header if necessary.</p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubsResponse+JSON.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+					</div>
+					
+					
+
+                    
+                    
+          
+				</main>
+
+				<footer>
+					<div class="footer-copyright">
+						
+						<p class="copyright">Copyright &copy; 2016 b. All rights reserved. Updated: 2016-03-06</p>
+						
+						
+						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
+						
+					</div>
+				</footer>
+			</div>
+		</div>
+	</article>
+
+	<script src="../js/script.js"></script>
+</body>
+</html>

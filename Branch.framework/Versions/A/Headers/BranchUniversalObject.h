@@ -35,16 +35,24 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier;
 - (instancetype)initWithTitle:(NSString *)title;
+
 - (void)addMetadataKey:(NSString *)key value:(NSString *)value;
+
 - (void)registerView;
 - (void)registerViewWithCallback:(callbackWithParams)callback;
+
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties;
+- (NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(BranchLinkProperties *)linkProperties;
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback;
+
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties;
+
 - (void)showShareSheetWithShareText:(NSString *)shareText andCallback:(callback)callback __attribute__((deprecated(("This method has been deprecated. Use -[showShareSheetWithShareText:completion:] instead."))));
 - (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController andCallback:(callback)callback __attribute__((deprecated(("This method has been deprecated. Use -[showShareSheetWithLinkProperties:andShareText:fromViewController:viewController:completion:] instead."))));
 - (void)showShareSheetWithShareText:(NSString *)shareText completion:(shareCompletion)completion;
 - (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController completion:(shareCompletion)completion;
+//iPad
+- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController anchor:(UIBarButtonItem *)anchor completion:(shareCompletion)completion;
 
 - (void)listOnSpotlight;
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback;
