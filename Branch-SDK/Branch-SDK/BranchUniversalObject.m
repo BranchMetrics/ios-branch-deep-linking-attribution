@@ -166,8 +166,9 @@
         // Required for iPad/Universal apps on iOS 8+
         if ([presentingViewController respondsToSelector:@selector(popoverPresentationController)]) {
             shareViewController.popoverPresentationController.sourceView = presentingViewController.view;
-            if (anchor)
+            if (anchor) {
                 shareViewController.popoverPresentationController.barButtonItem = anchor;
+            }
         }
         [presentingViewController presentViewController:shareViewController animated:YES completion:nil];
     }
