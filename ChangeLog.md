@@ -1,5 +1,13 @@
 Branch iOS SDK change log
 
+- v0.11.17
+  * Carthage support
+  * account for different anchors on iPad for share sheet
+  * add canonincal ID and URL to spotlight index
+  * change matchDuration parameter sent to the backend
+  * fix unit tests
+  * URL encoding for iOS 6
+
 - v0.11.16
   * increased timeout for SFSafariViewController
   * removed init session methods that do not use launchOptions

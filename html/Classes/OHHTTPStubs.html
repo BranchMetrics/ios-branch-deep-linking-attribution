@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>OHHTTPStubs Class Reference</title>
+
+	<link rel="stylesheet" href="../css/style.css">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
+	<meta name="generator" content="appledoc 2.2.1 (build 1334)">
+</head>
+<body class="appledoc">
+	<header>
+		<div class="container" class="hide-in-xcode">
+			
+			<h1 id="library-title">
+				<a href="../index.html">b </a>
+			</h1>
+
+			<p id="developer-home">
+				<a href="../index.html">b</a>
+			</p>
+			
+		</div>
+	</header>
+
+	<aside>
+		<div class="container">
+			<nav>
+				<ul id="header-buttons" role="toolbar">
+					<li><a href="../index.html">Index</a></li>
+<li><a href="../hierarchy.html">Hierarchy</a></li>
+
+					<li id="on-this-page" role="navigation">
+						<label>
+							On This Page
+
+							<div class="chevron">
+								<div class="chevy chevron-left"></div>
+								<div class="chevy chevron-right"></div>
+							</div>
+
+							<select id="jump-to">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+
+	
+	
+
+	
+	<optgroup label="Class Methods">
+		
+		<option value="//api/name/allStubs">+ allStubs</option>
+		
+		<option value="//api/name/onStubActivation:">+ onStubActivation:</option>
+		
+		<option value="//api/name/removeAllStubs">+ removeAllStubs</option>
+		
+		<option value="//api/name/removeStub:">+ removeStub:</option>
+		
+		<option value="//api/name/setEnabled:">+ setEnabled:</option>
+		
+		<option value="//api/name/setEnabled:forSessionConfiguration:">+ setEnabled:forSessionConfiguration:</option>
+		
+		<option value="//api/name/stubRequestsPassingTest:withStubResponse:">+ stubRequestsPassingTest:withStubResponse:</option>
+		
+	</optgroup>
+	
+
+	
+	
+</select>
+						</label>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</aside>
+
+	<article>
+		<div id="overview_contents" class="container">
+			<div id="content">
+				<main role="main">
+					<h1 class="title">OHHTTPStubs Class Reference</h1>
+
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<th>Inherits from</th>
+	<td>NSObject</td>
+</tr><tr>
+	<th>Declared in</th>
+	<td>OHHTTPStubs.h<br />OHHTTPStubs.m</td>
+</tr>
+						</tbody></table></div>
+					
+
+                    
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>Stubs Manager. Use this class to add and remove stubs and stub your network requests.</p>
+					</div>
+					
+					
+
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						
+
+						
+						
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/stubRequestsPassingTest:withStubResponse:" title="stubRequestsPassingTest:withStubResponse:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/stubRequestsPassingTest:withStubResponse:">+&nbsp;stubRequestsPassingTest:withStubResponse:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Dedicated method to add a stub</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (id&lt;OHHTTPStubsDescriptor&gt;)stubRequestsPassingTest:(OHHTTPStubsTestBlock)<em>testBlock</em> withStubResponse:(OHHTTPStubsResponseBlock)<em>responseBlock</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>testBlock</code></th>
+						<td><p>Block that should return <code>YES</code> if the request passed as parameter
+should be stubbed with the response block, and <code>NO</code> if it should
+hit the real world (or be managed by another stub).</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>responseBlock</code></th>
+						<td><p>Block that will return the <a href="../Classes/OHHTTPStubsResponse.html"><code>OHHTTPStubsResponse</code></a> (response to
+use for stubbing) corresponding to the given request</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>a stub descriptor that uniquely identifies the stub and can be later used to remove it with <a href="#//api/name/removeStub:"><code>removeStub:</code></a>.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Dedicated method to add a stub</p><div class="note"><p><strong>Note:</strong> The returned stub descriptor is retained (<code>__strong</code> reference) by <code>OHHTTPStubs</code>
+until it is removed (with one of the <a href="#//api/name/removeStub:"><code>removeStub:</code></a> / <a href="#//api/name/removeAllStubs"><code>removeAllStubs</code></a>
+methods); it is thus recommended to keep it in a <code>__weak</code> storage (and not <code>__strong</code>)
+in your app code, to let the stub descriptor be destroyed and let the variable go
+back to <code>nil</code> automatically when the stub is removed.</p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubs.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/removeStub:" title="removeStub:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/removeStub:">+&nbsp;removeStub:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Remove a stub from the list of stubs</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (BOOL)removeStub:(id&lt;OHHTTPStubsDescriptor&gt;)<em>stubDesc</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>stubDesc</code></th>
+						<td><p>The stub descriptor that has been returned when adding the stub
+using <a href="#//api/name/stubRequestsPassingTest:withStubResponse:"><code>stubRequestsPassingTest:withStubResponse:</code></a></p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p><code>YES</code> if the stub has been successfully removed, <code>NO</code> if the parameter was
+not a valid stub identifier</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Remove a stub from the list of stubs</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubs.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/removeAllStubs" title="removeAllStubs"></a>
+	<h3 class="method-title"><code><a href="#//api/name/removeAllStubs">+&nbsp;removeAllStubs</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Remove all the stubs from the stubs list.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (void)removeAllStubs</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Remove all the stubs from the stubs list.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubs.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setEnabled:" title="setEnabled:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setEnabled:">+&nbsp;setEnabled:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Enable or disable the stubs for the shared session or for <code>NSURLConnection</code></p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (void)setEnabled:(BOOL)<em>enabled</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>enabled</code></th>
+						<td><p>If <code>YES</code>, enables the stubs. If <code>NO</code>, disable all the
+stubs and let all the requests hit the real world.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Enable or disable the stubs for the shared session or for <code>NSURLConnection</code></p><div class="note"><p><strong>Note:</strong> OHHTTPStubs are enabled by default, so there is no need to call
+this method with <code>YES</code> for stubs to work, except if you explicitely
+disabled the stubs before.</p></div><div class="note"><p><strong>Note:</strong> This only affects requests that are further made using <code>NSURLConnection</code>
+or using <code>[NSURLSession sharedSession]</code>. This does not affect requests
+sent on an <code>NSURLSession</code> created using an <code>NSURLSessionConfiguration</code>.</p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubs.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setEnabled:forSessionConfiguration:" title="setEnabled:forSessionConfiguration:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setEnabled:forSessionConfiguration:">+&nbsp;setEnabled:forSessionConfiguration:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Enable or disable the stubs on a given <code>NSURLSessionConfiguration</code>.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (void)setEnabled:(BOOL)<em>enabled</em> forSessionConfiguration:(NSURLSessionConfiguration *)<em>sessionConfig</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>enabled</code></th>
+						<td><p>If <code>YES</code>, enables the stubs for this <code>NSURLSessionConfiguration</code>.
+If <code>NO</code>, disable the stubs and let all the requests hit the real world</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>sessionConfig</code></th>
+						<td><p>The NSURLSessionConfiguration on which to enabled/disable the stubs</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Enable or disable the stubs on a given <code>NSURLSessionConfiguration</code>.</p><div class="note"><p><strong>Note:</strong> OHHTTPStubs are enabled by default on newly created <code>defaultSessionConfiguration</code>
+and <code>ephemeralSessionConfiguration</code>, so there is no need to call this method with
+<code>YES</code> for stubs to work. You generally only use this if you want to disable
+<code>OHTTPStubs</code> per <code>NSURLSession</code> by calling it before building the <code>NSURLSession</code>
+with the <code>NSURLSessionConfiguration</code>.</p></div><div class="note"><p><strong>Note:</strong> Important: As usual according to the way <code>NSURLSessionConfiguration</code> works, you
+MUST set this property BEFORE creating the <code>NSURLSession</code>. Once the <code>NSURLSession</code>
+object is created, they use a deep copy of the <code>NSURLSessionConfiguration</code> object
+used to create them, so changing the configuration later does not affect already
+created sessions.</p></div>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubs.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/allStubs" title="allStubs"></a>
+	<h3 class="method-title"><code><a href="#//api/name/allStubs">+&nbsp;allStubs</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>List all the installed stubs</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (NSArray *)allStubs</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>An array of <code>id</code>OHHTTPStubsDescriptor<code></code> objects currently installed. Useful for debug.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>List all the installed stubs</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubs.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/onStubActivation:" title="onStubActivation:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/onStubActivation:">+&nbsp;onStubActivation:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Setup a block to be called each time a stub is triggered.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (void)onStubActivation:(void ( ^ ) ( NSURLRequest *request , id&lt;OHHTTPStubsDescriptor&gt; stub ))<em>block</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>block</code></th>
+						<td><p>The block to call each time a request is being stubbed by OHHTTPStubs.
+Set it to <code>nil</code> to do nothing. Defaults is <code>nil</code>.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Setup a block to be called each time a stub is triggered.</p>
+
+<p>Useful if you want to log all your requests being stubbed for example and see which stub
+was used to respond to each request.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">OHHTTPStubs.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+					</div>
+					
+					
+
+                    
+                    
+          
+				</main>
+
+				<footer>
+					<div class="footer-copyright">
+						
+						<p class="copyright">Copyright &copy; 2016 b. All rights reserved. Updated: 2016-03-06</p>
+						
+						
+						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
+						
+					</div>
+				</footer>
+			</div>
+		</div>
+	</article>
+
+	<script src="../js/script.js"></script>
+</body>
+</html>
