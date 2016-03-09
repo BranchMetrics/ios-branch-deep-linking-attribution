@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AppPromoView.h"
+#import "BNCAppPromoView.h"
 
 NSInteger const APP_PROMO_USAGE_UNLIMITED = -1;
 NSString * const APP_PROMO_ID = @"app_promo_id";
