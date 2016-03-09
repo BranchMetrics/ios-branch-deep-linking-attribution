@@ -11,6 +11,7 @@
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
+#import "BNCPromoViewHandler.h"
 
 @interface BranchOpenRequest ()
 
@@ -130,6 +131,8 @@
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
     }
     
+    [[Branch getInstance] saveAppPromoViewList];
+   
     if (self.callback) {
         self.callback(YES, nil);
     }
