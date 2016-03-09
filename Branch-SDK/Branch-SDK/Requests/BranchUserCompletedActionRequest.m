@@ -9,6 +9,7 @@
 #import "BranchUserCompletedActionRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
+#import "BNCPromoViewHandler.h"
 
 @interface BranchUserCompletedActionRequest ()
 
@@ -42,6 +43,8 @@
     }
 
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION] key:key callback:callback];
+    
+    [[BNCPromoViewHandler getInstance] showPromoView : _action];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
