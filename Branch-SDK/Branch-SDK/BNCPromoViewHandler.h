@@ -11,7 +11,7 @@
 
 
 #endif /* BNCPromoViewHandler_h */
-#import "AppPromoView.h"
+#import "BNCAppPromoView.h"
 
 @interface BNCPromoViewHandler : NSObject
 

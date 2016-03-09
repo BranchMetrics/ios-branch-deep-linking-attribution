@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "BNCPromoViewhandler.h"
 #import "Branch.h"
-#import "AppPromoView.h"
+#import "BNCAppPromoView.h"
 
 
 @implementation BNCPromoViewHandler
