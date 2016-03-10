@@ -15,6 +15,7 @@ NSString * const APP_PROMO_ACTION = @"app_promo_action";
 NSString * const APP_PROMO_NUM_USE = @"num_of_use";
 NSString * const APP_PROMO_EXPIRY = @"expiry";
 NSString * const APP_PROMO_WEBURL = @"promo_view_url";
+NSString * const APP_PROMO_WEBHTML = @"promo_view_html";
 
 @interface AppPromoView()
 @end
@@ -27,8 +28,9 @@ NSString * const APP_PROMO_WEBURL = @"promo_view_url";
         self.promoID = [promoViewDict objectForKey:APP_PROMO_ID];
         self.promoAction = [promoViewDict objectForKey:APP_PROMO_ACTION];
         self.numOfUse = [[promoViewDict objectForKey:APP_PROMO_NUM_USE]integerValue];
-        self.expirationDate = [NSDate dateWithTimeIntervalSince1970:[[promoViewDict objectForKey:APP_PROMO_EXPIRY]integerValue]];
+        self.expirationDate = [NSDate dateWithTimeIntervalSince1970:[[promoViewDict objectForKey:APP_PROMO_EXPIRY]doubleValue]/1000];
         self.webUrl = [promoViewDict objectForKey:APP_PROMO_WEBURL];
+        self.webHtml = [promoViewDict objectForKey:APP_PROMO_WEBHTML];
     }
     return self;
 }

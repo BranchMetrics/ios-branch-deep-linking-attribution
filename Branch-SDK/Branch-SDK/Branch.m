@@ -37,7 +37,6 @@
 #import "BranchInstallRequest.h"
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchRegisterViewRequest.h"
-#import "BNCPromoViewHandler.h"
 
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -1411,10 +1410,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
                 [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
             }
         }
-    }
-    
-    
-    [[BNCPromoViewHandler getInstance] showPromoView:@"open"];
+    }    
 }
 
 - (void)handleInitFailure:(NSError *)error {
@@ -1439,25 +1435,6 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
 - (void)deepLinkingControllerCompleted {
     [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
-}
-
-
--(void) saveAppPromoViewList {
-    
-    //promoViewArray = [[self getLatestReferringParams] objectForKey:@"app_promo_data"];
-    
-    // TODO Example data for test only. Need to remove and use the line above after test
-    //---Test only data-------//
-    NSString * appPromoViewJson = @"{\"app_promo_data\":[{ \"app_promo_id\":\"promo_id_01\",\"app_promo_action\" : \"open\",\"num_of_use\":1,\"promo_view_url\":\"https://branch.io\",\"expiry\":1552085563000 },{ \"app_promo_id\":\"promo_id_02\",\"app_promo_action\" : \"buy\",\"num_of_use\":1,\"promo_view_url\":\"https://branch.io/features\",\"expiry\":1552085563000}]}";
-    
-    NSDictionary *promoViewObject = [NSJSONSerialization JSONObjectWithData:[appPromoViewJson dataUsingEncoding:NSUTF8StringEncoding]
-                                                          options:0 error:NULL];
-     NSArray *promoViewArray = [promoViewObject objectForKey:@"app_promo_data"];
-    //---Test only data-------//
-    
-   
-    [[BNCPromoViewHandler getInstance] saveAppPromoViews:promoViewArray];
-    
 }
 
 @end

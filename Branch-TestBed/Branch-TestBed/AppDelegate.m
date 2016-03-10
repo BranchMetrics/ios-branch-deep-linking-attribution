@@ -35,6 +35,31 @@
     
     [branch setDeepLinkDebugMode:@{@"example_debug_param" : @"foo"}];
     
+    NSString *webViewHtml = @"<!DOCTYPE html><html><body><h1>App Promo View Test</h1><p>App Promo View Test.</p>\n\n\n <a class=\"accept_btn\" href=\"branch-cta://accept\">Accept</a>\n\n<a class=\"cancel_btn\" href=\"branch-cta://cancel\">Cancel</a></body></html>";
+    
+    NSMutableArray * promoViewArray = [[NSMutableArray alloc] init];
+    NSDictionary * promoViewItem1 = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     @"promo_id_01", @"app_promo_id",
+                                     @"open", @"app_promo_action",
+                                     @"1", @"num_of_use",
+                                     webViewHtml, @"promo_view_html",
+                                     @"1489176401000", @"expiry",
+                                     @"true", @"debug",
+                                     nil];
+    NSDictionary * promoViewItem2 = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     @"promo_id_02", @"app_promo_id",
+                                     @"buy", @"app_promo_action",
+                                     @"1", @"num_of_use",
+                                     webViewHtml, @"promo_view_html",
+                                     @"1489176401000", @"expiry",
+                                     @"true", @"debug",
+                                     nil];
+  
+    [promoViewArray addObject:promoViewItem1];
+    [promoViewArray addObject:promoViewItem2];
+    [branch setDeepLinkDebugMode:@{@"app_promo_data" : promoViewArray }];
+    
+    
     [branch registerDeepLinkController:controller forKey:@"gravatar_email"];
     
     [branch initSessionWithLaunchOptions:launchOptions automaticallyDisplayDeepLinkController:YES deepLinkHandler:^(NSDictionary *params, NSError *error) {
