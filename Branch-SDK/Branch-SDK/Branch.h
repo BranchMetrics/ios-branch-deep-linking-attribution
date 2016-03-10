@@ -1399,9 +1399,4 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)executeGenericRequest:(BNCServerRequest*)request;
 
-/**
- Method used to save the app promo view list available with open or install request
- */
-- (void) saveAppPromoViewList;
-
 @end

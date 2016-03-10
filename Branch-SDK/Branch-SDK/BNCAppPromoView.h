@@ -12,7 +12,7 @@
 @interface AppPromoView : NSObject
 //-------- properties-------------------//
 /**
- Unique ID for thsi app promo
+ Unique ID for this app promo
  */
 @property (strong, nonatomic) NSString *promoID;
 /**
@@ -31,6 +31,11 @@
  Web url to for showing html content for the promo iew
  */
 @property (strong, nonatomic) NSString *webUrl;
+
+/**
+ HTml content for loading the web view
+ */
+@property (strong, nonatomic) NSString *webHtml;
 
 //---------- Methods---------------//
 /**
