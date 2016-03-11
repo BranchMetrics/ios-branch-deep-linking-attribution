@@ -25,7 +25,7 @@
     return [self initWithAction:action state:state withPromoViewCallback:nil];
 }
 
-- (id)initWithAction:(NSString *)action state:(NSDictionary *)state withPromoViewCallback:(id) callback {
+- (id)initWithAction:(NSString *)action state:(NSDictionary *)state withPromoViewCallback:(id)callback {
     if (self = [super init]) {
         _action = action;
         _state = state;

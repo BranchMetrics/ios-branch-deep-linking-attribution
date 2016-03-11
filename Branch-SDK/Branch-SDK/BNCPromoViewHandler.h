@@ -16,19 +16,18 @@
 
 @protocol BranchPromoViewControllerDelegate <NSObject>
 
-- (void)promoViewVisible: (NSString *) actionName;
-- (void)promoViewAccepted: (NSString *) actionName;
-- (void)promoViewCancelled: (NSString *) actionName;
+- (void)promoViewVisible:(NSString *) actionName;
+- (void)promoViewAccepted:(NSString *) actionName;
+- (void)promoViewCancelled:(NSString *) actionName;
 
 @end
 
-
 @interface BNCPromoViewHandler : NSObject
-
 //---- Properties---------------//
-
+/**
+ Callback for Branch View events
+ */
 @property (nonatomic, assign) id  <BranchPromoViewControllerDelegate> promoViewCallback;
-
 /**
  Cache for saving AppPromoViews locally
  */
@@ -36,20 +35,17 @@
 
 
 //-- Methods--------------------//
-
 /**
  Gets the global instance for BNCPromoViewHandler.
  */
 + (BNCPromoViewHandler *)getInstance;
-
 /**
  Shows a promo view for the given action if available
  */
-- (BOOL) showPromoView : (NSString*) actionName withCallback:(id) callback;
-
+- (BOOL)showPromoView:(NSString *)actionName withCallback:(id)callback;
 /**
   Adds a given list of promoviews to cache
  */
-- (void) saveAppPromoViews : (NSArray *) promoViewList;
+- (void)saveAppPromoViews:(NSArray *)promoViewList;
 
 @end

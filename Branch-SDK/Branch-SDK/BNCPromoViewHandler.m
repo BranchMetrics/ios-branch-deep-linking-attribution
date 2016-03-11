@@ -22,8 +22,8 @@ NSString * const APP_PROMO_REDIRECT_ACTION_CANCEL = @"cancel";
 @implementation BNCPromoViewHandler
 
 static BNCPromoViewHandler *bncPromoViewHandler;
-BOOL isPromoAccepted = false;
-NSString * currentActionName;
+BOOL isPromoAccepted = NO;
+NSString *currentActionName;
 
 + (BNCPromoViewHandler *)getInstance {
     if (!bncPromoViewHandler) {
@@ -33,30 +33,29 @@ NSString * currentActionName;
     return bncPromoViewHandler;
 }
 
-- (void) saveAppPromoViews : (NSArray *) promoViewList {    
+- (void)saveAppPromoViews:(NSArray *)promoViewList {
     for (NSDictionary *promoView in promoViewList) {
-        AppPromoView *appPromoView = [[AppPromoView alloc]initWithPromoView: promoView];
+        AppPromoView *appPromoView = [[AppPromoView alloc] initWithPromoView: promoView];
         [self.promoViewCache addObject:appPromoView];
     }
 }
 
-- (BOOL) showPromoView : (NSString*) actionName withCallback:(id) callback {
+- (BOOL)showPromoView:(NSString*)actionName withCallback:(id)callback {
     for (AppPromoView * promoView in self.promoViewCache) {
-        if([promoView.promoAction isEqualToString:actionName] && [promoView isAvailable]) {
+        if ([promoView.promoAction isEqualToString:actionName] && [promoView isAvailable]) {
             self.promoViewCallback = callback;
             [self showView:promoView];
             [promoView updateUsageCount];
-            return TRUE;
+            return YES;
         }
     }
-    return FALSE;
+    return NO;
 }
 
-- (void) showView : (AppPromoView*) appPromoView {    
+- (void)showView:(AppPromoView*)appPromoView {
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     UIWebView *webview = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, screenRect.size.width, screenRect.size.height)];
-   
-   
+    
     webview.scrollView.scrollEnabled = NO;
     webview.scrollView.bounces = NO;
     webview.delegate = self;
@@ -73,13 +72,12 @@ NSString * currentActionName;
         return;
     }
     
-    isPromoAccepted = false;
+    isPromoAccepted = NO;
     currentActionName = appPromoView.promoAction;
     
     UIViewController *holderView = [[UIViewController alloc] init];
     [holderView.view insertSubview:webview atIndex:0];
-    
-     UIViewController *presentingViewController = [[[UIApplication sharedApplication].delegate window] rootViewController];
+    UIViewController *presentingViewController = [[[UIApplication sharedApplication].delegate window] rootViewController];
     [presentingViewController presentViewController:holderView animated:YES completion:nil];
     
     if (self.promoViewCallback) {
@@ -87,7 +85,7 @@ NSString * currentActionName;
     }
 }
 
-- (void) closePromoView {
+- (void)closePromoView {
     UIViewController *presentingViewController = [[[UIApplication sharedApplication].delegate window] rootViewController];
     [presentingViewController dismissViewControllerAnimated:YES completion:nil];
     
@@ -99,7 +97,6 @@ NSString * currentActionName;
             [self.promoViewCallback promoViewCancelled:currentActionName];
         }
     }
-
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
@@ -110,14 +107,14 @@ NSString * currentActionName;
     return !isRedirectHandled;
 }
 
-- (BOOL)handleUserActionRedirects:(NSURLRequest *) request {
+- (BOOL)handleUserActionRedirects:(NSURLRequest *)request {
     BOOL isRedirectionHandled = NO;
-    if ([[request.URL scheme] isEqual: APP_PROMO_REDIRECT_SCHEME]) {
+    if ([[request.URL scheme] isEqual:APP_PROMO_REDIRECT_SCHEME]) {
         if ([[request.URL host] isEqual:APP_PROMO_REDIRECT_ACTION_ACCEPT]) {
-            isPromoAccepted = true;
+            isPromoAccepted = YES;
         }
         else if ([[request.URL host] isEqual:APP_PROMO_REDIRECT_ACTION_CANCEL]) {
-            isPromoAccepted = false;
+            isPromoAccepted = NO;
         }
         isRedirectionHandled = YES;
     }

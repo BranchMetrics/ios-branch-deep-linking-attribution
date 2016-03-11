@@ -131,7 +131,7 @@
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
     }
    
-    NSArray *promoViewArray = [[[Branch getInstance] getLatestReferringParams]objectForKey:@"app_promo_data"];
+    NSArray *promoViewArray = [[[Branch getInstance] getLatestReferringParams] objectForKey:@"app_promo_data"];
     [[BNCPromoViewHandler getInstance] saveAppPromoViews:promoViewArray];
     [[BNCPromoViewHandler getInstance] showPromoView:@"open" withCallback:nil];
 

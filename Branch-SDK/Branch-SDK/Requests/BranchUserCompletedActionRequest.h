@@ -12,6 +12,6 @@
 @interface BranchUserCompletedActionRequest : BNCServerRequest
 
 - (id)initWithAction:(NSString *)action state:(NSDictionary *)state;
-- (id)initWithAction:(NSString *)action state:(NSDictionary *)state withPromoViewCallback:(id) callback ;
+- (id)initWithAction:(NSString *)action state:(NSDictionary *)state withPromoViewCallback:(id)callback ;
 
 @end

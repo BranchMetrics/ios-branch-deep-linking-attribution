@@ -24,16 +24,15 @@
  */
 @property (nonatomic) NSInteger numOfUse;
 /**
- Epoach millisec denoting expiration for this app promo
+ Epoch millisec denoting expiration for this app promo
  */
 @property (nonatomic, strong) NSDate *expirationDate;
 /**
- Web url to for showing html content for the promo iew
+ Web url to for showing html content for the Branch View
  */
 @property (strong, nonatomic) NSString *webUrl;
-
 /**
- HTml content for loading the web view
+ Html content for loading the web view
  */
 @property (strong, nonatomic) NSString *webHtml;
 
@@ -41,16 +40,14 @@
 /**
  Initialises promo view with the give promo view dictionary
  */
-- (id) initWithPromoView : (NSDictionary *) promoViewDict;
-
+- (id)initWithPromoView:(NSDictionary *)promoViewDict;
 /**
  check promo view for expiry and uasage count
  */
-- (BOOL) isAvailable;
-
+- (BOOL)isAvailable;
 /**
- Decrement the usage count for this promo view by 1
+ update the usage count for this Branch view
  */
-- (void) updateUsageCount;
+- (void)updateUsageCount;
 
 @end
