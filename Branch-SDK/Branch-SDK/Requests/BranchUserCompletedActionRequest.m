@@ -15,17 +15,23 @@
 
 @property (strong, nonatomic) NSString *action;
 @property (strong, nonatomic) NSDictionary *state;
+@property (strong, nonatomic) id <BranchPromoViewControllerDelegate> promoViewcallback;
 
 @end
 
 @implementation BranchUserCompletedActionRequest
 
 - (id)initWithAction:(NSString *)action state:(NSDictionary *)state {
+    return [self initWithAction:action state:state withPromoViewCallback:nil];
+}
+
+- (id)initWithAction:(NSString *)action state:(NSDictionary *)state withPromoViewCallback:(id) callback {
     if (self = [super init]) {
         _action = action;
         _state = state;
+        _promoViewcallback = callback;
     }
-
+    
     return self;
 }
 
@@ -44,7 +50,7 @@
 
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION] key:key callback:callback];
     
-    [[BNCPromoViewHandler getInstance] showPromoView : _action];
+    [[BNCPromoViewHandler getInstance] showPromoView : _action withCallback:_promoViewcallback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

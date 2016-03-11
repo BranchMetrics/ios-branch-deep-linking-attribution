@@ -113,7 +113,7 @@
 
 - (IBAction)cmdExecuteBuy:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch userCompletedAction:@"buy"];
+    [branch userCompletedAction:@"buy" withState:nil withCallback:self];
 }
 - (IBAction)cmdIdentifyUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
@@ -180,5 +180,17 @@
     }
     [super touchesBegan:touches withEvent:event];
 }
+
+- (void)promoViewVisible: (NSString *) actionName {
+     NSLog(@"promoViewVisible for action : %@", actionName);
+}
+- (void)promoViewAccepted: (NSString *) actionName {
+     NSLog(@"promoViewAccepted for action : %@", actionName);
+}
+- (void)promoViewCancelled: (NSString *) actionName {
+     NSLog(@"promoViewCancelled for action : %@", actionName);
+}
+
+
 
 @end
