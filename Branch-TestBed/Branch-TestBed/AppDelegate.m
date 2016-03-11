@@ -49,7 +49,7 @@
     NSDictionary * promoViewItem2 = [NSDictionary dictionaryWithObjectsAndKeys:
                                      @"promo_id_02", @"app_promo_id",
                                      @"buy", @"app_promo_action",
-                                     @"1", @"num_of_use",
+                                     @"3", @"num_of_use",
                                      webViewHtml, @"promo_view_html",
                                      @"1489176401000", @"expiry",
                                      @"true", @"debug",

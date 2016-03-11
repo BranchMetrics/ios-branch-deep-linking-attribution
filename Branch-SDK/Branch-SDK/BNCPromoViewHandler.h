@@ -13,9 +13,22 @@
 #endif /* BNCPromoViewHandler_h */
 #import "BNCAppPromoView.h"
 
+
+@protocol BranchPromoViewControllerDelegate <NSObject>
+
+- (void)promoViewVisible: (NSString *) actionName;
+- (void)promoViewAccepted: (NSString *) actionName;
+- (void)promoViewCancelled: (NSString *) actionName;
+
+@end
+
+
 @interface BNCPromoViewHandler : NSObject
 
 //---- Properties---------------//
+
+@property (nonatomic, assign) id  <BranchPromoViewControllerDelegate> promoViewCallback;
+
 /**
  Cache for saving AppPromoViews locally
  */
@@ -32,7 +45,7 @@
 /**
  Shows a promo view for the given action if available
  */
-- (BOOL) showPromoView : (NSString *) actionName;
+- (BOOL) showPromoView : (NSString*) actionName withCallback:(id) callback;
 
 /**
   Adds a given list of promoviews to cache

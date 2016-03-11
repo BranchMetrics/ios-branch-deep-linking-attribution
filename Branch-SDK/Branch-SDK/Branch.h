@@ -628,6 +628,15 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state;
 
 /**
+ Send a user action to the server with additional state items. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
+ 
+ @param action The action string.
+ @param state The additional state items associated with the action.
+ @param promoViewCallback Callback for promoview state
+ */
+- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withCallback: (id) promoViewCallback;
+
+/**
  Gets the total number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.
  
  @deprecated Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of

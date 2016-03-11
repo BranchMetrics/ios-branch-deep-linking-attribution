@@ -133,7 +133,7 @@
    
     NSArray *promoViewArray = [[[Branch getInstance] getLatestReferringParams]objectForKey:@"app_promo_data"];
     [[BNCPromoViewHandler getInstance] saveAppPromoViews:promoViewArray];
-    [[BNCPromoViewHandler getInstance] showPromoView:@"open"];
+    [[BNCPromoViewHandler getInstance] showPromoView:@"open" withCallback:nil];
 
    
     if (self.callback) {

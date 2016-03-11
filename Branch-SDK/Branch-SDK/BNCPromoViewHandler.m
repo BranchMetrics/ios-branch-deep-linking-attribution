@@ -23,6 +23,7 @@ NSString * const APP_PROMO_REDIRECT_ACTION_CANCEL = @"cancel";
 
 static BNCPromoViewHandler *bncPromoViewHandler;
 BOOL isPromoAccepted = false;
+NSString * currentActionName;
 
 + (BNCPromoViewHandler *)getInstance {
     if (!bncPromoViewHandler) {
@@ -39,9 +40,10 @@ BOOL isPromoAccepted = false;
     }
 }
 
-- (BOOL) showPromoView : (NSString*) actionName {
+- (BOOL) showPromoView : (NSString*) actionName withCallback:(id) callback {
     for (AppPromoView * promoView in self.promoViewCache) {
         if([promoView.promoAction isEqualToString:actionName] && [promoView isAvailable]) {
+            self.promoViewCallback = callback;
             [self showView:promoView];
             [promoView updateUsageCount];
             return TRUE;
@@ -72,17 +74,32 @@ BOOL isPromoAccepted = false;
     }
     
     isPromoAccepted = false;
+    currentActionName = appPromoView.promoAction;
     
     UIViewController *holderView = [[UIViewController alloc] init];
     [holderView.view insertSubview:webview atIndex:0];
     
      UIViewController *presentingViewController = [[[UIApplication sharedApplication].delegate window] rootViewController];
     [presentingViewController presentViewController:holderView animated:YES completion:nil];
+    
+    if (self.promoViewCallback) {
+        [self.promoViewCallback promoViewVisible:appPromoView.promoAction];
+    }
 }
 
 - (void) closePromoView {
     UIViewController *presentingViewController = [[[UIApplication sharedApplication].delegate window] rootViewController];
     [presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    
+    if (self.promoViewCallback) {
+        if (isPromoAccepted) {
+            [self.promoViewCallback promoViewAccepted:currentActionName];
+        }
+        else {
+            [self.promoViewCallback promoViewCancelled:currentActionName];
+        }
+    }
+
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
@@ -98,12 +115,11 @@ BOOL isPromoAccepted = false;
     if ([[request.URL scheme] isEqual: APP_PROMO_REDIRECT_SCHEME]) {
         if ([[request.URL host] isEqual:APP_PROMO_REDIRECT_ACTION_ACCEPT]) {
             isPromoAccepted = true;
-            isRedirectionHandled = YES;
         }
         else if ([[request.URL host] isEqual:APP_PROMO_REDIRECT_ACTION_CANCEL]) {
             isPromoAccepted = false;
-            isRedirectionHandled = YES;
         }
+        isRedirectionHandled = YES;
     }
     return isRedirectionHandled;
 }
