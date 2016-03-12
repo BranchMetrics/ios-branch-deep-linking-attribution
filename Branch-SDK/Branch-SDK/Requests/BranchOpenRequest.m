@@ -134,7 +134,7 @@
     NSArray *branchViewArray = [[[Branch getInstance] getLatestReferringParams] objectForKey:@"branch_view_data"];
     BranchViewHandler *branchViewHandler = [BranchViewHandler getInstance];
     [branchViewHandler saveBranchViews:branchViewArray];
-    [branchViewHandler showBranchView:[self getActionName] withCallback:nil];
+    [branchViewHandler showBranchView:[self getActionName] withDelegate:nil];
 
    
     if (self.callback) {

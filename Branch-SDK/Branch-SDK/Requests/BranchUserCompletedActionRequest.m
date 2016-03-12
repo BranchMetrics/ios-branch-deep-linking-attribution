@@ -50,7 +50,7 @@
 
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION] key:key callback:callback];
     
-    [[BranchViewHandler getInstance] showBranchView:_action withCallback:_branchViewcallback];
+    [[BranchViewHandler getInstance] showBranchView:_action withDelegate:_branchViewcallback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

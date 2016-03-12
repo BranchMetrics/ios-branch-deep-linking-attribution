@@ -113,7 +113,7 @@
 
 - (IBAction)cmdExecuteBuy:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch userCompletedAction:@"buy" withState:nil withCallback:self];
+    [branch userCompletedAction:@"buy" withState:nil withDelegate:self];
 }
 - (IBAction)cmdIdentifyUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
