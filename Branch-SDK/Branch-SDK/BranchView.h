@@ -1,5 +1,5 @@
 //
-//  AppPromoView.h
+//  BranchView.h
 //  Branch-TestBed
 //
 //  Created by Sojan P.R. on 3/4/16.
@@ -9,22 +9,22 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 
-@interface AppPromoView : NSObject
+@interface BranchView : NSObject
 //-------- properties-------------------//
 /**
- Unique ID for this app promo
+ Unique ID for this Branch view
  */
-@property (strong, nonatomic) NSString *promoID;
+@property (strong, nonatomic) NSString *branchViewID;
 /**
- User or Branch action associated with the app promo
+ User or Branch action associated with the Branch view
  */
-@property (strong, nonatomic) NSString *promoAction;
+@property (strong, nonatomic) NSString *branchViewAction;
 /**
- Number of times this promo view can be used
+ Number of times this Branch view can be used
  */
 @property (nonatomic) NSInteger numOfUse;
 /**
- Epoch millisec denoting expiration for this app promo
+ Epoch millisec denoting expiration for this Branch view
  */
 @property (nonatomic, strong) NSDate *expirationDate;
 /**
@@ -38,11 +38,11 @@
 
 //---------- Methods---------------//
 /**
- Initialises promo view with the give promo view dictionary
+ Initialises Branch View with the given dictionary
  */
-- (id)initWithPromoView:(NSDictionary *)promoViewDict;
+- (id)initWithBranchView:(NSDictionary *)branchViewDict;
 /**
- check promo view for expiry and uasage count
+ check Branch view for expiry and uasage count
  */
 - (BOOL)isAvailable;
 /**

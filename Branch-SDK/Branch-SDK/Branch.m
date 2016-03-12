@@ -540,14 +540,14 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     [self userCompletedAction:action withState:state withCallback:nil];
 }
 
-- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withCallback: (id) promoViewCallback {
+- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withCallback:(id)branchViewCallback {
     if (!action) {
         return;
     }
     
     [self initSessionIfNeededAndNotInProgress];
     
-    BranchUserCompletedActionRequest *req = [[BranchUserCompletedActionRequest alloc] initWithAction:action state:state withPromoViewCallback:promoViewCallback];
+    BranchUserCompletedActionRequest *req = [[BranchUserCompletedActionRequest alloc] initWithAction:action state:state withBranchViewCallback:branchViewCallback];
     [self.requestQueue enqueue:req];
     [self processNextQueueItem];
 }
