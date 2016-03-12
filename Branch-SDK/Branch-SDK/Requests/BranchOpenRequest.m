@@ -134,12 +134,17 @@
     NSArray *branchViewArray = [[[Branch getInstance] getLatestReferringParams] objectForKey:@"branch_view_data"];
     BranchViewHandler *branchViewHandler = [BranchViewHandler getInstance];
     [branchViewHandler saveBranchViews:branchViewArray];
-    [branchViewHandler showBranchView:@"open" withCallback:nil];
+    [branchViewHandler showBranchView:[self getActionName] withCallback:nil];
 
    
     if (self.callback) {
         self.callback(YES, nil);
     }
+
+}
+
+- (NSString *)getActionName {
+    return @"open";
 }
 
 @end
