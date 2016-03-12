@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BNCPromoViewHandler.h"
+#import "BranchViewHandler.h"
 
-@interface ViewController : UIViewController <BranchPromoViewControllerDelegate>
+@interface ViewController : UIViewController <BranchViewControllerDelegate>
 
 @end

@@ -35,29 +35,29 @@
     
     [branch setDeepLinkDebugMode:@{@"example_debug_param" : @"foo"}];
     
-    NSString *webViewHtml = @"<!DOCTYPE html><html><body><h1>App Promo View Test</h1><p>App Promo View Test.</p>\n\n\n <a class=\"accept_btn\" href=\"branch-cta://accept\">Accept</a>\n\n<a class=\"cancel_btn\" href=\"branch-cta://cancel\">Cancel</a></body></html>";
+    NSString *webViewHtml = @"<!DOCTYPE html><html><body><h1>Branch View Test</h1><p>Branch View Test.</p>\n\n\n <a class=\"accept_btn\" href=\"branch-cta://accept\">Accept</a>\n\n<a class=\"cancel_btn\" href=\"branch-cta://cancel\">Cancel</a></body></html>";
     
-    NSMutableArray * promoViewArray = [[NSMutableArray alloc] init];
-    NSDictionary * promoViewItem1 = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     @"promo_id_01", @"app_promo_id",
-                                     @"open", @"app_promo_action",
+    NSMutableArray * branchViewArray = [[NSMutableArray alloc] init];
+    NSDictionary * branchViewItem1 = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     @"branch_view_id_01", @"branch_view_id",
+                                     @"open", @"branch_view_action",
                                      @"1", @"num_of_use",
-                                     webViewHtml, @"promo_view_html",
+                                     webViewHtml, @"branch_view_html",
                                      @"1489176401000", @"expiry",
                                      @"true", @"debug",
                                      nil];
-    NSDictionary * promoViewItem2 = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     @"promo_id_02", @"app_promo_id",
-                                     @"buy", @"app_promo_action",
+    NSDictionary * branchViewItem2 = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     @"branch_view_id_02", @"branch_view_id",
+                                     @"buy", @"branch_view_action",
                                      @"3", @"num_of_use",
-                                     webViewHtml, @"promo_view_html",
+                                     webViewHtml, @"branch_view_html",
                                      @"1489176401000", @"expiry",
                                      @"true", @"debug",
                                      nil];
   
-    [promoViewArray addObject:promoViewItem1];
-    [promoViewArray addObject:promoViewItem2];
-    [branch setDeepLinkDebugMode:@{@"app_promo_data" : promoViewArray }];
+    [branchViewArray addObject:branchViewItem1];
+    [branchViewArray addObject:branchViewItem2];
+    [branch setDeepLinkDebugMode:@{@"branch_view_data" : branchViewArray }];
     
     
     [branch registerDeepLinkController:controller forKey:@"gravatar_email"];

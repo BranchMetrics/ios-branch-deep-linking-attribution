@@ -181,14 +181,14 @@
     [super touchesBegan:touches withEvent:event];
 }
 
-- (void)promoViewVisible: (NSString *)actionName {
-     NSLog(@"promoViewVisible for action : %@", actionName);
+- (void)branchViewVisible: (NSString *)actionName {
+     NSLog(@"branchViewVisible for action : %@", actionName);
 }
-- (void)promoViewAccepted: (NSString *)actionName {
-     NSLog(@"promoViewAccepted for action : %@", actionName);
+- (void)branchViewAccepted: (NSString *)actionName {
+     NSLog(@"branchViewAccepted for action : %@", actionName);
 }
-- (void)promoViewCancelled: (NSString *)actionName {
-     NSLog(@"promoViewCancelled for action : %@", actionName);
+- (void)branchViewCancelled: (NSString *)actionName {
+     NSLog(@"branchViewCancelled for action : %@", actionName);
 }
 
 

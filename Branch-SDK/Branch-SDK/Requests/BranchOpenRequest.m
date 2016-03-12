@@ -11,7 +11,7 @@
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
-#import "BNCPromoViewHandler.h"
+#import "BranchViewHandler.h"
 
 @interface BranchOpenRequest ()
 
@@ -131,9 +131,10 @@
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
     }
    
-    NSArray *promoViewArray = [[[Branch getInstance] getLatestReferringParams] objectForKey:@"app_promo_data"];
-    [[BNCPromoViewHandler getInstance] saveAppPromoViews:promoViewArray];
-    [[BNCPromoViewHandler getInstance] showPromoView:@"open" withCallback:nil];
+    NSArray *branchViewArray = [[[Branch getInstance] getLatestReferringParams] objectForKey:@"branch_view_data"];
+    BranchViewHandler *branchViewHandler = [BranchViewHandler getInstance];
+    [branchViewHandler saveBranchViews:branchViewArray];
+    [branchViewHandler showBranchView:@"open" withCallback:nil];
 
    
     if (self.callback) {
