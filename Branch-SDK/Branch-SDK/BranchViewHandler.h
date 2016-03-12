@@ -42,7 +42,7 @@
 /**
  Shows a Branch view for the given action if available
  */
-- (BOOL)showBranchView:(NSString *)actionName withCallback:(id)callback;
+- (BOOL)showBranchView:(NSString *)actionName withDelegate:(id)callback;
 /**
   Adds a given list of Branch views to cache
  */

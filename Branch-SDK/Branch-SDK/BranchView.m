@@ -28,7 +28,7 @@ NSString * const BRANCH_VIEW_WEBHTML = @"branch_view_html";
         self.branchViewID = [branchViewDict objectForKey:BRANCH_VIEW_ID];
         self.branchViewAction = [branchViewDict objectForKey:BRANCH_VIEW_ACTION];
         self.numOfUse = [[branchViewDict objectForKey:BRANCH_VIEW_NUM_USE] integerValue];
-        self.expirationDate = [NSDate dateWithTimeIntervalSince1970:[[branchViewDict objectForKey:BRANCH_VIEW_EXPIRY] doubleValue]/1000];
+        self.expirationDate = [NSDate dateWithTimeIntervalSince1970:[[branchViewDict objectForKey:BRANCH_VIEW_EXPIRY] doubleValue] / 1000];
         self.webUrl = [branchViewDict objectForKey:BRANCH_VIEW_WEBURL];
         self.webHtml = [branchViewDict objectForKey:BRANCH_VIEW_WEBHTML];
     }

@@ -41,7 +41,7 @@ NSString * const BRANCH_PREFS_KEY_COUNTS = @"bnc_counts";
 NSString * const BRANCH_PREFS_KEY_TOTAL_BASE = @"bnc_total_base_";
 NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
-NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usage_cnt";
+NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usage_cnt_";
 
 @interface BNCPreferenceHelper ()
 

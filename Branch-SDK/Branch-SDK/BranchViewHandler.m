@@ -40,7 +40,7 @@ NSString *currentActionName;
     }
 }
 
-- (BOOL)showBranchView:(NSString*)actionName withCallback:(id)callback {
+- (BOOL)showBranchView:(NSString *)actionName withDelegate:(id)callback {
     for (BranchView * branchView in self.branchViewCache) {
         if ([branchView.branchViewAction isEqualToString:actionName] && [branchView isAvailable]) {
             self.branchViewCallback = callback;
@@ -52,7 +52,7 @@ NSString *currentActionName;
     return NO;
 }
 
-- (void)showView:(BranchView*)branchView {
+- (void)showView:(BranchView *)branchView {
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     UIWebView *webview = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, screenRect.size.width, screenRect.size.height)];
     
@@ -109,11 +109,11 @@ NSString *currentActionName;
 
 - (BOOL)handleUserActionRedirects:(NSURLRequest *)request {
     BOOL isRedirectionHandled = NO;
-    if ([[request.URL scheme] isEqual:BRANCH_VIEW_REDIRECT_SCHEME]) {
-        if ([[request.URL host] isEqual:BRANCH_VIEW_REDIRECT_ACTION_ACCEPT]) {
+    if ([[request.URL scheme] isEqualToString:BRANCH_VIEW_REDIRECT_SCHEME]) {
+        if ([[request.URL host] isEqualToString:BRANCH_VIEW_REDIRECT_ACTION_ACCEPT]) {
             isBranchViewAccepted = YES;
         }
-        else if ([[request.URL host] isEqual:BRANCH_VIEW_REDIRECT_ACTION_CANCEL]) {
+        else if ([[request.URL host] isEqualToString:BRANCH_VIEW_REDIRECT_ACTION_CANCEL]) {
             isBranchViewAccepted = NO;
         }
         isRedirectionHandled = YES;

@@ -634,7 +634,7 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param state The additional state items associated with the action.
  @param branchViewCallback Callback for Branch view state
  */
-- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withCallback:(id)branchViewCallback;
+- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withDelegate:(id)branchViewCallback;
 
 /**
  Gets the total number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.
