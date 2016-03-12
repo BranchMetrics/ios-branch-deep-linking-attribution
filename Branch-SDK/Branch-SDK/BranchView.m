@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "BranchView.h"
+#import "BNCPreferenceHelper.h"
 
 NSInteger const BRANCH_VIEW_USAGE_UNLIMITED = -1;
 NSString * const BRANCH_VIEW_ID = @"branch_view_id";
@@ -35,14 +36,13 @@ NSString * const BRANCH_VIEW_WEBHTML = @"branch_view_html";
 }
 
 - (BOOL)isAvailable {
+    NSInteger currentUsage = [[BNCPreferenceHelper preferenceHelper] getBranchViewCount:self.branchViewID];
     return (self.expirationDate.timeIntervalSinceNow > 0
-             && (self.numOfUse > 0 || self.numOfUse == BRANCH_VIEW_USAGE_UNLIMITED));
+             && (self.numOfUse > currentUsage || self.numOfUse == BRANCH_VIEW_USAGE_UNLIMITED));
 }
 
 - (void)updateUsageCount {
-    if (self.numOfUse > 0) {
-        self.numOfUse--;
-    }
+    [[BNCPreferenceHelper preferenceHelper] updateBranchViewCount:self.branchViewID];
 }
 
 @end
