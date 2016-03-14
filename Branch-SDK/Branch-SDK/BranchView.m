@@ -11,12 +11,12 @@
 #import "BNCPreferenceHelper.h"
 
 NSInteger const BRANCH_VIEW_USAGE_UNLIMITED = -1;
-NSString * const BRANCH_VIEW_ID = @"branch_view_id";
-NSString * const BRANCH_VIEW_ACTION = @"branch_view_action";
+NSString * const BRANCH_VIEW_ID = @"id";
+NSString * const BRANCH_VIEW_ACTION = @"action";
 NSString * const BRANCH_VIEW_NUM_USE = @"num_of_use";
 NSString * const BRANCH_VIEW_EXPIRY = @"expiry";
-NSString * const BRANCH_VIEW_WEBURL = @"branch_view_url";
-NSString * const BRANCH_VIEW_WEBHTML = @"branch_view_html";
+NSString * const BRANCH_VIEW_WEBURL = @"url";
+NSString * const BRANCH_VIEW_WEBHTML = @"html";
 
 @interface BranchView()
 @end

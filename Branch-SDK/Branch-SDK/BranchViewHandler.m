@@ -24,6 +24,7 @@ NSString * const BRANCH_VIEW_REDIRECT_ACTION_CANCEL = @"cancel";
 static BranchViewHandler *branchViewHandler;
 BOOL isBranchViewAccepted = NO;
 NSString *currentActionName;
+NSString *currentBranchViewID;
 
 + (BranchViewHandler *)getInstance {
     if (!branchViewHandler) {
@@ -74,6 +75,7 @@ NSString *currentActionName;
     
     isBranchViewAccepted = NO;
     currentActionName = branchView.branchViewAction;
+    currentBranchViewID = branchView.branchViewID;
     
     UIViewController *holderView = [[UIViewController alloc] init];
     [holderView.view insertSubview:webview atIndex:0];
@@ -81,7 +83,7 @@ NSString *currentActionName;
     [presentingViewController presentViewController:holderView animated:YES completion:nil];
     
     if (self.branchViewCallback) {
-        [self.branchViewCallback branchViewVisible:branchView.branchViewAction];
+        [self.branchViewCallback branchViewVisible:branchView.branchViewAction withID:branchView.branchViewID];
     }
 }
 
@@ -91,10 +93,10 @@ NSString *currentActionName;
     
     if (self.branchViewCallback) {
         if (isBranchViewAccepted) {
-            [self.branchViewCallback branchViewAccepted:currentActionName];
+            [self.branchViewCallback branchViewAccepted:currentActionName withID:currentBranchViewID];
         }
         else {
-            [self.branchViewCallback branchViewCancelled:currentActionName];
+            [self.branchViewCallback branchViewCancelled:currentActionName withID:currentBranchViewID];
         }
     }
 }
