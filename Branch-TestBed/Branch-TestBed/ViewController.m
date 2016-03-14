@@ -181,14 +181,14 @@
     [super touchesBegan:touches withEvent:event];
 }
 
-- (void)branchViewVisible: (NSString *)actionName {
-     NSLog(@"branchViewVisible for action : %@", actionName);
+- (void)branchViewVisible: (NSString *)actionName withID:(NSString *)branchViewID {
+     NSLog(@"branchViewVisible for action : %@ %@", actionName, branchViewID);
 }
-- (void)branchViewAccepted: (NSString *)actionName {
-     NSLog(@"branchViewAccepted for action : %@", actionName);
+- (void)branchViewAccepted: (NSString *)actionName withID:(NSString *)branchViewID {
+     NSLog(@"branchViewAccepted for action : %@ %@", actionName, branchViewID);
 }
-- (void)branchViewCancelled: (NSString *)actionName {
-     NSLog(@"branchViewCancelled for action : %@", actionName);
+- (void)branchViewCancelled: (NSString *)actionName withID:(NSString *)branchViewID {
+     NSLog(@"branchViewCancelled for action : %@ %@", actionName, branchViewID);
 }
 
 

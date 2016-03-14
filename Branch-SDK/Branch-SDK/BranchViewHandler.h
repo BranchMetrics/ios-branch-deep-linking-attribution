@@ -16,9 +16,9 @@
 
 @protocol BranchViewControllerDelegate <NSObject>
 
-- (void)branchViewVisible:(NSString *)actionName;
-- (void)branchViewAccepted:(NSString *)actionName;
-- (void)branchViewCancelled:(NSString *)actionName;
+- (void)branchViewVisible:(NSString *)actionName withID:(NSString *)branchViewID;
+- (void)branchViewAccepted:(NSString *)actionName withID:(NSString *)branchViewID;
+- (void)branchViewCancelled:(NSString *)actionName withID:(NSString *)branchViewID;
 
 @end
 

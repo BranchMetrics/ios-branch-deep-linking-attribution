@@ -39,18 +39,18 @@
     
     NSMutableArray * branchViewArray = [[NSMutableArray alloc] init];
     NSDictionary * branchViewItem1 = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     @"branch_view_id_01", @"branch_view_id",
-                                     @"open", @"branch_view_action",
-                                     @"1", @"num_of_use",
-                                     webViewHtml, @"branch_view_html",
+                                     @"id_01", @"id",
+                                     @"open", @"action",
+                                     @"2", @"num_of_use",
+                                     webViewHtml, @"html",
                                      @"1489176401000", @"expiry",
                                      @"true", @"debug",
                                      nil];
     NSDictionary * branchViewItem2 = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     @"branch_view_id_02", @"branch_view_id",
-                                     @"buy", @"branch_view_action",
-                                     @"3", @"num_of_use",
-                                     webViewHtml, @"branch_view_html",
+                                     @"id_02", @"id",
+                                     @"buy", @"action",
+                                     @"5", @"num_of_use",
+                                     webViewHtml, @"html",
                                      @"1489176401000", @"expiry",
                                      @"true", @"debug",
                                      nil];
