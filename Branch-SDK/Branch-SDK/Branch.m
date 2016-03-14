@@ -1414,7 +1414,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
                 [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
             }
         }
-    }    
+    }
 }
 
 - (void)handleInitFailure:(NSError *)error {

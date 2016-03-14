@@ -79,7 +79,7 @@ NSString *currentBranchViewID;
     
     UIViewController *holderView = [[UIViewController alloc] init];
     [holderView.view insertSubview:webview atIndex:0];
-    UIViewController *presentingViewController = [[[UIApplication sharedApplication].delegate window] rootViewController];
+    UIViewController *presentingViewController = [[[[UIApplication sharedApplication] windows] firstObject] rootViewController];
     [presentingViewController presentViewController:holderView animated:YES completion:nil];
     
     if (self.branchViewCallback) {
@@ -88,7 +88,7 @@ NSString *currentBranchViewID;
 }
 
 - (void)closeBranchView {
-    UIViewController *presentingViewController = [[[UIApplication sharedApplication].delegate window] rootViewController];
+    UIViewController *presentingViewController = [[[[UIApplication sharedApplication] windows] firstObject] rootViewController];
     [presentingViewController dismissViewControllerAnimated:YES completion:nil];
     
     if (self.branchViewCallback) {
