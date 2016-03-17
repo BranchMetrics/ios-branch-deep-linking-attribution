@@ -1,5 +1,8 @@
 Branch iOS SDK change log
 
+- v0.11.18
+  * prevent against future crashes on wrong installParams format
+
 - v0.11.17
   * Carthage support
   * account for different anchors on iPad for share sheet
