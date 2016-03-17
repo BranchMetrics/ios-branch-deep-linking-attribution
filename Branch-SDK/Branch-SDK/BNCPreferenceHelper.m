@@ -383,7 +383,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 - (void)setInstallParams:(NSString *)installParams {
     if ([installParams isKindOfClass:[NSDictionary class]]) {
-        _installParams = [BNCEncodingUtils encodeDictionaryToJsonString:installParams];
+        _installParams = [BNCEncodingUtils encodeDictionaryToJsonString:(NSDictionary *)installParams];
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_INSTALL_PARAMS value:_installParams];
         return;
     }
