@@ -7,6 +7,7 @@
 //
 
 #import "BNCPreferenceHelper.h"
+#import "BNCEncodingUtils.h"
 #import "BNCConfig.h"
 #import "Branch.h"
 
@@ -368,13 +369,25 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 - (NSString *)installParams {
     if (!_installParams) {
-        _installParams = [self readStringFromDefaults:BRANCH_PREFS_KEY_INSTALL_PARAMS];
+        id installParamsFromCache = [self readStringFromDefaults:BRANCH_PREFS_KEY_INSTALL_PARAMS];
+        if ([installParamsFromCache isKindOfClass:[NSString class]]) {
+            _installParams = [self readStringFromDefaults:BRANCH_PREFS_KEY_INSTALL_PARAMS];
+        }
+        else if ([installParamsFromCache isKindOfClass:[NSDictionary class]]) {
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_INSTALL_PARAMS value:nil];
+        }
     }
     
     return _installParams;
 }
 
 - (void)setInstallParams:(NSString *)installParams {
+    if ([installParams isKindOfClass:[NSDictionary class]]) {
+        _installParams = [BNCEncodingUtils encodeDictionaryToJsonString:(NSDictionary *)installParams];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_INSTALL_PARAMS value:_installParams];
+        return;
+    }
+    
     if (![_installParams isEqualToString:installParams]) {
         _installParams = installParams;
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_INSTALL_PARAMS value:installParams];
