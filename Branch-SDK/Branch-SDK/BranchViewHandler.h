@@ -28,11 +28,6 @@
  Callback for Branch View events
  */
 @property (nonatomic, assign) id  <BranchViewControllerDelegate> branchViewCallback;
-/**
- Cache for saving Branch views locally
- */
-@property (strong, nonatomic) NSMutableArray *branchViewCache;
-
 
 //-- Methods--------------------//
 /**
@@ -42,10 +37,6 @@
 /**
  Shows a Branch view for the given action if available
  */
-- (BOOL)showBranchView:(NSString *)actionName withDelegate:(id)callback;
-/**
-  Adds a given list of Branch views to cache
- */
-- (void)saveBranchViews:(NSArray *)branchViewList;
+- (BOOL)showBranchView:(NSString *)actionName withBranchViewDictionary:(NSDictionary*)branchViewDict andWithDelegate:(id)callback;
 
 @end

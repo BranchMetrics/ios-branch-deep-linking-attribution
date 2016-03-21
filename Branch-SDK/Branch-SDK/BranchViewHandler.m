@@ -29,28 +29,24 @@ NSString *currentBranchViewID;
 + (BranchViewHandler *)getInstance {
     if (!branchViewHandler) {
         branchViewHandler = [[BranchViewHandler alloc] init];
-        branchViewHandler.branchViewCache = [[NSMutableArray alloc] init];
     }
     return branchViewHandler;
 }
 
-- (void)saveBranchViews:(NSArray *)branchViewList {
-    for (NSDictionary *branchViewItem in branchViewList) {
-        BranchView *branchView = [[BranchView alloc] initWithBranchView:branchViewItem];
-        [self.branchViewCache addObject:branchView];
-    }
+- (BOOL)showBranchView:(NSString *)actionName withBranchViewDictionary:(NSDictionary*)branchViewDict andWithDelegate:(id)callback {
+    BranchView *branchView = [[BranchView alloc] initWithBranchView:branchViewDict];
+    return[self showBranchView:actionName withBranchView:branchView andWithDelegate:callback];
 }
 
-- (BOOL)showBranchView:(NSString *)actionName withDelegate:(id)callback {
-    for (BranchView * branchView in self.branchViewCache) {
-        if ([branchView.branchViewAction isEqualToString:actionName] && [branchView isAvailable]) {
-            self.branchViewCallback = callback;
-            [self showView:branchView];
-            [branchView updateUsageCount];
-            return YES;
-        }
+- (BOOL)showBranchView:(NSString *)actionName withBranchView:(BranchView*)branchView andWithDelegate:(id)callback {
+    if ([branchView isAvailable]){
+        self.branchViewCallback = callback;
+        [self showView:branchView];
+        [branchView updateUsageCount];
+        return YES;
+    } else {
+        return NO;
     }
-    return NO;
 }
 
 - (void)showView:(BranchView *)branchView {

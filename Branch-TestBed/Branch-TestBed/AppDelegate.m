@@ -33,31 +33,7 @@
     Branch *branch = [Branch getInstance];
     [branch setDebug];
     
-    [branch setDeepLinkDebugMode:@{@"example_debug_param" : @"foo"}];
-    
-    NSString *webViewHtml = @"<!DOCTYPE html><html><body><h1>Branch View Test</h1><p>Branch View Test.</p>\n\n\n <a class=\"accept_btn\" href=\"branch-cta://accept\">Accept</a>\n\n<a class=\"cancel_btn\" href=\"branch-cta://cancel\">Cancel</a></body></html>";
-    
-    NSMutableArray * branchViewArray = [[NSMutableArray alloc] init];
-    NSDictionary * branchViewItem1 = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     @"id_01", @"id",
-                                     @"open", @"action",
-                                     @"2", @"num_of_use",
-                                     webViewHtml, @"html",
-                                     @"1489176401000", @"expiry",
-                                     @"true", @"debug",
-                                     nil];
-    NSDictionary * branchViewItem2 = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     @"id_02", @"id",
-                                     @"buy", @"action",
-                                     @"5", @"num_of_use",
-                                     webViewHtml, @"html",
-                                     @"1489176401000", @"expiry",
-                                     @"true", @"debug",
-                                     nil];
-  
-    [branchViewArray addObject:branchViewItem1];
-    [branchViewArray addObject:branchViewItem2];
-    [branch setDeepLinkDebugMode:@{@"branch_view_data" : branchViewArray }];
+    [branch setDeepLinkDebugMode:@{@"example_debug_param" : @"foo"}];    
     
     
     [branch registerDeepLinkController:controller forKey:@"gravatar_email"];
