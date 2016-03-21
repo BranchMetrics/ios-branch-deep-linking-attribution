@@ -24,10 +24,6 @@
  */
 @property (nonatomic) NSInteger numOfUse;
 /**
- Epoch millisec denoting expiration for this Branch view
- */
-@property (nonatomic, strong) NSDate *expirationDate;
-/**
  Web url to for showing html content for the Branch View
  */
 @property (strong, nonatomic) NSString *webUrl;
