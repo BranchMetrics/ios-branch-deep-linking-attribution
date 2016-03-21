@@ -117,7 +117,9 @@
 }
 - (IBAction)cmdIdentifyUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch setIdentity:@"test_user_10"];
+    [branch setIdentity:@"test_user_104" withCallback:^(NSDictionary *params, NSError *error) {
+        NSLog(@"callback in setIdentity %@", params);
+    }];
 }
 - (IBAction)logoutWithCallback {
   Branch *branch = [Branch getInstance];
