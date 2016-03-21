@@ -115,8 +115,12 @@
     if (sessionData.length && preferenceHelper.isReferrable) {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         BOOL dataIsFromALinkClick = [sessionDataDict[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] isEqual:@1];
-        BOOL storedParamsAreEmpty = !preferenceHelper.installParams.length;
         
+        BOOL storedParamsAreEmpty = YES;
+        if ([preferenceHelper.installParams isKindOfClass:[NSString class]]) {
+            storedParamsAreEmpty = !preferenceHelper.installParams.length;
+        }
+
         if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {
             preferenceHelper.installParams = sessionData;
         }
