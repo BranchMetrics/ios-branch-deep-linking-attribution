@@ -22,10 +22,10 @@ NSString * const BRANCH_VIEW_WEBHTML = @"html";
 
 @implementation BranchView
 
-- (id)initWithBranchView:(NSDictionary *)branchViewDict {
+- (id)initWithBranchView:(NSDictionary *)branchViewDict andActionName:(NSString *)actionName {
     if (self = [super init]) {
+        self.branchViewAction = actionName;
         self.branchViewID = [branchViewDict objectForKey:BRANCH_VIEW_ID];
-        self.branchViewAction = [branchViewDict objectForKey:BRANCH_VIEW_ACTION];
         self.numOfUse = [[branchViewDict objectForKey:BRANCH_VIEW_NUM_USE] integerValue];
         self.webUrl = [branchViewDict objectForKey:BRANCH_VIEW_WEBURL];
         self.webHtml = [branchViewDict objectForKey:BRANCH_VIEW_WEBHTML];

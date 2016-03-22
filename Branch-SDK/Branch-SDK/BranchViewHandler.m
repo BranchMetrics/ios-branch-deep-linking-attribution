@@ -34,11 +34,11 @@ NSString *currentBranchViewID;
 }
 
 - (BOOL)showBranchView:(NSString *)actionName withBranchViewDictionary:(NSDictionary*)branchViewDict andWithDelegate:(id)callback {
-    BranchView *branchView = [[BranchView alloc] initWithBranchView:branchViewDict];
-    return[self showBranchView:actionName withBranchView:branchView andWithDelegate:callback];
+    BranchView *branchView = [[BranchView alloc] initWithBranchView:branchViewDict andActionName:actionName];
+    return[self showBranchView:branchView withDelegate:callback];
 }
 
-- (BOOL)showBranchView:(NSString *)actionName withBranchView:(BranchView*)branchView andWithDelegate:(id)callback {
+- (BOOL)showBranchView:(BranchView *)branchView withDelegate:(id)callback {
     if ([branchView isAvailable]){
         self.branchViewCallback = callback;
         [self showView:branchView];

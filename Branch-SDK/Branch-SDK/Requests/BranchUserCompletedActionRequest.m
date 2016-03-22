@@ -58,15 +58,14 @@
     if (!error) {
         // TODO change to NSDictionary after Branch View Test
         NSMutableDictionary *data = response.data;
-
+        
         //-----------TODO Test code : To be removed before merging to production ---------------//
-                NSString *webViewHtml = @"<!DOCTYPE html><html><body><h1>Branch View Test</h1><p>Branch View Test.</p>\n\n\n <a class=\"accept_btn\" href=\"branch-cta://accept\">Accept</a>\n\n<a class=\"cancel_btn\" href=\"branch-cta://cancel\">Cancel</a></body></html>";
+        NSString *webViewHtml = @"<!DOCTYPE html><html><body><h1>Branch View Test</h1><p>Branch View Test.</p>\n\n\n <a class=\"accept_btn\" href=\"branch-cta://accept\">Accept</a>\n\n<a class=\"cancel_btn\" href=\"branch-cta://cancel\">Cancel</a></body></html>";
         NSDictionary *branchViewItem1 = [NSDictionary dictionaryWithObjectsAndKeys:
-                                          @"id_01", @"id",
-                                          _action, @"action",
-                                          @"-1", @"num_of_use",
-                                          webViewHtml, @"html",
-                                          nil];
+                                         @"id_01", @"id",
+                                         @"-1", @"num_of_use",
+                                         webViewHtml, @"html",
+                                         nil];
         NSString *branchViewJsonStringTest = [BNCEncodingUtils encodeDictionaryToJsonString:branchViewItem1];
         [data setObject:branchViewJsonStringTest forKey:BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
         //------------ TestCode End -------------//
