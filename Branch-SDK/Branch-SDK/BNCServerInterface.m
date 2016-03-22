@@ -10,6 +10,9 @@
 #import "BNCConfig.h"
 #import "BNCEncodingUtils.h"
 #import "BNCError.h"
+#import "BNCPreferenceHelper.h"
+#import "BNCSystemObserver.h"
+#import "BranchConstants.h"
 
 @implementation BNCServerInterface
 
@@ -52,7 +55,8 @@
 }
 
 - (void)postRequest:(NSDictionary *)post url:(NSString *)url retryNumber:(NSInteger)retryNumber key:(NSString *)key log:(BOOL)log callback:(BNCServerCallback)callback {
-    NSURLRequest *request = [self preparePostRequest:post url:url key:key retryNumber:retryNumber log:log];
+    NSDictionary *extendedParams = [self updateDeviceInfoToParams:post];
+    NSURLRequest *request = [self preparePostRequest:extendedParams url:url key:key retryNumber:retryNumber log:log];
 
     [self genericHTTPRequest:request retryNumber:retryNumber log:log callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
         return [self preparePostRequest:post url:url key:key retryNumber:++lastRetryNumber log:log];
@@ -60,7 +64,8 @@
 }
 
 - (BNCServerResponse *)postRequest:(NSDictionary *)post url:(NSString *)url key:(NSString *)key log:(BOOL)log {
-    NSURLRequest *request = [self preparePostRequest:post url:url key:key retryNumber:0 log:log];
+    NSDictionary *extendedParams = [self updateDeviceInfoToParams:post];
+    NSURLRequest *request = [self preparePostRequest:extendedParams url:url key:key retryNumber:0 log:log];
     return [self genericHTTPRequest:request log:log];
 }
 
@@ -227,5 +232,39 @@
     
     return serverResponse;
 }
+
+- (void)updateDeviceInfoToMutableDictionary:(NSMutableDictionary *)dict {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BOOL isRealHardwareId;
+    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:preferenceHelper.isDebug];
+    if (hardwareId) {
+        dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
+        dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = @(isRealHardwareId);
+    }
+    
+    [self safeSetValue:[BNCSystemObserver getCarrier] forKey:BRANCH_REQUEST_KEY_CARRIER onDict:dict];
+    [self safeSetValue:[BNCSystemObserver getBrand] forKey:BRANCH_REQUEST_KEY_BRAND onDict:dict];
+    [self safeSetValue:[BNCSystemObserver getModel] forKey:BRANCH_REQUEST_KEY_MODEL onDict:dict];
+    [self safeSetValue:[BNCSystemObserver getOS] forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
+    [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
+    [self safeSetValue:[BNCSystemObserver getScreenWidth] forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
+    [self safeSetValue:[BNCSystemObserver getScreenHeight] forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
+    
+}
+
+- (NSDictionary*)updateDeviceInfoToParams:(NSDictionary *)params {
+    NSMutableDictionary *extendedParams=[[NSMutableDictionary alloc] init];
+    [extendedParams addEntriesFromDictionary:params];
+    [self updateDeviceInfoToMutableDictionary:extendedParams];
+    return extendedParams;
+}
+
+- (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
+    if (value) {
+        dict[key] = value;
+    }
+}
+
+
 
 @end
