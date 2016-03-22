@@ -10,9 +10,8 @@
 #import "BNCConfig.h"
 #import "BNCEncodingUtils.h"
 #import "BNCError.h"
-#import "BNCPreferenceHelper.h"
-#import "BNCSystemObserver.h"
 #import "BranchConstants.h"
+#import "BNCDeviceInfo.h"
 
 @implementation BNCServerInterface
 
@@ -234,21 +233,22 @@
 }
 
 - (void)updateDeviceInfoToMutableDictionary:(NSMutableDictionary *)dict {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    BOOL isRealHardwareId;
-    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:preferenceHelper.isDebug];
-    if (hardwareId) {
-        dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
-        dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = @(isRealHardwareId);
+    BNCDeviceInfo *deviceInfo  = [BNCDeviceInfo getInstance];
+   
+    if (deviceInfo.hardwareId) {
+        dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = deviceInfo.hardwareId;
+        dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = @(deviceInfo.isRealHardwareId);
     }
     
-    [self safeSetValue:[BNCSystemObserver getCarrier] forKey:BRANCH_REQUEST_KEY_CARRIER onDict:dict];
-    [self safeSetValue:[BNCSystemObserver getBrand] forKey:BRANCH_REQUEST_KEY_BRAND onDict:dict];
-    [self safeSetValue:[BNCSystemObserver getModel] forKey:BRANCH_REQUEST_KEY_MODEL onDict:dict];
-    [self safeSetValue:[BNCSystemObserver getOS] forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
-    [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
-    [self safeSetValue:[BNCSystemObserver getScreenWidth] forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
-    [self safeSetValue:[BNCSystemObserver getScreenHeight] forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
+    [self safeSetValue:deviceInfo.carrierName forKey:BRANCH_REQUEST_KEY_CARRIER onDict:dict];
+    [self safeSetValue:deviceInfo.brandName forKey:BRANCH_REQUEST_KEY_BRAND onDict:dict];
+    [self safeSetValue:deviceInfo.modelName forKey:BRANCH_REQUEST_KEY_MODEL onDict:dict];
+    [self safeSetValue:deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
+    [self safeSetValue:deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
+    [self safeSetValue:deviceInfo.screenWidth forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
+    [self safeSetValue:deviceInfo.screenHeight forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
+    
+    dict[BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED] = @(deviceInfo.isAdTrackingEnabled);
     
 }
 
