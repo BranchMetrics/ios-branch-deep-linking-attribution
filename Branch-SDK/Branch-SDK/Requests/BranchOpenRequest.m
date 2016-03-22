@@ -11,6 +11,7 @@
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
+#import "BranchViewHandler.h"
 
 @interface BranchOpenRequest ()
 
@@ -48,12 +49,12 @@
     else {
         params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
     }
-
+    
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
     params[BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED] = @([BNCSystemObserver adTrackingSafe]);
     params[BRANCH_REQUEST_KEY_IS_REFERRABLE] = @(preferenceHelper.isReferrable);
     params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
-
+    
     [self safeSetValue:[BNCSystemObserver getBundleID] forKey:BRANCH_REQUEST_KEY_BUNDLE_ID onDict:params];
     [self safeSetValue:[BNCSystemObserver getTeamIdentifier] forKey:BRANCH_REQUEST_KEY_TEAM_ID onDict:params];
     [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];
@@ -83,20 +84,21 @@
     }
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-
-    NSDictionary *data = response.data;
-
+    
+    // TODO change to NSDictionary after Branch View Test
+    NSMutableDictionary *data = response.data;
+    
     // Handle possibly mis-parsed identity.
     id userIdentity = data[BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY];
     if ([userIdentity isKindOfClass:[NSNumber class]]) {
         userIdentity = [userIdentity stringValue];
     }
-
+    
     preferenceHelper.deviceFingerprintID = data[BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID];
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
-
+    
     [BNCSystemObserver setUpdateState];
     
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
@@ -118,7 +120,7 @@
         if ([preferenceHelper.installParams isKindOfClass:[NSString class]]) {
             storedParamsAreEmpty = !preferenceHelper.installParams.length;
         }
-
+        
         if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {
             preferenceHelper.installParams = sessionData;
         }
@@ -134,9 +136,32 @@
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
     }
     
+    // Check if there is any Branch View to show
+    //-----------TODO Test code : To be removed before merging to production ---------------//
+    NSString *webViewHtml = @"<!DOCTYPE html><html><body><h1>Branch View Test</h1><p>Branch View Test.</p>\n\n\n <a class=\"accept_btn\" href=\"branch-cta://accept\">Accept</a>\n\n<a class=\"cancel_btn\" href=\"branch-cta://cancel\">Cancel</a></body></html>";
+    NSDictionary *branchViewItem1 = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     @"id_01", @"id",
+                                     @"4", @"num_of_use",
+                                     webViewHtml, @"html",
+                                     nil];
+    NSString *branchViewJsonStringTest = [BNCEncodingUtils encodeDictionaryToJsonString:branchViewItem1];
+    [data setObject:branchViewJsonStringTest forKey:BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
+    //------------ TestCode End -------------//
+    
+    NSString *branchViewJsonString = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
+    if(branchViewJsonString != nil && branchViewJsonString.length) {
+        NSDictionary *branchViewDict = [BNCEncodingUtils decodeJsonStringToDictionary:branchViewJsonString];
+        [[BranchViewHandler getInstance] showBranchView:[self getActionName] withBranchViewDictionary:branchViewDict andWithDelegate:nil];
+    }
+    
     if (self.callback) {
         self.callback(YES, nil);
     }
+    
+}
+
+- (NSString *)getActionName {
+    return @"open";
 }
 
 @end
