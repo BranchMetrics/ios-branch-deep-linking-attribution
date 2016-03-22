@@ -60,6 +60,9 @@
 - (NSInteger)getActionTotalCount:(NSString *)action;
 - (NSInteger)getActionUniqueCount:(NSString *)action;
 
+- (void)updateBranchViewCount:(NSString *)branchViewID;
+- (NSInteger)getBranchViewCount:(NSString *)branchViewID;
+
 - (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
 
 @end

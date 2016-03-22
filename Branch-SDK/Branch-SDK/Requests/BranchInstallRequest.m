@@ -63,6 +63,10 @@
     if (value) {
         dict[key] = value;
     }
+    
+}
+- (NSString *)getActionName {
+    return @"install";
 }
 
 @end

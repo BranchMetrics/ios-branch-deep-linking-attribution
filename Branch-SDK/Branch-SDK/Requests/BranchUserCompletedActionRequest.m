@@ -9,22 +9,30 @@
 #import "BranchUserCompletedActionRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
+#import "BranchViewHandler.h"
+#import "BNCEncodingUtils.h"
 
 @interface BranchUserCompletedActionRequest ()
 
 @property (strong, nonatomic) NSString *action;
 @property (strong, nonatomic) NSDictionary *state;
+@property (strong, nonatomic) id <BranchViewControllerDelegate> branchViewcallback;
 
 @end
 
 @implementation BranchUserCompletedActionRequest
 
 - (id)initWithAction:(NSString *)action state:(NSDictionary *)state {
+    return [self initWithAction:action state:state withBranchViewCallback:nil];
+}
+
+- (id)initWithAction:(NSString *)action state:(NSDictionary *)state withBranchViewCallback:(id)callback {
     if (self = [super init]) {
         _action = action;
         _state = state;
+        _branchViewcallback = callback;
     }
-
+    
     return self;
 }
 
@@ -40,12 +48,34 @@
     if (self.state) {
         params[BRANCH_REQUEST_KEY_STATE] = self.state;
     }
-
+    
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION] key:key callback:callback];
+    
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
-    // Nothing to do here...
+    // Check if there is any Branch View to show
+    if (!error) {
+        // TODO change to NSDictionary after Branch View Test
+        NSMutableDictionary *data = response.data;
+        
+        //-----------TODO Test code : To be removed before merging to production ---------------//
+        NSString *webViewHtml = @"<!DOCTYPE html><html><body><h1>Branch View Test</h1><p>Branch View Test.</p>\n\n\n <a class=\"accept_btn\" href=\"branch-cta://accept\">Accept</a>\n\n<a class=\"cancel_btn\" href=\"branch-cta://cancel\">Cancel</a></body></html>";
+        NSDictionary *branchViewItem1 = [NSDictionary dictionaryWithObjectsAndKeys:
+                                         @"id_01", @"id",
+                                         @"-1", @"num_of_use",
+                                         webViewHtml, @"html",
+                                         nil];
+        NSString *branchViewJsonStringTest = [BNCEncodingUtils encodeDictionaryToJsonString:branchViewItem1];
+        [data setObject:branchViewJsonStringTest forKey:BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
+        //------------ TestCode End -------------//
+        
+        NSString *branchViewJsonString = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
+        if(branchViewJsonString != nil && branchViewJsonString.length) {
+            NSDictionary *branchViewDict = [BNCEncodingUtils decodeJsonStringToDictionary:branchViewJsonString];
+            [[BranchViewHandler getInstance] showBranchView:_action withBranchViewDictionary:branchViewDict andWithDelegate:_branchViewcallback];
+        }
+    }
 }
 
 #pragma mark - NSCoding methods
