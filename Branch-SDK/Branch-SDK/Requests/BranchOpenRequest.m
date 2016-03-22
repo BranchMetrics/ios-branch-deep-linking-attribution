@@ -85,7 +85,7 @@
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     
-   // TODO change to NSDictionary after Branch View Test
+    // TODO change to NSDictionary after Branch View Test
     NSMutableDictionary *data = response.data;
     
     // Handle possibly mis-parsed identity.
@@ -120,7 +120,7 @@
         if ([preferenceHelper.installParams isKindOfClass:[NSString class]]) {
             storedParamsAreEmpty = !preferenceHelper.installParams.length;
         }
-
+        
         if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {
             preferenceHelper.installParams = sessionData;
         }
@@ -141,7 +141,6 @@
     NSString *webViewHtml = @"<!DOCTYPE html><html><body><h1>Branch View Test</h1><p>Branch View Test.</p>\n\n\n <a class=\"accept_btn\" href=\"branch-cta://accept\">Accept</a>\n\n<a class=\"cancel_btn\" href=\"branch-cta://cancel\">Cancel</a></body></html>";
     NSDictionary *branchViewItem1 = [NSDictionary dictionaryWithObjectsAndKeys:
                                      @"id_01", @"id",
-                                     [self getActionName], @"action",
                                      @"4", @"num_of_use",
                                      webViewHtml, @"html",
                                      nil];

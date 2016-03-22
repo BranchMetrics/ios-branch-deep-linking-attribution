@@ -36,9 +36,9 @@
 /**
  Initialises Branch View with the given dictionary
  */
-- (id)initWithBranchView:(NSDictionary *)branchViewDict;
+- (id)initWithBranchView:(NSDictionary *)branchViewDict andActionName:(NSString *)actionName;
 /**
- check Branch view for expiry and uasage count
+ Check Branch view for usage limit
  */
 - (BOOL)isAvailable;
 /**
