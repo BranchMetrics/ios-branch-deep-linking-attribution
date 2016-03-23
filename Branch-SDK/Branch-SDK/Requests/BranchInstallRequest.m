@@ -45,4 +45,8 @@
     }
 }
 
+- (NSString *)getActionName {
+    return @"install";
+}
+
 @end
