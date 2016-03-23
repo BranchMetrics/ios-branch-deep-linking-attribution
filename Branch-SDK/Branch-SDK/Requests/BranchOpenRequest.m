@@ -11,6 +11,7 @@
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
+#import "BranchViewHandler.h"
 
 @interface BranchOpenRequest ()
 
@@ -35,10 +36,11 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-    
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];    
-    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
-    
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    if (preferenceHelper.deviceFingerprintID) {
+        params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    }
     
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
     params[BRANCH_REQUEST_KEY_IS_REFERRABLE] = @(preferenceHelper.isReferrable);
@@ -65,7 +67,7 @@
     }
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    
+
     NSDictionary *data = response.data;
     
     // Handle possibly mis-parsed identity.
@@ -116,9 +118,20 @@
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
     }
     
+    NSString *branchViewJsonString = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
+    if(branchViewJsonString != nil && branchViewJsonString.length) {
+        NSDictionary *branchViewDict = [BNCEncodingUtils decodeJsonStringToDictionary:branchViewJsonString];
+        [[BranchViewHandler getInstance] showBranchView:[self getActionName] withBranchViewDictionary:branchViewDict andWithDelegate:nil];
+    }
+    
     if (self.callback) {
         self.callback(YES, nil);
     }
+    
+}
+
+- (NSString *)getActionName {
+    return @"open";
 }
 
 @end
