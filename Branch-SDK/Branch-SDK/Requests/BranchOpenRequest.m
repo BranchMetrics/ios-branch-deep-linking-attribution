@@ -67,7 +67,6 @@
     }
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-
     NSDictionary *data = response.data;
     
     // Handle possibly mis-parsed identity.
@@ -117,7 +116,7 @@
     if (data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]) {
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
     }
-    
+
     NSString *branchViewJsonString = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
     if(branchViewJsonString != nil && branchViewJsonString.length) {
         NSDictionary *branchViewDict = [BNCEncodingUtils decodeJsonStringToDictionary:branchViewJsonString];
