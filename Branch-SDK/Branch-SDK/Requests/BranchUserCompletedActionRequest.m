@@ -57,9 +57,9 @@
     // Check if there is any Branch View to show
     if (!error) {
         NSDictionary *data = response.data;
-        NSDictionary *branchViewDict = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
-        if (branchViewDict != nil) {
-           [[BranchViewHandler getInstance] showBranchView:_action withBranchViewDictionary:branchViewDict andWithDelegate:_branchViewcallback];
+        NSObject *branchViewDict = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
+        if ([branchViewDict isKindOfClass:[NSDictionary class]]) {
+           [[BranchViewHandler getInstance] showBranchView:_action withBranchViewDictionary:(NSDictionary *)branchViewDict andWithDelegate:_branchViewcallback];
         }
     }
 }
