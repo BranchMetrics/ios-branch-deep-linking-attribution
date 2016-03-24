@@ -13,7 +13,7 @@
 NSInteger const BRANCH_VIEW_USAGE_UNLIMITED = -1;
 NSString * const BRANCH_VIEW_ID = @"id";
 NSString * const BRANCH_VIEW_ACTION = @"action";
-NSString * const BRANCH_VIEW_NUM_USE = @"num_of_use";
+NSString * const BRANCH_VIEW_NUM_USE = @"number_of_use";
 NSString * const BRANCH_VIEW_WEBURL = @"url";
 NSString * const BRANCH_VIEW_WEBHTML = @"html";
 
