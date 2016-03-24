@@ -118,10 +118,9 @@
     }
     
     // Check if there is any Branch View to show
-    NSString *branchViewJsonString = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
-    if(branchViewJsonString != nil && branchViewJsonString.length) {
-        NSDictionary *branchViewDict = [BNCEncodingUtils decodeJsonStringToDictionary:branchViewJsonString];
-        [[BranchViewHandler getInstance] showBranchView:[self getActionName] withBranchViewDictionary:branchViewDict andWithDelegate:nil];
+    NSObject *branchViewDict = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
+    if ([branchViewDict isKindOfClass:[NSDictionary class]]) {
+        [[BranchViewHandler getInstance] showBranchView:[self getActionName] withBranchViewDictionary:(NSDictionary *)branchViewDict andWithDelegate:nil];
     }
     
     if (self.callback) {
