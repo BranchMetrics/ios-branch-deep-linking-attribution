@@ -73,6 +73,7 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
             isReferrable = _isReferrable,
             isDebug = _isDebug,
             isContinuingUserActivity = _isContinuingUserActivity,
+            suppressWarningLogs = _suppressWarningLogs,
             retryCount = _retryCount,
             retryInterval = _retryInterval,
             timeout = _timeout,
@@ -96,6 +97,7 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
         _retryInterval = DEFAULT_RETRY_INTERVAL;
         
         _isDebug = NO;
+        _suppressWarningLogs = NO;
         _explicitlyRequestedReferrable = NO;
         _isReferrable = [self readBoolFromDefaults:BRANCH_PREFS_KEY_IS_REFERRABLE];
     }
@@ -135,6 +137,12 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
         NSString *log = [NSString stringWithFormat:@"[%@:%d] %@", filename, line, [[NSString alloc] initWithFormat:format arguments:args]];
         va_end(args);
         NSLog(@"%@", log);
+    }
+}
+
+- (void)logWarning:(NSString *)message {
+    if (!self.suppressWarningLogs) {
+        NSLog(@"[Branch Warning] %@", message);
     }
 }
 
@@ -568,7 +576,7 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
     NSDictionary *persistenceDict = [self.persistenceDict copy];
     NSBlockOperation *newPersistOp = [NSBlockOperation blockOperationWithBlock:^{
         if (![NSKeyedArchiver archiveRootObject:persistenceDict toFile:[self prefsFile]]) {
-            NSLog(@"[Branch Warning] Failed to persist preferences to disk");
+            [self logWarning:@"Failed to persist preferences to disk"];
         }
     }];
     [self.persistPrefsQueue addOperation:newPersistOp];
@@ -583,7 +591,7 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
             persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithFile:[self prefsFile]];
         }
         @catch (NSException *exception) {
-            NSLog(@"[Branch Warning] Failed to load preferences from disk");
+            [self logWarning:@"Failed to load preferences from disk"];
         }
 
         if (persistenceDict) {
