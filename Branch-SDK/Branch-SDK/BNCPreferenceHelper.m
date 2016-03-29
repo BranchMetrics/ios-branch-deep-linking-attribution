@@ -7,6 +7,7 @@
 //
 
 #import "BNCPreferenceHelper.h"
+#import "BNCEncodingUtils.h"
 #import "BNCConfig.h"
 #import "Branch.h"
 
@@ -40,6 +41,8 @@ NSString * const BRANCH_PREFS_KEY_CREDIT_BASE = @"bnc_credit_base_";
 NSString * const BRANCH_PREFS_KEY_COUNTS = @"bnc_counts";
 NSString * const BRANCH_PREFS_KEY_TOTAL_BASE = @"bnc_total_base_";
 NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
+
+NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usage_cnt_";
 
 @interface BNCPreferenceHelper ()
 
@@ -368,13 +371,25 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 - (NSString *)installParams {
     if (!_installParams) {
-        _installParams = [self readStringFromDefaults:BRANCH_PREFS_KEY_INSTALL_PARAMS];
+        id installParamsFromCache = [self readStringFromDefaults:BRANCH_PREFS_KEY_INSTALL_PARAMS];
+        if ([installParamsFromCache isKindOfClass:[NSString class]]) {
+            _installParams = [self readStringFromDefaults:BRANCH_PREFS_KEY_INSTALL_PARAMS];
+        }
+        else if ([installParamsFromCache isKindOfClass:[NSDictionary class]]) {
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_INSTALL_PARAMS value:nil];
+        }
     }
     
     return _installParams;
 }
 
 - (void)setInstallParams:(NSString *)installParams {
+    if ([installParams isKindOfClass:[NSDictionary class]]) {
+        _installParams = [BNCEncodingUtils encodeDictionaryToJsonString:(NSDictionary *)installParams];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_INSTALL_PARAMS value:_installParams];
+        return;
+    }
+    
     if (![_installParams isEqualToString:installParams]) {
         _installParams = installParams;
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_INSTALL_PARAMS value:installParams];
@@ -511,6 +526,19 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 - (NSInteger)getActionUniqueCount:(NSString *)action {
     return [self.countsDictionary[[BRANCH_PREFS_KEY_UNIQUE_BASE stringByAppendingString:action]] integerValue];
+}
+
+- (void)updateBranchViewCount:(NSString *)branchViewID {
+    NSInteger currentCount = [self getBranchViewCount:branchViewID] + 1;
+    [self writeObjectToDefaults:[BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT stringByAppendingString:branchViewID] value:@(currentCount)];
+}
+
+- (NSInteger)getBranchViewCount:(NSString *)branchViewID {
+    NSInteger count = [self readIntegerFromDefaults:[BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT stringByAppendingString:branchViewID]];
+    if (count == NSNotFound){
+        count = 0;
+    }
+    return count;
 }
 
 #pragma mark - Writing To Persistence
