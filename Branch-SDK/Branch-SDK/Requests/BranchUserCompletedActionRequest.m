@@ -9,22 +9,30 @@
 #import "BranchUserCompletedActionRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
+#import "BranchViewHandler.h"
+#import "BNCEncodingUtils.h"
 
 @interface BranchUserCompletedActionRequest ()
 
 @property (strong, nonatomic) NSString *action;
 @property (strong, nonatomic) NSDictionary *state;
+@property (strong, nonatomic) id <BranchViewControllerDelegate> branchViewcallback;
 
 @end
 
 @implementation BranchUserCompletedActionRequest
 
 - (id)initWithAction:(NSString *)action state:(NSDictionary *)state {
+    return [self initWithAction:action state:state withBranchViewCallback:nil];
+}
+
+- (id)initWithAction:(NSString *)action state:(NSDictionary *)state withBranchViewCallback:(id)callback {
     if (self = [super init]) {
         _action = action;
         _state = state;
+        _branchViewcallback = callback;
     }
-
+    
     return self;
 }
 
@@ -40,12 +48,20 @@
     if (self.state) {
         params[BRANCH_REQUEST_KEY_STATE] = self.state;
     }
-
+    
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION] key:key callback:callback];
+    
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
-    // Nothing to do here...
+    // Check if there is any Branch View to show
+    if (!error) {
+        NSDictionary *data = response.data;
+        NSObject *branchViewDict = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
+        if ([branchViewDict isKindOfClass:[NSDictionary class]]) {
+           [[BranchViewHandler getInstance] showBranchView:_action withBranchViewDictionary:(NSDictionary *)branchViewDict andWithDelegate:_branchViewcallback];
+        }
+    }
 }
 
 #pragma mark - NSCoding methods

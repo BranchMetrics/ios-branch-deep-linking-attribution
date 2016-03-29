@@ -22,7 +22,6 @@
     Branch *branch = [Branch getInstance];
     [branch setDebug];
     
-    // Example of automatic deep link routing (https://dev.branch.io/getting-started/deep-link-routing/guide/ios/)
     ExampleDeepLinkingController *controller = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"DeepLinkingController"];
     [branch registerDeepLinkController:controller forKey:@"gravatar_email"];
     
