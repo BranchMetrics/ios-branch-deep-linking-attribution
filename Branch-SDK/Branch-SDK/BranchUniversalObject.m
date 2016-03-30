@@ -9,12 +9,16 @@
 #import "BranchUniversalObject.h"
 #import "BNCError.h"
 #import "BranchConstants.h"
+#import "BNCPreferenceHelper.h"
 
-@implementation BranchUniversalObject
+@implementation BranchUniversalObject {
+    BNCPreferenceHelper *_preferenceHelper;
+}
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier {
     if (self = [super init]) {
         self.canonicalIdentifier = canonicalIdentifier;
+        _preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     }
     return self;
 }
@@ -22,6 +26,7 @@
 - (instancetype)initWithTitle:(NSString *)title {
     if (self = [super init]) {
         self.title = title;
+        _preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     }
     return self;
 }
@@ -44,7 +49,7 @@
 
 - (void)registerView {
     if (!self.canonicalIdentifier && !self.title) {
-        NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not register view.");
+        [_preferenceHelper logWarning:@"A canonicalIdentifier or title are required to uniquely identify content, so could not register view."];
         return;
     }
     
@@ -60,7 +65,7 @@
                                           userInfo:@{ NSLocalizedDescriptionKey: @"A canonicalIdentifier or title are required to uniquely identify content, so could not register view." }]);
         }
         else {
-            NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not register view.");
+            [_preferenceHelper logWarning:@"A canonicalIdentifier or title are required to uniquely identify content, so could not register view."];
         }
         return;
     }
@@ -72,7 +77,7 @@
 
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.title) {
-        NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.");
+        [_preferenceHelper logWarning:@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL."];
         return nil;
     }
     
@@ -91,7 +96,7 @@
             callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL." }]);
         }
         else {
-            NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.");
+            [_preferenceHelper logWarning:@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL."];
         }
         return;
     }
@@ -108,7 +113,7 @@
 
 - (NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.title) {
-        NSLog(@"[Branch Warning] a canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.");
+        [_preferenceHelper logWarning:@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL."];
         return nil;
     }
     // keep this operation outside of sync operation below.
@@ -126,7 +131,7 @@
 
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.canonicalUrl && !self.title) {
-        NSLog(@"[Branch Warning] a canonicalIdentifier, canonicalURL, or title are required to uniquely identify content. In order to not break the end user experience with sharing, Branch SDK will proceed to create a URL, but content analytics may not properly include this URL.");
+        [_preferenceHelper logWarning:@"A canonicalIdentifier, canonicalURL, or title are required to uniquely identify content. In order to not break the end user experience with sharing, Branch SDK will proceed to create a URL, but content analytics may not properly include this URL."];
     }
     
     NSMutableDictionary *params = [[self getParamsForServerRequestWithAddedLinkProperties:linkProperties] mutableCopy];
@@ -182,7 +187,7 @@
             [shareViewController setValue:linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT] forKey:@"subject"];
         }
         @catch (NSException *exception) {
-            NSLog(@"[Branch warning] Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController.");
+            [_preferenceHelper logWarning:@"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController."];
         }
     }
     
