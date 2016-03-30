@@ -419,6 +419,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)accountForFacebookSDKPreventingAppLaunch;
 
+- (void)suppressWarningLogs;
+
 #pragma mark - Session Item methods
 
 ///--------------------
