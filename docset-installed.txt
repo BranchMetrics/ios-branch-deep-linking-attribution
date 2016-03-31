@@ -1,4 +1,0 @@
-Documentation set was installed to Xcode!
-
-Path: /Users/ahmed/Library/Developer/Shared/Documentation/DocSets/io.branch.Branch-iOS-SDK.docset
-Time: 2016-02-22 23:09:34 +0000
