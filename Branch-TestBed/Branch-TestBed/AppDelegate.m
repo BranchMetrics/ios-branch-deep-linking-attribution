@@ -20,7 +20,7 @@
      */
     
     Branch *branch = [Branch getInstance];
-    //[branch setDebug];
+    [branch setDebug];
     
     ExampleDeepLinkingController *controller = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"DeepLinkingController"];
     [branch registerDeepLinkController:controller forKey:@"gravatar_email"];
