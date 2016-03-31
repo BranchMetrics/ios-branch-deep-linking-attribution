@@ -1448,26 +1448,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 }
 
 + (NSString *)kitDisplayVersion {
-    return @"0.11.16";
+    return @"0.12.0";
 }
-
-+ (void)initializeIfNeeded {
-    Class fabric = NSClassFromString(@"Fabric");
-    if (fabric) {
-        // The app must be using Fabric, as it exists at runtime. We fetch our default publishable key from Fabric.
-        NSDictionary *fabricConfiguration = [fabric configurationDictionaryForKitClass:[Branch class]];
-        NSString *branch_key = fabricConfiguration[@"MySDKKey"];
-        if (!branch_key) {
-            NSLog(@"Configuration dictionary returned by Fabric was nil, or doesn't have publishableKey. Can't initialize Branch.");
-            return;
-        }
-        [self getInstance:branch_key];
-        NSLog(@"branch was initIfNeeded %@", branch_key);
-    } else {
-        NSCAssert(fabric, @"initializeIfNeeded method called from a project that doesn't have Fabric.");
-    }
-}
-
-
 
 @end
