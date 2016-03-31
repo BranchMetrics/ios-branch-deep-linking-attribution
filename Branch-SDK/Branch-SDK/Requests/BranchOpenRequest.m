@@ -11,6 +11,7 @@
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
+#import "BranchViewHandler.h"
 
 @interface BranchOpenRequest ()
 
@@ -35,30 +36,19 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-    
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    if (!preferenceHelper.deviceFingerprintID) {
-        BOOL isRealHardwareId;
-        NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:preferenceHelper.isDebug];
-        if (hardwareId) {
-            params[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
-            params[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = @(isRealHardwareId);
-        }
-    }
-    else {
+    if (preferenceHelper.deviceFingerprintID) {
         params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
     }
-
+    
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
-    params[BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED] = @([BNCSystemObserver adTrackingSafe]);
     params[BRANCH_REQUEST_KEY_IS_REFERRABLE] = @(preferenceHelper.isReferrable);
     params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
-
+    
     [self safeSetValue:[BNCSystemObserver getBundleID] forKey:BRANCH_REQUEST_KEY_BUNDLE_ID onDict:params];
     [self safeSetValue:[BNCSystemObserver getTeamIdentifier] forKey:BRANCH_REQUEST_KEY_TEAM_ID onDict:params];
-    [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];
-    [self safeSetValue:[BNCSystemObserver getOS] forKey:BRANCH_REQUEST_KEY_OS onDict:params];
-    [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:params];
+    [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];        
     [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:params];
     [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:BRANCH_REQUEST_KEY_UPDATE onDict:params];
     [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:params];
@@ -66,12 +56,6 @@
     [self safeSetValue:preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:params];
     [self safeSetValue:preferenceHelper.externalIntentURI forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:params];
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
-}
-
-- (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
-    if (value) {
-        dict[key] = value;
-    }
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
@@ -83,20 +67,19 @@
     }
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-
     NSDictionary *data = response.data;
-
+    
     // Handle possibly mis-parsed identity.
     id userIdentity = data[BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY];
     if ([userIdentity isKindOfClass:[NSNumber class]]) {
         userIdentity = [userIdentity stringValue];
     }
-
+    
     preferenceHelper.deviceFingerprintID = data[BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID];
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
-
+    
     [BNCSystemObserver setUpdateState];
     
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
@@ -113,8 +96,12 @@
     if (sessionData.length && preferenceHelper.isReferrable) {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         BOOL dataIsFromALinkClick = [sessionDataDict[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] isEqual:@1];
-        BOOL storedParamsAreEmpty = !preferenceHelper.installParams.length;
-
+        
+        BOOL storedParamsAreEmpty = YES;
+        if ([preferenceHelper.installParams isKindOfClass:[NSString class]]) {
+            storedParamsAreEmpty = !preferenceHelper.installParams.length;
+        }
+        
         if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {
             preferenceHelper.installParams = sessionData;
         }
@@ -130,9 +117,20 @@
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
     }
     
+    // Check if there is any Branch View to show
+    NSObject *branchViewDict = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
+    if ([branchViewDict isKindOfClass:[NSDictionary class]]) {
+        [[BranchViewHandler getInstance] showBranchView:[self getActionName] withBranchViewDictionary:(NSDictionary *)branchViewDict andWithDelegate:nil];
+    }
+    
     if (self.callback) {
         self.callback(YES, nil);
     }
+    
+}
+
+- (NSString *)getActionName {
+    return @"open";
 }
 
 @end

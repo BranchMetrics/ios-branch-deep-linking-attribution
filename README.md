@@ -1,3 +1,6 @@
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hyperium/hyper/master/LICENSE)
+
 # Branch Metrics iOS SDK Reference
 
 This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a complete list of the content featured in this document.
@@ -23,6 +26,14 @@ Branch is available through [CocoaPods](http://cocoapods.org). To install it, si
 ```objc
 pod "Branch"
 ```
+### Carthage
+
+To integrate Branch into your project using Carthage add the following to your `Cartfile`:
+
+```ruby
+github "BranchMetrics/iOS-Deferred-Deep-Linking-SDK"
+```
+
 
 ### Download the Raw Files
 
@@ -148,7 +159,7 @@ To deep link, Branch must initialize a session to check if the user originated f
 ```objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     Branch *branch = [Branch getInstance];
-    [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
     	// route the user based on what's in params
     }];
     return YES;
@@ -176,13 +187,13 @@ To deep link, Branch must initialize a session to check if the user originated f
 ```swift
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     let branch: Branch = Branch.getInstance()
-    branch.initSessionWithLaunchOptions(launchOptions, true, andRegisterDeepLinkHandler: { params, error in
+    branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
     	// route the user based on what's in params
     })
     return true
 }
 
-func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
+func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
     if (!Branch.getInstance().handleDeepLink(url)) {
         // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
     }
@@ -466,7 +477,7 @@ branchUniversalObject.imageUrl = @"https://example.com/mycontent-12345.png";
 ###### Swift
 
 ```swift
-let branchUniversalObject: BranchUniversalObject = BranchUniversalObject(String: "item/12345")
+let branchUniversalObject: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "item/12345")
 branchUniversalObject.title = "My Content Title"
 branchUniversalObject.contentDescription = "My Content Description"
 branchUniversalObject.imageUrl = "https://example.com/mycontent-12345.png"
