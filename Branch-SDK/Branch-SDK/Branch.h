@@ -419,6 +419,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)accountForFacebookSDKPreventingAppLaunch;
 
+- (void)suppressWarningLogs;
+
 #pragma mark - Session Item methods
 
 ///--------------------
@@ -626,6 +628,15 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param state The additional state items associated with the action.
  */
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state;
+
+/**
+ Send a user action to the server with additional state items. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
+ 
+ @param action The action string.
+ @param state The additional state items associated with the action.
+ @param branchViewCallback Callback for Branch view state
+ */
+- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withDelegate:(id)branchViewCallback;
 
 /**
  Gets the total number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.

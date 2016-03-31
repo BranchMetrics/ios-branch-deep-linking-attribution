@@ -113,11 +113,13 @@
 
 - (IBAction)cmdExecuteBuy:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch userCompletedAction:@"buy"];
+    [branch userCompletedAction:@"buy" withState:nil withDelegate:self];
 }
 - (IBAction)cmdIdentifyUserClick:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch setIdentity:@"test_user_10"];
+    [branch setIdentity:@"test_user_104" withCallback:^(NSDictionary *params, NSError *error) {
+        NSLog(@"callback in setIdentity %@", params);
+    }];
 }
 - (IBAction)logoutWithCallback {
   Branch *branch = [Branch getInstance];
@@ -180,5 +182,17 @@
     }
     [super touchesBegan:touches withEvent:event];
 }
+
+- (void)branchViewVisible: (NSString *)actionName withID:(NSString *)branchViewID {
+     NSLog(@"branchViewVisible for action : %@ %@", actionName, branchViewID);
+}
+- (void)branchViewAccepted: (NSString *)actionName withID:(NSString *)branchViewID {
+     NSLog(@"branchViewAccepted for action : %@ %@", actionName, branchViewID);
+}
+- (void)branchViewCancelled: (NSString *)actionName withID:(NSString *)branchViewID {
+     NSLog(@"branchViewCancelled for action : %@ %@", actionName, branchViewID);
+}
+
+
 
 @end
