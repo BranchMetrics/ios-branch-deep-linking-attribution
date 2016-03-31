@@ -9,7 +9,7 @@ export FRAMEWORK_DIR=Branch.framework
 export FRAMEWORK_BINARY_NAME=Branch
 
 function xcode_build_target() {
-    echo "Compiling for platfo rm ${1}"
+    echo "Compiling for platform ${1}"
 
     xcodebuild \
         -target $XCODE_BUILD_TARGET \
