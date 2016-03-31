@@ -1,0 +1,7 @@
+framework module Branch {
+    umbrella header "BranchSDK.h"
+    header "Branch.h"
+
+    export *
+    module * { export * }
+}

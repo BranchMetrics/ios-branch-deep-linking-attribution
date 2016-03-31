@@ -38,6 +38,10 @@
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchRegisterViewRequest.h"
 
+//Fabric
+#import "FABKitProtocol.h"
+#import "Fabric+FABKits.h"
+
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
@@ -57,7 +61,7 @@ NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
 NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
-@interface Branch() <BranchDeepLinkingControllerCompletionDelegate>
+@interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit>
 
 
 @property (strong, nonatomic) BNCServerInterface *bServerInterface;
@@ -1442,6 +1446,16 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
 - (void)deepLinkingControllerCompleted {
     [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
+}
+
+#pragma mark FABKit methods
+
++ (NSString *)bundleIdentifier {
+    return @"io.branch.sdk.ios";
+}
+
++ (NSString *)kitDisplayVersion {
+    return @"0.12.0";
 }
 
 @end
