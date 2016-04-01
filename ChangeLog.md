@@ -1,5 +1,12 @@
 Branch iOS SDK change log
 
+- v0.12.0
+  * ability to suppress warning logs
+  * fix NSURLSession checks
+  * add SDK support for application landing pages
+  * Fabric integration
+  * TestBed app cleanup
+
 - v0.11.18
   * prevent against future crashes on wrong installParams format
 
