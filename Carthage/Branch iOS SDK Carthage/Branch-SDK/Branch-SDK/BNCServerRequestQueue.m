@@ -151,7 +151,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     }
     
     if (!openOrInstallRequest) {
-        NSLog(@"[Branch Warning] No install or open request in queue while trying to move it to the front");
+        [[BNCPreferenceHelper preferenceHelper] logWarning:@"No install or open request in queue while trying to move it to the front"];
         return nil;
     }
     
@@ -207,11 +207,12 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
             }
             
             if (![NSKeyedArchiver archiveRootObject:encodedRequests toFile:[self queueFile]]) {
-                NSLog(@"[Branch Warning] Failed to persist queue to disk");
+                [[BNCPreferenceHelper preferenceHelper] logWarning:@"Failed to persist queue to disk"];
             }
         }
         @catch (NSException *exception) {
-            NSLog(@"[Branch Warning] An exception occurred while attempting to save the queue. Exception information:\n\n%@", [self exceptionString:exception]);
+            NSString *warningMessage = [NSString stringWithFormat:@"An exception occurred while attempting to save the queue. Exception information:\n\n%@", [self exceptionString:exception]];
+            [[BNCPreferenceHelper preferenceHelper] logWarning:warningMessage];
         }
     });
 }
@@ -225,7 +226,8 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
         encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithFile:[self queueFile]];
     }
     @catch (NSException *exception) {
-        NSLog(@"[Branch Warning] An exception occurred while attempting to load the queue file, proceeding without requests. Exception information:\n\n%@", [self exceptionString:exception]);
+        NSString *warningMessage = [NSString stringWithFormat:@"An exception occurred while attempting to load the queue file, proceeding without requests. Exception information:\n\n%@", [self exceptionString:exception]];
+        [[BNCPreferenceHelper preferenceHelper] logWarning:warningMessage];
         self.queue = queue;
         return;
     }
@@ -238,13 +240,13 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
             request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
         }
         @catch (NSException *exception) {
-            NSLog(@"[Branch Warning] An exception occurred while attempting to parse a queued request, discarding.");
+            [[BNCPreferenceHelper preferenceHelper] logWarning:@"An exception occurred while attempting to parse a queued request, discarding."];
             continue;
         }
         
         // Throw out invalid request types
         if (![request isKindOfClass:[BNCServerRequest class]]) {
-            NSLog(@"[Branch Warning] Found an invalid request object, discarding.");
+            [[BNCPreferenceHelper preferenceHelper] logWarning:@"Found an invalid request object, discarding."];
             continue;
         }
         

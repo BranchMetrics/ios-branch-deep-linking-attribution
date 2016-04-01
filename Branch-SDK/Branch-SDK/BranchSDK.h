@@ -4,17 +4,12 @@
 
 #import <UIKit/UIKit.h>
 
-
-#import "BNCConfig.h"
-#import "BNCLinkCache.h"
-#import "BNCLinkData.h"
-#import "BNCPreferenceHelper.h"
-#import "BNCServerInterface.h"
-#import "BNCServerRequestQueue.h"
-#import "BNCServerResponse.h"
 #import "Branch.h"
-#import "BranchActivityItemProvider.h"
-#import "BranchCSSearchableItemAttributeSet.h"
-#import "BranchDeepLinkingController.h"
+#import "BNCConfig.h"
+#import "BranchView.h"
+#import "BranchViewHandler.h"
 #import "BranchLinkProperties.h"
 #import "BranchUniversalObject.h"
+#import "BranchActivityItemProvider.h"
+#import "BranchDeepLinkingController.h"
+#import "BranchCSSearchableItemAttributeSet.h"

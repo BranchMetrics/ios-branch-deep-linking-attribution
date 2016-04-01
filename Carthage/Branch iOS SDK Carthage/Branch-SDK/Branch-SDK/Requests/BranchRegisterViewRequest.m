@@ -42,21 +42,11 @@
     [self safeSetValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID onDict:data];
     [self safeSetValue:preferenceHelper.identityID forKey:BRANCH_REQUEST_KEY_BRANCH_IDENTITY onDict:data];
     [self safeSetValue:preferenceHelper.sessionID forKey:BRANCH_REQUEST_KEY_SESSION_ID onDict:data];
-    [self safeSetValue:@([BNCSystemObserver adTrackingSafe]) forKey:BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED onDict:data];
     [self safeSetValue:@(preferenceHelper.isDebug) forKey:BRANCH_REQUEST_KEY_DEBUG onDict:data];
-    [self safeSetValue:[BNCSystemObserver getOS] forKey:BRANCH_REQUEST_KEY_OS onDict:data];
-    [self safeSetValue:[BNCSystemObserver getOSVersion] forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:data];
-    [self safeSetValue:[BNCSystemObserver getModel] forKey:BRANCH_REQUEST_KEY_MODEL onDict:data];
     [self safeSetValue:@([BNCSystemObserver isSimulator]) forKey:BRANCH_REQUEST_KEY_IS_SIMULATOR onDict:data];
 
     [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:data];
     [self safeSetValue:[BNCSystemObserver getDeviceName] forKey:BRANCH_REQUEST_KEY_DEVICE_NAME onDict:data];
-
-    BOOL isRealHardwareId;
-    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:preferenceHelper.isDebug];
-    if (hardwareId && isRealHardwareId) {
-        data[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
-    }
     
     [serverInterface postRequest:data url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_REGISTER_VIEW] key:key callback:callback];
 }
@@ -71,12 +61,6 @@
     
     if (self.callback) {
         self.callback(response.data, error);
-    }
-}
-
-- (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
-    if (value) {
-        dict[key] = value;
     }
 }
 
