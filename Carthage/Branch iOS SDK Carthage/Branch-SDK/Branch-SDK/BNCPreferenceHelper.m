@@ -42,6 +42,8 @@ NSString * const BRANCH_PREFS_KEY_COUNTS = @"bnc_counts";
 NSString * const BRANCH_PREFS_KEY_TOTAL_BASE = @"bnc_total_base_";
 NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
+NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usage_cnt_";
+
 @interface BNCPreferenceHelper ()
 
 @property (strong, nonatomic) NSMutableDictionary *persistenceDict;
@@ -71,6 +73,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
             isReferrable = _isReferrable,
             isDebug = _isDebug,
             isContinuingUserActivity = _isContinuingUserActivity,
+            suppressWarningLogs = _suppressWarningLogs,
             retryCount = _retryCount,
             retryInterval = _retryInterval,
             timeout = _timeout,
@@ -94,6 +97,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
         _retryInterval = DEFAULT_RETRY_INTERVAL;
         
         _isDebug = NO;
+        _suppressWarningLogs = NO;
         _explicitlyRequestedReferrable = NO;
         _isReferrable = [self readBoolFromDefaults:BRANCH_PREFS_KEY_IS_REFERRABLE];
     }
@@ -133,6 +137,12 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
         NSString *log = [NSString stringWithFormat:@"[%@:%d] %@", filename, line, [[NSString alloc] initWithFormat:format arguments:args]];
         va_end(args);
         NSLog(@"%@", log);
+    }
+}
+
+- (void)logWarning:(NSString *)message {
+    if (!self.suppressWarningLogs) {
+        NSLog(@"[Branch Warning] %@", message);
     }
 }
 
@@ -526,6 +536,19 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     return [self.countsDictionary[[BRANCH_PREFS_KEY_UNIQUE_BASE stringByAppendingString:action]] integerValue];
 }
 
+- (void)updateBranchViewCount:(NSString *)branchViewID {
+    NSInteger currentCount = [self getBranchViewCount:branchViewID] + 1;
+    [self writeObjectToDefaults:[BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT stringByAppendingString:branchViewID] value:@(currentCount)];
+}
+
+- (NSInteger)getBranchViewCount:(NSString *)branchViewID {
+    NSInteger count = [self readIntegerFromDefaults:[BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT stringByAppendingString:branchViewID]];
+    if (count == NSNotFound){
+        count = 0;
+    }
+    return count;
+}
+
 #pragma mark - Writing To Persistence
 
 - (void)writeIntegerToDefaults:(NSString *)key value:(NSInteger)value {
@@ -553,7 +576,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
     NSDictionary *persistenceDict = [self.persistenceDict copy];
     NSBlockOperation *newPersistOp = [NSBlockOperation blockOperationWithBlock:^{
         if (![NSKeyedArchiver archiveRootObject:persistenceDict toFile:[self prefsFile]]) {
-            NSLog(@"[Branch Warning] Failed to persist preferences to disk");
+            [self logWarning:@"Failed to persist preferences to disk"];
         }
     }];
     [self.persistPrefsQueue addOperation:newPersistOp];
@@ -568,7 +591,7 @@ NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
             persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithFile:[self prefsFile]];
         }
         @catch (NSException *exception) {
-            NSLog(@"[Branch Warning] Failed to load preferences from disk");
+            [self logWarning:@"Failed to load preferences from disk"];
         }
 
         if (persistenceDict) {

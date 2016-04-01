@@ -13,12 +13,12 @@
 typedef void (^callback) ();
 typedef void (^shareCompletion) (NSString *activityType, BOOL completed);
 
-@interface BranchUniversalObject : NSObject
-
 typedef NS_ENUM(NSInteger, ContentIndexMode) {
     ContentIndexModePublic,
     ContentIndexModePrivate
 };
+
+@interface BranchUniversalObject : NSObject
 
 @property (nonatomic, strong) NSString *canonicalIdentifier;
 @property (nonatomic, strong) NSString *canonicalUrl;

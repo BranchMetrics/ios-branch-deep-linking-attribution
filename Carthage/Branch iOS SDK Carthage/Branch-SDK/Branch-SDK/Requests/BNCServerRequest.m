@@ -26,4 +26,10 @@
     // Nothing going on here
 }
 
+- (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
+    if (value) {
+        dict[key] = value;
+    }
+}
+
 @end
