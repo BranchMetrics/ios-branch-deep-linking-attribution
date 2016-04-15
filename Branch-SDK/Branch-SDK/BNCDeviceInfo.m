@@ -36,7 +36,6 @@ static BNCDeviceInfo *bncDeviceInfo;
             self.isRealHardwareId = isRealHardwareId;
         }
         
-        self.carrierName = [BNCSystemObserver getCarrier];
         self.brandName = [BNCSystemObserver getBrand];
         self.modelName = [BNCSystemObserver getModel];
         self.osName = [BNCSystemObserver getOS];

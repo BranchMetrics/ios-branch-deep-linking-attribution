@@ -18,7 +18,6 @@
 //---------Properties-------------//
 @property (nonatomic, strong) NSString *hardwareId;
 @property (nonatomic) BOOL isRealHardwareId;
-@property (nonatomic, strong) NSString *carrierName;
 @property (nonatomic, strong) NSString *brandName;
 @property (nonatomic, strong) NSString *modelName;
 @property (nonatomic, strong) NSString *osName;
