@@ -52,7 +52,6 @@ NSString * const BRANCH_REQUEST_KEY_UPDATE = @"update";
 NSString * const BRANCH_REQUEST_KEY_LINK_IDENTIFIER = @"link_identifier";
 NSString * const BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER = @"spotlight_identifier";
 NSString * const BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL = @"universal_link_url";
-NSString * const BRANCH_REQUEST_KEY_CARRIER = @"carrier";
 NSString * const BRANCH_REQUEST_KEY_BRAND = @"brand";
 NSString * const BRANCH_REQUEST_KEY_MODEL = @"model";
 NSString * const BRANCH_REQUEST_KEY_SCREEN_WIDTH = @"screen_width";
