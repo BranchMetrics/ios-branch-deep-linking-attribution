@@ -363,7 +363,7 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
 }
 
 - (NSString *)sessionParams {
-    if (_sessionParams) {
+    if (!_sessionParams) {
         _sessionParams = [self readStringFromDefaults:BRANCH_PREFS_KEY_SESSION_PARAMS];
     }
     
