@@ -13,6 +13,10 @@
 #import "BranchView.h"
 
 @interface BranchViewHandler() <UIWebViewDelegate>
+
+@property (nonatomic, strong) BranchView *pendingBranchView;
+@property (nonatomic, strong) UIWebView *pendingWebview;
+
 @end
 
 NSString * const BRANCH_VIEW_REDIRECT_SCHEME = @"branch-cta";
@@ -42,7 +46,6 @@ NSString *currentBranchViewID;
     if ([branchView isAvailable]){
         self.branchViewCallback = callback;
         [self showView:branchView];
-        [branchView updateUsageCount];
         return YES;
     } else {
         return NO;
@@ -73,14 +76,13 @@ NSString *currentBranchViewID;
     currentActionName = branchView.branchViewAction;
     currentBranchViewID = branchView.branchViewID;
     
-    UIViewController *holderView = [[UIViewController alloc] init];
-    [holderView.view insertSubview:webview atIndex:0];
-    UIViewController *presentingViewController = [[[[UIApplication sharedApplication] windows] firstObject] rootViewController];
-    [presentingViewController presentViewController:holderView animated:YES completion:nil];
-    
-    if (self.branchViewCallback) {
-        [self.branchViewCallback branchViewVisible:branchView.branchViewAction withID:branchView.branchViewID];
+    if (self.pendingBranchView == nil) {
+        self.pendingBranchView = branchView;
     }
+    if (self.pendingWebview == nil) {
+        self.pendingWebview = webview;
+    }
+    // Now delay showing the webview until a successful load completes.
 }
 
 - (void)closeBranchView {
@@ -103,6 +105,28 @@ NSString *currentBranchViewID;
         [self closeBranchView];
     }
     return !isRedirectHandled;
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    NSCachedURLResponse *resp = [[NSURLCache sharedURLCache] cachedResponseForRequest:webView.request];
+    NSInteger status = [(NSHTTPURLResponse*)resp.response statusCode];
+    NSLog(@"Status: %ld",(long)status);
+    if (status == 200) {
+        if (self.pendingBranchView != nil && self.pendingWebview != nil) {
+            UIViewController *holderView = [[UIViewController alloc] init];
+            [holderView.view insertSubview:self.pendingWebview atIndex:0];
+            UIViewController *presentingViewController = [[[[UIApplication sharedApplication] windows] firstObject] rootViewController];
+            [presentingViewController presentViewController:holderView animated:YES completion:nil];
+            
+            [self.pendingBranchView updateUsageCount];
+            
+            if (self.branchViewCallback) {
+                [self.branchViewCallback branchViewVisible:self.pendingBranchView.branchViewAction withID:self.pendingBranchView.branchViewID];
+            }
+        }
+    }
+    self.pendingBranchView = nil;
+    self.pendingWebview = nil;
 }
 
 - (BOOL)handleUserActionRedirects:(NSURLRequest *)request {
