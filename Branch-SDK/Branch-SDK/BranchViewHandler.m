@@ -22,6 +22,7 @@
 NSString * const BRANCH_VIEW_REDIRECT_SCHEME = @"branch-cta";
 NSString * const BRANCH_VIEW_REDIRECT_ACTION_ACCEPT = @"accept";
 NSString * const BRANCH_VIEW_REDIRECT_ACTION_CANCEL = @"cancel";
+const NSInteger BRANCH_VIEW_ERR_TEMP_UNAVAILABLE = -202;
 
 @implementation BranchViewHandler
 
@@ -109,9 +110,9 @@ NSString *currentBranchViewID;
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     NSCachedURLResponse *resp = [[NSURLCache sharedURLCache] cachedResponseForRequest:webView.request];
-    NSInteger status = [(NSHTTPURLResponse*)resp.response statusCode];
-    NSLog(@"Status: %ld",(long)status);
-    if (status == 200) {
+    NSInteger statusCode = [(NSHTTPURLResponse*)resp.response statusCode];
+    NSLog(@"Status: %ld",(long)statusCode);
+    if (statusCode == 200) {
         if (self.pendingBranchView != nil && self.pendingWebview != nil) {
             UIViewController *holderView = [[UIViewController alloc] init];
             [holderView.view insertSubview:self.pendingWebview atIndex:0];
@@ -123,6 +124,11 @@ NSString *currentBranchViewID;
             if (self.branchViewCallback) {
                 [self.branchViewCallback branchViewVisible:self.pendingBranchView.branchViewAction withID:self.pendingBranchView.branchViewID];
             }
+        }
+    } else {
+        if (self.branchViewCallback) {
+            NSString *message = [NSString stringWithFormat:@"%ld: %@", (long)statusCode, [NSHTTPURLResponse localizedStringForStatusCode:statusCode]];
+            [self.branchViewCallback branchViewErrorCode:BRANCH_VIEW_ERR_TEMP_UNAVAILABLE message:message actionName:self.pendingBranchView.branchViewAction withID:self.pendingBranchView.branchViewID];
         }
     }
     self.pendingBranchView = nil;
