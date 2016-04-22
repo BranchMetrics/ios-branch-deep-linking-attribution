@@ -111,7 +111,6 @@ NSString *currentBranchViewID;
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     NSCachedURLResponse *resp = [[NSURLCache sharedURLCache] cachedResponseForRequest:webView.request];
     NSInteger statusCode = [(NSHTTPURLResponse*)resp.response statusCode];
-    NSLog(@"Status: %ld",(long)statusCode);
     if (statusCode == 200) {
         if (self.pendingBranchView != nil && self.pendingWebview != nil) {
             UIViewController *holderView = [[UIViewController alloc] init];
