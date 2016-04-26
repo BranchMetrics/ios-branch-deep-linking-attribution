@@ -56,7 +56,6 @@ extern NSString * const BRANCH_REQUEST_KEY_BRAND;
 extern NSString * const BRANCH_REQUEST_KEY_MODEL;
 extern NSString * const BRANCH_REQUEST_KEY_SCREEN_WIDTH;
 extern NSString * const BRANCH_REQUEST_KEY_SCREEN_HEIGHT;
-extern NSString * const BRANCH_REQUEST_KEY_DEVICE_NAME;
 extern NSString * const BRANCH_REQUEST_KEY_IS_SIMULATOR;
 extern NSString * const BRANCH_REQUEST_KEY_LOG;
 extern NSString * const BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI;
