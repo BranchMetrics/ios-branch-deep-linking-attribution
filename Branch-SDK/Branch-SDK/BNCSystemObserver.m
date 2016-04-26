@@ -89,24 +89,6 @@
     return nil;
 }
 
-+ (NSString *)getCarrier {
-    NSString *carrierName = nil;
-
-    Class CTTelephonyNetworkInfoClass = NSClassFromString(@"CTTelephonyNetworkInfo");
-    if (CTTelephonyNetworkInfoClass) {
-        id networkInfo = [[CTTelephonyNetworkInfoClass alloc] init];
-        SEL subscriberCellularProviderSelector = NSSelectorFromString(@"subscriberCellularProvider");
-
-        id carrier = ((id (*)(id, SEL))[networkInfo methodForSelector:subscriberCellularProviderSelector])(networkInfo, subscriberCellularProviderSelector);
-        if (carrier) {
-            SEL carrierNameSelector = NSSelectorFromString(@"carrierName");
-            carrierName = ((NSString* (*)(id, SEL))[carrier methodForSelector:carrierNameSelector])(carrier, carrierNameSelector);
-        }
-    }
-    
-    return carrierName;
-}
-
 + (NSString *)getBrand {
     return @"Apple";
 }
@@ -128,16 +110,6 @@
         device = currentDevice.model;
     }
     return [device rangeOfString:@"Simulator"].location != NSNotFound;
-}
-
-+ (NSString *)getDeviceName {
-    if ([BNCSystemObserver isSimulator]) {
-        struct utsname name;
-        uname(&name);
-        return [NSString stringWithFormat:@"%@ %s", [[UIDevice currentDevice] name], name.nodename];
-    } else {
-        return [[UIDevice currentDevice] name];
-    }
 }
 
 + (NSNumber *)getUpdateState {

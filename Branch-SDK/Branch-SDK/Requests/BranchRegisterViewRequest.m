@@ -46,7 +46,6 @@
     [self safeSetValue:@([BNCSystemObserver isSimulator]) forKey:BRANCH_REQUEST_KEY_IS_SIMULATOR onDict:data];
 
     [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:data];
-    [self safeSetValue:[BNCSystemObserver getDeviceName] forKey:BRANCH_REQUEST_KEY_DEVICE_NAME onDict:data];
     
     [serverInterface postRequest:data url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_REGISTER_VIEW] key:key callback:callback];
 }

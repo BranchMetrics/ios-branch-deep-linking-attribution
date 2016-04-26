@@ -15,7 +15,6 @@
 + (NSString *)getAppVersion;
 + (NSString *)getBundleID;
 + (NSString *)getTeamIdentifier;
-+ (NSString *)getCarrier;
 + (NSString *)getBrand;
 + (NSString *)getModel;
 + (NSString *)getOS;
@@ -24,7 +23,6 @@
 + (NSNumber *)getScreenHeight;
 + (NSNumber *)getUpdateState;
 + (void)setUpdateState;
-+ (NSString *)getDeviceName;
 + (BOOL)isSimulator;
 + (BOOL)adTrackingSafe;
 
