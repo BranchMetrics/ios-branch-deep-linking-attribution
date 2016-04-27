@@ -61,10 +61,10 @@ NSString *currentBranchViewID;
     webview.scrollView.bounces = NO;
     webview.delegate = self;
     
-    if (branchView.webHtml) {
+    if (branchView.webHtml && ![branchView.webHtml isKindOfClass:[NSNull class]]) {
         [webview loadHTMLString:branchView.webHtml baseURL:nil];
     }
-    else if (branchView.webUrl) {
+    else if (branchView.webUrl && ![branchView.webUrl isKindOfClass:[NSNull class]]) {
         NSURL *url = [NSURL URLWithString:branchView.webUrl];
         NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
         [webview loadRequest:requestObj];
