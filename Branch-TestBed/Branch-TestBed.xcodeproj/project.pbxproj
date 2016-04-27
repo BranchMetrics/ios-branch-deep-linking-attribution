@@ -7,6 +7,48 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		110BC3ED1C44BCFC009B99C3 /* KeyboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 110BC3EC1C44BCFC009B99C3 /* KeyboardViewController.m */; };
+		110BC3F11C44BCFC009B99C3 /* Branch-TestExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 110BC3E91C44BCFB009B99C3 /* Branch-TestExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		110BC3FB1C44BF8D009B99C3 /* KeyboardView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 110BC3FA1C44BF8D009B99C3 /* KeyboardView.xib */; };
+		110BC71E1C465B8D009B99C3 /* BranchSetIdentityRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B34C1B0FD5BF0019767C /* BranchSetIdentityRequest.m */; };
+		110BC71F1C465B8D009B99C3 /* BranchLogoutRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B34F1B0FDAB70019767C /* BranchLogoutRequest.m */; };
+		110BC7201C465B8D009B99C3 /* BranchUserCompletedActionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3521B0FDD3C0019767C /* BranchUserCompletedActionRequest.m */; };
+		110BC7211C465B8D009B99C3 /* BranchLoadActionsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3551B0FE02E0019767C /* BranchLoadActionsRequest.m */; };
+		110BC7221C465B8D009B99C3 /* BranchLoadRewardsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3581B0FE0F70019767C /* BranchLoadRewardsRequest.m */; };
+		110BC7231C465B8D009B99C3 /* BranchRedeemRewardsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B35B1B0FE21A0019767C /* BranchRedeemRewardsRequest.m */; };
+		110BC7241C465B8D009B99C3 /* BranchCreditHistoryRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B35E1B0FE42D0019767C /* BranchCreditHistoryRequest.m */; };
+		110BC7251C465B8D009B99C3 /* BranchGetPromoCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3611B14CA890019767C /* BranchGetPromoCodeRequest.m */; };
+		110BC7261C465B8D009B99C3 /* BranchValidatePromoCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3641B14D1D20019767C /* BranchValidatePromoCodeRequest.m */; };
+		110BC7271C465B8D009B99C3 /* BranchApplyPromoCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3671B14D7290019767C /* BranchApplyPromoCodeRequest.m */; };
+		110BC7281C465B8D009B99C3 /* BranchShortUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B36A1B14DD870019767C /* BranchShortUrlRequest.m */; };
+		110BC7291C465B8D009B99C3 /* BranchShortUrlSyncRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 466B582F1B16227100A69EDE /* BranchShortUrlSyncRequest.m */; };
+		110BC72A1C465B8D009B99C3 /* BranchCloseRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B36D1B14F6540019767C /* BranchCloseRequest.m */; };
+		110BC72B1C465B8D009B99C3 /* BranchOpenRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3761B1507370019767C /* BranchOpenRequest.m */; };
+		110BC72C1C465B8D009B99C3 /* BranchInstallRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3791B1508B40019767C /* BranchInstallRequest.m */; };
+		110BC72D1C465B8D009B99C3 /* BranchSpotlightUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 460F4FA61B618A38002E84D6 /* BranchSpotlightUrlRequest.m */; };
+		110BC72E1C465B8D009B99C3 /* BranchRegisterViewRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F941BD20EB50004CE2E /* BranchRegisterViewRequest.m */; };
+		110BC72F1C465B8D009B99C3 /* BranchConnectDebugRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4642E6A61B1FA1DB006E4C1F /* BranchConnectDebugRequest.m */; };
+		110BC7301C465B8D009B99C3 /* BranchDisconnectDebugRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4642E6AA1B1FA2AA006E4C1F /* BranchDisconnectDebugRequest.m */; };
+		110BC7311C465B8D009B99C3 /* BranchLogRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4642E6AE1B1FA303006E4C1F /* BranchLogRequest.m */; };
+		110BC7321C465B8D009B99C3 /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3491B0FD4620019767C /* BNCServerRequest.m */; };
+		110BC7331C465B8D009B99C3 /* BNCDebugRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 467BA3541B713287003E458B /* BNCDebugRequest.m */; };
+		110BC7341C465B8D009B99C3 /* Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016BE1946309100A9E103 /* Branch.m */; };
+		110BC7351C465B8D009B99C3 /* BranchConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 4665AF251B28B9BB00184037 /* BranchConstants.m */; };
+		110BC7361C465B8D009B99C3 /* BNCPreferenceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C21946309100A9E103 /* BNCPreferenceHelper.m */; };
+		110BC7371C465B8D009B99C3 /* BNCServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C41946309100A9E103 /* BNCServerInterface.m */; };
+		110BC7381C465B8D009B99C3 /* BNCSystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016C81946309100A9E103 /* BNCSystemObserver.m */; };
+		110BC7391C465B8D009B99C3 /* BNCServerRequestQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6ACAF719E324090066913E /* BNCServerRequestQueue.m */; };
+		110BC73A1C465B8D009B99C3 /* BNCError.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E38829F1A37E22A004BDABE /* BNCError.m */; };
+		110BC73B1C465B8D009B99C3 /* BNCServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790919E90B9F008D4A83 /* BNCServerResponse.m */; };
+		110BC73C1C465B8D009B99C3 /* BNCLinkData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E30BCF31A71EEEE00AC7402 /* BNCLinkData.m */; };
+		110BC73D1C465B8D009B99C3 /* BNCLinkCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E30BCF61A72FE7900AC7402 /* BNCLinkCache.m */; };
+		110BC73E1C465B8D009B99C3 /* BranchActivityItemProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = D258D2C51A794D64004A1C90 /* BranchActivityItemProvider.m */; };
+		110BC73F1C465B8D009B99C3 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
+		110BC7401C465B8D009B99C3 /* BNCContentDiscoveryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 466D5A101B5991E3009DB845 /* BNCContentDiscoveryManager.m */; };
+		110BC7411C465B8D009B99C3 /* BNCStrongMatchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */; };
+		110BC7421C465B8D009B99C3 /* BranchCSSearchableItemAttributeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 54391A141BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m */; };
+		110BC7431C465B8D009B99C3 /* BranchUniversalObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F8C1BD1D4AE0004CE2E /* BranchUniversalObject.m */; };
+		110BC7441C465B8D009B99C3 /* BranchLinkProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */; };
 		460F4FA71B618A38002E84D6 /* BranchSpotlightUrlRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 460F4FA51B618A38002E84D6 /* BranchSpotlightUrlRequest.h */; };
 		460F4FA81B618A38002E84D6 /* BranchSpotlightUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 460F4FA61B618A38002E84D6 /* BranchSpotlightUrlRequest.m */; };
 		461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */; };
@@ -138,6 +180,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		110BC3EF1C44BCFC009B99C3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 670016581940F51400A9E103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 110BC3E81C44BCFB009B99C3;
+			remoteInfo = "Branch-TestExtension";
+		};
 		466B586F1B1777DE00A69EDE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 670016581940F51400A9E103 /* Project object */;
@@ -154,8 +203,28 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		110BC3F51C44BCFC009B99C3 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				110BC3F11C44BCFC009B99C3 /* Branch-TestExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		020EE1FD238C9B737656ABA0 /* libPods-Branch-SDK test.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK test.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		110BC3E91C44BCFB009B99C3 /* Branch-TestExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Branch-TestExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		110BC3EB1C44BCFC009B99C3 /* KeyboardViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardViewController.h; sourceTree = "<group>"; };
+		110BC3EC1C44BCFC009B99C3 /* KeyboardViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardViewController.m; sourceTree = "<group>"; };
+		110BC3EE1C44BCFC009B99C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		110BC3F61C44BD27009B99C3 /* Branch-TestExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Branch-TestExtension.entitlements"; sourceTree = "<group>"; };
+		110BC3FA1C44BF8D009B99C3 /* KeyboardView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = KeyboardView.xib; sourceTree = "<group>"; };
 		1715515941BF9D80F30AE170 /* Pods-Branch-SDK-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK-Tests/Pods-Branch-SDK-Tests.release.xcconfig"; sourceTree = "<group>"; };
 		31573E92BB6FA3902CA53858 /* Pods-Branch-SDK-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK-Tests/Pods-Branch-SDK-Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		404E2B2AF41159D3BBB79669 /* libPods-Branch-SDK Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -304,6 +373,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		110BC3E61C44BCFB009B99C3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		466B58351B17773000A69EDE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -341,6 +417,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		110BC3EA1C44BCFC009B99C3 /* Branch-TestExtension */ = {
+			isa = PBXGroup;
+			children = (
+				110BC3F61C44BD27009B99C3 /* Branch-TestExtension.entitlements */,
+				110BC3EB1C44BCFC009B99C3 /* KeyboardViewController.h */,
+				110BC3EC1C44BCFC009B99C3 /* KeyboardViewController.m */,
+				110BC3FA1C44BF8D009B99C3 /* KeyboardView.xib */,
+				110BC3EE1C44BCFC009B99C3 /* Info.plist */,
+			);
+			path = "Branch-TestExtension";
+			sourceTree = "<group>";
+		};
 		4659B3471B0FD4430019767C /* BranchRequests */ = {
 			isa = PBXGroup;
 			children = (
@@ -420,6 +508,7 @@
 			children = (
 				670016BB1946309100A9E103 /* Branch-SDK */,
 				670016691940F51400A9E103 /* Branch-TestBed */,
+				110BC3EA1C44BCFC009B99C3 /* Branch-TestExtension */,
 				7E6B3B521AA42D0E005F45BF /* Branch-SDK-Tests */,
 				E220F4281C7D39D500F5B126 /* Fabric */,
 				670016621940F51400A9E103 /* Frameworks */,
@@ -434,6 +523,7 @@
 				670016601940F51400A9E103 /* Branch-TestBed.app */,
 				7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */,
 				466B58381B17773000A69EDE /* libBranch.a */,
+				110BC3E91C44BCFB009B99C3 /* Branch-TestExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -647,6 +737,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		110BC3E81C44BCFB009B99C3 /* Branch-TestExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 110BC3F21C44BCFC009B99C3 /* Build configuration list for PBXNativeTarget "Branch-TestExtension" */;
+			buildPhases = (
+				110BC3E51C44BCFB009B99C3 /* Sources */,
+				110BC3E61C44BCFB009B99C3 /* Frameworks */,
+				110BC3E71C44BCFB009B99C3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Branch-TestExtension";
+			productName = "Branch-TestExtension";
+			productReference = 110BC3E91C44BCFB009B99C3 /* Branch-TestExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		466B58371B17773000A69EDE /* Branch */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 466B584D1B17773000A69EDE /* Build configuration list for PBXNativeTarget "Branch" */;
@@ -671,11 +778,13 @@
 				6700165C1940F51400A9E103 /* Sources */,
 				6700165D1940F51400A9E103 /* Frameworks */,
 				6700165E1940F51400A9E103 /* Resources */,
+				110BC3F51C44BCFC009B99C3 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				466B58701B1777DE00A69EDE /* PBXTargetDependency */,
+				110BC3F01C44BCFC009B99C3 /* PBXTargetDependency */,
 			);
 			name = "Branch-TestBed";
 			productName = "Branch-TestBed";
@@ -712,6 +821,15 @@
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Branch Metrics";
 				TargetAttributes = {
+					110BC3E81C44BCFB009B99C3 = {
+						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = SZEQ82CPUZ;
+						SystemCapabilities = {
+							com.apple.SafariKeychain = {
+								enabled = 1;
+							};
+						};
+					};
 					466B58371B17773000A69EDE = {
 						CreatedOnToolsVersion = 6.3.2;
 					};
@@ -747,11 +865,20 @@
 				466B58371B17773000A69EDE /* Branch */,
 				6700165F1940F51400A9E103 /* Branch-TestBed */,
 				7E6B3B501AA42D0E005F45BF /* Branch-SDK-Tests */,
+				110BC3E81C44BCFB009B99C3 /* Branch-TestExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		110BC3E71C44BCFB009B99C3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				110BC3FB1C44BF8D009B99C3 /* KeyboardView.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6700165E1940F51400A9E103 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -821,6 +948,53 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		110BC3E51C44BCFB009B99C3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				110BC72D1C465B8D009B99C3 /* BranchSpotlightUrlRequest.m in Sources */,
+				110BC7391C465B8D009B99C3 /* BNCServerRequestQueue.m in Sources */,
+				110BC72F1C465B8D009B99C3 /* BranchConnectDebugRequest.m in Sources */,
+				110BC73C1C465B8D009B99C3 /* BNCLinkData.m in Sources */,
+				110BC7401C465B8D009B99C3 /* BNCContentDiscoveryManager.m in Sources */,
+				110BC71E1C465B8D009B99C3 /* BranchSetIdentityRequest.m in Sources */,
+				110BC73B1C465B8D009B99C3 /* BNCServerResponse.m in Sources */,
+				110BC7211C465B8D009B99C3 /* BranchLoadActionsRequest.m in Sources */,
+				110BC7431C465B8D009B99C3 /* BranchUniversalObject.m in Sources */,
+				110BC7231C465B8D009B99C3 /* BranchRedeemRewardsRequest.m in Sources */,
+				110BC7241C465B8D009B99C3 /* BranchCreditHistoryRequest.m in Sources */,
+				110BC7361C465B8D009B99C3 /* BNCPreferenceHelper.m in Sources */,
+				110BC7281C465B8D009B99C3 /* BranchShortUrlRequest.m in Sources */,
+				110BC7291C465B8D009B99C3 /* BranchShortUrlSyncRequest.m in Sources */,
+				110BC7261C465B8D009B99C3 /* BranchValidatePromoCodeRequest.m in Sources */,
+				110BC7341C465B8D009B99C3 /* Branch.m in Sources */,
+				110BC7221C465B8D009B99C3 /* BranchLoadRewardsRequest.m in Sources */,
+				110BC7371C465B8D009B99C3 /* BNCServerInterface.m in Sources */,
+				110BC3ED1C44BCFC009B99C3 /* KeyboardViewController.m in Sources */,
+				110BC7331C465B8D009B99C3 /* BNCDebugRequest.m in Sources */,
+				110BC72B1C465B8D009B99C3 /* BranchOpenRequest.m in Sources */,
+				110BC7271C465B8D009B99C3 /* BranchApplyPromoCodeRequest.m in Sources */,
+				110BC72A1C465B8D009B99C3 /* BranchCloseRequest.m in Sources */,
+				110BC7201C465B8D009B99C3 /* BranchUserCompletedActionRequest.m in Sources */,
+				110BC7351C465B8D009B99C3 /* BranchConstants.m in Sources */,
+				110BC7311C465B8D009B99C3 /* BranchLogRequest.m in Sources */,
+				110BC7251C465B8D009B99C3 /* BranchGetPromoCodeRequest.m in Sources */,
+				110BC7421C465B8D009B99C3 /* BranchCSSearchableItemAttributeSet.m in Sources */,
+				110BC71F1C465B8D009B99C3 /* BranchLogoutRequest.m in Sources */,
+				110BC7321C465B8D009B99C3 /* BNCServerRequest.m in Sources */,
+				110BC7411C465B8D009B99C3 /* BNCStrongMatchHelper.m in Sources */,
+				110BC7301C465B8D009B99C3 /* BranchDisconnectDebugRequest.m in Sources */,
+				110BC73A1C465B8D009B99C3 /* BNCError.m in Sources */,
+				110BC73F1C465B8D009B99C3 /* BNCEncodingUtils.m in Sources */,
+				110BC7441C465B8D009B99C3 /* BranchLinkProperties.m in Sources */,
+				110BC72C1C465B8D009B99C3 /* BranchInstallRequest.m in Sources */,
+				110BC73E1C465B8D009B99C3 /* BranchActivityItemProvider.m in Sources */,
+				110BC7381C465B8D009B99C3 /* BNCSystemObserver.m in Sources */,
+				110BC73D1C465B8D009B99C3 /* BNCLinkCache.m in Sources */,
+				110BC72E1C465B8D009B99C3 /* BranchRegisterViewRequest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		466B58341B17773000A69EDE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -913,6 +1087,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		110BC3F01C44BCFC009B99C3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 110BC3E81C44BCFB009B99C3 /* Branch-TestExtension */;
+			targetProxy = 110BC3EF1C44BCFC009B99C3 /* PBXContainerItemProxy */;
+		};
 		466B58701B1777DE00A69EDE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 466B58371B17773000A69EDE /* Branch */;
@@ -945,6 +1124,57 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		110BC3F31C44BCFC009B99C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Branch-TestExtension/Branch-TestExtension.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"BRANCH_EXTENSION=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Branch-TestExtension/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed.Branch-TestExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		110BC3F41C44BCFC009B99C3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = "Branch-TestExtension/Branch-TestExtension.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "BRANCH_EXTENSION=1";
+				INFOPLIST_FILE = "Branch-TestExtension/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed.Branch-TestExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		466B58491B17773000A69EDE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1144,6 +1374,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		110BC3F21C44BCFC009B99C3 /* Build configuration list for PBXNativeTarget "Branch-TestExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				110BC3F31C44BCFC009B99C3 /* Debug */,
+				110BC3F41C44BCFC009B99C3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		466B584D1B17773000A69EDE /* Build configuration list for PBXNativeTarget "Branch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

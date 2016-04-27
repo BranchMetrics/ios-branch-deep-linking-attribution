@@ -436,6 +436,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
 // handle push notification if app is already launched
 - (void)handlePushNotification:(NSDictionary *) userInfo {
+#ifndef BRANCH_EXTENSION
     // If app is active, then close out the session and start a new one
     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
         [self callClose];
@@ -452,6 +453,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
         [self applicationDidBecomeActive];
     }
+#endif
 }
 
 
@@ -1201,10 +1203,12 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     [self clearTimer];
     self.sessionTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(callClose) userInfo:nil repeats:NO];
     [self.requestQueue persistImmediately];
-    
+
+#ifndef BRANCH_EXTENSION
     if (self.debugGestureRecognizer) {
         [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:self.debugGestureRecognizer];
     }
+#endif
 }
 
 - (void)clearTimer {
@@ -1391,7 +1395,8 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
             self.sessionInitWithBranchUniversalObjectCallback([self getLatestReferringBranchUniversalObject], [self getLatestReferringBranchLinkProperties], nil);
         }
     }
-    
+	
+#ifndef BRANCH_EXTENSION
     if (self.shouldAutomaticallyDeepLink) {
         // Find any matched keys, then launch any controllers that match
         // TODO which one to launch if more than one match?
@@ -1410,8 +1415,9 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
                 [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"[Branch Warning] View controller does not implement configureControlWithData:"];
             }
             branchSharingController.deepLinkingCompletionDelegate = self;
+
             self.deepLinkPresentingController = [[[UIApplication sharedApplication].delegate window] rootViewController];
-            
+			
             if ([self.deepLinkPresentingController presentedViewController]) {
                 [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
                     [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
@@ -1422,6 +1428,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
             }
         }
     }
+#endif
 }
 
 - (void)handleInitFailure:(NSError *)error {
