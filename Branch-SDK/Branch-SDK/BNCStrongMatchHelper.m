@@ -72,7 +72,7 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
     id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_app_domain"];
     if (ret) {
         if ([ret isKindOfClass:[NSString class]])
-            appDomainLinkURL = [NSString stringWithFormat:@"https://%@", ret, nil];
+            appDomainLinkURL = [NSString stringWithFormat:@"https://%@", ret];
     } else {
         appDomainLinkURL = BNC_LINK_URL;
     }
