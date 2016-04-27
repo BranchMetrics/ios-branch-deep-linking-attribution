@@ -61,7 +61,6 @@
     [[[systemObserverMock stub] andReturn:OS_VERSION] getOSVersion];
     [[[systemObserverMock stub] andReturn:URI_SCHEME] getDefaultUriScheme];
     [[[systemObserverMock stub] andReturn:UPDATE_STATE] getUpdateState];
-    [[[systemObserverMock stub] andReturn:CARRIER] getCarrier];
     [[[systemObserverMock stub] andReturn:BRAND] getBrand];
     [[[systemObserverMock stub] andReturn:MODEL] getModel];
     [[[systemObserverMock stub] andReturn:SCREEN_WIDTH] getScreenWidth];

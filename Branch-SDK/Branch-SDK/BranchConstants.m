@@ -52,12 +52,10 @@ NSString * const BRANCH_REQUEST_KEY_UPDATE = @"update";
 NSString * const BRANCH_REQUEST_KEY_LINK_IDENTIFIER = @"link_identifier";
 NSString * const BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER = @"spotlight_identifier";
 NSString * const BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL = @"universal_link_url";
-NSString * const BRANCH_REQUEST_KEY_CARRIER = @"carrier";
 NSString * const BRANCH_REQUEST_KEY_BRAND = @"brand";
 NSString * const BRANCH_REQUEST_KEY_MODEL = @"model";
 NSString * const BRANCH_REQUEST_KEY_SCREEN_WIDTH = @"screen_width";
 NSString * const BRANCH_REQUEST_KEY_SCREEN_HEIGHT = @"screen_height";
-NSString * const BRANCH_REQUEST_KEY_DEVICE_NAME = @"device_name";
 NSString * const BRANCH_REQUEST_KEY_IS_SIMULATOR = @"is_simulator";
 NSString * const BRANCH_REQUEST_KEY_LOG = @"log";
 
