@@ -193,6 +193,8 @@
      NSLog(@"branchViewCancelled for action : %@ %@", actionName, branchViewID);
 }
 
-
+- (void)branchViewErrorCode:(NSInteger)errorCode message:(NSString *)errorMsg actionName:(NSString *)actionName withID:(NSString *)branchViewID {
+    NSLog(@"branchViewErrorCode for action : %ld %@ %@", (long)errorCode, actionName, branchViewID);
+}
 
 @end
