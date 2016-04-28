@@ -1,5 +1,10 @@
 Branch iOS SDK change log
 
+- v0.12.1
+  * removed unnecessary device info
+  * error handling for Branch Views
+  * support for new Branch domains
+
 - v0.12.0
   * ability to suppress warning logs
   * fix NSURLSession checks
