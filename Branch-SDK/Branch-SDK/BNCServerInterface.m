@@ -122,6 +122,7 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
             
         }
         dispatch_async(dispatch_get_main_queue(), ^{
+            if (callback)
             callback(serverResponse, error);
         });
     };
