@@ -402,7 +402,14 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
             }
         }
         
-        return [[userActivity.webpageURL absoluteString] containsString:@"bnc.lt"];
+        NSString *userActivityURL = [userActivity.webpageURL absoluteString];
+        NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
+        for (NSString* domain in branchDomains) {
+            if ([userActivityURL containsString:domain])
+                return YES;
+        }
+        
+        return NO;
     }
     
     //check to see if a spotlight activity needs to be handled

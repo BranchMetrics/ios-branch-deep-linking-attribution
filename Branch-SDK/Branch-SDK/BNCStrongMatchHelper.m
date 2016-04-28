@@ -67,7 +67,16 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
 }
 
 - (void)presentSafariVCWithBranchKey:(NSString *)branchKey {
-    NSMutableString *urlString = [[NSMutableString alloc] initWithFormat:@"%@/_strong_match?os=%@", BNC_LINK_URL, [BNCSystemObserver getOS]];
+    
+    NSString *appDomainLinkURL;
+    id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_app_domain"];
+    if (ret) {
+        if ([ret isKindOfClass:[NSString class]])
+            appDomainLinkURL = [NSString stringWithFormat:@"https://%@", ret];
+    } else {
+        appDomainLinkURL = BNC_LINK_URL;
+    }
+    NSMutableString *urlString = [[NSMutableString alloc] initWithFormat:@"%@/_strong_match?os=%@", appDomainLinkURL, [BNCSystemObserver getOS]];
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     BOOL isRealHardwareId;
