@@ -25,5 +25,6 @@
 + (void)setUpdateState;
 + (BOOL)isSimulator;
 + (BOOL)adTrackingSafe;
++ (NSArray *)getWalletPasses;
 
 @end
