@@ -421,6 +421,12 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 
 - (void)suppressWarningLogs;
 
+/**
+ If set, the Branch SDK will try to get distinctId from Mixpanel, and send that up with every Install, Open and Event call.
+ distinctId can then be passed through to Mixpanel.
+ */
+- (void)collectMixpanelDistinctId;
+
 #pragma mark - Session Item methods
 
 ///--------------------
