@@ -267,11 +267,6 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 - (void)suppressWarningLogs {
     self.preferenceHelper.suppressWarningLogs = YES;
 }
-
-- (void)collectMixpanelDistinctId {
-    self.preferenceHelper.collectMixpanelDistinctId = YES;
-}
-
 #pragma mark - InitSession Permutation methods
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options {

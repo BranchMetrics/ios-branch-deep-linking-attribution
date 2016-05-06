@@ -44,7 +44,6 @@
     params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
     params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
-    [self safeSetValue:[preferenceHelper getMixpanelDistinctId] forKey:BRANCH_REQUEST_KEY_MIXPANEL_DISTINCT_ID onDict:params];
     
     if (self.state) {
         params[BRANCH_REQUEST_KEY_STATE] = self.state;
