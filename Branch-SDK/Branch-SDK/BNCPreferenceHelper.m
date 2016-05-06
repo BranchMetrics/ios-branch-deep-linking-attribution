@@ -34,7 +34,6 @@ NSString * const BRANCH_PREFS_KEY_USER_URL = @"bnc_user_url";
 NSString * const BRANCH_PREFS_KEY_IS_REFERRABLE = @"bnc_is_referrable";
 NSString * const BRANCH_PREFS_KEY_BRANCH_UNIVERSAL_LINK_DOMAINS = @"branch_universal_link_domains";
 NSString * const BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI = @"external_intent_uri";
-NSString * const BRANCH_REQUEST_KEY_MIXPANEL_DISTINCT_ID = @"$mixpanel_distinct_id";
 
 NSString * const BRANCH_PREFS_KEY_CREDITS = @"bnc_credits";
 NSString * const BRANCH_PREFS_KEY_CREDIT_BASE = @"bnc_credit_base_";
@@ -548,29 +547,6 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
         count = 0;
     }
     return count;
-}
-
-- (NSString *)getMixpanelDistinctId {
-    if (self.collectMixpanelDistinctId) {
-        @try {
-            Class MixpanelClass = NSClassFromString(@"Mixpanel");
-            NSString *distinctId;
-            if (MixpanelClass) {
-                SEL sharedInstanceSelector = NSSelectorFromString(@"sharedInstance");
-                id mixpanel = ((id (*)(id, SEL))[MixpanelClass methodForSelector:sharedInstanceSelector])(MixpanelClass, sharedInstanceSelector);
-                SEL distinctIdSelector = NSSelectorFromString(@"distinctId");
-                distinctId = ((NSString* (*)(id, SEL))[mixpanel methodForSelector:distinctIdSelector])(mixpanel, distinctIdSelector);
-                if (distinctId) {
-                    return distinctId;
-                }
-            }
-            [self logWarning:@"Failed to get Mixpanel distinctId"];
-        }
-        @catch (NSException *exception) {
-            [self logWarning:@"Failed to get Mixpanel distinctId"];
-        }
-    }
-    return nil;
 }
 
 #pragma mark - Writing To Persistence
