@@ -80,7 +80,8 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     BOOL isRealHardwareId;
-    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:preferenceHelper.isDebug];
+    NSString *hardwareIdType;
+    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId isDebug:preferenceHelper.isDebug andType:&hardwareIdType];
     if (!hardwareId || !isRealHardwareId) {
         [preferenceHelper logWarning:@"Cannot use cookie-based matching while setDebug is enabled"];
         self.shouldDelayInstallRequest = NO;
