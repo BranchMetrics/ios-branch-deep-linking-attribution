@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name             = "Branch"
+  s.name             = "Branch-no-idfa"
   s.version          = "0.12.1"
   s.summary          = "Create an HTTP URL for any piece of content in your app"
   s.description      = <<-DESC
