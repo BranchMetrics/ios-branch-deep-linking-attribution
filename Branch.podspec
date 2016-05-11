@@ -21,7 +21,15 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.platform     = :ios, '6.0'
   s.requires_arc = true
 
-  s.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Fabric/*.h", "Branch-SDK/Branch-SDK/Requests/*.{h,m}"
+  s.subspec 'Core' do |core|
+    core.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Fabric/*.h", "Branch-SDK/Branch-SDK/Requests/*.{h,m}"
 
-  s.frameworks = 'AdSupport', 'CoreTelephony', 'MobileCoreServices'
+    core.frameworks = 'AdSupport', 'CoreTelephony', 'MobileCoreServices'
+  end
+
+  s.subspec 'without-IDFA' do |idfa|
+    idfa.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Fabric/*.h", "Branch-SDK/Branch-SDK/Requests/*.{h,m}"
+
+    idfa.frameworks = 'CoreTelephony', 'MobileCoreServices'
+  end
 end
