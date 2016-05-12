@@ -248,6 +248,7 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
    
     if (deviceInfo.hardwareId) {
         dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = deviceInfo.hardwareId;
+        dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = deviceInfo.hardwareIdType;
         dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = @(deviceInfo.isRealHardwareId);
     }
     

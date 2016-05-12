@@ -53,7 +53,7 @@
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
     
     id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
-    [[[[systemObserverMock stub] ignoringNonObjectArgs] andReturn:HARDWARE_ID] getUniqueHardwareId:0 andIsDebug:YES];
+    [[[[systemObserverMock stub] ignoringNonObjectArgs] andReturn:HARDWARE_ID] getUniqueHardwareId:0 isDebug:YES andType:nil];
     [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingSafe];
     [[[systemObserverMock stub] andReturn:BUNDLE_ID] getBundleID];
     [[[systemObserverMock stub] andReturn:APP_VERSION] getAppVersion];
