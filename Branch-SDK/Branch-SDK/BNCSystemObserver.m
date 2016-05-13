@@ -44,6 +44,16 @@
     return uid;
 }
 
++ (NSString *)getVendorId:(BOOL)debug {
+    NSString *vendorId = nil;
+    
+    if (!debug && NSClassFromString(@"UIDevice")) {
+        vendorId = [[UIDevice currentDevice].identifierForVendor UUIDString];
+    }
+    
+    return vendorId;
+}
+
 + (BOOL)adTrackingSafe {
     Class ASIdentifierManagerClass = NSClassFromString(@"ASIdentifierManager");
     if (ASIdentifierManagerClass) {

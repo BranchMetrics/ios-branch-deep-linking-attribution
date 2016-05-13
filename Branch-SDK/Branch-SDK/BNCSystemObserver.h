@@ -11,6 +11,7 @@
 @interface BNCSystemObserver : NSObject
 
 + (NSString *)getUniqueHardwareId:(BOOL *)isReal isDebug:(BOOL)debug andType:(NSString **)type;
++ (NSString *)getVendorId:(BOOL)debug;
 + (NSString *)getDefaultUriScheme;
 + (NSString *)getAppVersion;
 + (NSString *)getBundleID;
