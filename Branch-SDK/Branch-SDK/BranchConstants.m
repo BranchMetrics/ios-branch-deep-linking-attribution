@@ -40,6 +40,7 @@ NSString * const BRANCH_REQUEST_KEY_APP_LIST = @"apps_data";
 NSString * const BRANCH_REQUEST_KEY_HARDWARE_ID = @"hardware_id";
 NSString * const BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE = @"hardware_id_type";
 NSString * const BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL = @"is_hardware_id_real";
+NSString * const BRANCH_REQUEST_KEY_IOS_VENDOR_ID = @"ios_vendor_id";
 NSString * const BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED = @"ad_tracking_enabled";
 NSString * const BRANCH_REQUEST_KEY_IS_REFERRABLE = @"is_referrable";
 NSString * const BRANCH_REQUEST_KEY_DEBUG = @"debug";
