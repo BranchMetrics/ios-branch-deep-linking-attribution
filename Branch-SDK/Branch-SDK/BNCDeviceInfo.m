@@ -38,11 +38,7 @@ static BNCDeviceInfo *bncDeviceInfo;
             self.hardwareIdType = hardwareIdType;
         }
         
-        NSString *vendorId = [BNCSystemObserver getVendorId:preferenceHelper.isDebug];
-        if (vendorId) {
-            self.vendorId = vendorId;
-        }
-    
+        self.vendorId = [BNCSystemObserver getVendorId:preferenceHelper.isDebug];
         self.brandName = [BNCSystemObserver getBrand];
         self.modelName = [BNCSystemObserver getModel];
         self.osName = [BNCSystemObserver getOS];
