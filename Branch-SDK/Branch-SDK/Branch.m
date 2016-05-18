@@ -267,6 +267,11 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 - (void)suppressWarningLogs {
     self.preferenceHelper.suppressWarningLogs = YES;
 }
+
+- (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value {
+    [self.preferenceHelper setRequestMetadataKey:key value:value];
+}
+
 #pragma mark - InitSession Permutation methods
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options {

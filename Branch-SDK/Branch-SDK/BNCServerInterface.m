@@ -214,6 +214,11 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
     fullParamDict[@"retryNumber"] = @(retryNumber);
     
+    NSMutableDictionary *metadata = [[NSMutableDictionary alloc] init];
+    [metadata addEntriesFromDictionary:self.preferenceHelper.requestMetadataDictionary];
+    [metadata addEntriesFromDictionary:fullParamDict[BRANCH_REQUEST_KEY_STATE]];
+    fullParamDict[BRANCH_REQUEST_KEY_STATE] = metadata;
+    
     if ([key hasPrefix:@"key_"]) {
         fullParamDict[@"branch_key"] = key;
     }
