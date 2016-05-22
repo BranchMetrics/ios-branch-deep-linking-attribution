@@ -101,6 +101,9 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
                 NSURLRequest *retryRequest = retryHandler(retryNumber);
                 [self genericHTTPRequest:retryRequest retryNumber:(retryNumber + 1) log:log callback:callback retryHandler:retryHandler];
             });
+            
+            // Do not continue on if retrying, else the callback will be called incorrectly
+            return;
         }
         else if (callback) {
             // Wrap up bad statuses w/ specific error messages
@@ -123,7 +126,7 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback)
-            callback(serverResponse, error);
+                callback(serverResponse, error);
         });
     };
     
