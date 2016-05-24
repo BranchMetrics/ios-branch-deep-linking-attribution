@@ -38,6 +38,7 @@ static BNCDeviceInfo *bncDeviceInfo;
             self.hardwareIdType = hardwareIdType;
         }
         
+        self.vendorId = [BNCSystemObserver getVendorId:preferenceHelper.isDebug];
         self.brandName = [BNCSystemObserver getBrand];
         self.modelName = [BNCSystemObserver getModel];
         self.osName = [BNCSystemObserver getOS];
