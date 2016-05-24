@@ -365,7 +365,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
 - (BOOL)handleDeepLink:(NSURL *)url {
     BOOL handled = NO;
-    if (url) {
+    if (url && ![url isEqual:[NSNull null]]) {
         //always save the incoming url in the preferenceHelper in the externalIntentURI field
         self.preferenceHelper.externalIntentURI = [url absoluteString];
 
