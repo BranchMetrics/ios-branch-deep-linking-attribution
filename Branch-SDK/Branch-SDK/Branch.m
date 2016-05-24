@@ -341,13 +341,14 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
             }
         }
         else if ([options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
-            self.preferenceHelper.shouldWaitForInit = YES;
             if (self.accountForFacebookSDK) {
                 id activity = [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
                 if (activity && [activity isKindOfClass:[NSUserActivity class]]) {
                     [self continueUserActivity:activity];
+                    return;
                 }
             }
+            self.preferenceHelper.shouldWaitForInit = YES;
         }
     }
     else if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
