@@ -421,6 +421,14 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 
 - (void)suppressWarningLogs;
 
+/**
+ Key-value pairs to be included in the metadata on every request.
+ 
+ @param key String to be included in request metadata
+ @param value Object to be included in request metadata
+ */
+- (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
+
 #pragma mark - Session Item methods
 
 ///--------------------
