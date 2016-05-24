@@ -101,6 +101,9 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
                 NSURLRequest *retryRequest = retryHandler(retryNumber);
                 [self genericHTTPRequest:retryRequest retryNumber:(retryNumber + 1) log:log callback:callback retryHandler:retryHandler];
             });
+            
+            // Do not continue on if retrying, else the callback will be called incorrectly
+            return;
         }
         else if (callback) {
             // Wrap up bad statuses w/ specific error messages
@@ -123,7 +126,7 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             if (callback)
-            callback(serverResponse, error);
+                callback(serverResponse, error);
         });
     };
     
@@ -214,6 +217,11 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
     fullParamDict[@"retryNumber"] = @(retryNumber);
     
+    NSMutableDictionary *metadata = [[NSMutableDictionary alloc] init];
+    [metadata addEntriesFromDictionary:self.preferenceHelper.requestMetadataDictionary];
+    [metadata addEntriesFromDictionary:fullParamDict[BRANCH_REQUEST_KEY_STATE]];
+    fullParamDict[BRANCH_REQUEST_KEY_STATE] = metadata;
+    
     if ([key hasPrefix:@"key_"]) {
         fullParamDict[@"branch_key"] = key;
     }
@@ -248,9 +256,11 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
    
     if (deviceInfo.hardwareId) {
         dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = deviceInfo.hardwareId;
+        dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = deviceInfo.hardwareIdType;
         dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = @(deviceInfo.isRealHardwareId);
     }
     
+    [self safeSetValue:deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
     [self safeSetValue:deviceInfo.brandName forKey:BRANCH_REQUEST_KEY_BRAND onDict:dict];
     [self safeSetValue:deviceInfo.modelName forKey:BRANCH_REQUEST_KEY_MODEL onDict:dict];
     [self safeSetValue:deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
