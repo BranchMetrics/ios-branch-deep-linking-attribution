@@ -30,12 +30,15 @@ static BNCDeviceInfo *bncDeviceInfo;
     if (self = [super init]) {
         BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
         BOOL isRealHardwareId;
-        NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId andIsDebug:preferenceHelper.isDebug];
+        NSString *hardwareIdType;
+        NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId isDebug:preferenceHelper.isDebug andType:&hardwareIdType];
         if (hardwareId) {
             self.hardwareId = hardwareId;
             self.isRealHardwareId = isRealHardwareId;
+            self.hardwareIdType = hardwareIdType;
         }
         
+        self.vendorId = [BNCSystemObserver getVendorId:preferenceHelper.isDebug];
         self.brandName = [BNCSystemObserver getBrand];
         self.modelName = [BNCSystemObserver getModel];
         self.osName = [BNCSystemObserver getOS];

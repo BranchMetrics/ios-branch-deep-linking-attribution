@@ -65,6 +65,9 @@
 - (void)updateBranchViewCount:(NSString *)branchViewID;
 - (NSInteger)getBranchViewCount:(NSString *)branchViewID;
 
+- (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
+- (NSMutableDictionary *)requestMetadataDictionary;
+
 - (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
 - (void)logWarning:(NSString *)message;
 @end

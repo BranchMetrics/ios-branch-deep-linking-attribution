@@ -16,7 +16,7 @@
 
 @implementation BNCSystemObserver
 
-+ (NSString *)getUniqueHardwareId:(BOOL *)isReal andIsDebug:(BOOL)debug {
++ (NSString *)getUniqueHardwareId:(BOOL *)isReal isDebug:(BOOL)debug andType:(NSString **)type {
     NSString *uid = nil;
     *isReal = YES;
 
@@ -27,18 +27,31 @@
         SEL advertisingIdentifierSelector = NSSelectorFromString(@"advertisingIdentifier");
         NSUUID *uuid = ((NSUUID* (*)(id, SEL))[sharedManager methodForSelector:advertisingIdentifierSelector])(sharedManager, advertisingIdentifierSelector);
         uid = [uuid UUIDString];
+        *type = @"idfa";
     }
 
     if (!uid && NSClassFromString(@"UIDevice") && !debug) {
         uid = [[UIDevice currentDevice].identifierForVendor UUIDString];
+        *type = @"vendor_id";
     }
 
     if (!uid) {
         uid = [[NSUUID UUID] UUIDString];
+        *type = @"random";
         *isReal = NO;
     }
 
     return uid;
+}
+
++ (NSString *)getVendorId:(BOOL)debug {
+    NSString *vendorId = nil;
+    
+    if (!debug && NSClassFromString(@"UIDevice")) {
+        vendorId = [[UIDevice currentDevice].identifierForVendor UUIDString];
+    }
+    
+    return vendorId;
 }
 
 + (BOOL)adTrackingSafe {
