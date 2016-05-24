@@ -382,8 +382,15 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  
  @param debugParams dictionary of keystrings/valuestrings that will be added to response 
  */
--(void) setDeepLinkDebugMode:(NSDictionary *)debugParams;
+-(void)setDeepLinkDebugMode:(NSDictionary *)debugParams;
 
+
+/**
+ Register your Facebook SDK's FBSDKAppLinkUtility class to be used by Branch for deferred deep linking from their platform
+ 
+ @param FBSDKAppLinkUtility - call [FBSDKAppLinkUtility class] after importing #import <FBSDKCoreKit/FBSDKCoreKit.h>
+ */
+- (void)registerFacebookDeepLinkingClass:(id)FBSDKAppLinkUtility;
 
 /**
  Specify the time to wait in seconds between retries in the case of a Branch server error

@@ -52,6 +52,7 @@ NSString * const BRANCH_REQUEST_KEY_OS_VERSION = @"os_version";
 NSString * const BRANCH_REQUEST_KEY_URI_SCHEME = @"uri_scheme";
 NSString * const BRANCH_REQUEST_KEY_UPDATE = @"update";
 NSString * const BRANCH_REQUEST_KEY_LINK_IDENTIFIER = @"link_identifier";
+NSString * const BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS = @"facebook_app_link_checked";
 NSString * const BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER = @"spotlight_identifier";
 NSString * const BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL = @"universal_link_url";
 NSString * const BRANCH_REQUEST_KEY_BRAND = @"brand";
