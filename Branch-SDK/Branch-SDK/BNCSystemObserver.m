@@ -44,10 +44,10 @@
     return uid;
 }
 
-+ (NSString *)getVendorId:(BOOL)debug {
++ (NSString *)getVendorId {
     NSString *vendorId = nil;
     
-    if (!debug && NSClassFromString(@"UIDevice")) {
+    if (NSClassFromString(@"UIDevice")) {
         vendorId = [[UIDevice currentDevice].identifierForVendor UUIDString];
     }
     
