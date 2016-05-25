@@ -39,8 +39,8 @@
 #import "BranchRegisterViewRequest.h"
 
 //Fabric
-#import "FABKitProtocol.h"
-#import "Fabric+FABKits.h"
+#import "../Fabric/FABKitProtocol.h"
+#import "../Fabric/Fabric+FABKits.h"
 
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
