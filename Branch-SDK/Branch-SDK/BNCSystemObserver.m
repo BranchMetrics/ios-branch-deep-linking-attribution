@@ -47,7 +47,7 @@
 + (NSString *)getVendorId:(BOOL)debug {
     NSString *vendorId = nil;
     
-    if (!debug && NSClassFromString(@"UIDevice")) {
+    if (NSClassFromString(@"UIDevice")) {
         vendorId = [[UIDevice currentDevice].identifierForVendor UUIDString];
     }
     
