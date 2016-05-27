@@ -1,5 +1,12 @@
 Branch iOS SDK change log
 
+- v0.12.2
+  * better error handling for 500s
+  * check for Facebook deferred app links on the client
+  * sanity checks for strong_match url
+  * send vendor_id in requests
+  * provide .podspec to install SDK without AdSupport framework
+
 - v0.12.1
   * removed unnecessary device info
   * error handling for Branch Views
