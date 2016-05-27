@@ -31,8 +31,9 @@
 @property (assign, nonatomic) BOOL explicitlyRequestedReferrable;
 @property (assign, nonatomic) BOOL isReferrable;
 @property (assign, nonatomic) BOOL isDebug;
-@property (assign, nonatomic) BOOL isContinuingUserActivity;
+@property (assign, nonatomic) BOOL shouldWaitForInit;
 @property (assign, nonatomic) BOOL suppressWarningLogs;
+@property (assign, nonatomic) BOOL checkedFacebookAppLinks;
 @property (assign, nonatomic) NSInteger retryCount;
 @property (assign, nonatomic) NSTimeInterval retryInterval;
 @property (assign, nonatomic) NSTimeInterval timeout;
@@ -63,6 +64,9 @@
 
 - (void)updateBranchViewCount:(NSString *)branchViewID;
 - (NSInteger)getBranchViewCount:(NSString *)branchViewID;
+
+- (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
+- (NSMutableDictionary *)requestMetadataDictionary;
 
 - (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
 - (void)logWarning:(NSString *)message;
