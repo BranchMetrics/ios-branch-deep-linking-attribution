@@ -12,6 +12,7 @@
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
 #import "BranchViewHandler.h"
+#import "BNCFabricAnswers.h"
 
 @interface BranchOpenRequest ()
 
@@ -80,7 +81,7 @@
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
-    
+    preferenceHelper.isFabricIntegrated = [data[BRANCH_RESPONSE_KEY_APP_ORIGIN] isEqualToString:@"Twitter Fabric"];
     [BNCSystemObserver setUpdateState];
     
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
@@ -97,7 +98,7 @@
     if (sessionData.length && preferenceHelper.isReferrable) {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         BOOL dataIsFromALinkClick = [sessionDataDict[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] isEqual:@1];
-        
+
         BOOL storedParamsAreEmpty = YES;
         if ([preferenceHelper.installParams isKindOfClass:[NSString class]]) {
             storedParamsAreEmpty = !preferenceHelper.installParams.length;
@@ -105,6 +106,10 @@
         
         if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {
             preferenceHelper.installParams = sessionData;
+        }
+        
+        if (dataIsFromALinkClick && preferenceHelper.isFabricIntegrated) {
+            [BNCFabricAnswers sendEventWithName:[self getActionName] andAttributes:sessionDataDict];
         }
     }
     

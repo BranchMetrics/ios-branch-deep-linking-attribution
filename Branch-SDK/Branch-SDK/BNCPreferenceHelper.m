@@ -26,6 +26,7 @@ NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
 NSString * const BRANCH_PREFS_KEY_IDENTITY_ID = @"bnc_identity_id";
 NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
 NSString * const BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS = @"bnc_checked_fb_app_links";
+NSString * const BRANCH_PREFS_KEY_IS_FABRIC_INTEGRATED = @"bnc_is_fabric_integrated";
 NSString * const BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
 NSString * const BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER = @"bnc_spotlight_identifier";
 NSString * const BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL = @"bnc_universal_link_url";
@@ -79,6 +80,7 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
             retryCount = _retryCount,
             retryInterval = _retryInterval,
             timeout = _timeout,
+            isFabricIntegrated = _isFabricIntegrated,
             lastStrongMatchDate = _lastStrongMatchDate,
             checkedFacebookAppLinks = _checkedFacebookAppLinks,
             requestMetadataDictionary = _requestMetadataDictionary;
@@ -433,6 +435,15 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
     [self writeBoolToDefaults:BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS value:checked];
 }
 
+- (BOOL)isFabricIntegrated {
+    _isFabricIntegrated = [self readBoolFromDefaults:BRANCH_PREFS_KEY_IS_FABRIC_INTEGRATED];
+    return _isFabricIntegrated;
+}
+
+- (void)setIsFabricIntegrated:(BOOL)isFabricIntegrated {
+    _isFabricIntegrated = isFabricIntegrated;
+    [self writeBoolToDefaults:BRANCH_PREFS_KEY_IS_FABRIC_INTEGRATED value:isFabricIntegrated];
+}
 - (BOOL)isReferrable {
     BOOL hasIdentity = self.identityID != nil;
     
