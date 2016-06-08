@@ -81,16 +81,13 @@
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
-    preferenceHelper.isFabricIntegrated = ([data[BRANCH_RESPONSE_KEY_APP_ORIGIN] isEqualToString:APP_ORIGIN_TWITTER_FABRIC]);
+    preferenceHelper.isFabricEnabled = ([data[BRANCH_RESPONSE_KEY_APP_ORIGIN] isEqualToString:APP_ORIGIN_TWITTER_FABRIC]);
     [BNCSystemObserver setUpdateState];
     
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
     
     // Update session params
     preferenceHelper.sessionParams = sessionData;
-    NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
-    NSLog(@"sessionDataDict %@", sessionDataDict);
-    [BNCFabricAnswers prepareBranchDataForEvent:@"share" andData:sessionDataDict];
 
     // Scenarios:
     // If no data, data isn't from a link click, or isReferrable is false, don't set, period.
@@ -98,12 +95,11 @@
     // * On Install: set.
     // * On Open and installParams set: don't set.
     // * On Open and stored installParams are empty: set.
-    if (sessionData.length && preferenceHelper.isReferrable) {
-       // NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
-      
+    if (sessionData.length) {
+        NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         BOOL dataIsFromALinkClick = [sessionDataDict[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] isEqual:@1];
-
         BOOL storedParamsAreEmpty = YES;
+        
         if ([preferenceHelper.installParams isKindOfClass:[NSString class]]) {
             storedParamsAreEmpty = !preferenceHelper.installParams.length;
         }
@@ -112,7 +108,7 @@
             preferenceHelper.installParams = sessionData;
         }
         
-        if (dataIsFromALinkClick && preferenceHelper.isFabricIntegrated) {
+        if (dataIsFromALinkClick && preferenceHelper.isFabricEnabled) {
             [BNCFabricAnswers sendEventWithName:[self getActionName] andAttributes:sessionDataDict];
         }
     }

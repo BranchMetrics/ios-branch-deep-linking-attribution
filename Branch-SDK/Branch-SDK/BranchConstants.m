@@ -106,7 +106,6 @@ NSString * const BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_lin
 NSString * const BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA = @"branch_view_data";
 NSString * const BRANCH_RESPONSE_KEY_APP_ORIGIN = @"app_origin";
 
-
 NSString * const BRANCH_LINK_DATA_KEY_OG_TITLE = @"$og_title";
 NSString * const BRANCH_LINK_DATA_KEY_OG_DESCRIPTION = @"$og_description";
 NSString * const BRANCH_LINK_DATA_KEY_OG_IMAGE_URL = @"$og_image_url";

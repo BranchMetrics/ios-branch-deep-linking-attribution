@@ -80,7 +80,7 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
             retryCount = _retryCount,
             retryInterval = _retryInterval,
             timeout = _timeout,
-            isFabricIntegrated = _isFabricIntegrated,
+            isFabricEnabled = _isFabricEnabled,
             lastStrongMatchDate = _lastStrongMatchDate,
             checkedFacebookAppLinks = _checkedFacebookAppLinks,
             requestMetadataDictionary = _requestMetadataDictionary;
@@ -435,14 +435,14 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
     [self writeBoolToDefaults:BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS value:checked];
 }
 
-- (BOOL)isFabricIntegrated {
-    _isFabricIntegrated = [self readBoolFromDefaults:BRANCH_PREFS_KEY_IS_FABRIC_INTEGRATED];
-    return _isFabricIntegrated;
+- (BOOL)isFabricEnabled {
+    _isFabricEnabled = [self readBoolFromDefaults:BRANCH_PREFS_KEY_IS_FABRIC_INTEGRATED];
+    return _isFabricEnabled;
 }
 
-- (void)setIsFabricIntegrated:(BOOL)isFabricIntegrated {
-    _isFabricIntegrated = isFabricIntegrated;
-    [self writeBoolToDefaults:BRANCH_PREFS_KEY_IS_FABRIC_INTEGRATED value:isFabricIntegrated];
+- (void)setIsFabricEnabled:(BOOL)isFabricEnabled {
+    _isFabricEnabled = isFabricEnabled;
+    [self writeBoolToDefaults:BRANCH_PREFS_KEY_IS_FABRIC_INTEGRATED value:isFabricEnabled];
 }
 - (BOOL)isReferrable {
     BOOL hasIdentity = self.identityID != nil;

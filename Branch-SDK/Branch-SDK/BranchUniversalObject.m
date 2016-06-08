@@ -164,8 +164,8 @@
     if ([shareViewController respondsToSelector:@selector(completionWithItemsHandler)]) {
         shareViewController.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
             if (completion) {
-                [BNCFabricAnswers prepareBranchDataForEvent:@"share" andData:[self getDictionaryWithCompleteLinkProperties:linkProperties]];
                 completion(activityType, completed);
+                [BNCFabricAnswers sendEventWithName:@"share" andAttributes:[self getDictionaryWithCompleteLinkProperties:linkProperties]];
             }
         };
     } else {
