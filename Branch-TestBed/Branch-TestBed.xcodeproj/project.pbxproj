@@ -137,6 +137,8 @@
 		E214D4471CAF432C007FF922 /* Fabric.h in Headers */ = {isa = PBXBuildFile; fileRef = E214D4431CAF42F5007FF922 /* Fabric.h */; };
 		E214D4481CAF432C007FF922 /* Fabric+FABKits.h in Headers */ = {isa = PBXBuildFile; fileRef = E214D4441CAF42F5007FF922 /* Fabric+FABKits.h */; };
 		E2546CDA1C82B164006AD5D2 /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = E2546CD91C82B164006AD5D2 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E2B597071D063EEF00A089A6 /* Answers.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B597061D063EEF00A089A6 /* Answers.h */; };
+		E2B597091D063F1D00A089A6 /* ANSCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B597081D063F1D00A089A6 /* ANSCompatibility.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -304,6 +306,8 @@
 		E214D4431CAF42F5007FF922 /* Fabric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fabric.h; sourceTree = "<group>"; };
 		E214D4441CAF42F5007FF922 /* Fabric+FABKits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Fabric+FABKits.h"; sourceTree = "<group>"; };
 		E2546CD91C82B164006AD5D2 /* BranchSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchSDK.h; sourceTree = "<group>"; };
+		E2B597061D063EEF00A089A6 /* Answers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Answers.h; sourceTree = "<group>"; };
+		E2B597081D063F1D00A089A6 /* ANSCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANSCompatibility.h; sourceTree = "<group>"; };
 		FDC715ABABBD5DC03AF5936B /* libPods-Branch-SDK Debugger Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK Debugger Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -580,6 +584,8 @@
 		E220F4281C7D39D500F5B126 /* Fabric */ = {
 			isa = PBXGroup;
 			children = (
+				E2B597061D063EEF00A089A6 /* Answers.h */,
+				E2B597081D063F1D00A089A6 /* ANSCompatibility.h */,
 				E214D4411CAF42F5007FF922 /* FABAttributes.h */,
 				E214D4421CAF42F5007FF922 /* FABKitProtocol.h */,
 				E214D4431CAF42F5007FF922 /* Fabric.h */,
@@ -613,6 +619,7 @@
 				466B587C1B17780A00A69EDE /* BNCLinkData.h in Headers */,
 				462B50461B449DF000967B81 /* BranchDeepLinkingController.h in Headers */,
 				54FF1F951BD20EB50004CE2E /* BranchRegisterViewRequest.h in Headers */,
+				E2B597071D063EEF00A089A6 /* Answers.h in Headers */,
 				46946B851B26898800627BCC /* BNCServerRequest.h in Headers */,
 				466D5A111B5991E3009DB845 /* BNCContentDiscoveryManager.h in Headers */,
 				466B58741B17780A00A69EDE /* BNCPreferenceHelper.h in Headers */,
@@ -631,6 +638,7 @@
 				466B58781B17780A00A69EDE /* BNCServerRequestQueue.h in Headers */,
 				466B58751B17780A00A69EDE /* BNCServerInterface.h in Headers */,
 				46946B981B2689A100627BCC /* BranchLoadRewardsRequest.h in Headers */,
+				E2B597091D063F1D00A089A6 /* ANSCompatibility.h in Headers */,
 				466B587B1B17780A00A69EDE /* BNCServerResponse.h in Headers */,
 				46946B971B2689A100627BCC /* BranchLoadActionsRequest.h in Headers */,
 				466B587F1B17780A00A69EDE /* BNCEncodingUtils.h in Headers */,

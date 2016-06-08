@@ -123,3 +123,4 @@ NSString * const BRANCH_LINK_DATA_KEY_CONTENT_TYPE = @"$content_type";
 NSString * const BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT = @"$email_subject";
 
 NSString * const BRANCH_SPOTLIGHT_PREFIX = @"io.branch.link.v1";
+NSString * const APP_ORIGIN_TWITTER_FABRIC = @"Twitter Fabric";
