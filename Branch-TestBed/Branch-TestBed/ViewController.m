@@ -52,17 +52,25 @@
 - (IBAction)cmdShareLink:(id)sender {
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = @"sharing";
+    linkProperties.alias = @"man";
+    linkProperties.tags = @[@"tag1", @"tag2"];
+    linkProperties.matchDuration = 123;
+    linkProperties.stage = @"first";
     [linkProperties addControlParam:@"$desktop_url" withValue:@"http://example.com/home"];
     [linkProperties addControlParam:@"$ios_url" withValue:@"http://example.com/ios"];
+    [linkProperties addControlParam:@"ios_url" withValue:@"http://example.com/ios"];
 
-    
-    [self.branchUniversalObject
-     showShareSheetWithShareText:@"Super amazing thing I want to share"
-     completion:^(NSString *activityType, BOOL completed) {
-         if (completed) {
-             NSLog(@"%@", [NSString stringWithFormat:@"Completed sharing to %@", activityType]);
-         }
+    [self.branchUniversalObject showShareSheetWithLinkProperties:linkProperties andShareText:@"" fromViewController:self.parentViewController completion:^(NSString *activityType, BOOL completed) {
+        //
     }];
+    
+//    [self.branchUniversalObject
+//     showShareSheetWithShareText:@"Super amazing thing I want to share"
+//     completion:^(NSString *activityType, BOOL completed) {
+//         if (completed) {
+//             NSLog(@"%@", [NSString stringWithFormat:@"Completed sharing to %@", activityType]);
+//         }
+//    }];
 }
 - (IBAction)cmdRegisterView:(id)sender {
     [self.branchUniversalObject registerView];

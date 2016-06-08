@@ -123,3 +123,4 @@ extern NSString * const BRANCH_LINK_DATA_KEY_CONTENT_TYPE;
 extern NSString * const BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT;
 
 extern NSString * const BRANCH_SPOTLIGHT_PREFIX;
+extern NSString * const APP_ORIGIN_TWITTER_FABRIC;
