@@ -165,7 +165,11 @@
         shareViewController.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
             if (completion) {
                 completion(activityType, completed);
-                [BNCFabricAnswers sendEventWithName:@"share" andAttributes:[self getDictionaryWithCompleteLinkProperties:linkProperties]];
+                // DEBUG ONLY
+                _preferenceHelper.isFabricEnabled = YES;
+                if (_preferenceHelper.isFabricEnabled) {
+                    [BNCFabricAnswers sendEventWithName:@"share" andAttributes:[self getDictionaryWithCompleteLinkProperties:linkProperties]];
+                }
             }
         };
     } else {
