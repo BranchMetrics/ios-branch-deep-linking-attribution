@@ -33,6 +33,7 @@
     self.branchUniversalObject.title = @"My Content Title";
     self.branchUniversalObject.contentDescription = @"My Content Description";
     self.branchUniversalObject.imageUrl = @"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png";
+    self.branchUniversalObject.keywords = @[@"key1", @"key2"];
     [self.branchUniversalObject addMetadataKey:@"custom_key1" value:@"some custom data"];
     [self.branchUniversalObject addMetadataKey:@"custom_key2" value:@"more custom data"];
 }
@@ -52,7 +53,7 @@
 - (IBAction)cmdShareLink:(id)sender {
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = @"sharing";
-    linkProperties.alias = @"man";
+    linkProperties.alias = @"some alias";
     linkProperties.tags = @[@"tag1", @"tag2"];
     linkProperties.matchDuration = 123;
     linkProperties.stage = @"first";
