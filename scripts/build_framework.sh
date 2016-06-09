@@ -57,7 +57,7 @@ cp $PROJECT_DIR/$BUILD_DIR/$CONFIGURATION-iphoneos/Headers/* $FRAMEWORK_DIR/Vers
 cp $PROJECT_DIR/$BUILD_DIR/$LIBRARY_BINARY_NAME $FRAMEWORK_DIR/Versions/A/$FRAMEWORK_BINARY_NAME
 #Fabric
 cp $PROJECT_DIR/module.modulemap $FRAMEWORK_DIR/Modules/
-cp $PROJECT_DIR/Branch-Testbed/Framework-Info.plist $FRAMEWORK_DIR/Info.plist
+cp $PROJECT_DIR/Framework-Info.plist $FRAMEWORK_DIR/Info.plist
 # Clean up build dir. This must be done *before* the end of the script, otherwise it doesn't seem to do anything.
 rm -rf $PROJECT_DIR/$BUILD_DIR
 
