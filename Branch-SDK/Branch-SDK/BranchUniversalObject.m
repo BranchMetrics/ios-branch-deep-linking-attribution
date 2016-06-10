@@ -165,7 +165,8 @@
         shareViewController.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
             if (completion) {
                 completion(activityType, completed);
-                // DEBUG ONLY
+
+#warning DEBUG_ONLY
                 _preferenceHelper.isFabricEnabled = YES;
                 if (_preferenceHelper.isFabricEnabled) {
                     [BNCFabricAnswers sendEventWithName:@"share" andAttributes:[self getDictionaryWithCompleteLinkProperties:linkProperties]];

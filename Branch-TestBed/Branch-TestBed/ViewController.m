@@ -55,7 +55,7 @@
     linkProperties.feature = @"sharing";
     linkProperties.alias = @"some alias";
     linkProperties.tags = @[@"tag1", @"tag2"];
-    linkProperties.matchDuration = 123;
+    linkProperties.matchDuration = 7200; // default: 2 hours
     linkProperties.stage = @"first";
     [linkProperties addControlParam:@"$desktop_url" withValue:@"http://example.com/home"];
     [linkProperties addControlParam:@"$ios_url" withValue:@"http://example.com/ios"];

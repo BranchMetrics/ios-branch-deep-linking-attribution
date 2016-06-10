@@ -108,7 +108,7 @@
             preferenceHelper.installParams = sessionData;
         }
         
-        //DEBUG ONLY
+#warning DEBUG ONLY
         preferenceHelper.isFabricEnabled = YES;
         if (dataIsFromALinkClick && preferenceHelper.isFabricEnabled) {
             [BNCFabricAnswers sendEventWithName:[self getActionName] andAttributes:sessionDataDict];
