@@ -13,7 +13,6 @@
 
 + (void)sendEventWithName:(NSString *)name andAttributes:(NSDictionary *)attributes {
     ANSLogCustomEvent(name, [self prepareBranchDataForAnswers:attributes]);
-    
 }
 
 + (NSDictionary *)prepareBranchDataForAnswers:(NSDictionary *)dictionary {
@@ -23,17 +22,8 @@
         if ([key hasPrefix:@"+"]) {
             // ignore because this data is not found on the ShareSheet
             continue;
-        } else if ([key hasPrefix:@"~"]) {
-            // strip tildes ~
-            temp[[key substringFromIndex:1]] = dictionary[key];
-        } else {
-            // link data
-            temp[[NSString stringWithFormat:@"data.%@", key]] = dictionary[key];
-        }
-        
-        //flatten arrays, separate if statement because they are caught in one of the prefix conditionals
-        if ([dictionary[key] isKindOfClass:[NSArray class]]) {
-            // special treatement for ~tags
+        } else if ([dictionary[key] isKindOfClass:[NSArray class]]) {
+            // flatten arrays, special treatement for ~tags
             NSString *aKey;
             if ([key hasPrefix:@"~"])
                 aKey = [key substringFromIndex:1];
@@ -41,8 +31,14 @@
                 aKey = key;
             NSArray *valuesArray = dictionary[key];
             for (NSUInteger i = 0; i < valuesArray.count; ++i) {
-                temp[[NSString stringWithFormat:@"%@.%lu", aKey, i + 1]] = valuesArray[i];
+                temp[[NSString stringWithFormat:@"%@.%lu", aKey, i]] = valuesArray[i];
             }
+        } else if ([key hasPrefix:@"~"]) {
+            // strip tildes ~
+            temp[[key substringFromIndex:1]] = dictionary[key];
+        } else if ([dictionary[key] isKindOfClass:[NSNumber class]] || [dictionary[key] isKindOfClass:[NSString class]]) {
+            // link data, only accept NSNumber and NSStrings values
+            temp[[NSString stringWithFormat:@"data.%@", key]] = dictionary[key];
         }
     }
     return temp;
