@@ -87,7 +87,11 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
     NSURLSessionCompletionHandler = ^void(NSData *data, NSURLResponse *response, NSError *error) {
         BNCServerResponse *serverResponse = [self processServerResponse:response data:data error:error log:log];
         NSInteger status = [serverResponse.statusCode integerValue];
-        BOOL isRetryableStatusCode = status >= 500;
+        // If the phone is in a poor network condition,
+        // iOS will return statuses such as -1001, -1003, -1200, -9806
+        // indicating various parts of the HTTP post failed.
+        // We should retry in those conditions in addition to the case where the server returns a 500
+        BOOL isRetryableStatusCode = status >= 500 || status < 0;
         
         // Retry the request if appropriate
         if (retryNumber < self.preferenceHelper.retryCount && isRetryableStatusCode) {
