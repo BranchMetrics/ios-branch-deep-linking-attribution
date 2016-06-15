@@ -7,6 +7,7 @@
 //
 
 #import "BNCFabricAnswers.h"
+#import "BNCPreferenceHelper.h"
 #import "Answers.h"
 
 @implementation BNCFabricAnswers
@@ -19,7 +20,7 @@
     NSMutableDictionary *temp = [[NSMutableDictionary alloc] init];
     
     for (NSString *key in dictionary.allKeys) {
-        if ([key hasPrefix:@"+"]) {
+        if ([key hasPrefix:@"+"] || [key hasPrefix:@"$"] || [key isEqualToString:@"~referring_link"]) {
             // ignore because this data is not found on the ShareSheet
             continue;
         } else if ([dictionary[key] isKindOfClass:[NSArray class]]) {
@@ -36,11 +37,12 @@
         } else if ([key hasPrefix:@"~"]) {
             // strip tildes ~
             temp[[key substringFromIndex:1]] = dictionary[key];
-        } else if ([dictionary[key] isKindOfClass:[NSNumber class]] || [dictionary[key] isKindOfClass:[NSString class]]) {
-            // link data, only accept NSNumber and NSStrings values
-            temp[[NSString stringWithFormat:@"data.%@", key]] = dictionary[key];
         }
     }
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    temp[@"branch_identity"] = preferenceHelper.identityID;
+    
     return temp;
 }
 

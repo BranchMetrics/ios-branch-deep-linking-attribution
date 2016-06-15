@@ -27,7 +27,6 @@ NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
 NSString * const BRANCH_PREFS_KEY_IDENTITY_ID = @"bnc_identity_id";
 NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
 NSString * const BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS = @"bnc_checked_fb_app_links";
-NSString * const BRANCH_PREFS_KEY_IS_FABRIC_INTEGRATED = @"bnc_is_fabric_integrated";
 NSString * const BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
 NSString * const BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER = @"bnc_spotlight_identifier";
 NSString * const BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL = @"bnc_universal_link_url";
@@ -84,7 +83,6 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             retryCount = _retryCount,
             retryInterval = _retryInterval,
             timeout = _timeout,
-            isFabricEnabled = _isFabricEnabled,
             lastStrongMatchDate = _lastStrongMatchDate,
             checkedFacebookAppLinks = _checkedFacebookAppLinks,
             requestMetadataDictionary = _requestMetadataDictionary;
@@ -450,15 +448,6 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     [self writeBoolToDefaults:BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS value:checked];
 }
 
-- (BOOL)isFabricEnabled {
-    _isFabricEnabled = [self readBoolFromDefaults:BRANCH_PREFS_KEY_IS_FABRIC_INTEGRATED];
-    return _isFabricEnabled;
-}
-
-- (void)setIsFabricEnabled:(BOOL)isFabricEnabled {
-    _isFabricEnabled = isFabricEnabled;
-    [self writeBoolToDefaults:BRANCH_PREFS_KEY_IS_FABRIC_INTEGRATED value:isFabricEnabled];
-}
 - (BOOL)isReferrable {
     BOOL hasIdentity = self.identityID != nil;
     

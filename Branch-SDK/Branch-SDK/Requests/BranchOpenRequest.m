@@ -81,7 +81,6 @@
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
-    preferenceHelper.isFabricEnabled = ([data[BRANCH_RESPONSE_KEY_APP_ORIGIN] isEqualToString:APP_ORIGIN_TWITTER_FABRIC]);
     [BNCSystemObserver setUpdateState];
     
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
@@ -108,11 +107,7 @@
             preferenceHelper.installParams = sessionData;
         }
         
-#warning DEBUG ONLY
-        preferenceHelper.isFabricEnabled = YES;
-        if (dataIsFromALinkClick && preferenceHelper.isFabricEnabled) {
-            [BNCFabricAnswers sendEventWithName:[self getActionName] andAttributes:sessionDataDict];
-        }
+        [BNCFabricAnswers sendEventWithName:[self getActionName] andAttributes:sessionDataDict];
     }
     
     // Clear link identifiers so they don't get reused on the next open

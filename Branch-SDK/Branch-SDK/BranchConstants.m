@@ -104,7 +104,6 @@ NSString * const BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID = @"device_fingerprin
 NSString * const BRANCH_RESPONSE_KEY_SESSION_DATA = @"data";
 NSString * const BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 NSString * const BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA = @"branch_view_data";
-NSString * const BRANCH_RESPONSE_KEY_APP_ORIGIN = @"app_origin";
 
 NSString * const BRANCH_LINK_DATA_KEY_OG_TITLE = @"$og_title";
 NSString * const BRANCH_LINK_DATA_KEY_OG_DESCRIPTION = @"$og_description";
@@ -122,4 +121,3 @@ NSString * const BRANCH_LINK_DATA_KEY_CONTENT_TYPE = @"$content_type";
 NSString * const BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT = @"$email_subject";
 
 NSString * const BRANCH_SPOTLIGHT_PREFIX = @"io.branch.link.v1";
-NSString * const APP_ORIGIN_TWITTER_FABRIC = @"Twitter Fabric";

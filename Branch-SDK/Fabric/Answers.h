@@ -221,7 +221,6 @@ NS_ASSUME_NONNULL_END
 // only performing some actions if so.
 static _Nullable Class ANSGetAnswersClass() {
     Class answersClass = NSClassFromString(@"Answers");
-    NSLog(@"in twitter %@", answersClass);
     if ([answersClass respondsToSelector:@selector(logCustomEventWithName:customAttributes:)]) {
         return answersClass;
     }
