@@ -32,7 +32,7 @@
                 aKey = key;
             NSArray *valuesArray = dictionary[key];
             for (NSUInteger i = 0; i < valuesArray.count; ++i) {
-                temp[[NSString stringWithFormat:@"%@.%lu", aKey, i]] = valuesArray[i];
+                temp[[NSString stringWithFormat:@"%@.%lu", aKey, (unsigned long)i]] = valuesArray[i];
             }
         } else if ([key hasPrefix:@"~"]) {
             // strip tildes ~
