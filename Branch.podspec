@@ -22,13 +22,13 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.requires_arc = true
 
   s.subspec 'Core' do |core|
-    core.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Branch-SDK/Requests/*.{h,m}"
+    core.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Branch-SDK/Requests/*.{h,m}", "Branch-SDK/Fabric/*.h"
     core.private_header_files = "Branch-SDK/Fabric/*.h"
     core.frameworks = 'AdSupport', 'CoreTelephony', 'MobileCoreServices'
   end
 
   s.subspec 'without-IDFA' do |idfa|
-    idfa.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Branch-SDK/Requests/*.{h,m}"
+    idfa.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Branch-SDK/Requests/*.{h,m}", "Branch-SDK/Fabric/*.h"
     idfa.private_header_files = "Branch-SDK/Fabric/*.h"
     idfa.frameworks = 'CoreTelephony', 'MobileCoreServices'
   end
