@@ -8,7 +8,7 @@
 
 #import "BNCFabricAnswers.h"
 #import "BNCPreferenceHelper.h"
-#import "Answers.h"
+#import "../Fabric/Answers.h"
 
 @implementation BNCFabricAnswers
 
