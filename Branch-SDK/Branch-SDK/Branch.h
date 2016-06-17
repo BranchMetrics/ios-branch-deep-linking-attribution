@@ -436,6 +436,8 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
 
+- (void)setThirdPartyUniversalLinksRegex:(NSRegularExpression *)regex;
+
 #pragma mark - Session Item methods
 
 ///--------------------

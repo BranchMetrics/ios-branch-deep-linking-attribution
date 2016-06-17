@@ -61,7 +61,7 @@ NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
 NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
-@interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit>
+@interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit, NSURLSessionDelegate>
 
 
 @property (strong, nonatomic) BNCServerInterface *bServerInterface;
@@ -271,6 +271,11 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value {
     [self.preferenceHelper setRequestMetadataKey:key value:value];
 }
+
+- (void)setThirdPartyUniversalLinksRegex:(NSRegularExpression *)regex {
+    self.preferenceHelper.thirdPartyUniversalLinksRegex = regex;
+}
+
 
 #pragma mark - InitSession Permutation methods
 
@@ -1287,7 +1292,6 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
         dispatch_semaphore_signal(self.processing_sema);
         
         BNCServerRequest *req = [self.requestQueue peek];
-        
         if (req) {
             BNCServerCallback callback = ^(BNCServerResponse *response, NSError *error) {
                 // If the request was successful, or was a bad user request, continue processing.
@@ -1334,7 +1338,11 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
                 [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
                 return;
             }
-            
+
+            if (self.preferenceHelper.thirdPartyUniversalLinksRegex && self.preferenceHelper.universalLinkUrl && ([req isKindOfClass:[BranchInstallRequest class]] || [req isKindOfClass:[BranchOpenRequest class]]) && [self.preferenceHelper.thirdPartyUniversalLinksRegex matchesInString:self.preferenceHelper.universalLinkUrl options:0 range:NSMakeRange(0, self.preferenceHelper.universalLinkUrl.length)]) {
+                [self getBranchUniversalLinkUrlForThirdPartyUrl];
+            }
+
             if (![req isKindOfClass:[BranchCloseRequest class]]) {
                 [self clearTimer];
             }
@@ -1345,6 +1353,31 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     else {
         dispatch_semaphore_signal(self.processing_sema);
     }
+}
+
+- (void)getBranchUniversalLinkUrlForThirdPartyUrl {
+    NSURL *url = [NSURL URLWithString:self.preferenceHelper.universalLinkUrl];
+    if (!url) {
+        return;
+    }
+
+    NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:url];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:nil];
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    NSURLSessionTask *task = [session dataTaskWithRequest:req completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        dispatch_semaphore_signal(semaphore);
+    }];
+    [task resume];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+}
+
+- (void)URLSession:(NSURLSession *)session
+              task:(NSURLSessionTask *)task
+willPerformHTTPRedirection:(NSHTTPURLResponse *)redirectResponse
+        newRequest:(NSURLRequest *)request
+ completionHandler:(void (^)(NSURLRequest *))completionHandler {
+    self.preferenceHelper.universalLinkUrl = request.URL.absoluteString;
+    completionHandler(nil);
 }
 
 

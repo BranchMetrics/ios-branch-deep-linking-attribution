@@ -81,7 +81,8 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
             timeout = _timeout,
             lastStrongMatchDate = _lastStrongMatchDate,
             checkedFacebookAppLinks = _checkedFacebookAppLinks,
-            requestMetadataDictionary = _requestMetadataDictionary;
+            requestMetadataDictionary = _requestMetadataDictionary,
+            thirdPartyUniversalLinksRegex = _thirdPartyUniversalLinksRegex;
 
 + (BNCPreferenceHelper *)preferenceHelper {
     static BNCPreferenceHelper *preferenceHelper;

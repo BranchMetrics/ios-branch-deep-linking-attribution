@@ -38,6 +38,7 @@
 @property (assign, nonatomic) NSTimeInterval retryInterval;
 @property (assign, nonatomic) NSTimeInterval timeout;
 @property (strong, nonatomic) NSString *externalIntentURI;
+@property (strong, nonatomic) NSRegularExpression *thirdPartyUniversalLinksRegex;
 
 + (BNCPreferenceHelper *)preferenceHelper;
 
