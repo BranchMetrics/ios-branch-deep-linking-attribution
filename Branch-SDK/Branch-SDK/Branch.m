@@ -385,7 +385,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
         }
     }
     
-    [self initUserSessionAndCallCallback:YES];
+    [self initUserSessionAndCallCallback:!self.isInitialized];
     
     return handled;
 }
