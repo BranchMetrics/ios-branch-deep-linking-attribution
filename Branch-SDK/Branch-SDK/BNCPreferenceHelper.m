@@ -10,6 +10,7 @@
 #import "BNCEncodingUtils.h"
 #import "BNCConfig.h"
 #import "Branch.h"
+#import "../Fabric/Fabric+FABKits.h"
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
@@ -44,6 +45,9 @@ NSString * const BRANCH_PREFS_KEY_TOTAL_BASE = @"bnc_total_base_";
 NSString * const BRANCH_PREFS_KEY_UNIQUE_BASE = @"bnc_unique_base_";
 
 NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usage_cnt_";
+
+// The name of this key was specified in the account-creation API integration
+static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 
 @interface BNCPreferenceHelper ()
 
@@ -192,6 +196,17 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
         }
         else if ([ret isKindOfClass:[NSDictionary class]]) {
             self.branchKey = isLive ? ret[@"live"] : ret[@"test"];
+        }
+    } else {
+        Class fabric = NSClassFromString(@"Fabric");
+        
+        if (fabric) {
+            NSDictionary *configDictionary = [fabric configurationDictionaryForKitClass:[Branch class]];
+            ret = [configDictionary objectForKey:BNC_BRANCH_FABRIC_APP_KEY_KEY];
+            
+            if ([ret isKindOfClass:[NSString class]]) {
+                self.branchKey = ret;
+            }
         }
     }
     

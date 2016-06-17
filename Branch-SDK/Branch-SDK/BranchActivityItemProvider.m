@@ -73,7 +73,6 @@
     if ([channel isEqualToString:@"facebook"] || [channel isEqualToString:@"twitter"]  || [channel isEqualToString:@"com.tinyspeck.chatlyio.share"]) {
         return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andAlias:alias ignoreUAString:self.userAgentString forceLinkCreation:YES]];
     }
-    
     return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andAlias:alias ignoreUAString:nil forceLinkCreation:YES]];
 }
 

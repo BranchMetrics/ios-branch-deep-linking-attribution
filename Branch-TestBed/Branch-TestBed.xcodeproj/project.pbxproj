@@ -130,10 +130,8 @@
 		7D58823A1CA1DF2700FF6358 /* BNCDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5882391CA1DF2700FF6358 /* BNCDeviceInfo.m */; };
 		7E6B3B561AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6B3B551AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m */; };
 		9F4BE02E2EFA48B94EB8CEAD /* libPods-Branch-SDK-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA508DAFBC70E7B594A5D76C /* libPods-Branch-SDK-Tests.a */; };
-		E214D4451CAF432C007FF922 /* FABAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = E214D4411CAF42F5007FF922 /* FABAttributes.h */; };
-		E214D4461CAF432C007FF922 /* FABKitProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = E214D4421CAF42F5007FF922 /* FABKitProtocol.h */; };
-		E214D4471CAF432C007FF922 /* Fabric.h in Headers */ = {isa = PBXBuildFile; fileRef = E214D4431CAF42F5007FF922 /* Fabric.h */; };
-		E214D4481CAF432C007FF922 /* Fabric+FABKits.h in Headers */ = {isa = PBXBuildFile; fileRef = E214D4441CAF42F5007FF922 /* Fabric+FABKits.h */; };
+		E2133B731D01297E00763049 /* BNCFabricAnswers.h in Headers */ = {isa = PBXBuildFile; fileRef = E2133B711D0125EF00763049 /* BNCFabricAnswers.h */; };
+		E2133B751D01477200763049 /* BNCFabricAnswers.m in Sources */ = {isa = PBXBuildFile; fileRef = E2133B741D01477200763049 /* BNCFabricAnswers.m */; };
 		E2546CDA1C82B164006AD5D2 /* BranchSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = E2546CD91C82B164006AD5D2 /* BranchSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -295,11 +293,15 @@
 		D258D2C41A794D64004A1C90 /* BranchActivityItemProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchActivityItemProvider.h; sourceTree = "<group>"; };
 		D258D2C51A794D64004A1C90 /* BranchActivityItemProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchActivityItemProvider.m; sourceTree = "<group>"; };
 		D85A06FB422AB22B126B40DE /* libPods-Branch-SDK Load Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK Load Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E214D4411CAF42F5007FF922 /* FABAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FABAttributes.h; sourceTree = "<group>"; };
-		E214D4421CAF42F5007FF922 /* FABKitProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FABKitProtocol.h; sourceTree = "<group>"; };
-		E214D4431CAF42F5007FF922 /* Fabric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fabric.h; sourceTree = "<group>"; };
-		E214D4441CAF42F5007FF922 /* Fabric+FABKits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Fabric+FABKits.h"; sourceTree = "<group>"; };
+		E2133B711D0125EF00763049 /* BNCFabricAnswers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCFabricAnswers.h; sourceTree = "<group>"; };
+		E2133B741D01477200763049 /* BNCFabricAnswers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCFabricAnswers.m; sourceTree = "<group>"; };
+		E214D4411CAF42F5007FF922 /* FABAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FABAttributes.h; path = "../Branch-SDK/Fabric/FABAttributes.h"; sourceTree = "<group>"; };
+		E214D4421CAF42F5007FF922 /* FABKitProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FABKitProtocol.h; path = "../Branch-SDK/Fabric/FABKitProtocol.h"; sourceTree = "<group>"; };
+		E214D4431CAF42F5007FF922 /* Fabric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Fabric.h; path = "../Branch-SDK/Fabric/Fabric.h"; sourceTree = "<group>"; };
+		E214D4441CAF42F5007FF922 /* Fabric+FABKits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Fabric+FABKits.h"; path = "../Branch-SDK/Fabric/Fabric+FABKits.h"; sourceTree = "<group>"; };
 		E2546CD91C82B164006AD5D2 /* BranchSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchSDK.h; sourceTree = "<group>"; };
+		E2B597061D063EEF00A089A6 /* Answers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Answers.h; path = "../Branch-SDK/Fabric/Answers.h"; sourceTree = "<group>"; };
+		E2B597081D063F1D00A089A6 /* ANSCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ANSCompatibility.h; path = "../Branch-SDK/Fabric/ANSCompatibility.h"; sourceTree = "<group>"; };
 		FDC715ABABBD5DC03AF5936B /* libPods-Branch-SDK Debugger Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK Debugger Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -538,6 +540,8 @@
 				54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */,
 				7D5882301CA1BEEA00FF6358 /* BNCDeviceInfo.h */,
 				7D5882391CA1DF2700FF6358 /* BNCDeviceInfo.m */,
+				E2133B711D0125EF00763049 /* BNCFabricAnswers.h */,
+				E2133B741D01477200763049 /* BNCFabricAnswers.m */,
 			);
 			name = "Branch-SDK";
 			path = "../Branch-SDK/Branch-SDK";
@@ -574,6 +578,8 @@
 		E220F4281C7D39D500F5B126 /* Fabric */ = {
 			isa = PBXGroup;
 			children = (
+				E2B597061D063EEF00A089A6 /* Answers.h */,
+				E2B597081D063F1D00A089A6 /* ANSCompatibility.h */,
 				E214D4411CAF42F5007FF922 /* FABAttributes.h */,
 				E214D4421CAF42F5007FF922 /* FABKitProtocol.h */,
 				E214D4431CAF42F5007FF922 /* Fabric.h */,
@@ -641,6 +647,7 @@
 				46946B881B26899100627BCC /* BranchUserCompletedActionRequest.h in Headers */,
 				466B587A1B17780A00A69EDE /* BNCError.h in Headers */,
 				46946BA01B2689A100627BCC /* BranchCloseRequest.h in Headers */,
+				E2133B731D01297E00763049 /* BNCFabricAnswers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -862,6 +869,7 @@
 				54391A161BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m in Sources */,
 				460F4FA81B618A38002E84D6 /* BranchSpotlightUrlRequest.m in Sources */,
 				463F0A351B20A663004235D2 /* BranchLoadActionsRequest.m in Sources */,
+				E2133B751D01477200763049 /* BNCFabricAnswers.m in Sources */,
 				67486B8E1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
