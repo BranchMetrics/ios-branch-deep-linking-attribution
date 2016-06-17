@@ -107,7 +107,9 @@
             preferenceHelper.installParams = sessionData;
         }
         
-        [BNCFabricAnswers sendEventWithName:[@"Branch " stringByAppendingString:[[self getActionName] capitalizedString]] andAttributes:sessionDataDict];
+        if (dataIsFromALinkClick) {
+            [BNCFabricAnswers sendEventWithName:[@"Branch " stringByAppendingString:[[self getActionName] capitalizedString]] andAttributes:sessionDataDict];
+        }
     }
     
     // Clear link identifiers so they don't get reused on the next open
