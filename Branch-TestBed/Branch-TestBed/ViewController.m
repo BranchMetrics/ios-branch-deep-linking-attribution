@@ -33,6 +33,7 @@
     self.branchUniversalObject.title = @"My Content Title";
     self.branchUniversalObject.contentDescription = @"My Content Description";
     self.branchUniversalObject.imageUrl = @"https://s3-us-west-1.amazonaws.com/branchhost/mosaic_og.png";
+    self.branchUniversalObject.keywords = @[@"key1", @"key2"];
     [self.branchUniversalObject addMetadataKey:@"custom_key1" value:@"some custom data"];
     [self.branchUniversalObject addMetadataKey:@"custom_key2" value:@"more custom data"];
 }
@@ -52,17 +53,24 @@
 - (IBAction)cmdShareLink:(id)sender {
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = @"sharing";
+    linkProperties.tags = @[@"tag1", @"tag2"];
+    linkProperties.matchDuration = 7200; // default: 2 hours
+    linkProperties.stage = @"first";
     [linkProperties addControlParam:@"$desktop_url" withValue:@"http://example.com/home"];
     [linkProperties addControlParam:@"$ios_url" withValue:@"http://example.com/ios"];
+    [linkProperties addControlParam:@"ios_url" withValue:@"http://example.com/ios"];
 
-    
-    [self.branchUniversalObject
-     showShareSheetWithShareText:@"Super amazing thing I want to share"
-     completion:^(NSString *activityType, BOOL completed) {
-         if (completed) {
-             NSLog(@"%@", [NSString stringWithFormat:@"Completed sharing to %@", activityType]);
-         }
+    [self.branchUniversalObject showShareSheetWithLinkProperties:linkProperties andShareText:@"" fromViewController:self.parentViewController completion:^(NSString *activityType, BOOL completed) {
+        //
     }];
+    
+//    [self.branchUniversalObject
+//     showShareSheetWithShareText:@"Super amazing thing I want to share"
+//     completion:^(NSString *activityType, BOOL completed) {
+//         if (completed) {
+//             NSLog(@"%@", [NSString stringWithFormat:@"Completed sharing to %@", activityType]);
+//         }
+//    }];
 }
 - (IBAction)cmdRegisterView:(id)sender {
     [self.branchUniversalObject registerView];

@@ -12,6 +12,7 @@
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
 #import "BranchViewHandler.h"
+#import "BNCFabricAnswers.h"
 
 @interface BranchOpenRequest ()
 
@@ -80,31 +81,34 @@
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
-    
     [BNCSystemObserver setUpdateState];
     
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
     
     // Update session params
     preferenceHelper.sessionParams = sessionData;
-    
+
     // Scenarios:
     // If no data, data isn't from a link click, or isReferrable is false, don't set, period.
     // Otherwise,
     // * On Install: set.
     // * On Open and installParams set: don't set.
     // * On Open and stored installParams are empty: set.
-    if (sessionData.length && preferenceHelper.isReferrable) {
+    if (sessionData.length) {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         BOOL dataIsFromALinkClick = [sessionDataDict[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] isEqual:@1];
-        
         BOOL storedParamsAreEmpty = YES;
+        
         if ([preferenceHelper.installParams isKindOfClass:[NSString class]]) {
             storedParamsAreEmpty = !preferenceHelper.installParams.length;
         }
         
         if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {
             preferenceHelper.installParams = sessionData;
+        }
+        
+        if (dataIsFromALinkClick) {
+            [BNCFabricAnswers sendEventWithName:[@"Branch " stringByAppendingString:[[self getActionName] capitalizedString]] andAttributes:sessionDataDict];
         }
     }
     
