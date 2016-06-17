@@ -20,7 +20,7 @@
     NSMutableDictionary *temp = [[NSMutableDictionary alloc] init];
     
     for (NSString *key in dictionary.allKeys) {
-        if ([key hasPrefix:@"+"] || [key hasPrefix:@"$"] || [key isEqualToString:@"~referring_link"]) {
+        if ([key hasPrefix:@"+"] || ([key hasPrefix:@"$"] && ![key isEqualToString:@"$identity_id"]) || [key isEqualToString:@"~referring_link"]) {
             // ignore because this data is not found on the ShareSheet
             continue;
         } else if ([dictionary[key] isKindOfClass:[NSArray class]]) {
@@ -37,12 +37,14 @@
         } else if ([key hasPrefix:@"~"]) {
             // strip tildes ~
             temp[[key substringFromIndex:1]] = dictionary[key];
+        } else if ([key isEqualToString:@"$identity_id"]) {
+            temp[@"referring_branch_identity"] = dictionary[key];
         }
     }
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     temp[@"branch_identity"] = preferenceHelper.identityID;
-    
+        
     return temp;
 }
 
