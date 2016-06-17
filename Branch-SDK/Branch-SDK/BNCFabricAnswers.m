@@ -20,7 +20,7 @@
     NSMutableDictionary *temp = [[NSMutableDictionary alloc] init];
     
     for (NSString *key in dictionary.allKeys) {
-        if ([key hasPrefix:@"+"] || ([key hasPrefix:@"$"] && ![key isEqualToString:@"$identity_id"]) || [key isEqualToString:@"~referring_link"]) {
+        if ([key hasPrefix:@"+"] || ([key hasPrefix:@"$"] && ![key isEqualToString:@"$identity_id"])) {
             // ignore because this data is not found on the ShareSheet
             continue;
         } else if ([dictionary[key] isKindOfClass:[NSArray class]]) {
@@ -44,7 +44,7 @@
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     temp[@"branch_identity"] = preferenceHelper.identityID;
-        
+    
     return temp;
 }
 

@@ -53,7 +53,6 @@
 - (IBAction)cmdShareLink:(id)sender {
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = @"sharing";
-    linkProperties.alias = @"some alias";
     linkProperties.tags = @[@"tag1", @"tag2"];
     linkProperties.matchDuration = 7200; // default: 2 hours
     linkProperties.stage = @"first";
