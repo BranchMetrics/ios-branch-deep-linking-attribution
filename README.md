@@ -93,8 +93,8 @@ With iOS 9, Apple has added the ability to allow http links to directly open you
 1. Select the "Capabilities" tab.
 1. Expand the "Associated Domains" tab.
 1. Enable the setting (toggle the switch).
-1. Add "applinks:bnc.lt" to the list.
-1. Add any additional custom domains you have (e.g. applinks:vng.io)
+1. Add `applinks:xxxx.app.link` and `applinks:xxxx-alternate.app.link` to the list. Make sure `xxxx` matches the 4 character subdomain for your app (you can find it on the [dashboard here](https://dashboard.branch.io/#/settings/link)). If you use a custom subdomain, use that in place of the x's (eg `imgur.app.link` and `imgur-alternate.app.link`).
+1. Add any additional custom domains you have (e.g. `applinks:vng.io`)
 
 ![Xcode Enable UL](docs/images/xcode-ul-enable.png)
 
