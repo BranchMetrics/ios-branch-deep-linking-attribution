@@ -1,5 +1,5 @@
 framework module Branch {
-    umbrella header "BranchSDK.h"
+    umbrella header "Branch.h"
 
     export *
     module * { export * }

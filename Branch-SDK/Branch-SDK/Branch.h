@@ -7,27 +7,24 @@
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "BranchActivityItemProvider.h"
-#import "BNCServerInterface.h"
-#import "BNCServerRequestQueue.h"
+#import "BNCConfig.h"
+#import "BranchView.h"
+#import "BNCCallbacks.h"
 #import "BNCLinkCache.h"
-#import "BranchDeepLinkingController.h"
+#import "BranchViewHandler.h"
+#import "BNCServerInterface.h"
 #import "BNCPreferenceHelper.h"
-@class BranchUniversalObject;
-@class BranchLinkProperties;
+#import "BranchLinkProperties.h"
+#import "BranchUniversalObject.h"
+#import "BNCServerRequestQueue.h"
+#import "BranchActivityItemProvider.h"
+#import "BranchDeepLinkingController.h"
 
 /**
  `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.
  
   Note, when `getInstance` is called, it assumes that you have already placed a Branch Key in your main `Info.plist` file for your project. For additional information on configuring the Branch SDK, check out the getting started guides in the Readme.
  */
-
-typedef void (^callbackWithParams) (NSDictionary *params, NSError *error);
-typedef void (^callbackWithUrl) (NSString *url, NSError *error);
-typedef void (^callbackWithStatus) (BOOL changed, NSError *error);
-typedef void (^callbackWithList) (NSArray *list, NSError *error);
-typedef void (^callbackWithUrlAndSpotlightIdentifier) (NSString *url, NSString *spotlightIdentifier, NSError *error);
-typedef void (^callbackWithBranchUniversalObject) (BranchUniversalObject *universalObject, BranchLinkProperties *linkProperties, NSError *error);
 
 ///----------------
 /// @name Constants
