@@ -1,5 +1,14 @@
 Branch iOS SDK change log
 
+- v0.12.3
+  * Fabric Answers integration
+  * Swift Testbed
+  * Retry in poor network conditions 
+  * Fix for Facebook calling openUrl from within the app
+  * Fix Fabric headers conflict
+  * Simplify Carthage project
+  * Fix framework headers visibility issue with BranchView
+
 - v0.12.2
   * better error handling for 500s
   * check for Facebook deferred app links on the client
