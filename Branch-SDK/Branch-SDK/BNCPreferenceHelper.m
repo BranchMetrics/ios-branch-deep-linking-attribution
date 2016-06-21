@@ -85,7 +85,8 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             timeout = _timeout,
             lastStrongMatchDate = _lastStrongMatchDate,
             checkedFacebookAppLinks = _checkedFacebookAppLinks,
-            requestMetadataDictionary = _requestMetadataDictionary;
+            requestMetadataDictionary = _requestMetadataDictionary,
+            thirdPartyUniversalLinksRegex = _thirdPartyUniversalLinksRegex;
 
 + (BNCPreferenceHelper *)preferenceHelper {
     static BNCPreferenceHelper *preferenceHelper;
