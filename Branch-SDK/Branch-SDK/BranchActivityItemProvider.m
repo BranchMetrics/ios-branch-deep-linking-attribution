@@ -47,7 +47,7 @@
         _feature = feature;
         _stage = stage;
         _alias = alias;
-        _userAgentString = [[[UIWebView alloc] init] stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+        _userAgentString = [BNCSystemObserver getBrowserUserAgent];
         _delegate = delegate;
     }
     
