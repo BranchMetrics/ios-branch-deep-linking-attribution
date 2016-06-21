@@ -1,6 +1,6 @@
 Pods/
-Carthage/*.zip
-Carthage/Carthage
+carthage-files/*.zip
+carthage-files/Carthage
 *.xcuserstate
 *.xcuserdatad
 *.DS_Store
