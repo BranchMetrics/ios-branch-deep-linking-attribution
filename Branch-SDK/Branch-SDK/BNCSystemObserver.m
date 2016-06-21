@@ -102,6 +102,10 @@
     return nil;
 }
 
++ (NSString *)getBrowserUserAgent {
+    return [[[UIWebView alloc] init] stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+}
+
 + (NSString *)getBrand {
     return @"Apple";
 }

@@ -20,6 +20,7 @@
 + (NSString *)getModel;
 + (NSString *)getOS;
 + (NSString *)getOSVersion;
++ (NSString *)getBrowserUserAgent;
 + (NSNumber *)getScreenWidth;
 + (NSNumber *)getScreenHeight;
 + (NSNumber *)getUpdateState;
