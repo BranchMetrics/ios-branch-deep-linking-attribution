@@ -8,10 +8,14 @@ SED_TMP_LOC=$PROJECT_DIR/sed.tmp
 CHANGELOG_LOC=$PROJECT_DIR/ChangeLog.md
 PODSPEC_LOC=$PROJECT_DIR/Branch.podspec
 BNCCONFIG_LOC=$SCRIPT_DIR/../Branch-SDK/Branch-SDK/BNCConfig.h
+BRANCHM_LOC=$SCRIPT_DIR/../Branch-SDK/Branch-SDK/Branch.m
 
 # Replace version numbers. Note, with sed, we can't write to the same file we read, so we make a temp one for the operation, then immediately replace it.
 sed 's/  s.version.*$/  s.version          = "'$1'"/' <$PODSPEC_LOC >$SED_TMP_LOC && mv $SED_TMP_LOC $PODSPEC_LOC
 sed 's/#define SDK_VERSION.*$/#define SDK_VERSION             @"'$1'"/' <$BNCCONFIG_LOC >$SED_TMP_LOC && mv $SED_TMP_LOC $BNCCONFIG_LOC
+
+# Update Fabric Kit Display version automatically
+perl -0pi -e "s/\+ \(NSString \*\)kitDisplayVersion {.*/+ (NSString \*)kitDisplayVersion {\n\treturn \@\""$1"\";\n}\n\n\@end/sg" $BRANCHM_LOC
 
 # Set up the header for the release in the ChangeLog.
 sed 's/Branch iOS SDK change log/Branch iOS SDK change log\
