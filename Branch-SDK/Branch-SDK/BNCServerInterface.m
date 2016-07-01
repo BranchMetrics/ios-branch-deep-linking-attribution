@@ -118,10 +118,10 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
                 error = [NSError errorWithDomain:BNCErrorDomain code:BNCDuplicateResourceError userInfo:@{ NSLocalizedDescriptionKey: @"A resource with this identifier already exists" }];
             }
             else if (status >= 400) {
-                NSString *errorString = @"The request was invalid."
+                NSString *errorString = @"The request was invalid.";
                 
                 if ([serverResponse.data objectForKey:@"error"] && [[serverResponse.data objectForKey:@"error"] isKindOfClass:[NSString class]]) {
-                    errorString = [serverResponse.data objectForKey:@"error"]
+                    errorString = [serverResponse.data objectForKey:@"error"];
                 }
                 
                 error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: errorString }];
