@@ -43,6 +43,8 @@
 
 - (NSString *)getAPIBaseURL;
 - (NSString *)getAPIURL:(NSString *)endpoint;
+- (NSString *)getEndpointFromURL:(NSString *)url;
+
 - (NSString *)getBranchKey:(BOOL)isLive;
 
 - (void)clearUserCreditsAndCounts;
@@ -67,6 +69,10 @@
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
 - (NSMutableDictionary *)requestMetadataDictionary;
+
+- (void)addInstrumentationDictionaryKey:(NSString *)key value:(NSString *)value;
+- (NSMutableDictionary *)instrumentationDictionary;
+- (void)clearInstrumentationDictionary;
 
 - (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
 - (void)logWarning:(NSString *)message;
