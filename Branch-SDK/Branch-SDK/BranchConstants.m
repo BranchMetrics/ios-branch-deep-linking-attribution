@@ -61,6 +61,7 @@ NSString * const BRANCH_REQUEST_KEY_SCREEN_WIDTH = @"screen_width";
 NSString * const BRANCH_REQUEST_KEY_SCREEN_HEIGHT = @"screen_height";
 NSString * const BRANCH_REQUEST_KEY_IS_SIMULATOR = @"is_simulator";
 NSString * const BRANCH_REQUEST_KEY_LOG = @"log";
+NSString * const BRANCH_REQUEST_KEY_INSTRUMENTATION = @"instrumentation";
 
 NSString * const BRANCH_REQUEST_ENDPOINT_SET_IDENTITY = @"profile";
 NSString * const BRANCH_REQUEST_ENDPOINT_LOGOUT = @"logout";
