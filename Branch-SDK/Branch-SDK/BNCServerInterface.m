@@ -64,9 +64,9 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
     NSURLRequest *request = [self preparePostRequest:extendedParams url:url key:key retryNumber:retryNumber log:log];
     
     // Instrumentation metrics
-    startTime = [NSDate date];
     requestEndpoint = [self.preferenceHelper getEndpointFromURL:url];
-    
+    startTime = [NSDate date];
+
     [self genericHTTPRequest:request retryNumber:retryNumber log:log callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
         return [self preparePostRequest:post url:url key:key retryNumber:++lastRetryNumber log:log];
     }];
