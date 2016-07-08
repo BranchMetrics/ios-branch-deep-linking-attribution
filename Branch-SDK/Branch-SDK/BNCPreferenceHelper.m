@@ -55,6 +55,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 @property (strong, nonatomic) NSMutableDictionary *countsDictionary;
 @property (strong, nonatomic) NSMutableDictionary *creditsDictionary;
 @property (strong, nonatomic) NSMutableDictionary *requestMetadataDictionary;
+@property (strong, nonatomic) NSMutableDictionary *instrumentationDictionary;
 @property (assign, nonatomic) BOOL isUsingLiveKey;
 
 @end
@@ -85,7 +86,8 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             timeout = _timeout,
             lastStrongMatchDate = _lastStrongMatchDate,
             checkedFacebookAppLinks = _checkedFacebookAppLinks,
-            requestMetadataDictionary = _requestMetadataDictionary;
+            requestMetadataDictionary = _requestMetadataDictionary,
+            instrumentationDictionary = _instrumentationDictionary;
 
 + (BNCPreferenceHelper *)preferenceHelper {
     static BNCPreferenceHelper *preferenceHelper;
@@ -162,6 +164,10 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     return [[self getAPIBaseURL] stringByAppendingString:endpoint];
 }
 
+- (NSString *)getEndpointFromURL:(NSString *)url {
+    NSUInteger index = BNC_API_BASE_URL.length;
+    return [url substringFromIndex:index];
+}
 #pragma mark - Preference Storage
 
 - (NSString *)appKey {
@@ -493,6 +499,26 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     }
     else if (value) {
         [self.requestMetadataDictionary setObject:value forKey:key];
+    }
+}
+
+- (NSMutableDictionary *)instrumentationDictionary {
+    if (!_instrumentationDictionary) {
+        _instrumentationDictionary = [NSMutableDictionary dictionary];
+    }
+    return _instrumentationDictionary;
+}
+
+- (void)addInstrumentationDictionaryKey:(NSString *)key value:(NSString *)value {
+    if (key && value) {
+        [self.instrumentationDictionary setObject:value forKey:key];
+    }
+}
+
+- (void)clearInstrumentationDictionary {
+    NSArray *keys = [_instrumentationDictionary allKeys];
+    for (int i = 0 ; i < [keys count]; i++) {
+        [_instrumentationDictionary removeObjectForKey:keys[i]];
     }
 }
 
