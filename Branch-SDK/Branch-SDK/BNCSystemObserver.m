@@ -19,6 +19,7 @@
 + (NSString *)getUniqueHardwareId:(BOOL *)isReal isDebug:(BOOL)debug andType:(NSString **)type {
     NSString *uid = nil;
     *isReal = YES;
+    
     Class ASIdentifierManagerClass = NSClassFromString(@"ASIdentifierManager");
     if (ASIdentifierManagerClass && !debug) {
         SEL sharedManagerSelector = NSSelectorFromString(@"sharedManager");
@@ -43,6 +44,7 @@
         *type = @"random";
         *isReal = NO;
     }
+    
     return uid;
 }
 
