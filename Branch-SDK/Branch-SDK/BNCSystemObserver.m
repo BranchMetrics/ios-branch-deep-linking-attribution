@@ -19,7 +19,6 @@
 + (NSString *)getUniqueHardwareId:(BOOL *)isReal isDebug:(BOOL)debug andType:(NSString **)type {
     NSString *uid = nil;
     *isReal = YES;
-
     Class ASIdentifierManagerClass = NSClassFromString(@"ASIdentifierManager");
     if (ASIdentifierManagerClass && !debug) {
         SEL sharedManagerSelector = NSSelectorFromString(@"sharedManager");
@@ -27,6 +26,10 @@
         SEL advertisingIdentifierSelector = NSSelectorFromString(@"advertisingIdentifier");
         NSUUID *uuid = ((NSUUID* (*)(id, SEL))[sharedManager methodForSelector:advertisingIdentifierSelector])(sharedManager, advertisingIdentifierSelector);
         uid = [uuid UUIDString];
+        // limit ad tracking is enabled. iOS 10+
+        if ([uid isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
+            uid = nil;
+        }
         *type = @"idfa";
     }
 
@@ -40,7 +43,6 @@
         *type = @"random";
         *isReal = NO;
     }
-
     return uid;
 }
 
