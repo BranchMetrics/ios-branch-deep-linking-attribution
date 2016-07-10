@@ -15,13 +15,9 @@
 		463F0A321B20A663004235D2 /* BranchSetIdentityRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B34C1B0FD5BF0019767C /* BranchSetIdentityRequest.m */; };
 		463F0A331B20A663004235D2 /* BranchLogoutRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B34F1B0FDAB70019767C /* BranchLogoutRequest.m */; };
 		463F0A341B20A663004235D2 /* BranchUserCompletedActionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3521B0FDD3C0019767C /* BranchUserCompletedActionRequest.m */; };
-		463F0A351B20A663004235D2 /* BranchLoadActionsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3551B0FE02E0019767C /* BranchLoadActionsRequest.m */; };
 		463F0A361B20A663004235D2 /* BranchLoadRewardsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3581B0FE0F70019767C /* BranchLoadRewardsRequest.m */; };
 		463F0A371B20A663004235D2 /* BranchRedeemRewardsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B35B1B0FE21A0019767C /* BranchRedeemRewardsRequest.m */; };
 		463F0A381B20A663004235D2 /* BranchCreditHistoryRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B35E1B0FE42D0019767C /* BranchCreditHistoryRequest.m */; };
-		463F0A391B20A663004235D2 /* BranchGetPromoCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3611B14CA890019767C /* BranchGetPromoCodeRequest.m */; };
-		463F0A3A1B20A663004235D2 /* BranchValidatePromoCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3641B14D1D20019767C /* BranchValidatePromoCodeRequest.m */; };
-		463F0A3B1B20A663004235D2 /* BranchApplyPromoCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3671B14D7290019767C /* BranchApplyPromoCodeRequest.m */; };
 		463F0A3C1B20A663004235D2 /* BranchShortUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B36A1B14DD870019767C /* BranchShortUrlRequest.m */; };
 		463F0A3D1B20A663004235D2 /* BranchShortUrlSyncRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 466B582F1B16227100A69EDE /* BranchShortUrlSyncRequest.m */; };
 		463F0A3E1B20A663004235D2 /* BranchCloseRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B36D1B14F6540019767C /* BranchCloseRequest.m */; };
@@ -71,13 +67,9 @@
 		46946B861B26898B00627BCC /* BranchSetIdentityRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B34B1B0FD5BF0019767C /* BranchSetIdentityRequest.h */; };
 		46946B871B26898E00627BCC /* BranchLogoutRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B34E1B0FDAB70019767C /* BranchLogoutRequest.h */; };
 		46946B881B26899100627BCC /* BranchUserCompletedActionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B3511B0FDD3C0019767C /* BranchUserCompletedActionRequest.h */; };
-		46946B971B2689A100627BCC /* BranchLoadActionsRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B3541B0FE02E0019767C /* BranchLoadActionsRequest.h */; };
 		46946B981B2689A100627BCC /* BranchLoadRewardsRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B3571B0FE0F70019767C /* BranchLoadRewardsRequest.h */; };
 		46946B991B2689A100627BCC /* BranchRedeemRewardsRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B35A1B0FE21A0019767C /* BranchRedeemRewardsRequest.h */; };
 		46946B9A1B2689A100627BCC /* BranchCreditHistoryRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B35D1B0FE42D0019767C /* BranchCreditHistoryRequest.h */; };
-		46946B9B1B2689A100627BCC /* BranchGetPromoCodeRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B3601B14CA890019767C /* BranchGetPromoCodeRequest.h */; };
-		46946B9C1B2689A100627BCC /* BranchValidatePromoCodeRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B3631B14D1D20019767C /* BranchValidatePromoCodeRequest.h */; };
-		46946B9D1B2689A100627BCC /* BranchApplyPromoCodeRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B3661B14D7290019767C /* BranchApplyPromoCodeRequest.h */; };
 		46946B9E1B2689A100627BCC /* BranchShortUrlRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B3691B14DD870019767C /* BranchShortUrlRequest.h */; };
 		46946B9F1B2689A100627BCC /* BranchShortUrlSyncRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 466B582E1B16227100A69EDE /* BranchShortUrlSyncRequest.h */; };
 		46946BA01B2689A100627BCC /* BranchCloseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4659B36C1B14F6540019767C /* BranchCloseRequest.h */; };
@@ -92,13 +84,9 @@
 		46DBB43D1B34B7A300642FC8 /* BranchOpenRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DBB43C1B34B7A300642FC8 /* BranchOpenRequestTests.m */; };
 		46DC406E1B2A328900D2D203 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67BBCF271A69E49A009C7DAE /* AdSupport.framework */; };
 		46DC40701B2A34EE00D2D203 /* BranchUserCompletedActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC406F1B2A34EE00D2D203 /* BranchUserCompletedActionTests.m */; };
-		46DC40721B2B285900D2D203 /* BranchLoadActionsRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC40711B2B285900D2D203 /* BranchLoadActionsRequestTests.m */; };
 		46DC40741B2B31A300D2D203 /* BranchLoadRewardsRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC40731B2B31A300D2D203 /* BranchLoadRewardsRequestTests.m */; };
 		46DC40761B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC40751B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m */; };
 		46DC40781B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */; };
-		46DC407A1B2B694600D2D203 /* BranchGetPromoCodeRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC40791B2B694600D2D203 /* BranchGetPromoCodeRequestTests.m */; };
-		46DC407C1B2B81CA00D2D203 /* BranchValidatePromoCodeRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC407B1B2B81CA00D2D203 /* BranchValidatePromoCodeRequestTests.m */; };
-		46DC407E1B2B83B800D2D203 /* BranchApplyPromoCodeRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC407D1B2B83B800D2D203 /* BranchApplyPromoCodeRequestTests.m */; };
 		46DC40801B2B84CD00D2D203 /* BranchShortUrlRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */; };
 		46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */; };
 		46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */; };
@@ -171,20 +159,12 @@
 		4659B34F1B0FDAB70019767C /* BranchLogoutRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLogoutRequest.m; sourceTree = "<group>"; };
 		4659B3511B0FDD3C0019767C /* BranchUserCompletedActionRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchUserCompletedActionRequest.h; sourceTree = "<group>"; };
 		4659B3521B0FDD3C0019767C /* BranchUserCompletedActionRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUserCompletedActionRequest.m; sourceTree = "<group>"; };
-		4659B3541B0FE02E0019767C /* BranchLoadActionsRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchLoadActionsRequest.h; sourceTree = "<group>"; };
-		4659B3551B0FE02E0019767C /* BranchLoadActionsRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLoadActionsRequest.m; sourceTree = "<group>"; };
 		4659B3571B0FE0F70019767C /* BranchLoadRewardsRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchLoadRewardsRequest.h; sourceTree = "<group>"; };
 		4659B3581B0FE0F70019767C /* BranchLoadRewardsRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLoadRewardsRequest.m; sourceTree = "<group>"; };
 		4659B35A1B0FE21A0019767C /* BranchRedeemRewardsRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchRedeemRewardsRequest.h; sourceTree = "<group>"; };
 		4659B35B1B0FE21A0019767C /* BranchRedeemRewardsRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchRedeemRewardsRequest.m; sourceTree = "<group>"; };
 		4659B35D1B0FE42D0019767C /* BranchCreditHistoryRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchCreditHistoryRequest.h; sourceTree = "<group>"; };
 		4659B35E1B0FE42D0019767C /* BranchCreditHistoryRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchCreditHistoryRequest.m; sourceTree = "<group>"; };
-		4659B3601B14CA890019767C /* BranchGetPromoCodeRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchGetPromoCodeRequest.h; sourceTree = "<group>"; };
-		4659B3611B14CA890019767C /* BranchGetPromoCodeRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchGetPromoCodeRequest.m; sourceTree = "<group>"; };
-		4659B3631B14D1D20019767C /* BranchValidatePromoCodeRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchValidatePromoCodeRequest.h; sourceTree = "<group>"; };
-		4659B3641B14D1D20019767C /* BranchValidatePromoCodeRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchValidatePromoCodeRequest.m; sourceTree = "<group>"; };
-		4659B3661B14D7290019767C /* BranchApplyPromoCodeRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchApplyPromoCodeRequest.h; sourceTree = "<group>"; };
-		4659B3671B14D7290019767C /* BranchApplyPromoCodeRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchApplyPromoCodeRequest.m; sourceTree = "<group>"; };
 		4659B3691B14DD870019767C /* BranchShortUrlRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchShortUrlRequest.h; sourceTree = "<group>"; };
 		4659B36A1B14DD870019767C /* BranchShortUrlRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShortUrlRequest.m; sourceTree = "<group>"; };
 		4659B36C1B14F6540019767C /* BranchCloseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchCloseRequest.h; sourceTree = "<group>"; };
@@ -217,13 +197,9 @@
 		46DBB4381B34B22F00642FC8 /* BranchCloseRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchCloseRequestTests.m; sourceTree = "<group>"; };
 		46DBB43C1B34B7A300642FC8 /* BranchOpenRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchOpenRequestTests.m; sourceTree = "<group>"; };
 		46DC406F1B2A34EE00D2D203 /* BranchUserCompletedActionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUserCompletedActionTests.m; sourceTree = "<group>"; };
-		46DC40711B2B285900D2D203 /* BranchLoadActionsRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLoadActionsRequestTests.m; sourceTree = "<group>"; };
 		46DC40731B2B31A300D2D203 /* BranchLoadRewardsRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLoadRewardsRequestTests.m; sourceTree = "<group>"; };
 		46DC40751B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchRedeemRewardsRequestTests.m; sourceTree = "<group>"; };
 		46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchGetCreditHistoryRequestTests.m; sourceTree = "<group>"; };
-		46DC40791B2B694600D2D203 /* BranchGetPromoCodeRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchGetPromoCodeRequestTests.m; sourceTree = "<group>"; };
-		46DC407B1B2B81CA00D2D203 /* BranchValidatePromoCodeRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchValidatePromoCodeRequestTests.m; sourceTree = "<group>"; };
-		46DC407D1B2B83B800D2D203 /* BranchApplyPromoCodeRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchApplyPromoCodeRequestTests.m; sourceTree = "<group>"; };
 		46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShortUrlRequestTests.m; sourceTree = "<group>"; };
 		46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserverTests.m; sourceTree = "<group>"; };
 		46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
@@ -360,13 +336,9 @@
 				4665AF201B2892F700184037 /* BranchSetIdentityRequestTests.m */,
 				4665AF271B28C1DE00184037 /* BranchLogoutRequestTests.m */,
 				46DC406F1B2A34EE00D2D203 /* BranchUserCompletedActionTests.m */,
-				46DC40711B2B285900D2D203 /* BranchLoadActionsRequestTests.m */,
 				46DC40731B2B31A300D2D203 /* BranchLoadRewardsRequestTests.m */,
 				46DC40751B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m */,
 				46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */,
-				46DC40791B2B694600D2D203 /* BranchGetPromoCodeRequestTests.m */,
-				46DC407B1B2B81CA00D2D203 /* BranchValidatePromoCodeRequestTests.m */,
-				46DC407D1B2B83B800D2D203 /* BranchApplyPromoCodeRequestTests.m */,
 				46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */,
 				46DBB4361B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m */,
 				46DBB4381B34B22F00642FC8 /* BranchCloseRequestTests.m */,
@@ -385,20 +357,12 @@
 				4659B34F1B0FDAB70019767C /* BranchLogoutRequest.m */,
 				4659B3511B0FDD3C0019767C /* BranchUserCompletedActionRequest.h */,
 				4659B3521B0FDD3C0019767C /* BranchUserCompletedActionRequest.m */,
-				4659B3541B0FE02E0019767C /* BranchLoadActionsRequest.h */,
-				4659B3551B0FE02E0019767C /* BranchLoadActionsRequest.m */,
 				4659B3571B0FE0F70019767C /* BranchLoadRewardsRequest.h */,
 				4659B3581B0FE0F70019767C /* BranchLoadRewardsRequest.m */,
 				4659B35A1B0FE21A0019767C /* BranchRedeemRewardsRequest.h */,
 				4659B35B1B0FE21A0019767C /* BranchRedeemRewardsRequest.m */,
 				4659B35D1B0FE42D0019767C /* BranchCreditHistoryRequest.h */,
 				4659B35E1B0FE42D0019767C /* BranchCreditHistoryRequest.m */,
-				4659B3601B14CA890019767C /* BranchGetPromoCodeRequest.h */,
-				4659B3611B14CA890019767C /* BranchGetPromoCodeRequest.m */,
-				4659B3631B14D1D20019767C /* BranchValidatePromoCodeRequest.h */,
-				4659B3641B14D1D20019767C /* BranchValidatePromoCodeRequest.m */,
-				4659B3661B14D7290019767C /* BranchApplyPromoCodeRequest.h */,
-				4659B3671B14D7290019767C /* BranchApplyPromoCodeRequest.m */,
 				4659B3691B14DD870019767C /* BranchShortUrlRequest.h */,
 				4659B36A1B14DD870019767C /* BranchShortUrlRequest.m */,
 				466B582E1B16227100A69EDE /* BranchShortUrlSyncRequest.h */,
@@ -624,19 +588,15 @@
 				54FF1F8D1BD1D4AE0004CE2E /* BranchUniversalObject.h in Headers */,
 				46946B9F1B2689A100627BCC /* BranchShortUrlSyncRequest.h in Headers */,
 				46946B9E1B2689A100627BCC /* BranchShortUrlRequest.h in Headers */,
-				46946B9D1B2689A100627BCC /* BranchApplyPromoCodeRequest.h in Headers */,
 				466B58781B17780A00A69EDE /* BNCServerRequestQueue.h in Headers */,
 				466B58751B17780A00A69EDE /* BNCServerInterface.h in Headers */,
 				46946B981B2689A100627BCC /* BranchLoadRewardsRequest.h in Headers */,
 				466B587B1B17780A00A69EDE /* BNCServerResponse.h in Headers */,
-				46946B971B2689A100627BCC /* BranchLoadActionsRequest.h in Headers */,
 				466B587F1B17780A00A69EDE /* BNCEncodingUtils.h in Headers */,
-				46946B9B1B2689A100627BCC /* BranchGetPromoCodeRequest.h in Headers */,
 				460F4FA71B618A38002E84D6 /* BranchSpotlightUrlRequest.h in Headers */,
 				54FF1F911BD1DC320004CE2E /* BranchLinkProperties.h in Headers */,
 				67486B8D1B93B48A0044D872 /* BNCStrongMatchHelper.h in Headers */,
 				46946BA31B2689A100627BCC /* BranchOpenRequest.h in Headers */,
-				46946B9C1B2689A100627BCC /* BranchValidatePromoCodeRequest.h in Headers */,
 				46946BA41B2689A100627BCC /* BranchInstallRequest.h in Headers */,
 				46946B861B26898B00627BCC /* BranchSetIdentityRequest.h in Headers */,
 				466B58771B17780A00A69EDE /* BNCSystemObserver.h in Headers */,
@@ -834,7 +794,6 @@
 				466B58551B17779C00A69EDE /* Branch.m in Sources */,
 				7D4DAC261C8FA908008E37DB /* BranchView.m in Sources */,
 				463F0A3D1B20A663004235D2 /* BranchShortUrlSyncRequest.m in Sources */,
-				463F0A391B20A663004235D2 /* BranchGetPromoCodeRequest.m in Sources */,
 				54FF1F8E1BD1D4AE0004CE2E /* BranchUniversalObject.m in Sources */,
 				54FF1F961BD20EB50004CE2E /* BranchRegisterViewRequest.m in Sources */,
 				463F0A321B20A663004235D2 /* BranchSetIdentityRequest.m in Sources */,
@@ -857,14 +816,11 @@
 				54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */,
 				466B586A1B17779C00A69EDE /* BNCLinkCache.m in Sources */,
 				463F0A361B20A663004235D2 /* BranchLoadRewardsRequest.m in Sources */,
-				463F0A3B1B20A663004235D2 /* BranchApplyPromoCodeRequest.m in Sources */,
-				463F0A3A1B20A663004235D2 /* BranchValidatePromoCodeRequest.m in Sources */,
 				466B586C1B17779C00A69EDE /* BranchActivityItemProvider.m in Sources */,
 				466B586E1B17779C00A69EDE /* BNCEncodingUtils.m in Sources */,
 				463F0A371B20A663004235D2 /* BranchRedeemRewardsRequest.m in Sources */,
 				54391A161BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m in Sources */,
 				460F4FA81B618A38002E84D6 /* BranchSpotlightUrlRequest.m in Sources */,
-				463F0A351B20A663004235D2 /* BranchLoadActionsRequest.m in Sources */,
 				E2133B751D01477200763049 /* BNCFabricAnswers.m in Sources */,
 				67486B8E1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */,
 			);
@@ -888,7 +844,6 @@
 			files = (
 				4665AF231B28965E00184037 /* Branch_SDK_Load_Tests.m in Sources */,
 				46DC40761B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m in Sources */,
-				46DC407E1B2B83B800D2D203 /* BranchApplyPromoCodeRequestTests.m in Sources */,
 				46DBB4371B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m in Sources */,
 				7E6B3B561AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m in Sources */,
 				4677EB511B3B384C00A13964 /* BranchInstallRequestTests.m in Sources */,
@@ -903,14 +858,11 @@
 				46DC40701B2A34EE00D2D203 /* BranchUserCompletedActionTests.m in Sources */,
 				46D0B6FA1ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m in Sources */,
 				46DBB43D1B34B7A300642FC8 /* BranchOpenRequestTests.m in Sources */,
-				46DC407A1B2B694600D2D203 /* BranchGetPromoCodeRequestTests.m in Sources */,
 				46DBB42E1B330CF300642FC8 /* BNCServerRequestQueueTests.m in Sources */,
 				4673094A1AF2C4FB005B8848 /* BranchTest.m in Sources */,
 				46DC40801B2B84CD00D2D203 /* BranchShortUrlRequestTests.m in Sources */,
 				46DBB4391B34B22F00642FC8 /* BranchCloseRequestTests.m in Sources */,
-				46DC407C1B2B81CA00D2D203 /* BranchValidatePromoCodeRequestTests.m in Sources */,
 				46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */,
-				46DC40721B2B285900D2D203 /* BranchLoadActionsRequestTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

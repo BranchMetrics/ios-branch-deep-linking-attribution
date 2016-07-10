@@ -22,14 +22,10 @@
 #import "BranchUniversalObject.h"
 #import "BranchSetIdentityRequest.h"
 #import "BranchLogoutRequest.h"
-#import "BranchLoadActionsRequest.h"
 #import "BranchUserCompletedActionRequest.h"
 #import "BranchLoadRewardsRequest.h"
 #import "BranchRedeemRewardsRequest.h"
 #import "BranchCreditHistoryRequest.h"
-#import "BranchGetPromoCodeRequest.h"
-#import "BranchValidatePromoCodeRequest.h"
-#import "BranchApplyPromoCodeRequest.h"
 #import "BranchShortUrlRequest.h"
 #import "BranchShortUrlSyncRequest.h"
 #import "BranchCloseRequest.h"
@@ -77,7 +73,6 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
 @property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
 @property (strong, nonatomic) UILongPressGestureRecognizer *debugGestureRecognizer;
-@property (strong, nonatomic) NSTimer *debugHeartbeatTimer;
 @property (strong, nonatomic) NSString *branchKey;
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
 @property (weak, nonatomic) UIViewController *deepLinkPresentingController;
@@ -205,31 +200,8 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     return [[BranchActivityItemProvider alloc] initWithParams:params tags:tags feature:feature stage:stage alias:alias delegate:delegate];
 }
 
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature {
-    return [[BranchActivityItemProvider alloc] initWithParams:params tags:nil feature:feature stage:nil alias:nil delegate:nil];
-}
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage {
-    return [[BranchActivityItemProvider alloc] initWithParams:params tags:nil feature:feature stage:stage alias:nil delegate:nil];
-}
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags {
-    return [[BranchActivityItemProvider alloc] initWithParams:params tags:tags feature:feature stage:stage alias:nil delegate:nil];
-}
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
-    return [[BranchActivityItemProvider alloc] initWithParams:params tags:nil feature:feature stage:stage alias:alias delegate:nil];
-}
-
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
-    return [[BranchActivityItemProvider alloc] initWithParams:params tags:tags feature:feature stage:stage alias:alias delegate:nil];
-}
 
 #pragma mark - Configuration methods
-
-+ (void)setDebug {
-    [[Branch getInstance] setDebug];
-}
 
 - (void)setDebug {
     self.preferenceHelper.isDebug = YES;
@@ -325,8 +297,6 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController {
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
-    self.preferenceHelper.isReferrable = isReferrable;
-    self.preferenceHelper.explicitlyRequestedReferrable = explicitlyRequestedReferrable;
 
     // Handle push notification on app launch
     if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
@@ -435,14 +405,6 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     self.preferenceHelper.shouldWaitForInit = NO;
     
     return spotlightIdentifier != nil;
-}
-
-#pragma mark - Generic Request support
-
-- (void)executeGenericRequest:(BNCServerRequest*)request {
-    [self initSessionIfNeededAndNotInProgress];
-    [self.requestQueue enqueue:request];
-    [self processNextQueueItem];
 }
 
 
@@ -564,21 +526,6 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
 #pragma mark - User Action methods
 
-- (void)loadActionCountsWithCallback:(callbackWithStatus)callback {
-    [self initSessionIfNeededAndNotInProgress];
-    
-    BranchLoadActionsRequest *req = [[BranchLoadActionsRequest alloc] initWithCallback:callback];
-    [self.requestQueue enqueue:req];
-    [self processNextQueueItem];
-}
-
-- (NSInteger)getTotalCountsForAction:(NSString *)action {
-    return [self.preferenceHelper getActionTotalCount:action];
-}
-
-- (NSInteger)getUniqueCountsForAction:(NSString *)action {
-    return [self.preferenceHelper getActionUniqueCount:action];
-}
 
 - (void)userCompletedAction:(NSString *)action {
     [self userCompletedAction:action withState:nil withDelegate:nil];
@@ -963,113 +910,6 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 - (void)getReferralUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback {
     [self generateShortUrl:nil andAlias:nil andType:BranchLinkTypeUnlimitedUse andMatchDuration:0 andChannel:channel andFeature:BRANCH_FEATURE_TAG_REFERRAL andStage:nil andParams:params andCallback:callback];
 }
-
-- (void)getPromoCodeWithCallback:(callbackWithParams)callback {
-    [self getPromoCodeWithPrefix:nil amount:0 expiration:nil bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
-}
-
-- (void)getReferralCodeWithCallback:(callbackWithParams)callback {
-    [self getPromoCodeWithPrefix:nil amount:0 expiration:nil bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
-}
-
-- (void)getPromoCodeWithAmount:(NSInteger)amount callback:(callbackWithParams)callback {
-    [self getPromoCodeWithPrefix:nil amount:amount expiration:nil bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
-}
-
-- (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback {
-    [self getPromoCodeWithPrefix:nil amount:amount expiration:nil bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
-}
-
-- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount callback:(callbackWithParams)callback {
-    [self getPromoCodeWithPrefix:prefix amount:amount expiration:nil bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
-}
-
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback {
-    [self getPromoCodeWithPrefix:prefix amount:amount expiration:nil bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
-}
-
-- (void)getPromoCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback {
-    [self getPromoCodeWithPrefix:nil amount:amount expiration:expiration bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
-}
-
-- (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback {
-    [self getPromoCodeWithPrefix:nil amount:amount expiration:expiration bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
-}
-
-- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback {
-    [self getPromoCodeWithPrefix:prefix amount:amount expiration:expiration bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
-}
-
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback {
-    [self getPromoCodeWithPrefix:prefix amount:amount expiration:expiration bucket:nil usageType:BranchPromoCodeUsageTypeUnlimitedUses rewardLocation:BranchPromoCodeRewardReferringUser callback:callback];
-}
-
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(BranchPromoCodeUsageType)calcType location:(BranchPromoCodeRewardLocation)location andCallback:(callbackWithParams)callback {
-    [self getPromoCodeWithPrefix:prefix amount:amount expiration:expiration bucket:bucket usageType:calcType rewardLocation:location useOld:YES callback:callback];
-}
-
-- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket usageType:(BranchPromoCodeUsageType)usageType rewardLocation:(BranchPromoCodeRewardLocation)rewardLocation callback:(callbackWithParams)callback {
-    [self getPromoCodeWithPrefix:prefix amount:amount expiration:expiration bucket:bucket usageType:usageType rewardLocation:rewardLocation useOld:NO callback:callback];
-}
-
-- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket usageType:(BranchPromoCodeUsageType)usageType rewardLocation:(BranchPromoCodeRewardLocation)rewardLocation useOld:(BOOL)useOld callback:(callbackWithParams)callback {
-    [self initSessionIfNeededAndNotInProgress];
-    
-    if (!bucket) {
-        bucket = @"default";
-    }
-    
-    BranchGetPromoCodeRequest *req = [[BranchGetPromoCodeRequest alloc] initWithUsageType:usageType rewardLocation:rewardLocation amount:amount bucket:bucket prefix:prefix expiration:expiration useOld:useOld callback:callback];
-    [self.requestQueue enqueue:req];
-    [self processNextQueueItem];
-}
-
-- (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
-    [self validatePromoCode:code useOld:YES callback:callback];
-}
-
-- (void)validatePromoCode:(NSString *)code callback:(callbackWithParams)callback {
-    [self validatePromoCode:code useOld:NO callback:callback];
-}
-
-- (void)validatePromoCode:(NSString *)code useOld:(BOOL)useOld callback:(callbackWithParams)callback {
-    if (!code.length) {
-        if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidPromoCodeError userInfo:@{ NSLocalizedDescriptionKey: @"No code specified" }]);
-        }
-        return;
-    }
-    
-    [self initSessionIfNeededAndNotInProgress];
-    
-    BranchValidatePromoCodeRequest *req = [[BranchValidatePromoCodeRequest alloc] initWithCode:code useOld:useOld callback:callback];
-    [self.requestQueue enqueue:req];
-    [self processNextQueueItem];
-}
-
-- (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback {
-    [self applyPromoCode:code useOld:YES callback:callback];
-}
-
-- (void)applyPromoCode:(NSString *)code callback:(callbackWithParams)callback {
-    [self applyPromoCode:code useOld:NO callback:callback];
-}
-
-- (void)applyPromoCode:(NSString *)code useOld:(BOOL)useOld callback:(callbackWithParams)callback {
-    if (!code.length) {
-        if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidPromoCodeError userInfo:@{ NSLocalizedDescriptionKey: @"No code specified" }]);
-        }
-        return;
-    }
-    
-    [self initSessionIfNeededAndNotInProgress];
-    
-    BranchApplyPromoCodeRequest *req = [[BranchApplyPromoCodeRequest alloc] initWithCode:code useOld:useOld callback:callback];
-    [self.requestQueue enqueue:req];
-    [self processNextQueueItem];
-}
-
 
 #pragma mark - Private methods
 
