@@ -793,44 +793,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (NSString *)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
 
-/**
- Get a short url with specified params and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
- 
- @param params Dictionary of parameters to include in the link.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @warning This method makes a synchronous url request.
- */
-- (NSString *)getContentUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel;
-
-/**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
- 
- @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @warning This method makes a synchronous url request.
- */
-- (NSString *)getContentUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel;
-
-/**
- Get a short url with specified params and channel. The usage type will default to unlimited. Referral Urls use the feature `BRANCH_FEATURE_TAG_REFERRAL`.
- 
- @param params Dictionary of parameters to include in the link.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @warning This method makes a synchronous url request.
- */
-- (NSString *)getReferralUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel;
-
-/**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Referral Urls use the feature `BRANCH_FEATURE_TAG_REFERRAL`.
- 
- @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @warning This method makes a synchronous url request.
- */
-- (NSString *)getReferralUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel;
-
 #pragma mark - Long Url generation
 
 ///--------------------------
@@ -1040,44 +1002,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning This can fail if the alias is already taken.
  */
 - (void)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback;
-
-/**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
- 
- @param params Dictionary of parameters to include in the link.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @param callback Callback called with the url.
- */
-- (void)getContentUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback;
-
-/**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
- 
- @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @param callback Callback called with the url.
- */
-- (void)getContentUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback;
-
-/**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Referral Urls use the feature `BRANCH_FEATURE_TAG_REFERRAL`.
- 
- @param params Dictionary of parameters to include in the link.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @param callback Callback called with the url.
- */
-- (void)getReferralUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback;
-
-/**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Referral Urls use the feature `BRANCH_FEATURE_TAG_REFERRAL`.
- 
- @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @param callback Callback called with the url.
- */
-- (void)getReferralUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback;
 
 - (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback;
 
