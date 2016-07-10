@@ -28,8 +28,6 @@
 @property (strong, nonatomic) NSString *userIdentity;
 @property (strong, nonatomic) NSString *sessionParams;
 @property (strong, nonatomic) NSString *installParams;
-@property (assign, nonatomic) BOOL explicitlyRequestedReferrable;
-@property (assign, nonatomic) BOOL isReferrable;
 @property (assign, nonatomic) BOOL isDebug;
 @property (assign, nonatomic) BOOL shouldWaitForInit;
 @property (assign, nonatomic) BOOL suppressWarningLogs;
@@ -56,11 +54,6 @@
 - (NSDictionary *)getCreditDictionary;
 - (NSInteger)getCreditCount;
 - (NSInteger)getCreditCountForBucket:(NSString *)bucket;
-
-- (void)setActionTotalCount:(NSString *)action withCount:(NSInteger)count;
-- (void)setActionUniqueCount:(NSString *)action withCount:(NSInteger)count;
-- (NSInteger)getActionTotalCount:(NSString *)action;
-- (NSInteger)getActionUniqueCount:(NSString *)action;
 
 - (void)updateBranchViewCount:(NSString *)branchViewID;
 - (NSInteger)getBranchViewCount:(NSString *)branchViewID;

@@ -20,7 +20,7 @@
 #endif
 
 #ifdef BNC_STAGE_ENV
-#define BNC_API_BASE_URL        @"http://api.dev.branchmetrics.io"
+#define BNC_API_BASE_URL        @"http://api.dev.branch.io"
 #endif
 
 #define BNC_LINK_URL             @"https://bnc.lt"
