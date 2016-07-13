@@ -657,7 +657,7 @@ linkProperties.feature = @"sharing";
 [branchUniversalObject showShareSheetWithLinkProperties:linkProperties
                                            andShareText:@"Super amazing thing I want to share!"
                                      fromViewController:self 
-                                            andCallback:^{
+                                             completion:^(NSString *activityType, BOOL completed){
     NSLog(@"finished presenting");
 }];
 ```
@@ -675,7 +675,7 @@ linkProperties.addControlParam("$ios_url", withValue: "http://example.com/ios")
 branchUniversalObject.showShareSheetWithLinkProperties(linkProperties, 
                                         andShareText: "Super amazing thing I want to share!",
                                         fromViewController: self,
-                                        andCallback: { () -> Void in
+                                        completion: { () -> Void in
     NSLog("done showing share sheet!")
 })
 ```
@@ -688,7 +688,7 @@ branchUniversalObject.showShareSheetWithLinkProperties(linkProperties,
 
 **fromViewController**: 
 
-**andCallback**: 
+**completion**: 
 
 #### Returns
 
