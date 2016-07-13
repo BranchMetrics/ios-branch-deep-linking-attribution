@@ -1258,10 +1258,10 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     
     if (self.shouldCallSessionInitCallback) {
         if (self.sessionInitWithParamsCallback) {
-            self.sessionInitWithParamsCallback(nil, error);
+            self.sessionInitWithParamsCallback([[NSDictionary alloc] init], error);
         }
         else if (self.sessionInitWithBranchUniversalObjectCallback) {
-            self.sessionInitWithBranchUniversalObjectCallback(nil, nil, error);
+            self.sessionInitWithBranchUniversalObjectCallback([[BranchUniversalObject alloc] init], [[BranchLinkProperties alloc] init], error);
         }
     }
 }
