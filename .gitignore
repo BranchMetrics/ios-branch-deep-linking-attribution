@@ -4,4 +4,4 @@ carthage-files/Carthage
 *.xcuserstate
 *.xcuserdatad
 *.DS_Store
-
+*.xcscmblueprint
