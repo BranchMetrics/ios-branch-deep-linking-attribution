@@ -273,9 +273,9 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
     // multiplying by negative because startTime happened in the past
     NSTimeInterval elapsedTime = [startTime timeIntervalSinceNow] * -1000.0;
     NSString *lastRoundTripTime = [[NSNumber numberWithDouble:floor(elapsedTime)] stringValue];
-    NSString * lrttKey = [NSString stringWithFormat:@"%@-lrtt", requestEndpoint];
+    NSString * brttKey = [NSString stringWithFormat:@"%@-brtt", requestEndpoint];
     [self.preferenceHelper clearInstrumentationDictionary];
-    [self.preferenceHelper addInstrumentationDictionaryKey:lrttKey value:lastRoundTripTime];
+    [self.preferenceHelper addInstrumentationDictionaryKey:brttKey value:lastRoundTripTime];
 }
 - (void)updateDeviceInfoToMutableDictionary:(NSMutableDictionary *)dict {
     BNCDeviceInfo *deviceInfo  = [BNCDeviceInfo getInstance];
