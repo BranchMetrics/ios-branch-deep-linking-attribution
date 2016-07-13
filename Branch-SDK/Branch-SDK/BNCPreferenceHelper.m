@@ -18,7 +18,6 @@ static const NSInteger DEFAULT_RETRY_COUNT = 3;
 
 NSString * const BRANCH_PREFS_FILE = @"BNCPreferences";
 
-NSString * const BRANCH_PREFS_KEY_APP_KEY = @"bnc_app_key";
 NSString * const BRANCH_PREFS_KEY_APP_VERSION = @"bnc_app_version";
 NSString * const BRANCH_PREFS_KEY_LAST_RUN_BRANCH_KEY = @"bnc_last_run_branch_key";
 NSString * const BRANCH_PREFS_KEY_LAST_STRONG_MATCH_DATE = @"bnc_strong_match_created_date";
@@ -57,7 +56,6 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 @implementation BNCPreferenceHelper
 
 @synthesize branchKey = _branchKey,
-            appKey = _appKey,
             lastRunBranchKey = _lastRunBranchKey,
             appVersion = _appVersion,
             deviceFingerprintID = _deviceFingerprintID,
@@ -160,23 +158,6 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     return [url substringFromIndex:index];
 }
 #pragma mark - Preference Storage
-
-- (NSString *)appKey {
-    if (!_appKey) {
-        _appKey = [[[NSBundle mainBundle] infoDictionary] objectForKey:BRANCH_PREFS_KEY_APP_KEY];
-    }
-    
-    return _appKey;
-}
-
-- (void)setAppKey:(NSString *)appKey {
-    NSLog(@"Usage of App Key is deprecated, please move toward using a Branch key");
-    
-    if (![_appKey isEqualToString:appKey]) {
-        _appKey = appKey;
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_APP_KEY value:appKey];
-    }
-}
 
 - (NSString *)getBranchKey:(BOOL)isLive {
     // Already loaded a key, and it's the same state (live/test)

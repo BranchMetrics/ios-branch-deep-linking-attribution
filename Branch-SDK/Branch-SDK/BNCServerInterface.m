@@ -231,7 +231,8 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
     [fullParamDict addEntriesFromDictionary:params];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
     fullParamDict[@"retryNumber"] = @(retryNumber);
-    
+    fullParamDict[@"branch_key"] = key;
+
     NSMutableDictionary *metadata = [[NSMutableDictionary alloc] init];
     [metadata addEntriesFromDictionary:self.preferenceHelper.requestMetadataDictionary];
     [metadata addEntriesFromDictionary:fullParamDict[BRANCH_REQUEST_KEY_STATE]];
@@ -239,13 +240,7 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
     if (self.preferenceHelper.instrumentationDictionary.count) {
         fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = self.preferenceHelper.instrumentationDictionary;
     }
-    if ([key hasPrefix:@"key_"]) {
-        fullParamDict[@"branch_key"] = key;
-    }
-    else {
-        fullParamDict[@"app_id"] = key;
-    }
-    
+   
     return fullParamDict;
 }
 
