@@ -59,18 +59,14 @@
     [linkProperties addControlParam:@"$desktop_url" withValue:@"http://example.com/home"];
     [linkProperties addControlParam:@"$ios_url" withValue:@"http://example.com/ios"];
     [linkProperties addControlParam:@"ios_url" withValue:@"http://example.com/ios"];
-
-    [self.branchUniversalObject showShareSheetWithLinkProperties:linkProperties andShareText:@"" fromViewController:self.parentViewController completion:^(NSString *activityType, BOOL completed) {
-        //
-    }];
     
-//    [self.branchUniversalObject
-//     showShareSheetWithShareText:@"Super amazing thing I want to share"
-//     completion:^(NSString *activityType, BOOL completed) {
-//         if (completed) {
-//             NSLog(@"%@", [NSString stringWithFormat:@"Completed sharing to %@", activityType]);
-//         }
-//    }];
+    [self.branchUniversalObject
+     showShareSheetWithShareText:@"Super amazing thing I want to share"
+     completion:^(NSString *activityType, BOOL completed) {
+         if (completed) {
+             NSLog(@"%@", [NSString stringWithFormat:@"Completed sharing to %@", activityType]);
+         }
+    }];
 }
 - (IBAction)cmdRegisterView:(id)sender {
     [self.branchUniversalObject registerView];
