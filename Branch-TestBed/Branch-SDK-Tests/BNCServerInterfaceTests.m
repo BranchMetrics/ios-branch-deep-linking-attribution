@@ -57,29 +57,6 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   
 }
 
-//==================================================================================
-//TEST 02
-//This test checks to see that the branch key has been added to the GET request
-
-- (void)testParamAddForAppKey {
-  BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-  XCTestExpectation* expectation = [self expectationWithDescription:@"NSURLSessionDataTask completed"];
-  
-  [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-    // We're not sending a request, just verifying a "branch_key=key_foo" is present.
-    XCTAssertTrue([request.URL.query rangeOfString:@"app_id=non_branch_key"].location != NSNotFound, @"Branch App ID not added");
-    [expectation fulfill];
-    return [request.URL.query rangeOfString:@"app_id=key_foo"].location != NSNotFound;
-  } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
-    NSDictionary* dummyJSONResponse = @{@"key": @"value"};
-    return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
-  }];
-  
-  [serverInterface getRequest:nil url:@"http://foo" key:@"non_branch_key" callback:NULL];
-  
-  [self waitForExpectationsWithTimeout:5.0 /* 5 seconds */ handler:nil];
-}
-
 #pragma mark - Retry tests
 
 //==================================================================================

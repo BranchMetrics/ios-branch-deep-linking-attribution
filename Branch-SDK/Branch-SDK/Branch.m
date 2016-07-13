@@ -102,18 +102,10 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     NSString *branchKey = [preferenceHelper getBranchKey:YES];
     NSString *keyToUse = branchKey;
     if (!branchKey) {
-        // If no app key
-        NSString *appKey = preferenceHelper.appKey;
-        if (!appKey) {
-            [preferenceHelper logWarning:@"Please enter your branch_key in the plist!"];
-            return nil;
-        }
-        else {
-            keyToUse = appKey;
-            NSLog(@"Usage of App Key is deprecated, please move toward using a Branch key");
-        }
+        [preferenceHelper logWarning:@"Please enter your branch_key in the plist!"];
+        return nil;
     }
-    
+
     return [Branch getInstanceInternal:keyToUse returnNilIfNoCurrentInstance:NO];
 }
 
@@ -124,17 +116,8 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     NSString *branchKey = [preferenceHelper getBranchKey:NO];
     NSString *keyToUse = branchKey;
     if (!branchKey) {
-        // If no app key
-        NSString *appKey = preferenceHelper.appKey;
-        if (!appKey) {
-            [preferenceHelper logWarning:@"Please enter your branch_key in the plist!"];
-            return nil;
-        }
-        // If they did provide an app key, show them a warning. Shouldn't use app key with a test instance.
-        else {
-            [preferenceHelper logWarning:@"You requested the test instance, but provided an app key. App Keys cannot be used for test instances. Additionally, usage of App Key is deprecated, please move toward using a Branch key"];
-            keyToUse = appKey;
-        }
+        [preferenceHelper logWarning:@"Please enter your branch_key in the plist!"];
+        return nil;
     }
     
     return [Branch getInstanceInternal:keyToUse returnNilIfNoCurrentInstance:NO];
@@ -143,11 +126,12 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 + (Branch *)getInstance:(NSString *)branchKey {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     
-    if ([branchKey rangeOfString:@"key_"].location != NSNotFound) {
+    if ([branchKey hasPrefix:@"key_"]) {
         preferenceHelper.branchKey = branchKey;
     }
     else {
-        preferenceHelper.appKey = branchKey;
+        [preferenceHelper logWarning:@"Invalid Branch Key format!"];
+        return nil;
     }
     
     return [Branch getInstanceInternal:branchKey returnNilIfNoCurrentInstance:NO];
