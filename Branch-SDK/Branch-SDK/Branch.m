@@ -1284,7 +1284,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 }
 
 + (NSString *)kitDisplayVersion {
-    return @"0.12.0";
+	return @"0.12.4";
 }
 
 @end
