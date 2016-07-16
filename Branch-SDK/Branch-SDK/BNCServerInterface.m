@@ -13,6 +13,9 @@
 #import "BranchConstants.h"
 #import "BNCDeviceInfo.h"
 
+NSDate *startTime;
+NSString *requestEndpoint;
+
 void (^NSURLSessionCompletionHandler) (NSData *data, NSURLResponse *response, NSError *error);
 void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *responseData, NSError *error);
 
@@ -59,6 +62,10 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
 - (void)postRequest:(NSDictionary *)post url:(NSString *)url retryNumber:(NSInteger)retryNumber key:(NSString *)key log:(BOOL)log callback:(BNCServerCallback)callback {
     NSDictionary *extendedParams = [self updateDeviceInfoToParams:post];
     NSURLRequest *request = [self preparePostRequest:extendedParams url:url key:key retryNumber:retryNumber log:log];
+    
+    // Instrumentation metrics
+    requestEndpoint = [self.preferenceHelper getEndpointFromURL:url];
+    startTime = [NSDate date];
 
     [self genericHTTPRequest:request retryNumber:retryNumber log:log callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
         return [self preparePostRequest:post url:url key:key retryNumber:++lastRetryNumber log:log];
@@ -118,7 +125,11 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
                 error = [NSError errorWithDomain:BNCErrorDomain code:BNCDuplicateResourceError userInfo:@{ NSLocalizedDescriptionKey: @"A resource with this identifier already exists" }];
             }
             else if (status >= 400) {
-                NSString *errorString = [serverResponse.data objectForKey:@"error"] ?: @"The request was invalid.";
+                NSString *errorString = @"The request was invalid.";
+                
+                if ([serverResponse.data objectForKey:@"error"] && [[serverResponse.data objectForKey:@"error"] isKindOfClass:[NSString class]]) {
+                    errorString = [serverResponse.data objectForKey:@"error"];
+                }
                 
                 error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: errorString }];
             }
@@ -220,19 +231,16 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
     [fullParamDict addEntriesFromDictionary:params];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
     fullParamDict[@"retryNumber"] = @(retryNumber);
-    
+    fullParamDict[@"branch_key"] = key;
+
     NSMutableDictionary *metadata = [[NSMutableDictionary alloc] init];
     [metadata addEntriesFromDictionary:self.preferenceHelper.requestMetadataDictionary];
     [metadata addEntriesFromDictionary:fullParamDict[BRANCH_REQUEST_KEY_STATE]];
     fullParamDict[BRANCH_REQUEST_KEY_STATE] = metadata;
-    
-    if ([key hasPrefix:@"key_"]) {
-        fullParamDict[@"branch_key"] = key;
+    if (self.preferenceHelper.instrumentationDictionary.count) {
+        fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = self.preferenceHelper.instrumentationDictionary;
     }
-    else {
-        fullParamDict[@"app_id"] = key;
-    }
-    
+   
     return fullParamDict;
 }
 
@@ -252,9 +260,18 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
         [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned = %@", serverResponse];
     }
     
+    [self collectInstrumentationMetrics];
     return serverResponse;
 }
 
+- (void) collectInstrumentationMetrics {
+    // multiplying by negative because startTime happened in the past
+    NSTimeInterval elapsedTime = [startTime timeIntervalSinceNow] * -1000.0;
+    NSString *lastRoundTripTime = [[NSNumber numberWithDouble:floor(elapsedTime)] stringValue];
+    NSString * brttKey = [NSString stringWithFormat:@"%@-brtt", requestEndpoint];
+    [self.preferenceHelper clearInstrumentationDictionary];
+    [self.preferenceHelper addInstrumentationDictionaryKey:brttKey value:lastRoundTripTime];
+}
 - (void)updateDeviceInfoToMutableDictionary:(NSMutableDictionary *)dict {
     BNCDeviceInfo *deviceInfo  = [BNCDeviceInfo getInstance];
    

@@ -1,5 +1,15 @@
 Branch iOS SDK change log
 
+- v0.12.4 
+  * setDebug must be called on getInstance. It's no longer a static method.
+  * referral code and promo code methods are no longer available
+  * action count methods are no longer available
+  * getReferralUrl removed - please migrate to BUO
+  * getContentUrl removed - please migrate to BUO
+  * BUO showShareSheet andCallback method deprecated - migrate to showShareSheet callback.
+  * App ID removed - please migrate to using Branch Key
+  * Handle iOS 10 returning all-zeros IDFA when limiting ad tracking
+
 - v0.12.3
   * Fabric Answers integration
   * Swift Testbed
