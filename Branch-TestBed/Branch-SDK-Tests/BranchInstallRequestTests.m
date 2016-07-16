@@ -30,7 +30,6 @@
 - (void)testRequestBody {
     NSString * const HARDWARE_ID = @"foo-hardware-id";
     NSNumber * const AD_TRACKING_SAFE = @YES;
-    NSNumber * const IS_REFERRABLE = @YES;
     NSNumber * const IS_DEBUG = @YES;
     NSString * const BUNDLE_ID = @"foo-bundle-id";
     NSString * const APP_VERSION = @"foo-app-version";
@@ -70,7 +69,6 @@
         BRANCH_REQUEST_KEY_APP_VERSION: APP_VERSION,
         BRANCH_REQUEST_KEY_DEBUG: IS_DEBUG,
         BRANCH_REQUEST_KEY_BUNDLE_ID: BUNDLE_ID,
-        BRANCH_REQUEST_KEY_IS_REFERRABLE: IS_REFERRABLE,
         BRANCH_REQUEST_KEY_LINK_IDENTIFIER: LINK_IDENTIFIER,
         BRANCH_REQUEST_KEY_UPDATE: UPDATE_STATE,
         BRANCH_REQUEST_KEY_URI_SCHEME: URI_SCHEME,
