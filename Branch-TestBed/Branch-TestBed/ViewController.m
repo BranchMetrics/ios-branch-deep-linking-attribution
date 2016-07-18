@@ -158,12 +158,6 @@ NSString *test_key = @"test_key";
     }];
 }
 
-
-- (IBAction)simulateReferralsButtonTouchUpInside:(id)sender {
-    [self performSegueWithIdentifier:@"ShowSimulateReferrals" sender:self];
-}
-
-
 - (IBAction)viewFirstReferringParamsButtonTouchUpInside:(id)sender {
     Branch *branch = [Branch getInstance];
     [self performSegueWithIdentifier:@"ShowLogOutput" sender:[[branch getFirstReferringParams] description]];
