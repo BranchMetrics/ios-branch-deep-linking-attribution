@@ -41,27 +41,43 @@
     }
     
     if (self.creditTransactions.count > 0) {
-        NSDictionary *creditItem = self.creditTransactions[indexPath.row];
-        NSDictionary *transaction = [creditItem objectForKey:@"transaction"];
-        NSMutableString *text = [NSMutableString stringWithFormat:@"%@ : %@", [transaction objectForKey:@"bucket"], [transaction objectForKey:@"amount"]];
-
-        if ([creditItem objectForKey:@"referrer"] || [creditItem objectForKey:@"referree"]) {
-            BOOL hasReferrer = NO;
-            [text appendString:@"\t("];
-            if ([creditItem objectForKey:@"referrer"]) {
-                hasReferrer = YES;
-                [text appendFormat:@"referrer: %@)", [creditItem objectForKey:@"referrer"]];
+        
+        if ([self.creditTransactions count] > 0) {
+            NSDictionary *creditItem = [[self creditTransactions] objectAtIndex:indexPath.row];
+            NSDictionary *transaction = [creditItem objectForKey:@"transaction"];
+            int amount = (int) [[transaction objectForKey:@"amount"] integerValue];
+            NSString *bucket = [transaction objectForKey:@"bucket"];
+            
+            NSString *amountAsString;
+            if (amount >= 0) {
+                amountAsString = [NSString stringWithFormat:@"+%d", amount];
+            } else {
+                amountAsString = [NSString stringWithFormat:@"%d", amount];
             }
-            if ([creditItem objectForKey:@"referree"]) {
-                if (hasReferrer) {
-                    [text appendString:@" -> "];
-                }
-                [text appendFormat:@"referree: %@)", [creditItem objectForKey:@"referree"]];
+            NSString *text = [NSString stringWithFormat:@"%@ to %@", amountAsString, bucket];
+            
+            if ([transaction objectForKey:@"referrer"]) {
+                text = [NSString stringWithFormat:@"%@ - Referred by: %@", text, [transaction objectForKey:@"referrer"]];
+            } if ([transaction objectForKey:@"referred"]) {
+                text = [NSString stringWithFormat:@"%@ - User Referred: %@", text, [transaction objectForKey:@"referred"]];
             }
-            [text appendString:@")"];
+            [cell textLabel].text = text;
+            
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
+            [dateFormatter setLocale:[NSLocale currentLocale]];
+            NSString *dateString = transaction[@"date"];
+            NSDate *date = [dateFormatter dateFromString:dateString];
+            if (date) {
+                [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+                [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
+                [cell detailTextLabel].text = [dateFormatter stringFromDate:date];
+            }
+            
+            [cell detailTextLabel].text = [dateFormatter stringFromDate:date];
         }
-        cell.textLabel.text = text;
-        cell.detailTextLabel.text = [transaction objectForKey:@"date"];
+        
+        
     } else {
         cell.textLabel.text = @"None found";
         cell.detailTextLabel.text = nil;
