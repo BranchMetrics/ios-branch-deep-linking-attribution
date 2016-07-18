@@ -99,7 +99,6 @@
 		54FF1F961BD20EB50004CE2E /* BranchRegisterViewRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F941BD20EB50004CE2E /* BranchRegisterViewRequest.m */; };
 		63E4C4881D25E16A00A45FD8 /* LogOutputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4C4871D25E16A00A45FD8 /* LogOutputViewController.m */; };
 		63E4C48B1D25E17B00A45FD8 /* NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4C48A1D25E17B00A45FD8 /* NavigationController.m */; };
-		63E4C48E1D25E18900A45FD8 /* SimulateReferralsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4C48D1D25E18900A45FD8 /* SimulateReferralsViewController.m */; };
 		63E4C4901D25E1BC00A45FD8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63E4C48F1D25E1BC00A45FD8 /* LaunchScreen.storyboard */; };
 		63E4C4921D25E1CA00A45FD8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63E4C4911D25E1CA00A45FD8 /* Assets.xcassets */; };
 		670016641940F51400A9E103 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016631940F51400A9E103 /* Foundation.framework */; };
@@ -218,8 +217,6 @@
 		63E4C4871D25E16A00A45FD8 /* LogOutputViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogOutputViewController.m; sourceTree = "<group>"; };
 		63E4C4891D25E17B00A45FD8 /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationController.h; sourceTree = "<group>"; };
 		63E4C48A1D25E17B00A45FD8 /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationController.m; sourceTree = "<group>"; };
-		63E4C48C1D25E18900A45FD8 /* SimulateReferralsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulateReferralsViewController.h; sourceTree = "<group>"; };
-		63E4C48D1D25E18900A45FD8 /* SimulateReferralsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimulateReferralsViewController.m; sourceTree = "<group>"; };
 		63E4C48F1D25E1BC00A45FD8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		63E4C4911D25E1CA00A45FD8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		670016601940F51400A9E103 /* Branch-TestBed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Branch-TestBed.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -450,8 +447,6 @@
 				670016751940F51400A9E103 /* Main.storyboard */,
 				63E4C4891D25E17B00A45FD8 /* NavigationController.h */,
 				63E4C48A1D25E17B00A45FD8 /* NavigationController.m */,
-				63E4C48C1D25E18900A45FD8 /* SimulateReferralsViewController.h */,
-				63E4C48D1D25E18900A45FD8 /* SimulateReferralsViewController.m */,
 				6700166A1940F51400A9E103 /* Supporting Files */,
 				670016781940F51400A9E103 /* ViewController.h */,
 				670016791940F51400A9E103 /* ViewController.m */,
@@ -850,7 +845,6 @@
 				4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,
 				63E4C48B1D25E17B00A45FD8 /* NavigationController.m in Sources */,
-				63E4C48E1D25E18900A45FD8 /* SimulateReferralsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
