@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BranchViewHandler.h"
+#import "Branch.h"
 
-@interface ViewController : UIViewController <BranchViewControllerDelegate>
+@interface ViewController : UITableViewController
 
 @end
