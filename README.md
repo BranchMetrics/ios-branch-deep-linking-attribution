@@ -5,15 +5,52 @@
 
 This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a complete list of the content featured in this document.
 
+___
+
+## iOS Reference
+
+1. External resources
+  + [Full integration guide](https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/)
+  + [Change log](https://github.com/BranchMetrics/ios-branch-deep-linking/blob/master/ChangeLog.md)
+  + [Testing resources](https://dev.branch.io/getting-started/integration-testing/guide/ios/)
+  + [Support portal](http://support.branch.io)
+  + [Test app resources](#get-the-demo-app)
+
+2. Getting started
+  + [Library installation](#installation)
+  + [Register for Branch key](#register-your-app)
+  + [Add your Branch key](#add-your-branch-key-to-your-project)
+  + [Register a URI scheme](#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)
+  + [Support Universal Links](#support-universal-linking-ios-9)
+
+3. Branch general methods
+  + [Get a Branch singleton](#get-a-singleton-branch-instance)
+  + [Initialize Branch and register deep link router](#init-branch-session-and-deep-link-routing-function)
+  + [Register view controller for auto deep linking](#register-a-deep-link-controller)
+  + [Retrieve latest deep linking params](#retrieve-session-install-or-open-parameters)
+  + [Retrieve the user's first deep linking params](#retrieve-install-install-only-parameters)
+  + [Setting the user id for tracking influencers](#persistent-identities)
+  + [Logging a user out](#logout)
+  + [Tracking custom events](#register-custom-events)
+
+4. Branch Universal Objects
+  + [Instantiate a Branch Universal Object](#branch-universal-object)
+  + [Register views for content analytics](#register-views-for-content-analytics)
+  + [List content on Spotlight](#list-content-on-spotlight)
+  + [Configuring link properties](link-properties-parameters)
+  + [Creating a short link referencing the object](#shortened-links)
+  + [Triggering a share sheet to share a link](#uiactivityview-share-sheet)
+
+5. Referral rewards methods
+  + [Get reward balance](#get-reward-balance)
+  + [Redeem rewards](#redeem-all-or-some-of-the-reward-balance-store-state)
+  + [Get credit history](#get-credit-history)
+
+___
+
 ## Get the Demo App
 
 There's a full demo app embedded in this repository, but you can also check out our live demo: [Branch Monster Factory](https://itunes.apple.com/us/app/id917737838). We've [open sourced the Branchster's app](https://github.com/BranchMetrics/Branchster-iOS) as well if you're ready to dig in.
-
-## Additional Resources
-- [Integration guide](https://dev.branch.io/recipes/add_the_sdk/ios/) *Start Here*
-- [Changelog](https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK/blob/master/ChangeLog.md)
-- [Testing](https://dev.branch.io/recipes/testing_your_integration/ios/)
-- [Support portal, FAQ](http://support.branch.io)
 
 ## Installation
 
@@ -33,7 +70,6 @@ To integrate Branch into your project using Carthage add the following to your `
 ```ruby
 github "BranchMetrics/iOS-Deferred-Deep-Linking-SDK"
 ```
-
 
 ### Download the Raw Files
 
@@ -634,7 +670,7 @@ UIActivityView is the standard way of allowing users to share content from your 
 
 **Sample UIActivityView Share Sheet**
 
-![UIActivityView Share Sheet](https://dev.branch.io/img/ingredients/sdk_links/ios_share_sheet.jpg)
+![UIActivityView Share Sheet](https://dev.branch.io/img/pages/getting-started/branch-universal-object/ios_share_sheet.png)
 
 The Branch iOS SDK includes a wrapper on the UIActivityViewController, that will generate a Branch short URL and automatically tag it with the channel the user selects (Facebook, Twitter, etc.).
 
