@@ -339,6 +339,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
             for (NSString *scheme in self.whiteListedSchemeList) {
                 if ([scheme isEqualToString:[url scheme]]) {
                     self.preferenceHelper.externalIntentURI = [url absoluteString];
+                    break;
                 }
             }
         } else {
