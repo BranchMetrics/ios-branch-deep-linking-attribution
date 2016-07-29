@@ -357,6 +357,19 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 -(void)setDeepLinkDebugMode:(NSDictionary *)debugParams;
 
+/**
+ Add a scheme to a whitelist of URI schemes that will be tracked by Branch. Default to all schemes.
+ 
+ @param the scheme to add to the whitelist, i.e. @"http", @"https" or @"myapp"
+ */
+-(void)addWhiteListedScheme:(NSString *)scheme;
+
+/**
+ Add an array of schemes to a whitelist of URI schemes that will be tracked by Branch. Default to all schemes.
+ 
+ @param the array of schemes to add to the whitelist, i.e. @[@"http", @"https", @"myapp"]
+ */
+-(void)setWhiteListedSchemes:(NSArray *)schemes;
 
 /**
  Register your Facebook SDK's FBSDKAppLinkUtility class to be used by Branch for deferred deep linking from their platform
