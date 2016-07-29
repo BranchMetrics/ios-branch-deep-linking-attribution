@@ -1,5 +1,10 @@
 Branch iOS SDK change log
 
+- v0.12.5
+  * New Testbed App!
+  * fix module.map path on Carthage project
+  * ability to whitelist URI schemes
+
 - v0.12.4 
   * setDebug must be called on getInstance. It's no longer a static method.
   * referral code and promo code methods are no longer available
