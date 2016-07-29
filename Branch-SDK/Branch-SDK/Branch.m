@@ -80,7 +80,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (assign, nonatomic) BOOL accountForFacebookSDK;
 @property (assign, nonatomic) id FBSDKAppLinkUtility;
-@property (strong, nonatomic) NSMutableArray *whiteListedSchemes;
+@property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
 
 @end
 
@@ -148,7 +148,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
         _processing_sema = dispatch_semaphore_create(1);
         _networkCount = 0;
         _deepLinkControllers = [[NSMutableDictionary alloc] init];
-        _whiteListedSchemes = [[NSMutableArray alloc] init];
+        _whiteListedSchemeList = [[NSMutableArray alloc] init];
         _useCookieBasedMatching = YES;
         
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
@@ -323,11 +323,11 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 }
 
 -(void)setWhiteListedSchemes:(NSArray *)schemes {
-    self.whiteListedSchemes = [schemes mutableCopy];
+    self.whiteListedSchemeList = [schemes mutableCopy];
 }
 
 -(void)addWhiteListedScheme:(NSString *)scheme {
-    [self.whiteListedSchemes addObject:scheme];
+    [self.whiteListedSchemeList addObject:scheme];
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url {
@@ -335,8 +335,8 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     if (url && ![url isEqual:[NSNull null]]) {
         
         // save the incoming url in the preferenceHelper in the externalIntentURI field
-        if ([self.whiteListedSchemes count]) {
-            for (NSString *scheme in self.whiteListedSchemes) {
+        if ([self.whiteListedSchemeList count]) {
+            for (NSString *scheme in self.whiteListedSchemeList) {
                 if ([scheme isEqualToString:[url scheme]]) {
                     self.preferenceHelper.externalIntentURI = [url absoluteString];
                 }
