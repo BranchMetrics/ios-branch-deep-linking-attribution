@@ -21,6 +21,7 @@
     
     Branch *branch = [Branch getInstance];
     [branch setDebug];
+    [branch setWhiteListedSchemes:@[@"branchtest"]];
     
     ExampleDeepLinkingController *controller = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"DeepLinkingController"];
     [branch registerDeepLinkController:controller forKey:@"gravatar_email"];
