@@ -21,6 +21,7 @@
     
     Branch *branch = [Branch getInstance];
     [branch setDebug];
+    [branch setWhiteListedSchemes:@[@"branchtest"]];
     
     // Automatic Deeplinking on "deeplink_text"
     NavigationController *navigationController = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateInitialViewController];
