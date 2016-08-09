@@ -66,7 +66,7 @@ NSString *test_key = @"test_key";
     linkProperties.feature = feature;
     linkProperties.channel = channel;
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
-    [linkProperties addControlParam:@"$ios_url" withValue: channel];
+    [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
     
     [self.branchUniversalObject getShortUrlWithLinkProperties:linkProperties andCallback:^(NSString *url, NSError *error) {
         [self.branchLinkTextField setText:url];
