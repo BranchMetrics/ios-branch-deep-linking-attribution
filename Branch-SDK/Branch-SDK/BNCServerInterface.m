@@ -13,13 +13,13 @@
 #import "BranchConstants.h"
 #import "BNCDeviceInfo.h"
 
-NSDate *startTime;
-NSString *requestEndpoint;
-
 void (^NSURLSessionCompletionHandler) (NSData *data, NSURLResponse *response, NSError *error);
 void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *responseData, NSError *error);
 
 @implementation BNCServerInterface
+
+NSDate *startTime;
+NSString *requestEndpoint;
 
 #pragma mark - GET methods
 
