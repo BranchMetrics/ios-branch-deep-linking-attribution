@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="rgL-wI-yV3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="rgL-wI-yV3">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -147,7 +147,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wi0-L9-cPT">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wi0-L9-cPT" userLabel="redeem5PointsButton">
                                                     <rect key="frame" x="8" y="9" width="140" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -161,7 +161,7 @@
                                                         <action selector="redeemFivePointsButtonTouchUpInside:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="IsF-jl-NT1"/>
                                                     </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3nO-kb-Ybc">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3nO-kb-Ybc" userLabel="setUserIDButton">
                                                     <rect key="frame" x="172" y="9" width="140" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -192,7 +192,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ocf-3D-1vT">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ocf-3D-1vT" userLabel="refreshRewardPointsButton">
                                                     <rect key="frame" x="8" y="9" width="140" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -206,14 +206,14 @@
                                                         <action selector="refreshRewardsButtonTouchUpInside:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="ghF-kN-k8w"/>
                                                     </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VJv-ub-Zmr">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VJv-ub-Zmr" userLabel="simulateLogoutButton">
                                                     <rect key="frame" x="172" y="9" width="140" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="140" id="dxd-jI-fNp"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <state key="normal" title="SimulateLogout">
+                                                    <state key="normal" title="Simulate Logout">
                                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
@@ -237,7 +237,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="amI-7f-lc5">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="amI-7f-lc5" userLabel="sendBuyEventButton">
                                                     <rect key="frame" x="8" y="9" width="140" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -251,7 +251,7 @@
                                                         <action selector="sendBuyEventButtonTouchUpInside:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="J7z-W4-wJV"/>
                                                     </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wlk-mP-jg4">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wlk-mP-jg4" userLabel="sendComplexEventButton">
                                                     <rect key="frame" x="172" y="9" width="140" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -282,7 +282,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UB9-Wg-s6V">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UB9-Wg-s6V" userLabel="showRewardsHistoryButton">
                                                     <rect key="frame" x="8" y="9" width="140" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -296,11 +296,10 @@
                                                         <action selector="getCreditHistoryButtonTouchUpInside:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="ynp-4b-edn"/>
                                                     </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eLX-a4-zOU">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eLX-a4-zOU" userLabel="shareLinkButton">
                                                     <rect key="frame" x="172" y="9" width="140" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="27" id="Ve0-e8-Mtm"/>
                                                         <constraint firstAttribute="width" constant="140" id="cwU-K2-GE6"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
@@ -313,10 +312,10 @@
                                                 </button>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="eLX-a4-zOU" firstAttribute="centerY" secondItem="oIM-DP-jP8" secondAttribute="centerY" id="83r-ux-sg8"/>
+                                                <constraint firstItem="eLX-a4-zOU" firstAttribute="trailing" secondItem="oIM-DP-jP8" secondAttribute="trailingMargin" id="ACR-fm-wAd"/>
                                                 <constraint firstItem="UB9-Wg-s6V" firstAttribute="leading" secondItem="oIM-DP-jP8" secondAttribute="leadingMargin" id="Ymx-80-wmC"/>
                                                 <constraint firstItem="UB9-Wg-s6V" firstAttribute="centerY" secondItem="oIM-DP-jP8" secondAttribute="centerY" id="bgL-WW-CaX"/>
-                                                <constraint firstItem="eLX-a4-zOU" firstAttribute="top" secondItem="oIM-DP-jP8" secondAttribute="topMargin" constant="1" id="u7W-EN-iL0"/>
-                                                <constraint firstItem="eLX-a4-zOU" firstAttribute="leading" secondItem="UB9-Wg-s6V" secondAttribute="trailing" constant="24" id="zEg-BO-7BJ"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" red="0.14117647059999999" green="0.14117647059999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
@@ -328,7 +327,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Luw-Dl-fN9">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Luw-Dl-fN9" userLabel="viewFirstReferringParamsButton">
                                                     <rect key="frame" x="65" y="9" width="190" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -357,7 +356,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Spk-te-tFl">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Spk-te-tFl" userLabel="viewLatestReferringParamsButton">
                                                     <rect key="frame" x="65" y="9" width="190" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -386,7 +385,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xlw-co-H5i">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xlw-co-H5i" userLabel="simulateContentAccessButton">
                                                     <rect key="frame" x="65" y="9" width="190" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -415,7 +414,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LMJ-qq-b98">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LMJ-qq-b98" userLabel="registerWithSpotlightButton">
                                                     <rect key="frame" x="65" y="8" width="190" height="27"/>
                                                     <color key="backgroundColor" red="0.28235294119999998" green="0.2784313725" blue="0.28627450980000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -435,15 +434,6 @@
                                                 <constraint firstItem="LMJ-qq-b98" firstAttribute="top" secondItem="o6X-XF-FCv" secondAttribute="topMargin" id="YYc-aO-zHT"/>
                                                 <constraint firstItem="LMJ-qq-b98" firstAttribute="centerX" secondItem="o6X-XF-FCv" secondAttribute="centerX" id="aiS-km-n6V"/>
                                             </constraints>
-                                        </tableViewCellContentView>
-                                        <color key="backgroundColor" red="0.14117647059999999" green="0.14117647059999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
-                                    </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="ekc-rb-YQC">
-                                        <rect key="frame" x="0.0" y="548" width="320" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ekc-rb-YQC" id="By0-RI-7TX">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" red="0.14117647059999999" green="0.14117647059999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
                                     </tableViewCell>

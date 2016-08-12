@@ -19,7 +19,6 @@
 		63AAF0E21CF758AF00CA98BD /* TestBed_SwiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0E11CF758AF00CA98BD /* TestBed_SwiftUITests.swift */; };
 		63AAF0F11CF7594400CA98BD /* Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0F01CF7594400CA98BD /* Branch.m */; };
 		63AAF0FD1CF7F4AD00CA98BD /* CreditHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0FC1CF7F4AD00CA98BD /* CreditHistoryViewController.swift */; };
-		63AAF0FF1CF7F4CC00CA98BD /* SimulateReferralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0FE1CF7F4CC00CA98BD /* SimulateReferralsViewController.swift */; };
 		63AAF1011CF7F58900CA98BD /* LogOutputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF1001CF7F58900CA98BD /* LogOutputViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -59,7 +58,6 @@
 		63AAF0EF1CF7594400CA98BD /* TestBed-Swift-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestBed-Swift-Bridging-Header.h"; sourceTree = "<group>"; };
 		63AAF0F01CF7594400CA98BD /* Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Branch.m; sourceTree = "<group>"; };
 		63AAF0FC1CF7F4AD00CA98BD /* CreditHistoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreditHistoryViewController.swift; sourceTree = "<group>"; };
-		63AAF0FE1CF7F4CC00CA98BD /* SimulateReferralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimulateReferralsViewController.swift; sourceTree = "<group>"; };
 		63AAF1001CF7F58900CA98BD /* LogOutputViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogOutputViewController.swift; sourceTree = "<group>"; };
 		64F238FAA0C1505CD62B9B74 /* Pods-TestBed-Swift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestBed-Swift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TestBed-Swift/Pods-TestBed-Swift.debug.xcconfig"; sourceTree = "<group>"; };
 		72799EEB76B210A6795944CF /* libPods-TestBed-Swift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TestBed-Swift.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -140,7 +138,6 @@
 				633EEA691CF88817000AE1BC /* TestBed-Swift.entitlements */,
 				63AAF0FC1CF7F4AD00CA98BD /* CreditHistoryViewController.swift */,
 				63AAF1001CF7F58900CA98BD /* LogOutputViewController.swift */,
-				63AAF0FE1CF7F4CC00CA98BD /* SimulateReferralsViewController.swift */,
 				63AAF0C51CF758AF00CA98BD /* Main.storyboard */,
 				63AAF0C81CF758AF00CA98BD /* Assets.xcassets */,
 				63AAF0CA1CF758AF00CA98BD /* LaunchScreen.storyboard */,
@@ -240,7 +237,7 @@
 				TargetAttributes = {
 					63AAF0BD1CF758AF00CA98BD = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = 69TZ4MRH7U;
+						DevelopmentTeam = R63EM248DP;
 						SystemCapabilities = {
 							com.apple.SafariKeychain = {
 								enabled = 1;
@@ -359,7 +356,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				63AAF0FD1CF7F4AD00CA98BD /* CreditHistoryViewController.swift in Sources */,
-				63AAF0FF1CF7F4CC00CA98BD /* SimulateReferralsViewController.swift in Sources */,
 				63AAF1011CF7F58900CA98BD /* LogOutputViewController.swift in Sources */,
 				63AAF0F11CF7594400CA98BD /* Branch.m in Sources */,
 				63AAF0C41CF758AF00CA98BD /* ViewController.swift in Sources */,
@@ -512,10 +508,12 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "TestBed-Swift/TestBed-Swift.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "TestBed-Swift/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.objective-c.Branch-TestBed";
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Swift.TestBed;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "TestBed-Swift/TestBed-Swift-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -529,10 +527,12 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "TestBed-Swift/TestBed-Swift.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "TestBed-Swift/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.objective-c.Branch-TestBed";
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Swift.TestBed;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "TestBed-Swift/TestBed-Swift-Bridging-Header.h";
 			};
 			name = Release;

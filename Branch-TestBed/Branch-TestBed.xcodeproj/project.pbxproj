@@ -690,7 +690,7 @@
 						DevelopmentTeam = R63EM248DP;
 						SystemCapabilities = {
 							com.apple.Push = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.SafariKeychain = {
 								enabled = 1;
@@ -1040,7 +1040,7 @@
 				GCC_PREFIX_HEADER = "Branch-TestBed/Branch-TestBed-Prefix.pch";
 				INFOPLIST_FILE = "Branch-TestBed/Branch-TestBed-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.Objective-C.TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
@@ -1061,7 +1061,7 @@
 				GCC_PREFIX_HEADER = "Branch-TestBed/Branch-TestBed-Prefix.pch";
 				INFOPLIST_FILE = "Branch-TestBed/Branch-TestBed-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.Objective-C.TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;

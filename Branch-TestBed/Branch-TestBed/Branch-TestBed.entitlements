@@ -4,7 +4,10 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:bnc.lt</string>
-    </array>
+		<string>applinks:er3j.app.link</string>
+		<string>applinks:er3j-alternate.app.link</string>
+		<string>applinks:er3j.test-app.link</string>
+		<string>applinks:er3j-alternate.test-app.link</string>
+	</array>
 </dict>
 </plist>
