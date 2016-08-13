@@ -65,10 +65,9 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
     
     // Instrumentation metrics
     requestEndpoint = [self.preferenceHelper getEndpointFromURL:url];
-    startTime = [NSDate date];
 
     [self genericHTTPRequest:request retryNumber:retryNumber log:log callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
-        return [self preparePostRequest:post url:url key:key retryNumber:++lastRetryNumber log:log];
+        return [self preparePostRequest:extendedParams url:url key:key retryNumber:++lastRetryNumber log:log];
     }];
 }
 
@@ -150,6 +149,9 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
         NSURLSessionCompletionHandler(responseData, response, error);
     };
     
+    // start the reqeust timer here. This will account for retries.
+    startTime = [NSDate date];
+
     // NSURLSession is available in iOS 7 and above
     if (NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_7_0) {
         NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
