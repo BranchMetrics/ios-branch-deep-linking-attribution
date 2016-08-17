@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Branch"
-  s.version          = "0.12.3"
+  s.version          = "0.12.5"
   s.summary          = "Create an HTTP URL for any piece of content in your app"
   s.description      = <<-DESC
 - Want the highest possible conversions on your sharing feature?
@@ -16,8 +16,6 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.license          = 'Proprietary'
   s.author           = { "Branch" => "support@branch.io" }
   s.source           = { :git => "https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK.git", :tag => s.version.to_s }
-  s.social_media_url = 'https://www.linkedin.com/company/3813083'
-
   s.platform     = :ios, '6.0'
   s.requires_arc = true
 

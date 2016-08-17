@@ -208,19 +208,6 @@
     }
 }
 
-
-- (void)showShareSheetWithShareText:(NSString *)shareText andCallback:(callback)callback {
-    [self showShareSheetWithLinkProperties:nil andShareText:shareText fromViewController:nil andCallback:callback];
-}
-
-- (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController andCallback:(callback)callback {
-    [self showShareSheetWithLinkProperties:linkProperties andShareText:shareText fromViewController:viewController completion:^(NSString *activityType, BOOL completed) {
-        if (callback) {
-            callback();
-        }
-    }];
-}
-
 - (void)listOnSpotlight {
     [self listOnSpotlightWithCallback:nil];
 }

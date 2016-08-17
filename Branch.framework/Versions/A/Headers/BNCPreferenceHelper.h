@@ -14,7 +14,6 @@
 @interface BNCPreferenceHelper : NSObject
 
 @property (strong, nonatomic) NSString *branchKey;
-@property (strong, nonatomic) NSString *appKey;
 @property (strong, nonatomic) NSString *lastRunBranchKey;
 @property (strong, nonatomic) NSDate *lastStrongMatchDate;
 @property (strong, nonatomic) NSString *appVersion;
@@ -28,8 +27,6 @@
 @property (strong, nonatomic) NSString *userIdentity;
 @property (strong, nonatomic) NSString *sessionParams;
 @property (strong, nonatomic) NSString *installParams;
-@property (assign, nonatomic) BOOL explicitlyRequestedReferrable;
-@property (assign, nonatomic) BOOL isReferrable;
 @property (assign, nonatomic) BOOL isDebug;
 @property (assign, nonatomic) BOOL shouldWaitForInit;
 @property (assign, nonatomic) BOOL suppressWarningLogs;
@@ -43,6 +40,8 @@
 
 - (NSString *)getAPIBaseURL;
 - (NSString *)getAPIURL:(NSString *)endpoint;
+- (NSString *)getEndpointFromURL:(NSString *)url;
+
 - (NSString *)getBranchKey:(BOOL)isLive;
 
 - (void)clearUserCreditsAndCounts;
@@ -57,16 +56,15 @@
 - (NSInteger)getCreditCount;
 - (NSInteger)getCreditCountForBucket:(NSString *)bucket;
 
-- (void)setActionTotalCount:(NSString *)action withCount:(NSInteger)count;
-- (void)setActionUniqueCount:(NSString *)action withCount:(NSInteger)count;
-- (NSInteger)getActionTotalCount:(NSString *)action;
-- (NSInteger)getActionUniqueCount:(NSString *)action;
-
 - (void)updateBranchViewCount:(NSString *)branchViewID;
 - (NSInteger)getBranchViewCount:(NSString *)branchViewID;
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
 - (NSMutableDictionary *)requestMetadataDictionary;
+
+- (void)addInstrumentationDictionaryKey:(NSString *)key value:(NSString *)value;
+- (NSMutableDictionary *)instrumentationDictionary;
+- (void)clearInstrumentationDictionary;
 
 - (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
 - (void)logWarning:(NSString *)message;

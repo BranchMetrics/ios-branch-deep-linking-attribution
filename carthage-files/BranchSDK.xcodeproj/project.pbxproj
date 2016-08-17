@@ -51,18 +51,12 @@
 		E230A1971D03DB9E006181D8 /* BranchViewHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A1401D03DB9E006181D8 /* BranchViewHandler.m */; };
 		E230A1981D03DB9E006181D8 /* BNCServerRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1421D03DB9E006181D8 /* BNCServerRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E230A1991D03DB9E006181D8 /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A1431D03DB9E006181D8 /* BNCServerRequest.m */; };
-		E230A19A1D03DB9E006181D8 /* BranchApplyPromoCodeRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1441D03DB9E006181D8 /* BranchApplyPromoCodeRequest.h */; };
-		E230A19B1D03DB9E006181D8 /* BranchApplyPromoCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A1451D03DB9E006181D8 /* BranchApplyPromoCodeRequest.m */; };
 		E230A19C1D03DB9E006181D8 /* BranchCloseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1461D03DB9E006181D8 /* BranchCloseRequest.h */; };
 		E230A19D1D03DB9E006181D8 /* BranchCloseRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A1471D03DB9E006181D8 /* BranchCloseRequest.m */; };
 		E230A19E1D03DB9E006181D8 /* BranchCreditHistoryRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1481D03DB9E006181D8 /* BranchCreditHistoryRequest.h */; };
 		E230A19F1D03DB9E006181D8 /* BranchCreditHistoryRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A1491D03DB9E006181D8 /* BranchCreditHistoryRequest.m */; };
-		E230A1A01D03DB9E006181D8 /* BranchGetPromoCodeRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A14A1D03DB9E006181D8 /* BranchGetPromoCodeRequest.h */; };
-		E230A1A11D03DB9E006181D8 /* BranchGetPromoCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A14B1D03DB9E006181D8 /* BranchGetPromoCodeRequest.m */; };
 		E230A1A21D03DB9E006181D8 /* BranchInstallRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A14C1D03DB9E006181D8 /* BranchInstallRequest.h */; };
 		E230A1A31D03DB9E006181D8 /* BranchInstallRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A14D1D03DB9E006181D8 /* BranchInstallRequest.m */; };
-		E230A1A41D03DB9E006181D8 /* BranchLoadActionsRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A14E1D03DB9E006181D8 /* BranchLoadActionsRequest.h */; };
-		E230A1A51D03DB9E006181D8 /* BranchLoadActionsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A14F1D03DB9E006181D8 /* BranchLoadActionsRequest.m */; };
 		E230A1A61D03DB9E006181D8 /* BranchLoadRewardsRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1501D03DB9E006181D8 /* BranchLoadRewardsRequest.h */; };
 		E230A1A71D03DB9E006181D8 /* BranchLoadRewardsRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A1511D03DB9E006181D8 /* BranchLoadRewardsRequest.m */; };
 		E230A1A81D03DB9E006181D8 /* BranchLogoutRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1521D03DB9E006181D8 /* BranchLogoutRequest.h */; };
@@ -83,8 +77,6 @@
 		E230A1B71D03DB9F006181D8 /* BranchSpotlightUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A1611D03DB9E006181D8 /* BranchSpotlightUrlRequest.m */; };
 		E230A1B81D03DB9F006181D8 /* BranchUserCompletedActionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1621D03DB9E006181D8 /* BranchUserCompletedActionRequest.h */; };
 		E230A1B91D03DB9F006181D8 /* BranchUserCompletedActionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A1631D03DB9E006181D8 /* BranchUserCompletedActionRequest.m */; };
-		E230A1BA1D03DB9F006181D8 /* BranchValidatePromoCodeRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1641D03DB9E006181D8 /* BranchValidatePromoCodeRequest.h */; };
-		E230A1BB1D03DB9F006181D8 /* BranchValidatePromoCodeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A1651D03DB9E006181D8 /* BranchValidatePromoCodeRequest.m */; };
 		E230A1BC1D03DB9F006181D8 /* PromoViewHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1661D03DB9E006181D8 /* PromoViewHandler.h */; };
 		E2B9477B1D15E31700F2270D /* BNCCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B9477A1D15E31700F2270D /* BNCCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E2B9477E1D15E3C100F2270D /* BNCFabricAnswers.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B9477C1D15E3C100F2270D /* BNCFabricAnswers.h */; };
@@ -137,18 +129,12 @@
 		E230A1401D03DB9E006181D8 /* BranchViewHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchViewHandler.m; sourceTree = "<group>"; };
 		E230A1421D03DB9E006181D8 /* BNCServerRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCServerRequest.h; sourceTree = "<group>"; };
 		E230A1431D03DB9E006181D8 /* BNCServerRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerRequest.m; sourceTree = "<group>"; };
-		E230A1441D03DB9E006181D8 /* BranchApplyPromoCodeRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchApplyPromoCodeRequest.h; sourceTree = "<group>"; };
-		E230A1451D03DB9E006181D8 /* BranchApplyPromoCodeRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchApplyPromoCodeRequest.m; sourceTree = "<group>"; };
 		E230A1461D03DB9E006181D8 /* BranchCloseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchCloseRequest.h; sourceTree = "<group>"; };
 		E230A1471D03DB9E006181D8 /* BranchCloseRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchCloseRequest.m; sourceTree = "<group>"; };
 		E230A1481D03DB9E006181D8 /* BranchCreditHistoryRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchCreditHistoryRequest.h; sourceTree = "<group>"; };
 		E230A1491D03DB9E006181D8 /* BranchCreditHistoryRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchCreditHistoryRequest.m; sourceTree = "<group>"; };
-		E230A14A1D03DB9E006181D8 /* BranchGetPromoCodeRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchGetPromoCodeRequest.h; sourceTree = "<group>"; };
-		E230A14B1D03DB9E006181D8 /* BranchGetPromoCodeRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchGetPromoCodeRequest.m; sourceTree = "<group>"; };
 		E230A14C1D03DB9E006181D8 /* BranchInstallRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchInstallRequest.h; sourceTree = "<group>"; };
 		E230A14D1D03DB9E006181D8 /* BranchInstallRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchInstallRequest.m; sourceTree = "<group>"; };
-		E230A14E1D03DB9E006181D8 /* BranchLoadActionsRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchLoadActionsRequest.h; sourceTree = "<group>"; };
-		E230A14F1D03DB9E006181D8 /* BranchLoadActionsRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLoadActionsRequest.m; sourceTree = "<group>"; };
 		E230A1501D03DB9E006181D8 /* BranchLoadRewardsRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchLoadRewardsRequest.h; sourceTree = "<group>"; };
 		E230A1511D03DB9E006181D8 /* BranchLoadRewardsRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLoadRewardsRequest.m; sourceTree = "<group>"; };
 		E230A1521D03DB9E006181D8 /* BranchLogoutRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchLogoutRequest.h; sourceTree = "<group>"; };
@@ -169,8 +155,6 @@
 		E230A1611D03DB9E006181D8 /* BranchSpotlightUrlRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchSpotlightUrlRequest.m; sourceTree = "<group>"; };
 		E230A1621D03DB9E006181D8 /* BranchUserCompletedActionRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchUserCompletedActionRequest.h; sourceTree = "<group>"; };
 		E230A1631D03DB9E006181D8 /* BranchUserCompletedActionRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUserCompletedActionRequest.m; sourceTree = "<group>"; };
-		E230A1641D03DB9E006181D8 /* BranchValidatePromoCodeRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchValidatePromoCodeRequest.h; sourceTree = "<group>"; };
-		E230A1651D03DB9E006181D8 /* BranchValidatePromoCodeRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchValidatePromoCodeRequest.m; sourceTree = "<group>"; };
 		E230A1661D03DB9E006181D8 /* PromoViewHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PromoViewHandler.h; sourceTree = "<group>"; };
 		E230A1681D03DB9E006181D8 /* FABAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FABAttributes.h; sourceTree = "<group>"; };
 		E230A1691D03DB9E006181D8 /* FABKitProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FABKitProtocol.h; sourceTree = "<group>"; };
@@ -257,18 +241,12 @@
 			children = (
 				E230A1421D03DB9E006181D8 /* BNCServerRequest.h */,
 				E230A1431D03DB9E006181D8 /* BNCServerRequest.m */,
-				E230A1441D03DB9E006181D8 /* BranchApplyPromoCodeRequest.h */,
-				E230A1451D03DB9E006181D8 /* BranchApplyPromoCodeRequest.m */,
 				E230A1461D03DB9E006181D8 /* BranchCloseRequest.h */,
 				E230A1471D03DB9E006181D8 /* BranchCloseRequest.m */,
 				E230A1481D03DB9E006181D8 /* BranchCreditHistoryRequest.h */,
 				E230A1491D03DB9E006181D8 /* BranchCreditHistoryRequest.m */,
-				E230A14A1D03DB9E006181D8 /* BranchGetPromoCodeRequest.h */,
-				E230A14B1D03DB9E006181D8 /* BranchGetPromoCodeRequest.m */,
 				E230A14C1D03DB9E006181D8 /* BranchInstallRequest.h */,
 				E230A14D1D03DB9E006181D8 /* BranchInstallRequest.m */,
-				E230A14E1D03DB9E006181D8 /* BranchLoadActionsRequest.h */,
-				E230A14F1D03DB9E006181D8 /* BranchLoadActionsRequest.m */,
 				E230A1501D03DB9E006181D8 /* BranchLoadRewardsRequest.h */,
 				E230A1511D03DB9E006181D8 /* BranchLoadRewardsRequest.m */,
 				E230A1521D03DB9E006181D8 /* BranchLogoutRequest.h */,
@@ -289,8 +267,6 @@
 				E230A1611D03DB9E006181D8 /* BranchSpotlightUrlRequest.m */,
 				E230A1621D03DB9E006181D8 /* BranchUserCompletedActionRequest.h */,
 				E230A1631D03DB9E006181D8 /* BranchUserCompletedActionRequest.m */,
-				E230A1641D03DB9E006181D8 /* BranchValidatePromoCodeRequest.h */,
-				E230A1651D03DB9E006181D8 /* BranchValidatePromoCodeRequest.m */,
 				E230A1661D03DB9E006181D8 /* PromoViewHandler.h */,
 			);
 			path = Requests;
@@ -355,7 +331,6 @@
 				E230A1811D03DB9E006181D8 /* BNCStrongMatchHelper.h in Headers */,
 				E230A1731D03DB9E006181D8 /* BNCError.h in Headers */,
 				E230A1A81D03DB9E006181D8 /* BranchLogoutRequest.h in Headers */,
-				E230A19A1D03DB9E006181D8 /* BranchApplyPromoCodeRequest.h in Headers */,
 				E230A1B81D03DB9F006181D8 /* BranchUserCompletedActionRequest.h in Headers */,
 				E230A19E1D03DB9E006181D8 /* BranchCreditHistoryRequest.h in Headers */,
 				E230A1A61D03DB9E006181D8 /* BranchLoadRewardsRequest.h in Headers */,
@@ -364,14 +339,11 @@
 				E230A1711D03DB9E006181D8 /* BNCEncodingUtils.h in Headers */,
 				E230A1981D03DB9E006181D8 /* BNCServerRequest.h in Headers */,
 				E230A1AC1D03DB9E006181D8 /* BranchRedeemRewardsRequest.h in Headers */,
-				E230A1BA1D03DB9F006181D8 /* BranchValidatePromoCodeRequest.h in Headers */,
 				E230A1AE1D03DB9E006181D8 /* BranchRegisterViewRequest.h in Headers */,
 				E230A18F1D03DB9E006181D8 /* BranchLinkProperties.h in Headers */,
 				E230A1BC1D03DB9F006181D8 /* PromoViewHandler.h in Headers */,
 				E230A1881D03DB9E006181D8 /* BranchActivityItemProvider.h in Headers */,
-				E230A1A01D03DB9E006181D8 /* BranchGetPromoCodeRequest.h in Headers */,
 				E230A1831D03DB9E006181D8 /* BNCSystemObserver.h in Headers */,
-				E230A1A41D03DB9E006181D8 /* BranchLoadActionsRequest.h in Headers */,
 				E230A17F1D03DB9E006181D8 /* BNCServerResponse.h in Headers */,
 				E230A1B41D03DB9E006181D8 /* BranchShortUrlSyncRequest.h in Headers */,
 				E230A1A21D03DB9E006181D8 /* BranchInstallRequest.h in Headers */,
@@ -457,10 +429,7 @@
 				E230A17C1D03DB9E006181D8 /* BNCServerInterface.m in Sources */,
 				E230A1741D03DB9E006181D8 /* BNCError.m in Sources */,
 				E230A1951D03DB9E006181D8 /* BranchView.m in Sources */,
-				E230A1A51D03DB9E006181D8 /* BranchLoadActionsRequest.m in Sources */,
 				E230A1901D03DB9E006181D8 /* BranchLinkProperties.m in Sources */,
-				E230A1BB1D03DB9F006181D8 /* BranchValidatePromoCodeRequest.m in Sources */,
-				E230A19B1D03DB9E006181D8 /* BranchApplyPromoCodeRequest.m in Sources */,
 				E230A1AB1D03DB9E006181D8 /* BranchOpenRequest.m in Sources */,
 				E230A1B11D03DB9E006181D8 /* BranchSetIdentityRequest.m in Sources */,
 				E230A1B51D03DB9E006181D8 /* BranchShortUrlSyncRequest.m in Sources */,
@@ -470,7 +439,6 @@
 				E230A1AF1D03DB9E006181D8 /* BranchRegisterViewRequest.m in Sources */,
 				E230A19F1D03DB9E006181D8 /* BranchCreditHistoryRequest.m in Sources */,
 				E230A1B91D03DB9F006181D8 /* BranchUserCompletedActionRequest.m in Sources */,
-				E230A1A11D03DB9E006181D8 /* BranchGetPromoCodeRequest.m in Sources */,
 				E230A19D1D03DB9E006181D8 /* BranchCloseRequest.m in Sources */,
 				E230A18B1D03DB9E006181D8 /* BranchConstants.m in Sources */,
 				E230A1871D03DB9E006181D8 /* Branch.m in Sources */,
@@ -593,7 +561,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "/Users/ahmed/Documents/git_repos/iOS-Deferred-Deep-Linking-SDK/carthage-files/module.modulemap";
+				MODULEMAP_FILE = "$(SRCROOT)/module.modulemap";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.branch.ios-carthage";
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME)";
 				PRODUCT_NAME = Branch;
@@ -612,7 +580,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "/Users/ahmed/Documents/git_repos/iOS-Deferred-Deep-Linking-SDK/carthage-files/module.modulemap";
+				MODULEMAP_FILE = "$(SRCROOT)/module.modulemap";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.branch.ios-carthage";
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME)";
 				PRODUCT_NAME = Branch;

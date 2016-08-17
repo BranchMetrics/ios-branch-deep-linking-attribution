@@ -109,17 +109,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchLeastRecentFirst
 };
 
-typedef NS_ENUM(NSUInteger, BranchPromoCodeRewardLocation ) {
-    BranchPromoCodeRewardReferredUser __attribute__((deprecated(("This property has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality.")))) = 0,
-    BranchPromoCodeRewardReferringUser __attribute__((deprecated(("This property has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality.")))) = 2,
-    BranchPromoCodeRewardBothUsers __attribute__((deprecated(("This property has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality.")))) = 3
-};
-
-typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
-    BranchPromoCodeUsageTypeOncePerUser __attribute__((deprecated(("This property has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality.")))) = 1,
-    BranchPromoCodeUsageTypeUnlimitedUses __attribute__((deprecated(("This property has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality.")))) = 0
-};
-
 @interface Branch : NSObject
 
 #pragma mark - Global Instance Accessors
@@ -173,7 +162,6 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param feature The feature the generated link will be associated with.
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature;
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature  __attribute__((deprecated(("Use methods without 'and'"))));
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -185,7 +173,6 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage;
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage __attribute__((deprecated(("Use methods without 'and'"))));
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -198,7 +185,6 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param tags An array of tag strings to be associated with the link.
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags;
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags __attribute__((deprecated(("Use methods without 'and'"))));
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -212,8 +198,6 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @warning This can fail if the alias is already taken.
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags alias:(NSString *)alias;
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias __attribute__((deprecated(("Use methods without 'and'"))));
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias __attribute__((deprecated(("Use methods without 'and'"))));
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -367,20 +351,25 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)setDebug;
 
 /**
- Have Branch treat this device / session as a debug session, causing more information to be logged, and info to be available in the debug tab of the dashboard.
- 
- @warning Deprecated, use the instance method.
- @warning This should not be used in production.
- */
-+ (void)setDebug __attribute__((deprecated(("Use the instance method instead"))));
-
-/**
  Specify additional constant parameters to be included in the response
  
  @param debugParams dictionary of keystrings/valuestrings that will be added to response 
  */
 -(void)setDeepLinkDebugMode:(NSDictionary *)debugParams;
 
+/**
+ Add a scheme to a whitelist of URI schemes that will be tracked by Branch. Default to all schemes.
+ 
+ @param the scheme to add to the whitelist, i.e. @"http", @"https" or @"myapp"
+ */
+-(void)addWhiteListedScheme:(NSString *)scheme;
+
+/**
+ Add an array of schemes to a whitelist of URI schemes that will be tracked by Branch. Default to all schemes.
+ 
+ @param the array of schemes to add to the whitelist, i.e. @[@"http", @"https", @"myapp"]
+ */
+-(void)setWhiteListedSchemes:(NSArray *)schemes;
 
 /**
  Register your Facebook SDK's FBSDKAppLinkUtility class to be used by Branch for deferred deep linking from their platform
@@ -418,8 +407,18 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 - (void)disableCookieBasedMatching;
 
 /**
- If you're using a version of the Facebook SDK that prevents application:didFinishLaunchingWithOptions: from returning
- YES/true when a Universal Link is clicked, you should enable this option.
+ TL;DR: If you're using a version of the Facebook SDK that prevents application:didFinishLaunchingWithOptions: from
+ returning YES/true when a Universal Link is clicked, you should enable this option.
+
+ Long explanation: in application:didFinishLaunchingWithOptions: you should choose one of the following:
+
+ 1. Always `return YES;`, and do *not* invoke `[[Branch getInstance] accountForFacebookSDKPreventingAppLaunch];`
+ 2. Allow the Facebook SDK to determine whether `application:didFinishLaunchingWithOptions:` returns `YES` or `NO`,
+    and invoke `[[Branch getInstance] accountForFacebookSDKPreventingAppLaunch];`
+
+ The reason for this second option is that the Facebook SDK will return `NO` if a Universal Link opens the app
+ but that UL is not a Facebook UL. Some developers prefer not to modify
+ `application:didFinishLaunchingWithOptions:` to always return `YES` and should use this method instead.
  */
 - (void)accountForFacebookSDKPreventingAppLaunch;
 
@@ -617,16 +616,6 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
 ///--------------
 
 /**
- Load actions counts that have taken place for users referred by the current user.
- 
- @deprecated Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of
- actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts
- 
- @param callback The callback that is called once the request has completed.
- */
-- (void)loadActionCountsWithCallback:(callbackWithStatus)callback __attribute__((deprecated(("Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts"))));
-
-/**
  Send a user action to the server. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
  
  @param action The action string.
@@ -649,32 +638,6 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @param branchViewCallback Callback for Branch view state
  */
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withDelegate:(id)branchViewCallback;
-
-/**
- Gets the total number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.
- 
- @deprecated Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of
- actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts
- 
- @param action The action string.
- @warning You must `loadActionCountsWithCallback:` before calling `getTotalCountsForAction:`. This method does not make a request for the counts.
- */
-- (NSInteger)getTotalCountsForAction:(NSString *)action __attribute__((deprecated(("Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts"))));
-
-/**
- Gets the distinct number of times an action has taken place for users referred by the current user. Note, this does not include actions taken by this user, only referred users' actions.
- 
- @deprecated Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of
- actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts
- 
- Distinct in this case can be explained as follows:
- Scenario 1: User A completed action `buy`, User B completed action `buy` -- Total Actions: 2, Distinct Actions: 2
- Scenario 2: User A completed action `buy`, User A completed action `buy` again -- Total Actions: 2, Distinct Actions: 1
- 
- @param action The action string.
- @warning You must `loadActionCountsWithCallback:` before calling `getUniqueCountsForAction:`. This method does not make a request for the counts.
- */
-- (NSInteger)getUniqueCountsForAction:(NSString *)action __attribute__((deprecated(("Method is no longer supported. As an alternative, you can set up reward rules in your Branch dashboard, based off of actions taken by your referred users. You can then examine credit history using getCreditsHistory to see referred events. More information here: https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK#deprecation-notice---action-counts"))));
 
 #pragma mark - Short Url Sync methods
 
@@ -852,44 +815,6 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @warning This can fail if the alias is already taken.
  */
 - (NSString *)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
-
-/**
- Get a short url with specified params and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
- 
- @param params Dictionary of parameters to include in the link.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @warning This method makes a synchronous url request.
- */
-- (NSString *)getContentUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel;
-
-/**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
- 
- @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @warning This method makes a synchronous url request.
- */
-- (NSString *)getContentUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel;
-
-/**
- Get a short url with specified params and channel. The usage type will default to unlimited. Referral Urls use the feature `BRANCH_FEATURE_TAG_REFERRAL`.
- 
- @param params Dictionary of parameters to include in the link.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @warning This method makes a synchronous url request.
- */
-- (NSString *)getReferralUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel;
-
-/**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Referral Urls use the feature `BRANCH_FEATURE_TAG_REFERRAL`.
- 
- @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @warning This method makes a synchronous url request.
- */
-- (NSString *)getReferralUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel;
 
 #pragma mark - Long Url generation
 
@@ -1101,44 +1026,6 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback;
 
-/**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
- 
- @param params Dictionary of parameters to include in the link.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @param callback Callback called with the url.
- */
-- (void)getContentUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback;
-
-/**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Content Urls use the feature `BRANCH_FEATURE_TAG_SHARE`.
- 
- @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @param callback Callback called with the url.
- */
-- (void)getContentUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback;
-
-/**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Referral Urls use the feature `BRANCH_FEATURE_TAG_REFERRAL`.
- 
- @param params Dictionary of parameters to include in the link.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @param callback Callback called with the url.
- */
-- (void)getReferralUrlWithParams:(NSDictionary *)params andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback;
-
-/**
- Get a short url with specified params, tags, and channel. The usage type will default to unlimited. Referral Urls use the feature `BRANCH_FEATURE_TAG_REFERRAL`.
- 
- @param params Dictionary of parameters to include in the link.
- @param tags An array of tags to associate with this link, useful for tracking.
- @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
- @param callback Callback called with the url.
- */
-- (void)getReferralUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andCallback:(callbackWithUrl)callback;
-
 - (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback;
 
 #pragma mark - Content Discovery methods
@@ -1316,93 +1203,6 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
 
-#pragma mark - Referral Code methods
-
-///-------------------------
-/// @name Promo Code methods
-///-------------------------
-
-
-/**
- Get a promo code without providing any parameters.
- 
- @param callback The callback that is called with the created referral code object.
- */
-- (void)getPromoCodeWithCallback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide improvements or modifications to referral/promo code functionality."))));
-- (void)getReferralCodeWithCallback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide improvements or modifications to referral/promo code functionality."))));
-
-/**
- Get a promo code with an amount of credits the code will be worth.
- 
- @param amount Number of credits generating user will earn when a user is referred by this code.
- @param callback The callback that is called with the created referral code object.
- */
-- (void)getPromoCodeWithAmount:(NSInteger)amount callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-- (void)getReferralCodeWithAmount:(NSInteger)amount andCallback:(callbackWithParams)callback  __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-
-/**
- Get a promo code with an amount of credits the code will be worth, and a prefix for the code.
- 
- @param prefix The string to prefix the code with.
- @param amount Number of credits generating user will earn when a user is referred by this code.
- @param callback The callback that is called with the created referral code object.
- */
-- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount andCallback:(callbackWithParams)callback  __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-
-/**
- Get a promo code with an amount of credits the code will be worth, and an expiration date.
- 
- @param amount Number of credits generating user will earn when a user is referred by this code.
- @param expiration The date when the code should be invalidated.
- @param callback The callback that is called with the created referral code object.
- */
-- (void)getPromoCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-- (void)getReferralCodeWithAmount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback  __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-
-/**
- Get a promo code with an amount of credits the code will be worth, the prefix to put in front of it, and an expiration date.
- 
- @param prefix The string to prefix the code with.
- @param amount Number of credits generating user will earn when a user is referred by this code.
- @param expiration The date when the code should be invalidated.
- @param callback The callback that is called with the created referral code object.
- */
-- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration andCallback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-
-/**
- Get a promo code with an amount of credits the code will be worth, the prefix to put in front of it, an expiration date, the bucket it will be part of, the calculation method, and location of user earning credits.
- 
- @param prefix The string to prefix the code with.
- @param amount Number of credits to be earned (by the user specified by location).
- @param expiration The date when the code should be invalidated.
- @param bucket A bucket the credits should be associated with.
- @param type The type of this code will be, one of Single Use or Unlimited Use. Single use means once *per user*, not once period.
- @param location The location of the user who earns credits for the referral, one of Referrer, Referree (the referred user), or Both.
- @param callback The callback that is called with the created referral code object.
- */
-- (void)getPromoCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket usageType:(BranchPromoCodeUsageType)usageType rewardLocation:(BranchPromoCodeRewardLocation)rewardLocation callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-- (void)getReferralCodeWithPrefix:(NSString *)prefix amount:(NSInteger)amount expiration:(NSDate *)expiration bucket:(NSString *)bucket calculationType:(BranchPromoCodeUsageType)calcType location:(BranchPromoCodeRewardLocation)location andCallback:(callbackWithParams)callback  __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-
-/**
- Validate a promo code. Will callback with the referral code object on success, or an error if it's invalid.
- 
- @param code The referral code to validate
- @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
- */
-- (void)validatePromoCode:(NSString *)code callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-- (void)validateReferralCode:(NSString *)code andCallback:(callbackWithParams)callback  __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-
-/**
- Apply a promo code, awarding the referral points. Will callback with the referral code object on success, or an error if it's invalid.
- 
- @param code The referral code to validate
- @param callback The callback that is called with the referral code object on success, or an error if it's invalid.
- */
-- (void)applyPromoCode:(NSString *)code callback:(callbackWithParams)callback __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-- (void)applyReferralCode:(NSString *)code andCallback:(callbackWithParams)callback  __attribute__((deprecated(("This method has been deprecated. Branch will no longer provide any improvements or modifications to referral/promo code functionality."))));
-
 /**
  Method for creating a one of Branch instance and specifying its dependencies.
  
@@ -1416,10 +1216,5 @@ typedef NS_ENUM(NSUInteger, BranchPromoCodeUsageType) {
  @warning This is meant for use internally only and should not be used by apps.
  */
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
-
-/**
- Method used by external Branch libs to initiate server requests
- */
-- (void)executeGenericRequest:(BNCServerRequest*)request;
 
 @end
