@@ -68,7 +68,7 @@ pod "Branch"
 To integrate Branch into your project using Carthage add the following to your `Cartfile`:
 
 ```ruby
-github "BranchMetrics/iOS-Deferred-Deep-Linking-SDK"
+github "BranchMetrics/ios-branch-deep-linking"
 ```
 
 ### Download the Raw Files
