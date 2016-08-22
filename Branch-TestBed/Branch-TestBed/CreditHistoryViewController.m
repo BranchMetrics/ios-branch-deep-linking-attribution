@@ -7,6 +7,7 @@
 //
 
 #import "CreditHistoryViewController.h"
+#import "ContentDiscoverer.h"
 
 @interface CreditHistoryViewController ()
 
@@ -85,6 +86,11 @@
     
     return cell;
 }
+
+- (void) viewDidAppear:(BOOL)animated {
+    [[ContentDiscoverer getInstance] readContentData:self];
+}
+
 
 
 @end

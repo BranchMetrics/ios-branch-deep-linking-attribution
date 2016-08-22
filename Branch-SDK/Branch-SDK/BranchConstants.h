@@ -103,3 +103,16 @@ extern NSString * const BRANCH_LINK_DATA_KEY_CONTENT_TYPE;
 extern NSString * const BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT;
 
 extern NSString * const BRANCH_SPOTLIGHT_PREFIX;
+
+extern NSString *const MANIFEST_VERSION_KEY;
+extern NSString *const HASH_MODE_KEY;
+extern NSString *const MANIFEST_KEY;
+extern NSString *const PATH_KEY;
+extern NSString *const FILTERED_KEYS;
+extern NSString *const MAX_TEXT_LEN_KEY;
+extern NSString *const MAX_VIEW_HISTORY_LENGTH;
+extern NSString *const MAX_PACKET_SIZE_KEY;
+extern NSString *const CONTENT_DISCOVER_KEY;
+extern NSString *const BUNDLE_IDENTIFIER;
+
+

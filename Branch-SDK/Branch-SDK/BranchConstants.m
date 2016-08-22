@@ -102,3 +102,16 @@ NSString * const BRANCH_LINK_DATA_KEY_CONTENT_TYPE = @"$content_type";
 NSString * const BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT = @"$email_subject";
 
 NSString * const BRANCH_SPOTLIGHT_PREFIX = @"io.branch.link.v1";
+
+NSString *const MANIFEST_VERSION_KEY = @"mv";
+NSString *const HASH_MODE_KEY = @"h";
+NSString *const MANIFEST_KEY = @"m";
+NSString *const PATH_KEY = @"p";
+NSString *const FILTERED_KEYS = @"ck";
+NSString *const MAX_TEXT_LEN_KEY = @"mtl";
+NSString *const MAX_VIEW_HISTORY_LENGTH = @"mhl";
+NSString *const MAX_PACKET_SIZE_KEY = @"mps";
+NSString *const CONTENT_DISCOVER_KEY = @"cd";
+NSString *const BUNDLE_IDENTIFIER = @"pn";
+
+

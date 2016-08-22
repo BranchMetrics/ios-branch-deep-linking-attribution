@@ -39,6 +39,8 @@ NSString * const BRANCH_PREFS_KEY_CREDITS = @"bnc_credits";
 NSString * const BRANCH_PREFS_KEY_CREDIT_BASE = @"bnc_credit_base_";
 
 NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usage_cnt_";
+NSString * const KEY_BRANCH_ANALYTICAL_DATA = @"bnc_branch_analytical_data";
+NSString * const KEY_BRANCH_ANALYTICS_MANIFEST = @"bnc_branch_analytics_manifest";
 
 // The name of this key was specified in the account-creation API integration
 static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
@@ -56,29 +58,30 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 @implementation BNCPreferenceHelper
 
 @synthesize branchKey = _branchKey,
-            lastRunBranchKey = _lastRunBranchKey,
-            appVersion = _appVersion,
-            deviceFingerprintID = _deviceFingerprintID,
-            sessionID = _sessionID,
-            spotlightIdentifier = _spotlightIdentifier,
-            identityID = _identityID,
-            linkClickIdentifier = _linkClickIdentifier,
-            userUrl = _userUrl,
-            userIdentity = _userIdentity,
-            sessionParams = _sessionParams,
-            installParams = _installParams,
-            universalLinkUrl = _universalLinkUrl,
-            externalIntentURI = _externalIntentURI,
-            isDebug = _isDebug,
-            shouldWaitForInit = _shouldWaitForInit,
-            suppressWarningLogs = _suppressWarningLogs,
-            retryCount = _retryCount,
-            retryInterval = _retryInterval,
-            timeout = _timeout,
-            lastStrongMatchDate = _lastStrongMatchDate,
-            checkedFacebookAppLinks = _checkedFacebookAppLinks,
-            requestMetadataDictionary = _requestMetadataDictionary,
-            instrumentationDictionary = _instrumentationDictionary;
+lastRunBranchKey = _lastRunBranchKey,
+appVersion = _appVersion,
+deviceFingerprintID = _deviceFingerprintID,
+sessionID = _sessionID,
+spotlightIdentifier = _spotlightIdentifier,
+identityID = _identityID,
+linkClickIdentifier = _linkClickIdentifier,
+userUrl = _userUrl,
+userIdentity = _userIdentity,
+sessionParams = _sessionParams,
+installParams = _installParams,
+universalLinkUrl = _universalLinkUrl,
+externalIntentURI = _externalIntentURI,
+isDebug = _isDebug,
+shouldWaitForInit = _shouldWaitForInit,
+suppressWarningLogs = _suppressWarningLogs,
+retryCount = _retryCount,
+retryInterval = _retryInterval,
+timeout = _timeout,
+lastStrongMatchDate = _lastStrongMatchDate,
+checkedFacebookAppLinks = _checkedFacebookAppLinks,
+requestMetadataDictionary = _requestMetadataDictionary,
+instrumentationDictionary = _instrumentationDictionary,
+savedAnalyticsData = _savedAnalyticsData;
 
 + (BNCPreferenceHelper *)preferenceHelper {
     static BNCPreferenceHelper *preferenceHelper;
@@ -123,7 +126,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         persistPrefsQueue = [[NSOperationQueue alloc] init];
         persistPrefsQueue.maxConcurrentOperationCount = 1;
     });
-
+    
     return persistPrefsQueue;
 }
 
@@ -166,7 +169,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     }
     
     self.isUsingLiveKey = isLive;
-
+    
     id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
     if (ret) {
         if ([ret isKindOfClass:[NSString class]]) {
@@ -289,7 +292,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     if (!_userIdentity) {
         _userIdentity = [self readStringFromDefaults:BRANCH_PREFS_KEY_IDENTITY];
     }
-
+    
     return _userIdentity;
 }
 
@@ -304,7 +307,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     if (!_linkClickIdentifier) {
         _linkClickIdentifier = [self readStringFromDefaults:BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER];
     }
-
+    
     return _linkClickIdentifier;
 }
 
@@ -493,14 +496,14 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 
 - (void)setCreditCount:(NSInteger)count forBucket:(NSString *)bucket {
     self.creditsDictionary[[BRANCH_PREFS_KEY_CREDIT_BASE stringByAppendingString:bucket]] = @(count);
-
+    
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_CREDITS value:self.creditsDictionary];
 }
 
 - (void)removeCreditCountForBucket:(NSString *)bucket {
     NSMutableDictionary *dictToWrite = self.creditsDictionary;
     [dictToWrite removeObjectForKey:[BRANCH_PREFS_KEY_CREDIT_BASE stringByAppendingString:bucket]];
-
+    
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_CREDITS value:self.creditsDictionary];
 }
 
@@ -508,7 +511,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     NSMutableDictionary *returnDictionary = [[NSMutableDictionary alloc] init];
     for(NSString *key in self.creditsDictionary) {
         NSString *cleanKey = [key stringByReplacingOccurrencesOfString:BRANCH_PREFS_KEY_CREDIT_BASE
-                                                                                     withString:@""];
+                                                            withString:@""];
         returnDictionary[cleanKey] = self.creditsDictionary[key];
     }
     return returnDictionary;
@@ -542,6 +545,56 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     return count;
 }
 
+- (void) saveBranchAnalyticsData:(NSDictionary *)analyticsData {
+    if(_sessionID != nil) {
+        if(_savedAnalyticsData == nil) {
+            _savedAnalyticsData = [self getBranchAnlyticsData];
+        }
+        NSMutableArray *viewDataArray;
+        if([_savedAnalyticsData objectForKey:_sessionID] != nil) {
+            viewDataArray =[_savedAnalyticsData objectForKey:_sessionID];
+        }
+        else {
+            viewDataArray = [[NSMutableArray alloc]init];
+            [_savedAnalyticsData  setObject:viewDataArray forKey:_sessionID];
+        }
+        [viewDataArray addObject:analyticsData];
+        [self writeObjectToDefaults:KEY_BRANCH_ANALYTICAL_DATA value:_savedAnalyticsData];
+    }
+}
+
+- (void) clearBranchAnalyticsData {
+    [self writeObjectToDefaults:KEY_BRANCH_ANALYTICAL_DATA value:nil];
+}
+
+- (NSMutableDictionary *) getBranchAnlyticsData {
+    NSMutableDictionary *analyticsDataObj;
+    if(_savedAnalyticsData != nil) {
+        analyticsDataObj  = _savedAnalyticsData;
+    } else {
+        NSObject * dataObj = [self readObjectFromDefaults:KEY_BRANCH_ANALYTICAL_DATA];
+        if(dataObj != nil) {
+            analyticsDataObj =(NSMutableDictionary *)dataObj;
+        } else {
+            analyticsDataObj = [[NSMutableDictionary alloc] init];
+        }
+    }
+    return analyticsDataObj;
+}
+
+- (void) saveContentAnalyticsManifest:(NSDictionary *)cdManifest {
+    [self writeObjectToDefaults:KEY_BRANCH_ANALYTICS_MANIFEST value:cdManifest];
+}
+
+- (NSDictionary *) getContentAnalyticsManifest {
+    NSObject * manifestObj = [self readObjectFromDefaults:KEY_BRANCH_ANALYTICS_MANIFEST];
+    if(manifestObj != nil){
+        return (NSDictionary *) manifestObj;
+    } else {
+        return nil;
+    }
+}
+
 #pragma mark - Writing To Persistence
 
 - (void)writeIntegerToDefaults:(NSString *)key value:(NSInteger)value {
@@ -561,7 +614,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     else {
         [self.persistenceDict removeObjectForKey:key];
     }
-
+    
     [self persistPrefsToDisk];
 }
 
@@ -586,7 +639,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         @catch (NSException *exception) {
             [self logWarning:@"Failed to load preferences from disk"];
         }
-
+        
         if (persistenceDict) {
             _persistenceDict = [persistenceDict mutableCopy];
         }

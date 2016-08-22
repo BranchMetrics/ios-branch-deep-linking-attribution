@@ -11,6 +11,7 @@
 #import "LogOutputViewController.h"
 #import "BranchUniversalObject.h"
 #import "BranchLinkProperties.h"
+#import "ContentDiscoverer.h"
 
 NSString *cononicalIdentifier = @"item/12345";
 NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
@@ -290,6 +291,10 @@ NSString *test_key = @"test_key";
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void) viewDidAppear:(BOOL)animated {
+    [[ContentDiscoverer getInstance] readContentData:self];
 }
 
 @end

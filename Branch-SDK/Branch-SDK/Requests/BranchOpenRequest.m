@@ -13,6 +13,9 @@
 #import "BNCEncodingUtils.h"
 #import "BranchViewHandler.h"
 #import "BNCFabricAnswers.h"
+#import "ContentDiscoveryManifest.h"
+
+ContentDiscoveryManifest *contentDiscoveryManifest;
 
 @interface BranchOpenRequest ()
 
@@ -22,6 +25,8 @@
 
 @implementation BranchOpenRequest
 
+
+
 - (id)initWithCallback:(callbackWithStatus)callback {
     return [self initWithCallback:callback isInstall:NO];
 }
@@ -30,6 +35,7 @@
     if (self = [super init]) {
         _callback = callback;
         _isInstall = isInstall;
+        contentDiscoveryManifest = [ContentDiscoveryManifest getInstance];
     }
     
     return self;
@@ -56,7 +62,14 @@
     [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:params];
     [self safeSetValue:preferenceHelper.externalIntentURI forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:params];
+    
+    NSMutableDictionary *cdDict = [[NSMutableDictionary alloc] init];
+    [cdDict setObject:[contentDiscoveryManifest getManifestVersion] forKey:MANIFEST_VERSION_KEY];
+    [cdDict setObject:[BNCSystemObserver getBundleID] forKey:BUNDLE_IDENTIFIER];
+    [self safeSetValue:cdDict forKey:CONTENT_DISCOVER_KEY onDict:params];
+
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
+    
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
