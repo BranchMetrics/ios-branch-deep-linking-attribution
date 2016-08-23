@@ -61,7 +61,7 @@
 - (void)registerViewWithCallback:(callbackWithParams)callback {
     if (!self.canonicalIdentifier && !self.title) {
         if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain
+            callback([[NSDictionary alloc] init], [NSError errorWithDomain:BNCErrorDomain
                                               code:BNCInitError
                                           userInfo:@{ NSLocalizedDescriptionKey: @"A canonicalIdentifier or title are required to uniquely identify content, so could not register view." }]);
         }
@@ -94,7 +94,7 @@
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback {
     if (!self.canonicalIdentifier && !self.title) {
         if (callback) {
-            callback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL." }]);
+            callback([BNCPreferenceHelper preferenceHelper].userUrl, [NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL." }]);
         }
         else {
             [_preferenceHelper logWarning:@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL."];
