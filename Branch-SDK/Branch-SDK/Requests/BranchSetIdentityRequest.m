@@ -46,7 +46,7 @@
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     if (error) {
         if (self.callback && self.shouldCallCallback) {
-            self.callback(nil, error);
+            self.callback([[NSDictionary alloc] init], error);
         }
         
         self.shouldCallCallback = NO; // don't call the callback next time around

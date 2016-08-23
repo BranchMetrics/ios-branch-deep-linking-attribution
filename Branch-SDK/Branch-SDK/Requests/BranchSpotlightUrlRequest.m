@@ -31,7 +31,7 @@
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     if (error) {
         if (self.spotlightCallback) {
-            self.spotlightCallback(nil, error);
+            self.spotlightCallback([[NSDictionary alloc] init], error);
         }
     }
     else if (self.spotlightCallback) {
