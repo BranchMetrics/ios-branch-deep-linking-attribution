@@ -127,6 +127,7 @@
                                      andChannel:linkProperties.channel
                                      andFeature:linkProperties.feature
                                        andStage:linkProperties.stage
+                                           andCampaign:linkProperties.campaign
                                        andAlias:linkProperties.alias
                                  ignoreUAString:UAString
                               forceLinkCreation:YES];
@@ -141,9 +142,11 @@
     if (linkProperties.matchDuration) {
         [params setObject:@(linkProperties.matchDuration) forKey:BRANCH_REQUEST_KEY_URL_DURATION];
     }
+
     return [Branch getBranchActivityItemWithParams:params
                                            feature:linkProperties.feature
                                              stage:linkProperties.stage
+                                          campaign:linkProperties.campaign
                                               tags:linkProperties.tags
                                              alias:linkProperties.alias];
 }
@@ -353,6 +356,7 @@
     [self safeSetValue:linkProperties.alias forKey:[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_ALIAS] onDict:temp];
     [self safeSetValue:linkProperties.channel forKey:[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_CHANNEL] onDict:temp];
     [self safeSetValue:linkProperties.stage forKey:[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_STAGE] onDict:temp];
+    [self safeSetValue:linkProperties.campaign forKey:[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_CAMPAIGN] onDict:temp];
     [self safeSetValue:@(linkProperties.matchDuration) forKey:[NSString stringWithFormat:@"~%@", BRANCH_REQUEST_KEY_URL_DURATION] onDict:temp];
 
     return [temp copy];
