@@ -15,6 +15,7 @@
 @property (nonatomic, strong) NSString *alias;
 @property (nonatomic, strong) NSString *channel;
 @property (nonatomic, strong) NSString *stage;
+@property (nonatomic, strong) NSString *campaign;
 @property (nonatomic) NSUInteger matchDuration;
 @property (nonatomic, strong) NSDictionary *controlParams;
 

@@ -32,6 +32,7 @@ NSString * const BRANCH_REQUEST_KEY_URL_ALIAS = @"alias";
 NSString * const BRANCH_REQUEST_KEY_URL_CHANNEL = @"channel";
 NSString * const BRANCH_REQUEST_KEY_URL_FEATURE = @"feature";
 NSString * const BRANCH_REQUEST_KEY_URL_STAGE = @"stage";
+NSString * const BRANCH_REQUEST_KEY_URL_CAMPAIGN = @"campaign";
 NSString * const BRANCH_REQUEST_KEY_URL_DURATION = @"duration";
 NSString * const BRANCH_REQUEST_KEY_URL_DATA = @"data";
 NSString * const BRANCH_REQUEST_KEY_URL_IGNORE_UA_STRING = @"ignore_ua_string";
