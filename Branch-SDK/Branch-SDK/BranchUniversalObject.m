@@ -88,6 +88,7 @@
                                             andChannel:linkProperties.channel
                                             andFeature:linkProperties.feature
                                               andStage:linkProperties.stage
+                                           andCampaign:linkProperties.campaign
                                       andMatchDuration:linkProperties.matchDuration];
 }
 
@@ -109,6 +110,7 @@
                                      andChannel:linkProperties.channel
                                      andFeature:linkProperties.feature
                                        andStage:linkProperties.stage
+                                    andCampaign:linkProperties.campaign
                                     andCallback:callback];
 }
 
