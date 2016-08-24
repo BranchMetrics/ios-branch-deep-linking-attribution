@@ -816,6 +816,22 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (NSString *)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
 
+
+/**
+ Get a short url with specified params, channel, feature, stage, campaign and match duration. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param tags An array of tags to associate with this link, useful for tracking.
+ @param alias The alias for a link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param campaign Use this field to organize the links by actual marketing campaign.
+ @param matchDuration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
+ @warning This method makes a synchronous url request.
+ */
+- (NSString *)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCampaign:campaign andMatchDuration:(NSUInteger)duration;
+
 #pragma mark - Long Url generation
 
 ///--------------------------
@@ -1025,6 +1041,22 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning This can fail if the alias is already taken.
  */
 - (void)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback;
+
+/**
+ Get a short url with the specified params, tags, channel, feature, stage, campaign and match duration. The usage type will default to unlimited.
+ 
+ @param params Dictionary of parameters to include in the link.
+ @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
+ @param tags An array of tags to associate with this link, useful for tracking.
+ @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
+ @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
+ @param matchDuration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
+ @param campaign Use this field to organize the links by actual marketing campaign.
+ @param callback Callback called with the url.
+ @param alias The alias for a link.
+ @warning This can fail if the alias is already taken.
+ */
+- (void)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCampaign:(NSString *)campaign andCallback:(callbackWithUrl)callback;
 
 - (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback;
 
