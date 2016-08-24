@@ -26,6 +26,7 @@
 @property (strong, nonatomic) NSArray *tags;
 @property (strong, nonatomic) NSString *feature;
 @property (strong, nonatomic) NSString *stage;
+@property (strong, nonatomic) NSString *campaign;
 @property (strong, nonatomic) NSString *alias;
 @property (strong, nonatomic) NSString *userAgentString;
 @property (weak, nonatomic) id <BranchActivityItemProviderDelegate> delegate;
@@ -35,10 +36,10 @@
 @implementation BranchActivityItemProvider
 
 - (id)initWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
-    return [self initWithParams:params tags:tags feature:feature stage:stage alias:alias delegate:nil];
+    return [self initWithParams:params tags:tags feature:feature stage:stage campaign:nil alias:alias delegate:nil];
 }
 
-- (id)initWithParams:(NSDictionary *)params tags:(NSArray *)tags feature:(NSString *)feature stage:(NSString *)stage alias:(NSString *)alias delegate:(id <BranchActivityItemProviderDelegate>)delegate {
+- (id)initWithParams:(NSDictionary *)params tags:(NSArray *)tags feature:(NSString *)feature stage:(NSString *)stage campaign:(NSString *)campaign alias:(NSString *)alias delegate:(id <BranchActivityItemProviderDelegate>)delegate {
     NSString *url = [[Branch getInstance] getLongURLWithParams:params andChannel:nil andTags:tags andFeature:feature andStage:stage andAlias:alias];
     
     if (self = [super initWithPlaceholderItem:[NSURL URLWithString:url]]) {
@@ -46,6 +47,7 @@
         _tags = tags;
         _feature = feature;
         _stage = stage;
+        _campaign = campaign;
         _alias = alias;
         _userAgentString = [[[UIWebView alloc] init] stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
         _delegate = delegate;
@@ -62,6 +64,7 @@
     NSArray *tags = [self tagsForChannel:channel];
     NSString *feature = [self featureForChannel:channel];
     NSString *stage = [self stageForChannel:channel];
+    NSString *campaign = [self campaignForChannel:channel];
     NSString *alias = [self aliasForChannel:channel];
     
     // Allow the channel param to be overridden, perhaps they want "fb" instead of "facebook"
@@ -71,9 +74,9 @@
     
     // Because Facebook immediately scrapes URLs, we add an additional parameter to the existing list, telling the backend to ignore the first click
     if ([channel isEqualToString:@"facebook"] || [channel isEqualToString:@"twitter"]  || [channel isEqualToString:@"com.tinyspeck.chatlyio.share"]) {
-        return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andAlias:alias ignoreUAString:self.userAgentString forceLinkCreation:YES]];
+        return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andCampaign:campaign andAlias:alias ignoreUAString:self.userAgentString forceLinkCreation:YES]];
     }
-    return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andAlias:alias ignoreUAString:nil forceLinkCreation:YES]];
+    return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andCampaign:campaign andAlias:alias ignoreUAString:nil forceLinkCreation:YES]];
 }
 
 #pragma mark - Internals
@@ -131,6 +134,11 @@
 - (NSString *)stageForChannel:(NSString *)channel {
     return ([self.delegate respondsToSelector:@selector(activityItemStageForChannel:)]) ? [self.delegate activityItemStageForChannel:channel] : self.stage;
 }
+
+- (NSString *)campaignForChannel:(NSString *)channel {
+    return ([self.delegate respondsToSelector:@selector(activityItemCampaignForChannel:)]) ? [self.delegate activityItemCampaignForChannel:channel] : self.campaign;
+}
+
 
 - (NSString *)aliasForChannel:(NSString *)channel {
     return ([self.delegate respondsToSelector:@selector(activityItemAliasForChannel:)]) ? [self.delegate activityItemAliasForChannel:channel] : self.alias;
