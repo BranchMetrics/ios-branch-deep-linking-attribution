@@ -38,4 +38,8 @@
     return (filteredElelments != nil && filteredElelments.count == 0);
 }
 
+- (BOOL)isClearText {
+    return _isClearText;
+}
+
 @end

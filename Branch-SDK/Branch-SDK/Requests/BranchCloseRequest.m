@@ -14,14 +14,20 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-
-    NSDictionary *params = @{
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
-        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID
-    };
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    [params setObject:preferenceHelper.identityID forKey:BRANCH_REQUEST_KEY_BRANCH_IDENTITY];
+    [params setObject:preferenceHelper.sessionID forKey:BRANCH_REQUEST_KEY_SESSION_ID];
+    [params setObject:preferenceHelper.deviceFingerprintID forKey:BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID];
     
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CLOSE] key:key callback:callback];
+   
+    NSDictionary *branchAnalyticsObj = [preferenceHelper getBranchAnalyticsData];
+    if(branchAnalyticsObj != nil) {
+        [params setObject:branchAnalyticsObj forKey:CONTENT_DISCOVER_KEY];
+        [preferenceHelper clearBranchAnalyticsData];
+    }
+    
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CLOSE] key:key callback:callback];    
+    
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

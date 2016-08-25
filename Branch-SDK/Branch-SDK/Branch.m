@@ -33,6 +33,7 @@
 #import "BranchInstallRequest.h"
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchRegisterViewRequest.h"
+#import "ContentDiscoverer.h"
 
 //Fabric
 #import "../Fabric/FABKitProtocol.h"
@@ -101,7 +102,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
         [preferenceHelper logWarning:@"Please enter your branch_key in the plist!"];
         return nil;
     }
-
+    
     return [Branch getInstanceInternal:keyToUse returnNilIfNoCurrentInstance:NO];
 }
 
@@ -283,7 +284,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController {
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
-
+    
     // Handle push notification on app launch
     if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
         id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
@@ -345,7 +346,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
         } else {
             self.preferenceHelper.externalIntentURI = [url absoluteString];
         }
-
+        
         NSString *query = [url fragment];
         if (!query) {
             query = [url query];
@@ -419,14 +420,14 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
         [self callClose];
     }
-
+    
     // look for a branch shortlink in the payload (shortlink because iOS7 only supports 256 bytes)
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
     if (urlStr) {
         // reusing this field, so as not to create yet another url slot on prefshelper
         self.preferenceHelper.universalLinkUrl = urlStr;
     }
-
+    
     // Again, if app is active, then close out the session and start a new one
     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
         [self applicationDidBecomeActive];
@@ -448,12 +449,12 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
                 self.preferenceHelper.shouldWaitForInit = NO;
                 [self handleDeepLink:appLink];
             };
-        
+            
             self.preferenceHelper.checkedFacebookAppLinks = YES;
             self.preferenceHelper.shouldWaitForInit = YES;
-        
+            
             ((void (*)(id, SEL, void (^ __nullable)(NSURL *__nullable appLink, NSError * __nullable error)))[self.FBSDKAppLinkUtility methodForSelector:fetchDeferredAppLink])(self.FBSDKAppLinkUtility, fetchDeferredAppLink, completionBlock);
-        
+            
             return YES;
         }
     }
@@ -1063,6 +1064,11 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     if (self.isInitialized) {
         self.isInitialized = NO;
         
+        ContentDiscoverer *contentDiscoverer = [ContentDiscoverer getInstance];
+        if(contentDiscoverer != nil) {
+            [contentDiscoverer stopContentDiscoveryTask];
+        }           
+        
         if (self.preferenceHelper.sessionID && ![self.requestQueue containsClose]) {
             BranchCloseRequest *req = [[BranchCloseRequest alloc] init];
             [self.requestQueue enqueue:req];
@@ -1303,7 +1309,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 }
 
 + (NSString *)kitDisplayVersion {
-	return @"0.12.5";
+    return @"0.12.5";
 }
 
 @end

@@ -20,5 +20,6 @@
 - (instancetype) init:(NSDictionary *)pathInfo;
 - (NSArray *) getFilteredElements;
 - (BOOL) isSkipContentDiscovery;
+- (BOOL)isClearText;
 
 @end

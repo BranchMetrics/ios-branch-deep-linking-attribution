@@ -87,10 +87,6 @@
     return cell;
 }
 
-- (void) viewDidAppear:(BOOL)animated {
-    [[ContentDiscoverer getInstance] readContentData:self];
-}
-
 
 
 @end

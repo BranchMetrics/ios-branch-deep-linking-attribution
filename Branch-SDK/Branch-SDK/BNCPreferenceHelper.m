@@ -548,7 +548,7 @@ savedAnalyticsData = _savedAnalyticsData;
 - (void) saveBranchAnalyticsData:(NSDictionary *)analyticsData {
     if(_sessionID != nil) {
         if(_savedAnalyticsData == nil) {
-            _savedAnalyticsData = [self getBranchAnlyticsData];
+            _savedAnalyticsData = [self getBranchAnalyticsData];
         }
         NSMutableArray *viewDataArray;
         if([_savedAnalyticsData objectForKey:_sessionID] != nil) {
@@ -567,7 +567,7 @@ savedAnalyticsData = _savedAnalyticsData;
     [self writeObjectToDefaults:KEY_BRANCH_ANALYTICAL_DATA value:nil];
 }
 
-- (NSMutableDictionary *) getBranchAnlyticsData {
+- (NSMutableDictionary *) getBranchAnalyticsData {
     NSMutableDictionary *analyticsDataObj;
     if(_savedAnalyticsData != nil) {
         analyticsDataObj  = _savedAnalyticsData;

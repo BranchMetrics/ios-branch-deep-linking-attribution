@@ -24,7 +24,13 @@ static ContentDiscoveryManifest *contentDiscoveryManifest;
 {
     self = [super init];
     if (self) {
-        _cdManifest = [[[BNCPreferenceHelper preferenceHelper]getContentAnalyticsManifest]mutableCopy];
+        NSDictionary *savedManifest = [[BNCPreferenceHelper preferenceHelper]getContentAnalyticsManifest];
+        if(savedManifest != nil ) {
+            _cdManifest = [savedManifest mutableCopy];
+        }
+        else {
+            _cdManifest = [[NSMutableDictionary alloc] init];
+        }
     }
     return self;
 }
@@ -38,7 +44,8 @@ static ContentDiscoveryManifest *contentDiscoveryManifest;
 
 
 
-- (void) onBranchInitialised:(NSDictionary *) branchInitDict {
+- (void) onBranchInitialised:(NSDictionary *) branchInitDict withUrl:(NSString *) referredUrl {
+    _referredLink = referredUrl;
     if([branchInitDict objectForKey:CONTENT_DISCOVER_KEY] != nil) {
         _isCDEnabled = YES;
         NSDictionary *cdManifestDict = [branchInitDict objectForKey:CONTENT_DISCOVER_KEY];

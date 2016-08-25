@@ -113,5 +113,16 @@ NSString *const MAX_VIEW_HISTORY_LENGTH = @"mhl";
 NSString *const MAX_PACKET_SIZE_KEY = @"mps";
 NSString *const CONTENT_DISCOVER_KEY = @"cd";
 NSString *const BUNDLE_IDENTIFIER = @"pn";
+NSString *const TIME_STAMP_KEY = @"ts";
+NSString *const TIME_STAMP_CLOSE_KEY = @"tc";
+NSString *const NAV_PATH_KEY = @"n";
+NSString *const REFERRAL_LINK_KEY = @"rl";
+NSString *const CONTENT_LINK_KEY = @"cl";
+NSString *const CONTENT_META_DATA_KEY = @"cm";
+NSString *const VIEW_KEY = @"v";
+NSString *const CONTENT_DATA_KEY = @"cd";
+NSString *const CONTENT_KEYS_KEY = @"ck";
+NSString *const PACKAGE_NAME_KEY = @"p";
+NSString *const ENTITIES_KEY = @"e";
 
 

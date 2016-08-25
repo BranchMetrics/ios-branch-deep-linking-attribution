@@ -293,8 +293,5 @@ NSString *test_key = @"test_key";
     [self presentViewController:alert animated:YES completion:nil];
 }
 
-- (void) viewDidAppear:(BOOL)animated {
-    [[ContentDiscoverer getInstance] readContentData:self];
-}
 
 @end

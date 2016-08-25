@@ -14,8 +14,8 @@
 #import "BranchViewHandler.h"
 #import "BNCFabricAnswers.h"
 #import "ContentDiscoveryManifest.h"
+#import "ContentDiscoverer.h"
 
-ContentDiscoveryManifest *contentDiscoveryManifest;
 
 @interface BranchOpenRequest ()
 
@@ -35,7 +35,7 @@ ContentDiscoveryManifest *contentDiscoveryManifest;
     if (self = [super init]) {
         _callback = callback;
         _isInstall = isInstall;
-        contentDiscoveryManifest = [ContentDiscoveryManifest getInstance];
+        
     }
     
     return self;
@@ -43,7 +43,7 @@ ContentDiscoveryManifest *contentDiscoveryManifest;
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-
+    
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     if (preferenceHelper.deviceFingerprintID) {
         params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
@@ -54,7 +54,7 @@ ContentDiscoveryManifest *contentDiscoveryManifest;
     
     [self safeSetValue:[BNCSystemObserver getBundleID] forKey:BRANCH_REQUEST_KEY_BUNDLE_ID onDict:params];
     [self safeSetValue:[BNCSystemObserver getTeamIdentifier] forKey:BRANCH_REQUEST_KEY_TEAM_ID onDict:params];
-    [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];        
+    [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];
     [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:params];
     [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:BRANCH_REQUEST_KEY_UPDATE onDict:params];
     [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedFacebookAppLinks] forKey:BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS onDict:params];
@@ -64,10 +64,11 @@ ContentDiscoveryManifest *contentDiscoveryManifest;
     [self safeSetValue:preferenceHelper.externalIntentURI forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:params];
     
     NSMutableDictionary *cdDict = [[NSMutableDictionary alloc] init];
+    ContentDiscoveryManifest *contentDiscoveryManifest = [ContentDiscoveryManifest getInstance];
     [cdDict setObject:[contentDiscoveryManifest getManifestVersion] forKey:MANIFEST_VERSION_KEY];
     [cdDict setObject:[BNCSystemObserver getBundleID] forKey:BUNDLE_IDENTIFIER];
     [self safeSetValue:cdDict forKey:CONTENT_DISCOVER_KEY onDict:params];
-
+    
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
     
 }
@@ -99,7 +100,7 @@ ContentDiscoveryManifest *contentDiscoveryManifest;
     
     // Update session params
     preferenceHelper.sessionParams = sessionData;
-
+    
     // Scenarios:
     // If no data, data isn't from a link click, or isReferrable is false, don't set, period.
     // Otherwise,
@@ -124,6 +125,19 @@ ContentDiscoveryManifest *contentDiscoveryManifest;
         }
     }
     
+    NSString * referredUrl = nil;
+    if (preferenceHelper.universalLinkUrl != nil) {
+        referredUrl = preferenceHelper.universalLinkUrl;
+    }
+    else if (preferenceHelper.externalIntentURI) {
+        referredUrl = preferenceHelper.externalIntentURI;
+    }
+    ContentDiscoveryManifest *cdManifest = [ContentDiscoveryManifest getInstance];
+    [cdManifest onBranchInitialised:data withUrl:referredUrl];
+    if ([cdManifest isCDEnabled]) {
+        [[ContentDiscoverer getInstance:cdManifest] startContentDiscoveryTask];
+    }
+    
     // Clear link identifiers so they don't get reused on the next open
     preferenceHelper.checkedFacebookAppLinks = NO;
     preferenceHelper.linkClickIdentifier = nil;
@@ -144,6 +158,9 @@ ContentDiscoveryManifest *contentDiscoveryManifest;
     if (self.callback) {
         self.callback(YES, nil);
     }
+    
+    
+    
     
 }
 

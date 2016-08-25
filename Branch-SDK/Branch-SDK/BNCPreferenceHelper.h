@@ -72,7 +72,7 @@
 
 - (void) saveBranchAnalyticsData:(NSDictionary *)analyticsData;
 - (void) clearBranchAnalyticsData;
-- (NSMutableDictionary *) getBranchAnlyticsData;
+- (NSMutableDictionary *) getBranchAnalyticsData;
 
 - (NSDictionary *) getContentAnalyticsManifest;
 - (void) saveContentAnalyticsManifest:(NSDictionary *)cdManifest;

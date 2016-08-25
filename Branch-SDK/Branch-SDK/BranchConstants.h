@@ -114,5 +114,17 @@ extern NSString *const MAX_VIEW_HISTORY_LENGTH;
 extern NSString *const MAX_PACKET_SIZE_KEY;
 extern NSString *const CONTENT_DISCOVER_KEY;
 extern NSString *const BUNDLE_IDENTIFIER;
+extern NSString *const TIME_STAMP_KEY;
+extern NSString *const TIME_STAMP_CLOSE_KEY;
+extern NSString *const NAV_PATH_KEY;
+extern NSString *const REFERRAL_LINK_KEY;
+extern NSString *const CONTENT_LINK_KEY;
+extern NSString *const CONTENT_META_DATA_KEY;
+extern NSString *const VIEW_KEY;
+extern NSString *const CONTENT_DATA_KEY;
+extern NSString *const CONTENT_KEYS_KEY;
+extern NSString *const PACKAGE_NAME_KEY;
+extern NSString *const ENTITIES_KEY;
+
 
 
