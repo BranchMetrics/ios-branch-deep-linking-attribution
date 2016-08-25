@@ -19,14 +19,14 @@
     [params setObject:preferenceHelper.sessionID forKey:BRANCH_REQUEST_KEY_SESSION_ID];
     [params setObject:preferenceHelper.deviceFingerprintID forKey:BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID];
     
-   
+    
     NSDictionary *branchAnalyticsObj = [preferenceHelper getBranchAnalyticsData];
-    if(branchAnalyticsObj != nil) {
+    if (branchAnalyticsObj != nil && branchAnalyticsObj.count > 0) {
         [params setObject:branchAnalyticsObj forKey:CONTENT_DISCOVER_KEY];
         [preferenceHelper clearBranchAnalyticsData];
     }
     
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CLOSE] key:key callback:callback];    
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CLOSE] key:key callback:callback];
     
 }
 

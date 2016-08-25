@@ -49,6 +49,7 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
 
 
 - (void) stopContentDiscoveryTask {
+    lastViewController = nil;
     if(contentDiscoveryTimer != nil) {
         [contentDiscoveryTimer invalidate];
     }
@@ -99,7 +100,7 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
                 [self discoverViewContents:rootView contentData:contentDataArray contentKeys:contentKeysArray clearText:YES ID:@""];
             }
             
-            if (contentKeysArray != nil) {
+            if (contentKeysArray != nil && contentKeysArray.count > 0) {
                 NSMutableDictionary *contentEventObj = [[NSMutableDictionary alloc] init];
                 [contentEventObj setObject:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]] forKey: TIME_STAMP_KEY];
                 if(cdManifest.referredLink != nil) {
