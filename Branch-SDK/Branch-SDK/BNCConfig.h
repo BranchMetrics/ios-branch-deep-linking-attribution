@@ -16,7 +16,7 @@
 //#define BNC_DEV_ENV
 
 #ifdef BNC_PROD_ENV
-#define BNC_API_BASE_URL        @"http://chandra.branch.io:8080"
+#define BNC_API_BASE_URL        @"http://chandra.branch.io:8080"//@"https://api.branch.io"
 #endif
 
 #ifdef BNC_STAGE_ENV

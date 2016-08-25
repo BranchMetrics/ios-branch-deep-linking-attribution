@@ -565,6 +565,7 @@ savedAnalyticsData = _savedAnalyticsData;
 
 - (void) clearBranchAnalyticsData {
     [self writeObjectToDefaults:KEY_BRANCH_ANALYTICAL_DATA value:nil];
+    _savedAnalyticsData = nil;
 }
 
 - (NSMutableDictionary *) getBranchAnalyticsData {

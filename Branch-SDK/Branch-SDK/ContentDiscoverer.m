@@ -97,7 +97,7 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
                     }
                 }
             } else if(cdManifest.referredLink != nil) { // else discover content if this session is started by a link click
-                [self discoverViewContents:rootView contentData:contentDataArray contentKeys:contentKeysArray clearText:YES ID:@""];
+                [self discoverViewContents:rootView contentData:nil contentKeys:contentKeysArray clearText:YES ID:@""];
             }
             
             if (contentKeysArray != nil && contentKeysArray.count > 0) {
@@ -110,7 +110,9 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
                 [contentEventObj setObject:[NSString stringWithFormat:@"/%@",lastViewController.class] forKey: VIEW_KEY];
                 [contentEventObj setObject:isClearText? @"true":@"false" forKey: HASH_MODE_KEY];
                 [contentEventObj setObject:contentKeysArray forKey:CONTENT_KEYS_KEY];
-                [contentEventObj setObject:contentDataArray forKey:CONTENT_DATA_KEY];
+                if(contentDataArray != nil && contentDataArray.count > 0){
+                    [contentEventObj setObject:contentDataArray forKey:CONTENT_DATA_KEY];
+                }
                 
                 [[BNCPreferenceHelper preferenceHelper]saveBranchAnalyticsData:contentEventObj];
             }
@@ -120,7 +122,7 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
 
 
 
-- (void) discoverViewContents:(UIView *) rootView contentData:(NSMutableArray *)ContentDataArray contentKeys:(NSMutableArray *) contentKeysArray clearText:(BOOL)isClearText ID:(NSString *) viewId {
+- (void) discoverViewContents:(UIView *) rootView contentData:(NSMutableArray *)contentDataArray contentKeys:(NSMutableArray *) contentKeysArray clearText:(BOOL)isClearText ID:(NSString *) viewId {
     if([rootView isKindOfClass:UITableView.class]) {
         NSArray * cells = ((UITableView *)rootView).visibleCells;
         int cellCnt=-1;
@@ -133,7 +135,7 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
                 format = @"%d";
             }
             NSString *cellViewId = [viewId stringByAppendingFormat:format ,cellCnt];
-            [self discoverViewContents:cell contentData:ContentDataArray contentKeys:contentKeysArray clearText:isClearText ID:cellViewId ];
+            [self discoverViewContents:cell contentData:contentDataArray contentKeys:contentKeysArray clearText:isClearText ID:cellViewId ];
         }
     } else {
         if([rootView respondsToSelector:@selector(text)]){
@@ -141,7 +143,9 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
             contentData = [rootView valueForKey:@"text"];
             if(contentData != nil) {
                 [contentKeysArray addObject:viewId];
-                [ContentDataArray addObject: [self formatContentData:contentData clearText:isClearText]];
+                if(contentDataArray != nil) {
+                    [self addFormatedContentData:contentDataArray withText:contentData clearText:isClearText];
+                }
             }
         }
         NSArray *subViews = [rootView subviews];
@@ -150,7 +154,7 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
             for (UIView* view in subViews ) {
                 childCount++;
                 NSString *subViewId = [viewId stringByAppendingFormat:@"-%d" ,childCount];
-                [self discoverViewContents:view contentData:ContentDataArray contentKeys:contentKeysArray clearText:isClearText ID:subViewId];
+                [self discoverViewContents:view contentData:contentDataArray contentKeys:contentKeysArray clearText:isClearText ID:subViewId];
             }
         }
         
@@ -158,13 +162,15 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
 }
 
 
-- (void) discoverFilteredViewContents:(NSMutableArray *)ContentDataArray contentKeys:(NSMutableArray *) contentKeysArray clearText:(BOOL)isClearText {
+- (void) discoverFilteredViewContents:(NSMutableArray *)contentDataArray contentKeys:(NSMutableArray *) contentKeysArray clearText:(BOOL)isClearText {
     for (NSString * contentKey in contentKeysArray) {
         NSString *contentData = [self getViewText:contentKey forController:lastViewController];
         if(contentData == nil) {
             contentData = @"";
         }
-        [ContentDataArray addObject: [self formatContentData:contentData clearText:isClearText]];
+        if(contentDataArray != nil) {
+            [self addFormatedContentData:contentDataArray withText:contentData clearText:isClearText];
+        }
     }
 }
 
@@ -224,14 +230,13 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
     return activeController;
 }
 
-- (NSString *) formatContentData:(NSString *) contentData clearText:(BOOL)isClearText {
+- (void) addFormatedContentData:(NSArray *)contentDataArray withText:(NSString *)contentData clearText:(BOOL)isClearText {
     if (contentData != nil && contentData.length > cdManifest.maxTextLen) {
         contentData = [contentData substringToIndex:cdManifest.maxTextLen];
     }
     if(!isClearText) {
         contentData = [self hashContent:contentData];
     }
-    return contentData;
 }
 
 - (NSString*) hashContent:(NSString *)content {
