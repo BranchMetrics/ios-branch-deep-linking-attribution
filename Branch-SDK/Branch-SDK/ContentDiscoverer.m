@@ -142,7 +142,8 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
             NSString *contentData;
             contentData = [rootView valueForKey:@"text"];
             if(contentData != nil) {
-                [contentKeysArray addObject:viewId];
+                NSString * viewFriendlyName = [NSString stringWithFormat:@"%@:%@",[rootView class],viewId];
+                [contentKeysArray addObject:viewFriendlyName];
                 if(contentDataArray != nil) {
                     [self addFormatedContentData:contentDataArray withText:contentData clearText:isClearText];
                 }
@@ -179,7 +180,12 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
     NSString *viewTxt = @"";
     if (viewController != nil) {
         UIView * rootView = [viewController view];
-        
+        if ([viewId containsString:@":"]) {
+            NSArray * viewIDsplitArray = [viewId componentsSeparatedByString:@":"];
+            if(viewIDsplitArray.count > 0) {
+                viewId = [[viewId componentsSeparatedByString:@":"] objectAtIndex:1];
+            }
+        }
         NSArray * viewIds = [viewId componentsSeparatedByString:@"-"];
         BOOL foundView = true;
         for(NSString *subViewIdStr in viewIds) {
