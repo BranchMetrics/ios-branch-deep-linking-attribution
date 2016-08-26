@@ -113,27 +113,19 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
             return;
         }
         
-        UIViewController * safController = [[SFSafariViewControllerClass alloc] initWithURL:strongMatchUrl];
-        self.secondWindow = [[UIWindow alloc] initWithFrame:[[[[UIApplication sharedApplication] windows] firstObject] bounds]];
-        UIViewController *windowRootController = [[UIViewController alloc] init];
-        self.secondWindow.rootViewController = windowRootController;
-        self.secondWindow.windowLevel = UIWindowLevelNormal - 1;
-        [self.secondWindow setHidden:NO];
-        [self.secondWindow setAlpha:0];
-        
         // Must be on next run loop to avoid a warning
         dispatch_async(dispatch_get_main_queue(), ^{
-            // Add the safari view controller using view controller containment
-            [windowRootController addChildViewController:safController];
-            [windowRootController.view addSubview:safController.view];
-            [safController didMoveToParentViewController:windowRootController];
+            UIViewController * safController = [[SFSafariViewControllerClass alloc] initWithURL:strongMatchUrl];
+            self.secondWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+            self.secondWindow.rootViewController = safController;
+            self.secondWindow.windowLevel = UIWindowLevelNormal - 100;
+            [self.secondWindow setHidden:NO];
+            UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+            [self.secondWindow makeKeyWindow];
             
-            // Give a little bit of time for safari to load the request.
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                // Remove the safari view controller from view controller containment
-                [safController willMoveToParentViewController:nil];
-                [safController.view removeFromSuperview];
-                [safController removeFromParentViewController];
+            // Give enough time for Safari to load the request (optimized for 3G)
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [keyWindow makeKeyWindow];
                 
                 // Remove the window and release it's strong reference. This is important to ensure that
                 // applications using view controller based status bar appearance are restored.
