@@ -16,6 +16,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.license          = 'Proprietary'
   s.author           = { "Branch" => "support@branch.io" }
   s.source           = { :git => "https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK.git", :tag => s.version.to_s }
+  s.private_header_files = "Branch-SDK/Fabric/*.h"
   s.platform     = :ios, '6.0'
   s.requires_arc = true
 
