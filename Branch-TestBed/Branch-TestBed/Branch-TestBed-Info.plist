@@ -47,16 +47,14 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>branch_app_domain</key>
-	<string>er3j.app.link</string>
-    <key>branch_key</key>
-    <dict>
-        <key>live</key>
-        <string>key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx</string>
-        <key>test</key>
-        <string>key_test_jkptOCZtmtxhOMZ11ynbXecdDCd93cbr</string>
-    </dict>
-    <key>UILaunchStoryboardName</key>
+	<key>branch_key</key>
+	<dict>
+		<key>live</key>
+		<string>key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx</string>
+		<key>test</key>
+		<string>key_test_jkptOCZtmtxhOMZ11ynbXecdDCd93cbr</string>
+	</dict>
+	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 </dict>
 </plist>
