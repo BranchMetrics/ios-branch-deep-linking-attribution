@@ -20,6 +20,7 @@
 @property (strong, nonatomic) NSString *channel;
 @property (strong, nonatomic) NSString *feature;
 @property (strong, nonatomic) NSString *stage;
+@property (strong, nonatomic) NSString *campaign;
 @property (strong, nonatomic) NSDictionary *params;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCLinkData *linkData;
@@ -29,7 +30,7 @@
 
 @implementation BranchShortUrlRequest
 
-- (id)initWithTags:(NSArray *)tags alias:(NSString *)alias type:(BranchLinkType)type matchDuration:(NSInteger)duration channel:(NSString *)channel feature:(NSString *)feature stage:(NSString *)stage params:(NSDictionary *)params linkData:(BNCLinkData *)linkData linkCache:(BNCLinkCache *)linkCache callback:(callbackWithUrl)callback {
+- (id)initWithTags:(NSArray *)tags alias:(NSString *)alias type:(BranchLinkType)type matchDuration:(NSInteger)duration channel:(NSString *)channel feature:(NSString *)feature stage:(NSString *)stage campaign:campaign params:(NSDictionary *)params linkData:(BNCLinkData *)linkData linkCache:(BNCLinkCache *)linkCache callback:(callbackWithUrl)callback {
     if (self = [super init]) {
         _tags = tags;
         _alias = alias;
@@ -38,6 +39,7 @@
         _channel = channel;
         _feature = feature;
         _stage = stage;
+        _campaign = campaign;
         _params = params;
         _callback = callback;
         _linkCache = linkCache;
@@ -129,6 +131,7 @@
         _channel = [decoder decodeObjectForKey:@"channel"];
         _feature = [decoder decodeObjectForKey:@"feature"];
         _stage = [decoder decodeObjectForKey:@"stage"];
+        _campaign = [decoder decodeObjectForKey:@"campaign"];
         _params = [BNCEncodingUtils decodeJsonStringToDictionary:[decoder decodeObjectForKey:@"params"]];
         
         // Set up link data
@@ -138,6 +141,7 @@
         [self.linkData setupChannel:_channel];
         [self.linkData setupFeature:_feature];
         [self.linkData setupStage:_stage];
+        [self.linkData setupCampaign:_campaign];
         [self.linkData setupAlias:_alias];
         [self.linkData setupMatchDuration:_matchDuration];
         [self.linkData setupParams:_params];
@@ -156,6 +160,7 @@
     [coder encodeObject:self.channel forKey:@"channel"];
     [coder encodeObject:self.feature forKey:@"feature"];
     [coder encodeObject:self.stage forKey:@"stage"];
+    [coder encodeObject:self.campaign forKey:@"campaign"];
     [coder encodeObject:[BNCEncodingUtils encodeDictionaryToJsonString:self.params] forKey:@"params"];
 }
 

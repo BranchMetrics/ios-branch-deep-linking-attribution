@@ -21,6 +21,7 @@
 @property (strong, nonatomic) NSString *channel;
 @property (strong, nonatomic) NSString *feature;
 @property (strong, nonatomic) NSString *stage;
+@property (strong, nonatomic) NSString *campaign;
 @property (strong, nonatomic) NSDictionary *params;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCLinkData *linkData;
@@ -29,7 +30,7 @@
 
 @implementation BranchShortUrlSyncRequest
 
-- (id)initWithTags:(NSArray *)tags alias:(NSString *)alias type:(BranchLinkType)type matchDuration:(NSInteger)duration channel:(NSString *)channel feature:(NSString *)feature stage:(NSString *)stage params:(NSDictionary *)params linkData:(BNCLinkData *)linkData linkCache:(BNCLinkCache *)linkCache {
+- (id)initWithTags:(NSArray *)tags alias:(NSString *)alias type:(BranchLinkType)type matchDuration:(NSInteger)duration channel:(NSString *)channel feature:(NSString *)feature stage:(NSString *)stage campaign:(NSString *)campaign params:(NSDictionary *)params linkData:(BNCLinkData *)linkData linkCache:(BNCLinkCache *)linkCache {
     if (self = [super init]) {
         _tags = tags;
         _alias = alias;
@@ -38,6 +39,7 @@
         _channel = channel;
         _feature = feature;
         _stage = stage;
+        _campaign = campaign;
         _params = params;
         _linkCache = linkCache;
         _linkData = linkData;

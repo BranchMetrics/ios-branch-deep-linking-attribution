@@ -65,6 +65,7 @@ NSString *test_key = @"test_key";
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
     linkProperties.channel = channel;
+    linkProperties.campaign = @"some campaign";
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
     [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
     
@@ -181,17 +182,17 @@ NSString *test_key = @"test_key";
 - (IBAction)shareLinkButtonTouchUpInside:(id)sender {
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
+    linkProperties.campaign = @"sharing campaign";
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
     [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
     
-    [self.branchUniversalObject showShareSheetWithShareText: shareText
-                                                 completion:^(NSString *activityType, BOOL completed) {
-                                                     if (completed) {
-                                                         NSLog(@"%@", [NSString stringWithFormat:@"Branch TestBed: Completed sharing to %@", activityType]);
-                                                     } else {
-                                                         NSLog(@"%@", [NSString stringWithFormat:@"Branch TestBed: Sharing failed"]);
-                                                     }
-                                                 }];
+    [self.branchUniversalObject showShareSheetWithLinkProperties:linkProperties andShareText:shareText fromViewController:self.parentViewController completion:^(NSString *activityType, BOOL completed) {
+        if (completed) {
+            NSLog(@"%@", [NSString stringWithFormat:@"Branch TestBed: Completed sharing to %@", activityType]);
+        } else {
+            NSLog(@"%@", [NSString stringWithFormat:@"Branch TestBed: Sharing failed"]);
+        }
+    }];
 }
 
 
