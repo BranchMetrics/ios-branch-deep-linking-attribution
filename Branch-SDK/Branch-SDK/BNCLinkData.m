@@ -17,6 +17,7 @@
 @property (strong, nonatomic) NSString *channel;
 @property (strong, nonatomic) NSString *feature;
 @property (strong, nonatomic) NSString *stage;
+@property (strong, nonatomic) NSString *campaign;
 @property (strong, nonatomic) NSDictionary *params;
 @property (strong, nonatomic) NSString *ignoreUAString;
 @property (assign, nonatomic) BranchLinkType type;
@@ -90,6 +91,14 @@
     }
 }
 
+- (void)setupCampaign:(NSString *)campaign {
+    if (campaign) {
+        _campaign = campaign;
+        
+        self.data[BRANCH_REQUEST_KEY_URL_CAMPAIGN] = campaign;
+    }
+}
+
 - (void)setupIgnoreUAString:(NSString *)ignoreUAString {
     if (ignoreUAString) {
         _ignoreUAString = ignoreUAString;
@@ -116,6 +125,7 @@
     result = prime * result + [[BNCEncodingUtils md5Encode:self.channel] hash];
     result = prime * result + [[BNCEncodingUtils md5Encode:self.feature] hash];
     result = prime * result + [[BNCEncodingUtils md5Encode:self.stage] hash];
+    result = prime * result + [[BNCEncodingUtils md5Encode:self.campaign] hash];
     result = prime * result + [[BNCEncodingUtils md5Encode:encodedParams] hash];
     result = prime * result + self.duration;
     
@@ -145,6 +155,9 @@
     if (self.stage) {
         [coder encodeObject:self.stage forKey:BRANCH_REQUEST_KEY_URL_STAGE];
     }
+    if (self.campaign) {
+        [coder encodeObject:self.campaign forKey:BRANCH_REQUEST_KEY_URL_CAMPAIGN];
+    }
     if (self.params) {
         NSString *encodedParams = [BNCEncodingUtils encodeDictionaryToJsonString:self.params];
         [coder encodeObject:encodedParams forKey:BRANCH_REQUEST_KEY_URL_DATA];
@@ -162,6 +175,7 @@
         self.channel = [coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_CHANNEL];
         self.feature = [coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_FEATURE];
         self.stage = [coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_STAGE];
+        self.campaign = [coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_CAMPAIGN];
         self.duration = [[coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_DURATION] integerValue];
         
         NSString *encodedParams = [coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_DATA];
