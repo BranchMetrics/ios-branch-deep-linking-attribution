@@ -30,6 +30,7 @@
     // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is NO).
     [branch initSessionWithLaunchOptions:launchOptions automaticallyDisplayDeepLinkController:YES deepLinkHandler:^(NSDictionary *params, NSError *error) {
         if (!error) {
+            NSLog(@"initSession succeeded with params: %@", params);
             // Deeplinking logic for use when automaticallyDisplayDeepLinkController = NO
             /*
              NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
