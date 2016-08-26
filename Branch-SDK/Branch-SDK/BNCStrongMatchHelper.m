@@ -113,6 +113,7 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
             return;
         }
         
+        // Must be on next run loop to avoid a warning
         dispatch_async(dispatch_get_main_queue(), ^{
             UIViewController * safController = [[SFSafariViewControllerClass alloc] initWithURL:strongMatchUrl];
             self.secondWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -121,6 +122,8 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
             [self.secondWindow setHidden:NO];
             UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
             [self.secondWindow makeKeyWindow];
+            
+            // Give enough time for Safari to load the request (optimized for 3G)
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [keyWindow makeKeyWindow];
                 
@@ -133,24 +136,6 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
                 self.requestInProgress = NO;
             });
         });
-        
-//        // Must be on next run loop to avoid a warning
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            // Add the safari view controller using view controller containment
-//            [windowRootController addChildViewController:safController];
-//            [windowRootController.view addSubview:safController.view];
-//            [safController didMoveToParentViewController:windowRootController];
-//            
-//            // Give a little bit of time for safari to load the request.
-//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                // Remove the safari view controller from view controller containment
-//                [safController willMoveToParentViewController:nil];
-//                [safController.view removeFromSuperview];
-//                [safController removeFromParentViewController];
-//                
-//
-//            });
-//        });
     }
     else {
         self.requestInProgress = NO;
