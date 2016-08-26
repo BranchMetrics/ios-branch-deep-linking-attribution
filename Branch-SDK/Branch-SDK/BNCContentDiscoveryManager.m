@@ -6,6 +6,7 @@
 //  Copyright © 2015 Branch Metrics. All rights reserved.
 //
 
+#import "BNCPreferenceHelper.h"
 #import "BNCContentDiscoveryManager.h"
 #import "BNCSystemObserver.h"
 #import "BNCError.h"
@@ -309,7 +310,7 @@
     if ([BNCSystemObserver getOSVersion].integerValue < 9) {
         NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service prior to iOS 9" }];
         if (callback) {
-            callback(nil, error);
+            callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         }
         else if (spotlightCallback) {
             spotlightCallback(nil, nil, error);
@@ -319,7 +320,7 @@
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
     NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"CoreSpotlight is not available because the base SDK for this project is less than 9.0" }];
     if (callback) {
-        callback(nil, error);
+        callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
     }
     else if (spotlightCallback) {
         spotlightCallback(nil, nil, error);
@@ -334,7 +335,7 @@
     if (!isIndexingAvailable) {
         NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service on this device/OS" }];
         if (callback) {
-            callback(nil, error);
+            callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         }
         else if (spotlightCallback) {
             spotlightCallback(nil, nil, error);
@@ -345,7 +346,7 @@
     if (!title) {
         NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title" }];
         if (callback) {
-            callback(nil, error);
+            callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         }
         else if (spotlightCallback) {
             spotlightCallback(nil, nil, error);
@@ -397,7 +398,7 @@
     [[Branch getInstance] getSpotlightUrlWithParams:spotlightLinkData callback:^(NSDictionary *data, NSError *urlError) {
         if (urlError) {
             if (callback) {
-                callback(nil, urlError);
+                callback([BNCPreferenceHelper preferenceHelper].userUrl, urlError);
             }
             else if (spotlightCallback) {
                 spotlightCallback(nil, nil, urlError);
@@ -481,7 +482,7 @@
         if (callback || spotlightCallback) {
             if (indexError) {
                 if (callback) {
-                    callback(nil, indexError);
+                    callback([BNCPreferenceHelper preferenceHelper].userUrl, indexError);
                 }
                 else if (spotlightCallback) {
                     spotlightCallback(nil, nil, indexError);
