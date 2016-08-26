@@ -108,7 +108,7 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
                 }
                 
                 [contentEventObj setObject:[NSString stringWithFormat:@"/%@",lastViewController.class] forKey: VIEW_KEY];
-                [contentEventObj setObject:isClearText? @"true":@"false" forKey: HASH_MODE_KEY];
+                [contentEventObj setObject:!isClearText? @"true":@"false" forKey: HASH_MODE_KEY];
                 [contentEventObj setObject:contentKeysArray forKey:CONTENT_KEYS_KEY];
                 if(contentDataArray != nil && contentDataArray.count > 0){
                     [contentEventObj setObject:contentDataArray forKey:CONTENT_DATA_KEY];
@@ -230,13 +230,14 @@ int const CONTENT_DISCOVERY_INTERVAL = 5;
     return activeController;
 }
 
-- (void) addFormatedContentData:(NSArray *)contentDataArray withText:(NSString *)contentData clearText:(BOOL)isClearText {
+- (void) addFormatedContentData:(NSMutableArray *)contentDataArray withText:(NSString *)contentData clearText:(BOOL)isClearText {
     if (contentData != nil && contentData.length > cdManifest.maxTextLen) {
         contentData = [contentData substringToIndex:cdManifest.maxTextLen];
     }
     if(!isClearText) {
         contentData = [self hashContent:contentData];
     }
+    [contentDataArray addObject:contentData];
 }
 
 - (NSString*) hashContent:(NSString *)content {

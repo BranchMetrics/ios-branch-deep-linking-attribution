@@ -92,8 +92,7 @@ static ContentDiscoveryManifest *contentDiscoveryManifest;
     ContentPathProperties *contentPathProperties;
     
     if(_contentPaths != nil) {
-        NSString *viewPath = [@"/%@" stringByAppendingString:NSStringFromClass([viewController class])];
-        
+        NSString *viewPath = [NSString stringWithFormat:@"/%@",([viewController class])];        
         for(NSDictionary * pathObj in _contentPaths) {
             NSString *pathStr = [pathObj objectForKey:PATH_KEY];
             if(pathStr != nil && [pathStr isEqualToString:viewPath]){

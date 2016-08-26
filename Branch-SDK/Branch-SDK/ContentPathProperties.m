@@ -20,7 +20,7 @@
         _pathInfo = pathInfo;
     }
     if([pathInfo objectForKey:HASH_MODE_KEY] != nil) {
-        _isClearText = [pathInfo objectForKey:HASH_MODE_KEY];
+        _isClearText = ![ [pathInfo objectForKey:HASH_MODE_KEY] boolValue];
     }
     return self;
 }
