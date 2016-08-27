@@ -30,8 +30,8 @@
 @property (strong, nonatomic) NSMutableArray *contentPaths;
 
 + (ContentDiscoveryManifest *)getInstance;
-- (NSString *) getManifestVersion;
-- (ContentPathProperties *) getContentPathProperties:(UIViewController *) viewController;
-- (void) onBranchInitialised:(NSDictionary *) branchInitDict withUrl:(NSString *) referredUrl;
+- (NSString *)getManifestVersion;
+- (ContentPathProperties *)getContentPathProperties:(UIViewController *)viewController;
+- (void)onBranchInitialised:(NSDictionary *)branchInitDict withUrl:(NSString *)referredUrl;
 
 @end

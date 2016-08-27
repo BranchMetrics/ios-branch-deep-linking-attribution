@@ -70,11 +70,11 @@
 - (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
 - (void)logWarning:(NSString *)message;
 
-- (void) saveBranchAnalyticsData:(NSDictionary *)analyticsData;
-- (void) clearBranchAnalyticsData;
-- (NSMutableDictionary *) getBranchAnalyticsData;
+- (void)saveBranchAnalyticsData:(NSDictionary *)analyticsData;
+- (void)clearBranchAnalyticsData;
+- (NSMutableDictionary *)getBranchAnalyticsData;
 
-- (NSDictionary *) getContentAnalyticsManifest;
-- (void) saveContentAnalyticsManifest:(NSDictionary *)cdManifest;
+- (NSDictionary *)getContentAnalyticsManifest;
+- (void)saveContentAnalyticsManifest:(NSDictionary *)cdManifest;
 
 @end

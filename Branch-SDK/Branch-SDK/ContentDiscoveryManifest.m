@@ -16,8 +16,6 @@
 @implementation ContentDiscoveryManifest
 
 NSString *manifestVersion;
-
-
 static ContentDiscoveryManifest *contentDiscoveryManifest;
 
 - (instancetype)init
@@ -25,7 +23,7 @@ static ContentDiscoveryManifest *contentDiscoveryManifest;
     self = [super init];
     if (self) {
         NSDictionary *savedManifest = [[BNCPreferenceHelper preferenceHelper]getContentAnalyticsManifest];
-        if(savedManifest != nil ) {
+        if (savedManifest != nil ) {
             _cdManifest = [savedManifest mutableCopy];
         }
         else {
@@ -44,29 +42,29 @@ static ContentDiscoveryManifest *contentDiscoveryManifest;
 
 
 
-- (void) onBranchInitialised:(NSDictionary *) branchInitDict withUrl:(NSString *) referredUrl {
+- (void)onBranchInitialised:(NSDictionary *)branchInitDict withUrl:(NSString *)referredUrl {
     _referredLink = referredUrl;
-    if([branchInitDict objectForKey:CONTENT_DISCOVER_KEY] != nil) {
+    if ([branchInitDict objectForKey:CONTENT_DISCOVER_KEY] != nil) {
         _isCDEnabled = YES;
         NSDictionary *cdManifestDict = [branchInitDict objectForKey:CONTENT_DISCOVER_KEY];
         
-        if([cdManifestDict objectForKey:MANIFEST_VERSION_KEY] != nil) {
+        if ([cdManifestDict objectForKey:MANIFEST_VERSION_KEY] != nil) {
             manifestVersion = [cdManifestDict objectForKey:MANIFEST_VERSION_KEY];
         }
         
-        if([cdManifestDict objectForKey:MAX_VIEW_HISTORY_LENGTH] != nil) {
+        if ([cdManifestDict objectForKey:MAX_VIEW_HISTORY_LENGTH] != nil) {
             _maxViewHistoryLength = [[cdManifestDict objectForKey:MAX_VIEW_HISTORY_LENGTH] integerValue];
         }
         
-        if([cdManifestDict objectForKey:MANIFEST_KEY] != nil) {
+        if ([cdManifestDict objectForKey:MANIFEST_KEY] != nil) {
             _contentPaths = [cdManifestDict objectForKey:MANIFEST_KEY];
         }
         
-        if([cdManifestDict objectForKey:MAX_TEXT_LEN_KEY] != nil) {
+        if ([cdManifestDict objectForKey:MAX_TEXT_LEN_KEY] != nil) {
             _maxTextLen = [[cdManifestDict objectForKey:MAX_TEXT_LEN_KEY]integerValue];
         }
         
-        if([cdManifestDict objectForKey:MAX_PACKET_SIZE_KEY] != nil) {
+        if ([cdManifestDict objectForKey:MAX_PACKET_SIZE_KEY] != nil) {
             _maxPktSize = [[cdManifestDict objectForKey:MAX_PACKET_SIZE_KEY]integerValue];
         }
         
@@ -80,22 +78,22 @@ static ContentDiscoveryManifest *contentDiscoveryManifest;
     
 }
 
-- (NSString *) getManifestVersion {
+- (NSString *)getManifestVersion {
     NSString *mVersion = @"-1";
-    if(_cdManifest != nil && [_cdManifest objectForKey:MANIFEST_VERSION_KEY] != nil) {
+    if (_cdManifest != nil && [_cdManifest objectForKey:MANIFEST_VERSION_KEY] != nil) {
         mVersion = [_cdManifest objectForKey:MANIFEST_VERSION_KEY] ;
     }
     return mVersion;
 }
 
-- (ContentPathProperties *) getContentPathProperties:(UIViewController *) viewController {
+- (ContentPathProperties *)getContentPathProperties:(UIViewController *)viewController {
     ContentPathProperties *contentPathProperties;
     
-    if(_contentPaths != nil) {
-        NSString *viewPath = [NSString stringWithFormat:@"/%@",([viewController class])];        
-        for(NSDictionary * pathObj in _contentPaths) {
+    if (_contentPaths != nil) {
+        NSString *viewPath = [NSString stringWithFormat:@"/%@",([viewController class])];
+        for (NSDictionary * pathObj in _contentPaths) {
             NSString *pathStr = [pathObj objectForKey:PATH_KEY];
-            if(pathStr != nil && [pathStr isEqualToString:viewPath]){
+            if (pathStr != nil && [pathStr isEqualToString:viewPath]) {
                 contentPathProperties = [[ContentPathProperties alloc]init:pathObj];
                 break;
             }

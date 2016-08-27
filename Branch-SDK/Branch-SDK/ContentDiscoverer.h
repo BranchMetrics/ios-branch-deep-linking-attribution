@@ -15,9 +15,10 @@
 #endif /* ContentDiscoverer_h */
 
 @interface ContentDiscoverer : NSObject
+//----------- Methods ----------------//
 + (ContentDiscoverer *)getInstance:(ContentDiscoveryManifest *)manifest;
-- (void) startContentDiscoveryTask;
 + (ContentDiscoverer *)getInstance;
-- (void) stopContentDiscoveryTask;
+- (void)startContentDiscoveryTask;
+- (void)stopContentDiscoveryTask;
 
 @end

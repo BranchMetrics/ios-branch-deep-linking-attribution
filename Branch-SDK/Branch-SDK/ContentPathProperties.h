@@ -17,9 +17,9 @@
 @property (strong, nonatomic) NSDictionary *pathInfo;
 @property (nonatomic) BOOL isClearText;
 
-- (instancetype) init:(NSDictionary *)pathInfo;
-- (NSArray *) getFilteredElements;
-- (BOOL) isSkipContentDiscovery;
+- (instancetype)init:(NSDictionary *)pathInfo;
+- (NSArray *)getFilteredElements;
+- (BOOL)isSkipContentDiscovery;
 - (BOOL)isClearText;
 
 @end

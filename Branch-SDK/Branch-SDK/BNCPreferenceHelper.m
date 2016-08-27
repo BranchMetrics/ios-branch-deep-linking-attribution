@@ -126,7 +126,6 @@ savedAnalyticsData = _savedAnalyticsData;
         persistPrefsQueue = [[NSOperationQueue alloc] init];
         persistPrefsQueue.maxConcurrentOperationCount = 1;
     });
-    
     return persistPrefsQueue;
 }
 
@@ -169,7 +168,6 @@ savedAnalyticsData = _savedAnalyticsData;
     }
     
     self.isUsingLiveKey = isLive;
-    
     id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
     if (ret) {
         if ([ret isKindOfClass:[NSString class]]) {
@@ -292,7 +290,6 @@ savedAnalyticsData = _savedAnalyticsData;
     if (!_userIdentity) {
         _userIdentity = [self readStringFromDefaults:BRANCH_PREFS_KEY_IDENTITY];
     }
-    
     return _userIdentity;
 }
 
@@ -307,7 +304,6 @@ savedAnalyticsData = _savedAnalyticsData;
     if (!_linkClickIdentifier) {
         _linkClickIdentifier = [self readStringFromDefaults:BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER];
     }
-    
     return _linkClickIdentifier;
 }
 
@@ -496,7 +492,6 @@ savedAnalyticsData = _savedAnalyticsData;
 
 - (void)setCreditCount:(NSInteger)count forBucket:(NSString *)bucket {
     self.creditsDictionary[[BRANCH_PREFS_KEY_CREDIT_BASE stringByAppendingString:bucket]] = @(count);
-    
     [self writeObjectToDefaults:BRANCH_PREFS_KEY_CREDITS value:self.creditsDictionary];
 }
 
@@ -545,37 +540,37 @@ savedAnalyticsData = _savedAnalyticsData;
     return count;
 }
 
-- (void) saveBranchAnalyticsData:(NSDictionary *)analyticsData {
-    if(_sessionID != nil) {
-        if(_savedAnalyticsData == nil) {
+- (void)saveBranchAnalyticsData:(NSDictionary *)analyticsData {
+    if (_sessionID != nil) {
+        if (_savedAnalyticsData == nil) {
             _savedAnalyticsData = [self getBranchAnalyticsData];
         }
         NSMutableArray *viewDataArray;
-        if([_savedAnalyticsData objectForKey:_sessionID] != nil) {
-            viewDataArray =[_savedAnalyticsData objectForKey:_sessionID];
+        if ([_savedAnalyticsData objectForKey:_sessionID] != nil) {
+            viewDataArray = [_savedAnalyticsData objectForKey:_sessionID];
         }
         else {
             viewDataArray = [[NSMutableArray alloc]init];
-            [_savedAnalyticsData  setObject:viewDataArray forKey:_sessionID];
+            [_savedAnalyticsData setObject:viewDataArray forKey:_sessionID];
         }
         [viewDataArray addObject:analyticsData];
         [self writeObjectToDefaults:KEY_BRANCH_ANALYTICAL_DATA value:_savedAnalyticsData];
     }
 }
 
-- (void) clearBranchAnalyticsData {
+- (void)clearBranchAnalyticsData {
     [self writeObjectToDefaults:KEY_BRANCH_ANALYTICAL_DATA value:nil];
     _savedAnalyticsData = nil;
 }
 
-- (NSMutableDictionary *) getBranchAnalyticsData {
+- (NSMutableDictionary *)getBranchAnalyticsData {
     NSMutableDictionary *analyticsDataObj;
-    if(_savedAnalyticsData != nil) {
+    if (_savedAnalyticsData != nil) {
         analyticsDataObj  = _savedAnalyticsData;
     } else {
         NSObject * dataObj = [self readObjectFromDefaults:KEY_BRANCH_ANALYTICAL_DATA];
-        if(dataObj != nil) {
-            analyticsDataObj =(NSMutableDictionary *)dataObj;
+        if (dataObj != nil) {
+            analyticsDataObj = (NSMutableDictionary *)dataObj;
         } else {
             analyticsDataObj = [[NSMutableDictionary alloc] init];
         }
@@ -583,14 +578,14 @@ savedAnalyticsData = _savedAnalyticsData;
     return analyticsDataObj;
 }
 
-- (void) saveContentAnalyticsManifest:(NSDictionary *)cdManifest {
+- (void)saveContentAnalyticsManifest:(NSDictionary *)cdManifest {
     [self writeObjectToDefaults:KEY_BRANCH_ANALYTICS_MANIFEST value:cdManifest];
 }
 
-- (NSDictionary *) getContentAnalyticsManifest {
+- (NSDictionary *)getContentAnalyticsManifest {
     NSObject * manifestObj = [self readObjectFromDefaults:KEY_BRANCH_ANALYTICS_MANIFEST];
-    if(manifestObj != nil){
-        return (NSDictionary *) manifestObj;
+    if (manifestObj != nil) {
+        return (NSDictionary *)manifestObj;
     } else {
         return nil;
     }
