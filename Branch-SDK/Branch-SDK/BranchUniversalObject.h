@@ -42,6 +42,9 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 - (void)registerView;
 - (void)registerViewWithCallback:(callbackWithParams)callback;
 
+
+- (void)userCompletedAction:(NSString *)action;
+
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties;
 - (NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(BranchLinkProperties *)linkProperties;
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback;

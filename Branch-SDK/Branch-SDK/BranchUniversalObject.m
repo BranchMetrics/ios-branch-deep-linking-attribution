@@ -74,6 +74,16 @@
     [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest] andCallback:callback];
 }
 
+- (void)userCompletedAction:(NSString *)action {
+    NSMutableDictionary *actionPayload = [[NSMutableDictionary alloc] init];
+    NSDictionary *linkParams = [self getParamsForServerRequest];
+    actionPayload[BNCCanonicalIdList] = @[self.canonicalIdentifier];
+    actionPayload[self.canonicalIdentifier] = linkParams;
+    
+    // to be removed: this will not work if they are using getTestInstance. Thoughts?
+    [[Branch getInstance] userCompletedAction:action withState:actionPayload];
+}
+
 #pragma mark - Link Creation Methods
 
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties {
