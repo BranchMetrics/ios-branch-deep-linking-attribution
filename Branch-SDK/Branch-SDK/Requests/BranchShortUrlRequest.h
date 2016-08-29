@@ -11,6 +11,8 @@
 
 @interface BranchShortUrlRequest : BNCServerRequest
 
+@property (nonatomic, assign) BOOL isSpotlightRequest;
+
 - (id)initWithTags:(NSArray *)tags alias:(NSString *)alias type:(BranchLinkType)type matchDuration:(NSInteger)duration channel:(NSString *)channel feature:(NSString *)feature stage:(NSString *)stage campaign:(NSString *)campaign params:(NSDictionary *)params linkData:(BNCLinkData *)linkData linkCache:(BNCLinkCache *)linkCache callback:(callbackWithUrl)callback;
 
 @end
