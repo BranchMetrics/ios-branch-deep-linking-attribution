@@ -33,6 +33,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 @property (nonatomic, strong) NSArray *keywords;
 @property (nonatomic, strong) NSDate *expirationDate;
 @property (nonatomic, strong) NSString *spotlightIdentifier;
+@property (nonatomic, assign) CGFloat price;
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier;
 - (instancetype)initWithTitle:(NSString *)title;
