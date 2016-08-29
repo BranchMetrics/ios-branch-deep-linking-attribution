@@ -58,6 +58,13 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
 NSString * const BNCCanonicalIdList = @"$canonical_identifier_list";
 NSString * const BNCPurchaseAmount = @"$amount";
+NSString * const BNCRegisterViewEvent = @"View";
+NSString * const BNCAddToWishlistEvent = @"Add to Wishlist";
+NSString * const BNCAddToCartEvent = @"Add to Cart";
+NSString * const BNCPurchaseInitiatedEvent = @"Purchase Started";
+NSString * const BNCPurchasedEvent = @"Purchased";
+NSString * const BNCShareInitiatedEvent = @"Share Started";
+NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit>
 
