@@ -56,6 +56,9 @@ NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
 NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
+NSString * const BNCCanonicalIdList = @"$canonical_identifier_list";
+NSString * const BNCPurchaseAmount = @"$amount";
+
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit>
 
 
@@ -538,6 +541,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 }
 
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
+    NSLog(@"action: %@, state: %@", action, state);
     [self userCompletedAction:action withState:state withDelegate:nil];
 }
 

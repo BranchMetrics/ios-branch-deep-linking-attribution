@@ -103,6 +103,9 @@ extern NSString * const BRANCH_INIT_KEY_PHONE_NUMBER;
 extern NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION;
 extern NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK;
 
+extern NSString * const BNCCanonicalIdList;
+extern NSString * const BNCPurchaseAmount;
+
 #pragma mark - Branch Enums
 typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchMostRecentFirst,
