@@ -321,6 +321,9 @@
     if (dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS]) {
         universalObject.keywords = dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS];
     }
+    if (dictionary[BNCPurchaseAmount]) {
+        universalObject.price = [dictionary[BNCPurchaseAmount] floatValue];
+    }
     
     return universalObject;
 }
