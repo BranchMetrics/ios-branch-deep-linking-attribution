@@ -103,8 +103,18 @@ extern NSString * const BRANCH_INIT_KEY_PHONE_NUMBER;
 extern NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION;
 extern NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK;
 
+// BUO Constants
 extern NSString * const BNCCanonicalIdList;
 extern NSString * const BNCPurchaseAmount;
+extern NSString * const BNCCanonicalIdList;
+extern NSString * const BNCPurchaseAmount;
+extern NSString * const BNCRegisterViewEvent;
+extern NSString * const BNCAddToWishlistEvent;
+extern NSString * const BNCAddToCartEvent;
+extern NSString * const BNCPurchaseInitiatedEvent;
+extern NSString * const BNCPurchasedEvent;
+extern NSString * const BNCShareInitiatedEvent;
+extern NSString * const BNCShareCompletedEvent;
 
 #pragma mark - Branch Enums
 typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
