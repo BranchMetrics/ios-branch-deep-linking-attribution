@@ -9,6 +9,7 @@
 #import "BranchCloseRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
+#import "ContentDiscoveryManifest.h"
 
 @implementation BranchCloseRequest
 
@@ -19,13 +20,15 @@
     [params setObject:preferenceHelper.sessionID forKey:BRANCH_REQUEST_KEY_SESSION_ID];
     [params setObject:preferenceHelper.deviceFingerprintID forKey:BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID];
     
-    
     NSDictionary *branchAnalyticsObj = [preferenceHelper getBranchAnalyticsData];
-    if (branchAnalyticsObj != nil && branchAnalyticsObj.count > 0) {
-        [params setObject:branchAnalyticsObj forKey:CONTENT_DISCOVER_KEY];
+    if (branchAnalyticsObj && branchAnalyticsObj.count > 0) {
+        NSData *data = [NSPropertyListSerialization dataFromPropertyList:branchAnalyticsObj
+                                                                   format:NSPropertyListBinaryFormat_v1_0 errorDescription:NULL];
+        if ([data length] < [ContentDiscoveryManifest getInstance].maxPktSize) {
+            [params setObject:branchAnalyticsObj forKey:BRANCH_CONTENT_DISCOVER_KEY];
+        }
         [preferenceHelper clearBranchAnalyticsData];
     }
-    
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_CLOSE] key:key callback:callback];
     
 }

@@ -541,16 +541,13 @@ savedAnalyticsData = _savedAnalyticsData;
 }
 
 - (void)saveBranchAnalyticsData:(NSDictionary *)analyticsData {
-    if (_sessionID != nil) {
-        if (_savedAnalyticsData == nil) {
+    if (_sessionID) {
+        if (!_savedAnalyticsData) {
             _savedAnalyticsData = [self getBranchAnalyticsData];
         }
-        NSMutableArray *viewDataArray;
-        if ([_savedAnalyticsData objectForKey:_sessionID] != nil) {
-            viewDataArray = [_savedAnalyticsData objectForKey:_sessionID];
-        }
-        else {
-            viewDataArray = [[NSMutableArray alloc]init];
+        NSMutableArray *viewDataArray = [_savedAnalyticsData objectForKey:_sessionID];
+        if (!viewDataArray) {
+            viewDataArray = [[NSMutableArray alloc] init];
             [_savedAnalyticsData setObject:viewDataArray forKey:_sessionID];
         }
         [viewDataArray addObject:analyticsData];
@@ -564,12 +561,10 @@ savedAnalyticsData = _savedAnalyticsData;
 }
 
 - (NSMutableDictionary *)getBranchAnalyticsData {
-    NSMutableDictionary *analyticsDataObj;
-    if (_savedAnalyticsData != nil) {
-        analyticsDataObj  = _savedAnalyticsData;
-    } else {
-        NSObject * dataObj = [self readObjectFromDefaults:KEY_BRANCH_ANALYTICAL_DATA];
-        if (dataObj != nil) {
+    NSMutableDictionary *analyticsDataObj = _savedAnalyticsData;
+    if (!analyticsDataObj) {
+        NSObject *dataObj = [self readObjectFromDefaults:KEY_BRANCH_ANALYTICAL_DATA];
+        if (dataObj) {
             analyticsDataObj = (NSMutableDictionary *)dataObj;
         } else {
             analyticsDataObj = [[NSMutableDictionary alloc] init];
@@ -583,8 +578,8 @@ savedAnalyticsData = _savedAnalyticsData;
 }
 
 - (NSDictionary *)getContentAnalyticsManifest {
-    NSObject * manifestObj = [self readObjectFromDefaults:KEY_BRANCH_ANALYTICS_MANIFEST];
-    if (manifestObj != nil) {
+    NSObject *manifestObj = [self readObjectFromDefaults:KEY_BRANCH_ANALYTICS_MANIFEST];
+    if (manifestObj) {
         return (NSDictionary *)manifestObj;
     } else {
         return nil;

@@ -16,24 +16,20 @@
     self = [super init];
     if (self) {
         _pathInfo = pathInfo;
-    }
-    if ([pathInfo objectForKey:HASH_MODE_KEY] != nil) {
-        _isClearText = ![[pathInfo objectForKey:HASH_MODE_KEY] boolValue];
+        if ([pathInfo objectForKey:BRANCH_HASH_MODE_KEY]) {
+            _isClearText = ![[pathInfo objectForKey:BRANCH_HASH_MODE_KEY] boolValue];
+        }
     }
     return self;
 }
 
 - (NSArray *)getFilteredElements {
-    NSArray * filteredKeys = nil;
-    if ([_pathInfo objectForKey:FILTERED_KEYS]) {
-        filteredKeys = [_pathInfo objectForKey:FILTERED_KEYS];
-    }
-    return filteredKeys;
+    return [_pathInfo objectForKey:BRANCH_FILTERED_KEYS];
 }
 
 - (BOOL)isSkipContentDiscovery {
     NSArray *filteredElelments = [self getFilteredElements];
-    return (filteredElelments != nil && filteredElelments.count == 0);
+    return (filteredElelments && filteredElelments.count == 0);
 }
 
 - (BOOL)isClearText {

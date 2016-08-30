@@ -65,9 +65,9 @@
     
     NSMutableDictionary *cdDict = [[NSMutableDictionary alloc] init];
     ContentDiscoveryManifest *contentDiscoveryManifest = [ContentDiscoveryManifest getInstance];
-    [cdDict setObject:[contentDiscoveryManifest getManifestVersion] forKey:MANIFEST_VERSION_KEY];
-    [cdDict setObject:[BNCSystemObserver getBundleID] forKey:BUNDLE_IDENTIFIER];
-    [self safeSetValue:cdDict forKey:CONTENT_DISCOVER_KEY onDict:params];
+    [cdDict setObject:[contentDiscoveryManifest getManifestVersion] forKey:BRANCH_MANIFEST_VERSION_KEY];
+    [cdDict setObject:[BNCSystemObserver getBundleID] forKey:BRANCH_BUNDLE_IDENTIFIER];
+    [self safeSetValue:cdDict forKey:BRANCH_CONTENT_DISCOVER_KEY onDict:params];
     
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
     
@@ -125,8 +125,8 @@
         }
     }
     
-    NSString * referredUrl = nil;
-    if (preferenceHelper.universalLinkUrl != nil) {
+    NSString *referredUrl = nil;
+    if (preferenceHelper.universalLinkUrl) {
         referredUrl = preferenceHelper.universalLinkUrl;
     }
     else if (preferenceHelper.externalIntentURI) {

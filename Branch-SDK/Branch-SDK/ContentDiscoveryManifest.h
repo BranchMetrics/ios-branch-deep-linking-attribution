@@ -16,17 +16,11 @@
 @interface ContentDiscoveryManifest : NSObject
 //---- Properties---------------//
 @property (strong, nonatomic) NSMutableDictionary *cdManifest;
-
 @property (strong, nonatomic) NSString *referredLink;
-
 @property (nonatomic) NSInteger maxTextLen;
-
 @property (nonatomic) NSInteger maxViewHistoryLength;
-
 @property (nonatomic) NSInteger maxPktSize;
-
 @property (nonatomic) BOOL isCDEnabled;
-
 @property (strong, nonatomic) NSMutableArray *contentPaths;
 
 + (ContentDiscoveryManifest *)getInstance;

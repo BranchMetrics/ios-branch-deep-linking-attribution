@@ -7,7 +7,6 @@
 //
 
 #import "CreditHistoryViewController.h"
-#import "ContentDiscoverer.h"
 
 @interface CreditHistoryViewController ()
 

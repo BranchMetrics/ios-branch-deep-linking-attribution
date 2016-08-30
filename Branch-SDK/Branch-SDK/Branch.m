@@ -385,7 +385,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
         
         NSString *userActivityURL = [userActivity.webpageURL absoluteString];
         NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
-        for (NSString* domain in branchDomains) {
+        for (NSString *domain in branchDomains) {
             if ([userActivityURL containsString:domain])
                 return YES;
         }
@@ -453,7 +453,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
             self.preferenceHelper.checkedFacebookAppLinks = YES;
             self.preferenceHelper.shouldWaitForInit = YES;
             
-            ((void (*)(id, SEL, void (^ __nullable)(NSURL *__nullable appLink, NSError * __nullable error)))[self.FBSDKAppLinkUtility methodForSelector:fetchDeferredAppLink])(self.FBSDKAppLinkUtility, fetchDeferredAppLink, completionBlock);
+            ((void (*)(id, SEL, void (^ __nullable)(NSURL *__nullable appLink, NSError *__nullable error)))[self.FBSDKAppLinkUtility methodForSelector:fetchDeferredAppLink])(self.FBSDKAppLinkUtility, fetchDeferredAppLink, completionBlock);
             
             return YES;
         }
@@ -651,7 +651,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     NSDictionary *origInstallParams = [BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.installParams];
     
     if (self.deepLinkDebugParams) {
-        NSMutableDictionary* debugInstallParams = [[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams] mutableCopy];
+        NSMutableDictionary *debugInstallParams = [[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams] mutableCopy];
         [debugInstallParams addEntriesFromDictionary:self.deepLinkDebugParams];
         return debugInstallParams;
     }
@@ -662,7 +662,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     NSDictionary *origSessionParams = [BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams];
     
     if (self.deepLinkDebugParams) {
-        NSMutableDictionary* debugSessionParams = [origSessionParams mutableCopy];
+        NSMutableDictionary *debugSessionParams = [origSessionParams mutableCopy];
         [debugSessionParams addEntriesFromDictionary:self.deepLinkDebugParams];
         return debugSessionParams;
     }
@@ -1065,7 +1065,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
         self.isInitialized = NO;
         
         ContentDiscoverer *contentDiscoverer = [ContentDiscoverer getInstance];
-        if(contentDiscoverer != nil) {
+        if (contentDiscoverer) {
             [contentDiscoverer stopContentDiscoveryTask];
         }           
         

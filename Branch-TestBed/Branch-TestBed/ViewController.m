@@ -11,7 +11,6 @@
 #import "LogOutputViewController.h"
 #import "BranchUniversalObject.h"
 #import "BranchLinkProperties.h"
-#import "ContentDiscoverer.h"
 
 NSString *cononicalIdentifier = @"item/12345";
 NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";

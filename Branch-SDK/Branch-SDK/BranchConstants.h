@@ -104,27 +104,27 @@ extern NSString * const BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT;
 
 extern NSString * const BRANCH_SPOTLIGHT_PREFIX;
 
-extern NSString *const MANIFEST_VERSION_KEY;
-extern NSString *const HASH_MODE_KEY;
-extern NSString *const MANIFEST_KEY;
-extern NSString *const PATH_KEY;
-extern NSString *const FILTERED_KEYS;
-extern NSString *const MAX_TEXT_LEN_KEY;
-extern NSString *const MAX_VIEW_HISTORY_LENGTH;
-extern NSString *const MAX_PACKET_SIZE_KEY;
-extern NSString *const CONTENT_DISCOVER_KEY;
-extern NSString *const BUNDLE_IDENTIFIER;
-extern NSString *const TIME_STAMP_KEY;
-extern NSString *const TIME_STAMP_CLOSE_KEY;
-extern NSString *const NAV_PATH_KEY;
-extern NSString *const REFERRAL_LINK_KEY;
-extern NSString *const CONTENT_LINK_KEY;
-extern NSString *const CONTENT_META_DATA_KEY;
-extern NSString *const VIEW_KEY;
-extern NSString *const CONTENT_DATA_KEY;
-extern NSString *const CONTENT_KEYS_KEY;
-extern NSString *const PACKAGE_NAME_KEY;
-extern NSString *const ENTITIES_KEY;
+extern NSString * const BRANCH_MANIFEST_VERSION_KEY;
+extern NSString * const BRANCH_HASH_MODE_KEY;
+extern NSString * const BRANCH_MANIFEST_KEY;
+extern NSString * const BRANCH_PATH_KEY;
+extern NSString * const BRANCH_FILTERED_KEYS;
+extern NSString * const BRANCH_MAX_TEXT_LEN_KEY;
+extern NSString * const BRANCH_MAX_VIEW_HISTORY_LENGTH;
+extern NSString * const BRANCH_MAX_PACKET_SIZE_KEY;
+extern NSString * const BRANCH_CONTENT_DISCOVER_KEY;
+extern NSString * const BRANCH_BUNDLE_IDENTIFIER;
+extern NSString * const BRANCH_TIME_STAMP_KEY;
+extern NSString * const BRANCH_TIME_STAMP_CLOSE_KEY;
+extern NSString * const BRANCH_NAV_PATH_KEY;
+extern NSString * const BRANCH_REFERRAL_LINK_KEY;
+extern NSString * const BRANCH_CONTENT_LINK_KEY;
+extern NSString * const BRANCH_CONTENT_META_DATA_KEY;
+extern NSString * const BRANCH_VIEW_KEY;
+extern NSString * const BRANCH_CONTENT_DATA_KEY;
+extern NSString * const BRANCH_CONTENT_KEYS_KEY;
+extern NSString * const BRANCH_PACKAGE_NAME_KEY;
+extern NSString * const BRANCH_ENTITIES_KEY;
 
 
 
