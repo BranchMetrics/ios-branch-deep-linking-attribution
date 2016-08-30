@@ -80,7 +80,6 @@
     actionPayload[BNCCanonicalIdList] = @[self.canonicalIdentifier];
     actionPayload[self.canonicalIdentifier] = linkParams;
     
-    // to be removed: this will not work if they are using getTestInstance. Thoughts?
     [[Branch getInstance] userCompletedAction:action withState:actionPayload];
 }
 

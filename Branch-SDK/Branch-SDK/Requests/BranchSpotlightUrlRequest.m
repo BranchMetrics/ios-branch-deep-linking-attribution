@@ -25,7 +25,6 @@
         self.isSpotlightRequest = YES;
         _spotlightCallback = callback;
     }
-    
     return self;
 }
 
