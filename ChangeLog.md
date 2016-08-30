@@ -1,5 +1,14 @@
 Branch iOS SDK change log
 
+- v0.12.6
+  * Remove debug gesture
+  * Better instrumentation on retries
+  * Add checksumming to the release procedure
+  * Fix Branch & Mopub Fabric header conflict 
+  * Nullability and nonnull support for Swift
+  * Add campaign to link properties
+  * iOS 10 optimizations
+
 - v0.12.5
   * New Testbed App!
   * fix module.map path on Carthage project
