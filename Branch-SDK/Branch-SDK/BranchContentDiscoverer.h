@@ -6,7 +6,7 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 #import <UIKit/UIKit.h>
-#import "ContentDiscoveryManifest.h"
+#import "BranchContentDiscoveryManifest.h"
 
 #ifndef ContentDiscoverer_h
 #define ContentDiscoverer_h
@@ -14,11 +14,11 @@
 
 #endif /* ContentDiscoverer_h */
 
-@interface ContentDiscoverer : NSObject
+@interface BranchContentDiscoverer : NSObject
 
 //----------- Methods ----------------//
-+ (ContentDiscoverer *)getInstance:(ContentDiscoveryManifest *)manifest;
-+ (ContentDiscoverer *)getInstance;
++ (BranchContentDiscoverer *)getInstance:(BranchContentDiscoveryManifest *)manifest;
++ (BranchContentDiscoverer *)getInstance;
 - (void)startContentDiscoveryTask;
 - (void)stopContentDiscoveryTask;
 

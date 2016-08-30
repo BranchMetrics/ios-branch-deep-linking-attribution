@@ -9,7 +9,7 @@
 #import "BranchCloseRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
-#import "ContentDiscoveryManifest.h"
+#import "BranchContentDiscoveryManifest.h"
 
 @implementation BranchCloseRequest
 
@@ -24,7 +24,7 @@
     if (branchAnalyticsObj && branchAnalyticsObj.count > 0) {
         NSData *data = [NSPropertyListSerialization dataFromPropertyList:branchAnalyticsObj
                                                                    format:NSPropertyListBinaryFormat_v1_0 errorDescription:NULL];
-        if ([data length] < [ContentDiscoveryManifest getInstance].maxPktSize) {
+        if ([data length] < [BranchContentDiscoveryManifest getInstance].maxPktSize) {
             [params setObject:branchAnalyticsObj forKey:BRANCH_CONTENT_DISCOVER_KEY];
         }
         [preferenceHelper clearBranchAnalyticsData];

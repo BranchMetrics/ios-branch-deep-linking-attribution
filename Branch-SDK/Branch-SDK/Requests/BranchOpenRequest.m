@@ -13,8 +13,8 @@
 #import "BNCEncodingUtils.h"
 #import "BranchViewHandler.h"
 #import "BNCFabricAnswers.h"
-#import "ContentDiscoveryManifest.h"
-#import "ContentDiscoverer.h"
+#import "BranchContentDiscoveryManifest.h"
+#import "BranchContentDiscoverer.h"
 
 
 @interface BranchOpenRequest ()
@@ -64,7 +64,7 @@
     [self safeSetValue:preferenceHelper.externalIntentURI forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:params];
     
     NSMutableDictionary *cdDict = [[NSMutableDictionary alloc] init];
-    ContentDiscoveryManifest *contentDiscoveryManifest = [ContentDiscoveryManifest getInstance];
+    BranchContentDiscoveryManifest *contentDiscoveryManifest = [BranchContentDiscoveryManifest getInstance];
     [cdDict setObject:[contentDiscoveryManifest getManifestVersion] forKey:BRANCH_MANIFEST_VERSION_KEY];
     [cdDict setObject:[BNCSystemObserver getBundleID] forKey:BRANCH_BUNDLE_IDENTIFIER];
     [self safeSetValue:cdDict forKey:BRANCH_CONTENT_DISCOVER_KEY onDict:params];
@@ -132,10 +132,10 @@
     else if (preferenceHelper.externalIntentURI) {
         referredUrl = preferenceHelper.externalIntentURI;
     }
-    ContentDiscoveryManifest *cdManifest = [ContentDiscoveryManifest getInstance];
+    BranchContentDiscoveryManifest *cdManifest = [BranchContentDiscoveryManifest getInstance];
     [cdManifest onBranchInitialised:data withUrl:referredUrl];
     if ([cdManifest isCDEnabled]) {
-        [[ContentDiscoverer getInstance:cdManifest] startContentDiscoveryTask];
+        [[BranchContentDiscoverer getInstance:cdManifest] startContentDiscoveryTask];
     }
     
     // Clear link identifiers so they don't get reused on the next open

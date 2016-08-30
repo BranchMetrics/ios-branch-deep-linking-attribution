@@ -33,7 +33,7 @@
 #import "BranchInstallRequest.h"
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchRegisterViewRequest.h"
-#import "ContentDiscoverer.h"
+#import "BranchContentDiscoverer.h"
 
 //Fabric
 #import "../Fabric/FABKitProtocol.h"
@@ -1064,7 +1064,7 @@ NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
     if (self.isInitialized) {
         self.isInitialized = NO;
         
-        ContentDiscoverer *contentDiscoverer = [ContentDiscoverer getInstance];
+        BranchContentDiscoverer *contentDiscoverer = [BranchContentDiscoverer getInstance];
         if (contentDiscoverer) {
             [contentDiscoverer stopContentDiscoveryTask];
         }           

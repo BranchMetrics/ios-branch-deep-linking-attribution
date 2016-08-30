@@ -12,7 +12,7 @@
 
 #endif /* ContentPathProperties_h */
 
-@interface ContentPathProperties : NSObject
+@interface BranchContentPathProperties : NSObject
 
 @property (strong, nonatomic) NSDictionary *pathInfo;
 @property (nonatomic) BOOL isClearText;

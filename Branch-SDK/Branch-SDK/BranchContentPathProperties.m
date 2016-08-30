@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ContentPathProperties.h"
+#import "BranchContentPathProperties.h"
 #import "BranchConstants.h"
 
-@implementation ContentPathProperties
+@implementation BranchContentPathProperties
 
 - (instancetype)init:(NSDictionary *)pathInfo {
     self = [super init];

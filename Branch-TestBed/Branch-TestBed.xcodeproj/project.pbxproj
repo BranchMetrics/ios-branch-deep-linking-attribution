@@ -113,14 +113,14 @@
 		67486B8E1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */; };
 		677F4CB51C1FB1910029F2B3 /* Branch-TestBed.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 677F4CB41C1FB0FA0029F2B3 /* Branch-TestBed.entitlements */; };
 		67F270891BA9FCFF002546A7 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		7D42150A1D66578100611BCF /* ContentDiscoveryManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D4215091D66578100611BCF /* ContentDiscoveryManifest.m */; };
-		7D47FB421D65066B0050481A /* ContentDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D47FB411D65066B0050481A /* ContentDiscoverer.m */; };
+		7D42150A1D66578100611BCF /* BranchContentDiscoveryManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D4215091D66578100611BCF /* BranchContentDiscoveryManifest.m */; };
+		7D47FB421D65066B0050481A /* BranchContentDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D47FB411D65066B0050481A /* BranchContentDiscoverer.m */; };
 		7D4DAC211C8FA8C0008E37DB /* BranchView.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D4DAC201C8FA8C0008E37DB /* BranchView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7D4DAC251C8FA908008E37DB /* BranchViewHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D4DAC221C8FA908008E37DB /* BranchViewHandler.m */; };
 		7D4DAC261C8FA908008E37DB /* BranchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D4DAC231C8FA908008E37DB /* BranchView.m */; };
 		7D4DAC271C8FA908008E37DB /* BranchViewHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D4DAC241C8FA908008E37DB /* BranchViewHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7D58823A1CA1DF2700FF6358 /* BNCDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5882391CA1DF2700FF6358 /* BNCDeviceInfo.m */; };
-		7D65D5EA1D678E76004A4BE8 /* ContentPathProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D65D5E91D678E76004A4BE8 /* ContentPathProperties.m */; };
+		7D65D5EA1D678E76004A4BE8 /* BranchContentPathProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D65D5E91D678E76004A4BE8 /* BranchContentPathProperties.m */; };
 		7E6B3B561AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6B3B551AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m */; };
 		9F4BE02E2EFA48B94EB8CEAD /* libPods-Branch-SDK-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA508DAFBC70E7B594A5D76C /* libPods-Branch-SDK-Tests.a */; };
 		E2133B731D01297E00763049 /* BNCFabricAnswers.h in Headers */ = {isa = PBXBuildFile; fileRef = E2133B711D0125EF00763049 /* BNCFabricAnswers.h */; };
@@ -249,18 +249,18 @@
 		677F4CB41C1FB0FA0029F2B3 /* Branch-TestBed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Branch-TestBed.entitlements"; sourceTree = "<group>"; };
 		67BBCF271A69E49A009C7DAE /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
-		7D4215091D66578100611BCF /* ContentDiscoveryManifest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContentDiscoveryManifest.m; sourceTree = "<group>"; };
-		7D42150B1D6657E900611BCF /* ContentDiscoveryManifest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentDiscoveryManifest.h; sourceTree = "<group>"; };
-		7D47FB411D65066B0050481A /* ContentDiscoverer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContentDiscoverer.m; sourceTree = "<group>"; };
-		7D47FB431D6506CF0050481A /* ContentDiscoverer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentDiscoverer.h; sourceTree = "<group>"; };
+		7D4215091D66578100611BCF /* BranchContentDiscoveryManifest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchContentDiscoveryManifest.m; sourceTree = "<group>"; };
+		7D42150B1D6657E900611BCF /* BranchContentDiscoveryManifest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchContentDiscoveryManifest.h; sourceTree = "<group>"; };
+		7D47FB411D65066B0050481A /* BranchContentDiscoverer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchContentDiscoverer.m; sourceTree = "<group>"; };
+		7D47FB431D6506CF0050481A /* BranchContentDiscoverer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchContentDiscoverer.h; sourceTree = "<group>"; };
 		7D4DAC201C8FA8C0008E37DB /* BranchView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchView.h; sourceTree = "<group>"; };
 		7D4DAC221C8FA908008E37DB /* BranchViewHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchViewHandler.m; sourceTree = "<group>"; };
 		7D4DAC231C8FA908008E37DB /* BranchView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchView.m; sourceTree = "<group>"; };
 		7D4DAC241C8FA908008E37DB /* BranchViewHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchViewHandler.h; sourceTree = "<group>"; };
 		7D5882301CA1BEEA00FF6358 /* BNCDeviceInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCDeviceInfo.h; sourceTree = "<group>"; };
 		7D5882391CA1DF2700FF6358 /* BNCDeviceInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeviceInfo.m; sourceTree = "<group>"; };
-		7D65D5E91D678E76004A4BE8 /* ContentPathProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContentPathProperties.m; sourceTree = "<group>"; };
-		7D65D5EB1D678E9D004A4BE8 /* ContentPathProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentPathProperties.h; sourceTree = "<group>"; };
+		7D65D5E91D678E76004A4BE8 /* BranchContentPathProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchContentPathProperties.m; sourceTree = "<group>"; };
+		7D65D5EB1D678E9D004A4BE8 /* BranchContentPathProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchContentPathProperties.h; sourceTree = "<group>"; };
 		7E30BCF21A71EEEE00AC7402 /* BNCLinkData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLinkData.h; sourceTree = "<group>"; };
 		7E30BCF31A71EEEE00AC7402 /* BNCLinkData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLinkData.m; sourceTree = "<group>"; };
 		7E30BCF51A72FE7900AC7402 /* BNCLinkCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLinkCache.h; sourceTree = "<group>"; };
@@ -523,15 +523,23 @@
 				7D5882391CA1DF2700FF6358 /* BNCDeviceInfo.m */,
 				E2133B711D0125EF00763049 /* BNCFabricAnswers.h */,
 				E2133B741D01477200763049 /* BNCFabricAnswers.m */,
-				7D47FB411D65066B0050481A /* ContentDiscoverer.m */,
-				7D47FB431D6506CF0050481A /* ContentDiscoverer.h */,
-				7D4215091D66578100611BCF /* ContentDiscoveryManifest.m */,
-				7D42150B1D6657E900611BCF /* ContentDiscoveryManifest.h */,
-				7D65D5E91D678E76004A4BE8 /* ContentPathProperties.m */,
-				7D65D5EB1D678E9D004A4BE8 /* ContentPathProperties.h */,
+				7D3AAB421D75F407004ECA0A /* BranchContentDiscovery */,
 			);
 			name = "Branch-SDK";
 			path = "../Branch-SDK/Branch-SDK";
+			sourceTree = "<group>";
+		};
+		7D3AAB421D75F407004ECA0A /* BranchContentDiscovery */ = {
+			isa = PBXGroup;
+			children = (
+				7D47FB411D65066B0050481A /* BranchContentDiscoverer.m */,
+				7D47FB431D6506CF0050481A /* BranchContentDiscoverer.h */,
+				7D4215091D66578100611BCF /* BranchContentDiscoveryManifest.m */,
+				7D42150B1D6657E900611BCF /* BranchContentDiscoveryManifest.h */,
+				7D65D5E91D678E76004A4BE8 /* BranchContentPathProperties.m */,
+				7D65D5EB1D678E9D004A4BE8 /* BranchContentPathProperties.h */,
+			);
+			name = BranchContentDiscovery;
 			sourceTree = "<group>";
 		};
 		7E6B3B521AA42D0E005F45BF /* Branch-SDK-Tests */ = {
@@ -840,8 +848,8 @@
 				54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */,
 				466B586A1B17779C00A69EDE /* BNCLinkCache.m in Sources */,
 				463F0A361B20A663004235D2 /* BranchLoadRewardsRequest.m in Sources */,
-				7D42150A1D66578100611BCF /* ContentDiscoveryManifest.m in Sources */,
-				7D65D5EA1D678E76004A4BE8 /* ContentPathProperties.m in Sources */,
+				7D42150A1D66578100611BCF /* BranchContentDiscoveryManifest.m in Sources */,
+				7D65D5EA1D678E76004A4BE8 /* BranchContentPathProperties.m in Sources */,
 				466B586C1B17779C00A69EDE /* BranchActivityItemProvider.m in Sources */,
 				466B586E1B17779C00A69EDE /* BNCEncodingUtils.m in Sources */,
 				463F0A371B20A663004235D2 /* BranchRedeemRewardsRequest.m in Sources */,
@@ -849,7 +857,7 @@
 				460F4FA81B618A38002E84D6 /* BranchSpotlightUrlRequest.m in Sources */,
 				E2133B751D01477200763049 /* BNCFabricAnswers.m in Sources */,
 				67486B8E1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */,
-				7D47FB421D65066B0050481A /* ContentDiscoverer.m in Sources */,
+				7D47FB421D65066B0050481A /* BranchContentDiscoverer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

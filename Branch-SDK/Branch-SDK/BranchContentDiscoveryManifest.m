@@ -7,22 +7,22 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ContentDiscoveryManifest.h"
+#import "BranchContentDiscoveryManifest.h"
 #import "BNCPreferenceHelper.h"
-#import "ContentPathProperties.h"
+#import "BranchContentPathProperties.h"
 #import <UIKit/UIKit.h>
 #import "BranchConstants.h"
 
-@interface ContentDiscoveryManifest ()
+@interface BranchContentDiscoveryManifest ()
 
 @property (nonatomic, strong) NSString *manifestVersion;
 
 @end
 
-@implementation ContentDiscoveryManifest
+@implementation BranchContentDiscoveryManifest
 
 
-static ContentDiscoveryManifest *contentDiscoveryManifest;
+static BranchContentDiscoveryManifest *contentDiscoveryManifest;
 
 - (instancetype)init
 {
@@ -38,9 +38,9 @@ static ContentDiscoveryManifest *contentDiscoveryManifest;
     return self;
 }
 
-+ (ContentDiscoveryManifest *)getInstance {
++ (BranchContentDiscoveryManifest *)getInstance {
     if (!contentDiscoveryManifest) {
-        contentDiscoveryManifest = [[ContentDiscoveryManifest alloc] init];
+        contentDiscoveryManifest = [[BranchContentDiscoveryManifest alloc] init];
     }
     return contentDiscoveryManifest;
 }
@@ -90,15 +90,15 @@ static ContentDiscoveryManifest *contentDiscoveryManifest;
     return mVersion;
 }
 
-- (ContentPathProperties *)getContentPathProperties:(UIViewController *)viewController {
-    ContentPathProperties *contentPathProperties;
+- (BranchContentPathProperties *)getContentPathProperties:(UIViewController *)viewController {
+    BranchContentPathProperties *contentPathProperties;
     
     if (_contentPaths) {
         NSString *viewPath = [NSString stringWithFormat:@"/%@", ([viewController class])];
         for (NSDictionary *pathObj in _contentPaths) {
             NSString *pathStr = [pathObj objectForKey:BRANCH_PATH_KEY];
             if (pathStr && [pathStr isEqualToString:viewPath]) {
-                contentPathProperties = [[ContentPathProperties alloc] init:pathObj];
+                contentPathProperties = [[BranchContentPathProperties alloc] init:pathObj];
                 break;
             }
         }

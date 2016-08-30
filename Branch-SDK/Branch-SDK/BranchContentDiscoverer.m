@@ -7,43 +7,43 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ContentDiscoverer.h"
-#import "ContentDiscoveryManifest.h"
-#import "ContentPathProperties.h"
+#import "BranchContentDiscoverer.h"
+#import "BranchContentDiscoveryManifest.h"
+#import "BranchContentPathProperties.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
 #import <UIKit/UIKit.h>
 #import <CommonCrypto/CommonDigest.h>
 
-@interface ContentDiscoverer ()
+@interface BranchContentDiscoverer ()
 
 @property (nonatomic, strong) UIViewController *lastViewController;
 @property (nonatomic, strong) NSTimer *contentDiscoveryTimer;
-@property (nonatomic, strong) ContentDiscoveryManifest *cdManifest;
+@property (nonatomic, strong) BranchContentDiscoveryManifest *cdManifest;
 @property (nonatomic) NSInteger numOfViewsDiscovered;
 
 @end
 
 
-@implementation ContentDiscoverer
+@implementation BranchContentDiscoverer
 
-static ContentDiscoverer *contentViewHandler;
+static BranchContentDiscoverer *contentViewHandler;
 static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
 
 
-+ (ContentDiscoverer *)getInstance:(ContentDiscoveryManifest *)manifest {
++ (BranchContentDiscoverer *)getInstance:(BranchContentDiscoveryManifest *)manifest {
     if (!contentViewHandler) {
-        contentViewHandler = [[ContentDiscoverer alloc] init];
+        contentViewHandler = [[BranchContentDiscoverer alloc] init];
     }
     [contentViewHandler initInstance:manifest];
     return contentViewHandler;
 }
 
-+ (ContentDiscoverer *)getInstance {
++ (BranchContentDiscoverer *)getInstance {
     return contentViewHandler;
 }
 
-- (void)initInstance:(ContentDiscoveryManifest *)manifest {
+- (void)initInstance:(BranchContentDiscoveryManifest *)manifest {
     _numOfViewsDiscovered = 0;
     _cdManifest = manifest;
     
@@ -79,19 +79,13 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
 - (void)readContentData {
     UIViewController *viewController = _lastViewController;
     if (viewController) {
-        UIView *rootView = [viewController view];
-        if ([viewController isKindOfClass:UITableViewController.class]) {
-            rootView = ((UITableViewController *)viewController).tableView;
-        } else if ([viewController isKindOfClass:UICollectionViewController.class]) {
-            rootView = ((UICollectionViewController *)viewController).collectionView;
-        }
-        
+        UIView *rootView = [self getRootView:viewController];
         NSMutableArray *contentDataArray = [[NSMutableArray alloc] init];
         NSMutableArray *contentKeysArray = [[NSMutableArray alloc] init];
         BOOL isClearText = YES;
         
         if (rootView) {
-            ContentPathProperties *pathProperties = [_cdManifest getContentPathProperties:viewController];
+            BranchContentPathProperties *pathProperties = [_cdManifest getContentPathProperties:viewController];
             // Check for any existing path properties for this ViewController
             if (pathProperties) {
                 isClearText = pathProperties.isClearText;
@@ -177,6 +171,15 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
     }
 }
 
+- (UIView *)getRootView:(UIViewController *)viewController {
+    UIView *rootView = [viewController view];
+    if ([viewController isKindOfClass:UITableViewController.class]) {
+        rootView = ((UITableViewController *)viewController).tableView;
+    } else if ([viewController isKindOfClass:UICollectionViewController.class]) {
+        rootView = ((UICollectionViewController *)viewController).collectionView;
+    }
+    return rootView;
+}
 
 - (NSString *)getViewText:(NSString *)viewId forController:(UIViewController *)viewController {
     NSString *viewTxt = @"";
@@ -245,7 +248,7 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
     [contentDataArray addObject:contentData];
 }
 
-- (NSString*)hashContent:(NSString *)content {
+- (NSString *)hashContent:(NSString *)content {
     const char *ptr = [content UTF8String];
     unsigned char md5Buffer[CC_MD5_DIGEST_LENGTH];
     CC_MD5(ptr, (CC_LONG)strlen(ptr), md5Buffer);
