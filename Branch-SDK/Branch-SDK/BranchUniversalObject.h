@@ -11,7 +11,7 @@
 
 @class BranchLinkProperties;
 
-typedef void (^_Nullable callback) (); // TO BE REMOVED: I don't this called anywhere, shall I remove it?
+typedef void (^_Nullable callback) ();
 typedef void (^shareCompletion) (NSString *_Nonnull activityType, BOOL completed);
 
 typedef NS_ENUM(NSInteger, ContentIndexMode) {

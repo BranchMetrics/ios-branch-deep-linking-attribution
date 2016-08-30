@@ -548,7 +548,6 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 }
 
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
-    NSLog(@"action: %@, state: %@", action, state);
     [self userCompletedAction:action withState:state withDelegate:nil];
 }
 
