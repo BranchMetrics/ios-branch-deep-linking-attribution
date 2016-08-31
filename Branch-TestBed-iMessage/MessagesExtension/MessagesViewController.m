@@ -9,16 +9,37 @@
 #import "MessagesViewController.h"
 #import "Branch.h"
 
-
 @interface MessagesViewController ()
-
+@property (weak, nonatomic) IBOutlet UILabel *txtStatus;
+@property (strong, nonatomic) BranchUniversalObject *branchUniversalObject;
 @end
 
 @implementation MessagesViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
+    self.branchUniversalObject = [[BranchUniversalObject alloc] initWithCanonicalIdentifier:@"item/12345"];
+    self.branchUniversalObject.title = @"Branch is awesome!";
+    self.branchUniversalObject.contentDescription = @"Branch is the best possible developer tool to help drive awareness and growth for my apps.";
+    self.branchUniversalObject.imageUrl = @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png";
+    [self.branchUniversalObject addMetadataKey:@"property1" value:@"blue"];
+    [self.branchUniversalObject addMetadataKey:@"property2" value:@"red"];
+}
+
+- (IBAction)cmdCreateLink:(id)sender {
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.feature = @"sharing";
+    linkProperties.channel = @"imessage";
+    [linkProperties addControlParam:@"$desktop_url" withValue:@"https://branch.io"];
+    [linkProperties addControlParam:@"$ios_url" withValue:@"https://itunes.apple.com/us/app/classic-mac/id1127542169?app=messages"];
+    
+    [self.branchUniversalObject getShortUrlWithLinkProperties:linkProperties andCallback:^(NSString * _Nonnull url, NSError * _Nullable error) {
+        if (!error) {
+            NSLog(@"got myself a cool link here: %@", url);
+            [self.txtStatus setText:url];
+        }
+    }];
 }
 
 #pragma mark - Conversation Handling
@@ -28,10 +49,12 @@
     // This will happen when the extension is about to present UI.
     
     NSLog(@"didBecomeActiveWithConversation: %@", [conversation description]);
-    
-    [[Branch getInstance] initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary * _Nonnull params, NSError * _Nullable error) {
+    Branch *branch = [Branch getInstance];
+    [branch setDebug];
+    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary * _Nonnull params, NSError * _Nullable error) {
         if (!error) {
             NSLog(@"found params %@", [params description]);
+            [self.txtStatus setText:[NSString stringWithFormat:@"referred: %@", [params objectForKey:@"+clicked_branch_link"]]];
         }
     }];
     

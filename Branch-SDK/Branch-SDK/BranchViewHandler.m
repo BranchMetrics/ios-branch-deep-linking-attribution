@@ -40,11 +40,12 @@ NSString *currentBranchViewID;
 
 - (BOOL)showBranchView:(NSString *)actionName withBranchViewDictionary:(NSDictionary*)branchViewDict andWithDelegate:(id)callback {
     BranchView *branchView = [[BranchView alloc] initWithBranchView:branchViewDict andActionName:actionName];
-    return[self showBranchView:branchView withDelegate:callback];
+    return [self showBranchView:branchView withDelegate:callback];
 }
 
 - (BOOL)showBranchView:(BranchView *)branchView withDelegate:(id)callback {
-    if ([branchView isAvailable]){
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if (UIApplicationClass && [branchView isAvailable]){
         self.branchViewCallback = callback;
         [self showView:branchView];
         return YES;
@@ -87,7 +88,8 @@ NSString *currentBranchViewID;
 }
 
 - (void)closeBranchView {
-    UIViewController *presentingViewController = [[[[UIApplication sharedApplication] windows] firstObject] rootViewController];
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    UIViewController *presentingViewController = [[[[UIApplicationClass sharedApplication] windows] firstObject] rootViewController];
     [presentingViewController dismissViewControllerAnimated:YES completion:nil];
     
     if (self.branchViewCallback) {
@@ -115,7 +117,8 @@ NSString *currentBranchViewID;
         if (self.pendingBranchView != nil && self.pendingWebview != nil) {
             UIViewController *holderView = [[UIViewController alloc] init];
             [holderView.view insertSubview:self.pendingWebview atIndex:0];
-            UIViewController *presentingViewController = [[[[UIApplication sharedApplication] windows] firstObject] rootViewController];
+            Class UIApplicationClass = NSClassFromString(@"UIApplication");
+            UIViewController *presentingViewController = [[[[UIApplicationClass sharedApplication] windows] firstObject] rootViewController];
             [presentingViewController presentViewController:holderView animated:YES completion:nil];
             
             [self.pendingBranchView updateUsageCount];

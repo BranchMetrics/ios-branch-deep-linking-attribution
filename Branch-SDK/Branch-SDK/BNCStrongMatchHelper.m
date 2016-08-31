@@ -106,7 +106,8 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
     [urlString appendFormat:@"&sdk=ios%@", SDK_VERSION];
     
     Class SFSafariViewControllerClass = NSClassFromString(@"SFSafariViewController");
-    if (SFSafariViewControllerClass) {
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if (SFSafariViewControllerClass && UIApplicationClass) {
         NSURL *strongMatchUrl = [NSURL URLWithString:[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
         if (!strongMatchUrl) {
             self.requestInProgress = NO;
@@ -120,7 +121,7 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
             self.secondWindow.rootViewController = safController;
             self.secondWindow.windowLevel = UIWindowLevelNormal - 100;
             [self.secondWindow setHidden:NO];
-            UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+            UIWindow *keyWindow = [[UIApplicationClass sharedApplication] keyWindow];
             [self.secondWindow makeKeyWindow];
             
             // Give enough time for Safari to load the request (optimized for 3G)
