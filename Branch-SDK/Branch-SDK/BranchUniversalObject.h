@@ -11,7 +11,6 @@
 
 @class BranchLinkProperties;
 
-typedef void (^_Nullable callback) ();
 typedef void (^shareCompletion) (NSString *_Nonnull activityType, BOOL completed);
 
 typedef NS_ENUM(NSInteger, ContentIndexMode) {
@@ -34,6 +33,8 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 @property (nonatomic, strong) NSDate *expirationDate;
 @property (nonatomic, strong) NSString *spotlightIdentifier;
 @property (nonatomic, assign) CGFloat price;
+@property (nonatomic, strong) NSString *currency;
+
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier;
 - (instancetype)initWithTitle:(NSString *)title;

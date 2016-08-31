@@ -106,6 +106,7 @@ extern NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK;
 // BUO Constants
 extern NSString * const BNCCanonicalIdList;
 extern NSString * const BNCPurchaseAmount;
+extern NSString * const BNCPurchaseCurrency;
 extern NSString * const BNCCanonicalIdList;
 extern NSString * const BNCPurchaseAmount;
 extern NSString * const BNCRegisterViewEvent;
