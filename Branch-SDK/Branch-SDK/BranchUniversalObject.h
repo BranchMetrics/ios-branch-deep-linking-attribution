@@ -11,8 +11,7 @@
 
 @class BranchLinkProperties;
 
-typedef void (^callback) ();
-typedef void (^shareCompletion) (NSString *activityType, BOOL completed);
+typedef void (^shareCompletion) (NSString *_Nonnull activityType, BOOL completed);
 
 typedef NS_ENUM(NSInteger, ContentIndexMode) {
     ContentIndexModePublic,
@@ -33,6 +32,9 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 @property (nonatomic, strong) NSArray *keywords;
 @property (nonatomic, strong) NSDate *expirationDate;
 @property (nonatomic, strong) NSString *spotlightIdentifier;
+@property (nonatomic, assign) CGFloat price;
+@property (nonatomic, strong) NSString *currency;
+
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier;
 - (instancetype)initWithTitle:(NSString *)title;
@@ -41,6 +43,8 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 
 - (void)registerView;
 - (void)registerViewWithCallback:(callbackWithParams)callback;
+
+- (void)userCompletedAction:(NSString *)action;
 
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties;
 - (NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(BranchLinkProperties *)linkProperties;

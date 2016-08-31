@@ -44,6 +44,7 @@
         _callback = callback;
         _linkCache = linkCache;
         _linkData = linkData;
+        _isSpotlightRequest = NO;
     }
     
     return self;
@@ -54,7 +55,10 @@
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
-    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    
+    if (!_isSpotlightRequest) {
+        params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    }
     params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL] key:key callback:callback];

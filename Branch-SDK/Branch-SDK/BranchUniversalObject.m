@@ -74,6 +74,15 @@
     [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest] andCallback:callback];
 }
 
+- (void)userCompletedAction:(NSString *)action {
+    NSMutableDictionary *actionPayload = [[NSMutableDictionary alloc] init];
+    NSDictionary *linkParams = [self getParamsForServerRequest];
+    actionPayload[BNCCanonicalIdList] = @[self.canonicalIdentifier];
+    actionPayload[self.canonicalIdentifier] = linkParams;
+    
+    [[Branch getInstance] userCompletedAction:action withState:actionPayload];
+}
+
 #pragma mark - Link Creation Methods
 
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties {
@@ -311,6 +320,12 @@
     if (dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS]) {
         universalObject.keywords = dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS];
     }
+    if (dictionary[BNCPurchaseAmount]) {
+        universalObject.price = [dictionary[BNCPurchaseAmount] floatValue];
+    }
+    if (dictionary[BNCPurchaseCurrency]) {
+        universalObject.currency = dictionary[BNCPurchaseCurrency];
+    }
     
     return universalObject;
 }
@@ -337,6 +352,12 @@
     [self safeSetValue:self.keywords forKey:BRANCH_LINK_DATA_KEY_KEYWORDS onDict:temp];
     [self safeSetValue:@(1000 * [self.expirationDate timeIntervalSince1970]) forKey:BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE onDict:temp];
     [self safeSetValue:self.type forKey:BRANCH_LINK_DATA_KEY_CONTENT_TYPE onDict:temp];
+    [self safeSetValue:self.currency forKey:BNCPurchaseCurrency onDict:temp];
+    if (self.price) {
+        // have to add if statement because safeSetValue only accepts objects so even if self.price is not set
+        // a valid NSNumber object will be created and the request will have amount:0 in all cases.
+        [self safeSetValue:[NSNumber numberWithFloat:self.price] forKey:BNCPurchaseAmount onDict:temp];
+    }
     
     [temp addEntriesFromDictionary:[self.metadata copy]];
     return [temp copy];
