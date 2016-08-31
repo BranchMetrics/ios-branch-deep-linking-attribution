@@ -56,6 +56,17 @@ NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
 NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
+NSString * const BNCCanonicalIdList = @"$canonical_identifier_list";
+NSString * const BNCPurchaseAmount = @"$amount";
+NSString * const BNCPurchaseCurrency = @"$currency";
+NSString * const BNCRegisterViewEvent = @"View";
+NSString * const BNCAddToWishlistEvent = @"Add to Wishlist";
+NSString * const BNCAddToCartEvent = @"Add to Cart";
+NSString * const BNCPurchaseInitiatedEvent = @"Purchase Started";
+NSString * const BNCPurchasedEvent = @"Purchased";
+NSString * const BNCShareInitiatedEvent = @"Share Started";
+NSString * const BNCShareCompletedEvent = @"Share Completed";
+
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit>
 
 
