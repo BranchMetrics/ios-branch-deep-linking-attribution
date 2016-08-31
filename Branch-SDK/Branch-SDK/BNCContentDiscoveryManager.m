@@ -431,8 +431,9 @@
     attributes = ((id (*)(id, SEL, NSString *))[attributes methodForSelector:initAttributesSelector])(attributes, initAttributesSelector, type);
     SEL setIdentifierSelector = NSSelectorFromString(@"setIdentifier:");
     ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setIdentifierSelector])(attributes, setIdentifierSelector, spotlightIdentifier);
+    // NSUserActivity.CSSearchableItemAttributeSet.relatedUniqueIdentifier
     SEL setRelatedUniqueIdentifierSelector = NSSelectorFromString(@"setRelatedUniqueIdentifier:");
-    ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setRelatedUniqueIdentifierSelector])(attributes, setRelatedUniqueIdentifierSelector, spotlightIdentifier);
+    ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setRelatedUniqueIdentifierSelector])(attributes, setRelatedUniqueIdentifierSelector, url);
     SEL setTitleSelector = NSSelectorFromString(@"setTitle:");
     ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setTitleSelector])(attributes, setTitleSelector, title);
     SEL setContentDescriptionSelector = NSSelectorFromString(@"setContentDescription:");
@@ -441,13 +442,16 @@
     ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setThumbnailURLSelector])(attributes, setThumbnailURLSelector, thumbnailUrl);
     SEL setThumbnailDataSelector = NSSelectorFromString(@"setThumbnailData:");
     ((void (*)(id, SEL, NSData *))[attributes methodForSelector:setThumbnailDataSelector])(attributes, setThumbnailDataSelector, thumbnailData);
+    // NSUserActivity.CSSearchableItemAttributeSet.contentURL
     SEL setContentURLSelector = NSSelectorFromString(@"setContentURL:");
     ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setContentURLSelector])(attributes, setContentURLSelector, [NSURL URLWithString:url]);
     
     // Index via the NSUserActivity strategy
     // Currently (iOS 9 Beta 4) we need a strong reference to this, or it isn't indexed
-    self.currentUserActivity = [[NSUserActivity alloc] initWithActivityType:spotlightIdentifier];
+    NSString *uniqueIdentifier = [NSString stringWithFormat:@"io.branch.%@", [[NSBundle mainBundle] bundleIdentifier]];
+    self.currentUserActivity = [[NSUserActivity alloc] initWithActivityType:uniqueIdentifier];
     self.currentUserActivity.title = title;
+    // NSUserActivity.webpageURL
     self.currentUserActivity.webpageURL = [NSURL URLWithString:url]; // This should allow indexed content to fall back to the web if user doesn't have the app installed. Unable to test as of iOS 9 Beta 4
     self.currentUserActivity.eligibleForSearch = YES;
     self.currentUserActivity.eligibleForPublicIndexing = publiclyIndexable;
