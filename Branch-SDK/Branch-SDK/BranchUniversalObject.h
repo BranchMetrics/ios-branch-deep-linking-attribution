@@ -34,6 +34,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 @property (nonatomic, strong) NSString *spotlightIdentifier;
 @property (nonatomic, assign) CGFloat price;
 @property (nonatomic, strong) NSString *currency;
+@property (nonatomic, assign) BOOL automaticallyListOnSpotlight;
 
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier;
