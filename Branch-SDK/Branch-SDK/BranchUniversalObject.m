@@ -49,13 +49,7 @@
 }
 
 - (void)registerView {
-    if (!self.canonicalIdentifier && !self.title) {
-        [_preferenceHelper logWarning:@"A canonicalIdentifier or title are required to uniquely identify content, so could not register view."];
-        return;
-    }
-    
-    [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest]
-                                     andCallback:nil];
+    [self registerViewWithCallback:nil];
 }
 
 - (void)registerViewWithCallback:(callbackWithParams)callback {
@@ -71,6 +65,9 @@
         return;
     }
     
+    if (self.automaticallyListOnSpotlight) {
+        [self listOnSpotlight];
+    }
     [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest] andCallback:callback];
 }
 
@@ -81,6 +78,9 @@
     actionPayload[self.canonicalIdentifier] = linkParams;
     
     [[Branch getInstance] userCompletedAction:action withState:actionPayload];
+    if (self.automaticallyListOnSpotlight && [action isEqualToString:BNCRegisterViewEvent]) {
+        [self listOnSpotlight];
+    }
 }
 
 #pragma mark - Link Creation Methods
