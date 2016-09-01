@@ -563,10 +563,8 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 - (NSMutableDictionary *)getBranchAnalyticsData {
     NSMutableDictionary *analyticsDataObj = _savedAnalyticsData;
     if (!analyticsDataObj) {
-        NSObject *dataObj = [self readObjectFromDefaults:KEY_BRANCH_ANALYTICAL_DATA];
-        if (dataObj) {
-            analyticsDataObj = (NSMutableDictionary *)dataObj;
-        } else {
+        analyticsDataObj = (NSMutableDictionary *)[self readObjectFromDefaults:KEY_BRANCH_ANALYTICAL_DATA];
+        if (!analyticsDataObj) {
             analyticsDataObj = [[NSMutableDictionary alloc] init];
         }
     }
