@@ -17,7 +17,7 @@
 
 @interface BranchContentDiscoverer ()
 
-@property (nonatomic, strong) UIViewController *lastViewController;
+@property (nonatomic, strong) NSString *lastViewControllerName;
 @property (nonatomic, strong) NSTimer *contentDiscoveryTimer;
 @property (nonatomic, strong) BranchContentDiscoveryManifest *cdManifest;
 @property (nonatomic) NSInteger numOfViewsDiscovered;
@@ -58,7 +58,7 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
 }
 
 - (void)stopContentDiscoveryTask {
-    _lastViewController = nil;
+    _lastViewControllerName = nil;
     if (_contentDiscoveryTimer) {
         [_contentDiscoveryTimer invalidate];
     }
@@ -67,17 +67,17 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
 - (void)readContentDataIfNeeded {
     if (_numOfViewsDiscovered < _cdManifest.maxViewHistoryLength) {
         UIViewController *presentingViewController = [self getActiveViewController];
-        if (_lastViewController == nil || (_lastViewController.class != presentingViewController.class)) {
-            _lastViewController = presentingViewController;
-            [self readContentData];
+        NSString *presentingViewControllerName = NSStringFromClass([presentingViewController class]);
+        if (_lastViewControllerName == nil || ![_lastViewControllerName isEqualToString:presentingViewControllerName]) {
+            _lastViewControllerName = presentingViewControllerName;
+            [self readContentData:presentingViewController];
         }
     } else {
         [self stopContentDiscoveryTask];
     }
 }
 
-- (void)readContentData {
-    UIViewController *viewController = _lastViewController;
+- (void)readContentData:(UIViewController *)viewController {
     if (viewController) {
         UIView *rootView = [self getRootView:viewController];
         NSMutableArray *contentDataArray = [[NSMutableArray alloc] init];
@@ -95,7 +95,7 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
                         [self discoverViewContents:rootView contentData:nil contentKeys:contentKeysArray clearText:isClearText ID:@""];
                     } else {
                         contentKeysArray = filteredKeys.mutableCopy;
-                        [self discoverFilteredViewContents:contentDataArray contentKeys:contentKeysArray clearText:isClearText];
+                        [self discoverFilteredViewContents:viewController contentData:contentDataArray contentKeys:contentKeysArray clearText:isClearText];
                     }
                 }
             } else if (_cdManifest.referredLink) { // else discover content if this session is started by a link click
@@ -108,7 +108,7 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
                     [contentEventObj setObject:_cdManifest.referredLink forKey:BRANCH_REFERRAL_LINK_KEY];
                 }
                 
-                [contentEventObj setObject:[NSString stringWithFormat:@"/%@", _lastViewController.class] forKey:BRANCH_VIEW_KEY];
+                [contentEventObj setObject:[NSString stringWithFormat:@"/%@", _lastViewControllerName] forKey:BRANCH_VIEW_KEY];
                 [contentEventObj setObject:!isClearText? @"true" : @"false" forKey:BRANCH_HASH_MODE_KEY];
                 [contentEventObj setObject:contentKeysArray forKey:BRANCH_CONTENT_KEYS_KEY];
                 if (contentDataArray && contentDataArray.count > 0) {
@@ -147,21 +147,19 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
             }
         }
         NSArray *subViews = [rootView subviews];
-        if (subViews.count > 0) {
-            NSInteger childCount = -1;
-            for (UIView *view in subViews) {
-                childCount++;
-                NSString *subViewId = [viewId stringByAppendingFormat:@"-%ld", (long)childCount];
-                [self discoverViewContents:view contentData:contentDataArray contentKeys:contentKeysArray clearText:isClearText ID:subViewId];
-            }
+        NSInteger childCount = 0;
+        for (UIView *view in subViews) {
+            NSString *subViewId = [viewId stringByAppendingFormat:@"-%ld", (long)childCount];
+            childCount++;
+            [self discoverViewContents:view contentData:contentDataArray contentKeys:contentKeysArray clearText:isClearText ID:subViewId];
         }
     }
 }
 
 
-- (void)discoverFilteredViewContents:(NSMutableArray *)contentDataArray contentKeys:(NSMutableArray *)contentKeysArray clearText:(BOOL)isClearText {
+- (void)discoverFilteredViewContents:(UIViewController *)viewController contentData:(NSMutableArray *)contentDataArray contentKeys:(NSMutableArray *)contentKeysArray clearText:(BOOL)isClearText {
     for (NSString *contentKey in contentKeysArray) {
-        NSString *contentData = [self getViewText:contentKey forController:_lastViewController];
+        NSString *contentData = [self getViewText:contentKey forController:viewController];
         if (contentData == nil) {
             contentData = @"";
         }
@@ -185,8 +183,8 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
     NSString *viewTxt = @"";
     if (viewController) {
         UIView *rootView = [viewController view];
-        NSArray *viewIDsplitArray = [viewId componentsSeparatedByString:@":"];
-        if (viewIDsplitArray.count > 0) {
+        NSArray *viewIDSplitArray = [viewId componentsSeparatedByString:@":"];
+        if (viewIDSplitArray.count > 0) {
             viewId = [[viewId componentsSeparatedByString:@":"] objectAtIndex:1];
         }
         NSArray *viewIds = [viewId componentsSeparatedByString:@"-"];

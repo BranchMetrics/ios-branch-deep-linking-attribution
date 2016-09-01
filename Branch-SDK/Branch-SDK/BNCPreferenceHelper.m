@@ -576,12 +576,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 }
 
 - (NSDictionary *)getContentAnalyticsManifest {
-    NSObject *manifestObj = [self readObjectFromDefaults:KEY_BRANCH_ANALYTICS_MANIFEST];
-    if (manifestObj) {
-        return (NSDictionary *)manifestObj;
-    } else {
-        return nil;
-    }
+    return (NSDictionary *)[self readObjectFromDefaults:KEY_BRANCH_ANALYTICS_MANIFEST];
 }
 
 #pragma mark - Writing To Persistence
