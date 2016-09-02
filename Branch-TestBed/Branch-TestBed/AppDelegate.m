@@ -20,7 +20,7 @@
      */
     
     Branch *branch = [Branch getInstance];
-    //[branch setDebug];
+    [branch setDebug];
     [branch setWhiteListedSchemes:@[@"branchtest"]];
     
     // Automatic Deeplinking on "deeplink_text"
