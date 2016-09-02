@@ -39,14 +39,15 @@
 #pragma mark - Launch handling
 
 - (NSString *)spotlightIdentifierFromActivity:(NSUserActivity *)userActivity {
-    
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
-    // Matched if it has our prefix, then the link identifier is just the last piece of the identifier.
+    // If it has our prefix, then the link identifier is just the last piece of the identifier.
     NSString *activityIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
     BOOL isBranchIdentifier = [activityIdentifier hasPrefix:BRANCH_SPOTLIGHT_PREFIX];
     
+    // Checking for CSSearchableItemActionType in the activity for legacy spotlight indexing (pre 0.12.7)
+    // Now we index NSUserActivies with type set to io.branch. + bundleId for better SEO
     if ([userActivity.activityType isEqualToString:CSSearchableItemActionType] || isBranchIdentifier) {
-            return activityIdentifier;
+        return activityIdentifier;
     }
 #endif
     
@@ -446,7 +447,7 @@
                                                  };
     [self indexUsingNSUserActivity:userActivityIndexingParams];
     
-    // not handling error scenarios because they are already handled upstream by the caller
+    // Not handling error scenarios because they are already handled upstream by the caller
     if (url) {
         if (callback) {
             callback(url, nil);
@@ -488,13 +489,14 @@
     
     UIViewController *activeViewController = [self getActiveViewController];
     NSString *uniqueIdentifier = [NSString stringWithFormat:@"io.branch.%@", [[NSBundle mainBundle] bundleIdentifier]];
+    // Can't create any weak references here to the userActivity, otherwise it will not index.
     activeViewController.userActivity = [[NSUserActivity alloc] initWithActivityType:uniqueIdentifier];
     activeViewController.userActivity.delegate = self;
     activeViewController.userActivity.title = params[@"title"];
     activeViewController.userActivity.webpageURL = [NSURL URLWithString:params[@"url"]];
     activeViewController.userActivity.eligibleForSearch = YES;
     activeViewController.userActivity.eligibleForPublicIndexing = params[@"publiclyIndexable"];
-    activeViewController.userActivity.userInfo = self.userInfo; // This alone doesn't pass userInfo thru
+    activeViewController.userActivity.userInfo = self.userInfo; // This alone doesn't pass userInfo through
     activeViewController.userActivity.requiredUserInfoKeys = [NSSet setWithArray:self.userInfo.allKeys]; // This along with the delegate method userActivityWillSave, however, seem to force the userInfo to come through.
     activeViewController.userActivity.keywords = params[@"keywords"];
     SEL setContentAttributeSetSelector = NSSelectorFromString(@"setContentAttributeSet:");
