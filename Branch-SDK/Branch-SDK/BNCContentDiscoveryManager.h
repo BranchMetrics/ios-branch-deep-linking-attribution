@@ -8,7 +8,7 @@
 
 #import "Branch.h"
 
-@interface BNCContentDiscoveryManager : NSObject
+@interface BNCContentDiscoveryManager : NSObject<NSUserActivityDelegate>
 
 - (NSString *)spotlightIdentifierFromActivity:(NSUserActivity *)userActivity;
 - (NSString *)standardSpotlightIdentifierFromActivity:(NSUserActivity *)userActivity;
