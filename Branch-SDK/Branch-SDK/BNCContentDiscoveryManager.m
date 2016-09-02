@@ -416,8 +416,7 @@
 
 
 - (void)indexContentWithUrl:(NSString *)url spotlightIdentifier:(NSString *)spotlightIdentifier title:(NSString *)title description:(NSString *)description type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl thumbnailData:(NSData *)thumbnailData publiclyIndexable:(BOOL)publiclyIndexable userInfo:(NSDictionary *)userInfo keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate callback:(callbackWithUrl)callback spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
-    // NSUserActivity is available iOS 8+
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     
     id CSSearchableItemAttributeSetClass = NSClassFromString(@"CSSearchableItemAttributeSet");
     id attributes = [CSSearchableItemAttributeSetClass alloc];
@@ -425,9 +424,6 @@
     attributes = ((id (*)(id, SEL, NSString *))[attributes methodForSelector:initAttributesSelector])(attributes, initAttributesSelector, type);
     SEL setIdentifierSelector = NSSelectorFromString(@"setIdentifier:");
     ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setIdentifierSelector])(attributes, setIdentifierSelector, spotlightIdentifier);
-    // NSUserActivity.CSSearchableItemAttributeSet.relatedUniqueIdentifier
-    SEL setRelatedUniqueIdentifierSelector = NSSelectorFromString(@"setRelatedUniqueIdentifier:");
-    ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setRelatedUniqueIdentifierSelector])(attributes, setRelatedUniqueIdentifierSelector, url);
     SEL setTitleSelector = NSSelectorFromString(@"setTitle:");
     ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setTitleSelector])(attributes, setTitleSelector, title);
     SEL setContentDescriptionSelector = NSSelectorFromString(@"setContentDescription:");
@@ -449,6 +445,15 @@
                                                  @"attributeSet": attributes
                                                  };
     [self indexUsingNSUserActivity:userActivityIndexingParams];
+    
+    // not handling error scenarios because they are already handled upstream by the caller
+    if (url) {
+        if (callback) {
+            callback(url, nil);
+        } else if (spotlightCallback) {
+            spotlightCallback(url, spotlightIdentifier, nil);
+        }
+    }
 #endif
 }
 
@@ -478,20 +483,19 @@
 }
 
 - (void)indexUsingNSUserActivity:(NSDictionary *)params {
-    NSLog(@"indexUsingNSUserActivity %@", params);
     self.userInfo = params[@"userInfo"];
     self.userInfo[CSSearchableItemActivityIdentifier] = params[@"spotlightId"];
     
     UIViewController *activeViewController = [self getActiveViewController];
     NSString *uniqueIdentifier = [NSString stringWithFormat:@"io.branch.%@", [[NSBundle mainBundle] bundleIdentifier]];
     activeViewController.userActivity = [[NSUserActivity alloc] initWithActivityType:uniqueIdentifier];
+    activeViewController.userActivity.delegate = self;
     activeViewController.userActivity.title = params[@"title"];
     activeViewController.userActivity.webpageURL = [NSURL URLWithString:params[@"url"]];
     activeViewController.userActivity.eligibleForSearch = YES;
     activeViewController.userActivity.eligibleForPublicIndexing = params[@"publiclyIndexable"];
-    activeViewController.userActivity.userInfo = self.userInfo;
-    activeViewController.userActivity.delegate = self;
-    activeViewController.userActivity.requiredUserInfoKeys = [NSSet setWithArray:self.userInfo.allKeys]; // This, however, seems to force the userInfo to come through.
+    activeViewController.userActivity.userInfo = self.userInfo; // This alone doesn't pass userInfo thru
+    activeViewController.userActivity.requiredUserInfoKeys = [NSSet setWithArray:self.userInfo.allKeys]; // This along with the delegate method userActivityWillSave, however, seem to force the userInfo to come through.
     activeViewController.userActivity.keywords = params[@"keywords"];
     SEL setContentAttributeSetSelector = NSSelectorFromString(@"setContentAttributeSet:");
     ((void (*)(id, SEL, id))[activeViewController.userActivity methodForSelector:setContentAttributeSetSelector])(activeViewController.userActivity, setContentAttributeSetSelector, params[@"attributeSet"]);
