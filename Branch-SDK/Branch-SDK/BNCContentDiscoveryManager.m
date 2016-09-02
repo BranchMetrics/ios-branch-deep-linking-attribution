@@ -11,7 +11,7 @@
 #import "BNCSystemObserver.h"
 #import "BNCError.h"
 #import "BranchConstants.h"
-
+#import <CoreSpotlight/CoreSpotlight.h>
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
@@ -30,7 +30,7 @@
 
 @interface BNCContentDiscoveryManager ()
 
-@property (strong, nonatomic) NSUserActivity *currentUserActivity;
+@property (strong, nonatomic) NSMutableDictionary *userInfo;
 
 @end
 
@@ -39,19 +39,14 @@
 #pragma mark - Launch handling
 
 - (NSString *)spotlightIdentifierFromActivity:(NSUserActivity *)userActivity {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-    if ([userActivity.activityType hasPrefix:BRANCH_SPOTLIGHT_PREFIX]) {
-        return userActivity.activityType;
-    }
     
-    // CoreSpotlight version. Matched if it has our prefix, then the link identifier is just the last piece of the identifier.
-    if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
-        NSString *activityIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
-        BOOL isBranchIdentifier = [activityIdentifier hasPrefix:BRANCH_SPOTLIGHT_PREFIX];
-        
-        if (isBranchIdentifier) {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
+    // Matched if it has our prefix, then the link identifier is just the last piece of the identifier.
+    NSString *activityIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
+    BOOL isBranchIdentifier = [activityIdentifier hasPrefix:BRANCH_SPOTLIGHT_PREFIX];
+    
+    if ([userActivity.activityType isEqualToString:CSSearchableItemActionType] || isBranchIdentifier) {
             return activityIdentifier;
-        }
     }
 #endif
     
@@ -59,16 +54,14 @@
 }
 
 - (NSString *)standardSpotlightIdentifierFromActivity:(NSUserActivity *)userActivity {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-    // CoreSpotlight version. Matched if it has our prefix, then the link identifier is just the last piece of the identifier.
-    if ([userActivity.activityType isEqualToString:CSSearchableItemActionType] && userActivity.userInfo[CSSearchableItemActivityIdentifier]) {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
+    if (userActivity.userInfo[CSSearchableItemActivityIdentifier]) {
         return userActivity.userInfo[CSSearchableItemActivityIdentifier];
     }
 #endif
     
     return nil;
 }
-
 
 #pragma mark - Content Indexing
 
@@ -423,7 +416,8 @@
 
 
 - (void)indexContentWithUrl:(NSString *)url spotlightIdentifier:(NSString *)spotlightIdentifier title:(NSString *)title description:(NSString *)description type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl thumbnailData:(NSData *)thumbnailData publiclyIndexable:(BOOL)publiclyIndexable userInfo:(NSDictionary *)userInfo keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate callback:(callbackWithUrl)callback spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+    // NSUserActivity is available iOS 8+
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
     
     id CSSearchableItemAttributeSetClass = NSClassFromString(@"CSSearchableItemAttributeSet");
     id attributes = [CSSearchableItemAttributeSetClass alloc];
@@ -446,64 +440,63 @@
     SEL setContentURLSelector = NSSelectorFromString(@"setContentURL:");
     ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setContentURLSelector])(attributes, setContentURLSelector, [NSURL URLWithString:url]);
     
-    // Index via the NSUserActivity strategy
-    // Currently (iOS 9 Beta 4) we need a strong reference to this, or it isn't indexed
-    NSString *uniqueIdentifier = [NSString stringWithFormat:@"io.branch.%@", [[NSBundle mainBundle] bundleIdentifier]];
-    self.currentUserActivity = [[NSUserActivity alloc] initWithActivityType:uniqueIdentifier];
-    self.currentUserActivity.title = title;
-    // NSUserActivity.webpageURL
-    self.currentUserActivity.webpageURL = [NSURL URLWithString:url]; // This should allow indexed content to fall back to the web if user doesn't have the app installed. Unable to test as of iOS 9 Beta 4
-    self.currentUserActivity.eligibleForSearch = YES;
-    self.currentUserActivity.eligibleForPublicIndexing = publiclyIndexable;
-    SEL setContentAttributeSetSelector = NSSelectorFromString(@"setContentAttributeSet:");
-    ((void (*)(id, SEL, id))[self.currentUserActivity methodForSelector:setContentAttributeSetSelector])(self.currentUserActivity, setContentAttributeSetSelector, attributes);
-    self.currentUserActivity.userInfo = userInfo; // As of iOS 9 Beta 4, this gets lost and never makes it through to application:continueActivity:restorationHandler:
-    self.currentUserActivity.requiredUserInfoKeys = [NSSet setWithArray:userInfo.allKeys]; // This, however, seems to force the userInfo to come through.
-    self.currentUserActivity.keywords = keywords;
-    [self.currentUserActivity becomeCurrent];
-    
-    // Index via the CoreSpotlight strategy
-    //get the CSSearchableItem Class object
-    id CSSearchableItemClass = NSClassFromString(@"CSSearchableItem");
-    //alloc an empty instance
-    id searchableItem = [CSSearchableItemClass alloc];
-    //create-by-name a selector fot the init method we want
-    SEL initItemSelector = NSSelectorFromString(@"initWithUniqueIdentifier:domainIdentifier:attributeSet:");
-    //call the selector on the searchableItem with appropriate arguments
-    searchableItem = ((id (*)(id, SEL, NSString *, NSString *, id))[searchableItem methodForSelector:initItemSelector])(searchableItem, initItemSelector, spotlightIdentifier, BRANCH_SPOTLIGHT_PREFIX, attributes);
-  
-    //create an assignment method to set the expiration date on the searchableItem
-    SEL expirationSelector = NSSelectorFromString(@"setExpirationDate:");
-    //now invoke it on the searchableItem, providing the expirationdate
-    ((void (*)(id, SEL, NSDate *))[searchableItem methodForSelector:expirationSelector])(searchableItem, expirationSelector, expirationDate);
-  
-
-    Class CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
-    SEL defaultSearchableIndexSelector = NSSelectorFromString(@"defaultSearchableIndex");
-    id defaultSearchableIndex = ((id (*)(id, SEL))[CSSearchableIndexClass methodForSelector:defaultSearchableIndexSelector])(CSSearchableIndexClass, defaultSearchableIndexSelector);
-    SEL indexSearchableItemsSelector = NSSelectorFromString(@"indexSearchableItems:completionHandler:");
-    void (^__nullable completionBlock)(NSError *indexError) = ^void(NSError *__nullable indexError) {
-        if (callback || spotlightCallback) {
-            if (indexError) {
-                if (callback) {
-                    callback([BNCPreferenceHelper preferenceHelper].userUrl, indexError);
-                }
-                else if (spotlightCallback) {
-                    spotlightCallback(nil, nil, indexError);
-                }
-            }
-            else {
-                if (callback) {
-                    callback(url, nil);
-                }
-                else if (spotlightCallback) {
-                    spotlightCallback(url, spotlightIdentifier, nil);
-                }
-            }
-        }
-    };
-    ((void (*)(id, SEL, NSArray *, void (^ __nullable)(NSError * __nullable error)))[defaultSearchableIndex methodForSelector:indexSearchableItemsSelector])(defaultSearchableIndex, indexSearchableItemsSelector, @[searchableItem], completionBlock);
+    NSDictionary *userActivityIndexingParams = @{@"title": title,
+                                                 @"url": url,
+                                                 @"spotlightId": spotlightIdentifier,
+                                                 @"userInfo": [userInfo mutableCopy],
+                                                 @"keywords": keywords,
+                                                 @"publiclyIndexable": [NSNumber numberWithBool:publiclyIndexable],
+                                                 @"attributeSet": attributes
+                                                 };
+    [self indexUsingNSUserActivity:userActivityIndexingParams];
 #endif
+}
+
+#pragma mark Delegate Methods
+
+- (void)userActivityWillSave:(NSUserActivity *)userActivity {
+    [userActivity addUserInfoEntriesFromDictionary:self.userInfo];
+}
+
+#pragma mark Helper Methods
+
+- (UIViewController *)getActiveViewController {
+    UIViewController *rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    return [self getActiveViewController:rootViewController];
+}
+
+- (UIViewController *)getActiveViewController:(UIViewController *)rootViewController {
+    UIViewController *activeController;
+    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
+        activeController = ((UINavigationController *)rootViewController).topViewController;
+    } else if ([rootViewController isKindOfClass:[UITabBarController class]]) {
+        activeController = ((UITabBarController *)rootViewController).selectedViewController;
+    } else {
+        activeController = rootViewController;
+    }
+    return activeController;
+}
+
+- (void)indexUsingNSUserActivity:(NSDictionary *)params {
+    NSLog(@"indexUsingNSUserActivity %@", params);
+    self.userInfo = params[@"userInfo"];
+    self.userInfo[CSSearchableItemActivityIdentifier] = params[@"spotlightId"];
+    
+    UIViewController *activeViewController = [self getActiveViewController];
+    NSString *uniqueIdentifier = [NSString stringWithFormat:@"io.branch.%@", [[NSBundle mainBundle] bundleIdentifier]];
+    activeViewController.userActivity = [[NSUserActivity alloc] initWithActivityType:uniqueIdentifier];
+    activeViewController.userActivity.title = params[@"title"];
+    activeViewController.userActivity.webpageURL = [NSURL URLWithString:params[@"url"]];
+    activeViewController.userActivity.eligibleForSearch = YES;
+    activeViewController.userActivity.eligibleForPublicIndexing = params[@"publiclyIndexable"];
+    activeViewController.userActivity.userInfo = self.userInfo;
+    activeViewController.userActivity.delegate = self;
+    activeViewController.userActivity.requiredUserInfoKeys = [NSSet setWithArray:self.userInfo.allKeys]; // This, however, seems to force the userInfo to come through.
+    activeViewController.userActivity.keywords = params[@"keywords"];
+    SEL setContentAttributeSetSelector = NSSelectorFromString(@"setContentAttributeSet:");
+    ((void (*)(id, SEL, id))[activeViewController.userActivity methodForSelector:setContentAttributeSetSelector])(activeViewController.userActivity, setContentAttributeSetSelector, params[@"attributeSet"]);
+
+    [activeViewController.userActivity becomeCurrent];
 }
 
 @end
