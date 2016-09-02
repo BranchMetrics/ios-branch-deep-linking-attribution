@@ -11,7 +11,7 @@
 #import "BNCSystemObserver.h"
 #import "BNCError.h"
 #import "BranchConstants.h"
-#import <CoreSpotlight/CoreSpotlight.h>
+
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
@@ -39,7 +39,7 @@
 #pragma mark - Launch handling
 
 - (NSString *)spotlightIdentifierFromActivity:(NSUserActivity *)userActivity {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     // If it has our prefix, then the link identifier is just the last piece of the identifier.
     NSString *activityIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
     BOOL isBranchIdentifier = [activityIdentifier hasPrefix:BRANCH_SPOTLIGHT_PREFIX];
@@ -55,7 +55,7 @@
 }
 
 - (NSString *)standardSpotlightIdentifierFromActivity:(NSUserActivity *)userActivity {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     if (userActivity.userInfo[CSSearchableItemActivityIdentifier]) {
         return userActivity.userInfo[CSSearchableItemActivityIdentifier];
     }
