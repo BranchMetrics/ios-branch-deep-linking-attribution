@@ -198,18 +198,6 @@ NSString *test_key = @"test_key";
 }
 
 
-/*
- - (IBAction)cmdIndexSpotlight:(id)sender {
- [self.branchUniversalObject listOnSpotlightWithCallback:^(NSString *url, NSError *error) {
- if (!error) {
- NSLog(@"Branch TestBed: ShortURL: %@", url);
- } else {
- NSLog(@"Branch TestBed: Error: %@", error);
- }
- }];
- }*/
-
-
 //example using callbackWithURLandSpotlightIdentifier
 - (IBAction)registerWithSpotlightButtonTouchUpInside:(id)sender {
     [self.branchUniversalObject addMetadataKey:@"deeplink_text" value:@"This link was generated for Spotlight registration"];
