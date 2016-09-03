@@ -327,6 +327,9 @@
         universalObject.currency = dictionary[BNCPurchaseCurrency];
     }
     
+    if (dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE]) {
+        universalObject.type = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE];
+    }
     return universalObject;
 }
 
