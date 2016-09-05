@@ -8,8 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		1FD0AC52AA1842CA6F7C5CBA /* libPods-TestBed-Swift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72799EEB76B210A6795944CF /* libPods-TestBed-Swift.a */; };
+		6306D5BF1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306D5BE1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift */; };
+		6306FFEF1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306FFEE1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift */; };
+		6306FFF11D6BEFA30031D2E3 /* ArrayTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306FFF01D6BEFA30031D2E3 /* ArrayTableViewCell.swift */; };
 		633EEA6A1CF88817000AE1BC /* TestBed-Swift.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 633EEA691CF88817000AE1BC /* TestBed-Swift.entitlements */; };
 		633EEA6C1CF942C4000AE1BC /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633EEA6B1CF942C4000AE1BC /* NavigationController.swift */; };
+		63522AEE1D7DEF4A00FFE98D /* Dictionary+JSONDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63522AED1D7DEF4A00FFE98D /* Dictionary+JSONDescription.swift */; };
+		636DB7911D656D78000EBB5E /* KeyValuePairTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636DB7901D656D78000EBB5E /* KeyValuePairTableViewController.swift */; };
+		63865EAF1D601123006071CE /* TextViewFormTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63865EAE1D601123006071CE /* TextViewFormTableViewController.swift */; };
+		63865EB11D60E7B6006071CE /* DictionaryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63865EB01D60E7B6006071CE /* DictionaryTableViewController.swift */; };
+		63865EB71D617BED006071CE /* TestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63865EB61D617BED006071CE /* TestData.swift */; };
 		63AAF0C21CF758AF00CA98BD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0C11CF758AF00CA98BD /* AppDelegate.swift */; };
 		63AAF0C41CF758AF00CA98BD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0C31CF758AF00CA98BD /* ViewController.swift */; };
 		63AAF0C71CF758AF00CA98BD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63AAF0C51CF758AF00CA98BD /* Main.storyboard */; };
@@ -19,8 +27,12 @@
 		63AAF0E21CF758AF00CA98BD /* TestBed_SwiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0E11CF758AF00CA98BD /* TestBed_SwiftUITests.swift */; };
 		63AAF0F11CF7594400CA98BD /* Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0F01CF7594400CA98BD /* Branch.m */; };
 		63AAF0FD1CF7F4AD00CA98BD /* CreditHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0FC1CF7F4AD00CA98BD /* CreditHistoryViewController.swift */; };
-		63AAF0FF1CF7F4CC00CA98BD /* SimulateReferralsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0FE1CF7F4CC00CA98BD /* SimulateReferralsViewController.swift */; };
 		63AAF1011CF7F58900CA98BD /* LogOutputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF1001CF7F58900CA98BD /* LogOutputViewController.swift */; };
+		63BCC3591D5AC8D600CE0EB1 /* cancel-28.png in Resources */ = {isa = PBXBuildFile; fileRef = 63BCC3581D5AC8D600CE0EB1 /* cancel-28.png */; };
+		63BCC35B1D5AC8DF00CE0EB1 /* cancel-56.png in Resources */ = {isa = PBXBuildFile; fileRef = 63BCC35A1D5AC8DF00CE0EB1 /* cancel-56.png */; };
+		63F65BFA1D654EF30055A2F6 /* DictionaryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F65BF91D654EF30055A2F6 /* DictionaryTableViewCell.swift */; };
+		63F8BB201D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F8BB1F1D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift */; };
+		63F8BB241D57E7730013B6F7 /* ArrayTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F8BB231D57E7730013B6F7 /* ArrayTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,8 +53,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6306D5BE1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BranchUniversalObjectPropertiesTableViewController.swift; sourceTree = "<group>"; };
+		6306FFEE1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldFormTableViewController.swift; sourceTree = "<group>"; };
+		6306FFF01D6BEFA30031D2E3 /* ArrayTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayTableViewCell.swift; sourceTree = "<group>"; };
 		633EEA691CF88817000AE1BC /* TestBed-Swift.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "TestBed-Swift.entitlements"; sourceTree = "<group>"; };
 		633EEA6B1CF942C4000AE1BC /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		63522AED1D7DEF4A00FFE98D /* Dictionary+JSONDescription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dictionary+JSONDescription.swift"; sourceTree = "<group>"; };
+		636DB7901D656D78000EBB5E /* KeyValuePairTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValuePairTableViewController.swift; sourceTree = "<group>"; };
+		63865EAE1D601123006071CE /* TextViewFormTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextViewFormTableViewController.swift; sourceTree = "<group>"; };
+		63865EB01D60E7B6006071CE /* DictionaryTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryTableViewController.swift; sourceTree = "<group>"; };
+		63865EB61D617BED006071CE /* TestData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestData.swift; sourceTree = "<group>"; };
 		63AAF0BE1CF758AF00CA98BD /* TestBed-Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TestBed-Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63AAF0C11CF758AF00CA98BD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		63AAF0C31CF758AF00CA98BD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -59,8 +79,12 @@
 		63AAF0EF1CF7594400CA98BD /* TestBed-Swift-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestBed-Swift-Bridging-Header.h"; sourceTree = "<group>"; };
 		63AAF0F01CF7594400CA98BD /* Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Branch.m; sourceTree = "<group>"; };
 		63AAF0FC1CF7F4AD00CA98BD /* CreditHistoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreditHistoryViewController.swift; sourceTree = "<group>"; };
-		63AAF0FE1CF7F4CC00CA98BD /* SimulateReferralsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimulateReferralsViewController.swift; sourceTree = "<group>"; };
 		63AAF1001CF7F58900CA98BD /* LogOutputViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogOutputViewController.swift; sourceTree = "<group>"; };
+		63BCC3581D5AC8D600CE0EB1 /* cancel-28.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cancel-28.png"; sourceTree = "<group>"; };
+		63BCC35A1D5AC8DF00CE0EB1 /* cancel-56.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cancel-56.png"; sourceTree = "<group>"; };
+		63F65BF91D654EF30055A2F6 /* DictionaryTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryTableViewCell.swift; sourceTree = "<group>"; };
+		63F8BB1F1D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkPropertiesTableViewController.swift; sourceTree = "<group>"; };
+		63F8BB231D57E7730013B6F7 /* ArrayTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayTableViewController.swift; sourceTree = "<group>"; };
 		64F238FAA0C1505CD62B9B74 /* Pods-TestBed-Swift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestBed-Swift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TestBed-Swift/Pods-TestBed-Swift.debug.xcconfig"; sourceTree = "<group>"; };
 		72799EEB76B210A6795944CF /* libPods-TestBed-Swift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TestBed-Swift.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A12A4B910418708604DC76BC /* Pods-TestBed-Swift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestBed-Swift.release.xcconfig"; path = "Pods/Target Support Files/Pods-TestBed-Swift/Pods-TestBed-Swift.release.xcconfig"; sourceTree = "<group>"; };
@@ -109,6 +133,24 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		6306FFF21D6BEFB20031D2E3 /* Custom Events */ = {
+			isa = PBXGroup;
+			children = (
+				63865EB01D60E7B6006071CE /* DictionaryTableViewController.swift */,
+				63F65BF91D654EF30055A2F6 /* DictionaryTableViewCell.swift */,
+			);
+			name = "Custom Events";
+			sourceTree = "<group>";
+		};
+		6306FFF31D6BEFD60031D2E3 /* Link Properties */ = {
+			isa = PBXGroup;
+			children = (
+				6306FFF01D6BEFA30031D2E3 /* ArrayTableViewCell.swift */,
+				63F8BB231D57E7730013B6F7 /* ArrayTableViewController.swift */,
+			);
+			name = "Link Properties";
+			sourceTree = "<group>";
+		};
 		63AAF0B51CF758AF00CA98BD = {
 			isa = PBXGroup;
 			children = (
@@ -134,19 +176,28 @@
 		63AAF0C01CF758AF00CA98BD /* TestBed-Swift */ = {
 			isa = PBXGroup;
 			children = (
+				63F8BB1F1D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift */,
+				6306D5BE1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift */,
+				6306FFF31D6BEFD60031D2E3 /* Link Properties */,
+				6306FFF21D6BEFB20031D2E3 /* Custom Events */,
+				63BCC3571D5AC8C700CE0EB1 /* Images */,
 				63AAF0C11CF758AF00CA98BD /* AppDelegate.swift */,
 				63AAF0F01CF7594400CA98BD /* Branch.m */,
 				63AAF0C31CF758AF00CA98BD /* ViewController.swift */,
 				633EEA691CF88817000AE1BC /* TestBed-Swift.entitlements */,
 				63AAF0FC1CF7F4AD00CA98BD /* CreditHistoryViewController.swift */,
 				63AAF1001CF7F58900CA98BD /* LogOutputViewController.swift */,
-				63AAF0FE1CF7F4CC00CA98BD /* SimulateReferralsViewController.swift */,
 				63AAF0C51CF758AF00CA98BD /* Main.storyboard */,
 				63AAF0C81CF758AF00CA98BD /* Assets.xcassets */,
 				63AAF0CA1CF758AF00CA98BD /* LaunchScreen.storyboard */,
 				633EEA6B1CF942C4000AE1BC /* NavigationController.swift */,
 				63AAF0CD1CF758AF00CA98BD /* Info.plist */,
 				63AAF0EF1CF7594400CA98BD /* TestBed-Swift-Bridging-Header.h */,
+				636DB7901D656D78000EBB5E /* KeyValuePairTableViewController.swift */,
+				6306FFEE1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift */,
+				63865EAE1D601123006071CE /* TextViewFormTableViewController.swift */,
+				63865EB61D617BED006071CE /* TestData.swift */,
+				63522AED1D7DEF4A00FFE98D /* Dictionary+JSONDescription.swift */,
 			);
 			path = "TestBed-Swift";
 			sourceTree = "<group>";
@@ -167,6 +218,15 @@
 				63AAF0E31CF758AF00CA98BD /* Info.plist */,
 			);
 			path = "TestBed-SwiftUITests";
+			sourceTree = "<group>";
+		};
+		63BCC3571D5AC8C700CE0EB1 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				63BCC3581D5AC8D600CE0EB1 /* cancel-28.png */,
+				63BCC35A1D5AC8DF00CE0EB1 /* cancel-56.png */,
+			);
+			name = Images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -240,7 +300,7 @@
 				TargetAttributes = {
 					63AAF0BD1CF758AF00CA98BD = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = 69TZ4MRH7U;
+						DevelopmentTeam = R63EM248DP;
 						SystemCapabilities = {
 							com.apple.SafariKeychain = {
 								enabled = 1;
@@ -285,6 +345,8 @@
 				63AAF0CC1CF758AF00CA98BD /* LaunchScreen.storyboard in Resources */,
 				63AAF0C91CF758AF00CA98BD /* Assets.xcassets in Resources */,
 				63AAF0C71CF758AF00CA98BD /* Main.storyboard in Resources */,
+				63BCC3591D5AC8D600CE0EB1 /* cancel-28.png in Resources */,
+				63BCC35B1D5AC8DF00CE0EB1 /* cancel-56.png in Resources */,
 				633EEA6A1CF88817000AE1BC /* TestBed-Swift.entitlements in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -358,12 +420,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63865EAF1D601123006071CE /* TextViewFormTableViewController.swift in Sources */,
+				63522AEE1D7DEF4A00FFE98D /* Dictionary+JSONDescription.swift in Sources */,
 				63AAF0FD1CF7F4AD00CA98BD /* CreditHistoryViewController.swift in Sources */,
-				63AAF0FF1CF7F4CC00CA98BD /* SimulateReferralsViewController.swift in Sources */,
+				63865EB71D617BED006071CE /* TestData.swift in Sources */,
+				63F8BB241D57E7730013B6F7 /* ArrayTableViewController.swift in Sources */,
 				63AAF1011CF7F58900CA98BD /* LogOutputViewController.swift in Sources */,
+				63F8BB201D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift in Sources */,
+				6306FFF11D6BEFA30031D2E3 /* ArrayTableViewCell.swift in Sources */,
+				63865EB11D60E7B6006071CE /* DictionaryTableViewController.swift in Sources */,
 				63AAF0F11CF7594400CA98BD /* Branch.m in Sources */,
+				6306D5BF1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift in Sources */,
 				63AAF0C41CF758AF00CA98BD /* ViewController.swift in Sources */,
+				636DB7911D656D78000EBB5E /* KeyValuePairTableViewController.swift in Sources */,
+				6306FFEF1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift in Sources */,
 				633EEA6C1CF942C4000AE1BC /* NavigationController.swift in Sources */,
+				63F65BFA1D654EF30055A2F6 /* DictionaryTableViewCell.swift in Sources */,
 				63AAF0C21CF758AF00CA98BD /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -456,7 +528,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -496,7 +568,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -512,10 +584,13 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "TestBed-Swift/TestBed-Swift.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "TestBed-Swift/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.objective-c.Branch-TestBed";
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Swift.TestBed;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "TestBed-Swift/TestBed-Swift-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -529,10 +604,13 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "TestBed-Swift/TestBed-Swift.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "TestBed-Swift/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.objective-c.Branch-TestBed";
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Swift.TestBed;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "TestBed-Swift/TestBed-Swift-Bridging-Header.h";
 			};
 			name = Release;
