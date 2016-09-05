@@ -100,7 +100,7 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         switch(indexPath.section) {
         case 2 :
             self.performSegueWithIdentifier("ShowKeywords", sender: "Keywords")
-        case 24 :
+        case 26 :
             self.performSegueWithIdentifier("ShowCustomData", sender: "CustomData")
         default : break
         }
