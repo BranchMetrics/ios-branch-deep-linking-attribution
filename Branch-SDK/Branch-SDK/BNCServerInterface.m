@@ -232,7 +232,7 @@ NSString *requestEndpoint;
     NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
     [fullParamDict addEntriesFromDictionary:params];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
-    if (!NSClassFromString(@"UIApplication")) {
+    if ([[[NSBundle mainBundle] executablePath] containsString:@".appex/"]) {
         fullParamDict[@"ios_extension"] = @(1);
     }
     fullParamDict[@"retryNumber"] = @(retryNumber);
