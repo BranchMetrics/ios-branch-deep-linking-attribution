@@ -26,7 +26,7 @@ NSString *user_id1 = @"abe@emailaddress.io";
 NSString *user_id2 = @"ben@emailaddress.io";
 NSString *live_key = @"live_key";
 NSString *test_key = @"test_key";
-
+NSString *type = @"some type";
 
 @interface ViewController ()
 
@@ -57,6 +57,7 @@ NSString *test_key = @"test_key";
     _branchUniversalObject.imageUrl = imageUrl;
     _branchUniversalObject.price = 1000;
     _branchUniversalObject.currency = @"$";
+    _branchUniversalObject.type = type;
     [_branchUniversalObject addMetadataKey:@"deeplink_text" value:[NSString stringWithFormat:
                                                                    @"This text was embedded as data in a Branch link with the following characteristics:\n\n  canonicalUrl: %@\n  title: %@\n  contentDescription: %@\n  imageUrl: %@\n", canonicalUrl, contentTitle, contentDescription, imageUrl]];
     [self refreshRewardPoints];
