@@ -429,9 +429,13 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 #pragma mark - Push Notification support
 
 // handle push notification if app is already launched
-- (void)handlePushNotification:(NSDictionary *) userInfo {
+- (void)handlePushNotification:(NSDictionary *)userInfo {
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    
+    if (!UIApplicationClass) { return; }
+
     // If app is active, then close out the session and start a new one
-    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+    if ([[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
         [self callClose];
     }
 
@@ -443,7 +447,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     }
 
     // Again, if app is active, then close out the session and start a new one
-    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+    if ([[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
         [self applicationDidBecomeActive];
     }
 }
@@ -1260,7 +1264,8 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
         }
     }
     
-    if (self.shouldAutomaticallyDeepLink) {
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if (self.shouldAutomaticallyDeepLink && UIApplicationClass) {
         // Find any matched keys, then launch any controllers that match
         // TODO which one to launch if more than one match?
         NSMutableSet *keysInParams = [NSMutableSet setWithArray:[latestReferringParams allKeys]];
@@ -1278,7 +1283,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
                 [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"[Branch Warning] View controller does not implement configureControlWithData:"];
             }
             branchSharingController.deepLinkingCompletionDelegate = self;
-            self.deepLinkPresentingController = [[[UIApplication sharedApplication].delegate window] rootViewController];
+            self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
             
             if ([self.deepLinkPresentingController presentedViewController]) {
                 [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
