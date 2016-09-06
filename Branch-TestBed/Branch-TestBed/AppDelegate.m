@@ -69,7 +69,7 @@
 
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *))restorationHandler {
-    NSLog(@"application:continueUserActivity:restorationHandler: invoked. userActivity.webpageURL if any: %@", userActivity.webpageURL.absoluteString);
+    NSLog(@"application:continueUserActivity:restorationHandler: invoked. activityType: %@ userActivity.webpageURL: %@", userActivity.activityType, userActivity.webpageURL.absoluteString);
     
     // Required. Returns YES if Branch Universal Link, else returns NO. Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
     [[Branch getInstance] continueUserActivity:userActivity];

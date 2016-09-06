@@ -406,7 +406,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
         return NO;
     }
     
-    //check to see if a spotlight activity needs to be handled
+    // Check to see if a spotlight activity needs to be handled
     NSString *spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     
     if (spotlightIdentifier) {
@@ -418,6 +418,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
             self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
         }
     }
+    
     [self initUserSessionAndCallCallback:YES];
     self.preferenceHelper.shouldWaitForInit = NO;
     
