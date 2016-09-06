@@ -22,7 +22,11 @@ struct TestData {
     }
     
     static func setUserID(value: String) {
-        userDefaults.setValue(value, forKey: "userID")
+        if value == "" {
+            userDefaults.removeObjectForKey("userID")
+        } else {
+            userDefaults.setValue(value, forKey: "userID")
+        }
     }
     
     static func getLinkProperties() -> [String: AnyObject] {
@@ -64,7 +68,11 @@ struct TestData {
     }
     
     static func setRewardsBucket(value: String) {
-        userDefaults.setValue(value, forKey: "rewardsBucket")
+        if value == "" {
+            userDefaults.removeObjectForKey("rewardsBucket")
+        } else {
+            userDefaults.setValue(value, forKey: "rewardsBucket")
+        }
     }
     
     static func getRewardsBalanceOfBucket() -> String {
@@ -78,7 +86,11 @@ struct TestData {
     }
     
     static func setRewardsBalanceOfBucket(value: String) {
-        userDefaults.setValue(value, forKey: "rewardsBalanceOfBucket")
+        if value == "" {
+            userDefaults.removeObjectForKey("rewardsBalanceOfBucket")
+        } else {
+            userDefaults.setValue(value, forKey: "rewardsBalanceOfBucket")
+        }
     }
     
     static func getRewardPointsToRedeem() -> String {
@@ -95,7 +107,7 @@ struct TestData {
         if Int(value) != nil {
             userDefaults.setValue(value, forKey: "rewardPointsToRedeem")
         } else {
-            userDefaults.setValue("", forKey: "rewardPointsToRedeem")
+            userDefaults.removeObjectForKey("rewardPointsToRedeem")
         }
     }
     
@@ -110,7 +122,11 @@ struct TestData {
     }
     
     static func setCustomEventName(value: String) {
-        userDefaults.setValue(value, forKey: "customEventName")
+        if value == "" {
+            userDefaults.removeObjectForKey("customEventName")
+        } else {
+            userDefaults.setValue(value, forKey: "customEventName")
+        }
     }
     
     static func getCustomEventMetadata() -> [String: AnyObject] {

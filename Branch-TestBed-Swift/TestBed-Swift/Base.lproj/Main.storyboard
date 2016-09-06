@@ -601,7 +601,7 @@
                         <outlet property="actionButton" destination="JKY-IE-iMg" id="IVY-XA-sKp"/>
                         <outlet property="activityIndicator" destination="iWm-9a-YrS" id="rgY-wp-brq"/>
                         <outlet property="customEventMetadataTextView" destination="3MJ-Nk-tjQ" id="xv6-06-sD9"/>
-                        <outlet property="customEventNameTextField" destination="qqT-nj-v61" id="F1z-dC-Ykt"/>
+                        <outlet property="customEventNameTextField" destination="qqT-nj-v61" id="WzD-du-fH5"/>
                         <outlet property="linkTextField" destination="HbG-sF-3ao" id="PZV-Kl-bBm"/>
                         <outlet property="loadLinkPropertiesButton" destination="Knu-zU-SC4" id="zAs-nR-vBJ"/>
                         <outlet property="loadObjectPropertiesButton" destination="wtf-SJ-zcY" id="c1C-qE-QQq"/>
@@ -2691,10 +2691,10 @@ Default value: default_template</string>
         <image name="cancel-28.png" width="28" height="28"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="X7W-cf-8rz"/>
         <segue reference="7TN-Vi-Tcv"/>
         <segue reference="wth-hd-3D7"/>
         <segue reference="lul-Hc-eKM"/>
+        <segue reference="Qus-RU-z7K"/>
         <segue reference="wzH-j8-TDu"/>
     </inferredMetricsTieBreakers>
 </document>

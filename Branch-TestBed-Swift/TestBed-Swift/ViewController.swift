@@ -472,6 +472,7 @@ class ViewController: UITableViewController {
                             } else {
                                 print("Branch TestBed: User ID cleared")
                                 self.userIDTextField.text = userID
+                                TestData.setUserID(userID)
                                 self.refreshRewardsBalanceOfBucket()
                             }
                         }
@@ -482,6 +483,7 @@ class ViewController: UITableViewController {
                         if (error == nil) {
                             print(String(format: "Branch TestBed: Identity set: %@", userID))
                             self.userIDTextField.text = userID
+                            TestData.setUserID(userID)
                             self.refreshRewardsBalanceOfBucket()
                             
                             let defaultContainer = NSUserDefaults.standardUserDefaults()
