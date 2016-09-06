@@ -198,8 +198,11 @@
     if (viewController && [viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
         presentingViewController = viewController;
     }
-    else if ([[[[UIApplication sharedApplication].delegate window] rootViewController] respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-        presentingViewController = [[[UIApplication sharedApplication].delegate window] rootViewController];
+    else {
+        Class UIApplicationClass = NSClassFromString(@"UIApplication");
+        if (UIApplicationClass && [[[[UIApplicationClass sharedApplication].delegate window] rootViewController] respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+            presentingViewController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
+        }
     }
     
     if (linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT]) {
