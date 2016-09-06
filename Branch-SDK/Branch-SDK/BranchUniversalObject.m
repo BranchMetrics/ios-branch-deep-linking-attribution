@@ -49,13 +49,7 @@
 }
 
 - (void)registerView {
-    if (!self.canonicalIdentifier && !self.title) {
-        [_preferenceHelper logWarning:@"A canonicalIdentifier or title are required to uniquely identify content, so could not register view."];
-        return;
-    }
-    
-    [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest]
-                                     andCallback:nil];
+    [self registerViewWithCallback:nil];
 }
 
 - (void)registerViewWithCallback:(callbackWithParams)callback {
@@ -71,6 +65,9 @@
         return;
     }
     
+    if (self.automaticallyListOnSpotlight) {
+        [self listOnSpotlight];
+    }
     [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest] andCallback:callback];
 }
 
@@ -81,6 +78,9 @@
     actionPayload[self.canonicalIdentifier] = linkParams;
     
     [[Branch getInstance] userCompletedAction:action withState:actionPayload];
+    if (self.automaticallyListOnSpotlight && [action isEqualToString:BNCRegisterViewEvent]) {
+        [self listOnSpotlight];
+    }
 }
 
 #pragma mark - Link Creation Methods
@@ -168,6 +168,8 @@
     [self showShareSheetWithLinkProperties:linkProperties andShareText:shareText fromViewController:viewController anchor:nil completion:completion];
 }
 - (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties andShareText:(NSString *)shareText fromViewController:(UIViewController *)viewController anchor:(UIBarButtonItem *)anchor completion:(shareCompletion)completion {
+    // Log share initiated event
+    [self userCompletedAction:BNCShareInitiatedEvent];
     UIActivityItemProvider *itemProvider = [self getBranchActivityItemWithLinkProperties:linkProperties];
     NSMutableArray *items = [NSMutableArray arrayWithObject:itemProvider];
     if (shareText) {
@@ -177,6 +179,8 @@
     
     if ([shareViewController respondsToSelector:@selector(completionWithItemsHandler)]) {
         shareViewController.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+            // Log share completed event
+            [self userCompletedAction:BNCShareCompletedEvent];
             if (completion) {
                 completion(activityType, completed);
                 [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:[self getDictionaryWithCompleteLinkProperties:linkProperties]];

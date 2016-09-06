@@ -34,6 +34,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 @property (nonatomic, strong) NSString *spotlightIdentifier;
 @property (nonatomic, assign) CGFloat price;
 @property (nonatomic, strong) NSString *currency;
+@property (nonatomic, assign) BOOL automaticallyListOnSpotlight;
 
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier;
@@ -59,7 +60,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 
 - (void)listOnSpotlight;
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback;
-- (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
+- (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback __attribute__((deprecated(("iOS 10 has changed how Spotlight indexing works and we’ve updated the SDK to reflect this. Please see https://dev.branch.io/features/spotlight-indexing/overview/ for instructions on migration"))));;
 
 // Convenience method for initSession methods that return BranchUniversalObject, but can be used safely by anyone.
 + (BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(NSDictionary *)dictionary;
