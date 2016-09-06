@@ -467,8 +467,13 @@
 #pragma mark Helper Methods
 
 - (UIViewController *)getActiveViewController {
-    UIViewController *rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
-    return [self getActiveViewController:rootViewController];
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if (UIApplicationClass) {
+        UIViewController *rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+        return [self getActiveViewController:rootViewController];
+    }
+    
+    return nil;
 }
 
 - (UIViewController *)getActiveViewController:(UIViewController *)rootViewController {
@@ -488,6 +493,11 @@
     self.userInfo[CSSearchableItemActivityIdentifier] = params[@"spotlightId"];
     
     UIViewController *activeViewController = [self getActiveViewController];
+    
+    if (!activeViewController) {
+        // if no view controller, don't index. Current use case: iMessage extensions
+        return;
+    }
     NSString *uniqueIdentifier = [NSString stringWithFormat:@"io.branch.%@", [[NSBundle mainBundle] bundleIdentifier]];
     // Can't create any weak references here to the userActivity, otherwise it will not index.
     activeViewController.userActivity = [[NSUserActivity alloc] initWithActivityType:uniqueIdentifier];
