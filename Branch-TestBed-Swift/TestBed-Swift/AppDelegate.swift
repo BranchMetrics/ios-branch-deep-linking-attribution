@@ -39,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                  
                         let dict = params as Dictionary
                         let referringLink = dict["~referring_link"]
-                        let logOutput = String(format:"\nReferring link: \(referringLink)\n\nSessionDetails:\n\(dict.JSONDescription())")
+                        let logOutput = String(format:"\nReferring link: \(referringLink)\n\nSession Details:\n\(dict.JSONDescription())")
                         logOutputViewController.logOutput = logOutput
                  
                     }
