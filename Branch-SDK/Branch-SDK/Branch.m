@@ -432,8 +432,6 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 - (void)handlePushNotification:(NSDictionary *)userInfo {
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     
-    if (!UIApplicationClass) { return; }
-
     // If app is active, then close out the session and start a new one
     if ([[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
         [self callClose];
@@ -1265,7 +1263,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     }
     
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    if (self.shouldAutomaticallyDeepLink && UIApplicationClass) {
+    if (self.shouldAutomaticallyDeepLink) {
         // Find any matched keys, then launch any controllers that match
         // TODO which one to launch if more than one match?
         NSMutableSet *keysInParams = [NSMutableSet setWithArray:[latestReferringParams allKeys]];

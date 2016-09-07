@@ -232,6 +232,9 @@ NSString *requestEndpoint;
     NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
     [fullParamDict addEntriesFromDictionary:params];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
+    if ([[[NSBundle mainBundle] executablePath] containsString:@".appex/"]) {
+        fullParamDict[@"ios_extension"] = @(1);
+    }
     fullParamDict[@"retryNumber"] = @(retryNumber);
     fullParamDict[@"branch_key"] = key;
 

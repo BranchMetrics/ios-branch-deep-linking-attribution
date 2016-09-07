@@ -468,12 +468,8 @@
 
 - (UIViewController *)getActiveViewController {
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    if (UIApplicationClass) {
-        UIViewController *rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
-        return [self getActiveViewController:rootViewController];
-    }
-    
-    return nil;
+    UIViewController *rootViewController = [UIApplicationClass sharedApplication].keyWindow.rootViewController;
+    return [self getActiveViewController:rootViewController];
 }
 
 - (UIViewController *)getActiveViewController:(UIViewController *)rootViewController {

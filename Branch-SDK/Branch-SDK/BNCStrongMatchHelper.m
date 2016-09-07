@@ -107,7 +107,7 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
     
     Class SFSafariViewControllerClass = NSClassFromString(@"SFSafariViewController");
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    if (SFSafariViewControllerClass && UIApplicationClass) {
+    if (SFSafariViewControllerClass) {
         NSURL *strongMatchUrl = [NSURL URLWithString:[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
         if (!strongMatchUrl) {
             self.requestInProgress = NO;

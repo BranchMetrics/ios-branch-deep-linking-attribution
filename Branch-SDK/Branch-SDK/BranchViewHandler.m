@@ -44,8 +44,7 @@ NSString *currentBranchViewID;
 }
 
 - (BOOL)showBranchView:(BranchView *)branchView withDelegate:(id)callback {
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    if (UIApplicationClass && [branchView isAvailable]){
+    if ([branchView isAvailable]) {
         self.branchViewCallback = callback;
         [self showView:branchView];
         return YES;
