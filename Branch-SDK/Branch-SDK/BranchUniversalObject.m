@@ -200,7 +200,7 @@
     }
     else {
         Class UIApplicationClass = NSClassFromString(@"UIApplication");
-        if (UIApplicationClass && [[[[UIApplicationClass sharedApplication].delegate window] rootViewController] respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+        if ([[[[UIApplicationClass sharedApplication].delegate window] rootViewController] respondsToSelector:@selector(presentViewController:animated:completion:)]) {
             presentingViewController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
         }
     }
