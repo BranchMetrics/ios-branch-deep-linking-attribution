@@ -44,7 +44,7 @@ NSString *currentBranchViewID;
 }
 
 - (BOOL)showBranchView:(BranchView *)branchView withDelegate:(id)callback {
-    if ([branchView isAvailable]){
+    if ([branchView isAvailable]) {
         self.branchViewCallback = callback;
         [self showView:branchView];
         return YES;
