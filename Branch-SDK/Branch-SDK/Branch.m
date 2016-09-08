@@ -1109,7 +1109,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 - (void)processNextQueueItem {
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
     
-    if (self.networkCount == 0 && self.requestQueue.size > 0) {
+    if (self.networkCount == 0 && self.requestQueue.size > 0 && !self.preferenceHelper.shouldWaitForInit) {
         self.networkCount = 1;
         dispatch_semaphore_signal(self.processing_sema);
         
