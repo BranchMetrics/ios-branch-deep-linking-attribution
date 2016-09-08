@@ -1,5 +1,10 @@
 Branch iOS SDK change log
 
+- v0.12.7
+  * iOS 10 Spotlight indexing support
+  * iMessage extensions support for deep linking and BUO
+  * retrieve content type in BUO from dictionary
+
 - v0.12.6
   * Remove debug gesture
   * Better instrumentation on retries
