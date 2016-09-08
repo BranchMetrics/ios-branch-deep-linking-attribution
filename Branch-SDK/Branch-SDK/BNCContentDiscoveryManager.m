@@ -501,7 +501,7 @@
     activeViewController.userActivity.title = params[@"title"];
     activeViewController.userActivity.webpageURL = [NSURL URLWithString:params[@"url"]];
     activeViewController.userActivity.eligibleForSearch = YES;
-    activeViewController.userActivity.eligibleForPublicIndexing = params[@"publiclyIndexable"];
+    activeViewController.userActivity.eligibleForPublicIndexing = [params[@"publiclyIndexable"] boolValue];
     activeViewController.userActivity.userInfo = self.userInfo; // This alone doesn't pass userInfo through
     activeViewController.userActivity.requiredUserInfoKeys = [NSSet setWithArray:self.userInfo.allKeys]; // This along with the delegate method userActivityWillSave, however, seem to force the userInfo to come through.
     activeViewController.userActivity.keywords = params[@"keywords"];
