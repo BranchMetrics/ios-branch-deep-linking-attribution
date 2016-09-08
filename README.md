@@ -35,7 +35,7 @@ ___
 
 4. Branch Universal Objects
   + [Instantiate a Branch Universal Object](#branch-universal-object)
-  + [Register views for content analytics](#register-views-for-content-analytics)
+  + [Register user actions on an object](#register-user-actions-on-an-object)
   + [List content on Spotlight](#list-content-on-spotlight)
   + [Configuring link properties](link-properties-parameters)
   + [Creating a short link referencing the object](#shortened-links)
@@ -491,6 +491,22 @@ None
 
 As more methods have evolved in iOS, we've found that it was increasingly hard to manage them all. We abstracted as many as we could into the concept of a Branch Universal Object. This is the object that is associated with the thing you want to share (content or user). You can set all the metadata associated with the object and then call action methods on it to get a link or index in Spotlight.
 
+### Branch Universal Object best practices
+
+Here are a set of best practices to ensure that your analytics are correct, and your content is ranking on Spotlight effectively.
+
+1. Set the `canonicalIdentifier` to a unique, de-duped value across instances of the app
+2. Ensure that the `title`, `contentDescription` and `imageUrl` properly represent the object
+3. Initialize the Branch Universal Object and call `userCompletedAction` with the `BNCRegisterViewEvent` **on page load**
+4. Call `showShareSheet` and `createShortLink` later in the life cycle, when the user takes an action that needs a link
+5. Call the additional object events (purchase, share completed, etc) when the corresponding user action is taken
+
+Practices to _avoid_:
+1. Don't set the same `title`, `contentDescription` and `imageUrl` across all objects
+2. Don't wait to initialize the object and register views until the user goes to share
+3. Don't wait to initialize the object until you conveniently need a link
+4. Don't create many objects at once and register views in a `for` loop.
+
 ### Branch Universal Object
 
 #### Methods
@@ -545,22 +561,32 @@ branchUniversalObject.addMetadataKey("property2", value: "red")
 
 None
 
-### Register Views for Content Analytics
+### Register User Actions On An Object
 
-If you want to track how many times a user views a particular piece of content, you can call this method in `viewDidLoad` or `viewDidAppear` to tell Branch that this content was viewed.
+We've added a series of custom events that you'll want to start tracking for rich analytics and targeting. Here's a list below with a sample snippet that calls the register view event.
+
+| Key | Value
+| --- | ---
+| BNCRegisterViewEvent | User viewed the object
+| BNCAddToWishlistEvent | User added the object to their wishlist
+| BNCAddToCartEvent | User added object to cart
+| BNCPurchaseInitiatedEvent | User started to check out
+| BNCPurchasedEvent | User purchased the item
+| BNCShareInitiatedEvent | User started to share the object
+| BNCShareCompletedEvent | User completed a share
 
 #### Methods
 
 ###### Objective-C
 
 ```objc
-[branchUniversalObject registerView];
+[branchUniversalObject userCompletedAction:BNCRegisterViewEvent];
 ```
 
 ###### Swift
 
 ```swift
-branchUniversalObject.registerView()
+branchUniversalObject.userCompletedAction(BNCRegisterViewEvent)
 ```
 
 #### Parameters
@@ -732,28 +758,22 @@ None
 
 ### List Content On Spotlight
 
-If you'd like to list your Branch Universal Object in Spotlight, this is the method you'll call.
+If you'd like to list your Branch Universal Object in Spotlight local and cloud index, this is the method you'll call. You'll want to register views every time the page loads as this contributes to your global ranking in search.
 
 #### Methods
 
 ###### Objective-C
 
 ```objc
-[branchUniversalObject listOnSpotlightWithCallback:^(NSString *url, NSError *error) {
-    if (!error) {
-        NSLog(@"success getting url! %@", url);
-    }
-}];
+branchUniversalObject.automaticallyListOnSpotlight = YES;
+[branchUniversalObject userCompletedAction:BNCRegisterViewEvent];
 ```
 
 ###### Swift
 
 ```swift
-branchUniversalObject.listOnSpotlightWithCallback((url: String?, error: NSError?) -> Void in
-    if error == nil {
-        NSLog("got my Branch link to share: %@", url)
-    }
-})
+branchUniversalObject.automaticallyListOnSpotlight = true
+branchUniversalObject.userCompletedAction(BNCRegisterViewEvent)
 ```
 
 #### Parameters
