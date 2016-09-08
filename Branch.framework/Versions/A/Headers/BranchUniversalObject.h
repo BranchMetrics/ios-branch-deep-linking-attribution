@@ -11,8 +11,7 @@
 
 @class BranchLinkProperties;
 
-typedef void (^callback) ();
-typedef void (^shareCompletion) (NSString *activityType, BOOL completed);
+typedef void (^shareCompletion) (NSString *_Nonnull activityType, BOOL completed);
 
 typedef NS_ENUM(NSInteger, ContentIndexMode) {
     ContentIndexModePublic,
@@ -33,6 +32,10 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 @property (nonatomic, strong) NSArray *keywords;
 @property (nonatomic, strong) NSDate *expirationDate;
 @property (nonatomic, strong) NSString *spotlightIdentifier;
+@property (nonatomic, assign) CGFloat price;
+@property (nonatomic, strong) NSString *currency;
+@property (nonatomic, assign) BOOL automaticallyListOnSpotlight;
+
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier;
 - (instancetype)initWithTitle:(NSString *)title;
@@ -41,6 +44,8 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 
 - (void)registerView;
 - (void)registerViewWithCallback:(callbackWithParams)callback;
+
+- (void)userCompletedAction:(NSString *)action;
 
 - (NSString *)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties;
 - (NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(BranchLinkProperties *)linkProperties;
@@ -55,7 +60,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 
 - (void)listOnSpotlight;
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback;
-- (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
+- (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback __attribute__((deprecated(("iOS 10 has changed how Spotlight indexing works and we’ve updated the SDK to reflect this. Please see https://dev.branch.io/features/spotlight-indexing/overview/ for instructions on migration"))));;
 
 // Convenience method for initSession methods that return BranchUniversalObject, but can be used safely by anyone.
 + (BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(NSDictionary *)dictionary;
