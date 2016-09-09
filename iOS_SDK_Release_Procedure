@@ -1,7 +1,7 @@
-iOS SDK Release Procedure   18/11/2015
+iOS SDK Release Procedure   Last update: 9/9/2016 
 ======================================
 
-Steps to release the iOS:
+Steps to release the iOS SDK:
 
 1) Decide which Pull Requests (changes) will be included in the release
 	• are they fixing a partner issue?
@@ -12,19 +12,52 @@ Steps to release the iOS:
 	• merge them one at a time, to verify no conflicts
 	• delete the branches you merge (they can be restored later if necessary)
 
-2) Run the pre-release script
+3) Make sure that the code builds from XCode
+	• git checkout staging
+	• git pull
+	• run the Testbed from XCode and make sure it works
+	• git checkout master
+	• git merge staging
+
+3) Run the pre-release script
 	• from the root directory of the iOS SDK, run 'sh scripts/pre-release.sh'
 	• verifies our cocoapod definition file
 	• (more details! What to do if it fails?)
 
-3) Run the release script
+4) Run the release script
 	• this script requires a new version number as an argument (ex: 0.8.5)	
 	• from the root directory of the iOS SDK, run  'sh scripts/release.sh <version>'  (ex 0.8.5)
 	• this script does several things:
-		• it opens the changelog on the command line.  add release notes here and save them
+		• it opens the changelog on the command line. Add release notes here and save them.
 		• it builds the framework and cocoapod
 		• it commits everything to github, including cocoapod tags
 		• it pushes the pod to Cocoapods.org
 		• it uploads the build to amazon s3
 		• it opens the google group where we announce releases; have your work browser open and logged in to gmail
 		• announce the release!
+
+5) Release on Fabric
+	• Zip the .framework file
+	• run the following curl from the same directory and make sure to use the correct SDK version (note: currently, get the key from Ahmed or Sojan)
+	curl --fail -v -X PUT -H "X-FabricKits-ApiKey: $iOS_API_KEY" \
+   -F "release_metadata={\"description\": \"Deep links to drive app installs, user engagement and retention across all channels\", \"friendly-name\": \"Branch\",\"learn-more-url\": \"https://dev.branch.io\", \"release-channel\":\"public\"};type=application/json" \
+   -F "release_artifact=@Branch.framework.zip;type=application/octet-stream" \
+   https://kits.fabric.io/manage-api/v1/kit-releases/ios/io.branch.sdk.ios/0.12.7
+   • More details to be found here: https://github.com/twitterdev/3pk/wiki/Updating-SDKs
+   • Verify by going to the Fabric Mac app, choose Branch and check the version number.
+
+6) Release on Carthage
+	• cd to carthage-files
+	• Run the XCode project and make sure it compiles
+	• run carthage build --no-skip-current && carthage archive Branch
+	• go to https://github.com/BranchMetrics/ios-branch-deep-linking/releases and click on Draft a new release
+	• Choose the release version, put some funny (required!) title and add the ChangeLog to the Description
+	• In the attachment sections, chosee the zipped framework in the carthage-files directory (different from the fabric one)
+	• Publish Release
+
+Important Note about Carthage:
+	• The Carthage XCode project is separate from the main Testbed one, however, the SDK-related files in this project are sybmolic links to the main ones (so that udates to the original files are reflected in Carthage)
+	• This means if you add new files to the main XCode Project, make sure to add them to the Carthage one as well (but not as copies)
+
+7) Rejoice and pay tribute to Steve Jobs!
+
