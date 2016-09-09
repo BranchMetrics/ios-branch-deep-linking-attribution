@@ -233,7 +233,7 @@ NSString *requestEndpoint;
     [fullParamDict addEntriesFromDictionary:params];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
     
-    // using rangeOfString insteaf of containsString to support devices running pre iOS 8
+    // using rangeOfString instead of containsString to support devices running pre iOS 8
     if ([[[NSBundle mainBundle] executablePath] rangeOfString:@".appex/"].location != NSNotFound) {
         fullParamDict[@"ios_extension"] = @(1);
     }
