@@ -460,6 +460,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
 
+- (void)enableDelayedInit;
+
+- (void)disableDelayedInit;
+
+- (NSURL *)getUrlForOnboardingWithRedirectUrl:(NSString *)redirectUrl;
+
+- (void)resumeInit;
+
 #pragma mark - Session Item methods
 
 ///--------------------

@@ -243,6 +243,34 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     [self.preferenceHelper setRequestMetadataKey:key value:value];
 }
 
+- (void)enableDelayedInit {
+    self.preferenceHelper.shouldWaitForInit = YES;
+    
+    self.useCookieBasedMatching = NO; // Developers delaying init should implement their own SFSafariViewController
+}
+
+- (void)disableDelayedInit {
+    self.preferenceHelper.shouldWaitForInit = NO;
+}
+
+- (NSURL *)getUrlForOnboardingWithRedirectUrl:(NSString *)redirectUrl {
+    return [BNCStrongMatchHelper getUrlForCookieBasedMatchingWithBranchKey:self.branchKey redirectUrl:redirectUrl];
+}
+
+- (void)resumeInit {
+    self.preferenceHelper.shouldWaitForInit = NO;
+    if (self.isInitialized) {
+        NSLog(@"[Branch Error] User session has already been initialized, so resumeInit is aborting.");
+    }
+    else if (![self.requestQueue containsInstallOrOpen]) {
+        NSLog(@"[Branch Error] No install or open request, so resumeInit is aborting.");
+    }
+    else {
+        [self processNextQueueItem];
+    }
+}
+
+
 #pragma mark - InitSession Permutation methods
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options {
