@@ -62,7 +62,7 @@
             NSLog(@"Branch TestBed: Initialization failed\n%@", error.localizedDescription);
         }
     }];
-        
+
     return YES;
 }
 
