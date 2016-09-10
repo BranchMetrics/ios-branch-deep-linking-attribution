@@ -20,6 +20,7 @@
 + (BNCStrongMatchHelper *)strongMatchHelper { return nil; }
 - (void)createStrongMatchWithBranchKey:(NSString *)branchKey { }
 - (BOOL)shouldDelayInstallRequest { return NO; }
++ (NSURL *)getUrlForCookieBasedMatchingWithBranchKey:(NSString *)branchKey redirectUrl:(NSString *)redirectUrl { return nil; }
 
 @end
 
@@ -48,6 +49,51 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
     return strongMatchHelper;
 }
 
++ (NSURL *)getUrlForCookieBasedMatchingWithBranchKey:(NSString *)branchKey redirectUrl:(NSString *)redirectUrl {
+    if (!branchKey) {
+        return nil;
+    }
+    
+    NSString *appDomainLinkURL;
+    id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_app_domain"];
+    if (ret) {
+        if ([ret isKindOfClass:[NSString class]])
+            appDomainLinkURL = [NSString stringWithFormat:@"https://%@", ret];
+    } else {
+        appDomainLinkURL = BNC_LINK_URL;
+    }
+    NSMutableString *urlString = [[NSMutableString alloc] initWithFormat:@"%@/_strong_match?os=%@", appDomainLinkURL, [BNCSystemObserver getOS]];
+    
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BOOL isRealHardwareId;
+    NSString *hardwareIdType;
+    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId isDebug:preferenceHelper.isDebug andType:&hardwareIdType];
+    if (!hardwareId || !isRealHardwareId) {
+        [preferenceHelper logWarning:@"Cannot use cookie-based matching while setDebug is enabled"];
+        return nil;
+    }
+    
+    [urlString appendFormat:@"&%@=%@", BRANCH_REQUEST_KEY_HARDWARE_ID, hardwareId];
+
+    if (preferenceHelper.deviceFingerprintID) {
+        [urlString appendFormat:@"&%@=%@", BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID, preferenceHelper.deviceFingerprintID];
+    }
+
+    if ([BNCSystemObserver getAppVersion]) {
+        [urlString appendFormat:@"&%@=%@", BRANCH_REQUEST_KEY_APP_VERSION, [BNCSystemObserver getAppVersion]];
+    }
+    
+    [urlString appendFormat:@"&branch_key=%@", branchKey];
+    
+    [urlString appendFormat:@"&sdk=ios%@", SDK_VERSION];
+    
+    if (redirectUrl) {
+        [urlString appendFormat:@"&redirect_url=%@", [redirectUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    }
+
+    return [NSURL URLWithString:[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+}
+
 - (void)createStrongMatchWithBranchKey:(NSString *)branchKey {
     if (self.requestInProgress) {
         return;
@@ -67,52 +113,16 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
 }
 
 - (void)presentSafariVCWithBranchKey:(NSString *)branchKey {
-    
-    NSString *appDomainLinkURL;
-    id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_app_domain"];
-    if (ret) {
-        if ([ret isKindOfClass:[NSString class]])
-            appDomainLinkURL = [NSString stringWithFormat:@"https://%@", ret];
-    } else {
-        appDomainLinkURL = BNC_LINK_URL;
-    }
-    NSMutableString *urlString = [[NSMutableString alloc] initWithFormat:@"%@/_strong_match?os=%@", appDomainLinkURL, [BNCSystemObserver getOS]];
-    
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    BOOL isRealHardwareId;
-    NSString *hardwareIdType;
-    NSString *hardwareId = [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId isDebug:preferenceHelper.isDebug andType:&hardwareIdType];
-    if (!hardwareId || !isRealHardwareId) {
-        [preferenceHelper logWarning:@"Cannot use cookie-based matching while setDebug is enabled"];
+    NSURL *strongMatchUrl = [BNCStrongMatchHelper getUrlForCookieBasedMatchingWithBranchKey:branchKey redirectUrl:nil];
+    if (!strongMatchUrl) {
         self.shouldDelayInstallRequest = NO;
         self.requestInProgress = NO;
         return;
     }
     
-    [urlString appendFormat:@"&%@=%@", BRANCH_REQUEST_KEY_HARDWARE_ID, hardwareId];
-
-    if (preferenceHelper.deviceFingerprintID) {
-        [urlString appendFormat:@"&%@=%@", BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID, preferenceHelper.deviceFingerprintID];
-    }
-
-    if ([BNCSystemObserver getAppVersion]) {
-        [urlString appendFormat:@"&%@=%@", BRANCH_REQUEST_KEY_APP_VERSION, [BNCSystemObserver getAppVersion]];
-    }
-
-    if (branchKey) {
-        [urlString appendFormat:@"&branch_key=%@", branchKey];
-    }
-
-    [urlString appendFormat:@"&sdk=ios%@", SDK_VERSION];
-    
     Class SFSafariViewControllerClass = NSClassFromString(@"SFSafariViewController");
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (SFSafariViewControllerClass) {
-        NSURL *strongMatchUrl = [NSURL URLWithString:[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-        if (!strongMatchUrl) {
-            self.requestInProgress = NO;
-            return;
-        }
         
         // Must be on next run loop to avoid a warning
         dispatch_async(dispatch_get_main_queue(), ^{
