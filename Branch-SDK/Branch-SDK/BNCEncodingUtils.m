@@ -230,7 +230,7 @@ static const short _base64DecodingTable[256] = {
             value = [BNCEncodingUtils encodeArrayToJsonString:obj];
             string = NO;
         }
-        else if ([obj isKindOfClass:[NSDictionary class]]) {
+        else if ([obj isKindOfClass:[NSDictionary class]] || [obj isKindOfClass:[NSMutableDictionary class]]) {
             value = [BNCEncodingUtils encodeDictionaryToJsonString:obj];
             string = NO;
         }
@@ -297,7 +297,7 @@ static const short _base64DecodingTable[256] = {
             value = [BNCEncodingUtils encodeArrayToJsonString:obj];
             string = NO;
         }
-        else if ([obj isKindOfClass:[NSDictionary class]]) {
+        else if ([obj isKindOfClass:[NSDictionary class]] || [obj isKindOfClass:[NSMutableDictionary class]]) {
             value = [BNCEncodingUtils encodeDictionaryToJsonString:obj];
             string = NO;
         }
