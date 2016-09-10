@@ -202,15 +202,8 @@ NSString *type = @"some type";
 //example using callbackWithURLandSpotlightIdentifier
 - (IBAction)registerWithSpotlightButtonTouchUpInside:(id)sender {
     [self.branchUniversalObject addMetadataKey:@"deeplink_text" value:@"This link was generated for Spotlight registration"];
-    [self.branchUniversalObject listOnSpotlightWithIdentifierCallback:^(NSString *url, NSString *spotlightIdentifier,  NSError *error) {
-        if (!error) {
-            NSLog(@"Branch TestBed: ShortURL: %@   spotlight ID: %@", url, spotlightIdentifier);
-            [self showAlert:@"Spotlight Registration Succeeded" withDescription:[NSString stringWithFormat:@"Branch Link:\n%@\n\nSpotlight ID:\n%@", url, spotlightIdentifier]];
-        } else {
-            NSLog(@"Branch TestBed: Error: %@", error.localizedDescription);
-            [self showAlert:@"Spotlight Registration Failed" withDescription:error.localizedDescription];
-        }
-    }];
+    self.branchUniversalObject.automaticallyListOnSpotlight = YES;
+    [self.branchUniversalObject userCompletedAction:BNCRegisterViewEvent];
 }
 
 
