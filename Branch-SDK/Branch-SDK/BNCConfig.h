@@ -23,7 +23,7 @@
 #define BNC_API_BASE_URL        @"http://api.dev.branch.io"
 #endif
 
-#define BNC_LINK_URL             @"https://bnc.lt"
+#define BNC_LINK_URL             @"https://app.link"
 
 #ifdef BNC_DEV_ENV
 #define BNC_API_BASE_URL        @"http://localhost:3001"
