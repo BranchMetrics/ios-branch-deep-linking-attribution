@@ -103,3 +103,25 @@ NSString * const BRANCH_LINK_DATA_KEY_CONTENT_TYPE = @"$content_type";
 NSString * const BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT = @"$email_subject";
 
 NSString * const BRANCH_SPOTLIGHT_PREFIX = @"io.branch.link.v1";
+
+NSString * const BRANCH_MANIFEST_VERSION_KEY = @"mv";
+NSString * const BRANCH_HASH_MODE_KEY = @"h";
+NSString * const BRANCH_MANIFEST_KEY = @"m";
+NSString * const BRANCH_PATH_KEY = @"p";
+NSString * const BRANCH_FILTERED_KEYS = @"ck";
+NSString * const BRANCH_MAX_TEXT_LEN_KEY = @"mtl";
+NSString * const BRANCH_MAX_VIEW_HISTORY_LENGTH = @"mhl";
+NSString * const BRANCH_MAX_PACKET_SIZE_KEY = @"mps";
+NSString * const BRANCH_CONTENT_DISCOVER_KEY = @"cd";
+NSString * const BRANCH_BUNDLE_IDENTIFIER = @"pn";
+NSString * const BRANCH_TIME_STAMP_KEY = @"ts";
+NSString * const BRANCH_TIME_STAMP_CLOSE_KEY = @"tc";
+NSString * const BRANCH_NAV_PATH_KEY = @"n";
+NSString * const BRANCH_REFERRAL_LINK_KEY = @"rl";
+NSString * const BRANCH_CONTENT_LINK_KEY = @"cl";
+NSString * const BRANCH_CONTENT_META_DATA_KEY = @"cm";
+NSString * const BRANCH_VIEW_KEY = @"v";
+NSString * const BRANCH_CONTENT_DATA_KEY = @"cd";
+NSString * const BRANCH_CONTENT_KEYS_KEY = @"ck";
+NSString * const BRANCH_PACKAGE_NAME_KEY = @"p";
+NSString * const BRANCH_ENTITIES_KEY = @"e";
