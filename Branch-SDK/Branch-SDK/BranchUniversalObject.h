@@ -11,7 +11,8 @@
 
 @class BranchLinkProperties;
 
-typedef void (^shareCompletion) (NSString *_Nonnull activityType, BOOL completed);
+typedef void (^shareCompletion) (NSString * _Nullable activityType, BOOL completed);
+typedef void (^shareCompletionWithError) (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError);
 
 typedef NS_ENUM(NSInteger, ContentIndexMode) {
     ContentIndexModePublic,
@@ -55,8 +56,12 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 
 - (void)showShareSheetWithShareText:(nullable NSString *)shareText completion:(nullable shareCompletion)completion;
 - (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties andShareText:(nullable NSString *)shareText fromViewController:(nullable UIViewController *)viewController completion:(nullable shareCompletion)completion;
+// Returns with activityError as well
+- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties andShareText:(nullable NSString *)shareText fromViewController:(nullable UIViewController *)viewController completionWithError:(nullable shareCompletionWithError)completion;
 //iPad
 - (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties andShareText:(nullable NSString *)shareText fromViewController:(nullable UIViewController *)viewController anchor:(nullable UIBarButtonItem *)anchor completion:(nullable shareCompletion)completion;
+// Returns with activityError as well
+- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties andShareText:(nullable NSString *)shareText fromViewController:(nullable UIViewController *)viewController anchor:(nullable UIBarButtonItem *)anchor completionWithError:(nullable shareCompletionWithError)completion;
 
 - (void)listOnSpotlight;
 - (void)listOnSpotlightWithCallback:(nullable callbackWithUrl)callback;
