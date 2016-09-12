@@ -24,8 +24,7 @@
 
 static BranchContentDiscoveryManifest *contentDiscoveryManifest;
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         NSDictionary *savedManifest = [[BNCPreferenceHelper preferenceHelper] getContentAnalyticsManifest];

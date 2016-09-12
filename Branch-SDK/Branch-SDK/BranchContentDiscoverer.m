@@ -14,6 +14,7 @@
 #import "BranchConstants.h"
 #import <UIKit/UIKit.h>
 #import <CommonCrypto/CommonDigest.h>
+#import "BNCEncodingUtils.h"
 
 @interface BranchContentDiscoverer ()
 
@@ -67,10 +68,12 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
 - (void)readContentDataIfNeeded {
     if (_numOfViewsDiscovered < _cdManifest.maxViewHistoryLength) {
         UIViewController *presentingViewController = [self getActiveViewController];
-        NSString *presentingViewControllerName = NSStringFromClass([presentingViewController class]);
-        if (_lastViewControllerName == nil || ![_lastViewControllerName isEqualToString:presentingViewControllerName]) {
-            _lastViewControllerName = presentingViewControllerName;
-            [self readContentData:presentingViewController];
+        if (presentingViewController) {
+            NSString *presentingViewControllerName = NSStringFromClass([presentingViewController class]);
+            if (_lastViewControllerName == nil || ![_lastViewControllerName isEqualToString:presentingViewControllerName]) {
+                _lastViewControllerName = presentingViewControllerName;
+                [self readContentData:presentingViewController];
+            }
         }
     } else {
         [self stopContentDiscoveryTask];
@@ -115,7 +118,7 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
                     [contentEventObj setObject:contentDataArray forKey:BRANCH_CONTENT_DATA_KEY];
                 }
                 
-                [[BNCPreferenceHelper preferenceHelper]saveBranchAnalyticsData:contentEventObj];
+                [[BNCPreferenceHelper preferenceHelper] saveBranchAnalyticsData:contentEventObj];
             }
         }
     }
@@ -143,7 +146,7 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
             NSString *viewFriendlyName = [NSString stringWithFormat:@"%@:%@", [rootView class], viewId];
             [contentKeysArray addObject:viewFriendlyName];
             if (contentDataArray) {
-                [self addFormatedContentData:contentDataArray withText:contentData clearText:isClearText];
+                [self addFormattedContentData:contentDataArray withText:contentData clearText:isClearText];
             }
         }
         NSArray *subViews = [rootView subviews];
@@ -164,7 +167,7 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
             contentData = @"";
         }
         if (contentDataArray) {
-            [self addFormatedContentData:contentDataArray withText:contentData clearText:isClearText];
+            [self addFormattedContentData:contentDataArray withText:contentData clearText:isClearText];
         }
     }
 }
@@ -219,7 +222,8 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
 }
 
 - (UIViewController *)getActiveViewController {
-    UIViewController *rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    UIViewController *rootViewController = [UIApplicationClass sharedApplication].keyWindow.rootViewController;
     return [self getActiveViewController:rootViewController];
     
 }
@@ -236,25 +240,14 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
     return activeController;
 }
 
-- (void)addFormatedContentData:(NSMutableArray *)contentDataArray withText:(NSString *)contentData clearText:(BOOL)isClearText {
+- (void)addFormattedContentData:(NSMutableArray *)contentDataArray withText:(NSString *)contentData clearText:(BOOL)isClearText {
     if (contentData && contentData.length > _cdManifest.maxTextLen) {
         contentData = [contentData substringToIndex:_cdManifest.maxTextLen];
     }
     if (!isClearText) {
-        contentData = [self hashContent:contentData];
+        contentData = [BNCEncodingUtils md5Encode:contentData];
     }
     [contentDataArray addObject:contentData];
-}
-
-- (NSString *)hashContent:(NSString *)content {
-    const char *ptr = [content UTF8String];
-    unsigned char md5Buffer[CC_MD5_DIGEST_LENGTH];
-    CC_MD5(ptr, (CC_LONG)strlen(ptr), md5Buffer);
-    NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
-    for (NSInteger i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
-        [output appendFormat:@"%02x",md5Buffer[i]];
-    }
-    return output;
 }
 
 - (NSString *)getContentText:(UIView *)view {

@@ -28,8 +28,8 @@
 }
 
 - (BOOL)isSkipContentDiscovery {
-    NSArray *filteredElelments = [self getFilteredElements];
-    return (filteredElelments && filteredElelments.count == 0);
+    NSArray *filteredElements = [self getFilteredElements];
+    return (filteredElements && filteredElements.count == 0);
 }
 
 - (BOOL)isClearText {
