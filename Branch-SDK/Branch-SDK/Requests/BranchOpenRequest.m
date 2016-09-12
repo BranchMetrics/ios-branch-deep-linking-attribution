@@ -13,6 +13,8 @@
 #import "BNCEncodingUtils.h"
 #import "BranchViewHandler.h"
 #import "BNCFabricAnswers.h"
+#import "BranchContentDiscoveryManifest.h"
+#import "BranchContentDiscoverer.h"
 
 @interface BranchOpenRequest ()
 
@@ -56,6 +58,13 @@
     [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:params];
     [self safeSetValue:preferenceHelper.externalIntentURI forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:params];
+    
+    NSMutableDictionary *cdDict = [[NSMutableDictionary alloc] init];
+    BranchContentDiscoveryManifest *contentDiscoveryManifest = [BranchContentDiscoveryManifest getInstance];
+    [cdDict setObject:[contentDiscoveryManifest getManifestVersion] forKey:BRANCH_MANIFEST_VERSION_KEY];
+    [cdDict setObject:[BNCSystemObserver getBundleID] forKey:BRANCH_BUNDLE_IDENTIFIER];
+    [self safeSetValue:cdDict forKey:BRANCH_CONTENT_DISCOVER_KEY onDict:params];    
+    
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
 }
 
@@ -109,6 +118,19 @@
         if (dataIsFromALinkClick) {
             [BNCFabricAnswers sendEventWithName:[@"Branch " stringByAppendingString:[[self getActionName] capitalizedString]] andAttributes:sessionDataDict];
         }
+    }
+    
+    NSString *referredUrl = nil;
+    if (preferenceHelper.universalLinkUrl) {
+        referredUrl = preferenceHelper.universalLinkUrl;
+    }
+    else if (preferenceHelper.externalIntentURI) {
+        referredUrl = preferenceHelper.externalIntentURI;
+    }
+    BranchContentDiscoveryManifest *cdManifest = [BranchContentDiscoveryManifest getInstance];
+    [cdManifest onBranchInitialised:data withUrl:referredUrl];
+    if ([cdManifest isCDEnabled]) {
+        [[BranchContentDiscoverer getInstance:cdManifest] startContentDiscoveryTask];
     }
     
     // Clear link identifiers so they don't get reused on the next open

@@ -33,6 +33,7 @@
 #import "BranchInstallRequest.h"
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchRegisterViewRequest.h"
+#import "BranchContentDiscoverer.h"
 
 //Fabric
 #import "../Fabric/FABKitProtocol.h"
@@ -1112,6 +1113,11 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 - (void)callClose {
     if (self.isInitialized) {
         self.isInitialized = NO;
+        
+        BranchContentDiscoverer *contentDiscoverer = [BranchContentDiscoverer getInstance];
+        if (contentDiscoverer) {
+            [contentDiscoverer stopContentDiscoveryTask];
+        }
         
         if (self.preferenceHelper.sessionID && ![self.requestQueue containsClose]) {
             BranchCloseRequest *req = [[BranchCloseRequest alloc] init];
