@@ -39,6 +39,8 @@ NSString * const BRANCH_PREFS_KEY_CREDITS = @"bnc_credits";
 NSString * const BRANCH_PREFS_KEY_CREDIT_BASE = @"bnc_credit_base_";
 
 NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usage_cnt_";
+NSString * const BRANCH_PREFS_KEY_ANALYTICAL_DATA = @"bnc_branch_analytical_data";
+NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_manifest";
 
 // The name of this key was specified in the account-creation API integration
 static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
@@ -543,6 +545,45 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         count = 0;
     }
     return count;
+}
+
+- (void)saveBranchAnalyticsData:(NSDictionary *)analyticsData {
+    if (_sessionID) {
+        if (!_savedAnalyticsData) {
+            _savedAnalyticsData = [self getBranchAnalyticsData];
+        }
+        NSMutableArray *viewDataArray = [_savedAnalyticsData objectForKey:_sessionID];
+        if (!viewDataArray) {
+            viewDataArray = [[NSMutableArray alloc] init];
+            [_savedAnalyticsData setObject:viewDataArray forKey:_sessionID];
+        }
+        [viewDataArray addObject:analyticsData];
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_ANALYTICAL_DATA value:_savedAnalyticsData];
+    }
+}
+
+- (void)clearBranchAnalyticsData {
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_ANALYTICAL_DATA value:nil];
+    _savedAnalyticsData = nil;
+}
+
+- (NSMutableDictionary *)getBranchAnalyticsData {
+    NSMutableDictionary *analyticsDataObj = _savedAnalyticsData;
+    if (!analyticsDataObj) {
+        analyticsDataObj = (NSMutableDictionary *)[self readObjectFromDefaults:BRANCH_PREFS_KEY_ANALYTICAL_DATA];
+        if (!analyticsDataObj) {
+            analyticsDataObj = [[NSMutableDictionary alloc] init];
+        }
+    }
+    return analyticsDataObj;
+}
+
+- (void)saveContentAnalyticsManifest:(NSDictionary *)cdManifest {
+    [self writeObjectToDefaults:BRANCH_PREFS_KEY_ANALYTICS_MANIFEST value:cdManifest];
+}
+
+- (NSDictionary *)getContentAnalyticsManifest {
+    return (NSDictionary *)[self readObjectFromDefaults:BRANCH_PREFS_KEY_ANALYTICS_MANIFEST];
 }
 
 #pragma mark - Writing To Persistence
