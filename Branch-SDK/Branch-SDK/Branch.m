@@ -1094,6 +1094,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
+    [self clearTimer];
     if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:YES];
     }
