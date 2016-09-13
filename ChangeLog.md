@@ -1,5 +1,10 @@
 Branch iOS SDK change log
 
+- v0.12.8
+  * Changes for supporting latest xcode updates
+  * Content Discovery feature
+  * Fix for an iOS 7 crash issue
+
 - v0.12.7
   * iOS 10 Spotlight indexing support
   * iMessage extensions support for deep linking and BUO
