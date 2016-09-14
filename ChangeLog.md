@@ -1,5 +1,8 @@
 Branch iOS SDK change log
 
+- v0.12.9
+  * Fixing the time delay for strong match check using SVC
+
 - v0.12.8
   * Changes for supporting latest xcode updates
   * Content Discovery feature
