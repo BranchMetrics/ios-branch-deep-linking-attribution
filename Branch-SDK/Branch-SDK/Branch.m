@@ -410,8 +410,8 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     //check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         self.preferenceHelper.universalLinkUrl = [userActivity.webpageURL absoluteString];
-        [self initUserSessionAndCallCallback:YES];
         self.preferenceHelper.shouldWaitForInit = NO;
+        [self initUserSessionAndCallCallback:YES];
         
         id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
         if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] && [[userActivity.webpageURL absoluteString] containsString:branchUniversalLinkDomains]) {
@@ -448,8 +448,8 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
         }
     }
     
-    [self initUserSessionAndCallCallback:YES];
     self.preferenceHelper.shouldWaitForInit = NO;
+    [self initUserSessionAndCallCallback:YES];
     
     return spotlightIdentifier != nil;
 }
