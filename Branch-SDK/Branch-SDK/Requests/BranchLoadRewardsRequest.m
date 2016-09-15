@@ -46,18 +46,26 @@
     NSArray *responseKeys = [response.data allKeys];
     NSArray *storedKeys = [currentCreditDictionary allKeys];
 
-    if ([responseKeys count]) {
+    if ([responseKeys count] && ([response.data isKindOfClass:[NSDictionary class]] || [response.data isKindOfClass:[NSMutableDictionary class]])) {
+        
         for (NSString *key in response.data) {
-             NSInteger credits = [response.data[key] integerValue];
+            if (![key isKindOfClass:[NSString class]]) { continue; }
+            
+            NSInteger credits = [preferenceHelper getCreditCountForBucket:key];
+            if (response.data[key] && [response.data[key] respondsToSelector:@selector(integerValue)]) {
+                credits = [response.data[key] integerValue];
+            }
 
-             BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-             if (credits != [preferenceHelper getCreditCountForBucket:key]) {
-                 hasUpdated = YES;
-             }
+            BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+            if (credits != [preferenceHelper getCreditCountForBucket:key]) {
+                hasUpdated = YES;
+            }
 
-             [preferenceHelper setCreditCount:credits forBucket:key];
+            [preferenceHelper setCreditCount:credits forBucket:key];
         }
         for(NSString *key in storedKeys) {
+            if (![key isKindOfClass:[NSString class]]) { continue; }
+
             if(![response.data objectForKey:key]) {
                 [preferenceHelper removeCreditCountForBucket:key];
                 hasUpdated = YES;
