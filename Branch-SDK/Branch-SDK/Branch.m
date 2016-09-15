@@ -1165,7 +1165,10 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
                     // First, gather all the requests to fail
                     NSMutableArray *requestsToFail = [[NSMutableArray alloc] init];
                     for (int i = 0; i < self.requestQueue.size; i++) {
-                        [requestsToFail addObject:[self.requestQueue peekAt:i]];
+                        BNCServerRequest *request = [self.requestQueue peekAt:i];
+                        if (request) {
+                            [requestsToFail addObject:request];
+                        }                        
                     }
                     
                     // Next, remove all the requests that should not be replayed. Note, we do this before calling callbacks, in case any
