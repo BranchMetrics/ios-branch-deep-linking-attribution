@@ -38,8 +38,8 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 @property (nonatomic, assign) BOOL automaticallyListOnSpotlight;
 
 
-- (nullable instancetype)initWithCanonicalIdentifier:(nonnull NSString *)canonicalIdentifier;
-- (nullable instancetype)initWithTitle:(nonnull NSString *)title;
+- (nonnull instancetype)initWithCanonicalIdentifier:(nonnull NSString *)canonicalIdentifier;
+- (nonnull instancetype)initWithTitle:(nonnull NSString *)title;
 
 - (void)addMetadataKey:(nonnull NSString *)key value:(nonnull NSString *)value;
 
