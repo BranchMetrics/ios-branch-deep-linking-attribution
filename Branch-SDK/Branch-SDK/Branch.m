@@ -448,8 +448,8 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
         }
     }
     
-    [self initUserSessionAndCallCallback:YES];
     self.preferenceHelper.shouldWaitForInit = NO;
+    [self initUserSessionAndCallCallback:YES];
     
     return spotlightIdentifier != nil;
 }
