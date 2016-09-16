@@ -36,6 +36,7 @@
 @property (assign, nonatomic) NSTimeInterval timeout;
 @property (strong, nonatomic) NSString *externalIntentURI;
 @property (strong, nonatomic) NSMutableDictionary *savedAnalyticsData;
+@property (assign, nonatomic) NSInteger installRequestDelay;
 
 + (BNCPreferenceHelper *)preferenceHelper;
 

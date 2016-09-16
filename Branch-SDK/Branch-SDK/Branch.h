@@ -468,6 +468,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 - (void)resumeInit;
 
+- (void)setInstallRequestDelay:(NSInteger)installRequestDelay;
+
 #pragma mark - Session Item methods
 
 ///--------------------
