@@ -1,5 +1,10 @@
 Branch iOS SDK change log
 
+- v0.12.10
+  * Fix for issue causing initsession hang on cold start from universal link
+  * Adding few crash protection
+  * Removing BUO nullable fields  
+
 - v0.12.9
   * Fixing the time delay for strong match check using SVC
 
