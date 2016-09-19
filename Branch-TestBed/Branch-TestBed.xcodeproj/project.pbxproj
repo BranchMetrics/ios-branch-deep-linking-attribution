@@ -1072,6 +1072,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Branch-TestBed/Branch-TestBed.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = R63EM248DP;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Branch-TestBed/Branch-TestBed-Prefix.pch";
 				INFOPLIST_FILE = "Branch-TestBed/Branch-TestBed-Info.plist";
@@ -1093,6 +1094,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Branch-TestBed/Branch-TestBed.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = R63EM248DP;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Branch-TestBed/Branch-TestBed-Prefix.pch";
 				INFOPLIST_FILE = "Branch-TestBed/Branch-TestBed-Info.plist";
