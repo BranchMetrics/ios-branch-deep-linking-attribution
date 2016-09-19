@@ -271,6 +271,9 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     }
 }
 
+- (void)setInstallRequestDelay:(NSInteger)installRequestDelay {
+    self.preferenceHelper.installRequestDelay = installRequestDelay;
+}
 
 #pragma mark - InitSession Permutation methods
 
