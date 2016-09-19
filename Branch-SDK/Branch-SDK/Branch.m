@@ -339,14 +339,15 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     }
     
     if ([BNCSystemObserver getOSVersion].integerValue >= 8) {
-        if (![options objectForKey:UIApplicationLaunchOptionsURLKey] && ![options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
+        if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             // If Facebook SDK is present, call deferred app link check here
             if (![self checkFacebookAppLinks]) {
                 [self initUserSessionAndCallCallback:YES];
             }
         }
-        else if ([options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
+        else if ([options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             if (self.accountForFacebookSDK) {
+                // does not work in Swift, because Objective-C to Swift interop is bad
                 id activity = [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
                 if (activity && [activity isKindOfClass:[NSUserActivity class]]) {
                     [self continueUserActivity:activity];
@@ -356,7 +357,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
             self.preferenceHelper.shouldWaitForInit = YES;
         }
     }
-    else if (![options objectForKey:UIApplicationLaunchOptionsURLKey]) {
+    else if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey]) {
         [self initUserSessionAndCallCallback:YES];
     }
 }
