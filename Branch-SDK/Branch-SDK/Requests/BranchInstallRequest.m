@@ -36,7 +36,11 @@
     params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
     
     if ([[BNCStrongMatchHelper strongMatchHelper] shouldDelayInstallRequest]) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(750 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+        NSInteger delay = 750;
+        if (preferenceHelper.installRequestDelay) {
+            delay = preferenceHelper.installRequestDelay;
+        }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
             [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_INSTALL] key:key callback:callback];
         });
     }
