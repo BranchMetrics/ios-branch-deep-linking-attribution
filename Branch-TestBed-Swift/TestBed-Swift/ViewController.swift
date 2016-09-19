@@ -178,10 +178,10 @@ class ViewController: UITableViewController {
         
         print(universalObjectProperties["$canonical_identifier"])
         if let canonicalIdentifier = universalObjectProperties["$canonical_identifier"] as? String {
-            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)!
+            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
         } else {
             print(universalObjectProperties["$canonical_identifier"])
-            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: "_")!
+            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: "_")
         }
         
         for key in universalObjectProperties.keys {
@@ -239,17 +239,18 @@ class ViewController: UITableViewController {
         
         print(universalObjectProperties["$canonical_identifier"])
         if let canonicalIdentifier = universalObjectProperties["$canonical_identifier"] as? String {
-            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)!
+            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
         } else {
             print(universalObjectProperties["$canonical_identifier"])
-            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: "_")!
+            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: "_")
         }
         
         for key in universalObjectProperties.keys {
             setBranchUniversalObjectProperty(key)
         }
         
-        branchUniversalObject.getShortUrl(with: branchLinkProperties) { (url, error) in
+        //branchUniversalObject.getShortUrl(with: branchLinkProperties) { (url, error) in
+        branchUniversalObject.getShortUrl(with: branchLinkProperties,  andCallback: { (url: String, error: Error?) in
             if (error == nil) {
                 print(self.branchLinkProperties.description())
                 print(self.branchUniversalObject.description())
@@ -260,7 +261,7 @@ class ViewController: UITableViewController {
                 self.showAlert("Link Creation Failed", withDescription: error!.localizedDescription)
             }
             
-        }
+        })
     }
     
     @IBAction func redeemPointsButtonTouchUpInside(_ sender: AnyObject) {
