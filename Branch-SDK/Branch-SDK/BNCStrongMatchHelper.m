@@ -135,7 +135,7 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
             [self.secondWindow makeKeyWindow];
             
             // Give enough time for Safari to load the request (optimized for 3G)
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [keyWindow makeKeyWindow];
                 
                 // Remove the window and release it's strong reference. This is important to ensure that
