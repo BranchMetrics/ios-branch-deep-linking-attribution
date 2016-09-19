@@ -5,3 +5,6 @@ carthage-files/Carthage
 *.xcuserdatad
 *.DS_Store
 *.xcscmblueprint
+
+# Carthage
+Carthage/Build
