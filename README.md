@@ -640,7 +640,7 @@ linkProperties.addControlParam("$ios_url", withValue: "http://example.com/ios")
 ```
 
 ```swift
-branchUniversalObject.getShortUrlWithLinkProperties(linkProperties,  andCallback: { (url: String?, error: NSError?) -> Void in
+branchUniversalObject.getShortUrl(with: linkProperties,  andCallback: { (url: String, error: Error?) in
     if error == nil {
         NSLog("got my Branch link to share: %@", url)
     }
