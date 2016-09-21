@@ -73,7 +73,7 @@
     }
     
     // Because Facebook immediately scrapes URLs, we add an additional parameter to the existing list, telling the backend to ignore the first click
-    if ([channel isEqualToString:@"facebook"] || [channel isEqualToString:@"twitter"]  || [channel isEqualToString:@"com.tinyspeck.chatlyio.share"]) {
+    if ([channel isEqualToString:@"facebook"] || [channel isEqualToString:@"twitter"]  || [channel isEqualToString:@"com.tinyspeck.chatlyio.share"] || [channel isEqualToString:@"com.apple.mobilenotes.SharingExtension"]) {
         return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andCampaign:campaign andAlias:alias ignoreUAString:self.userAgentString forceLinkCreation:YES]];
     }
     return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andCampaign:campaign andAlias:alias ignoreUAString:nil forceLinkCreation:YES]];
