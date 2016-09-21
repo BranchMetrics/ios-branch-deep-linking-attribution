@@ -182,7 +182,12 @@
     // Log share initiated event
     [self userCompletedAction:BNCShareInitiatedEvent];
     UIActivityItemProvider *itemProvider = [self getBranchActivityItemWithLinkProperties:linkProperties];
-    NSMutableArray *items = [NSMutableArray arrayWithObject:itemProvider];
+    NSMutableArray *items;
+    if (itemProvider) {
+        items = [NSMutableArray arrayWithObject:itemProvider];
+    } else {
+        items = [[NSMutableArray alloc] init];
+    }
     if (shareText) {
         [items insertObject:shareText atIndex:0];
     }
