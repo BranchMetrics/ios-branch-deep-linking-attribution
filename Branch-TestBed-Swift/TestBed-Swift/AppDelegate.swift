@@ -9,52 +9,55 @@ import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        let branch = Branch.getInstance()
-        branch?.setDebug()
-
-        // Automatic Deeplinking on "~referring_link"
-        let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UINavigationController
-        branch?.registerDeepLinkController(navigationController, forKey:"~referring_link")
-        
-        // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is false).
-        branch?.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: true, deepLinkHandler: { params, error in
+        if let branch = Branch.getInstance() {
+            branch.setDebug()
             
-            if (error == nil) {
+            // Automatic Deeplinking on "~referring_link"
+            let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UINavigationController
+            branch.registerDeepLinkController(navigationController, forKey:"~referring_link")
+            
+            // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is false).
+            branch.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: true, deepLinkHandler: { params, error in
                 
-                // Deeplinking logic for use when automaticallyDisplayDeepLinkController = false
-                /*
-                if let clickedBranchLink = params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool? {
+                if (error == nil) {
                     
-                    if clickedBranchLink {
-                 
-                        let nc = self.window!.rootViewController as! UINavigationController
-                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                        let logOutputViewController = storyboard.instantiateViewControllerWithIdentifier("LogOutput") as! LogOutputViewController
-                        nc.pushViewController(logOutputViewController, animated: true)
-                 
-                        let dict = params as Dictionary
-                        let referringLink = dict["~referring_link"]
-                        let logOutput = String(format:"\nReferring link: \(referringLink)\n\nSession Details:\n\(dict.JSONDescription())")
-                        logOutputViewController.logOutput = logOutput
-                 
-                    }
+                    // Deeplinking logic for use when automaticallyDisplayDeepLinkController = false
+                    /*
+                     if let clickedBranchLink = params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool? {
+                     
+                     if clickedBranchLink {
+                     
+                     let nc = self.window!.rootViewController as! UINavigationController
+                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                     let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
+                     nc.pushViewController(contentViewController, animated: true)
+                     
+                     let dict = params as Dictionary
+                     let referringLink = dict["~referring_link"]
+                     let content = String(format:"\nReferring link: \(referringLink)\n\nSession Details:\n\(dict.JSONDescription())")
+                     contentViewController.content = content
+                     
+                     }
+                     } else {
+                     print(String(format: "Branch TestBed: Finished init with params\n%@", params.description))
+                     }
+                     */
+                    
                 } else {
-                    print(String(format: "Branch TestBed: Finished init with params\n%@", params.description))
+                    print("Branch TestBed: Initialization failed\n%@", error!.localizedDescription)
                 }
-                */
- 
-            } else {
-                print("Branch TestBed: Initialization failed\n%@", error!.localizedDescription)
-            }
-        })
+                let notificationName = Notification.Name("BranchCallbackCompleted")
+                NotificationCenter.default.post(name: notificationName, object: nil)
+            })
+        }
         return true
     }
-
+    
     // Respond to URI scheme links
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
         if (!Branch.getInstance().handleDeepLink(url)) {
@@ -77,19 +80,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillResignActive(_ application: UIApplication) {
     }
-
+    
     func applicationDidEnterBackground(_ application: UIApplication) {
     }
-
+    
     func applicationWillEnterForeground(_ application: UIApplication) {
     }
-
     
     func applicationDidBecomeActive(_ application: UIApplication) {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
     }
-
+    
 }
 

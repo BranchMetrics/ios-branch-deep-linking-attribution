@@ -5,7 +5,6 @@
 //  Created by David Westgate on 9/5/16.
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
-
 import Foundation
 
 extension Dictionary {
