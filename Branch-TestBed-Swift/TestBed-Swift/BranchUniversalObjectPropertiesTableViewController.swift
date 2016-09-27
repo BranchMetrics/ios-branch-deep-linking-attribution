@@ -47,6 +47,7 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        publiclyIndexableSwitch.addTarget(self, action: #selector(switchhDidChangeState), for: UIControlEvents.valueChanged)
         canonicalIdentifierTextField.delegate = self
         expDateTextField.delegate = self
         contentTypeTextField.delegate = self
@@ -77,6 +78,9 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         self.expDateTextField.inputView = datePicker
         self.expDateTextField.inputAccessoryView = createToolbar(true)
         
+        clearAllValuesButton.isEnabled = universalObjectProperties.count > 0 ? true : false
+
+        
         refreshControls()
     }
     
@@ -91,10 +95,12 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         return false
     }
     
-    @IBAction func clearAllValuesButton(_ sender: AnyObject) {
+    @IBAction func clearAllValuesButtonTouchUpInside(_ sender: AnyObject) {
         universalObjectProperties.removeAll()
+        clearAllValuesButton.isEnabled = false
         refreshControls()
     }
+    
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch((indexPath as NSIndexPath).section) {
@@ -151,6 +157,7 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
                 customDataTextView.text = ""
             }
         }
+        clearAllValuesButton.isEnabled = universalObjectProperties.count > 0 ? true : false
     }
     
     @IBAction func unwindArrayTableViewController(_ segue:UIStoryboardSegue) {
@@ -163,6 +170,7 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
                 keywordsTextView.text = ""
             }
         }
+        clearAllValuesButton.isEnabled = universalObjectProperties.count > 0 ? true : false
     }
     
     //MARK: - Date Picker
@@ -213,13 +221,19 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         present(alert, animated: true, completion: nil);
     }
     
+    func switchhDidChangeState() {
+        refreshUniversalObjectProperties()
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        refreshUniversalObjectProperties()
+    }
+    
+    
     func refreshControls() {
-        
-        publiclyIndexableSwitch.isOn = false
+        publiclyIndexableSwitch.isOn = true
         if let publiclyIndexable = universalObjectProperties["$publicly_indexable"] as? String {
-            if publiclyIndexable == "1" {
-                publiclyIndexableSwitch.isOn = true
-            } else {
+            if publiclyIndexable != "1" {
                 publiclyIndexableSwitch.isOn = false
             }
         }
@@ -267,14 +281,15 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         } else {
             customDataTextView.text = ""
         }
+
     }
-    
+
     func refreshUniversalObjectProperties() {
         
         if publiclyIndexableSwitch.isOn {
-            universalObjectProperties["$publicly_indexable"] = "1" as AnyObject?
-        } else {
             universalObjectProperties.removeValue(forKey: "$publicly_indexable")
+        } else {
+            universalObjectProperties["$publicly_indexable"] = "0" as AnyObject?
         }
         
         addProperty("$canonical_identifier", value: canonicalIdentifierTextField.text!)
@@ -301,6 +316,7 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         addProperty("$price", value: priceTextField.text!)
         addProperty("$currency", value: currencyTextField.text!)
         
+        clearAllValuesButton.isEnabled = universalObjectProperties.count > 0 ? true : false
     }
     
     func addProperty(_ key: String, value: String) {
