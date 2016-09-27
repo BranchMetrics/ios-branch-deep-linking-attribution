@@ -47,6 +47,7 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        publiclyIndexableSwitch.addTarget(self, action: #selector(switchhDidChangeState), for: UIControlEvents.valueChanged)
         canonicalIdentifierTextField.delegate = self
         expDateTextField.delegate = self
         contentTypeTextField.delegate = self
@@ -71,11 +72,14 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         priceTextField.delegate = self
         currencyTextField.delegate = self
         
-        UITableViewCell.appearance().backgroundColor = UIColor.whiteColor()
+        UITableViewCell.appearance().backgroundColor = UIColor.white
         
-        datePicker.datePickerMode = .Date
+        datePicker.datePickerMode = .date
         self.expDateTextField.inputView = datePicker
         self.expDateTextField.inputAccessoryView = createToolbar(true)
+        
+        clearAllValuesButton.isEnabled = universalObjectProperties.count > 0 ? true : false
+
         
         refreshControls()
     }
@@ -86,34 +90,36 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
     
     // MARK: - Navigation
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return false
     }
     
-    @IBAction func clearAllValuesButton(sender: AnyObject) {
+    @IBAction func clearAllValuesButtonTouchUpInside(_ sender: AnyObject) {
         universalObjectProperties.removeAll()
+        clearAllValuesButton.isEnabled = false
         refreshControls()
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        switch(indexPath.section) {
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch((indexPath as NSIndexPath).section) {
         case 2 :
-            self.performSegueWithIdentifier("ShowKeywords", sender: "Keywords")
+            self.performSegue(withIdentifier: "ShowKeywords", sender: "Keywords")
         case 26 :
-            self.performSegueWithIdentifier("ShowCustomData", sender: "CustomData")
+            self.performSegue(withIdentifier: "ShowCustomData", sender: "CustomData")
         default : break
         }
         
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         refreshUniversalObjectProperties()
         
         switch segue.identifier! {
         case "ShowKeywords":
-            let vc = segue.destinationViewController as! ArrayTableViewController
+            let vc = segue.destination as! ArrayTableViewController
             if let keywords = universalObjectProperties["$keywords"] as? [String] {
                 vc.array = keywords
             }
@@ -121,9 +127,9 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
             vc.header = "Keyword"
             vc.placeholder = "keyword"
             vc.footer = "Enter a new keyword that describes the content."
-            vc.keyboardType = UIKeyboardType.Default
+            vc.keyboardType = UIKeyboardType.default
         case "ShowCustomData":
-            let vc = segue.destinationViewController as! DictionaryTableViewController
+            let vc = segue.destination as! DictionaryTableViewController
             if let customData = universalObjectProperties["customData"] as? [String: AnyObject] {
                 vc.dictionary = customData
             }
@@ -133,47 +139,49 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
             vc.keyFooter = ""
             vc.valueHeader = "Value"
             vc.valueFooter = ""
-            vc.keyKeyboardType = UIKeyboardType.Default
-            vc.valueKeyboardType = UIKeyboardType.Default
+            vc.keyKeyboardType = UIKeyboardType.default
+            vc.valueKeyboardType = UIKeyboardType.default
         default: break
         }
     }
     
-    @IBAction func unwindByCancelling(segue:UIStoryboardSegue) { }
+    @IBAction func unwindByCancelling(_ segue:UIStoryboardSegue) { }
     
-    @IBAction func unwindDictionaryTableViewController(segue:UIStoryboardSegue) {
-        if let vc = segue.sourceViewController as? DictionaryTableViewController {
+    @IBAction func unwindDictionaryTableViewController(_ segue:UIStoryboardSegue) {
+        if let vc = segue.source as? DictionaryTableViewController {
             let customData = vc.dictionary
-            universalObjectProperties["customData"] = customData
+            universalObjectProperties["customData"] = customData as AnyObject?
             if customData.count > 0 {
                 customDataTextView.text = customData.description
             } else {
                 customDataTextView.text = ""
             }
         }
+        clearAllValuesButton.isEnabled = universalObjectProperties.count > 0 ? true : false
     }
     
-    @IBAction func unwindArrayTableViewController(segue:UIStoryboardSegue) {
-        if let vc = segue.sourceViewController as? ArrayTableViewController {
+    @IBAction func unwindArrayTableViewController(_ segue:UIStoryboardSegue) {
+        if let vc = segue.source as? ArrayTableViewController {
             let keywords = vc.array
-            universalObjectProperties["$keywords"] = keywords
+            universalObjectProperties["$keywords"] = keywords as AnyObject?
             if keywords.count > 0 {
                 keywordsTextView.text = keywords.description
             } else {
                 keywordsTextView.text = ""
             }
         }
+        clearAllValuesButton.isEnabled = universalObjectProperties.count > 0 ? true : false
     }
     
     //MARK: - Date Picker
     
-    func createToolbar(withCancelButton: Bool) -> UIToolbar {
-        let toolbar = UIToolbar(frame: CGRectMake(0,0,self.view.frame.size.width,44))
-        toolbar.tintColor = UIColor.grayColor()
-        let donePickingButton = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: #selector(self.donePicking))
-        let emptySpace = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
+    func createToolbar(_ withCancelButton: Bool) -> UIToolbar {
+        let toolbar = UIToolbar(frame: CGRect(x: 0,y: 0,width: self.view.frame.size.width,height: 44))
+        toolbar.tintColor = UIColor.gray
+        let donePickingButton = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(self.donePicking))
+        let emptySpace = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
         if (withCancelButton) {
-            let cancelPickingButton = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(self.donePicking))
+            let cancelPickingButton = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(self.donePicking))
             toolbar.setItems([cancelPickingButton, emptySpace, donePickingButton], animated: true)
         } else {
             toolbar.setItems([emptySpace, donePickingButton], animated: true)
@@ -192,35 +200,41 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
     }
     
     func donePicking() {
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd"
         let expirationDate = datePicker.date
-        self.expDateTextField.text = String(format:"%@", dateFormatter.stringFromDate(expirationDate))
+        self.expDateTextField.text = String(format:"%@", dateFormatter.string(from: expirationDate))
         self.expDateTextField.resignFirstResponder()
     }
     
-    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
     
-    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return 0
     }
     
-    func showAlert(alertTitle: String, withDescription message: String) {
-        let alert = UIAlertController(title: alertTitle, message: message, preferredStyle: UIAlertControllerStyle.Alert);
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Cancel, handler: nil));
-        presentViewController(alert, animated: true, completion: nil);
+    func showAlert(_ alertTitle: String, withDescription message: String) {
+        let alert = UIAlertController(title: alertTitle, message: message, preferredStyle: UIAlertControllerStyle.alert);
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: nil));
+        present(alert, animated: true, completion: nil);
     }
     
+    func switchhDidChangeState() {
+        refreshUniversalObjectProperties()
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        refreshUniversalObjectProperties()
+    }
+    
+    
     func refreshControls() {
-        
-        publiclyIndexableSwitch.on = false
+        publiclyIndexableSwitch.isOn = true
         if let publiclyIndexable = universalObjectProperties["$publicly_indexable"] as? String {
-            if publiclyIndexable == "1" {
-                publiclyIndexableSwitch.on = true
-            } else {
-                publiclyIndexableSwitch.on = false
+            if publiclyIndexable != "1" {
+                publiclyIndexableSwitch.isOn = false
             }
         }
         
@@ -267,14 +281,15 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         } else {
             customDataTextView.text = ""
         }
+
     }
-    
+
     func refreshUniversalObjectProperties() {
         
-        if publiclyIndexableSwitch.on {
-            universalObjectProperties["$publicly_indexable"] = "1"
+        if publiclyIndexableSwitch.isOn {
+            universalObjectProperties.removeValue(forKey: "$publicly_indexable")
         } else {
-            universalObjectProperties.removeValueForKey("$publicly_indexable")
+            universalObjectProperties["$publicly_indexable"] = "0" as AnyObject?
         }
         
         addProperty("$canonical_identifier", value: canonicalIdentifierTextField.text!)
@@ -301,14 +316,15 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         addProperty("$price", value: priceTextField.text!)
         addProperty("$currency", value: currencyTextField.text!)
         
+        clearAllValuesButton.isEnabled = universalObjectProperties.count > 0 ? true : false
     }
     
-    func addProperty(key: String, value: String) {
+    func addProperty(_ key: String, value: String) {
         guard value.characters.count > 0 else {
-            universalObjectProperties.removeValueForKey(key)
+            universalObjectProperties.removeValue(forKey: key)
             return
         }
-        universalObjectProperties[key] = value
+        universalObjectProperties[key] = value as AnyObject?
     }
     
 }

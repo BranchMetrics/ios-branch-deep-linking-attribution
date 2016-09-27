@@ -21,13 +21,13 @@ class NavigationController: UINavigationController, BranchDeepLinkingController 
         super.didReceiveMemoryWarning()
     }
     
-    func configureControlWithData(params: [NSObject : AnyObject]!) {
-        let vc = self.storyboard?.instantiateViewControllerWithIdentifier("LogOutput") as! LogOutputViewController
+    func configureControl(withData params: [AnyHashable: Any]!) {
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "Content") as! ContentViewController
         self.pushViewController(vc, animated: true)
         
         let dict = params as Dictionary
-        if let referringLink = dict["~referring_link"] {
-            vc.logOutput = String(format:"\nReferring link: \(referringLink)\n\nSession Details:\n\(dict.JSONDescription())")
+        if dict["~referring_link"] != nil {
+            vc.contentType = "Content"
         }
     }
 }

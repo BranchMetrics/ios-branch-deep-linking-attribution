@@ -15,7 +15,7 @@ class ArrayTableViewController: UITableViewController {
     var header = "Default Array Header"
     var placeholder = "Default Array Placeholder"
     var footer = "Default Array Footer"
-    var keyboardType = UIKeyboardType.Default
+    var keyboardType = UIKeyboardType.default
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,69 +29,69 @@ class ArrayTableViewController: UITableViewController {
     
     // MARK: - Table view data source
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return array.count
     }
     
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cellIdentifier = "ArrayTableViewCell"
-        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! ArrayTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! ArrayTableViewCell
         
-        cell.elementLabel.text = array[indexPath.row]
+        cell.elementLabel.text = array[(indexPath as NSIndexPath).row]
         
         return cell
     }
     
     
     // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
     
     
     // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
             // Delete the row from the data source
-            array.removeAtIndex(indexPath.row)
+            array.remove(at: (indexPath as NSIndexPath).row)
             
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
     
     
     // MARK: - Navigation
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "AddElement" {
-            let nc = segue.destinationViewController as! UINavigationController
+            let nc = segue.destination as! UINavigationController
             let vc = nc.topViewController as! TextFieldFormTableViewController
             vc.incumbantValue = incumbantValue
             vc.viewTitle = viewTitle
             vc.header = header
             vc.placeholder = placeholder
             vc.footer = footer
-            vc.keyboardType = UIKeyboardType.Default
+            vc.keyboardType = UIKeyboardType.default
         }
     }
     
-    @IBAction func unwindByCancelling(segue:UIStoryboardSegue) { }
+    @IBAction func unwindByCancelling(_ segue:UIStoryboardSegue) { }
     
-    @IBAction func unwindTextFieldFormTableViewController(sender: UIStoryboardSegue) {
-        if let vc = sender.sourceViewController as? TextFieldFormTableViewController {
+    @IBAction func unwindTextFieldFormTableViewController(_ sender: UIStoryboardSegue) {
+        if let vc = sender.source as? TextFieldFormTableViewController {
             
             if let receivedValue = vc.textField.text {
                 
@@ -104,7 +104,7 @@ class ArrayTableViewController: UITableViewController {
                 }
                 
                 array.append(receivedValue)
-                array.sortInPlace()
+                array.sort()
                 tableView.reloadData()
                 
             }

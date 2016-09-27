@@ -21,8 +21,8 @@ class CreditHistoryViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     
-    override func viewWillAppear(animated: Bool) {
-        self.navigationController?.navigationBarHidden = false
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.isNavigationBarHidden = false
         super.viewWillAppear(animated)
     }
 
@@ -33,12 +33,12 @@ class CreditHistoryViewController: UITableViewController {
 
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         if self.creditTransactions == nil {
             return 0
@@ -47,17 +47,17 @@ class CreditHistoryViewController: UITableViewController {
     }
 
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell?
-        cell = tableView.dequeueReusableCellWithIdentifier("CreditTransactionRow")! as UITableViewCell
+        cell = tableView.dequeueReusableCell(withIdentifier: "CreditTransactionRow")! as UITableViewCell
         
         if (cell == nil) {
-            cell = UITableViewCell.init(style: .Subtitle, reuseIdentifier: "CreditTransactionRow")
+            cell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "CreditTransactionRow")
         }
         
         
         if (self.creditTransactions!.count > 0) {
-            let creditItem: Dictionary = self.creditTransactions![indexPath.row] as! Dictionary<String, AnyObject>
+            let creditItem: Dictionary = self.creditTransactions![(indexPath as NSIndexPath).row] as! Dictionary<String, AnyObject>
             let transaction = creditItem["transaction"] as! Dictionary<String, AnyObject>
             let amount = transaction["amount"] as! Int
             let bucket = transaction["bucket"] as! String
@@ -71,25 +71,25 @@ class CreditHistoryViewController: UITableViewController {
             var text = String(format: "%@ to %@", amountAsString, bucket)
             
             if transaction.keys.contains("referrer") {
-                text = String(format: "%@ - Referred by: %@", text, transaction.keys.contains("referrer"))
+                text = String(format: "%@ - Referred by: %@", text, transaction.keys.contains("referrer") as CVarArg)
             }
             if transaction.keys.contains("referrer") {
-                text = String(format: "%@ - User Referred: %@", text, transaction.keys.contains("referree"))
+                text = String(format: "%@ - User Referred: %@", text, transaction.keys.contains("referree") as CVarArg)
             }
             cell!.textLabel!.text = text
             
             
             let dateString = transaction["date"] as! String
-            let dateFormatter = NSDateFormatter()
+            let dateFormatter = DateFormatter()
 
             print(dateString)
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-            let test = dateFormatter.dateFromString(dateString)
+            let test = dateFormatter.date(from: dateString)
             print(test)
-            if let date = dateFormatter.dateFromString(dateString) {
-                dateFormatter.dateStyle = .MediumStyle
-                dateFormatter.timeStyle = .MediumStyle
-                cell!.detailTextLabel!.text = dateFormatter.stringFromDate(date)
+            if let date = dateFormatter.date(from: dateString) {
+                dateFormatter.dateStyle = .medium
+                dateFormatter.timeStyle = .medium
+                cell!.detailTextLabel!.text = dateFormatter.string(from: date)
             }
         } else {
             cell!.textLabel!.text = "None found";
