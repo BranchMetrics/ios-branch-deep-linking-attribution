@@ -46,7 +46,7 @@
     
     // Checking for CSSearchableItemActionType in the activity for legacy spotlight indexing (pre 0.12.7)
     // Now we index NSUserActivies with type set to io.branch. + bundleId for better SEO
-    if ([userActivity.activityType isEqualToString:CSSearchableItemActionType] || isBranchIdentifier) {
+    if ([userActivity.activityType isEqualToString:CSSearchableItemActionType] && isBranchIdentifier) {
         return activityIdentifier;
     }
 #endif
