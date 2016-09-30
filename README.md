@@ -752,6 +752,18 @@ branchUniversalObject.showShareSheetWithLinkProperties(linkProperties,
 
 **completion**: 
 
+#### Further Customization
+
+The majority of share options only include one string of text, except email, which has a subject and a body. The share text will fill in the body and you can specify the email subject in the link properties as shown below.
+
+```objc
+[linkProperties addControlParam:@"$email_subject" withValue:@"This one weird trick."];
+```
+
+```swift
+linkProperties.addControlParam("$email_subject", withValue: "Therapists hate him.")
+```
+
 #### Returns
 
 None

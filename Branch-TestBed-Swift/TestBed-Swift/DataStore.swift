@@ -1,5 +1,5 @@
 //
-//  TestData.swift
+//  DataStore.swift
 //  TestBed-Swift
 //
 //  Created by David Westgate on 8/29/16.
@@ -7,7 +7,7 @@
 //
 import Foundation
 
-struct TestData {
+struct DataStore {
     
     static let userDefaults = UserDefaults.standard
 
@@ -142,7 +142,5 @@ struct TestData {
     static func setCustomEventMetadata(_ value: [String: AnyObject]) {
         userDefaults.set(value, forKey: "customEventMetadata")
     }
-    
-    
     
 }

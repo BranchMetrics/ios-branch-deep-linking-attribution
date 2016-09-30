@@ -65,17 +65,22 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
         iosWeChatURLTextField.delegate = self
         iosWeiboURLTextField.delegate = self
         afterClickURLTextField.delegate = self
+        webOnlySwitch.addTarget(self, action: #selector(switchhDidChangeState), for: UIControlEvents.valueChanged)
         deeplinkPathTextField.delegate = self
         androidDeeplinkPathTextField.delegate = self
         iosDeeplinkPathTextField.delegate = self
         matchDurationTextField.delegate = self
+        alwaysDeeplinkSwitch.addTarget(self, action: #selector(switchhDidChangeState), for: UIControlEvents.valueChanged)
         iosRedirectTimeoutTextField.delegate = self
         androidRedirectTimeoutTextField.delegate = self
+        oneTimeUseSwitch.addTarget(self, action: #selector(switchhDidChangeState), for: UIControlEvents.valueChanged)
         iosDeepviewTextField.delegate = self
         androidDeepviewTextField.delegate = self
         desktopDeepviewTextField.delegate = self
         
         UITableViewCell.appearance().backgroundColor = UIColor.white
+        clearAllValuesButton.isEnabled = linkProperties.count > 0 ? true : false
+
         refreshControls()
     }
 
@@ -92,6 +97,7 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
     
     @IBAction func clearAllValuesTouchUpInside(_ sender: AnyObject) {
         linkProperties.removeAll()
+        clearAllValuesButton.isEnabled = false
         refreshControls()
     }
     
@@ -109,7 +115,7 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
         
         if segue.identifier! == "ShowTags" {
             let vc = segue.destination as! ArrayTableViewController
-            if let tags = linkProperties["tags"] as? [String] {
+            if let tags = linkProperties["~tags"] as? [String] {
                 vc.array = tags
             }
             vc.viewTitle = "Link Tags"
@@ -132,6 +138,15 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
                 tagsTextView.text = ""
             }
         }
+        clearAllValuesButton.isEnabled = linkProperties.count > 0 ? true : false
+    }
+    
+    func switchhDidChangeState() {
+        refreshLinkProperties()
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        refreshLinkProperties()
     }
     
     // MARK: - Refresh Functions
@@ -253,6 +268,8 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
         addProperty("$ios_deepview", value: iosDeepviewTextField.text!)
         addProperty("$android_deepview", value: androidDeepviewTextField.text!)
         addProperty("$desktop_deepview", value: desktopDeepviewTextField.text!)
+        
+        clearAllValuesButton.isEnabled = linkProperties.count > 0 ? true : false
     }
     
     func addProperty(_ key: String, value: String) {
