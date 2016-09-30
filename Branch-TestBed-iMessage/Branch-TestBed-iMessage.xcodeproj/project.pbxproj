@@ -48,6 +48,9 @@
 		67E91FD91D769FE30039F1C4 /* BranchShortUrlSyncRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 67E91FAC1D769FE30039F1C4 /* BranchShortUrlSyncRequest.m */; };
 		67E91FDA1D769FE30039F1C4 /* BranchSpotlightUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 67E91FAE1D769FE30039F1C4 /* BranchSpotlightUrlRequest.m */; };
 		67E91FDB1D769FE30039F1C4 /* BranchUserCompletedActionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 67E91FB01D769FE30039F1C4 /* BranchUserCompletedActionRequest.m */; };
+		E212CC5E1D9DE6A900603475 /* BranchContentDiscoveryManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = E212CC5D1D9DE6A900603475 /* BranchContentDiscoveryManifest.m */; };
+		E212CC611D9DE6C400603475 /* BranchContentPathProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = E212CC601D9DE6C400603475 /* BranchContentPathProperties.m */; };
+		E212CC641D9DE6D800603475 /* BranchContentDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = E212CC631D9DE6D800603475 /* BranchContentDiscoverer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -166,6 +169,12 @@
 		67E91FB61D769FE30039F1C4 /* FABKitProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FABKitProtocol.h; sourceTree = "<group>"; };
 		67E91FB71D769FE30039F1C4 /* Fabric+FABKits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Fabric+FABKits.h"; sourceTree = "<group>"; };
 		67E91FB81D769FE30039F1C4 /* Fabric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fabric.h; sourceTree = "<group>"; };
+		E212CC5C1D9DE6A900603475 /* BranchContentDiscoveryManifest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchContentDiscoveryManifest.h; sourceTree = "<group>"; };
+		E212CC5D1D9DE6A900603475 /* BranchContentDiscoveryManifest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchContentDiscoveryManifest.m; sourceTree = "<group>"; };
+		E212CC5F1D9DE6C400603475 /* BranchContentPathProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchContentPathProperties.h; sourceTree = "<group>"; };
+		E212CC601D9DE6C400603475 /* BranchContentPathProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchContentPathProperties.m; sourceTree = "<group>"; };
+		E212CC621D9DE6D800603475 /* BranchContentDiscoverer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchContentDiscoverer.h; sourceTree = "<group>"; };
+		E212CC631D9DE6D800603475 /* BranchContentDiscoverer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchContentDiscoverer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -249,8 +258,14 @@
 				67E91F6A1D769FE30039F1C4 /* BNCDeviceInfo.h */,
 				67E91F6B1D769FE30039F1C4 /* BNCDeviceInfo.m */,
 				67E91F6C1D769FE30039F1C4 /* BNCEncodingUtils.h */,
+				E212CC5F1D9DE6C400603475 /* BranchContentPathProperties.h */,
+				E212CC601D9DE6C400603475 /* BranchContentPathProperties.m */,
 				67E91F6D1D769FE30039F1C4 /* BNCEncodingUtils.m */,
 				67E91F6E1D769FE30039F1C4 /* BNCError.h */,
+				E212CC5C1D9DE6A900603475 /* BranchContentDiscoveryManifest.h */,
+				E212CC5D1D9DE6A900603475 /* BranchContentDiscoveryManifest.m */,
+				E212CC621D9DE6D800603475 /* BranchContentDiscoverer.h */,
+				E212CC631D9DE6D800603475 /* BranchContentDiscoverer.m */,
 				67E91F6F1D769FE30039F1C4 /* BNCError.m */,
 				67E91F701D769FE30039F1C4 /* BNCFabricAnswers.h */,
 				67E91F711D769FE30039F1C4 /* BNCFabricAnswers.m */,
@@ -446,6 +461,7 @@
 			files = (
 				67E91FCB1D769FE30039F1C4 /* BranchUniversalObject.m in Sources */,
 				67E91FD61D769FE30039F1C4 /* BranchRegisterViewRequest.m in Sources */,
+				E212CC5E1D9DE6A900603475 /* BranchContentDiscoveryManifest.m in Sources */,
 				67E91FDB1D769FE30039F1C4 /* BranchUserCompletedActionRequest.m in Sources */,
 				67E91FD71D769FE30039F1C4 /* BranchSetIdentityRequest.m in Sources */,
 				67E91FC01D769FE30039F1C4 /* BNCPreferenceHelper.m in Sources */,
@@ -466,6 +482,7 @@
 				67E91FD51D769FE30039F1C4 /* BranchRedeemRewardsRequest.m in Sources */,
 				67E91FC41D769FE30039F1C4 /* BNCStrongMatchHelper.m in Sources */,
 				67E91FD21D769FE30039F1C4 /* BranchLoadRewardsRequest.m in Sources */,
+				E212CC641D9DE6D800603475 /* BranchContentDiscoverer.m in Sources */,
 				67E91FCC1D769FE30039F1C4 /* BranchView.m in Sources */,
 				67E91FBE1D769FE30039F1C4 /* BNCLinkCache.m in Sources */,
 				67E91FD31D769FE30039F1C4 /* BranchLogoutRequest.m in Sources */,
@@ -480,6 +497,7 @@
 				67E91FC51D769FE30039F1C4 /* BNCSystemObserver.m in Sources */,
 				67E91EFF1D769E1E0039F1C4 /* MessagesViewController.m in Sources */,
 				67E91FD11D769FE30039F1C4 /* BranchInstallRequest.m in Sources */,
+				E212CC611D9DE6C400603475 /* BranchContentPathProperties.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -662,6 +680,7 @@
 				67E91F0A1D769E1E0039F1C4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		67E91F0C1D769E1E0039F1C4 /* Build configuration list for PBXNativeTarget "Branch-TestBed-iMessage" */ = {
 			isa = XCConfigurationList;
@@ -670,6 +689,7 @@
 				67E91F0E1D769E1E0039F1C4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
