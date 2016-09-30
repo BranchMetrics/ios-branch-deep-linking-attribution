@@ -43,10 +43,7 @@
     // If it has our prefix, then the link identifier is just the last piece of the identifier.
     NSString *activityIdentifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
     BOOL isBranchIdentifier = [activityIdentifier hasPrefix:BRANCH_SPOTLIGHT_PREFIX];
-    
-    // Checking for CSSearchableItemActionType in the activity for legacy spotlight indexing (pre 0.12.7)
-    // Now we index NSUserActivies with type set to io.branch. + bundleId for better SEO
-    if ([userActivity.activityType isEqualToString:CSSearchableItemActionType] && isBranchIdentifier) {
+    if (isBranchIdentifier) {
         return activityIdentifier;
     }
 #endif
