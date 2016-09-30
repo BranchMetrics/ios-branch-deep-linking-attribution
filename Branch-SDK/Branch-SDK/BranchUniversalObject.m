@@ -74,12 +74,12 @@
 - (void)userCompletedAction:(NSString *)action {
     NSMutableDictionary *actionPayload = [[NSMutableDictionary alloc] init];
     NSDictionary *linkParams = [self getParamsForServerRequest];
-    actionPayload[BNCCanonicalIdList] = @[self.canonicalIdentifier];
-    actionPayload[self.canonicalIdentifier] = linkParams;
-    
-    [[Branch getInstance] userCompletedAction:action withState:actionPayload];
-    if (self.automaticallyListOnSpotlight && [action isEqualToString:BNCRegisterViewEvent]) {
-        [self listOnSpotlight];
+    if (self.canonicalIdentifier && linkParams) {
+        actionPayload[BNCCanonicalIdList] = @[self.canonicalIdentifier];
+        actionPayload[self.canonicalIdentifier] = linkParams;
+        [[Branch getInstance] userCompletedAction:action withState:actionPayload];
+        if (self.automaticallyListOnSpotlight && [action isEqualToString:BNCRegisterViewEvent])
+            [self listOnSpotlight];
     }
 }
 
