@@ -14,6 +14,7 @@ class KeyValuePairTableViewController: UITableViewController, UITextFieldDelegat
     @IBOutlet weak var keyTextField: UITextField!
     @IBOutlet weak var valueTextView: UITextView!
     @IBOutlet weak var clearButton: UIButton!
+    @IBOutlet weak var saveButton: UIBarButtonItem!
     
     var incumbantKey = ""
     var incumbantValue = ""
@@ -32,11 +33,15 @@ class KeyValuePairTableViewController: UITableViewController, UITextFieldDelegat
         super.viewDidLoad()
         
         title = viewTitle
+        keyTextField.placeholder = keyPlaceholder
         keyTextField.text = incumbantKey
+        keyTextField.keyboardType = keyKeyboardType
+        keyTextField.addTarget(self, action: #selector(textFieldDidChange), for: UIControlEvents.editingChanged)
         valueTextView.delegate = self
         valueTextView.text = incumbantValue
-        setClearButtonVisibility()
-        setFirstResponder()
+        valueTextView.keyboardType = valueKeyboardType
+        valueTextView.textColor = UIColor.lightGray
+        updateButtonStates()
     }
     
     override func didReceiveMemoryWarning() {
@@ -83,6 +88,10 @@ class KeyValuePairTableViewController: UITableViewController, UITextFieldDelegat
         return footer
     }
     
+    func textFieldDidChange() {
+        saveButton.isEnabled = keyTextField.text == "" ? false : true
+    }
+    
     func textViewDidChangeSelection(_ textView: UITextView) {
         if self.view.window != nil {
             if textView.textColor == UIColor.lightGray {
@@ -118,24 +127,20 @@ class KeyValuePairTableViewController: UITableViewController, UITextFieldDelegat
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        setClearButtonVisibility()
+        updateButtonStates()
     }
     
-    func setFirstResponder() {
-        if (incumbantKey == "") {
-            keyTextField.becomeFirstResponder()
-        } else {
-            keyTextField.isEnabled = false
-            valueTextView.becomeFirstResponder()
-        }
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        clearButton.isHidden = textView.text == "" ? true : false
     }
     
-    func setClearButtonVisibility() {
-        if valueTextView.text == "" {
-            clearButton.isHidden = true
-        } else if valueTextView.textColor != UIColor.lightGray {
-            clearButton.isHidden = false
-        }
+    func textViewDidEndEditing(_ textView: UITextView) {
+        clearButton.isHidden = true
+    }
+    
+    func updateButtonStates() {
+        clearButton.isHidden = valueTextView.textColor == UIColor.lightGray ? true : false
+        saveButton.isEnabled = keyTextField.text == "" ? false : true
     }
     
 }
