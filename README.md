@@ -221,30 +221,30 @@ To deep link, Branch must initialize a session to check if the user originated f
 
 ###### Swift
 ```swift
-func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-    let branch: Branch = Branch.getInstance()
-    branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
-    	// route the user based on what's in params
-    })
-    return true
-}
-
-func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
-    if (!Branch.getInstance().handleDeepLink(url)) {
-        // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+  let branch: Branch = Branch.getInstance()
+  branch.initSession(launchOptions: launchOptions, deepLinkHandler: { params, error in
+    if error == nil {
+      // route the user based on what's in params
     }
+  }
+  return true
+}
 
+func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+    Branch.getInstance().handleDeepLink(url)
+    
     return true
 }
 
-func application(application: UIApplication, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
+func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
     // pass the url to the handle deep link call
     Branch.getInstance().continueUserActivity(userActivity);
 
     return true
 }
 
-func application(application: UIApplication, didReceiveRemoteNotification launchOptions: [NSObject: AnyObject]?) -> Void {
+func application(_ application: UIApplication, didReceiveRemoteNotification launchOptions: [AnyHashable: Any]) -> Void {
     Branch.getInstance().handlePushNotification(launchOptions)
 }
 ```
@@ -640,11 +640,11 @@ linkProperties.addControlParam("$ios_url", withValue: "http://example.com/ios")
 ```
 
 ```swift
-branchUniversalObject.getShortUrl(with: linkProperties,  andCallback: { (url: String, error: Error?) in
+branchUniversalObject.getShortUrl(with: linkProperties) { (url, error) in
     if error == nil {
         NSLog("got my Branch link to share: %@", url)
     }
-})
+}
 ```
 
 #### Link Properties Parameters
@@ -734,12 +734,11 @@ linkProperties.addControlParam("$ios_url", withValue: "http://example.com/ios")
 ```
 
 ```swift
-branchUniversalObject.showShareSheetWithLinkProperties(linkProperties, 
-                                        andShareText: "Super amazing thing I want to share!",
-                                        fromViewController: self,
-                                        completion: { () -> Void in
+branchUniversalObject.showShareSheet(with: linkProperties,
+                                     andShareText: "Super amazing thing I want to share!",
+                                     from: self) { (activityType, completed) in
     NSLog("done showing share sheet!")
-})
+}
 ```
 
 #### Show Share Sheet Parameters
@@ -818,7 +817,7 @@ Reward balances change randomly on the backend when certain actions are taken (d
 ###### Swift
 
 ```swift
-Branch.getInstance().loadRewardsWithCallback { (changed: Bool, error: NSError!) -> Void in
+Branch.getInstance().loadRewards { (changed, error) in
     // changed boolean will indicate if the balance changed from what is currently in memory
 
     // will return the balance of the current user's credits
@@ -873,8 +872,8 @@ This call will retrieve the entire history of credits and redemptions from the i
 ###### Swift
 
 ```swift
-Branch.getInstance().getCreditHistoryWithCallback { (history: [AnyObject]!, error: NSError!) -> Void in
-    if (error == nil) {
+Branch.getInstance().getCreditHistory { (creditHistory, error) in
+    if error == nil {
         // process history
     }
 }
