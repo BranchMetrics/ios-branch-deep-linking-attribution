@@ -244,7 +244,7 @@ static const short _base64DecodingTable[256] = {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            NSLog(@"Cannot encode value for key %@, type is in list of accepted types", key);
+            NSLog(@"[encodeDictionaryToJsonString] Cannot encode value for key %@, type is not in list of accepted types", key);
             continue;
         }
         
@@ -311,7 +311,7 @@ static const short _base64DecodingTable[256] = {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            NSLog(@"Cannot encode value %@, type is not in list of accepted types", obj);
+            NSLog(@"[encodedArray] Cannot encode value %@, type is not in list of accepted types", obj);
             continue;
         }
         
@@ -365,7 +365,7 @@ static const short _base64DecodingTable[256] = {
             }
             else {
                 // If this type is not a known type, don't attempt to encode it.
-                NSLog(@"Cannot encode value %@, type is in not list of accepted types", obj);
+                NSLog(@"[encodeDictionaryToQueryString] Cannot encode value %@, type is not in list of accepted types", obj);
                 continue;
             }
             

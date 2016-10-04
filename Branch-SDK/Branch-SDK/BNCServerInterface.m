@@ -191,8 +191,10 @@ NSString *requestEndpoint;
 #pragma mark - Internals
 
 - (NSURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber log:(BOOL)log {
-    NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber];
+    NSMutableDictionary *preparedParams = [[self prepareParamDict:params key:key retryNumber:retryNumber] mutableCopy];
     
+    // explicitly remove instrumentation info from GET requests. They are only meant to be sent in POST requests.
+    [preparedParams removeObjectForKey:BRANCH_REQUEST_KEY_INSTRUMENTATION];
     NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:preparedParams]];
     
     if (log) {
@@ -243,7 +245,9 @@ NSString *requestEndpoint;
     NSMutableDictionary *metadata = [[NSMutableDictionary alloc] init];
     [metadata addEntriesFromDictionary:self.preferenceHelper.requestMetadataDictionary];
     [metadata addEntriesFromDictionary:fullParamDict[BRANCH_REQUEST_KEY_STATE]];
-    fullParamDict[BRANCH_REQUEST_KEY_STATE] = metadata;
+    if (metadata.count) {
+        fullParamDict[BRANCH_REQUEST_KEY_STATE] = metadata;
+    }
     if (self.preferenceHelper.instrumentationDictionary.count) {
         fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = self.preferenceHelper.instrumentationDictionary;
     }
