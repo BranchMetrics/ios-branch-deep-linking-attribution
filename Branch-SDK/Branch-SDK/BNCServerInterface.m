@@ -191,10 +191,8 @@ NSString *requestEndpoint;
 #pragma mark - Internals
 
 - (NSURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber log:(BOOL)log {
-    NSMutableDictionary *preparedParams = [[self prepareParamDict:params key:key retryNumber:retryNumber] mutableCopy];
+    NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"GET"];
     
-    // explicitly remove instrumentation info from GET requests. They are only meant to be sent in POST requests.
-    [preparedParams removeObjectForKey:BRANCH_REQUEST_KEY_INSTRUMENTATION];
     NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:preparedParams]];
     
     if (log) {
@@ -210,7 +208,7 @@ NSString *requestEndpoint;
 }
 
 - (NSURLRequest *)preparePostRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber log:(BOOL)log {
-    NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber];
+    NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"POST"];
 
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
@@ -230,7 +228,7 @@ NSString *requestEndpoint;
     return request;
 }
 
-- (NSDictionary *)prepareParamDict:(NSDictionary *)params key:(NSString *)key retryNumber:(NSInteger)retryNumber {
+- (NSDictionary *)prepareParamDict:(NSDictionary *)params key:(NSString *)key retryNumber:(NSInteger)retryNumber requestType:(NSString *)reqType {
     NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
     [fullParamDict addEntriesFromDictionary:params];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
@@ -248,7 +246,8 @@ NSString *requestEndpoint;
     if (metadata.count) {
         fullParamDict[BRANCH_REQUEST_KEY_STATE] = metadata;
     }
-    if (self.preferenceHelper.instrumentationDictionary.count) {
+    // we only send instrumentation info in the POST body request
+    if (self.preferenceHelper.instrumentationDictionary.count && [reqType isEqualToString:@"POST"]) {
         fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = self.preferenceHelper.instrumentationDictionary;
     }
    
