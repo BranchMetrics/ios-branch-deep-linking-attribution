@@ -24,8 +24,8 @@
 @property (nonatomic, strong) NSString *modelName;
 @property (nonatomic, strong) NSString *osName;
 @property (nonatomic, strong) NSString *osVersion;
-@property (nonatomic) NSNumber *screenWidth;
-@property (nonatomic) NSNumber *screenHeight;
+@property (nonatomic, strong) NSNumber *screenWidth;
+@property (nonatomic, strong) NSNumber *screenHeight;
 @property (nonatomic) BOOL isAdTrackingEnabled;
 
 
