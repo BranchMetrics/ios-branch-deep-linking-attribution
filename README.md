@@ -226,8 +226,6 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
   branch?.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: true, deepLinkHandler: { params, error in
     if error == nil {
         // params are the deep linked params associated with the link that the user clicked -> was re-directed to this app
-        // params will be empty if no data found
-        // ... insert custom logic here ...
         print("params: %@", params.description)
     }
    })
@@ -236,7 +234,7 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 
 func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
     // pass the url to the handle deep link call
-    Branch.getInstance().handleDeepLink(url);
+    Branch.getInstance().handleDeepLink(url)
 
     return true
 }
