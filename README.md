@@ -223,23 +223,26 @@ To deep link, Branch must initialize a session to check if the user originated f
 ```swift
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
   let branch: Branch = Branch.getInstance()
-  branch.initSession(launchOptions: launchOptions, deepLinkHandler: { params, error in
+  branch?.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: true, deepLinkHandler: { params, error in
     if error == nil {
-      // route the user based on what's in params
+        // params are the deep linked params associated with the link that the user clicked -> was re-directed to this app
+        // params will be empty if no data found
+        // ... insert custom logic here ...
+        print("params: %@", params.description)
     }
-  }
+   })
   return true
 }
 
 func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-    Branch.getInstance().handleDeepLink(url)
-    
+    // pass the url to the handle deep link call
+    Branch.getInstance().handleDeepLink(url);
+
     return true
 }
 
 func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
-    // pass the url to the handle deep link call
-    Branch.getInstance().continueUserActivity(userActivity);
+    Branch.getInstance().continue(userActivity)
 
     return true
 }
