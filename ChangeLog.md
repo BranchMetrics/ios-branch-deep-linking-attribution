@@ -1,5 +1,16 @@
 Branch iOS SDK change log
 
+- v0.12.12
+  * Updated Swift example to Swift 3.0
+  * Updated Update README.md Documentation Syntax for Swift
+  * Removed an initSession option
+  * Fixed instrumentation data property types
+  * Stopped sending instrumentation data in GET requests
+  * Fixed Spotlight content discovery
+  * Fixed crash that sometimes occurred when a user completed a Branch action
+  * Added email subject to share action
+  * Added 'Notes' to the list of sharing channels
+
 - v0.12.11
   * Support for Carthage sub modules
   * Fix for few swift compatibility issues
