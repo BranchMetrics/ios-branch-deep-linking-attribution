@@ -1109,7 +1109,6 @@
 		};
 		7E6B3B581AA42D0E005F45BF /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 31573E92BB6FA3902CA53858 /* Pods-Branch-SDK-Tests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1132,7 +1131,6 @@
 		};
 		7E6B3B591AA42D0E005F45BF /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1715515941BF9D80F30AE170 /* Pods-Branch-SDK-Tests.release.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
