@@ -609,62 +609,53 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     [self persistPrefsToDisk];
 }
 
-- (void)persistPrefsToDisk
-    {
-    @synchronized (self)
-        {
+- (void)persistPrefsToDisk {
+    @synchronized (self) {
         NSDictionary *persistenceDict = [self.persistenceDict copy];
-        NSBlockOperation *newPersistOp = [NSBlockOperation blockOperationWithBlock:
-        ^   {
+        NSBlockOperation *newPersistOp = [NSBlockOperation blockOperationWithBlock:^ {
             NSData *data = [NSKeyedArchiver archivedDataWithRootObject:persistenceDict];
-            if (!data)
-                {
+            if (!data) {
                 [self logWarning:@"Can't create preferences archive."];
                 return;
-                }
+            }
             NSError *error = nil;
             [data writeToURL:self.class.URLForPrefsFile
                 options:NSDataWritingAtomic error:&error];
-            if (error)
-                {
+            if (error) {
                 [self logWarning:
                     [NSString stringWithFormat:
                         @"Failed to persist preferences to disk: %@.", error]];
-                }
-            }];
-        [self.persistPrefsQueue addOperation:newPersistOp];
-        }
+            }
+        }];
+    [self.persistPrefsQueue addOperation:newPersistOp];
     }
+}
 
 #pragma mark - Reading From Persistence
 
-- (NSMutableDictionary *)persistenceDict
-    {
-    if (!_persistenceDict)
-        {
+- (NSMutableDictionary *)persistenceDict {
+    if (!_persistenceDict) {
         NSDictionary *persistenceDict = nil;
         @try {
             NSError *error = nil;
-            NSData *data =
-                [NSData dataWithContentsOfURL:self.class.URLForPrefsFile
+            NSData *data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile
                     options:0 error:&error];
             if (error || !data)
                 NSLog(@"Error opening prefs file: %@.", error);
             else
                 persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-            }
-        @catch (NSException *exception)
-            {
+        }
+        @catch (NSException *exception) {
             [self logWarning:@"Failed to load preferences from disk."];
-            }
+        }
 
         if ([persistenceDict isKindOfClass:[NSDictionary class]])
             _persistenceDict = [persistenceDict mutableCopy];
         else
             _persistenceDict = [[NSMutableDictionary alloc] init];
-        }
-    return _persistenceDict;
     }
+    return _persistenceDict;
+}
 
 - (NSObject *)readObjectFromDefaults:(NSString *)key {
     NSObject *obj = self.persistenceDict[key];
@@ -696,17 +687,15 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     return NSNotFound;
 }
 
-+ (NSString *)prefsFile_deprecated
-    {
++ (NSString *)prefsFile_deprecated {
     NSString * path =
         [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)
             firstObject]
                 stringByAppendingPathComponent:BRANCH_PREFS_FILE];
     return path;
-    }
+}
 
-+ (NSURL*) URLForBranchDirectory
-    {
++ (NSURL*) URLForBranchDirectory {
     NSError *error = nil;
     NSURL *URL =
         [[NSFileManager defaultManager]
@@ -715,34 +704,30 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             appropriateForURL:nil
             create:YES
             error:&error];
-    if (error)
-        {
+    if (error) {
         NSLog(@"Error creating URLForPrefsDirectory: %@.", error);
         return nil;
-        }
+    }
     URL = [URL URLByAppendingPathComponent:@"io.branch"];
     [[NSFileManager defaultManager]
         createDirectoryAtURL:URL
         withIntermediateDirectories:YES
         attributes:nil
         error:&error];
-    if (error)
-        {
+    if (error) {
         NSLog(@"Error creating URLForPrefsDirectory: %@.", error);
         return nil;
-        }
-    return URL;
     }
+    return URL;
+}
 
-+ (NSURL*) URLForPrefsFile
-    {
++ (NSURL*) URLForPrefsFile {
     NSURL *URL = [self URLForBranchDirectory];
     URL = [URL URLByAppendingPathComponent:BRANCH_PREFS_FILE];
     return URL;
-    }
+}
 
-+ (void) moveOldPrefsFile
-    {
++ (void) moveOldPrefsFile {
     NSURL *oldURL = [NSURL fileURLWithPath:self.prefsFile_deprecated];
     NSURL *newURL = [self URLForBranchDirectory];
 
@@ -752,22 +737,19 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         toURL:newURL
         error:&error];
 
-    if (error && error.code != NSFileNoSuchFileError)
-        {
-        if (error.code == NSFileWriteFileExistsError)
-            {
+    if (error && error.code != NSFileNoSuchFileError) {
+        if (error.code == NSFileWriteFileExistsError) {
             [[NSFileManager defaultManager]
                 removeItemAtURL:oldURL
                 error:&error];
-            }
-        else
+        } else {
             NSLog(@"Error moving prefs file: %@.", error);
         }
     }
+}
 
-+ (void) initialize
-    {
++ (void) initialize {
     [self moveOldPrefsFile];
-    }
+}
 
 @end

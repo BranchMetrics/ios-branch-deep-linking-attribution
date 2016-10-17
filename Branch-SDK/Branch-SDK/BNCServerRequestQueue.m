@@ -187,14 +187,12 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 
 - (void)persistImmediately {
     [self.writeTimer invalidate];
-    
     [self persistToDisk];
 }
 
 - (void)persistToDisk {
     NSArray *requestsToPersist = [self.queue copy];
-    dispatch_async(self.asyncQueue,
-    ^   {
+    dispatch_async(self.asyncQueue, ^ {
         @try {
             NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
             for (BNCServerRequest *req in requestsToPersist) {
@@ -208,29 +206,26 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
             }
 
             NSData *data = [NSKeyedArchiver archivedDataWithRootObject:encodedRequests];
-            if (!data)
-                {
+            if (!data) {
                 [[BNCPreferenceHelper preferenceHelper]
                     logWarning:@"Cannot create archive data."];
                 return;
-                }
+            }
             NSError *error = nil;
             [data writeToURL:self.class.URLForQueueFile
                 options:NSDataWritingAtomic error:&error];
-            if (error)
-                {
+            if (error) {
                 [[BNCPreferenceHelper preferenceHelper] logWarning:
                     [NSString stringWithFormat:@"Failed to persist queue to disk: %@", error]];
-                }
             }
-        @catch (NSException *exception)
-            {
+        }
+        @catch (NSException *exception) {
             NSString *warningMessage =
                 [NSString stringWithFormat:
                     @"An exception occurred while attempting to save the queue. Exception information:\n\n%@",
                         [self exceptionString:exception]];
             [[BNCPreferenceHelper preferenceHelper] logWarning:warningMessage];
-            }
+        }
     });
 }
 
@@ -247,9 +242,8 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
                 [NSString stringWithFormat:@"Error loading network queue: %@.", error]];
         else
             encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-        }
-    @catch (NSException *exception)
-        {
+    }
+    @catch (NSException *exception) {
         NSString *warningMessage =
             [NSString stringWithFormat:
                 @"An exception occurred while attempting to load the queue file, proceeding without requests. Exception information:\n\n%@",
@@ -257,7 +251,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
         [[BNCPreferenceHelper preferenceHelper] logWarning:warningMessage];
         self.queue = queue;
         return;
-        }
+    }
 
     for (NSData *encodedRequest in encodedRequests) {
         BNCServerRequest *request;
@@ -292,24 +286,21 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     return [NSString stringWithFormat:@"Name: %@\nReason: %@\nStack:\n\t%@\n\n", exception.name, exception.reason, [exception.callStackSymbols componentsJoinedByString:@"\n\t"]];
 }
 
-+ (NSString *)queueFile_deprecated
-    {
++ (NSString *)queueFile_deprecated {
     NSString *path =
         [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)
             firstObject]
                 stringByAppendingPathComponent:BRANCH_QUEUE_FILE];
     return path;
-    }
+}
 
-+ (NSURL*) URLForQueueFile
-    {
++ (NSURL*) URLForQueueFile {
     NSURL *URL = [BNCPreferenceHelper URLForBranchDirectory];
     URL = [URL URLByAppendingPathComponent:BRANCH_QUEUE_FILE];
     return URL;
-    }
+}
 
-+ (void) moveOldQueueFile
-    {
++ (void) moveOldQueueFile {
     NSURL *oldURL = [NSURL fileURLWithPath:self.queueFile_deprecated];
     NSURL *newURL = [self URLForQueueFile];
     NSError *error = nil;
@@ -318,23 +309,20 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
         toURL:newURL
         error:&error];
 
-    if (error && error.code != NSFileNoSuchFileError)
-        {
-        if (error.code == NSFileWriteFileExistsError)
-            {
+    if (error && error.code != NSFileNoSuchFileError) {
+        if (error.code == NSFileWriteFileExistsError) {
             [[NSFileManager defaultManager]
                 removeItemAtURL:oldURL
                 error:&error];
-            }
-        else
+        } else {
             NSLog(@"Error moving queue file: %@.", error);
         }
     }
+}
 
-+ (void) initialize
-    {
++ (void) initialize {
     [self moveOldQueueFile];
-    }
+}
 
 #pragma mark - Singleton method
 
@@ -342,12 +330,15 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     static BNCServerRequestQueue *sharedQueue = nil;
     static dispatch_once_t onceToken;
     
-    dispatch_once(&onceToken, ^{
+    dispatch_once(&onceToken, ^ {
         sharedQueue = [[BNCServerRequestQueue alloc] init];
         [sharedQueue retrieve];
-        [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Retrieved from Persist: %@", sharedQueue];
+        [[BNCPreferenceHelper preferenceHelper]
+            log:FILE_NAME
+            line:LINE_NUM
+            message:@"Retrieved from Persist: %@", sharedQueue];
     });
-    
+
     return sharedQueue;
 }
 
