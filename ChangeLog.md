@@ -6,6 +6,8 @@ Branch iOS SDK change log
   * INT-2882: Moved Branch support files from Documents directory to Application Support directory.
   * Github #487: Updated documentation to mention that application:willFinishLaunchingWithOptions:
     also has to return YES on app launch.
+  * Merged the Swift 3.0 Test-Bed.
+
 - v0.12.12
   * Updated Swift example to Swift 3.0
   * Updated Update README.md Documentation Syntax for Swift
