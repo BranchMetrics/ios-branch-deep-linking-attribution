@@ -28,6 +28,10 @@
 @property (nonatomic, strong) NSNumber *screenHeight;
 @property (nonatomic) BOOL isAdTrackingEnabled;
 
+@property (nonatomic, strong) NSString* country;            //  iso2 Country name (us, in,etc).
+@property (nonatomic, strong) NSString* language;           //  iso2 language code (en, ml).
+@property (nonatomic, strong) NSString* browserUserAgent;   //  Simple user agent string.
+
 
 //----------Methods----------------//
 + (BNCDeviceInfo *)getInstance;
