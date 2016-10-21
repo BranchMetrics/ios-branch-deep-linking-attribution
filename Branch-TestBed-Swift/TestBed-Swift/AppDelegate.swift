@@ -14,10 +14,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        if let branch = Branch.getInstance() {
-            branch.setDebug()
+        let defaultBranchKey = Bundle.main.object(forInfoDictionaryKey: "branch_key") as! String
+        var branchKey = defaultBranchKey
+        
+        if let pendingBranchKey = DataStore.getPendingBranchKey() as String? {
+            if pendingBranchKey != "" {
+                branchKey = pendingBranchKey
+            }
+            DataStore.setActiveBranchKey(branchKey)
+        } else {
+            branchKey = defaultBranchKey
+            DataStore.setActiveBranchKey(defaultBranchKey)
+        }
+        
+        if let branch = Branch.getInstance(branchKey) {
             
-            // Automatic Deeplinking on "~referring_link"
+            if DataStore.getPendingSetDebugEnabled()! {
+                branch.setDebug()
+                DataStore.setActivePendingSetDebugEnabled(true)
+            } else {
+                DataStore.setActivePendingSetDebugEnabled(false)
+            }
+            
             let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UINavigationController
             branch.registerDeepLinkController(navigationController, forKey:"~referring_link")
             
@@ -54,6 +72,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let notificationName = Notification.Name("BranchCallbackCompleted")
                 NotificationCenter.default.post(name: notificationName, object: nil)
             })
+        } else {
+            print("Branch TestBed: Invalid Key\n")
+            DataStore.setActiveBranchKey("")
+            DataStore.setPendingBranchKey("")
         }
         return true
     }
