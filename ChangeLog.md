@@ -1,5 +1,11 @@
 Branch iOS SDK change log
 
+- v0.12.13
+  * AIS-106: Included user_agent in device POST parameters.
+  * AIS-109: Included language & country in device POST parameters.
+  * INT-2882: Moved Branch support files from Documents directory to Application Support directory.
+  * Github #487: Updated documentation to mention that application:willFinishLaunchingWithOptions:
+    also has to return YES on app launch.
 - v0.12.12
   * Updated Swift example to Swift 3.0
   * Updated Update README.md Documentation Syntax for Swift
@@ -18,7 +24,7 @@ Branch iOS SDK change log
 - v0.12.10
   * Fix for issue causing initsession hang on cold start from universal link
   * Adding few crash protection
-  * Removing BUO nullable fields  
+  * Removing BUO nullable fields
 
 - v0.12.9
   * Fixing the time delay for strong match check using SVC
@@ -37,7 +43,7 @@ Branch iOS SDK change log
   * Remove debug gesture
   * Better instrumentation on retries
   * Add checksumming to the release procedure
-  * Fix Branch & Mopub Fabric header conflict 
+  * Fix Branch & Mopub Fabric header conflict
   * Nullability and nonnull support for Swift
   * Add campaign to link properties
   * iOS 10 optimizations
@@ -47,7 +53,7 @@ Branch iOS SDK change log
   * fix module.map path on Carthage project
   * ability to whitelist URI schemes
 
-- v0.12.4 
+- v0.12.4
   * setDebug must be called on getInstance. It's no longer a static method.
   * referral code and promo code methods are no longer available
   * action count methods are no longer available
@@ -60,7 +66,7 @@ Branch iOS SDK change log
 - v0.12.3
   * Fabric Answers integration
   * Swift Testbed
-  * Retry in poor network conditions 
+  * Retry in poor network conditions
   * Fix for Facebook calling openUrl from within the app
   * Fix Fabric headers conflict
   * Simplify Carthage project
@@ -111,7 +117,7 @@ Branch iOS SDK change log
   * workaround for Facebook sometimes returning NO from didFinishLaunching
   * spotlight IDs optionally returned in indexing callbacks
   * added ability to have custom parameters appear in deeplink data for debugging
-  * removed fftl 
+  * removed fftl
   * added externalIntentURI to capture referrals
 
 - v0.11.13
@@ -128,7 +134,7 @@ Branch iOS SDK change log
   * Set email subject on share sheet
   * 100% matching prototype. Woo!
   * BRanchUniversalObject with only canonical url allowed
-  * Update register-view call so it's no longer a flat object  
+  * Update register-view call so it's no longer a flat object
   * Fix debug tests
   * Fix setUserUrl capitalization
   * TeamID can be gotten from plist or original way
@@ -162,7 +168,7 @@ Branch iOS SDK change log
     * easy listing for Spotlight search
   * fixed bugs / made additions for debug mode
   * squashed annoying warnings that some users saw
-  * safer unarchiving of saved info (BNCPreferenceHelper) 
+  * safer unarchiving of saved info (BNCPreferenceHelper)
 
 - v0.11.6
   * fix race condition if certain methods are invoked before initSession
@@ -227,7 +233,7 @@ Branch iOS SDK change log
     * If isReferrable is false, it will not be set.
     * If the session data returned from the API call is empty, it will not be set.
     * If the session data is not from a link click, it will not be set.
-    * If the request is an open request, it will only be set if install params are empty.  
+    * If the request is an open request, it will only be set if install params are empty.
 
 - v0.10.2
   * Fixing potential for bad types to come through in UserIdentity (number rather than string).
