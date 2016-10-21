@@ -40,6 +40,10 @@ class ViewController: UITableViewController {
     @IBOutlet weak var rewardPointsToRedeemTextField: UITextField!
     @IBOutlet weak var customEventNameTextField: UITextField!
     @IBOutlet weak var customEventMetadataTextView: UITextView!
+    @IBOutlet weak var activeBranchKeyTextField: UITextField!
+    @IBOutlet weak var activeSetDebugEnabledSwitch: UISwitch!
+    @IBOutlet weak var pendingBranchKeyTextField: UITextField!
+    @IBOutlet weak var pendingSetDebugEnabledSwitch: UISwitch!
     
     var linkProperties = [String: AnyObject]()
     var universalObjectProperties = [String: AnyObject]()
@@ -90,16 +94,13 @@ class ViewController: UITableViewController {
                                        name: Notification.Name("BranchCallbackCompleted"),
                                        object: nil)
         
-
-        
         linkTextField.text = ""
         refreshControlValues()
         refreshEnabledButtons()
     }
     
     func applicationDidBecomeActive() {
-        loadLinkPropertiesButton.isEnabled = false
-        loadObjectPropertiesButton.isEnabled = false
+        refreshEnabledButtons()
     }
     
     func refreshEnabledButtons() {
@@ -107,8 +108,6 @@ class ViewController: UITableViewController {
         
         if let clickedBranchLink = Branch.getInstance().getLatestReferringParams()["+clicked_branch_link"] as! Bool? {
             enableButtons = clickedBranchLink
-            
-            print(Branch.getInstance().getLatestReferringParams().JSONDescription())
         }
         if enableButtons == true {
             loadLinkPropertiesButton.isEnabled = true
@@ -174,6 +173,8 @@ class ViewController: UITableViewController {
                 self.performSegue(withIdentifier: "ShowContentView", sender: "FirstReferringParams")
                 print("Branch TestBed: FirstReferringParams:\n", content)
             }
+        case (6,0) :
+            self.performSegue(withIdentifier: "ShowTextViewFormNavigationBar", sender: "pendingBranchKey")
         default : break
         }
     }
@@ -184,18 +185,20 @@ class ViewController: UITableViewController {
             setBranchLinkProperty(key)
         }
         
-        print(universalObjectProperties["$canonical_identifier"])
         if let canonicalIdentifier = universalObjectProperties["$canonical_identifier"] as? String {
             branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
         } else {
-            print(universalObjectProperties["$canonical_identifier"])
-            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: "_")
+            var canonicalIdentifier = ""
+            for _ in 1...18 {
+                canonicalIdentifier.append(String(arc4random_uniform(10)))
+            }
+            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
         }
         
         for key in universalObjectProperties.keys {
             setBranchUniversalObjectProperty(key)
         }
-        
+
         branchUniversalObject.showShareSheet(with: branchLinkProperties, andShareText: shareText, from: self, anchor: actionButton) { (activityType, completed) in
             if (completed) {
                 print(String(format: "Branch TestBed: Completed sharing to %@", activityType!))
@@ -216,7 +219,6 @@ class ViewController: UITableViewController {
                 linkProperties[key] = value as AnyObject?
             }
         }
-        
         self.showAlert("Link Properties Loadded", withDescription: "")
     }
     
@@ -245,7 +247,6 @@ class ViewController: UITableViewController {
             setBranchLinkProperty(key)
         }
         
-        print(universalObjectProperties["$canonical_identifier"])
         if let canonicalIdentifier = universalObjectProperties["$canonical_identifier"] as? String {
             branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
         } else {
@@ -332,28 +333,10 @@ class ViewController: UITableViewController {
         }
     }
     
-    @IBAction func viewFirstReferringParamsButtonTouchUpInside(_ sender: AnyObject) {
-        let branch = Branch.getInstance()
-        let params = branch?.getFirstReferringParams()
-        let content = String(format:"FirstReferringParams:\n\n%@", (params?.description)!)
-        
-        self.performSegue(withIdentifier: "ShowContentView", sender: content)
-        print("Branch TestBed: FirstReferringParams:\n", content)
+    @IBAction func pendingSetDebugEnabledButtonValueChanged(_ sender: AnyObject) {
+        DataStore.setPendingPendingSetDebugEnabled(self.pendingSetDebugEnabledSwitch.isOn)
     }
     
-    @IBAction func viewLatestReferringParamsButtonTouchUpInside(_ sender: AnyObject) {
-        let branch = Branch.getInstance()
-        let params = branch?.getFirstReferringParams()
-        let content = String(format:"LatestReferringParams:\n\n%@", (params?.description)!)
-        
-        self.performSegue(withIdentifier: "ShowContentView", sender: content)
-        print("Branch TestBed: LatestReferringParams:\n", content)
-    }
-    
-    @IBAction func simulateContentAccessButtonTouchUpInside(_ sender: AnyObject) {
-        self.branchUniversalObject.registerView()
-        self.showAlert("Content Access Registered", withDescription: "")
-    }
     
     func textFieldDidChange(_ sender:UITextField) {
         sender.resignFirstResponder()
@@ -455,6 +438,15 @@ class ViewController: UITableViewController {
             } else {
                 vc.contentType = "\nApp has not yet been opened via a Branch link"
             }
+        case "pendingBranchKey":
+            let nc = segue.destination as! UINavigationController
+            let vc = nc.topViewController as! TextViewFormTableViewController
+            vc.sender = sender as! String
+            vc.viewTitle = "Branch Key"
+            vc.header = "Branch Key"
+            vc.footer = "This Branch key will be used the next time the application is closed (not merely backgrounded) and re-opened."
+            vc.keyboardType = UIKeyboardType.alphabet
+            vc.incumbantValue = DataStore.getPendingBranchKey()!
         default:
             break
         }
@@ -536,6 +528,14 @@ class ViewController: UITableViewController {
                     }
                     DataStore.setCustomEventName(customEventName)
                     self.customEventNameTextField.text = customEventName
+                }
+            case "pendingBranchKey":
+                if let pendingBranchKey = vc.textView.text {
+                    guard self.pendingBranchKeyTextField.text != pendingBranchKey else {
+                        return
+                    }
+                    DataStore.setPendingBranchKey(pendingBranchKey)
+                    self.pendingBranchKeyTextField.text = pendingBranchKey
                 }
             default: break
             }
@@ -667,6 +667,14 @@ class ViewController: UITableViewController {
             customEventMetadataTextView.text = customEventMetadata.description
         } else {
             customEventMetadataTextView.text = ""
+        }
+        activeBranchKeyTextField.text = DataStore.getActiveBranchKey()
+        activeSetDebugEnabledSwitch.isOn = DataStore.getActiveSetDebugEnabled()!
+        pendingBranchKeyTextField.text = DataStore.getPendingBranchKey()
+        pendingSetDebugEnabledSwitch.isOn = DataStore.getPendingSetDebugEnabled()!
+        
+        if activeBranchKeyTextField.text == "" {
+            showAlert("Initialization Failure", withDescription: "Close and re-open app to initialize Branch")
         }
     }
     

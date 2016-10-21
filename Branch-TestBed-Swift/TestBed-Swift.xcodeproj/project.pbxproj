@@ -452,7 +452,7 @@
 				INFOPLIST_FILE = "TestBed-Swift/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Swift.TestBed;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.TestBed-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "TestBed-Swift/TestBed-Swift-Bridging-Header.h";
@@ -473,7 +473,7 @@
 				INFOPLIST_FILE = "TestBed-Swift/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.branch.Swift.TestBed;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.TestBed-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "TestBed-Swift/TestBed-Swift-Bridging-Header.h";
