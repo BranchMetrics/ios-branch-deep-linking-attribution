@@ -13,6 +13,8 @@ Better Match keys, Better Documentation - Tuesday, October 25 2016
 
 *  There are no significant new features in this release.
 
+*  Testing notes:  All fixes were bug fixes.  Make sure that existing tests run OK.
+
 
 ####  Branch Version 0.12.12
 Bug Fixes, Swift Updates, and iOS 10 Compatibility – Tuesday, October 11 2016
