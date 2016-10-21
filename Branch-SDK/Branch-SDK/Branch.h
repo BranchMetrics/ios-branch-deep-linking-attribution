@@ -428,9 +428,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)setNetworkTimeout:(NSTimeInterval)timeout;
 
 /**
- Specify that Branch should use an invisible SFSafariViewController to attempt cookie-based matching. Enabled by default.
- 
- @warning Please import SafariServices in order for this to work.
+ Specify that Branch should NOT use an invisible SFSafariViewController to attempt cookie-based matching upon install.
+ If you call this method, we will fall back to using our pool of cookie-IDFA pairs for matching.
  */
 - (void)disableCookieBasedMatching;
 
