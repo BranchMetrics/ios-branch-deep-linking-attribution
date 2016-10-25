@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 [ $# -eq 0 ] && { echo "Usage: $0 1.0.0"; exit 1; }
 
@@ -23,14 +24,14 @@ sed 's/Branch iOS SDK change log/Branch iOS SDK change log\
 - v'$1'\
   */' <$CHANGELOG_LOC >$SED_TMP_LOC && mv $SED_TMP_LOC $CHANGELOG_LOC
 
-# Prompt for editor input for ChangeLog. 
+# Prompt for editor input for ChangeLog.
 vim +4 +star $CHANGELOG_LOC
 
 # Build the framework
 sh $SCRIPT_DIR/build_framework.sh
 
 # Commit and tag
-git add .
+git add --all
 git commit -m "Updates for $1 release."
 git tag $1
 git push --tags origin master
@@ -42,4 +43,4 @@ pod trunk push $PODSPEC_LOC
 sh $SCRIPT_DIR/upload_zips.sh
 
 # Prompt for SDK Releases Group post
-open https://groups.google.com/forum/#!newtopic/branch-sdk-releases
+open 'https://groups.google.com/forum/#!newtopic/branch-sdk-releases'
