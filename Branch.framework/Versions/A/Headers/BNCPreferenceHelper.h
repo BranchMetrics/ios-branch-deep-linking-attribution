@@ -39,6 +39,7 @@
 @property (assign, nonatomic) NSInteger installRequestDelay;
 
 + (BNCPreferenceHelper *)preferenceHelper;
++ (NSURL*) URLForBranchDirectory;
 
 - (NSString *)getAPIBaseURL;
 - (NSString *)getAPIURL:(NSString *)endpoint;
