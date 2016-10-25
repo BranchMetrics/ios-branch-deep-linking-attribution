@@ -1,7 +1,8 @@
-iOS SDK Release Procedure   Last update: 10/25/2016
-======================================
+iOS SDK Release Procedure
+=========================
+### Last update: 10/25/2016
 
-Steps to release the iOS SDK:
+# Steps to release the iOS SDK:
 
 1) Decide which Pull Requests (changes) will be included in the release
 	• are they fixing a partner issue?
