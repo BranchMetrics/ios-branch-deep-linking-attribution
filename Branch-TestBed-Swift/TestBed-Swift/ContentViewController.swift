@@ -31,11 +31,15 @@ class ContentViewController: UIViewController {
                         imageView.isHidden = false
                         imageView.loadImageFromUrl(url: imageURL)
                         print("ImageURL=\(imageURL)")
+                        
                     }
                 }
                 
-                universalObject.automaticallyListOnSpotlight = true
-                universalObject.userCompletedAction(BNCRegisterViewEvent)
+                if universalObject.canonicalIdentifier != "" {
+                    universalObject.automaticallyListOnSpotlight = true
+                    universalObject.userCompletedAction(BNCRegisterViewEvent)
+                }
+                
             }
         } else if contentType == "LatestReferringParams" {
             if let latestReferringParams = Branch.getInstance().getLatestReferringParams() {

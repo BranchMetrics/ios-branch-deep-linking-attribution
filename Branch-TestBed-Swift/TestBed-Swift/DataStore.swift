@@ -143,4 +143,48 @@ struct DataStore {
         userDefaults.set(value, forKey: "customEventMetadata")
     }
     
+    static func getActiveBranchKey() -> String? {
+        if let value = userDefaults.string(forKey: "activeBranchKey") {
+            return value
+        } else {
+            let value = ""
+            userDefaults.setValue(value, forKey: "activeBranchKey")
+            return value
+        }
+    }
+    
+    static func setActiveBranchKey(_ value: String) {
+        userDefaults.setValue(value, forKey: "activeBranchKey")
+    }
+    
+    static func getPendingBranchKey() -> String? {
+        if let value = userDefaults.string(forKey: "pendingBranchKey") {
+            return value
+        } else {
+            let value = ""
+            userDefaults.setValue(value, forKey: "pendingBranchKey")
+            return value
+        }
+    }
+    
+    static func setPendingBranchKey(_ value: String) {
+        userDefaults.setValue(value, forKey: "pendingBranchKey")
+    }
+    
+    static func getActiveSetDebugEnabled() -> Bool? {
+        return userDefaults.bool(forKey: "activeSetDebug")
+    }
+    
+    static func setActivePendingSetDebugEnabled(_ value: Bool) {
+        userDefaults.setValue(value, forKey: "activeSetDebug")
+    }
+    
+    static func getPendingSetDebugEnabled() -> Bool? {
+        return userDefaults.bool(forKey: "pendingSetDebug")
+    }
+    
+    static func setPendingPendingSetDebugEnabled(_ value: Bool) {
+        userDefaults.setValue(value, forKey: "pendingSetDebug")
+    }
+    
 }

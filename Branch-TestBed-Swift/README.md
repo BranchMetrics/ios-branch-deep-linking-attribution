@@ -1,3 +1,9 @@
+# Branch TestBed-Swift
+
+This iOS application can be used to test Branch deep linking functionality and validate proposed use cases.  
+
+It is available on the App Store: https://testbed-swift.app.link/appstore
+
 ## Create a personal copy of Branch's Swift TestBed app for testing!
 
 1. From the command line:

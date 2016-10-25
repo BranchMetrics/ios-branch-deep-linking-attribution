@@ -1,23 +1,22 @@
-iOS SDK Release Procedure   Last update: 9/9/2016 
-======================================
+iOS SDK Release Procedure
+=========================
+### Last update: 10/25/2016
 
-Steps to release the iOS SDK:
+# Steps to release the iOS SDK:
 
 1) Decide which Pull Requests (changes) will be included in the release
 	• are they fixing a partner issue?
 	• are there tests that verify the correctness of the change?
 
-2) Accept the pull requests and merge them into the project.  
+2) Accept the pull requests and merge them into the project.
 	• get a thumbs-up from at least one person
 	• merge them one at a time, to verify no conflicts
 	• delete the branches you merge (they can be restored later if necessary)
 
 3) Make sure that the code builds from XCode
-	• git checkout staging
+	• git checkout QA
 	• git pull
 	• run the Testbed from XCode and make sure it works
-	• git checkout master
-	• git merge staging
 
 3) Run the pre-release script
 	• from the root directory of the iOS SDK, run 'sh scripts/pre-release.sh'
@@ -25,7 +24,7 @@ Steps to release the iOS SDK:
 	• (more details! What to do if it fails?)
 
 4) Run the release script
-	• this script requires a new version number as an argument (ex: 0.8.5)	
+	• this script requires a new version number as an argument (ex: 0.8.5)
 	• from the root directory of the iOS SDK, run  'sh scripts/release.sh <version>'  (ex 0.8.5)
 	• this script does several things:
 		• it opens the changelog on the command line. Add release notes here and save them.
@@ -52,7 +51,7 @@ Steps to release the iOS SDK:
 	• run carthage build --no-skip-current && carthage archive Branch
 	• go to https://github.com/BranchMetrics/ios-branch-deep-linking/releases and click on Draft a new release
 	• Choose the release version, put some funny (required!) title and add the ChangeLog to the Description
-	• In the attachment sections, chosee the zipped framework in the carthage-files directory (different from the fabric one)
+	• In the attachment sections, choose the zipped framework in the carthage-files directory (different from the fabric one)
 	• Publish Release
 
 Important Note about Carthage:
