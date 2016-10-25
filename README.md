@@ -210,7 +210,7 @@ To deep link, Branch must initialize a session to check if the user originated f
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
     BOOL handledByBranch = [[Branch getInstance] continueUserActivity:userActivity];
-    
+
     return handledByBranch;
 }
 
@@ -249,6 +249,22 @@ func application(_ application: UIApplication, didReceiveRemoteNotification laun
     Branch.getInstance().handlePushNotification(launchOptions)
 }
 ```
+
+
+Note:  If your application delegate declares the method:
+
+```
+- (BOOL) application:willFinishLaunchingWithOptions:
+```
+
+In Swift:
+
+```
+optional func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool
+```
+
+it must return ```YES``` for Branch to work.
+
 
 #### Parameters
 
@@ -719,7 +735,7 @@ linkProperties.feature = @"sharing";
 ```objc
 [branchUniversalObject showShareSheetWithLinkProperties:linkProperties
                                            andShareText:@"Super amazing thing I want to share!"
-                                     fromViewController:self 
+                                     fromViewController:self
                                              completion:^(NSString *activityType, BOOL completed){
     NSLog(@"finished presenting");
 }];
@@ -748,9 +764,9 @@ branchUniversalObject.showShareSheet(with: linkProperties,
 
 **andShareText**: A dictionary to use while building up the Branch link.
 
-**fromViewController**: 
+**fromViewController**:
 
-**completion**: 
+**completion**:
 
 #### Further Customization
 
