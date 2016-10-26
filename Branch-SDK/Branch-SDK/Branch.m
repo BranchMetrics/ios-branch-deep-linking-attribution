@@ -1368,7 +1368,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 }
 
 + (NSString *)kitDisplayVersion {
-	return @"0.12.13";
+	return @"0.12.14";
 }
 
 @end
