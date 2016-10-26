@@ -3,6 +3,12 @@ Branch SDK Release Notes
 ========================
 
 
+####  Branch Version 0.12.14
+Xcode 7 Support - Wednesday, October 26 2016
+
+*  This release fixes a compile error with Xcode 7.
+
+
 ####  Branch Version 0.12.13
 Better Match keys, Better Documentation - Tuesday, October 25 2016
 
