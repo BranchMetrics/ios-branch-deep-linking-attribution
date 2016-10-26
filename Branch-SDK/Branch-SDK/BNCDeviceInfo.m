@@ -6,11 +6,14 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
+
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
+#import "BNCXcode7Support.h"
+
 
 @interface BNCDeviceInfo()
 
@@ -74,8 +77,9 @@ static BNCDeviceInfo *bncDeviceInfo;
 
     } else {
 
-        self.country = [NSLocale currentLocale].countryCode;
-        self.language = [NSLocale currentLocale].languageCode;
+        NSLocale *locale = [NSLocale currentLocale];
+        self.country = [locale countryCode];
+        self.language = [locale languageCode ];
 
     }
 
