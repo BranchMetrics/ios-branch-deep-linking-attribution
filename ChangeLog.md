@@ -1,5 +1,8 @@
 Branch iOS SDK change log
 
+- v0.12.14
+  *  This release fixes a compile error with Xcode 7.
+
 - v0.12.13
   * AIS-106: Included user_agent in device POST parameters.
   * AIS-109: Included language & country in device POST parameters.
