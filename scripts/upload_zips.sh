@@ -1,4 +1,5 @@
 #/bin/sh
+set -euo pipefail
 
 echo 'Zipping Branch-iOS-SDK'
 zip -rqy Branch-iOS-SDK.zip Branch-SDK/ Branch.framework/
