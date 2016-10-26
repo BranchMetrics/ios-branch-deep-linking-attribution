@@ -58,7 +58,6 @@
             error:&error];
     if (error) {
         NSLog(@"Error creating URLForPrefsDirectory: %@.", error);
-        return nil;
     }
     URL = [URL URLByAppendingPathComponent:@"io.branch"];
 
