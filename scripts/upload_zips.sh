@@ -1,6 +1,12 @@
 #/bin/sh
 set -euo pipefail
 
+#  Upload the SDK and the TestBed to AWS.
+#
+#  The files can be downloaded from:
+#  https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip
+#  https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip
+
 echo 'Zipping Branch-iOS-SDK'
 zip -rqy Branch-iOS-SDK.zip Branch-SDK/ Branch.framework/
 
