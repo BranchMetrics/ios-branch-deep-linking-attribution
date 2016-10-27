@@ -177,18 +177,25 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         else if ([ret isKindOfClass:[NSDictionary class]]) {
             self.branchKey = isLive ? ret[@"live"] : ret[@"test"];
         }
-    } else {
-        Class fabric = NSClassFromString(@"Fabric");
         
-        if (fabric) {
+    } else {
+
+        Class fabric = NSClassFromString(@"Fabric");
+        if ([fabric respondsToSelector:@selector(configurationDictionaryForKitClass:)]) {
+
             NSDictionary *configDictionary = [fabric configurationDictionaryForKitClass:[Branch class]];
             ret = [configDictionary objectForKey:BNC_BRANCH_FABRIC_APP_KEY_KEY];
             
             if ([ret isKindOfClass:[NSString class]]) {
+
                 self.branchKey = ret;
-            }
-            else if ([ret isKindOfClass:[NSDictionary class]]) {
+
+            } else if ([ret isKindOfClass:[NSDictionary class]]) {
+
                 self.branchKey = isLive ? ret[@"live"] : ret[@"test"];
+                if (![self.branchKey isKindOfClass:NSString.class])
+                    self.branchKey = nil;
+
             }
         }
     }
