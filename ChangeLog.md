@@ -1,7 +1,12 @@
-Branch iOS SDK change log
+Branch iOS SDK Change Log
+
+- v0.12.15 (Pre-release)
+  * Check for older versions of the Fabric SDK instead of just crashing (AIS-102).
+    - Testing note:  This is a pretty contrived problem that isn't easily testable.
+      I stepped through the code with the debugger and it worked.
 
 - v0.12.14
-  *  This release fixes a compile error with Xcode 7.
+  * This release fixes a compile error with Xcode 7.
 
 - v0.12.13
   * AIS-106: Included user_agent in device POST parameters.
@@ -27,7 +32,7 @@ Branch iOS SDK change log
   * Fix for few swift compatibility issues
 
 - v0.12.10
-  * Fix for issue causing initsession hang on cold start from universal link
+  * Fix for issue causing initSession hang on cold start from universal link
   * Adding few crash protection
   * Removing BUO nullable fields
 
@@ -102,7 +107,7 @@ Branch iOS SDK change log
 - v0.11.17
   * Carthage support
   * account for different anchors on iPad for share sheet
-  * add canonincal ID and URL to spotlight index
+  * add canonical ID and URL to spotlight index
   * change matchDuration parameter sent to the backend
   * fix unit tests
   * URL encoding for iOS 6

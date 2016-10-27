@@ -177,7 +177,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         else if ([ret isKindOfClass:[NSDictionary class]]) {
             self.branchKey = isLive ? ret[@"live"] : ret[@"test"];
         }
-        
+
     } else {
 
         Class fabric = NSClassFromString(@"Fabric");
