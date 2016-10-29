@@ -749,7 +749,9 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 }
 
 + (void) initialize {
-    [self moveOldPrefsFile];
+    if (self == [BNCPreferenceHelper self]) {
+        [self moveOldPrefsFile];
+    }
 }
 
 @end
