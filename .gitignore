@@ -11,6 +11,7 @@
 
 # Pods
 Pods/
+Podfile.lock
 
 # Carthage
 Carthage/Build
