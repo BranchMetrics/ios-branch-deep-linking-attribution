@@ -321,7 +321,9 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 }
 
 + (void) initialize {
-    [self moveOldQueueFile];
+    if (self == [BNCServerRequestQueue self]) {
+        [self moveOldQueueFile];
+    }
 }
 
 #pragma mark - Singleton method
