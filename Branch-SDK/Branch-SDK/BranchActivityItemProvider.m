@@ -73,7 +73,7 @@
     }
     
     // Because Facebook et al immediately scrape URLs, we add an additional parameter to the existing list, telling the backend to ignore the first click
-    NSArray *scrapers = @[@"facebook", @"twitter", @"com.tinyspeck.chatlyio.share", @"com.apple.mobilenotes.SharingExtension"];
+    NSArray *scrapers = @[@"facebook", @"twitter", @"slack", @"com.apple.mobilenotes.SharingExtension"];
     for (NSString *scraper in scrapers) {
         if ([channel isEqualToString:scraper])
             return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andCampaign:campaign andAlias:alias ignoreUAString:self.userAgentString forceLinkCreation:YES]];
@@ -105,6 +105,8 @@
         channel = @"print";
     } else if ([activityString isEqualToString:UIActivityTypeSaveToCameraRoll]) {
         channel = @"camera_roll";
+    } else if ([activityString isEqualToString:@"com.tinyspeck.chatlyio.share"]) {
+        channel = @"slack";
     } else if ([BNCSystemObserver getOSVersion].integerValue >= 7) {
         if ([activityString isEqualToString:UIActivityTypeAddToReadingList]) {
             channel = @"reading_list";
