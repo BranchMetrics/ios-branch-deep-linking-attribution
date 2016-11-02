@@ -34,6 +34,7 @@
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchRegisterViewRequest.h"
 #import "BranchContentDiscoverer.h"
+#import "BNCSearchAdAttribution.h"
 
 //Fabric
 #import "../Fabric/FABKitProtocol.h"
@@ -337,7 +338,9 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
             self.preferenceHelper.universalLinkUrl = branchUrlFromPush;
         }
     }
-    
+
+    [BNCSearchAdAttribution checkAttributionWithCompletion:nil];    //  eDebug !!! Testing
+
     if ([BNCSystemObserver getOSVersion].integerValue >= 8) {
         if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             // If Facebook SDK is present, call deferred app link check here
