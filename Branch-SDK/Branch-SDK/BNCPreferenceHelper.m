@@ -413,6 +413,17 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     }
 }
 
+- (void) setAppleSearchAdDetails:(NSDictionary*)details
+{
+    [self writeObjectToDefaults:@"appleSearchAdDetails" value:details];
+}
+
+- (NSDictionary*) appleSearchAdDetails
+{
+    NSDictionary *dictionary = (NSDictionary*) [self readObjectFromDefaults:@"appleSearchAdDetails"];
+    return [dictionary isKindOfClass:[NSDictionary class]] ? dictionary : nil;
+}
+
 - (NSString *)userUrl {
     if (!_userUrl) {
         _userUrl = [self readStringFromDefaults:BRANCH_PREFS_KEY_USER_URL];
