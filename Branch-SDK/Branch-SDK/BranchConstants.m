@@ -125,3 +125,6 @@ NSString * const BRANCH_CONTENT_DATA_KEY = @"cd";
 NSString * const BRANCH_CONTENT_KEYS_KEY = @"ck";
 NSString * const BRANCH_PACKAGE_NAME_KEY = @"p";
 NSString * const BRANCH_ENTITIES_KEY = @"e";
+
+NSString * const BRANCH_REQUEST_KEY_SEARCH_AD = @"search_ad_encoded";
+

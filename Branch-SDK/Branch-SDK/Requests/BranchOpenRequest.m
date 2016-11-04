@@ -15,6 +15,7 @@
 #import "BNCFabricAnswers.h"
 #import "BranchContentDiscoveryManifest.h"
 #import "BranchContentDiscoverer.h"
+#import "BNCSearchAdAttribution.h"
 
 @interface BranchOpenRequest ()
 
@@ -64,7 +65,11 @@
     [cdDict setObject:[contentDiscoveryManifest getManifestVersion] forKey:BRANCH_MANIFEST_VERSION_KEY];
     [cdDict setObject:[BNCSystemObserver getBundleID] forKey:BRANCH_BUNDLE_IDENTIFIER];
     [self safeSetValue:cdDict forKey:BRANCH_CONTENT_DISCOVER_KEY onDict:params];    
-    
+
+    [self safeSetValue:[BNCSearchAdAttribution lastAttributionWireFormatString]
+        forKey:BRANCH_REQUEST_KEY_SEARCH_AD
+        onDict:params];
+
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
 }
 

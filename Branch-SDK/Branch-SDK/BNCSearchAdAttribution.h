@@ -11,8 +11,6 @@
 
 @interface BNCSearchAdAttribution : NSObject
 
-//- (instancetype _Nullable) init NS_DESIGNATED_INITIALIZER;
-
 + (void) checkAttributionWithCompletion:(void (^_Nullable)(NSDictionary*_Nonnull))completion;
 + (NSDictionary* _Nullable) lastAttribution;
 + (NSString*_Nonnull) lastAttributionWireFormatString;
