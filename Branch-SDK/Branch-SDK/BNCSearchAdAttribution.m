@@ -38,12 +38,12 @@
 {
     return [self readObjectFromDefaults:@"appleSearchAdDetails"];
 }
-        
+
+@property (assign, nonatomic) BOOL waitForAppleSearchAdDetails;
+
 */
 
 
-const NSInteger BNCErrorADClientNotAvailable = 1007;
-const NSString* BNCErrorADClientNotAvailableDescription = @"ADClient is not available on this device.";
 
 
 @interface BNCSearchAdAttribution ()
@@ -73,7 +73,8 @@ const NSString* BNCErrorADClientNotAvailableDescription = @"ADClient is not avai
 {
     Class ADClientClass = NSClassFromString(@"ADClient");
     if (ADClientClass &&
-        [[ADClientClass sharedClient] respondsToSelector:@selector(requestAttributionDetailsWithBlock:)]) {
+        [[ADClientClass sharedClient]
+            respondsToSelector:@selector(requestAttributionDetailsWithBlock:)]) {
 
         [[ADClientClass sharedClient]
             requestAttributionDetailsWithBlock:
@@ -83,19 +84,16 @@ const NSString* BNCErrorADClientNotAvailableDescription = @"ADClient is not avai
 
     } else {
 
-        NSError *error =
-            [NSError errorWithDomain:BNCErrorDomain
-                                code:BNCErrorADClientNotAvailable
-                            userInfo:@{ NSLocalizedDescriptionKey: BNCErrorADClientNotAvailableDescription }];
-        if (completion)
-            completion(nil, error);
+        NSError *error = BNCErrorWithCode(BNCErrorADClientNotAvailable);
+        if (completion) completion(nil, error);
+            
     }
 }
 
 + (void) checkAttributionWithCompletion:(void (^)(NSDictionary*result))completion
 {
     NSDictionary *dictionary = [self.class lastAttribution];
-    if (/* DISABLES CODE */ (NO) /*dictionary*/) {
+    if (/* DISABLES CODE */ (NO) /*dictionary*/) {      //  eDebug
         if (completion) completion(dictionary);
         return;
     }

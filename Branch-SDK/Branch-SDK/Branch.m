@@ -339,8 +339,6 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
         }
     }
 
-    [BNCSearchAdAttribution checkAttributionWithCompletion:nil];    //  eDebug !!! Testing
-
     if ([BNCSystemObserver getOSVersion].integerValue >= 8) {
         if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             // If Facebook SDK is present, call deferred app link check here
@@ -494,6 +492,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 - (BOOL)checkFacebookAppLinks {
     if (self.FBSDKAppLinkUtility) {
+
         SEL fetchDeferredAppLink = NSSelectorFromString(@"fetchDeferredAppLink:");
         
         if ([self.FBSDKAppLinkUtility methodForSelector:fetchDeferredAppLink]) {
@@ -1254,7 +1253,9 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     else if ([self.branchKey rangeOfString:@"key_test_"].location != NSNotFound) {
         [self.preferenceHelper logWarning:@"You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment."];
     }
-    
+
+    [BNCSearchAdAttribution checkAttributionWithCompletion:nil];
+
     if (!self.preferenceHelper.identityID) {
         [self registerInstallOrOpen:[BranchInstallRequest class]];
     }
@@ -1362,6 +1363,13 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 - (void)deepLinkingControllerCompleted {
     [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
+}
+
+#pragma mark - Apple Search Ad results
+
+- (NSDictionary*) appleSearchAdDetails
+{
+    return  [BNCSearchAdAttribution lastAttribution];
 }
 
 #pragma mark FABKit methods

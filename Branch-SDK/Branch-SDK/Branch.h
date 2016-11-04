@@ -469,6 +469,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 - (void)setInstallRequestDelay:(NSInteger)installRequestDelay;
 
+
+///@brief  If YES, initialization is delayed until Apple Search Ad Details are retrieved from the app store.
+@property (assign, nonatomic) BOOL delayForAppleSearchAdDetails;
+
+///@brief  The Apple Search Ad Details as returned from the Apple app store.
+@property (strong, nonatomic, readonly) NSDictionary *appleSearchAdDetails;
+
+
 #pragma mark - Session Item methods
 
 ///--------------------
