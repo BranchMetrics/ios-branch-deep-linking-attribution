@@ -99,6 +99,10 @@
     }
 
     [self _checkAttributionWithCompletion:^ void (NSDictionary *dictionary, NSError*error) {
+    
+        if (dictionary == nil && error == nil)
+            error = BNCErrorWithCode(BNCErrorNoResults);
+
         NSMutableDictionary *result = nil;
         if ([dictionary isKindOfClass:[NSDictionary class]])
             result = [dictionary mutableCopy];

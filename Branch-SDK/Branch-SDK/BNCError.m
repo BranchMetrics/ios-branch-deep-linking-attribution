@@ -13,24 +13,35 @@
 NSString * const BNCErrorDomain = @"io.branch.error";
 
 
+#define _countof(arr) (sizeof(arr) / sizeof(arr[0]))
+
+
 NSError *_Nonnull BNCErrorWithCode(BNCErrorCode errorCode) {
     return BNCErrorWithCodeAndReason(errorCode, nil);
 }
 
+
 NSError *_Nonnull BNCErrorWithCodeAndReason(BNCErrorCode errorCode, NSString* reason) {
 
-    NSString * description = nil;
+    NSString *const localizedDescriptions[] =
+        {
+         nil    //  0
+        ,nil
+        ,nil
+        ,nil
+        ,nil
+        ,nil    //  5
+        ,nil
+        ,@"ADClient is not available."
+        ,@"No results where found."
+        };
 
-    switch (errorCode) {
-    case BNCErrorADClientNotAvailable:
-        description = @"ADClient is not available.";
-        break;
-    default:
-        description = nil;
-    }
+    NSString * description = nil;
+    NSInteger index = errorCode - BNCInitError;
+    if (index >= 0 && index < _countof(localizedDescriptions))
+        description = localizedDescriptions[index];
 
     NSMutableDictionary *userInfo = [NSMutableDictionary new];
-
     if (description)
         userInfo[NSLocalizedDescriptionKey] = description;
     if (reason)
