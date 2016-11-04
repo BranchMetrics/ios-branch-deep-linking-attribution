@@ -23,6 +23,7 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     ,BNCNilLogError                 = 1005
     ,BNCVersionError                = 1006
     ,BNCErrorADClientNotAvailable   = 1007
+    ,BNCErrorNoResults              = 1008
 
 };
 
