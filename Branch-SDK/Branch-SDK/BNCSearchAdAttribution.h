@@ -13,6 +13,6 @@
 
 + (void) checkAttributionWithCompletion:(void (^_Nullable)(NSDictionary*_Nonnull))completion;
 + (NSDictionary* _Nullable) lastAttribution;
-+ (NSString*_Nonnull) lastAttributionWireFormatString;
++ (NSString*_Nullable) lastAttributionWireFormatString;
 
 @end

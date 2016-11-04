@@ -44,8 +44,6 @@
 */
 
 
-
-
 @interface BNCSearchAdAttribution ()
 @end
 
@@ -55,16 +53,23 @@
 + (NSDictionary* _Nullable) lastAttribution
 {
     return [BNCPreferenceHelper preferenceHelper].appleSearchAdDetails;
-    return nil;
 }
 
-+ (NSString*_Nonnull) lastAttributionWireFormatString
++ (NSString*_Nullable) lastAttributionWireFormatString
 {
+    NSString *string = nil;
     NSDictionary *dictionary = [self lastAttribution];
-    if (!dictionary) dictionary = [NSDictionary new];
-    NSString* string = dictionary.description;
-    if (!string) string = @"";
-    string = [BNCEncodingUtils base64EncodeStringToString:string];
+    if (!dictionary) return string;
+    NSData *data = nil;
+    NSError *error = nil;
+    @try {
+        data = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:&error];
+    }
+    @catch (id e) {
+        data = nil;
+    }
+    if (error) NSLog(@"Error encoding JSON: %@.", error);
+    if (data) string = [BNCEncodingUtils base64EncodeData:data];
     return string;
 }
 
