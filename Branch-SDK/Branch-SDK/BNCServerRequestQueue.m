@@ -304,7 +304,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     NSURL *oldURL = [NSURL fileURLWithPath:self.queueFile_deprecated];
     NSURL *newURL = [self URLForQueueFile];
     
-    if (!oldURL) { return; }
+    if (!oldURL || !newURL) { return; }
     
     NSError *error = nil;
     [[NSFileManager defaultManager]
