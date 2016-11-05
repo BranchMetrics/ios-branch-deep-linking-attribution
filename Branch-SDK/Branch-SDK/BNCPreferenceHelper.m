@@ -731,6 +731,8 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     NSURL *oldURL = [NSURL fileURLWithPath:self.prefsFile_deprecated];
     NSURL *newURL = [self URLForPrefsFile];
 
+    if (!oldURL) { return; }
+
     NSError *error = nil;
     [[NSFileManager defaultManager]
         moveItemAtURL:oldURL
