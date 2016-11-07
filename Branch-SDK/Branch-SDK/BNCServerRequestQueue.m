@@ -237,10 +237,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     @try {
         NSError *error = nil;
         NSData *data = [NSData dataWithContentsOfURL:self.class.URLForQueueFile options:0 error:&error];
-        if (error || !data)
-            [[BNCPreferenceHelper preferenceHelper] logWarning:
-                [NSString stringWithFormat:@"Error loading network queue: %@.", error]];
-        else
+        if (!error && data)
             encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithData:data];
     }
     @catch (NSException *exception) {
