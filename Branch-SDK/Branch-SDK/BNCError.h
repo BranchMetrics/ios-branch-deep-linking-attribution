@@ -6,9 +6,11 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
+
 #import <Foundation/Foundation.h>
 
-FOUNDATION_EXPORT NSString * const BNCErrorDomain;
+
+FOUNDATION_EXPORT NSString *_Nonnull const BNCErrorDomain;
 
 enum {
     BNCInitError = 1000,

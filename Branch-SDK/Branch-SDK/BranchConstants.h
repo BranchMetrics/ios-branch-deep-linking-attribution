@@ -126,3 +126,5 @@ extern NSString * const BRANCH_CONTENT_DATA_KEY;
 extern NSString * const BRANCH_CONTENT_KEYS_KEY;
 extern NSString * const BRANCH_PACKAGE_NAME_KEY;
 extern NSString * const BRANCH_ENTITIES_KEY;
+
+extern NSString * const BRANCH_REQUEST_KEY_SEARCH_AD;
