@@ -24,50 +24,15 @@
      * [self registerForPushNotifications:application];
      */
 
-    //  Testing: Check our prefs.  Remove later.
-
-    NSString * path =
-        [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)
-            firstObject];
-
-    NSError *error = nil;
-    NSArray *files =
-        [[NSFileManager defaultManager]
-            contentsOfDirectoryAtPath:path
-            error:&error];
-    NSLog(@"Doc Files (error: %@):\n%@", error, files);
-
     Branch *branch = [Branch getInstance];
     [branch setDebug];
+    
+    // For Apple Search Ads
+    // [branch delayInitToCheckForSearchAds];
+    // [branch setAppleSearchAdsDebugMode];
+    
     [branch setWhiteListedSchemes:@[@"branchtest"]];
 
-    //  Testing: Check our prefs
-
-    files =
-        [[NSFileManager defaultManager]
-            contentsOfDirectoryAtPath:path
-            error:&error];
-    NSLog(@"Doc Files (error: %@):\n%@", error, files);
-
-    NSURL *URL =
-        [[NSFileManager defaultManager]
-            URLForDirectory:NSApplicationSupportDirectory
-            inDomain:NSUserDomainMask
-            appropriateForURL:nil
-            create:YES
-            error:&error];
-    if (error) {
-        NSLog(@"Error creating URLForPrefsDirectory: %@.", error);
-    }
-    URL = [URL URLByAppendingPathComponent:@"io.branch"];
-
-    files =
-        [[NSFileManager defaultManager]
-            contentsOfDirectoryAtPath:URL.path
-            error:&error];
-    NSLog(@"App Files (error: %@):\n%@", error, files);
-
-    //  Testing: End checks.
 
     // Automatic Deeplinking on "deeplink_text"
     NavigationController *navigationController = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateInitialViewController];
