@@ -34,7 +34,6 @@
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchRegisterViewRequest.h"
 #import "BranchContentDiscoverer.h"
-#import "BNCSearchAdAttribution.h"
 
 //Fabric
 #import "../Fabric/FABKitProtocol.h"
@@ -92,6 +91,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (assign, nonatomic) BOOL accountForFacebookSDK;
 @property (assign, nonatomic) id FBSDKAppLinkUtility;
+@property (assign, nonatomic) BOOL delayForAppleAds;
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
 
 @end
@@ -342,7 +342,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     if ([BNCSystemObserver getOSVersion].integerValue >= 8) {
         if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             // If Facebook SDK is present, call deferred app link check here
-            if (![self checkFacebookAppLinks]) {
+            if (![self checkFacebookAppLinks] && ![self checkAppleSearchAdsAttribution]) {
                 [self initUserSessionAndCallCallback:YES];
             }
         }
@@ -483,6 +483,43 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
         [self applicationDidBecomeActive];
     }
 }
+
+# pragma mark - Apple Search Ad check
+
+- (void)delayInitToCheckForSearchAds {
+    self.delayForAppleAds = YES;
+}
+
+- (BOOL)checkAppleSearchAdsAttribution {
+    if (self.delayForAppleAds) {
+        Class ADClientClass = NSClassFromString(@"ADClient");
+        SEL sharedClient = NSSelectorFromString(@"sharedClient");
+        SEL requestAttribution = NSSelectorFromString(@"requestAttributionDetailsWithBlock:");
+
+        if (ADClientClass &&
+            [ADClientClass methodForSelector:sharedClient]) {
+            id sharedClientInstance = ((id (*)(id, SEL))[ADClientClass methodForSelector:sharedClient])(ADClientClass, sharedClient);
+            
+            self.preferenceHelper.shouldWaitForInit = YES;
+            
+            void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) = ^void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
+                self.preferenceHelper.shouldWaitForInit = NO;
+                
+                if (attrDetails && [attrDetails count]) {
+                    [BNCPreferenceHelper preferenceHelper].appleSearchAdDetails = attrDetails;
+                }
+                
+                [self initUserSessionAndCallCallback:!self.isInitialized];
+            };
+            
+            ((void (*)(id, SEL, void (^ __nullable)(NSDictionary *__nullable attrDetails, NSError * __nullable error)))[sharedClientInstance methodForSelector:requestAttribution])(sharedClientInstance, requestAttribution, completionBlock);
+            
+            return YES;
+        }
+    }
+    return NO;
+}
+
 
 # pragma mark - Facebook App Link check
 
@@ -1254,8 +1291,6 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
         [self.preferenceHelper logWarning:@"You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment."];
     }
 
-    [BNCSearchAdAttribution checkAttributionWithCompletion:nil];
-
     if (!self.preferenceHelper.identityID) {
         [self registerInstallOrOpen:[BranchInstallRequest class]];
     }
@@ -1363,13 +1398,6 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 - (void)deepLinkingControllerCompleted {
     [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
-}
-
-#pragma mark - Apple Search Ad results
-
-- (NSDictionary*) appleSearchAdDetails
-{
-    return  [BNCSearchAdAttribution lastAttribution];
 }
 
 #pragma mark FABKit methods

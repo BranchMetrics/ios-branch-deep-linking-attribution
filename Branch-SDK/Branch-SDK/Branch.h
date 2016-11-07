@@ -407,6 +407,12 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)registerFacebookDeepLinkingClass:(id)FBSDKAppLinkUtility;
 
 /**
+ Check for Apple Search Ads before initialization. Will add about 1 second from call to initSession to callback due to Apple's latency.
+ */
+- (void)delayInitToCheckForSearchAds;
+
+
+/**
  Specify the time to wait in seconds between retries in the case of a Branch server error
  
  @param retryInterval Number of seconds to wait between retries.
@@ -468,13 +474,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)resumeInit;
 
 - (void)setInstallRequestDelay:(NSInteger)installRequestDelay;
-
-
-///@brief  If YES, initialization is delayed until Apple Search Ad Details are retrieved from the app store.
-@property (assign, nonatomic) BOOL delayForAppleSearchAdDetails;
-
-///@brief  The Apple Search Ad Details as returned from the Apple app store.
-@property (strong, nonatomic, readonly) NSDictionary *appleSearchAdDetails;
 
 
 #pragma mark - Session Item methods
