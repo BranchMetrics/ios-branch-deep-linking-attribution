@@ -660,9 +660,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             NSError *error = nil;
             NSData *data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile
                     options:0 error:&error];
-            if (error || !data)
-                NSLog(@"Error opening prefs file: %@.", error);
-            else
+            if (!error && data)
                 persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
         }
         @catch (NSException *exception) {
