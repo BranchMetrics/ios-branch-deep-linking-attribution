@@ -421,7 +421,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 
 - (NSDictionary*) appleSearchAdDetails {
     if (!_appleSearchAdDetails) {
-        _appleSearchAdDetails = (NSDictionary*) [self readObjectFromDefaults:BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO];
+        _appleSearchAdDetails = (NSDictionary *) [self readObjectFromDefaults:BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO];
     }
     return [_appleSearchAdDetails isKindOfClass:[NSDictionary class]] ? _appleSearchAdDetails : nil;
 }

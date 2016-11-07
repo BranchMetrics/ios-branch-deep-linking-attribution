@@ -92,6 +92,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 @property (assign, nonatomic) BOOL accountForFacebookSDK;
 @property (assign, nonatomic) id FBSDKAppLinkUtility;
 @property (assign, nonatomic) BOOL delayForAppleAds;
+@property (assign, nonatomic) BOOL searchAdsDebugMode;
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
 
 @end
@@ -490,6 +491,10 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     self.delayForAppleAds = YES;
 }
 
+- (void)setAppleSearchAdsDebugMode {
+    self.searchAdsDebugMode = YES;
+}
+
 - (BOOL)checkAppleSearchAdsAttribution {
     if (self.delayForAppleAds) {
         Class ADClientClass = NSClassFromString(@"ADClient");
@@ -506,10 +511,31 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
                 self.preferenceHelper.shouldWaitForInit = NO;
                 
                 if (attrDetails && [attrDetails count]) {
-                    [BNCPreferenceHelper preferenceHelper].appleSearchAdDetails = attrDetails;
+                    self.preferenceHelper.appleSearchAdDetails = attrDetails;
+                }
+                else if (self.searchAdsDebugMode) {
+                    NSMutableDictionary *testInfo = [[NSMutableDictionary alloc] init];
+                    
+                    NSMutableDictionary *testDetails = [[NSMutableDictionary alloc] init];
+                    [testDetails setObject:[NSNumber numberWithBool:YES] forKey:@"iad-attribution"];
+                    [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-campaign-id"];
+                    [testDetails setObject:@"CampaignName" forKey:@"iad-campaign-name"];
+                    [testDetails setObject:@"2016-09-09T01:33:17Z" forKey:@"iad-click-date"];
+                    [testDetails setObject:@"2016-09-09T01:33:17Z" forKey:@"iad-conversion-date"];
+                    [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-creative-id"];
+                    [testDetails setObject:@"CreativeName" forKey:@"iad-creative-name"];
+                    [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-lineitem-id"];
+                    [testDetails setObject:@"LineName" forKey:@"iad-lineitem-name"];
+                    [testDetails setObject:@"OrgName" forKey:@"iad-org-name"];
+                    
+                    [testInfo setObject:testDetails forKey:@"Version3.1"];
+                    
+                    self.preferenceHelper.appleSearchAdDetails = testInfo;
                 }
                 
-                [self initUserSessionAndCallCallback:!self.isInitialized];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self initUserSessionAndCallCallback:!self.isInitialized];
+                });
             };
             
             ((void (*)(id, SEL, void (^ __nullable)(NSDictionary *__nullable attrDetails, NSError * __nullable error)))[sharedClientInstance methodForSelector:requestAttribution])(sharedClientInstance, requestAttribution, completionBlock);
