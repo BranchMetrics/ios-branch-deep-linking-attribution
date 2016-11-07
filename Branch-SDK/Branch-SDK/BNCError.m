@@ -47,8 +47,7 @@ NSError *_Nonnull BNCErrorWithCodeAndReason(BNCErrorCode errorCode, NSString* re
     if (reason)
         userInfo[NSLocalizedFailureReasonErrorKey] = reason;
 
-    NSError *error =
-        [NSError errorWithDomain:BNCErrorDomain
+    NSError *error = [NSError errorWithDomain:BNCErrorDomain
                             code:errorCode
                         userInfo:userInfo];
     return error;
