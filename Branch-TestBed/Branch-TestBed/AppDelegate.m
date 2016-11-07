@@ -39,7 +39,7 @@
 
     Branch *branch = [Branch getInstance];
     [branch setDebug];
-    branch.delayForAppleSearchAdDetails = YES;
+    [branch delayInitToCheckForSearchAds];
     [branch setWhiteListedSchemes:@[@"branchtest"]];
 
     //  Testing: Check our prefs
