@@ -2,6 +2,10 @@
 Branch SDK Release Notes
 ========================
 
+####  Branch Version 0.12.14
+Fixed a major crash bug.
+
+*  Added a nil checks when moving the preferences file.
 
 ####  Branch Version 0.12.14
 Xcode 7 Support - Wednesday, October 26 2016
