@@ -8,7 +8,7 @@
 
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED < 100000
-#warning Compiling with Xcode 7 support
+#warning Warning: Compiling with Xcode 7 support
 
 
 #import <Foundation/Foundation.h>
