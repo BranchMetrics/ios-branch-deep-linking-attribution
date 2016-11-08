@@ -7,7 +7,7 @@ Apple Search Ad Attribution
 
 *  Branch can now optionally track Apple Search Ad campaign attribution.
    See the documentation for using this feature in the README.md section
-   [Apple Search Ad Attribution.](https://github.com/BranchMetrics/ios-branch-deep-linking/blob/master/README.md#Apple-Search-Ad-Attribution)
+   [Apple Search Ad Attribution.](https://github.com/BranchMetrics/ios-branch-deep-linking/blob/master/README.md#apple-search-ads)
 
 *  Check the change log for specific fixes:  [Change log on Github.](https://github.com/BranchMetrics/ios-branch-deep-linking/blob/master/ChangeLog.md)
 
