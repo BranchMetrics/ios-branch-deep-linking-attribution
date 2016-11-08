@@ -508,12 +508,11 @@ None
 
 ### Apple Search Ads
 
-Branch can help track your Apple Search Ad campaigns by fetching the Search Ad attribution
-from Apple at app install.  You can then use the Apple Search Ad parameters that you have set
-in the Apple Search Ad dashboard, parameters such as the campaign name, and take special
-action in you app after an install, or simply track the effectiveness of a campaign in the
-Branch dashboard side-by-side with other Branch statistics such as total installs, referrals,
-and app link statistics.
+Branch can help track your Apple Search Ad campaigns by fetching the search ad attribution from
+Apple at app install.  You can then use the parameters you've set in the Apple Search Ad dashboard,
+parameters such as the campaign name, and take special action in you app after an install, or simply
+track the effectiveness of a campaign in the Branch dashboard, along with other your other Branch
+statistics, such as total installs, referrals, and app link statistics.
 
 1. External resources
   + [Apple Search Ads](https://searchads.apple.com/)
@@ -525,8 +524,10 @@ and app link statistics.
 
 ##### `- (void) delayInitToCheckForSearchAds`
 
-Check for Apple Search Ads before Branch initialization.  Note that this will add about 1
-second from call to initSession to callback due to Apple's latency.
+Call this method to enable checking for Apple Search Ads before Branch initialization.  This method
+must be called before you initialize your Branch session.
+
+Note that this will add about 1 second from call to initSession to callback due to Apple's latency.
 
 ###### Objective-C
 ```objc
@@ -540,8 +541,8 @@ Branch.getInstance().delayInitToCheckForSearchAds
 
 ##### `- (void) setAppleSearchAdsDebugMode`
 
-The `setAppleSearchAdsDebugMode` method sets the SDK into Apple Search Ad debug mode where
-it passes fake campaign params back 100% of the time.
+The `setAppleSearchAdsDebugMode` method sets the SDK into Apple Search Ad debug mode.  In this mode
+fake campaign params are returned 100% of the time.  This is for testing only.
 
 Warning: This should not be used in production.
 
