@@ -66,7 +66,7 @@
     [self safeSetValue:cdDict forKey:BRANCH_CONTENT_DISCOVER_KEY onDict:params];    
 
     if (preferenceHelper.appleSearchAdDetails) {
-        NSString *encodedSearchData;
+        NSString *encodedSearchData = nil;
         @try {
             NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:preferenceHelper.appleSearchAdDetails];
             encodedSearchData = [BNCEncodingUtils base64EncodeData:jsonData];
