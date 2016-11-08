@@ -501,7 +501,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
         SEL sharedClient = NSSelectorFromString(@"sharedClient");
         SEL requestAttribution = NSSelectorFromString(@"requestAttributionDetailsWithBlock:");
 
-        if (ADClientClass &&
+        if (ADClientClass && [ADClientClass instancesRespondToSelector:requestAttribution] &&
             [ADClientClass methodForSelector:sharedClient]) {
             id sharedClientInstance = ((id (*)(id, SEL))[ADClientClass methodForSelector:sharedClient])(ADClientClass, sharedClient);
             
