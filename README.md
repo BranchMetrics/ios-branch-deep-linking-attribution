@@ -32,6 +32,7 @@ ___
   + [Setting the user id for tracking influencers](#persistent-identities)
   + [Logging a user out](#logout)
   + [Tracking custom events](#register-custom-events)
+  + [Tracking Apple Search Ad Attribution](#apple-search-ads)
 
 4. Branch Universal Objects
   + [Instantiate a Branch Universal Object](#branch-universal-object)
@@ -503,6 +504,57 @@ Some example events you might want to track:
 ####Parameters
 
 None
+
+
+### Apple Search Ads
+
+Branch can help track your Apple Search Ad campaigns by fetching the Search Ad attribution
+from Apple at app install.  You can then use the Apple Search Ad parameters that you have set
+in the Apple Search Ad dashboard, parameters such as the campaign name, and take special
+action in you app after an install, or simply track the effectiveness of a campaign in the
+Branch dashboard side-by-side with other Branch statistics such as total installs, referrals,
+and app link statistics.
+
+1. External resources
+  + [Apple Search Ads](https://searchads.apple.com/)
+  + [Apple Search Ads for Developers](https://developer.apple.com/app-store/search-ads/)
+  + [Apple Search Ads WWDC](https://developer.apple.com/videos/play/wwdc2016/302/)
+
+
+#### Methods
+
+##### `- (void) delayInitToCheckForSearchAds`
+
+Check for Apple Search Ads before Branch initialization.  Note that this will add about 1
+second from call to initSession to callback due to Apple's latency.
+
+###### Objective-C
+```objc
+[[Branch getInstance] delayInitToCheckForSearchAds];
+```
+
+###### Swift
+```swift
+Branch.getInstance().delayInitToCheckForSearchAds
+```
+
+##### `- (void) setAppleSearchAdsDebugMode`
+
+The `setAppleSearchAdsDebugMode` method sets the SDK into Apple Search Ad debug mode where
+it passes fake campaign params back 100% of the time.
+
+Warning: This should not be used in production.
+
+###### Objective-C
+```objc
+[[Branch getInstance] setAppleSearchAdsDebugMode];
+```
+
+###### Swift
+```swift
+Branch.getInstance().setAppleSearchAdsDebugMode
+```
+
 
 ## Branch Universal Object (for deep links, content analytics and indexing)
 
