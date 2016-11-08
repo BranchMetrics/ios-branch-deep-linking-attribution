@@ -28,8 +28,8 @@
     [branch setDebug];
     
     // For Apple Search Ads
-    [branch delayInitToCheckForSearchAds];
-//  [branch setAppleSearchAdsDebugMode];
+    // [branch delayInitToCheckForSearchAds];
+    // [branch setAppleSearchAdsDebugMode];
 
     [branch setWhiteListedSchemes:@[@"branchtest"]];
 
@@ -48,10 +48,7 @@
         if (!error) {
 
             NSLog(@"initSession succeeded with params: %@", params);
-            NSDictionary *searchAds = [BNCPreferenceHelper preferenceHelper].appleSearchAdDetails;
-            NSLog(@"Search Ads:\n%@.", searchAds);    //  Apple Search ad demo.
-            NSLog(@"");
-
+           
             // Deeplinking logic for use when automaticallyDisplayDeepLinkController = NO
             /*
              NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
