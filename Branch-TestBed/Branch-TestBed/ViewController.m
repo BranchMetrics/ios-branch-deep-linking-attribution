@@ -270,11 +270,43 @@ NSString *type = @"some type";
     }];
 }
 
+static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
+    if ([NSThread currentThread] == [NSThread mainThread]) {
+        block();
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), block);
+    }
+}
 
 - (void)showAlert: (NSString *)title withDescription:(NSString *) message {
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
-    [self presentViewController:alert animated:YES completion:nil];
+
+    BNCPerformBlockOnMainThread(^ {
+
+        if ([UIDevice currentDevice].systemVersion.floatValue < 8.0) {
+
+            UIAlertView *alert = [[UIAlertView alloc]
+                initWithTitle:title
+                message:message
+                delegate:nil
+                cancelButtonTitle:@"OK"
+                otherButtonTitles:nil];
+            [alert show];
+
+        } else {
+
+            UIAlertController* alert = [UIAlertController
+                alertControllerWithTitle:title
+                message:message
+                preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"OK"
+                style:UIAlertActionStyleCancel
+                handler:nil]];
+            [self presentViewController:alert
+                animated:YES
+                completion:nil];
+                
+        }
+    });
 }
 
 @end
