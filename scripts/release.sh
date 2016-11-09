@@ -34,7 +34,7 @@ sh $SCRIPT_DIR/build_framework.sh
 git add --all
 git commit -m "Updates for $1 release."
 git tag $1
-## git push --tags origin master
+git push --tags origin master
 
 # Release to CocoaPods
 pod trunk push $PODSPEC_LOC
