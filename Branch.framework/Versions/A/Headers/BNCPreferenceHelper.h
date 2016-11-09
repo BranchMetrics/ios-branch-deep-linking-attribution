@@ -37,6 +37,7 @@
 @property (strong, nonatomic) NSString *externalIntentURI;
 @property (strong, nonatomic) NSMutableDictionary *savedAnalyticsData;
 @property (assign, nonatomic) NSInteger installRequestDelay;
+@property (strong, nonatomic) NSDictionary *appleSearchAdDetails;
 
 + (BNCPreferenceHelper *)preferenceHelper;
 + (NSURL*) URLForBranchDirectory;
