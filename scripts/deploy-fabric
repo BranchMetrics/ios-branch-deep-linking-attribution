@@ -1,0 +1,53 @@
+#!/bin/bash
+set -euo pipefail
+
+#  Deploy to Fabric
+#  EB Smith.  October, 2016.
+
+scriptpath="${BASH_SOURCE[0]}"
+scriptpath=$(cd "$(dirname "${scriptpath}")" && pwd)
+cd ${scriptpath}/..
+
+
+if [ $# != 1 ]
+then
+    echo ">>> Error: A version string is expected as a parameter." 1>&2
+    exit 1
+fi
+version=$1
+
+if [ -z "${FABRIC_KEY+x}" ] || [ ${#FABRIC_KEY} = 0 ]
+then
+    echo ">>> Error: FABRIC_KEY not defined.  Define it in your .bashrc." 1>&2
+    exit 1
+fi
+
+
+if [ ! -d Branch.framework ]
+then
+    echo ">>> Error: Can't find the Branch.framework file." 1>&2
+    exit 1
+fi
+
+# rm Branch.framework.zip
+# zip -r Branch.framework.zip Branch.framework
+
+metadata=$(cat <<METADATA
+{
+     "description":     "Deep links to drive app installs, user engagement and retention across all channels"
+    ,"friendly-name":   "Branch"
+    ,"learn-more-url":  "https://dev.branch.io"
+    ,"release-channel": "public"
+}
+METADATA
+)
+
+#echo $metadata
+echo "Need to fix compression options!"
+exit 1
+
+curl --fail -v -X PUT \
+    -H "X-FabricKits-ApiKey: $FABRIC_KEY" \
+    -F "release_metadata=$metadata; type=application/json" \
+    -F "release_artifact=@Branch.framework.zip; type=application/octet-stream" \
+    https://kits.fabric.io/manage-api/v1/kit-releases/ios/io.branch.sdk.ios/$version
