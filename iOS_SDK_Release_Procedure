@@ -36,6 +36,9 @@ iOS SDK Release Procedure
 		• announce the release!
 
 5) Release on Fabric
+    New!!  Run the script ./scripts/deploy-fabic
+
+Old Fabric:
 	• Zip the .framework file
 	• run the following curl from the same directory and make sure to use the correct SDK version (note: currently, get the key from Ahmed or Sojan)
 	curl --fail -v -X PUT -H "X-FabricKits-ApiKey: $iOS_API_KEY" \
@@ -48,7 +51,7 @@ iOS SDK Release Procedure
 6) Release on Carthage
 	• cd to carthage-files
 	• Run the XCode project and make sure it compiles
-	• run carthage build --no-skip-current && carthage archive Branch
+	• run 'carthage build --no-skip-current && carthage archive Branch'
 	• go to https://github.com/BranchMetrics/ios-branch-deep-linking/releases and click on Draft a new release
 	• Choose the release version, put some funny (required!) title and add the ChangeLog to the Description
 	• In the attachment sections, choose the zipped framework in the carthage-files directory (different from the fabric one)
