@@ -1,4 +1,6 @@
 #!/bin/sh
+set -euo pipefail
+
 checksum_file=checksum
 sdk_archive=Branch-iOS-SDK.zip
 testbed_archive=Branch-iOS-TestBed.zip
