@@ -1,14 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-#  Deploy to Fabric
+#  deploy-fabric  --  Deploy the Branch.framework to Fabric
 #  EB Smith.  October, 2016.
 
 scriptpath="${BASH_SOURCE[0]}"
 scriptpath=$(cd "$(dirname "${scriptpath}")" && pwd)
 cd ${scriptpath}/..
 
-
+#  Check the parameters:
 if [ $# != 1 ]
 then
     echo ">>> Error: A version string is expected as a parameter." 1>&2
@@ -16,6 +16,7 @@ then
 fi
 version=$1
 
+# This script assumes that the bash variable 'FABRIC_KEY' is defined in your .bashrc file.
 if [ -z "${FABRIC_KEY+x}" ] || [ ${#FABRIC_KEY} = 0 ]
 then
     echo ">>> Error: FABRIC_KEY not defined.  Define it in your .bashrc." 1>&2
@@ -29,8 +30,11 @@ then
     exit 1
 fi
 
-# rm Branch.framework.zip
-# zip -r Branch.framework.zip Branch.framework
+
+#  Archive the framework files into a zip file:
+rm Branch.framework.zip
+ditto -c -k -v -V --sequesterRsrc --keepParent Branch.framework  Branch.framework.zip
+
 
 metadata=$(cat <<METADATA
 {
@@ -42,9 +46,9 @@ metadata=$(cat <<METADATA
 METADATA
 )
 
+#  While testing the script, stop before uploading:
 #echo $metadata
-echo "Need to fix compression options!"
-exit 1
+#exit 1
 
 curl --fail -v -X PUT \
     -H "X-FabricKits-ApiKey: $FABRIC_KEY" \

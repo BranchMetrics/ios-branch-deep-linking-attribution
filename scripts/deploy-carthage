@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euo pipefail
+
+#  deploy-carthage  --  Deploy the Branch.framework with Carthage
+#  EB Smith.  November, 2016.
+
+scriptpath="${BASH_SOURCE[0]}"
+scriptpath=$(cd "$(dirname "${scriptpath}")" && pwd)
+cd ${scriptpath}/../carthage-files
+
+
+scriptFailed=1
+function finish {
+    if $scriptFailed
+    then
+        echo ">>> Error: carthage-deploy failed!" 1>&2
+        exit 1
+    fi
+}
+trap finish EXIT
+
+
+xcodebuild -scheme 'Branch iOS SDK Carthage' build
+carthage build --no-skip-current && carthage archive Branch
+open https://github.com/BranchMetrics/ios-branch-deep-linking/releases
+scriptFailed=0
