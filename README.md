@@ -437,7 +437,8 @@ Branch.getInstance().setIdentity(your user id)  // your user id should not excee
 
 #### Parameters
 
-None
+**identity** (NSString *) _required_
+: This is the alias you'd like to label your user in the Branch system. Note that we only support a single alias per user.
 
 ### Logout
 
@@ -503,8 +504,12 @@ Some example events you might want to track:
 
 ####Parameters
 
-None
 
+**event** (NSString *) _required_
+: This is the event string you'd like to send to Branch. You can view the attribution of which links drove events to occur in the analytics.
+
+**state** (NSDictionary *) _optional_
+: If you'd like to pass additional metadata along with the event, you should use this dictionary. For example, this is how you pass revenue into Branch using the BNCPurchaseAmount constant as a key.
 
 ### Apple Search Ads
 
