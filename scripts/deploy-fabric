@@ -4,6 +4,7 @@ set -euo pipefail
 #  deploy-fabric  --  Deploy the Branch.framework to Fabric
 #  EB Smith.  October, 2016.
 
+scriptname=$(basename "BASH_SOURCE[0]")
 scriptpath="${BASH_SOURCE[0]}"
 scriptpath=$(cd "$(dirname "${scriptpath}")" && pwd)
 cd ${scriptpath}/..
@@ -31,8 +32,19 @@ then
 fi
 
 
+scriptFailed=1
+function finish {
+    if [ $scriptFailed -ne 0 ]
+    then
+        echo ">>> Error: $scriptname failed!" 1>&2
+        exit 1
+    fi
+}
+trap finish EXIT
+
+
 #  Archive the framework files into a zip file:
-rm Branch.framework.zip
+rm Branch.framework.zip || true
 ditto -c -k -v -V --sequesterRsrc --keepParent Branch.framework  Branch.framework.zip
 
 
@@ -55,3 +67,8 @@ curl --fail -v -X PUT \
     -F "release_metadata=$metadata; type=application/json" \
     -F "release_artifact=@Branch.framework.zip; type=application/octet-stream" \
     https://kits.fabric.io/manage-api/v1/kit-releases/ios/io.branch.sdk.ios/$version
+
+open -a Fabric.app
+echo ">>> Success!  Check the version in the Fabric.app" 1>&2
+scriptFailed=0
+
