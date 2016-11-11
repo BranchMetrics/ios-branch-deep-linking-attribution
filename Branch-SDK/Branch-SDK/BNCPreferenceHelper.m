@@ -633,7 +633,11 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     @synchronized (self) {
         NSDictionary *persistenceDict = [self.persistenceDict copy];
         NSBlockOperation *newPersistOp = [NSBlockOperation blockOperationWithBlock:^ {
-            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:persistenceDict];
+            NSData *data = nil;
+            @try {
+                data = [NSKeyedArchiver archivedDataWithRootObject:persistenceDict];
+            } @catch (id n) {
+            }
             if (!data) {
                 [self logWarning:@"Can't create preferences archive."];
                 return;
@@ -659,7 +663,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         @try {
             NSError *error = nil;
             NSData *data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile
-                    options:0 error:&error];
+                options:0 error:&error];
             if (!error && data)
                 persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
         }
