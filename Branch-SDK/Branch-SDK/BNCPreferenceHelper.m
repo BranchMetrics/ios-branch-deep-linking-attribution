@@ -374,17 +374,20 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 }
 
 - (NSString *)sessionParams {
-    if (_sessionParams) {
-        _sessionParams = [self readStringFromDefaults:BRANCH_PREFS_KEY_SESSION_PARAMS];
+    @synchronized (self) {
+        if (!_sessionParams) {
+            _sessionParams = [self readStringFromDefaults:BRANCH_PREFS_KEY_SESSION_PARAMS];
+        }
+        return _sessionParams;
     }
-    
-    return _sessionParams;
 }
 
 - (void)setSessionParams:(NSString *)sessionParams {
-    if (![_sessionParams isEqualToString:sessionParams]) {
-        _sessionParams = sessionParams;
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_SESSION_PARAMS value:sessionParams];
+    @synchronized (self) {
+        if (![_sessionParams isEqualToString:sessionParams]) {
+            _sessionParams = sessionParams;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_SESSION_PARAMS value:sessionParams];
+        }
     }
 }
 
@@ -631,13 +634,9 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 
 - (void)persistPrefsToDisk {
     @synchronized (self) {
-        NSDictionary *persistenceDict = [self.persistenceDict copy];
+        if (!self.persistenceDict) return;
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.persistenceDict];
         NSBlockOperation *newPersistOp = [NSBlockOperation blockOperationWithBlock:^ {
-            NSData *data = nil;
-            @try {
-                data = [NSKeyedArchiver archivedDataWithRootObject:persistenceDict];
-            } @catch (id n) {
-            }
             if (!data) {
                 [self logWarning:@"Can't create preferences archive."];
                 return;
