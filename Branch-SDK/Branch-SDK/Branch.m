@@ -1338,21 +1338,10 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.useCookieBasedMatching) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
     }
-    
-    // If there isn't already an Open / Install request, add one to the queue
-    if (![self.requestQueue containsInstallOrOpen]) {
-        BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
-        
-        [self insertRequestAtFront:req];
-    }
-    // If there is already one in the queue, make sure it's in the front.
-    // Make sure a callback is associated with this request. This callback can
-    // be cleared if the app is terminated while an Open/Install is pending.
-    else {
-        BranchOpenRequest *req = [self.requestQueue moveInstallOrOpenToFront:self.networkCount];
-        req.callback = initSessionCallback;
-    }
-    
+
+    [self.requestQueue removeInstallOrOpen];
+    BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
+    [self insertRequestAtFront:req];
     [self processNextQueueItem];
 }
 
