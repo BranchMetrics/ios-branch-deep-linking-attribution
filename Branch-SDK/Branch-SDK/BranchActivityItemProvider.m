@@ -93,6 +93,7 @@
         @"WhatsApp", @"net.whatsapp.WhatsApp.ShareExtension",
         @"WeChat", @"com.tencent.xin.sharetimeline",
         @"LINE", @"jp.naver.line.Share",
+		@"Pinterest", @"pinterest.ShareExtension",
         nil
     ];
     // Set to a more human readible sting if we can identify it
