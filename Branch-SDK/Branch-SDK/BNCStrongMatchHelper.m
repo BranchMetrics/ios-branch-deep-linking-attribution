@@ -264,7 +264,7 @@
 
 - (void)safariViewController:(SFSafariViewController *)controller
       didCompleteInitialLoad:(BOOL)didLoadSuccessfully {
-    //NSLog(@"Safari Did load.");
+    NSLog(@"Safari Did load. Success: %d.", didLoadSuccessfully);
     [self unloadViewController];
 }
 
