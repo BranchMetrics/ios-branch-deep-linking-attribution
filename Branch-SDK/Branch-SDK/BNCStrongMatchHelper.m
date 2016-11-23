@@ -231,8 +231,10 @@
         fail |= ![self subclass:BNCMatchViewControllerSubclass selector:@selector(becomeFirstResponder)];
         fail |= ![self subclass:BNCMatchViewControllerSubclass selector:@selector(canBecomeFirstResponder)];
         fail |= ![self subclass:BNCMatchViewControllerSubclass selector:@selector(nextResponder)];
-        if (fail) return NO;
-
+        if (fail) {
+            objc_disposeClassPair(BNCMatchViewControllerSubclass);
+            return NO;
+        }
         objc_registerClassPair(BNCMatchViewControllerSubclass);
     }
 
