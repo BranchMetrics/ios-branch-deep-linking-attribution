@@ -240,14 +240,17 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
     return activeController;
 }
 
-- (void)addFormattedContentData:(NSMutableArray *)contentDataArray withText:(NSString *)contentData clearText:(BOOL)isClearText {
+- (void)addFormattedContentData:(NSMutableArray *)contentDataArray
+                       withText:(NSString *)contentData
+                      clearText:(BOOL)isClearText {
     if (contentData && contentData.length > _cdManifest.maxTextLen) {
         contentData = [contentData substringToIndex:_cdManifest.maxTextLen];
     }
     if (!isClearText) {
         contentData = [BNCEncodingUtils md5Encode:contentData];
     }
-    [contentDataArray addObject:contentData];
+    if (contentData)
+        [contentDataArray addObject:contentData];
 }
 
 - (NSString *)getContentText:(UIView *)view {
