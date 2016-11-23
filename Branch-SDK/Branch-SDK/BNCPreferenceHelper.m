@@ -609,38 +609,48 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     return (NSDictionary *)[self readObjectFromDefaults:BRANCH_PREFS_KEY_ANALYTICS_MANIFEST];
 }
 
+
 #pragma mark - Writing To Persistence
 
+
 - (void)writeIntegerToDefaults:(NSString *)key value:(NSInteger)value {
-    self.persistenceDict[key] = @(value);
-    [self persistPrefsToDisk];
+    [self writeObjectToDefaults:key value:@(value)];
 }
 
 - (void)writeBoolToDefaults:(NSString *)key value:(BOOL)value {
-    self.persistenceDict[key] = @(value);
-    [self persistPrefsToDisk];
+    [self writeObjectToDefaults:key value:@(value)];
 }
 
 - (void)writeObjectToDefaults:(NSString *)key value:(NSObject *)value {
-    if (value) {
-        self.persistenceDict[key] = value;
+    @synchronized (self) {
+        if (value) {
+            self.persistenceDict[key] = value;
+        }
+        else {
+            [self.persistenceDict removeObjectForKey:key];
+        }
+        [self persistPrefsToDisk];
     }
-    else {
-        [self.persistenceDict removeObjectForKey:key];
-    }
-
-    [self persistPrefsToDisk];
 }
 
 - (void)persistPrefsToDisk {
     @synchronized (self) {
         if (!self.persistenceDict) return;
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.persistenceDict];
+        NSData *data = nil;
+        @try {
+            data = [NSKeyedArchiver archivedDataWithRootObject:self.persistenceDict];
+        }
+        @catch (id exception) {
+            data = nil;
+            [self logWarning:
+                [NSString stringWithFormat:@"Exception creating preferences data: %@.",
+                    exception]];
+        }
+        if (!data) {
+            [self logWarning:@"Can't create preferences data."];
+            return;
+        }
         NSBlockOperation *newPersistOp = [NSBlockOperation blockOperationWithBlock:^ {
-            if (!data) {
-                [self logWarning:@"Can't create preferences archive."];
-                return;
-            }
             NSError *error = nil;
             [data writeToURL:self.class.URLForPrefsFile
                 options:NSDataWritingAtomic error:&error];
@@ -650,7 +660,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
                         @"Failed to persist preferences to disk: %@.", error]];
             }
         }];
-    [self.persistPrefsQueue addOperation:newPersistOp];
+        [self.persistPrefsQueue addOperation:newPersistOp];
     }
 }
 
