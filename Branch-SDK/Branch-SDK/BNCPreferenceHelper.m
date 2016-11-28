@@ -374,7 +374,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 }
 
 - (NSString *)sessionParams {
-    if (_sessionParams) {
+    if (!_sessionParams) {
         _sessionParams = [self readStringFromDefaults:BRANCH_PREFS_KEY_SESSION_PARAMS];
     }
     
