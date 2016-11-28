@@ -291,9 +291,9 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     return path;
 }
 
-+ (NSURL*) URLForQueueFile {
++ (NSURL* _Nonnull) URLForQueueFile {
     NSURL *URL = [BNCPreferenceHelper URLForBranchDirectory];
-    URL = [URL URLByAppendingPathComponent:BRANCH_QUEUE_FILE];
+    URL = [URL URLByAppendingPathComponent:BRANCH_QUEUE_FILE isDirectory:NO];
     return URL;
 }
 
