@@ -4,6 +4,12 @@ Branch SDK Release Notes
 
 Check the change log for specific fixes:  [Change log on Github.](https://github.com/BranchMetrics/ios-branch-deep-linking/blob/master/ChangeLog.md)
 
+####  Branch Version 0.12.18
+
+*  There are no breaking changes in this release.
+*  There are no significant new features in this release.
+*  Special testing instructions: Test with slow networks and fast app switches.
+
 ####  Branch Version 0.12.17
 Crash fix due to preferences
 
