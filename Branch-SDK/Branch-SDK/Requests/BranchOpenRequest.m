@@ -22,6 +22,7 @@
 
 @end
 
+
 @implementation BranchOpenRequest
 
 - (id)initWithCallback:(callbackWithStatus)callback {
