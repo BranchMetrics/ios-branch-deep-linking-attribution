@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+- v0.12.17
+  * Made the preference file creation more robust and fault tolerant.
+
 - v0.12.16
   * Branch can now optionally track Apple Search Ad campaign attribution.
   * Sharing channels have been updated to be human readable and match the Android names.
