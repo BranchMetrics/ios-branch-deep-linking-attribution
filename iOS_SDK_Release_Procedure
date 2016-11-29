@@ -39,7 +39,7 @@ iOS SDK Release Procedure
 5) Release on Fabric
     => New!! <=
     • On the command line, cd to 'ios-branch-deep-linking'.
-    • Run the script './scripts/deploy-fabric'.
+    • Run the script './scripts/deploy-fabric <version>'.
     • The script will compress and upload the framework, then the Fabric.app application will open.
     • Verify the deploy by going to the Fabric Mac app, choose 'Branch' and check the version number.
     • More details to be found here: https://github.com/twitterdev/3pk/wiki/Updating-SDKs
@@ -57,7 +57,7 @@ iOS SDK Release Procedure
 6) Release on Carthage
     => New!! <=
     • On the command line, cd to 'ios-branch-deep-linking'.
-    • Run the script './scripts/deploy-fabric'.
+    • Run the script './scripts/deploy-carthage'.
     • The script will check and compile the framework.  Then the web page
       'https://github.com/BranchMetrics/ios-branch-deep-linking/releases/new' will open.
 

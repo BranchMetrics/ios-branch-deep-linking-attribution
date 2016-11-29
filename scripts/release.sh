@@ -50,5 +50,5 @@ sh $SCRIPT_DIR/upload_zips.sh
 # Prompt for SDK Releases Group post
 echo "Inform the SDK Releases Group."
 echo "Subject: 'iOS SDK Release $1'"
-echo "   Body: The change log."
+echo "   Body: < The change log >"
 open 'https://groups.google.com/forum/#!newtopic/branch-sdk-releases'
