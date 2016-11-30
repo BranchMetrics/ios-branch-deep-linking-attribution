@@ -38,6 +38,7 @@ git push
 git checkout master
 git pull
 git pull origin QA
+git commit
 git push
 git push --tags origin master
 
@@ -51,4 +52,5 @@ sh $SCRIPT_DIR/upload_zips.sh
 echo "Inform the SDK Releases Group."
 echo "Subject: 'iOS SDK Release $1'"
 echo "   Body: < The change log >"
+open ChangeLog.md
 open 'https://groups.google.com/forum/#!newtopic/branch-sdk-releases'
