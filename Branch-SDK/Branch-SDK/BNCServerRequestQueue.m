@@ -131,21 +131,6 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     return NO;
 }
 
-- (BOOL)removeInstallOrOpen {
-    @synchronized (self.queue) {
-        for (int i = 0; i < self.queue.count; i++) {
-            BranchOpenRequest *req = [self.queue objectAtIndex:i];
-            // Install extends open, so only need to check open.
-            if ([req isKindOfClass:[BranchOpenRequest class]]) {
-                req.callback = nil;
-                [self remove:req];
-                return YES;
-            }
-        }
-        return NO;
-    }
-}
-
 - (BranchOpenRequest *)moveInstallOrOpenToFront:(NSInteger)networkCount {
     BOOL requestAlreadyInProgress = networkCount > 0;
 
