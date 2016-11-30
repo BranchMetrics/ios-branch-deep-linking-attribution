@@ -93,7 +93,7 @@
         baseUrl = [preferenceHelper.userUrl mutableCopy];
         [baseUrl appendString:@"&"];
     } else {
-        baseUrl = [[NSMutableString alloc] initWithFormat:@"%@/a/%@?", BNC_LINK_URL, branchKey];
+        baseUrl = [[NSMutableString alloc] initWithFormat:@"%@/a/%@?", @"https://bnc.lt", branchKey];
     }
     
     return [BranchShortUrlSyncRequest createLongUrlWithBaseUrl:baseUrl tags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params];
