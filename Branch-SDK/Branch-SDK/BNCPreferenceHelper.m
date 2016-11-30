@@ -374,20 +374,17 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 }
 
 - (NSString *)sessionParams {
-    @synchronized (self) {
-        if (!_sessionParams) {
-            _sessionParams = [self readStringFromDefaults:BRANCH_PREFS_KEY_SESSION_PARAMS];
-        }
-        return _sessionParams;
+    if (_sessionParams) {
+        _sessionParams = [self readStringFromDefaults:BRANCH_PREFS_KEY_SESSION_PARAMS];
     }
+    
+    return _sessionParams;
 }
 
 - (void)setSessionParams:(NSString *)sessionParams {
-    @synchronized (self) {
-        if (![_sessionParams isEqualToString:sessionParams]) {
-            _sessionParams = sessionParams;
-            [self writeObjectToDefaults:BRANCH_PREFS_KEY_SESSION_PARAMS value:sessionParams];
-        }
+    if (![_sessionParams isEqualToString:sessionParams]) {
+        _sessionParams = sessionParams;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_SESSION_PARAMS value:sessionParams];
     }
 }
 
@@ -609,48 +606,42 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     return (NSDictionary *)[self readObjectFromDefaults:BRANCH_PREFS_KEY_ANALYTICS_MANIFEST];
 }
 
-
 #pragma mark - Writing To Persistence
 
-
 - (void)writeIntegerToDefaults:(NSString *)key value:(NSInteger)value {
-    [self writeObjectToDefaults:key value:@(value)];
+    self.persistenceDict[key] = @(value);
+    [self persistPrefsToDisk];
 }
 
 - (void)writeBoolToDefaults:(NSString *)key value:(BOOL)value {
-    [self writeObjectToDefaults:key value:@(value)];
+    self.persistenceDict[key] = @(value);
+    [self persistPrefsToDisk];
 }
 
 - (void)writeObjectToDefaults:(NSString *)key value:(NSObject *)value {
-    @synchronized (self) {
-        if (value) {
-            self.persistenceDict[key] = value;
-        }
-        else {
-            [self.persistenceDict removeObjectForKey:key];
-        }
-        [self persistPrefsToDisk];
+    if (value) {
+        self.persistenceDict[key] = value;
     }
+    else {
+        [self.persistenceDict removeObjectForKey:key];
+    }
+
+    [self persistPrefsToDisk];
 }
 
 - (void)persistPrefsToDisk {
     @synchronized (self) {
-        if (!self.persistenceDict) return;
-        NSData *data = nil;
-        @try {
-            data = [NSKeyedArchiver archivedDataWithRootObject:self.persistenceDict];
-        }
-        @catch (id exception) {
-            data = nil;
-            [self logWarning:
-                [NSString stringWithFormat:@"Exception creating preferences data: %@.",
-                    exception]];
-        }
-        if (!data) {
-            [self logWarning:@"Can't create preferences data."];
-            return;
-        }
+        NSDictionary *persistenceDict = [self.persistenceDict copy];
         NSBlockOperation *newPersistOp = [NSBlockOperation blockOperationWithBlock:^ {
+            NSData *data = nil;
+            @try {
+                data = [NSKeyedArchiver archivedDataWithRootObject:persistenceDict];
+            } @catch (id n) {
+            }
+            if (!data) {
+                [self logWarning:@"Can't create preferences archive."];
+                return;
+            }
             NSError *error = nil;
             [data writeToURL:self.class.URLForPrefsFile
                 options:NSDataWritingAtomic error:&error];
@@ -660,7 +651,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
                         @"Failed to persist preferences to disk: %@.", error]];
             }
         }];
-        [self.persistPrefsQueue addOperation:newPersistOp];
+    [self.persistPrefsQueue addOperation:newPersistOp];
     }
 }
 
