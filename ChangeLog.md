@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+- v0.12.19
+  * Reverted changes from release 0.12.18.
+
 - v0.12.17
   * Made the preference file creation more robust and fault tolerant.
 
