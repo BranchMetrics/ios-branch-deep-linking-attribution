@@ -46,7 +46,7 @@ static BNCDeviceInfo *bncDeviceInfo;
         self.isRealHardwareId = isRealHardwareId;
         self.hardwareIdType = hardwareIdType;
     }
-    
+
     self.vendorId = [BNCSystemObserver getVendorId];
     self.brandName = [BNCSystemObserver getBrand];
     self.modelName = [BNCSystemObserver getModel];
@@ -83,10 +83,21 @@ static BNCDeviceInfo *bncDeviceInfo;
 
     }
 
-    self.browserUserAgent =
-        [[[UIWebView alloc]
-            initWithFrame:CGRectZero]
-                stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+    void (^setUpBrowserUserAgent)() = ^() {
+        self.browserUserAgent = [[[UIWebView alloc]
+                                  initWithFrame:CGRectZero]
+                                    stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+    };
+
+    if (NSThread.isMainThread) {
+
+        setUpBrowserUserAgent();
+
+    } else {
+
+        dispatch_sync(dispatch_get_main_queue(), setUpBrowserUserAgent);
+
+    }
 
     return self;
 }
