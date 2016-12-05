@@ -42,9 +42,8 @@ git tag $1
 git push
 git checkout master
 git pull
-git pull origin QA
+git merge origin QA
 git commit
-git push
 git push --tags origin master
 
 # Release to CocoaPods
