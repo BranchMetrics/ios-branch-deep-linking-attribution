@@ -30,7 +30,6 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
 
 @interface BNCStrongMatchHelper ()
 
-@property (strong, nonatomic) UIWindow *secondWindow;
 @property (assign, nonatomic) BOOL requestInProgress;
 @property (assign, nonatomic) BOOL shouldDelayInstallRequest;
 
@@ -127,21 +126,20 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
         // Must be on next run loop to avoid a warning
         dispatch_async(dispatch_get_main_queue(), ^{
             UIViewController * safController = [[SFSafariViewControllerClass alloc] initWithURL:strongMatchUrl];
-            self.secondWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-            self.secondWindow.rootViewController = safController;
-            self.secondWindow.windowLevel = UIWindowLevelNormal - 100;
-            [self.secondWindow setHidden:NO];
+            safController.view.userInteractionEnabled = NO;
+            safController.view.alpha = 0;
+            
             UIWindow *keyWindow = [[UIApplicationClass sharedApplication] keyWindow];
-            [self.secondWindow makeKeyWindow];
+            [keyWindow.rootViewController addChildViewController:safController];
+            [keyWindow.rootViewController.view addSubview:safController.view];
+            [safController didMoveToParentViewController:keyWindow.rootViewController];
+            safController.view.frame = CGRectZero;
             
             // Give enough time for Safari to load the request (optimized for 3G)
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [keyWindow makeKeyWindow];
-                
-                // Remove the window and release it's strong reference. This is important to ensure that
-                // applications using view controller based status bar appearance are restored.
-                [self.secondWindow removeFromSuperview];
-                self.secondWindow = nil;
+                [safController willMoveToParentViewController:nil];
+                [safController.view removeFromSuperview];
+                [safController removeFromParentViewController];
                 
                 [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
                 self.requestInProgress = NO;
