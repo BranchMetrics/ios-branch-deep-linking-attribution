@@ -1,6 +1,14 @@
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hyperium/hyper/master/LICENSE)
 
+## What's New
+### We are starting an SDK beta test program at Branch!
+
+Get priority updates and receive swag when you sign up and participate in the beta program.
+
+[Read about the Branch SDK Beta Program](https://github.com/BranchMetrics/ios-branch-deep-linking/wiki/The-Branch-SDK-Beta-Project)<br/>
+[Sign up for the Branch SDK Beta Program](https://docs.google.com/a/branch.io/forms/d/1fbXVFG11i-sQkd9pzHUu-U3B2qCBuwA64pVnsTQwQMo)
+
 # Branch Metrics iOS SDK Reference
 
 This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a complete list of the content featured in this document.
