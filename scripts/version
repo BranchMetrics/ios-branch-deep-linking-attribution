@@ -16,6 +16,13 @@ Options:
 
   -h  Print this usage info.
   -i  Increment the version number.  By default increments the patch number.
+
+    Updates version numbers in files:
+
+        Branch version:     ../Branch-SDK/Branch-SDK/BNCConfig.m
+        Podspec version:    ../Branch.podspec
+        Carthage version:   ../carthage-files/Info.plist
+
   -M  Print or increment the \`major\` version number.
   -m  Print or increment the \`minor\` version number.
   -p  Print or increment the \`patch\` version number.
@@ -23,7 +30,7 @@ Options:
 USAGE
 }
 
-version=2.0.1
+version=0.0.23
 
 if (( $# == 0 )); then
     echo $version
@@ -32,6 +39,9 @@ fi
 
 scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 scriptfile="${scriptfile}"/$(basename "$0")
+cd $(dirname "$scriptfile")
+
+
 IFS=$'.' read  M m p < <(echo "$version")
 
 major=
@@ -67,6 +77,18 @@ if [[ $increment ]]; then
 
     version="$M.$m.$p"
     echo "$version"
+
+    # Update the SDK version:
+    sed -i '' -e "/SDK_VERSION/ {s/\".*\"/\"$version\"/; }" ../Branch-SDK/Branch-SDK/BNCConfig.m
+
+    # Update the Podspec version:
+    sed -i '' -e "/^[[:space:]]*s\.version/ {s/\".*\"/\"$version\"/; }" ../Branch.podspec
+
+    # Update the Carthage version:
+    plutil -replace CFBundleVersion -string "$version"  ../carthage-files/Info.plist
+    plutil -replace CFBundleShortVersionString -string "$version"  ../carthage-files/Info.plist
+
+    # Update our version (Do it last. Updating a running bash script can have undefined results.)
     sed -i '' -e "s/^version=.*$/version=$version/" "$scriptfile"; exit 0
 
 else
@@ -84,4 +106,5 @@ else
     fi
 
 fi
+
 

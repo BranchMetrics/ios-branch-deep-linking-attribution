@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4D19C1C21DC110FB008D8B38 /* BNCXcode7Support.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D19C1C01DC110FA008D8B38 /* BNCXcode7Support.h */; };
 		4D19C1C31DC110FB008D8B38 /* BNCXcode7Support.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D19C1C11DC110FB008D8B38 /* BNCXcode7Support.m */; };
+		4D3FA94D1DFF3F6C00E2B6A9 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FA94C1DFF3F6C00E2B6A9 /* BNCConfig.m */; };
 		7DA3BF1D1D889CE500CA8AE0 /* BranchContentDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3BF171D889CE500CA8AE0 /* BranchContentDiscoverer.m */; };
 		7DA3BF1E1D889CE500CA8AE0 /* BranchContentDiscoverer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7DA3BF181D889CE500CA8AE0 /* BranchContentDiscoverer.h */; };
 		7DA3BF1F1D889CE500CA8AE0 /* BranchContentDiscoveryManifest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7DA3BF191D889CE500CA8AE0 /* BranchContentDiscoveryManifest.h */; };
@@ -94,6 +95,7 @@
 /* Begin PBXFileReference section */
 		4D19C1C01DC110FA008D8B38 /* BNCXcode7Support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCXcode7Support.h; sourceTree = "<group>"; };
 		4D19C1C11DC110FB008D8B38 /* BNCXcode7Support.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCXcode7Support.m; sourceTree = "<group>"; };
+		4D3FA94C1DFF3F6C00E2B6A9 /* BNCConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCConfig.m; sourceTree = "<group>"; };
 		7DA3BF171D889CE500CA8AE0 /* BranchContentDiscoverer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchContentDiscoverer.m; sourceTree = "<group>"; };
 		7DA3BF181D889CE500CA8AE0 /* BranchContentDiscoverer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchContentDiscoverer.h; sourceTree = "<group>"; };
 		7DA3BF191D889CE500CA8AE0 /* BranchContentDiscoveryManifest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchContentDiscoveryManifest.h; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 			children = (
 				E2B9477A1D15E31700F2270D /* BNCCallbacks.h */,
 				E230A1151D03DB9E006181D8 /* BNCConfig.h */,
+				4D3FA94C1DFF3F6C00E2B6A9 /* BNCConfig.m */,
 				E230A1161D03DB9E006181D8 /* BNCContentDiscoveryManager.h */,
 				E230A1171D03DB9E006181D8 /* BNCContentDiscoveryManager.m */,
 				E230A1181D03DB9E006181D8 /* BNCDeviceInfo.h */,
@@ -480,6 +483,7 @@
 				E230A1A91D03DB9E006181D8 /* BranchLogoutRequest.m in Sources */,
 				E230A1A71D03DB9E006181D8 /* BranchLoadRewardsRequest.m in Sources */,
 				E230A17A1D03DB9E006181D8 /* BNCPreferenceHelper.m in Sources */,
+				4D3FA94D1DFF3F6C00E2B6A9 /* BNCConfig.m in Sources */,
 				E230A18D1D03DB9E006181D8 /* BranchCSSearchableItemAttributeSet.m in Sources */,
 				E230A1821D03DB9E006181D8 /* BNCStrongMatchHelper.m in Sources */,
 				E230A1841D03DB9E006181D8 /* BNCSystemObserver.m in Sources */,

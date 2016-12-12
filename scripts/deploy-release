@@ -1,0 +1,72 @@
+#!/bin/bash
+set -euo pipefail
+
+#  deploy-release
+
+scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+scriptfile="${scriptfile}"/$(basename "$0")
+cd $(dirname "$scriptfile")/..
+
+version=$(./version)
+
+if ! ./scripts/askYN "Deploy version ${version}?"; then
+    echo ">>> Nothing deployed." 1>&2
+    exit 1
+fi
+
+# Prompt for editor input for ChangeLog.
+vim +4 +star ChangeLog.md
+
+# Pre-release lint
+pod lib lint Branch.podspec --verbose
+
+# Build the framework
+./scripts/build_framework.sh
+
+# Zip the SDK files
+echo '>>> Zipping Branch-iOS-SDK' 1>&2
+zip -rqy Branch-iOS-SDK.zip Branch-SDK/ Branch.framework/
+
+echo '>>> Zipping Branch-iOS-TestBed' 1>&2
+zip -rqy Branch-iOS-TestBed.zip Branch-SDK/ Branch-TestBed/ Branch.framework/
+
+# Checksum the zip files
+checksum_file=checksum
+echo '#checksum for Branch-iOS-SDK found at https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip' > "$checksum_file"
+shasum Branch-iOS-SDK.zip >> $checksum_file
+
+echo '#checksum for Branch-iOS-TestBed found at https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip' >> "$checksum_file"
+shasum Branch-iOS-TestBed.zip >> $checksum_file
+
+exit 1
+
+./scripts/deploy-carthage
+./scripts/deploy-fabric
+
+# Commit and tag:
+git add --all
+git commit -m "Updates for ${version} release"
+git push
+git checkout master
+git pull
+git merge origin QA
+git commit
+git tag "v${version}"
+git push
+git push --tags origin master
+
+pod trunk push $PODSPEC_LOC
+
+
+#  Finally, deploy the zips to AWS:
+aws s3 cp --acl public-read Branch-iOS-SDK.zip s3://branchhost/
+aws s3 cp --acl public-read Branch-iOS-TestBed.zip s3://branchhost/
+
+# Prompt for SDK Releases Group post
+open ChangeLog.md
+open 'https://github.com/BranchMetrics/ios-branch-deep-linking/releases/new'
+open 'https://groups.google.com/forum/#!newtopic/branch-sdk-releases'
+echo "Inform the SDK Releases Group."
+echo "Subject: 'iOS SDK Release $1'"
+echo "   Body: < The change log >"
+
