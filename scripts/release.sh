@@ -3,10 +3,10 @@ set -euo pipefail
 
 [ $# -eq 0 ] && { echo "Usage: $0 1.0.0"; exit 1; }
 
-if [ `git status -bs` != "## QA...origin/QA" ]; then
-    echo ">>> Error:  Must be on the QA branch." 1>&2
-    exit 1
-fi
+# if [ `git status -bs` != "## QA...origin/QA" ]; then
+#     echo ">>> Error:  Must be on the QA branch." 1>&2
+#     exit 1
+# fi
 
 SCRIPT_DIR=$(cd "$(dirname $0)" && pwd)
 PROJECT_DIR=$SCRIPT_DIR/..
@@ -44,6 +44,7 @@ git checkout master
 git pull
 git merge origin QA
 git commit
+git push
 git push --tags origin master
 
 # Release to CocoaPods
