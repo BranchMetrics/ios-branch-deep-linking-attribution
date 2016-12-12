@@ -23,6 +23,4 @@ trap finish EXIT
 
 xcodebuild -scheme 'Branch iOS SDK Carthage' clean build
 carthage build --no-skip-current && carthage archive Branch
-open https://github.com/BranchMetrics/ios-branch-deep-linking/releases/new
-open ../ChangeLog.md
 scriptFailed=0
