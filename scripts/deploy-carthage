@@ -12,8 +12,7 @@ cd ${scriptpath}/../carthage-files
 
 scriptFailed=1
 function finish {
-    if [ $scriptFailed -ne 0 ]
-    then
+    if [ $scriptFailed -ne 0 ]; then
         echo ">>> Error: $scriptname failed!" 1>&2
         exit 1
     fi
