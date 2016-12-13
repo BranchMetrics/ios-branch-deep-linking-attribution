@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-#  deploy-release
+# deploy-release
+# Edward Smith, December 2016
 
 scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 scriptfile="${scriptfile}"/$(basename "$0")
@@ -9,10 +10,21 @@ cd $(dirname "$scriptfile")/..
 
 version=$(./scripts/version)
 
+scriptFailed=1
+function finish {
+    if [ $scriptFailed -ne 0 ]; then
+        echo ">>> Error: `basename "$scriptfile"` failed!" 1>&2
+        exit 1
+    fi
+}
+trap finish EXIT
+
+
 if ! ./scripts/askYN "Deploy Branch release version ${version}?"; then
     echo ">>> Nothing deployed." 1>&2
     exit 1
 fi
+
 
 git_branch=$(git symbolic-ref --short HEAD)
 
@@ -60,8 +72,8 @@ git commit -m "Updates for ${version} release"
 git push
 git checkout master
 git pull
-git merge origin "$git_branch"
-git commit
+git merge -m "Merge $git_branch" origin "$git_branch"
+(git commit || true)
 git tag "${version}"
 git push
 git push --tags origin master
@@ -70,7 +82,7 @@ echo '>>> Pushing Branch Cocoapod...' 1>&2
 pod trunk push Branch.podspec
 
 
-#  Finally, deploy the zips to AWS:
+# Finally, deploy the zips to AWS:
 echo '>>> Uploading to AWS...' 1>&2
 aws s3 cp --acl public-read Branch-iOS-SDK.zip s3://branchhost/
 aws s3 cp --acl public-read Branch-iOS-TestBed.zip s3://branchhost/
@@ -79,7 +91,16 @@ aws s3 cp --acl public-read Branch-iOS-TestBed.zip s3://branchhost/
 open ChangeLog.md
 open 'https://github.com/BranchMetrics/ios-branch-deep-linking/releases/new'
 open 'https://groups.google.com/forum/#!newtopic/branch-sdk-releases'
+open "./carthage-files"
 echo "Inform the SDK Releases Group!  We've released."
 echo "Subject: 'iOS SDK Release $version'"
 echo "   Body: < The change log >"
+echo ""
+echo "Also, add the carthage-files 'Branch.framework.zip' to the Github release."
 
+# Remove remnants:
+(rm Branch-iOS-SDK.zip || true)
+(rm Branch-iOS-TestBed.zip || true)
+
+# Completed OK:
+scriptFailed=0
