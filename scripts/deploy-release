@@ -41,10 +41,14 @@ shasum Branch-iOS-SDK.zip >> $checksum_file
 echo '#checksum for Branch-iOS-TestBed found at https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip' >> "$checksum_file"
 shasum Branch-iOS-TestBed.zip >> $checksum_file
 
+
 echo '>>> Making Carthage build...' 1>&2
 ./scripts/deploy-carthage
 
-exit 1
+if ! ./scripts/askYN "Commit and deploy Branch release version ${version}?"; then
+    echo ">>> Nothing deployed." 1>&2
+    exit 1
+fi
 
 echo '>>> Deploying Fabric build...' 1>&2
 ./scripts/deploy-fabric
