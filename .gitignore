@@ -18,3 +18,7 @@ Carthage/Build
 carthage-files/*.zip
 carthage-files/Carthage
 
+# Ignore some build products
+Branch-iOS-SDK.zip
+Branch-iOS-TestBed.zip
+Branch.framework.zip
