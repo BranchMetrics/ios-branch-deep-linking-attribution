@@ -9,24 +9,16 @@ scriptpath="${BASH_SOURCE[0]}"
 scriptpath=$(cd "$(dirname "${scriptpath}")" && pwd)
 cd ${scriptpath}/..
 
-#  Check the parameters:
-if [ $# != 1 ]
-then
-    echo ">>> Error: A version string is expected as a parameter." 1>&2
-    exit 1
-fi
-version=$1
+version=$(./scripts/version)
 
 # This script assumes that the bash variable 'FABRIC_KEY' is defined in your .bashrc file.
-if [ -z "${FABRIC_KEY+x}" ] || [ ${#FABRIC_KEY} = 0 ]
-then
+if [ -z "${FABRIC_KEY+x}" ] || [ ${#FABRIC_KEY} = 0 ]; then
     echo ">>> Error: FABRIC_KEY not defined.  Define it in your .bashrc." 1>&2
     exit 1
 fi
 
 
-if [ ! -d Branch.framework ]
-then
+if [ ! -d Branch.framework ]; then
     echo ">>> Error: Can't find the Branch.framework file." 1>&2
     exit 1
 fi
@@ -34,8 +26,7 @@ fi
 
 scriptFailed=1
 function finish {
-    if [ $scriptFailed -ne 0 ]
-    then
+    if [ $scriptFailed -ne 0 ]; then
         echo ">>> Error: $scriptname failed!" 1>&2
         exit 1
     fi

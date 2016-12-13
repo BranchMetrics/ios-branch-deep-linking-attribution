@@ -1,0 +1,85 @@
+#!/bin/bash
+set -euo pipefail
+
+#  deploy-release
+
+scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+scriptfile="${scriptfile}"/$(basename "$0")
+cd $(dirname "$scriptfile")/..
+
+version=$(./scripts/version)
+
+if ! ./scripts/askYN "Deploy Branch release version ${version}?"; then
+    echo ">>> Nothing deployed." 1>&2
+    exit 1
+fi
+
+git_branch=$(git symbolic-ref --short HEAD)
+
+# Prompt for editor input for ChangeLog.
+vim +4 +star ChangeLog.md
+
+# Pre-release lint
+echo ">>> Linting build for release..." 1>&2
+pod lib lint Branch.podspec --verbose
+
+# Build the framework
+./scripts/build_framework.sh
+
+# Zip the SDK files
+echo '>>> Zipping Branch-iOS-SDK' 1>&2
+zip -rqy Branch-iOS-SDK.zip Branch-SDK/ Branch.framework/
+
+echo '>>> Zipping Branch-iOS-TestBed' 1>&2
+zip -rqy Branch-iOS-TestBed.zip Branch-SDK/ Branch-TestBed/ Branch.framework/
+
+# Checksum the zip files
+checksum_file=checksum
+echo '#checksum for Branch-iOS-SDK found at https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip' > "$checksum_file"
+shasum Branch-iOS-SDK.zip >> $checksum_file
+
+echo '#checksum for Branch-iOS-TestBed found at https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip' >> "$checksum_file"
+shasum Branch-iOS-TestBed.zip >> $checksum_file
+
+
+echo '>>> Making Carthage build...' 1>&2
+./scripts/deploy-carthage
+
+if ! ./scripts/askYN "Commit and deploy Branch release version ${version}?"; then
+    echo ">>> Nothing deployed." 1>&2
+    exit 1
+fi
+
+echo '>>> Deploying Fabric build...' 1>&2
+./scripts/deploy-fabric
+
+# Commit and tag:
+echo '>>> Merging and pushing to master...' 1>&2
+git add --all
+git commit -m "Updates for ${version} release"
+git push
+git checkout master
+git pull
+git merge origin "$git_branch"
+git commit
+git tag "${version}"
+git push
+git push --tags origin master
+
+echo '>>> Pushing Branch Cocoapod...' 1>&2
+pod trunk push Branch.podspec
+
+
+#  Finally, deploy the zips to AWS:
+echo '>>> Uploading to AWS...' 1>&2
+aws s3 cp --acl public-read Branch-iOS-SDK.zip s3://branchhost/
+aws s3 cp --acl public-read Branch-iOS-TestBed.zip s3://branchhost/
+
+# Prompt for SDK Releases Group post
+open ChangeLog.md
+open 'https://github.com/BranchMetrics/ios-branch-deep-linking/releases/new'
+open 'https://groups.google.com/forum/#!newtopic/branch-sdk-releases'
+echo "Inform the SDK Releases Group!  We've released."
+echo "Subject: 'iOS SDK Release $version'"
+echo "   Body: < The change log >"
+

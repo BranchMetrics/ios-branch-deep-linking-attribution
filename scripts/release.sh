@@ -3,6 +3,11 @@ set -euo pipefail
 
 [ $# -eq 0 ] && { echo "Usage: $0 1.0.0"; exit 1; }
 
+# if [ `git status -bs` != "## QA...origin/QA" ]; then
+#     echo ">>> Error:  Must be on the QA branch." 1>&2
+#     exit 1
+# fi
+
 SCRIPT_DIR=$(cd "$(dirname $0)" && pwd)
 PROJECT_DIR=$SCRIPT_DIR/..
 SED_TMP_LOC=$PROJECT_DIR/sed.tmp
@@ -37,7 +42,7 @@ git tag $1
 git push
 git checkout master
 git pull
-git pull origin QA
+git merge origin QA
 git commit
 git push
 git push --tags origin master

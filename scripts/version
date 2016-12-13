@@ -1,0 +1,110 @@
+#!/bin/bash
+#  version  -  Version number managment.
+#  Edward Smith,  December 2016.
+set -euo pipefail
+function usage() {
+cat <<USAGE
+version  -  Print or increment a version number.
+
+Usage:  version  [ -hiMmp ]
+
+With no options given, \`version\` simply prints the current version number.
+
+Version numbers are:  Major.Minor.Patch
+
+Options:
+
+  -h  Print this usage info.
+  -i  Increment the version number.  By default increments the patch number.
+
+    Updates version numbers in files:
+
+        Branch version:     ../Branch-SDK/Branch-SDK/BNCConfig.m
+        Podspec version:    ../Branch.podspec
+        Carthage version:   ../carthage-files/Info.plist
+
+  -M  Print or increment the \`major\` version number.
+  -m  Print or increment the \`minor\` version number.
+  -p  Print or increment the \`patch\` version number.
+
+USAGE
+}
+
+version=0.12.20
+
+if (( $# == 0 )); then
+    echo $version
+    exit 0
+fi
+
+scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+scriptfile="${scriptfile}"/$(basename "$0")
+cd $(dirname "$scriptfile")
+
+
+IFS=$'.' read  M m p < <(echo "$version")
+
+major=
+minor=
+patch=
+increment=
+
+while getopts ":hiMmpv" option; do
+    case "$option" in
+    h)  usage; exit 0 ;;
+    i)  increment=true ;;
+    M)  major=true ;;
+    m)  minor=true ;;
+    p)  patch=true ;;
+    v)  ;;
+    ?)  echo ">>> Error: Unknown option '-$OPTARG'." 1>&2; exit 1 ;;
+    esac
+done
+
+
+if [[ $increment ]]; then
+
+    if [[ $major ]]; then
+        let M=M+1
+        m=0
+        p=0
+    elif [[ $minor ]]; then
+        let m=m+1
+        p=0
+    else
+        let p=p+1
+    fi
+
+    version="$M.$m.$p"
+    echo "$version"
+
+    # Update the SDK version:
+    sed -i '' -e "/SDK_VERSION/ {s/\".*\"/\"$version\"/; }" ../Branch-SDK/Branch-SDK/BNCConfig.m
+
+    # Update the Podspec version:
+    sed -i '' -e "/^[[:space:]]*s\.version/ {s/\".*\"/\"$version\"/; }" ../Branch.podspec
+
+    # Update the Carthage version:
+    plutil -replace CFBundleVersion -string "$version"  ../carthage-files/Info.plist
+    plutil -replace CFBundleShortVersionString -string "$version"  ../carthage-files/Info.plist
+
+    # Update our version (Do it last. Updating a running bash script can have undefined results.)
+    sed -i '' -e "s/^version=.*$/version=$version/" "$scriptfile"; exit 0
+
+else
+
+    #  Print the version or parts
+
+    if   [[ $major ]]; then
+        echo $M
+    elif [[ $minor ]]; then
+        echo $m
+    elif [[ $patch ]]; then
+        echo $p
+    else
+        echo "$version"
+    fi
+
+fi
+
+

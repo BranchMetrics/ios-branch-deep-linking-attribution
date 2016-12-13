@@ -72,11 +72,10 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 
 @property (strong, nonatomic) BNCServerInterface *bServerInterface;
-@property (strong, nonatomic) NSTimer *sessionTimer;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
-@property (strong, nonatomic) callbackWithParams sessionInitWithParamsCallback;
-@property (strong, nonatomic) callbackWithBranchUniversalObject sessionInitWithBranchUniversalObjectCallback;
+@property (copy,   nonatomic) callbackWithParams sessionInitWithParamsCallback;
+@property (copy,   nonatomic) callbackWithBranchUniversalObject sessionInitWithBranchUniversalObjectCallback;
 @property (assign, nonatomic) NSInteger networkCount;
 @property (assign, nonatomic) BOOL isInitialized;
 @property (assign, nonatomic) BOOL shouldCallSessionInitCallback;
@@ -86,7 +85,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 @property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
 @property (strong, nonatomic) NSString *branchKey;
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
-@property (weak, nonatomic) UIViewController *deepLinkPresentingController;
+@property (weak,   nonatomic) UIViewController *deepLinkPresentingController;
 @property (assign, nonatomic) BOOL useCookieBasedMatching;
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (assign, nonatomic) BOOL accountForFacebookSDK;
@@ -94,7 +93,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 @property (assign, nonatomic) BOOL delayForAppleAds;
 @property (assign, nonatomic) BOOL searchAdsDebugMode;
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
-
+@property (assign, nonatomic) BOOL appIsInBackground;
 @end
 
 @implementation Branch
@@ -1152,6 +1151,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 #pragma mark - BranchUniversalObject methods
 
+
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback {
     [self initSessionIfNeededAndNotInProgress];
     
@@ -1164,20 +1164,16 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    [self clearTimer];
+    self.appIsInBackground = NO;
     if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:YES];
     }
 }
 
 - (void)applicationWillResignActive {
-    [self clearTimer];
-    self.sessionTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(callClose) userInfo:nil repeats:NO];
+    self.appIsInBackground = YES;
+    [self callClose];
     [self.requestQueue persistImmediately];
-}
-
-- (void)clearTimer {
-    [self.sessionTimer invalidate];
 }
 
 - (void)callClose {
@@ -1268,11 +1264,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
                 [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
                 return;
             }
-            
-            if (![req isKindOfClass:[BranchCloseRequest class]]) {
-                [self clearTimer];
-            }
-            
+                        
             [req makeRequest:self.bServerInterface key:self.branchKey callback:callback];
         }
     }
@@ -1338,26 +1330,17 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.useCookieBasedMatching) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
     }
-    
-    // If there isn't already an Open / Install request, add one to the queue
-    if (![self.requestQueue containsInstallOrOpen]) {
-        BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
-        
-        [self insertRequestAtFront:req];
-    }
-    // If there is already one in the queue, make sure it's in the front.
-    // Make sure a callback is associated with this request. This callback can
-    // be cleared if the app is terminated while an Open/Install is pending.
-    else {
-        BranchOpenRequest *req = [self.requestQueue moveInstallOrOpenToFront:self.networkCount];
-        req.callback = initSessionCallback;
-    }
-    
+
+    if ([self.requestQueue removeInstallOrOpen])
+        self.networkCount = 0;
+    BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
+    [self insertRequestAtFront:req];
     [self processNextQueueItem];
 }
 
 - (void)handleInitSuccess {
-    self.isInitialized = YES;
+    if (!self.appIsInBackground)
+        self.isInitialized = YES;
     
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
     if (self.shouldCallSessionInitCallback) {
@@ -1433,7 +1416,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 }
 
 + (NSString *)kitDisplayVersion {
-	return @"0.12.19";
+	return SDK_VERSION;
 }
 
 @end
