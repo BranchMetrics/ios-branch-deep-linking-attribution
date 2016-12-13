@@ -1,7 +1,8 @@
 Branch iOS SDK Change Log
 
 - v0.12.20
-  * Started beta program.
+  * Started the SDK beta program. A beta version of the SDK is now available.
+    - See the Github info here: https://branch.app.link/5HMUVrQeYy 
   * Updated the build script.
   * Merge pull request #517 from brianmichel/bsm/call-javascript-from-main-thread.
   * Fixed and re-applied patches from v0.12.18. These are:
