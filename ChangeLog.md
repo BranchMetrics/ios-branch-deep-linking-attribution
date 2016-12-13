@@ -1,7 +1,34 @@
 Branch iOS SDK Change Log
 
+- v0.12.20
+  * Started the SDK beta program. A beta version of the SDK is now available.
+    - See the Github info here: https://branch.app.link/5HMUVrQeYy 
+  * Updated the build script.
+  * Merge pull request #517 from brianmichel/bsm/call-javascript-from-main-thread.
+  * Fixed and re-applied patches from v0.12.18. These are:
+    - Updated share channel names for some older iOS app versions.
+    - Updated how the SFSafariViewController window is handled when finding a strong match.
+      * The keyWindow and firstResponder will no longer lose focus at app start up (#484, AIS-122).
+      * Branch now plays nicely with the Facebook login controller (AIS-122).
+    - Improved handling of queued link opens. (#491, #503, AIS-128)
+    - Made the preference helper more robust to prevent crashes (#514)
+    - Updated nullability of callback parameters for Swift (#509, #507, AIS-149).
+    - Fixed some nil reference errors found by static analysis.
+    - Fixed a small memory leak.
+
 - v0.12.19
   * Reverted changes from release 0.12.18.
+
+- v0.12.18
+  * Updated share channel names for some older iOS app versions.
+  * Updated how the SFSafariViewController window is handled when finding a strong match.
+    - The keyWindow and firstResponder will no longer lose focus at app start up (#484, AIS-122).
+    - Branch now plays nicely with the Facebook login controller (AIS-122).
+  * Improved handling of queued link opens. (#491, #503, AIS-128)
+  * Made the preference helper more robust to prevent crashes (#514)
+  * Updated nullability of callback parameters for Swift (#509, #507, AIS-149).
+  * Fixed some nil reference errors found by static analysis.
+  * Fixed a small memory leak.
 
 - v0.12.17
   * Made the preference file creation more robust and fault tolerant.
