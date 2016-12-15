@@ -15,7 +15,7 @@
 @property (nonatomic, strong) NSString *sku;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSDecimalNumber *price;
-@property (nonatomic, strong) NSNumber *quatity;
+@property (nonatomic, strong) NSNumber *quantity;
 @property (nonatomic, strong) NSString *brand;
 @property (nonatomic, strong) NSString *category;
 @property (nonatomic, strong) NSString *variant;

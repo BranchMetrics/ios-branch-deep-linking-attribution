@@ -198,6 +198,34 @@ NSString *type = @"some type";
     }];
 }
 
+- (IBAction) sendCommerceEvent:(id)sender {
+    BNCProduct *product = [BNCProduct new];
+    product.price = [NSDecimalNumber decimalNumberWithString:@"1000.99"];
+    product.sku = @"acme007";
+    product.name = @"Acme brand 1 ton weight";
+    product.quantity = @(1.0);
+    product.brand = @"Acme";
+    product.category = @"Widgets";
+    product.variant = @"Lite Weight";
+
+    BNCCommerceEvent *commerceEvent = [BNCCommerceEvent new];
+    commerceEvent.revenue = [NSDecimalNumber decimalNumberWithString:@"1101.99"];
+    commerceEvent.currency = @"Smackeroos";
+    commerceEvent.transactionID = @"tr00x8";
+    commerceEvent.shipping = [NSDecimalNumber decimalNumberWithString:@"100.00"];
+    commerceEvent.tax = [NSDecimalNumber decimalNumberWithString:@"1.00"];
+    commerceEvent.coupon = @"Acme weights coupon";
+    commerceEvent.affiliation = @"ACME by Amazon";
+    commerceEvent.products = @[ product ];
+
+    [[Branch getInstance]
+        sendCommerceEvent:commerceEvent
+        metadata:@{ @"Meta": @"Never meta dog I didn't like." }
+        withCompletion:
+        ^ (NSDictionary *response, NSError *error) {
+            NSLog(@"Completion called. Error: %@\n%@", error, response);
+        }];
+}
 
 //example using callbackWithURLandSpotlightIdentifier
 - (IBAction)registerWithSpotlightButtonTouchUpInside:(id)sender {

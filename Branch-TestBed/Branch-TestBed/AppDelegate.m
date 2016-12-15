@@ -40,7 +40,7 @@
         [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]]
             instantiateInitialViewController];
 
-#if 0   //  eDebug
+#if 1   //  eDebug
     UIViewController *viewController =
         [[UIStoryboard storyboardWithName:@"Main" bundle:NULL]
             instantiateViewControllerWithIdentifier:@"ViewController"];

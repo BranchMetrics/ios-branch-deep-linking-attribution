@@ -22,7 +22,7 @@
 	assign(sku);
 	assign(name);
 	assign(price);
-	assign(quatity);
+	assign(quantity);
 	assign(brand);
 	assign(category);
 	assign(variant);
@@ -56,7 +56,7 @@
 		NSDictionary * d = [product dictionary];
 		if (d) [products addObject:d];
 	}
-	self.products = products;
+    dictionary[@"products"] = products;
 	
 	#undef assign
 	
@@ -83,6 +83,10 @@
 							completion:(void (^)(NSDictionary* response, NSError* error))completion {
 	self = [super init];
 	if (!self) return self;
+
+    if ([commerceEvent.revenue isEqualToNumber:[NSDecimalNumber numberWithDouble:0.0]]) {
+        NSLog(@"[Branch] Warning: Sending a commerce event with zero value!!");
+    }
 
 	self.commerceDictionary = [commerceEvent dictionary];
 	self.metadata = metadata;
