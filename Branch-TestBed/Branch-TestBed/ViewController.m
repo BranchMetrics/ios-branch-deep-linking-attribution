@@ -219,8 +219,8 @@ NSString *type = @"some type";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self refreshRewardPoints];
+    [self.branchLinkTextField becomeFirstResponder];    //  eDebug
 }
-
 
 - (void)textFieldFinished:(id)sender {
     [sender resignFirstResponder];
