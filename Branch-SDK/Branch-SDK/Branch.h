@@ -704,7 +704,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param completion 		The optional completion callback.
  */
 - (void) sendCommerceEvent:(BNCCommerceEvent*)commerceEvent
-				  metadata:(NSDictionary*)dictionary
+				  metadata:(NSDictionary<NSString*,id>*)metadata
 			withCompletion:(void (^) (NSDictionary*response, NSError*error))completion;
 
 #pragma mark - Short Url Sync methods
