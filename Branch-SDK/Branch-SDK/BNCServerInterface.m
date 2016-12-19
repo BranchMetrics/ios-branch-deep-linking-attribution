@@ -228,10 +228,12 @@ NSString *requestEndpoint;
     return request;
 }
 
-- (NSDictionary *)prepareParamDict:(NSDictionary *)params key:(NSString *)key retryNumber:(NSInteger)retryNumber requestType:(NSString *)reqType {
+- (NSDictionary *)prepareParamDict:(NSDictionary *)params
+							   key:(NSString *)key
+					   retryNumber:(NSInteger)retryNumber requestType:(NSString *)reqType {
     NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
     [fullParamDict addEntriesFromDictionary:params];
-    fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
+    fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
     
     // using rangeOfString instead of containsString to support devices running pre iOS 8
     if ([[[NSBundle mainBundle] executablePath] rangeOfString:@".appex/"].location != NSNotFound) {
