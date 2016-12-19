@@ -6,8 +6,9 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
+
 #import <Messages/Messages.h>
 
-@interface MessagesViewController : MSMessagesAppViewController
 
+@interface MessagesViewController : MSMessagesAppViewController
 @end
