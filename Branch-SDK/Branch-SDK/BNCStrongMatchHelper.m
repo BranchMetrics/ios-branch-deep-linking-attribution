@@ -279,10 +279,11 @@
     }
 
     NSLog(@"Safari initializing."); //  eDebug
+    self.primaryWindow = [self keyWindow];
+
     self.matchViewController = [[BNCMatchViewControllerSubclass alloc] initWithURL:matchURL];
     if (!self.matchViewController) return NO;
     
-    self.primaryWindow = [self keyWindow];
     self.matchViewController.delegate = self;
     self.matchViewController.view.frame = self.primaryWindow.bounds;
 
