@@ -1134,9 +1134,12 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     if ([stage length]) {
         [longUrl appendFormat:@"stage=%@&", stage];
     }
-    
-    [longUrl appendFormat:@"type=%ld&", (long)type];
-    [longUrl appendFormat:@"matchDuration=%ld&", (long)duration];
+    if (type) {
+        [longUrl appendFormat:@"type=%ld&", (long)type];
+    }
+    if (duration) {
+        [longUrl appendFormat:@"matchDuration=%ld&", (long)duration];
+    }
     
     NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:params];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
