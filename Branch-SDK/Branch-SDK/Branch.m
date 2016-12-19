@@ -665,6 +665,20 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 }
 
 
+- (void) sendCommerceEvent:(BNCCommerceEvent *)commerceEvent
+				  metadata:(NSDictionary*)metadata
+			withCompletion:(void (^)(NSDictionary *, NSError *))completion {
+
+    [self initSessionIfNeededAndNotInProgress];
+    BranchCommerceEventRequest *request =
+		[[BranchCommerceEventRequest alloc]
+			initWithCommerceEvent:commerceEvent
+			metadata:metadata
+			completion:completion];
+    [self.requestQueue enqueue:request];
+    [self processNextQueueItem];
+}
+
 #pragma mark - Credit methods
 
 - (void)loadRewardsWithCallback:(callbackWithStatus)callback {
