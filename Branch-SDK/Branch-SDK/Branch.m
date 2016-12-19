@@ -1278,8 +1278,11 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
                 [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
                 return;
             }
-                        
-            [req makeRequest:self.bServerInterface key:self.branchKey callback:callback];
+
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+            dispatch_async(queue, ^ {
+                [req makeRequest:self.bServerInterface key:self.branchKey callback:callback];
+            });
         }
     }
     else {

@@ -16,8 +16,8 @@
 
 
 @interface BNCDeviceInfo()
-
 @end
+
 
 @implementation BNCDeviceInfo
 
@@ -83,20 +83,24 @@ static BNCDeviceInfo *bncDeviceInfo;
 
     }
 
+    static NSString* browserUserAgentString = nil;
+
     void (^setUpBrowserUserAgent)() = ^() {
-        self.browserUserAgent = [[[UIWebView alloc]
-                                  initWithFrame:CGRectZero]
-                                    stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+        browserUserAgentString =
+            [[[UIWebView alloc]
+              initWithFrame:CGRectZero]
+                stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+        self.browserUserAgent = browserUserAgentString;
     };
 
-    if (NSThread.isMainThread) {
-
-        setUpBrowserUserAgent();
-
-    } else {
-
-        dispatch_sync(dispatch_get_main_queue(), setUpBrowserUserAgent);
-
+    @synchronized (self.class) {
+        if (browserUserAgentString) {
+            self.browserUserAgent = browserUserAgentString;
+        } else if (NSThread.isMainThread) {
+            setUpBrowserUserAgent();
+        } else {
+            dispatch_sync(dispatch_get_main_queue(), setUpBrowserUserAgent);
+        }
     }
 
     return self;
