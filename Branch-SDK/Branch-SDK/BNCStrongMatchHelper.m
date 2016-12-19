@@ -174,7 +174,7 @@
     }
     
     [urlString appendFormat:@"&branch_key=%@", branchKey];
-    [urlString appendFormat:@"&sdk=ios%@", SDK_VERSION];
+    [urlString appendFormat:@"&sdk=ios%@", BNC_SDK_VERSION];
     
     if (redirectUrl) {
         [urlString appendFormat:@"&redirect_url=%@",
