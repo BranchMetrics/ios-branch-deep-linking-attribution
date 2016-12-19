@@ -6,12 +6,13 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
+
 #import "BNCLinkData.h"
 #import "BNCEncodingUtils.h"
 #import "BranchConstants.h"
 
-@interface BNCLinkData ()
 
+@interface BNCLinkData ()
 @property (strong, nonatomic) NSArray *tags;
 @property (strong, nonatomic) NSString *alias;
 @property (strong, nonatomic) NSString *channel;
@@ -22,8 +23,8 @@
 @property (strong, nonatomic) NSString *ignoreUAString;
 @property (assign, nonatomic) BranchLinkType type;
 @property (assign, nonatomic) NSUInteger duration;
-
 @end
+
 
 @implementation BNCLinkData
 
