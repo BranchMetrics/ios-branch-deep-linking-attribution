@@ -244,6 +244,7 @@
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     UIWindow *keyWindow = [UIApplicationClass sharedApplication].keyWindow;
     if (keyWindow) return keyWindow;
+	// ToDo: Put different code for extensions here.
     return nil;
 }
 
