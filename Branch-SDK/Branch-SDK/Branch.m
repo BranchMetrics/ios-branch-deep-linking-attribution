@@ -1409,7 +1409,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
 }
 
-#pragma mark FABKit methods
+#pragma mark - FABKit methods
 
 + (NSString *)bundleIdentifier {
     return @"io.branch.sdk.ios";
