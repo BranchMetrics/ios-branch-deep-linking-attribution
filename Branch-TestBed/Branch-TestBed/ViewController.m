@@ -60,7 +60,7 @@ NSString *type = @"some type";
     _branchUniversalObject.type = type;
     [_branchUniversalObject addMetadataKey:@"deeplink_text" value:[NSString stringWithFormat:
                                                                    @"This text was embedded as data in a Branch link with the following characteristics:\n\n  canonicalUrl: %@\n  title: %@\n  contentDescription: %@\n  imageUrl: %@\n", canonicalUrl, contentTitle, contentDescription, imageUrl]];
-    [self refreshRewardPoints];
+   // [self refreshRewardPoints];
 }
 
 
@@ -246,7 +246,7 @@ NSString *type = @"some type";
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self refreshRewardPoints];
+   // [self refreshRewardPoints];
 }
 
 

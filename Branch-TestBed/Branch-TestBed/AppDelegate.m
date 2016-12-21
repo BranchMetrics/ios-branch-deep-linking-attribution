@@ -5,7 +5,7 @@
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
-#import "Branch.h"
+#import "Branch/Branch.h"
 #import "AppDelegate.h"
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
@@ -18,7 +18,8 @@
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+- (BOOL)application:(UIApplication *)application
+    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     /**
      * // Push notification support (Optional)
      * [self registerForPushNotifications:application];
@@ -26,8 +27,8 @@
 
     Branch *branch = [Branch getInstance];
     
-    // Un-comment to turn debugging on:    
-    // [branch setDebug];
+    // Comment / un-comment to toggle debugging:    
+    [branch setDebug];
     
     // For Apple Search Ads
     // [branch delayInitToCheckForSearchAds];
@@ -39,14 +40,6 @@
     NavigationController *navigationController =
         [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]]
             instantiateInitialViewController];
-
-#if 1   //  eDebug
-    UIViewController *viewController =
-        [[UIStoryboard storyboardWithName:@"Main" bundle:NULL]
-            instantiateViewControllerWithIdentifier:@"ViewController"];
-    self.window.rootViewController = viewController;
-    [self.window makeKeyAndVisible];
-#endif
 
     [branch registerDeepLinkController:navigationController forKey:@"deeplink_text"];
     
