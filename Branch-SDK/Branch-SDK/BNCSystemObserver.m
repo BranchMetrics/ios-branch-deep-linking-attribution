@@ -140,8 +140,9 @@
     NSDate *creationDate = [documentsDirAttributes fileCreationDate];
 
     // for modification date
+    NSError *error = nil;
     NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
-    NSDictionary *bundleAttributes = [manager attributesOfItemAtPath:bundleRoot error:nil];
+    NSDictionary *bundleAttributes = [manager attributesOfItemAtPath:bundleRoot error:&error];
     NSDate *modificationDate = [bundleAttributes fileModificationDate];
 
     // No stored version
