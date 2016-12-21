@@ -357,6 +357,16 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
             }
             self.preferenceHelper.shouldWaitForInit = YES;
         }
+        else {
+
+            // NOTE - possible race condition while processing a deep link!!
+            // we can get here when the app calls initSession after handleDeepLink has already been called
+            // in that case, sessionInitWithParamsCallback needs to be called
+
+            if (self.isInitialized) {
+                [self initUserSessionAndCallCallback:YES];
+            }
+        }
     }
     else if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey]) {
         [self initUserSessionAndCallCallback:YES];
