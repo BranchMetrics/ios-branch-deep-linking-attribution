@@ -665,6 +665,20 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 }
 
 
+- (void) sendCommerceEvent:(BNCCommerceEvent *)commerceEvent
+				  metadata:(NSDictionary*)metadata
+			withCompletion:(void (^)(NSDictionary *, NSError *))completion {
+
+    [self initSessionIfNeededAndNotInProgress];
+    BranchCommerceEventRequest *request =
+		[[BranchCommerceEventRequest alloc]
+			initWithCommerceEvent:commerceEvent
+			metadata:metadata
+			completion:completion];
+    [self.requestQueue enqueue:request];
+    [self processNextQueueItem];
+}
+
 #pragma mark - Credit methods
 
 - (void)loadRewardsWithCallback:(callbackWithStatus)callback {
@@ -1120,9 +1134,12 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     if ([stage length]) {
         [longUrl appendFormat:@"stage=%@&", stage];
     }
-    
-    [longUrl appendFormat:@"type=%ld&", (long)type];
-    [longUrl appendFormat:@"matchDuration=%ld&", (long)duration];
+    if (type) {
+        [longUrl appendFormat:@"type=%ld&", (long)type];
+    }
+    if (duration) {
+        [longUrl appendFormat:@"matchDuration=%ld&", (long)duration];
+    }
     
     NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:params];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
@@ -1264,8 +1281,11 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
                 [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
                 return;
             }
-                        
-            [req makeRequest:self.bServerInterface key:self.branchKey callback:callback];
+
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+            dispatch_async(queue, ^ {
+                [req makeRequest:self.bServerInterface key:self.branchKey callback:callback];
+            });
         }
     }
     else {
@@ -1416,7 +1436,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 }
 
 + (NSString *)kitDisplayVersion {
-	return SDK_VERSION;
+	return BNC_SDK_VERSION;
 }
 
 @end

@@ -15,7 +15,8 @@ Version numbers are:  Major.Minor.Patch
 Options:
 
   -h  Print this usage info.
-  -i  Increment the version number.  By default increments the patch number.
+  -i  Increment the version number.  By default this increments the patch number.
+  -u  Update all source files for the update.  The '-i' version implies this option.
 
     Updates version numbers in files:
 
@@ -48,14 +49,16 @@ major=
 minor=
 patch=
 increment=
+update=
 
-while getopts ":hiMmpv" option; do
+while getopts ":hiMmpvu" option; do
     case "$option" in
     h)  usage; exit 0 ;;
-    i)  increment=true ;;
+    i)  increment=true; update=true ;;
     M)  major=true ;;
     m)  minor=true ;;
     p)  patch=true ;;
+    u)  update=true ;;
     v)  ;;
     ?)  echo ">>> Error: Unknown option '-$OPTARG'." 1>&2; exit 1 ;;
     esac
@@ -78,19 +81,6 @@ if [[ $increment ]]; then
     version="$M.$m.$p"
     echo "$version"
 
-    # Update the SDK version:
-    sed -i '' -e "/SDK_VERSION/ {s/\".*\"/\"$version\"/; }" ../Branch-SDK/Branch-SDK/BNCConfig.m
-
-    # Update the Podspec version:
-    sed -i '' -e "/^[[:space:]]*s\.version/ {s/\".*\"/\"$version\"/; }" ../Branch.podspec
-
-    # Update the Carthage version:
-    plutil -replace CFBundleVersion -string "$version"  ../carthage-files/Info.plist
-    plutil -replace CFBundleShortVersionString -string "$version"  ../carthage-files/Info.plist
-
-    # Update our version (Do it last. Updating a running bash script can have undefined results.)
-    sed -i '' -e "s/^version=.*$/version=$version/" "$scriptfile"; exit 0
-
 else
 
     #  Print the version or parts
@@ -108,3 +98,22 @@ else
 fi
 
 
+if [[ $update ]]; then
+
+    # Update the SDK version:
+    sed -i '' -e "/BNC_SDK_VERSION/ {s/\".*\"/\"$version\"/; }" ../Branch-SDK/Branch-SDK/BNCConfig.m
+
+    # Update the Podspec version:
+    sed -i '' -e "/^[[:space:]]*s\.version/ {s/\".*\"/\"$version\"/; }" ../Branch.podspec
+
+    # Update the Carthage version:
+    plutil -replace CFBundleVersion -string "$version"  ../carthage-files/Info.plist
+    plutil -replace CFBundleShortVersionString -string "$version"  ../carthage-files/Info.plist
+
+fi
+
+
+if [[ $increment ]]; then
+    # Update our version (Do this last. Updating a running bash script has undefined results.)
+    sed -i '' -e "s/^version=.*$/version=$version/" "$scriptfile"; exit 0
+fi
