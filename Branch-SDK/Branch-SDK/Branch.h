@@ -19,6 +19,7 @@
 #import "BNCServerRequestQueue.h"
 #import "BranchActivityItemProvider.h"
 #import "BranchDeepLinkingController.h"
+#import "BNCCommerceEvent.h"
 
 /**
  `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.
@@ -689,6 +690,22 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param branchViewCallback Callback for Branch view state
  */
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withDelegate:(id)branchViewCallback;
+
+/**
+ Sends a user commerce event to the server.
+
+ Use commerce events to track when a user purchases an item in your online store, 
+ makes an in-app purchase, or buys a subscription.  The commerce events are tracked in 
+ the Branch dashboard along with your other events so you can judge the effectiveness of
+ campaigns and other analytics.
+
+ @param commerceEvent 	The BNCCommerceEvent that describes the purchase.
+ @param metadata        Optional metadata you may want add to the event.
+ @param completion 		The optional completion callback.
+ */
+- (void) sendCommerceEvent:(BNCCommerceEvent*)commerceEvent
+				  metadata:(NSDictionary<NSString*,id>*)metadata
+			withCompletion:(void (^) (NSDictionary*response, NSError*error))completion;
 
 #pragma mark - Short Url Sync methods
 

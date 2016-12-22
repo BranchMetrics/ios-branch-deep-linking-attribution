@@ -50,7 +50,7 @@
     
     NSLog(@"didBecomeActiveWithConversation: %@", [conversation description]);
     Branch *branch = [Branch getInstance];
-    [branch setDebug];
+    //[branch setDebug];    //  eDebug
     [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary * _Nonnull params, NSError * _Nullable error) {
         if (!error) {
             NSLog(@"found params %@", [params description]);

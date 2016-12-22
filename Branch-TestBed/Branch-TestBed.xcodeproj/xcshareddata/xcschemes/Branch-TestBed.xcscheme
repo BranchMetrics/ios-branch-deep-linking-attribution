@@ -73,9 +73,6 @@
       </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
-      <DeviceAppData
-         resolvedPath = "../Simulate-FirstRun.xcappdata">
-      </DeviceAppData>
       <LocationScenarioReference
          identifier = "com.apple.dt.IDEFoundation.CurrentLocationScenarioIdentifier"
          referenceType = "1">
