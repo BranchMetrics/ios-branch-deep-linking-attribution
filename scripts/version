@@ -51,7 +51,7 @@ patch=
 increment=
 update=
 
-while getopts ":hiMmpv" option; do
+while getopts ":hiMmpvu" option; do
     case "$option" in
     h)  usage; exit 0 ;;
     i)  increment=true; update=true ;;
@@ -65,13 +65,13 @@ while getopts ":hiMmpv" option; do
 done
 
 
-if $increment; then
+if [[ $increment ]]; then
 
-    if $major; then
+    if [[ $major ]]; then
         let M=M+1
         m=0
         p=0
-    elif $minor; then
+    elif [[ $minor ]]; then
         let m=m+1
         p=0
     else
@@ -85,11 +85,11 @@ else
 
     #  Print the version or parts
 
-    if  $major; then
+    if   [[ $major ]]; then
         echo $M
-    elif $minor; then
+    elif [[ $minor ]]; then
         echo $m
-    elif $patch; then
+    elif [[ $patch ]]; then
         echo $p
     else
         echo "$version"
@@ -98,7 +98,7 @@ else
 fi
 
 
-if $update; then
+if [[ $update ]]; then
 
     # Update the SDK version:
     sed -i '' -e "/BNC_SDK_VERSION/ {s/\".*\"/\"$version\"/; }" ../Branch-SDK/Branch-SDK/BNCConfig.m
@@ -113,7 +113,7 @@ if $update; then
 fi
 
 
-if $increment; then
-    # Update our version (Do it last. Updating a running bash script has undefined results.)
+if [[ $increment ]]; then
+    # Update our version (Do this last. Updating a running bash script has undefined results.)
     sed -i '' -e "s/^version=.*$/version=$version/" "$scriptfile"; exit 0
 fi

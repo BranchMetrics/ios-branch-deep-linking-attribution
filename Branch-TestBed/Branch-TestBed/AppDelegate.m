@@ -27,7 +27,7 @@
 
     Branch *branch = [Branch getInstance];
     
-    // Comment / un-comment to toggle debugging:    
+    // Comment / un-comment to toggle debugging:
     [branch setDebug];
     
     // For Apple Search Ads
