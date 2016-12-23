@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D698FF11E04B566006DA451 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D698FEF1E04B566006DA451 /* BNCCommerceEvent.m */; };
+		4D698FF21E04B566006DA451 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D698FF01E04B566006DA451 /* BNCConfig.m */; };
 		67E91EEF1D769E1E0039F1C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 67E91EEE1D769E1E0039F1C4 /* Assets.xcassets */; };
 		67E91EF61D769E1E0039F1C4 /* MessagesExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 67E91EF51D769E1E0039F1C4 /* MessagesExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		67E91EFB1D769E1E0039F1C4 /* Messages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67E91EFA1D769E1E0039F1C4 /* Messages.framework */; };
@@ -78,6 +80,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4D698FEE1E04B566006DA451 /* BNCCommerceEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCCommerceEvent.h; sourceTree = "<group>"; };
+		4D698FEF1E04B566006DA451 /* BNCCommerceEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCCommerceEvent.m; sourceTree = "<group>"; };
+		4D698FF01E04B566006DA451 /* BNCConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCConfig.m; sourceTree = "<group>"; };
 		67E91EEB1D769E1E0039F1C4 /* Branch-TestBed-iMessage.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Branch-TestBed-iMessage.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		67E91EEE1D769E1E0039F1C4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		67E91EF01D769E1E0039F1C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -251,6 +256,9 @@
 		67E91F651D769FE30039F1C4 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
+				4D698FEE1E04B566006DA451 /* BNCCommerceEvent.h */,
+				4D698FEF1E04B566006DA451 /* BNCCommerceEvent.m */,
+				4D698FF01E04B566006DA451 /* BNCConfig.m */,
 				67E91F661D769FE30039F1C4 /* BNCCallbacks.h */,
 				67E91F671D769FE30039F1C4 /* BNCConfig.h */,
 				67E91F681D769FE30039F1C4 /* BNCContentDiscoveryManager.h */,
@@ -400,7 +408,7 @@
 		67E91EE51D769E1E0039F1C4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Branch Metrics";
 				TargetAttributes = {
 					67E91EEA1D769E1E0039F1C4 = {
@@ -482,12 +490,14 @@
 				67E91FD51D769FE30039F1C4 /* BranchRedeemRewardsRequest.m in Sources */,
 				67E91FC41D769FE30039F1C4 /* BNCStrongMatchHelper.m in Sources */,
 				67E91FD21D769FE30039F1C4 /* BranchLoadRewardsRequest.m in Sources */,
+				4D698FF21E04B566006DA451 /* BNCConfig.m in Sources */,
 				E212CC641D9DE6D800603475 /* BranchContentDiscoverer.m in Sources */,
 				67E91FCC1D769FE30039F1C4 /* BranchView.m in Sources */,
 				67E91FBE1D769FE30039F1C4 /* BNCLinkCache.m in Sources */,
 				67E91FD31D769FE30039F1C4 /* BranchLogoutRequest.m in Sources */,
 				67E91FC31D769FE30039F1C4 /* BNCServerResponse.m in Sources */,
 				67E91FC11D769FE30039F1C4 /* BNCServerInterface.m in Sources */,
+				4D698FF11E04B566006DA451 /* BNCCommerceEvent.m in Sources */,
 				67E91FBA1D769FE30039F1C4 /* BNCDeviceInfo.m in Sources */,
 				67E91FBD1D769FE30039F1C4 /* BNCFabricAnswers.m in Sources */,
 				67E91FC71D769FE30039F1C4 /* BranchActivityItemProvider.m in Sources */,
@@ -541,6 +551,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -588,6 +599,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
