@@ -162,7 +162,9 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
         _deepLinkControllers = [[NSMutableDictionary alloc] init];
         _whiteListedSchemeList = [[NSMutableArray alloc] init];
         _useCookieBasedMatching = YES;
-        
+
+        [BranchOpenRequest setWaitNeededForOpenResponseLock];
+
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
         [notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
@@ -796,6 +798,18 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     return origSessionParams;
 }
 
+- (NSDictionary*) getLatestReferringParamsSynchronous {
+    if (!self.isInitialized &&
+        !self.preferenceHelper.shouldWaitForInit &&
+        ![self.requestQueue containsInstallOrOpen]) {
+        [self initUserSessionAndCallCallback:YES];
+    }
+    [BranchOpenRequest waitForOpenResponseLock];
+    NSDictionary *result = [self getLatestReferringParams];
+    [BranchOpenRequest releaseOpenResponseLock];
+    return result;
+}
+
 - (BranchUniversalObject *)getLatestReferringBranchUniversalObject {
     NSDictionary *params = [self getLatestReferringParams];
     if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {
@@ -1191,6 +1205,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     self.appIsInBackground = YES;
     [self callClose];
     [self.requestQueue persistImmediately];
+    [BranchOpenRequest setWaitNeededForOpenResponseLock];
 }
 
 - (void)callClose {

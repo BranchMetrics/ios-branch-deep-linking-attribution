@@ -521,6 +521,12 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (NSDictionary *)getLatestReferringParams;
 
 /**
+ Get the parameters used the most recent time this user was referred (can be empty).
+ Blocks the calling thread until results are available.
+ */
+- (NSDictionary*) getLatestReferringParamsSynchronous;
+
+/**
  Tells Branch to act as though initSession hadn't been called. Will require another open call (this is done automatically, internally).
  */
 - (void)resetUserSession;

@@ -82,6 +82,7 @@
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     if (error) {
+        [BranchOpenRequest releaseOpenResponseLock];    
         if (self.callback) {
             self.callback(NO, error);
         }
@@ -156,7 +157,9 @@
     if (data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]) {
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
     }
-    
+
+    [BranchOpenRequest releaseOpenResponseLock];
+
     // Check if there is any Branch View to show
     NSObject *branchViewDict = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
     if ([branchViewDict isKindOfClass:[NSDictionary class]]) {
@@ -171,6 +174,41 @@
 
 - (NSString *)getActionName {
     return @"open";
+}
+
+
+#pragma - Open Response Lock Handling
+
+
+typedef dispatch_block_t BNCVoidBlockType;
+
+static inline void BNCPerformBlockOnMainThreadSynchronous(BNCVoidBlockType block) {
+	if ([NSThread currentThread] == [NSThread mainThread])
+		block();
+	else
+		dispatch_sync(dispatch_get_main_queue(), block);
+}
+
+static NSLock *openResponseLock = nil;
+
++ (void) initialize {
+    if (self == [BranchOpenRequest self]) {
+        BNCPerformBlockOnMainThreadSynchronous(^ {
+            openResponseLock = [[NSLock alloc] init];
+        });
+    }
+}
+
++ (void) setWaitNeededForOpenResponseLock {
+    BNCPerformBlockOnMainThreadSynchronous(^{[openResponseLock tryLock];});
+}
+
++ (void) waitForOpenResponseLock {
+    BNCPerformBlockOnMainThreadSynchronous(^{[openResponseLock lock];});
+}
+
++ (void) releaseOpenResponseLock {
+    BNCPerformBlockOnMainThreadSynchronous(^{[openResponseLock unlock];});
 }
 
 @end
