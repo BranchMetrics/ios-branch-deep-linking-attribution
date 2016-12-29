@@ -521,8 +521,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (NSDictionary *)getLatestReferringParams;
 
 /**
- Get the parameters used the most recent time this user was referred (can be empty).
- Blocks the calling thread until results are available.
+ Returns the most recent referral parameters for this user. An empty object can be returned.
+ This call blocks the calling thread until the latest results are available.
  */
 - (NSDictionary*) getLatestReferringParamsSynchronous;
 
