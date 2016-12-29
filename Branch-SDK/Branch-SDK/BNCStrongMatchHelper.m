@@ -174,7 +174,7 @@
     }
     
     [urlString appendFormat:@"&branch_key=%@", branchKey];
-    [urlString appendFormat:@"&sdk=ios%@", SDK_VERSION];
+    [urlString appendFormat:@"&sdk=ios%@", BNC_SDK_VERSION];
     
     if (redirectUrl) {
         [urlString appendFormat:@"&redirect_url=%@",
@@ -240,6 +240,14 @@
     return YES;
 }
 
+- (UIWindow*) keyWindow {
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    UIWindow *keyWindow = [UIApplicationClass sharedApplication].keyWindow;
+    if (keyWindow) return keyWindow;
+	// ToDo: Put different code for extensions here.
+    return nil;
+}
+
 - (BOOL) willLoadViewControllerWithURL:(NSURL*)matchURL {
     if (self.primaryWindow) return NO;
 
@@ -271,10 +279,11 @@
     }
 
     NSLog(@"Safari initializing."); //  eDebug
+    self.primaryWindow = [self keyWindow];
+
     self.matchViewController = [[BNCMatchViewControllerSubclass alloc] initWithURL:matchURL];
     if (!self.matchViewController) return NO;
     
-    self.primaryWindow = [[UIApplication sharedApplication] keyWindow];
     self.matchViewController.delegate = self;
     self.matchViewController.view.frame = self.primaryWindow.bounds;
 

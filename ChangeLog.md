@@ -1,8 +1,21 @@
 Branch iOS SDK Change Log
 
+- v0.12.21
+  * > Beta Release <
+  * Fixed iOS 10.2.2 app install/update reporting (INFRA-1484).
+  * Don't add 'type' or 'duration' to link data if they're 0 (AIS-97).
+  * Made UIApplication use optional so that iMessage extensions could build (GH-#521).
+  * Return faster from the Branch initialization call (GH-#520).
+    - Cached the browserUserAgentString in BNCDeviceInfo.
+    - Made post requests start asynchronously.
+  * Changed SDK_VERSION to BNC_SDK_VERSION (GH-#523).
+  * Added a 'commerce' event for tracking in-app purchases (DANA-39).
+    - Added BNCCommerceEvent.
+    - Added test methods for BNCCommerceEvent use.
+
 - v0.12.20
   * Started the SDK beta program. A beta version of the SDK is now available.
-    - See the Github info here: https://branch.app.link/5HMUVrQeYy 
+    - See the Github info here: https://branch.app.link/5HMUVrQeYy
   * Updated the build script.
   * Merge pull request #517 from brianmichel/bsm/call-javascript-from-main-thread.
   * Fixed and re-applied patches from v0.12.18. These are:

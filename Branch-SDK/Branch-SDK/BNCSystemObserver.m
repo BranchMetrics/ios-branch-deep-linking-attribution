@@ -129,7 +129,56 @@
     return [device rangeOfString:@"Simulator"].location != NSNotFound;
 }
 
+typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
+    BNCUpdateStatusInstall      = 0,    //  App was recently installed.
+    BNCUpdateStatusNonUpdate    = 1,    //  App was neither newly installed nor updated.
+    BNCUpdateStatusUpdate       = 2,    //  App was recently updated.
+};
+
++ (NSNumber*) getUpdateState_10_2_2 {
+
+    NSString *storedAppVersion = [BNCPreferenceHelper preferenceHelper].appVersion;
+    NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
+
+    if (storedAppVersion) {
+        if ([storedAppVersion isEqualToString:currentAppVersion])
+            return @(BNCUpdateStatusNonUpdate);
+        else
+            return @(BNCUpdateStatusUpdate);
+    }
+
+    //  This is the first Branch install.  Check file dates for app install status:
+
+    //  Get the install date:
+
+    NSError *error = nil;
+    NSFileManager *manager = [NSFileManager defaultManager];
+    NSURL *libraryURL =
+        [[manager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
+    NSDictionary *attributes = [manager attributesOfItemAtPath:libraryURL.path error:&error];
+    NSDate *installDate = [attributes fileCreationDate];
+
+    //  Get the build date:
+
+    NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
+    NSString *filename = [bundleRoot stringByAppendingPathComponent:@"_CodeSignature"];
+    attributes = [manager attributesOfItemAtPath:filename error:&error];
+    NSDate *buildDate = [attributes fileModificationDate];
+
+    if ([buildDate compare:installDate] > 0) {
+        return @(BNCUpdateStatusUpdate);
+    }
+
+    if ([installDate timeIntervalSinceNow] > (-60.0 * 60.0 * 24.0)) {
+        return @(BNCUpdateStatusInstall);
+    }
+
+    return @(BNCUpdateStatusNonUpdate);
+}
+
+
 + (NSNumber *)getUpdateState {
+
     NSString *storedAppVersion = [BNCPreferenceHelper preferenceHelper].appVersion;
     NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
     NSFileManager *manager = [NSFileManager defaultManager];
@@ -140,9 +189,14 @@
     NSDate *creationDate = [documentsDirAttributes fileCreationDate];
 
     // for modification date
+    NSError *error = nil;
     NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
-    NSDictionary *bundleAttributes = [manager attributesOfItemAtPath:bundleRoot error:nil];
+    NSDictionary *bundleAttributes = [manager attributesOfItemAtPath:bundleRoot error:&error];
     NSDate *modificationDate = [bundleAttributes fileModificationDate];
+
+    if (creationDate == nil || [creationDate timeIntervalSince1970] <= 0.0 ||
+        modificationDate == nil || [modificationDate timeIntervalSince1970] <= 0.0)
+        return [self getUpdateState_10_2_2];
 
     // No stored version
     if (!storedAppVersion) {
@@ -150,21 +204,21 @@
         // an update. This would be the case that they were installing a new version of the app that was
         // adding Branch for the first time, where we don't already have an NSUserDefaults value.
         if (ABS([modificationDate timeIntervalSinceDate:creationDate]) > 86400) {
-            return @2;
+            return @(BNCUpdateStatusUpdate);
         }
 
         // If we don't have one of the previous dates, or they're less than 60 apart,
         // we understand this to be an install.
-        return @0;
+        return @(BNCUpdateStatusInstall);
     }
     // Have a stored version, but it isn't the same as the current value indicates an update
     else if (![storedAppVersion isEqualToString:currentAppVersion]) {
-        return @2;
+        return @(BNCUpdateStatusUpdate);
     }
 
     // Otherwise, we have a stored version, and it is equal.
     // Not an update, not an install.
-    return @1;
+    return @(BNCUpdateStatusNonUpdate);
 }
 
 + (void)setUpdateState {
