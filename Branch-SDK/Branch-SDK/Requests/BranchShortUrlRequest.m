@@ -113,10 +113,13 @@
     if ([self.stage length]) {
         [longUrl appendFormat:@"stage=%@&", self.stage];
     }
-    
-    [longUrl appendFormat:@"type=%ld&", (long)self.type];
-    [longUrl appendFormat:@"duration=%ld&", (long)self.matchDuration];
-    
+    if (self.type) {
+        [longUrl appendFormat:@"type=%ld&", (long)self.type];
+    }
+    if (self.matchDuration) {
+        [longUrl appendFormat:@"duration=%ld&", (long)self.matchDuration];
+    }
+
     NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:self.params];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
     [longUrl appendFormat:@"source=ios&data=%@", base64EncodedParams];

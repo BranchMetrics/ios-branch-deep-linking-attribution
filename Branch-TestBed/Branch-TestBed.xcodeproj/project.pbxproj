@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B6B1A061E020623001A8F1C /* BNCCommerceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B6B1A041E020623001A8F1C /* BNCCommerceEvent.h */; };
+		2B6B1A071E020623001A8F1C /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6B1A051E020623001A8F1C /* BNCCommerceEvent.m */; };
 		460F4FA71B618A38002E84D6 /* BranchSpotlightUrlRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 460F4FA51B618A38002E84D6 /* BranchSpotlightUrlRequest.h */; };
 		460F4FA81B618A38002E84D6 /* BranchSpotlightUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 460F4FA61B618A38002E84D6 /* BranchSpotlightUrlRequest.m */; };
 		461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */; };
@@ -150,6 +152,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2B6B1A041E020623001A8F1C /* BNCCommerceEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BNCCommerceEvent.h; path = "../Branch-SDK/Branch-SDK/BNCCommerceEvent.h"; sourceTree = SOURCE_ROOT; };
+		2B6B1A051E020623001A8F1C /* BNCCommerceEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BNCCommerceEvent.m; path = "../Branch-SDK/Branch-SDK/BNCCommerceEvent.m"; sourceTree = SOURCE_ROOT; };
 		423ACD2DEBB9A2E4FAF64B08 /* libPods-Branch-SDK-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		460F4FA51B618A38002E84D6 /* BranchSpotlightUrlRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchSpotlightUrlRequest.h; sourceTree = "<group>"; };
 		460F4FA61B618A38002E84D6 /* BranchSpotlightUrlRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchSpotlightUrlRequest.m; sourceTree = "<group>"; };
@@ -367,6 +371,8 @@
 		467BA3581B7132A0003E458B /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				2B6B1A041E020623001A8F1C /* BNCCommerceEvent.h */,
+				2B6B1A051E020623001A8F1C /* BNCCommerceEvent.m */,
 				4659B34B1B0FD5BF0019767C /* BranchSetIdentityRequest.h */,
 				4659B34C1B0FD5BF0019767C /* BranchSetIdentityRequest.m */,
 				4659B34E1B0FDAB70019767C /* BranchLogoutRequest.h */,
@@ -608,6 +614,7 @@
 				462B50461B449DF000967B81 /* BranchDeepLinkingController.h in Headers */,
 				E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */,
 				54FF1F951BD20EB50004CE2E /* BranchRegisterViewRequest.h in Headers */,
+				2B6B1A061E020623001A8F1C /* BNCCommerceEvent.h in Headers */,
 				46946B851B26898800627BCC /* BNCServerRequest.h in Headers */,
 				466D5A111B5991E3009DB845 /* BNCContentDiscoveryManager.h in Headers */,
 				466B58741B17780A00A69EDE /* BNCPreferenceHelper.h in Headers */,
@@ -830,6 +837,7 @@
 				54FF1F8E1BD1D4AE0004CE2E /* BranchUniversalObject.m in Sources */,
 				54FF1F961BD20EB50004CE2E /* BranchRegisterViewRequest.m in Sources */,
 				463F0A321B20A663004235D2 /* BranchSetIdentityRequest.m in Sources */,
+				2B6B1A071E020623001A8F1C /* BNCCommerceEvent.m in Sources */,
 				463F0A3C1B20A663004235D2 /* BranchShortUrlRequest.m in Sources */,
 				7D4DAC251C8FA908008E37DB /* BranchViewHandler.m in Sources */,
 				466B58591B17779C00A69EDE /* BNCPreferenceHelper.m in Sources */,
