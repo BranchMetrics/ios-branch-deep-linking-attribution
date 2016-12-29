@@ -73,6 +73,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 @property (strong, nonatomic) BNCServerInterface *bServerInterface;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
+@property (strong, nonatomic) NSTimer *sessionTimer;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
 @property (copy,   nonatomic) callbackWithParams sessionInitWithParamsCallback;
 @property (copy,   nonatomic) callbackWithBranchUniversalObject sessionInitWithBranchUniversalObjectCallback;
@@ -93,7 +94,6 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 @property (assign, nonatomic) BOOL delayForAppleAds;
 @property (assign, nonatomic) BOOL searchAdsDebugMode;
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
-@property (assign, nonatomic) BOOL appIsInBackground;
 @end
 
 @implementation Branch
@@ -1181,15 +1181,15 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    self.appIsInBackground = NO;
+    [self clearTimer];
     if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:YES];
     }
 }
 
 - (void)applicationWillResignActive {
-    self.appIsInBackground = YES;
-    [self callClose];
+    [self clearTimer];
+    self.sessionTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(callClose) userInfo:nil repeats:NO];
     [self.requestQueue persistImmediately];
 }
 
@@ -1211,6 +1211,9 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     }
 }
 
+- (void)clearTimer {
+    [self.sessionTimer invalidate];
+}
 
 #pragma mark - Queue management
 
@@ -1280,6 +1283,10 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
                 NSLog(@"[Branch Error] Missing session items!");
                 [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
                 return;
+            }
+
+            if (![req isKindOfClass:[BranchCloseRequest class]]) {
+                [self clearTimer];
             }
 
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
@@ -1359,8 +1366,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 }
 
 - (void)handleInitSuccess {
-    if (!self.appIsInBackground)
-        self.isInitialized = YES;
+    self.isInitialized = YES;
     
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
     if (self.shouldCallSessionInitCallback) {
