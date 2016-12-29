@@ -48,7 +48,7 @@ class ContentViewController: UIViewController {
             }
         } else if contentType == "FirstReferringParams" {
             if let firstReferringParams = Branch.getInstance().getFirstReferringParams() {
-                content = String(format:"\nFirstReferringParams:\n\n%@", content, firstReferringParams.JSONDescription())
+                content = String(format:"\nFirstReferringParams:\n\n%@", firstReferringParams.JSONDescription())
                 print("Branch TestBed: FirstReferringParams:\n", content)
             }
         } else {
