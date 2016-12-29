@@ -1375,6 +1375,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
     if ([self.requestQueue removeInstallOrOpen])
         self.networkCount = 0;
+    [BranchOpenRequest setWaitNeededForOpenResponseLock];
     BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
     [self insertRequestAtFront:req];
     [self processNextQueueItem];
