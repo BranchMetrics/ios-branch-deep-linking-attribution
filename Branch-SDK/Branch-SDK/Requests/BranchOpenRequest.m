@@ -181,18 +181,24 @@
 
 
 static dispatch_queue_t openRequestWaitQueue = NULL;
+static BOOL openRequestWaitQueueIsSuspended = NO;
 
 
 + (void) initialize {
-    if (self == [BranchOpenRequest self])
+    if (self != [BranchOpenRequest self])
         return;
     openRequestWaitQueue =
         dispatch_queue_create("io.branch.sdk.openqueue", DISPATCH_QUEUE_CONCURRENT);
 }
 
 + (void) setWaitNeededForOpenResponseLock {
-    NSLog(@"Suspend openRequestWaitQueue.");
-    dispatch_suspend(openRequestWaitQueue);
+    @synchronized (self) {
+        if (!openRequestWaitQueueIsSuspended) {
+            NSLog(@"Suspend openRequestWaitQueue.");
+            openRequestWaitQueueIsSuspended = YES;
+            dispatch_suspend(openRequestWaitQueue);
+        }
+    }
 }
 
 + (void) waitForOpenResponseLock {
@@ -203,8 +209,13 @@ static dispatch_queue_t openRequestWaitQueue = NULL;
 }
 
 + (void) releaseOpenResponseLock {
-    NSLog(@"Resume openRequestWaitQueue.");
-    dispatch_resume(openRequestWaitQueue);
+    @synchronized (self) {
+        if (openRequestWaitQueueIsSuspended) {
+            NSLog(@"Resume openRequestWaitQueue.");
+            openRequestWaitQueueIsSuspended = NO;
+            dispatch_resume(openRequestWaitQueue);
+        }
+    }
 }
 
 @end
