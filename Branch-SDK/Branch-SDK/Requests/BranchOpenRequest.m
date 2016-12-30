@@ -180,35 +180,31 @@
 #pragma - Open Response Lock Handling
 
 
-typedef dispatch_block_t BNCVoidBlockType;
+static dispatch_queue_t openRequestWaitQueue = NULL;
 
-static inline void BNCPerformBlockOnMainThreadSynchronous(BNCVoidBlockType block) {
-	if ([NSThread currentThread] == [NSThread mainThread])
-		block();
-	else
-		dispatch_sync(dispatch_get_main_queue(), block);
-}
-
-static NSLock *openResponseLock = nil;
 
 + (void) initialize {
-    if (self == [BranchOpenRequest self]) {
-        BNCPerformBlockOnMainThreadSynchronous(^ {
-            openResponseLock = [[NSLock alloc] init];
-        });
-    }
+    if (self == [BranchOpenRequest self])
+        return;
+    openRequestWaitQueue =
+        dispatch_queue_create("io.branch.sdk.openqueue", DISPATCH_QUEUE_CONCURRENT);
 }
 
 + (void) setWaitNeededForOpenResponseLock {
-    BNCPerformBlockOnMainThreadSynchronous(^{[openResponseLock tryLock];});
+    NSLog(@"Suspend openRequestWaitQueue.");
+    dispatch_suspend(openRequestWaitQueue);
 }
 
 + (void) waitForOpenResponseLock {
-    BNCPerformBlockOnMainThreadSynchronous(^{[openResponseLock lock];});
+    NSLog(@"Wait for openRequestWaitQueue.");
+    dispatch_sync(openRequestWaitQueue, ^ {
+        NSLog(@"Finished waitForOpenResponseLock");
+    });
 }
 
 + (void) releaseOpenResponseLock {
-    BNCPerformBlockOnMainThreadSynchronous(^{[openResponseLock unlock];});
+    NSLog(@"Resume openRequestWaitQueue.");
+    dispatch_resume(openRequestWaitQueue);
 }
 
 @end
