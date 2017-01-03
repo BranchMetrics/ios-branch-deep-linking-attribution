@@ -138,10 +138,8 @@ NSString *requestEndpoint;
             }
             
         }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (callback)
-                callback(serverResponse, error);
-        });
+		if (callback)
+			callback(serverResponse, error);
     };
     
     NSURLConnectionCompletionHandler = ^void(NSURLResponse *response, NSData *responseData, NSError *error) {

@@ -1352,12 +1352,13 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 	}
 
     callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
-        if (error) {
-            [self handleInitFailure:error];
-        }
-        else {
-            [self handleInitSuccess];
-        }
+		dispatch_async(dispatch_get_main_queue(), ^ {
+			if (error) {
+				[self handleInitFailure:error];
+			} else {
+				[self handleInitSuccess];
+			}
+		});
     };
     
     if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.useCookieBasedMatching) {
