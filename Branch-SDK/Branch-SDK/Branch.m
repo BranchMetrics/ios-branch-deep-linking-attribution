@@ -73,7 +73,6 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 @property (strong, nonatomic) BNCServerInterface *bServerInterface;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
-@property (strong, nonatomic) NSTimer *sessionTimer;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
 @property (copy,   nonatomic) callbackWithParams sessionInitWithParamsCallback;
 @property (copy,   nonatomic) callbackWithBranchUniversalObject sessionInitWithBranchUniversalObjectCallback;
@@ -94,6 +93,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 @property (assign, nonatomic) BOOL delayForAppleAds;
 @property (assign, nonatomic) BOOL searchAdsDebugMode;
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
+@property (assign, nonatomic) BOOL appIsInBackground;
 @end
 
 @implementation Branch
@@ -802,7 +802,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     if (!self.isInitialized &&
         !self.preferenceHelper.shouldWaitForInit &&
         ![self.requestQueue containsInstallOrOpen]) {
-        [self initUserSessionAndCallCallback:YES];
+		NSLog(@"[Branch] Warning: getLatestReferringParamsSynchronous called before session init.");
     }
     [BranchOpenRequest waitForOpenResponseLock];
     NSDictionary *result = [self getLatestReferringParams];
@@ -1195,15 +1195,15 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    [self clearTimer];
+    self.appIsInBackground = NO;
     if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:YES];
     }
 }
 
 - (void)applicationWillResignActive {
-    [self clearTimer];
-    self.sessionTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(callClose) userInfo:nil repeats:NO];
+    self.appIsInBackground = YES;
+    [self callClose];
     [self.requestQueue persistImmediately];
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
 }
@@ -1226,9 +1226,6 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     }
 }
 
-- (void)clearTimer {
-    [self.sessionTimer invalidate];
-}
 
 #pragma mark - Queue management
 
@@ -1300,10 +1297,6 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
                 return;
             }
 
-            if (![req isKindOfClass:[BranchCloseRequest class]]) {
-                [self clearTimer];
-            }
-
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
             dispatch_async(queue, ^ {
                 [req makeRequest:self.bServerInterface key:self.branchKey callback:callback];
@@ -1318,6 +1311,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 #pragma mark - Session Initialization
 
+
 - (void)initSessionIfNeededAndNotInProgress {
     if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:NO];
@@ -1325,6 +1319,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 }
 
 - (void)initUserSessionAndCallCallback:(BOOL)callCallback {
+ 	NSLog(@"%@",[NSThread callStackSymbols]);
     self.shouldCallSessionInitCallback = callCallback;
     
     // If the session is not yet initialized
@@ -1351,15 +1346,11 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
         [self.preferenceHelper logWarning:@"You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment."];
     }
 
-    if (!self.preferenceHelper.identityID) {
-        [self registerInstallOrOpen:[BranchInstallRequest class]];
-    }
-    else {
-        [self registerInstallOrOpen:[BranchOpenRequest class]];
-    }
-}
+	Class clazz = [BranchInstallRequest class];
+	if (self.preferenceHelper.identityID) {
+		clazz = [BranchOpenRequest class];
+	}
 
-- (void)registerInstallOrOpen:(Class)clazz {
     callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
         if (error) {
             [self handleInitFailure:error];
@@ -1373,17 +1364,19 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
     }
 
-    if ([self.requestQueue removeInstallOrOpen])
-        self.networkCount = 0;
-    [BranchOpenRequest setWaitNeededForOpenResponseLock];
-    BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
-    [self insertRequestAtFront:req];
-    [self processNextQueueItem];
+	@synchronized (self) {
+		if ([self.requestQueue removeInstallOrOpen])
+			self.networkCount = 0;
+		[BranchOpenRequest setWaitNeededForOpenResponseLock];
+		BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
+		[self insertRequestAtFront:req];
+		[self processNextQueueItem];
+	}
 }
 
 - (void)handleInitSuccess {
+
     self.isInitialized = YES;
-    
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
     if (self.shouldCallSessionInitCallback) {
         if (self.sessionInitWithParamsCallback) {

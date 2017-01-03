@@ -86,22 +86,20 @@ static BNCDeviceInfo *bncDeviceInfo;
     static NSString* browserUserAgentString = nil;
 
     void (^setUpBrowserUserAgent)() = ^() {
-        browserUserAgentString =
-            [[[UIWebView alloc]
-              initWithFrame:CGRectZero]
-                stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+		if (!browserUserAgentString) {
+			browserUserAgentString =
+				[[[UIWebView alloc]
+				  initWithFrame:CGRectZero]
+					stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+		}
         self.browserUserAgent = browserUserAgentString;
     };
 
-    @synchronized (self.class) {
-        if (browserUserAgentString) {
-            self.browserUserAgent = browserUserAgentString;
-        } else if (NSThread.isMainThread) {
-            setUpBrowserUserAgent();
-        } else {
-            dispatch_sync(dispatch_get_main_queue(), setUpBrowserUserAgent);
-        }
-    }
+	if (NSThread.isMainThread) {
+		setUpBrowserUserAgent();
+	} else {
+		dispatch_sync(dispatch_get_main_queue(), setUpBrowserUserAgent);
+	}
 
     return self;
 }
