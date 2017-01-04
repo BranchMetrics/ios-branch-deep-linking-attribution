@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# deploy-git-tag
+# Edward Smith, January 2017
+
+set -euo pipefail
+
+scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+scriptfile="${scriptfile}"/$(basename "$0")
+cd $(dirname "$scriptfile")/..
+
+git_branch=$(git symbolic-ref --short HEAD)
+version=$(./scripts/version)
+
+echo ">>> Merging and pushing '$git_branch' to master..." 1>&2
+
+git add --all
+git commit -m "Updates for ${version} release."
+git push
+git checkout master
+git pull
+git merge -m "Merge ${git_branch}." origin "${git_branch}"
+(git commit || true)
+git tag "${version}"
+git push
+git push --tags origin master
