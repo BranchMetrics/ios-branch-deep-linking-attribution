@@ -217,7 +217,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
                 }
 
                 NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
-                [encodedRequests addObject:encodedReq];
+                if (encodedReq) [encodedRequests addObject:encodedReq];
             }
 
             NSData *data = [NSKeyedArchiver archivedDataWithRootObject:encodedRequests];
@@ -254,12 +254,17 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
         NSData *data = [NSData dataWithContentsOfURL:self.class.URLForQueueFile options:0 error:&error];
         if (!error && data)
             encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        if (![encodedRequests isKindOfClass:[NSArray class]]) {
+            @throw [NSException exceptionWithName:NSInvalidArgumentException
+                reason:@"Saved server queue is invalid." userInfo:nil];
+        }
     }
     @catch (NSException *exception) {
         NSString *warningMessage =
             [NSString stringWithFormat:
-                @"An exception occurred while attempting to load the queue file, proceeding without requests. Exception information:\n\n%@",
-                        [self exceptionString:exception]];
+                @"An exception occurred while attempting to load the queue file, "
+                 "proceeding without requests. Exception information:\n\n%@",
+                    [self exceptionString:exception]];
         [[BNCPreferenceHelper preferenceHelper] logWarning:warningMessage];
         self.queue = queue;
         return;
@@ -273,7 +278,8 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
             request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
         }
         @catch (NSException *exception) {
-            [[BNCPreferenceHelper preferenceHelper] logWarning:@"An exception occurred while attempting to parse a queued request, discarding."];
+            [[BNCPreferenceHelper preferenceHelper]
+                logWarning:@"An exception occurred while attempting to parse a queued request, discarding."];
             continue;
         }
         

@@ -158,9 +158,13 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 }
 
 - (NSString *)getEndpointFromURL:(NSString *)url {
-    NSUInteger index = BNC_API_BASE_URL.length;
-    return [url substringFromIndex:index];
+    if ([url hasPrefix:BNC_API_BASE_URL]) {
+        NSUInteger index = BNC_API_BASE_URL.length;
+        return [url substringFromIndex:index];
+    }
+    return @"";
 }
+
 #pragma mark - Preference Storage
 
 - (NSString *)getBranchKey:(BOOL)isLive {

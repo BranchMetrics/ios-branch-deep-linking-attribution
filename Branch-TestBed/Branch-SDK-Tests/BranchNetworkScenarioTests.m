@@ -411,14 +411,19 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
     [[[serverInterfaceMock expect] andDo:badRequestInvocation] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
-    
+
+#if loadActionCountsWithCallback
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNotNil(error);
         callback();
     }];
+#endif
 }
 
-- (void)enqueueTwoNonReplayableRequestsWithFirstFailingBecauseBranchIsDown:(Branch *)branch serverInterface:(id)serverInterfaceMock callback:(void (^)(void))callback {
+- (void)enqueueTwoNonReplayableRequestsWithFirstFailingBecauseBranchIsDown:(Branch *)branch
+        serverInterface:(id)serverInterfaceMock
+        callback:(void (^)(void))callback {
+
     __block BNCServerCallback badRequestCallback;
     id badRequestCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         badRequestCallback = callback;
@@ -430,7 +435,8 @@
     NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
     [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
     [[serverInterfaceMock reject] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:[OCMArg any]];
-    
+
+#if loadActionCountsWithCallback
     // Throw two requests in the queue, but the first failing w/ a 500 should trigger both to fail
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNotNil(error);
@@ -440,7 +446,8 @@
         XCTAssertNotNil(error);
         callback();
     }];
-    
+#endif
+
     // Bad requests callback should be captured at this point, call it to trigger the failure.
     badRequestCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCServerProblemError userInfo:nil]);
 }
@@ -463,7 +470,8 @@
     NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
     [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
     [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:goodRequestCheckBlock];
-    
+
+#if loadActionCountsWithCallback
     // Throw two requests in the queue, but the first failing w/ a 500 should trigger both to fail
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNotNil(error);
@@ -473,7 +481,8 @@
         XCTAssertNil(error);
         callback();
     }];
-    
+#endif
+
     // Bad requests callback should be captured at this point, call it to trigger the failure.
     badRequestCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:nil]);
     goodRequestCallback([[BNCServerResponse alloc] init], nil);
@@ -496,11 +505,13 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
     [[[serverInterfaceMock expect] andDo:goodRequestInvocation] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:goodRequestCheckBlock];
-    
+
+#if loadActionCountsWithCallback
     [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNil(error);
         callback();
     }];
+#endif
 }
 
 #pragma mark - Callbacks

@@ -114,15 +114,17 @@
     [requestQueueMock verify];
 }
 
-#pragma mark - Retrive Tests
+#pragma mark - Retrieve Tests
+
 - (void)testPersistWhenArchiveFails {
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
     [queue enqueue:[[BNCServerRequest alloc] init]];
     
     id archiverMock = OCMClassMock([NSKeyedArchiver class]);
     [[[archiverMock expect] andReturn:[NSData data]] archivedDataWithRootObject:[OCMArg any]];
-    [[[archiverMock expect] andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
-    
+    [[[archiverMock expect] andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]]
+        archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
+
     [queue persistImmediately];
     
     // Wait for operation to occur
@@ -143,8 +145,9 @@
     [requestQueue enqueue:closeRequest];
     
     id archiverMock = OCMClassMock([NSKeyedArchiver class]);
-    [[archiverMock reject] archivedDataWithRootObject:[OCMArg any]];
-    [[archiverMock expect] archiveRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) { return [reqs count] == 0; }] toFile:[OCMArg any]];
+    [[archiverMock reject] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
+    [[archiverMock expect] archivedDataWithRootObject:
+        [OCMArg checkWithBlock:^BOOL(NSArray *reqs) { return [reqs count] == 0; }]];
 
     [requestQueue persistImmediately];
     
@@ -163,8 +166,9 @@
     BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
     
     id archiverMock = OCMClassMock([NSKeyedArchiver class]);
-    [[archiverMock reject] archivedDataWithRootObject:[OCMArg any]];
-    [[archiverMock expect] archiveRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) { return [reqs count] == 0; }] toFile:[OCMArg any]];
+    [[archiverMock reject] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
+    [[archiverMock expect] archivedDataWithRootObject:
+        [OCMArg checkWithBlock:^BOOL(NSArray *reqs) { return [reqs count] == 0; }]];
 
     [requestQueue persistImmediately];
     
@@ -187,7 +191,6 @@
     [[[unarchiverMock expect] andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]] unarchiveObjectWithData:[OCMArg any]];
     
     [queue performSelector:@selector(retrieve)];
-    
     [unarchiverMock verify];
 }
 

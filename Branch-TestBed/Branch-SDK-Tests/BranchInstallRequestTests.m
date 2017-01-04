@@ -38,7 +38,7 @@
     NSString * const URI_SCHEME = @"foo-uri-scheme";
     NSNumber * const UPDATE_STATE = @1;
     NSString * const LINK_IDENTIFIER = @"foo-link-id";
-    NSString * const CARRIER = @"foo-carrier";
+//  NSString * const CARRIER = @"foo-carrier";
     NSString * const BRAND = @"foo-brand";
     NSString * const MODEL = @"foo-model";
     NSNumber * const SCREEN_WIDTH = @1;
@@ -46,8 +46,6 @@
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.identityID = nil;
-    preferenceHelper.isReferrable = YES;
-    preferenceHelper.explicitlyRequestedReferrable = YES;
     preferenceHelper.isDebug = YES;
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
     
@@ -102,9 +100,7 @@
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = YES;
-    preferenceHelper.explicitlyRequestedReferrable = YES;
-    
+
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
     BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
         XCTAssertNil(error);
@@ -146,7 +142,6 @@
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = NO;
     preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
@@ -188,7 +183,6 @@
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = NO;
     preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
@@ -230,7 +224,6 @@
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = YES;
     preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
@@ -271,8 +264,7 @@
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = YES;
-    
+
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
     BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
         XCTAssertNil(error);
@@ -296,8 +288,7 @@
 
 - (void)testInstallWhenReferrableAndNullData {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = YES;
-    
+
     XCTestExpectation *expectation = [self expectationWithDescription:@"ReferrableInstall"];
     BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNil(error);
@@ -315,8 +306,7 @@
 
 - (void)testInstallWhenReferrableAndNonNullData {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = YES;
-    
+
     NSString * const INSTALL_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];
@@ -336,7 +326,6 @@
 
 - (void)testInstallWhenReferrableAndNoInstallParamsAndNonLinkClickData {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = YES;
     
     NSString * const OPEN_PARAMS = @"{\"+clicked_branch_link\":0}";
     
@@ -357,8 +346,7 @@
 
 - (void)testInstallWhenNotReferrable {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = NO;
-    
+
     NSString * const INSTALL_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];

@@ -37,6 +37,9 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 //TEST 01
 //This test checks to see that the branch key has been added to the GET request
 
+#if 0
+    // This test is using 'expectation' wrong -- EBS
+
 - (void)testParamAddForBranchKey {
   BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
   XCTestExpectation* expectation = [self expectationWithDescription:@"NSURLSessionDataTask completed"];
@@ -54,8 +57,8 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
   
   [self waitForExpectationsWithTimeout:5.0 /* 5 seconds */ handler:nil];
-  
 }
+#endif
 
 #pragma mark - Retry tests
 
