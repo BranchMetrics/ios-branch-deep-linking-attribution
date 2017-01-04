@@ -330,7 +330,16 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController {
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
+    
+    // If the SDK is already initialized, this means that initSession is being called later in the app lifecycle
+    // and that the developer is expecting to receive deep link parameters via the callback block immediately
+    if (self.isInitialized) {
+        [self initUserSessionAndCallCallback:YES];
+    }
 
+    // The rest of this function assumes that initSession is being called BEFORE continueUserActivity and openUrl
+    // in the application life cycle, and that the SDK is not yet initialized.
+    
     // Handle push notification on app launch
     if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
         id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
@@ -340,13 +349,22 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     }
 
     if ([BNCSystemObserver getOSVersion].integerValue >= 8) {
-        if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
-            // If Facebook SDK is present, call deferred app link check here
+        
+        // Handle case where there's no URI scheme or Universal Link
+        if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] &&
+            ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
+            
+            // If Facebook SDK is present, call deferred app link check here which will later on call initUserSession
             if (![self checkFacebookAppLinks] && ![self checkAppleSearchAdsAttribution]) {
+                
+                // If we're not looking for App Links or Apple Search Ads, initialize
                 [self initUserSessionAndCallCallback:YES];
             }
         }
+        // Handle case where there is Universal Link present
         else if ([options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
+            // Optional flag for the developer if they're letting Facebook return the boolean on didFinishLaunchingWithOptions
+            // Note that this is no longer a recommended path, and that we tell developers to just return YES
             if (self.accountForFacebookSDK) {
                 // does not work in Swift, because Objective-C to Swift interop is bad
                 id activity = [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
@@ -355,6 +373,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
                     return;
                 }
             }
+            // Wait for continueUserActivity Branch AppDelegate call to come through
             self.preferenceHelper.shouldWaitForInit = YES;
         }
     }
