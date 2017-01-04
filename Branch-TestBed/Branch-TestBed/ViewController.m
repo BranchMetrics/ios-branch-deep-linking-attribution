@@ -223,7 +223,16 @@ NSString *type = @"some type";
         metadata:@{ @"Meta": @"Never meta dog I didn't like." }
         withCompletion:
         ^ (NSDictionary *response, NSError *error) {
-            NSLog(@"Completion called. Error: %@\n%@", error, response);
+			NSString *message =
+				[NSString stringWithFormat:@"Commerce completion called.\nError: %@\n%@", error, response];
+			NSLog(@"%@", message);
+			[[[UIAlertView alloc]
+				initWithTitle:@"Commerce Event"
+				message:message
+				delegate:nil
+				cancelButtonTitle:@"OK"
+				otherButtonTitles:nil]
+					show];
         }];
 }
 
