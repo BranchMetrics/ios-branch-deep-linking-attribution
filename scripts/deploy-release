@@ -8,8 +8,6 @@ scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 scriptfile="${scriptfile}"/$(basename "$0")
 cd $(dirname "$scriptfile")/..
 
-version=$(./scripts/version)
-
 scriptFailed=1
 function finish {
     if [ $scriptFailed -ne 0 ]; then
@@ -19,6 +17,7 @@ function finish {
 }
 trap finish EXIT
 
+version=$(./scripts/version)
 
 if ! ./scripts/askYN "Deploy Branch release version ${version}?"; then
     echo ">>> Nothing deployed." 1>&2
@@ -26,12 +25,10 @@ if ! ./scripts/askYN "Deploy Branch release version ${version}?"; then
 fi
 
 
-git_branch=$(git symbolic-ref --short HEAD)
-
 # Prompt for editor input for ChangeLog.
 vim +4 +star ChangeLog.md
 
-# Pre-release lint
+# Pre-release Cocoapod lint:
 echo ">>> Linting build for release..." 1>&2
 pod lib lint Branch.podspec --verbose
 
@@ -66,17 +63,7 @@ echo '>>> Deploying Fabric build...' 1>&2
 ./scripts/deploy-fabric
 
 # Commit and tag:
-echo '>>> Merging and pushing to master...' 1>&2
-git add --all
-git commit -m "Updates for ${version} release"
-git push
-git checkout master
-git pull
-git merge -m "Merge $git_branch" origin "$git_branch"
-(git commit || true)
-git tag "${version}"
-git push
-git push --tags origin master
+./scripts/deploy-git-tag
 
 echo '>>> Pushing Branch Cocoapod...' 1>&2
 pod trunk push Branch.podspec
