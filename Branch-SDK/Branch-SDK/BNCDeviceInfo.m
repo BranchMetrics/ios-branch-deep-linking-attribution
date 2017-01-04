@@ -95,6 +95,8 @@ static BNCDeviceInfo *bncDeviceInfo;
         self.browserUserAgent = browserUserAgentString;
     };
 
+	//	Make sure this executes on the main thread.
+	//	Uses an implied lock through dispatch_queues to avoid a race condition.
 	if (NSThread.isMainThread) {
 		setUpBrowserUserAgent();
 	} else {

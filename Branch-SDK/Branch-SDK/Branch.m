@@ -1319,7 +1319,6 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 }
 
 - (void)initUserSessionAndCallCallback:(BOOL)callCallback {
- 	NSLog(@"%@",[NSThread callStackSymbols]);
     self.shouldCallSessionInitCallback = callCallback;
     
     // If the session is not yet initialized

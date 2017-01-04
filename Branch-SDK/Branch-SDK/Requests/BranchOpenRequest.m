@@ -180,6 +180,12 @@
 #pragma - Open Response Lock Handling
 
 
+//	Instead of semaphores, the lock is handled by scheduled dispatch_queues.
+//	This is the 'new' way to lock and is handled better optimized for iOS.
+//	Also, since implied lock is handled by a scheduler and not a hard semaphore it's less error
+//	prone.
+
+
 static dispatch_queue_t openRequestWaitQueue = NULL;
 static BOOL openRequestWaitQueueIsSuspended = NO;
 

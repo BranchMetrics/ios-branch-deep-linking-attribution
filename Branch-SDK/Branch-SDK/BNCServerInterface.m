@@ -138,6 +138,7 @@ NSString *requestEndpoint;
             }
             
         }
+		//	Don't call on the main queue since it might be blocked.
 		if (callback)
 			callback(serverResponse, error);
     };
