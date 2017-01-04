@@ -43,7 +43,7 @@
     //  Emit a warning if the action is collides with the Branch commerce 'purchase' event.
     if (self.action && [self.action isEqualToString:@"purchase"]) {
         NSLog(@"[Branch] Warning: You are sending a purchase event with our non-dedicated purchase "
-               "function. Please see function sendCommerceEvent");
+               "method. Please use the sendCommerceEvent:metadata:withCompletion: method.");
     }
 
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
