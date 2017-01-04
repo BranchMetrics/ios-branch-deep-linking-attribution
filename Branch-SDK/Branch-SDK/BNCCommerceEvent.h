@@ -21,8 +21,6 @@ extern BNCProductCategory BNCProductCategoryArtsEntertainment;
 extern BNCProductCategory BNCProductCategoryBabyToddler;
 extern BNCProductCategory BNCProductCategoryBusinessIndustrial;
 extern BNCProductCategory BNCProductCategoryCamerasOptics;
-extern BNCProductCategory BNCProductCategoryComputerHardware;
-extern BNCProductCategory BNCProductCategoryComputerSoftware;
 extern BNCProductCategory BNCProductCategoryElectronics;
 extern BNCProductCategory BNCProductCategoryFoodBeverageTobacco;
 extern BNCProductCategory BNCProductCategoryFurniture;
@@ -34,10 +32,10 @@ extern BNCProductCategory BNCProductCategoryMature;
 extern BNCProductCategory BNCProductCategoryMedia;
 extern BNCProductCategory BNCProductCategoryOfficeSupplies;
 extern BNCProductCategory BNCProductCategoryReligious;
+extern BNCProductCategory BNCProductCategorySoftware;
 extern BNCProductCategory BNCProductCategorySportingGoods;
 extern BNCProductCategory BNCProductCategoryToysGames;
 extern BNCProductCategory BNCProductCategoryVehiclesParts;
-extern BNCProductCategory BNCProductCategoryWidget;
 
 #pragma mark - BNCProduct
 

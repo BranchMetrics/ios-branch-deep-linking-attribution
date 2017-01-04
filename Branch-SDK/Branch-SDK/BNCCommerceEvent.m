@@ -19,8 +19,6 @@ BNCProductCategory BNCProductCategoryArtsEntertainment  = @"Arts & Entertainment
 BNCProductCategory BNCProductCategoryBabyToddler        = @"Baby & Toddler";
 BNCProductCategory BNCProductCategoryBusinessIndustrial = @"Business & Industrial";
 BNCProductCategory BNCProductCategoryCamerasOptics      = @"Cameras & Optics";
-BNCProductCategory BNCProductCategoryComputerHardware   = @"Computer Hardware";
-BNCProductCategory BNCProductCategoryComputerSoftware   = @"Computer Software";
 BNCProductCategory BNCProductCategoryElectronics        = @"Electronics";
 BNCProductCategory BNCProductCategoryFoodBeverageTobacco = @"Food, Beverages & Tobacco";
 BNCProductCategory BNCProductCategoryFurniture          = @"Furniture";
@@ -32,10 +30,10 @@ BNCProductCategory BNCProductCategoryMature             = @"Mature";
 BNCProductCategory BNCProductCategoryMedia              = @"Media";
 BNCProductCategory BNCProductCategoryOfficeSupplies     = @"Office Supplies";
 BNCProductCategory BNCProductCategoryReligious          = @"Religious & Ceremonial";
+BNCProductCategory BNCProductCategorySoftware           = @"Software";
 BNCProductCategory BNCProductCategorySportingGoods      = @"Sporting Goods";
 BNCProductCategory BNCProductCategoryToysGames          = @"Toys & Games";
 BNCProductCategory BNCProductCategoryVehiclesParts      = @"Vehicles & Parts";
-BNCProductCategory BNCProductCategoryWidget             = @"Widget";
 
 #pragma mark - BNCProduct
 
