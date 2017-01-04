@@ -205,7 +205,7 @@ NSString *type = @"some type";
     product.name = @"Acme brand 1 ton weight";
     product.quantity = @(1.0);
     product.brand = @"Acme";
-    product.category = @"Widgets";
+    product.category = BNCProductCategoryWidget;
     product.variant = @"Lite Weight";
 
     BNCCommerceEvent *commerceEvent = [BNCCommerceEvent new];

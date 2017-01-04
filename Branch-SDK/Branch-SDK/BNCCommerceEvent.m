@@ -11,6 +11,34 @@
 #import "BranchConstants.h"
 
 
+#pragma mark BNCProductCategory
+
+BNCProductCategory BNCProductCategoryAnimalSupplies     = @"Animals & Pet Supplies";
+BNCProductCategory BNCProductCategoryApparel            = @"Apparel & Accessories";
+BNCProductCategory BNCProductCategoryArtsEntertainment  = @"Arts & Entertainment";
+BNCProductCategory BNCProductCategoryBabyToddler        = @"Baby & Toddler";
+BNCProductCategory BNCProductCategoryBusinessIndustrial = @"Business & Industrial";
+BNCProductCategory BNCProductCategoryCamerasOptics      = @"Cameras & Optics";
+BNCProductCategory BNCProductCategoryComputerHardware   = @"Computer Hardware";
+BNCProductCategory BNCProductCategoryComputerSoftware   = @"Computer Software";
+BNCProductCategory BNCProductCategoryElectronics        = @"Electronics";
+BNCProductCategory BNCProductCategoryFoodBeverageTobacco = @"Food, Beverages & Tobacco";
+BNCProductCategory BNCProductCategoryFurniture          = @"Furniture";
+BNCProductCategory BNCProductCategoryHardware           = @"Hardware";
+BNCProductCategory BNCProductCategoryHealthBeauty       = @"Health & Beauty";
+BNCProductCategory BNCProductCategoryHomeGarden         = @"Home & Garden";
+BNCProductCategory BNCProductCategoryLuggageBags        = @"Luggage & Bags";
+BNCProductCategory BNCProductCategoryMature             = @"Mature";
+BNCProductCategory BNCProductCategoryMedia              = @"Media";
+BNCProductCategory BNCProductCategoryOfficeSupplies     = @"Office Supplies";
+BNCProductCategory BNCProductCategoryReligious          = @"Religious & Ceremonial";
+BNCProductCategory BNCProductCategorySportingGoods      = @"Sporting Goods";
+BNCProductCategory BNCProductCategoryToysGames          = @"Toys & Games";
+BNCProductCategory BNCProductCategoryVehiclesParts      = @"Vehicles & Parts";
+BNCProductCategory BNCProductCategoryWidget             = @"Widget";
+
+#pragma mark - BNCProduct
+
 @implementation BNCProduct
 
 - (NSMutableDictionary*) dictionary {
@@ -32,8 +60,21 @@
 	return dictionary;
 }
 
+- (NSString*) description {
+    return [NSString stringWithFormat:
+        @"Name: %@ Sku: %@ Price: %@ Quantity: %@ Brand: %@ Category: %@ Variant: %@",
+        self.name,
+        self.sku,
+        self.price,
+        self.quantity,
+        self.brand,
+        self.category,
+        self.variant];
+}
+
 @end
 
+#pragma mark - BNCCommerceEvent
 
 @implementation BNCCommerceEvent : NSObject
 
@@ -61,6 +102,19 @@
 	#undef assign
 	
 	return dictionary;
+}
+
+- (NSString*) description {
+    return [NSString stringWithFormat:
+        @"Revenue: %@ Currency: %@ TxID: %@ Shipping: %@ Tax: %@ Coupon: %@ Affl: %@ Products: %lu",
+        self.revenue,
+        self.currency,
+        self.transactionID,
+        self.shipping,
+        self.tax,
+        self.coupon,
+        self.affiliation,
+        (unsigned long) self.products.count];
 }
 
 @end
@@ -130,7 +184,7 @@
 }
 
 
-#pragma mark - NSCoding
+#pragma mark BranchCommerceEventRequest NSCoding
 
 
 - (instancetype)initWithCoder:(NSCoder *)decoder {

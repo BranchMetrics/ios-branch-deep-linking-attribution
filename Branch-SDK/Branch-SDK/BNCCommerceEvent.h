@@ -11,16 +11,47 @@
 #import "BNCServerRequest.h"
 
 
+#pragma mark BNCProductCategory
+
+typedef NSString*const BNCProductCategory;
+
+extern BNCProductCategory BNCProductCategoryAnimalSupplies;
+extern BNCProductCategory BNCProductCategoryApparel;
+extern BNCProductCategory BNCProductCategoryArtsEntertainment;
+extern BNCProductCategory BNCProductCategoryBabyToddler;
+extern BNCProductCategory BNCProductCategoryBusinessIndustrial;
+extern BNCProductCategory BNCProductCategoryCamerasOptics;
+extern BNCProductCategory BNCProductCategoryComputerHardware;
+extern BNCProductCategory BNCProductCategoryComputerSoftware;
+extern BNCProductCategory BNCProductCategoryElectronics;
+extern BNCProductCategory BNCProductCategoryFoodBeverageTobacco;
+extern BNCProductCategory BNCProductCategoryFurniture;
+extern BNCProductCategory BNCProductCategoryHardware;
+extern BNCProductCategory BNCProductCategoryHealthBeauty;
+extern BNCProductCategory BNCProductCategoryHomeGarden;
+extern BNCProductCategory BNCProductCategoryLuggageBags;
+extern BNCProductCategory BNCProductCategoryMature;
+extern BNCProductCategory BNCProductCategoryMedia;
+extern BNCProductCategory BNCProductCategoryOfficeSupplies;
+extern BNCProductCategory BNCProductCategoryReligious;
+extern BNCProductCategory BNCProductCategorySportingGoods;
+extern BNCProductCategory BNCProductCategoryToysGames;
+extern BNCProductCategory BNCProductCategoryVehiclesParts;
+extern BNCProductCategory BNCProductCategoryWidget;
+
+#pragma mark - BNCProduct
+
 @interface BNCProduct : NSObject
 @property (nonatomic, strong) NSString *sku;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSDecimalNumber *price;
 @property (nonatomic, strong) NSNumber *quantity;
 @property (nonatomic, strong) NSString *brand;
-@property (nonatomic, strong) NSString *category;
+@property (nonatomic, strong) BNCProductCategory category;
 @property (nonatomic, strong) NSString *variant;
 @end
 
+#pragma mark - BNCCommerceEvent
 
 @interface BNCCommerceEvent : NSObject
 @property (nonatomic, strong) NSDecimalNumber *revenue;
