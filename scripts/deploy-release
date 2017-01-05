@@ -82,12 +82,20 @@ aws s3 cp --acl public-read Branch-iOS-TestBed.zip s3://branchhost/
 open ChangeLog.md
 open 'https://github.com/BranchMetrics/ios-branch-deep-linking/releases/new'
 open 'https://groups.google.com/forum/#!newtopic/branch-sdk-releases'
+open 'https://cocoapods.org/?q=branch'
 open "./carthage-files"
+
+echo ""
+echo ""
+echo '>>> Huzzah! Branch SDK for iOS has been published!'
 echo "Inform the SDK Releases Group!  We've released."
+echo ""
+echo "Add a release announcement in Google Groups:"
 echo "Subject: 'iOS SDK Release $version'"
 echo "   Body: < The change log >"
 echo ""
-echo "Also, add the carthage-files 'Branch.framework.zip' to the Github release."
+echo "Add a similar announcement at Github."
+echo "Also, add the ./carthage-files/Branch.framework.zip to the Github release."
 
 # Remove remnants:
 (rm Branch-iOS-SDK.zip || true)
