@@ -36,9 +36,17 @@
     return self;
 }
 
-- (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+- (void)makeRequest:(BNCServerInterface *)serverInterface
+                key:(NSString *)key
+           callback:(BNCServerCallback)callback {
+
+    //  Emit a warning if the action is collides with the Branch commerce 'purchase' event.
+    if (self.action && [self.action isEqualToString:@"purchase"]) {
+        NSLog(@"[Branch] Warning: You are sending a purchase event with our non-dedicated purchase "
+               "method. Please use the sendCommerceEvent:metadata:withCompletion: method.");
+    }
+
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-    
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     params[BRANCH_REQUEST_KEY_ACTION] = self.action;
     params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;

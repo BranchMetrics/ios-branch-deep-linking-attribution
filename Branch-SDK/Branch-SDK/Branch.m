@@ -797,7 +797,9 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
     NSDictionary *origInstallParams = [BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.installParams];
     
     if (self.deepLinkDebugParams) {
-        NSMutableDictionary* debugInstallParams = [[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams] mutableCopy];
+        NSMutableDictionary* debugInstallParams =
+			[[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams]
+				mutableCopy];
         [debugInstallParams addEntriesFromDictionary:self.deepLinkDebugParams];
         return debugInstallParams;
     }
