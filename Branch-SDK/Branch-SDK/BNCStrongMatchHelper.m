@@ -291,11 +291,13 @@
     self.matchView.alpha = 1.0;
     [self.matchView addSubview:self.matchViewController.view];
 
-    [self.primaryWindow.rootViewController addChildViewController:self.matchViewController];
-    UIView *parentView = self.primaryWindow.rootViewController.view ?: self.primaryWindow;
+    UIViewController *rootViewController = [self topViewController:self.primaryWindow.rootViewController];
+
+    [rootViewController addChildViewController:self.matchViewController];
+    UIView *parentView = rootViewController.view ?: self.primaryWindow;
     [parentView insertSubview:self.matchView atIndex:0];
 
-    [self.matchViewController didMoveToParentViewController:self.primaryWindow.rootViewController];
+    [self.matchViewController didMoveToParentViewController:rootViewController];
 
     return YES;
 }
@@ -317,6 +319,25 @@
     [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
     self.shouldDelayInstallRequest = NO;
     self.requestInProgress = NO;
+}
+
+/**
+  Find the top view controller that is not of type UINavigationController or UITabBarController
+ */
+- (UIViewController *)topViewController:(UIViewController *)baseViewController {
+    if ([baseViewController isKindOfClass:[UINavigationController class]]) {
+        return [self topViewController: ((UINavigationController *)baseViewController).visibleViewController];
+    }
+
+    if ([baseViewController isKindOfClass:[UITabBarController class]]) {
+        return [self topViewController: ((UITabBarController *)baseViewController).selectedViewController];
+    }
+
+    if ([baseViewController presentedViewController] != nil) {
+        return [self topViewController: [baseViewController presentedViewController]];
+    }
+
+    return baseViewController;
 }
 
 - (void)safariViewController:(SFSafariViewController *)controller
