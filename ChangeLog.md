@@ -1,5 +1,14 @@
 Branch iOS SDK Change Log
 
+- v0.12.22
+  * Fixed a crash when the root view controller is UINavigationController during strong matching (#539).
+  * Updated documentation.
+  * Warn when a user purchase event conflicts with a commerce event DANA-77 (#538).
+  * Added product categories DANA-75 (#537).
+  * Fixed a potential initialization race condition (#535).
+  * Updated the Branch-TestBed-Swift example.
+  * Fixed problem where getLatestReferringParams was sometimes returning the wrong params (#532).
+
 - v0.12.21
   * > Beta Release <
   * Fixed iOS 10.2.2 app install/update reporting (INFRA-1484).
@@ -341,7 +350,7 @@ Branch iOS SDK Change Log
 
 - v0.8.2
   * Fix issue with callbacks being lost on some of the internal requests.
-  * Fix issue with old requests not fitting the new request format, causing crsahes.
+  * Fix issue with old requests not fitting the new request format, causing crashes.
 
 - v0.8.1
   * Fix potential for bad reference when no callback is provided to `redeemRewards` call.
