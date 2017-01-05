@@ -248,6 +248,25 @@
     return nil;
 }
 
+/**
+  Find the top view controller that is not of type UINavigationController or UITabBarController
+ */
+- (UIViewController *)topViewController:(UIViewController *)baseViewController {
+    if ([baseViewController isKindOfClass:[UINavigationController class]]) {
+        return [self topViewController: ((UINavigationController *)baseViewController).visibleViewController];
+    }
+
+    if ([baseViewController isKindOfClass:[UITabBarController class]]) {
+        return [self topViewController: ((UITabBarController *)baseViewController).selectedViewController];
+    }
+
+    if ([baseViewController presentedViewController] != nil) {
+        return [self topViewController: [baseViewController presentedViewController]];
+    }
+
+    return baseViewController;
+}
+
 - (BOOL) willLoadViewControllerWithURL:(NSURL*)matchURL {
     if (self.primaryWindow) return NO;
 
@@ -319,25 +338,6 @@
     [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
     self.shouldDelayInstallRequest = NO;
     self.requestInProgress = NO;
-}
-
-/**
-  Find the top view controller that is not of type UINavigationController or UITabBarController
- */
-- (UIViewController *)topViewController:(UIViewController *)baseViewController {
-    if ([baseViewController isKindOfClass:[UINavigationController class]]) {
-        return [self topViewController: ((UINavigationController *)baseViewController).visibleViewController];
-    }
-
-    if ([baseViewController isKindOfClass:[UITabBarController class]]) {
-        return [self topViewController: ((UITabBarController *)baseViewController).selectedViewController];
-    }
-
-    if ([baseViewController presentedViewController] != nil) {
-        return [self topViewController: [baseViewController presentedViewController]];
-    }
-
-    return baseViewController;
 }
 
 - (void)safariViewController:(SFSafariViewController *)controller
