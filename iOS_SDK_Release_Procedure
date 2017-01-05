@@ -44,17 +44,9 @@ iOS SDK Release Procedure
    - Update the version number ./scripts/version -im
    - Update the release notes in ./ChangeNotes.md
    - The script ./scripts/deploy-release is a master script that calls the other deploy scripts.
-     Each part of the deploy is broken out so if that part fails or needs to be re-run for some
-     reason, It is broken into parts so that each step can be run individually if needed.
+     * Each part of the deploy is broken out so that if some part fails or needs to be re-run for some
+       reason, It is broken into parts so that each step can be run individually if needed.
 
-3) Run the pre-release script
-    • from the root directory of the iOS SDK, run 'sh scripts/pre-release.sh'
-    • verifies our cocoapod definition file
-    • (more details! What to do if it fails?)
-
-4) Run the release script
-    • this script requires a new version number as an argument (ex: 0.8.5)
-    • from the root directory of the iOS SDK, run  'sh scripts/release.sh <version>'  (ex 0.8.5)
     • this script does several things:
         • it opens the changelog on the command line. Add release notes here and save them.
         • it builds the framework and cocoapod
@@ -65,8 +57,7 @@ iOS SDK Release Procedure
           logged in to gmail.
         • Announce the release!
 
-5) Release on Fabric
-    => New!! <=
+    • Release on Fabric
     • On the command line, cd to 'ios-branch-deep-linking'.
     • Run the script './scripts/deploy-fabric <version>'.
     • The script will compress and upload the framework, then the Fabric.app application will open.

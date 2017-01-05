@@ -17,6 +17,7 @@ function finish {
 }
 trap finish EXIT
 
+
 version=$(./scripts/version)
 
 if ! ./scripts/askYN "Deploy Branch release version ${version}?"; then
@@ -33,16 +34,18 @@ echo ">>> Linting build for release..." 1>&2
 pod lib lint Branch.podspec --verbose
 
 # Build the framework
+echo ">>> Building the framework..." 1>&2
 ./scripts/build_framework.sh
 
 # Zip the SDK files
-echo '>>> Zipping Branch-iOS-SDK' 1>&2
+echo '>>> Zipping Branch-iOS-SDK...' 1>&2
 zip -rqy Branch-iOS-SDK.zip Branch-SDK/ Branch.framework/
 
-echo '>>> Zipping Branch-iOS-TestBed' 1>&2
+echo '>>> Zipping Branch-iOS-TestBed...' 1>&2
 zip -rqy Branch-iOS-TestBed.zip Branch-SDK/ Branch-TestBed/ Branch.framework/
 
 # Checksum the zip files
+echo '>>> Creating checksum file...' 1>&2
 checksum_file=checksum
 echo '#checksum for Branch-iOS-SDK found at https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip' > "$checksum_file"
 shasum Branch-iOS-SDK.zip >> $checksum_file
@@ -54,6 +57,7 @@ shasum Branch-iOS-TestBed.zip >> $checksum_file
 echo '>>> Making Carthage build...' 1>&2
 ./scripts/deploy-carthage
 
+echo '>>> Branch SDK for iOS build and lint successful so far.' 1>&2
 if ! ./scripts/askYN "Commit and deploy Branch release version ${version}?"; then
     echo ">>> Nothing deployed." 1>&2
     exit 1
