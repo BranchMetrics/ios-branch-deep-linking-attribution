@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+- v0.12.23
+  * Updated the public headers for Carthage to include BNCCommerceEvent.h.
+
 - v0.12.22
   * Fixed a crash when the root view controller is UINavigationController during strong matching (#539).
   * Updated documentation.
