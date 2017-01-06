@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		4D19C1C21DC110FB008D8B38 /* BNCXcode7Support.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D19C1C01DC110FA008D8B38 /* BNCXcode7Support.h */; };
 		4D19C1C31DC110FB008D8B38 /* BNCXcode7Support.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D19C1C11DC110FB008D8B38 /* BNCXcode7Support.m */; };
-		4D3922BD1E1F0C85004FB7C8 /* BNCCommerceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3922BC1E1F0C85004FB7C8 /* BNCCommerceEvent.h */; };
+		4D3922BD1E1F0C85004FB7C8 /* BNCCommerceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3922BC1E1F0C85004FB7C8 /* BNCCommerceEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4D3FA94D1DFF3F6C00E2B6A9 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FA94C1DFF3F6C00E2B6A9 /* BNCConfig.m */; };
 		4DA40A8F1E1F0011004D2534 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA40A8D1E1F0011004D2534 /* BNCCommerceEvent.m */; };
 		7DA3BF1D1D889CE500CA8AE0 /* BranchContentDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3BF171D889CE500CA8AE0 /* BranchContentDiscoverer.m */; };
@@ -345,13 +345,13 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D3922BD1E1F0C85004FB7C8 /* BNCCommerceEvent.h in Headers */,
 				E230A1941D03DB9E006181D8 /* BranchView.h in Headers */,
+				E230A1861D03DB9E006181D8 /* Branch.h in Headers */,
 				E230A1791D03DB9E006181D8 /* BNCPreferenceHelper.h in Headers */,
 				E230A17B1D03DB9E006181D8 /* BNCServerInterface.h in Headers */,
 				E230A1961D03DB9E006181D8 /* BranchViewHandler.h in Headers */,
 				7DA3BF211D889CE500CA8AE0 /* BranchContentPathProperties.h in Headers */,
-				E230A1861D03DB9E006181D8 /* Branch.h in Headers */,
+				4D3922BD1E1F0C85004FB7C8 /* BNCCommerceEvent.h in Headers */,
 				E230A16C1D03DB9E006181D8 /* BNCConfig.h in Headers */,
 				7DA3BF1E1D889CE500CA8AE0 /* BranchContentDiscoverer.h in Headers */,
 				E230A18E1D03DB9E006181D8 /* BranchDeepLinkingController.h in Headers */,
