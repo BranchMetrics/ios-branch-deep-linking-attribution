@@ -4,11 +4,10 @@ set -euo pipefail
 #  deploy-carthage  --  Deploy the Branch.framework with Carthage
 #  EB Smith.  November, 2016.
 
-scriptname=$(basename "BASH_SOURCE[0]")
+scriptname=$(basename "${BASH_SOURCE[0]}")
 scriptpath="${BASH_SOURCE[0]}"
 scriptpath=$(cd "$(dirname "${scriptpath}")" && pwd)
 cd ${scriptpath}/../carthage-files
-
 
 scriptFailed=1
 function finish {

@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -euo pipefail
 
 export PROJECT_DIR=Branch-TestBed
 export LIBRARY_BINARY_NAME=libBranch.a
@@ -7,6 +8,10 @@ export XCODE_BUILD_TARGET=Branch
 export CONFIGURATION=Release
 export FRAMEWORK_DIR=Branch.framework
 export FRAMEWORK_BINARY_NAME=Branch
+
+yell() { echo "$0: $*" >&2; }
+die()  { yell "$*"; exit 111; }
+try()  { "$@" || die "cannot $*"; }
 
 function xcode_build_target() {
     echo "Compiling for platform ${1}"

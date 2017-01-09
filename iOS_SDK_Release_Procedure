@@ -1,43 +1,63 @@
 iOS SDK Release Procedure
 =========================
-### Last update: 11/10/2016
+### Last update: 1/4/2016
 
 # Steps to release the iOS SDK:
 
-1) Decide which Pull Requests (changes) will be included in the release
-    • are they fixing a partner issue?
-    • are there tests that verify the correctness of the change?
+1) Decide which pull requests and changes will be included in the release.
+    • Are they fixing a partner issue?
+    • Are there tests that verify the correctness of the change?
 
-2) Accept the pull requests and merge them into the project.
-    • get a thumbs-up from at least one person
-    • merge them one at a time, to verify no conflicts
-    • delete the branches you merge (they can be restored later if necessary)
+2) Accept the pull requests and merge them into the staging branch of the project.
+    • Get a thumbs-up from at least one person
+    • Merge them one at a time, to verify no conflicts
+    • Delete the branches you merge (they can be restored later if necessary)
 
-3) Make sure that the code builds from Xcode
-    • git checkout QA
-    • git pull
-    • run the Testbed from Xcode and make sure it works
+3) When you're ready to prepare a release, merge the 'staging' branch into the 'QA' branch.
+   This keeps the staging branch unblocked for continuos development.
+   - All final testing is done on the QA branch of the code.
+   - All fixes for bugs found while testing are made to the QA branch.
+   - QA the release candidate:
+     * Does it compile in Xcode 8?
+     * Does it pass static analysis?
+     * Does it pass all the manual tests?
+       (test suite ref...)
+     * Does it compile in Xcode 7?
+     * Do all of the code examples compile?
+       - TestBed
+       - TestBed-Swift
+       - TestBed-iMessenger, etc.
 
-3) Run the pre-release script
-    • from the root directory of the iOS SDK, run 'sh scripts/pre-release.sh'
-    • verifies our cocoapod definition file
-    • (more details! What to do if it fails?)
+4) Congratulations!  All tests have passed.  The code is sleek.  Everything is documented.
+   Time to make a release.
 
-4) Run the release script
-    • this script requires a new version number as an argument (ex: 0.8.5)
-    • from the root directory of the iOS SDK, run  'sh scripts/release.sh <version>'  (ex 0.8.5)
+5) For a Beta release, on the QA branch:
+   - Update the version number. ./scripts/version -i
+   - Update the release notes in ./ChangeNotes.md.
+   - Merge the 'QA' branch into 'beta' branch.
+   - Merge the 'QA' branch into the 'staging' branch.
+   - Talk with Elizabeth about sending an email announcement to the beta testers.
+   - Done!
+
+6) For a production release (from either 'beta' or 'QA'):
+   - Check out and pull the latest code from that branch.
+   - Update the version number ./scripts/version -im
+   - Update the release notes in ./ChangeNotes.md
+   - The script ./scripts/deploy-release is a master script that calls the other deploy scripts.
+     * Each part of the deploy is broken out so that if some part fails or needs to be re-run for some
+       reason, It is broken into parts so that each step can be run individually if needed.
+
     • this script does several things:
         • it opens the changelog on the command line. Add release notes here and save them.
         • it builds the framework and cocoapod
-        • it commits everything to github, including cocoapod tags
+        • it commits everything to Github, including cocoapod tags
         • it pushes the pod to Cocoapods.org
         • it uploads the build to amazon s3
         • it opens the google group where we announce releases; have your work browser open and
           logged in to gmail.
         • Announce the release!
 
-5) Release on Fabric
-    => New!! <=
+    • Release on Fabric
     • On the command line, cd to 'ios-branch-deep-linking'.
     • Run the script './scripts/deploy-fabric <version>'.
     • The script will compress and upload the framework, then the Fabric.app application will open.

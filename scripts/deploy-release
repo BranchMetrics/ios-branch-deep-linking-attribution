@@ -8,8 +8,6 @@ scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 scriptfile="${scriptfile}"/$(basename "$0")
 cd $(dirname "$scriptfile")/..
 
-version=$(./scripts/version)
-
 scriptFailed=1
 function finish {
     if [ $scriptFailed -ne 0 ]; then
@@ -20,32 +18,34 @@ function finish {
 trap finish EXIT
 
 
+version=$(./scripts/version)
+
 if ! ./scripts/askYN "Deploy Branch release version ${version}?"; then
     echo ">>> Nothing deployed." 1>&2
     exit 1
 fi
 
 
-git_branch=$(git symbolic-ref --short HEAD)
-
 # Prompt for editor input for ChangeLog.
 vim +4 +star ChangeLog.md
 
-# Pre-release lint
+# Pre-release Cocoapod lint:
 echo ">>> Linting build for release..." 1>&2
 pod lib lint Branch.podspec --verbose
 
 # Build the framework
+echo ">>> Building the framework..." 1>&2
 ./scripts/build_framework.sh
 
 # Zip the SDK files
-echo '>>> Zipping Branch-iOS-SDK' 1>&2
+echo '>>> Zipping Branch-iOS-SDK...' 1>&2
 zip -rqy Branch-iOS-SDK.zip Branch-SDK/ Branch.framework/
 
-echo '>>> Zipping Branch-iOS-TestBed' 1>&2
+echo '>>> Zipping Branch-iOS-TestBed...' 1>&2
 zip -rqy Branch-iOS-TestBed.zip Branch-SDK/ Branch-TestBed/ Branch.framework/
 
 # Checksum the zip files
+echo '>>> Creating checksum file...' 1>&2
 checksum_file=checksum
 echo '#checksum for Branch-iOS-SDK found at https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip' > "$checksum_file"
 shasum Branch-iOS-SDK.zip >> $checksum_file
@@ -57,6 +57,7 @@ shasum Branch-iOS-TestBed.zip >> $checksum_file
 echo '>>> Making Carthage build...' 1>&2
 ./scripts/deploy-carthage
 
+echo '>>> Branch SDK for iOS build and lint successful so far.' 1>&2
 if ! ./scripts/askYN "Commit and deploy Branch release version ${version}?"; then
     echo ">>> Nothing deployed." 1>&2
     exit 1
@@ -66,17 +67,7 @@ echo '>>> Deploying Fabric build...' 1>&2
 ./scripts/deploy-fabric
 
 # Commit and tag:
-echo '>>> Merging and pushing to master...' 1>&2
-git add --all
-git commit -m "Updates for ${version} release"
-git push
-git checkout master
-git pull
-git merge -m "Merge $git_branch" origin "$git_branch"
-(git commit || true)
-git tag "${version}"
-git push
-git push --tags origin master
+./scripts/deploy-git-tag
 
 echo '>>> Pushing Branch Cocoapod...' 1>&2
 pod trunk push Branch.podspec
@@ -91,12 +82,20 @@ aws s3 cp --acl public-read Branch-iOS-TestBed.zip s3://branchhost/
 open ChangeLog.md
 open 'https://github.com/BranchMetrics/ios-branch-deep-linking/releases/new'
 open 'https://groups.google.com/forum/#!newtopic/branch-sdk-releases'
+open 'https://cocoapods.org/?q=branch'
 open "./carthage-files"
+
+echo ""
+echo ""
+echo '>>> Huzzah! Branch SDK for iOS has been published!'
 echo "Inform the SDK Releases Group!  We've released."
+echo ""
+echo "Add a release announcement in Google Groups:"
 echo "Subject: 'iOS SDK Release $version'"
 echo "   Body: < The change log >"
 echo ""
-echo "Also, add the carthage-files 'Branch.framework.zip' to the Github release."
+echo "Add a similar announcement at Github."
+echo "Also, add the ./carthage-files/Branch.framework.zip to the Github release."
 
 # Remove remnants:
 (rm Branch-iOS-SDK.zip || true)
