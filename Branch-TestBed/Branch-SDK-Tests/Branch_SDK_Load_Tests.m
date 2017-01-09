@@ -24,7 +24,13 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
 
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
+    Branch *branch =
+		[[Branch alloc]
+			initWithInterface:serverInterfaceMock
+			queue:[[BNCServerRequestQueue alloc] init]
+			cache:[[BNCLinkCache alloc] init]
+			preferenceHelper:preferenceHelper
+			key:@"key_foo"];
     
     BNCServerResponse *linkResponse = [[BNCServerResponse alloc] init];
     linkResponse.data = @{ @"url": @"https://bnc.lt/l/3PxZVFU-BK" };
@@ -60,9 +66,16 @@
     };
     
     id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
-        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+        return
+			[url rangeOfString:@"open"].location != NSNotFound ||
+			[url rangeOfString:@"install"].location != NSNotFound;
     }];
-    [[[serverInterfaceMock expect] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock expect]
+		andDo:openOrInstallInvocation]
+			postRequest:[OCMArg any]
+			url:openOrInstallUrlCheckBlock
+			key:[OCMArg any]
+			callback:openOrInstallCallbackCheckBlock];
     
     // Fake branch key
     preferenceHelper.branchKey = @"foo";

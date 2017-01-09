@@ -74,10 +74,15 @@
     
     BranchInstallRequest *request = [[BranchInstallRequest alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] postRequest:EXPECTED_PARAMS url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_INSTALL] key:[OCMArg any] callback:[OCMArg any]];
-    
+    [[serverInterfaceMock expect]
+		postRequest:EXPECTED_PARAMS
+		url:[OCMArg any]	//	[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_INSTALL]
+		key:[OCMArg any]
+		callback:[OCMArg any]];
+//  [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_INSTALL] key:key callback:callback];
+
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
-    
+
     [serverInterfaceMock verify];
 }
 
@@ -350,12 +355,12 @@
     NSString * const INSTALL_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];
-    BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
-        XCTAssertNil(error);
-        XCTAssertNil(preferenceHelper.installParams);
-        
-        [self safelyFulfillExpectation:expectation];
-    }];
+    BranchInstallRequest *request =
+		[[BranchInstallRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
+        	XCTAssertNil(error);
+        	XCTAssertNil(preferenceHelper.installParams);
+        	[self safelyFulfillExpectation:expectation];
+    		}];
     
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{ BRANCH_RESPONSE_KEY_SESSION_DATA: INSTALL_PARAMS };

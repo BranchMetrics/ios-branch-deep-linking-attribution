@@ -353,7 +353,13 @@ NSInteger const  TEST_CREDITS = 30;
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
+    Branch *branch =
+		[[Branch alloc]
+			initWithInterface:serverInterfaceMock
+			queue:[[BNCServerRequestQueue alloc] init]
+			cache:[[BNCLinkCache alloc] init]
+			preferenceHelper:preferenceHelper
+			key:@"key_foo"];
 
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL Sync"];
     [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {

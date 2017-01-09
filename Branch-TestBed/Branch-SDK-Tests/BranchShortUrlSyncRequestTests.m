@@ -171,7 +171,7 @@
     NSString * EXPECTED_URL =
         [NSString stringWithFormat:
             @"%@?tags=%@&tags=%@&alias=%@&channel=%@&feature=%@&stage=%@&type=%ld"
-             "&matchDuration=%ld&source=ios&data=%@",
+             "&duration=%ld&source=ios&data=%@",
              USER_URL, TAG1, TAG2, ALIAS, CHANNEL, FEATURE, STAGE,
              (long)LINK_TYPE, (long)DURATION, ENCODED_PARAMS];
     

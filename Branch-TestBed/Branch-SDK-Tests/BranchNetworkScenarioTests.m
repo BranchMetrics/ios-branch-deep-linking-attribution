@@ -294,7 +294,12 @@
     // Ignore first request, don't call callback (simulate failure)
     [[serverInterfaceMock expect] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:[OCMArg any]];
     // Second request execute as normal
-    [[[serverInterfaceMock expect] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock expect]
+		andDo:openOrInstallInvocation]
+			postRequest:[OCMArg any]
+			url:openOrInstallUrlCheckBlock
+			key:[OCMArg any]
+			callback:openOrInstallCallbackCheckBlock];
     
     // Queue mocking. Request should only be inserted once
     id openRequestCheck = [OCMArg checkWithBlock:^BOOL(BNCServerRequest *request) {
@@ -392,7 +397,12 @@
         return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
     }];
 
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock stub]
+		andDo:openOrInstallInvocation]
+			postRequest:[OCMArg any]
+			url:openOrInstallUrlCheckBlock
+			key:[OCMArg any]
+			callback:openOrInstallCallbackCheckBlock];
     
     [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:[self callbackExpectingFailure:callback]];
 }
@@ -412,19 +422,17 @@
     NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
     [[[serverInterfaceMock expect] andDo:badRequestInvocation] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
 
-#if loadActionCountsWithCallback
-    [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
+    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNotNil(error);
         callback();
     }];
-#endif
 }
 
 - (void)enqueueTwoNonReplayableRequestsWithFirstFailingBecauseBranchIsDown:(Branch *)branch
         serverInterface:(id)serverInterfaceMock
         callback:(void (^)(void))callback {
 
-    __block BNCServerCallback badRequestCallback;
+    __block BNCServerCallback badRequestCallback = nil;
     id badRequestCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         badRequestCallback = callback;
         return YES;
@@ -436,23 +444,30 @@
     [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
     [[serverInterfaceMock reject] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:[OCMArg any]];
 
-#if loadActionCountsWithCallback
     // Throw two requests in the queue, but the first failing w/ a 500 should trigger both to fail
-    [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
+    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNotNil(error);
     }];
     
-    [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
+    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNotNil(error);
         callback();
     }];
-#endif
 
     // Bad requests callback should be captured at this point, call it to trigger the failure.
-    badRequestCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCServerProblemError userInfo:nil]);
+
+	if (badRequestCallback) {
+		NSError * error = [NSError errorWithDomain:BNCErrorDomain code:BNCServerProblemError userInfo:nil];
+    	badRequestCallback(nil, error);
+	} else {
+		XCTAssert(badRequestCallback);
+	}
 }
 
-- (void)enqueueTwoNonReplayableRequestsWithFirstFailingBecauseRequestIsBad:(Branch *)branch serverInterface:(id)serverInterfaceMock callback:(void (^)(void))callback {
+- (void)enqueueTwoNonReplayableRequestsWithFirstFailingBecauseRequestIsBad:(Branch *)branch
+		serverInterface:(id)serverInterfaceMock
+		callback:(void (^)(void))callback {
+		
     __block BNCServerCallback badRequestCallback;
     id badRequestCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         badRequestCallback = callback;
@@ -471,24 +486,30 @@
     [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
     [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:goodRequestCheckBlock];
 
-#if loadActionCountsWithCallback
     // Throw two requests in the queue, but the first failing w/ a 500 should trigger both to fail
-    [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
+    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNotNil(error);
     }];
     
-    [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
+    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNil(error);
         callback();
     }];
-#endif
 
     // Bad requests callback should be captured at this point, call it to trigger the failure.
-    badRequestCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:nil]);
-    goodRequestCallback([[BNCServerResponse alloc] init], nil);
+
+	if (badRequestCallback && goodRequestCallback) {
+		badRequestCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:nil]);
+		goodRequestCallback([[BNCServerResponse alloc] init], nil);
+	} else {
+		XCTAssert(badRequestCallback && goodRequestCallback);
+	}
 }
 
-- (void)makeSuccessfulNonReplayableRequest:(Branch *)branch serverInterface:(id)serverInterfaceMock callback:(void (^)(void))callback {
+- (void)makeSuccessfulNonReplayableRequest:(Branch *)branch
+		serverInterface:(id)serverInterfaceMock
+		callback:(void (^)(void))callback {
+
     BNCServerResponse *goodResponse = [[BNCServerResponse alloc] init];
     goodResponse.statusCode = @200;
     
@@ -506,12 +527,10 @@
     NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
     [[[serverInterfaceMock expect] andDo:goodRequestInvocation] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:goodRequestCheckBlock];
 
-#if loadActionCountsWithCallback
-    [branch loadActionCountsWithCallback:^(BOOL changed, NSError *error) {
+    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNil(error);
         callback();
     }];
-#endif
 }
 
 #pragma mark - Callbacks
@@ -539,7 +558,8 @@
     };
 }
 
-# pragma mark - Init mocking
+#pragma mark - Init mocking
+
 - (void)mockSuccesfulInit:(id)serverInterfaceMock {
     BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
     openInstallResponse.data = @{
@@ -561,10 +581,16 @@
     };
     
     id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
-        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+        return 	[url rangeOfString:@"open"].location != NSNotFound ||
+				[url rangeOfString:@"install"].location != NSNotFound;
     }];
 
-    [[[serverInterfaceMock stub] andDo:openOrInstallInvocation] postRequest:[OCMArg any] url:openOrInstallUrlCheckBlock key:[OCMArg any] callback:openOrInstallCallbackCheckBlock];
+    [[[serverInterfaceMock stub]
+		andDo:openOrInstallInvocation]
+			postRequest:[OCMArg any]
+			url:openOrInstallUrlCheckBlock
+			key:[OCMArg any]
+			callback:openOrInstallCallbackCheckBlock];
 }
 
 - (void)overrideBranch:(Branch *)branch initHandler:(callbackWithParams)initHandler {
