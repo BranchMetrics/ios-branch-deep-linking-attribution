@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.12.24
+  * Updated Fabric files.
+  * Made the release script more robust.
+
 - v0.12.23
   * Updated the public headers for Carthage to include BNCCommerceEvent.h.
 
