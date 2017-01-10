@@ -1,8 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-#  deploy-fabric  --  Deploy the Branch.framework to Fabric
-#  EB Smith.  October, 2016.
+# deploy-fabric  -  Deploys Branch.framework to Fabric
+#
+# Edward Smith, October 2016
 
 scriptname=$(basename "BASH_SOURCE[0]")
 scriptpath="${BASH_SOURCE[0]}"

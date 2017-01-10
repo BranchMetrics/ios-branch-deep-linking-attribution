@@ -1,0 +1,23 @@
+#!/bin/bash
+set -euo pipefail
+
+# deploy-checksum  -  The zip & checksum the framework.
+#
+# Edward Smith, December 2016
+
+
+# Zip the SDK files
+echo '>>> Zipping Branch-iOS-SDK...' 1>&2
+zip -rqy Branch-iOS-SDK.zip Branch-SDK/ Branch.framework/
+
+echo '>>> Zipping Branch-iOS-TestBed...' 1>&2
+zip -rqy Branch-iOS-TestBed.zip Branch-SDK/ Branch-TestBed/ Branch.framework/
+
+# Checksum the zip files
+echo '>>> Creating checksum file...' 1>&2
+checksum_file=checksum
+echo '#checksum for Branch-iOS-SDK found at https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip' > "$checksum_file"
+shasum Branch-iOS-SDK.zip >> $checksum_file
+
+echo '#checksum for Branch-iOS-TestBed found at https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip' >> "$checksum_file"
+shasum Branch-iOS-TestBed.zip >> $checksum_file
