@@ -1,5 +1,5 @@
 #!/bin/bash
-#  version  -  Version number managment.
+#  version  -  Version number management.
 #  Edward Smith,  December 2016.
 set -euo pipefail
 function usage() {
