@@ -59,29 +59,32 @@ iOS SDK Release Procedure
      * Opens the Fabric.app on your computer so you can check that the released version is correct.
      * Opens the Branch CocoaPod web page so you can check that the released version is correct.
 
+   - Important Note about Carthage:
+     * The Carthage Xcode project is separate from the main Testbed one, however, the SDK-related
+       files in this project are symbolic links to the main ones (so that updates to the original
+       files are reflected in Carthage).
+     * This means if you add new files to the main Xcode Project, make sure to add them to the
+       Carthage one as well (but not as copies).
+
+   - Release steps:
+     * Make sure you have a browser window open and logged into your Branch Gmail account.
+     * Also have a browser window open and logged into your Github account.
+     * Check out and pull the latest code from that branch.
+     * Update the version number ./scripts/version -i
+     * Update the release notes in ./ChangeLog.md.
+
      * it opens the google group where we announce releases; have your work browser open and
        logged in to gmail.
      * Announce the release!
 
-   - Release steps:
-   - Make sure you have a browser window open and logged into your Branch Gmail account.
-   - Also have a browser window open and logged into your Github account.
-   - Check out and pull the latest code from that branch.
-   - Update the version number ./scripts/version -i
-   - Update the release notes in ./ChangeLog.md.
-
-    Draft a new release:
-    * Choose the release version, put some funny (required!) title and add the ChangeLog to the description.
-    * In the attachment section, choose the zipped framework in the 'carthage-files' directory
-      (different from the fabric one).
-    * Publish the release.
-
-Important Note about Carthage:
-    * The Carthage Xcode project is separate from the main Testbed one, however, the SDK-related
-      files in this project are symbolic links to the main ones (so that updates to the original
-      files are reflected in Carthage).
-    * This means if you add new files to the main Xcode Project, make sure to add them to the
-      Carthage one as well (but not as copies).
+     * Prompts you, the user, to update the Github and Google release announcement pages.
+     * Draft a new release in Github
+       - The Github release page should be open in one of your browser windows.
+       - Choose the release version, put some funny (required!) title and add the ChangeLog to the description.
+       - In the attachment section, choose the zipped framework in the 'carthage-files' directory.
+         (different from the fabric one).  This directory should be open in one of your Finder windows.
+       - Publish the release.
+     * Draft a new Google groups rele
 
 7) Rejoice and pay tribute to Steve Jobs!
 
