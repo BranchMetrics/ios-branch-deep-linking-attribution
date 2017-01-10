@@ -1,9 +1,9 @@
 #!/bin/bash
-
-# deploy-git-tag
-# Edward Smith, January 2017
-
 set -euo pipefail
+
+# deploy-git-tag  -  Commit and push the current git changes.  Create a version tag and push to master.
+#
+# Edward Smith, January 2017
 
 scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 scriptfile="${scriptfile}"/$(basename "$0")

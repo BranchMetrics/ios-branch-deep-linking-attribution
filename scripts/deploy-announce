@@ -1,0 +1,31 @@
+#!/bin/bash
+set -euo pipefail
+
+# deploy-announce  -  Prompts to check the announcement of a new SDK version.
+#
+# Edward Smith, January 2017
+
+version=$(./scripts/version)
+
+echo ""
+echo ""
+echo ">>> Huzzah! The Branch SDK for iOS has been published!"
+echo ">>> Inform the world!"
+echo ""
+echo "Add a release announcement in Google Groups:"
+echo "Subject: 'An Update for the Branch SDK for iOS is Available:  Version $version'"
+echo "   Body: < The change log >"
+open 'https://groups.google.com/forum/#!newtopic/branch-sdk-releases'
+open ChangeLog.md
+echo ""
+echo "Add a similar announcement at Github:"
+echo "Subject: 'Release $version'"
+echo "   Body: < The change log >"
+echo "Also, add the ./carthage-files/Branch.framework.zip to the Github release."
+open 'https://github.com/BranchMetrics/ios-branch-deep-linking/releases/new'
+open "./carthage-files"
+echo ""
+echo "- Check that the Fabric has uploaded & the version is correct."
+open -a Fabric.app
+echo "- Check that the CocoaPod has uploaded & the version is correct."
+open 'https://cocoapods.org/pods/Branch#changelog'
