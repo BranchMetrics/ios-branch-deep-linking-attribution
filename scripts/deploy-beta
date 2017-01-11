@@ -42,4 +42,4 @@ git push
 
 echo ""
 echo ">>> Beta deployed O.K."
-echo ">>> Announce the beta update through Elizabeth, maybe?"
+echo ">>> Announce the beta update through Elizabeth, for now."
