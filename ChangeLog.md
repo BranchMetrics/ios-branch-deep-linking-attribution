@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.12.25
+  * > Beta Release <
+  * Added a beta release deployment script.
+
 - v0.12.24
   * Updated Fabric files.
   * Made the release script more robust.
