@@ -92,7 +92,7 @@
 		4D3FA94B1DFF31EB00E2B6A9 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FA94A1DFF31EB00E2B6A9 /* BNCConfig.m */; };
 		4D8999EC1DC108FF00F7EE0A /* BNCXcode7Support.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8999EA1DC108FF00F7EE0A /* BNCXcode7Support.h */; };
 		4D8999ED1DC108FF00F7EE0A /* BNCXcode7Support.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D8999EB1DC108FF00F7EE0A /* BNCXcode7Support.m */; };
-		4D8EE7A51E1F0A5D00B1F450 /* BNCCommerceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8EE7A31E1F0A5D00B1F450 /* BNCCommerceEvent.h */; };
+		4D8EE7A51E1F0A5D00B1F450 /* BNCCommerceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8EE7A31E1F0A5D00B1F450 /* BNCCommerceEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4D8EE7A61E1F0A5D00B1F450 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D8EE7A41E1F0A5D00B1F450 /* BNCCommerceEvent.m */; };
 		4DDC52621DCC08E700CFB737 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DDC52611DCC08E700CFB737 /* iAd.framework */; };
 		54391A151BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 54391A131BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.h */; };
@@ -614,10 +614,10 @@
 				462B50461B449DF000967B81 /* BranchDeepLinkingController.h in Headers */,
 				E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */,
 				54FF1F951BD20EB50004CE2E /* BranchRegisterViewRequest.h in Headers */,
-				4D8EE7A51E1F0A5D00B1F450 /* BNCCommerceEvent.h in Headers */,
 				46946B851B26898800627BCC /* BNCServerRequest.h in Headers */,
 				466D5A111B5991E3009DB845 /* BNCContentDiscoveryManager.h in Headers */,
 				466B58741B17780A00A69EDE /* BNCPreferenceHelper.h in Headers */,
+				4D8EE7A51E1F0A5D00B1F450 /* BNCCommerceEvent.h in Headers */,
 				466B58791B17780A00A69EDE /* BNCConfig.h in Headers */,
 				7D4DAC211C8FA8C0008E37DB /* BranchView.h in Headers */,
 				7D4DAC271C8FA908008E37DB /* BranchViewHandler.h in Headers */,

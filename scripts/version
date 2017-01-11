@@ -1,5 +1,5 @@
 #!/bin/bash
-#  version  -  Version number managment.
+#  version  -  Version number management.
 #  Edward Smith,  December 2016.
 set -euo pipefail
 function usage() {
@@ -31,7 +31,7 @@ Options:
 USAGE
 }
 
-version=0.12.23
+version=0.12.25
 
 if (( $# == 0 )); then
     echo $version

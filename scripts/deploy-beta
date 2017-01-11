@@ -1,0 +1,45 @@
+#!/bin/bash
+set -euo pipefail
+
+# deploy-beta  -  Deploys a Branch.framework beta release.
+#
+# Edward Smith, January 2017
+
+git_branch=$(git symbolic-ref --short HEAD)
+version=$(./scripts/version)
+
+git checkout QA
+git pull
+
+echo ""
+echo ""
+head -n10 ChangeLog.md
+echo ""
+echo ">>> Is ChangeLog.md updated?"
+if ! ./scripts/askYN "Commit and deploy Branch beta release version ${version}?"; then
+    echo ">>> Nothing deployed." 1>&2
+    exit 1
+fi
+
+# Update the changes in QA:
+git add --all
+git commit -m "Beta Release ${version}."
+git tag "${version}"
+git push
+git push --tags origin QA
+
+# Pull the changes to beta:
+git checkout beta
+git pull
+git pull origin QA
+git push
+
+# Update staging from QA:
+git checkout staging
+git pull
+git pull origin QA
+git push
+
+echo ""
+echo ">>> Beta deployed O.K."
+echo ">>> Announce the beta update through Elizabeth, for now."

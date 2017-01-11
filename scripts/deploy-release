@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-# deploy-release
+# deploy-release  -  The release deployment master script.
+#
 # Edward Smith, December 2016
 
 scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -20,16 +21,24 @@ trap finish EXIT
 
 version=$(./scripts/version)
 
+echo ""
+echo "Before continuing:"
+echo "- Make sure that the release version number is already updated."
+echo "- Make sure that the ChangeLog.md has been updated, spell checked, and is coherent."
+echo "- Make sure that you are logged in to your Branch Google account and have write access to Google Groups."
+echo ""
 if ! ./scripts/askYN "Deploy Branch release version ${version}?"; then
     echo ">>> Nothing deployed." 1>&2
     exit 1
 fi
 
+# Check that deployment software is installed
+./scripts/deploy-check
 
 # Prompt for editor input for ChangeLog.
 vim +4 +star ChangeLog.md
 
-# Pre-release Cocoapod lint:
+# Pre-release CocoaPod lint
 echo ">>> Linting build for release..." 1>&2
 pod lib lint Branch.podspec --verbose
 
@@ -37,27 +46,14 @@ pod lib lint Branch.podspec --verbose
 echo ">>> Building the framework..." 1>&2
 ./scripts/build_framework.sh
 
-# Zip the SDK files
-echo '>>> Zipping Branch-iOS-SDK...' 1>&2
-zip -rqy Branch-iOS-SDK.zip Branch-SDK/ Branch.framework/
-
-echo '>>> Zipping Branch-iOS-TestBed...' 1>&2
-zip -rqy Branch-iOS-TestBed.zip Branch-SDK/ Branch-TestBed/ Branch.framework/
-
-# Checksum the zip files
-echo '>>> Creating checksum file...' 1>&2
-checksum_file=checksum
-echo '#checksum for Branch-iOS-SDK found at https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-SDK.zip' > "$checksum_file"
-shasum Branch-iOS-SDK.zip >> $checksum_file
-
-echo '#checksum for Branch-iOS-TestBed found at https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip' >> "$checksum_file"
-shasum Branch-iOS-TestBed.zip >> $checksum_file
-
+# Make the zip files and get the checksums
+echo ">>> Zipping and checksumming framework files..." 1>&2
+./scripts/deploy-checksum
 
 echo '>>> Making Carthage build...' 1>&2
 ./scripts/deploy-carthage
 
-echo '>>> Branch SDK for iOS build and lint successful so far.' 1>&2
+echo '>>> The Branch SDK build is successful so far.' 1>&2
 if ! ./scripts/askYN "Commit and deploy Branch release version ${version}?"; then
     echo ">>> Nothing deployed." 1>&2
     exit 1
@@ -66,40 +62,25 @@ fi
 echo '>>> Deploying Fabric build...' 1>&2
 ./scripts/deploy-fabric
 
-# Commit and tag:
+echo '>>> Commit and tag...' 1>&2
 ./scripts/deploy-git-tag
 
-echo '>>> Pushing Branch Cocoapod...' 1>&2
+echo '>>> Pushing Branch CocoaPod...' 1>&2
 pod trunk push Branch.podspec
-
 
 # Finally, deploy the zips to AWS:
 echo '>>> Uploading to AWS...' 1>&2
 aws s3 cp --acl public-read Branch-iOS-SDK.zip s3://branchhost/
 aws s3 cp --acl public-read Branch-iOS-TestBed.zip s3://branchhost/
 
-# Prompt for SDK Releases Group post
-open ChangeLog.md
-open 'https://github.com/BranchMetrics/ios-branch-deep-linking/releases/new'
-open 'https://groups.google.com/forum/#!newtopic/branch-sdk-releases'
-open 'https://cocoapods.org/?q=branch'
-open "./carthage-files"
-
-echo ""
-echo ""
-echo '>>> Huzzah! Branch SDK for iOS has been published!'
-echo "Inform the SDK Releases Group!  We've released."
-echo ""
-echo "Add a release announcement in Google Groups:"
-echo "Subject: 'iOS SDK Release $version'"
-echo "   Body: < The change log >"
-echo ""
-echo "Add a similar announcement at Github."
-echo "Also, add the ./carthage-files/Branch.framework.zip to the Github release."
+# Prompts for SDK Release announcements
+./scripts/deploy-announce
 
 # Remove remnants:
 (rm Branch-iOS-SDK.zip || true)
 (rm Branch-iOS-TestBed.zip || true)
 
+echo ""
+echo "The Branch SDK has been released.  Rejoice and pay tribute to Steve Jobs!"
 # Completed OK:
 scriptFailed=0
