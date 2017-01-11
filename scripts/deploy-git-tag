@@ -15,7 +15,7 @@ version=$(./scripts/version)
 echo ">>> Merging and pushing '$git_branch' to master..." 1>&2
 
 git add --all
-git commit -m "Updates for ${version} release."
+git commit -m "Release ${version}."
 git push
 git checkout master
 git pull
