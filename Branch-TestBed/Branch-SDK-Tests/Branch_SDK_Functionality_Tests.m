@@ -373,14 +373,28 @@ NSInteger const  TEST_CREDITS = 30;
         __block BNCServerCallback logoutCallback;
         [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
             logoutCallback(logoutResp, nil);
-        }] postRequest:[OCMArg any] url:[preferenceHelper getAPIURL:@"logout"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-            logoutCallback = callback;
-            return YES;
-        }]];
+        }] postRequest:[OCMArg any]
+				url:[preferenceHelper
+				getAPIURL:@"logout"]
+				key:[OCMArg any]
+				callback:[OCMArg
+				checkWithBlock:^BOOL(BNCServerCallback callback) {
+            		logoutCallback = callback;
+            		return YES;
+        		}]];
 
         // Should only be twice, since logout is called in between
-        [[[serverInterfaceMock expect] andReturn:urlResp] postRequest:[OCMArg any] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any] log:YES];
-        [[[serverInterfaceMock expect] andReturn:urlResp] postRequest:[OCMArg any] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any] log:YES];
+        [[[serverInterfaceMock expect] andReturn:urlResp]
+			postRequest:[OCMArg any]
+			url:[preferenceHelper
+			getAPIURL:@"url"]
+			key:[OCMArg any]
+			log:YES];
+        [[[serverInterfaceMock expect] andReturn:urlResp]
+			postRequest:[OCMArg any]
+			url:[preferenceHelper getAPIURL:@"url"]
+			key:[OCMArg any]
+			log:YES];
 
         NSString *url1 = [branch getShortURLWithParams:nil andChannel:nil andFeature:nil];
         XCTAssertNotNil(url1);
@@ -391,13 +405,11 @@ NSInteger const  TEST_CREDITS = 30;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC), dispatch_get_main_queue(), ^{
             NSString *url2 = [branch getShortURLWithParams:nil andChannel:nil andFeature:nil];
             XCTAssertEqualObjects(url1, url2);
-
             [self safelyFulfillExpectation:getShortURLExpectation];
         });
     }];
 
     [self awaitExpectations];
-
     [serverInterfaceMock verify];
 }
 
@@ -410,7 +422,7 @@ NSInteger const  TEST_CREDITS = 30;
 }
 
 - (void)awaitExpectations {
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
         self.hasExceededExpectations = YES;
     }];
 }
