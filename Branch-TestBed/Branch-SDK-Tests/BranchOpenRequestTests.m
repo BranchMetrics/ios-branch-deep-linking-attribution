@@ -16,14 +16,12 @@
 #import "BNCSystemObserver.h"
 
 @interface BranchOpenRequestTests : BranchTest
-
 @end
 
 @implementation BranchOpenRequestTests
 
 - (void)setUp {
     [super setUp];
-    
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.installParams = nil;
     preferenceHelper.identityID = nil;
@@ -62,22 +60,30 @@
     preferenceHelper.deviceFingerprintID = nil;
     preferenceHelper.identityID = IDENTITY_ID;
 
-    NSDictionary * const EXPECTED_PARAMS = @{        
-        BRANCH_REQUEST_KEY_APP_VERSION: APP_VERSION,
-        BRANCH_REQUEST_KEY_DEBUG: IS_DEBUG,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: IDENTITY_ID,
-        BRANCH_REQUEST_KEY_BUNDLE_ID: BUNDLE_ID,
-        BRANCH_REQUEST_KEY_LINK_IDENTIFIER: LINK_IDENTIFIER,
-        BRANCH_REQUEST_KEY_UPDATE: UPDATE_STATE,
-        BRANCH_REQUEST_KEY_URI_SCHEME: URI_SCHEME
+    NSDictionary *expectedParams = @{
+        @"app_version": APP_VERSION,
+        @"cd": @{
+            @"mv": @"-1",
+            @"pn": BUNDLE_ID
+        },
+        @"debug":                       @1,
+        @"facebook_app_link_checked":   @0,
+        @"identity_id":                 IDENTITY_ID,
+        @"ios_bundle_id":               BUNDLE_ID,
+        @"link_identifier":             LINK_IDENTIFIER,
+        @"update":                      @1,
+        @"uri_scheme":                  URI_SCHEME
     };
 
-    BranchOpenRequest *request = [[BranchOpenRequest alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] postRequest:EXPECTED_PARAMS url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_OPEN] key:[OCMArg any] callback:[OCMArg any]];
+    [[serverInterfaceMock expect]
+        postRequest:expectedParams
+        url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_OPEN]
+        key:[OCMArg any]
+        callback:[OCMArg any]];
     
+    BranchOpenRequest *request = [[BranchOpenRequest alloc] init];
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
-    
     [serverInterfaceMock verify];
 }
 
@@ -115,23 +121,31 @@
     preferenceHelper.deviceFingerprintID = FINGERPRINT_ID;
     preferenceHelper.identityID = IDENTITY_ID;
     
-    NSDictionary * const EXPECTED_PARAMS = @{
-        BRANCH_REQUEST_KEY_APP_VERSION: APP_VERSION,
-        BRANCH_REQUEST_KEY_DEBUG: IS_DEBUG,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: IDENTITY_ID,
-        BRANCH_REQUEST_KEY_BUNDLE_ID: BUNDLE_ID,
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: FINGERPRINT_ID,
-        BRANCH_REQUEST_KEY_LINK_IDENTIFIER: LINK_IDENTIFIER,   
-        BRANCH_REQUEST_KEY_UPDATE: UPDATE_STATE,
-        BRANCH_REQUEST_KEY_URI_SCHEME: URI_SCHEME
+    NSDictionary *expectedParams = @{
+        @"app_version": APP_VERSION,
+        @"cd": @{
+            @"mv": @"-1",
+            @"pn": BUNDLE_ID
+        },
+        @"debug":                       @1,
+        @"device_fingerprint_id":       FINGERPRINT_ID,
+        @"facebook_app_link_checked":   @0,
+        @"identity_id":                 IDENTITY_ID,
+        @"ios_bundle_id":               BUNDLE_ID,
+        @"link_identifier":             LINK_IDENTIFIER,
+        @"update":                      @1,
+        @"uri_scheme":                  URI_SCHEME
     };
+
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    [[serverInterfaceMock expect]
+        postRequest:expectedParams
+        url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_OPEN]
+        key:[OCMArg any]
+        callback:[OCMArg any]];
     
     BranchOpenRequest *request = [[BranchOpenRequest alloc] init];
-    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] postRequest:EXPECTED_PARAMS url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_OPEN] key:[OCMArg any] callback:[OCMArg any]];
-    
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
-    
     [serverInterfaceMock verify];
 }
 
@@ -422,6 +436,9 @@
 }
 
 - (void)testOpenWhenNotReferrable {
+    //  'isReferrable' seems to be an empty concept in iOS.
+    //  It is in the code but not used. -- Edward.
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     NSString * const OPEN_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
@@ -429,8 +446,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];
     BranchOpenRequest *request = [[BranchOpenRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNil(error);
-        XCTAssertNil(preferenceHelper.installParams);
-        
+        XCTAssert([preferenceHelper.installParams isEqualToString:OPEN_PARAMS]);
         [self safelyFulfillExpectation:expectation];
     }];
     

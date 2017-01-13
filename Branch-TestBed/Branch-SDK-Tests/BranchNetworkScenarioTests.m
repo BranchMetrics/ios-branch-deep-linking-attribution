@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
+
 #import <UIKit/UIKit.h>
 #import "BranchTest.h"
 #import <OCMock/OCMock.h>
@@ -15,11 +16,11 @@
 #import "BNCError.h"
 #import "BranchOpenRequest.h"
 
+
 @interface BranchNetworkScenarioTests : BranchTest
-
 @property (assign, nonatomic) BOOL hasExceededExpectations;
-
 @end
+
 
 @implementation BranchNetworkScenarioTests
 
@@ -34,9 +35,15 @@
 - (void)testScenario1 {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_live"];
+    Branch *branch =
+        [[Branch alloc] initWithInterface:serverInterfaceMock
+            queue:[[BNCServerRequestQueue alloc] init]
+            cache:[[BNCLinkCache alloc] init]
+            preferenceHelper:[BNCPreferenceHelper preferenceHelper]
+            key:@"key_live"];
 
-    XCTestExpectation *scenario1Expectation1 = [self expectationWithDescription:@"Scenario1 Expectation1"];
+    XCTestExpectation *scenario1Expectation1 =
+        [self expectationWithDescription:@"Scenario1 Expectation1"];
 
     // Start off with a good connection
     [self initSessionExpectingSuccess:branch serverInterface:serverInterfaceMock callback:^{
@@ -56,9 +63,11 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
     
     // Then make another request, which should play through fine
-    [self makeSuccessfulNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
-        [self safelyFulfillExpectation:scenario1Expectation2];
-    }];
+    [self makeSuccessfulNonReplayableRequest:branch
+        serverInterface:serverInterfaceMock
+        callback:^{
+            [self safelyFulfillExpectation:scenario1Expectation2];
+        }];
 
     [self awaitExpectations];
     [serverInterfaceMock verify];
@@ -354,7 +363,13 @@
     BNCPreferenceHelper *preferenceHelper = [[BNCPreferenceHelper alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_live"];
+    Branch *branch =
+        [[Branch alloc]
+            initWithInterface:serverInterfaceMock
+            queue:[[BNCServerRequestQueue alloc] init]
+            cache:[[BNCLinkCache alloc] init]
+            preferenceHelper:preferenceHelper
+            key:@"key_live"];
     
     XCTestExpectation *expecation = [self expectationWithDescription:@"Scenario8 Expectation"];
     [self initSessionExpectingSuccess:branch serverInterface:serverInterfaceMock callback:^{

@@ -119,11 +119,14 @@
 - (void)testPersistWhenArchiveFails {
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
     [queue enqueue:[[BNCServerRequest alloc] init]];
-    
+
     id archiverMock = OCMClassMock([NSKeyedArchiver class]);
-    [[[archiverMock expect] andReturn:[NSData data]] archivedDataWithRootObject:[OCMArg any]];
-    [[[archiverMock expect] andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]]
-        archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
+    [[[archiverMock expect]
+        andReturn:[NSData data]]
+            archivedDataWithRootObject:[OCMArg any]];
+    [[[archiverMock expect]
+        andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]]
+            archivedDataWithRootObject:[OCMArg any]];
 
     [queue persistImmediately];
     
@@ -183,80 +186,77 @@
     [archiverMock stopMocking];
 }
 
-- (void)testRetrieveWhenUnarchiveFails {
+- (void)testRetrieveFailWhenReadingData {
+
+    //  Test handling an exception when reading data from storage.
+
+    id nsdataMock = [OCMockObject mockForClass:[NSData class]];
+    [[[nsdataMock expect]
+        andReturn:nil]
+            dataWithContentsOfURL:[OCMArg any]
+            options:0
+            error:[OCMArg anyObjectRef]];
+
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
-    
-    id unarchiverMock = OCMClassMock([NSKeyedUnarchiver class]);
-    [[[unarchiverMock expect] andReturn:@[ [@"foo" dataUsingEncoding:NSUTF8StringEncoding] ]] unarchiveObjectWithFile:[OCMArg any]];
-    [[[unarchiverMock expect] andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]] unarchiveObjectWithData:[OCMArg any]];
-    
+    [queue performSelector:@selector(retrieve)];
+    [nsdataMock verify];
+}
+
+- (void)testRetrieveFailWhenUnarchivingFile {
+
+    //  Test handling an exception when unarchiving.
+
+    id unarchiverMock = [OCMockObject mockForClass:[NSKeyedUnarchiver class]];
+    [[[unarchiverMock expect]
+        andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]]
+            unarchiveObjectWithData:[OCMArg any]];
+
+    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
     [queue performSelector:@selector(retrieve)];
     [unarchiverMock verify];
 }
 
-- (void)testRetrieveWhenUnarchiveFailsAfterOneSuccessful {
-    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
-    BNCServerRequest *request = [[BNCServerRequest alloc] init];
-    
-    id unarchiverMock = OCMClassMock([NSKeyedUnarchiver class]);
-    [[[unarchiverMock expect] andReturn:@[ [@"foo" dataUsingEncoding:NSUTF8StringEncoding], [@"foo" dataUsingEncoding:NSUTF8StringEncoding] ]] unarchiveObjectWithFile:[OCMArg any]];
-    [[[unarchiverMock expect] andReturn:request] unarchiveObjectWithData:[OCMArg any]];
-    [[[unarchiverMock expect] andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]] unarchiveObjectWithData:[OCMArg any]];
-    
-    [queue performSelector:@selector(retrieve)];
-    
-    XCTAssertEqual([queue size], 1);
-    XCTAssertEqualObjects([queue peek], request);
-    
-    [unarchiverMock verify];
-}
+- (void)testRetrieveFailWhenUnarchivingRecord {
 
-- (void)testRetrieveWhenUnarchiveFailsThenHasOneSuccess {
+    //  Test handling an exception when unarchiving.
+
+    id unarchiverMock = [OCMockObject mockForClass:[NSKeyedUnarchiver class]];
+    [[[unarchiverMock expect]
+        andReturn:@[ [@"Garbage" dataUsingEncoding:NSUTF8StringEncoding] ]]
+            unarchiveObjectWithData:[OCMArg any]];
+
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
-    BNCServerRequest *request = [[BNCServerRequest alloc] init];
-    
-    id unarchiverMock = OCMClassMock([NSKeyedUnarchiver class]);
-    [[[unarchiverMock expect] andReturn:@[ [@"foo" dataUsingEncoding:NSUTF8StringEncoding], [@"foo" dataUsingEncoding:NSUTF8StringEncoding] ]] unarchiveObjectWithFile:[OCMArg any]];
-    [[[unarchiverMock expect] andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]] unarchiveObjectWithData:[OCMArg any]];
-    [[[unarchiverMock expect] andReturn:request] unarchiveObjectWithData:[OCMArg any]];
-    
     [queue performSelector:@selector(retrieve)];
-    
-    XCTAssertEqual([queue size], 1);
-    XCTAssertEqualObjects([queue peek], request);
-    
     [unarchiverMock verify];
 }
 
 - (void)testPersistedCloseRequestsArentLoaded {
-    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
+
+    //  Mock up the 'saved' data:
+
     BranchCloseRequest *closeRequest = [[BranchCloseRequest alloc] init];
+    BranchOpenRequest *openRequest = [[BranchOpenRequest alloc] init];
+    NSArray *requests = @[
+        [NSKeyedArchiver archivedDataWithRootObject:closeRequest],
+        [NSKeyedArchiver archivedDataWithRootObject:openRequest],
+        [NSKeyedArchiver archivedDataWithRootObject:closeRequest]
+    ];
 
-    id unarchiverMock = OCMClassMock([NSKeyedUnarchiver class]);
-    [[[unarchiverMock expect] andReturn:@[ [@"foo" dataUsingEncoding:NSUTF8StringEncoding] ]] unarchiveObjectWithFile:[OCMArg any]];
-    [[[unarchiverMock expect] andReturn:closeRequest] unarchiveObjectWithData:[OCMArg any]];
+    id nsdataMock = [OCMockObject mockForClass:[NSData class]];
+    [[[nsdataMock expect]
+        andReturn:[NSKeyedArchiver archivedDataWithRootObject:requests]]
+            dataWithContentsOfURL:[OCMArg any]
+            options:0
+            error:[OCMArg anyObjectRef]];
 
-    [queue performSelector:@selector(retrieve)];
-    
-    XCTAssertEqual([queue size], 0);
-    
-    [unarchiverMock verify];
-}
-
-- (void)testPersistedDebugRequestsArentLoaded {
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
-    
-    id unarchiverMock = OCMClassMock([NSKeyedUnarchiver class]);
-    [[[unarchiverMock expect] andReturn:@[ [@"foo" dataUsingEncoding:NSUTF8StringEncoding] ]] unarchiveObjectWithFile:[OCMArg any]];
-    
     [queue performSelector:@selector(retrieve)];
-    
-    XCTAssertEqual([queue size], 0);
-    
-    [unarchiverMock verify];
+    XCTAssertEqual([queue size], 1);
+    [nsdataMock verify];
 }
 
-// Fool compiler.
-- (void)retrieve { }
+// Fool the compiler by defining the 'retrieve', which normally wouldn't be visible.
+- (void)retrieve {
+}
 
 @end

@@ -30,7 +30,6 @@
 - (void)testRequestBody {
     NSString * const HARDWARE_ID = @"foo-hardware-id";
     NSNumber * const AD_TRACKING_SAFE = @YES;
-    NSNumber * const IS_DEBUG = @YES;
     NSString * const BUNDLE_ID = @"foo-bundle-id";
     NSString * const APP_VERSION = @"foo-app-version";
     NSString * const OS = @"foo-os";
@@ -38,7 +37,6 @@
     NSString * const URI_SCHEME = @"foo-uri-scheme";
     NSNumber * const UPDATE_STATE = @1;
     NSString * const LINK_IDENTIFIER = @"foo-link-id";
-//  NSString * const CARRIER = @"foo-carrier";
     NSString * const BRAND = @"foo-brand";
     NSString * const MODEL = @"foo-model";
     NSNumber * const SCREEN_WIDTH = @1;
@@ -62,27 +60,26 @@
     [[[systemObserverMock stub] andReturn:MODEL] getModel];
     [[[systemObserverMock stub] andReturn:SCREEN_WIDTH] getScreenWidth];
     [[[systemObserverMock stub] andReturn:SCREEN_HEIGHT] getScreenHeight];
-    
-    NSDictionary * const EXPECTED_PARAMS = @{
-        BRANCH_REQUEST_KEY_APP_VERSION: APP_VERSION,
-        BRANCH_REQUEST_KEY_DEBUG: IS_DEBUG,
-        BRANCH_REQUEST_KEY_BUNDLE_ID: BUNDLE_ID,
-        BRANCH_REQUEST_KEY_LINK_IDENTIFIER: LINK_IDENTIFIER,
-        BRANCH_REQUEST_KEY_UPDATE: UPDATE_STATE,
-        BRANCH_REQUEST_KEY_URI_SCHEME: URI_SCHEME,
+
+    NSDictionary *expectedParams = @{
+        @"app_version":                 @"foo-app-version",
+        @"debug":                       @1,
+        @"facebook_app_link_checked":   @0,
+        @"ios_bundle_id":               @"foo-bundle-id",
+        @"link_identifier":             @"foo-link-id",
+        @"update":                      @1,
+        @"uri_scheme":                  @"foo-uri-scheme"
     };
-    
+
     BranchInstallRequest *request = [[BranchInstallRequest alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect]
-		postRequest:EXPECTED_PARAMS
-		url:[OCMArg any]	//	[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_INSTALL]
+		postRequest:expectedParams
+		url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_INSTALL]
 		key:[OCMArg any]
 		callback:[OCMArg any]];
-//  [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_INSTALL] key:key callback:callback];
 
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
-
     [serverInterfaceMock verify];
 }
 
@@ -350,6 +347,9 @@
 }
 
 - (void)testInstallWhenNotReferrable {
+    //  'isReferrable' seems to be an empty concept in iOS.
+    //  It is in the code but not used. -- Edward.
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     NSString * const INSTALL_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
@@ -358,7 +358,7 @@
     BranchInstallRequest *request =
 		[[BranchInstallRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
         	XCTAssertNil(error);
-        	XCTAssertNil(preferenceHelper.installParams);
+        	XCTAssert([preferenceHelper.installParams isEqualToString:INSTALL_PARAMS]);
         	[self safelyFulfillExpectation:expectation];
     		}];
     

@@ -246,7 +246,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 
 - (void)retrieve {
     NSMutableArray *queue = [[NSMutableArray alloc] init];
-    NSArray *encodedRequests;
+    NSArray *encodedRequests = nil;
     
     // Capture exception while loading the queue file
     @try {
