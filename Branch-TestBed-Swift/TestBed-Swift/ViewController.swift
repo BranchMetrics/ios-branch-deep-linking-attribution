@@ -304,7 +304,7 @@ class ViewController: UITableViewController {
     }
     
     @IBAction func sendEventButtonTouchUpInside(_ sender: AnyObject) {
-        var customEventName = "buy"
+        var customEventName = "view"
         let branch = Branch.getInstance()
         
         if customEventNameTextField.text != "" {
