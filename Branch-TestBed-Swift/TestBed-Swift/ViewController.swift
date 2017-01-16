@@ -161,6 +161,8 @@ class ViewController: UITableViewController {
             self.performSegue(withIdentifier: "ShowTextViewFormNavigationBar", sender: "CustomEventName")
         case (3,1) :
             self.performSegue(withIdentifier: "ShowDictionaryTableView", sender: "CustomEventMetadata")
+        case (3,3) :
+            self.sendCommerceEvent(self)
         case (4,0) :
             if let params = Branch.getInstance().getLatestReferringParams() {
                 let content = String(format:"LatestReferringParams:\n\n%@", (params.JSONDescription()))
@@ -319,7 +321,46 @@ class ViewController: UITableViewController {
         refreshRewardsBalanceOfBucket()
         self.showAlert(String(format: "Custom event '%@' dispatched", customEventName), withDescription: "")
     }
-    
+
+    @IBAction func sendCommerceEvent(_ sender: AnyObject) {
+        let product = BNCProduct.init()
+        product.price = NSDecimalNumber.init(string:"1000.99")
+        product.sku = "acme007"
+        product.name = "Acme brand 1 ton weight"
+        product.quantity = 1.0;
+        product.brand = "Acme";
+        product.category = BNCProductCategoryMedia;
+        product.variant = "Lite Weight";
+
+        let commerceEvent = BNCCommerceEvent.init()
+        commerceEvent.revenue = NSDecimalNumber.init(string:"1101.99")
+        commerceEvent.currency = "Smackeroos"
+        commerceEvent.transactionID = "tr00x8"
+        commerceEvent.shipping = NSDecimalNumber.init(string:"100.00")
+        commerceEvent.tax = NSDecimalNumber.init(string:"1.00");
+        commerceEvent.coupon = "Acme weights coupon"
+        commerceEvent.affiliation = "ACME by Amazon"
+        commerceEvent.products = [ product ];
+
+        Branch.getInstance()?.send(
+            commerceEvent,
+            metadata: ["Meta": "Never meta dog I didn't like." ],
+            withCompletion: { (response, error) in
+                let errorMessage: String = (error?.localizedDescription != nil) ?
+                    error!.localizedDescription : "<nil>"
+                let responseMessage  = (response?.description != nil) ?
+                    response!.description : "<nil>"
+                let message = String.init(
+                    format:"Commerce event completion called.\nError: %@\nResponse:\n%@",
+                    errorMessage,
+                    responseMessage
+                )
+                NSLog("%@", message)
+                self.showAlert("Commerce Event", withDescription: message)
+            }
+        )
+    }
+
     @IBAction func showRewardsHistoryButtonTouchUpInside(_ sender: AnyObject) {
         let branch = Branch.getInstance()
         branch?.getCreditHistory { (creditHistory, error) in
