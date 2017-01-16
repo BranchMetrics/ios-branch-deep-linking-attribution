@@ -12,7 +12,7 @@
 
 @interface BranchLogoutRequest ()
 
-@property (strong, nonatomic) callbackWithStatus callback;
+@property (copy) callbackWithStatus callback;
 
 @end
 

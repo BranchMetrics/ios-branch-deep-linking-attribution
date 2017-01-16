@@ -14,7 +14,7 @@
 
 @property (assign, nonatomic) NSInteger amount;
 @property (strong, nonatomic) NSString *bucket;
-@property (strong, nonatomic) callbackWithStatus callback;
+@property (copy) callbackWithStatus callback;
 
 @end
 
