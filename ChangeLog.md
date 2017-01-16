@@ -1,8 +1,15 @@
 Branch iOS SDK Change Log
 
+- v0.12.25
+  * > Beta Release <
+  * Added a beta release deployment script.
+
 - v0.12.24
   * Updated Fabric files.
   * Made the release script more robust.
+  * Made changes to the Safari Strong Match Helper to ensure that:
+    - Safari doesn't steal the firstResponder status. 
+    - The hidden Safari view is inserted correctly into the ViewController / View hierarchy.
 
 - v0.12.23
   * Updated the public headers for Carthage to include BNCCommerceEvent.h.
