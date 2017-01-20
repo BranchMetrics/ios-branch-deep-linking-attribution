@@ -34,6 +34,7 @@
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchRegisterViewRequest.h"
 #import "BranchContentDiscoverer.h"
+#import "NSMutableDictionary+Branch.h"
 
 //Fabric
 #import "../Fabric/FABKitProtocol.h"
@@ -67,6 +68,18 @@ NSString * const BNCPurchaseInitiatedEvent = @"Purchase Started";
 NSString * const BNCPurchasedEvent = @"Purchased";
 NSString * const BNCShareInitiatedEvent = @"Share Started";
 NSString * const BNCShareCompletedEvent = @"Share Completed";
+
+
+#pragma mark - Load Categories
+
+void ForceCategoriesToLoad();
+void ForceCategoriesToLoad() {
+    ForceNSMutableDictionaryToLoad();
+}
+
+
+#pragma mark - Branch
+
 
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit>
 
@@ -147,6 +160,9 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 - (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache preferenceHelper:(BNCPreferenceHelper *)preferenceHelper key:(NSString *)key {
     if (self = [super init]) {
+
+        ForceCategoriesToLoad();
+
         _bServerInterface = interface;
         _bServerInterface.preferenceHelper = preferenceHelper;
         _requestQueue = queue;

@@ -25,3 +25,8 @@
 }
 
 @end
+
+
+void ForceNSMutableDictionaryToLoad() {
+    //  Does nothing.  But will force the linker to include this category.
+}
