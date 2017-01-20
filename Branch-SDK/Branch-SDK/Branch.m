@@ -528,7 +528,7 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
             void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) = ^void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
                 self.preferenceHelper.shouldWaitForInit = NO;
                 
-                if (attrDetails && [attrDetails count]) {
+                if ([[attrDetails valueForKey:@"Version3.1"] valueForKey:@"iad-attribution"]) {
                     self.preferenceHelper.appleSearchAdDetails = attrDetails;
                 }
                 else if (self.searchAdsDebugMode) {
