@@ -334,7 +334,7 @@ class ViewController: UITableViewController {
 
         let commerceEvent = BNCCommerceEvent.init()
         commerceEvent.revenue = NSDecimalNumber.init(string:"1101.99")
-        commerceEvent.currency = "Smackeroos"
+        commerceEvent.currency = "USD"
         commerceEvent.transactionID = "tr00x8"
         commerceEvent.shipping = NSDecimalNumber.init(string:"100.00")
         commerceEvent.tax = NSDecimalNumber.init(string:"1.00");
