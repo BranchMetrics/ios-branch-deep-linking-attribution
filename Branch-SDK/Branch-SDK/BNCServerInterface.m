@@ -13,8 +13,8 @@
 #import "BranchConstants.h"
 #import "BNCDeviceInfo.h"
 
-void (^NSURLSessionCompletionHandler) (NSData *data, NSURLResponse *response, NSError *error);
-void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *responseData, NSError *error);
+typedef void (^NSURLSessionCompletionHandler) (NSData *data, NSURLResponse *response, NSError *error);
+typedef void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *responseData, NSError *error);
 
 @implementation BNCServerInterface
 
@@ -90,7 +90,7 @@ NSString *requestEndpoint;
     // This method uses NSURLConnection for iOS 6 and NSURLSession for iOS 7 and above
     // Assigning completion handlers blocks to variables eliminates redundancy 
     // Defining both completion handlers before the request methods otherwise they won't be called
-    NSURLSessionCompletionHandler = ^void(NSData *data, NSURLResponse *response, NSError *error) {
+    NSURLSessionCompletionHandler sessionHandler = ^void(NSData *data, NSURLResponse *response, NSError *error) {
         BNCServerResponse *serverResponse = [self processServerResponse:response data:data error:error log:log];
         NSInteger status = [serverResponse.statusCode integerValue];
         // If the phone is in a poor network condition,
@@ -144,9 +144,9 @@ NSString *requestEndpoint;
         });
     };
     
-    NSURLConnectionCompletionHandler = ^void(NSURLResponse *response, NSData *responseData, NSError *error) {
+    NSURLConnectionCompletionHandler connectionHandler = ^void(NSURLResponse *response, NSData *responseData, NSError *error) {
         // NSURLConnection and NSURLSession expect the same arguments for completion handlers but in different order
-        NSURLSessionCompletionHandler(responseData, response, error);
+        sessionHandler(responseData, response, error);
     };
     
     // start the reqeust timer here. This will account for retries.
@@ -155,11 +155,11 @@ NSString *requestEndpoint;
     // NSURLSession is available in iOS 7 and above
     if (NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_7_0) {
         NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-        NSURLSessionDataTask *task = [session dataTaskWithRequest:request.copy completionHandler:NSURLSessionCompletionHandler];
+        NSURLSessionDataTask *task = [session dataTaskWithRequest:request.copy completionHandler:sessionHandler];
         [task resume];
         [session finishTasksAndInvalidate];
     } else {
-        [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:NSURLConnectionCompletionHandler];
+        [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:connectionHandler];
     }
 }
 
