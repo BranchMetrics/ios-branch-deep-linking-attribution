@@ -210,7 +210,7 @@ NSString *type = @"some type";
 
     BNCCommerceEvent *commerceEvent = [BNCCommerceEvent new];
     commerceEvent.revenue = [NSDecimalNumber decimalNumberWithString:@"1101.99"];
-    commerceEvent.currency = @"Smackeroos";
+    commerceEvent.currency = @"USD";
     commerceEvent.transactionID = @"tr00x8";
     commerceEvent.shipping = [NSDecimalNumber decimalNumberWithString:@"100.00"];
     commerceEvent.tax = [NSDecimalNumber decimalNumberWithString:@"1.00"];
