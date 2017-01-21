@@ -446,12 +446,12 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     }
 }
 
-- (BOOL)checkedAppleSearchAdsAttribution {
+- (BOOL)checkedAppleSearchAdAttribution {
     _checkedAppleSearchAdAttribution = [self readBoolFromDefaults:BRANCH_PREFS_KEY_CHECKED_APPLE_SEARCH_ADS];
     return _checkedAppleSearchAdAttribution;
 }
 
-- (void)setCheckedAppleSearchAdsAttribution:(BOOL)checked {
+- (void)setCheckedAppleSearchAdAttribution:(BOOL)checked {
     _checkedAppleSearchAdAttribution = checked;
     [self writeBoolToDefaults:BRANCH_PREFS_KEY_CHECKED_APPLE_SEARCH_ADS value:checked];
 }
