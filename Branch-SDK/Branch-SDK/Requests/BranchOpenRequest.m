@@ -9,6 +9,7 @@
 #import "BranchOpenRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
+#import "BNCDeviceInfo.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
 #import "BranchViewHandler.h"
@@ -209,6 +210,7 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 
 + (void) waitForOpenResponseLock {
     NSLog(@"Wait for openRequestWaitQueue.");
+    [BNCDeviceInfo userAgentString];    //  Make sure we do this lock first to prevent a deadlock.
     dispatch_sync(openRequestWaitQueue, ^ {
         NSLog(@"Finished waitForOpenResponseLock");
     });
