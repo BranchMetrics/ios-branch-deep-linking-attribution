@@ -35,5 +35,6 @@
 
 //----------Methods----------------//
 + (BNCDeviceInfo *)getInstance;
++ (NSString*) userAgentString;
 
 @end

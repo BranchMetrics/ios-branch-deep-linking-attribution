@@ -83,27 +83,32 @@ static BNCDeviceInfo *bncDeviceInfo;
 
     }
 
-    static NSString* browserUserAgentString = nil;
+    self.browserUserAgent = [self.class userAgentString];
+    return self;
+}
 
-    void (^setUpBrowserUserAgent)() = ^() {
-		if (!browserUserAgentString) {
-			browserUserAgentString =
-				[[[UIWebView alloc]
-				  initWithFrame:CGRectZero]
-					stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
-		}
-        self.browserUserAgent = browserUserAgentString;
++ (NSString*) userAgentString {
+
+    static NSString* browserUserAgentString = nil;
+    void (^setBrowserUserAgent)() = ^() {
+        browserUserAgentString =
+            [[[UIWebView alloc]
+              initWithFrame:CGRectZero]
+                stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
     };
 
-	//	Make sure this executes on the main thread.
-	//	Uses an implied lock through dispatch_queues to avoid a race condition.
-	if (NSThread.isMainThread) {
-		setUpBrowserUserAgent();
-	} else {
-		dispatch_sync(dispatch_get_main_queue(), setUpBrowserUserAgent);
-	}
+    static dispatch_once_t onceToken = 0;
+    dispatch_once(&onceToken, ^ {
+        //	Make sure this executes on the main thread.
+        //	Uses an implied lock through dispatch_queues:  This can deadlock if mis-used!
+        if (NSThread.isMainThread) {
+            setBrowserUserAgent();
+        } else {
+            dispatch_sync(dispatch_get_main_queue(), setBrowserUserAgent);
+        }
+    });
 
-    return self;
+    return browserUserAgentString;
 }
 
 @end
