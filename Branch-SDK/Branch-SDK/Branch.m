@@ -798,13 +798,6 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 }
 
 - (NSDictionary*) getLatestReferringParamsSynchronous {
-    if (!self.isInitialized &&
-        !self.preferenceHelper.shouldWaitForInit &&
-        ![self.requestQueue containsInstallOrOpen]) {
-		NSLog(@"[Branch] Warning: getLatestReferringParamsSynchronous called before session init.");
-		NSLog(@"[Branch] Make sure Branch `initSessionWithLaunchOptions:`, `handleDeepLink:`, or "
-			   "`continueUserActivity:` is called or your app will wait forever.");
-    }
     [BranchOpenRequest waitForOpenResponseLock];
     NSDictionary *result = [self getLatestReferringParams];
     [BranchOpenRequest releaseOpenResponseLock];
