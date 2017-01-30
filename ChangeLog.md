@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+- v0.12.26
+  * Updated project and include files for Xcode 8.3.
+
 - v0.12.25
   * > Beta Release <
   * Added a deployment script for beta releases.
