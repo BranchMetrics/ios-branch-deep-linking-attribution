@@ -90,25 +90,53 @@ static BNCDeviceInfo *bncDeviceInfo;
 + (NSString*) userAgentString {
 
     static NSString* browserUserAgentString = nil;
-    void (^setBrowserUserAgent)() = ^() {
-        browserUserAgentString =
-            [[[UIWebView alloc]
-              initWithFrame:CGRectZero]
-                stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
-    };
+	void (^setBrowserUserAgent)() = ^() {
+		if (!browserUserAgentString) {
+			browserUserAgentString =
+				[[[UIWebView alloc]
+				  initWithFrame:CGRectZero]
+					stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+			NSLog(@"[Branch] userAgentString: '%@'.", browserUserAgentString);
+		}
+	};
 
-    static dispatch_once_t onceToken = 0;
-    dispatch_once(&onceToken, ^ {
-        //	Make sure this executes on the main thread.
-        //	Uses an implied lock through dispatch_queues:  This can deadlock if mis-used!
-        if (NSThread.isMainThread) {
-            setBrowserUserAgent();
-        } else {
-            dispatch_sync(dispatch_get_main_queue(), setBrowserUserAgent);
-        }
-    });
+	//	We only get the string once per app run:
 
-    return browserUserAgentString;
+	if (browserUserAgentString)
+		return browserUserAgentString;
+
+	//	Make sure this executes on the main thread.
+	//	Uses an implied lock through dispatch_queues:  This can deadlock if mis-used!
+
+	if (NSThread.isMainThread) {
+		setBrowserUserAgent();
+		return browserUserAgentString;
+	}
+
+	//	Wait and yield to prevent deadlock:
+
+	dispatch_block_t agentBlock = dispatch_block_create_with_qos_class(
+		DISPATCH_BLOCK_DETACHED | DISPATCH_BLOCK_ENFORCE_QOS_CLASS,
+		QOS_CLASS_USER_INTERACTIVE,
+		0,  ^ {
+			NSLog(@"Will do.");
+			setBrowserUserAgent();
+			NSLog(@"Will did.");
+		});
+
+	int retries = 5;
+	int64_t timeoutDelta = (dispatch_time_t)((long double)NSEC_PER_SEC * (long double)0.200);
+	while (!browserUserAgentString && retries > 0) {
+
+		dispatch_async(dispatch_get_main_queue(), agentBlock);
+
+		dispatch_time_t timeoutTime = dispatch_time(DISPATCH_TIME_NOW, timeoutDelta);
+		long result = dispatch_block_wait(agentBlock, timeoutTime);
+		NSLog(@"Result: %ld.", result);
+		retries--;
+	}
+
+	return browserUserAgentString;
 }
 
 @end
