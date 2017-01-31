@@ -267,10 +267,10 @@ class ViewController: UITableViewController {
             if (error == nil) {
                 print(self.branchLinkProperties.description())
                 print(self.branchUniversalObject.description())
-                print("Link Created: \(url)")
+                print("Link Created: \(url?.description)")
                 self.linkTextField.text = url
             } else {
-                print(String(format: "Branch TestBed: %@", error! as CVarArg))
+                print(String(format: "Branch TestBed: %@", error as! CVarArg))
                 self.showAlert("Link Creation Failed", withDescription: error!.localizedDescription)
             }
             
@@ -290,7 +290,7 @@ class ViewController: UITableViewController {
             }
             
             if (error != nil || !changed) {
-                print(String(format: "Branch TestBed: Didn't redeem anything: %@", error! as CVarArg))
+                print(String(format: "Branch TestBed: Didn't redeem anything: %@", error as! CVarArg))
                 self.showAlert("Redemption Unsuccessful", withDescription: error!.localizedDescription)
             } else {
                 print("Branch TestBed: Five Points Redeemed!")
