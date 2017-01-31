@@ -12,7 +12,7 @@
 
 @interface BranchLoadRewardsRequest ()
 
-@property (strong, nonatomic) callbackWithStatus callback;
+@property (copy) callbackWithStatus callback;
 
 @end
 

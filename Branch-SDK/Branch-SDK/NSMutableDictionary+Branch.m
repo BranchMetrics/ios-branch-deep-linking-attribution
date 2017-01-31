@@ -18,4 +18,15 @@
 	}
 }
 
+- (void) bnc_safeAddEntriesFromDictionary:(NSDictionary<id<NSCopying>,id> *)otherDictionary {
+    if ([otherDictionary isKindOfClass:[NSDictionary class]]) {
+        [self addEntriesFromDictionary:otherDictionary];
+    }
+}
+
 @end
+
+
+void ForceNSMutableDictionaryToLoad() {
+    //  Does nothing.  But will force the linker to include this category.
+}

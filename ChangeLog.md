@@ -1,12 +1,25 @@
 Branch iOS SDK Change Log
 
+- v0.12.26
+  * Updated project and include files for Xcode 8.3.
+
 - v0.12.25
   * > Beta Release <
-  * Added a beta release deployment script.
+  * Added a deployment script for beta releases.
+  * Fixed crashes related to nil values being inserted into a dictionary (GH #551 & #552).
+  * Made callback block properties atomic/copy to prevent a possible crashes due to race conditions.
+  * In the BNCServerInterface code, the code blocks for NSURLSessionCompletionHandler and
+    NSURLConnectionCompletionHandler are now copied blocks rather global static blocks.
+    This prevents a crash when the block is deallocated or reallocated (GH #548).
+  * Added a Swift example for the new Branch commerce event, `BNCCommerceEvent`, in the
+    TestBed-Swift project.
 
 - v0.12.24
   * Updated Fabric files.
   * Made the release script more robust.
+  * Made changes to the Safari Strong Match Helper to ensure that:
+    - Safari doesn't steal the firstResponder status.
+    - The hidden Safari view is inserted correctly into the ViewController / View hierarchy.
 
 - v0.12.23
   * Updated the public headers for Carthage to include BNCCommerceEvent.h.
