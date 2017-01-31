@@ -1,6 +1,6 @@
 # Branch TestBed-Swift
 
-This iOS application can be used to test Branch deep linking functionality and validate proposed use cases.  
+This iOS application can be used to test Branch deep linking functionality and validate proposed use cases.
 
 It is available on the App Store: https://testbed-swift.app.link/appstore
 
@@ -9,7 +9,6 @@ It is available on the App Store: https://testbed-swift.app.link/appstore
 1. From the command line:
      - Clone the repo: `git clone git@github.com:BranchMetrics/ios-branch-deep-linking.git`
      - `cd ios-branch-deep-linking/Branch-TestBed-Swift`
-     - `pod install`
 2. In Finder open: **TestBed-Swift.xcworkspace**
 3. In Xcode click on the root node of the project: TestBed-Swift
 4. Under Targets select TestBed-Swift, then the General tab
