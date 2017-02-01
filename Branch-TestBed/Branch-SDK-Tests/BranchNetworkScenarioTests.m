@@ -25,7 +25,6 @@
 @implementation BranchNetworkScenarioTests
 
 #pragma mark - Scenario 1
-
 // Connection starts good -- InitSession completes
 // Connection drops
 // Request is made, should fail and call callback.
@@ -79,7 +78,6 @@
 
 
 #pragma mark - Scenario 2
-
 // Connection starts bad -- InitSession fails
 // Connection drops
 // Request is made, should fail and call callback.
@@ -89,9 +87,16 @@
 - (void)testScenario2 {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:[BNCPreferenceHelper preferenceHelper] key:@"key_foo"];
+    Branch *branch =
+        [[Branch alloc]
+            initWithInterface:serverInterfaceMock
+            queue:[[BNCServerRequestQueue alloc] init]
+            cache:[[BNCLinkCache alloc] init]
+            preferenceHelper:[BNCPreferenceHelper preferenceHelper]
+            key:@"key_foo"];
 
-    XCTestExpectation *scenario2Expectation1 = [self expectationWithDescription:@"Scenario2 Expectation1"];
+    XCTestExpectation *scenario2Expectation1 =
+        [self expectationWithDescription:@"Scenario2 Expectation1"];
     
     // Start off with a bad connection
     [self initSessionExpectingFailure:branch serverInterface:serverInterfaceMock callback:^{
@@ -128,8 +133,7 @@
 }
 
 
-//#pragma mark - Scenario 3
-//
+#pragma mark - Scenario 3
 // Connection starts good -- InitSession completes
 // Connection drops
 // Request is made, should fail and call callback.
@@ -163,7 +167,8 @@
     [self awaitExpectations];
     [self resetExpectations];
     
-    XCTestExpectation *scenario3Expectation2 = [self expectationWithDescription:@"Scenario3 Expectation2"];
+    XCTestExpectation *scenario3Expectation2 =
+        [self expectationWithDescription:@"Scenario3 Expectation2"];
     
     // Simulate network return, shouldn't call init!
     [serverInterfaceMock stopMocking];
@@ -178,8 +183,7 @@
 }
 
 
-//#pragma mark - Scenario 4
-//
+#pragma mark - Scenario 4
 // Connection starts bad -- InitSession fails
 // Connection drops
 // Request is made, should fail and call callback.
@@ -687,10 +691,9 @@
 }
 
 - (void)awaitExpectations {
-    [self waitForExpectationsWithTimeout:1.0
-        handler:^(NSError *error) {
-            self.hasExceededExpectations = YES;
-        }];
+    [self waitForExpectationsWithTimeout:3.0 handler:^(NSError *error) {
+        self.hasExceededExpectations = YES;
+    }];
 }
 
 @end
