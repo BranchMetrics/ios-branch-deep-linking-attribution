@@ -91,6 +91,7 @@ void ForceCategoriesToLoad() {
 @property (copy,   nonatomic) callbackWithParams sessionInitWithParamsCallback;
 @property (copy,   nonatomic) callbackWithBranchUniversalObject sessionInitWithBranchUniversalObjectCallback;
 @property (assign, nonatomic) NSInteger networkCount;
+@property (assign, nonatomic) NSInteger asyncRequestCount;
 @property (assign, nonatomic) BOOL isInitialized;
 @property (assign, nonatomic) BOOL shouldCallSessionInitCallback;
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
@@ -175,6 +176,7 @@ void ForceCategoriesToLoad() {
         _shouldCallSessionInitCallback = YES;
         _processing_sema = dispatch_semaphore_create(1);
         _networkCount = 0;
+        _asyncRequestCount = 0;
         _deepLinkControllers = [[NSMutableDictionary alloc] init];
         _whiteListedSchemeList = [[NSMutableArray alloc] init];
         _useCookieBasedMatching = YES;
@@ -370,9 +372,14 @@ void ForceCategoriesToLoad() {
         if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] &&
             ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             
+            self.asyncRequestCount = 0;
+
             // If Facebook SDK is present, call deferred app link check here which will later on call initUserSession
-            if (![self checkFacebookAppLinks] && ![self checkAppleSearchAdsAttribution]) {
-                
+            [self checkFacebookAppLinks];
+            // If developer opted in, call deferred apple search attribution API here which will later on call initUserSession
+            [self checkAppleSearchAdsAttribution];
+            
+            if (self.asyncRequestCount == 0) {
                 // If we're not looking for App Links or Apple Search Ads, initialize
                 [self initUserSessionAndCallCallback:YES];
             }
@@ -540,9 +547,11 @@ void ForceCategoriesToLoad() {
             id sharedClientInstance = ((id (*)(id, SEL))[ADClientClass methodForSelector:sharedClient])(ADClientClass, sharedClient);
             
             self.preferenceHelper.shouldWaitForInit = YES;
+            self.preferenceHelper.checkedAppleSearchAdAttribution = YES;
+            self.asyncRequestCount++;
             
             void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) = ^void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
-                self.preferenceHelper.shouldWaitForInit = NO;
+                self.asyncRequestCount--;
                 
                 if (attrDetails && [attrDetails count]) {
                     self.preferenceHelper.appleSearchAdDetails = attrDetails;
@@ -566,6 +575,11 @@ void ForceCategoriesToLoad() {
                     
                     self.preferenceHelper.appleSearchAdDetails = testInfo;
                 }
+                
+                // if there's another async attribution check in flight, don't continue with init
+                if (self.asyncRequestCount > 0) { return; }
+                
+                self.preferenceHelper.shouldWaitForInit = NO;
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self initUserSessionAndCallCallback:!self.isInitialized];
@@ -594,10 +608,17 @@ void ForceCategoriesToLoad() {
         
         if ([self.FBSDKAppLinkUtility methodForSelector:fetchDeferredAppLink]) {
             void (^__nullable completionBlock)(NSURL *appLink, NSError *error) = ^void(NSURL *__nullable appLink, NSError *__nullable error) {
+                self.asyncRequestCount--;
+                
+                // if there's another async attribution check in flight, don't continue with init
+                if (self.asyncRequestCount > 0) { return; }
+                
                 self.preferenceHelper.shouldWaitForInit = NO;
+                
                 [self handleDeepLink:appLink];
             };
         
+            self.asyncRequestCount++;
             self.preferenceHelper.checkedFacebookAppLinks = YES;
             self.preferenceHelper.shouldWaitForInit = YES;
         
