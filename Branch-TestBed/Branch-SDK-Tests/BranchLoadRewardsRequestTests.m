@@ -88,8 +88,8 @@
                 XCTAssertNil(error);
                 [self safelyFulfillExpectation:requestCallbackExpectation];
             }];
-
     [request processResponse:response error:nil];
+
     [self awaitExpectations];
     XCTAssertEqual(
         [[BNCPreferenceHelper preferenceHelper] getCreditCountForBucket:BUCKET],
