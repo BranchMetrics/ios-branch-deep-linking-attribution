@@ -373,9 +373,13 @@ void ForceCategoriesToLoad() {
             ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             
             self.asyncRequestCount = 0;
-            BOOL willNotCheckAsyncAttributionAPIs = ![self checkFacebookAppLinks] && ![self checkAppleSearchAdsAttribution];
+
             // If Facebook SDK is present, call deferred app link check here which will later on call initUserSession
-            if (willNotCheckAsyncAttributionAPIs) {
+            [self checkFacebookAppLinks];
+            // If developer opted in, call deferred apple search attribution API here which will later on call initUserSession
+            [self checkAppleSearchAdsAttribution];
+            
+            if (self.asyncRequestCount == 0) {
                 // If we're not looking for App Links or Apple Search Ads, initialize
                 [self initUserSessionAndCallCallback:YES];
             }
