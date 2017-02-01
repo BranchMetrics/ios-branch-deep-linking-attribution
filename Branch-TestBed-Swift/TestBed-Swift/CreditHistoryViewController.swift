@@ -71,10 +71,10 @@ class CreditHistoryViewController: UITableViewController {
             var text = String(format: "%@ to %@", amountAsString, bucket)
             
             if transaction.keys.contains("referrer") {
-                text = String(format: "%@ - Referred by: %@", text, transaction.keys.contains("referrer") as CVarArg)
+                text = String(format: "%@ - Referred by: %@", text, transaction["referrer"] as! CVarArg)
             }
             if transaction.keys.contains("referrer") {
-                text = String(format: "%@ - User Referred: %@", text, transaction.keys.contains("referree") as CVarArg)
+                text = String(format: "%@ - User Referred: %@", text, transaction["referree"] as! CVarArg)
             }
             cell!.textLabel!.text = text
             
