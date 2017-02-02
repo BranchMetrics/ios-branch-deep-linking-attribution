@@ -375,20 +375,36 @@ Nothing
 
 ### Retrieve session (install or open) parameters
 
-These session parameters will be available at any point later on with this command. If no params, the dictionary will be empty. This refreshes with every new session (app installs AND app opens).
+These session parameters will be available at any point later on with this command. If no parameters are available then Branch will return an empty dictionary. This refreshes with every new session (app installs AND app opens).
+
+Warning: If the Branch SDK is retrieving the latest session parameters via a network call, this method will return the *previous* session's parameters.  The best practice is to set a callback deep link handler at Branch initialization.  That handler will be called when a Branch deep link is handled and the most recent session parameters are available.
+
+Otherwise, use the `getLatestReferringParamsSynchronous` method. This method always returns the latest session parameters.  The downside is that is may block the calling thread until the current results are available.
 
 #### Methods
 
 ###### Objective-C
 
 ```objc
+// This is an example of `getLatestReferringParams`.
+// Warning: It may return the previous results.
 NSDictionary *sessionParams = [[Branch getInstance] getLatestReferringParams];
+
+// This is an example of `getLatestReferringParamsSynchronous`.
+// Warning: It may block the current thread until the latest results are available.
+NSDictionary *sessionParams = [[Branch getInstance] getLatestReferringParamsSynchronous];
 ```
 
 ###### Swift
 
 ```swift
+// This is an example of `getLatestReferringParams`.
+// Warning: It may return the previous results.
 let sessionParams = Branch.getInstance().getLatestReferringParams()
+
+// This is an example of `getLatestReferringParamsSynchronous`.
+// Warning: It may block the current thread until the latest results are available.
+let sessionParams = Branch.getInstance().getLatestReferringParamsSynchronous()
 ```
 
 #### Parameters
@@ -622,7 +638,7 @@ branchUniversalObject.addMetadataKey("property2", value: "red")
 
 #### Parameters
 
-**canonicalIdentifier**: This is the unique identifier for content that will help Branch dedupe across many instances of the same thing. If you have a website with pathing, feel free to use that. Or if you have database identifiers for entities, use those.
+**canonicalIdentifier**: This is the unique identifier for content that will help Branch de-dupe across many instances of the same thing. If you have a website with pathing, feel free to use that. Or if you have database identifiers for entities, use those.
 
 **title**: This is the name for the content and will automatically be used for the OG tags. It will insert $og_title into the data dictionary of any link created.
 

@@ -13,6 +13,10 @@
 
 @property (copy) callbackWithStatus callback;
 
++ (void) waitForOpenResponseLock;
++ (void) releaseOpenResponseLock;
++ (void) setWaitNeededForOpenResponseLock;
+
 - (id)initWithCallback:(callbackWithStatus)callback;
 - (id)initWithCallback:(callbackWithStatus)callback isInstall:(BOOL)isInstall;
 
