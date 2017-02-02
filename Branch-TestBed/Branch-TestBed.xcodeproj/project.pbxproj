@@ -556,18 +556,18 @@
 		7E6B3B521AA42D0E005F45BF /* Branch-SDK-Tests */ = {
 			isa = PBXGroup;
 			children = (
+				46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */,
+				46DBB42B1B330CF300642FC8 /* BNCLinkDataTests.m */,
+				46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */,
+				464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */,
+				46DBB42C1B330CF300642FC8 /* BNCServerRequestQueueTests.m */,
+				46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */,
+				7E6B3B551AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m */,
+				4665AF1D1B28923900184037 /* Branch_SDK_Load_Tests.m */,
+				461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */,
 				4665AF1F1B2892CF00184037 /* BranchRequestsTests */,
 				467309471AF2C4FB005B8848 /* BranchTest.h */,
-				4665AF1D1B28923900184037 /* Branch_SDK_Load_Tests.m */,
 				467309481AF2C4FB005B8848 /* BranchTest.m */,
-				7E6B3B551AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m */,
-				464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */,
-				46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */,
-				46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */,
-				461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */,
-				46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */,
-				46DBB42B1B330CF300642FC8 /* BNCLinkDataTests.m */,
-				46DBB42C1B330CF300642FC8 /* BNCServerRequestQueueTests.m */,
 				7E6B3B531AA42D0E005F45BF /* Supporting Files */,
 			);
 			path = "Branch-SDK-Tests";

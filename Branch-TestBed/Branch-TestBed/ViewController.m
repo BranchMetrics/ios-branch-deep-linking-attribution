@@ -255,9 +255,8 @@ NSString *type = @"some type";
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-   // [self refreshRewardPoints];
+    [self refreshRewardPoints];
 }
-
 
 - (void)textFieldFinished:(id)sender {
     [sender resignFirstResponder];

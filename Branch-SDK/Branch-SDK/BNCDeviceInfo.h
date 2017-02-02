@@ -35,5 +35,6 @@
 
 //----------Methods----------------//
 + (BNCDeviceInfo *)getInstance;
++ (NSString*) userAgentString;          // Warning:  Has an implied lock on main thread on first call.
 
 @end
