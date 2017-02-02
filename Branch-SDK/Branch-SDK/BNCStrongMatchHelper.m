@@ -175,6 +175,9 @@
     
     [urlString appendFormat:@"&branch_key=%@", branchKey];
     [urlString appendFormat:@"&sdk=ios%@", BNC_SDK_VERSION];
+
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     
     if (redirectUrl) {
         [urlString appendFormat:@"&redirect_url=%@",
@@ -184,6 +187,8 @@
     NSString *escapedURL =
         [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     return [NSURL URLWithString:escapedURL];
+
+    #pragma clang diagnostic pop
 }
 
 - (void)createStrongMatchWithBranchKey:(NSString *)branchKey {

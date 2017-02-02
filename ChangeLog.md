@@ -1,5 +1,13 @@
 Branch iOS SDK Change Log
 
+- v0.12.27
+  * Fixed a bug were Facebook and Apple Search Ad attribution weren't checked correctly.
+    Facebook would get checked first, and Apple Search Ads wouldn't get checked (INTENG-3137).
+  * Fixed a bug were Apple Search Ad attribution would get stuck on (INTENG-3133).
+  * Suppressed some compiler deprecation warnings.
+  * Removed CocoaPods from the Swift TestBed example since it needlessly complicated building the
+    example (AIS-188).
+
 - v0.12.26
   * Updated project and include files for Xcode 8.3.
 
