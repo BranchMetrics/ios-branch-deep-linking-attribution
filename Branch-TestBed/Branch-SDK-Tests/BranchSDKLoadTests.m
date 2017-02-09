@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
+#import <libkern/OSAtomic.h>
 #import "Branch.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
@@ -49,13 +50,18 @@
     
     // Stub all the requests
     __block BNCServerCallback urlCallback;
-    [[[serverInterfaceMock stub] andDo:^(NSInvocation *invocation) {
-        urlCallback(linkResponse, nil);
-    }] postRequest:[OCMArg any] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-        urlCallback = callback;
-        return YES;
-    }]];
-    
+    [[[serverInterfaceMock stub]
+        andDo:^(NSInvocation *invocation) {
+            urlCallback(linkResponse, nil);
+        }]
+        postRequest:[OCMArg any]
+        url:[preferenceHelper getAPIURL:@"url"]
+        key:[OCMArg any]
+        callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+            urlCallback = callback;
+            return YES;
+        }]];
+
     __block BNCServerCallback openOrInstallCallback;
     id openOrInstallCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         openOrInstallCallback = callback;
@@ -80,22 +86,32 @@
     
     // Fake branch key
     preferenceHelper.branchKey = @"foo";
-    
+
+    __block int32_t completedCount = 0;
     for (int i = 0; i < 1000; i++) {
-        [branch getShortURLWithParams:nil andChannel:[NSString stringWithFormat:@"%d", i] andFeature:nil andCallback:^(NSString *url, NSError *error) {
-            XCTAssertNil(error);
-            XCTAssertNotNil(url);
+        [branch getShortURLWithParams:nil
+            andChannel:[NSString stringWithFormat:@"%d", i]
+            andFeature:nil
+            andCallback:^(NSString *url, NSError *error) {
+                XCTAssertNil(error);
+                XCTAssertNotNil(url);
+                OSAtomicIncrement32(&completedCount);
         }];
     }
-    
+
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
-    [branch getShortURLWithParams:nil andChannel:nil andFeature:@"feature" andCallback:^(NSString *url, NSError *error) {
-        XCTAssertNil(error);
-        XCTAssertEqualObjects(url, @"https://bnc.lt/l/3PxZVFU-BK");
-        [getShortURLExpectation fulfill];
+    [branch getShortURLWithParams:nil
+        andChannel:nil
+        andFeature:@"feature"
+        andCallback:^(NSString *url, NSError *error) {
+            XCTAssertNil(error);
+            XCTAssertEqualObjects(url, @"https://bnc.lt/l/3PxZVFU-BK");
+            [getShortURLExpectation fulfill];
     }];
     
-    [self waitForExpectationsWithTimeout:10 handler:NULL];
+    [self waitForExpectationsWithTimeout:10.0 handler:NULL];
+    NSLog(@"Completed %ld.", completedCount);
+    NSLog(@"Wow!");
 }
 
 @end

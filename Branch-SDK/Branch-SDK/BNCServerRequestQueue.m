@@ -215,11 +215,9 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
                 if ([req isKindOfClass:[BranchCloseRequest class]]) {
                     continue;
                 }
-
                 NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
                 if (encodedReq) [encodedRequests addObject:encodedReq];
             }
-
             NSData *data = [NSKeyedArchiver archivedDataWithRootObject:encodedRequests];
             if (!data) {
                 [[BNCPreferenceHelper preferenceHelper]

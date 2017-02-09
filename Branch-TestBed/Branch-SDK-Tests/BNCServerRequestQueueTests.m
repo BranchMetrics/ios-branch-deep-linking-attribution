@@ -149,14 +149,16 @@
     
     id archiverMock = OCMClassMock([NSKeyedArchiver class]);
     [[archiverMock reject] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
-    [[archiverMock expect] archivedDataWithRootObject:
-        [OCMArg checkWithBlock:^BOOL(NSArray *reqs) { return [reqs count] == 0; }]];
-
+    [[[archiverMock expect]
+        andReturn:[NSData data]]
+        archivedDataWithRootObject:
+            [OCMArg checkWithBlock:^BOOL(NSArray *reqs) { return [reqs count] == 0; }]];
     [requestQueue persistImmediately];
     
     // Wait for operation to occur
     XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, ((double)NSEC_PER_SEC) * 0.10);
+    dispatch_after(time, dispatch_get_main_queue(), ^{
         [self safelyFulfillExpectation:expectation];
     });
     
@@ -170,14 +172,17 @@
     
     id archiverMock = OCMClassMock([NSKeyedArchiver class]);
     [[archiverMock reject] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
-    [[archiverMock expect] archivedDataWithRootObject:
+    [[[archiverMock expect]
+        andReturn:[NSData data]]
+        archivedDataWithRootObject:
         [OCMArg checkWithBlock:^BOOL(NSArray *reqs) { return [reqs count] == 0; }]];
 
     [requestQueue persistImmediately];
     
     // Wait for operation to occur
     XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, ((double)NSEC_PER_SEC) * 0.10);
+    dispatch_after(time, dispatch_get_main_queue(), ^{
         [self safelyFulfillExpectation:expectation];
     });
     
