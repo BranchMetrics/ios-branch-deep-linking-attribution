@@ -14,11 +14,12 @@
 #import "BNCEncodingUtils.h"
 #import "BNCServerRequestQueue.h"
 
-@interface Branch_SDK_Load_Tests : XCTestCase
 
+@interface BranchSDKLoadTests : XCTestCase
 @end
 
-@implementation Branch_SDK_Load_Tests
+
+@implementation BranchSDKLoadTests
 
 - (void)testLoad {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
