@@ -62,6 +62,7 @@
 
     NSDictionary *expectedParams = @{
         @"app_version": APP_VERSION,
+        @"apple_ad_attribution_checked":@0,
         @"cd": @{
             @"mv": @"-1",
             @"pn": BUNDLE_ID
@@ -123,6 +124,7 @@
     
     NSDictionary *expectedParams = @{
         @"app_version": APP_VERSION,
+        @"apple_ad_attribution_checked":@0,        
         @"cd": @{
             @"mv": @"-1",
             @"pn": BUNDLE_ID

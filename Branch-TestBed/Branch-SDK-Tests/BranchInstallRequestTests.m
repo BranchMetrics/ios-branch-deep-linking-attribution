@@ -48,7 +48,12 @@
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
     
     id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
-    [[[[systemObserverMock stub] ignoringNonObjectArgs] andReturn:HARDWARE_ID] getUniqueHardwareId:0 isDebug:YES andType:nil];
+    [[[[systemObserverMock stub]
+        ignoringNonObjectArgs]
+        andReturn:HARDWARE_ID]
+            getUniqueHardwareId:0
+            isDebug:YES
+            andType:nil];
     [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingSafe];
     [[[systemObserverMock stub] andReturn:BUNDLE_ID] getBundleID];
     [[[systemObserverMock stub] andReturn:APP_VERSION] getAppVersion];
@@ -63,6 +68,7 @@
 
     NSDictionary *expectedParams = @{
         @"app_version":                 @"foo-app-version",
+        @"apple_ad_attribution_checked":@0,
         @"debug":                       @1,
         @"facebook_app_link_checked":   @0,
         @"ios_bundle_id":               @"foo-bundle-id",
