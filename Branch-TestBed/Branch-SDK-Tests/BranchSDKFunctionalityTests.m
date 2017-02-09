@@ -32,12 +32,12 @@ NSString * const TEST_NEW_USER_LINK = @"https://bnc.lt/i/2kkbX6k-As";
 NSInteger const  TEST_CREDITS = 30;
 
 
-@interface Branch_SDK_Functionality_Tests : XCTestCase
+@interface BranchSDKFunctionalityTests : XCTestCase
 @property (assign, nonatomic) BOOL hasExceededExpectations;
 @end
 
 
-@implementation Branch_SDK_Functionality_Tests
+@implementation BranchSDKFunctionalityTests
 
 - (void)test00OpenOrInstall {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
