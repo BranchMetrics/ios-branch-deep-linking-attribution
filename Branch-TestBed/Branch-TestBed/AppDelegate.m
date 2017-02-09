@@ -33,7 +33,7 @@
     // For Apple Search Ads
     // [branch delayInitToCheckForSearchAds];
     // [branch setAppleSearchAdsDebugMode];
-
+    
     [branch setWhiteListedSchemes:@[@"branchtest"]];
 
     // Automatic Deeplinking on "deeplink_text"

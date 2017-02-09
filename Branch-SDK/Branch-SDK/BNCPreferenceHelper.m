@@ -26,6 +26,7 @@ NSString * const BRANCH_PREFS_KEY_SESSION_ID = @"bnc_session_id";
 NSString * const BRANCH_PREFS_KEY_IDENTITY_ID = @"bnc_identity_id";
 NSString * const BRANCH_PREFS_KEY_IDENTITY = @"bnc_identity";
 NSString * const BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS = @"bnc_checked_fb_app_links";
+NSString * const BRANCH_PREFS_KEY_CHECKED_APPLE_SEARCH_ADS = @"bnc_checked_apple_search_ads";
 NSString * const BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO = @"bnc_apple_search_ads_info";
 NSString * const BRANCH_PREFS_KEY_LINK_CLICK_IDENTIFIER = @"bnc_link_click_identifier";
 NSString * const BRANCH_PREFS_KEY_SPOTLIGHT_IDENTIFIER = @"bnc_spotlight_identifier";
@@ -80,6 +81,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             timeout = _timeout,
             lastStrongMatchDate = _lastStrongMatchDate,
             checkedFacebookAppLinks = _checkedFacebookAppLinks,
+            checkedAppleSearchAdAttribution = _checkedAppleSearchAdAttribution,
             appleSearchAdDetails = _appleSearchAdDetails,
             requestMetadataDictionary = _requestMetadataDictionary,
             instrumentationDictionary = _instrumentationDictionary;
@@ -423,7 +425,10 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 }
 
 - (void) setAppleSearchAdDetails:(NSDictionary*)details {
-    [self writeObjectToDefaults:BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO value:details];
+    if (details == nil || [details isKindOfClass:[NSDictionary class]]) {
+        _appleSearchAdDetails = details;
+        [self writeObjectToDefaults:BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO value:details];
+    }
 }
 
 - (NSDictionary*) appleSearchAdDetails {
@@ -447,6 +452,17 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         [self writeObjectToDefaults:BRANCH_PREFS_KEY_USER_URL value:userUrl];
     }
 }
+
+- (BOOL)checkedAppleSearchAdAttribution {
+    _checkedAppleSearchAdAttribution = [self readBoolFromDefaults:BRANCH_PREFS_KEY_CHECKED_APPLE_SEARCH_ADS];
+    return _checkedAppleSearchAdAttribution;
+}
+
+- (void)setCheckedAppleSearchAdAttribution:(BOOL)checked {
+    _checkedAppleSearchAdAttribution = checked;
+    [self writeBoolToDefaults:BRANCH_PREFS_KEY_CHECKED_APPLE_SEARCH_ADS value:checked];
+}
+
 
 - (BOOL)checkedFacebookAppLinks {
     _checkedFacebookAppLinks = [self readBoolFromDefaults:BRANCH_PREFS_KEY_CHECKED_FACEBOOK_APP_LINKS];

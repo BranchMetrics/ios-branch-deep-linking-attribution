@@ -139,10 +139,9 @@ NSString *requestEndpoint;
             }
             
         }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (callback)
-                callback(serverResponse, error);
-        });
+		//	Don't call on the main queue since it might be blocked.
+        if (callback)
+            callback(serverResponse, error);
     };
     
     NSURLConnectionCompletionHandler connectionHandler = ^void(NSURLResponse *response, NSData *responseData, NSError *error) {
@@ -160,7 +159,10 @@ NSString *requestEndpoint;
         [task resume];
         [session finishTasksAndInvalidate];
     } else {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:connectionHandler];
+        #pragma clang diagnostic pop
     }
 }
 
@@ -183,7 +185,10 @@ NSString *requestEndpoint;
         [session finishTasksAndInvalidate];
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     } else {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         _respData = [NSURLConnection sendSynchronousRequest:request returningResponse:&_response error:&_error];
+        #pragma clang diagnostic pop
     }
     return [self processServerResponse:_response data:_respData error:_error log:log];
 }

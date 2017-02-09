@@ -86,11 +86,11 @@ void ForceCategoriesToLoad() {
 
 @property (strong, nonatomic) BNCServerInterface *bServerInterface;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
-@property (strong, nonatomic) NSTimer *sessionTimer;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
 @property (copy,   nonatomic) callbackWithParams sessionInitWithParamsCallback;
 @property (copy,   nonatomic) callbackWithBranchUniversalObject sessionInitWithBranchUniversalObjectCallback;
 @property (assign, nonatomic) NSInteger networkCount;
+@property (assign, nonatomic) NSInteger asyncRequestCount;
 @property (assign, nonatomic) BOOL isInitialized;
 @property (assign, nonatomic) BOOL shouldCallSessionInitCallback;
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
@@ -175,10 +175,13 @@ void ForceCategoriesToLoad() {
         _shouldCallSessionInitCallback = YES;
         _processing_sema = dispatch_semaphore_create(1);
         _networkCount = 0;
+        _asyncRequestCount = 0;
         _deepLinkControllers = [[NSMutableDictionary alloc] init];
         _whiteListedSchemeList = [[NSMutableArray alloc] init];
         _useCookieBasedMatching = YES;
-        
+
+        [BranchOpenRequest setWaitNeededForOpenResponseLock];
+
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
         [notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
@@ -370,9 +373,16 @@ void ForceCategoriesToLoad() {
         if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] &&
             ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
             
+            self.asyncRequestCount = 0;
+
+            // These methods will increment self.asyncRequestCount if they make an async call:
+
             // If Facebook SDK is present, call deferred app link check here which will later on call initUserSession
-            if (![self checkFacebookAppLinks] && ![self checkAppleSearchAdsAttribution]) {
-                
+            [self checkFacebookAppLinks];
+            // If developer opted in, call deferred apple search attribution API here which will later on call initUserSession
+            [self checkAppleSearchAdsAttribution];
+            
+            if (self.asyncRequestCount == 0) {
                 // If we're not looking for App Links or Apple Search Ads, initialize
                 [self initUserSessionAndCallCallback:YES];
             }
@@ -540,9 +550,11 @@ void ForceCategoriesToLoad() {
             id sharedClientInstance = ((id (*)(id, SEL))[ADClientClass methodForSelector:sharedClient])(ADClientClass, sharedClient);
             
             self.preferenceHelper.shouldWaitForInit = YES;
+            self.preferenceHelper.checkedAppleSearchAdAttribution = YES;
+            self.asyncRequestCount++;
             
             void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) = ^void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
-                self.preferenceHelper.shouldWaitForInit = NO;
+                self.asyncRequestCount--;
                 
                 if (attrDetails && [attrDetails count]) {
                     self.preferenceHelper.appleSearchAdDetails = attrDetails;
@@ -566,6 +578,11 @@ void ForceCategoriesToLoad() {
                     
                     self.preferenceHelper.appleSearchAdDetails = testInfo;
                 }
+                
+                // if there's another async attribution check in flight, don't continue with init
+                if (self.asyncRequestCount > 0) { return; }
+                
+                self.preferenceHelper.shouldWaitForInit = NO;
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self initUserSessionAndCallCallback:!self.isInitialized];
@@ -594,10 +611,17 @@ void ForceCategoriesToLoad() {
         
         if ([self.FBSDKAppLinkUtility methodForSelector:fetchDeferredAppLink]) {
             void (^__nullable completionBlock)(NSURL *appLink, NSError *error) = ^void(NSURL *__nullable appLink, NSError *__nullable error) {
+                self.asyncRequestCount--;
+                
+                // if there's another async attribution check in flight, don't continue with init
+                if (self.asyncRequestCount > 0) { return; }
+                
                 self.preferenceHelper.shouldWaitForInit = NO;
+                
                 [self handleDeepLink:appLink];
             };
         
+            self.asyncRequestCount++;
             self.preferenceHelper.checkedFacebookAppLinks = YES;
             self.preferenceHelper.shouldWaitForInit = YES;
         
@@ -831,6 +855,13 @@ void ForceCategoriesToLoad() {
         return debugSessionParams;
     }
     return origSessionParams;
+}
+
+- (NSDictionary*) getLatestReferringParamsSynchronous {
+    [BranchOpenRequest waitForOpenResponseLock];
+    NSDictionary *result = [self getLatestReferringParams];
+    [BranchOpenRequest releaseOpenResponseLock];
+    return result;
 }
 
 - (BranchUniversalObject *)getLatestReferringBranchUniversalObject {
@@ -1278,16 +1309,15 @@ void ForceCategoriesToLoad() {
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    [self clearTimer];
     if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:YES];
     }
 }
 
 - (void)applicationWillResignActive {
-    [self clearTimer];
-    self.sessionTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(callClose) userInfo:nil repeats:NO];
+    [self callClose];
     [self.requestQueue persistImmediately];
+    [BranchOpenRequest setWaitNeededForOpenResponseLock];
 }
 
 - (void)callClose {
@@ -1308,9 +1338,6 @@ void ForceCategoriesToLoad() {
     }
 }
 
-- (void)clearTimer {
-    [self.sessionTimer invalidate];
-}
 
 #pragma mark - Queue management
 
@@ -1382,10 +1409,6 @@ void ForceCategoriesToLoad() {
                 return;
             }
 
-            if (![req isKindOfClass:[BranchCloseRequest class]]) {
-                [self clearTimer];
-            }
-
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
             dispatch_async(queue, ^ {
                 [req makeRequest:self.bServerInterface key:self.branchKey callback:callback];
@@ -1399,6 +1422,7 @@ void ForceCategoriesToLoad() {
 
 
 #pragma mark - Session Initialization
+
 
 - (void)initSessionIfNeededAndNotInProgress {
     if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen]) {
@@ -1433,38 +1457,38 @@ void ForceCategoriesToLoad() {
         [self.preferenceHelper logWarning:@"You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment."];
     }
 
-    if (!self.preferenceHelper.identityID) {
-        [self registerInstallOrOpen:[BranchInstallRequest class]];
-    }
-    else {
-        [self registerInstallOrOpen:[BranchOpenRequest class]];
-    }
-}
+	Class clazz = [BranchInstallRequest class];
+	if (self.preferenceHelper.identityID) {
+		clazz = [BranchOpenRequest class];
+	}
 
-- (void)registerInstallOrOpen:(Class)clazz {
     callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
-        if (error) {
-            [self handleInitFailure:error];
-        }
-        else {
-            [self handleInitSuccess];
-        }
+		dispatch_async(dispatch_get_main_queue(), ^ {
+			if (error) {
+				[self handleInitFailure:error];
+			} else {
+				[self handleInitSuccess];
+			}
+		});
     };
     
     if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.useCookieBasedMatching) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
     }
 
-    if ([self.requestQueue removeInstallOrOpen])
-        self.networkCount = 0;
-    BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
-    [self insertRequestAtFront:req];
-    [self processNextQueueItem];
+	@synchronized (self) {
+		if ([self.requestQueue removeInstallOrOpen])
+			self.networkCount = 0;
+		[BranchOpenRequest setWaitNeededForOpenResponseLock];
+		BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
+		[self insertRequestAtFront:req];
+		[self processNextQueueItem];
+	}
 }
 
 - (void)handleInitSuccess {
+
     self.isInitialized = YES;
-    
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
     if (self.shouldCallSessionInitCallback) {
         if (self.sessionInitWithParamsCallback) {
@@ -1532,7 +1556,7 @@ void ForceCategoriesToLoad() {
     [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
 }
 
-#pragma mark FABKit methods
+#pragma mark - FABKit methods
 
 + (NSString *)bundleIdentifier {
     return @"io.branch.sdk.ios";
