@@ -543,8 +543,8 @@
 		7D0C97081D875177004E14B1 /* BranchContentDiscovery */ = {
 			isa = PBXGroup;
 			children = (
-				7D0C97181D8753C9004E14B1 /* BranchContentDiscoverer.m */,
 				7D0C971A1D8753EA004E14B1 /* BranchContentDiscoverer.h */,
+				7D0C97181D8753C9004E14B1 /* BranchContentDiscoverer.m */,
 				7D0C971B1D875445004E14B1 /* BranchContentDiscoveryManifest.h */,
 				7D0C971C1D875465004E14B1 /* BranchContentDiscoveryManifest.m */,
 				7D0C971E1D875487004E14B1 /* BranchContentPathProperties.h */,
