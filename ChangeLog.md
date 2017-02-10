@@ -1,9 +1,11 @@
 Branch iOS SDK Change Log
 
 - v0.12.28
+  * > Beta Release <
   * Added the `getLatestReferringParamsSynchronous` method AIS-8 (#536).
     - For details see [`getLatestReferringParamsSynchronous`](https://github.com/BranchMetrics/ios-branch-deep-linking#retrieve-session-install-or-open-parameters)
       in the README.md documentation.
+  * Improved the SDK responsiveness when getting the browserUserAgentString.
 
 - v0.12.27
   * Fixed a bug were Facebook and Apple Search Ad attribution weren't checked correctly.
