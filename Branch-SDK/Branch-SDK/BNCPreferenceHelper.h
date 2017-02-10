@@ -79,4 +79,7 @@
 - (NSMutableDictionary *)getBranchAnalyticsData;
 - (NSDictionary *)getContentAnalyticsManifest;
 - (void)saveContentAnalyticsManifest:(NSDictionary *)cdManifest;
+
+- (void) save;  //  Flushes preference queue to persistence.
+
 @end

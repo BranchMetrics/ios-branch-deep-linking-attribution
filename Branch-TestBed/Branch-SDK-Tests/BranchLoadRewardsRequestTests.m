@@ -46,6 +46,7 @@
     response.data = ACTION_DICT;
     
     [[BNCPreferenceHelper preferenceHelper] setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
+    [[BNCPreferenceHelper preferenceHelper] save];
     
     XCTestExpectation *requestCallbackExpectation = [self expectationWithDescription:@"Request Callback Expectation"];
     BranchLoadRewardsRequest *request =
@@ -77,7 +78,8 @@
     response.data = ACTION_DICT;
     
     [[BNCPreferenceHelper preferenceHelper] setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
-    
+    [[BNCPreferenceHelper preferenceHelper] save];
+
     XCTestExpectation *requestCallbackExpectation =
         [self expectationWithDescription:@"Request Callback Expectation"];
 

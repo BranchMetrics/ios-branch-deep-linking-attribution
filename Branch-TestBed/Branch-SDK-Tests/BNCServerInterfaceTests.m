@@ -38,7 +38,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 //This test checks to see that the branch key has been added to the GET request
 
 #if 0
-    // This test is using 'expectation' wrong -- EBS
+    // This test is using 'expectation' wrong -- EBS eDebug
 
 - (void)testParamAddForBranchKey {
   BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];

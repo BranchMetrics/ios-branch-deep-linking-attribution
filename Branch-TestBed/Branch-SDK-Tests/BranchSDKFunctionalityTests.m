@@ -323,7 +323,13 @@ NSInteger const  TEST_CREDITS = 30;
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
+    Branch *branch =
+        [[Branch alloc]
+            initWithInterface:serverInterfaceMock
+            queue:[[BNCServerRequestQueue alloc] init]
+            cache:[[BNCLinkCache alloc] init]
+            preferenceHelper:preferenceHelper
+            key:@"key_foo"];
 
     [preferenceHelper setCreditCount:1 forBucket:@"default"];
     
@@ -331,11 +337,17 @@ NSInteger const  TEST_CREDITS = 30;
     loadRewardsResponse.data = @{ @"default": @1 };
     
     __block BNCServerCallback loadRewardsCallback;
-    [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
-        loadRewardsCallback(loadRewardsResponse, nil);
-    }] getRequest:[OCMArg any] url:[preferenceHelper getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", preferenceHelper.identityID]] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-        loadRewardsCallback = callback;
-        return YES;
+    [[[serverInterfaceMock expect]
+        andDo:^(NSInvocation *invocation) {
+            loadRewardsCallback(loadRewardsResponse, nil);
+        }]
+        getRequest:[OCMArg any]
+        url:[preferenceHelper
+        getAPIURL:[NSString stringWithFormat:@"%@/%@", @"credits", preferenceHelper.identityID]]
+        key:[OCMArg any]
+        callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+            loadRewardsCallback = callback;
+            return YES;
     }]];
     
     XCTestExpectation *getRewardExpectation = [self expectationWithDescription:@"Test getReward"];
@@ -346,7 +358,7 @@ NSInteger const  TEST_CREDITS = 30;
         
         [self safelyFulfillExpectation:getRewardExpectation];
     }];
-    
+
     [self awaitExpectations];
 }
 
@@ -355,7 +367,13 @@ NSInteger const  TEST_CREDITS = 30;
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:[[BNCServerRequestQueue alloc] init] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:@"key_foo"];
+    Branch *branch =
+        [[Branch alloc]
+            initWithInterface:serverInterfaceMock
+            queue:[[BNCServerRequestQueue alloc] init]
+            cache:[[BNCLinkCache alloc] init]
+            preferenceHelper:preferenceHelper
+            key:@"key_foo"];
 
     [preferenceHelper setCreditCount:1 forBucket:@"default"];
     
@@ -375,12 +393,17 @@ NSInteger const  TEST_CREDITS = 30;
     ];
     
     __block BNCServerCallback creditHistoryCallback;
-    [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
-        creditHistoryCallback(creditHistoryResponse, nil);
-    }] postRequest:[OCMArg any] url:[preferenceHelper getAPIURL:@"credithistory"] key:[OCMArg any] callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-        creditHistoryCallback = callback;
-        return YES;
-    }]];
+    [[[serverInterfaceMock expect]
+        andDo:^(NSInvocation *invocation) {
+            creditHistoryCallback(creditHistoryResponse, nil);
+        }]
+        postRequest:[OCMArg any]
+        url:[preferenceHelper getAPIURL:@"credithistory"]
+        key:[OCMArg any]
+        callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+            creditHistoryCallback = callback;
+            return YES;
+        }]];
     
     XCTestExpectation *getCreditHistoryExpectation = [self expectationWithDescription:@"Test getCreditHistory"];
     [branch getCreditHistoryWithCallback:^(NSArray *list, NSError *error) {
@@ -393,6 +416,7 @@ NSInteger const  TEST_CREDITS = 30;
     
     [self awaitExpectations];
 }
+
 
 #if 0
 

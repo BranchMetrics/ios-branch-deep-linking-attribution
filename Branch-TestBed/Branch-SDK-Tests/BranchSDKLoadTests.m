@@ -110,7 +110,7 @@
     }];
     
     [self waitForExpectationsWithTimeout:10.0 handler:NULL];
-    NSLog(@"Completed %ld.", completedCount);
+    NSLog(@"Completed %d.", completedCount);
     NSLog(@"Wow!");
 }
 
