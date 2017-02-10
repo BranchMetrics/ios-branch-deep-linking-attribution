@@ -132,11 +132,13 @@ NSString *type = @"some type";
 }
 
 
-- (IBAction)sendBuyEventButtonTouchUpInside:(id)sender {
+- (IBAction)sendButtonEventButtonTouchUpInside:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch userCompletedAction:@"buy" withState:nil withDelegate:self];
+    [branch userCompletedAction:@"button_press"
+        withState:@{ @"name": @"button1", @"action": @"alert" }
+        withDelegate:self];
     [self refreshRewardPoints];
-    [self showAlert:@"'buy' event dispatched" withDescription:@""];
+    [self showAlert:@"'button_press' event dispatched" withDescription:@""];
 }
 
 
