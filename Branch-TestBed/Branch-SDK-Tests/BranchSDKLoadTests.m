@@ -1,10 +1,11 @@
 //
-//  Branch_SDK_Load_Tests.m
+//  BranchSDKLoadTests.m
 //  Branch-TestBed
 //
 //  Created by Qinwei Gong on 2/23/15.
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
+
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
@@ -109,7 +110,7 @@
             [getShortURLExpectation fulfill];
     }];
     
-    [self waitForExpectationsWithTimeout:10.0 handler:NULL];
+    [self waitForExpectationsWithTimeout:2.0 handler:NULL];
     NSLog(@"Completed %d.", completedCount);
     NSLog(@"Wow!");
 }

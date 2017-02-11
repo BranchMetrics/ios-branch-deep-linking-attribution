@@ -72,10 +72,8 @@
             if (userUrl) {
                 failedUrl = [self createLongUrlForUserUrl:userUrl];
             }
-            
             self.callback(failedUrl, error);
         }
-        
         return;
     }
     
@@ -85,7 +83,6 @@
     if (url) {
         [self.linkCache setObject:url forKey:self.linkData];
     }
-    
     if (self.callback) {
         self.callback(url, nil);
     }
@@ -153,13 +150,11 @@
         [self.linkData setupMatchDuration:_matchDuration];
         [self.linkData setupParams:_params];
     }
-    
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     [super encodeWithCoder:coder];
-    
     [coder encodeObject:self.tags forKey:@"tags"];
     [coder encodeObject:self.alias forKey:@"alias"];
     [coder encodeInteger:self.type forKey:@"type"];

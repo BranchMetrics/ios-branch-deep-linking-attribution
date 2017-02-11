@@ -35,7 +35,8 @@
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
     Branch *branch =
-        [[Branch alloc] initWithInterface:serverInterfaceMock
+        [[Branch alloc]
+            initWithInterface:serverInterfaceMock
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
             preferenceHelper:[BNCPreferenceHelper preferenceHelper]
@@ -106,22 +107,25 @@
     [self awaitExpectations];
     [self resetExpectations];
 
-    XCTestExpectation *scenario2Expectation2 = [self expectationWithDescription:@"Scenario2 Expectation2"];
+    XCTestExpectation *scenario2Expectation2 =
+        [self expectationWithDescription:@"Scenario2 Expectation2"];
 
     // Request should fail
     [self makeFailingNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
         [serverInterfaceMock stopMocking];
-
         [self safelyFulfillExpectation:scenario2Expectation2];
     }];
 
     [self awaitExpectations];
     [self resetExpectations];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:UIApplicationDidBecomeActiveNotification
+        object:nil];
     [self overrideBranch:branch initHandler:[self callbackExpectingSuccess:NULL]];
 
-    XCTestExpectation *scenario2Expectation3 = [self expectationWithDescription:@"Scenario2 Expectation3"];
+    XCTestExpectation *scenario2Expectation3 =
+        [self expectationWithDescription:@"Scenario2 Expectation3"];
     
     // Then make another request, which should play through fine
     [self makeSuccessfulNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
@@ -476,7 +480,10 @@
     [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:[self callbackExpectingFailure:callback]];
 }
 
-- (void)makeFailingNonReplayableRequest:(Branch *)branch serverInterface:(id)serverInterfaceMock callback:(void (^)(void))callback {
+- (void)makeFailingNonReplayableRequest:(Branch *)branch
+                        serverInterface:(id)serverInterfaceMock
+                               callback:(void (^)(void))callback {
+
     __block BNCServerCallback badRequestCallback;
     id badRequestCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         badRequestCallback = callback;
@@ -488,8 +495,15 @@
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
-    [[[serverInterfaceMock expect] andDo:badRequestInvocation] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
+    NSString *url = [[preferenceHelper getAPIURL:@"credits/"]
+        stringByAppendingString:preferenceHelper.identityID];
+
+    [[[serverInterfaceMock expect]
+        andDo:badRequestInvocation]
+            getRequest:[OCMArg any]
+            url:url
+            key:[OCMArg any]
+            callback:badRequestCheckBlock];
 
     [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNotNil(error);
@@ -509,7 +523,7 @@
     
     // Only one request should make it to the server
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
+    NSString *url = [[preferenceHelper getAPIURL:@"credits/"] stringByAppendingString:preferenceHelper.identityID];
     [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
     [[serverInterfaceMock reject] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:[OCMArg any]];
 
@@ -551,7 +565,7 @@
     
     // Only one request should make it to the server
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
+    NSString *url = [[preferenceHelper getAPIURL:@"credits/"] stringByAppendingString:preferenceHelper.identityID];
     [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
     [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:goodRequestCheckBlock];
 
@@ -576,8 +590,8 @@
 }
 
 - (void)makeSuccessfulNonReplayableRequest:(Branch *)branch
-		serverInterface:(id)serverInterfaceMock
-		callback:(void (^)(void))callback {
+                           serverInterface:(id)serverInterfaceMock
+                                  callback:(void (^)(void))callback {
 
     BNCServerResponse *goodResponse = [[BNCServerResponse alloc] init];
     goodResponse.statusCode = @200;
@@ -593,8 +607,15 @@
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSString *url = [[preferenceHelper getAPIURL:@"referrals/"] stringByAppendingString:preferenceHelper.identityID];
-    [[[serverInterfaceMock expect] andDo:goodRequestInvocation] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:goodRequestCheckBlock];
+    NSString *url = [[preferenceHelper getAPIURL:@"credits/"]
+        stringByAppendingString:preferenceHelper.identityID];
+
+    [[[serverInterfaceMock expect]
+        andDo:goodRequestInvocation]
+            getRequest:[OCMArg any]
+            url:[OCMArg any]//url:url eDebug
+            key:[OCMArg any]
+            callback:goodRequestCheckBlock];
 
     [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNil(error);
@@ -664,10 +685,10 @@
 
 - (void)overrideBranch:(Branch *)branch initHandler:(callbackWithParams)initHandler {
     // Override Branch init by setting internals *shudder*
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wundeclared-selector"
     [branch performSelector:@selector(setSessionInitWithParamsCallback:) withObject:initHandler];
-#pragma clang diagnostic pop
+    #pragma clang diagnostic pop
 }
 
 - (NSData *)openResponseData {

@@ -703,10 +703,10 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             [self logWarning:@"Can't create preferences data."];
             return;
         }
+        NSURL *prefsURL = self.class.URLForPrefsFile;
         NSBlockOperation *newPersistOp = [NSBlockOperation blockOperationWithBlock:^ {
             NSError *error = nil;
-            [data writeToURL:self.class.URLForPrefsFile
-                options:NSDataWritingAtomic error:&error];
+            [data writeToURL:prefsURL options:NSDataWritingAtomic error:&error];
             if (error) {
                 [self logWarning:
                     [NSString stringWithFormat:
