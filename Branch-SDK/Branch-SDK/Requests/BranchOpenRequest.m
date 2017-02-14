@@ -199,8 +199,6 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
         dispatch_queue_create("io.branch.sdk.openqueue", DISPATCH_QUEUE_CONCURRENT);
 }
 
-#if 0   //  eDebug
-
 + (void) setWaitNeededForOpenResponseLock {
     @synchronized (self) {
         if (!openRequestWaitQueueIsSuspended) {
@@ -228,22 +226,5 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
         }
     }
 }
-
-#else 
-
-+ (void) setWaitNeededForOpenResponseLock {
-    NSLog(@"Suspend openRequestWaitQueue.");
-}
-
-+ (void) waitForOpenResponseLock {
-    NSLog(@"Wait for openRequestWaitQueue.");
-    NSLog(@"Finished waitForOpenResponseLock");
-}
-
-+ (void) releaseOpenResponseLock {
-    NSLog(@"Resume openRequestWaitQueue.");
-}
-
-#endif
 
 @end

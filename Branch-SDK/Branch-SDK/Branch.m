@@ -1443,7 +1443,11 @@ void ForceCategoriesToLoad() {
             self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
         }
         else if (self.sessionInitWithBranchUniversalObjectCallback) {
-            self.sessionInitWithBranchUniversalObjectCallback([self getLatestReferringBranchUniversalObject], [self getLatestReferringBranchLinkProperties], nil);
+            self.sessionInitWithBranchUniversalObjectCallback(
+                [self getLatestReferringBranchUniversalObject],
+                [self getLatestReferringBranchLinkProperties],
+                nil
+            );
         }
     }
 }
@@ -1462,6 +1466,7 @@ void ForceCategoriesToLoad() {
 		clazz = [BranchOpenRequest class];
 	}
 
+#if 0   //  eDebug - Why does this have to be on the main queue?  This breaks the tests.
     callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
 		dispatch_async(dispatch_get_main_queue(), ^ {
 			if (error) {
@@ -1471,7 +1476,15 @@ void ForceCategoriesToLoad() {
 			}
 		});
     };
-    
+#else
+    callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
+        if (error)
+            [self handleInitFailure:error];
+        else
+            [self handleInitSuccess];
+    };
+#endif 
+
     if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.useCookieBasedMatching) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
     }
@@ -1495,7 +1508,11 @@ void ForceCategoriesToLoad() {
             self.sessionInitWithParamsCallback(latestReferringParams, nil);
         }
         else if (self.sessionInitWithBranchUniversalObjectCallback) {
-            self.sessionInitWithBranchUniversalObjectCallback([self getLatestReferringBranchUniversalObject], [self getLatestReferringBranchLinkProperties], nil);
+            self.sessionInitWithBranchUniversalObjectCallback(
+                [self getLatestReferringBranchUniversalObject],
+                [self getLatestReferringBranchLinkProperties],
+                nil
+            );
         }
     }
     
@@ -1515,7 +1532,8 @@ void ForceCategoriesToLoad() {
                 [branchSharingController configureControlWithData:latestReferringParams];
             }
             else {
-                [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"[Branch Warning] View controller does not implement configureControlWithData:"];
+                [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:
+                    @"[Branch Warning] View controller does not implement configureControlWithData:"];
             }
             branchSharingController.deepLinkingCompletionDelegate = self;
             self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
