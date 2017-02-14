@@ -17,6 +17,12 @@
 #import "BranchOpenRequest.h"
 
 
+@interface Branch (Testing)
+@property (strong, nonatomic) BNCServerInterface *bServerInterface;
+@property (assign, nonatomic) NSInteger networkCount;
+@end
+
+
 @interface BranchNetworkScenarioTests : BranchTest
 @property (assign, nonatomic) BOOL hasExceededExpectations;
 @end
@@ -105,6 +111,7 @@
     }];
 
     [self awaitExpectations];
+    [serverInterfaceMock verify];    
     [self resetExpectations];
 
     XCTestExpectation *scenario2Expectation2 =
@@ -112,24 +119,33 @@
 
     // Request should fail
     [self makeFailingNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
-        [serverInterfaceMock stopMocking];
         [self safelyFulfillExpectation:scenario2Expectation2];
     }];
 
     [self awaitExpectations];
     [self resetExpectations];
 
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:UIApplicationDidBecomeActiveNotification
-        object:nil];
-    [self overrideBranch:branch initHandler:[self callbackExpectingSuccess:NULL]];
+    // Init should succeed
+
+    // Re-mock the serverInterface so it succeeds
+    serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    branch.bServerInterface = serverInterfaceMock;
 
     XCTestExpectation *scenario2Expectation3 =
         [self expectationWithDescription:@"Scenario2 Expectation3"];
+    [self initSessionExpectingSuccess:branch serverInterface:serverInterfaceMock callback:^{
+        [self safelyFulfillExpectation:scenario2Expectation3];
+    }];
+
+    [self awaitExpectations];
+    [self resetExpectations];
+
+    XCTestExpectation *scenario2Expectation4 =
+        [self expectationWithDescription:@"Scenario2 Expectation4"];
     
     // Then make another request, which should play through fine
     [self makeSuccessfulNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
-        [self safelyFulfillExpectation:scenario2Expectation3];
+        [self safelyFulfillExpectation:scenario2Expectation4];
     }];
 
     [self awaitExpectations];
@@ -215,9 +231,11 @@
         }];
     
     [self awaitExpectations];
+    [serverInterfaceMock verify];
     [self resetExpectations];
     
-    XCTestExpectation *scenario4Expectation2 = [self expectationWithDescription:@"Scenario4 Expectation2"];
+    XCTestExpectation *scenario4Expectation2 =
+        [self expectationWithDescription:@"Scenario4 Expectation2"];
     
     // Request should fail
     [self makeFailingNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
@@ -227,11 +245,14 @@
     [self awaitExpectations];
     [self resetExpectations];
     
-    XCTestExpectation *scenario4Expectation3 = [self expectationWithDescription:@"Scenario4 Expectation3"];
+    XCTestExpectation *scenario4Expectation3 =
+        [self expectationWithDescription:@"Scenario4 Expectation3"];
     
     // Simulate network return, shouldn't call init!
-    [serverInterfaceMock stopMocking];
-    
+    //[serverInterfaceMock stopMocking];
+    serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    branch.bServerInterface = serverInterfaceMock;
+
     // However, making another request when not initialized should make an init
     [self mockSuccesfulInit:serverInterfaceMock];
     [self overrideBranch:branch initHandler:[self callbackExpectingSuccess:NULL]];
@@ -304,7 +325,7 @@
             key:@"key_live"];
     
     XCTestExpectation *scenario6Expectation1 =
-        [self expectationWithDescription:@"Scenario5 Expectation1"];
+        [self expectationWithDescription:@"Scenario6 Expectation1"];
     
     // Start off with a good connection
     [self initSessionExpectingSuccess:branch
@@ -317,7 +338,7 @@
     [self resetExpectations];
     
     XCTestExpectation *scenario6Expectation2 =
-        [self expectationWithDescription:@"Scenario5 Expectation2"];
+        [self expectationWithDescription:@"Scenario6 Expectation2"];
 
     [self enqueueTwoNonReplayableRequestsWithFirstFailingBecauseRequestIsBad:branch
         serverInterface:serverInterfaceMock
@@ -332,8 +353,15 @@
 
 #pragma mark - Scenario 7
 
+
+#if 0 
+
+// This test is no longer valid.  We remove pending opens.  And the test is written wrong anyway.
+// --EBS
+
 // While an Open / Install request is pending, the app is killed, causing the callback to be lost.
 // When InitSession is called again (next launch), the request should still complete.
+
 - (void)testScenario7 {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     id queueMock = OCMClassMock([BNCServerRequestQueue class]);
@@ -350,7 +378,9 @@
     };
     
     id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
-        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+        return
+            [url rangeOfString:@"open"].location != NSNotFound ||
+            [url rangeOfString:@"install"].location != NSNotFound;
     }];
     
     // Ignore first request, don't call callback (simulate failure)
@@ -388,29 +418,34 @@
     [[[queueMock expect] andReturnValue:@YES] containsInstallOrOpen];
     [(BNCServerRequestQueue *)[[queueMock stub] andReturnValue:@1] size];
     
-    Branch *branch = [[Branch alloc] initWithInterface:serverInterfaceMock queue:queueMock cache:nil preferenceHelper:nil key:@"key_live"];
+    Branch *branch =
+        [[Branch alloc]
+            initWithInterface:serverInterfaceMock
+            queue:queueMock
+            cache:nil
+            preferenceHelper:nil
+            key:@"key_live"];
     
     __block NSInteger initCallbackCount = 0;
-    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
-        initCallbackCount++;
-    }];
+    [branch initSessionWithLaunchOptions:@{}
+        andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+            initCallbackCount++;
+        }];
 
     // Override Branch network requests by setting internals *shudder*
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
-    [branch performSelector:@selector(setNetworkCount:) withObject:0];
-#pragma clang diagnostic pop
+    branch.networkCount = 0;
 
     XCTestExpectation *initExpectation = [self expectationWithDescription:@"Init expectation"];
-    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
-        initCallbackCount++;
-
-        [self safelyFulfillExpectation:initExpectation];
-    }];
+    [branch initSessionWithLaunchOptions:@{}
+        andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+            initCallbackCount++;
+            [self safelyFulfillExpectation:initExpectation];
+        }];
     
     [self awaitExpectations];
     XCTAssertEqual(initCallbackCount, 1);
 }
+#endif
 
 
 #pragma mark - Scenario 8
@@ -449,13 +484,17 @@
 #pragma mark - Internals
 
 
-- (void)initSessionExpectingSuccess:(Branch *)branch serverInterface:(id)serverInterfaceMock callback:(void (^)(void))callback {
+- (void)initSessionExpectingSuccess:(Branch *)branch
+                    serverInterface:(id)serverInterfaceMock
+                           callback:(void (^)(void))callback {
     [self mockSuccesfulInit:serverInterfaceMock];
-
-    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:[self callbackExpectingSuccess:callback]];
+    [branch initSessionWithLaunchOptions:@{}
+              andRegisterDeepLinkHandler:[self callbackExpectingSuccess:callback]];
 }
 
-- (void)initSessionExpectingFailure:(Branch *)branch serverInterface:(id)serverInterfaceMock callback:(void (^)(void))callback {
+- (void)initSessionExpectingFailure:(Branch *)branch
+                    serverInterface:(id)serverInterfaceMock
+                           callback:(void (^)(void))callback {
     __block BNCServerCallback openOrInstallCallback;
     id openOrInstallCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         openOrInstallCallback = callback;
@@ -523,20 +562,38 @@
     
     // Only one request should make it to the server
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSString *url = [[preferenceHelper getAPIURL:@"credits/"] stringByAppendingString:preferenceHelper.identityID];
-    [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
-    [[serverInterfaceMock reject] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:[OCMArg any]];
+    NSString *url =
+        [[preferenceHelper getAPIURL:@"credits/"]
+            stringByAppendingString:preferenceHelper.identityID];
+
+    [[serverInterfaceMock expect]
+        getRequest:[OCMArg any]
+        url:url
+        key:[OCMArg any]
+        callback:badRequestCheckBlock];
+
+    [[serverInterfaceMock reject]
+        getRequest:[OCMArg any]
+        url:url
+        key:[OCMArg any]
+        callback:[OCMArg any]];
+
+    XCTestExpectation *enqueueTwoExpectation =
+        [self expectationWithDescription:@"EnqueueTwo Expectation"];
 
     // Throw two requests in the queue, but the first failing w/ a 500 should trigger both to fail
+
     [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNotNil(error);
+        [self safelyFulfillExpectation:enqueueTwoExpectation];
     }];
-    
+
     [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNotNil(error);
         callback();
     }];
 
+    sleep(1); // Sleep to allow server queue time to process.
     // Bad requests callback should be captured at this point, call it to trigger the failure.
 
 	if (badRequestCallback) {
@@ -549,44 +606,62 @@
 
 - (void)enqueueTwoNonReplayableRequestsWithFirstFailingBecauseRequestIsBad:(Branch *)branch
 		serverInterface:(id)serverInterfaceMock
-		callback:(void (^)(void))callback {
-		
-    __block BNCServerCallback badRequestCallback;
-    id badRequestCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-        badRequestCallback = callback;
-        return YES;
-    }];
+		callback:(void (^)(void))testCaseCallback {
 
+    __block int callNumber = 0;
+    __block BNCServerCallback badRequestCallback;
     __block BNCServerCallback goodRequestCallback;
-    id goodRequestCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-        goodRequestCallback = callback;
+    id requestCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        callNumber++;
+        if (callNumber == 1)
+            badRequestCallback = callback;
+        else if (callNumber == 2)
+            goodRequestCallback = callback;
+        else
+            XCTFail(@"Bad callNumber %d.", callNumber);
+        NSLog(@"Call number %d.", callNumber);
         return YES;
     }];
     
     // Only one request should make it to the server
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSString *url = [[preferenceHelper getAPIURL:@"credits/"] stringByAppendingString:preferenceHelper.identityID];
-    [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:badRequestCheckBlock];
-    [[serverInterfaceMock expect] getRequest:[OCMArg any] url:url key:[OCMArg any] callback:goodRequestCheckBlock];
+    NSString *url =
+        [[preferenceHelper getAPIURL:@"credits/"]
+            stringByAppendingString:preferenceHelper.identityID];
+    [[serverInterfaceMock expect]
+        getRequest:[OCMArg any]
+        url:url
+        key:[OCMArg any]
+        callback:requestCheckBlock];
 
     // Throw two requests in the queue, but the first failing w/ a 500 should trigger both to fail
     [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNotNil(error);
+        [[serverInterfaceMock expect]
+            getRequest:[OCMArg any]
+            url:url
+            key:[OCMArg any]
+            callback:requestCheckBlock];
     }];
-    
     [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNil(error);
-        callback();
+        testCaseCallback();
     }];
 
-    // Bad requests callback should be captured at this point, call it to trigger the failure.
+    NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:3.0];
+    while ([timeoutDate timeIntervalSinceNow] > 0.0) {
 
-	if (badRequestCallback && goodRequestCallback) {
-		badRequestCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:nil]);
-		goodRequestCallback([[BNCServerResponse alloc] init], nil);
-	} else {
-		XCTAssert(badRequestCallback && goodRequestCallback);
-	}
+        sleep(1); // Sleep so that network queue processes
+        if (badRequestCallback) {
+            badRequestCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:nil]);
+            badRequestCallback = nil;
+        } else if (goodRequestCallback) {
+            goodRequestCallback([[BNCServerResponse alloc] init], nil);
+            goodRequestCallback = nil;
+            return;
+        }
+    }
+	XCTAssert(badRequestCallback && goodRequestCallback);
 }
 
 - (void)makeSuccessfulNonReplayableRequest:(Branch *)branch
@@ -613,7 +688,7 @@
     [[[serverInterfaceMock expect]
         andDo:goodRequestInvocation]
             getRequest:[OCMArg any]
-            url:[OCMArg any]//url:url eDebug
+            url:url
             key:[OCMArg any]
             callback:goodRequestCheckBlock];
 

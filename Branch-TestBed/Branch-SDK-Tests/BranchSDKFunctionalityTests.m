@@ -417,10 +417,9 @@ NSInteger const  TEST_CREDITS = 30;
     [self awaitExpectations];
 }
 
-
 #if 0
 
-    eDebug -- Fix this with correct expectations:  EBS
+ eDebug
 
 - (void)test13GetShortURLAfterLogout {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
@@ -487,7 +486,6 @@ NSInteger const  TEST_CREDITS = 30;
     [self awaitExpectations];
     [serverInterfaceMock verify];
 }
-
 #endif
 
 #pragma mark - Test Utility

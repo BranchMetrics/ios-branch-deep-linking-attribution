@@ -50,6 +50,7 @@
     };
     
     // Stub all the requests
+    __block int stubCount = 0;
     __block BNCServerCallback urlCallback;
     [[[serverInterfaceMock stub]
         andDo:^(NSInvocation *invocation) {
@@ -59,6 +60,7 @@
         url:[preferenceHelper getAPIURL:@"url"]
         key:[OCMArg any]
         callback:[OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+            stubCount++;
             urlCallback = callback;
             return YES;
         }]];
@@ -100,7 +102,8 @@
         }];
     }
 
-    XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
+    XCTestExpectation *getShortURLExpectation =
+        [self expectationWithDescription:@"Test getShortURL"];
     [branch getShortURLWithParams:nil
         andChannel:nil
         andFeature:@"feature"
@@ -110,7 +113,7 @@
             [getShortURLExpectation fulfill];
     }];
     
-    [self waitForExpectationsWithTimeout:2.0 handler:NULL];
+    [self waitForExpectationsWithTimeout:4.0 handler:NULL];
     NSLog(@"Completed %d.", completedCount);
     NSLog(@"Wow!");
 }
