@@ -1,0 +1,78 @@
+#!/bin/bash
+set -euo pipefail
+
+# test-logic  -  Runs all the unit tests.
+#
+# Edward Smith, February 2017
+
+scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+scriptfile="${scriptfile}"/$(basename "$0")
+cd $(dirname "$scriptfile")/../Branch-TestBed
+pwd
+
+if [[ ${CLICOLOR:-0} == 1 && -t 1 ]]; then
+    textBold="\e[1m"
+    textBlue="\e[94m"
+    textDarkBlue="\e[1m\e[34m"
+    textYellow="\e[93m"
+    textRed="\e[31m"
+    textNormal="\e[0m"
+    textDim="\e[2m"
+else
+    textBold=""
+    textBlue=""
+    textDarkBlue=""
+    textYellow=""
+    textRed=""
+    textNormal=""
+    textDim=""
+fi
+
+function testSimulatorVersion() {
+    local name=$1
+    local version=$2
+    printf "${textBlue}Testing %s %s...${textNormal}\n" "${name}" "${version}"
+    xcodebuild \
+        -workspace Branch-TestBed.xcworkspace \
+        -scheme Branch-TestBed \
+        -destination name="${name}",OS="${version}" \
+            clean test -quiet
+}
+
+stressTest=0
+function testSimulatorStress() {
+    if (( $stressTest == 0 )); then
+        printf "${textBlue}Start stress test...${textNormal}\n"
+    fi
+    let stressTest=stressTest+1
+    printf "${textBlue}   Stress test %d.${textNormal}\n" $stressTest
+    xcodebuild \
+        -workspace Branch-TestBed.xcworkspace \
+        -scheme Branch-TestBed \
+        -destination name="iPhone 7",OS=latest \
+            test -quiet
+}
+
+function analyzeBuild() {
+    printf "${textBlue}Analyzing project for code correctness...${textNormal}\n"
+    xcodebuild \
+        -workspace Branch-TestBed.xcworkspace \
+        -scheme Branch-TestBed \
+        -destination name="iPhone 7 Plus",OS=latest \
+            clean analyze -quiet
+}
+
+
+# analyzeBuild
+for i in {1..10}
+do
+    testSimulatorStress
+done
+testSimulatorVersion "iPhone 6" 10.0
+testSimulatorVersion "iPhone 6s Plus" 9.3
+testSimulatorVersion "iPhone 4s" 8.4
+
+
+
+#     -project Branch-TestBed.xcodeproj \
+#       clean analyze test

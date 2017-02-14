@@ -6,13 +6,14 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
+
 #import "BNCLinkCache.h"
 
+
 @interface BNCLinkCache ()
-
 @property (nonatomic, strong) NSMutableDictionary *cache;
-
 @end
+
 
 @implementation BNCLinkCache
 

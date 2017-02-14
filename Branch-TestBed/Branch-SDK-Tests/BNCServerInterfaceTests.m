@@ -46,30 +46,35 @@ static inline void BNCAfterSecondsPerformBlock(NSTimeInterval seconds, dispatch_
 //TEST 01
 //This test checks to see that the branch key has been added to the GET request
 
-#if 0 // eDebug
 - (void)testParamAddForBranchKey {
   [OHHTTPStubs removeAllStubs];
   BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
-  XCTestExpectation* expectation = [self expectationWithDescription:@"NSURLSessionDataTask completed"];
+  XCTestExpectation* expectation =
+    [self expectationWithDescription:@"NSURLSessionDataTask completed"];
 
   __block int callCount = 0;
   [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-    // We're not sending a request, just verifying a "branch_key=key_foo" is present.
-    callCount++;
-    NSLog(@"\n\nCall count %d. Request: %@", callCount, request);
-    BOOL foundIt = ([request.URL.query rangeOfString:@"branch_key=key_foo"].location != NSNotFound);
-    XCTAssertTrue(foundIt, @"Branch Key not added");
-    BNCAfterSecondsPerformBlock(0.01, ^{ [expectation fulfill]; });
-    return YES;
-  } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
-    NSDictionary* dummyJSONResponse = @{@"key": @"value"};
-    return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
-  }];
+        // We're not sending a request, just verifying a "branch_key=key_foo" is present.
+        callCount++;
+        NSLog(@"\n\nCall count %d.\nRequest: %@\n", callCount, request);
+        if (callCount == 1) {
+            BOOL foundIt = ([request.URL.query rangeOfString:@"branch_key=key_foo"].location != NSNotFound);
+            XCTAssertTrue(foundIt, @"Branch Key not added");
+            BNCAfterSecondsPerformBlock(0.01, ^{ [expectation fulfill]; });
+            return YES;
+        }
+        return NO;
+    }
+    withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+        NSDictionary* dummyJSONResponse = @{@"key": @"value"};
+        return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+    }
+  ];
   
   [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
-  [self waitForExpectationsWithTimeout:5.0 /* 5 seconds */ handler:nil];
+  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  [OHHTTPStubs removeAllStubs];
 }
-#endif 
 
 #pragma mark - Retry tests
 

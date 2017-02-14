@@ -405,7 +405,8 @@ NSInteger const  TEST_CREDITS = 30;
             return YES;
         }]];
     
-    XCTestExpectation *getCreditHistoryExpectation = [self expectationWithDescription:@"Test getCreditHistory"];
+    XCTestExpectation *getCreditHistoryExpectation =
+        [self expectationWithDescription:@"Test getCreditHistory"];
     [branch getCreditHistoryWithCallback:^(NSArray *list, NSError *error) {
         XCTAssertNil(error);
         XCTAssertNotNil(list);
@@ -417,10 +418,11 @@ NSInteger const  TEST_CREDITS = 30;
     [self awaitExpectations];
 }
 
-#if 0
-
- eDebug
-
+// Test scenario
+// * Initialize the session
+// * Get a short url.
+// * Log out.
+// * Get the same url:  should be the same.
 - (void)test13GetShortURLAfterLogout {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
@@ -434,59 +436,81 @@ NSInteger const  TEST_CREDITS = 30;
 			preferenceHelper:preferenceHelper
 			key:@"key_foo"];
 
-    XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL Sync"];
+    // Init session
+
+    XCTestExpectation *initSessionExpectation =
+        [self expectationWithDescription:@"Expect Session"];
     
     [branch initSessionWithLaunchOptions:@{}
               andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
-        BNCServerResponse *urlResp = [[BNCServerResponse alloc] init];
-        urlResp.statusCode = @200;
-        urlResp.data = @{ @"url": @"https://bnc.lt/l/4BGtJj-03N" };
-
-        BNCServerResponse *logoutResp = [[BNCServerResponse alloc] init];
-        logoutResp.data = @{ @"session_id": @"foo", @"identity_id": @"foo", @"link": @"http://foo" };
-
-        __block BNCServerCallback logoutCallback;
-        [[[serverInterfaceMock expect] andDo:^(NSInvocation *invocation) {
-            logoutCallback(logoutResp, nil);
-        }] postRequest:[OCMArg any]
-				url:[preferenceHelper
-				getAPIURL:@"logout"]
-				key:[OCMArg any]
-				callback:[OCMArg
-				checkWithBlock:^BOOL(BNCServerCallback callback) {
-            		logoutCallback = callback;
-            		return YES;
-        		}]];
-
-        // Should only be twice, since logout is called in between
-        [[[serverInterfaceMock expect] andReturn:urlResp]
-			postRequest:[OCMArg any]
-			url:[preferenceHelper getAPIURL:@"url"]
-			key:[OCMArg any]
-			log:YES];
-        [[[serverInterfaceMock expect] andReturn:urlResp]
-			postRequest:[OCMArg any]
-			url:[preferenceHelper getAPIURL:@"url"]
-			key:[OCMArg any]
-			log:YES];
-
-        NSString *url1 = [branch getShortURLWithParams:nil andChannel:nil andFeature:nil];
-        XCTAssertNotNil(url1);
-
-        [branch logout];
-
-        // Give the logout 1 second to complete
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5.0*NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            NSString *url2 = [branch getShortURLWithParams:nil andChannel:nil andFeature:nil];
-            XCTAssertEqualObjects(url1, url2);
-            [self safelyFulfillExpectation:getShortURLExpectation];
-        });
-    }];
+                XCTAssert(!error);
+                NSLog(@"Fullfilled 1.");
+                [self safelyFulfillExpectation:initSessionExpectation];
+              }];
 
     [self awaitExpectations];
-    [serverInterfaceMock verify];
+
+    // Get short URL
+
+    NSString * urlTruthString = @"https://bnc.lt/l/4BGtJj-03N";
+    BNCServerResponse *urlResp = [[BNCServerResponse alloc] init];
+    urlResp.statusCode = @200;
+    urlResp.data = @{ @"url": urlTruthString };
+
+    [[[serverInterfaceMock expect]
+        andReturn:urlResp]
+            postRequest:[OCMArg any]
+            url:[preferenceHelper getAPIURL:@"url"]
+            key:[OCMArg any]
+            log:YES];
+
+    NSString *url1 = [branch getShortURLWithParams:nil andChannel:nil andFeature:nil];
+    XCTAssertEqual(urlTruthString, url1);
+
+    // Log out
+
+    BNCServerResponse *logoutResp = [[BNCServerResponse alloc] init];
+    logoutResp.data = @{ @"session_id": @"foo", @"identity_id": @"foo", @"link": @"http://foo" };
+
+    __block BNCServerCallback logoutCallback;
+    [[[serverInterfaceMock expect]
+        andDo:^(NSInvocation *invocation) {
+            logoutCallback(logoutResp, nil);
+        }]
+            postRequest:[OCMArg any]
+            url:[preferenceHelper
+            getAPIURL:@"logout"]
+            key:[OCMArg any]
+            callback:[OCMArg
+            checkWithBlock:^BOOL(BNCServerCallback callback) {
+                logoutCallback = callback;
+                return YES;
+            }]];
+
+    XCTestExpectation *logoutExpectation =
+        [self expectationWithDescription:@"Logout Session"];
+
+    [branch logoutWithCallback:^(BOOL changed, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        NSLog(@"Fullfilled 2.");
+        [self safelyFulfillExpectation:logoutExpectation];
+    }];
+
+    self.hasExceededExpectations = NO;
+    [self awaitExpectations];
+
+    // Get short URL
+
+    [[[serverInterfaceMock expect]
+        andReturn:urlResp]
+            postRequest:[OCMArg any]
+            url:[preferenceHelper getAPIURL:@"url"]
+            key:[OCMArg any]
+            log:YES];
+
+    NSString *url2 = [branch getShortURLWithParams:nil andChannel:nil andFeature:nil];
+    XCTAssertEqualObjects(url1, url2);
 }
-#endif
 
 #pragma mark - Test Utility
 
