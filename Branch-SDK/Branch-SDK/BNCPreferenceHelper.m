@@ -49,6 +49,8 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 
 @interface BNCPreferenceHelper () {
     NSOperationQueue *_persistPrefsQueue;
+    NSString         *_lastSystemBuildVersion;
+    NSString         *_browserUserAgentString;
 }
 
 @property (strong, nonatomic) NSMutableDictionary *persistenceDict;
@@ -463,6 +465,34 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         _appleSearchAdDetails = (NSDictionary *) [self readObjectFromDefaults:BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO];
     }
     return [_appleSearchAdDetails isKindOfClass:[NSDictionary class]] ? _appleSearchAdDetails : nil;
+}
+
+- (NSString*) lastSystemBuildVersion {
+    if (!_lastSystemBuildVersion) {
+        _lastSystemBuildVersion = [self readStringFromDefaults:@"_lastSystemBuildVersion"];
+    }
+    return _lastSystemBuildVersion;
+}
+
+- (void) setLastSystemBuildVersion:(NSString *)lastSystemBuildVersion {
+    if (![_lastSystemBuildVersion isEqualToString:lastSystemBuildVersion]) {
+        _lastSystemBuildVersion = lastSystemBuildVersion;
+        [self writeObjectToDefaults:@"_lastSystemBuildVersion" value:_lastSystemBuildVersion];
+    }
+}
+
+- (NSString*) browserUserAgentString {
+    if (!_browserUserAgentString) {
+        _browserUserAgentString = [self readStringFromDefaults:@"_browserUserAgentString"];
+    }
+    return _browserUserAgentString;
+}
+
+- (void) setBrowserUserAgentString:(NSString *)browserUserAgentString {
+    if (![_browserUserAgentString isEqualToString:browserUserAgentString]) {
+        _browserUserAgentString = browserUserAgentString;
+        [self writeObjectToDefaults:@"_browserUserAgentString" value:_browserUserAgentString];
+    }
 }
 
 - (NSString *)userUrl {
