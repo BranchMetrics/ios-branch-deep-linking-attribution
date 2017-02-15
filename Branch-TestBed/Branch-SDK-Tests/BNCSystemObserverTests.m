@@ -6,11 +6,13 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
+
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "BNCSystemObserver.h"
 #import "BNCPreferenceHelper.h"
+
 
 @interface BNCSystemObserverTests : XCTestCase
 
@@ -20,29 +22,28 @@
 
 @end
 
-@implementation BNCSystemObserverTests
 
+@implementation BNCSystemObserverTests
 
 #pragma mark - Test Update State with No Stored version
 
 - (void)testGetUpdateStateWithNoStoredVersionAndDatesAreEqual {
+    [self stubNilValuesForStoredAndCurrentVersions];
     NSDate *now = [NSDate date];
     [self stubCreationDate:now modificationDate:now];
-    [self stubNilValuesForStoredAndCurrentVersions];
-    
+
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
-    
     XCTAssertEqualObjects(updateState, @0);
 
     [self clearMocks];
 }
 
 - (void)testGetUpdateStateWithNoStoredVersionAndDatesUnder60SecondsApart {
+    [self stubNilValuesForStoredAndCurrentVersions];
     NSDate *now = [NSDate date];
     NSDate *lessThan24HoursFromNow = [now dateByAddingTimeInterval:59];
     [self stubCreationDate:now modificationDate:lessThan24HoursFromNow];
-    [self stubNilValuesForStoredAndCurrentVersions];
-    
+
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     XCTAssertEqualObjects(updateState, @0);
 
@@ -50,11 +51,11 @@
 }
 
 - (void)testGetUpdateStateWithNoStoredVersionAndDatesMoreThan60SecondsApart {
+    [self stubNilValuesForStoredAndCurrentVersions];
     NSDate *now = [NSDate date];
     NSDate *moreThan24HoursFromNow = [now dateByAddingTimeInterval:86401];
     [self stubCreationDate:now modificationDate:moreThan24HoursFromNow];
-    [self stubNilValuesForStoredAndCurrentVersions];
-    
+
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     XCTAssertEqualObjects(updateState, @2);
 
@@ -62,10 +63,10 @@
 }
 
 - (void)testGetUpdateStateWithNoStoredVersionAndNilCreationDate {
+    [self stubNilValuesForStoredAndCurrentVersions];
     NSDate *now = [NSDate date];
     [self stubCreationDate:nil modificationDate:now];
-    [self stubNilValuesForStoredAndCurrentVersions];
-    
+
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     XCTAssertEqualObjects(updateState, @0);
 
@@ -73,10 +74,10 @@
 }
 
 - (void)testGetUpdateStateWithNoStoredVersionAndNilUpdateDate {
+    [self stubNilValuesForStoredAndCurrentVersions];
     NSDate *now = [NSDate date];
     [self stubCreationDate:now modificationDate:nil];
-    [self stubNilValuesForStoredAndCurrentVersions];
-    
+
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     XCTAssertEqualObjects(updateState, @0);
 
@@ -144,6 +145,7 @@
 }
 
 - (void)clearMocks {
+    [[BNCPreferenceHelper preferenceHelper] save];
     [self.fileManagerMock stopMocking];
     [self.docDirAttributesMock stopMocking];
     [self.bundleAttributesMock stopMocking];
@@ -151,7 +153,6 @@
 
 - (void)stubNilValuesForStoredAndCurrentVersions {
     [BNCPreferenceHelper preferenceHelper].appVersion = nil;
-
     id bundleMock = OCMClassMock([NSBundle class]);
     [[[bundleMock stub] andReturn:nil] mainBundle];
 }

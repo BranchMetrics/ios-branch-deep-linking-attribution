@@ -8,6 +8,7 @@
 
 
 #import <XCTest/XCTest.h>
+#import "BranchTest.h"
 #import "BNCServerInterface.h"
 #import "BNCPreferenceHelper.h"
 #import <OCMock/OCMock.h>
@@ -16,14 +17,6 @@
 
 
 typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
-
-static inline dispatch_time_t BNCDispatchTimeFromSeconds(NSTimeInterval seconds)	{
-	return dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC);
-}
-
-static inline void BNCAfterSecondsPerformBlock(NSTimeInterval seconds, dispatch_block_t block) {
-	dispatch_after(BNCDispatchTimeFromSeconds(seconds), dispatch_get_main_queue(), block);
-}
 
 
 @interface BNCServerInterfaceTests : XCTestCase

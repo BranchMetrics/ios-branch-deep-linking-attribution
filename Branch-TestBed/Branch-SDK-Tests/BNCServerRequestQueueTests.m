@@ -146,22 +146,24 @@
     BranchCloseRequest *closeRequest = [[BranchCloseRequest alloc] init];
     
     [requestQueue enqueue:closeRequest];
-    
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
+
     id archiverMock = OCMClassMock([NSKeyedArchiver class]);
     [[archiverMock reject] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
     [[[archiverMock expect]
         andReturn:[NSData data]]
-        archivedDataWithRootObject:
-            [OCMArg checkWithBlock:^BOOL(NSArray *reqs) { return [reqs count] == 0; }]];
+            archivedDataWithRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) {
+                if ([reqs isKindOfClass:[NSArray class]]) {
+                    XCTAssert(reqs.count == 0);
+                    BNCAfterSecondsPerformBlock(0.01, ^{ [self safelyFulfillExpectation:expectation]; });
+                    return YES;
+                }
+                return NO;
+            }]];
     [requestQueue persistImmediately];
     
-    // Wait for operation to occur
-    XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
-    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, ((double)NSEC_PER_SEC) * 0.10);
-    dispatch_after(time, dispatch_get_main_queue(), ^{
-        [self safelyFulfillExpectation:expectation];
-    });
-    
+    // Wait for operation to occur    
     [self awaitExpectations];
     [archiverMock verify];
     [archiverMock stopMocking];
@@ -169,23 +171,24 @@
 
 - (void)testDebugRequestsArentPersisted {
     BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
+
     id archiverMock = OCMClassMock([NSKeyedArchiver class]);
     [[archiverMock reject] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
     [[[archiverMock expect]
         andReturn:[NSData data]]
-        archivedDataWithRootObject:
-        [OCMArg checkWithBlock:^BOOL(NSArray *reqs) { return [reqs count] == 0; }]];
-
+            archivedDataWithRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) {
+                if ([reqs isKindOfClass:[NSArray class]]) {
+                    XCTAssert(reqs.count == 0);
+                    BNCAfterSecondsPerformBlock(0.01, ^{ [self safelyFulfillExpectation:expectation]; });
+                    return YES;
+                }
+                return NO;
+            }]];
     [requestQueue persistImmediately];
-    
-    // Wait for operation to occur
-    XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
-    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, ((double)NSEC_PER_SEC) * 0.10);
-    dispatch_after(time, dispatch_get_main_queue(), ^{
-        [self safelyFulfillExpectation:expectation];
-    });
-    
+
+    // Wait for operation to occur    
     [self awaitExpectations];
     [archiverMock verify];
     [archiverMock stopMocking];
