@@ -38,8 +38,12 @@
 
 - (void)setUp {
     [super setUp];
-    
     [self resetExpectations];
+}
+
+- (void) testFailure {
+    // Un-comment to test a failure case:
+    // XCTAssert(NO, @"Test failure!");
 }
 
 - (void)resetExpectations {
@@ -59,10 +63,15 @@
 }
 
 - (id)stringMatchingPattern:(NSString *)pattern {
-    NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:nil];
+    NSRegularExpression *regex =
+        [[NSRegularExpression alloc]
+            initWithPattern:pattern
+            options:NSRegularExpressionCaseInsensitive
+            error:nil];
 
     return [OCMArg checkWithBlock:^BOOL(NSString *param) {
-        return [regex numberOfMatchesInString:param options:kNilOptions range:NSMakeRange(0, param.length)] > 0;
+        return [regex numberOfMatchesInString:param
+            options:kNilOptions range:NSMakeRange(0, param.length)] > 0;
     }];
 }
 

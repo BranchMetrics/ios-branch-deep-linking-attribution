@@ -44,7 +44,6 @@
     [self stubNilValuesForStoredAndCurrentVersions];
     
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
-    
     XCTAssertEqualObjects(updateState, @0);
 
     [self clearMocks];
@@ -57,7 +56,6 @@
     [self stubNilValuesForStoredAndCurrentVersions];
     
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
-    
     XCTAssertEqualObjects(updateState, @2);
 
     [self clearMocks];
@@ -69,7 +67,6 @@
     [self stubNilValuesForStoredAndCurrentVersions];
     
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
-    
     XCTAssertEqualObjects(updateState, @0);
 
     [self clearMocks];
@@ -81,7 +78,6 @@
     [self stubNilValuesForStoredAndCurrentVersions];
     
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
-    
     XCTAssertEqualObjects(updateState, @0);
 
     [self clearMocks];
@@ -96,7 +92,6 @@
     [[[bundleMock stub] andReturn:@{ @"CFBundleShortVersionString": version }] infoDictionary];
 
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
-    
     XCTAssertEqualObjects(updateState, @1);
 
     [self clearMocks];
@@ -112,7 +107,6 @@
     [[[bundleMock stub] andReturn:@{ @"CFBundleShortVersionString": currentVersion }] infoDictionary];
 
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
-    
     XCTAssertEqualObjects(updateState, @2);
     
     [self clearMocks];

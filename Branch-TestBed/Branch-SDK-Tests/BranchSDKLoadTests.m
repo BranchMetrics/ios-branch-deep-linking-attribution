@@ -117,10 +117,5 @@
     NSLog(@"Completed %d.", completedCount);
 }
 
-- (void) testFailure {
-    // Un-comment to test a failure case:
-    // XCTAssert(NO, @"Test failure!");
-}
-
 @end
 
