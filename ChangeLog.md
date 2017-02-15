@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.12.29
+  * > Beta Release <
+  * The browser user agent string is now cached for faster SDK startup.
+
 - v0.12.28
   * > Beta Release <
   * Added the `getLatestReferringParamsSynchronous` method AIS-8 (#536).
