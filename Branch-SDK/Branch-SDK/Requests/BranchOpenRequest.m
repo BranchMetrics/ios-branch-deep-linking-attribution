@@ -208,7 +208,7 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 + (void) setWaitNeededForOpenResponseLock {
     @synchronized (self) {
         if (!openRequestWaitQueueIsSuspended) {
-            NSLog(@"Suspend openRequestWaitQueue.");
+            //NSLog(@"Suspend openRequestWaitQueue.");
             openRequestWaitQueueIsSuspended = YES;
             dispatch_suspend(openRequestWaitQueue);
         }
@@ -216,17 +216,17 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 }
 
 + (void) waitForOpenResponseLock {
-    NSLog(@"Wait for openRequestWaitQueue.");
+    //NSLog(@"Wait for openRequestWaitQueue.");
     [BNCDeviceInfo userAgentString];    //  Make sure we do this lock first to prevent a deadlock.
     dispatch_sync(openRequestWaitQueue, ^ {
-        NSLog(@"Finished waitForOpenResponseLock");
+        //NSLog(@"Finished waitForOpenResponseLock");
     });
 }
 
 + (void) releaseOpenResponseLock {
     @synchronized (self) {
         if (openRequestWaitQueueIsSuspended) {
-            NSLog(@"Resume openRequestWaitQueue.");
+            //NSLog(@"Resume openRequestWaitQueue.");
             openRequestWaitQueueIsSuspended = NO;
             dispatch_resume(openRequestWaitQueue);
         }
