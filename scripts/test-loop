@@ -7,12 +7,12 @@ set -euo pipefail
 
 scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 scriptfile="${scriptfile}"/$(basename "$0")
-cd $(dirname "$scriptfile")
+cd $(dirname "$scriptfile")/..
 
 
 while true
 do
     ./scripts/test-unit-tests
-    ./scripts/test-unit-tests-xcode7
+    # ./scripts/test-unit-tests-xcode7
 done
 

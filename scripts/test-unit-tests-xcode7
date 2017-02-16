@@ -10,6 +10,8 @@ scriptfile="${scriptfile}"/$(basename "$0")
 cd $(dirname "$scriptfile")/../Branch-TestBed
 pwd
 
+latest=9.3
+
 if [[ ${CLICOLOR:-0} == 1 && -t 1 ]]; then
     textBold="\e[1m"
     textBlue="\e[94m"
@@ -36,7 +38,7 @@ function testSimulatorVersion() {
         -workspace Branch-TestBed.xcworkspace \
         -scheme Branch-TestBed \
         -destination name="${name}",OS="${version}" \
-            clean test -quiet
+            clean test
 }
 
 stressTest=0
@@ -49,8 +51,8 @@ function testSimulatorStress() {
     xcodebuild \
         -workspace Branch-TestBed.xcworkspace \
         -scheme Branch-TestBed \
-        -destination name="iPhone 7",OS=latest \
-            test -quiet
+        -destination name="iPhone 6s",OS=$latest \
+            test
 }
 
 function analyzeBuild() {
@@ -58,23 +60,28 @@ function analyzeBuild() {
     xcodebuild \
         -workspace Branch-TestBed.xcworkspace \
         -scheme Branch-TestBed \
-        -destination name="iPhone 7",OS=latest \
-            clean analyze -quiet
+        -destination name="iPhone 6s",OS=$latest \
+            clean analyze
 }
 
-xcode-switch 7
+
+xcodeversion=$(xcodebuild -version)
+if [[ ! "$xcodeversion" =~ "Xcode 7" ]]; then
+    echo "Requires Xcode 7! Use xcode-select to switch versions of Xcode." >&2
+    exit 1
+fi
+
 
 analyzeBuild
 for i in {1..10}
 do
     testSimulatorStress
 done
-testSimulatorVersion "iPhone 7 Plus" latest
-testSimulatorVersion "iPhone SE" latest
-testSimulatorVersion "iPhone 5"  9.3
-testSimulatorVersion "iPhone 4s" 8.4
-testSimulatorVersion "iPhone 4s" 8.4
+testSimulatorVersion "iPhone 6s Plus" $latest
+testSimulatorVersion "iPhone 5s"     9.3
+testSimulatorVersion "iPad 2"        9.1
+testSimulatorVersion "iPhone 4s"     8.4
+# The iOS 7.1 Simulator isn't available after Mac OS 10.10.5
+# testSimulatorVersion "iPhone 4s"     7.1
 
-xcode-switch 8
 printf "${textBlue}All tests completed successfully.${textNormal}\n"
-
