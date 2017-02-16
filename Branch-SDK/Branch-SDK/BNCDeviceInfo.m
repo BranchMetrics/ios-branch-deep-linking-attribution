@@ -124,7 +124,7 @@ static BNCDeviceInfo *bncDeviceInfo;
             BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
             preferences.browserUserAgentString = browserUserAgentString;
             preferences.lastSystemBuildVersion = self.systemBuildVersion;
-			NSLog(@"[Branch] userAgentString: '%@'.", browserUserAgentString);
+			//NSLog(@"[Branch] userAgentString: '%@'.", browserUserAgentString);
 		}
 	};
 
@@ -153,23 +153,27 @@ static BNCDeviceInfo *bncDeviceInfo;
 
 	//	Wait and yield to prevent deadlock:
 
-	int retries = 5;
-	int64_t timeoutDelta = (dispatch_time_t)((long double)NSEC_PER_SEC * (long double)0.200);
+	int retries = 10;
+	int64_t timeoutDelta = (dispatch_time_t)((long double)NSEC_PER_SEC * (long double)0.100);
 	while (!browserUserAgentString && retries > 0) {
 
         dispatch_block_t agentBlock = dispatch_block_create_with_qos_class(
             DISPATCH_BLOCK_DETACHED | DISPATCH_BLOCK_ENFORCE_QOS_CLASS,
             QOS_CLASS_USER_INTERACTIVE,
             0,  ^ {
-                NSLog(@"Will userAgent.");
+                //NSLog(@"Will userAgent.");
                 setBrowserUserAgent();
-                NSLog(@"Did  userAgent.");
+                //NSLog(@"Did  userAgent.");
             });
         dispatch_async(dispatch_get_main_queue(), agentBlock);
 
 		dispatch_time_t timeoutTime = dispatch_time(DISPATCH_TIME_NOW, timeoutDelta);
-		long result = dispatch_block_wait(agentBlock, timeoutTime);
-		NSLog(@"Result: %ld.", result);
+        #if defined(BNCTesting)
+        long result = dispatch_block_wait(agentBlock, timeoutTime);
+		NSLog(@"Wait result: %ld.", result);
+        #else
+        dispatch_block_wait(agentBlock, timeoutTime);
+        #endif
 		retries--;
 	}
 
