@@ -176,7 +176,6 @@ static BNCDeviceInfo *bncDeviceInfo;
         #endif
 		retries--;
 	}
-
 	return browserUserAgentString;
 }
 
