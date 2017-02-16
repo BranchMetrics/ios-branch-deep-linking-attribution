@@ -86,7 +86,6 @@ void ForceCategoriesToLoad() {
 
 @property (strong, nonatomic) BNCServerInterface *bServerInterface;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
-@property (strong, nonatomic) NSTimer *sessionTimer;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
 @property (copy,   nonatomic) callbackWithParams sessionInitWithParamsCallback;
 @property (copy,   nonatomic) callbackWithBranchUniversalObject sessionInitWithBranchUniversalObjectCallback;
@@ -180,7 +179,9 @@ void ForceCategoriesToLoad() {
         _deepLinkControllers = [[NSMutableDictionary alloc] init];
         _whiteListedSchemeList = [[NSMutableArray alloc] init];
         _useCookieBasedMatching = YES;
-        
+
+        [BranchOpenRequest setWaitNeededForOpenResponseLock];
+
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
         [notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
@@ -856,6 +857,13 @@ void ForceCategoriesToLoad() {
     return origSessionParams;
 }
 
+- (NSDictionary*) getLatestReferringParamsSynchronous {
+    [BranchOpenRequest waitForOpenResponseLock];
+    NSDictionary *result = [self getLatestReferringParams];
+    [BranchOpenRequest releaseOpenResponseLock];
+    return result;
+}
+
 - (BranchUniversalObject *)getLatestReferringBranchUniversalObject {
     NSDictionary *params = [self getLatestReferringParams];
     if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {
@@ -1241,16 +1249,15 @@ void ForceCategoriesToLoad() {
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    [self clearTimer];
     if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:YES];
     }
 }
 
 - (void)applicationWillResignActive {
-    [self clearTimer];
-    self.sessionTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(callClose) userInfo:nil repeats:NO];
+    [self callClose];
     [self.requestQueue persistImmediately];
+    [BranchOpenRequest setWaitNeededForOpenResponseLock];
 }
 
 - (void)callClose {
@@ -1271,9 +1278,6 @@ void ForceCategoriesToLoad() {
     }
 }
 
-- (void)clearTimer {
-    [self.sessionTimer invalidate];
-}
 
 #pragma mark - Queue management
 
@@ -1345,10 +1349,6 @@ void ForceCategoriesToLoad() {
                 return;
             }
 
-            if (![req isKindOfClass:[BranchCloseRequest class]]) {
-                [self clearTimer];
-            }
-
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
             dispatch_async(queue, ^ {
                 [req makeRequest:self.bServerInterface key:self.branchKey callback:callback];
@@ -1362,6 +1362,7 @@ void ForceCategoriesToLoad() {
 
 
 #pragma mark - Session Initialization
+
 
 - (void)initSessionIfNeededAndNotInProgress {
     if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen]) {
@@ -1396,38 +1397,38 @@ void ForceCategoriesToLoad() {
         [self.preferenceHelper logWarning:@"You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment."];
     }
 
-    if (!self.preferenceHelper.identityID) {
-        [self registerInstallOrOpen:[BranchInstallRequest class]];
-    }
-    else {
-        [self registerInstallOrOpen:[BranchOpenRequest class]];
-    }
-}
+	Class clazz = [BranchInstallRequest class];
+	if (self.preferenceHelper.identityID) {
+		clazz = [BranchOpenRequest class];
+	}
 
-- (void)registerInstallOrOpen:(Class)clazz {
     callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
-        if (error) {
-            [self handleInitFailure:error];
-        }
-        else {
-            [self handleInitSuccess];
-        }
+		dispatch_async(dispatch_get_main_queue(), ^ {
+			if (error) {
+				[self handleInitFailure:error];
+			} else {
+				[self handleInitSuccess];
+			}
+		});
     };
     
     if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.useCookieBasedMatching) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
     }
 
-    if ([self.requestQueue removeInstallOrOpen])
-        self.networkCount = 0;
-    BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
-    [self insertRequestAtFront:req];
-    [self processNextQueueItem];
+	@synchronized (self) {
+		if ([self.requestQueue removeInstallOrOpen])
+			self.networkCount = 0;
+		[BranchOpenRequest setWaitNeededForOpenResponseLock];
+		BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
+		[self insertRequestAtFront:req];
+		[self processNextQueueItem];
+	}
 }
 
 - (void)handleInitSuccess {
+
     self.isInitialized = YES;
-    
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
     if (self.shouldCallSessionInitCallback) {
         if (self.sessionInitWithParamsCallback) {
@@ -1495,7 +1496,7 @@ void ForceCategoriesToLoad() {
     [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
 }
 
-#pragma mark FABKit methods
+#pragma mark - FABKit methods
 
 + (NSString *)bundleIdentifier {
     return @"io.branch.sdk.ios";

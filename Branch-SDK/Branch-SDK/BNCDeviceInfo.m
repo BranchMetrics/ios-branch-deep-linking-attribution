@@ -9,6 +9,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <sys/sysctl.h>
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
@@ -83,27 +84,96 @@ static BNCDeviceInfo *bncDeviceInfo;
 
     }
 
+    self.browserUserAgent = [self.class userAgentString];
+    return self;
+}
+
++ (NSString*) systemBuildVersion {
+    int mib[2] = { CTL_KERN, KERN_OSVERSION };
+    u_int namelen = sizeof(mib) / sizeof(mib[0]);
+
+    //	Get the size for the buffer --
+
+    size_t bufferSize = 0;
+    sysctl(mib, namelen, NULL, &bufferSize, NULL, 0);
+	if (bufferSize <= 0) return nil;
+
+    u_char buildBuffer[bufferSize];
+    int result = sysctl(mib, namelen, buildBuffer, &bufferSize, NULL, 0);
+
+	NSString *version = nil;
+    if (result >= 0) {
+        version = [[NSString alloc]
+            initWithBytes:buildBuffer
+            length:bufferSize-1
+            encoding:NSUTF8StringEncoding];
+    }
+    return version;
+}
+
+
++ (NSString*) userAgentString {
+
     static NSString* browserUserAgentString = nil;
+	void (^setBrowserUserAgent)() = ^() {
+		if (!browserUserAgentString) {
+			browserUserAgentString =
+				[[[UIWebView alloc]
+				  initWithFrame:CGRectZero]
+					stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+            BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+            preferences.browserUserAgentString = browserUserAgentString;
+            preferences.lastSystemBuildVersion = self.systemBuildVersion;
+			NSLog(@"[Branch] userAgentString: '%@'.", browserUserAgentString);
+		}
+	};
 
-    void (^setUpBrowserUserAgent)() = ^() {
-        browserUserAgentString =
-            [[[UIWebView alloc]
-              initWithFrame:CGRectZero]
-                stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
-        self.browserUserAgent = browserUserAgentString;
-    };
+	//	We only get the string once per app run:
 
-    @synchronized (self.class) {
-        if (browserUserAgentString) {
-            self.browserUserAgent = browserUserAgentString;
-        } else if (NSThread.isMainThread) {
-            setUpBrowserUserAgent();
-        } else {
-            dispatch_sync(dispatch_get_main_queue(), setUpBrowserUserAgent);
-        }
+	if (browserUserAgentString)
+		return browserUserAgentString;
+
+    //  Did we cache it?
+
+    BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+    if (preferences.browserUserAgentString &&
+        preferences.lastSystemBuildVersion &&
+        [preferences.lastSystemBuildVersion isEqualToString:self.systemBuildVersion]) {
+        browserUserAgentString = [preferences.browserUserAgentString copy];
+        return browserUserAgentString;
     }
 
-    return self;
+	//	Make sure this executes on the main thread.
+	//	Uses an implied lock through dispatch_queues:  This can deadlock if mis-used!
+
+	if (NSThread.isMainThread) {
+		setBrowserUserAgent();
+		return browserUserAgentString;
+	}
+
+	//	Wait and yield to prevent deadlock:
+
+	int retries = 5;
+	int64_t timeoutDelta = (dispatch_time_t)((long double)NSEC_PER_SEC * (long double)0.200);
+	while (!browserUserAgentString && retries > 0) {
+
+        dispatch_block_t agentBlock = dispatch_block_create_with_qos_class(
+            DISPATCH_BLOCK_DETACHED | DISPATCH_BLOCK_ENFORCE_QOS_CLASS,
+            QOS_CLASS_USER_INTERACTIVE,
+            0,  ^ {
+                NSLog(@"Will userAgent.");
+                setBrowserUserAgent();
+                NSLog(@"Did  userAgent.");
+            });
+        dispatch_async(dispatch_get_main_queue(), agentBlock);
+
+		dispatch_time_t timeoutTime = dispatch_time(DISPATCH_TIME_NOW, timeoutDelta);
+		long result = dispatch_block_wait(agentBlock, timeoutTime);
+		NSLog(@"Result: %ld.", result);
+		retries--;
+	}
+
+	return browserUserAgentString;
 }
 
 @end

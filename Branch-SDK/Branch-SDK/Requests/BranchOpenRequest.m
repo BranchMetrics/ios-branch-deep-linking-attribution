@@ -9,6 +9,7 @@
 #import "BranchOpenRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
+#import "BNCDeviceInfo.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
 #import "BranchViewHandler.h"
@@ -83,6 +84,7 @@
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     if (error) {
+        [BranchOpenRequest releaseOpenResponseLock];    
         if (self.callback) {
             self.callback(NO, error);
         }
@@ -140,6 +142,12 @@
     else if (preferenceHelper.externalIntentURI) {
         referredUrl = preferenceHelper.externalIntentURI;
     }
+    else {
+        NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
+        if (sessionDataDict[BRANCH_RESPONSE_KEY_SESSION_DATA][BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK]) {
+            referredUrl = sessionDataDict[BRANCH_RESPONSE_KEY_SESSION_DATA][BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
+        }
+    }
     BranchContentDiscoveryManifest *cdManifest = [BranchContentDiscoveryManifest getInstance];
     [cdManifest onBranchInitialised:data withUrl:referredUrl];
     if ([cdManifest isCDEnabled]) {
@@ -157,7 +165,9 @@
     if (data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]) {
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
     }
-    
+
+    [BranchOpenRequest releaseOpenResponseLock];
+
     // Check if there is any Branch View to show
     NSObject *branchViewDict = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
     if ([branchViewDict isKindOfClass:[NSDictionary class]]) {
@@ -172,6 +182,55 @@
 
 - (NSString *)getActionName {
     return @"open";
+}
+
+
+#pragma - Open Response Lock Handling
+
+
+//	Instead of semaphores, the lock is handled by scheduled dispatch_queues.
+//	This is the 'new' way to lock and is handled better optimized for iOS.
+//	Also, since implied lock is handled by a scheduler and not a hard semaphore it's less error
+//	prone.
+
+
+static dispatch_queue_t openRequestWaitQueue = NULL;
+static BOOL openRequestWaitQueueIsSuspended = NO;
+
+
++ (void) initialize {
+    if (self != [BranchOpenRequest self])
+        return;
+    openRequestWaitQueue =
+        dispatch_queue_create("io.branch.sdk.openqueue", DISPATCH_QUEUE_CONCURRENT);
+}
+
++ (void) setWaitNeededForOpenResponseLock {
+    @synchronized (self) {
+        if (!openRequestWaitQueueIsSuspended) {
+            NSLog(@"Suspend openRequestWaitQueue.");
+            openRequestWaitQueueIsSuspended = YES;
+            dispatch_suspend(openRequestWaitQueue);
+        }
+    }
+}
+
++ (void) waitForOpenResponseLock {
+    NSLog(@"Wait for openRequestWaitQueue.");
+    [BNCDeviceInfo userAgentString];    //  Make sure we do this lock first to prevent a deadlock.
+    dispatch_sync(openRequestWaitQueue, ^ {
+        NSLog(@"Finished waitForOpenResponseLock");
+    });
+}
+
++ (void) releaseOpenResponseLock {
+    @synchronized (self) {
+        if (openRequestWaitQueueIsSuspended) {
+            NSLog(@"Resume openRequestWaitQueue.");
+            openRequestWaitQueueIsSuspended = NO;
+            dispatch_resume(openRequestWaitQueue);
+        }
+    }
 }
 
 @end

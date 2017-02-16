@@ -306,13 +306,13 @@ class ViewController: UITableViewController {
     }
     
     @IBAction func sendEventButtonTouchUpInside(_ sender: AnyObject) {
-        var customEventName = "view"
+        var customEventName = "button"
         let branch = Branch.getInstance()
         
         if customEventNameTextField.text != "" {
             customEventName = customEventNameTextField.text!
         }
-        
+
         if customEventMetadata.count == 0 {
             branch?.userCompletedAction(customEventName)
         } else {

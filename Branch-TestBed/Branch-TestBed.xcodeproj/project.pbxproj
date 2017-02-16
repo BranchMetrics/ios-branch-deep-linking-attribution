@@ -543,8 +543,8 @@
 		7D0C97081D875177004E14B1 /* BranchContentDiscovery */ = {
 			isa = PBXGroup;
 			children = (
-				7D0C97181D8753C9004E14B1 /* BranchContentDiscoverer.m */,
 				7D0C971A1D8753EA004E14B1 /* BranchContentDiscoverer.h */,
+				7D0C97181D8753C9004E14B1 /* BranchContentDiscoverer.m */,
 				7D0C971B1D875445004E14B1 /* BranchContentDiscoveryManifest.h */,
 				7D0C971C1D875465004E14B1 /* BranchContentDiscoveryManifest.m */,
 				7D0C971E1D875487004E14B1 /* BranchContentPathProperties.h */,
@@ -556,18 +556,18 @@
 		7E6B3B521AA42D0E005F45BF /* Branch-SDK-Tests */ = {
 			isa = PBXGroup;
 			children = (
+				46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */,
+				46DBB42B1B330CF300642FC8 /* BNCLinkDataTests.m */,
+				46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */,
+				464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */,
+				46DBB42C1B330CF300642FC8 /* BNCServerRequestQueueTests.m */,
+				46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */,
+				7E6B3B551AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m */,
+				4665AF1D1B28923900184037 /* Branch_SDK_Load_Tests.m */,
+				461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */,
 				4665AF1F1B2892CF00184037 /* BranchRequestsTests */,
 				467309471AF2C4FB005B8848 /* BranchTest.h */,
-				4665AF1D1B28923900184037 /* Branch_SDK_Load_Tests.m */,
 				467309481AF2C4FB005B8848 /* BranchTest.m */,
-				7E6B3B551AA42D0E005F45BF /* Branch_SDK_Functionality_Tests.m */,
-				464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */,
-				46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */,
-				46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */,
-				461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */,
-				46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */,
-				46DBB42B1B330CF300642FC8 /* BNCLinkDataTests.m */,
-				46DBB42C1B330CF300642FC8 /* BNCServerRequestQueueTests.m */,
 				7E6B3B531AA42D0E005F45BF /* Supporting Files */,
 			);
 			path = "Branch-SDK-Tests";
@@ -1035,7 +1035,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
@@ -1073,7 +1073,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
