@@ -142,6 +142,12 @@
     else if (preferenceHelper.externalIntentURI) {
         referredUrl = preferenceHelper.externalIntentURI;
     }
+    else {
+        NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
+        if (sessionDataDict[BRANCH_RESPONSE_KEY_SESSION_DATA][BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK]) {
+            referredUrl = sessionDataDict[BRANCH_RESPONSE_KEY_SESSION_DATA][BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
+        }
+    }
     BranchContentDiscoveryManifest *cdManifest = [BranchContentDiscoveryManifest getInstance];
     [cdManifest onBranchInitialised:data withUrl:referredUrl];
     if ([cdManifest isCDEnabled]) {
