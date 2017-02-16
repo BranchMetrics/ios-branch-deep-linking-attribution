@@ -43,7 +43,9 @@
 
 - (void) testFailure {
     // Un-comment to test a failure case:
-    // XCTAssert(NO, @"Test failure!");
+    // XCTAssert(NO, @"Testing a test failure!");
+    NSString * bundleID = [NSBundle mainBundle].bundleIdentifier;
+    NSLog(@"The test bundleID is '%@'.", bundleID);
 }
 
 - (void)resetExpectations {
