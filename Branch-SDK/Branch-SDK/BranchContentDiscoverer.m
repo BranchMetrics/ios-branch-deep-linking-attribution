@@ -152,7 +152,13 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
         NSArray *subViews = [rootView subviews];
         NSInteger childCount = 0;
         for (UIView *view in subViews) {
-            NSString *subViewId = [viewId stringByAppendingFormat:@"-%ld", (long)childCount];
+            NSString *format;
+            if (viewId.length > 0 ) {
+                format = @"-%ld";
+            } else {
+                format = @"%ld";
+            }
+            NSString *subViewId = [viewId stringByAppendingFormat:format, (long)childCount];
             childCount++;
             [self discoverViewContents:view contentData:contentDataArray contentKeys:contentKeysArray clearText:isClearText ID:subViewId];
         }
