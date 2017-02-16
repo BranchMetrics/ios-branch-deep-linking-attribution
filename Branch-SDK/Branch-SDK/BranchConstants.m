@@ -87,6 +87,7 @@ NSString * const BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID = @"device_fingerprin
 NSString * const BRANCH_RESPONSE_KEY_SESSION_DATA = @"data";
 NSString * const BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
 NSString * const BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA = @"branch_view_data";
+NSString * const BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK = @"~referring_link";
 
 NSString * const BRANCH_LINK_DATA_KEY_OG_TITLE = @"$og_title";
 NSString * const BRANCH_LINK_DATA_KEY_OG_DESCRIPTION = @"$og_description";
