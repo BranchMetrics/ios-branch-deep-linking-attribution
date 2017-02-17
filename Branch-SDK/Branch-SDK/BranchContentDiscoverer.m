@@ -125,20 +125,27 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
 }
 
 
-- (void)discoverViewContents:(UIView *)rootView contentData:(NSMutableArray *)contentDataArray contentKeys:(NSMutableArray *)contentKeysArray clearText:(BOOL)isClearText ID:(NSString *)viewId {
+- (void)discoverViewContents:(UIView *)rootView
+                 contentData:(NSMutableArray *)contentDataArray
+                 contentKeys:(NSMutableArray *)contentKeysArray
+                   clearText:(BOOL)isClearText
+                          ID:(NSString *)viewId {
     if ([rootView isKindOfClass:UITableView.class] || [rootView isKindOfClass:UICollectionView.class]) {
         NSArray *cells = [rootView performSelector:@selector(visibleCells) withObject:nil];
         NSInteger cellCnt = -1;
         for (UIView *cell in cells) {
             cellCnt++;
-            NSString *format;
-            if (viewId.length > 0 ) {
-                format = @"-%d";
+            NSString *cellViewId = nil;
+            if (viewId.length > 0) {
+                cellViewId = [viewId stringByAppendingFormat:@"-%ld", (long) cellCnt];
             } else {
-                format = @"%d";
+                cellViewId = [NSString stringWithFormat:@"%ld", (long) cellCnt];
             }
-            NSString *cellViewId = [viewId stringByAppendingFormat:format, cellCnt];
-            [self discoverViewContents:cell contentData:contentDataArray contentKeys:contentKeysArray clearText:isClearText ID:cellViewId];
+            [self discoverViewContents:cell
+                contentData:contentDataArray
+                contentKeys:contentKeysArray
+                clearText:isClearText
+                ID:cellViewId];
         }
     } else {
         NSString *contentData = [self getContentText:rootView];
@@ -152,9 +159,18 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
         NSArray *subViews = [rootView subviews];
         NSInteger childCount = 0;
         for (UIView *view in subViews) {
-            NSString *subViewId = [viewId stringByAppendingFormat:@"-%ld", (long)childCount];
+            NSString *subViewId = nil;
+            if (viewId.length > 0) {
+                subViewId = [viewId stringByAppendingFormat:@"-%ld", (long) childCount];
+            } else {
+                subViewId = [NSString stringWithFormat:@"%ld", (long) childCount];
+            }
             childCount++;
-            [self discoverViewContents:view contentData:contentDataArray contentKeys:contentKeysArray clearText:isClearText ID:subViewId];
+            [self discoverViewContents:view
+                contentData:contentDataArray
+                contentKeys:contentKeysArray
+                clearText:isClearText
+                ID:subViewId];
         }
     }
 }
