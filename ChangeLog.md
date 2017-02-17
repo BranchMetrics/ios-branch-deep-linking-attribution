@@ -11,7 +11,7 @@ Branch iOS SDK Change Log
 
 - v0.12.29
   * > Beta Release <
-  * The browser user agent string is now cached for faster SDK startup.
+  * The browser user agent string is now cached for faster SDK startup (AIS-197).
 
 - v0.12.28
   * > Beta Release <
