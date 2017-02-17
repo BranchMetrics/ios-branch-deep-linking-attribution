@@ -1,5 +1,14 @@
 Branch iOS SDK Change Log
 
+- v0.12.30
+  * Prevent a crash by making a deep copy of dictionary before merging entries. (#573)
+  * Removed NSLog statements added for debugging. (#572)
+  * Content Discovery Updates (#571)
+    - Adding referred link from response.
+      Adding referred link from response in case available.
+      Support non-app links click with content discovery.
+    - Fixed unnecessary "-" char appended to the CD keys.
+
 - v0.12.29
   * > Beta Release <
   * The browser user agent string is now cached for faster SDK startup.
