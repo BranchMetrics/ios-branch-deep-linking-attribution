@@ -1,6 +1,7 @@
 Branch iOS SDK Change Log
 
 - v0.12.30
+  * Fixed some rare app crashes in BranchOpenRequest due to a race condition.
   * Prevent a crash by making a deep copy of dictionary before merging entries. (#573)
   * Removed NSLog statements added for debugging. (#572)
   * Content Discovery Updates (#571)
@@ -8,6 +9,7 @@ Branch iOS SDK Change Log
       Adding referred link from response in case available.
       Support non-app links click with content discovery.
     - Fixed unnecessary "-" char appended to the CD keys.
+    - Fixed a race condition that caused a rare app crash.
 
 - v0.12.29
   * > Beta Release <
