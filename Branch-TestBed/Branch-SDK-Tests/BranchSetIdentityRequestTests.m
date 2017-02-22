@@ -82,14 +82,16 @@ NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     NSError * const TEST_ERROR = [NSError errorWithDomain:@"foo" code:1 userInfo:nil];
     __block NSInteger callbackCount = 0;
     
-    BranchSetIdentityRequest *request = [[BranchSetIdentityRequest alloc] initWithUserId:IDENTITY_TEST_USER_ID callback:^(NSDictionary *params, NSError *error) {
-        callbackCount++;
-        XCTAssertNil(params);
-        XCTAssertEqual(error, TEST_ERROR);
-    }];
+    BranchSetIdentityRequest *request =
+        [[BranchSetIdentityRequest alloc]
+            initWithUserId:IDENTITY_TEST_USER_ID
+            callback:^(NSDictionary *params, NSError *error) {
+                callbackCount++;
+                XCTAssert(params != nil && params.count == 0);
+                XCTAssertEqual(error, TEST_ERROR);
+            }];
     
     [request processResponse:nil error:TEST_ERROR];
-    
     XCTAssertEqual(callbackCount, 1);
 }
 
@@ -97,12 +99,15 @@ NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
     NSError * const TEST_ERROR = [NSError errorWithDomain:@"foo" code:1 userInfo:nil];
     __block NSInteger callbackCount = 0;
     
-    BranchSetIdentityRequest *request = [[BranchSetIdentityRequest alloc] initWithUserId:IDENTITY_TEST_USER_ID callback:^(NSDictionary *params, NSError *error) {
-        callbackCount++;
-        XCTAssertNil(params);
-        XCTAssertEqual(error, TEST_ERROR);
-    }];
-    
+    BranchSetIdentityRequest *request =
+        [[BranchSetIdentityRequest alloc]
+            initWithUserId:IDENTITY_TEST_USER_ID
+            callback:^(NSDictionary *params, NSError *error) {
+                callbackCount++;
+                XCTAssert(params != nil && params.count == 0);
+                XCTAssertEqual(error, TEST_ERROR);
+            }];
+
     [request processResponse:nil error:TEST_ERROR];
     [request processResponse:nil error:TEST_ERROR];
     
@@ -133,12 +138,15 @@ NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
         BRANCH_RESPONSE_KEY_INSTALL_PARAMS: RESPONSE_INSTALL_PARAMS
     };
     
-    BranchSetIdentityRequest *request = [[BranchSetIdentityRequest alloc] initWithUserId:IDENTITY_TEST_USER_ID callback:^(NSDictionary *params, NSError *error) {
-        callbackCount++;
-        XCTAssertNil(params);
-        XCTAssertEqual(error, TEST_ERROR);
-    }];
-    
+    BranchSetIdentityRequest *request =
+        [[BranchSetIdentityRequest alloc]
+            initWithUserId:IDENTITY_TEST_USER_ID
+            callback:^(NSDictionary *params, NSError *error) {
+                callbackCount++;
+                XCTAssert(params != nil && params.count == 0);
+                XCTAssertEqual(error, TEST_ERROR);
+            }];
+
     [request processResponse:nil error:TEST_ERROR];
     [request processResponse:goodResponse error:nil];
     

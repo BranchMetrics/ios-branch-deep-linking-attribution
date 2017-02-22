@@ -5,6 +5,7 @@
 //  Created by Graham Mueller on 6/12/15.
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
+
 #import "BranchTest.h"
 #import "BranchShortUrlRequest.h"
 #import "BranchConstants.h"
@@ -14,7 +15,6 @@
 #import "BNCEncodingUtils.h"
 
 @interface BranchShortUrlRequestTests : BranchTest
-
 @end
 
 @implementation BranchShortUrlRequestTests
@@ -27,6 +27,7 @@
     NSString * const CHANNEL = @"foo-channel";
     NSString * const FEATURE = @"foo-feature";
     NSString * const STAGE = @"foo-stage";
+    NSString * const CAMPAIGN = @"foo-campaign";
     NSDictionary * const PARAMS = @{};
     BNCLinkData * const LINK_DATA = [[BNCLinkData alloc] init];
     BNCLinkCache * const LINK_CACHE = [[BNCLinkCache alloc] init];
@@ -56,7 +57,21 @@
         BRANCH_REQUEST_KEY_URL_TAGS: TAGS
     };
     
-    BranchShortUrlRequest *request = [[BranchShortUrlRequest alloc] initWithTags:TAGS alias:ALIAS type:LINK_TYPE matchDuration:DURATION channel:CHANNEL feature:FEATURE stage:STAGE params:PARAMS linkData:LINK_DATA linkCache:LINK_CACHE callback:NULL];
+    BranchShortUrlRequest *request =
+        [[BranchShortUrlRequest alloc]
+            initWithTags:TAGS
+            alias:ALIAS
+            type:LINK_TYPE
+            matchDuration:DURATION
+            channel:CHANNEL
+            feature:FEATURE
+            stage:STAGE
+            campaign:CAMPAIGN
+            params:PARAMS
+            linkData:LINK_DATA
+            linkCache:LINK_CACHE
+            callback:NULL];
+
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect] postRequest:expectedParams url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL] key:[OCMArg any] callback:[OCMArg any]];
     
@@ -81,7 +96,21 @@
         BRANCH_REQUEST_KEY_URL_LINK_TYPE: @(LINK_TYPE)
     };
     
-    BranchShortUrlRequest *request = [[BranchShortUrlRequest alloc] initWithTags:nil alias:nil type:LINK_TYPE matchDuration:0 channel:nil feature:nil stage:nil params:nil linkData:LINK_DATA linkCache:LINK_CACHE callback:NULL];
+    BranchShortUrlRequest *request =
+        [[BranchShortUrlRequest alloc]
+            initWithTags:nil
+            alias:nil
+            type:LINK_TYPE
+            matchDuration:0
+            channel:nil
+            feature:nil
+            stage:nil
+            campaign:nil
+            params:nil
+            linkData:LINK_DATA
+            linkCache:LINK_CACHE
+            callback:NULL];
+
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect] postRequest:expectedParams url:[OCMArg any] key:[OCMArg any] callback:[OCMArg any]];
     
@@ -97,7 +126,20 @@
     response.data = REFERRAL_RESPONSE_DATA;
     
     XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Get Referral Code Request Expectation"];
-    BranchShortUrlRequest *request = [[BranchShortUrlRequest alloc] initWithTags:nil alias:nil type:BranchLinkTypeOneTimeUse matchDuration:1 channel:nil feature:nil stage:nil params:nil linkData:nil linkCache:nil callback:^(NSString *url, NSError *error) {
+    BranchShortUrlRequest *request =
+        [[BranchShortUrlRequest alloc]
+            initWithTags:nil
+            alias:nil
+            type:BranchLinkTypeOneTimeUse
+            matchDuration:1
+            channel:nil
+            feature:nil
+            stage:nil
+            campaign:nil
+            params:nil
+            linkData:nil
+            linkCache:nil
+            callback:^(NSString *url, NSError *error) {
         XCTAssertEqualObjects(url, URL);
         XCTAssertNil(error);
         [self safelyFulfillExpectation:requestExpecation];
@@ -121,6 +163,7 @@
     NSString * const CHANNEL = @"foo-channel";
     NSString * const FEATURE = @"foo-feature";
     NSString * const STAGE = @"foo-stage";
+    NSString * const CAMPAIGN = @"foo-campaign";
     NSDictionary * const PARAMS = @{ @"foo-param": @"bar-value" };
     NSData * const PARAMS_DATA = [BNCEncodingUtils encodeDictionaryToJsonData:PARAMS];
     NSString * const ENCODED_PARAMS = [BNCEncodingUtils base64EncodeData:PARAMS_DATA];
@@ -131,7 +174,20 @@
     preferenceHelper.userUrl = USER_URL;
     
     XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Get Referral Code Request Expectation"];
-    BranchShortUrlRequest *request = [[BranchShortUrlRequest alloc] initWithTags:TAGS alias:ALIAS type:LINK_TYPE matchDuration:DURATION channel:CHANNEL feature:FEATURE stage:STAGE params:PARAMS linkData:nil linkCache:nil callback:^(NSString *url, NSError *error) {
+    BranchShortUrlRequest *request =
+        [[BranchShortUrlRequest alloc]
+            initWithTags:TAGS
+            alias:ALIAS
+            type:LINK_TYPE
+            matchDuration:DURATION
+            channel:CHANNEL
+            feature:FEATURE
+            stage:STAGE
+            campaign:CAMPAIGN
+            params:PARAMS
+            linkData:nil
+            linkCache:nil
+            callback:^(NSString *url, NSError *error) {
         XCTAssertEqualObjects(url, EXPECTED_URL);
         XCTAssertNotNil(error);
         [self safelyFulfillExpectation:requestExpecation];
@@ -153,6 +209,7 @@
     NSInteger const DURATION = 1;
     NSString * const CHANNEL = @"foo-channel";
     NSString * const FEATURE = @"foo-feature";
+    NSString * const CAMPAIGN = @"foo-campaign";
     NSString * const STAGE = @"foo-stage";
     NSDictionary * const PARAMS = @{ @"foo-param": @"bar-value" };
     
@@ -160,7 +217,20 @@
     preferenceHelper.userUrl = nil;
     
     XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Get Referral Code Request Expectation"];
-    BranchShortUrlRequest *request = [[BranchShortUrlRequest alloc] initWithTags:TAGS alias:ALIAS type:LINK_TYPE matchDuration:DURATION channel:CHANNEL feature:FEATURE stage:STAGE params:PARAMS linkData:nil linkCache:nil callback:^(NSString *url, NSError *error) {
+    BranchShortUrlRequest *request =
+        [[BranchShortUrlRequest alloc]
+            initWithTags:TAGS
+            alias:ALIAS
+            type:LINK_TYPE
+            matchDuration:DURATION
+            channel:CHANNEL
+            feature:FEATURE
+            stage:STAGE
+            campaign:CAMPAIGN
+            params:PARAMS
+            linkData:nil
+            linkCache:nil
+            callback:^(NSString *url, NSError *error) {
         XCTAssertNil(url);
         XCTAssertNotNil(error);
         [self safelyFulfillExpectation:requestExpecation];
