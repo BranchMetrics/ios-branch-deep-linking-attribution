@@ -41,6 +41,7 @@
 @property (strong, nonatomic) NSDictionary *appleSearchAdDetails;
 @property (strong, nonatomic) NSString *lastSystemBuildVersion;
 @property (strong, nonatomic) NSString *browserUserAgentString;
+@property (strong) NSString *branchAPIURL;
 
 + (BNCPreferenceHelper *)preferenceHelper;
 + (NSURL*) URLForBranchDirectory;
