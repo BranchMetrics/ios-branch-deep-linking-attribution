@@ -51,6 +51,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     NSOperationQueue *_persistPrefsQueue;
     NSString         *_lastSystemBuildVersion;
     NSString         *_browserUserAgentString;
+    NSString         *_branchAPIURL;
 }
 
 @property (strong, nonatomic) NSMutableDictionary *persistenceDict;
@@ -180,8 +181,25 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     }
 }
 
+- (void) setBranchAPIURL:(NSString*)branchAPIURL_ {
+    @synchronized (self) {
+        _branchAPIURL = [branchAPIURL_ copy];
+    }
+}
+
+- (NSString*) branchAPIURL {
+    @synchronized (self) {
+        if (!_branchAPIURL) {
+            _branchAPIURL = [BNC_API_BASE_URL copy];
+        }
+        return _branchAPIURL;
+    }
+}
+
 - (NSString *)getAPIBaseURL {
-    return [NSString stringWithFormat:@"%@/%@/", BNC_API_BASE_URL, BNC_API_VERSION];
+    @synchronized (self) {
+        return [NSString stringWithFormat:@"%@/%@/", self.branchAPIURL, BNC_API_VERSION];
+    }
 }
 
 - (NSString *)getAPIURL:(NSString *) endpoint {
@@ -189,8 +207,9 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 }
 
 - (NSString *)getEndpointFromURL:(NSString *)url {
-    if ([url hasPrefix:BNC_API_BASE_URL]) {
-        NSUInteger index = BNC_API_BASE_URL.length;
+    NSString *APIBase = self.branchAPIURL;
+    if ([url hasPrefix:APIBase]) {
+        NSUInteger index = APIBase.length;
         return [url substringFromIndex:index];
     }
     return @"";
