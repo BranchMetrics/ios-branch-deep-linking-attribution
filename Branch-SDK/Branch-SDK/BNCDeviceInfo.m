@@ -151,6 +151,14 @@ static BNCDeviceInfo *bncDeviceInfo;
 		return browserUserAgentString;
 	}
 
+    //  Different case for iOS 7.0:
+    if ([UIDevice currentDevice].systemVersion.floatValue  < 8.0) {
+        dispatch_sync(dispatch_get_main_queue(), ^ {
+            setBrowserUserAgent();
+        });
+        return browserUserAgentString;
+    }
+
 	//	Wait and yield to prevent deadlock:
 
 	int retries = 10;
@@ -176,7 +184,6 @@ static BNCDeviceInfo *bncDeviceInfo;
         #endif
 		retries--;
 	}
-
 	return browserUserAgentString;
 }
 

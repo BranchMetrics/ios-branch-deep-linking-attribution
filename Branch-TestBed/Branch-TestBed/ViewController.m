@@ -100,13 +100,17 @@ NSString *type = @"some type";
 - (IBAction)setUserIDButtonTouchUpInside:(id)sender {
     Branch *branch = [Branch getInstance];
     [branch setIdentity: user_id2 withCallback:^(NSDictionary *params, NSError *error) {
-        if (!error) {
-            NSLog(@"Branch TestBed: Identity Successfully Set%@", params);
-            [self performSegueWithIdentifier:@"ShowLogOutput" sender:[NSString stringWithFormat:@"Identity set to: %@\n\n%@", user_id2, params.description]];
-        } else {
-            NSLog(@"Branch TestBed: Error setting identity: %@", error);
-            [self showAlert:@"Unable to Set Identity" withDescription:error.localizedDescription];
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (!error) {
+                NSLog(@"Branch TestBed: Identity Successfully Set%@", params);
+                [self performSegueWithIdentifier:@"ShowLogOutput"
+                    sender:[NSString stringWithFormat:@"Identity set to: %@\n\n%@",
+                        user_id2, params.description]];
+            } else {
+                NSLog(@"Branch TestBed: Error setting identity: %@", error);
+                [self showAlert:@"Unable to Set Identity" withDescription:error.localizedDescription];
+            }
+        });
     }];
 }
 
@@ -146,7 +150,7 @@ NSString *type = @"some type";
     NSDictionary *eventDetails = [[NSDictionary alloc] initWithObjects:@[user_id1, [NSNumber numberWithInt:1], [NSNumber numberWithBool:YES], [NSNumber numberWithFloat:3.14159265359], test_key] forKeys:@[@"name",@"integer",@"boolean",@"float",@"test_key"]];
     
     Branch *branch = [Branch getInstance];
-    [branch userCompletedAction:@"buy" withState:eventDetails];
+    [branch userCompletedAction:@"complex_event" withState:eventDetails];
     [self performSegueWithIdentifier:@"ShowLogOutput" sender:[NSString stringWithFormat:@"Custom Event Details:\n\n%@", eventDetails.description]];
     [self refreshRewardPoints];
 }
