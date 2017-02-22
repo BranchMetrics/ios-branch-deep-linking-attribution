@@ -1,0 +1,18 @@
+#!/bin/bash
+set -euo pipefail
+
+# test-loop  -  Loop all the tests forever (until they fail).
+#
+# Edward Smith, February 2017
+
+scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+scriptfile="${scriptfile}"/$(basename "$0")
+cd $(dirname "$scriptfile")/..
+
+
+while true
+do
+    ./scripts/test-unit-tests
+    # ./scripts/test-unit-tests-xcode7
+done
+

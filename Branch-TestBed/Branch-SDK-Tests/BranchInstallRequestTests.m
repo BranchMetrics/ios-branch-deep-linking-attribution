@@ -30,7 +30,6 @@
 - (void)testRequestBody {
     NSString * const HARDWARE_ID = @"foo-hardware-id";
     NSNumber * const AD_TRACKING_SAFE = @YES;
-    NSNumber * const IS_DEBUG = @YES;
     NSString * const BUNDLE_ID = @"foo-bundle-id";
     NSString * const APP_VERSION = @"foo-app-version";
     NSString * const OS = @"foo-os";
@@ -38,7 +37,6 @@
     NSString * const URI_SCHEME = @"foo-uri-scheme";
     NSNumber * const UPDATE_STATE = @1;
     NSString * const LINK_IDENTIFIER = @"foo-link-id";
-    NSString * const CARRIER = @"foo-carrier";
     NSString * const BRAND = @"foo-brand";
     NSString * const MODEL = @"foo-model";
     NSNumber * const SCREEN_WIDTH = @1;
@@ -46,13 +44,16 @@
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.identityID = nil;
-    preferenceHelper.isReferrable = YES;
-    preferenceHelper.explicitlyRequestedReferrable = YES;
     preferenceHelper.isDebug = YES;
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
     
     id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
-    [[[[systemObserverMock stub] ignoringNonObjectArgs] andReturn:HARDWARE_ID] getUniqueHardwareId:0 isDebug:YES andType:nil];
+    [[[[systemObserverMock stub]
+        ignoringNonObjectArgs]
+        andReturn:HARDWARE_ID]
+            getUniqueHardwareId:0
+            isDebug:YES
+            andType:nil];
     [[[systemObserverMock stub] andReturnValue:AD_TRACKING_SAFE] adTrackingSafe];
     [[[systemObserverMock stub] andReturn:BUNDLE_ID] getBundleID];
     [[[systemObserverMock stub] andReturn:APP_VERSION] getAppVersion];
@@ -64,22 +65,27 @@
     [[[systemObserverMock stub] andReturn:MODEL] getModel];
     [[[systemObserverMock stub] andReturn:SCREEN_WIDTH] getScreenWidth];
     [[[systemObserverMock stub] andReturn:SCREEN_HEIGHT] getScreenHeight];
-    
-    NSDictionary * const EXPECTED_PARAMS = @{
-        BRANCH_REQUEST_KEY_APP_VERSION: APP_VERSION,
-        BRANCH_REQUEST_KEY_DEBUG: IS_DEBUG,
-        BRANCH_REQUEST_KEY_BUNDLE_ID: BUNDLE_ID,
-        BRANCH_REQUEST_KEY_LINK_IDENTIFIER: LINK_IDENTIFIER,
-        BRANCH_REQUEST_KEY_UPDATE: UPDATE_STATE,
-        BRANCH_REQUEST_KEY_URI_SCHEME: URI_SCHEME,
+
+    NSDictionary *expectedParams = @{
+        @"app_version":                 @"foo-app-version",
+        @"apple_ad_attribution_checked":@0,
+        @"debug":                       @1,
+        @"facebook_app_link_checked":   @0,
+        @"ios_bundle_id":               @"foo-bundle-id",
+        @"link_identifier":             @"foo-link-id",
+        @"update":                      @1,
+        @"uri_scheme":                  @"foo-uri-scheme"
     };
-    
+
     BranchInstallRequest *request = [[BranchInstallRequest alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    [[serverInterfaceMock expect] postRequest:EXPECTED_PARAMS url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_INSTALL] key:[OCMArg any] callback:[OCMArg any]];
-    
+    [[serverInterfaceMock expect]
+		postRequest:expectedParams
+		url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_INSTALL]
+		key:[OCMArg any]
+		callback:[OCMArg any]];
+
     [request makeRequest:serverInterfaceMock key:nil callback:NULL];
-    
     [serverInterfaceMock verify];
 }
 
@@ -102,9 +108,7 @@
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = YES;
-    preferenceHelper.explicitlyRequestedReferrable = YES;
-    
+
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
     BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
         XCTAssertNil(error);
@@ -146,7 +150,6 @@
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = NO;
     preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
@@ -188,7 +191,6 @@
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = NO;
     preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
@@ -230,7 +232,6 @@
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = YES;
     preferenceHelper.installParams = INSTALL_PARAMS;
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
@@ -271,8 +272,7 @@
     };
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = YES;
-    
+
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
     BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
         XCTAssertNil(error);
@@ -296,8 +296,7 @@
 
 - (void)testInstallWhenReferrableAndNullData {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = YES;
-    
+
     XCTestExpectation *expectation = [self expectationWithDescription:@"ReferrableInstall"];
     BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNil(error);
@@ -315,8 +314,7 @@
 
 - (void)testInstallWhenReferrableAndNonNullData {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = YES;
-    
+
     NSString * const INSTALL_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];
@@ -336,7 +334,6 @@
 
 - (void)testInstallWhenReferrableAndNoInstallParamsAndNonLinkClickData {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = YES;
     
     NSString * const OPEN_PARAMS = @"{\"+clicked_branch_link\":0}";
     
@@ -356,18 +353,20 @@
 }
 
 - (void)testInstallWhenNotReferrable {
+    //  'isReferrable' seems to be an empty concept in iOS.
+    //  It is in the code but not used. -- Edward.
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.isReferrable = NO;
-    
+
     NSString * const INSTALL_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];
-    BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
-        XCTAssertNil(error);
-        XCTAssertNil(preferenceHelper.installParams);
-        
-        [self safelyFulfillExpectation:expectation];
-    }];
+    BranchInstallRequest *request =
+		[[BranchInstallRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
+        	XCTAssertNil(error);
+        	XCTAssert([preferenceHelper.installParams isEqualToString:INSTALL_PARAMS]);
+        	[self safelyFulfillExpectation:expectation];
+    		}];
     
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{ BRANCH_RESPONSE_KEY_SESSION_DATA: INSTALL_PARAMS };
