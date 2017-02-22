@@ -17,6 +17,7 @@ function xcode_build_target() {
     echo "Compiling for platform ${1}"
 
     xcodebuild \
+        -project Branch-TestBed.xcodeproj \
         -target $XCODE_BUILD_TARGET \
         -sdk $1 \
         -configuration $2 \
