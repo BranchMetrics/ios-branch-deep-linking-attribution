@@ -56,7 +56,10 @@
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
     params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
 
-    return [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL] key:key log:YES];
+    return [serverInterface postRequest:params
+		url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]
+		key:key
+		log:YES];
 }
 
 - (NSString *)processResponse:(BNCServerResponse *)response {

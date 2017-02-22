@@ -1,0 +1,87 @@
+#!/bin/bash
+set -euo pipefail
+
+# test-unit-tests-xcode7  -  Runs all the unit tests for Xcode 7.
+#
+# Edward Smith, February 2017
+
+scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+scriptfile="${scriptfile}"/$(basename "$0")
+cd $(dirname "$scriptfile")/../Branch-TestBed
+pwd
+
+latest=9.3
+
+if [[ ${CLICOLOR:-0} == 1 && -t 1 ]]; then
+    textBold="\e[1m"
+    textBlue="\e[94m"
+    textDarkBlue="\e[1m\e[34m"
+    textYellow="\e[93m"
+    textRed="\e[31m"
+    textNormal="\e[0m"
+    textDim="\e[2m"
+else
+    textBold=""
+    textBlue=""
+    textDarkBlue=""
+    textYellow=""
+    textRed=""
+    textNormal=""
+    textDim=""
+fi
+
+function testSimulatorVersion() {
+    local name=$1
+    local version=$2
+    printf "${textBlue}Testing %s %s...${textNormal}\n" "${name}" "${version}"
+    xcodebuild \
+        -workspace Branch-TestBed.xcworkspace \
+        -scheme Branch-TestBed \
+        -destination name="${name}",OS="${version}" \
+            clean test
+}
+
+stressTest=0
+function testSimulatorStress() {
+    if (( $stressTest == 0 )); then
+        printf "${textBlue}Start stress test...${textNormal}\n"
+    fi
+    let stressTest=stressTest+1
+    printf "${textBlue}   Stress test %d.${textNormal}\n" $stressTest
+    xcodebuild \
+        -workspace Branch-TestBed.xcworkspace \
+        -scheme Branch-TestBed \
+        -destination name="iPhone 6s",OS=$latest \
+            test
+}
+
+function analyzeBuild() {
+    printf "${textBlue}Analyzing project for code correctness...${textNormal}\n"
+    xcodebuild \
+        -workspace Branch-TestBed.xcworkspace \
+        -scheme Branch-TestBed \
+        -destination name="iPhone 6s",OS=$latest \
+            clean analyze
+}
+
+
+xcodeversion=$(xcodebuild -version)
+if [[ ! "$xcodeversion" =~ "Xcode 7" ]]; then
+    echo "Requires Xcode 7! Use xcode-select to switch versions of Xcode." >&2
+    exit 1
+fi
+
+
+analyzeBuild
+for i in {1..10}
+do
+    testSimulatorStress
+done
+testSimulatorVersion "iPhone 6s Plus" $latest
+testSimulatorVersion "iPhone 5s"     9.3
+testSimulatorVersion "iPad 2"        9.1
+testSimulatorVersion "iPhone 4s"     8.4
+# The iOS 7.1 Simulator isn't available after Mac OS 10.10.5
+# testSimulatorVersion "iPhone 4s"     7.1
+
+printf "${textBlue}All tests completed successfully.${textNormal}\n"

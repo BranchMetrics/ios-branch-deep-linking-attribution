@@ -17,7 +17,7 @@
 #import "BNCFabricAnswers.h"
 #import "BranchContentDiscoveryManifest.h"
 #import "BranchContentDiscoverer.h"
-
+#import "NSMutableDictionary+Branch.h"
 
 @interface BranchOpenRequest ()
 @property (assign, nonatomic) BOOL isInstall;
@@ -35,7 +35,7 @@
         _callback = callback;
         _isInstall = isInstall;
     }
-    
+
     return self;
 }
 
@@ -46,13 +46,13 @@
     if (preferenceHelper.deviceFingerprintID) {
         params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
     }
-    
+
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
     params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
-    
+
     [self safeSetValue:[BNCSystemObserver getBundleID] forKey:BRANCH_REQUEST_KEY_BUNDLE_ID onDict:params];
     [self safeSetValue:[BNCSystemObserver getTeamIdentifier] forKey:BRANCH_REQUEST_KEY_TEAM_ID onDict:params];
-    [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];        
+    [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];
     [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:params];
     [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:BRANCH_REQUEST_KEY_UPDATE onDict:params];
     [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedFacebookAppLinks] forKey:BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS onDict:params];
@@ -61,12 +61,12 @@
     [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:params];
     [self safeSetValue:preferenceHelper.externalIntentURI forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:params];
-    
+
     NSMutableDictionary *cdDict = [[NSMutableDictionary alloc] init];
     BranchContentDiscoveryManifest *contentDiscoveryManifest = [BranchContentDiscoveryManifest getInstance];
-    [cdDict setObject:[contentDiscoveryManifest getManifestVersion] forKey:BRANCH_MANIFEST_VERSION_KEY];
-    [cdDict setObject:[BNCSystemObserver getBundleID] forKey:BRANCH_BUNDLE_IDENTIFIER];
-    [self safeSetValue:cdDict forKey:BRANCH_CONTENT_DISCOVER_KEY onDict:params];    
+    [cdDict bnc_safeSetObject:[contentDiscoveryManifest getManifestVersion] forKey:BRANCH_MANIFEST_VERSION_KEY];
+    [cdDict bnc_safeSetObject:[BNCSystemObserver getBundleID] forKey:BRANCH_BUNDLE_IDENTIFIER];
+    [self safeSetValue:cdDict forKey:BRANCH_CONTENT_DISCOVER_KEY onDict:params];
 
     if (preferenceHelper.appleSearchAdDetails) {
         NSString *encodedSearchData = nil;
@@ -85,30 +85,30 @@
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     if (error) {
-        [BranchOpenRequest releaseOpenResponseLock];    
+        [BranchOpenRequest releaseOpenResponseLock];
         if (self.callback) {
             self.callback(NO, error);
         }
         return;
     }
-    
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary *data = response.data;
-    
+
     // Handle possibly mis-parsed identity.
     id userIdentity = data[BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY];
     if ([userIdentity isKindOfClass:[NSNumber class]]) {
         userIdentity = [userIdentity stringValue];
     }
-    
+
     preferenceHelper.deviceFingerprintID = data[BRANCH_RESPONSE_KEY_DEVICE_FINGERPRINT_ID];
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
     [BNCSystemObserver setUpdateState];
-    
+
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
-    
+
     // Update session params
     preferenceHelper.sessionParams = sessionData;
 
@@ -122,20 +122,20 @@
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         BOOL dataIsFromALinkClick = [sessionDataDict[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] isEqual:@1];
         BOOL storedParamsAreEmpty = YES;
-        
+
         if ([preferenceHelper.installParams isKindOfClass:[NSString class]]) {
             storedParamsAreEmpty = !preferenceHelper.installParams.length;
         }
-        
+
         if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {
             preferenceHelper.installParams = sessionData;
         }
-        
+
         if (dataIsFromALinkClick) {
             [BNCFabricAnswers sendEventWithName:[@"Branch " stringByAppendingString:[[self getActionName] capitalizedString]] andAttributes:sessionDataDict];
         }
     }
-    
+
     NSString *referredUrl = nil;
     if (preferenceHelper.universalLinkUrl) {
         referredUrl = preferenceHelper.universalLinkUrl;
@@ -154,7 +154,7 @@
     if ([cdManifest isCDEnabled]) {
         [[BranchContentDiscoverer getInstance:cdManifest] startContentDiscoveryTask];
     }
-    
+
     // Clear link identifiers so they don't get reused on the next open
     preferenceHelper.checkedFacebookAppLinks = NO;
     preferenceHelper.linkClickIdentifier = nil;
@@ -162,7 +162,7 @@
     preferenceHelper.universalLinkUrl = nil;
     preferenceHelper.externalIntentURI = nil;
     preferenceHelper.appleSearchAdDetails = nil;
-    
+
     if (data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]) {
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
     }
@@ -172,13 +172,16 @@
     // Check if there is any Branch View to show
     NSObject *branchViewDict = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
     if ([branchViewDict isKindOfClass:[NSDictionary class]]) {
-        [[BranchViewHandler getInstance] showBranchView:[self getActionName] withBranchViewDictionary:(NSDictionary *)branchViewDict andWithDelegate:nil];
+        [[BranchViewHandler getInstance]
+            showBranchView:[self getActionName]
+            withBranchViewDictionary:(NSDictionary *)branchViewDict
+            andWithDelegate:nil];
     }
-    
+
     if (self.callback) {
         self.callback(YES, nil);
     }
-    
+
 }
 
 - (NSString *)getActionName {

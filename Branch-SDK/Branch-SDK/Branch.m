@@ -1139,17 +1139,50 @@ void ForceCategoriesToLoad() {
     [self processNextQueueItem];
 }
 
-- (NSString *)generateShortUrl:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCampaign:(NSString *)campaign andParams:(NSDictionary *)params ignoreUAString:(NSString *)ignoreUAString forceLinkCreation:(BOOL)forceLinkCreation {
+- (NSString *)generateShortUrl:(NSArray *)tags
+                      andAlias:(NSString *)alias
+                       andType:(BranchLinkType)type
+              andMatchDuration:(NSUInteger)duration
+                    andChannel:(NSString *)channel
+                    andFeature:(NSString *)feature
+                      andStage:(NSString *)stage
+                   andCampaign:(NSString *)campaign
+                     andParams:(NSDictionary *)params
+                ignoreUAString:(NSString *)ignoreUAString
+             forceLinkCreation:(BOOL)forceLinkCreation {
+
     NSString *shortURL = nil;
     
-    BNCLinkData *linkData = [self prepareLinkDataFor:tags andAlias:alias andType:type andMatchDuration:duration andChannel:channel andFeature:feature andStage:stage andCampaign:campaign andParams:params ignoreUAString:ignoreUAString];
+    BNCLinkData *linkData =
+        [self prepareLinkDataFor:tags
+            andAlias:alias
+             andType:type
+    andMatchDuration:duration
+          andChannel:channel
+          andFeature:feature
+            andStage:stage
+         andCampaign:campaign
+           andParams:params
+      ignoreUAString:ignoreUAString];
     
-    // If an ignore UA string is present, we always get a new url. Otherwise, if we've already seen this request, use the cached version
+    // If an ignore UA string is present, we always get a new url.
+    // Otherwise, if we've already seen this request, use the cached version.
     if (!ignoreUAString && [self.linkCache objectForKey:linkData]) {
         shortURL = [self.linkCache objectForKey:linkData];
-    }
-    else {
-        BranchShortUrlSyncRequest *req = [[BranchShortUrlSyncRequest alloc] initWithTags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage campaign:campaign params:params linkData:linkData linkCache:self.linkCache];
+    } else {
+        BranchShortUrlSyncRequest *req =
+            [[BranchShortUrlSyncRequest alloc]
+                initWithTags:tags
+                alias:alias
+                type:type
+                matchDuration:duration
+                channel:channel
+                feature:feature
+                stage:stage
+                campaign:campaign
+                params:params
+                linkData:linkData
+                linkCache:self.linkCache];
         
         if (self.isInitialized) {
             [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"Created custom url synchronously"];
@@ -1160,11 +1193,12 @@ void ForceCategoriesToLoad() {
             if (shortURL) {
                 [self.linkCache setObject:shortURL forKey:linkData];
             }
-        }
-        else {
+        } else {
             if (forceLinkCreation) {
                 if (self.branchKey) {
-                    return [BranchShortUrlSyncRequest createLinkFromBranchKey:self.branchKey tags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params];
+                    return [BranchShortUrlSyncRequest createLinkFromBranchKey:self.branchKey
+                        tags:tags alias:alias type:type matchDuration:duration
+                            channel:channel feature:feature stage:stage params:params];
                 }
             }
             NSLog(@"Branch SDK Error: making request before init succeeded!");
@@ -1174,13 +1208,29 @@ void ForceCategoriesToLoad() {
     return shortURL;
 }
 
-- (NSString *)generateLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
+- (NSString *)generateLongURLWithParams:(NSDictionary *)params
+                             andChannel:(NSString *)channel
+                                andTags:(NSArray *)tags
+                             andFeature:(NSString *)feature
+                               andStage:(NSString *)stage
+                               andAlias:(NSString *)alias {
+
     NSString *baseLongUrl = [NSString stringWithFormat:@"%@/a/%@", BNC_LINK_URL, self.branchKey];
     
-    return [self longUrlWithBaseUrl:baseLongUrl params:params tags:tags feature:feature channel:nil stage:stage alias:alias duration:0 type:BranchLinkTypeUnlimitedUse];
+    return [self longUrlWithBaseUrl:baseLongUrl params:params tags:tags feature:feature
+        channel:nil stage:stage alias:alias duration:0 type:BranchLinkTypeUnlimitedUse];
 }
 
-- (NSString *)longUrlWithBaseUrl:(NSString *)baseUrl params:(NSDictionary *)params tags:(NSArray *)tags feature:(NSString *)feature channel:(NSString *)channel stage:(NSString *)stage alias:(NSString *)alias duration:(NSUInteger)duration type:(BranchLinkType)type {
+- (NSString *)longUrlWithBaseUrl:(NSString *)baseUrl
+                          params:(NSDictionary *)params
+                            tags:(NSArray *)tags
+                         feature:(NSString *)feature
+                         channel:(NSString *)channel
+                           stage:(NSString *)stage
+                           alias:(NSString *)alias
+                        duration:(NSUInteger)duration
+                            type:(BranchLinkType)type {
+
     NSMutableString *longUrl = [[NSMutableString alloc] initWithFormat:@"%@?", baseUrl];
     
     for (NSString *tag in tags) {
@@ -1216,7 +1266,17 @@ void ForceCategoriesToLoad() {
     return longUrl;
 }
 
-- (BNCLinkData *)prepareLinkDataFor:(NSArray *)tags andAlias:(NSString *)alias andType:(BranchLinkType)type andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCampaign:(NSString *)campaign andParams:(NSDictionary *)params ignoreUAString:(NSString *)ignoreUAString {
+- (BNCLinkData *)prepareLinkDataFor:(NSArray *)tags
+                           andAlias:(NSString *)alias
+                            andType:(BranchLinkType)type
+                   andMatchDuration:(NSUInteger)duration
+                         andChannel:(NSString *)channel
+                         andFeature:(NSString *)feature
+                           andStage:(NSString *)stage
+                        andCampaign:(NSString *)campaign
+                          andParams:(NSDictionary *)params
+                     ignoreUAString:(NSString *)ignoreUAString {
+                     
     BNCLinkData *post = [[BNCLinkData alloc] init];
     
     [post setupType:type];
@@ -1383,7 +1443,11 @@ void ForceCategoriesToLoad() {
             self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
         }
         else if (self.sessionInitWithBranchUniversalObjectCallback) {
-            self.sessionInitWithBranchUniversalObjectCallback([self getLatestReferringBranchUniversalObject], [self getLatestReferringBranchLinkProperties], nil);
+            self.sessionInitWithBranchUniversalObjectCallback(
+                [self getLatestReferringBranchUniversalObject],
+                [self getLatestReferringBranchLinkProperties],
+                nil
+            );
         }
     }
 }
@@ -1402,6 +1466,7 @@ void ForceCategoriesToLoad() {
 		clazz = [BranchOpenRequest class];
 	}
 
+#if 0   //  eDebug - Why does this have to be on the main queue?  This breaks the tests.
     callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
 		dispatch_async(dispatch_get_main_queue(), ^ {
 			if (error) {
@@ -1411,7 +1476,15 @@ void ForceCategoriesToLoad() {
 			}
 		});
     };
-    
+#else
+    callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
+        if (error)
+            [self handleInitFailure:error];
+        else
+            [self handleInitSuccess];
+    };
+#endif 
+
     if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.useCookieBasedMatching) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
     }
@@ -1435,7 +1508,11 @@ void ForceCategoriesToLoad() {
             self.sessionInitWithParamsCallback(latestReferringParams, nil);
         }
         else if (self.sessionInitWithBranchUniversalObjectCallback) {
-            self.sessionInitWithBranchUniversalObjectCallback([self getLatestReferringBranchUniversalObject], [self getLatestReferringBranchLinkProperties], nil);
+            self.sessionInitWithBranchUniversalObjectCallback(
+                [self getLatestReferringBranchUniversalObject],
+                [self getLatestReferringBranchLinkProperties],
+                nil
+            );
         }
     }
     
@@ -1455,7 +1532,8 @@ void ForceCategoriesToLoad() {
                 [branchSharingController configureControlWithData:latestReferringParams];
             }
             else {
-                [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"[Branch Warning] View controller does not implement configureControlWithData:"];
+                [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:
+                    @"[Branch Warning] View controller does not implement configureControlWithData:"];
             }
             branchSharingController.deepLinkingCompletionDelegate = self;
             self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
