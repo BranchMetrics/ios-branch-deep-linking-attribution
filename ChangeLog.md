@@ -1,5 +1,19 @@
 Branch iOS SDK Change Log
 
+- v0.13.0
+  * All the unit tests now compile, run, and pass.
+  * Added the `branchAPIURL` property to `BNCPreferenceHelper` instances.
+      This property can be set when testing with mocking frameworks like WireMock, where canned
+      server responses are needed for functional testing scenarios.
+
+      This property can be set before Branch is initialized.  For example:
+      ```objc
+      [BNCPreferenceHelper preferenceHelper].branchAPIURL = @"http://localhost/branchmock";
+      [[Branch getInstance] initSessionWithLaunchOptions:launchOptions];
+      ```
+
+      Be sure to use the Branch production API URL in production apps!
+
 - v0.12.30
   * Fixed some rare app crashes in BranchOpenRequest due to a race condition.
   * Prevent a crash by making a deep copy of dictionary before merging entries. (#573)
