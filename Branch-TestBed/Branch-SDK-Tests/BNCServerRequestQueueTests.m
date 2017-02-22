@@ -121,18 +121,16 @@
     [queue enqueue:[[BNCServerRequest alloc] init]];
 
     id archiverMock = OCMClassMock([NSKeyedArchiver class]);
-    [[[archiverMock expect]
-        andReturn:[NSData data]]
-            archivedDataWithRootObject:[OCMArg any]];
-    [[[archiverMock expect]
+    [[[[archiverMock expect]
         andThrow:[NSException exceptionWithName:@"Exception" reason:@"I said so" userInfo:nil]]
+        andReturn:[NSData data]]
             archivedDataWithRootObject:[OCMArg any]];
 
     [queue persistImmediately];
     
     // Wait for operation to occur
     XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, ((double)NSEC_PER_SEC*0.1)), dispatch_get_main_queue(), ^{
         [self safelyFulfillExpectation:expectation];
     });
     
