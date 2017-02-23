@@ -1,6 +1,10 @@
 Branch iOS SDK Change Log
 
+- v0.13.1
+  * Version strings are now displayed in the testbed apps.
+
 - v0.13.0
+  * > Beta Release <
   * All the unit tests now compile, run, and pass.
   * Added the `branchAPIURL` property to `BNCPreferenceHelper` instances.
       This property can be set when testing with mocking frameworks like WireMock, where canned
