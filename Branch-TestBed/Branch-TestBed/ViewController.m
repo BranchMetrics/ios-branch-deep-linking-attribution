@@ -33,7 +33,7 @@ NSString *type = @"some type";
 @property (weak, nonatomic) IBOutlet UITextField *branchLinkTextField;
 @property (weak, nonatomic) IBOutlet UILabel *pointsLabel;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
-
+@property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 @property (strong, nonatomic) BranchUniversalObject *branchUniversalObject;
 
 @end
@@ -44,13 +44,18 @@ NSString *type = @"some type";
 
 - (void)viewDidLoad {
     [[UITableViewCell appearance] setBackgroundColor:[UIColor clearColor]];
-    [self.branchLinkTextField addTarget:self action:@selector(textFieldFinished:) forControlEvents:UIControlEventEditingDidEndOnExit];
+    [self.branchLinkTextField
+        addTarget:self
+        action:@selector(textFieldFinished:)
+        forControlEvents:UIControlEventEditingDidEndOnExit];
     [super viewDidLoad];
     
-    UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard)];
+    UITapGestureRecognizer *gestureRecognizer =
+        [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard)];
     [self.tableView addGestureRecognizer:gestureRecognizer];
     
-    _branchUniversalObject = [[BranchUniversalObject alloc] initWithCanonicalIdentifier: cononicalIdentifier];
+    _branchUniversalObject =
+        [[BranchUniversalObject alloc] initWithCanonicalIdentifier: cononicalIdentifier];
     _branchUniversalObject.canonicalUrl = canonicalUrl;
     _branchUniversalObject.title = contentTitle;
     _branchUniversalObject.contentDescription = contentDescription;
@@ -58,8 +63,20 @@ NSString *type = @"some type";
     _branchUniversalObject.price = 1000;
     _branchUniversalObject.currency = @"$";
     _branchUniversalObject.type = type;
-    [_branchUniversalObject addMetadataKey:@"deeplink_text" value:[NSString stringWithFormat:
-                                                                   @"This text was embedded as data in a Branch link with the following characteristics:\n\n  canonicalUrl: %@\n  title: %@\n  contentDescription: %@\n  imageUrl: %@\n", canonicalUrl, contentTitle, contentDescription, imageUrl]];
+    [_branchUniversalObject
+        addMetadataKey:@"deeplink_text"
+        value:[NSString stringWithFormat:
+            @"This text was embedded as data in a Branch link with the following characteristics:\n\n"
+             "canonicalUrl: %@\n  title: %@\n  contentDescription: %@\n  imageUrl: %@\n",
+                canonicalUrl, contentTitle, contentDescription, imageUrl]];
+
+    self.versionLabel.text =
+        [NSString stringWithFormat:@"v %@ / %@ / %@",
+            [UIDevice currentDevice].systemVersion,
+            [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"],
+            BNC_SDK_VERSION];
+    [self.versionLabel sizeToFit];
+
    // [self refreshRewardPoints];
 }
 
