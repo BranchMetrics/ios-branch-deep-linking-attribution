@@ -7,7 +7,7 @@ set -euo pipefail
 
 scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 scriptfile="${scriptfile}"/$(basename "$0")
-cd $(dirname "$scriptfile")/../Branch-TestBed
+cd $(dirname "$scriptfile")/../Branch-TestBed-Xcode-7
 pwd
 
 latest=9.3
@@ -56,7 +56,7 @@ function testSimulatorStress() {
 }
 
 function analyzeBuild() {
-    printf "${textBlue}Analyzing project for code correctness...${textNormal}\n"
+    printf "${textBlue}Running static analyzer...${textNormal}\n"
     xcodebuild \
         -workspace Branch-TestBed.xcworkspace \
         -scheme Branch-TestBed \

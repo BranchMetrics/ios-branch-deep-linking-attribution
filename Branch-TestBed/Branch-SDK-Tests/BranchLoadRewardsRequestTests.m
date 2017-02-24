@@ -93,6 +93,7 @@
     [request processResponse:response error:nil];
 
     [self awaitExpectations];
+    [[BNCPreferenceHelper preferenceHelper] save];
     XCTAssertEqual(
         [[BNCPreferenceHelper preferenceHelper] getCreditCountForBucket:BUCKET],
         OLD_REWARD_VALUE
