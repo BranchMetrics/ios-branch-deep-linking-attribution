@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/esmith/Documents/Development/BranchMetrics/ios-branch-deep-linking/Branch-TestBed/Xcode-7-Branch-TestBed.xcodeproj">
+      location = "group:Branch-TestBed.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

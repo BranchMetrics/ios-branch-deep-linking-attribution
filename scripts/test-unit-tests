@@ -54,7 +54,7 @@ function testSimulatorStress() {
 }
 
 function analyzeBuild() {
-    printf "${textBlue}Analyzing project for code correctness...${textNormal}\n"
+    printf "${textBlue}Running static analysis...${textNormal}\n"
     xcodebuild \
         -workspace Branch-TestBed.xcworkspace \
         -scheme Branch-TestBed \
