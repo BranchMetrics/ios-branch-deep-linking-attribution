@@ -1326,7 +1326,7 @@ void ForceCategoriesToLoad() {
         
         BranchContentDiscoverer *contentDiscoverer = [BranchContentDiscoverer getInstance];
         if (contentDiscoverer) {
-            [contentDiscoverer stopContentDiscoveryTask];
+            [contentDiscoverer stopDiscoveryTask];
         }
         
         if (self.preferenceHelper.sessionID && ![self.requestQueue containsClose]) {
@@ -1350,68 +1350,93 @@ void ForceCategoriesToLoad() {
     }
 }
 
+void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
+    if ([NSThread isMainThread]) {
+        block();
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), block);
+    }
+}
+
+void BNCPerformBlockOnMainThread(dispatch_block_t block) {
+    dispatch_async(dispatch_get_main_queue(), block);
+}
+
+- (void) processRequest:(BNCServerRequest*)req response:(BNCServerResponse*)response error:(NSError*)error {
+    // If the request was successful, or was a bad user request, continue processing.
+    if (!error || error.code == BNCBadRequestError || error.code == BNCDuplicateResourceError) {
+
+        BNCPerformBlockOnMainThreadSync(^{ [req processResponse:response error:error]; });
+
+        [self.requestQueue dequeue];
+        self.networkCount = 0;
+        [self processNextQueueItem];
+    }
+    // On network problems, or Branch down, call the other callbacks and stop processing.
+    else {
+        // First, gather all the requests to fail
+        NSMutableArray *requestsToFail = [[NSMutableArray alloc] init];
+        for (int i = 0; i < self.requestQueue.size; i++) {
+            BNCServerRequest *request = [self.requestQueue peekAt:i];
+            if (request) {
+                [requestsToFail addObject:request];
+            }
+        }
+
+        // Next, remove all the requests that should not be replayed. Note, we do this before
+        // calling callbacks, in case any of the callbacks try to kick off another request, which
+        // could potentially start another request (and call these callbacks again)
+        for (BNCServerRequest *request in requestsToFail) {
+            if (![request isKindOfClass:[BranchUserCompletedActionRequest class]] &&
+                ![request isKindOfClass:[BranchSetIdentityRequest class]]) {
+                [self.requestQueue remove:request];
+            }
+        }
+
+        // Then, set the network count to zero, indicating that requests can be started again
+        self.networkCount = 0;
+
+        // Finally, call all the requests callbacks with the error
+        for (BNCServerRequest *request in requestsToFail) {
+            BNCPerformBlockOnMainThreadSync(^ { [request processResponse:nil error:error]; });
+        }
+    }
+}
+
 - (void)processNextQueueItem {
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
     
     if (self.networkCount == 0 && self.requestQueue.size > 0 && !self.preferenceHelper.shouldWaitForInit) {
         self.networkCount = 1;
         dispatch_semaphore_signal(self.processing_sema);
-        
         BNCServerRequest *req = [self.requestQueue peek];
         
         if (req) {
-            BNCServerCallback callback = ^(BNCServerResponse *response, NSError *error) {
-                // If the request was successful, or was a bad user request, continue processing.
-                if (!error || error.code == BNCBadRequestError || error.code == BNCDuplicateResourceError) {
-                    [req processResponse:response error:error];
-                    
-                    [self.requestQueue dequeue];
-                    self.networkCount = 0;
-                    [self processNextQueueItem];
-                }
-                // On network problems, or Branch down, call the other callbacks and stop processing.
-                else {
-                    // First, gather all the requests to fail
-                    NSMutableArray *requestsToFail = [[NSMutableArray alloc] init];
-                    for (int i = 0; i < self.requestQueue.size; i++) {
-                        BNCServerRequest *request = [self.requestQueue peekAt:i];
-                        if (request) {
-                            [requestsToFail addObject:request];
-                        }                        
-                    }
-                    
-                    // Next, remove all the requests that should not be replayed. Note, we do this before calling callbacks, in case any
-                    // of the callbacks try to kick off another request, which could potentially start another request (and call these callbacks again)
-                    for (BNCServerRequest *request in requestsToFail) {
-                        if (![request isKindOfClass:[BranchUserCompletedActionRequest class]] && ![request isKindOfClass:[BranchSetIdentityRequest class]]) {
-                            [self.requestQueue remove:request];
-                        }
-                    }
-                    
-                    // Then, set the network count to zero, indicating that requests can be started again
-                    self.networkCount = 0;
-                    
-                    // Finally, call all the requests callbacks with the error
-                    for (BNCServerRequest *request in requestsToFail) {
-                        [request processResponse:nil error:error];
-                    }
-                }
-            };
-            
+
             if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.identityID) {
                 NSLog(@"[Branch Error] User session has not been initialized!");
-                [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
+                BNCPerformBlockOnMainThreadSync(^{
+                    [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError
+                        userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
+                });
                 return;
             }
-            else if (![req isKindOfClass:[BranchOpenRequest class]] && (!self.preferenceHelper.deviceFingerprintID || !self.preferenceHelper.sessionID)) {
+            else if (![req isKindOfClass:[BranchOpenRequest class]] &&
+                (!self.preferenceHelper.deviceFingerprintID || !self.preferenceHelper.sessionID)) {
                 NSLog(@"[Branch Error] Missing session items!");
-                [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
+                BNCPerformBlockOnMainThreadSync(^{
+                    [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError
+                        userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
+                });
                 return;
             }
 
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
             dispatch_async(queue, ^ {
-                [req makeRequest:self.bServerInterface key:self.branchKey callback:callback];
+                [req makeRequest:self.bServerInterface key:self.branchKey callback:
+                    ^(BNCServerResponse* response, NSError* error) {
+                        [self processRequest:req response:response error:error];
+                }];
             });
         }
     }
@@ -1466,7 +1491,7 @@ void ForceCategoriesToLoad() {
 		clazz = [BranchOpenRequest class];
 	}
 
-#if 0   //  eDebug - Why does this have to be on the main queue?  This breaks the tests.
+#if 0   //  eDebug - Does this have to be on the main queue?  This breaks the tests.
     callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
 		dispatch_async(dispatch_get_main_queue(), ^ {
 			if (error) {

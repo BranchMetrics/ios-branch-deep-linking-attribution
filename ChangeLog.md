@@ -1,7 +1,11 @@
 Branch iOS SDK Change Log
 
 - v0.13.1
+  * > Beta Release <
   * Version strings are now displayed in the testbed apps.
+  * Made sure that Branch callbacks happen on the main thread.
+  * Fixed the Xcode 7 example to work with unit tests.
+  * Fixed content discovery to work consistently.
 
 - v0.13.0
   * > Beta Release <
@@ -12,7 +16,7 @@ Branch iOS SDK Change Log
 
       This property can be set before Branch is initialized.  For example:
       ```objc
-      [BNCPreferenceHelper preferenceHelper].branchAPIURL = @"http://localhost/branchmock";
+      [BNCPreferenceHelper preferenceHelper].branchAPIURL = @"http://localhost/branch-mock";
       [[Branch getInstance] initSessionWithLaunchOptions:launchOptions];
       ```
 
