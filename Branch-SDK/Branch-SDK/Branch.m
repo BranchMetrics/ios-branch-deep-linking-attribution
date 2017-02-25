@@ -1326,7 +1326,7 @@ void ForceCategoriesToLoad() {
         
         BranchContentDiscoverer *contentDiscoverer = [BranchContentDiscoverer getInstance];
         if (contentDiscoverer) {
-            [contentDiscoverer stopContentDiscoveryTask];
+            [contentDiscoverer stopDiscoveryTask];
         }
         
         if (self.preferenceHelper.sessionID && ![self.requestQueue containsClose]) {
