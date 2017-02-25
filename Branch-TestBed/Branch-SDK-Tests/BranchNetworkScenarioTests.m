@@ -307,7 +307,6 @@
     [serverInterfaceMock verify];
 }
 
-
 #pragma mark - Scenario 6
 
 // Connection starts good -- InitSession completes
@@ -609,8 +608,8 @@
 		callback:(void (^)(void))testCaseCallback {
 
     __block int callNumber = 0;
-    __block BNCServerCallback badRequestCallback;
-    __block BNCServerCallback goodRequestCallback;
+    __block BNCServerCallback badRequestCallback = nil;
+    __block BNCServerCallback goodRequestCallback = nil;
     id requestCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         callNumber++;
         if (callNumber == 1)
@@ -648,10 +647,10 @@
         testCaseCallback();
     }];
 
-    NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:3.0];
+    NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:5.0];
     while ([timeoutDate timeIntervalSinceNow] > 0.0) {
 
-        sleep(1); // Sleep so that network queue processes
+        sleep(1); // Sleep so that network queue can processes
         if (badRequestCallback) {
             badRequestCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:nil]);
             badRequestCallback = nil;
@@ -660,6 +659,7 @@
             goodRequestCallback = nil;
             return;
         }
+
     }
 	XCTAssert(badRequestCallback && goodRequestCallback);
 }
