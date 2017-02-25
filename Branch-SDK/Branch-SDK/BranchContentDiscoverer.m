@@ -6,6 +6,7 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
+
 #import <Foundation/Foundation.h>
 #import "BranchContentDiscoverer.h"
 #import "BranchContentDiscoveryManifest.h"
@@ -16,57 +17,63 @@
 #import <CommonCrypto/CommonDigest.h>
 #import "BNCEncodingUtils.h"
 
-@interface BranchContentDiscoverer ()
 
+@interface BranchContentDiscoverer ()
 @property (nonatomic, strong) NSString *lastViewControllerName;
 @property (nonatomic, strong) NSTimer *contentDiscoveryTimer;
-@property (nonatomic, strong) BranchContentDiscoveryManifest *cdManifest;
 @property (nonatomic) NSInteger numOfViewsDiscovered;
-
 @end
 
 
 @implementation BranchContentDiscoverer
 
-static BranchContentDiscoverer *contentViewHandler;
-static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
-
-
-+ (BranchContentDiscoverer *)getInstance:(BranchContentDiscoveryManifest *)manifest {
-    if (!contentViewHandler) {
-        contentViewHandler = [[BranchContentDiscoverer alloc] init];
-    }
-    [contentViewHandler initInstance:manifest];
-    return contentViewHandler;
-}
-
 + (BranchContentDiscoverer *)getInstance {
-    return contentViewHandler;
+    static BranchContentDiscoverer *sharedInstance = nil;
+    @synchronized (self) {
+        if (!sharedInstance) {
+            sharedInstance = [[BranchContentDiscoverer alloc] init];
+        }
+    return sharedInstance;
+    }
 }
 
-- (void)initInstance:(BranchContentDiscoveryManifest *)manifest {
+- (void) dealloc {
+    [_contentDiscoveryTimer invalidate];
+}
+
+- (void) setContentManifest:(BranchContentDiscoveryManifest*)manifest {
     _numOfViewsDiscovered = 0;
-    _cdManifest = manifest;
-    
+    _contentManifest = manifest;
 }
 
-- (void)startContentDiscoveryTask {
-    _contentDiscoveryTimer = [NSTimer scheduledTimerWithTimeInterval:CONTENT_DISCOVERY_INTERVAL
-                                                              target:self
-                                                            selector:@selector(readContentDataIfNeeded)
-                                                            userInfo:nil
-                                                             repeats:YES];
+- (void) startDiscoveryTaskWithManifest:(BranchContentDiscoveryManifest*)manifest {
+    self.contentManifest = manifest;
+    [self startDiscoveryTask];
 }
 
-- (void)stopContentDiscoveryTask {
+- (void)startDiscoveryTask {
+    if (![NSThread isMainThread]) {
+        NSLog(@"Error: Should be called on main thread!");
+    }
+    [_contentDiscoveryTimer invalidate];
+    _contentDiscoveryTimer =
+        [NSTimer scheduledTimerWithTimeInterval:1.0
+            target:self
+            selector:@selector(readContentDataIfNeeded)
+            userInfo:nil
+            repeats:YES];
+}
+
+- (void)stopDiscoveryTask {
     _lastViewControllerName = nil;
     if (_contentDiscoveryTimer) {
         [_contentDiscoveryTimer invalidate];
+        _contentDiscoveryTimer = nil;
     }
 }
 
 - (void)readContentDataIfNeeded {
-    if (_numOfViewsDiscovered < _cdManifest.maxViewHistoryLength) {
+    if (_numOfViewsDiscovered < self.contentManifest.maxViewHistoryLength) {
         UIViewController *presentingViewController = [self getActiveViewController];
         if (presentingViewController) {
             NSString *presentingViewControllerName = NSStringFromClass([presentingViewController class]);
@@ -76,7 +83,7 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
             }
         }
     } else {
-        [self stopContentDiscoveryTask];
+        [self stopDiscoveryTask];
     }
 }
 
@@ -88,7 +95,7 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
         BOOL isClearText = YES;
         
         if (rootView) {
-            BranchContentPathProperties *pathProperties = [_cdManifest getContentPathProperties:viewController];
+            BranchContentPathProperties *pathProperties = [self.contentManifest getContentPathProperties:viewController];
             // Check for any existing path properties for this ViewController
             if (pathProperties) {
                 isClearText = pathProperties.isClearText;
@@ -101,14 +108,14 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
                         [self discoverFilteredViewContents:viewController contentData:contentDataArray contentKeys:contentKeysArray clearText:isClearText];
                     }
                 }
-            } else if (_cdManifest.referredLink) { // else discover content if this session is started by a link click
+            } else if (self.contentManifest.referredLink) { // else discover content if this session is started by a link click
                 [self discoverViewContents:rootView contentData:nil contentKeys:contentKeysArray clearText:YES ID:@""];
             }
             if (contentKeysArray && contentKeysArray.count > 0) {
                 NSMutableDictionary *contentEventObj = [[NSMutableDictionary alloc] init];
                 [contentEventObj setObject:[NSString stringWithFormat:@"%f", [[NSDate date] timeIntervalSince1970]] forKey:BRANCH_TIME_STAMP_KEY];
-                if (_cdManifest.referredLink) {
-                    [contentEventObj setObject:_cdManifest.referredLink forKey:BRANCH_REFERRAL_LINK_KEY];
+                if (self.contentManifest.referredLink.length) {
+                    [contentEventObj setObject:self.contentManifest.referredLink forKey:BRANCH_REFERRAL_LINK_KEY];
                 }
                 
                 [contentEventObj setObject:[NSString stringWithFormat:@"/%@", _lastViewControllerName] forKey:BRANCH_VIEW_KEY];
@@ -176,7 +183,10 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
 }
 
 
-- (void)discoverFilteredViewContents:(UIViewController *)viewController contentData:(NSMutableArray *)contentDataArray contentKeys:(NSMutableArray *)contentKeysArray clearText:(BOOL)isClearText {
+- (void)discoverFilteredViewContents:(UIViewController *)viewController
+                         contentData:(NSMutableArray *)contentDataArray
+                         contentKeys:(NSMutableArray *)contentKeysArray
+                           clearText:(BOOL)isClearText {
     for (NSString *contentKey in contentKeysArray) {
         NSString *contentData = [self getViewText:contentKey forController:viewController];
         if (contentData == nil) {
@@ -198,7 +208,8 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
     return rootView;
 }
 
-- (NSString *)getViewText:(NSString *)viewId forController:(UIViewController *)viewController {
+- (NSString *)getViewText:(NSString *)viewId
+            forController:(UIViewController *)viewController {
     NSString *viewTxt = @"";
     if (viewController) {
         UIView *rootView = [viewController view];
@@ -259,8 +270,8 @@ static NSInteger const CONTENT_DISCOVERY_INTERVAL = 5;
 - (void)addFormattedContentData:(NSMutableArray *)contentDataArray
                        withText:(NSString *)contentData
                       clearText:(BOOL)isClearText {
-    if (contentData && contentData.length > _cdManifest.maxTextLen) {
-        contentData = [contentData substringToIndex:_cdManifest.maxTextLen];
+    if (contentData && contentData.length > self.contentManifest.maxTextLen) {
+        contentData = [contentData substringToIndex:self.contentManifest.maxTextLen];
     }
     if (!isClearText) {
         contentData = [BNCEncodingUtils md5Encode:contentData];
