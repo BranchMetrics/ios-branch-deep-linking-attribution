@@ -39,7 +39,6 @@
 
 - (void) dealloc {
     [_contentDiscoveryTimer invalidate];
-    NSLog(@"dealloc");
 }
 
 - (void) setContentManifest:(BranchContentDiscoveryManifest*)manifest {
@@ -66,7 +65,6 @@
 }
 
 - (void)stopDiscoveryTask {
-    NSLog(@"Nope.");
     _lastViewControllerName = nil;
     if (_contentDiscoveryTimer) {
         [_contentDiscoveryTimer invalidate];
@@ -75,7 +73,6 @@
 }
 
 - (void)readContentDataIfNeeded {
-    NSLog(@"Yope.");
     if (_numOfViewsDiscovered < self.contentManifest.maxViewHistoryLength) {
         UIViewController *presentingViewController = [self getActiveViewController];
         if (presentingViewController) {
