@@ -152,7 +152,7 @@
     BranchContentDiscoveryManifest *cdManifest = [BranchContentDiscoveryManifest getInstance];
     [cdManifest onBranchInitialised:data withUrl:referredUrl];
     if ([cdManifest isCDEnabled]) {
-        [[BranchContentDiscoverer getInstance:cdManifest] startContentDiscoveryTask];
+        [[BranchContentDiscoverer getInstance] startDiscoveryTaskWithManifest:cdManifest];
     }
 
     // Clear link identifiers so they don't get reused on the next open
