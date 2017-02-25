@@ -1,0 +1,23 @@
+#!/bin/bash
+set -euo pipefail
+
+# pod-update-all  -  Update all CocoaPods before running tests.
+#
+# Edward Smith, February 2017
+
+scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+scriptfile="${scriptfile}"/$(basename "$0")
+cd $(dirname "$scriptfile")/..
+
+
+cd Branch-TestBed
+echo ""
+echo ">>> Updating `pwd`."
+pod update
+cd ..
+
+cd Branch-TestBed-Xcode-7
+echo ""
+echo ">>> Updating `pwd`."
+pod update
+cd ..
