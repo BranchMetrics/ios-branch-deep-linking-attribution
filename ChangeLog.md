@@ -6,6 +6,7 @@ Branch iOS SDK Change Log
   * Made sure that Branch callbacks happen on the main thread.
   * Fixed the Xcode 7 example to work with unit tests.
   * Fixed content discovery to work consistently.
+  * Updated the Apple Search Ad debug mode campaign name to 'DebugAppleSearchAdsCampaignName'.
 
 - v0.13.0
   * > Beta Release <
