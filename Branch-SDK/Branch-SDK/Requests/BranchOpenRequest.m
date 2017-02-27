@@ -132,7 +132,9 @@
         }
 
         if (dataIsFromALinkClick) {
-            [BNCFabricAnswers sendEventWithName:[@"Branch " stringByAppendingString:[[self getActionName] capitalizedString]] andAttributes:sessionDataDict];
+            NSString * eventName =
+                [@"Branch " stringByAppendingString:[[self getActionName] capitalizedString]];
+            [BNCFabricAnswers sendEventWithName:eventName andAttributes:sessionDataDict];
         }
     }
 
