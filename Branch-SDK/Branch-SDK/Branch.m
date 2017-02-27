@@ -565,7 +565,7 @@ void ForceCategoriesToLoad() {
                     NSMutableDictionary *testDetails = [[NSMutableDictionary alloc] init];
                     [testDetails setObject:[NSNumber numberWithBool:YES] forKey:@"iad-attribution"];
                     [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-campaign-id"];
-                    [testDetails setObject:@"CampaignName" forKey:@"iad-campaign-name"];
+                    [testDetails setObject:@"DebugAppleSearchAdsCampaignName" forKey:@"iad-campaign-name"];
                     [testDetails setObject:@"2016-09-09T01:33:17Z" forKey:@"iad-click-date"];
                     [testDetails setObject:@"2016-09-09T01:33:17Z" forKey:@"iad-conversion-date"];
                     [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-creative-id"];
