@@ -1491,7 +1491,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 		clazz = [BranchOpenRequest class];
 	}
 
-#if 0   //  eDebug - Does this have to be on the main queue?  This breaks the tests.
     callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
 		dispatch_async(dispatch_get_main_queue(), ^ {
 			if (error) {
@@ -1501,14 +1500,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 			}
 		});
     };
-#else
-    callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
-        if (error)
-            [self handleInitFailure:error];
-        else
-            [self handleInitSuccess];
-    };
-#endif 
 
     if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.useCookieBasedMatching) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
