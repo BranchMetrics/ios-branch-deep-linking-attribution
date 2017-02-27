@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D3A944B1E64C777007127B3 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D3A944A1E64C777007127B3 /* iAd.framework */; };
 		4D4F283E1E400F9800282A34 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F27E01E400F9800282A34 /* BNCCommerceEvent.m */; };
 		4D4F283F1E400F9800282A34 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F27E21E400F9800282A34 /* BNCConfig.m */; };
 		4D4F28401E400F9800282A34 /* BNCContentDiscoveryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F27E41E400F9800282A34 /* BNCContentDiscoveryManager.m */; };
@@ -77,6 +78,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4D3A944A1E64C777007127B3 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		4D4F27DE1E400F9800282A34 /* BNCCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCCallbacks.h; sourceTree = "<group>"; };
 		4D4F27DF1E400F9800282A34 /* BNCCommerceEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCCommerceEvent.h; sourceTree = "<group>"; };
 		4D4F27E01E400F9800282A34 /* BNCCommerceEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCCommerceEvent.m; sourceTree = "<group>"; };
@@ -206,6 +208,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D3A944B1E64C777007127B3 /* iAd.framework in Frameworks */,
 				63ECFAFC1D8F9624007F50AA /* SafariServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -216,6 +219,7 @@
 		44A650CEF93FEF2A6077B064 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4D3A944A1E64C777007127B3 /* iAd.framework */,
 				63ECFAFB1D8F9624007F50AA /* SafariServices.framework */,
 			);
 			name = Frameworks;
