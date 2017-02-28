@@ -22,11 +22,12 @@ if ! ./scripts/askYN "Commit and deploy Branch beta release version ${version}?"
 fi
 
 # Update the changes in QA:
+# Don't tag beta releases.  It messes up Carthage.
 git add --all
 git commit -m "Beta Release ${version}."
-git tag "${version}"
+# git tag "${version}"
 git push
-git push --tags origin QA
+# git push --tags origin QA
 
 # Pull the changes to beta:
 git checkout beta
