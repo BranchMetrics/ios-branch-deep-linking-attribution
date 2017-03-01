@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.13.5
+  * Updated Xcode 7 example project to work on iOS 7.
+  * Added iAd framework to Swift example so that the Apple Search Ad query works.
+
 - v0.13.1
   * > Beta Release <
   * Version strings are now displayed in the testbed apps.

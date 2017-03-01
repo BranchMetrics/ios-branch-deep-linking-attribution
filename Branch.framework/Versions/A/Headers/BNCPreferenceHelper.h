@@ -41,6 +41,7 @@
 @property (strong, nonatomic) NSDictionary *appleSearchAdDetails;
 @property (strong, nonatomic) NSString *lastSystemBuildVersion;
 @property (strong, nonatomic) NSString *browserUserAgentString;
+@property (strong) NSString *branchAPIURL;
 
 + (BNCPreferenceHelper *)preferenceHelper;
 + (NSURL*) URLForBranchDirectory;
@@ -81,5 +82,7 @@
 - (NSMutableDictionary *)getBranchAnalyticsData;
 - (NSDictionary *)getContentAnalyticsManifest;
 - (void)saveContentAnalyticsManifest:(NSDictionary *)cdManifest;
+
+- (void) save;  //  Flushes preference queue to persistence.
 
 @end
