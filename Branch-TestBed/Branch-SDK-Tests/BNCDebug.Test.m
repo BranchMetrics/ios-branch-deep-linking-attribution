@@ -2,13 +2,13 @@
 
 //--------------------------------------------------------------------------------------------------
 //
-//                                                                          		 BNCDebug.Test.m
-//																		  			Branch.framework
+//                                                                                   BNCDebug.Test.m
+//                                                                                  Branch.framework
 //
-//                                                                          	   Debugging Support
-//                                                              		  Edward Smith, October 2016
+//                                                                                 Debugging Support
+//                                                                        Edward Smith, October 2016
 //
-//                                   		   -©- Copyright © 2016 Branch, all rights reserved. -©-
+//                                             -©- Copyright © 2016 Branch, all rights reserved. -©-
 //
 //--------------------------------------------------------------------------------------------------
 
@@ -20,25 +20,25 @@
 #pragma mark Test DumpClass
 
 @interface DumpClass : NSObject {
-    NSString    	*stringVar;
-    int         	intVar;
-    char        	*charPtrVar;
-    Class       	classVar;
-    CGFloat     	floatVar;
-    double      	doubleVar;
-    short       	shortVar;
-    BOOL        	boolVar;
-	unsigned char	ucharVar;
-	unsigned int	uintVar;
-	unsigned short	ushortVar;
-	unsigned long	ulongVar;
-	unsigned long long	ullVar;
-	long double	 	doubleTroubleVar;
+    NSString        *stringVar;
+    int             intVar;
+    char            *charPtrVar;
+    Class           classVar;
+    CGFloat         floatVar;
+    double          doubleVar;
+    short           shortVar;
+    BOOL            boolVar;
+    unsigned char   ucharVar;
+    unsigned int    uintVar;
+    unsigned short  ushortVar;
+    unsigned long   ulongVar;
+    unsigned long long  ullVar;
+    long double     doubleTroubleVar;
 
-	struct UnhandledStruct {
-		int int1;
-		int int2;
-	} UnhandledType;
+    struct UnhandledStruct {
+        int int1;
+        int int2;
+    } UnhandledType;
 }
 @property (assign) NSInteger intProp;
 @property (strong) NSString  *stringProp;
@@ -74,7 +74,7 @@
 }
 
 + (void) classMethod {
-	NSLog(@"Class method.");
+    NSLog(@"Class method.");
 }
 
 @end
@@ -85,10 +85,10 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
     NSString *resource =
         NSLocalizedStringFromTableInBundle(
             key,
-			@"Branch-SDK-Tests",
+            @"Branch-SDK-Tests",
             [NSBundle bundleForClass:NSClassFromString(@"BRDebugTest")],
-			@""
-		);
+            @""
+        );
     return resource;
 }
 
@@ -108,9 +108,9 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
     NSLog(@"\nTruth:%@BNCSStringFromObjectDump result:%@", truthString, dumpString);
 
     NSMutableArray *truthArray =
-		[NSMutableArray arrayWithArray:[truthString componentsSeparatedByString:@"\n"]];
+        [NSMutableArray arrayWithArray:[truthString componentsSeparatedByString:@"\n"]];
 
-	//	Remove the empty line and the address line:
+    //  Remove the empty line and the address line:
     [truthArray removeObjectAtIndex:0];
     [truthArray removeObjectAtIndex:0];
     [truthArray sortUsingComparator:
@@ -120,7 +120,7 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
         }];
 
     NSMutableArray *dumpArray =
-		[NSMutableArray arrayWithArray:[dumpString componentsSeparatedByString:@"\n"]];
+        [NSMutableArray arrayWithArray:[dumpString componentsSeparatedByString:@"\n"]];
     [dumpArray removeObjectAtIndex:0];
     [dumpArray removeObjectAtIndex:0];
     [dumpArray sortUsingComparator:
@@ -132,7 +132,7 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
     XCTAssertTrue(truthArray.count == dumpArray.count);
     for (int i = 0; i < truthArray.count; ++i) {
         XCTAssertTrue([truthArray[i] isEqualToString:dumpArray[i]]);
-	}
+    }
 }
 
 - (void) testInstanceDump {
@@ -164,7 +164,7 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
     XCTAssertTrue(truthArray.count == dumpArray.count);
     for (int i = 0; i < truthArray.count; ++i) {
         XCTAssertTrue([truthArray[i] isEqualToString:dumpArray[i]]);
-	}
+    }
 }
 
 - (void) testDebuggerIsAttached {
@@ -175,17 +175,17 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
 }
 
 - (void) testClassInstanceDump {
-	NSString *s = nil;
+    NSString *s = nil;
     DumpClass *testInstance = [DumpClass new];
-	s = BNCDebugStringFromObject(testInstance);
-	NSLog(@"%@\n\n\n", s);
+    s = BNCDebugStringFromObject(testInstance);
+    NSLog(@"%@\n\n\n", s);
 
-	s = BNCDebugStringFromObject(testInstance.class);
-	NSLog(@"%@\n\n\n", s);
+    s = BNCDebugStringFromObject(testInstance.class);
+    NSLog(@"%@\n\n\n", s);
 
-	s = BNCDebugStringFromObject(nil);
-	NSLog(@"%@\n\n\n", s);
-	XCTAssertEqualObjects(s, @"Object is nil.\n");
+    s = BNCDebugStringFromObject(nil);
+    NSLog(@"%@\n\n\n", s);
+    XCTAssertEqualObjects(s, @"Object is nil.\n");
 }
 
 - (void) testClassList {
@@ -201,7 +201,7 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
 }
 
 - (void) testBreakpoint {
-	BNCDebugBreakpoint();
+    BNCDebugBreakpoint();
 }
 
 @end

@@ -3,9 +3,9 @@
 //--------------------------------------------------------------------------------------------------
 //
 //                                                                                 NSString+Branch.h
-//																		            Branch.framework
+//                                                                                  Branch.framework
 //
-//                                                               	              NSString Additions
+//                                                                                NSString Additions
 //                                                                       Edward Smith, February 2017
 //
 //                                             -©- Copyright © 2017 Branch, all rights reserved. -©-

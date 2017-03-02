@@ -2,13 +2,13 @@
 
 //--------------------------------------------------------------------------------------------------
 //
-//																			 		   BNCLog.Test.m
-//																		  				 BranchTests
+//                                                                                     BNCLog.Test.m
+//                                                                                       BranchTests
 //
-//                                                                			Simple logging functions
-//                                                                 		  Edward Smith, October 2016
+//                                                                          Simple logging functions
+//                                                                        Edward Smith, October 2016
 //
-//                                   		   -©- Copyright © 2016 Branch, all rights reserved. -©-
+//                                             -©- Copyright © 2016 Branch, all rights reserved. -©-
 //
 //--------------------------------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ static NSString* globalTestLogString = nil;
 
 
 void TestLogProcedure(NSDate*timestamp, BNCLogLevel level, NSString* message) {
-	globalTestLogString = [message copy];
+    globalTestLogString = [message copy];
 }
 
 
@@ -33,7 +33,7 @@ void TestLogProcedure(NSDate*timestamp, BNCLogLevel level, NSString* message) {
 @implementation BNCLogTest
 
 - (void) dealloc {
-	globalTestLogString = nil;
+    globalTestLogString = nil;
 }
 
 extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
@@ -51,8 +51,8 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     // Set SynchronizeMessages so that messages don't lag for testing.
     BNCLogSetSynchronizeMessages(NO);
 
-	//	Test the log message facility --
-	//	Warning!  If these line numbers change the tests will fail!
+    //  Test the log message facility --
+    //  Warning!  If these line numbers change the tests will fail!
 
     //  Extra line
     //  Extra line
@@ -60,7 +60,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     //  Extra line
     //  Extra line
 
-	BNCLog(@"Debug message with no parameters.");
+    BNCLog(@"Debug message with no parameters.");
     XCTAssertEqualObjects(globalTestLogString,
         @"[branch.io] BNCLog.Test.m(63)     Log: Debug message with no parameters.");
 }
@@ -78,13 +78,13 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     // Set SynchronizeMessages so that messages don't lag for testing.
     BNCLogSetSynchronizeMessages(NO);
 
-	//	Test the log message facility --
+    //  Test the log message facility --
 
-	BNCLog(@"Debug message with no parameters.");
+    BNCLog(@"Debug message with no parameters.");
     XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
         @"[branch.io] BNCLog.Test.m(**)     Log: Debug message with no parameters."]);
 
-	BNCLog(@"Debug message with one parameter: %d.", 1);
+    BNCLog(@"Debug message with one parameter: %d.", 1);
     XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
         @"[branch.io] BNCLog.Test.m(**)     Log: Debug message with one parameter: 1."]);
 
@@ -105,7 +105,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
         BNCLogBreakPoint();
         XCTAssertFalse(globalTestLogString);
         BNCLogSetBreakPointsEnabled(YES);
-	}
+    }
 
     BNCLogSetBreakPointsEnabled(NO);
     BNCLogAssert(1 == 2);
@@ -114,41 +114,41 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 
     BNCLogAssertWithMessage(1 == 2, @"Assert message! Parameter: %d.", 2);
     XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
-		@"[branch.io] BNCLog.Test.m(***)  Assert: (1 == 2) !!! Assert message! Parameter: 2."]);
+        @"[branch.io] BNCLog.Test.m(***)  Assert: (1 == 2) !!! Assert message! Parameter: 2."]);
 }
 
 - (void) testOutputFunctions {
-	BNCLogOutputFunctionPtr origPtr = BNCLogOutputFunction();
+    BNCLogOutputFunctionPtr origPtr = BNCLogOutputFunction();
 
-	BNCLogSetOutputFunction(BNCLogFunctionOutputToStdOut);
-	BNCLog(@"Hi to StdOut.");
+    BNCLogSetOutputFunction(BNCLogFunctionOutputToStdOut);
+    BNCLog(@"Hi to StdOut.");
 
-	BNCLogSetOutputFunction(BNCLogFunctionOutputToStdErr);
-	BNCLog(@"Hi to StdErr.");
+    BNCLogSetOutputFunction(BNCLogFunctionOutputToStdErr);
+    BNCLog(@"Hi to StdErr.");
 
-	NSError *error = nil;
-	NSURL *URL =
-		[[NSFileManager defaultManager]
-			URLForDirectory:NSCachesDirectory
-			inDomain:NSUserDomainMask
-			appropriateForURL:nil
-			create:YES
-			error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
-	[[NSFileManager defaultManager]
-		createDirectoryAtURL:URL
-		withIntermediateDirectories:YES
-		attributes:nil
-		error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"Test.log"];
+    NSError *error = nil;
+    NSURL *URL =
+        [[NSFileManager defaultManager]
+            URLForDirectory:NSCachesDirectory
+            inDomain:NSUserDomainMask
+            appropriateForURL:nil
+            create:YES
+            error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
+    [[NSFileManager defaultManager]
+        createDirectoryAtURL:URL
+        withIntermediateDirectories:YES
+        attributes:nil
+        error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"Test.log"];
     [[NSFileManager defaultManager]
         removeItemAtURL:URL
         error:&error];
 
-	BNCLogSetOutputToURL(URL);
-	BNCLog(@"Hi to file1.");
+    BNCLogSetOutputToURL(URL);
+    BNCLog(@"Hi to file1.");
     BNCLogFlushMessages();
     BNCLogSetOutputFunction(NULL);
 
@@ -160,13 +160,13 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     NSString *test = @"[branch.io] BNCLog.Test.m(***)     Log: Hi to file1. \n";
     XCTAssert([string bnc_isEqualToMaskedString:test]);
 
-	BNCLogSetOutputFunction(NULL);
-	BNCLog(@"Hi to null.");
+    BNCLogSetOutputFunction(NULL);
+    BNCLog(@"Hi to null.");
 
     // Re-open log file and append to it --
     BNCLogSetOutputToURL(URL);
-	BNCLog(@"Hi to file2.");
-	BNCLog(@"Hi to file3.");
+    BNCLog(@"Hi to file2.");
+    BNCLog(@"Hi to file3.");
     BNCLogFlushMessages();
     BNCLogSetOutputFunction(NULL);
 
@@ -180,29 +180,29 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     XCTAssert([string bnc_isEqualToMaskedString:test]);
 
 
-	BNCLogSetOutputFunction(origPtr);
+    BNCLogSetOutputFunction(origPtr);
 }
 
 - (void) testEvenLengthLogMessages {
-	BNCLogOutputFunctionPtr origPtr = BNCLogOutputFunction();
+    BNCLogOutputFunctionPtr origPtr = BNCLogOutputFunction();
 
-	NSError *error = nil;
-	NSURL *URL =
-		[[NSFileManager defaultManager]
-			URLForDirectory:NSCachesDirectory
-			inDomain:NSUserDomainMask
-			appropriateForURL:nil
-			create:YES
-			error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
-	[[NSFileManager defaultManager]
-		createDirectoryAtURL:URL
-		withIntermediateDirectories:YES
-		attributes:nil
-		error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"Test.log"];
+    NSError *error = nil;
+    NSURL *URL =
+        [[NSFileManager defaultManager]
+            URLForDirectory:NSCachesDirectory
+            inDomain:NSUserDomainMask
+            appropriateForURL:nil
+            create:YES
+            error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
+    [[NSFileManager defaultManager]
+        createDirectoryAtURL:URL
+        withIntermediateDirectories:YES
+        attributes:nil
+        error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"Test.log"];
     [[NSFileManager defaultManager]
         removeItemAtURL:URL
         error:&error];
@@ -210,8 +210,8 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 
     // Check that we only write even length messages.
 
-	BNCLogSetOutputToURL(URL);
-	BNCLog(@"Hi to file01.");
+    BNCLogSetOutputToURL(URL);
+    BNCLog(@"Hi to file01.");
     BNCLogFlushMessages();
     BNCLogSetOutputFunction(NULL);
 
@@ -225,8 +225,8 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 
     // Re-open log file and append to it --
     BNCLogSetOutputToURL(URL);
-	BNCLog(@"Hi to file02.");
-	BNCLog(@"Hi to file03.");
+    BNCLog(@"Hi to file02.");
+    BNCLog(@"Hi to file03.");
     BNCLogFlushMessages();
     BNCLogSetOutputFunction(NULL);
 
@@ -239,36 +239,36 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
         @"[branch.io] BNCLog.Test.m(***)     Log: Hi to file03.\n";
     XCTAssert([string bnc_isEqualToMaskedString:test]);
 
-	BNCLogSetOutputFunction(origPtr);
+    BNCLogSetOutputFunction(origPtr);
 }
 
 - (void) testTripleLengthLogMessages {
-	BNCLogOutputFunctionPtr origPtr = BNCLogOutputFunction();
+    BNCLogOutputFunctionPtr origPtr = BNCLogOutputFunction();
 
-	NSError *error = nil;
-	NSURL *URL =
-		[[NSFileManager defaultManager]
-			URLForDirectory:NSCachesDirectory
-			inDomain:NSUserDomainMask
-			appropriateForURL:nil
-			create:YES
-			error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
-	[[NSFileManager defaultManager]
-		createDirectoryAtURL:URL
-		withIntermediateDirectories:YES
-		attributes:nil
-		error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"Test.log"];
+    NSError *error = nil;
+    NSURL *URL =
+        [[NSFileManager defaultManager]
+            URLForDirectory:NSCachesDirectory
+            inDomain:NSUserDomainMask
+            appropriateForURL:nil
+            create:YES
+            error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
+    [[NSFileManager defaultManager]
+        createDirectoryAtURL:URL
+        withIntermediateDirectories:YES
+        attributes:nil
+        error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"Test.log"];
     [[NSFileManager defaultManager]
         removeItemAtURL:URL
         error:&error];
     error = nil;
 
-	BNCLogSetOutputToURL(URL);
-	BNCLog(@"Hi to file001.");
+    BNCLogSetOutputToURL(URL);
+    BNCLog(@"Hi to file001.");
     BNCLogFlushMessages();
     BNCLogSetOutputFunction(NULL);
 
@@ -282,8 +282,8 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 
     // Re-open log file and append to it --
     BNCLogSetOutputToURL(URL);
-	BNCLog(@"Hi to file002.");
-	BNCLog(@"Hi to file003.");
+    BNCLog(@"Hi to file002.");
+    BNCLog(@"Hi to file003.");
     BNCLogFlushMessages();
     BNCLogSetOutputFunction(NULL);
 
@@ -296,7 +296,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
         @"[branch.io] BNCLog.Test.m(***)     Log: Hi to file003. \n";
     XCTAssert([string bnc_isEqualToMaskedString:test]);
 
-	BNCLogSetOutputFunction(origPtr);
+    BNCLogSetOutputFunction(origPtr);
 }
 
 - (void) testLogObject {
@@ -318,23 +318,23 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     // Remove the current file if it exists.
 
-	NSError *error = nil;
-	NSURL *URL =
-		[[NSFileManager defaultManager]
-			URLForDirectory:NSCachesDirectory
-			inDomain:NSUserDomainMask
-			appropriateForURL:nil
-			create:YES
-			error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
-	[[NSFileManager defaultManager]
-		createDirectoryAtURL:URL
-		withIntermediateDirectories:YES
-		attributes:nil
-		error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"TestWrap.log"];
+    NSError *error = nil;
+    NSURL *URL =
+        [[NSFileManager defaultManager]
+            URLForDirectory:NSCachesDirectory
+            inDomain:NSUserDomainMask
+            appropriateForURL:nil
+            create:YES
+            error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
+    [[NSFileManager defaultManager]
+        createDirectoryAtURL:URL
+        withIntermediateDirectories:YES
+        attributes:nil
+        error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"TestWrap.log"];
     [[NSFileManager defaultManager]
         removeItemAtURL:URL
         error:&error];
@@ -445,23 +445,23 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
 - (void) testLogRecordWrapPerformanceTesting {
 
-	NSError *error = nil;
-	NSURL *URL =
-		[[NSFileManager defaultManager]
-			URLForDirectory:NSCachesDirectory
-			inDomain:NSUserDomainMask
-			appropriateForURL:nil
-			create:YES
-			error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
-	[[NSFileManager defaultManager]
-		createDirectoryAtURL:URL
-		withIntermediateDirectories:YES
-		attributes:nil
-		error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"TestWrapSync.log"];
+    NSError *error = nil;
+    NSURL *URL =
+        [[NSFileManager defaultManager]
+            URLForDirectory:NSCachesDirectory
+            inDomain:NSUserDomainMask
+            appropriateForURL:nil
+            create:YES
+            error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
+    [[NSFileManager defaultManager]
+        createDirectoryAtURL:URL
+        withIntermediateDirectories:YES
+        attributes:nil
+        error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"TestWrapSync.log"];
     [[NSFileManager defaultManager]
         removeItemAtURL:URL
         error:&error];
@@ -474,18 +474,18 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     NSDate *startTime = [NSDate date];
     dispatch_group_t waitGroup = dispatch_group_create();
-    
-	dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
             BNCLog(@"Message 1x%ld", i);
     });
 
-	dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
             BNCLog(@"Message 2x%ld", i);
     });
 
-	dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
             BNCLog(@"Message 3x%ld", i);
     });
@@ -503,18 +503,18 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     startTime = [NSDate date];
     waitGroup = dispatch_group_create();
-    
-	dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
             BNCLog(@"Message 1x%ld", i);
     });
 
-	dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
             BNCLog(@"Message 2x%ld", i);
     });
 
-	dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
             BNCLog(@"Message 3x%ld", i);
     });
@@ -529,27 +529,27 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 - (void) testRecordWrapTruncate {
     //  Create a larger log file then re-open and write smaller file to make sure it truncates.
 
-	NSError *error = nil;
-	NSURL *URL =
-		[[NSFileManager defaultManager]
-			URLForDirectory:NSCachesDirectory
-			inDomain:NSUserDomainMask
-			appropriateForURL:nil
-			create:YES
-			error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
-	[[NSFileManager defaultManager]
-		createDirectoryAtURL:URL
-		withIntermediateDirectories:YES
-		attributes:nil
-		error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"TestWrapSync.log"];
+    NSError *error = nil;
+    NSURL *URL =
+        [[NSFileManager defaultManager]
+            URLForDirectory:NSCachesDirectory
+            inDomain:NSUserDomainMask
+            appropriateForURL:nil
+            create:YES
+            error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
+    [[NSFileManager defaultManager]
+        createDirectoryAtURL:URL
+        withIntermediateDirectories:YES
+        attributes:nil
+        error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"TestWrapSync.log"];
     [[NSFileManager defaultManager]
         removeItemAtURL:URL
         error:&error];
-    error = nil;        
+    error = nil;
     NSLog(@"Log is %@.", URL);
 
     BNCLogSetSynchronizeMessages(YES);
@@ -584,23 +584,23 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     // Remove the current file if it exists.
 
-	NSError *error = nil;
-	NSURL *URL =
-		[[NSFileManager defaultManager]
-			URLForDirectory:NSCachesDirectory
-			inDomain:NSUserDomainMask
-			appropriateForURL:nil
-			create:YES
-			error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
-	[[NSFileManager defaultManager]
-		createDirectoryAtURL:URL
-		withIntermediateDirectories:YES
-		attributes:nil
-		error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"TestWrap.log"];
+    NSError *error = nil;
+    NSURL *URL =
+        [[NSFileManager defaultManager]
+            URLForDirectory:NSCachesDirectory
+            inDomain:NSUserDomainMask
+            appropriateForURL:nil
+            create:YES
+            error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
+    [[NSFileManager defaultManager]
+        createDirectoryAtURL:URL
+        withIntermediateDirectories:YES
+        attributes:nil
+        error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"TestWrap.log"];
     [[NSFileManager defaultManager]
         removeItemAtURL:URL
         error:&error];
@@ -713,23 +713,23 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
 - (void) testLogByteWrapPerformanceTesting {
 
-	NSError *error = nil;
-	NSURL *URL =
-		[[NSFileManager defaultManager]
-			URLForDirectory:NSCachesDirectory
-			inDomain:NSUserDomainMask
-			appropriateForURL:nil
-			create:YES
-			error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
-	[[NSFileManager defaultManager]
-		createDirectoryAtURL:URL
-		withIntermediateDirectories:YES
-		attributes:nil
-		error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"TestWrapSync.log"];
+    NSError *error = nil;
+    NSURL *URL =
+        [[NSFileManager defaultManager]
+            URLForDirectory:NSCachesDirectory
+            inDomain:NSUserDomainMask
+            appropriateForURL:nil
+            create:YES
+            error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
+    [[NSFileManager defaultManager]
+        createDirectoryAtURL:URL
+        withIntermediateDirectories:YES
+        attributes:nil
+        error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"TestWrapSync.log"];
     [[NSFileManager defaultManager]
         removeItemAtURL:URL
         error:&error];
@@ -745,18 +745,18 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     NSDate *startTime = [NSDate date];
     dispatch_group_t waitGroup = dispatch_group_create();
-    
-	dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
             BNCLog(@"Message 1x%ld", i);
     });
 
-	dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
             BNCLog(@"Message 2x%ld", i);
     });
 
-	dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
             BNCLog(@"Message 3x%ld", i);
     });
@@ -774,18 +774,18 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     startTime = [NSDate date];
     waitGroup = dispatch_group_create();
-    
-	dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
             BNCLog(@"Message 1x%ld", i);
     });
 
-	dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
             BNCLog(@"Message 2x%ld", i);
     });
 
-	dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
             BNCLog(@"Message 3x%ld", i);
     });
@@ -801,28 +801,28 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 - (void) testByteWrapTruncate {
     //  Create a larger log file then re-open and write smaller file to make sure it truncates.
 
-	NSError *error = nil;
-	NSURL *URL =
-		[[NSFileManager defaultManager]
-			URLForDirectory:NSCachesDirectory
-			inDomain:NSUserDomainMask
-			appropriateForURL:nil
-			create:YES
-			error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
-	[[NSFileManager defaultManager]
-		createDirectoryAtURL:URL
-		withIntermediateDirectories:YES
-		attributes:nil
-		error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"TestWrapSync.log"];
+    NSError *error = nil;
+    NSURL *URL =
+        [[NSFileManager defaultManager]
+            URLForDirectory:NSCachesDirectory
+            inDomain:NSUserDomainMask
+            appropriateForURL:nil
+            create:YES
+            error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
+    [[NSFileManager defaultManager]
+        createDirectoryAtURL:URL
+        withIntermediateDirectories:YES
+        attributes:nil
+        error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"TestWrapSync.log"];
     [[NSFileManager defaultManager]
         removeItemAtURL:URL
         error:&error];
     NSLog(@"Remove error is '%@'.\nLog is %@.", error, URL);
-    error = nil;        
+    error = nil;
 
     BNCLogSetSynchronizeMessages(YES);
     BNCLogSetOutputToURLByteWrap(URL, 1024);
@@ -853,23 +853,23 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 - (void) testByteWrapUnevenRecordReopen {
     // Make sure the re-open works at the right place when records aren't even:
 
-	NSError *error = nil;
-	NSURL *URL =
-		[[NSFileManager defaultManager]
-			URLForDirectory:NSCachesDirectory
-			inDomain:NSUserDomainMask
-			appropriateForURL:nil
-			create:YES
-			error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
-	[[NSFileManager defaultManager]
-		createDirectoryAtURL:URL
-		withIntermediateDirectories:YES
-		attributes:nil
-		error:&error];
-	XCTAssert(!error);
-	URL = [URL URLByAppendingPathComponent:@"TestWrap.log"];
+    NSError *error = nil;
+    NSURL *URL =
+        [[NSFileManager defaultManager]
+            URLForDirectory:NSCachesDirectory
+            inDomain:NSUserDomainMask
+            appropriateForURL:nil
+            create:YES
+            error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"io.branch.BranchSDK-Test"];
+    [[NSFileManager defaultManager]
+        createDirectoryAtURL:URL
+        withIntermediateDirectories:YES
+        attributes:nil
+        error:&error];
+    XCTAssert(!error);
+    URL = [URL URLByAppendingPathComponent:@"TestWrap.log"];
     [[NSFileManager defaultManager]
         removeItemAtURL:URL
         error:&error];

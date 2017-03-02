@@ -2,13 +2,13 @@
 
 //--------------------------------------------------------------------------------------------------
 //
-//																				   			BNCLog.m
-//																		  			Branch.framework
+//                                                                                          BNCLog.m
+//                                                                                  Branch.framework
 //
-//                                                                			Simple logging functions
-//                                                                 		  Edward Smith, October 2016
+//                                                                          Simple logging functions
+//                                                                        Edward Smith, October 2016
 //
-//                                   		   -©- Copyright © 2016 Branch, all rights reserved. -©-
+//                                             -©- Copyright © 2016 Branch, all rights reserved. -©-
 //
 //--------------------------------------------------------------------------------------------------
 
@@ -25,11 +25,11 @@ static NSNumber *bnc_LogIsInitialized = nil;
 extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...) {
 
-	va_list args;
-	va_start(args, format);
-	NSString* message = [[NSString alloc] initWithFormat:format arguments:args];
-	va_end(args);
-    
+    va_list args;
+    va_start(args, format);
+    NSString* message = [[NSString alloc] initWithFormat:format arguments:args];
+    va_end(args);
+
     NSLog(@"[branch.io] BNCLog.m (%d) Log error: %@", linenumber, message);
 }
 
@@ -213,7 +213,7 @@ BOOL BNCLogRecordWrapOpenURL(NSURL *url, long maxRecords, long recordSize) {
             oldestDate = date;
         }
         offset++;
-        n = read(bnc_LogDescriptor, &buffer, sizeof(buffer));        
+        n = read(bnc_LogDescriptor, &buffer, sizeof(buffer));
     }
     if (offset < bnc_LogOffsetMax)
         bnc_LogOffset = offset;
@@ -512,9 +512,9 @@ void BNCLogMessageInternal(
             (uint64_t) message, message.class, message.description];
     }
 
-	NSString* filename =
-		[[NSString stringWithCString:file encoding:NSMacOSRomanStringEncoding]
-			lastPathComponent];
+    NSString* filename =
+        [[NSString stringWithCString:file encoding:NSMacOSRomanStringEncoding]
+            lastPathComponent];
 
     NSString *logLevels[BNCLogLevelMax] = {
         @"  Debug",
@@ -529,12 +529,12 @@ void BNCLogMessageInternal(
     logLevel = MAX(MIN(logLevel, BNCLogLevelMax-1), 0);
     NSString *levelString = logLevels[logLevel];
 
-	va_list args;
-	va_start(args, message);		
-	NSString* m = [[NSString alloc] initWithFormat:message arguments:args];
-	NSString* s = [NSString stringWithFormat:
+    va_list args;
+    va_start(args, message);
+    NSString* m = [[NSString alloc] initWithFormat:message arguments:args];
+    NSString* s = [NSString stringWithFormat:
         @"[branch.io] %@(%d) %@: %@", filename, lineNumber, levelString, m];
-	va_end(args);
+    va_end(args);
 
     if (logLevel >= bnc_LogDisplayLevel) {
         NSLog(@"%@", s);

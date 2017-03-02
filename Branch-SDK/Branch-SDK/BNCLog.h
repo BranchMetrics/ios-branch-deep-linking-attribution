@@ -2,13 +2,13 @@
 
 //--------------------------------------------------------------------------------------------------
 //
-//																				   			BNCLog.h
-//																		  			Branch.framework
+//                                                                                          BNCLog.h
+//                                                                                  Branch.framework
 //
-//                                                                   		Simple logging functions
-//                                                              		  Edward Smith, October 2016
+//                                                                          Simple logging functions
+//                                                                        Edward Smith, October 2016
 //
-//                                   		   -©- Copyright © 2016 Branch, all rights reserved. -©-
+//                                             -©- Copyright © 2016 Branch, all rights reserved. -©-
 //
 //--------------------------------------------------------------------------------------------------
 
@@ -27,14 +27,14 @@ extern "C" {
 
 #pragma mark Log Message Severity
 
-///	Log message severity
+/// Log message severity
 typedef NS_ENUM(NSInteger, BNCLogLevel) {
     BNCLogLevelAll = 0,
-	BNCLogLevelDebug = BNCLogLevelAll,
+    BNCLogLevelDebug = BNCLogLevelAll,
     BNCLogLevelBreakPoint,
-	BNCLogLevelWarning,
-	BNCLogLevelError,
-	BNCLogLevelAssert,
+    BNCLogLevelWarning,
+    BNCLogLevelError,
+    BNCLogLevelAssert,
     BNCLogLevelLog,
     BNCLogLevelNone,
     BNCLogLevelMax
@@ -55,8 +55,8 @@ extern void BNCLogSetDisplayLevel(BNCLogLevel level);
 
 
 /*!
-* @discussion   When log messages are synchronized they are written to the log in order, including 
-*   across separate threads. Synchronizing log messages usually improves performance since it 
+* @discussion   When log messages are synchronized they are written to the log in order, including
+*   across separate threads. Synchronizing log messages usually improves performance since it
 *   reduces global resource lock contention. Note that synchronization has the side effect of some
 *   messages not being available immediately since they are written on a separate thread.
 *
@@ -162,10 +162,10 @@ extern void BNCLogFlushMessages();
             BNCLogMessageInternal(BNCLogLevelBreakPoint, __FILE__, __LINE__, @"Programmatic breakpoint."); \
             if (BNCDebuggerIsAttached()) { \
                 BNCLogFlushMessages(); \
-				BNCDebugBreakpoint(); \
-			} \
-		} \
-	} while (0)
+                BNCDebugBreakpoint(); \
+            } \
+        } \
+    } while (0)
 
 ///Log a message and cause a programmatic breakpoint if breakpoints are enabled.
 #define BNCBreakPointWithMessage(...) \
@@ -173,11 +173,11 @@ extern void BNCLogFlushMessages();
         if (BNCLogBreakPointsAreEnabled() { \
             BNCLogMessageInternal(BNCLogLevelBreakPoint, __FILE__, __LINE__, __VA_ARGS__); \
             if (BNCDebuggerIsAttached()) { \
-				BNCLogFlushMessages(); \
-				BNCDebugBreakpoint(); \
-			} \
-		} \
-	} while (0)
+                BNCLogFlushMessages(); \
+                BNCDebugBreakpoint(); \
+            } \
+        } \
+    } while (0)
 
 ///Check if an asserting is true.  If programmatic breakpoints are enabled then break.
 #define BNCLogAssert(condition) \
@@ -185,11 +185,11 @@ extern void BNCLogFlushMessages();
         if (!(condition)) { \
             BNCLogMessageInternal(BNCLogLevelAssert, __FILE__, __LINE__, @"(%s) !!!", #condition); \
             if (BNCLogBreakPointsAreEnabled() && BNCDebuggerIsAttached()) { \
-				BNCLogFlushMessages(); \
-				BNCDebugBreakpoint(); \
+                BNCLogFlushMessages(); \
+                BNCDebugBreakpoint(); \
             } \
-		} \
-	} while (0)
+        } \
+    } while (0)
 
 ///Check if an asserting is true logging a message if the assertion fails.
 ///If programmatic breakpoints are enabled then break.
@@ -200,10 +200,10 @@ extern void BNCLogFlushMessages();
             BNCLogMessageInternal(BNCLogLevelAssert, __FILE__, __LINE__, @"(%s) !!! %@", #condition, m); \
             if (BNCLogBreakPointsAreEnabled() && BNCDebuggerIsAttached()) { \
                 BNCLogFlushMessages(); \
-				BNCDebugBreakpoint(); \
-			} \
-		} \
-	} while (0)
+                BNCDebugBreakpoint(); \
+            } \
+        } \
+    } while (0)
 
 ///Assert that the current thread is the main thread.
 #define BNCLogAssertIsMainThread() \
@@ -211,7 +211,7 @@ extern void BNCLogFlushMessages();
 
 ///Write the name of the current method to the log.
 #define BNCLogMethodName() \
-	BNCLogDebug(@"Method '%@'.",  NSStringFromSelector(_cmd))
+    BNCLogDebug(@"Method '%@'.",  NSStringFromSelector(_cmd))
 
 ///Write the name of the current function to the log.
 #define BNCLogFunctionName() \
