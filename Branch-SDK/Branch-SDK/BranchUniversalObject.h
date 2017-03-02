@@ -6,7 +6,8 @@
 //  Copyright © 2015 Branch Metrics. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+
 #import "Branch.h"
 
 @class BranchLinkProperties;

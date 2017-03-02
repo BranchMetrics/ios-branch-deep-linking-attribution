@@ -11,7 +11,7 @@
 #warning Warning: Compiling with Xcode 7 support
 
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 
 @interface NSLocale (BranchXcode7Support)

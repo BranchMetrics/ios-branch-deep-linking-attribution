@@ -5,8 +5,9 @@
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+@import Foundation;
+@import UIKit;
+
 #import "BNCConfig.h"
 #import "BranchView.h"
 #import "BNCCallbacks.h"

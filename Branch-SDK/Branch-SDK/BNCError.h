@@ -7,7 +7,7 @@
 //
 
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 
 FOUNDATION_EXPORT NSString *_Nonnull const BNCErrorDomain;

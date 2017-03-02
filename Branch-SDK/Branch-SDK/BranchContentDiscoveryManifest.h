@@ -5,8 +5,12 @@
 //  Created by Sojan P.R. on 8/18/16.
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
+
+@import UIKit;
+
 #import "BranchContentPathProperties.h"
-#import <UIKit/UIKit.h>
+
+
 #ifndef ContentDiscoverManifest_h
 #define ContentDiscoverManifest_h
 
