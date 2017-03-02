@@ -556,7 +556,7 @@ void ForceCategoriesToLoad() {
             void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) = ^void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
                 self.asyncRequestCount--;
                 
-                if (attrDetails && [attrDetails count]) {
+                if ([[attrDetails valueForKey:@"Version3.1"] valueForKey:@"iad-attribution"]) {
                     self.preferenceHelper.appleSearchAdDetails = attrDetails;
                 }
                 else if (self.searchAdsDebugMode) {
