@@ -119,8 +119,8 @@ void BNCLogSetOutputToURL(NSURL *_Nullable url) {
 #pragma mark - Record Wrap Output File Functions
 
 static off_t bnc_LogOffset           = 0;
-static long  bnc_LogOffsetMax        = 100;
-static long  bnc_LogRecordSize       = 1024;
+static off_t bnc_LogOffsetMax        = 100;
+static off_t bnc_LogRecordSize       = 1024;
 static NSDateFormatter *bnc_LogDateFormatter = nil;
 
 void BNCLogRecordWrapWrite(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString *_Nullable message) {
