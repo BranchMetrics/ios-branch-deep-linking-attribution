@@ -21,10 +21,10 @@
 
 @interface DumpClass : NSObject {
     NSString        *stringVar;
-    int             intVar;
+    int32_t         intVar;
     char            *charPtrVar;
     Class           classVar;
-    CGFloat         floatVar;
+    float           floatVar;
     double          doubleVar;
     short           shortVar;
     BOOL            boolVar;
@@ -32,7 +32,6 @@
     unsigned int    uintVar;
     unsigned short  ushortVar;
     unsigned long   ulongVar;
-    unsigned long long  ullVar;
     long double     doubleTroubleVar;
 
     struct UnhandledStruct {
@@ -40,8 +39,8 @@
         int int2;
     } UnhandledType;
 }
-@property (assign) NSInteger intProp;
-@property (strong) NSString  *stringProp;
+@property (assign) int32_t  intProp;
+@property (strong) NSString *stringProp;
 @end
 
 
@@ -114,20 +113,18 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
     [truthArray removeObjectAtIndex:0];
     [truthArray removeObjectAtIndex:0];
     [truthArray sortUsingComparator:
-    ^ NSComparisonResult(NSString *_Nonnull obj1, NSString *_Nonnull obj2)
-        {
+    ^ NSComparisonResult(NSString *_Nonnull obj1, NSString *_Nonnull obj2) {
         return [obj1 compare:obj2];
-        }];
+    }];
 
     NSMutableArray *dumpArray =
         [NSMutableArray arrayWithArray:[dumpString componentsSeparatedByString:@"\n"]];
     [dumpArray removeObjectAtIndex:0];
     [dumpArray removeObjectAtIndex:0];
     [dumpArray sortUsingComparator:
-    ^ NSComparisonResult(NSString *_Nonnull obj1, NSString *_Nonnull obj2)
-        {
+    ^ NSComparisonResult(NSString *_Nonnull obj1, NSString *_Nonnull obj2) {
         return [obj1 compare:obj2];
-        }];
+    }];
 
     XCTAssertTrue(truthArray.count == dumpArray.count);
     for (int i = 0; i < truthArray.count; ++i) {
@@ -192,7 +189,7 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
     NSArray<NSString*> *names = BNCDebugArrayOfReqisteredClasses();
     //NSLog(@"Names:\n%@.", names);
 
-    //  Test that it returned more than 0 results and contains some well known classes:
+    // Test that it returned more than 0 results and contains some well known classes:
     XCTAssert(names.count > 0);
     XCTAssert([names containsObject:@"NSString"]);
     XCTAssert([names containsObject:@"XCTestCase"]);
@@ -201,8 +198,9 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
 }
 
 - (void) testBreakpoint {
-    BNCDebugBreakpoint();
+    if (BNCDebuggerIsAttached()) {
+        BNCDebugBreakpoint();
+    }
 }
 
 @end
-

@@ -17,6 +17,9 @@
 #import "NSString+Branch.h"
 
 
+#define _countof(array)  (sizeof(array)/sizeof(array[0]))
+
+
 @interface NSStringBranchTest : XCTestCase
 @end
 
@@ -38,8 +41,10 @@
 }
 
 - (void) testStringTruncatedAtNull {
-    char*bytes = "\x30\x31\x00\x32\x33\x34\x35\x36";
-    NSData *data = [NSData dataWithBytes:bytes length:sizeof(bytes)];
+    char bytes[] = "\x30\x31\x00\x32\x33\x34\x35\x36";
+    XCTAssert(sizeof(bytes) == 9);
+    NSData *data = [NSData dataWithBytes:bytes length:sizeof(bytes)-1];
+    XCTAssert(data.length == 8);
     NSString *string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     XCTAssert(string.length == 8);
     string = [string bnc_stringTruncatedAtNull];
@@ -51,10 +56,10 @@
     string = [string bnc_stringTruncatedAtNull];
     XCTAssertEqualObjects(string, test);
 
-     bytes = "\x00\x31\x00\x32\x33\x34\x35\x36";
-      data = [NSData dataWithBytes:bytes length:sizeof(bytes)];
+    char byte2[] = "\x00\x31\x00\x32\x33\x34\x35\x36";
+      data = [NSData dataWithBytes:byte2 length:sizeof(byte2)];
     string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    XCTAssert(string && string.length == 8);
+    XCTAssert(string && string.length == 9);
     string = [string bnc_stringTruncatedAtNull];
     XCTAssert(string && string.length == 0);
 

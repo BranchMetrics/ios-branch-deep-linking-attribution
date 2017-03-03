@@ -118,9 +118,9 @@ void BNCLogSetOutputToURL(NSURL *_Nullable url) {
 
 #pragma mark - Record Wrap Output File Functions
 
-static long bnc_LogOffset           = 0;
-static long bnc_LogOffsetMax        = 100;
-static long bnc_LogRecordSize       = 1024;
+static off_t bnc_LogOffset           = 0;
+static long  bnc_LogOffsetMax        = 100;
+static long  bnc_LogRecordSize       = 1024;
 static NSDateFormatter *bnc_LogDateFormatter = nil;
 
 void BNCLogRecordWrapWrite(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString *_Nullable message) {
@@ -135,7 +135,7 @@ void BNCLogRecordWrapWrite(NSDate*_Nonnull timestamp, BNCLogLevel level, NSStrin
     long len = MIN(stringData.length, sizeof(buffer)-1);
     memcpy(buffer, stringData.bytes, len);
 
-    long n = write(bnc_LogDescriptor, buffer, sizeof(buffer));
+    off_t n = write(bnc_LogDescriptor, buffer, sizeof(buffer));
     if (n < 0) {
         int e = errno;
         BNCLogInternalError(@"Can't write log message (%d): %s.", e, strerror(e));
@@ -181,7 +181,7 @@ BOOL BNCLogRecordWrapOpenURL(NSURL *url, long maxRecords, long recordSize) {
 
     // Truncate the file if the file size > max file size.
 
-    long n = 0;
+    off_t n = 0;
     off_t maxSz = bnc_LogOffsetMax * bnc_LogRecordSize;
     off_t sz = lseek(bnc_LogDescriptor, 0, SEEK_END);
     if (sz < 0) {
@@ -198,10 +198,10 @@ BOOL BNCLogRecordWrapOpenURL(NSURL *url, long maxRecords, long recordSize) {
 
     // Read the records until the oldest record is found --
 
-    long oldestOffset = 0;
+    off_t oldestOffset = 0;
     NSDate * oldestDate = [NSDate distantFuture];
 
-    int offset = 0;
+    off_t offset = 0;
     char buffer[bnc_LogRecordSize];
     n = read(bnc_LogDescriptor, &buffer, sizeof(buffer));
     while (n == sizeof(buffer)) {
@@ -283,7 +283,7 @@ NSString *BNCLogByteWrapReadNextRecord() {
 
     char *buffer = NULL;
     long bufferSize = 0;
-    long originalOffset = lseek(bnc_LogDescriptor, 0, SEEK_CUR);
+    off_t originalOffset = lseek(bnc_LogDescriptor, 0, SEEK_CUR);
     if (originalOffset < 0) {
         int e = errno;
         BNCLogInternalError(@"Can't find offset in log file (%d): %s.", e, strerror(e));
@@ -300,7 +300,7 @@ NSString *BNCLogByteWrapReadNextRecord() {
             goto error_exit;
         }
 
-        long n = lseek(bnc_LogDescriptor, originalOffset, SEEK_SET);
+        off_t n = lseek(bnc_LogDescriptor, originalOffset, SEEK_SET);
         if (n < 0) {
             int e = errno;
             BNCLogInternalError(@"Can't seek in log file (%d): %s.", e, strerror(e));
@@ -361,7 +361,7 @@ BOOL BNCLogByteWrapOpenURL(NSURL *url, long maxBytes) {
 
     // Truncate the file if the file size > max file size.
 
-    long n = 0;
+    off_t n = 0;
     off_t maxSz = bnc_LogOffsetMax;
     off_t sz = lseek(bnc_LogDescriptor, 0, SEEK_END);
     if (sz < 0) {
@@ -380,9 +380,9 @@ BOOL BNCLogByteWrapOpenURL(NSURL *url, long maxBytes) {
     // Read the records until the oldest record is found --
 
     BOOL logDidWrap = NO;
-    long wrapOffset = 0;
+    off_t wrapOffset = 0;
 
-    long lastOffset = 0;
+    off_t lastOffset = 0;
     NSDate *lastDate = [NSDate distantPast];
 
     NSString *record = BNCLogByteWrapReadNextRecord();

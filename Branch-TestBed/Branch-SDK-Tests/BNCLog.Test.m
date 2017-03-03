@@ -40,7 +40,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 
 - (void) testInternalError {
     int e = 9;
-    BNCLogInternalErrorFunction(__LINE__, @"Test error (%d): %s.", e, strerror(e));
+    BNCLogInternalErrorFunction(__LINE__, @"Test error success (%d): %s.", e, strerror(e));
 }
 
 - (void) testLogLineNumbers {
