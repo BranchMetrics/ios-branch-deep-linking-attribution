@@ -50,6 +50,7 @@
 		4D4F28651E400F9800282A34 /* BranchShortUrlSyncRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F28311E400F9800282A34 /* BranchShortUrlSyncRequest.m */; };
 		4D4F28661E400F9800282A34 /* BranchSpotlightUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F28331E400F9800282A34 /* BranchSpotlightUrlRequest.m */; };
 		4D4F28671E400F9800282A34 /* BranchUserCompletedActionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F28351E400F9800282A34 /* BranchUserCompletedActionRequest.m */; };
+		4DF867F41E6DDC4E00BE4C5F /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DF867F31E6DDC4E00BE4C5F /* AdSupport.framework */; };
 		6306D5BF1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306D5BE1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift */; };
 		6306FFEF1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306FFEE1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift */; };
 		6306FFF11D6BEFA30031D2E3 /* ArrayTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306FFF01D6BEFA30031D2E3 /* ArrayTableViewCell.swift */; };
@@ -173,6 +174,7 @@
 		4D4F283B1E400F9800282A34 /* FABKitProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FABKitProtocol.h; sourceTree = "<group>"; };
 		4D4F283C1E400F9800282A34 /* Fabric+FABKits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Fabric+FABKits.h"; sourceTree = "<group>"; };
 		4D4F283D1E400F9800282A34 /* Fabric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fabric.h; sourceTree = "<group>"; };
+		4DF867F31E6DDC4E00BE4C5F /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		6306D5BE1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BranchUniversalObjectPropertiesTableViewController.swift; sourceTree = "<group>"; };
 		6306FFEE1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldFormTableViewController.swift; sourceTree = "<group>"; };
 		6306FFF01D6BEFA30031D2E3 /* ArrayTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayTableViewCell.swift; sourceTree = "<group>"; };
@@ -208,6 +210,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4DF867F41E6DDC4E00BE4C5F /* AdSupport.framework in Frameworks */,
 				4D3A944B1E64C777007127B3 /* iAd.framework in Frameworks */,
 				63ECFAFC1D8F9624007F50AA /* SafariServices.framework in Frameworks */,
 			);
@@ -219,6 +222,7 @@
 		44A650CEF93FEF2A6077B064 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4DF867F31E6DDC4E00BE4C5F /* AdSupport.framework */,
 				4D3A944A1E64C777007127B3 /* iAd.framework */,
 				63ECFAFB1D8F9624007F50AA /* SafariServices.framework */,
 			);

@@ -9,6 +9,7 @@
 #import "BranchActivityItemProvider.h"
 #import "Branch.h"
 #import "BNCSystemObserver.h"
+#import "BNCDeviceInfo.h"
 
 @interface BranchActivityItemProvider ()
 
@@ -39,7 +40,7 @@
         _stage = stage;
         _campaign = campaign;
         _alias = alias;
-        _userAgentString = [[[UIWebView alloc] init] stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+        _userAgentString = [BNCDeviceInfo userAgentString];
         _delegate = delegate;
     }
     
