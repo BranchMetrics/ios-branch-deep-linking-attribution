@@ -154,13 +154,13 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     }
 }
 
-- (void) save {
+- (void) synchronize {
     //  Flushes preference queue to persistence.
     [_persistPrefsQueue waitUntilAllOperationsAreFinished];
 }
 
 - (void) dealloc {
-    [self save];
+    [self synchronize];
 }
 
 #pragma mark - Debug methods

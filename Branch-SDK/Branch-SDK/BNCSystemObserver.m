@@ -178,7 +178,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
 
 
 + (NSNumber *)getUpdateState {
-
+    [[BNCPreferenceHelper preferenceHelper] synchronize];
     NSString *storedAppVersion = [BNCPreferenceHelper preferenceHelper].appVersion;
     NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
     NSFileManager *manager = [NSFileManager defaultManager];
@@ -224,6 +224,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
 + (void)setUpdateState {
     NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
     [BNCPreferenceHelper preferenceHelper].appVersion = currentAppVersion;
+    [[BNCPreferenceHelper preferenceHelper] synchronize];
 }
 
 + (NSString *)getOS {

@@ -137,15 +137,22 @@
     self.fileManagerMock = OCMClassMock([NSFileManager class]);
     self.docDirAttributesMock = OCMClassMock([NSDictionary class]);
     self.bundleAttributesMock = OCMClassMock([NSDictionary class]);
-    [[[self.fileManagerMock stub] andReturn:self.fileManagerMock] defaultManager];
-    [[[self.fileManagerMock expect] andReturn:self.docDirAttributesMock] attributesOfItemAtPath:[OCMArg any] error:(NSError __autoreleasing **)[OCMArg anyPointer]];
-    [[[self.fileManagerMock expect] andReturn:self.bundleAttributesMock] attributesOfItemAtPath:[OCMArg any] error:(NSError __autoreleasing **)[OCMArg anyPointer]];
+    [[[self.fileManagerMock stub]
+        andReturn:self.fileManagerMock]
+            defaultManager];
+    [[[self.fileManagerMock expect]
+        andReturn:self.docDirAttributesMock]
+            attributesOfItemAtPath:[OCMArg any]
+            error:(NSError __autoreleasing **)[OCMArg anyPointer]];
+    [[[self.fileManagerMock expect]
+        andReturn:self.bundleAttributesMock]
+            attributesOfItemAtPath:[OCMArg any]
+            error:(NSError __autoreleasing **)[OCMArg anyPointer]];
     [[[self.docDirAttributesMock stub] andReturn:creationDate] fileCreationDate];
     [[[self.bundleAttributesMock stub] andReturn:modificationDate] fileModificationDate];
 }
 
 - (void)clearMocks {
-    [[BNCPreferenceHelper preferenceHelper] save];
     [self.fileManagerMock stopMocking];
     [self.docDirAttributesMock stopMocking];
     [self.bundleAttributesMock stopMocking];
