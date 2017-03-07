@@ -37,17 +37,9 @@
     NSString * const BUCKET = @"default";
     NSInteger const OLD_REWARD_VALUE = 25;
     NSInteger const NEW_REWARD_VALUE = 100;
-    
-    NSDictionary * const ACTION_DICT = @{
-        BUCKET: @(NEW_REWARD_VALUE)
-    };
-    
-    BNCServerResponse *response = [[BNCServerResponse alloc] init];
-    response.data = ACTION_DICT;
-    
+
     [[BNCPreferenceHelper preferenceHelper] setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
-    [[BNCPreferenceHelper preferenceHelper] save];
-    
+
     XCTestExpectation *requestCallbackExpectation = [self expectationWithDescription:@"Request Callback Expectation"];
     BranchLoadRewardsRequest *request =
         [[BranchLoadRewardsRequest alloc]
@@ -56,6 +48,10 @@
                 XCTAssertNil(error);
                 [self safelyFulfillExpectation:requestCallbackExpectation];
             }];
+    BNCServerResponse *response = [[BNCServerResponse alloc] init];
+    response.data = @{
+        BUCKET: @(NEW_REWARD_VALUE)
+    };
     [request processResponse:response error:nil];
     
     [self awaitExpectations];
@@ -69,16 +65,8 @@
     NSString * const BUCKET = @"default";
     NSInteger const OLD_REWARD_VALUE = 25;
     NSInteger const NEW_REWARD_VALUE = 25;
-    
-    NSDictionary * const ACTION_DICT = @{
-        BUCKET: @(NEW_REWARD_VALUE)
-    };
-    
-    BNCServerResponse *response = [[BNCServerResponse alloc] init];
-    response.data = ACTION_DICT;
-    
+
     [[BNCPreferenceHelper preferenceHelper] setCreditCount:OLD_REWARD_VALUE forBucket:BUCKET];
-    [[BNCPreferenceHelper preferenceHelper] save];
 
     XCTestExpectation *requestCallbackExpectation =
         [self expectationWithDescription:@"Request Callback Expectation"];
@@ -90,13 +78,17 @@
                 XCTAssertNil(error);
                 [self safelyFulfillExpectation:requestCallbackExpectation];
             }];
+    BNCServerResponse *response = [[BNCServerResponse alloc] init];
+    response.data =  @{
+        BUCKET: @(NEW_REWARD_VALUE)
+    };
     [request processResponse:response error:nil];
 
     [self awaitExpectations];
     [[BNCPreferenceHelper preferenceHelper] save];
     XCTAssertEqual(
         [[BNCPreferenceHelper preferenceHelper] getCreditCountForBucket:BUCKET],
-        OLD_REWARD_VALUE
+        NEW_REWARD_VALUE
     );
 }
 

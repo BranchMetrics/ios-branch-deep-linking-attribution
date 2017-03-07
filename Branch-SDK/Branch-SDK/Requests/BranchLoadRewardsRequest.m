@@ -42,6 +42,7 @@
 
     BOOL hasUpdated = NO;
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    [preferenceHelper save];
     NSDictionary *currentCreditDictionary = [preferenceHelper getCreditDictionary];
     NSArray *responseKeys = [response.data allKeys];
     NSArray *storedKeys = [currentCreditDictionary allKeys];
@@ -78,6 +79,7 @@
         }
     }
 
+    [preferenceHelper save];
     if (self.callback) {
         self.callback(hasUpdated, nil);
     }
