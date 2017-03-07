@@ -41,7 +41,7 @@
 - (void)testGetUpdateStateWithNoStoredVersionAndDatesUnder60SecondsApart {
     [self stubNilValuesForStoredAndCurrentVersions];
     NSDate *now = [NSDate date];
-    NSDate *lessThan24HoursFromNow = [now dateByAddingTimeInterval:59];
+    NSDate *lessThan24HoursFromNow = [now dateByAddingTimeInterval:59.0];
     [self stubCreationDate:now modificationDate:lessThan24HoursFromNow];
 
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
@@ -51,9 +51,9 @@
 }
 
 - (void)testGetUpdateStateWithNoStoredVersionAndDatesMoreThan60SecondsApart {
-    [self stubNilValuesForStoredAndCurrentVersions];
     NSDate *now = [NSDate date];
-    NSDate *moreThan24HoursFromNow = [now dateByAddingTimeInterval:86401];
+    NSDate *moreThan24HoursFromNow = [now dateByAddingTimeInterval:(60.0*60.0*24.5)];
+    [self stubNilValuesForStoredAndCurrentVersions];
     [self stubCreationDate:now modificationDate:moreThan24HoursFromNow];
 
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
