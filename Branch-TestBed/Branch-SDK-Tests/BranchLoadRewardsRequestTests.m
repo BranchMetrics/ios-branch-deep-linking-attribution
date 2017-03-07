@@ -74,6 +74,10 @@
     BranchLoadRewardsRequest *request =
         [[BranchLoadRewardsRequest alloc]
             initWithCallback:^(BOOL changed, NSError *error) {
+                if (changed) {
+                    //  eDebug
+                    NSLog(@"Breakpoint");
+                }
                 XCTAssertFalse(changed);
                 XCTAssertNil(error);
                 [self safelyFulfillExpectation:requestCallbackExpectation];
