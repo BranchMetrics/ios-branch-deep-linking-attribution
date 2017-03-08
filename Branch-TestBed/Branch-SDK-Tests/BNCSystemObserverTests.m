@@ -113,14 +113,17 @@
     [self clearMocks];
 }
 
-
 #pragma mark - URI Scheme tests
 
 - (void)testGetDefaultUriSchemeWithSingleCharacterScheme {
     NSString * const SINGLE_CHARACTER_SCEHEME = @"a";
     id bundleMock = OCMClassMock([NSBundle class]);
-    [[[bundleMock expect] andReturn:bundleMock] mainBundle];
-    [[[bundleMock expect] andReturn:@[ @{ @"CFBundleURLSchemes": @[ SINGLE_CHARACTER_SCEHEME ] } ]] objectForInfoDictionaryKey:[OCMArg any]];
+    [[[bundleMock expect]
+        andReturn:bundleMock]
+            mainBundle];
+    [[[bundleMock expect]
+        andReturn:@[ @{ @"CFBundleURLSchemes": @[ SINGLE_CHARACTER_SCEHEME ] } ]]
+            objectForInfoDictionaryKey:[OCMArg any]];
 
     NSString *uriScheme = [BNCSystemObserver getDefaultUriScheme];
     
@@ -134,6 +137,7 @@
 #pragma mark - Internals
 
 - (void)stubCreationDate:(NSDate *)creationDate modificationDate:(NSDate *)modificationDate {
+    [[BNCPreferenceHelper preferenceHelper] synchronize];
     self.fileManagerMock = OCMClassMock([NSFileManager class]);
     self.docDirAttributesMock = OCMClassMock([NSDictionary class]);
     self.bundleAttributesMock = OCMClassMock([NSDictionary class]);
@@ -160,6 +164,7 @@
 
 - (void)stubNilValuesForStoredAndCurrentVersions {
     [BNCPreferenceHelper preferenceHelper].appVersion = nil;
+    [[BNCPreferenceHelper preferenceHelper] synchronize];
     id bundleMock = OCMClassMock([NSBundle class]);
     [[[bundleMock stub] andReturn:nil] mainBundle];
 }

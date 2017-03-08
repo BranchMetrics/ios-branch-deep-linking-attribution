@@ -203,7 +203,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
         // Modification and Creation date are more than 24 hours' worth of seconds different indicates
         // an update. This would be the case that they were installing a new version of the app that was
         // adding Branch for the first time, where we don't already have an NSUserDefaults value.
-        if (ABS([modificationDate timeIntervalSinceDate:creationDate]) > 86400) {
+        if (ABS([modificationDate timeIntervalSinceDate:creationDate]) > 86400.0) {
             return @(BNCUpdateStatusUpdate);
         }
 
