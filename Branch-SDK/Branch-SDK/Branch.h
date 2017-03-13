@@ -31,7 +31,7 @@
 /// @name Constants
 ///----------------
 
-#pragma mark - Branch Link Features
+#pragma mark Branch Link Features
 
 /**
  ## Branch Link Features
