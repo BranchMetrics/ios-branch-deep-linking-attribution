@@ -787,7 +787,11 @@
 }
 
 - (void)awaitExpectations {
-    [self waitForExpectationsWithTimeout:4.0 handler:^(NSError *error) {
+    NSTimeInterval timeoutInterval = 5.0;
+    if ([UIDevice currentDevice].systemVersion.floatValue < 9.0) {
+        timeoutInterval = 10.0;
+    }
+    [self waitForExpectationsWithTimeout:timeoutInterval handler:^(NSError *error) {
         self.hasExceededExpectations = YES;
     }];
 }

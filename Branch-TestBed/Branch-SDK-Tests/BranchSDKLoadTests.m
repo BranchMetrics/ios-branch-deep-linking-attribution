@@ -115,7 +115,7 @@
 
     NSTimeInterval timeoutInterval = 10.0;
     if ([UIDevice currentDevice].systemVersion.floatValue < 9.0) {
-        timeoutInterval = 15.0;
+        timeoutInterval = 60.0;
     }
 
     [self waitForExpectationsWithTimeout:timeoutInterval handler:NULL];
