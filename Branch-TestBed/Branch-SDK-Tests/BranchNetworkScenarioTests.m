@@ -787,7 +787,7 @@
 }
 
 - (void)awaitExpectations {
-    [self waitForExpectationsWithTimeout:3.0 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:4.0 handler:^(NSError *error) {
         self.hasExceededExpectations = YES;
     }];
 }
