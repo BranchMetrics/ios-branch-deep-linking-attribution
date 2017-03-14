@@ -112,8 +112,13 @@
             XCTAssertEqualObjects(url, @"https://bnc.lt/l/3PxZVFU-BK");
             [getShortURLExpectation fulfill];
     }];
-    
-    [self waitForExpectationsWithTimeout:10.0 handler:NULL];
+
+    NSTimeInterval timeoutInterval = 10.0;
+    if ([UIDevice currentDevice].systemVersion.floatValue < 9.0) {
+        timeoutInterval = 15.0;
+    }
+
+    [self waitForExpectationsWithTimeout:timeoutInterval handler:NULL];
     NSLog(@"Completed %d.", completedCount);
 }
 
