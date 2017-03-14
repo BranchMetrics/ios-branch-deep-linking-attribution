@@ -63,8 +63,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
 @implementation BranchShareActionSheet
 
-- (instancetype _Nullable) initWithBranchUniversalObject:(BranchUniversalObject*_Nonnull)universalObject
-                                          linkProperties:(BranchLinkProperties*_Nonnull)linkProperties {
+- (instancetype _Nullable) initWithUniversalObject:(BranchUniversalObject*_Nonnull)universalObject
+                                    linkProperties:(BranchLinkProperties*_Nonnull)linkProperties {
     self = [super init];
     if (!self) return self;
 

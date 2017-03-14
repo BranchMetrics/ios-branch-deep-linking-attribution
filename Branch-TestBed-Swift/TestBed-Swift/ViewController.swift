@@ -27,7 +27,7 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
   }
 }
 
-class ViewController: UITableViewController {
+class ViewController: UITableViewController, BranchShareActionSheetDelegate {
     
     @IBOutlet weak var actionButton: UIBarButtonItem!
     @IBOutlet weak var userIDTextField: UITextField!
@@ -44,7 +44,8 @@ class ViewController: UITableViewController {
     @IBOutlet weak var activeSetDebugEnabledSwitch: UISwitch!
     @IBOutlet weak var pendingBranchKeyTextField: UITextField!
     @IBOutlet weak var pendingSetDebugEnabledSwitch: UISwitch!
-    
+
+    var dateFormatter: DateFormatter?
     var linkProperties = [String: AnyObject]()
     var universalObjectProperties = [String: AnyObject]()
     var creditHistory: Array<AnyObject>?
@@ -199,35 +200,62 @@ class ViewController: UITableViewController {
     }
     
     @IBAction func actionButtonTouchUpInside(_ sender: AnyObject) {
-        
-        for key in linkProperties.keys {
-            setBranchLinkProperty(key)
-        }
-        
-        if let canonicalIdentifier = universalObjectProperties["$canonical_identifier"] as? String {
-            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
-        } else {
-            var canonicalIdentifier = ""
-            for _ in 1...18 {
-                canonicalIdentifier.append(String(arc4random_uniform(10)))
-            }
-            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
-        }
-        
-        for key in universalObjectProperties.keys {
-            setBranchUniversalObjectProperty(key)
+        //  Share a Branch link:
+
+        if (self.dateFormatter == nil) {
+            self.dateFormatter = DateFormatter()
+            self.dateFormatter?.locale = Locale(identifier: "en_US_POSIX");
+            self.dateFormatter?.dateFormat = "yyyy-MM-dd'T'HH:mm:ssX"
+            self.dateFormatter?.timeZone = TimeZone(secondsFromGMT: 0)
         }
 
-        branchUniversalObject.showShareSheet(with: branchLinkProperties, andShareText: shareText, from: self, anchor: actionButton) { (activityType, completed) in
-            if (completed) {
-                print(String(format: "Branch TestBed: Completed sharing to %@", activityType!))
-            } else {
-                print("Branch TestBed: Link Sharing Cancelled\n")
-            }
+        let alias = String(format: "share-%@", dateFormatter!.string(from: Date()))
+        //let alias = "share-Share-Same-Name-4"
+        let canonicalIdentifier = alias
+
+        let shareBranchLink = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
+        shareBranchLink.title = "Share Branch Link Example"
+        shareBranchLink.canonicalUrl = "https://developer.branch.io/"
+        shareBranchLink.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
+        shareBranchLink.keywords = [ "example", "short", "share", "link" ]
+        shareBranchLink.contentDescription = "This is an example shared short link."
+        shareBranchLink.addMetadataKey("publicSlug", value: canonicalIdentifier)
+
+        let shareLinkProperties = BranchLinkProperties()
+        shareLinkProperties.alias = alias
+        shareLinkProperties.channel = "ios-app"
+        shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
+
+        let shareSheet = BranchShareActionSheet.init(
+            universalObject: shareBranchLink,
+            linkProperties:  shareLinkProperties
+        )
+        shareSheet?.delegate = self
+        shareSheet?.shareText = "Shared from Branch's TestBed-Swift at \(self.dateFormatter!.string(from: Date()))"
+        shareSheet?.show(from: self, anchor: actionButton)
+    }
+
+    func branchShareSheetWillShare(_ shareSheet: BranchShareActionSheet) {
+        // This example just shows changing the share text.
+        //
+        // Link properties, such as alias or channel can be overridden here based on the users'
+        // choice stored in shareSheet.activityType.
+
+        shareSheet.shareText =
+            "Shared through '\(shareSheet.linkProperties.channel!)'\nfrom Branch's TestBed-Swift" +
+            "\n\(self.dateFormatter!.string(from: Date()))."
+    }
+
+    func branchShare(_ shareSheet: BranchShareActionSheet, didComplete completed: Bool, withError error: Error?) {
+        if (error != nil) {
+            print("Branch: Error while sharing! Error: \(error!.localizedDescription).")
+        } else if (completed) {
+            print("Branch: User completed sharing to channel '\(shareSheet.linkProperties.channel!)'.")
+        } else {
+            print("Branch: User cancelled sharing.")
         }
     }
-    
-    
+
     @IBAction func loadLinkPropertiesButtonTouchUpInside(_ sender: AnyObject) {
         let branch = Branch.getInstance()
         let params: Dictionary = (branch?.getLatestReferringParams())!

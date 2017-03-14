@@ -44,8 +44,8 @@
 
 @interface BranchShareActionSheet : NSObject
 
-- (instancetype _Nullable) initWithBranchUniversalObject:(BranchUniversalObject*_Nonnull)universalObject
-                                          linkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
+- (instancetype _Nullable) initWithUniversalObject:(BranchUniversalObject*_Nonnull)universalObject
+                                    linkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
 
 - (void) showFromViewController:(UIViewController*_Nullable)viewController
                          anchor:(UIBarButtonItem*_Nullable)anchor;
