@@ -113,7 +113,7 @@
             [getShortURLExpectation fulfill];
     }];
     
-    [self waitForExpectationsWithTimeout:4.0 handler:NULL];
+    [self waitForExpectationsWithTimeout:60.0 handler:NULL];
     NSLog(@"Completed %d.", completedCount);
 }
 
