@@ -1,12 +1,12 @@
 //
-//  BranchShareActionSheet.m
-//  Branch-TestBed
+//  BranchShareActivitySheet.m
+//  Branch-SDK
 //
 //  Created by Edward Smith on 3/13/17.
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
-#import "BranchShareActionSheet.h"
+#import "BranchShareActivitySheet.h"
 #import "BranchConstants.h"
 #import "BNCFabricAnswers.h"
 #import "BranchActivityItemProvider.h"
@@ -14,14 +14,14 @@
 @class BranchShareActivityItem;
 
 typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
-    BranchShareActivityItemTypeURL = 0,
+    BranchShareActivityItemTypeBranchURL = 0,
     BranchShareActivityItemTypeShareText,
     BranchShareActivityItemTypeOther,
 };
 
-#pragma mark BranchShareActionSheet
+#pragma mark BranchShareActivitySheet
 
-@interface BranchShareActionSheet ()
+@interface BranchShareActivitySheet ()
 
 - (id) shareObjectForItem:(BranchShareActivityItem*)activityItem
              activityType:(UIActivityType)activityType;
@@ -33,7 +33,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
 @interface BranchShareActivityItem : UIActivityItemProvider
 @property (nonatomic, assign) BranchShareActivityItemType itemType;
-@property (nonatomic, weak)   BranchShareActionSheet *parentSheet;
+@property (nonatomic, weak)   BranchShareActivitySheet *parentSheet;
 @end
 
 @implementation BranchShareActivityItem
@@ -42,9 +42,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     self = [super initWithPlaceholderItem:placeholderItem];
     if (!self) return self;
 
-    if ([placeholderItem isKindOfClass:NSURL.class]) {
-        self.itemType = BranchShareActivityItemTypeURL;
-    } else if ([placeholderItem isKindOfClass:NSString.class]) {
+    if ([placeholderItem isKindOfClass:NSString.class]) {
         self.itemType = BranchShareActivityItemTypeShareText;
     } else {
         self.itemType = BranchShareActivityItemTypeOther;
@@ -59,9 +57,9 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
 @end
 
-#pragma mark - BranchShareActionSheet
+#pragma mark - BranchShareActivitySheet
 
-@implementation BranchShareActionSheet
+@implementation BranchShareActivitySheet
 
 - (instancetype _Nullable) initWithUniversalObject:(BranchUniversalObject*_Nonnull)universalObject
                                     linkProperties:(BranchLinkProperties*_Nonnull)linkProperties {
@@ -100,13 +98,20 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         [[self.universalObject getParamsForServerRequestWithAddedLinkProperties:self.linkProperties]
             mutableCopy];
     if (self.linkProperties.matchDuration) {
-        [self.serverParameters
-            setObject:@(self.linkProperties.matchDuration)
-            forKey:BRANCH_REQUEST_KEY_URL_DURATION];
+        self.serverParameters[BRANCH_REQUEST_KEY_URL_DURATION] = @(self.linkProperties.matchDuration);
     }
 
     // Log share initiated event
     [self.universalObject userCompletedAction:BNCShareInitiatedEvent];
+
+    BranchShareActivityItem *item = nil;
+    NSMutableArray *items = [NSMutableArray new];
+    if (self.shareText.length) {
+        item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareText];
+        item.itemType = BranchShareActivityItemTypeShareText;
+        item.parentSheet = self;
+        [items addObject:item];
+    }
 
     NSString *URLString =
         [[Branch getInstance]
@@ -117,24 +122,24 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
             andStage:self.linkProperties.stage
             andAlias:self.linkProperties.alias];
     NSURL *URL = [[NSURL alloc] initWithString:URLString];
-
-    BranchShareActivityItem *item = nil;
-    NSMutableArray *items = [NSMutableArray new];
-    if (self.shareText.length) {
-        item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareText];
-        item.parentSheet = self;
-        [items addObject:item];
-    }
-
     item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:URL];
+    item.itemType = BranchShareActivityItemTypeBranchURL;
     item.parentSheet = self;
     [items addObject:item];
+
+    if (self.shareObject) {
+        item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareObject];
+        item.itemType = BranchShareActivityItemTypeOther;
+        item.parentSheet = self;
+        [items addObject:self.shareObject];
+    }
 
     UIActivityViewController *shareViewController =
         [[UIActivityViewController alloc]
             initWithActivityItems:items
             applicationActivities:nil];
-    
+    shareViewController.title = self.title;
+
     if ([shareViewController respondsToSelector:@selector(completionWithItemsHandler)]) {
         shareViewController.completionWithItemsHandler =
         ^ (NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
@@ -149,18 +154,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         };
         #pragma clang diagnostic pop
     }
-    
-    UIViewController *presentingViewController = nil;
-    if ([viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-        presentingViewController = viewController;
-    } else {
-        Class UIApplicationClass = NSClassFromString(@"UIApplication");
-        UIViewController *rootController = [UIApplicationClass sharedApplication].delegate.window.rootViewController;
-        if ([rootController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-            presentingViewController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
-        }
-    }
-    
+
     if (self.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT]) {
         @try {
             [shareViewController
@@ -168,23 +162,34 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
                 forKey:@"subject"];
         }
         @catch (NSException *exception) {
-            NSLog(@"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController.");
+            NSLog(@"Warning: Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController.");
         }
     }
-    
-    if (presentingViewController) {
-        // Required for iPad/Universal apps on iOS 8+
-        if ([presentingViewController respondsToSelector:@selector(popoverPresentationController)]) {
-            shareViewController.popoverPresentationController.sourceView = presentingViewController.view;
-            if (anchor) {
-                shareViewController.popoverPresentationController.barButtonItem = anchor;
-            }
+
+    UIViewController *presentingViewController = nil;
+    if ([viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+        presentingViewController = viewController;
+    } else {
+        Class UIApplicationClass = NSClassFromString(@"UIApplication");
+        UIViewController *rootController = [UIApplicationClass sharedApplication].delegate.window.rootViewController;
+        if ([rootController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+            presentingViewController = rootController;
         }
-        [presentingViewController presentViewController:shareViewController animated:YES completion:nil];
     }
-    else {
-        NSLog(@"[Branch warning, fatal] No view controller is present to show the share sheet. Aborting.");
+
+    if (!presentingViewController) {
+        NSLog(@"[Branch] Error: No view controller is present to show the share sheet. Aborting.");
+        return;
     }
+
+    // Required for iPad/Universal apps on iOS 8+
+    if ([presentingViewController respondsToSelector:@selector(popoverPresentationController)]) {
+        shareViewController.popoverPresentationController.sourceView = presentingViewController.view;
+        if (anchor) {
+            shareViewController.popoverPresentationController.barButtonItem = anchor;
+        }
+    }
+    [presentingViewController presentViewController:shareViewController animated:YES completion:nil];
 }
 
 - (id) shareObjectForItem:(BranchShareActivityItem*)activityItem
@@ -201,7 +206,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         return self.shareText;
     }
     if (activityItem.itemType == BranchShareActivityItemTypeOther) {
-        return self.shareOther;
+        return self.shareObject;
     }
 
     // Else activityItem.itemType == BranchShareActivityItemTypeURL
@@ -232,6 +237,5 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
             forceLinkCreation:YES];
     return [NSURL URLWithString:URLString];
 }
-
 
 @end

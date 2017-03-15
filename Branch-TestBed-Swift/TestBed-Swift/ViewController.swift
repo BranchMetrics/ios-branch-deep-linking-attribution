@@ -27,7 +27,7 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
   }
 }
 
-class ViewController: UITableViewController, BranchShareActionSheetDelegate {
+class ViewController: UITableViewController, BranchShareActivitySheetDelegate {
     
     @IBOutlet weak var actionButton: UIBarButtonItem!
     @IBOutlet weak var userIDTextField: UITextField!
@@ -226,7 +226,7 @@ class ViewController: UITableViewController, BranchShareActionSheetDelegate {
         shareLinkProperties.channel = "ios-app"
         shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
 
-        let shareSheet = BranchShareActionSheet.init(
+        let shareSheet = BranchShareActivitySheet.init(
             universalObject: shareBranchLink,
             linkProperties:  shareLinkProperties
         )
@@ -235,7 +235,7 @@ class ViewController: UITableViewController, BranchShareActionSheetDelegate {
         shareSheet?.show(from: self, anchor: actionButton)
     }
 
-    func branchShareSheetWillShare(_ shareSheet: BranchShareActionSheet) {
+    func branchActivitySheetWillShare(_ shareSheet: BranchShareActivitySheet) {
         // This example just shows changing the share text.
         //
         // Link properties, such as alias or channel can be overridden here based on the users'
@@ -246,7 +246,7 @@ class ViewController: UITableViewController, BranchShareActionSheetDelegate {
             "\n\(self.dateFormatter!.string(from: Date()))."
     }
 
-    func branchShare(_ shareSheet: BranchShareActionSheet, didComplete completed: Bool, withError error: Error?) {
+    func branchActivitySheet(_ branchActivitySheet: branchActivitySheet, didComplete completed: Bool, withError error: Error?) {
         if (error != nil) {
             print("Branch: Error while sharing! Error: \(error!.localizedDescription).")
         } else if (completed) {
