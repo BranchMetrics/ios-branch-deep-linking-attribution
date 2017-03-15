@@ -1,12 +1,12 @@
 //
-//  BranchShareActivitySheet.m
+//  BranchShareLink.m
 //  Branch-SDK
 //
 //  Created by Edward Smith on 3/13/17.
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
-#import "BranchShareActivitySheet.h"
+#import "BranchShareLink.h"
 #import "BranchConstants.h"
 #import "BNCFabricAnswers.h"
 #import "BranchActivityItemProvider.h"
@@ -19,9 +19,11 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     BranchShareActivityItemTypeOther,
 };
 
-#pragma mark BranchShareActivitySheet
+#pragma mark BranchShareLink
 
-@interface BranchShareActivitySheet ()
+@interface BranchShareLink () {
+    NSArray<UIActivityItemProvider*>* _activityItems;
+}
 
 - (id) shareObjectForItem:(BranchShareActivityItem*)activityItem
              activityType:(UIActivityType)activityType;
@@ -33,7 +35,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
 @interface BranchShareActivityItem : UIActivityItemProvider
 @property (nonatomic, assign) BranchShareActivityItemType itemType;
-@property (nonatomic, weak)   BranchShareActivitySheet *parentSheet;
+@property (nonatomic, weak)   BranchShareLink *parent;
 @end
 
 @implementation BranchShareActivityItem
@@ -52,14 +54,14 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 }
 
 - (id) item {
-    return [self.parentSheet shareObjectForItem:self activityType:self.activityType];
+    return [self.parent shareObjectForItem:self activityType:self.activityType];
 }
 
 @end
 
-#pragma mark - BranchShareActivitySheet
+#pragma mark - BranchShareLink
 
-@implementation BranchShareActivitySheet
+@implementation BranchShareLink
 
 - (instancetype _Nullable) initWithUniversalObject:(BranchUniversalObject*_Nonnull)universalObject
                                     linkProperties:(BranchLinkProperties*_Nonnull)linkProperties {
@@ -72,16 +74,19 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 }
 
 - (void) shareDidComplete:(BOOL)completed activityError:(NSError*)error {
-    if ([self.delegate respondsToSelector:@selector(branchShareSheet:didComplete:withError:)]) {
-        [self.delegate branchShareSheet:self didComplete:completed withError:error];
+    if ([self.delegate respondsToSelector:@selector(branchShareLink:didComplete:withError:)]) {
+        [self.delegate branchShareLink:self didComplete:completed withError:error];
     }
     [self.universalObject userCompletedAction:BNCShareCompletedEvent];
     NSDictionary *attributes = [self.universalObject getDictionaryWithCompleteLinkProperties:self.linkProperties];
     [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:attributes];
 }
 
-- (void) showFromViewController:(UIViewController*_Nullable)viewController
-                         anchor:(UIBarButtonItem*_Nullable)anchor {
+- (NSArray<UIActivityItemProvider*>*_Nonnull) activityItems {
+    if (_activityItems) {
+        return _activityItems;
+    }
+
 
     // Make sure we can share
 
@@ -109,7 +114,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     if (self.shareText.length) {
         item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareText];
         item.itemType = BranchShareActivityItemTypeShareText;
-        item.parentSheet = self;
+        item.parent = self;
         [items addObject:item];
     }
 
@@ -124,19 +129,26 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     NSURL *URL = [[NSURL alloc] initWithString:URLString];
     item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:URL];
     item.itemType = BranchShareActivityItemTypeBranchURL;
-    item.parentSheet = self;
+    item.parent = self;
     [items addObject:item];
 
     if (self.shareObject) {
         item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareObject];
         item.itemType = BranchShareActivityItemTypeOther;
-        item.parentSheet = self;
+        item.parent = self;
         [items addObject:self.shareObject];
     }
 
+    _activityItems = items;
+    return _activityItems;
+}
+
+- (void) presentActivityViewControllerFromViewController:(UIViewController*_Nullable)viewController
+                                                  anchor:(UIBarButtonItem*_Nullable)anchor {
+
     UIActivityViewController *shareViewController =
         [[UIActivityViewController alloc]
-            initWithActivityItems:items
+            initWithActivityItems:self.activityItems
             applicationActivities:nil];
     shareViewController.title = self.title;
 
@@ -199,8 +211,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     self.linkProperties.channel =
         [BranchActivityItemProvider humanReadableChannelWithActivityType:self.activityType];
 
-    if ([self.delegate respondsToSelector:@selector(branchShareSheetWillShare:)]) {
-        [self.delegate branchShareSheetWillShare:self];
+    if ([self.delegate respondsToSelector:@selector(branchShareLinkWillShare:)]) {
+        [self.delegate branchShareLinkWillShare:self];
     }
     if (activityItem.itemType == BranchShareActivityItemTypeShareText) {
         return self.shareText;
