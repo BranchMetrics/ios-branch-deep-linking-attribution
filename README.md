@@ -70,7 +70,7 @@ There's a full demo app embedded in this repository, but you can also check out 
 Branch is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your Podfile:
 
 ```objc
-pod "Branch"
+pod 'Branch'
 ```
 ### Carthage
 
