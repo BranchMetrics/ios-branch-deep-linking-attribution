@@ -84,7 +84,9 @@ BNCProductCategory BNCProductCategoryVehiclesParts      = @"Vehicles & Parts";
 
 	assign(revenue);
 	assign(currency);
-	assign(transactionID);
+    if (self.transactionID) {
+        dictionary[@"transaction_id"] = self.transactionID;
+    }
 	assign(shipping);
 	assign(tax);
 	assign(coupon);
