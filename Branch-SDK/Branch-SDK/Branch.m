@@ -540,61 +540,69 @@ void ForceCategoriesToLoad() {
 }
 
 - (BOOL)checkAppleSearchAdsAttribution {
-    if (self.delayForAppleAds) {
-        Class ADClientClass = NSClassFromString(@"ADClient");
-        SEL sharedClient = NSSelectorFromString(@"sharedClient");
-        SEL requestAttribution = NSSelectorFromString(@"requestAttributionDetailsWithBlock:");
+    if (!self.delayForAppleAds)
+        return NO;
 
-        if (ADClientClass && [ADClientClass instancesRespondToSelector:requestAttribution] &&
-            [ADClientClass methodForSelector:sharedClient]) {
-            id sharedClientInstance = ((id (*)(id, SEL))[ADClientClass methodForSelector:sharedClient])(ADClientClass, sharedClient);
-            
-            self.preferenceHelper.shouldWaitForInit = YES;
-            self.preferenceHelper.checkedAppleSearchAdAttribution = YES;
-            self.asyncRequestCount++;
-            
-            void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) = ^void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
-                self.asyncRequestCount--;
-                
-                if (attrDetails && [attrDetails count]) {
-                    self.preferenceHelper.appleSearchAdDetails = attrDetails;
-                }
-                else if (self.searchAdsDebugMode) {
-                    NSMutableDictionary *testInfo = [[NSMutableDictionary alloc] init];
-                    
-                    NSMutableDictionary *testDetails = [[NSMutableDictionary alloc] init];
-                    [testDetails setObject:[NSNumber numberWithBool:YES] forKey:@"iad-attribution"];
-                    [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-campaign-id"];
-                    [testDetails setObject:@"DebugAppleSearchAdsCampaignName" forKey:@"iad-campaign-name"];
-                    [testDetails setObject:@"2016-09-09T01:33:17Z" forKey:@"iad-click-date"];
-                    [testDetails setObject:@"2016-09-09T01:33:17Z" forKey:@"iad-conversion-date"];
-                    [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-creative-id"];
-                    [testDetails setObject:@"CreativeName" forKey:@"iad-creative-name"];
-                    [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-lineitem-id"];
-                    [testDetails setObject:@"LineName" forKey:@"iad-lineitem-name"];
-                    [testDetails setObject:@"OrgName" forKey:@"iad-org-name"];
-                    
-                    [testInfo setObject:testDetails forKey:@"Version3.1"];
-                    
-                    self.preferenceHelper.appleSearchAdDetails = testInfo;
-                }
-                
-                // if there's another async attribution check in flight, don't continue with init
-                if (self.asyncRequestCount > 0) { return; }
-                
-                self.preferenceHelper.shouldWaitForInit = NO;
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self initUserSessionAndCallCallback:!self.isInitialized];
-                });
-            };
-            
-            ((void (*)(id, SEL, void (^ __nullable)(NSDictionary *__nullable attrDetails, NSError * __nullable error)))[sharedClientInstance methodForSelector:requestAttribution])(sharedClientInstance, requestAttribution, completionBlock);
-            
-            return YES;
-        }
+    Class ADClientClass = NSClassFromString(@"ADClient");
+    SEL sharedClient = NSSelectorFromString(@"sharedClient");
+    SEL requestAttribution = NSSelectorFromString(@"requestAttributionDetailsWithBlock:");
+
+    BOOL ADClientIsAvailable =
+        ADClientClass &&
+        [ADClientClass instancesRespondToSelector:requestAttribution] &&
+        [ADClientClass methodForSelector:sharedClient];
+
+    if (!ADClientIsAvailable) {
+        NSString *warning = @"delayForAppleAds is true but ADClient is not available. Is the iAD.framework included and iOS 10?";
+        [[BNCPreferenceHelper preferenceHelper] logWarning:warning];
+        return NO;
     }
-    return NO;
+
+    id sharedClientInstance = ((id (*)(id, SEL))[ADClientClass methodForSelector:sharedClient])(ADClientClass, sharedClient);
+    
+    self.preferenceHelper.shouldWaitForInit = YES;
+    self.preferenceHelper.checkedAppleSearchAdAttribution = YES;
+    self.asyncRequestCount++;
+    
+    void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) = ^void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
+        self.asyncRequestCount--;
+        
+        if (attrDetails && [attrDetails count]) {
+            self.preferenceHelper.appleSearchAdDetails = attrDetails;
+        }
+        else if (self.searchAdsDebugMode) {
+            NSMutableDictionary *testInfo = [[NSMutableDictionary alloc] init];
+            
+            NSMutableDictionary *testDetails = [[NSMutableDictionary alloc] init];
+            [testDetails setObject:[NSNumber numberWithBool:YES] forKey:@"iad-attribution"];
+            [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-campaign-id"];
+            [testDetails setObject:@"DebugAppleSearchAdsCampaignName" forKey:@"iad-campaign-name"];
+            [testDetails setObject:@"2016-09-09T01:33:17Z" forKey:@"iad-click-date"];
+            [testDetails setObject:@"2016-09-09T01:33:17Z" forKey:@"iad-conversion-date"];
+            [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-creative-id"];
+            [testDetails setObject:@"CreativeName" forKey:@"iad-creative-name"];
+            [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-lineitem-id"];
+            [testDetails setObject:@"LineName" forKey:@"iad-lineitem-name"];
+            [testDetails setObject:@"OrgName" forKey:@"iad-org-name"];
+            
+            [testInfo setObject:testDetails forKey:@"Version3.1"];
+            
+            self.preferenceHelper.appleSearchAdDetails = testInfo;
+        }
+        
+        // if there's another async attribution check in flight, don't continue with init
+        if (self.asyncRequestCount > 0) { return; }
+        
+        self.preferenceHelper.shouldWaitForInit = NO;
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self initUserSessionAndCallCallback:!self.isInitialized];
+        });
+    };
+    
+    ((void (*)(id, SEL, void (^ __nullable)(NSDictionary *__nullable attrDetails, NSError * __nullable error)))[sharedClientInstance methodForSelector:requestAttribution])(sharedClientInstance, requestAttribution, completionBlock);
+    
+    return YES;
 }
 
 
