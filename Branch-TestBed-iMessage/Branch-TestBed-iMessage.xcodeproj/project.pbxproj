@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4D698FF11E04B566006DA451 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D698FEF1E04B566006DA451 /* BNCCommerceEvent.m */; };
 		4D698FF21E04B566006DA451 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D698FF01E04B566006DA451 /* BNCConfig.m */; };
+		4DB567371E79FD5E00A8A324 /* BranchShareLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB567361E79FD5E00A8A324 /* BranchShareLink.m */; };
 		4DE887D41E3FFF9A00732E20 /* NSMutableDictionary+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DE887D31E3FFF9A00732E20 /* NSMutableDictionary+Branch.m */; };
 		67E91EEF1D769E1E0039F1C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 67E91EEE1D769E1E0039F1C4 /* Assets.xcassets */; };
 		67E91EF61D769E1E0039F1C4 /* MessagesExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 67E91EF51D769E1E0039F1C4 /* MessagesExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -84,6 +85,8 @@
 		4D698FEE1E04B566006DA451 /* BNCCommerceEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCCommerceEvent.h; sourceTree = "<group>"; };
 		4D698FEF1E04B566006DA451 /* BNCCommerceEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCCommerceEvent.m; sourceTree = "<group>"; };
 		4D698FF01E04B566006DA451 /* BNCConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCConfig.m; sourceTree = "<group>"; };
+		4DB567351E79FD5E00A8A324 /* BranchShareLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchShareLink.h; sourceTree = "<group>"; };
+		4DB567361E79FD5E00A8A324 /* BranchShareLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShareLink.m; sourceTree = "<group>"; };
 		4DE887D21E3FFF9A00732E20 /* NSMutableDictionary+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableDictionary+Branch.h"; sourceTree = "<group>"; };
 		4DE887D31E3FFF9A00732E20 /* NSMutableDictionary+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDictionary+Branch.m"; sourceTree = "<group>"; };
 		67E91EEB1D769E1E0039F1C4 /* Branch-TestBed-iMessage.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Branch-TestBed-iMessage.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -308,6 +311,8 @@
 				67E91F8B1D769FE30039F1C4 /* BranchDeepLinkingController.h */,
 				67E91F8C1D769FE30039F1C4 /* BranchLinkProperties.h */,
 				67E91F8D1D769FE30039F1C4 /* BranchLinkProperties.m */,
+				4DB567351E79FD5E00A8A324 /* BranchShareLink.h */,
+				4DB567361E79FD5E00A8A324 /* BranchShareLink.m */,
 				67E91F8E1D769FE30039F1C4 /* BranchUniversalObject.h */,
 				67E91F8F1D769FE30039F1C4 /* BranchUniversalObject.m */,
 				67E91F901D769FE30039F1C4 /* BranchView.h */,
@@ -494,6 +499,7 @@
 				67E91FD01D769FE30039F1C4 /* BranchCreditHistoryRequest.m in Sources */,
 				67E91FD51D769FE30039F1C4 /* BranchRedeemRewardsRequest.m in Sources */,
 				67E91FC41D769FE30039F1C4 /* BNCStrongMatchHelper.m in Sources */,
+				4DB567371E79FD5E00A8A324 /* BranchShareLink.m in Sources */,
 				67E91FD21D769FE30039F1C4 /* BranchLoadRewardsRequest.m in Sources */,
 				4D698FF21E04B566006DA451 /* BNCConfig.m in Sources */,
 				E212CC641D9DE6D800603475 /* BranchContentDiscoverer.m in Sources */,

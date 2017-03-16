@@ -20,6 +20,7 @@
 #import "BranchActivityItemProvider.h"
 #import "BranchDeepLinkingController.h"
 #import "BNCCommerceEvent.h"
+#import "BranchShareLink.h"
 
 /**
  `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.
@@ -31,7 +32,7 @@
 /// @name Constants
 ///----------------
 
-#pragma mark - Branch Link Features
+#pragma mark Branch Link Features
 
 /**
  ## Branch Link Features
