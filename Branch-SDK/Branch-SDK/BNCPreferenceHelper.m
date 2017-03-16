@@ -154,13 +154,13 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     }
 }
 
-- (void) save {
+- (void) synchronize {
     //  Flushes preference queue to persistence.
     [_persistPrefsQueue waitUntilAllOperationsAreFinished];
 }
 
 - (void) dealloc {
-    [self save];
+    [self synchronize];
 }
 
 #pragma mark - Debug methods
@@ -752,7 +752,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             [self logWarning:@"Can't create preferences data."];
             return;
         }
-        NSURL *prefsURL = self.class.URLForPrefsFile;
+        NSURL *prefsURL = [self.class.URLForPrefsFile copy];
         NSBlockOperation *newPersistOp = [NSBlockOperation blockOperationWithBlock:^ {
             NSError *error = nil;
             [data writeToURL:prefsURL options:NSDataWritingAtomic error:&error];

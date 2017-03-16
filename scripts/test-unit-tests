@@ -40,6 +40,9 @@ function testSimulatorVersion() {
 }
 
 stressTest=0
+stressPhone="iPhone 4s"     # "iPhone 7"  eDebug
+stressOS="8.3"              # "latest"
+
 function testSimulatorStress() {
     if (( $stressTest == 0 )); then
         printf "${textBlue}Start stress test...${textNormal}\n"
@@ -49,7 +52,7 @@ function testSimulatorStress() {
     xcodebuild \
         -workspace Branch-TestBed.xcworkspace \
         -scheme Branch-TestBed \
-        -destination name="iPhone 7",OS=latest \
+        -destination name="$stressPhone",OS="$stressOS" \
             test -quiet
 }
 
@@ -81,4 +84,5 @@ testSimulatorVersion "iPhone 6s" 10.0
 testSimulatorVersion "iPhone 5"  9.3
 testSimulatorVersion "iPhone 4s" 8.4
 
-printf "${textBlue}All tests completed successfully.${textNormal}\n"
+elapsed=$(date -jur$SECONDS +%H:%M:%S)
+printf "${textBlue}All tests completed successfully. Elapsed: %s.${textNormal}\n" "$elapsed"

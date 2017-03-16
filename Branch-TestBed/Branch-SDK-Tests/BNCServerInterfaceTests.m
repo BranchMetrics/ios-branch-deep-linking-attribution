@@ -204,7 +204,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
   serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
   serverInterface.preferenceHelper.retryCount = 3;
-  [serverInterface.preferenceHelper save];
+  [serverInterface.preferenceHelper synchronize];
   
   XCTestExpectation* successExpectation = [self expectationWithDescription:@"success"];
   

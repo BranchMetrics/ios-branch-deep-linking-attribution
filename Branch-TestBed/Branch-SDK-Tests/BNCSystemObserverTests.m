@@ -41,7 +41,7 @@
 - (void)testGetUpdateStateWithNoStoredVersionAndDatesUnder60SecondsApart {
     [self stubNilValuesForStoredAndCurrentVersions];
     NSDate *now = [NSDate date];
-    NSDate *lessThan24HoursFromNow = [now dateByAddingTimeInterval:59];
+    NSDate *lessThan24HoursFromNow = [now dateByAddingTimeInterval:59.0];
     [self stubCreationDate:now modificationDate:lessThan24HoursFromNow];
 
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
@@ -51,9 +51,9 @@
 }
 
 - (void)testGetUpdateStateWithNoStoredVersionAndDatesMoreThan60SecondsApart {
-    [self stubNilValuesForStoredAndCurrentVersions];
     NSDate *now = [NSDate date];
-    NSDate *moreThan24HoursFromNow = [now dateByAddingTimeInterval:86401];
+    NSDate *moreThan24HoursFromNow = [now dateByAddingTimeInterval:(60.0*60.0*24.5)];
+    [self stubNilValuesForStoredAndCurrentVersions];
     [self stubCreationDate:now modificationDate:moreThan24HoursFromNow];
 
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
@@ -113,14 +113,17 @@
     [self clearMocks];
 }
 
-
 #pragma mark - URI Scheme tests
 
 - (void)testGetDefaultUriSchemeWithSingleCharacterScheme {
     NSString * const SINGLE_CHARACTER_SCEHEME = @"a";
     id bundleMock = OCMClassMock([NSBundle class]);
-    [[[bundleMock expect] andReturn:bundleMock] mainBundle];
-    [[[bundleMock expect] andReturn:@[ @{ @"CFBundleURLSchemes": @[ SINGLE_CHARACTER_SCEHEME ] } ]] objectForInfoDictionaryKey:[OCMArg any]];
+    [[[bundleMock expect]
+        andReturn:bundleMock]
+            mainBundle];
+    [[[bundleMock expect]
+        andReturn:@[ @{ @"CFBundleURLSchemes": @[ SINGLE_CHARACTER_SCEHEME ] } ]]
+            objectForInfoDictionaryKey:[OCMArg any]];
 
     NSString *uriScheme = [BNCSystemObserver getDefaultUriScheme];
     
@@ -134,18 +137,26 @@
 #pragma mark - Internals
 
 - (void)stubCreationDate:(NSDate *)creationDate modificationDate:(NSDate *)modificationDate {
+    [[BNCPreferenceHelper preferenceHelper] synchronize];
     self.fileManagerMock = OCMClassMock([NSFileManager class]);
     self.docDirAttributesMock = OCMClassMock([NSDictionary class]);
     self.bundleAttributesMock = OCMClassMock([NSDictionary class]);
-    [[[self.fileManagerMock stub] andReturn:self.fileManagerMock] defaultManager];
-    [[[self.fileManagerMock expect] andReturn:self.docDirAttributesMock] attributesOfItemAtPath:[OCMArg any] error:(NSError __autoreleasing **)[OCMArg anyPointer]];
-    [[[self.fileManagerMock expect] andReturn:self.bundleAttributesMock] attributesOfItemAtPath:[OCMArg any] error:(NSError __autoreleasing **)[OCMArg anyPointer]];
+    [[[self.fileManagerMock stub]
+        andReturn:self.fileManagerMock]
+            defaultManager];
+    [[[self.fileManagerMock expect]
+        andReturn:self.docDirAttributesMock]
+            attributesOfItemAtPath:[OCMArg any]
+            error:(NSError __autoreleasing **)[OCMArg anyPointer]];
+    [[[self.fileManagerMock expect]
+        andReturn:self.bundleAttributesMock]
+            attributesOfItemAtPath:[OCMArg any]
+            error:(NSError __autoreleasing **)[OCMArg anyPointer]];
     [[[self.docDirAttributesMock stub] andReturn:creationDate] fileCreationDate];
     [[[self.bundleAttributesMock stub] andReturn:modificationDate] fileModificationDate];
 }
 
 - (void)clearMocks {
-    [[BNCPreferenceHelper preferenceHelper] save];
     [self.fileManagerMock stopMocking];
     [self.docDirAttributesMock stopMocking];
     [self.bundleAttributesMock stopMocking];
@@ -153,6 +164,7 @@
 
 - (void)stubNilValuesForStoredAndCurrentVersions {
     [BNCPreferenceHelper preferenceHelper].appVersion = nil;
+    [[BNCPreferenceHelper preferenceHelper] synchronize];
     id bundleMock = OCMClassMock([NSBundle class]);
     [[[bundleMock stub] andReturn:nil] mainBundle];
 }

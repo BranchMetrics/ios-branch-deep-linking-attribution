@@ -70,8 +70,20 @@ There's a full demo app embedded in this repository, but you can also check out 
 Branch is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your Podfile:
 
 ```objc
-pod "Branch"
+pod 'Branch'
 ```
+
+Then, from the command line, `cd` to your project directory, and do:
+
+```
+pod install
+pod update
+```
+
+to install the Branch pod and update it to the latest version of the SDK.
+
+Make sure to do the `pod update`.  CocoaPods may not use the latest version of the SDK otherwise!
+
 ### Carthage
 
 To integrate Branch into your project using Carthage add the following to your `Cartfile`:
@@ -543,11 +555,12 @@ parameters such as the campaign name, and take special action in you app after a
 track the effectiveness of a campaign in the Branch dashboard, along with other your other Branch
 statistics, such as total installs, referrals, and app link statistics.
 
-1. External resources
+* External resources
   + [Apple Search Ads](https://searchads.apple.com/)
   + [Apple Search Ads for Developers](https://developer.apple.com/app-store/search-ads/)
   + [Apple Search Ads WWDC](https://developer.apple.com/videos/play/wwdc2016/302/)
 
+* Important: You must add the iAd.framework to your project to enable Apple Search Ad checking.
 
 #### Methods
 

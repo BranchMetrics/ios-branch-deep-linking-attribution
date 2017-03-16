@@ -78,23 +78,23 @@
 + (NSString *)humanReadableChannelWithActivityType:(NSString *)activityString {
     NSString *channel = activityString; //default
     NSDictionary *channelMappings = [[NSDictionary alloc] initWithObjectsAndKeys:
-        @"Pasteboard", UIActivityTypeCopyToPasteboard,
-        @"Email", UIActivityTypeMail,
-        @"SMS", UIActivityTypeMessage,
-        @"Facebook", UIActivityTypePostToFacebook,
-        @"Twitter", UIActivityTypePostToTwitter,
-        @"Weibo", UIActivityTypePostToWeibo,
-        @"Reading List", UIActivityTypeAddToReadingList,
-        @"Airdrop", UIActivityTypeAirDrop,
-        @"flickr", UIActivityTypePostToFlickr,
+        @"Pasteboard",  UIActivityTypeCopyToPasteboard,
+        @"Email",       UIActivityTypeMail,
+        @"SMS",         UIActivityTypeMessage,
+        @"Facebook",    UIActivityTypePostToFacebook,
+        @"Twitter",     UIActivityTypePostToTwitter,
+        @"Weibo",       UIActivityTypePostToWeibo,
+        @"Reading List",UIActivityTypeAddToReadingList,
+        @"Airdrop",     UIActivityTypeAirDrop,
+        @"flickr",      UIActivityTypePostToFlickr,
         @"Tencent Weibo", UIActivityTypePostToTencentWeibo,
-        @"Vimeo", UIActivityTypePostToVimeo,
+        @"Vimeo",       UIActivityTypePostToVimeo,
         @"Apple Notes", @"com.apple.mobilenotes.SharingExtension",
-        @"Slack", @"com.tinyspeck.chatlyio.share",
-        @"WhatsApp", @"net.whatsapp.WhatsApp.ShareExtension",
-        @"WeChat", @"com.tencent.xin.sharetimeline",
-        @"LINE", @"jp.naver.line.Share",
-		@"Pinterest", @"pinterest.ShareExtension",
+        @"Slack",       @"com.tinyspeck.chatlyio.share",
+        @"WhatsApp",    @"net.whatsapp.WhatsApp.ShareExtension",
+        @"WeChat",      @"com.tencent.xin.sharetimeline",
+        @"LINE",        @"jp.naver.line.Share",
+		@"Pinterest",   @"pinterest.ShareExtension",
 
         //  Keys for older app versions --
 
