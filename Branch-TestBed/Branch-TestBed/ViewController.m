@@ -28,7 +28,9 @@ NSString *live_key = @"live_key";
 NSString *test_key = @"test_key";
 NSString *type = @"some type";
 
-@interface ViewController ()
+@interface ViewController () <BranchShareLinkDelegate> {
+    NSDateFormatter *_dateFormatter;
+}
 
 @property (weak, nonatomic) IBOutlet UITextField *branchLinkTextField;
 @property (weak, nonatomic) IBOutlet UILabel *pointsLabel;
@@ -205,7 +207,9 @@ NSString *type = @"some type";
 }
 
 
-- (IBAction)shareLinkButtonTouchUpInside:(id)sender {
+- (IBAction)oldShareLinkButtonTouchUpInside:(id)sender {
+    // This method uses the old way of sharing Branch links.
+
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
     linkProperties.campaign = @"sharing campaign";
@@ -219,6 +223,64 @@ NSString *type = @"some type";
             NSLog(@"%@", [NSString stringWithFormat:@"Branch TestBed: Sharing failed"]);
         }
     }];
+}
+
+- (NSDateFormatter*) dateFormatter {
+    if (_dateFormatter) return _dateFormatter;
+
+    _dateFormatter = [[NSDateFormatter alloc] init];
+    _dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+    _dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ssX";
+    _dateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+    return _dateFormatter;
+}
+
+- (IBAction)shareLinkButtonTouchUpInside:(id)sender {
+    // The new hotness.
+
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.feature = feature;
+    linkProperties.campaign = @"sharing campaign";
+    [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
+    [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
+
+    BranchShareLink *shareLink =
+        [[BranchShareLink alloc]
+            initWithUniversalObject:self.branchUniversalObject
+            linkProperties:linkProperties];
+
+    shareLink.title = @"Share your test link!";
+    shareLink.delegate = self;
+    shareLink.shareText = [NSString stringWithFormat:
+        @"Shared from Branch's Branch-TestBed at %@.",
+        [self.dateFormatter stringFromDate:[NSDate date]]];
+
+    [shareLink presentActivityViewControllerFromViewController:self anchor:nil];
+}
+
+- (void) branchShareLinkWillShare:(BranchShareLink*)shareLink {
+    // This example shows changing the share text.
+    //
+    // Link properties, such as alias or channel can be overridden here based on the users'
+    // choice stored in shareSheet.activityType.
+
+    shareLink.shareText = [NSString stringWithFormat:
+        @"Shared through '%@'\nfrom Branch's Branch-TestBed\n%@.",
+        shareLink.linkProperties.channel,
+        [self.dateFormatter stringFromDate:[NSDate date]]];
+}
+
+- (void) branchShareLink:(BranchShareLink*)shareLink
+             didComplete:(BOOL)completed
+               withError:(NSError*)error {
+
+    if (error != nil) {
+        NSLog(@"Branch: Error while sharing! Error: %@.", error);
+    } else if (completed) {
+        NSLog(@"Branch: User completed sharing to channel '%@'.", shareLink.linkProperties.channel);
+    } else {
+        NSLog(@"Branch: User cancelled sharing.");
+    }
 }
 
 - (IBAction) sendCommerceEvent:(id)sender {
