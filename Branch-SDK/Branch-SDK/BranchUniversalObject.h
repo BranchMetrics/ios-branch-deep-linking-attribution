@@ -72,4 +72,6 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 
 - (nonnull NSString *)description;
 
+- (NSDictionary*_Nonnull)getDictionaryWithCompleteLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
+- (NSDictionary*_Nonnull)getParamsForServerRequestWithAddedLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
 @end

@@ -38,6 +38,9 @@
                BlueprintName = "Branch-SDK-Tests"
                ReferencedContainer = "container:Branch-TestBed.xcodeproj">
             </BuildableReference>
+            <DeviceAppData
+               resolvedPath = "../Simulate-FirstRun.xcappdata">
+            </DeviceAppData>
          </TestableReference>
       </Testables>
       <MacroExpansion>
