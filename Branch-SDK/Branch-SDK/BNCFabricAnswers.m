@@ -42,7 +42,7 @@
         }
     }
 
-    [[BNCPreferenceHelper preferenceHelper] save];
+    [[BNCPreferenceHelper preferenceHelper] synchronize];
     NSString *identity = [[BNCPreferenceHelper preferenceHelper].identityID copy];
     if (identity) {
         temp[@"branch_identity"] = identity;
