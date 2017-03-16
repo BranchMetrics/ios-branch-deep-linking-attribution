@@ -52,7 +52,10 @@
     strcpy(cptr, s);
 
     self = [super init];
-    if (!self) return self;
+    if (!self) {
+        free(cptr);
+        return self;
+    }
     stringVar = @"Yope!";
     intVar = 1;
     floatVar = 2.0;
