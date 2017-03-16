@@ -84,4 +84,5 @@ testSimulatorVersion "iPhone 6s" 10.0
 testSimulatorVersion "iPhone 5"  9.3
 testSimulatorVersion "iPhone 4s" 8.4
 
-printf "${textBlue}All tests completed successfully.${textNormal}\n"
+elapsed=$(date -jur$SECONDS +%H:%M:%S)
+printf "${textBlue}All tests completed successfully. Elapsed: %s.${textNormal}\n" "$elapsed"

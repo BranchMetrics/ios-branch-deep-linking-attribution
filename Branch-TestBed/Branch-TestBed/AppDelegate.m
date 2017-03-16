@@ -31,7 +31,7 @@
     [branch setDebug];
 
     // For Apple Search Ads
-    // [branch delayInitToCheckForSearchAds];
+    [branch delayInitToCheckForSearchAds];
 
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];

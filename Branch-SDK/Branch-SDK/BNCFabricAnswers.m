@@ -41,9 +41,12 @@
             temp[@"referring_branch_identity"] = dictionary[key];
         }
     }
-    
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    temp[@"branch_identity"] = preferenceHelper.identityID;
+
+    [[BNCPreferenceHelper preferenceHelper] synchronize];
+    NSString *identity = [[BNCPreferenceHelper preferenceHelper].identityID copy];
+    if (identity) {
+        temp[@"branch_identity"] = identity;
+    }
     
     return temp;
 }
