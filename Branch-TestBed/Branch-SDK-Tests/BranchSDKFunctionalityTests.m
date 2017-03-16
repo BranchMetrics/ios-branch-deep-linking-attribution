@@ -89,7 +89,7 @@ NSInteger const  TEST_CREDITS = 30;
         [openExpectation fulfill];
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:NULL];
+    [self waitForExpectationsWithTimeout:2 handler:NULL];
 }
 
 - (void)test01SetIdentity {
@@ -521,7 +521,7 @@ NSInteger const  TEST_CREDITS = 30;
 }
 
 - (void)awaitExpectations {
-    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:6.0 handler:^(NSError *error) {
         self.hasExceededExpectations = YES;
     }];
 }
