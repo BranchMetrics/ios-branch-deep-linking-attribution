@@ -210,12 +210,8 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         return _dateFormatter!
     }
 
-    @IBAction func actionButtonTouchUpInside(_ sender: AnyObject) {
-        //  Share a Branch link:
-
-        let alias = String(format: "share-%@", self.dateFormatter().string(from: Date()))
-        //let alias = "share-Share-Same-Name-4"
-        let canonicalIdentifier = alias
+    @IBAction func shareBranchLinkAction(_ sender: AnyObject) {
+        let canonicalIdentifier = "id-" + self.dateFormatter().string(from: Date.init())
 
         let shareBranchObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
         shareBranchObject.title = "Share Branch Link Example"
@@ -226,8 +222,6 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         shareBranchObject.addMetadataKey("publicSlug", value: canonicalIdentifier)
 
         let shareLinkProperties = BranchLinkProperties()
-        shareLinkProperties.alias = alias
-        shareLinkProperties.channel = "ios-app"
         shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
 
         if let branchShareLink = BranchShareLink.init(
@@ -235,6 +229,37 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
             linkProperties:  shareLinkProperties
         ) {
             branchShareLink.title = "Share your test link!"
+            branchShareLink.shareText = "Shared from Branch's TestBed-Swift at \(self.dateFormatter().string(from: Date()))"
+            branchShareLink.presentActivityViewController(
+                from: self,
+                anchor: actionButton
+            )
+        }
+    }
+
+    @IBAction func shareAliasBranchLinkAction(_ sender: AnyObject) {
+        //  Share an alias Branch link:
+
+        let alias = "Share-Alias-Link"
+        let canonicalIdentifier = alias
+
+        let shareBranchObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
+        shareBranchObject.title = "Share Branch Link Example"
+        shareBranchObject.canonicalUrl = "https://developer.branch.io/"
+        shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
+        shareBranchObject.keywords = [ "example", "short", "share", "link" ]
+        shareBranchObject.contentDescription = "This is an example shared alias link."
+        shareBranchObject.addMetadataKey("publicSlug", value: canonicalIdentifier)
+
+        let shareLinkProperties = BranchLinkProperties()
+        shareLinkProperties.alias = alias
+        shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
+
+        if let branchShareLink = BranchShareLink.init(
+            universalObject: shareBranchObject,
+            linkProperties:  shareLinkProperties
+        ) {
+            branchShareLink.title = "Share your alias link!"
             branchShareLink.delegate = self
             branchShareLink.shareText = "Shared from Branch's TestBed-Swift at \(self.dateFormatter().string(from: Date()))"
             branchShareLink.presentActivityViewController(
@@ -244,7 +269,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         }
     }
 
-    func branchLinkWillShare(_ shareLink: BranchShareLink) {
+    func branchShareLinkWillShare(_ shareLink: BranchShareLink) {
 
         // Link properties, such as alias or channel can be overridden here based on the users'
         // choice stored in shareSheet.activityType.
@@ -253,7 +278,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
             "\n\(self.dateFormatter().string(from: Date()))."
 
         // In this example, we over-ride the channel so that the channel in the Branch short link 
-        // is always 'ios-share'.
+        // is always 'ios-share'. This allows a short alias link to always be crceated.
         shareLink.linkProperties.channel = "ios-share"
     }
 
