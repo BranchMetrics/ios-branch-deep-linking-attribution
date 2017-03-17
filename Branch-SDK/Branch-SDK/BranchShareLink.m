@@ -11,6 +11,7 @@
 #import "BNCFabricAnswers.h"
 #import "BranchActivityItemProvider.h"
 #import "BNCDeviceInfo.h"
+#import "BNCXcode7Support.h"
 @class BranchShareActivityItem;
 
 typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {

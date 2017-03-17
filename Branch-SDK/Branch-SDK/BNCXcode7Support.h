@@ -19,5 +19,6 @@
 - (NSString*) languageCode;
 @end
 
+typedef NSString * UIActivityType;
 
 #endif
