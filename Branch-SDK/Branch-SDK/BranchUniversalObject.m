@@ -72,12 +72,23 @@
     [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest] andCallback:callback];
 }
 
-- (void)userCompletedAction:(NSString *)action {
+- (void)userCompletedAction:(NSString *)action
+{
+    [self userCompletedAction:action withState:nil];
+}
+
+- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
     NSMutableDictionary *actionPayload = [[NSMutableDictionary alloc] init];
     NSDictionary *linkParams = [self getParamsForServerRequest];
     if (self.canonicalIdentifier && linkParams) {
         actionPayload[BNCCanonicalIdList] = @[self.canonicalIdentifier];
         actionPayload[self.canonicalIdentifier] = linkParams;
+
+        if (state) {
+            // Add in user params
+            [actionPayload addEntriesFromDictionary:state];
+        }
+
         [[Branch getInstance] userCompletedAction:action withState:actionPayload];
         if (self.automaticallyListOnSpotlight && [action isEqualToString:BNCRegisterViewEvent])
             [self listOnSpotlight];

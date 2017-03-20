@@ -123,6 +123,10 @@ If you want to add a key for both your live and test apps at the same time, you 
 
 ![Branch Multi Key Demo](docs/images/branch-multi-key-plist.png)
 
+Note: If you used Fabric to install Branch as a kit, your Branch keys will be in your Info.plist as an element under the Fabric > Kits array, like this:
+
+![Branch Fabric Keys](docs/images/branch-fabric-key-plist.png)
+
 ### Register a URI Scheme Direct Deep Linking (Optional but Recommended)
 
 You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to change **yourapp** to a unique string that represents your app name.
