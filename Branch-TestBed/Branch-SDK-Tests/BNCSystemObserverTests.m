@@ -157,9 +157,9 @@
     BOOL isSim = [BNCSystemObserver isSimulator];
 
     #if (TARGET_OS_SIMULATOR)
-    XCTAssert(isSim);
+    XCTAssertTrue(isSim);
     #else
-    XCTAssert(!isSim);
+    XCTAssertFalse(isSim);
     #endif
 }
 
