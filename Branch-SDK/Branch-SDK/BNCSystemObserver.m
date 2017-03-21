@@ -118,15 +118,11 @@
 }
 
 + (BOOL)isSimulator {
-    UIDevice *currentDevice = [UIDevice currentDevice];
-    NSString *device;
-    if ([BNCSystemObserver getOSVersion].floatValue >= 9.0) {
-        device = currentDevice.name;
-    }
-    else {
-        device = currentDevice.model;
-    }
-    return ([device rangeOfString:@"Simulator"].location != NSNotFound);
+    #if (TARGET_OS_SIMULATOR)
+    return YES;
+    #else
+    return NO;
+    #endif
 }
 
 + (NSString *)getOS {
