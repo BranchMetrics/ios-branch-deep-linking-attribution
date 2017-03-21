@@ -129,13 +129,82 @@
     return [device rangeOfString:@"Simulator"].location != NSNotFound;
 }
 
-typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
-    BNCUpdateStatusInstall      = 0,    //  App was recently installed.
-    BNCUpdateStatusNonUpdate    = 1,    //  App was neither newly installed nor updated.
-    BNCUpdateStatusUpdate       = 2,    //  App was recently updated.
-};
-
 + (NSNumber*) getUpdateState {
+
+    NSDate * buildDate = [self buildDate];
+    NSDate * appInstallDate = [self appInstallDate];
+    NSString *storedAppVersion = [BNCPreferenceHelper preferenceHelper].appVersion;
+    NSString *currentAppVersion = [self getAppVersion];
+
+    BNCUpdateStatus result =
+        [self updateStatusWithBuildDate:buildDate
+            appInstallDate:appInstallDate
+            storedAppVersion:storedAppVersion
+            currentAppVersion:currentAppVersion];
+
+#if 1 // Display an alert for testing
+    NSString *message = @"No result.";
+    switch (result) {
+        case BNCUpdateStatusInstall:    message = @"New install.";  break;
+        case BNCUpdateStatusNonUpdate:  message = @"Non-update.";    break;
+        case BNCUpdateStatusUpdate:     message = @"App update.";   break;
+        default:                        message = @"Invalide value.";   break;
+    }
+    message =
+        [NSString stringWithFormat:@"iOS: %@\n%@",
+            [UIDevice currentDevice].systemVersion,
+            message];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIAlertView *alert =
+            [[UIAlertView alloc]
+                initWithTitle:@"Update State"
+                message:message
+                delegate:nil
+                cancelButtonTitle:@"OK"
+                otherButtonTitles:nil];
+        [alert show];
+    });
+#endif
+
+    return @(result);
+}
+
++ (BNCUpdateStatus) updateStatusWithBuildDate:(NSDate*)buildDate
+                               appInstallDate:(NSDate*)appInstallDate
+                             storedAppVersion:(NSString*)storedAppVersion
+                            currentAppVersion:(NSString*)currentAppVersion {
+    if (storedAppVersion) {
+        if ([storedAppVersion isEqualToString:currentAppVersion])
+            return BNCUpdateStatusNonUpdate;
+        else
+            return BNCUpdateStatusUpdate;
+    }
+
+    if (buildDate && [buildDate timeIntervalSince1970] <= 0.0) {
+        // Invalid buildDate.
+        buildDate = nil;
+    }
+    if (appInstallDate && [appInstallDate timeIntervalSince1970] <= 0.0) {
+        // Invalid appInstallDate.
+        appInstallDate = nil;
+    }
+
+    if (!(buildDate && appInstallDate)) {
+        return BNCUpdateStatusInstall;
+    }
+
+    if ([buildDate compare:appInstallDate] > 0) {
+        return BNCUpdateStatusUpdate;
+    }
+
+    if ([appInstallDate timeIntervalSinceNow] > (-60.0 * 60.0 * 24.0)) {
+        return BNCUpdateStatusInstall;
+    }
+
+    return BNCUpdateStatusNonUpdate;
+}
+
++ (NSDate*) getUpdateStateWithFileManager:(NSFileManager*)manager {
 
     NSString *storedAppVersion = [BNCPreferenceHelper preferenceHelper].appVersion;
     NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
@@ -152,7 +221,6 @@ typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
     //  Get the install date:
 
     NSError *error = nil;
-    NSFileManager *manager = [[NSFileManager alloc] init];
     NSURL *libraryURL =
         [[manager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
     NSDictionary *attributes = [manager attributesOfItemAtPath:libraryURL.path error:&error];
@@ -162,20 +230,21 @@ typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
 
     error = nil;
     NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
+    if (!bundleRoot) bundleRoot = @"";
     NSURL *bundleRootURL = [NSURL URLWithString:[@"file://" stringByAppendingString:bundleRoot]];
     NSArray *fileInfoURLs =
         [manager contentsOfDirectoryAtURL:bundleRootURL
             includingPropertiesForKeys:@[ NSURLCreationDateKey ]
             options:0
-            error:&error];
+            error:&error];            
     if (error) {
         NSLog(@"Error retreiving bundle info: %@.", error);
     }
-    error = nil;
     BOOL success = NO;
     NSDate *buildDate = nil;
     for (NSURL *fileInfoURL in fileInfoURLs) {
         if ([[fileInfoURL lastPathComponent] isEqualToString:@"_CodeSignature"]) {
+            error = nil;
             success = [fileInfoURL getResourceValue:&buildDate
                 forKey:NSURLCreationDateKey
                 error:&error];
@@ -183,9 +252,14 @@ typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
         }
     }
 
+    if (buildDate && [buildDate timeIntervalSince1970] <= 0.0) {
+        // Invalid buildDate.
+        buildDate = nil;
+    }
+
     if (!success || error || !(buildDate && installDate)) {
         NSLog(@"Can't retrieve attributes Success: %d Error: %@.", success, error);
-        return @(BNCUpdateStatusUpdate);
+        return @(BNCUpdateStatusInstall);
     }
 
     if ([buildDate compare:installDate] > 0) {
@@ -197,6 +271,37 @@ typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
     }
 
     return @(BNCUpdateStatusNonUpdate);
+}
+
++ (NSNumber*) getUpdateState {
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    NSNumber *result = [self getUpdateStateWithFileManager:fileManager];
+
+#if 0   //  For testing
+    NSString *message = @"No result.";
+    switch (result.integerValue) {
+        case BNCUpdateStatusInstall:    message = @"New install.";  break;
+        case BNCUpdateStatusNonUpdate:  message = @"Non-update.";    break;
+        case BNCUpdateStatusUpdate:     message = @"App update.";   break;
+        default:                        message = @"Invalide value.";   break;
+    }
+    message =
+        [NSString stringWithFormat:@"iOS: %@\n%@",
+            [UIDevice currentDevice].systemVersion,
+            message];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIAlertView *alert =
+            [[UIAlertView alloc]
+                initWithTitle:@"Update State"
+                message:message
+                delegate:nil
+                cancelButtonTitle:@"OK"
+                otherButtonTitles:nil];
+        [alert show];
+    });
+#endif
+
+    return result;
 }
 
 + (void)setUpdateState {

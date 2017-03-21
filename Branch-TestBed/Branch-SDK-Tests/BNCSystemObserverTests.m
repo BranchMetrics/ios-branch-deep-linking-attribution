@@ -14,11 +14,24 @@
 #import "BNCPreferenceHelper.h"
 
 
+@interface BNCSystemObserver (Testing)
+
++ (BNCUpdateStatus) updateStatusWithBuildDate:(NSDate*)buildDate
+                               appInstallDate:(NSDate*)appInstallDate
+                             storedAppVersion:(NSString*)storedAppVersion
+                            currentAppVersion:(NSString*)currentAppVersion;
+
+@end
+
+#pragma mark - BNCSystemObserverTests
+
 @interface BNCSystemObserverTests : XCTestCase
 
 @property (strong, nonatomic) id fileManagerMock;
 @property (strong, nonatomic) id docDirAttributesMock;
 @property (strong, nonatomic) id bundleAttributesMock;
+@property (strong, nonatomic) id URLMock;
+@property (strong, nonatomic) NSArray *retainArray;
 
 @end
 
@@ -28,21 +41,23 @@
 #pragma mark - Test Update State with No Stored version
 
 - (void)testGetUpdateStateWithNoStoredVersionAndDatesAreEqual {
-    [self stubNilValuesForStoredAndCurrentVersions];
+
     NSDate *now = [NSDate date];
-    [self stubCreationDate:now modificationDate:now];
+    BNCUpdateStatus updateStatus =
+        [BNCSystemObserver
+            updateStatusWithBuildDate:now
+            appInstallDate:now
+            storedAppVersion:nil
+            currentAppVersion:@"1.2.1"];
 
-    NSNumber *updateState = [BNCSystemObserver getUpdateState];
-    XCTAssertEqualObjects(updateState, @0);
-
-    [self clearMocks];
+    XCTAssertTrue(updateStatus == BNCUpdateStatusInstall);
 }
 
 - (void)testGetUpdateStateWithNoStoredVersionAndDatesUnder60SecondsApart {
     [self stubNilValuesForStoredAndCurrentVersions];
     NSDate *now = [NSDate date];
     NSDate *lessThan24HoursFromNow = [now dateByAddingTimeInterval:59.0];
-    [self stubCreationDate:now modificationDate:lessThan24HoursFromNow];
+    [self stubAppInstallDate:now buildDate:lessThan24HoursFromNow];
 
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     XCTAssertEqualObjects(updateState, @0);
@@ -54,7 +69,7 @@
     NSDate *now = [NSDate date];
     NSDate *moreThan24HoursFromNow = [now dateByAddingTimeInterval:(60.0*60.0*24.5)];
     [self stubNilValuesForStoredAndCurrentVersions];
-    [self stubCreationDate:now modificationDate:moreThan24HoursFromNow];
+    [self stubAppInstallDate:now buildDate:moreThan24HoursFromNow];
 
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     XCTAssertEqualObjects(updateState, @2);
@@ -65,7 +80,7 @@
 - (void)testGetUpdateStateWithNoStoredVersionAndNilCreationDate {
     [self stubNilValuesForStoredAndCurrentVersions];
     NSDate *now = [NSDate date];
-    [self stubCreationDate:nil modificationDate:now];
+    [self stubAppInstallDate:nil buildDate:now];
 
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     XCTAssertEqualObjects(updateState, @0);
@@ -76,7 +91,7 @@
 - (void)testGetUpdateStateWithNoStoredVersionAndNilUpdateDate {
     [self stubNilValuesForStoredAndCurrentVersions];
     NSDate *now = [NSDate date];
-    [self stubCreationDate:now modificationDate:nil];
+    [self stubAppInstallDate:now buildDate:nil];
 
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     XCTAssertEqualObjects(updateState, @0);
@@ -133,33 +148,48 @@
     [bundleMock stopMocking];
 }
 
-
 #pragma mark - Internals
 
-- (void)stubCreationDate:(NSDate *)creationDate modificationDate:(NSDate *)modificationDate {
+- (void)stubAppInstallDate:(NSDate *)installDate buildDate:(NSDate *)buildDate {
     [[BNCPreferenceHelper preferenceHelper] synchronize];
+    
     self.fileManagerMock = OCMClassMock([NSFileManager class]);
-    self.docDirAttributesMock = OCMClassMock([NSDictionary class]);
+
     self.bundleAttributesMock = OCMClassMock([NSDictionary class]);
+    [[[self.bundleAttributesMock stub] andReturn:installDate] fileCreationDate];
     [[[self.fileManagerMock stub]
-        andReturn:self.fileManagerMock]
-            defaultManager];
-    [[[self.fileManagerMock expect]
-        andReturn:self.docDirAttributesMock]
-            attributesOfItemAtPath:[OCMArg any]
-            error:(NSError __autoreleasing **)[OCMArg anyPointer]];
-    [[[self.fileManagerMock expect]
         andReturn:self.bundleAttributesMock]
             attributesOfItemAtPath:[OCMArg any]
             error:(NSError __autoreleasing **)[OCMArg anyPointer]];
-    [[[self.docDirAttributesMock stub] andReturn:creationDate] fileCreationDate];
-    [[[self.bundleAttributesMock stub] andReturn:modificationDate] fileModificationDate];
+
+    //  OCMock result arrays need to be retained (sometimes?):
+    self.retainArray = @[ [NSURL URLWithString:@"file://MyApp/_CodeSignature"] ];
+
+    //self.docDirAttributesMock = OCMClassMock([NSDictionary class]);
+    [[[self.fileManagerMock stub]
+        andReturn:self.retainArray]
+            contentsOfDirectoryAtURL:[OCMArg any]
+            includingPropertiesForKeys:[OCMArg any]
+            options:0
+            error:(NSError __autoreleasing **)[OCMArg anyPointer]];
+
+    self.URLMock = OCMClassMock([NSURL class]);
+    OCMStub([self.URLMock getResourceValue:(NSDate __autoreleasing **)[OCMArg anyPointer]
+        forKey:[OCMArg any]
+        error:(NSError __autoreleasing **)[OCMArg anyPointer]];
+    ).andDo(^(NSInvocation *invocation) {
+        NSDate __autoreleasing **buildDatePtr;
+        [invocation getArgument:&buildDatePtr atIndex:0];
+        *buildDatePtr = buildDate;
+        invocation.returnValue = (void*) YES;
+    });
 }
 
 - (void)clearMocks {
     [self.fileManagerMock stopMocking];
     [self.docDirAttributesMock stopMocking];
     [self.bundleAttributesMock stopMocking];
+    [self.URLMock stopMocking];
 }
 
 - (void)stubNilValuesForStoredAndCurrentVersions {
