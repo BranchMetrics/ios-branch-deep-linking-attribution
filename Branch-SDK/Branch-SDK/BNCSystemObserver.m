@@ -129,187 +129,6 @@
     return [device rangeOfString:@"Simulator"].location != NSNotFound;
 }
 
-+ (NSNumber*) getUpdateState {
-
-    NSDate * buildDate = [self buildDate];
-    NSDate * appInstallDate = [self appInstallDate];
-    NSString *storedAppVersion = [BNCPreferenceHelper preferenceHelper].appVersion;
-    NSString *currentAppVersion = [self getAppVersion];
-
-    BNCUpdateStatus result =
-        [self updateStatusWithBuildDate:buildDate
-            appInstallDate:appInstallDate
-            storedAppVersion:storedAppVersion
-            currentAppVersion:currentAppVersion];
-
-#if 1 // Display an alert for testing
-    NSString *message = @"No result.";
-    switch (result) {
-        case BNCUpdateStatusInstall:    message = @"New install.";  break;
-        case BNCUpdateStatusNonUpdate:  message = @"Non-update.";    break;
-        case BNCUpdateStatusUpdate:     message = @"App update.";   break;
-        default:                        message = @"Invalide value.";   break;
-    }
-    message =
-        [NSString stringWithFormat:@"iOS: %@\n%@",
-            [UIDevice currentDevice].systemVersion,
-            message];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        UIAlertView *alert =
-            [[UIAlertView alloc]
-                initWithTitle:@"Update State"
-                message:message
-                delegate:nil
-                cancelButtonTitle:@"OK"
-                otherButtonTitles:nil];
-        [alert show];
-    });
-#endif
-
-    return @(result);
-}
-
-+ (BNCUpdateStatus) updateStatusWithBuildDate:(NSDate*)buildDate
-                               appInstallDate:(NSDate*)appInstallDate
-                             storedAppVersion:(NSString*)storedAppVersion
-                            currentAppVersion:(NSString*)currentAppVersion {
-    if (storedAppVersion) {
-        if ([storedAppVersion isEqualToString:currentAppVersion])
-            return BNCUpdateStatusNonUpdate;
-        else
-            return BNCUpdateStatusUpdate;
-    }
-
-    if (buildDate && [buildDate timeIntervalSince1970] <= 0.0) {
-        // Invalid buildDate.
-        buildDate = nil;
-    }
-    if (appInstallDate && [appInstallDate timeIntervalSince1970] <= 0.0) {
-        // Invalid appInstallDate.
-        appInstallDate = nil;
-    }
-
-    if (!(buildDate && appInstallDate)) {
-        return BNCUpdateStatusInstall;
-    }
-
-    if ([buildDate compare:appInstallDate] > 0) {
-        return BNCUpdateStatusUpdate;
-    }
-
-    if ([appInstallDate timeIntervalSinceNow] > (-60.0 * 60.0 * 24.0)) {
-        return BNCUpdateStatusInstall;
-    }
-
-    return BNCUpdateStatusNonUpdate;
-}
-
-+ (NSDate*) getUpdateStateWithFileManager:(NSFileManager*)manager {
-
-    NSString *storedAppVersion = [BNCPreferenceHelper preferenceHelper].appVersion;
-    NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
-
-    if (storedAppVersion) {
-        if ([storedAppVersion isEqualToString:currentAppVersion])
-            return @(BNCUpdateStatusNonUpdate);
-        else
-            return @(BNCUpdateStatusUpdate);
-    }
-
-    //  This may be the first Branch install.  Check file dates for app install status:
-
-    //  Get the install date:
-
-    NSError *error = nil;
-    NSURL *libraryURL =
-        [[manager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
-    NSDictionary *attributes = [manager attributesOfItemAtPath:libraryURL.path error:&error];
-    NSDate *installDate = [attributes fileCreationDate];
-
-    //  Get the build date:
-
-    error = nil;
-    NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
-    if (!bundleRoot) bundleRoot = @"";
-    NSURL *bundleRootURL = [NSURL URLWithString:[@"file://" stringByAppendingString:bundleRoot]];
-    NSArray *fileInfoURLs =
-        [manager contentsOfDirectoryAtURL:bundleRootURL
-            includingPropertiesForKeys:@[ NSURLCreationDateKey ]
-            options:0
-            error:&error];            
-    if (error) {
-        NSLog(@"Error retreiving bundle info: %@.", error);
-    }
-    BOOL success = NO;
-    NSDate *buildDate = nil;
-    for (NSURL *fileInfoURL in fileInfoURLs) {
-        if ([[fileInfoURL lastPathComponent] isEqualToString:@"_CodeSignature"]) {
-            error = nil;
-            success = [fileInfoURL getResourceValue:&buildDate
-                forKey:NSURLCreationDateKey
-                error:&error];
-            break;
-        }
-    }
-
-    if (buildDate && [buildDate timeIntervalSince1970] <= 0.0) {
-        // Invalid buildDate.
-        buildDate = nil;
-    }
-
-    if (!success || error || !(buildDate && installDate)) {
-        NSLog(@"Can't retrieve attributes Success: %d Error: %@.", success, error);
-        return @(BNCUpdateStatusInstall);
-    }
-
-    if ([buildDate compare:installDate] > 0) {
-        return @(BNCUpdateStatusUpdate);
-    }
-
-    if ([installDate timeIntervalSinceNow] > (-60.0 * 60.0 * 24.0)) {
-        return @(BNCUpdateStatusInstall);
-    }
-
-    return @(BNCUpdateStatusNonUpdate);
-}
-
-+ (NSNumber*) getUpdateState {
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    NSNumber *result = [self getUpdateStateWithFileManager:fileManager];
-
-#if 0   //  For testing
-    NSString *message = @"No result.";
-    switch (result.integerValue) {
-        case BNCUpdateStatusInstall:    message = @"New install.";  break;
-        case BNCUpdateStatusNonUpdate:  message = @"Non-update.";    break;
-        case BNCUpdateStatusUpdate:     message = @"App update.";   break;
-        default:                        message = @"Invalide value.";   break;
-    }
-    message =
-        [NSString stringWithFormat:@"iOS: %@\n%@",
-            [UIDevice currentDevice].systemVersion,
-            message];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        UIAlertView *alert =
-            [[UIAlertView alloc]
-                initWithTitle:@"Update State"
-                message:message
-                delegate:nil
-                cancelButtonTitle:@"OK"
-                otherButtonTitles:nil];
-        [alert show];
-    });
-#endif
-
-    return result;
-}
-
-+ (void)setUpdateState {
-    NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
-    [BNCPreferenceHelper preferenceHelper].appVersion = currentAppVersion;
-    [[BNCPreferenceHelper preferenceHelper] synchronize];
-}
-
 + (NSString *)getOS {
     return @"iOS";
 }
@@ -331,6 +150,164 @@
     float scaleFactor = mainScreen.scale;
     CGFloat height = mainScreen.bounds.size.height * scaleFactor;
     return [NSNumber numberWithInteger:(NSInteger)height];
+}
+
+#pragma mark - getUpdateState Suite
+
++ (NSNumber*) getUpdateState {
+
+    NSDate * buildDate = [self appBuildDate];
+    NSDate * appInstallDate = [self appInstallDate];
+    NSString *storedAppVersion = [BNCPreferenceHelper preferenceHelper].appVersion;
+    NSString *currentAppVersion = [self getAppVersion];
+
+    BNCUpdateState result =
+        [self updateStateWithBuildDate:buildDate
+            appInstallDate:appInstallDate
+            storedAppVersion:storedAppVersion
+            currentAppVersion:currentAppVersion];
+
+#if 1 // Display an alert for testing // eDebug
+    NSString *message = @"No result.";
+    switch (result) {
+        case BNCUpdateStateInstall:     message = @"New install.";  break;
+        case BNCUpdateStateNonUpdate:   message = @"Non-update.";    break;
+        case BNCUpdateStateUpdate:      message = @"App update.";   break;
+        default:                        message = @"Invalide value.";   break;
+    }
+    message =
+        [NSString stringWithFormat:@"iOS: %@\n%@",
+            [UIDevice currentDevice].systemVersion,
+            message];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIAlertView *alert =
+            [[UIAlertView alloc]
+                initWithTitle:@"Update State"
+                message:message
+                delegate:nil
+                cancelButtonTitle:@"OK"
+                otherButtonTitles:nil];
+        [alert show];
+    });
+#endif
+
+    return @(result);
+}
+
++ (BNCUpdateState) updateStateWithBuildDate:(NSDate*)buildDate
+                             appInstallDate:(NSDate*)appInstallDate
+                           storedAppVersion:(NSString*)storedAppVersion
+                          currentAppVersion:(NSString*)currentAppVersion {
+    if (storedAppVersion) {
+        if ([storedAppVersion isEqualToString:currentAppVersion])
+            return BNCUpdateStateNonUpdate;
+        else
+            return BNCUpdateStateUpdate;
+    }
+
+    if (buildDate && [buildDate timeIntervalSince1970] <= 0.0) {
+        // Invalid buildDate.
+        buildDate = nil;
+    }
+    if (appInstallDate && [appInstallDate timeIntervalSince1970] <= 0.0) {
+        // Invalid appInstallDate.
+        appInstallDate = nil;
+    }
+
+    if (!(buildDate && appInstallDate)) {
+        return BNCUpdateStateInstall;
+    }
+
+    if ([buildDate compare:appInstallDate] > 0) {
+        return BNCUpdateStateUpdate;
+    }
+
+    if ([appInstallDate timeIntervalSinceNow] > (-60.0 * 60.0 * 24.0)) {
+        return BNCUpdateStateInstall;
+    }
+
+    return BNCUpdateStateNonUpdate;
+}
+
++ (NSDate*) appInstallDate {
+    //  Get the app install date:
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *error = nil;
+    NSURL *libraryURL =
+        [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
+    NSDictionary *attributes = [fileManager attributesOfItemAtPath:libraryURL.path error:&error];
+    if (error) {
+        NSLog(@"Error getting library date: %@.", error);
+        return nil;
+    }
+    NSDate *installDate = [attributes fileCreationDate];
+    if (installDate == nil || [installDate timeIntervalSince1970] <= 0.0) {
+        NSLog(@"Error: Invalid install date.");
+        return nil;
+    }
+    return installDate;
+}
+
++ (NSDate*) dateForPathComponent:(NSString*)component inURLs:(NSArray<NSURL*>*)fileInfoURLs {
+    BOOL success = NO;
+    NSError *error = nil;
+    NSDate *buildDate = nil;
+    for (NSURL *fileInfoURL in fileInfoURLs) {
+        if ([[fileInfoURL lastPathComponent] isEqualToString:component]) {
+            success = [fileInfoURL getResourceValue:&buildDate
+                forKey:NSURLCreationDateKey
+                error:&error];
+            break;
+        }
+    }
+    if (!success || error) {
+        NSLog(@"Can't retrieve attributes. Success: %d Error: %@.", success, error);
+        return nil;
+    }
+    return buildDate;
+}
+
++ (NSDate*) appBuildDate {
+    //  Get the build date:
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    NSError *error = nil;
+    NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
+    if (!bundleRoot) bundleRoot = @"";
+    NSURL *bundleRootURL = [NSURL URLWithString:[@"file://" stringByAppendingString:bundleRoot]];
+    NSArray *fileInfoURLs =
+        [fileManager contentsOfDirectoryAtURL:bundleRootURL
+            includingPropertiesForKeys:@[ NSURLCreationDateKey ]
+            options:0
+            error:&error];            
+    if (error) {
+        NSLog(@"Error retreiving bundle info: %@.", error);
+        return nil;
+    }
+    NSDate *buildDate = nil;
+    buildDate = [self dateForPathComponent:@"_CodeSignature" inURLs:fileInfoURLs];
+    if (!buildDate) {
+        buildDate = [self dateForPathComponent:@"META-INF" inURLs:fileInfoURLs];
+    }
+    if (!buildDate) {
+        buildDate = [self dateForPathComponent:@"PkgInfo" inURLs:fileInfoURLs];
+    }
+    if (!buildDate) {
+        buildDate = [self dateForPathComponent:@"xctest" inURLs:fileInfoURLs];
+    }
+    if (buildDate == nil || [buildDate timeIntervalSince1970] <= 0.0) {
+        NSLog(@"Error: Invalid build date.");
+        return nil;
+    }
+    return buildDate;
+}
+
++ (void)setUpdateState {
+    NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
+    [BNCPreferenceHelper preferenceHelper].appVersion = currentAppVersion;
+    [[BNCPreferenceHelper preferenceHelper] synchronize];
 }
 
 @end

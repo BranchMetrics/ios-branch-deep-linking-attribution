@@ -16,23 +16,17 @@
 
 @interface BNCSystemObserver (Testing)
 
-+ (BNCUpdateStatus) updateStatusWithBuildDate:(NSDate*)buildDate
-                               appInstallDate:(NSDate*)appInstallDate
-                             storedAppVersion:(NSString*)storedAppVersion
-                            currentAppVersion:(NSString*)currentAppVersion;
-
++ (BNCUpdateState) updateStateWithBuildDate:(NSDate*)buildDate
+                             appInstallDate:(NSDate*)appInstallDate
+                           storedAppVersion:(NSString*)storedAppVersion
+                          currentAppVersion:(NSString*)currentAppVersion;
++ (NSDate*) appInstallDate;
++ (NSDate*) appBuildDate;
 @end
 
 #pragma mark - BNCSystemObserverTests
 
 @interface BNCSystemObserverTests : XCTestCase
-
-@property (strong, nonatomic) id fileManagerMock;
-@property (strong, nonatomic) id docDirAttributesMock;
-@property (strong, nonatomic) id bundleAttributesMock;
-@property (strong, nonatomic) id URLMock;
-@property (strong, nonatomic) NSArray *retainArray;
-
 @end
 
 
@@ -43,60 +37,81 @@
 - (void)testGetUpdateStateWithNoStoredVersionAndDatesAreEqual {
 
     NSDate *now = [NSDate date];
-    BNCUpdateStatus updateStatus =
+    BNCUpdateState updateState =
         [BNCSystemObserver
-            updateStatusWithBuildDate:now
+            updateStateWithBuildDate:now
             appInstallDate:now
             storedAppVersion:nil
             currentAppVersion:@"1.2.1"];
 
-    XCTAssertTrue(updateStatus == BNCUpdateStatusInstall);
+    XCTAssertTrue(updateState == 0);
 }
 
 - (void)testGetUpdateStateWithNoStoredVersionAndDatesUnder60SecondsApart {
-    [self stubNilValuesForStoredAndCurrentVersions];
+
     NSDate *now = [NSDate date];
-    NSDate *lessThan24HoursFromNow = [now dateByAddingTimeInterval:59.0];
-    [self stubAppInstallDate:now buildDate:lessThan24HoursFromNow];
+    BNCUpdateState updateState =
+        [BNCSystemObserver
+            updateStateWithBuildDate:now
+            appInstallDate:[now dateByAddingTimeInterval:59.0]
+            storedAppVersion:nil
+            currentAppVersion:@"1.2.1"];
 
-    NSNumber *updateState = [BNCSystemObserver getUpdateState];
-    XCTAssertEqualObjects(updateState, @0);
-
-    [self clearMocks];
+    XCTAssertTrue(updateState == 0);
 }
 
 - (void)testGetUpdateStateWithNoStoredVersionAndDatesMoreThan60SecondsApart {
+
     NSDate *now = [NSDate date];
     NSDate *moreThan24HoursFromNow = [now dateByAddingTimeInterval:(60.0*60.0*24.5)];
-    [self stubNilValuesForStoredAndCurrentVersions];
-    [self stubAppInstallDate:now buildDate:moreThan24HoursFromNow];
 
-    NSNumber *updateState = [BNCSystemObserver getUpdateState];
-    XCTAssertEqualObjects(updateState, @2);
+    BNCUpdateState updateState =
+        [BNCSystemObserver
+            updateStateWithBuildDate:moreThan24HoursFromNow
+            appInstallDate:now
+            storedAppVersion:nil
+            currentAppVersion:@"1.2.1"];
 
-    [self clearMocks];
+    XCTAssertTrue(updateState == 2);
 }
 
 - (void)testGetUpdateStateWithNoStoredVersionAndNilCreationDate {
-    [self stubNilValuesForStoredAndCurrentVersions];
-    NSDate *now = [NSDate date];
-    [self stubAppInstallDate:nil buildDate:now];
+    //  CreateDate is app install date.
 
-    NSNumber *updateState = [BNCSystemObserver getUpdateState];
-    XCTAssertEqualObjects(updateState, @0);
+    BNCUpdateState updateState =
+        [BNCSystemObserver
+            updateStateWithBuildDate:nil
+            appInstallDate:[NSDate date]
+            storedAppVersion:nil
+            currentAppVersion:@"1.2.1"];
 
-    [self clearMocks];
+    XCTAssertTrue(updateState == 0);
 }
 
 - (void)testGetUpdateStateWithNoStoredVersionAndNilUpdateDate {
-    [self stubNilValuesForStoredAndCurrentVersions];
+    //  Update date is build date.
+
+    BNCUpdateState updateState =
+        [BNCSystemObserver
+            updateStateWithBuildDate:[NSDate date]
+            appInstallDate:nil
+            storedAppVersion:nil
+            currentAppVersion:@"1.2.1"];
+
+    XCTAssertTrue(updateState == 0);
+}
+
+- (void)testGetUpdateStateWithNoStoredVersionAndBuildDateGreaterInstallDate {
+
     NSDate *now = [NSDate date];
-    [self stubAppInstallDate:now buildDate:nil];
+    BNCUpdateState updateState =
+        [BNCSystemObserver
+            updateStateWithBuildDate:[now dateByAddingTimeInterval:60.0*60.0*24.0*5.0]
+            appInstallDate:now
+            storedAppVersion:nil
+            currentAppVersion:@"1.2.1"];
 
-    NSNumber *updateState = [BNCSystemObserver getUpdateState];
-    XCTAssertEqualObjects(updateState, @0);
-
-    [self clearMocks];
+    XCTAssertTrue(updateState == 2);
 }
 
 - (void)testGetUpdateStateWithEqualStoredAndCurrentVersion {
@@ -110,7 +125,7 @@
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     XCTAssertEqualObjects(updateState, @1);
 
-    [self clearMocks];
+    [bundleMock stopMocking];
 }
 
 - (void)testGetUpdateStateWithNonEqualStoredAndCurrentVersion {
@@ -125,10 +140,30 @@
     NSNumber *updateState = [BNCSystemObserver getUpdateState];
     XCTAssertEqualObjects(updateState, @2);
     
-    [self clearMocks];
+    [bundleMock stopMocking];
 }
 
-#pragma mark - URI Scheme tests
+- (void) testAppBuildDate {
+    NSDate *appBuildDate = [BNCSystemObserver appBuildDate];
+    XCTAssert(appBuildDate && [appBuildDate timeIntervalSince1970] > 0.0);
+}
+
+- (void) testAppInstallDate {
+    NSDate *installDate = [BNCSystemObserver appInstallDate];
+    XCTAssert(installDate && [installDate timeIntervalSince1970] > 0.0);
+}
+
+- (void) testIsSimulator {
+    BOOL isSim = [BNCSystemObserver isSimulator];
+
+    #if (TARGET_OS_SIMULATOR)
+    XCTAssert(isSim);
+    #else
+    XCTAssert(!isSim);
+    #endif
+}
+
+#pragma mark - URI Scheme Tests
 
 - (void)testGetDefaultUriSchemeWithSingleCharacterScheme {
     NSString * const SINGLE_CHARACTER_SCEHEME = @"a";
@@ -146,57 +181,6 @@
     
     [bundleMock verify];
     [bundleMock stopMocking];
-}
-
-#pragma mark - Internals
-
-- (void)stubAppInstallDate:(NSDate *)installDate buildDate:(NSDate *)buildDate {
-    [[BNCPreferenceHelper preferenceHelper] synchronize];
-    
-    self.fileManagerMock = OCMClassMock([NSFileManager class]);
-
-    self.bundleAttributesMock = OCMClassMock([NSDictionary class]);
-    [[[self.bundleAttributesMock stub] andReturn:installDate] fileCreationDate];
-    [[[self.fileManagerMock stub]
-        andReturn:self.bundleAttributesMock]
-            attributesOfItemAtPath:[OCMArg any]
-            error:(NSError __autoreleasing **)[OCMArg anyPointer]];
-
-    //  OCMock result arrays need to be retained (sometimes?):
-    self.retainArray = @[ [NSURL URLWithString:@"file://MyApp/_CodeSignature"] ];
-
-    //self.docDirAttributesMock = OCMClassMock([NSDictionary class]);
-    [[[self.fileManagerMock stub]
-        andReturn:self.retainArray]
-            contentsOfDirectoryAtURL:[OCMArg any]
-            includingPropertiesForKeys:[OCMArg any]
-            options:0
-            error:(NSError __autoreleasing **)[OCMArg anyPointer]];
-
-    self.URLMock = OCMClassMock([NSURL class]);
-    OCMStub([self.URLMock getResourceValue:(NSDate __autoreleasing **)[OCMArg anyPointer]
-        forKey:[OCMArg any]
-        error:(NSError __autoreleasing **)[OCMArg anyPointer]];
-    ).andDo(^(NSInvocation *invocation) {
-        NSDate __autoreleasing **buildDatePtr;
-        [invocation getArgument:&buildDatePtr atIndex:0];
-        *buildDatePtr = buildDate;
-        invocation.returnValue = (void*) YES;
-    });
-}
-
-- (void)clearMocks {
-    [self.fileManagerMock stopMocking];
-    [self.docDirAttributesMock stopMocking];
-    [self.bundleAttributesMock stopMocking];
-    [self.URLMock stopMocking];
-}
-
-- (void)stubNilValuesForStoredAndCurrentVersions {
-    [BNCPreferenceHelper preferenceHelper].appVersion = nil;
-    [[BNCPreferenceHelper preferenceHelper] synchronize];
-    id bundleMock = OCMClassMock([NSBundle class]);
-    [[[bundleMock stub] andReturn:nil] mainBundle];
 }
 
 @end

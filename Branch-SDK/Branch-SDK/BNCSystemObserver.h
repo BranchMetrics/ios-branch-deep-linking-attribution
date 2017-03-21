@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
-    BNCUpdateStatusInstall      = 0,    //  App was recently installed.
-    BNCUpdateStatusNonUpdate    = 1,    //  App was neither newly installed nor updated.
-    BNCUpdateStatusUpdate       = 2,    //  App was recently updated.
+typedef NS_ENUM(NSInteger, BNCUpdateState) {
+    BNCUpdateStateInstall      = 0,    //  App was recently installed.
+    BNCUpdateStateNonUpdate    = 1,    //  App was neither newly installed nor updated.
+    BNCUpdateStateUpdate       = 2,    //  App was recently updated.
 };
 
 @interface BNCSystemObserver : NSObject
