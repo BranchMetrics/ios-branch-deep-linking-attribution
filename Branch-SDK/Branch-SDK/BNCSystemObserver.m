@@ -135,7 +135,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
     BNCUpdateStatusUpdate       = 2,    //  App was recently updated.
 };
 
-+ (NSNumber*) getUpdateState_10_2_2 {
++ (NSNumber*) getUpdateState {
 
     NSString *storedAppVersion = [BNCPreferenceHelper preferenceHelper].appVersion;
     NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
@@ -147,12 +147,12 @@ typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
             return @(BNCUpdateStatusUpdate);
     }
 
-    //  This is the first Branch install.  Check file dates for app install status:
+    //  This may be the first Branch install.  Check file dates for app install status:
 
     //  Get the install date:
 
     NSError *error = nil;
-    NSFileManager *manager = [NSFileManager defaultManager];
+    NSFileManager *manager = [[NSFileManager alloc] init];
     NSURL *libraryURL =
         [[manager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
     NSDictionary *attributes = [manager attributesOfItemAtPath:libraryURL.path error:&error];
@@ -160,10 +160,33 @@ typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
 
     //  Get the build date:
 
+    error = nil;
     NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
-    NSString *filename = [bundleRoot stringByAppendingPathComponent:@"_CodeSignature"];
-    attributes = [manager attributesOfItemAtPath:filename error:&error];
-    NSDate *buildDate = [attributes fileModificationDate];
+    NSURL *bundleRootURL = [NSURL URLWithString:[@"file://" stringByAppendingString:bundleRoot]];
+    NSArray *fileInfoURLs =
+        [manager contentsOfDirectoryAtURL:bundleRootURL
+            includingPropertiesForKeys:@[ NSURLCreationDateKey ]
+            options:0
+            error:&error];
+    if (error) {
+        NSLog(@"Error retreiving bundle info: %@.", error);
+    }
+    error = nil;
+    BOOL success = NO;
+    NSDate *buildDate = nil;
+    for (NSURL *fileInfoURL in fileInfoURLs) {
+        if ([[fileInfoURL lastPathComponent] isEqualToString:@"_CodeSignature"]) {
+            success = [fileInfoURL getResourceValue:&buildDate
+                forKey:NSURLCreationDateKey
+                error:&error];
+            break;
+        }
+    }
+
+    if (!success || error || !(buildDate && installDate)) {
+        NSLog(@"Can't retrieve attributes Success: %d Error: %@.", success, error);
+        return @(BNCUpdateStatusUpdate);
+    }
 
     if ([buildDate compare:installDate] > 0) {
         return @(BNCUpdateStatusUpdate);
@@ -173,51 +196,6 @@ typedef NS_ENUM(NSInteger, BNCUpdateStatus) {
         return @(BNCUpdateStatusInstall);
     }
 
-    return @(BNCUpdateStatusNonUpdate);
-}
-
-
-+ (NSNumber *)getUpdateState {
-    [[BNCPreferenceHelper preferenceHelper] synchronize];
-    NSString *storedAppVersion = [BNCPreferenceHelper preferenceHelper].appVersion;
-    NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
-    NSFileManager *manager = [NSFileManager defaultManager];
-
-    // for creation date
-    NSURL *documentsDirRoot = [[manager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-    NSDictionary *documentsDirAttributes = [manager attributesOfItemAtPath:documentsDirRoot.path error:nil];
-    NSDate *creationDate = [documentsDirAttributes fileCreationDate];
-
-    // for modification date
-    NSError *error = nil;
-    NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
-    NSDictionary *bundleAttributes = [manager attributesOfItemAtPath:bundleRoot error:&error];
-    NSDate *modificationDate = [bundleAttributes fileModificationDate];
-
-    if (creationDate == nil || [creationDate timeIntervalSince1970] <= 0.0 ||
-        modificationDate == nil || [modificationDate timeIntervalSince1970] <= 0.0)
-        return [self getUpdateState_10_2_2];
-
-    // No stored version
-    if (!storedAppVersion) {
-        // Modification and Creation date are more than 24 hours' worth of seconds different indicates
-        // an update. This would be the case that they were installing a new version of the app that was
-        // adding Branch for the first time, where we don't already have an NSUserDefaults value.
-        if (ABS([modificationDate timeIntervalSinceDate:creationDate]) > 86400.0) {
-            return @(BNCUpdateStatusUpdate);
-        }
-
-        // If we don't have one of the previous dates, or they're less than 60 apart,
-        // we understand this to be an install.
-        return @(BNCUpdateStatusInstall);
-    }
-    // Have a stored version, but it isn't the same as the current value indicates an update
-    else if (![storedAppVersion isEqualToString:currentAppVersion]) {
-        return @(BNCUpdateStatusUpdate);
-    }
-
-    // Otherwise, we have a stored version, and it is equal.
-    // Not an update, not an install.
     return @(BNCUpdateStatusNonUpdate);
 }
 
