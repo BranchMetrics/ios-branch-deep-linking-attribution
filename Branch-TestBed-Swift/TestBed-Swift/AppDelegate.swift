@@ -67,7 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      */
                     
                 } else {
-                    print("Branch TestBed: Initialization failed\n%@", error!.localizedDescription)
+                    print("Branch TestBed: Initialization failed: " + error!.localizedDescription)
                 }
                 let notificationName = Notification.Name("BranchCallbackCompleted")
                 NotificationCenter.default.post(name: notificationName, object: nil)
