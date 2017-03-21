@@ -240,7 +240,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
     @IBAction func shareAliasBranchLinkAction(_ sender: AnyObject) {
         //  Share an alias Branch link:
 
-        let alias = "Share-Alias-Link"
+        let alias = "Share-Alias-Link-Example"
         let canonicalIdentifier = alias
 
         let shareBranchObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
