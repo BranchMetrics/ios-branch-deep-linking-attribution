@@ -240,7 +240,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
     @IBAction func shareAliasBranchLinkAction(_ sender: AnyObject) {
         //  Share an alias Branch link:
 
-        let alias = "Share-Alias-Link"
+        let alias = "Share-Alias-Link-Example"
         let canonicalIdentifier = alias
 
         let shareBranchObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
@@ -278,7 +278,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
             "\n\(self.dateFormatter().string(from: Date()))."
 
         // In this example, we over-ride the channel so that the channel in the Branch short link 
-        // is always 'ios-share'. This allows a short alias link to always be crceated.
+        // is always 'ios-share'. This allows a short alias link to always be created.
         shareLink.linkProperties.channel = "ios-share"
     }
 
