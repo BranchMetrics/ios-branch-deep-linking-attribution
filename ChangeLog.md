@@ -1,5 +1,10 @@
 Branch iOS SDK Change Log
 
+- v0.14.4
+  * *Beta Release*
+  * Fixed `getUpdateState` so it works on enterprise distribution. INTENG-3189 (#601)
+  * Added light-weight logging. AIS-193 (#591)
+
 - v0.14.1
   * *Beta Release*
   * Added a new Branch class, `BranchShareLink`, that encapsulates a `BranchUniversalObject`,
