@@ -163,7 +163,7 @@
             storedAppVersion:storedAppVersion
             currentAppVersion:currentAppVersion];
 
-#if 1 // Display an alert for testing // eDebug
+#if 0 // Display an alert for testing.  Only for debugging.
     NSString *message = @"No result.";
     switch (result) {
         case BNCUpdateStateInstall:     message = @"New install.";      break;
@@ -194,14 +194,13 @@
                              appInstallDate:(NSDate*)appInstallDate
                            storedAppVersion:(NSString*)storedAppVersion
                           currentAppVersion:(NSString*)currentAppVersion {
-#if 0 // Comment for testing
+
     if (storedAppVersion) {
-        if ([storedAppVersion isEqualToString:currentAppVersion])
+        if (currentAppVersion && [storedAppVersion isEqualToString:currentAppVersion])
             return BNCUpdateStateNonUpdate;
         else
             return BNCUpdateStateUpdate;
     }
-#endif
 
     if (buildDate && [buildDate timeIntervalSince1970] <= 0.0) {
         // Invalid buildDate.
