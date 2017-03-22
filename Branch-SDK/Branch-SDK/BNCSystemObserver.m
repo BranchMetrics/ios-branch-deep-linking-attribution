@@ -166,10 +166,10 @@
 #if 1 // Display an alert for testing // eDebug
     NSString *message = @"No result.";
     switch (result) {
-        case BNCUpdateStateInstall:     message = @"New install.";  break;
-        case BNCUpdateStateNonUpdate:   message = @"Non-update.";    break;
-        case BNCUpdateStateUpdate:      message = @"App update.";   break;
-        default:                        message = @"Invalide value.";   break;
+        case BNCUpdateStateInstall:     message = @"New install.";      break;
+        case BNCUpdateStateNonUpdate:   message = @"Non-update.";       break;
+        case BNCUpdateStateUpdate:      message = @"App update.";       break;
+        default:                        message = @"Invalid value.";    break;
     }
     message =
         [NSString stringWithFormat:@"iOS: %@\n%@",
@@ -194,12 +194,14 @@
                              appInstallDate:(NSDate*)appInstallDate
                            storedAppVersion:(NSString*)storedAppVersion
                           currentAppVersion:(NSString*)currentAppVersion {
+#if 0 // Comment for testing
     if (storedAppVersion) {
         if ([storedAppVersion isEqualToString:currentAppVersion])
             return BNCUpdateStateNonUpdate;
         else
             return BNCUpdateStateUpdate;
     }
+#endif
 
     if (buildDate && [buildDate timeIntervalSince1970] <= 0.0) {
         // Invalid buildDate.
