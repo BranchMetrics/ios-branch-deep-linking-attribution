@@ -344,6 +344,38 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity;
 
+/**
+ Call this method from inside your app delegate's `application:openURL:sourceApplication:annotation:`
+ method with the so that Branch can open the passed URL.
+
+ @param application         The application that was passed to your app delegate.
+ @param url                 The URL that was passed to your app delegate.
+ @param sourceApplication   The sourceApplication that was passed to your app delegate.
+ @param annotation          The annotation that was passed to your app delegate.
+ @return                    Returns `YES` if Branch handled the passed URL.
+ */
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation;
+
+/**
+ Call this method from inside your app delegate's `application:openURL:options:`
+ method with the so that Branch can open the passed URL.
+ 
+ This method is functionally the same as calling the Branch method
+ `application:openURL:sourceApplication:annotation:`. This method matches the new Apple appDelegate
+ method for convenience.
+
+ @param application         The application that was passed to your app delegate.
+ @param url                 The URL that was passed to your app delegate.
+ @param options             The options dictionary that was passed to your app delegate.
+ @return                    Returns `YES` if Branch handled the passed URL.
+ */
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options;
+
 ///--------------------------------
 /// @name Push Notification Support
 ///--------------------------------
