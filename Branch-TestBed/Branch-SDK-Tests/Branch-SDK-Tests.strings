@@ -1,0 +1,71 @@
+/* 
+  Branch-SDK_Tests.strings
+  Branch
+
+  Created by EB Smith on 10/12/16.
+  Copyright © 2016 Branch. All rights reserved.
+*/
+
+"DumpClassTest" =
+"
+Class 0x11a380018 is class 'DumpClass' of class 'NSObject':
+	Ivar 'stringVar' type 'NSString'.
+	Ivar 'intVar' type 'int'.
+	Ivar 'charPtrVar' type 'char*'.
+	Ivar 'classVar' type 'class'.
+	Ivar 'floatVar' type 'float'.
+	Ivar 'doubleVar' type 'double'.
+	Ivar 'shortVar' type 'short'.
+	Ivar 'boolVar' type 'BOOL'.
+	Ivar 'ucharVar' type 'unsigned char'.
+	Ivar 'uintVar' type 'unsigned int'.
+	Ivar 'ushortVar' type 'unsigned short'.
+	Ivar 'ulongVar' type 'unsigned long'.
+	Ivar 'doubleTroubleVar' type 'long double'.
+	Ivar 'UnhandledType' type '{UnhandledStruct=\"int1\"i\"int2\"i}' (un-handled type).
+	Ivar '_intProp' type 'int'.
+	Ivar '_stringProp' type 'NSString'.
+	Property name: 'intProp'.
+	Property name: 'stringProp'.
+	Class method name: 'classMethod'.
+	Method name: '.cxx_destruct'.
+	Method name: 'dealloc'.
+	Method name: 'init'.
+	Method name: 'setIntProp:'.
+	Method name: 'setStringProp:'.
+	Method name: 'methodThatTakesAnNSString:'.
+	Method name: 'intProp'.
+	Method name: 'stringProp'.
+";
+
+"DumpInstanceTest" =
+"
+Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
+	Ivar 'stringVar' type '__NSCFConstantString' value 'Yope!'.
+	Ivar 'intVar' type 'int' value '1'.
+	Ivar 'charPtrVar' type 'char*' value 'YopeCharString'.
+	Ivar 'classVar' type 'class' value 'NSNumber'.
+	Ivar 'floatVar' type 'float' value '2.000000'.
+	Ivar 'doubleVar' type 'double' value '3.000000'.
+	Ivar 'shortVar' type 'short' value '4'.
+	Ivar 'boolVar' type 'BOOL' value 'NO'.
+	Ivar 'ucharVar' type 'unsigned char' value ''.
+	Ivar 'uintVar' type 'unsigned int' value '0'.
+	Ivar 'ushortVar' type 'unsigned short' value '0'.
+	Ivar 'ulongVar' type 'unsigned long' value '0'.
+	Ivar 'doubleTroubleVar' type 'long double' value '0.000000'.
+	Ivar 'UnhandledType' type '{UnhandledStruct=\"int1\"i\"int2\"i}' (un-handled type).
+	Ivar '_intProp' type 'int' value '5'.
+	Ivar '_stringProp' type '__NSCFConstantString' value 'Props!'.
+	Property name: 'intProp'.
+	Property name: 'stringProp'.
+	Class method name: 'classMethod'.
+	Method name: '.cxx_destruct'.
+	Method name: 'dealloc'.
+	Method name: 'init'.
+	Method name: 'setIntProp:'.
+	Method name: 'setStringProp:'.
+	Method name: 'methodThatTakesAnNSString:'.
+	Method name: 'intProp'.
+	Method name: 'stringProp'.
+";

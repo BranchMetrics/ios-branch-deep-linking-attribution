@@ -83,7 +83,7 @@
                 [self safelyFulfillExpectation:requestCallbackExpectation];
             }];
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
-    response.data =  @{
+    response.data = @{
         BUCKET: @(NEW_REWARD_VALUE)
     };
     [request processResponse:response error:nil];
