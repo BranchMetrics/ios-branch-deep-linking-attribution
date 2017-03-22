@@ -338,7 +338,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (BOOL)handleDeepLink:(NSURL *)url;
 
 /**
- Allow Branch to handle restoration from an NSUserActivity, returning whether or not it was from a Branch link.
+ Allow Branch to handle restoration from an NSUserActivity, returning whether or not it was
+ from a Branch link.
  
  @param userActivity The NSUserActivity that caused the app to be opened.
  */
