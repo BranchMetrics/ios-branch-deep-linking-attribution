@@ -1,5 +1,24 @@
 Branch iOS SDK Change Log
 
+- v0.14.5
+  * *Beta Release*
+  * Added two new Branch methods for handling opening scheme-based URLs from an app delegate.
+    These methods match the corresponding UIApplicationDelegate methods and allow the Branch SDK
+    more flexibility when handling scheme-based URLs.  The methods are:
+
+```
+        - (BOOL)application:(UIApplication *)application
+                    openURL:(NSURL *)url
+          sourceApplication:(NSString *)sourceApplication
+                 annotation:(id)annotation;
+```
+    and
+```
+        - (BOOL)application:(UIApplication *)application
+                    openURL:(NSURL *)url
+                    options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options;
+```
+
 - v0.14.4
   * *Beta Release*
   * Fixed `getUpdateState` so it works on enterprise distribution. INTENG-3189 (#601)
