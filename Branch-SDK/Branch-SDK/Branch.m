@@ -424,6 +424,10 @@ void ForceCategoriesToLoad() {
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url {
+    return [self handleDeepLink:url fromSelf:NO];
+}
+
+- (BOOL)handleDeepLink:(NSURL *)url fromSelf:(BOOL)isFromSelf {
     BOOL handled = NO;
     if (url && ![url isEqual:[NSNull null]]) {
         
@@ -447,6 +451,9 @@ void ForceCategoriesToLoad() {
         NSDictionary *params = [BNCEncodingUtils decodeQueryStringToDictionary:query];
         if (params[@"link_click_id"]) {
             handled = YES;
+            if (isFromSelf) {
+                [self resetUserSession];
+            }
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
@@ -454,6 +461,33 @@ void ForceCategoriesToLoad() {
     [self initUserSessionAndCallCallback:!self.isInitialized];
     
     return handled;
+}
+
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+
+    BOOL fromSelf = NO;
+    NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
+    if (bundleID && sourceApplication) {
+        fromSelf = [bundleID isEqualToString:sourceApplication];
+    }
+    return [self handleDeepLink:url fromSelf:fromSelf];
+}
+
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+
+    NSString *source = nil;
+    NSString *annotation = nil;
+    if (UIApplicationOpenURLOptionsSourceApplicationKey &&
+        UIApplicationOpenURLOptionsAnnotationKey) {
+        source = options[UIApplicationOpenURLOptionsSourceApplicationKey];
+        annotation = options[UIApplicationOpenURLOptionsAnnotationKey];
+    }
+    return [self application:application openURL:url sourceApplication:source annotation:annotation];
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
