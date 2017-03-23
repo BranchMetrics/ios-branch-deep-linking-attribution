@@ -80,12 +80,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    // Respond to URI scheme links
-    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-        if (!Branch.getInstance().handleDeepLink(url)) {
-            // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+    // Respond to URL scheme links
+    func application(_ application: UIApplication,
+                          open url: URL,
+                 sourceApplication: String?,
+                        annotation: Any) -> Bool {
+
+        let branchHandled = Branch.getInstance().application(application,
+            open: url,
+            sourceApplication: sourceApplication,
+            annotation: annotation)
+        if (!branchHandled) {
+            // If not handled by Branch, do other deep link routing for the Facebook SDK, Pinterest SDK, etc
         }
-        
         return true
     }
     
