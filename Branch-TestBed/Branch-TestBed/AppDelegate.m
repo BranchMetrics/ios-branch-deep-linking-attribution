@@ -119,8 +119,6 @@
     [[Branch getInstance] resumeInit];
 }
 
-#if 0   // eDebug -- remove test code.
-
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
@@ -138,22 +136,6 @@
     // Process non-Branch URIs here...
     return YES;
 }
-
-#else 
-
-- (BOOL) application:(UIApplication *)application
-             openURL:(NSURL *)url
-             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-
-    [[Branch getInstance]
-        application:application
-            openURL:url
-            options:options];
-
-    return YES;
-}
-
-#endif
 
 - (BOOL)application:(UIApplication *)application
 continueUserActivity:(NSUserActivity *)userActivity
