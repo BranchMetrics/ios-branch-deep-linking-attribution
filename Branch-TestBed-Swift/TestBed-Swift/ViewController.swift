@@ -286,7 +286,10 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         if (error != nil) {
             print("Branch: Error while sharing! Error: \(error!.localizedDescription).")
         } else if (completed) {
-            print("Branch: User completed sharing to channel '\(shareLink.linkProperties.channel!)'.")
+            if let channel = shareLink.activityType {
+                print("Branch: User completed sharing with activity '\(channel)'.")
+                Branch.getInstance().userCompletedAction("UserShared", withState: ["Channel": channel])
+            }
         } else {
             print("Branch: User cancelled sharing.")
         }
