@@ -59,7 +59,7 @@ ___
 
 ## Get the Demo App
 
-There's a full demo app embedded in this repository, but you can also check out our live demo: [Branch Monster Factory](https://itunes.apple.com/us/app/id917737838). We've [open sourced the Branchster's app](https://github.com/BranchMetrics/Branchster-iOS) as well if you're ready to dig in.
+There's a full demo app embedded in this repository, but you can also check out our live demo: [Branch Monster Factory](https://itunes.apple.com/us/app/id917737838). We've [open sourced the Branchster's app](https://github.com/BranchMetrics/Branch-Example-Deep-Linking-Branchster-iOS) as well if you're ready to dig in.
 
 ## Installation
 
@@ -67,7 +67,7 @@ There's a full demo app embedded in this repository, but you can also check out 
 
 ### Available in CocoaPods
 
-Branch is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your Podfile:
+Branch is available through [CocoaPods](https://cocoapods.org/). To install it, simply add the following line to your Podfile:
 
 ```objc
 pod "Branch"
