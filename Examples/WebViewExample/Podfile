@@ -1,0 +1,8 @@
+use_frameworks!
+
+pod "Branch", path: "../.."
+pod "Cartography"
+pod "MBProgressHUD"
+pod "TextAttributes"
+
+target "WebViewExample"
