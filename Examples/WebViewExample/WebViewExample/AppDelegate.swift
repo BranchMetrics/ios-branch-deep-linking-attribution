@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Branch.getInstance().initSession(launchOptions: launchOptions) {
             (params: [AnyHashable : Any]?, error: Error?) in
             guard error == nil else {
-                print("Error from Branch: \(error!.localizedDescription)")
+                print("Error from Branch: \(error!)")
                 return
             }
 

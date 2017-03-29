@@ -26,12 +26,12 @@ class ArticleListViewController: UIViewController, UITableViewDelegate, UITableV
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         constrain(tableView) {
-            tv in
-            let superview = tv.superview!
-            tv.centerX == superview.centerX
-            tv.centerY == superview.centerY
-            tv.width == superview.width
-            tv.height == superview.height
+            view in
+            let superview = view.superview!
+            view.centerX == superview.centerX
+            view.centerY == superview.centerY
+            view.width == superview.width
+            view.height == superview.height
         }
 
         tableView.register(PlanetCell.self, forCellReuseIdentifier: PlanetCell.identifier)
@@ -54,5 +54,13 @@ class ArticleListViewController: UIViewController, UITableViewDelegate, UITableV
         guard let planetCell = cell as? PlanetCell else { return }
 
         planetCell.planetData = PlanetData.all[indexPath.row]
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard indexPath.row < PlanetData.all.count else { return }
+        let planetData = PlanetData.all[indexPath.row]
+
+        let viewController = ArticleViewController(planetData: planetData)
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }
