@@ -140,7 +140,6 @@
 				TargetAttributes = {
 					7B3B977F1E8C1B650089C04B = {
 						CreatedOnToolsVersion = 8.3;
-						DevelopmentTeam = RAARD2VX57;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.SafariKeychain = {
@@ -367,10 +366,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
-				DEVELOPMENT_TEAM = RAARD2VX57;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "info.dubsar.TestBed-ReactNative";
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.WebViewExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -382,10 +381,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
-				DEVELOPMENT_TEAM = RAARD2VX57;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "info.dubsar.TestBed-ReactNative";
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.WebViewExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
