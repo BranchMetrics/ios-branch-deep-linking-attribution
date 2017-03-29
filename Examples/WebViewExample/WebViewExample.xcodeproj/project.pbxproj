@@ -35,6 +35,7 @@
 		7B3B979B1E8C267E0089C04B /* PlanetCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlanetCell.swift; sourceTree = "<group>"; };
 		7B3B97A91E8C31A60089C04B /* ArticleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
 		7B3B97AB1E8C32BD0089C04B /* ArticleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleView.swift; sourceTree = "<group>"; };
+		7B3B97AD1E8C40400089C04B /* WebViewExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WebViewExample.entitlements; sourceTree = "<group>"; };
 		8529F4248FBBE54B064721F2 /* Pods_WebViewExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WebViewExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -79,6 +80,7 @@
 		7B3B97821E8C1B650089C04B /* WebViewExample */ = {
 			isa = PBXGroup;
 			children = (
+				7B3B97AD1E8C40400089C04B /* WebViewExample.entitlements */,
 				7B3B97831E8C1B650089C04B /* AppDelegate.swift */,
 				7B3B97971E8C21F60089C04B /* ArticleListViewController.swift */,
 				7B3B97AB1E8C32BD0089C04B /* ArticleView.swift */,
@@ -138,7 +140,13 @@
 				TargetAttributes = {
 					7B3B977F1E8C1B650089C04B = {
 						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = RAARD2VX57;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.SafariKeychain = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -358,9 +366,11 @@
 			baseConfigurationReference = 73F43B2C303E9BF5A6714F1B /* Pods-WebViewExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
+				DEVELOPMENT_TEAM = RAARD2VX57;
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.branch.WebViewExample;
+				PRODUCT_BUNDLE_IDENTIFIER = "info.dubsar.TestBed-ReactNative";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -371,9 +381,11 @@
 			baseConfigurationReference = 6D6117909230007A384D2046 /* Pods-WebViewExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
+				DEVELOPMENT_TEAM = RAARD2VX57;
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = io.branch.WebViewExample;
+				PRODUCT_BUNDLE_IDENTIFIER = "info.dubsar.TestBed-ReactNative";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};

@@ -48,8 +48,9 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
         linkProperties.feature = "share"
         linkProperties.channel = "iOSApp"
         linkProperties.addControlParam("$desktop_url", withValue: planetData.url.absoluteString)
+        linkProperties.addControlParam("$email_subject", withValue: "The Planet \(planetData.title)")
 
-        buo.showShareSheet(with: linkProperties, andShareText: "The Planet \(planetData.title)", from: self) {
+        buo.showShareSheet(with: linkProperties, andShareText: "Read about the planet \(planetData.title).", from: self) {
             channel, success in
             print("Share to channel \(channel ?? "(nil)") complete. success = \(success)")
         }
@@ -60,7 +61,7 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
         buo.automaticallyListOnSpotlight = true
         buo.canonicalUrl = planetData.url.absoluteString
         buo.title = planetData.title
-        buo.imageUrl = planetData.url.absoluteString
+        buo.imageUrl = planetData.image?.absoluteString
         
         buo.userCompletedAction(BNCRegisterViewEvent)
         

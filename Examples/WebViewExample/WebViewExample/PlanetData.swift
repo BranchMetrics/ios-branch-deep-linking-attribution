@@ -11,12 +11,12 @@ import Foundation
 struct PlanetData {
     let title: String
     let url: URL
-    let image: URL
+    let image: URL?
 
-    init(title: String, url: String, image: String) {
+    init(title: String, url: String, image: String?=nil) {
         self.title = title
         self.url = URL(string: url)!
-        self.image = URL(string: image)!
+        self.image = image != nil ? URL(string: image!) : nil
     }
 
     static let all = [
