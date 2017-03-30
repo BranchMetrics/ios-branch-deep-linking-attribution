@@ -140,11 +140,6 @@
 }
 
 - (void)testCloseRequestsArentPersisted {
-    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    BranchCloseRequest *closeRequest = [[BranchCloseRequest alloc] init];
-    
-    [requestQueue enqueue:closeRequest];
-
     XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
 
     id archiverMock = OCMClassMock([NSKeyedArchiver class]);
@@ -159,6 +154,10 @@
                 }
                 return NO;
             }]];
+
+    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
+    BranchCloseRequest *closeRequest = [[BranchCloseRequest alloc] init];
+    [requestQueue enqueue:closeRequest];
     [requestQueue persistImmediately];
     
     // Wait for operation to occur    
@@ -168,10 +167,8 @@
 }
 
 - (void)testDebugRequestsArentPersisted {
-    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
 
     XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
-
     id archiverMock = OCMClassMock([NSKeyedArchiver class]);
     [[archiverMock reject] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
     [[[archiverMock expect]
@@ -184,6 +181,8 @@
                 }
                 return NO;
             }]];
+            
+    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
     [requestQueue persistImmediately];
 
     // Wait for operation to occur    

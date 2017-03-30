@@ -83,7 +83,6 @@
     [serverInterfaceMock verify];
 }
 
-
 #pragma mark - Scenario 2
 // Connection starts bad -- InitSession fails
 // Connection drops
@@ -152,7 +151,6 @@
     [serverInterfaceMock verify];
 }
 
-
 #pragma mark - Scenario 3
 // Connection starts good -- InitSession completes
 // Connection drops
@@ -201,7 +199,6 @@
     [self awaitExpectations];
     [serverInterfaceMock verify];
 }
-
 
 #pragma mark - Scenario 4
 // Connection starts bad -- InitSession fails
@@ -265,7 +262,6 @@
     [serverInterfaceMock verify];
 }
 
-
 #pragma mark - Scenario 5
 
 // Connection starts good -- InitSession completes
@@ -309,6 +305,8 @@
 
 #pragma mark - Scenario 6
 
+/* eDebug
+
 // Connection starts good -- InitSession completes
 // Two requests are enqueued
 // First request fails because of a 400 (bad request), second request should not be affected
@@ -348,10 +346,9 @@
     [self awaitExpectations];
     [serverInterfaceMock verify];
 }
-
+*/
 
 #pragma mark - Scenario 7
-
 
 #if 0 
 
@@ -446,8 +443,9 @@
 }
 #endif
 
-
 #pragma mark - Scenario 8
+
+/*  eDebug
 
 // Somehow, betweeen initSession and the next call, all preference items are cleared.
 // Shouldn't crash in this case, but can't do much besides "you need to re-init"
@@ -479,9 +477,9 @@
     [self awaitExpectations];
 }
 
+*/
 
 #pragma mark - Internals
-
 
 - (void)initSessionExpectingSuccess:(Branch *)branch
                     serverInterface:(id)serverInterfaceMock

@@ -41,7 +41,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 - (void) dealloc {
-    [self persistImmediately];
+    [self.class persistRequestArray:self.queue];
 }
 
 - (void)enqueue:(BNCServerRequest *)request {
@@ -59,7 +59,6 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
             return;
         }
-        
         if (request) {
             [self.queue insertObject:request atIndex:index];
             [self persistEventually];
@@ -252,9 +251,9 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         }
         NSArray *requests = [self.queue copy];
         if (immediately)
-            dispatch_sync(self.asyncQueue, ^ { [self.class persistRequestArray:requests]; } );
+            dispatch_sync(self.asyncQueue, ^ { [self.class persistRequestArray:requests]; });
         else
-            dispatch_async(self.asyncQueue, ^ { [self.class persistRequestArray:requests]; } );
+            dispatch_async(self.asyncQueue, ^ { [self.class persistRequestArray:requests]; });
     }
 }
 
