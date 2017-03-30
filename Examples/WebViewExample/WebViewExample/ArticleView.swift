@@ -82,8 +82,9 @@ class ArticleView: UIView, WKNavigationDelegate {
         button.addTarget(self, action: #selector(share), for: .touchUpInside)
 
         let attributes = TextAttributes()
-            .font(name: "San Francisco Bold", size: 23)
+            .font(name: Style.boldFontName, size: Style.titleFontSize)
             .foregroundColor(red: 0.133, green: 0.4, blue: 0.627, alpha: 1.0)
+            .kern(2.4)
         let attributedTitle = NSAttributedString(string: "Share", attributes: attributes)
         button.setAttributedTitle(attributedTitle, for: .normal)
         button.layer.borderColor = UIColor(red: 0.133, green: 0.4, blue: 0.627, alpha: 1.0).cgColor

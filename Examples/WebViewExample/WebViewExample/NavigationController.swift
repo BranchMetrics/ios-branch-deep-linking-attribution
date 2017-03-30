@@ -17,7 +17,7 @@ class NavigationController: UINavigationController {
         super.viewDidLoad()
 
         let attributes = TextAttributes()
-            .font(name: "San Francisco Bold", size: 23)
+            .font(name: Style.boldFontName, size: Style.titleFontSize)
         navigationBar.titleTextAttributes = attributes.dictionary
 
         setViewControllers([ArticleListViewController()], animated: false)

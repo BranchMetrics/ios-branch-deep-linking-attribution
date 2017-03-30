@@ -101,8 +101,9 @@ class PlanetCell: UITableViewCell {
         thumbnailImageView.image = UIImage(named: planetData.title)
 
         let attributes = TextAttributes()
-            .font(name: "San Francisco Bold", size: 17)
+            .font(name: Style.boldFontName, size: Style.rowFontSize)
             .alignment(.left)
+            .kern(1.2)
 
         label.attributedText = NSAttributedString(string: planetData.title, attributes: attributes)
     }
