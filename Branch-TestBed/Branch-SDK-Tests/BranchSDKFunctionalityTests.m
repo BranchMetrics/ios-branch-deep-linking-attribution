@@ -16,6 +16,7 @@
 #import "BNCConfig.h"
 #import "BNCEncodingUtils.h"
 #import "BNCServerRequestQueue.h"
+#import "BNCTestCase.h"
 
 
 NSString * const TEST_BRANCH_KEY = @"key_live_78801a996de4287481fe73708cc95da2";  //temp
@@ -32,7 +33,7 @@ NSString * const TEST_NEW_USER_LINK = @"https://bnc.lt/i/2kkbX6k-As";
 NSInteger const  TEST_CREDITS = 30;
 
 
-@interface BranchSDKFunctionalityTests : XCTestCase
+@interface BranchSDKFunctionalityTests : BNCTestCase
 @property (assign, nonatomic) BOOL hasExceededExpectations;
 @end
 

@@ -1,5 +1,5 @@
 //
-//  BranchTest.h
+//  BNCTestCase.h
 //  Branch-TestBed
 //
 //  Created by Graham Mueller on 4/27/15.
@@ -19,12 +19,12 @@ static inline void BNCAfterSecondsPerformBlock(NSTimeInterval seconds, dispatch_
 }
 
 
-@interface BranchTest : XCTestCase
+@interface BNCTestCase : XCTestCase
 
 - (void)safelyFulfillExpectation:(XCTestExpectation *)expectation;
 - (void)awaitExpectations;
 - (void)resetExpectations;
-
 - (id)stringMatchingPattern:(NSString *)pattern;
 
++ (BOOL) testBreakpoints;
 @end

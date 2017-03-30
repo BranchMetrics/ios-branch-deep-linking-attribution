@@ -15,12 +15,13 @@
 
 #import <XCTest/XCTest.h>
 #import "NSString+Branch.h"
+#import "BNCTestCase.h"
 
 
 #define _countof(array)  (sizeof(array)/sizeof(array[0]))
 
 
-@interface NSStringBranchTest : XCTestCase
+@interface NSStringBranchTest : BNCTestCase
 @end
 
 

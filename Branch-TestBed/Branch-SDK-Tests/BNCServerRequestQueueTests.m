@@ -6,14 +6,13 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BranchTest.h"
+#import "BNCTestCase.h"
 #import "BNCServerRequestQueue.h"
 #import "BranchOpenRequest.h"
 #import "BranchCloseRequest.h"
 #import <OCMock/OCMock.h>
 
-@interface BNCServerRequestQueueTests : BranchTest
-
+@interface BNCServerRequestQueueTests : BNCTestCase
 @end
 
 @implementation BNCServerRequestQueueTests

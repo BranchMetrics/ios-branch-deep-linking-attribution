@@ -6,14 +6,13 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BranchTest.h"
+#import "BNCTestCase.h"
 #import "BranchLogoutRequest.h"
 #import "BranchConstants.h"
 #import "BNCPreferenceHelper.h"
 #import <OCMock/OCMock.h>
 
-@interface BranchLogoutRequestTests : BranchTest
-
+@interface BranchLogoutRequestTests : BNCTestCase
 @end
 
 @implementation BranchLogoutRequestTests

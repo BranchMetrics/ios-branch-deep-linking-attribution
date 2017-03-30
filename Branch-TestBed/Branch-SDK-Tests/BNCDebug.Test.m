@@ -15,6 +15,7 @@
 
 #import <XCTest/XCTest.h>
 #import "BNCDebug.h"
+#import "BNCTestCase.h"
 
 
 #pragma mark Test DumpClass
@@ -96,7 +97,7 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
 
 #pragma mark - BRDebugTest
 
-@interface BRDebugTest : XCTestCase
+@interface BRDebugTest : BNCTestCase
 @end
 
 @implementation BRDebugTest
@@ -201,8 +202,8 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
 }
 
 - (void) testBreakpoint {
-    // if (BNCDebuggerIsAttached()) {  //  eDebug EBS
-    if (NO) {
+    // if (BNCDebuggerIsAttached()) {
+    if (self.class.testBreakpoints) {
         BNCDebugBreakpoint();
     }
 }

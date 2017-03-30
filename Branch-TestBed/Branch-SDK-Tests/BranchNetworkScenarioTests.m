@@ -8,7 +8,7 @@
 
 
 #import <UIKit/UIKit.h>
-#import "BranchTest.h"
+#import "BNCTestCase.h"
 #import <OCMock/OCMock.h>
 #import "Branch.h"
 #import "BNCServerRequestQueue.h"
@@ -23,7 +23,7 @@
 @end
 
 
-@interface BranchNetworkScenarioTests : BranchTest
+@interface BranchNetworkScenarioTests : BNCTestCase
 @property (assign, nonatomic) BOOL hasExceededExpectations;
 @end
 
