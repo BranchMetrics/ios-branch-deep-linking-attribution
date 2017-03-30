@@ -23,7 +23,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 #pragma mark BranchShareLink
 
 @interface BranchShareLink () {
-    NSArray<UIActivityItemProvider*>* _activityItems;
+    NSPointerArray* _activityItems;
 }
 
 - (id) shareObjectForItem:(BranchShareActivityItem*)activityItem
@@ -36,7 +36,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
 @interface BranchShareActivityItem : UIActivityItemProvider
 @property (nonatomic, assign) BranchShareActivityItemType itemType;
-@property (nonatomic, weak)   BranchShareLink *parent;
+@property (nonatomic, strong) BranchShareLink *parent;
 @end
 
 @implementation BranchShareActivityItem
@@ -85,9 +85,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
 - (NSArray<UIActivityItemProvider*>*_Nonnull) activityItems {
     if (_activityItems) {
-        return _activityItems;
+        return [_activityItems allObjects];
     }
-
 
     // Make sure we can share
 
@@ -111,12 +110,12 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     [self.universalObject userCompletedAction:BNCShareInitiatedEvent];
 
     BranchShareActivityItem *item = nil;
-    NSMutableArray *items = [NSMutableArray new];
+    _activityItems = [NSPointerArray weakObjectsPointerArray];
     if (self.shareText.length) {
         item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareText];
         item.itemType = BranchShareActivityItemTypeShareText;
         item.parent = self;
-        [items addObject:item];
+        [_activityItems addPointer:(__bridge void * _Nullable)(item)];
     }
 
     NSString *URLString =
@@ -131,17 +130,16 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:URL];
     item.itemType = BranchShareActivityItemTypeBranchURL;
     item.parent = self;
-    [items addObject:item];
+    [_activityItems addPointer:(__bridge void * _Nullable)(item)];
 
     if (self.shareObject) {
         item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareObject];
         item.itemType = BranchShareActivityItemTypeOther;
         item.parent = self;
-        [items addObject:self.shareObject];
+        [_activityItems addPointer:(__bridge void * _Nullable)(item)];
     }
 
-    _activityItems = items;
-    return _activityItems;
+    return [_activityItems allObjects];
 }
 
 - (void) presentActivityViewControllerFromViewController:(UIViewController*_Nullable)viewController
