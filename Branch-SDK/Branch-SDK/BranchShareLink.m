@@ -109,13 +109,13 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     // Log share initiated event
     [self.universalObject userCompletedAction:BNCShareInitiatedEvent];
 
+    NSMutableArray *items = [NSMutableArray new];
     BranchShareActivityItem *item = nil;
-    _activityItems = [NSPointerArray weakObjectsPointerArray];
     if (self.shareText.length) {
         item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareText];
         item.itemType = BranchShareActivityItemTypeShareText;
         item.parent = self;
-        [_activityItems addPointer:(__bridge void * _Nullable)(item)];
+        [items addObject:item];
     }
 
     NSString *URLString =
@@ -130,16 +130,22 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:URL];
     item.itemType = BranchShareActivityItemTypeBranchURL;
     item.parent = self;
+    [items addObject:item];
+
     [_activityItems addPointer:(__bridge void * _Nullable)(item)];
 
     if (self.shareObject) {
         item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareObject];
         item.itemType = BranchShareActivityItemTypeOther;
         item.parent = self;
-        [_activityItems addPointer:(__bridge void * _Nullable)(item)];
+        [items addObject:item];
     }
 
-    return [_activityItems allObjects];
+    _activityItems = [NSPointerArray weakObjectsPointerArray];
+    for (item in items)
+        [_activityItems addPointer:(__bridge void * _Nullable)(item)];
+
+    return items;
 }
 
 - (void) presentActivityViewControllerFromViewController:(UIViewController*_Nullable)viewController

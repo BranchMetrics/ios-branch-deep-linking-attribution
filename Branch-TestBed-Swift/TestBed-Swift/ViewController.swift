@@ -210,6 +210,8 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         return _dateFormatter!
     }
 
+//MARK: - Share a Branch Universal Object with BranchShareLink
+
     @IBAction func shareBranchLinkAction(_ sender: AnyObject) {
         let canonicalIdentifier = "id-" + self.dateFormatter().string(from: Date.init())
 
@@ -327,6 +329,8 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         }
     }
 
+//MARK: - Link Properties
+
     @IBAction func loadLinkPropertiesButtonTouchUpInside(_ sender: AnyObject) {
         let branch = Branch.getInstance()
         let params: Dictionary = (branch?.getLatestReferringParams())!
@@ -383,10 +387,10 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
             if (error == nil) {
                 print(self.branchLinkProperties.description())
                 print(self.branchUniversalObject.description())
-                print("Link Created: \(url?.description)")
+                print("Link Created: \(String(describing: url?.description))")
                 self.linkTextField.text = url
             } else {
-                print(String(format: "Branch TestBed: %@", error as! CVarArg))
+                print(String(format: "Branch TestBed: %@", error! as CVarArg))
                 self.showAlert("Link Creation Failed", withDescription: error!.localizedDescription)
             }
             
@@ -406,7 +410,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
             }
             
             if (error != nil || !changed) {
-                print(String(format: "Branch TestBed: Didn't redeem anything: %@", error as! CVarArg))
+                print(String(format: "Branch TestBed: Didn't redeem anything: %@", error! as CVarArg))
                 self.showAlert("Redemption Unsuccessful", withDescription: error!.localizedDescription)
             } else {
                 print("Branch TestBed: Five Points Redeemed!")
