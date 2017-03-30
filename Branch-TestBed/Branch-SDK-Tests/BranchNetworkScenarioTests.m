@@ -304,9 +304,6 @@
 }
 
 #pragma mark - Scenario 6
-
-/* eDebug
-
 // Connection starts good -- InitSession completes
 // Two requests are enqueued
 // First request fails because of a 400 (bad request), second request should not be affected
@@ -346,18 +343,15 @@
     [self awaitExpectations];
     [serverInterfaceMock verify];
 }
-*/
 
 #pragma mark - Scenario 7
 
-#if 0 
-
-// This test is no longer valid.  We remove pending opens.  And the test is written wrong anyway.
+#if 0
+// This test is no longer valid.  We remove pending opens.  And the test is written wrong.
 // --EBS
-
+//
 // While an Open / Install request is pending, the app is killed, causing the callback to be lost.
 // When InitSession is called again (next launch), the request should still complete.
-
 - (void)testScenario7 {
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     id queueMock = OCMClassMock([BNCServerRequestQueue class]);
@@ -403,7 +397,6 @@
             [[[queueMock stub] andReturn:openRequest] moveInstallOrOpenToFront:0];
             return YES;
         }
-        
         return NO;
     }];
 
@@ -444,9 +437,6 @@
 #endif
 
 #pragma mark - Scenario 8
-
-/*  eDebug
-
 // Somehow, betweeen initSession and the next call, all preference items are cleared.
 // Shouldn't crash in this case, but can't do much besides "you need to re-init"
 - (void)testScenario8 {
@@ -476,8 +466,6 @@
     
     [self awaitExpectations];
 }
-
-*/
 
 #pragma mark - Internals
 

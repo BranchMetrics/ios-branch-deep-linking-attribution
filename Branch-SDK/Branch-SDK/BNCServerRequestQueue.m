@@ -41,7 +41,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 - (void) dealloc {
-    [self.class persistRequestArray:self.queue];
+    [self persistImmediately];
 }
 
 - (void)enqueue:(BNCServerRequest *)request {
@@ -234,60 +234,55 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             BNCNanoSecondsFromTimeInterval(BATCH_WRITE_TIMEOUT),
             BNCNanoSecondsFromTimeInterval(BATCH_WRITE_TIMEOUT / 10.0)
         );
-        dispatch_source_set_event_handler(self.persistTimer, ^ { [self persistToDiskImmediately:NO]; });
+        dispatch_source_set_event_handler(self.persistTimer, ^ { [self persistImmediately]; });
         dispatch_resume(self.persistTimer);
     }
 }
 
 - (void)persistImmediately {
-    [self persistToDiskImmediately:YES];
-}
-
-- (void)persistToDiskImmediately:(BOOL)immediately {
     @synchronized (self) {
         if (self.persistTimer) {
             dispatch_source_cancel(self.persistTimer);
             self.persistTimer = nil;
         }
-        NSArray *requests = [self.queue copy];
-        if (immediately)
-            dispatch_sync(self.asyncQueue, ^ { [self.class persistRequestArray:requests]; });
-        else
-            dispatch_async(self.asyncQueue, ^ { [self.class persistRequestArray:requests]; });
+        NSArray *requestsToPersist = [self.queue copy];
+        @try {
+            NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
+            for (BNCServerRequest *req in requestsToPersist) {
+                // Don't persist these requests
+                if ([req isKindOfClass:[BranchCloseRequest class]]) {
+                    continue;
+                }
+                NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
+                if (encodedReq) [encodedRequests addObject:encodedReq];
+            }
+            NSData *data = [NSKeyedArchiver archivedDataWithRootObject:encodedRequests];
+            if (!data) {
+                [[BNCPreferenceHelper preferenceHelper]
+                    logWarning:@"Cannot create archive data."];
+                return;
+            }
+            NSError *error = nil;
+            [data writeToURL:self.class.URLForQueueFile
+                options:NSDataWritingAtomic error:&error];
+            if (error) {
+                [[BNCPreferenceHelper preferenceHelper] logWarning:
+                    [NSString stringWithFormat:@"Failed to persist queue to disk: %@", error]];
+            }
+        }
+        @catch (NSException *exception) {
+            NSString *warningMessage =
+                [NSString stringWithFormat:
+                    @"An exception occurred while attempting to save the queue. Exception information:\n\n%@",
+                        [self.class exceptionString:exception]];
+            [[BNCPreferenceHelper preferenceHelper] logWarning:warningMessage];
+        }
     }
 }
 
-+ (void)persistRequestArray:(NSArray*)requestsToPersist {
-    @try {
-        NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
-        for (BNCServerRequest *req in requestsToPersist) {
-            // Don't persist these requests
-            if ([req isKindOfClass:[BranchCloseRequest class]]) {
-                continue;
-            }
-            NSData *encodedReq = [NSKeyedArchiver archivedDataWithRootObject:req];
-            if (encodedReq) [encodedRequests addObject:encodedReq];
-        }
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:encodedRequests];
-        if (!data) {
-            [[BNCPreferenceHelper preferenceHelper]
-                logWarning:@"Cannot create archive data."];
-            return;
-        }
-        NSError *error = nil;
-        [data writeToURL:self.class.URLForQueueFile
-            options:NSDataWritingAtomic error:&error];
-        if (error) {
-            [[BNCPreferenceHelper preferenceHelper] logWarning:
-                [NSString stringWithFormat:@"Failed to persist queue to disk: %@", error]];
-        }
-    }
-    @catch (NSException *exception) {
-        NSString *warningMessage =
-            [NSString stringWithFormat:
-                @"An exception occurred while attempting to save the queue. Exception information:\n\n%@",
-                    [self exceptionString:exception]];
-        [[BNCPreferenceHelper preferenceHelper] logWarning:warningMessage];
+- (BOOL) isDirty {
+    @synchronized (self) {
+        return (self.persistTimer != nil);
     }
 }
 

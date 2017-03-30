@@ -114,7 +114,15 @@
     [requestQueueMock verify];
 }
 
-#pragma mark - Retrieve Tests
+#pragma mark - Persist Tests
+
+- (void)testPersistEventually {
+    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
+    [queue persistEventually];
+    XCTAssert(queue.isDirty);
+    sleep(4);
+    XCTAssert(!queue.isDirty);
+}
 
 - (void)testPersistWhenArchiveFails {
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
@@ -136,7 +144,6 @@
     
     [self awaitExpectations];
     [archiverMock verify];
-    [archiverMock stopMocking];
 }
 
 - (void)testCloseRequestsArentPersisted {
@@ -190,6 +197,8 @@
     [archiverMock verify];
     //[archiverMock stopMocking];
 }
+
+#pragma mark - Retrieve Tests
 
 - (void)testRetrieveFailWhenReadingData {
 

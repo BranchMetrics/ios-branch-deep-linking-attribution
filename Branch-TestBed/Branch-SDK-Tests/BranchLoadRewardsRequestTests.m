@@ -10,6 +10,7 @@
 #import "BranchLoadRewardsRequest.h"
 #import "BranchConstants.h"
 #import "BNCPreferenceHelper.h"
+#import "BNCDebug.h"
 #import <OCMock/OCMock.h>
 
 
@@ -75,8 +76,7 @@
         [[BranchLoadRewardsRequest alloc]
             initWithCallback:^(BOOL changed, NSError *error) {
                 if (changed) {
-                    //  eDebug
-                    NSLog(@"Breakpoint");
+                    BNCDebugBreakpoint();
                 }
                 XCTAssertFalse(changed);
                 XCTAssertNil(error);
