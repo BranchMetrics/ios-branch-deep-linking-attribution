@@ -20,6 +20,7 @@
 #import "BranchActivityItemProvider.h"
 #import "BranchDeepLinkingController.h"
 #import "BNCCommerceEvent.h"
+#import "BranchShareLink.h"
 
 /**
  `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.
@@ -31,7 +32,7 @@
 /// @name Constants
 ///----------------
 
-#pragma mark - Branch Link Features
+#pragma mark Branch Link Features
 
 /**
  ## Branch Link Features
@@ -337,11 +338,44 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (BOOL)handleDeepLink:(NSURL *)url;
 
 /**
- Allow Branch to handle restoration from an NSUserActivity, returning whether or not it was from a Branch link.
+ Allow Branch to handle restoration from an NSUserActivity, returning whether or not it was
+ from a Branch link.
  
  @param userActivity The NSUserActivity that caused the app to be opened.
  */
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity;
+
+/**
+ Call this method from inside your app delegate's `application:openURL:sourceApplication:annotation:`
+ method with the so that Branch can open the passed URL.
+
+ @param application         The application that was passed to your app delegate.
+ @param url                 The URL that was passed to your app delegate.
+ @param sourceApplication   The sourceApplication that was passed to your app delegate.
+ @param annotation          The annotation that was passed to your app delegate.
+ @return                    Returns `YES` if Branch handled the passed URL.
+ */
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation;
+
+/**
+ Call this method from inside your app delegate's `application:openURL:options:`
+ method with the so that Branch can open the passed URL.
+ 
+ This method is functionally the same as calling the Branch method
+ `application:openURL:sourceApplication:annotation:`. This method matches the new Apple appDelegate
+ method for convenience.
+
+ @param application         The application that was passed to your app delegate.
+ @param url                 The URL that was passed to your app delegate.
+ @param options             The options dictionary that was passed to your app delegate.
+ @return                    Returns `YES` if Branch handled the passed URL.
+ */
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            options:(NSDictionary</*UIApplicationOpenURLOptionsKey*/NSString*,id> *)options;
 
 ///--------------------------------
 /// @name Push Notification Support

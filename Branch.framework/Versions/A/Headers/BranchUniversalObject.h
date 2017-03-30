@@ -47,6 +47,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 - (void)registerViewWithCallback:(nullable callbackWithParams)callback;
 
 - (void)userCompletedAction:(nonnull NSString *)action;
+- (void)userCompletedAction:(nonnull NSString *)action withState:(nullable NSDictionary *)state;
 
 - (nullable NSString *)getShortUrlWithLinkProperties:(nonnull BranchLinkProperties *)linkProperties;
 - (nullable NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(nonnull BranchLinkProperties *)linkProperties;
@@ -72,4 +73,6 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 
 - (nonnull NSString *)description;
 
+- (NSDictionary*_Nonnull)getDictionaryWithCompleteLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
+- (NSDictionary*_Nonnull)getParamsForServerRequestWithAddedLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
 @end
