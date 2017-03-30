@@ -9,8 +9,15 @@
 import Cartography
 import UIKit
 
+/**
+ * Displays a list of planets from PlanetData.all in a table view using PlanetCell for each.
+ * When a row is tapped, an ArticleViewController is pushed for the PlanetData corresponding
+ * to that row.
+ */
 class ArticleListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     let tableView = UITableView()
+
+    // MARK: - View lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,8 +49,11 @@ class ArticleListViewController: UIViewController, UITableViewDelegate, UITableV
         super.viewWillAppear(animated)
         guard let selectedRow = tableView.indexPathForSelectedRow else { return }
 
+        // Reset previous row selection when back pressed.
         tableView.deselectRow(at: selectedRow, animated: false)
     }
+
+    // MARK: - UITableViewDataSource
 
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -56,6 +66,8 @@ class ArticleListViewController: UIViewController, UITableViewDelegate, UITableV
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         return tableView.dequeueReusableCell(withIdentifier: PlanetCell.identifier) ?? UITableViewCell()
     }
+
+    // MARK: - UITableViewDelegate
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         guard indexPath.row < PlanetData.all.count else { return }

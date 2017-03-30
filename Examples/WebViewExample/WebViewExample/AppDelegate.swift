@@ -14,7 +14,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var navigationController: NavigationController!
 
+    // MARK: - UIApplicationDelegate methods
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        // Store the NavigationController for later link routing.
+        navigationController = window?.rootViewController as? NavigationController
+
+        // Initialize Branch SDK
         Branch.getInstance().initSession(launchOptions: launchOptions) {
             (params: [AnyHashable : Any]?, error: Error?) in
             guard error == nil else {
@@ -27,9 +33,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             guard let params = params else { return }
             self.routeURLFromBranch(params)
         }
-
-        navigationController = window?.rootViewController as? NavigationController
-        assert(navigationController != nil)
         
         return true
     }
@@ -42,7 +45,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return Branch.getInstance().continue(userActivity)
     }
 
-    func routeURLFromBranch(_ params: [AnyHashable: Any]) {
+    // MARK: - Branch link routing
+
+    private func routeURLFromBranch(_ params: [AnyHashable: Any]) {
         guard let title = params["$og_title"] as? String else { return }
         guard let url = params["$canonical_url"] as? String else { return }
 

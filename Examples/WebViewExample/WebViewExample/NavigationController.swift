@@ -9,6 +9,9 @@
 import TextAttributes
 import UIKit
 
+/**
+ * Custom UINavigationController to display an article list.
+ */
 class NavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()

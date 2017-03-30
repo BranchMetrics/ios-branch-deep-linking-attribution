@@ -8,17 +8,37 @@
 
 import Foundation
 
+/**
+ * Struct to represent data for a WebView and Spotlight.
+ */
 struct PlanetData {
+    // MARK: - Stored properties
+
+    /// Title displayed in table view, nav bar and used with BUO for deep linking
     let title: String
+
+    /// The URL to display in the WebView and use with deep links
     let url: URL
+
+    /// (Optional) URL for a Spotlight preview image
     let image: URL?
 
+    // MARK: - Struct lifecycle
+
+    /**
+     * Initialize a PlanetData struct from String arguments
+     * - Parameters:
+     *   - title: String used for title property
+     *   - url: String used to construct URL for url property
+     *   - image: (Optional) String used to construct URL for image property (default: nil)
+     */
     init(title: String, url: String, image: String?=nil) {
         self.title = title
         self.url = URL(string: url)!
         self.image = image != nil ? URL(string: image!) : nil
     }
 
+    /// Array of PlanetData structs to populate the table view
     static let all = [
         PlanetData(title: "Mercury", url: "https://en.wikipedia.org/wiki/Mercury_(planet)",
                    image: "https://upload.wikimedia.org/wikipedia/commons/d/d9/Mercury_in_color_-_Prockter07-edit1.jpg"),

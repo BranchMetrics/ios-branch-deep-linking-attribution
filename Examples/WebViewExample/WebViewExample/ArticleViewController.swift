@@ -10,9 +10,18 @@ import Branch
 import Cartography
 import UIKit
 
+/**
+ * Displays an ArticleView for the specified PlanetData and provides
+ * the ArticleViewDelegate for the ArticleView.
+ */
 class ArticleViewController: UIViewController, ArticleViewDelegate {
+
+    // MARK: - Stored properties
+
     let planetData: PlanetData
     var buo: BranchUniversalObject!
+
+    // MARK: - Object lifecycle
 
     init(planetData: PlanetData) {
         self.planetData = planetData
@@ -24,9 +33,15 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - View lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        /*
+         * Add an ArticleView for this planetData as a subview of
+         * view.
+         */
         let articleView = ArticleView(planetData: planetData)
         articleView.delegate = self
         articleView.translatesAutoresizingMaskIntoConstraints = false
@@ -40,9 +55,13 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
             view.height == superview.height
         }
 
+        // Initialize BUO and log BNCRegisterViewEvent at page load.
         setupBUO()
     }
 
+    // MARK: - ArticleViewDelegate
+
+    // MARK: Calls BUO.showShareSheet
     func articleViewDidShare(_ articleView: ArticleView) {
         let linkProperties = BranchLinkProperties()
         linkProperties.feature = "share"
@@ -56,13 +75,12 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
         }
     }
 
+    // MARK: - Branch Universal Object setup
     private func setupBUO() {
-        buo = BranchUniversalObject(canonicalIdentifier: "planets/\(planetData.title)")
-        buo.automaticallyListOnSpotlight = true
-        buo.canonicalUrl = planetData.url.absoluteString
-        buo.title = planetData.title
-        buo.imageUrl = planetData.image?.absoluteString
-        
+        // Initialization and configuration.
+        buo = BranchUniversalObject(planetData: planetData)
+
+        // Register a view event
         buo.userCompletedAction(BNCRegisterViewEvent)
         
         print("Created Branch Universal Object and registered view event")
