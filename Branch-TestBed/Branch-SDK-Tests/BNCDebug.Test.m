@@ -201,7 +201,8 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
 }
 
 - (void) testBreakpoint {
-    if (BNCDebuggerIsAttached()) {
+    // if (BNCDebuggerIsAttached()) {  //  eDebug EBS
+    if (NO) {
         BNCDebugBreakpoint();
     }
 }

@@ -164,7 +164,7 @@
     // Wait for operation to occur    
     [self awaitExpectations];
     [archiverMock verify];
-    [archiverMock stopMocking];
+    //[archiverMock stopMocking];
 }
 
 - (void)testDebugRequestsArentPersisted {
@@ -189,7 +189,7 @@
     // Wait for operation to occur    
     [self awaitExpectations];
     [archiverMock verify];
-    [archiverMock stopMocking];
+    //[archiverMock stopMocking];
 }
 
 - (void)testRetrieveFailWhenReadingData {
@@ -257,7 +257,7 @@
 
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
     [queue performSelector:@selector(retrieve)];
-    XCTAssertEqual([queue size], 1);
+    XCTAssertEqual([queue queueDepth], 1);
     [nsdataMock verify];
 }
 

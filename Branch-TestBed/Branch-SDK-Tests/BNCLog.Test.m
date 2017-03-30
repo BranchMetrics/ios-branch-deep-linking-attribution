@@ -94,7 +94,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 
     //  Test breakpoints --
 
-    if (YES) {  // Test breakbpoints too:
+    if (NO) {  // Test break points too:    //  eDebug
         BNCLogSetBreakPointsEnabled(YES);
         BNCLogBreakPoint();
         XCTAssert([globalTestLogString bnc_isEqualToMaskedString:

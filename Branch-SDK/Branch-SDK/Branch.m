@@ -1404,7 +1404,10 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
     dispatch_async(dispatch_get_main_queue(), block);
 }
 
-- (void) processRequest:(BNCServerRequest*)req response:(BNCServerResponse*)response error:(NSError*)error {
+- (void) processRequest:(BNCServerRequest*)req
+               response:(BNCServerResponse*)response
+                  error:(NSError*)error {
+                  
     // If the request was successful, or was a bad user request, continue processing.
     if (!error || error.code == BNCBadRequestError || error.code == BNCDuplicateResourceError) {
 
@@ -1418,7 +1421,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
     else {
         // First, gather all the requests to fail
         NSMutableArray *requestsToFail = [[NSMutableArray alloc] init];
-        for (int i = 0; i < self.requestQueue.size; i++) {
+        for (int i = 0; i < self.requestQueue.queueDepth; i++) {
             BNCServerRequest *request = [self.requestQueue peekAt:i];
             if (request) {
                 [requestsToFail addObject:request];
@@ -1448,7 +1451,10 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 - (void)processNextQueueItem {
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
     
-    if (self.networkCount == 0 && self.requestQueue.size > 0 && !self.preferenceHelper.shouldWaitForInit) {
+    if (self.networkCount == 0 &&
+        self.requestQueue.queueDepth > 0 &&
+        !self.preferenceHelper.shouldWaitForInit) {
+
         self.networkCount = 1;
         dispatch_semaphore_signal(self.processing_sema);
         BNCServerRequest *req = [self.requestQueue peek];
