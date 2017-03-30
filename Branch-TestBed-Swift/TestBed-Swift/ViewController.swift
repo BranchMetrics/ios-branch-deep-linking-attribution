@@ -261,11 +261,43 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         ) {
             branchShareLink.title = "Share your alias link!"
             branchShareLink.delegate = self
-            branchShareLink.shareText = "Shared from Branch's TestBed-Swift at \(self.dateFormatter().string(from: Date()))"
+            branchShareLink.shareText = 
+                "Shared from Branch's TestBed-Swift at \(self.dateFormatter().string(from: Date()))"
             branchShareLink.presentActivityViewController(
                 from: self,
                 anchor: actionButton
             )
+        }
+    }
+
+    @IBAction func shareAliasActivityViewController(_ sender: AnyObject) {
+        //  Share an alias Branch link:
+
+        let alias = "Share-Alias-Link-Example"
+        let canonicalIdentifier = alias
+
+        let shareBranchObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
+        shareBranchObject.title = "Share Branch Link Example"
+        shareBranchObject.canonicalUrl = "https://developer.branch.io/"
+        shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
+        shareBranchObject.keywords = [ "example", "short", "share", "link" ]
+        shareBranchObject.contentDescription = "This is an example shared alias link."
+        shareBranchObject.addMetadataKey("publicSlug", value: canonicalIdentifier)
+
+        let shareLinkProperties = BranchLinkProperties()
+        shareLinkProperties.alias = alias
+        shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
+
+        if let branchShareLink = BranchShareLink.init(
+            universalObject: shareBranchObject,
+            linkProperties:  shareLinkProperties
+        ) {
+            branchShareLink.delegate = self
+            let activityViewController = UIActivityViewController.init(
+                activityItems: branchShareLink.activityItems(),
+                applicationActivities: nil
+            )
+            self.present(activityViewController, animated: true, completion: nil)
         }
     }
 
