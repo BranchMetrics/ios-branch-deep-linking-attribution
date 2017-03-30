@@ -1,5 +1,10 @@
 Branch iOS SDK Change Log
 
+- v0.14.9
+  * *Master Release*
+  * Updated the Branch-TestBed Branch-TestBed-Swift examples.
+  * Verified Xcode 8.3 and iOS 10.3 compatibility.
+
 - v0.14.5
   * *Beta Release*
   * Added two new Branch methods for handling opening scheme-based URLs from an app delegate.
