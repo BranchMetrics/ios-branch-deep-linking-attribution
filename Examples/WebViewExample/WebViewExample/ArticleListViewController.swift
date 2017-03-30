@@ -22,6 +22,7 @@ class ArticleListViewController: UIViewController, UITableViewDelegate, UITableV
         tableView.bounces = false
         tableView.separatorStyle = .none
         tableView.rowHeight = 88
+        tableView.allowsMultipleSelection = false
 
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -35,6 +36,13 @@ class ArticleListViewController: UIViewController, UITableViewDelegate, UITableV
         }
 
         tableView.register(PlanetCell.self, forCellReuseIdentifier: PlanetCell.identifier)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard let selectedRow = tableView.indexPathForSelectedRow else { return }
+
+        tableView.deselectRow(at: selectedRow, animated: false)
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
