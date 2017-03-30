@@ -272,7 +272,7 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <state key="normal" title="Share Alias Branch Link"/>
                                                     <connections>
-                                                        <action selector="shareAliasBranchLinkAction:" destination="3bi-5k-7qj" eventType="touchUpInside" id="9Zf-kF-7nj"/>
+                                                        <action selector="shareAliasActivityViewController:" destination="3bi-5k-7qj" eventType="touchUpInside" id="ibr-Hq-JNL"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
