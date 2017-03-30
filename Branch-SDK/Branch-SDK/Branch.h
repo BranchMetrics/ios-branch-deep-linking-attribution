@@ -375,7 +375,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
-            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options;
+            options:(NSDictionary</*UIApplicationOpenURLOptionsKey*/NSString*,id> *)options;
 
 ///--------------------------------
 /// @name Push Notification Support
