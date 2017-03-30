@@ -478,7 +478,7 @@ void ForceCategoriesToLoad() {
 
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
-            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+            options:(NSDictionary</*UIApplicationOpenURLOptionsKey*/NSString*,id> *)options {
 
     NSString *source = nil;
     NSString *annotation = nil;
