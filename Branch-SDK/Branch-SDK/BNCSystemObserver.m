@@ -272,7 +272,7 @@
 
     NSError *error = nil;
     NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
-    if (!bundleRoot) bundleRoot = @"/";
+    if (!bundleRoot) bundleRoot = @".";
     NSURL *bundleRootURL = [NSURL URLWithString:[@"file://" stringByAppendingString:bundleRoot]];
     if (bundleRootURL == nil) return nil;
     NSArray *fileInfoURLs =
