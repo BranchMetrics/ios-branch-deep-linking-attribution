@@ -6,16 +6,15 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BranchTest.h"
+#import "BNCTestCase.h"
 #import "BranchLoadRewardsRequest.h"
 #import "BranchConstants.h"
 #import "BNCPreferenceHelper.h"
+#import "BNCDebug.h"
 #import <OCMock/OCMock.h>
 
-
-@interface BranchLoadRewardsRequestTests : BranchTest
+@interface BranchLoadRewardsRequestTests : BNCTestCase
 @end
-
 
 @implementation BranchLoadRewardsRequestTests
 
@@ -75,8 +74,7 @@
         [[BranchLoadRewardsRequest alloc]
             initWithCallback:^(BOOL changed, NSError *error) {
                 if (changed) {
-                    //  eDebug
-                    NSLog(@"Breakpoint");
+                    BNCDebugBreakpoint();
                 }
                 XCTAssertFalse(changed);
                 XCTAssertNil(error);

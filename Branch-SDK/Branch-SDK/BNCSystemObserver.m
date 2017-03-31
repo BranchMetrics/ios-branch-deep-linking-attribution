@@ -259,7 +259,7 @@
         }
     }
     if (!success || error) {
-        NSLog(@"Can't retrieve attributes. Success: %d Error: %@.", success, error);
+        NSLog(@"Warning: Can't retrieve bundle attributes. Success: %d Error: %@.", success, error);
         return nil;
     }
     return buildDate;

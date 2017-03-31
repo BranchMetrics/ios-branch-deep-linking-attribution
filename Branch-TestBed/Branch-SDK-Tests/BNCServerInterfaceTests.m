@@ -8,7 +8,7 @@
 
 
 #import <XCTest/XCTest.h>
-#import "BranchTest.h"
+#import "BNCTestCase.h"
 #import "BNCServerInterface.h"
 #import "BNCPreferenceHelper.h"
 #import <OCMock/OCMock.h>
@@ -19,7 +19,7 @@
 typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
 
-@interface BNCServerInterfaceTests : XCTestCase
+@interface BNCServerInterfaceTests : BNCTestCase
 @end
 
 

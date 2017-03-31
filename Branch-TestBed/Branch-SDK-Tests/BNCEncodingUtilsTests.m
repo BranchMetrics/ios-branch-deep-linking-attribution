@@ -8,9 +8,9 @@
 
 #import <XCTest/XCTest.h>
 #import "BNCEncodingUtils.h"
+#import "BNCTestCase.h"
 
-@interface BNCEncodingUtilsTests : XCTestCase
-
+@interface BNCEncodingUtilsTests : BNCTestCase
 @end
 
 @implementation BNCEncodingUtilsTests
