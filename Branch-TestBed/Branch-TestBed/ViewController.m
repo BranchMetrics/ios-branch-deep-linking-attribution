@@ -300,7 +300,7 @@ NSString *type = @"some type";
     // choice stored in shareSheet.activityType.
 
     shareLink.shareText = [NSString stringWithFormat:
-        @"Shared through '%@'\nfrom Branch's Branch-TestBed\n%@.",
+        @"Shared through '%@'\nfrom Branch's Branch-TestBed\nat %@.",
         shareLink.linkProperties.channel,
         [self.dateFormatter stringFromDate:[NSDate date]]];
 }
