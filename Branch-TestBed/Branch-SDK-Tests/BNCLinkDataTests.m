@@ -6,11 +6,10 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BranchTest.h"
+#import "BNCTestCase.h"
 #import "BNCLinkData.h"
 
-@interface BNCLinkDataTests : BranchTest
-
+@interface BNCLinkDataTests : BNCTestCase
 @end
 
 @implementation BNCLinkDataTests

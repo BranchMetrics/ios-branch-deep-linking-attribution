@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BranchTest.h"
+#import "BNCTestCase.h"
 #import "BranchOpenRequest.h"
 #import "BranchConstants.h"
 #import "BNCPreferenceHelper.h"
@@ -15,7 +15,7 @@
 #import "BNCEncodingUtils.h"
 #import "BNCSystemObserver.h"
 
-@interface BranchOpenRequestTests : BranchTest
+@interface BranchOpenRequestTests : BNCTestCase
 @end
 
 @implementation BranchOpenRequestTests

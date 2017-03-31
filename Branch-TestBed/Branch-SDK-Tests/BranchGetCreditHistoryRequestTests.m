@@ -5,14 +5,13 @@
 //  Created by Graham Mueller on 6/12/15.
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
-#import "BranchTest.h"
+#import "BNCTestCase.h"
 #import "BranchCreditHistoryRequest.h"
 #import "BranchConstants.h"
 #import "BNCPreferenceHelper.h"
 #import <OCMock/OCMock.h>
 
-@interface BranchGetCreditHistoryRequestTests : BranchTest
-
+@interface BranchGetCreditHistoryRequestTests : BNCTestCase
 @end
 
 @implementation BranchGetCreditHistoryRequestTests

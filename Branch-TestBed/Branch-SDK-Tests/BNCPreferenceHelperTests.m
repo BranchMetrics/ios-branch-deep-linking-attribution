@@ -9,9 +9,9 @@
 #import <XCTest/XCTest.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
+#import "BNCTestCase.h"
 
-@interface BNCPreferenceHelperTests : XCTestCase
-
+@interface BNCPreferenceHelperTests : BNCTestCase
 @end
 
 @implementation BNCPreferenceHelperTests

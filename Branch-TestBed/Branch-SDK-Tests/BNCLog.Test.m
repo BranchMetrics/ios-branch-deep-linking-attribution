@@ -16,6 +16,7 @@
 #import <XCTest/XCTest.h>
 #import "BNCLog.h"
 #import "NSString+Branch.h"
+#import "BNCTestCase.h"
 
 
 static NSString* globalTestLogString = nil;
@@ -26,7 +27,7 @@ void TestLogProcedure(NSDate*timestamp, BNCLogLevel level, NSString* message) {
 }
 
 
-@interface BNCLogTest : XCTestCase
+@interface BNCLogTest : BNCTestCase
 @end
 
 
@@ -54,7 +55,6 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     //  Test the log message facility --
     //  Warning!  If these line numbers change the tests will fail!
 
-    //  Extra line
     //  Extra line
     //  Extra line
     //  Extra line
@@ -94,12 +94,12 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 
     //  Test breakpoints --
 
-    if (YES) {  // Test breakbpoints too:
+    if (self.class.testBreakpoints) {  // Test break points too:
         BNCLogSetBreakPointsEnabled(YES);
         BNCLogBreakPoint();
         XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
-            @"[branch.io] BNCLog.Test.m(**)   Break: Programmatic breakpoint."]);
-
+            @"[branch.io] BNCLog.Test.m(**)   Break: Programmatic breakpoint."]
+        );
         BNCLogSetBreakPointsEnabled(NO);
         globalTestLogString = nil;
         BNCLogBreakPoint();

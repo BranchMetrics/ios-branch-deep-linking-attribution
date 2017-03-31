@@ -40,8 +40,10 @@ function testSimulatorVersion() {
 }
 
 stressTest=0
-stressPhone="iPhone 4s"     # "iPhone 7"  eDebug
-stressOS="8.3"              # "latest"
+# stressPhone="iPhone 4s"
+# stressOS="8.3"
+stressPhone="iPhone 7 Plus"
+stressOS="latest"
 
 function testSimulatorStress() {
     if (( $stressTest == 0 )); then
