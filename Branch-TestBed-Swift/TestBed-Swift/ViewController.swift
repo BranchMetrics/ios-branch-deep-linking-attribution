@@ -294,6 +294,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
             universalObject: shareBranchObject,
             linkProperties:  shareLinkProperties
         ) {
+            branchShareLink.shareText = "Shared with TestBed-Swift"
             branchShareLink.delegate = self
             let activityViewController = UIActivityViewController.init(
                 activityItems: branchShareLink.activityItems(),
@@ -309,7 +310,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         // choice stored in shareSheet.activityType.
         shareLink.shareText =
             "Shared through '\(shareLink.linkProperties.channel!)'\nfrom Branch's TestBed-Swift" +
-            "\n\(self.dateFormatter().string(from: Date()))."
+            "\nat \(self.dateFormatter().string(from: Date()))."
 
         // In this example, we over-ride the channel so that the channel in the Branch short link 
         // is always 'ios-share'. This allows a short alias link to always be created.
