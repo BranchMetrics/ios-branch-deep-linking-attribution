@@ -22,16 +22,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Initialize Branch SDK
         Branch.getInstance().initSession(launchOptions: launchOptions) {
-            (params: [AnyHashable : Any]?, error: Error?) in
+            (buo: BranchUniversalObject?, linkProperties: BranchLinkProperties?, error: Error?) in
             guard error == nil else {
                 print("Error from Branch: \(error!)")
                 return
             }
 
-            print("Branch link params: \(params ?? [:])")
-
-            guard let params = params else { return }
-            self.routeURLFromBranch(params)
+            guard let buo = buo else { return }
+            self.routeURLFromBranch(buo)
         }
         
         return true
@@ -47,11 +45,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Branch link routing
 
-    private func routeURLFromBranch(_ params: [AnyHashable: Any]) {
-        guard let title = params["$og_title"] as? String else { return }
-        guard let url = params["$canonical_url"] as? String else { return }
+    private func routeURLFromBranch(_ buo: BranchUniversalObject) {
+        guard let planetData = PlanetData(branchUniversalObject: buo) else { return }
 
-        let planetData = PlanetData(title: title, url: url)
         let articleViewController = ArticleViewController(planetData: planetData)
         navigationController.pushViewController(articleViewController, animated: true)
     }

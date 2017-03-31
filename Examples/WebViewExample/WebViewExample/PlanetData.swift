@@ -6,7 +6,7 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
-import Foundation
+import Branch
 
 /**
  * Struct to represent data for a WebView and Spotlight.
@@ -36,6 +36,30 @@ struct PlanetData {
         self.title = title
         self.url = URL(string: url)!
         self.image = image != nil ? URL(string: image!) : nil
+    }
+
+    /**
+     * Initialize a PlanetData struct from a BranchUniversalObject. Returns nil if PlanetData cannot be constructed
+     * (title or canonicalUrl is nil or unparseable canonicalUrl).
+     * - Parameter branchUniversalObject: A BranchUniversalObject with data for an article
+     */
+    init?(branchUniversalObject: BranchUniversalObject) {
+        guard let title = branchUniversalObject.title,
+            let urlString = branchUniversalObject.canonicalUrl,
+            let url = URL(string: urlString) else {
+            print("Could not get required data from BranchUniversalObject")
+            return nil
+        }
+
+        self.title = title
+        self.url = url
+
+        if let imageString = branchUniversalObject.imageUrl, let image = URL(string: imageString) {
+            self.image = image
+        }
+        else {
+            self.image = nil
+        }
     }
 
     /// Array of PlanetData structs to populate the table view
