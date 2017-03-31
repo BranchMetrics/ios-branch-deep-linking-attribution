@@ -1,5 +1,10 @@
 Branch iOS SDK Change Log
 
+- v0.14.10
+  * *Master Release*
+  * Fixed a crash bug in `[BNCSystemObserver appBuildDate]`.
+  * Added a date in the sharing text for the testbed apps (AIS-228).
+
 - v0.14.9
   * *Master Release*
   * Updated the Branch-TestBed Branch-TestBed-Swift examples.
