@@ -1,8 +1,21 @@
 use_frameworks!
 
+# ----- Branch pod
+#
+# Take the Branch pod from this repo rather than CocoaPods.
+# Don't use the path: argument if you want the production
+# release from CocoaPods., e.g.:
+#
+# pod "Branch"
+
 pod "Branch", path: "../.."
+
+# ----- Other app dependencies
+
 pod "Cartography"
 pod "MBProgressHUD"
 pod "TextAttributes"
+
+# ----- Application target
 
 target "WebViewExample"
