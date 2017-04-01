@@ -55,8 +55,16 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
             view.height == superview.height
         }
 
-        // Initialize BUO and log BNCRegisterViewEvent at page load.
+        // Initialize BUO at page load.
         setupBUO()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // Log a BNCRegisterViewEvent each time the user views the page.
+        buo.userCompletedAction(BNCRegisterViewEvent)
+        print("Logged BNCRegisterViewEvent on BUO")
     }
 
     // MARK: - ArticleViewDelegate
@@ -76,13 +84,11 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
     }
 
     // MARK: - Branch Universal Object setup
+
     private func setupBUO() {
         // Initialization and configuration.
         buo = BranchUniversalObject(planetData: planetData)
-
-        // Register a view event
-        buo.userCompletedAction(BNCRegisterViewEvent)
         
-        print("Created Branch Universal Object and registered view event")
+        print("Created Branch Universal Object")
     }
 }
