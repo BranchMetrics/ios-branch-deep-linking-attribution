@@ -10,9 +10,7 @@
 7. Log in to the [Branch dashboard](https://dashboard.branch.io) and create a new app from the drop-down menu in the top right corner
 8. On the Settings, screen copy the Branch key
 9. In the Xcode project's **info.plist** file, change the `branch_key` entry to the value of your new Branch key key
-10. Add a new String key to the **info.plist** file: `branch_app_domain`
-11. Populate the new `branch_app_domain` key with the value of the **Default domain name** field found in the Custom Link Domain section of the dashboard's Link Settings tab
-12. Populate the Branch dashboard with the following values:
+10. Populate the Branch dashboard with the following values:
     - Always try to open app: Checked
     - I have an iOS App: Checked
     - iOS URL: `branchtest://` (from the **Supporting Files/Branch-TestBed-Info.plist** file, this is URL Types > URL Schemes > Item 0)
