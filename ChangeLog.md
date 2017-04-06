@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.14.11
+  * *Master Release*
+  * Added `BranchShareLink.h` to public headers.
+
 - v0.14.10
   * *Master Release*
   * Fixed a crash bug in `[BNCSystemObserver appBuildDate]`.
