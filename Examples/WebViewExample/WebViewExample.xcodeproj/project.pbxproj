@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		44B41F44A1783294F78E3DCC /* Pods_WebViewExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8529F4248FBBE54B064721F2 /* Pods_WebViewExample.framework */; };
+		7B016F1D1E97F1F800C34EBA /* BNCSwiftLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B016F1C1E97F1F800C34EBA /* BNCSwiftLog.m */; };
+		7B016F1F1E97F29000C34EBA /* BNCLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B016F1E1E97F29000C34EBA /* BNCLog.swift */; };
 		7B132B5A1E8D7B43006FB28F /* BranchUniversalObject+PlanetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B132B591E8D7B43006FB28F /* BranchUniversalObject+PlanetData.swift */; };
 		7B132B5C1E8D878E006FB28F /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B132B5B1E8D878E006FB28F /* Style.swift */; };
 		7B3B97841E8C1B650089C04B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3B97831E8C1B650089C04B /* AppDelegate.swift */; };
@@ -25,6 +27,10 @@
 /* Begin PBXFileReference section */
 		6D6117909230007A384D2046 /* Pods-WebViewExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebViewExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-WebViewExample/Pods-WebViewExample.release.xcconfig"; sourceTree = "<group>"; };
 		73F43B2C303E9BF5A6714F1B /* Pods-WebViewExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebViewExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WebViewExample/Pods-WebViewExample.debug.xcconfig"; sourceTree = "<group>"; };
+		7B016F1A1E97F1F800C34EBA /* WebViewExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WebViewExample-Bridging-Header.h"; sourceTree = "<group>"; };
+		7B016F1B1E97F1F800C34EBA /* BNCSwiftLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSwiftLog.h; sourceTree = "<group>"; };
+		7B016F1C1E97F1F800C34EBA /* BNCSwiftLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSwiftLog.m; sourceTree = "<group>"; };
+		7B016F1E1E97F29000C34EBA /* BNCLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BNCLog.swift; sourceTree = "<group>"; };
 		7B132B591E8D7B43006FB28F /* BranchUniversalObject+PlanetData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BranchUniversalObject+PlanetData.swift"; sourceTree = "<group>"; };
 		7B132B5B1E8D878E006FB28F /* Style.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		7B3B97801E8C1B650089C04B /* WebViewExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebViewExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -63,6 +69,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		7B016F191E97F1BE00C34EBA /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				7B016F1E1E97F29000C34EBA /* BNCLog.swift */,
+				7B016F1B1E97F1F800C34EBA /* BNCSwiftLog.h */,
+				7B016F1C1E97F1F800C34EBA /* BNCSwiftLog.m */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		7B3B97771E8C1B640089C04B = {
 			isa = PBXGroup;
 			children = (
@@ -84,6 +100,7 @@
 		7B3B97821E8C1B650089C04B /* WebViewExample */ = {
 			isa = PBXGroup;
 			children = (
+				7B016F191E97F1BE00C34EBA /* Utilities */,
 				7B3B97AD1E8C40400089C04B /* WebViewExample.entitlements */,
 				7B3B97831E8C1B650089C04B /* AppDelegate.swift */,
 				7B3B97971E8C21F60089C04B /* ArticleListViewController.swift */,
@@ -94,6 +111,7 @@
 				7B3B979B1E8C267E0089C04B /* PlanetCell.swift */,
 				7B3B97991E8C23AA0089C04B /* PlanetData.swift */,
 				7B132B5B1E8D878E006FB28F /* Style.swift */,
+				7B016F1A1E97F1F800C34EBA /* WebViewExample-Bridging-Header.h */,
 				7B3B97871E8C1B650089C04B /* Main.storyboard */,
 				7B3B978A1E8C1B650089C04B /* Assets.xcassets */,
 				7B3B978C1E8C1B650089C04B /* LaunchScreen.storyboard */,
@@ -146,6 +164,7 @@
 				TargetAttributes = {
 					7B3B977F1E8C1B650089C04B = {
 						CreatedOnToolsVersion = 8.3;
+						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.SafariKeychain = {
@@ -239,6 +258,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B016F1D1E97F1F800C34EBA /* BNCSwiftLog.m in Sources */,
 				7B132B5A1E8D7B43006FB28F /* BranchUniversalObject+PlanetData.swift in Sources */,
 				7B3B97981E8C21F60089C04B /* ArticleListViewController.swift in Sources */,
 				7B3B97AA1E8C31A60089C04B /* ArticleViewController.swift in Sources */,
@@ -246,6 +266,7 @@
 				7B3B979A1E8C23AA0089C04B /* PlanetData.swift in Sources */,
 				7B3B97961E8C21510089C04B /* NavigationController.swift in Sources */,
 				7B3B97AC1E8C32BD0089C04B /* ArticleView.swift in Sources */,
+				7B016F1F1E97F29000C34EBA /* BNCLog.swift in Sources */,
 				7B132B5C1E8D878E006FB28F /* Style.swift in Sources */,
 				7B3B97841E8C1B650089C04B /* AppDelegate.swift in Sources */,
 			);
@@ -373,12 +394,15 @@
 			baseConfigurationReference = 73F43B2C303E9BF5A6714F1B /* Pods-WebViewExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.WebViewExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "WebViewExample/WebViewExample-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -389,12 +413,14 @@
 			baseConfigurationReference = 6D6117909230007A384D2046 /* Pods-WebViewExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.branch.WebViewExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "WebViewExample/WebViewExample-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
