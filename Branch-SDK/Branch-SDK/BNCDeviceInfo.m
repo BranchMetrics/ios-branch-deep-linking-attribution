@@ -176,12 +176,7 @@ static BNCDeviceInfo *bncDeviceInfo;
         dispatch_async(dispatch_get_main_queue(), agentBlock);
 
 		dispatch_time_t timeoutTime = dispatch_time(DISPATCH_TIME_NOW, timeoutDelta);
-        #if defined(BNCTesting)
-        long result = dispatch_block_wait(agentBlock, timeoutTime);
-		NSLog(@"Wait result: %ld.", result);
-        #else
         dispatch_block_wait(agentBlock, timeoutTime);
-        #endif
 		retries--;
 	}
 	return browserUserAgentString;

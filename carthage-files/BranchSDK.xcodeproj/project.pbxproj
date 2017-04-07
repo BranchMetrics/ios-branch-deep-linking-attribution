@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4D19C1C21DC110FB008D8B38 /* BNCXcode7Support.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D19C1C01DC110FA008D8B38 /* BNCXcode7Support.h */; };
+		4D19C1C21DC110FB008D8B38 /* BNCXcode7Support.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D19C1C01DC110FA008D8B38 /* BNCXcode7Support.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4D19C1C31DC110FB008D8B38 /* BNCXcode7Support.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D19C1C11DC110FB008D8B38 /* BNCXcode7Support.m */; };
 		4D291AAB1E322ECC007ED118 /* NSMutableDictionary+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D291AA91E322ECC007ED118 /* NSMutableDictionary+Branch.h */; };
 		4D291AAC1E322ECC007ED118 /* NSMutableDictionary+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D291AAA1E322ECC007ED118 /* NSMutableDictionary+Branch.m */; };
@@ -372,6 +372,7 @@
 				E230A1851D03DB9E006181D8 /* Branch-SDK-Prefix.pch in Headers */,
 				4DB5673A1E79FDAF00A8A324 /* BranchShareLink.h in Headers */,
 				E230A1B61D03DB9F006181D8 /* BranchSpotlightUrlRequest.h in Headers */,
+				4D19C1C21DC110FB008D8B38 /* BNCXcode7Support.h in Headers */,
 				E230A1AA1D03DB9E006181D8 /* BranchOpenRequest.h in Headers */,
 				E230A1B01D03DB9E006181D8 /* BranchSetIdentityRequest.h in Headers */,
 				E230A16F1D03DB9E006181D8 /* BNCDeviceInfo.h in Headers */,
@@ -387,7 +388,6 @@
 				E230A16D1D03DB9E006181D8 /* BNCContentDiscoveryManager.h in Headers */,
 				E230A1711D03DB9E006181D8 /* BNCEncodingUtils.h in Headers */,
 				E230A1981D03DB9E006181D8 /* BNCServerRequest.h in Headers */,
-				4D19C1C21DC110FB008D8B38 /* BNCXcode7Support.h in Headers */,
 				E230A1AC1D03DB9E006181D8 /* BranchRedeemRewardsRequest.h in Headers */,
 				E230A1AE1D03DB9E006181D8 /* BranchRegisterViewRequest.h in Headers */,
 				4D291AAB1E322ECC007ED118 /* NSMutableDictionary+Branch.h in Headers */,

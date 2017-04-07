@@ -20,5 +20,6 @@
 @end
 
 typedef NSString * UIActivityType;
+typedef NSString * UIApplicationOpenURLOptionsKey;
 
 #endif
