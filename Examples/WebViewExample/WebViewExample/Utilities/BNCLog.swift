@@ -6,6 +6,8 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
+import Branch
+
 /**
  * Logs a message at BNCLogLevel.debug
  * - Parameters:
@@ -14,7 +16,7 @@
  *   - line: (unused) provides the Swift line number
  */
 func BNCLogDebug(_ message: String, _ file: String=#file, _ line: UInt=#line) {
-    BNCSwiftLog.debug(message, file: file, line: line)
+    BNCLogMessageInternalSwift(.debug, file, line, message)
 }
 
 /**
@@ -25,7 +27,7 @@ func BNCLogDebug(_ message: String, _ file: String=#file, _ line: UInt=#line) {
  *   - line: (unused) provides the Swift line number
  */
 func BNCLogError(_ message: String, _ file: String=#file, _ line: UInt=#line) {
-    BNCSwiftLog.error(message, file: file, line: line)
+    BNCLogMessageInternalSwift(.error, file, line, message)
 }
 
 /**
@@ -36,7 +38,7 @@ func BNCLogError(_ message: String, _ file: String=#file, _ line: UInt=#line) {
  *   - line: (unused) provides the Swift line number
  */
 func BNCLog(_ message: String, _ file: String=#file, _ line: UInt=#line) {
-    BNCSwiftLog.log(message, file: file, line: line)
+    BNCLogMessageInternalSwift(.log, file, line, message)
 }
 
 /**
@@ -47,5 +49,5 @@ func BNCLog(_ message: String, _ file: String=#file, _ line: UInt=#line) {
  *   - line: (unused) provides the Swift line number
  */
 func BNCLogWarning(_ message: String, _ file: String=#file, _ line: UInt=#line) {
-    BNCSwiftLog.warning(message, file: file, line: line)
+    BNCLogMessageInternalSwift(.warning, file, line, message)
 }

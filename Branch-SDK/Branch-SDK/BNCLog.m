@@ -551,6 +551,15 @@ void BNCLogMessageInternal(
     }
 }
 
+void BNCLogMessageInternalSwift(
+                           BNCLogLevel logLevel,
+                           NSString *_Nonnull file,
+                           NSUInteger lineNumber,
+                           NSString *_Nonnull message
+                           ) {
+    BNCLogMessageInternal(logLevel, file.UTF8String, (int)lineNumber, @"%@", message);
+}
+
 void BNCLogFlushMessages() {
     if (BNCLogSynchronizeMessages()) {
         dispatch_sync(bnc_LogQueue, ^{
