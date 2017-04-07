@@ -38,12 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        var stringOptions = [String: Any]()
-        for option in options {
-            stringOptions[option.key.rawValue] = option.value
-        }
-
-        return Branch.getInstance().application(app, open: url, options: stringOptions)
+        return Branch.getInstance().application(app, open: url, options: options)
     }
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
