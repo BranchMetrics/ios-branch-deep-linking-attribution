@@ -21,6 +21,7 @@
 #import "BranchDeepLinkingController.h"
 #import "BNCCommerceEvent.h"
 #import "BranchShareLink.h"
+#import "BNCXcode7Support.h"
 
 /**
  `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.
@@ -375,7 +376,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
-            options:(NSDictionary</*UIApplicationOpenURLOptionsKey*/NSString*,id> *)options;
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options;
 
 ///--------------------------------
 /// @name Push Notification Support

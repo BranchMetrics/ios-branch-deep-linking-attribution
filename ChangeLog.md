@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+- v0.14.12
+  * Fixed headers for Swift compatibility AIS-242 (#615).
+
 - v0.14.11
   * *Master Release*
   * Added `BranchShareLink.h` to public headers.
