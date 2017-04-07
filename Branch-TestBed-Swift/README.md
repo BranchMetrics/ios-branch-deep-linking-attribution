@@ -8,6 +8,7 @@ It is available on the App Store: https://testbed-swift.app.link/appstore
 
 1. From the command line:
      - Clone the repo: `git clone https://github.com/BranchMetrics/ios-branch-deep-linking.git`
+     - `cd ios-branch-deep-linking/Branch-TestBed-Swift/`
 2. In Finder open: **TestBed-Swift.xcodeproj**
 3. In Xcode click on the root node of the project: TestBed-Swift
 4. Under Targets select TestBed-Swift, then the General tab
