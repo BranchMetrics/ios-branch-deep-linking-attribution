@@ -879,6 +879,20 @@ The majority of share options only include one string of text, except email, whi
 linkProperties.addControlParam("$email_subject", withValue: "Therapists hate him.")
 ```
 
+You can also optionally add HTML to the email option and customize the link text. If the link text is left out, the url itself is used
+
+```objc
+[linkProperties addControlParam:@"$email_html_header" withValue:@"<style>your awesome CSS</style>\nOr Dear Friend,"];
+[linkProperties addControlParam:@"$email_html_footer" withValue:@"Thanks!"];
+[linkProperties addControlParam:@"$email_html_link_text" withValue:@"Tap here"];
+```
+
+```swift
+linkProperties.addControlParam("$email_html_header", withValue: "<style>your awesome CSS</style>\nOr Dear Friend,")
+linkProperties.addControlParam("$email_html_footer", withValue: "Thanks!")
+linkProperties.addControlParam("$email_html_link_text", withValue: "Tap here")
+```
+
 #### Returns
 
 None

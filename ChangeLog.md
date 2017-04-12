@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+- v0.14.13
+  * Added Email HTML support to BranchActivityItemProvider 
+
 - v0.14.12
   * Fixed headers for Swift compatibility AIS-242 (#615).
 
