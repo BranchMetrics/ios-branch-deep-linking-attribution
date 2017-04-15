@@ -99,11 +99,11 @@
 		4DA577171E67B1D600A43BDD /* BNCLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA577151E67B1D600A43BDD /* BNCLog.h */; };
 		4DA577181E67B1D600A43BDD /* BNCLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA577161E67B1D600A43BDD /* BNCLog.m */; };
 		4DA5771A1E67B1EB00A43BDD /* BNCLog.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA577191E67B1EB00A43BDD /* BNCLog.Test.m */; };
-		4DA5771D1E67B22700A43BDD /* BNCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA5771C1E67B22700A43BDD /* BNCDebug.m */; };
 		4DA5771F1E67B23D00A43BDD /* BNCDebug.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA5771E1E67B23D00A43BDD /* BNCDebug.Test.m */; };
 		4DA577221E67B28700A43BDD /* NSString+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA577211E67B28700A43BDD /* NSString+Branch.m */; };
 		4DA577241E67B2A000A43BDD /* NSString+Branch.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA577231E67B2A000A43BDD /* NSString+Branch.Test.m */; };
 		4DA577261E688C6000A43BDD /* Branch-SDK-Tests.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4DA577251E688C6000A43BDD /* Branch-SDK-Tests.strings */; };
+		4DA80E9F1EA1A74F00440F52 /* BNCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA5771C1E67B22700A43BDD /* BNCDebug.m */; };
 		4DB567331E79F46000A8A324 /* BranchShareLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB567311E79F46000A8A324 /* BranchShareLink.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DB567341E79F46000A8A324 /* BranchShareLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB567321E79F46000A8A324 /* BranchShareLink.m */; };
 		4DDC52621DCC08E700CFB737 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DDC52611DCC08E700CFB737 /* iAd.framework */; };
@@ -903,6 +903,7 @@
 				463F0A421B20A663004235D2 /* BranchInstallRequest.m in Sources */,
 				4D35141C1E3201D80085EBA1 /* NSMutableDictionary+Branch.m in Sources */,
 				7D0C97191D8753C9004E14B1 /* BranchContentDiscoverer.m in Sources */,
+				4DA80E9F1EA1A74F00440F52 /* BNCDebug.m in Sources */,
 				466B58661B17779C00A69EDE /* BNCServerResponse.m in Sources */,
 				466B58681B17779C00A69EDE /* BNCLinkData.m in Sources */,
 				54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */,
@@ -961,7 +962,6 @@
 				46DBB4391B34B22F00642FC8 /* BranchCloseRequestTests.m in Sources */,
 				46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */,
 				4DA577241E67B2A000A43BDD /* NSString+Branch.Test.m in Sources */,
-				4DA5771D1E67B22700A43BDD /* BNCDebug.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
