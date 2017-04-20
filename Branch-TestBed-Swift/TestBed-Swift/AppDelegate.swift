@@ -89,7 +89,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let branchHandled = Branch.getInstance().application(application,
             open: url,
             sourceApplication: sourceApplication,
-            annotation: annotation)
+            annotation: annotation
+        )
         if (!branchHandled) {
             // If not handled by Branch, do other deep link routing for the Facebook SDK, Pinterest SDK, etc
         }
