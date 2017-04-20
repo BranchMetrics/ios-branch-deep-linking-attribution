@@ -142,7 +142,7 @@
         if ([ret isKindOfClass:[NSString class]])
             appDomainLinkURL = [NSString stringWithFormat:@"https://%@", ret];
     } else {
-        appDomainLinkURL = BNC_LINK_URL;
+        appDomainLinkURL = BNC_STRONG_MATCH_URL;
     }
     NSMutableString *urlString =
         [[NSMutableString alloc] initWithFormat:@"%@/_strong_match?os=%@",
