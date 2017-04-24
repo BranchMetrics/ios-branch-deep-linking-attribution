@@ -47,7 +47,7 @@ struct PlanetData {
         guard let title = branchUniversalObject.title,
             let urlString = branchUniversalObject.canonicalUrl,
             let url = URL(string: urlString) else {
-            print("Could not get required data from BranchUniversalObject")
+            BNCLogWarning("Could not get required data from BranchUniversalObject")
             return nil
         }
 

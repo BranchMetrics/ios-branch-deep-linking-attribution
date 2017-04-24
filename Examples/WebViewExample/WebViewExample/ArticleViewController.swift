@@ -64,7 +64,7 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
 
         // Log a BNCRegisterViewEvent each time the user views the page.
         buo.userCompletedAction(BNCRegisterViewEvent)
-        print("Logged BNCRegisterViewEvent on BUO")
+        BNCLog("Logged BNCRegisterViewEvent on BUO")
     }
 
     // MARK: - ArticleViewDelegate
@@ -79,7 +79,7 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
 
         buo.showShareSheet(with: linkProperties, andShareText: "Read about the planet \(planetData.title).", from: self) {
             channel, success in
-            print("Share to channel \(channel ?? "(nil)") complete. success = \(success)")
+            BNCLog("Share to channel \(channel ?? "(nil)") complete. success = \(success)")
         }
     }
 
@@ -89,6 +89,6 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
         // Initialization and configuration.
         buo = BranchUniversalObject(planetData: planetData)
         
-        print("Created Branch Universal Object")
+        BNCLog("Created Branch Universal Object")
     }
 }

@@ -17,6 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - UIApplicationDelegate methods
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        BNCLogSetOutputFunction(nil)
+
         // Store the NavigationController for later link routing.
         navigationController = window?.rootViewController as? NavigationController
 
@@ -24,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Branch.getInstance().initSession(launchOptions: launchOptions) {
             (buo: BranchUniversalObject?, linkProperties: BranchLinkProperties?, error: Error?) in
             guard error == nil else {
-                print("Error from Branch: \(error!)")
+                BNCLogError("Error from Branch: \(error!)")
                 return
             }
 
