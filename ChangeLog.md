@@ -8,7 +8,9 @@ Branch iOS SDK Change Log
     - Added environment parameters to control the test cases without re-compiling.
     - Standardized test cases.
     - All tests pass.
-  * Updated README.md SDK integration documentation.
+  * Updated README.md SDK integration documentation to include the new
+    `[Branch application:openURL:sourceApplication:annotation:annotation]` method.
+  * Added Email HTML support to BranchActivityItemProvider.
 
 - v0.14.12
   * Fixed headers for Swift compatibility AIS-242 (#615).
