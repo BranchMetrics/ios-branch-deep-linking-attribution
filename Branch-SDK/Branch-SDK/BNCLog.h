@@ -122,8 +122,8 @@ extern BNCLogFlushFunctionPtr _Nullable BNCLogFlushFunction();
 #pragma mark - BNCLogMessageInternal
 
 
-/// The main logging function used in the logging defines.
-extern void BNCLogMessageInternal(
+/// The main logging function used in the variadic logging defines.
+extern void BNCLogMessageInternalFormat(
     BNCLogLevel logLevel,
     const char *_Nullable sourceFileName,
     int sourceLineNumber,
@@ -131,8 +131,8 @@ extern void BNCLogMessageInternal(
     ...
 );
 
-/// Swift-friendly wrapper for BNCLogMessageInternal
-extern void BNCLogMessageInternalSwift(
+/// Swift-friendly wrapper for BNCLogMessageInternalFormat
+extern void BNCLogMessageInternal(
     BNCLogLevel logLevel,
     NSString *_Nonnull sourceFileName,
     NSUInteger sourceLineNumber,
@@ -149,25 +149,25 @@ extern void BNCLogFlushMessages();
 
 ///@param format Log a debug message with the specified formatting.
 #define BNCLogDebug(...) \
-    do  { BNCLogMessageInternal(BNCLogLevelDebug, __FILE__, __LINE__, __VA_ARGS__); } while (0)
+    do  { BNCLogMessageInternalFormat(BNCLogLevelDebug, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
 ///@param format Log a warning message with the specified formatting.
 #define BNCLogWarning(...) \
-    do  { BNCLogMessageInternal(BNCLogLevelWarning, __FILE__, __LINE__, __VA_ARGS__); } while (0)
+    do  { BNCLogMessageInternalFormat(BNCLogLevelWarning, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
 ///@param format Log an error message with the specified formatting.
 #define BNCLogError(...) \
-    do  { BNCLogMessageInternal(BNCLogLevelError, __FILE__, __LINE__, __VA_ARGS__); } while (0)
+    do  { BNCLogMessageInternalFormat(BNCLogLevelError, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
 ///@param format Log a message with the specified formatting.
 #define BNCLog(...) \
-    do  { BNCLogMessageInternal(BNCLogLevelLog, __FILE__, __LINE__, __VA_ARGS__); } while (0)
+    do  { BNCLogMessageInternalFormat(BNCLogLevelLog, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
 ///Cause a programmatic breakpoint if breakpoints are enabled.
 #define BNCLogBreakPoint() \
     do  { \
         if (BNCLogBreakPointsAreEnabled()) { \
-            BNCLogMessageInternal(BNCLogLevelBreakPoint, __FILE__, __LINE__, @"Programmatic breakpoint."); \
+            BNCLogMessageInternalFormat(BNCLogLevelBreakPoint, __FILE__, __LINE__, @"Programmatic breakpoint."); \
             if (BNCDebuggerIsAttached()) { \
                 BNCLogFlushMessages(); \
                 BNCDebugBreakpoint(); \
@@ -179,7 +179,7 @@ extern void BNCLogFlushMessages();
 #define BNCBreakPointWithMessage(...) \
     do  { \
         if (BNCLogBreakPointsAreEnabled() { \
-            BNCLogMessageInternal(BNCLogLevelBreakPoint, __FILE__, __LINE__, __VA_ARGS__); \
+            BNCLogMessageInternalFormat(BNCLogLevelBreakPoint, __FILE__, __LINE__, __VA_ARGS__); \
             if (BNCDebuggerIsAttached()) { \
                 BNCLogFlushMessages(); \
                 BNCDebugBreakpoint(); \
@@ -191,7 +191,7 @@ extern void BNCLogFlushMessages();
 #define BNCLogAssert(condition) \
     do  { \
         if (!(condition)) { \
-            BNCLogMessageInternal(BNCLogLevelAssert, __FILE__, __LINE__, @"(%s) !!!", #condition); \
+            BNCLogMessageInternalFormat(BNCLogLevelAssert, __FILE__, __LINE__, @"(%s) !!!", #condition); \
             if (BNCLogBreakPointsAreEnabled() && BNCDebuggerIsAttached()) { \
                 BNCLogFlushMessages(); \
                 BNCDebugBreakpoint(); \
@@ -205,7 +205,7 @@ extern void BNCLogFlushMessages();
     do  { \
         if (!(condition)) { \
             NSString *m = [NSString stringWithFormat:message, __VA_ARGS__]; \
-            BNCLogMessageInternal(BNCLogLevelAssert, __FILE__, __LINE__, @"(%s) !!! %@", #condition, m); \
+            BNCLogMessageInternalFormat(BNCLogLevelAssert, __FILE__, __LINE__, @"(%s) !!! %@", #condition, m); \
             if (BNCLogBreakPointsAreEnabled() && BNCDebuggerIsAttached()) { \
                 BNCLogFlushMessages(); \
                 BNCDebugBreakpoint(); \
