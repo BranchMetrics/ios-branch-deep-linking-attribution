@@ -498,7 +498,7 @@ void BNCLogSetFlushFunction(BNCLogFlushFunctionPtr flushFunction) {
 
 static dispatch_queue_t bnc_LogQueue = nil;
 
-void BNCLogMessageInternalFormat(
+void BNCLogWriteMessageFormat(
         BNCLogLevel logLevel,
         const char *_Nullable file,
         int lineNumber,
@@ -551,13 +551,13 @@ void BNCLogMessageInternalFormat(
     }
 }
 
-void BNCLogMessageInternal(
+void BNCLogWriteMessage(
                            BNCLogLevel logLevel,
                            NSString *_Nonnull file,
                            NSUInteger lineNumber,
                            NSString *_Nonnull message
                            ) {
-    BNCLogMessageInternalFormat(logLevel, file.UTF8String, (int)lineNumber, @"%@", message);
+    BNCLogWriteMessageFormat(logLevel, file.UTF8String, (int)lineNumber, @"%@", message);
 }
 
 void BNCLogFlushMessages() {

@@ -119,11 +119,11 @@ extern void BNCLogSetFlushFunction(BNCLogFlushFunctionPtr _Nullable flushFunctio
 extern BNCLogFlushFunctionPtr _Nullable BNCLogFlushFunction();
 
 
-#pragma mark - BNCLogMessageInternal
+#pragma mark - BNCLogWriteMessage
 
 
 /// The main logging function used in the variadic logging defines.
-extern void BNCLogMessageInternalFormat(
+extern void BNCLogWriteMessageFormat(
     BNCLogLevel logLevel,
     const char *_Nullable sourceFileName,
     int sourceLineNumber,
@@ -131,8 +131,8 @@ extern void BNCLogMessageInternalFormat(
     ...
 );
 
-/// Swift-friendly wrapper for BNCLogMessageInternalFormat
-extern void BNCLogMessageInternal(
+/// Swift-friendly wrapper for BNCLogWriteMessageFormat
+extern void BNCLogWriteMessage(
     BNCLogLevel logLevel,
     NSString *_Nonnull sourceFileName,
     NSUInteger sourceLineNumber,
@@ -149,25 +149,25 @@ extern void BNCLogFlushMessages();
 
 ///@param format Log a debug message with the specified formatting.
 #define BNCLogDebug(...) \
-    do  { BNCLogMessageInternalFormat(BNCLogLevelDebug, __FILE__, __LINE__, __VA_ARGS__); } while (0)
+    do  { BNCLogWriteMessageFormat(BNCLogLevelDebug, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
 ///@param format Log a warning message with the specified formatting.
 #define BNCLogWarning(...) \
-    do  { BNCLogMessageInternalFormat(BNCLogLevelWarning, __FILE__, __LINE__, __VA_ARGS__); } while (0)
+    do  { BNCLogWriteMessageFormat(BNCLogLevelWarning, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
 ///@param format Log an error message with the specified formatting.
 #define BNCLogError(...) \
-    do  { BNCLogMessageInternalFormat(BNCLogLevelError, __FILE__, __LINE__, __VA_ARGS__); } while (0)
+    do  { BNCLogWriteMessageFormat(BNCLogLevelError, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
 ///@param format Log a message with the specified formatting.
 #define BNCLog(...) \
-    do  { BNCLogMessageInternalFormat(BNCLogLevelLog, __FILE__, __LINE__, __VA_ARGS__); } while (0)
+    do  { BNCLogWriteMessageFormat(BNCLogLevelLog, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
 ///Cause a programmatic breakpoint if breakpoints are enabled.
 #define BNCLogBreakPoint() \
     do  { \
         if (BNCLogBreakPointsAreEnabled()) { \
-            BNCLogMessageInternalFormat(BNCLogLevelBreakPoint, __FILE__, __LINE__, @"Programmatic breakpoint."); \
+            BNCLogWriteMessageFormat(BNCLogLevelBreakPoint, __FILE__, __LINE__, @"Programmatic breakpoint."); \
             if (BNCDebuggerIsAttached()) { \
                 BNCLogFlushMessages(); \
                 BNCDebugBreakpoint(); \
@@ -179,7 +179,7 @@ extern void BNCLogFlushMessages();
 #define BNCBreakPointWithMessage(...) \
     do  { \
         if (BNCLogBreakPointsAreEnabled() { \
-            BNCLogMessageInternalFormat(BNCLogLevelBreakPoint, __FILE__, __LINE__, __VA_ARGS__); \
+            BNCLogWriteMessageFormat(BNCLogLevelBreakPoint, __FILE__, __LINE__, __VA_ARGS__); \
             if (BNCDebuggerIsAttached()) { \
                 BNCLogFlushMessages(); \
                 BNCDebugBreakpoint(); \
@@ -191,7 +191,7 @@ extern void BNCLogFlushMessages();
 #define BNCLogAssert(condition) \
     do  { \
         if (!(condition)) { \
-            BNCLogMessageInternalFormat(BNCLogLevelAssert, __FILE__, __LINE__, @"(%s) !!!", #condition); \
+            BNCLogWriteMessageFormat(BNCLogLevelAssert, __FILE__, __LINE__, @"(%s) !!!", #condition); \
             if (BNCLogBreakPointsAreEnabled() && BNCDebuggerIsAttached()) { \
                 BNCLogFlushMessages(); \
                 BNCDebugBreakpoint(); \
@@ -205,7 +205,7 @@ extern void BNCLogFlushMessages();
     do  { \
         if (!(condition)) { \
             NSString *m = [NSString stringWithFormat:message, __VA_ARGS__]; \
-            BNCLogMessageInternalFormat(BNCLogLevelAssert, __FILE__, __LINE__, @"(%s) !!! %@", #condition, m); \
+            BNCLogWriteMessageFormat(BNCLogLevelAssert, __FILE__, __LINE__, @"(%s) !!! %@", #condition, m); \
             if (BNCLogBreakPointsAreEnabled() && BNCDebuggerIsAttached()) { \
                 BNCLogFlushMessages(); \
                 BNCDebugBreakpoint(); \

@@ -16,7 +16,7 @@ import Branch
  *   - line: (unused) provides the Swift line number
  */
 func BNCLogDebug(_ message: String, _ file: String=#file, _ line: UInt=#line) {
-    BNCLogMessageInternal(.debug, file, line, message)
+    BNCLogWriteMessage(.debug, file, line, message)
 }
 
 /**
@@ -27,7 +27,7 @@ func BNCLogDebug(_ message: String, _ file: String=#file, _ line: UInt=#line) {
  *   - line: (unused) provides the Swift line number
  */
 func BNCLogError(_ message: String, _ file: String=#file, _ line: UInt=#line) {
-    BNCLogMessageInternal(.error, file, line, message)
+    BNCLogWriteMessage(.error, file, line, message)
 }
 
 /**
@@ -38,7 +38,7 @@ func BNCLogError(_ message: String, _ file: String=#file, _ line: UInt=#line) {
  *   - line: (unused) provides the Swift line number
  */
 func BNCLog(_ message: String, _ file: String=#file, _ line: UInt=#line) {
-    BNCLogMessageInternal(.log, file, line, message)
+    BNCLogWriteMessage(.log, file, line, message)
 }
 
 /**
@@ -49,5 +49,5 @@ func BNCLog(_ message: String, _ file: String=#file, _ line: UInt=#line) {
  *   - line: (unused) provides the Swift line number
  */
 func BNCLogWarning(_ message: String, _ file: String=#file, _ line: UInt=#line) {
-    BNCLogMessageInternal(.warning, file, line, message)
+    BNCLogWriteMessage(.warning, file, line, message)
 }
