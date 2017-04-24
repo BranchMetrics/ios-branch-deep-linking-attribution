@@ -1,5 +1,5 @@
 //
-//  BranchTest.h
+//  BNCTestCase.h
 //  Branch-TestBed
 //
 //  Created by Graham Mueller on 4/27/15.
@@ -18,13 +18,22 @@ static inline void BNCAfterSecondsPerformBlock(NSTimeInterval seconds, dispatch_
 	dispatch_after(BNCDispatchTimeFromSeconds(seconds), dispatch_get_main_queue(), block);
 }
 
+static inline void BNCSleepForTimeInterval(NSTimeInterval seconds) {
+    double secPart = trunc(seconds);
+    double nanoPart = trunc((seconds - secPart) * ((double)NSEC_PER_SEC));
+    struct timespec sleepTime;
+    sleepTime.tv_sec = (typeof(sleepTime.tv_sec)) secPart;
+    sleepTime.tv_nsec = (typeof(sleepTime.tv_nsec)) nanoPart;
+    nanosleep(&sleepTime, NULL);
+}
 
-@interface BranchTest : XCTestCase
+
+@interface BNCTestCase : XCTestCase
 
 - (void)safelyFulfillExpectation:(XCTestExpectation *)expectation;
 - (void)awaitExpectations;
 - (void)resetExpectations;
-
 - (id)stringMatchingPattern:(NSString *)pattern;
 
++ (BOOL) testBreakpoints;
 @end

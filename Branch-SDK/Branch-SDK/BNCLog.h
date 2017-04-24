@@ -131,6 +131,14 @@ extern void BNCLogMessageInternal(
     ...
 );
 
+/// Swift-friendly wrapper for BNCLogMessageInternal
+extern void BNCLogMessageInternalSwift(
+    BNCLogLevel logLevel,
+    NSString *_Nonnull sourceFileName,
+    NSUInteger sourceLineNumber,
+    NSString *_Nonnull message
+);
+
 /// This function synchronizes all outstanding log messages and writes them to the logging function
 /// set by BNCLogSetOutputFunction.
 extern void BNCLogFlushMessages();

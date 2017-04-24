@@ -15,9 +15,10 @@
 #import "BNCServerInterface.h"
 #import "BNCEncodingUtils.h"
 #import "BNCServerRequestQueue.h"
+#import "BNCTestCase.h"
 
 
-@interface BranchSDKLoadTests : XCTestCase
+@interface BranchSDKLoadTests : BNCTestCase
 @end
 
 

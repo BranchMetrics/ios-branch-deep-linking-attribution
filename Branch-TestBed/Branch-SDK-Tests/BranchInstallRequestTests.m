@@ -6,15 +6,14 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BranchTest.h"
+#import "BNCTestCase.h"
 #import "BranchInstallRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
 #import <OCMock/OCMock.h>
 
-@interface BranchInstallRequestTests : BranchTest
-
+@interface BranchInstallRequestTests : BNCTestCase
 @end
 
 @implementation BranchInstallRequestTests

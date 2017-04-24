@@ -6,14 +6,13 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BranchTest.h"
+#import "BNCTestCase.h"
 #import "BNCServerRequestQueue.h"
 #import "BranchOpenRequest.h"
 #import "BranchCloseRequest.h"
 #import <OCMock/OCMock.h>
 
-@interface BNCServerRequestQueueTests : BranchTest
-
+@interface BNCServerRequestQueueTests : BNCTestCase
 @end
 
 @implementation BNCServerRequestQueueTests
@@ -114,7 +113,15 @@
     [requestQueueMock verify];
 }
 
-#pragma mark - Retrieve Tests
+#pragma mark - Persist Tests
+
+- (void)testPersistEventually {
+    BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
+    [queue persistEventually];
+    XCTAssert(queue.isDirty);
+    sleep(4);
+    XCTAssert(!queue.isDirty);
+}
 
 - (void)testPersistWhenArchiveFails {
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
@@ -136,61 +143,64 @@
     
     [self awaitExpectations];
     [archiverMock verify];
-    [archiverMock stopMocking];
 }
 
 - (void)testCloseRequestsArentPersisted {
-    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    BranchCloseRequest *closeRequest = [[BranchCloseRequest alloc] init];
-    
-    [requestQueue enqueue:closeRequest];
+    @autoreleasepool {
+        XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
 
-    XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
+        id archiverMock = OCMClassMock([NSKeyedArchiver class]);
+        [[archiverMock reject] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
+        [[[archiverMock expect]
+            andReturn:[NSData data]]
+                archivedDataWithRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) {
+                    if ([reqs isKindOfClass:[NSArray class]]) {
+                        XCTAssert(reqs.count == 0);
+                        BNCAfterSecondsPerformBlock(0.01, ^{ [self safelyFulfillExpectation:expectation]; });
+                        return YES;
+                    }
+                    return NO;
+                }]];
 
-    id archiverMock = OCMClassMock([NSKeyedArchiver class]);
-    [[archiverMock reject] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
-    [[[archiverMock expect]
-        andReturn:[NSData data]]
-            archivedDataWithRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) {
-                if ([reqs isKindOfClass:[NSArray class]]) {
-                    XCTAssert(reqs.count == 0);
-                    BNCAfterSecondsPerformBlock(0.01, ^{ [self safelyFulfillExpectation:expectation]; });
-                    return YES;
-                }
-                return NO;
-            }]];
-    [requestQueue persistImmediately];
-    
-    // Wait for operation to occur    
-    [self awaitExpectations];
-    [archiverMock verify];
-    [archiverMock stopMocking];
+        BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
+        BranchCloseRequest *closeRequest = [[BranchCloseRequest alloc] init];
+        [requestQueue enqueue:closeRequest];
+        [requestQueue persistImmediately];
+        
+        // Wait for operation to occur    
+        [self awaitExpectations];
+        [archiverMock verify];
+        BNCSleepForTimeInterval(0.001); // Allow for mock class to be un-mocked.
+    }
 }
 
 - (void)testDebugRequestsArentPersisted {
-    BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
+    @autoreleasepool {
+        XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
+        id archiverMock = OCMClassMock([NSKeyedArchiver class]);
+        [[archiverMock reject] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
+        [[[archiverMock expect]
+            andReturn:[NSData data]]
+                archivedDataWithRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) {
+                    if ([reqs isKindOfClass:[NSArray class]]) {
+                        XCTAssert(reqs.count == 0);
+                        BNCAfterSecondsPerformBlock(0.01, ^{ [self safelyFulfillExpectation:expectation]; });
+                        return YES;
+                    }
+                    return NO;
+                }]];
+                
+        BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
+        [requestQueue persistImmediately];
 
-    XCTestExpectation *expectation = [self expectationWithDescription:@"PersistExpectation"];
-
-    id archiverMock = OCMClassMock([NSKeyedArchiver class]);
-    [[archiverMock reject] archiveRootObject:[OCMArg any] toFile:[OCMArg any]];
-    [[[archiverMock expect]
-        andReturn:[NSData data]]
-            archivedDataWithRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) {
-                if ([reqs isKindOfClass:[NSArray class]]) {
-                    XCTAssert(reqs.count == 0);
-                    BNCAfterSecondsPerformBlock(0.01, ^{ [self safelyFulfillExpectation:expectation]; });
-                    return YES;
-                }
-                return NO;
-            }]];
-    [requestQueue persistImmediately];
-
-    // Wait for operation to occur    
-    [self awaitExpectations];
-    [archiverMock verify];
-    [archiverMock stopMocking];
+        // Wait for operation to occur    
+        [self awaitExpectations];
+        [archiverMock verify];
+        BNCSleepForTimeInterval(0.001); // Allow for mock class to be un-mocked.
+    }
 }
+
+#pragma mark - Retrieve Tests
 
 - (void)testRetrieveFailWhenReadingData {
 
@@ -257,7 +267,7 @@
 
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
     [queue performSelector:@selector(retrieve)];
-    XCTAssertEqual([queue size], 1);
+    XCTAssertEqual([queue queueDepth], 1);
     [nsdataMock verify];
 }
 

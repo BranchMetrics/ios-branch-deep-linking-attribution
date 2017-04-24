@@ -1,21 +1,19 @@
 //
-//  BranchTest.m
+//  BNCTestCase.m
 //  Branch-TestBed
 //
 //  Created by Graham Mueller on 4/27/15.
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BranchTest.h"
+#import "BNCTestCase.h"
 #import "BNCPreferenceHelper.h"
 
-@interface BranchTest ()
-
+@interface BNCTestCase ()
 @property (assign, nonatomic) BOOL hasExceededExpectations;
-
 @end
 
-@implementation BranchTest
+@implementation BNCTestCase
 
 + (void)setUp {
     [super setUp];
@@ -24,15 +22,12 @@
     if (!preferenceHelper.deviceFingerprintID) {
         preferenceHelper.deviceFingerprintID = @"foo_fingerprint";
     }
-
     if (!preferenceHelper.identityID) {
         preferenceHelper.identityID = @"foo_identity";
     }
-
     if (!preferenceHelper.sessionID) {
         preferenceHelper.sessionID = @"foo_sesion";
     }
-    
     preferenceHelper.isDebug = NO;
 }
 
@@ -42,7 +37,7 @@
 }
 
 - (void) testFailure {
-    // Un-comment to test a failure case:
+    // Un-comment the next line to test a failure case:
     // XCTAssert(NO, @"Testing a test failure!");
     NSString * bundleID = [NSBundle mainBundle].bundleIdentifier;
     NSLog(@"The test bundleID is '%@'.", bundleID);
@@ -75,6 +70,25 @@
         return [regex numberOfMatchesInString:param
             options:kNilOptions range:NSMakeRange(0, param.length)] > 0;
     }];
+}
+
+static BOOL _testBreakpoints = NO;
+
++ (BOOL) testBreakpoints {
+    return _testBreakpoints;
+}
+
++ (void) initialize {
+    if (self != [BNCTestCase self]) return;
+
+    // Load test options from environment variables:
+
+    NSDictionary<NSString*, NSString*> *environment = [NSProcessInfo processInfo].environment;
+
+    NSString *BNCTestBreakpoints = environment[@"BNCTestBreakpoints"];
+    if ([BNCTestBreakpoints boolValue]) {
+        _testBreakpoints = YES;
+    }
 }
 
 @end

@@ -6,35 +6,46 @@
 //
 //
 
+
 #import "BNCServerRequestQueue.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchCloseRequest.h"
 #import "BranchOpenRequest.h"
 
+
 NSString * const BRANCH_QUEUE_FILE = @"BNCServerRequestQueue";
-NSUInteger const BATCH_WRITE_TIMEOUT = 3;
+NSTimeInterval const BATCH_WRITE_TIMEOUT = 3.0;
+
+
+static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
+    return interval * ((NSTimeInterval) NSEC_PER_SEC);
+}
+
 
 @interface BNCServerRequestQueue()
-
-@property (nonatomic, strong) NSMutableArray *queue;
-@property (nonatomic) dispatch_queue_t asyncQueue;
-@property (strong, nonatomic) NSTimer *writeTimer;
-
+@property (strong) NSMutableArray *queue;
+@property (strong) dispatch_queue_t asyncQueue;
+@property (strong) dispatch_source_t persistTimer;
 @end
 
 
 @implementation BNCServerRequestQueue
 
 - (id)init {
-    if (self = [super init]) {
-        self.queue = [NSMutableArray array];
-        self.asyncQueue = dispatch_queue_create("brnch_persist_queue", NULL);
-    }
+    self = [super init];
+    if (!self) return self;
+
+    self.queue = [NSMutableArray array];
+    self.asyncQueue = dispatch_queue_create("io.branch.persist_queue", DISPATCH_QUEUE_SERIAL);
     return self;
 }
 
+- (void) dealloc {
+    [self persistImmediately];
+}
+
 - (void)enqueue:(BNCServerRequest *)request {
-    @synchronized(self.queue) {
+    @synchronized (self) {
         if (request) {
             [self.queue addObject:request];
             [self persistEventually];
@@ -43,12 +54,11 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 }
 
 - (void)insert:(BNCServerRequest *)request at:(unsigned int)index {
-    @synchronized(self.queue) {
+    @synchronized (self) {
         if (index > self.queue.count) {
             [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
             return;
         }
-        
         if (request) {
             [self.queue insertObject:request atIndex:index];
             [self persistEventually];
@@ -57,38 +67,39 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 }
 
 - (BNCServerRequest *)dequeue {
-    BNCServerRequest *request = nil;
-    
-    @synchronized(self.queue) {
+    @synchronized (self) {
+        BNCServerRequest *request = nil;
         if (self.queue.count > 0) {
             request = [self.queue objectAtIndex:0];
             [self.queue removeObjectAtIndex:0];
             [self persistEventually];
         }
-    }
-    
     return request;
+    }
 }
 
 - (BNCServerRequest *)removeAt:(unsigned int)index {
-    BNCServerRequest *request = nil;
-    @synchronized(self.queue) {
+    @synchronized (self) {
+        BNCServerRequest *request = nil;
         if (index >= self.queue.count) {
-            [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
+            [[BNCPreferenceHelper preferenceHelper]
+                log:FILE_NAME line:LINE_NUM
+                    message:@"Invalid queue operation: index out of bound!"];
             return nil;
         }
         
         request = [self.queue objectAtIndex:index];
         [self.queue removeObjectAtIndex:index];
         [self persistEventually];
+        return request;
     }
-    
-    return request;
 }
 
 - (void)remove:(BNCServerRequest *)request {
-    [self.queue removeObject:request];
-    [self persistEventually];
+    @synchronized (self) {
+        [self.queue removeObject:request];
+        [self persistEventually];
+    }
 }
 
 - (BNCServerRequest *)peek {
@@ -96,19 +107,25 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 }
 
 - (BNCServerRequest *)peekAt:(unsigned int)index {
-    if (index >= self.queue.count) {
-        [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
-        return nil;
+    @synchronized (self) {
+        if (index >= self.queue.count) {
+            [[BNCPreferenceHelper preferenceHelper]
+                log:FILE_NAME line:LINE_NUM
+                    message:@"Invalid queue operation: index out of bound!"];
+            return nil;
+        }
+        
+        BNCServerRequest *request = nil;
+        request = [self.queue objectAtIndex:index];
+        
+        return request;
     }
-    
-    BNCServerRequest *request = nil;
-    request = [self.queue objectAtIndex:index];
-    
-    return request;
 }
 
-- (unsigned int)size {
-    return (unsigned int)self.queue.count;
+- (NSInteger)queueDepth {
+    @synchronized (self) {
+        return (NSInteger) self.queue.count;
+    }
 }
 
 - (NSString *)description {
@@ -116,23 +133,27 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 }
 
 - (void)clearQueue {
-    [self.queue removeAllObjects];
-    [self persistEventually];
+    @synchronized (self) {
+        [self.queue removeAllObjects];
+        [self persistEventually];
+    }
 }
 
 - (BOOL)containsInstallOrOpen {
-    for (int i = 0; i < self.queue.count; i++) {
-        BNCServerRequest *req = [self.queue objectAtIndex:i];
-        // Install extends open, so only need to check open.
-        if ([req isKindOfClass:[BranchOpenRequest class]]) {
-            return YES;
+    @synchronized (self) {
+        for (int i = 0; i < self.queue.count; i++) {
+            BNCServerRequest *req = [self.queue objectAtIndex:i];
+            // Install extends open, so only need to check open.
+            if ([req isKindOfClass:[BranchOpenRequest class]]) {
+                return YES;
+            }
         }
+        return NO;
     }
-    return NO;
 }
 
 - (BOOL)removeInstallOrOpen {
-    @synchronized (self.queue) {
+    @synchronized (self) {
         for (int i = 0; i < self.queue.count; i++) {
             BranchOpenRequest *req = [self.queue objectAtIndex:i];
             // Install extends open, so only need to check open.
@@ -147,67 +168,84 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
 }
 
 - (BranchOpenRequest *)moveInstallOrOpenToFront:(NSInteger)networkCount {
-    BOOL requestAlreadyInProgress = networkCount > 0;
+    @synchronized (self) {
 
-    BNCServerRequest *openOrInstallRequest;
-    for (int i = 0; i < self.queue.count; i++) {
-        BNCServerRequest *req = [self.queue objectAtIndex:i];
-        if ([req isKindOfClass:[BranchOpenRequest class]]) {
-            
-            // Already in front, nothing to do
-            if (i == 0 || (i == 1 && requestAlreadyInProgress)) {
-                return (BranchOpenRequest *)req;
+        BOOL requestAlreadyInProgress = networkCount > 0;
+
+        BNCServerRequest *openOrInstallRequest;
+        for (int i = 0; i < self.queue.count; i++) {
+            BNCServerRequest *req = [self.queue objectAtIndex:i];
+            if ([req isKindOfClass:[BranchOpenRequest class]]) {
+                
+                // Already in front, nothing to do
+                if (i == 0 || (i == 1 && requestAlreadyInProgress)) {
+                    return (BranchOpenRequest *)req;
+                }
+
+                // Otherwise, pull this request out and stop early
+                openOrInstallRequest = [self removeAt:i];
+                break;
             }
-
-            // Otherwise, pull this request out and stop early
-            openOrInstallRequest = [self removeAt:i];
-            break;
         }
+        
+        if (!openOrInstallRequest) {
+            [[BNCPreferenceHelper preferenceHelper]
+                logWarning:@"No install or open request in queue while trying to move it to the front"];
+            return nil;
+        }
+        
+        if (!requestAlreadyInProgress || !self.queue.count) {
+            [self insert:openOrInstallRequest at:0];
+        }
+        else {
+            [self insert:openOrInstallRequest at:1];
+        }
+        
+        return (BranchOpenRequest *)openOrInstallRequest;
     }
-    
-    if (!openOrInstallRequest) {
-        [[BNCPreferenceHelper preferenceHelper] logWarning:@"No install or open request in queue while trying to move it to the front"];
-        return nil;
-    }
-    
-    if (!requestAlreadyInProgress || !self.queue.count) {
-        [self insert:openOrInstallRequest at:0];
-    }
-    else {
-        [self insert:openOrInstallRequest at:1];
-    }
-    
-    return (BranchOpenRequest *)openOrInstallRequest;
 }
 
 - (BOOL)containsClose {
-    for (int i = 0; i < self.queue.count; i++) {
-        BNCServerRequest *req = [self.queue objectAtIndex:i];
-        if ([req isKindOfClass:[BranchCloseRequest class]]) {
-            return YES;
+    @synchronized (self) {
+        for (int i = 0; i < self.queue.count; i++) {
+            BNCServerRequest *req = [self.queue objectAtIndex:i];
+            if ([req isKindOfClass:[BranchCloseRequest class]]) {
+                return YES;
+            }
         }
+        return NO;
     }
-
-    return NO;
 }
 
-
-#pragma mark - Private method
+#pragma mark - Private Methods
 
 - (void)persistEventually {
-    if (!self.writeTimer.valid) {
-        self.writeTimer = [NSTimer scheduledTimerWithTimeInterval:BATCH_WRITE_TIMEOUT target:self selector:@selector(persistToDisk) userInfo:nil repeats:NO];
+    @synchronized (self) {
+        if (self.persistTimer) return;
+
+        self.persistTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, self.asyncQueue);
+        if (!self.persistTimer) return;
+
+        dispatch_time_t startTime =
+            dispatch_time(DISPATCH_TIME_NOW, BNCNanoSecondsFromTimeInterval(BATCH_WRITE_TIMEOUT));
+        dispatch_source_set_timer(
+            self.persistTimer,
+            startTime,
+            BNCNanoSecondsFromTimeInterval(BATCH_WRITE_TIMEOUT),
+            BNCNanoSecondsFromTimeInterval(BATCH_WRITE_TIMEOUT / 10.0)
+        );
+        dispatch_source_set_event_handler(self.persistTimer, ^ { [self persistImmediately]; });
+        dispatch_resume(self.persistTimer);
     }
 }
 
 - (void)persistImmediately {
-    [self.writeTimer invalidate];
-    [self persistToDisk];
-}
-
-- (void)persistToDisk {
-    NSArray *requestsToPersist = [self.queue copy];
-    dispatch_async(self.asyncQueue, ^ {
+    @synchronized (self) {
+        if (self.persistTimer) {
+            dispatch_source_cancel(self.persistTimer);
+            self.persistTimer = nil;
+        }
+        NSArray *requestsToPersist = [self.queue copy];
         @try {
             NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
             for (BNCServerRequest *req in requestsToPersist) {
@@ -236,72 +274,82 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
             NSString *warningMessage =
                 [NSString stringWithFormat:
                     @"An exception occurred while attempting to save the queue. Exception information:\n\n%@",
-                        [self exceptionString:exception]];
+                        [self.class exceptionString:exception]];
             [[BNCPreferenceHelper preferenceHelper] logWarning:warningMessage];
         }
-    });
+    }
+}
+
+- (BOOL) isDirty {
+    @synchronized (self) {
+        return (self.persistTimer != nil);
+    }
 }
 
 - (void)retrieve {
-    NSMutableArray *queue = [[NSMutableArray alloc] init];
-    NSArray *encodedRequests = nil;
-    
-    // Capture exception while loading the queue file
-    @try {
-        NSError *error = nil;
-        NSData *data = [NSData dataWithContentsOfURL:self.class.URLForQueueFile options:0 error:&error];
-        if ([error.domain isEqualToString:NSCocoaErrorDomain] && error.code == NSFileReadNoSuchFileError) {
-            encodedRequests = [NSArray new];
-        } else if (!error && data)
-            encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-        if (![encodedRequests isKindOfClass:[NSArray class]]) {
-            @throw [NSException exceptionWithName:NSInvalidArgumentException
-                reason:@"Saved server queue is invalid." userInfo:nil];
-        }
-    }
-    @catch (NSException *exception) {
-        NSString *warningMessage =
-            [NSString stringWithFormat:
-                @"An exception occurred while attempting to load the queue file, "
-                 "proceeding without requests. Exception information:\n\n%@",
-                    [self exceptionString:exception]];
-        [[BNCPreferenceHelper preferenceHelper] logWarning:warningMessage];
-        self.queue = queue;
-        return;
-    }
-
-    for (NSData *encodedRequest in encodedRequests) {
-        BNCServerRequest *request;
-
-        // Capture exceptions while parsing individual request objects
+    @synchronized (self) {
+        NSMutableArray *queue = [[NSMutableArray alloc] init];
+        NSArray *encodedRequests = nil;
+        
+        // Capture exception while loading the queue file
         @try {
-            request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
+            NSError *error = nil;
+            NSData *data = [NSData dataWithContentsOfURL:self.class.URLForQueueFile options:0 error:&error];
+            if ([error.domain isEqualToString:NSCocoaErrorDomain] && error.code == NSFileReadNoSuchFileError) {
+                encodedRequests = [NSArray new];
+            } else if (!error && data)
+                encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+            if (![encodedRequests isKindOfClass:[NSArray class]]) {
+                @throw [NSException exceptionWithName:NSInvalidArgumentException
+                    reason:@"Saved server queue is invalid." userInfo:nil];
+            }
         }
         @catch (NSException *exception) {
-            [[BNCPreferenceHelper preferenceHelper]
-                logWarning:@"An exception occurred while attempting to parse a queued request, discarding."];
-            continue;
-        }
-        
-        // Throw out invalid request types
-        if (![request isKindOfClass:[BNCServerRequest class]]) {
-            [[BNCPreferenceHelper preferenceHelper] logWarning:@"Found an invalid request object, discarding."];
-            continue;
-        }
-        
-        // Throw out persisted close requests
-        if ([request isKindOfClass:[BranchCloseRequest class]]) {
-            continue;
+            NSString *warningMessage =
+                [NSString stringWithFormat:
+                    @"An exception occurred while attempting to load the queue file, "
+                     "proceeding without requests. Exception information:\n\n%@",
+                        [self.class exceptionString:exception]];
+            [[BNCPreferenceHelper preferenceHelper] logWarning:warningMessage];
+            self.queue = queue;
+            return;
         }
 
-        [queue addObject:request];
+        for (NSData *encodedRequest in encodedRequests) {
+            BNCServerRequest *request;
+
+            // Capture exceptions while parsing individual request objects
+            @try {
+                request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
+            }
+            @catch (NSException *exception) {
+                [[BNCPreferenceHelper preferenceHelper]
+                    logWarning:@"An exception occurred while attempting to parse a queued request, discarding."];
+                continue;
+            }
+            
+            // Throw out invalid request types
+            if (![request isKindOfClass:[BNCServerRequest class]]) {
+                [[BNCPreferenceHelper preferenceHelper] logWarning:@"Found an invalid request object, discarding."];
+                continue;
+            }
+            
+            // Throw out persisted close requests
+            if ([request isKindOfClass:[BranchCloseRequest class]]) {
+                continue;
+            }
+
+            [queue addObject:request];
+        }
+        
+        self.queue = queue;
     }
-    
-    self.queue = queue;
 }
 
-- (NSString *)exceptionString:(NSException *)exception {
-    return [NSString stringWithFormat:@"Name: %@\nReason: %@\nStack:\n\t%@\n\n", exception.name, exception.reason, [exception.callStackSymbols componentsJoinedByString:@"\n\t"]];
++ (NSString *)exceptionString:(NSException *)exception {
+    return [NSString stringWithFormat:@"Name: %@\nReason: %@\nStack:\n\t%@\n\n",
+        exception.name, exception.reason,
+            [exception.callStackSymbols componentsJoinedByString:@"\n\t"]];
 }
 
 + (NSString *)queueFile_deprecated {
@@ -347,7 +395,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     }
 }
 
-#pragma mark - Singleton method
+#pragma mark - Shared Method
 
 + (id)getInstance {
     static BNCServerRequestQueue *sharedQueue = nil;
@@ -361,7 +409,6 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
             line:LINE_NUM
             message:@"Retrieved from Persist: %@", sharedQueue];
     });
-
     return sharedQueue;
 }
 

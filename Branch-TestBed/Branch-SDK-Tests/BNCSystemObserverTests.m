@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
+#import "BNCTestCase.h"
 #import "BNCSystemObserver.h"
 #import "BNCPreferenceHelper.h"
 
@@ -26,7 +27,7 @@
 
 #pragma mark - BNCSystemObserverTests
 
-@interface BNCSystemObserverTests : XCTestCase
+@interface BNCSystemObserverTests : BNCTestCase
 @end
 
 

@@ -6,16 +6,15 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BranchTest.h"
+#import "BNCTestCase.h"
 #import "BranchSetIdentityRequest.h"
 #import "BranchConstants.h"
 #import "BNCPreferenceHelper.h"
 #import <OCMock/OCMock.h>
 
-NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
+static NSString * const IDENTITY_TEST_USER_ID = @"foo_id";
 
-@interface BranchSetIdentityRequestTests : BranchTest
-
+@interface BranchSetIdentityRequestTests : BNCTestCase
 @end
 
 @implementation BranchSetIdentityRequestTests
