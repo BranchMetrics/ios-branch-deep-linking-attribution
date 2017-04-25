@@ -17,7 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - UIApplicationDelegate methods
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        BNCLogSetOutputFunction(nil)
 
         // Store the NavigationController for later link routing.
         navigationController = window?.rootViewController as? NavigationController
@@ -33,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             guard let buo = buo else { return }
             self.routeURLFromBranch(buo)
         }
-        
+
         return true
     }
 
