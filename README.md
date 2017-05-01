@@ -227,7 +227,15 @@ To deep link, Branch must initialize a session to check if the user originated f
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-    if (![[Branch getInstance] handleDeepLink:url]) {
+
+    BOOL branchHandled =
+        [[Branch getInstance]
+            application:application
+                openURL:url
+      sourceApplication:sourceApplication
+             annotation:annotation];
+
+    if (!branchHandled) {
         // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
     }
     return YES;
@@ -258,8 +266,17 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 }
 
 func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-    // pass the url to the handle deep link call
-    Branch.getInstance().handleDeepLink(url)
+
+    // Pass the url to the handle deep link call
+    let branchHandled = Branch.getInstance().application(application,
+        open: url,
+        sourceApplication: sourceApplication,
+        annotation: annotation
+    )
+    if (!branchHandled) {
+        // If not handled by Branch, do other deep link routing for the
+        // Facebook SDK, Pinterest SDK, etc
+    }
 
     return true
 }
@@ -877,6 +894,20 @@ The majority of share options only include one string of text, except email, whi
 
 ```swift
 linkProperties.addControlParam("$email_subject", withValue: "Therapists hate him.")
+```
+
+You can also optionally add HTML to the email option and customize the link text. If the link text is left out, the url itself is used
+
+```objc
+[linkProperties addControlParam:@"$email_html_header" withValue:@"<style>your awesome CSS</style>\nOr Dear Friend,"];
+[linkProperties addControlParam:@"$email_html_footer" withValue:@"Thanks!"];
+[linkProperties addControlParam:@"$email_html_link_text" withValue:@"Tap here"];
+```
+
+```swift
+linkProperties.addControlParam("$email_html_header", withValue: "<style>your awesome CSS</style>\nOr Dear Friend,")
+linkProperties.addControlParam("$email_html_footer", withValue: "Thanks!")
+linkProperties.addControlParam("$email_html_link_text", withValue: "Tap here")
 ```
 
 #### Returns

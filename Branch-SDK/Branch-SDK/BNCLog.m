@@ -463,7 +463,7 @@ void BNCLogSetBreakPointsEnabled(BOOL enabled) {
 
 #pragma mark - Log Functions
 
-static BNCLogOutputFunctionPtr bnc_LoggingFunction = BNCLogFunctionOutputToStdOut;
+static BNCLogOutputFunctionPtr bnc_LoggingFunction = nil; // Default to just NSLog output.
 static BNCLogFlushFunctionPtr bnc_LogFlushFunction = BNCLogFlushFileDescriptor;
 
 BNCLogOutputFunctionPtr _Nullable BNCLogOutputFunction() {
@@ -498,7 +498,7 @@ void BNCLogSetFlushFunction(BNCLogFlushFunctionPtr flushFunction) {
 
 static dispatch_queue_t bnc_LogQueue = nil;
 
-void BNCLogMessageInternal(
+void BNCLogWriteMessageFormat(
         BNCLogLevel logLevel,
         const char *_Nullable file,
         int lineNumber,
@@ -549,6 +549,15 @@ void BNCLogMessageInternal(
         if (bnc_LoggingFunction)
             bnc_LoggingFunction([NSDate date], logLevel, s);
     }
+}
+
+void BNCLogWriteMessage(
+                           BNCLogLevel logLevel,
+                           NSString *_Nonnull file,
+                           NSUInteger lineNumber,
+                           NSString *_Nonnull message
+                           ) {
+    BNCLogWriteMessageFormat(logLevel, file.UTF8String, (int)lineNumber, @"%@", message);
 }
 
 void BNCLogFlushMessages() {

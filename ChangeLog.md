@@ -1,5 +1,17 @@
 Branch iOS SDK Change Log
 
+- v0.15.0
+  * Added The Planets WebView example.
+    - This example demonstrates how to use Branch links in an app that has table view and web view.
+  * Added unit tests and fixed bugs as needed.
+    - Changed the NSTimer to a dispatch_timer.  NSTimers only fire in certain run modes.
+    - Added environment parameters to control the test cases without re-compiling.
+    - Standardized test cases.
+    - All tests pass.
+  * Updated README.md SDK integration documentation to include the new
+    `[Branch application:openURL:sourceApplication:annotation:annotation]` method.
+  * Added Email HTML support to BranchActivityItemProvider.
+
 - v0.14.12
   * Fixed headers for Swift compatibility AIS-242 (#615).
 

@@ -63,7 +63,7 @@ class ArticleView: UIView, WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         hud.hide(animated: true)
-        print("could not load \(planetData.url): \(error)")
+        BNCLogError("could not load \(planetData.url): \(error)")
     }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {

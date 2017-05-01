@@ -22,15 +22,12 @@
     if (!preferenceHelper.deviceFingerprintID) {
         preferenceHelper.deviceFingerprintID = @"foo_fingerprint";
     }
-
     if (!preferenceHelper.identityID) {
         preferenceHelper.identityID = @"foo_identity";
     }
-
     if (!preferenceHelper.sessionID) {
         preferenceHelper.sessionID = @"foo_sesion";
     }
-    
     preferenceHelper.isDebug = NO;
 }
 
@@ -40,7 +37,7 @@
 }
 
 - (void) testFailure {
-    // Un-comment to test a failure case:
+    // Un-comment the next line to test a failure case:
     // XCTAssert(NO, @"Testing a test failure!");
     NSString * bundleID = [NSBundle mainBundle].bundleIdentifier;
     NSLog(@"The test bundleID is '%@'.", bundleID);
