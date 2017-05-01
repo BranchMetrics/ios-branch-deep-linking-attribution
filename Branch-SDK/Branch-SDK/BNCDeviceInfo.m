@@ -15,6 +15,8 @@
 #import "BNCSystemObserver.h"
 #import "BNCXcode7Support.h"
 #import "BNCLog.h"
+#import "NSMutableDictionary+Branch.h"
+#import "BranchConstants.h"
 
 
 @interface BNCDeviceInfo()
@@ -194,6 +196,42 @@ static BNCDeviceInfo *bncDeviceInfo;
     BNCLogDebug(@"Found aps-environment %@.", environment);
     BOOL isProduction = ([environment isEqualToString:@"production"]);
     return isProduction;
+}
+
+- (NSDictionary*) dictionary {
+
+    NSMutableDictionary *dictionary = [NSMutableDictionary new];
+
+    #define set(member, key) \
+        [dictionary bnc_safeSetObject:self.member forKey:key]
+
+    #define setBool(member, key) \
+        [dictionary bnc_safeSetObject:@(self.member) forKey:key]
+
+    if (self.hardwareId && self.hardwareIdType && self.isRealHardwareId) {
+        set(hardwareId,         BRANCH_REQUEST_KEY_HARDWARE_ID);
+        set(hardwareIdType,     BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE);
+        setBool(isRealHardwareId,BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL);
+    }
+
+    set(vendorId,       BRANCH_REQUEST_KEY_IOS_VENDOR_ID);
+    set(brandName,      BRANCH_REQUEST_KEY_BRAND);
+    set(modelName,      BRANCH_REQUEST_KEY_MODEL);
+    set(osName,         BRANCH_REQUEST_KEY_OS);
+    set(osVersion,      BRANCH_REQUEST_KEY_OS_VERSION);
+    set(screenWidth,    BRANCH_REQUEST_KEY_SCREEN_WIDTH);
+    set(screenHeight,   BRANCH_REQUEST_KEY_SCREEN_HEIGHT);
+
+    setBool(isAdTrackingEnabled, BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED);
+
+    set(country,            @"country");
+    set(language,           @"language");
+    set(browserUserAgent,   @"user_agent");
+
+    setBool(isProductionApp,@"is_production_app");
+    set(notificationToken,  @"notification_token");
+
+    return dictionary;
 }
 
 @end
