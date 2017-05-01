@@ -32,6 +32,8 @@
 @property (nonatomic, strong) NSString* language;           //  iso2 language code (en, ml).
 @property (nonatomic, strong) NSString* browserUserAgent;   //  Simple user agent string.
 
+@property (nonatomic, assign) BOOL isProductionApp;
+@property (nonatomic, strong) NSData* notificationToken;
 
 //----------Methods----------------//
 + (BNCDeviceInfo *)getInstance;

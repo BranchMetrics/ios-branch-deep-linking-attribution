@@ -14,6 +14,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BNCXcode7Support.h"
+#import "BNCLog.h"
 
 
 @interface BNCDeviceInfo()
@@ -56,6 +57,8 @@ static BNCDeviceInfo *bncDeviceInfo;
     self.screenWidth = [BNCSystemObserver getScreenWidth];
     self.screenHeight = [BNCSystemObserver getScreenHeight];
     self.isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
+    self.notificationToken = [BNCPreferenceHelper preferenceHelper].notificationToken;
+    self.isProductionApp = [self.class isProductionApp];
 
     //  Get the locale info --
     CGFloat systemVersion = [UIDevice currentDevice].systemVersion.floatValue;
@@ -180,6 +183,17 @@ static BNCDeviceInfo *bncDeviceInfo;
 		retries--;
 	}
 	return browserUserAgentString;
+}
+
++ (BOOL) isProductionApp {
+    NSDictionary *entitlements =
+        [NSDictionary dictionaryWithContentsOfFile:
+            [[NSBundle mainBundle]
+                pathForResource:@"archived-expanded-entitlements" ofType:@"xcent"]];
+    NSString *environment = entitlements[@"aps-environment"];
+    BNCLogDebug(@"Found aps-environment %@.", environment);
+    BOOL isProduction = ([environment isEqualToString:@"production"]);
+    return isProduction;
 }
 
 @end

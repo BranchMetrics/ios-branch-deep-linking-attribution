@@ -52,6 +52,8 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     NSString         *_lastSystemBuildVersion;
     NSString         *_browserUserAgentString;
     NSString         *_branchAPIURL;
+    NSData           *_notificationToken;
+    BOOL             _isProductionApp;
 }
 
 @property (strong, nonatomic) NSMutableDictionary *persistenceDict;
@@ -511,6 +513,44 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     if (![_browserUserAgentString isEqualToString:browserUserAgentString]) {
         _browserUserAgentString = browserUserAgentString;
         [self writeObjectToDefaults:@"_browserUserAgentString" value:_browserUserAgentString];
+    }
+}
+
+- (void) setNotificationToken:(NSData*)notificationToken {
+    @synchronized (self) {
+        _notificationToken = [notificationToken copy];
+        [self writeObjectToDefaults:@"_notificationToken" value:_notificationToken];
+    }
+}
+
+- (NSData*) notificationToken {
+    @synchronized (self) {
+        if (!_notificationToken) {
+            _notificationToken = (id) [self readObjectFromDefaults:@"_notificationToken"];
+            if (![_notificationToken isKindOfClass:[NSData class]]) {
+                _notificationToken = nil;
+            }
+        }
+        return _notificationToken;
+    }
+}
+
+- (void) setIsProductionApp:(BOOL)isProductionApp {
+    @synchronized (self) {
+        _isProductionApp = isProductionApp;
+        [self writeObjectToDefaults:@"_isProductionApp" value:[NSNumber numberWithBool:_isProductionApp]];
+    }
+}
+
+- (BOOL) isProductionApp {
+    @synchronized (self) {
+        if (!_isProductionApp) {
+            NSNumber *number = (NSNumber*) [self readObjectFromDefaults:@"_isProductionApp"];
+            if ([number isKindOfClass:[NSNumber class]]) {
+                _isProductionApp = [(NSNumber*)[self readObjectFromDefaults:@"_isProductionApp"] boolValue];
+            }
+        }
+    return _isProductionApp;
     }
 }
 

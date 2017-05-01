@@ -35,6 +35,7 @@
 #import "BranchRegisterViewRequest.h"
 #import "BranchContentDiscoverer.h"
 #import "NSMutableDictionary+Branch.h"
+#import "BNCDeviceInfo.h"
 
 //Fabric
 #import "../Fabric/FABKitProtocol.h"
@@ -265,8 +266,7 @@ void ForceCategoriesToLoad() {
 }
 
 - (void)enableDelayedInit {
-    self.preferenceHelper.shouldWaitForInit = YES;
-    
+    self.preferenceHelper.shouldWaitForInit = YES;    
     self.useCookieBasedMatching = NO; // Developers delaying init should implement their own SFSafariViewController
 }
 
@@ -293,6 +293,37 @@ void ForceCategoriesToLoad() {
 
 - (void)setInstallRequestDelay:(NSInteger)installRequestDelay {
     self.preferenceHelper.installRequestDelay = installRequestDelay;
+}
+
+- (void) setNotificationToken:(NSData*)notificationToken {
+    BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+    BOOL isProductionToken = [BNCDeviceInfo getInstance].isProductionApp;
+
+    if (preferences.notificationToken && notificationToken &&
+       [preferences.notificationToken isEqualToData:notificationToken] &&
+       !!preferences.isProductionApp == !!isProductionToken) {
+       // Already registered.
+       return;
+    }
+
+    if (preferences.notificationToken == nil && notificationToken == nil) {
+        // Already un-registered.
+        return;
+    }
+
+    BNCDeviceInfo *deviceInfo = [[BNCDeviceInfo getInstance] copy];
+    deviceInfo.notificationToken = notificationToken;
+    BNCServerRequest *request =
+        [[BNCDeviceInfoUpdateRequest alloc] initWithDeviceInfo:deviceInfo
+            completion:^(NSDictionary*response, NSError*error) {
+                if (!error) {
+                    BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+                    preferences.notificationToken = notificationToken;
+                    preferences.isProductionApp = isProductionToken;
+                    [preferences synchronize];
+                }
+            }];
+
 }
 
 #pragma mark - InitSession Permutation methods

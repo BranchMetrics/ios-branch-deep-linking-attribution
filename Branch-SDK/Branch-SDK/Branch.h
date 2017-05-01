@@ -518,6 +518,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 - (void)setInstallRequestDelay:(NSInteger)installRequestDelay;
 
+/**
+ This method registers the device push notification token with the Branch SDK so that 
+ app uninstalls can be tracked and displayed on the Branch dashboard.
+ 
+ TODO: Finish documentation.
+*/
+- (void) setNotificationToken:(NSData*)deviceToken;
 
 #pragma mark - Session Item methods
 

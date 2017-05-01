@@ -173,8 +173,10 @@ continueUserActivity:(NSUserActivity *)userActivity
     }
 }
 
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    NSLog(@"Registered for remote notifications with APN device token: %@", deviceToken);
+- (void)application:(UIApplication *)application
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)notificationToken {
+    NSLog(@"Registered for remote notifications with APN device token: %@", notificationToken);
+    [[Branch getInstance] setNotificationToken:notificationToken];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
