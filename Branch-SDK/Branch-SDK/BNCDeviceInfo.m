@@ -17,6 +17,7 @@
 #import "BNCLog.h"
 #import "NSMutableDictionary+Branch.h"
 #import "BranchConstants.h"
+#import "BNCEncodingUtils.h"
 
 
 @interface BNCDeviceInfo()
@@ -229,7 +230,14 @@ static BNCDeviceInfo *bncDeviceInfo;
     set(browserUserAgent,   @"user_agent");
 
     setBool(isProductionApp,@"is_production_app");
-    set(notificationToken,  @"notification_token");
+
+    dictionary[@"notification_token"] = @"";
+    if (self.notificationToken) {
+        NSString *notificationTokenString = [BNCEncodingUtils base64EncodeData:self.notificationToken];
+        if (notificationTokenString) {
+            dictionary[@"notification_token"] = notificationTokenString;
+        }
+    }
 
     return dictionary;
 }
