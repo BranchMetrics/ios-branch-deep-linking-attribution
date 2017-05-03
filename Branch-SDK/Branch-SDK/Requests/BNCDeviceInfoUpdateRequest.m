@@ -37,7 +37,6 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    params[BRANCH_REQUEST_KEY_ACTION] = @"device_info_update";
     params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
     params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
@@ -45,7 +44,7 @@
 	if (self.deviceInfoDictionary)
 		params[@"device_info"] = self.deviceInfoDictionary;
 
-	NSString *URL = [preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION];
+	NSString *URL = [preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_DEVICE_UPDATE];
     [serverInterface postRequest:params
 							 url:URL
 							 key:key
@@ -69,7 +68,6 @@
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];
 	if (!self) return self;
-
 	self.deviceInfoDictionary = [decoder decodeObjectForKey:@"deviceInfoDictionary"];
     return self;
 }
