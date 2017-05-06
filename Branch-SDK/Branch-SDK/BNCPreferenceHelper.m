@@ -10,6 +10,7 @@
 #import "BNCEncodingUtils.h"
 #import "BNCConfig.h"
 #import "Branch.h"
+#import "BNCLog.h"
 #import "../Fabric/Fabric+FABKits.h"
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
@@ -52,7 +53,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     NSString         *_lastSystemBuildVersion;
     NSString         *_browserUserAgentString;
     NSString         *_branchAPIURL;
-    NSData           *_notificationToken;
+    NSString         *_notificationToken;
     BOOL             _isProductionApp;
 }
 
@@ -516,14 +517,14 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     }
 }
 
-- (void) setNotificationToken:(NSData*)notificationToken {
+- (void) setNotificationToken:(NSString*)notificationToken {
     @synchronized (self) {
         _notificationToken = [notificationToken copy];
         [self writeObjectToDefaults:@"_notificationToken" value:_notificationToken];
     }
 }
 
-- (NSData*) notificationToken {
+- (NSString*) notificationToken {
     @synchronized (self) {
         if (!_notificationToken) {
             _notificationToken = (id) [self readObjectFromDefaults:@"_notificationToken"];
@@ -896,7 +897,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             attributes:nil
             error:&error];
     if (!success) {
-        NSLog(@"Worst case CreateBranchURL error: %@ URL: %@.", error, branchURL);
+        BNCLogWarning(@"Worst case CreateBranchURL error: %@ URL: %@.", error, branchURL);
     }
     return branchURL;
 }
@@ -917,7 +918,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         if (success) {
             return branchURL;
         } else  {
-            NSLog(@"CreateBranchURL error: %@ URL: %@.", error, branchURL);
+            BNCLogWarning(@"CreateBranchURL error: %@ URL: %@.", error, branchURL);
         }
     }
     return nil;
@@ -948,7 +949,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
                 removeItemAtURL:oldURL
                 error:&error];
         } else {
-            NSLog(@"Error moving prefs file: %@.", error);
+            BNCLogWarning(@"Error moving prefs file: %@.", error);
         }
     }
 }

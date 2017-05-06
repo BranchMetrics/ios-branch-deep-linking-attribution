@@ -42,7 +42,7 @@
 @property (strong, nonatomic) NSString *lastSystemBuildVersion;
 @property (strong, nonatomic) NSString *browserUserAgentString;
 @property (strong) NSString *branchAPIURL;
-@property (strong, nonatomic) NSData *notificationToken;
+@property (strong, nonatomic) NSString *notificationToken;
 @property (assign, nonatomic) BOOL isProductionApp;
 
 + (BNCPreferenceHelper *)preferenceHelper;

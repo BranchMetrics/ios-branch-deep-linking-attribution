@@ -8,6 +8,7 @@
 
 #import "BNCEncodingUtils.h"
 #import "BNCPreferenceHelper.h"
+#import "BNCLog.h"
 #import <CommonCrypto/CommonDigest.h>
 
 @implementation BNCEncodingUtils
@@ -244,7 +245,7 @@ static const short _base64DecodingTable[256] = {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            NSLog(@"[encodeDictionaryToJsonString] Cannot encode value for key %@, type is not in list of accepted types", key);
+            BNCLogError(@"Cannot encode value for key %@, type is not in list of accepted types", key);
             continue;
         }
         
@@ -265,11 +266,8 @@ static const short _base64DecodingTable[256] = {
     }
 
     [encodedDictionary appendString:@"}"];
-    
-    if ([[BNCPreferenceHelper preferenceHelper] isDebug]) {
-        NSLog(@"encoded dictionary : %@", encodedDictionary);
-    }
-    
+    BNCLogDebug(@"Encoded dictionary: %@", encodedDictionary);
+
     return encodedDictionary;
 }
 
@@ -311,7 +309,7 @@ static const short _base64DecodingTable[256] = {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            NSLog(@"[encodedArray] Cannot encode value %@, type is not in list of accepted types", obj);
+            BNCLogError(@"Cannot encode value %@, type is not in list of accepted types", obj);
             continue;
         }
         
@@ -328,10 +326,7 @@ static const short _base64DecodingTable[256] = {
     // Delete the trailing comma
     [encodedArray deleteCharactersInRange:NSMakeRange([encodedArray length] - 1, 1)];
     [encodedArray appendString:@"]"];
-    
-    if ([[BNCPreferenceHelper preferenceHelper] isDebug]) {
-        NSLog(@"encoded array : %@", encodedArray);
-    }
+    BNCLogDebug(@"Encoded array: %@", encodedArray);
 
     return encodedArray;
 }
@@ -365,7 +360,7 @@ static const short _base64DecodingTable[256] = {
             }
             else {
                 // If this type is not a known type, don't attempt to encode it.
-                NSLog(@"[encodeDictionaryToQueryString] Cannot encode value %@, type is not in list of accepted types", obj);
+                BNCLogError(@"Cannot encode value %@, type is not in list of accepted types", obj);
                 continue;
             }
             
@@ -443,6 +438,30 @@ static const short _base64DecodingTable[256] = {
     }
 
     return params;
+}
+
+#pragma mark - Hex Strings
+
++ (NSString *) hexStringFromData:(NSData*)data {
+
+    NSUInteger bytesCount = data.length;
+	if (bytesCount <= 0) return @"";
+
+	const char *hexChars = "0123456789ABCDEF";
+	const unsigned char *dataBuffer = data.bytes;
+	char *chars = malloc(sizeof(char) * (bytesCount * 2 + 1));
+	if (!chars) return @"";
+	char *s = chars;
+	for (unsigned i = 0; i < bytesCount; ++i) {
+		*s++ = hexChars[((*dataBuffer & 0xF0) >> 4)];
+		*s++ = hexChars[(*dataBuffer & 0x0F)];
+		dataBuffer++;
+    }
+	*s = '\0';
+
+	NSString *hexString = [NSString stringWithUTF8String:chars];
+	if (chars) free(chars);
+	return hexString;
 }
 
 @end

@@ -33,7 +33,7 @@
 @property (nonatomic, strong) NSString* browserUserAgent;   //  Simple user agent string.
 
 @property (nonatomic, assign) BOOL isProductionApp;
-@property (nonatomic, strong) NSData* notificationToken;
+@property (nonatomic, strong) NSString* notificationToken;
 
 //----------Methods----------------//
 + (BNCDeviceInfo *)getInstance;

@@ -130,7 +130,7 @@ static BNCDeviceInfo *bncDeviceInfo;
             BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
             preferences.browserUserAgentString = browserUserAgentString;
             preferences.lastSystemBuildVersion = self.systemBuildVersion;
-			//NSLog(@"[Branch] userAgentString: '%@'.", browserUserAgentString);
+			BNCLogDebug(@"userAgentString: '%@'.", browserUserAgentString);
 		}
 	};
 
@@ -174,11 +174,9 @@ static BNCDeviceInfo *bncDeviceInfo;
         dispatch_block_t agentBlock = dispatch_block_create_with_qos_class(
             DISPATCH_BLOCK_DETACHED | DISPATCH_BLOCK_ENFORCE_QOS_CLASS,
             QOS_CLASS_USER_INTERACTIVE,
-            0,  ^ {
-                //NSLog(@"Will userAgent.");
-                setBrowserUserAgent();
-                //NSLog(@"Did  userAgent.");
-            });
+            0,
+            ^ { setBrowserUserAgent(); }
+        );
         dispatch_async(dispatch_get_main_queue(), agentBlock);
 
 		dispatch_time_t timeoutTime = dispatch_time(DISPATCH_TIME_NOW, timeoutDelta);
@@ -230,15 +228,11 @@ static BNCDeviceInfo *bncDeviceInfo;
     set(browserUserAgent,   @"user_agent");
 
     setBool(isProductionApp,@"is_production_app");
+    set(notificationToken,  @"notification_token");
 
-    dictionary[@"notification_token"] = @"";
-    if (self.notificationToken) {
-        NSString *notificationTokenString = [BNCEncodingUtils base64EncodeData:self.notificationToken];
-        if (notificationTokenString) {
-            dictionary[@"notification_token"] = notificationTokenString;
-        }
-    }
-
+    #undef set
+    #undef setBool
+    
     return dictionary;
 }
 

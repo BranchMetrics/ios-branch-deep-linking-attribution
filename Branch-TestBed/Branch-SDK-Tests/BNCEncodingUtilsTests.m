@@ -243,6 +243,7 @@
 }
 
 #pragma mark - Test Util methods
+
 - (NSString *)stringForDate:(NSDate *)date {
     static NSDateFormatter *dateFormatter;
     static dispatch_once_t onceToken;
@@ -254,6 +255,31 @@
     });
     
     return [dateFormatter stringFromDate:date];
+}
+
+#pragma mark - Hex String Tests
+
+- (void) testHexStringFromData {
+
+    NSString *s = nil;
+
+    s = [BNCEncodingUtils hexStringFromData:[NSData data]];
+    XCTAssertEqualObjects(s, @"");
+
+    unsigned char bytes1[] = { 0x01 };
+    s = [BNCEncodingUtils hexStringFromData:[NSData dataWithBytes:bytes1 length:1]];
+    XCTAssertEqualObjects(s, @"01");
+
+    unsigned char bytes2[] = {
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+        0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea, 0xeb, 0xec, 0xed, 0xee, 0xef
+    };
+    NSString *truth =
+        @"000102030405060708090A0B0C0D0E0F"
+         "E0E1E2E3E4E5E6E7E8E9EAEBECEDEEEF";
+
+    s = [BNCEncodingUtils hexStringFromData:[NSData dataWithBytes:bytes2 length:32]];
+    XCTAssertEqualObjects(s, truth);
 }
 
 @end

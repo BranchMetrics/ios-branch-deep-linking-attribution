@@ -20,10 +20,6 @@
 
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    /**
-     * // Push notification support (Optional)
-     * [self registerForPushNotifications:application];
-     */
 
     Branch *branch = [Branch getInstance];
     
@@ -79,6 +75,9 @@
             NSLog(@"Branch TestBed: Initialization failed\n%@", error.localizedDescription);
         }
     }];
+
+    // Push notification support (Optional)
+    [self registerForPushNotifications:application];
 
     return YES;
 }
