@@ -37,6 +37,7 @@
 #import "NSMutableDictionary+Branch.h"
 #import "BNCDeviceInfo.h"
 #import "BNCDeviceInfoUpdateRequest.h"
+#import "BNCLog.h"
 
 //Fabric
 #import "../Fabric/FABKitProtocol.h"
@@ -314,19 +315,19 @@ void ForceCategoriesToLoad() {
         return;
     }
 
+    preferences.notificationToken = notificationToken;
+    preferences.isProductionApp = isProductionApp;
+    [preferences synchronize];
+
     BNCDeviceInfo *deviceInfo = [[BNCDeviceInfo alloc] init];
     deviceInfo.notificationToken = notificationToken;
     deviceInfo.isProductionApp = isProductionApp;
+
     BNCServerRequest *request =
         [[BNCDeviceInfoUpdateRequest alloc]
             initWithDeviceInfo:deviceInfo
             completion:^(NSDictionary*response, NSError*error) {
-                if (!error) {
-                    BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
-                    preferences.notificationToken = notificationToken;
-                    preferences.isProductionApp = isProductionApp;
-                    [preferences synchronize];
-                }
+                BNCLogDebug(@"Device update completed with error %@: %@.", error, response);
             }];
     [self.requestQueue enqueue:request];
     [self processNextQueueItem];
