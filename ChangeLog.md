@@ -1,5 +1,10 @@
 Branch iOS SDK Change Log
 
+- v0.15.1
+  * *Beta Release*
+  * Master release candidate.
+  * Added an example of opening a Branch link in-app. (#621)
+
 - v0.15.0
   * *Beta Release*
   * Added 'The Planets' WebView example.
