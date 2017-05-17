@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.15.2
+  * *QA Release*
+  * Updated BNCStrongMatchHelper to handle UISplitViewController (#625).
+
 - v0.15.1
   * *Beta Release*
   * Master release candidate.
