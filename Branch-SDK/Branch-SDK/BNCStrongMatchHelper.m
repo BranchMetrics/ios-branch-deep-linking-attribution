@@ -254,7 +254,7 @@
 }
 
 /**
-  Find the top view controller that is not of type UINavigationController or UITabBarController
+  Find the top view controller that is not of type UINavigationController, UITabBarController, UISplitViewController
  */
 - (UIViewController *)topViewController:(UIViewController *)baseViewController {
     if ([baseViewController isKindOfClass:[UINavigationController class]]) {
@@ -263,6 +263,10 @@
 
     if ([baseViewController isKindOfClass:[UITabBarController class]]) {
         return [self topViewController: ((UITabBarController *)baseViewController).selectedViewController];
+    }
+
+    if ([baseViewController isKindOfClass:[UISplitViewController class]]) {
+        return [self topViewController: ((UISplitViewController *)baseViewController).viewControllers.firstObject];
     }
 
     if ([baseViewController presentedViewController] != nil) {
