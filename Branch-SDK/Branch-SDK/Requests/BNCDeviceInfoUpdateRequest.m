@@ -37,10 +37,11 @@
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [params bnc_safeAddEntriesFromDictionary:self.deviceInfoDictionary];
     [params bnc_safeSetObject:preferenceHelper.deviceFingerprintID forKey:BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID];
     [params bnc_safeSetObject:preferenceHelper.identityID forKey:BRANCH_REQUEST_KEY_BRANCH_IDENTITY];
     [params bnc_safeSetObject:preferenceHelper.sessionID forKey:BRANCH_REQUEST_KEY_SESSION_ID];
-    [params bnc_safeSetObject:self.deviceInfoDictionary forKey:@"device_info"];
+    [params bnc_safeSetObject:@"notification_token" forKey:@"update_reason"];
 
 	NSString *URL = [preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_DEVICE_UPDATE];
     [serverInterface postRequest:params

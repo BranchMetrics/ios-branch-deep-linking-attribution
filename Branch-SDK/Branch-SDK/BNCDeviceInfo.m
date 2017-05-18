@@ -227,7 +227,7 @@ static BNCDeviceInfo *bncDeviceInfo;
     set(language,           @"language");
     set(browserUserAgent,   @"user_agent");
 
-    setBool(isProductionApp,@"is_production_app");
+    setBool(isProductionApp,@"apns_production_app");
     set(notificationToken,  @"notification_token");
 
     #undef set
