@@ -38,28 +38,27 @@
     
     [branch setWhiteListedSchemes:@[@"branchtest"]];
 
-    // Automatic Deeplinking on "deeplink_text"
-    NavigationController *navigationController =
-        [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]]
-            instantiateInitialViewController];
-
-    [branch registerDeepLinkController:navigationController forKey:@"deeplink_text"];
-    
     /**
      * // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
      * [self onboardUserOnInstall];
      */
+    
+    // Deeplinking logic for use when automaticallyDisplayDeepLinkController = true
+    /*
+            [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]]
+                instantiateInitialViewController];
+    
+        [branch registerDeepLinkController:navigationController forKey:@"deeplink_text"];
+     */
 
     // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is NO).
     [branch initSessionWithLaunchOptions:launchOptions
-        automaticallyDisplayDeepLinkController:YES
+        automaticallyDisplayDeepLinkController:NO
         deepLinkHandler:^(NSDictionary *params, NSError *error) {
         if (!error) {
 
             NSLog(@"initSession succeeded with params: %@", params);
-           
-            // Deeplinking logic for use when automaticallyDisplayDeepLinkController = NO
-            /*
+                       
              NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
              if (params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] && deeplinkText) {
              
@@ -74,7 +73,7 @@
              } else {
              NSLog(@"Branch TestBed: Finished init with params\n%@", params.description);
              }
-             */
+            
         } else {
             NSLog(@"Branch TestBed: Initialization failed\n%@", error.localizedDescription);
         }
