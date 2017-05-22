@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             
             let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UINavigationController
-            branch.registerDeepLinkController(navigationController, forKey:"~referring_link")
+            branch.registerDeepLinkController(navigationController, forKey: "~referring_link", with: .show)
             
             // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is false).
             branch.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: true, deepLinkHandler: { params, error in

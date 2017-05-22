@@ -339,6 +339,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (BOOL)handleDeepLink:(NSURL *)url;
 
 /**
+ Allow Branch to reset the current session and handle deep link, returning whether it was from a Branch link or not.
+  @param url The url that caused the app to be opened.
+ */
+
+-(BOOL)handleDeepLinkWithNewSession:(NSURL *)url;
+
+
+/**
  Allow Branch to handle restoration from an NSUserActivity, returning whether or not it was
  from a Branch link.
  
@@ -399,7 +407,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /// @name Deep Link Controller
 ///---------------------------
 
-- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key;
+
+/**
+ Allow Branch to handle a view controller with options to push, present or show.
+ Note:
+ * If push option is used and the rootviewcontroller of window is not of type UINavigationViewController, than the sharing View controller would be presented automatically
+ * If UIViewController is pushed, than it wouldn't be popped on calling deepLinkingControllerCompleted delegate
+ */
+- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withOption:(BNCViewControllerOption)option;
 
 #pragma mark - Configuration methods
 

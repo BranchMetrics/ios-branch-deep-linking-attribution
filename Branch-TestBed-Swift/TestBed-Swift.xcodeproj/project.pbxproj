@@ -77,6 +77,7 @@
 		63F65BFA1D654EF30055A2F6 /* DictionaryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F65BF91D654EF30055A2F6 /* DictionaryTableViewCell.swift */; };
 		63F8BB201D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F8BB1F1D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift */; };
 		63F8BB241D57E7730013B6F7 /* ArrayTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F8BB231D57E7730013B6F7 /* ArrayTableViewController.swift */; };
+		F11999831ED36EF40043CA84 /* BranchDeepLinkModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F11999821ED36EF40043CA84 /* BranchDeepLinkModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -206,6 +207,8 @@
 		63F65BF91D654EF30055A2F6 /* DictionaryTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryTableViewCell.swift; sourceTree = "<group>"; };
 		63F8BB1F1D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkPropertiesTableViewController.swift; sourceTree = "<group>"; };
 		63F8BB231D57E7730013B6F7 /* ArrayTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayTableViewController.swift; sourceTree = "<group>"; };
+		F11999811ED36EF40043CA84 /* BranchDeepLinkModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchDeepLinkModel.h; sourceTree = "<group>"; };
+		F11999821ED36EF40043CA84 /* BranchDeepLinkModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchDeepLinkModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -294,6 +297,8 @@
 				4D4F280C1E400F9800282A34 /* BranchCSSearchableItemAttributeSet.h */,
 				4D4F280D1E400F9800282A34 /* BranchCSSearchableItemAttributeSet.m */,
 				4D4F280E1E400F9800282A34 /* BranchDeepLinkingController.h */,
+				F11999811ED36EF40043CA84 /* BranchDeepLinkModel.h */,
+				F11999821ED36EF40043CA84 /* BranchDeepLinkModel.m */,
 				4D4F280F1E400F9800282A34 /* BranchLinkProperties.h */,
 				4D4F28101E400F9800282A34 /* BranchLinkProperties.m */,
 				4D9E765A1E774DB100BD0620 /* BranchShareLink.h */,
@@ -557,6 +562,7 @@
 				4D9E765C1E774DB100BD0620 /* BranchShareLink.m in Sources */,
 				4D4F28671E400F9800282A34 /* BranchUserCompletedActionRequest.m in Sources */,
 				4D4F28521E400F9800282A34 /* BranchContentDiscoveryManifest.m in Sources */,
+				F11999831ED36EF40043CA84 /* BranchDeepLinkModel.m in Sources */,
 				63865EB11D60E7B6006071CE /* DictionaryTableViewController.swift in Sources */,
 				63AAF0F11CF7594400CA98BD /* Branch.m in Sources */,
 				4D4F283F1E400F9800282A34 /* BNCConfig.m in Sources */,

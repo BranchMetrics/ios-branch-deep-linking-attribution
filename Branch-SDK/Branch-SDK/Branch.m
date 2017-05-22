@@ -35,6 +35,7 @@
 #import "BranchRegisterViewRequest.h"
 #import "BranchContentDiscoverer.h"
 #import "NSMutableDictionary+Branch.h"
+#import "BranchDeepLinkModel.h"
 
 //Fabric
 #import "../Fabric/FABKitProtocol.h"
@@ -678,8 +679,14 @@ void ForceCategoriesToLoad() {
 
 #pragma mark - Deep Link Controller methods
 
-- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key {
-    self.deepLinkControllers[key] = controller;
+- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withOption:(BNCViewControllerOption)option{
+    
+    BranchDeepLinkModel* deepLinkModal = [[BranchDeepLinkModel alloc] init];
+    
+    deepLinkModal.viewController = controller;
+    deepLinkModal.option         = option;
+    
+    self.deepLinkControllers[key] = deepLinkModal;
 }
 
 
@@ -1564,7 +1571,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 }
 
 - (void)handleInitSuccess {
-
+    
     self.isInitialized = YES;
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
     if (self.shouldCallSessionInitCallback) {
@@ -1573,10 +1580,10 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         }
         else if (self.sessionInitWithBranchUniversalObjectCallback) {
             self.sessionInitWithBranchUniversalObjectCallback(
-                [self getLatestReferringBranchUniversalObject],
-                [self getLatestReferringBranchLinkProperties],
-                nil
-            );
+                                                              [self getLatestReferringBranchUniversalObject],
+                                                              [self getLatestReferringBranchLinkProperties],
+                                                              nil
+                                                              );
         }
     }
     
@@ -1591,26 +1598,65 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         // If we find a matching key, configure and show the controller
         if ([keysInParams count]) {
             NSString *key = [[keysInParams allObjects] firstObject];
-            UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
+            
+            
+            BranchDeepLinkModel* deepLinkModel = self.deepLinkControllers[key];
+            UIViewController <BranchDeepLinkingController> *branchSharingController = deepLinkModel.viewController;
+            
+            
             if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
                 [branchSharingController configureControlWithData:latestReferringParams];
             }
             else {
                 [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:
-                    @"[Branch Warning] View controller does not implement configureControlWithData:"];
+                 @"[Branch Warning] View controller does not implement configureControlWithData:"];
             }
             branchSharingController.deepLinkingCompletionDelegate = self;
             self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
             
-            if ([self.deepLinkPresentingController presentedViewController]) {
-                [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
-                    [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
-                }];
-            }
-            else {
-                [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
+            
+            switch (deepLinkModel.option) {
+                case BNCViewControllerOptionPresent:
+                    [self presentSharingViewController:branchSharingController];
+                    break;
+                    
+                case BNCViewControllerOptionPush:
+                    
+                    if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
+                        [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:true];
+                    }else{
+                        [self presentSharingViewController:branchSharingController];
+                    }
+                    
+                    NSAssert([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]==NO, @"Root View Controller is not of type UINavigationController, hence cannot push");
+                    
+                    break;
+                    
+                default:
+                    if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
+                        if ([self.deepLinkPresentingController respondsToSelector:@selector(showViewController:sender:)]) {
+                            [self.deepLinkPresentingController showViewController:branchSharingController sender:self];
+                        }else{
+                            [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:true];
+                        }
+                    }else{
+                        [self presentSharingViewController:branchSharingController];
+                    }
+                    
+                    break;
             }
         }
+    }
+}
+
+-(void)presentSharingViewController: (UIViewController <BranchDeepLinkingController> *)branchSharingController{
+    if ([self.deepLinkPresentingController presentedViewController]) {
+        [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
+            [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
+        }];
+    }
+    else {
+        [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
     }
 }
 
