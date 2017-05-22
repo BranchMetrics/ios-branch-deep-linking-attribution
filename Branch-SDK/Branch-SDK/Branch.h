@@ -338,13 +338,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (BOOL)handleDeepLink:(NSURL *)url;
 
-/**
- Allow Branch to reset the current session and handle deep link, returning whether it was from a Branch link or not.
-  @param url The url that caused the app to be opened.
- */
-
--(BOOL)handleDeepLinkWithNewSession:(NSURL *)url;
-
 
 /**
  Allow Branch to handle restoration from an NSUserActivity, returning whether or not it was
