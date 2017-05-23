@@ -427,6 +427,10 @@ void ForceCategoriesToLoad() {
     return [self handleDeepLink:url fromSelf:NO];
 }
 
+-(BOOL)handleDeepLinkWithNewSession:(NSURL *)url{
+    return [self handleDeepLink:url fromSelf:YES];
+}
+
 - (BOOL)handleDeepLink:(NSURL *)url fromSelf:(BOOL)isFromSelf {
     BOOL handled = NO;
     if (url && ![url isEqual:[NSNull null]]) {
