@@ -43,7 +43,7 @@
         [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]]
             instantiateInitialViewController];
 
-    [branch registerDeepLinkController:navigationController forKey:@"deeplink_text"];
+    [branch registerDeepLinkController:navigationController forKey:@"deeplink_text" withOption:BNCViewControllerOptionShow];
     
     /**
      * // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.

@@ -144,6 +144,8 @@
 		E2133B731D01297E00763049 /* BNCFabricAnswers.h in Headers */ = {isa = PBXBuildFile; fileRef = E2133B711D0125EF00763049 /* BNCFabricAnswers.h */; };
 		E2133B751D01477200763049 /* BNCFabricAnswers.m in Sources */ = {isa = PBXBuildFile; fileRef = E2133B741D01477200763049 /* BNCFabricAnswers.m */; };
 		E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B947491D15D73900F2270D /* BNCCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F1D359201ED4DCC500A93FD5 /* BranchDeepLinkModel.h in Headers */ = {isa = PBXBuildFile; fileRef = F1D3591E1ED4DCC500A93FD5 /* BranchDeepLinkModel.h */; };
+		F1D359211ED4DCC500A93FD5 /* BranchDeepLinkModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D3591F1ED4DCC500A93FD5 /* BranchDeepLinkModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -324,6 +326,8 @@
 		E2B597061D063EEF00A089A6 /* Answers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Answers.h; path = "../Branch-SDK/Fabric/Answers.h"; sourceTree = "<group>"; };
 		E2B597081D063F1D00A089A6 /* ANSCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ANSCompatibility.h; path = "../Branch-SDK/Fabric/ANSCompatibility.h"; sourceTree = "<group>"; };
 		E2B947491D15D73900F2270D /* BNCCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCCallbacks.h; sourceTree = "<group>"; };
+		F1D3591E1ED4DCC500A93FD5 /* BranchDeepLinkModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchDeepLinkModel.h; sourceTree = "<group>"; };
+		F1D3591F1ED4DCC500A93FD5 /* BranchDeepLinkModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchDeepLinkModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -565,6 +569,8 @@
 				4D35141A1E3201D80085EBA1 /* NSMutableDictionary+Branch.m */,
 				4DA577201E67B28700A43BDD /* NSString+Branch.h */,
 				4DA577211E67B28700A43BDD /* NSString+Branch.m */,
+				F1D3591E1ED4DCC500A93FD5 /* BranchDeepLinkModel.h */,
+				F1D3591F1ED4DCC500A93FD5 /* BranchDeepLinkModel.m */,
 			);
 			name = "Branch-SDK";
 			path = "../Branch-SDK/Branch-SDK";
@@ -668,6 +674,7 @@
 				466D5A111B5991E3009DB845 /* BNCContentDiscoveryManager.h in Headers */,
 				54FF1F8D1BD1D4AE0004CE2E /* BranchUniversalObject.h in Headers */,
 				46946B9F1B2689A100627BCC /* BranchShortUrlSyncRequest.h in Headers */,
+				F1D359201ED4DCC500A93FD5 /* BranchDeepLinkModel.h in Headers */,
 				46946B9E1B2689A100627BCC /* BranchShortUrlRequest.h in Headers */,
 				466B58781B17780A00A69EDE /* BNCServerRequestQueue.h in Headers */,
 				466B58751B17780A00A69EDE /* BNCServerInterface.h in Headers */,
@@ -891,6 +898,7 @@
 				466B585B1B17779C00A69EDE /* BNCServerInterface.m in Sources */,
 				463F0A411B20A663004235D2 /* BranchOpenRequest.m in Sources */,
 				463F0A341B20A663004235D2 /* BranchUserCompletedActionRequest.m in Sources */,
+				F1D359211ED4DCC500A93FD5 /* BranchDeepLinkModel.m in Sources */,
 				463F0A3E1B20A663004235D2 /* BranchCloseRequest.m in Sources */,
 				463F0A381B20A663004235D2 /* BranchCreditHistoryRequest.m in Sources */,
 				466B585F1B17779C00A69EDE /* BNCSystemObserver.m in Sources */,
