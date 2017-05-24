@@ -45,9 +45,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 DataStore.setActivePendingSetDebugEnabled(false)
             }
             
-            // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is false).
-            branch.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: false, deepLinkHandler: { params, error in
-                
+            
+            branch.initSession(launchOptions: launchOptions, andRegisterDeepLinkHandler: { (params, error) in
                 if (error == nil) {
                     
                     // Deeplinking logic for use when automaticallyDisplayDeepLinkController = false
@@ -60,20 +59,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
                             nc.pushViewController(contentViewController, animated: true)
                             contentViewController.contentType = "Content"
-                         
+                            
                             
                         }
                     } else {
                         print(String(format: "Branch TestBed: Finished init with params\n%@", (params?.description)!))
                     }
- 
+                    
                     
                 } else {
                     print("Branch TestBed: Initialization failed: " + error!.localizedDescription)
                 }
                 let notificationName = Notification.Name("BranchCallbackCompleted")
                 NotificationCenter.default.post(name: notificationName, object: nil)
+
             })
+            
         } else {
             print("Branch TestBed: Invalid Key\n")
             DataStore.setActiveBranchKey("")
