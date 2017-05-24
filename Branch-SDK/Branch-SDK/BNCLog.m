@@ -519,6 +519,7 @@ void BNCLogWriteMessageFormat(
     NSString *logLevels[BNCLogLevelMax] = {
         @"  Debug",
         @"  Break",
+        @"   Info",
         @"Warning",
         @"  Error",
         @" Assert",

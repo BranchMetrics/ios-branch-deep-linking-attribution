@@ -35,6 +35,7 @@
 #import "BranchRegisterViewRequest.h"
 #import "BranchContentDiscoverer.h"
 #import "NSMutableDictionary+Branch.h"
+#import "BNCLog.h"
 
 //Fabric
 #import "../Fabric/FABKitProtocol.h"
@@ -281,10 +282,10 @@ void ForceCategoriesToLoad() {
 - (void)resumeInit {
     self.preferenceHelper.shouldWaitForInit = NO;
     if (self.isInitialized) {
-        NSLog(@"[Branch Error] User session has already been initialized, so resumeInit is aborting.");
+        BNCLogError(@"User session has already been initialized, so resumeInit is aborting.");
     }
     else if (![self.requestQueue containsInstallOrOpen]) {
-        NSLog(@"[Branch Error] No install or open request, so resumeInit is aborting.");
+        BNCLogError(@"No install or open request, so resumeInit is aborting.");
     }
     else {
         [self processNextQueueItem];
@@ -715,7 +716,7 @@ void ForceCategoriesToLoad() {
 
 - (void)logoutWithCallback:(callbackWithStatus)callback {
     if (!self.isInitialized) {
-        NSLog(@"Branch is not initialized, cannot logout");
+        BNCLogError(@"Branch is not initialized, cannot logout.");
         if (callback) {callback(NO, nil);}
     }
     
@@ -727,16 +728,12 @@ void ForceCategoriesToLoad() {
             if (callback) {
                 callback(YES, nil);
             }
-            if (self.preferenceHelper.isDebug) {
-                NSLog(@"Logout Success");
-            }
+            BNCLogDebug(@"Logout Success");
         } else /*failure*/ {
             if (callback) {
                 callback(NO, error);
             }
-            if (self.preferenceHelper.isDebug) {
-                NSLog(@"Logout Failure");
-            }
+            BNCLogDebug(@"Logout Failure");
         }
     }];
     
@@ -1247,7 +1244,7 @@ void ForceCategoriesToLoad() {
                             channel:channel feature:feature stage:stage params:params];
                 }
             }
-            NSLog(@"Branch SDK Error: making request before init succeeded!");
+            BNCLogError(@"Branch SDK Error: making request before init succeeded!");
         }
     }
     
@@ -1466,7 +1463,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         if (req) {
 
             if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.identityID) {
-                NSLog(@"[Branch Error] User session has not been initialized!");
+                BNCLogError(@"User session has not been initialized!");
                 BNCPerformBlockOnMainThreadSync(^{
                     [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError
                         userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
@@ -1475,7 +1472,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
             }
             else if (![req isKindOfClass:[BranchOpenRequest class]] &&
                 (!self.preferenceHelper.deviceFingerprintID || !self.preferenceHelper.sessionID)) {
-                NSLog(@"[Branch Error] Missing session items!");
+                BNCLogError(@"Missing session items!");
                 BNCPerformBlockOnMainThreadSync(^{
                     [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError
                         userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];

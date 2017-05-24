@@ -9,6 +9,7 @@
 
 #import "BNCCommerceEvent.h"
 #import "BranchConstants.h"
+#import "BNCLog.h"
 
 
 #pragma mark BNCProductCategory
@@ -139,7 +140,7 @@ BNCProductCategory BNCProductCategoryVehiclesParts      = @"Vehicles & Parts";
 	if (!self) return self;
 
     if ([commerceEvent.revenue isEqualToNumber:[NSDecimalNumber numberWithDouble:0.0]]) {
-        NSLog(@"[Branch] Warning: Sending a commerce event with zero value!!");
+        BNCLogWarning(@"Sending a commerce event with zero revenue!");
     }
 
 	self.commerceDictionary = [commerceEvent dictionary];

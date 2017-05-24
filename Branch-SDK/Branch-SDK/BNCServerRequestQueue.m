@@ -11,6 +11,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchCloseRequest.h"
 #import "BranchOpenRequest.h"
+#import "BNCLog.h"
 
 
 NSString * const BRANCH_QUEUE_FILE = @"BNCServerRequestQueue";
@@ -384,7 +385,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
                 removeItemAtURL:oldURL
                 error:&error];
         } else {
-            NSLog(@"Error moving queue file: %@.", error);
+            BNCLogError(@"Error moving queue file: %@.", error);
         }
     }
 }
