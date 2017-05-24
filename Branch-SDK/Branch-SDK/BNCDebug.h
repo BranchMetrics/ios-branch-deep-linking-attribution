@@ -27,7 +27,8 @@
     Set NSAutoreleaseFreedObjectCheckEnabled to YES to catch autorelease problems.
     Set MallocStackLoggingNoCompact to YES to track and save all memory allocations. Memory intensive.
 
-    Check NSDebug.h for more debug switches. Also check Technical Note TN2124 and TN2239 for more info.
+    Check NSDebug.h for more debug switches. 
+    Also check Apple Technical Note TN2124, TN2239, and question QA1887 for more info.
 
     Useful exception breakpoints to set:
 
