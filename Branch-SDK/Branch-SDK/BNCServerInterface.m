@@ -143,7 +143,9 @@ NSString *requestEndpoint;
                 
                 error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: errorString }];
             }
-            BNCLogError(@"An error prevented request to %@ from completing: %@", request.URL, error);
+            if (error) {
+                BNCLogError(@"An error prevented request to %@ from completing: %@", request.URL, error);
+            }
         }
 		//	Don't call on the main queue since it might be blocked.
         if (callback)
@@ -287,7 +289,7 @@ exit:
                                  key:(NSString *)key
                          retryNumber:(NSInteger)retryNumber
                                  log:(BOOL)log {
-                                 
+
     NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"POST"];
 
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
