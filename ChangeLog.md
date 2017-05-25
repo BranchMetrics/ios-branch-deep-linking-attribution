@@ -1,5 +1,7 @@
 Branch iOS SDK Change Log
 
+  * Added a `BNCCurrency` type for commerce events.
+
 - v0.15.3
   * *Master Release*
 
