@@ -150,7 +150,7 @@ NSString *requestEndpoint;
             callback(serverResponse, error);
     };
 
-    // start the reqeust timer here. This will account for retries.
+    // start the request timer here. This will account for retries.
     startTime = [NSDate date];
 
     NSURLSession *session =
@@ -282,7 +282,12 @@ exit:
     return request;
 }
 
-- (NSURLRequest *)preparePostRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber log:(BOOL)log {
+- (NSURLRequest *)preparePostRequest:(NSDictionary *)params
+                                 url:(NSString *)url
+                                 key:(NSString *)key
+                         retryNumber:(NSInteger)retryNumber
+                                 log:(BOOL)log {
+                                 
     NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"POST"];
 
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
