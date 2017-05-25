@@ -153,7 +153,11 @@ NSString *requestEndpoint;
     };
 
     if (NSFoundationVersionNumber < NSFoundationVersionNumber_iOS_7_0) {
-        BNCLogError(@"iOS version number is too low for Branch: %f", NSFoundationVersionNumber);
+        NSString *message = [NSString stringWithFormat:@"iOS version number is too low for Branch: %f.", NSFoundationVersionNumber];
+        NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError
+            userInfo:@{NSLocalizedDescriptionKey: message}];
+        BNCLogError(message);
+        callback(nil, error);
         return;
     }
 
@@ -175,7 +179,7 @@ NSString *requestEndpoint;
     __block NSData *_respData = nil;
 
     if (NSFoundationVersionNumber < NSFoundationVersionNumber_iOS_7_0) {
-        BNCLogError(@"iOS version number is too low for Branch: %f", NSFoundationVersionNumber);
+        BNCLogError(@"iOS version number is too low for Branch: %f.", NSFoundationVersionNumber);
         return nil;
     }
 
