@@ -7,7 +7,7 @@
 //
 
 #if defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-#error iOS 7 is the minimum supported Branch iOS version.
+#warning iOS 7 is the minimum supported Branch iOS version.
 #endif
 
 

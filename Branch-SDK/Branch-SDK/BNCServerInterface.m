@@ -152,6 +152,11 @@ NSString *requestEndpoint;
             callback(serverResponse, error);
     };
 
+    if (NSFoundationVersionNumber < NSFoundationVersionNumber_iOS_7_0) {
+        BNCLogError(@"iOS version number is too low for Branch: %f", NSFoundationVersionNumber);
+        return;
+    }
+
     // start the request timer here. This will account for retries.
     startTime = [NSDate date];
 
@@ -168,7 +173,12 @@ NSString *requestEndpoint;
     __block NSURLResponse *_response = nil;
     __block NSError *_error = nil;
     __block NSData *_respData = nil;
-    
+
+    if (NSFoundationVersionNumber < NSFoundationVersionNumber_iOS_7_0) {
+        BNCLogError(@"iOS version number is too low for Branch: %f", NSFoundationVersionNumber);
+        return nil;
+    }
+
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     NSURLSession *session =
         [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]
