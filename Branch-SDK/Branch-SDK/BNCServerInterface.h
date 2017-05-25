@@ -12,7 +12,7 @@
 
 typedef void (^BNCServerCallback)(BNCServerResponse *response, NSError *error);
 
-@interface BNCServerInterface : NSObject
+@interface BNCServerInterface : NSObject <NSURLSessionDelegate>
 
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
 

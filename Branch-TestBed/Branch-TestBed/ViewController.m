@@ -220,13 +220,17 @@ NSString *type = @"some type";
 
 - (IBAction)oldShareLinkButtonTouchUpInside:(id)sender {
     // This method uses the old way of sharing Branch links.
+    // Use the new shiny way!  Use BNCShareLink!
 
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
     linkProperties.campaign = @"sharing campaign";
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
     [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
-    
+
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
     [self.branchUniversalObject showShareSheetWithLinkProperties:linkProperties
         andShareText:shareText
         fromViewController:self.parentViewController
@@ -238,6 +242,8 @@ NSString *type = @"some type";
             }
         }
     ];
+
+    #pragma clang diagnostic pop
 }
 
 - (IBAction)shareLinkButtonTouchUpInside:(id)sender {

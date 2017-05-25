@@ -445,4 +445,28 @@ static const short _base64DecodingTable[256] = {
     return params;
 }
 
+#pragma mark - Hex Strings
+
++ (NSString *) hexStringFromData:(NSData*)data {
+
+    NSUInteger bytesCount = data.length;
+    if (bytesCount <= 0) return @"";
+
+    const char *hexChars = "0123456789ABCDEF";
+    const unsigned char *dataBuffer = data.bytes;
+    char *chars = malloc(sizeof(char) * (bytesCount * 2 + 1));
+    if (!chars) return @"";
+    char *s = chars;
+    for (unsigned i = 0; i < bytesCount; ++i) {
+        *s++ = hexChars[((*dataBuffer & 0xF0) >> 4)];
+        *s++ = hexChars[(*dataBuffer & 0x0F)];
+        dataBuffer++;
+    }
+    *s = '\0';
+
+    NSString *hexString = [NSString stringWithUTF8String:chars];
+    if (chars) free(chars);
+    return hexString;
+}
+
 @end

@@ -13,6 +13,7 @@
 #import "BranchConstants.h"
 #import "BNCDeviceInfo.h"
 #import "NSMutableDictionary+Branch.h"
+#import "BNCLog.h"
 
 typedef void (^NSURLSessionCompletionHandler) (NSData *data, NSURLResponse *response, NSError *error);
 typedef void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *responseData, NSError *error);
@@ -82,12 +83,21 @@ NSString *requestEndpoint;
 #pragma mark - Generic requests
 
 - (void)genericHTTPRequest:(NSURLRequest *)request log:(BOOL)log callback:(BNCServerCallback)callback {
-    [self genericHTTPRequest:request retryNumber:0 log:log callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
+    [self genericHTTPRequest:request
+                 retryNumber:0
+                         log:log
+                    callback:callback
+                retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
         return request;
     }];
 }
 
-- (void)genericHTTPRequest:(NSURLRequest *)request retryNumber:(NSInteger)retryNumber log:(BOOL)log callback:(BNCServerCallback)callback retryHandler:(NSURLRequest *(^)(NSInteger))retryHandler {
+- (void)genericHTTPRequest:(NSURLRequest *)request
+               retryNumber:(NSInteger)retryNumber
+                       log:(BOOL)log
+                  callback:(BNCServerCallback)callback
+              retryHandler:(NSURLRequest *(^)(NSInteger))retryHandler {
+              
     // This method uses NSURLConnection for iOS 6 and NSURLSession for iOS 7 and above
     // Assigning completion handlers blocks to variables eliminates redundancy 
     // Defining both completion handlers before the request methods otherwise they won't be called
@@ -133,37 +143,23 @@ NSString *requestEndpoint;
                 
                 error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: errorString }];
             }
-            
-            if (error && log) {
-                [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, error.localizedDescription];
-            }
-            
+            BNCLogError(@"An error prevented request to %@ from completing: %@", request.URL, error);
         }
 		//	Don't call on the main queue since it might be blocked.
         if (callback)
             callback(serverResponse, error);
     };
-    
-    NSURLConnectionCompletionHandler connectionHandler = ^void(NSURLResponse *response, NSData *responseData, NSError *error) {
-        // NSURLConnection and NSURLSession expect the same arguments for completion handlers but in different order
-        sessionHandler(responseData, response, error);
-    };
-    
+
     // start the reqeust timer here. This will account for retries.
     startTime = [NSDate date];
 
-    // NSURLSession is available in iOS 7 and above
-    if (NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_7_0) {
-        NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-        NSURLSessionDataTask *task = [session dataTaskWithRequest:request.copy completionHandler:sessionHandler];
-        [task resume];
-        [session finishTasksAndInvalidate];
-    } else {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:connectionHandler];
-        #pragma clang diagnostic pop
-    }
+    NSURLSession *session =
+        [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]
+            delegate:self
+            delegateQueue:nil];
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request.copy completionHandler:sessionHandler];
+    [task resume];
+    [session finishTasksAndInvalidate];
 }
 
 - (BNCServerResponse *)genericHTTPRequest:(NSURLRequest *)request log:(BOOL)log {
@@ -171,32 +167,105 @@ NSString *requestEndpoint;
     __block NSError *_error = nil;
     __block NSData *_respData = nil;
     
-    //NSURLSession is available in iOS 7 and above
-    if (NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_7_0) {
-        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-        NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable urlResp, NSError * _Nullable error) {
-            _response = urlResp;
-            _error = error;
-            _respData = data;
-            dispatch_semaphore_signal(semaphore);
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    NSURLSession *session =
+        [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]
+            delegate:self
+            delegateQueue:nil];
+    NSURLSessionDataTask *task =
+        [session dataTaskWithRequest:request
+            completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable urlResp, NSError * _Nullable error) {
+                _response = urlResp;
+                _error = error;
+                _respData = data;
+                dispatch_semaphore_signal(semaphore);
         }];
-        [task resume];
-        [session finishTasksAndInvalidate];
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    } else {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        _respData = [NSURLConnection sendSynchronousRequest:request returningResponse:&_response error:&_error];
-        #pragma clang diagnostic pop
-    }
+    [task resume];
+    [session finishTasksAndInvalidate];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     return [self processServerResponse:_response data:_respData error:_error log:log];
 }
 
+- (void) URLSession:(NSURLSession *)session
+               task:(NSURLSessionTask *)task
+didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
+  completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler {
+
+    BOOL trusted = NO;
+    uint8_t kNonce[] = "Branch Rocks";
+    uint8_t encryptedString[2048];
+    size_t encryptedLength = sizeof(encryptedString);
+    SecTrustResultType trustResult = 0;
+    OSStatus err = 0;
+    NSData *data = nil;
+    NSString *string = nil;
+    NSString *hostName = nil;
+
+    // Release these:
+    SecKeyRef key = nil;
+    SecPolicyRef hostPolicy = nil;
+
+    NSString *encodedNonce =
+        @"BD26E0318889E71233FD5570D6FCAF111CF2C8F7793C67DC4CF2101142B2F581AB5695FDB4EE8F2DFF561311"
+         "AE3C025447ACE3BEB0CD9A14C4CDF56F15DBD37C371B1598A4172BF7E386709FC60AEEF7ED72B37C3C5226E0"
+         "618EA7B2224E019B44161A4A6CCEE929A4F6C3B61C06CBAA0E38C572192442CB1921A97CB7FA358A26974D35"
+         "986AFDC108B6E052C8176DED421F9DBDBD7963D7146208AC3EA378F8AACDDE65287A5A9815C18F3D02CDFB98"
+         "523C65357FC7F633F26755F64FFFBFC03B444ACF169564D17CD80A7976B5665AD3645DAC931257CE5759BD9A"
+         "608C981BF38694293C0F9F6CBA7E2707642D87FF6B2A7EE26B62A52646620BADA70A11A5";
+
+    // Get remote certificate
+    SecTrustRef serverTrust = challenge.protectionSpace.serverTrust;
+
+    // Set SSL policies for domain name check
+    hostPolicy = SecPolicyCreateSSL(true, (__bridge CFStringRef)challenge.protectionSpace.host);
+    if (!hostPolicy) goto exit;
+    SecTrustSetPolicies(serverTrust, (__bridge CFTypeRef _Nonnull)(@[ (__bridge id)hostPolicy ]));
+
+    // Evaluate server certificate
+    SecTrustEvaluate(serverTrust, &trustResult);
+    if (! (trustResult == kSecTrustResultUnspecified || trustResult == kSecTrustResultProceed)) {
+        goto exit;
+    }
+
+    hostName = task.originalRequest.URL.host;
+    if (![hostName hasSuffix:@"branch.io"]) {
+        trusted = YES;
+        goto exit;
+    }
+
+    key = SecTrustCopyPublicKey(serverTrust);
+    if (!key) goto exit;
+    err = SecKeyEncrypt(key, kSecPaddingNone, kNonce, sizeof(kNonce), encryptedString, &encryptedLength);
+    if (err)  goto exit;
+
+    data = [NSData dataWithBytes:encryptedString length:encryptedLength];
+    string = [BNCEncodingUtils hexStringFromData:data];
+    trusted = [string isEqualToString:encodedNonce];
+
+exit:
+    if (err) {
+        NSError *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+        BNCLogError(@"Error while validating cert: %@.", error);
+    }
+    if (key) CFRelease(key);
+    if (hostPolicy) CFRelease(hostPolicy);
+
+    if (trusted) {
+        NSURLCredential *credential = [NSURLCredential credentialForTrust:serverTrust];
+        completionHandler(NSURLSessionAuthChallengeUseCredential, credential);
+    } else {
+        completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, NULL);
+    }
+}
 
 #pragma mark - Internals
 
-- (NSURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber log:(BOOL)log {
+- (NSURLRequest *)prepareGetRequest:(NSDictionary *)params
+                                url:(NSString *)url
+                                key:(NSString *)key
+                        retryNumber:(NSInteger)retryNumber
+                                log:(BOOL)log {
+                                
     NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"GET"];
     
     NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:preparedParams]];
@@ -332,7 +401,5 @@ NSString *requestEndpoint;
         dict[key] = value;
     }
 }
-
-
 
 @end

@@ -1,5 +1,10 @@
 Branch iOS SDK Change Log
 
+- v0.16.0
+  * Added certificate pining for branch.io server calls.
+  * Removed support for iOS 6 networking.
+  * The iOS Security.framework is now required for linking with the Branch SDK.
+
 - v0.15.3
   * *Master Release*
 
