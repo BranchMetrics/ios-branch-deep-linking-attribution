@@ -679,6 +679,10 @@ void ForceCategoriesToLoad() {
 
 #pragma mark - Deep Link Controller methods
 
+- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key {
+    self.deepLinkControllers[key] = controller;
+}
+
 - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withOption:(BNCViewControllerOption)option{
     
     BranchDeepLinkModel* deepLinkModal = [[BranchDeepLinkModel alloc] init];
@@ -1599,54 +1603,95 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         if ([keysInParams count]) {
             NSString *key = [[keysInParams allObjects] firstObject];
             
-            
-            BranchDeepLinkModel* deepLinkModel = self.deepLinkControllers[key];
-            UIViewController <BranchDeepLinkingController> *branchSharingController = deepLinkModel.viewController;
-            
-            
-            if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
-                [branchSharingController configureControlWithData:latestReferringParams];
-            }
-            else {
-                [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:
-                 @"[Branch Warning] View controller does not implement configureControlWithData:"];
-            }
-            branchSharingController.deepLinkingCompletionDelegate = self;
-            self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
-            
-            
-            switch (deepLinkModel.option) {
-                case BNCViewControllerOptionPresent:
-                    [self presentSharingViewController:branchSharingController];
-                    break;
-                    
-                case BNCViewControllerOptionPush:
-                    
-                    if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
-                        [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:true];
-                    }else{
+            if([self.deepLinkControllers[key] isKindOfClass:[BranchDeepLinkModel class]]) {
+                BranchDeepLinkModel* deepLinkModel = self.deepLinkControllers[key];
+                UIViewController <BranchDeepLinkingController> *branchSharingController = deepLinkModel.viewController;
+                
+                if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
+                    [branchSharingController configureControlWithData:latestReferringParams];
+                }
+                else {
+                    [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:
+                     @"[Branch Warning] View controller does not implement configureControlWithData:"];
+                }
+                branchSharingController.deepLinkingCompletionDelegate = self;
+                self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
+                switch (deepLinkModel.option) {
+                    case BNCViewControllerOptionPresent:
                         [self presentSharingViewController:branchSharingController];
-                    }
-                    
-                    NSAssert([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]==NO, @"Root View Controller is not of type UINavigationController, hence cannot push");
-                    
-                    break;
-                    
-                default:
-                    if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
-                        if ([self.deepLinkPresentingController respondsToSelector:@selector(showViewController:sender:)]) {
-                            [self.deepLinkPresentingController showViewController:branchSharingController sender:self];
-                        }else{
-                            [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:true];
+                        break;
+                        
+                    case BNCViewControllerOptionPush:
+                        
+                        if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
+                            
+                            if ([[(UINavigationController*)self.deepLinkPresentingController viewControllers] containsObject:branchSharingController]) {
+                                [self removeInstanceFromRootNavigationController:branchSharingController];
+                                [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:false];
+                            }
+                            else {
+                                [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:true];
+                            }
                         }
-                    }else{
-                        [self presentSharingViewController:branchSharingController];
-                    }
-                    
-                    break;
+                        else {
+                            [self presentSharingViewController:branchSharingController];
+                        }
+                        
+                        break;
+                        
+                    default:
+                        if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
+                            if ([self.deepLinkPresentingController respondsToSelector:@selector(showViewController:sender:)]) {
+                                
+                                if ([[(UINavigationController*)self.deepLinkPresentingController viewControllers] containsObject:branchSharingController]) {
+                                    [self removeInstanceFromRootNavigationController:branchSharingController];
+                                }
+                                
+                                [self.deepLinkPresentingController showViewController:branchSharingController sender:self];
+                            }
+                            else {
+                                [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:true];
+                            }
+                        }
+                        else {
+                            [self presentSharingViewController:branchSharingController];
+                        }
+                        break;
+                }
+            }else{
+                
+                //Support for old API
+                UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
+                if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
+                    [branchSharingController configureControlWithData:latestReferringParams];
+                }
+                else {
+                    [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:
+                     @"[Branch Warning] View controller does not implement configureControlWithData:"];
+                }
+                branchSharingController.deepLinkingCompletionDelegate = self;
+                self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
+                
+                if ([self.deepLinkPresentingController presentedViewController]) {
+                    [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
+                        [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
+                    }];
+                }
+                else {
+                    [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
+                }
             }
         }
     }
+}
+
+-(void)removeInstanceFromRootNavigationController:(UIViewController*)branchSharingController{
+    NSMutableArray* viewControllers = [NSMutableArray arrayWithArray: [(UINavigationController*)self.deepLinkPresentingController viewControllers]];
+    
+    [viewControllers removeObject:branchSharingController];
+    
+    ((UINavigationController*)self.deepLinkPresentingController).viewControllers = viewControllers;
+    
 }
 
 -(void)presentSharingViewController: (UIViewController <BranchDeepLinkingController> *)branchSharingController{

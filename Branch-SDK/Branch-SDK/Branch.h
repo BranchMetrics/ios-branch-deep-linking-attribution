@@ -400,6 +400,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /// @name Deep Link Controller
 ///---------------------------
 
+- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key __attribute__((deprecated(("This API is deprecated. Please use registerDeepLinkController: forKey: withOption:"))));
 
 /**
  Allow Branch to handle a view controller with options to push, present or show.

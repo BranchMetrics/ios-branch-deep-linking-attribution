@@ -19,7 +19,6 @@ typedef NS_ENUM(NSInteger, BNCViewControllerOption) {
     BNCViewControllerOptionPresent
 };
 
-
 @protocol BranchDeepLinkingController <NSObject>
 
 - (void)configureControlWithData:(NSDictionary *)data;
