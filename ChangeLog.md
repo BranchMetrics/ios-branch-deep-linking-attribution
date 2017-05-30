@@ -1,5 +1,10 @@
 Branch iOS SDK Change Log
 
+  * Added a `BNCCurrency` type for commerce events.
+
+- v0.15.3
+  * *Master Release*
+
 - v0.15.2
   * *QA Release*
   * Updated BNCStrongMatchHelper to handle UISplitViewController (#625).
