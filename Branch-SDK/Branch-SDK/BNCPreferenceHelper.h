@@ -11,6 +11,8 @@
 #define FILE_NAME   [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
 #define LINE_NUM    __LINE__
 
+NSURL* BNCURLForBranchDirectory();
+
 @interface BNCPreferenceHelper : NSObject
 
 @property (strong, nonatomic) NSString *branchKey;
@@ -44,7 +46,6 @@
 @property (strong) NSString *branchAPIURL;
 
 + (BNCPreferenceHelper *)preferenceHelper;
-+ (NSURL*) URLForBranchDirectory;
 
 - (NSString *)getAPIBaseURL;
 - (NSString *)getAPIURL:(NSString *)endpoint;

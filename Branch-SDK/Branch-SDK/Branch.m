@@ -117,6 +117,16 @@ void ForceCategoriesToLoad() {
 
 #pragma mark - GetInstance methods
 
++ (void) initialize {
+    if (self == [Branch self]) {
+        NSURL *logURL = BNCURLForBranchDirectory();
+        logURL = [logURL URLByAppendingPathComponent:@"Branch.log"];
+        BNCLogSetOutputToURLByteWrap(logURL,  102400);
+        BNCLogSetDisplayLevel(BNCLogLevelWarning);
+        BNCLogDebug(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
+    }
+}
+
 + (Branch *)getInstance {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     
@@ -227,6 +237,7 @@ void ForceCategoriesToLoad() {
 
 - (void)setDebug {
     self.preferenceHelper.isDebug = YES;
+    BNCLogSetDisplayLevel(BNCLogLevelAll);
 }
 
 - (void)resetUserSession {

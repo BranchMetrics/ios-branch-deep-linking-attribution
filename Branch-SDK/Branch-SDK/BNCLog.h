@@ -98,6 +98,9 @@ extern void BNCLogSetOutputFunction(BNCLogOutputFunctionPtr _Nullable functionPt
 ///@return Returns the current logging function.
 extern BNCLogOutputFunctionPtr _Nullable BNCLogOutputFunction();
 
+/// If a predefined log handler is being used, the function closes the output file.
+extern void BNCLogCloseLogFile();
+
 ///@param URL Sets the log output function to a function that writes messages to the file at URL.
 extern void BNCLogSetOutputToURL(NSURL *_Nullable URL);
 

@@ -387,7 +387,8 @@ BOOL BNCLogByteWrapOpenURL(NSURL *url, long maxBytes) {
 
     NSString *record = BNCLogByteWrapReadNextRecord();
     while (record) {
-        NSString *dateString = [record substringWithRange:NSMakeRange(0, 27)];
+        NSString *dateString = @"";
+        if (record.length >= 27) dateString = [record substringWithRange:NSMakeRange(0, 27)];
         NSDate *date = [bnc_LogDateFormatter dateFromString:dateString];
         if (!date || [date compare:lastDate] < 0) {
             wrapOffset = lastOffset;
@@ -472,12 +473,19 @@ BNCLogOutputFunctionPtr _Nullable BNCLogOutputFunction() {
     }
 }
 
+void BNCLogCloseLogFile() {
+    @synchronized(bnc_LogIsInitialized) {
+        if (bnc_LogDescriptor >= 0) {
+            BNCLogFlushMessages();
+            close(bnc_LogDescriptor);
+            bnc_LogDescriptor = -1;
+        }
+    }
+}
+
 void BNCLogSetOutputFunction(BNCLogOutputFunctionPtr _Nullable logFunction) {
     @synchronized (bnc_LogIsInitialized) {
         BNCLogFlushMessages();
-        if (bnc_LogDescriptor >= 0)
-            close(bnc_LogDescriptor);
-        bnc_LogDescriptor = -1;
         bnc_LoggingFunction = logFunction;
     }
 }

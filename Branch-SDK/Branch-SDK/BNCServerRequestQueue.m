@@ -362,7 +362,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 + (NSURL* _Nonnull) URLForQueueFile {
-    NSURL *URL = [BNCPreferenceHelper URLForBranchDirectory];
+    NSURL *URL = BNCURLForBranchDirectory();
     URL = [URL URLByAppendingPathComponent:BRANCH_QUEUE_FILE isDirectory:NO];
     return URL;
 }
