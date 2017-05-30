@@ -1658,7 +1658,8 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                         }
                         break;
                 }
-            }else{
+            }
+            else {
                 
                 //Support for old API
                 UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];

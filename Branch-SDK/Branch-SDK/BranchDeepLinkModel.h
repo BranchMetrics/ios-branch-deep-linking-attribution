@@ -9,7 +9,7 @@
 #import "BranchDeepLinkingController.h"
 @interface BranchDeepLinkModel : NSObject
 
-@property (strong,nonatomic)UIViewController<BranchDeepLinkingController>* viewController;
+@property (strong, nonatomic)UIViewController<BranchDeepLinkingController>* viewController;
 @property (assign)BNCViewControllerOption option;
 
 @end
