@@ -81,7 +81,6 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             externalIntentURI = _externalIntentURI,
             isDebug = _isDebug,
             shouldWaitForInit = _shouldWaitForInit,
-            suppressWarningLogs = _suppressWarningLogs,
             retryCount = _retryCount,
             retryInterval = _retryInterval,
             timeout = _timeout,
@@ -110,7 +109,6 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         _retryInterval = DEFAULT_RETRY_INTERVAL;
         
         _isDebug = NO;
-        _suppressWarningLogs = NO;
     }
     
     return self;

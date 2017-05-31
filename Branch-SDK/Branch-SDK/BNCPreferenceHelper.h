@@ -31,7 +31,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory();
 @property (strong, nonatomic) NSString *installParams;
 @property (assign, nonatomic) BOOL isDebug;
 @property (assign, nonatomic) BOOL shouldWaitForInit;
-@property (assign, nonatomic) BOOL suppressWarningLogs;
 @property (assign, nonatomic) BOOL checkedFacebookAppLinks;
 @property (assign, nonatomic) BOOL checkedAppleSearchAdAttribution;
 @property (assign, nonatomic) NSInteger retryCount;

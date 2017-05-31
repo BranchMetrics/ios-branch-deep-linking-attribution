@@ -269,7 +269,7 @@ void ForceCategoriesToLoad() {
 }
 
 - (void)suppressWarningLogs {
-    self.preferenceHelper.suppressWarningLogs = YES;
+    BNCLogSetDisplayLevel(BNCLogLevelError);
 }
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value {
