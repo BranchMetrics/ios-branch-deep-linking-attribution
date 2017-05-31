@@ -162,19 +162,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     [self synchronize];
 }
 
-#pragma mark - Debug methods
-
-- (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ... {
-    va_list args;
-    va_start(args, format);
-    NSString *message = [[NSString alloc] initWithFormat:@"%@" arguments:args];
-    BNCLogWriteMessage(BNCLogLevelDebug, filename, line, message);
-    va_end(args);
-}
-
-- (void)logWarning:(NSString *)message {
-    BNCLogWarning(@"%@", message);
-}
+#pragma mark - API methods
 
 - (void) setBranchAPIURL:(NSString*)branchAPIURL_ {
     @synchronized (self) {
@@ -739,12 +727,10 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         }
         @catch (id exception) {
             data = nil;
-            [self logWarning:
-                [NSString stringWithFormat:@"Exception creating preferences data: %@.",
-                    exception]];
+            BNCLogWarning(@"Exception creating preferences data: %@.", exception);
         }
         if (!data) {
-            [self logWarning:@"Can't create preferences data."];
+            BNCLogWarning(@"Can't create preferences data.");
             return;
         }
         NSURL *prefsURL = [self.class.URLForPrefsFile copy];
@@ -752,9 +738,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             NSError *error = nil;
             [data writeToURL:prefsURL options:NSDataWritingAtomic error:&error];
             if (error) {
-                [self logWarning:
-                    [NSString stringWithFormat:
-                        @"Failed to persist preferences to disk: %@.", error]];
+                BNCLogWarning(@"Failed to persist preferences to disk: %@.", error);
             }
         }];
         [self.persistPrefsQueue addOperation:newPersistOp];
@@ -774,7 +758,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
                 persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
         }
         @catch (NSException *exception) {
-            [self logWarning:@"Failed to load preferences from disk."];
+            BNCLogWarning(@"Failed to load preferences from disk.");
         }
 
         if ([persistenceDict isKindOfClass:[NSDictionary class]])

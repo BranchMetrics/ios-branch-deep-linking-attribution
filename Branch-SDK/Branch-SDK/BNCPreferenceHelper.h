@@ -74,9 +74,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory();
 - (NSMutableDictionary *)instrumentationDictionary;
 - (void)clearInstrumentationDictionary;
 
-- (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
-- (void)logWarning:(NSString *)message;
-
 - (void)saveBranchAnalyticsData:(NSDictionary *)analyticsData;
 - (void)clearBranchAnalyticsData;
 - (NSMutableDictionary *)getBranchAnalyticsData;
