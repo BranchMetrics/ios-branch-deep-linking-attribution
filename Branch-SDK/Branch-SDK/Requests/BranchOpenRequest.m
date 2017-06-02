@@ -215,7 +215,7 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 + (void) setWaitNeededForOpenResponseLock {
     @synchronized (self) {
         if (!openRequestWaitQueueIsSuspended) {
-            BNCLogDebug(@"Suspend openRequestWaitQueue.");
+            BNCLogDebugSDK(@"Suspended for openRequestWaitQueue.");
             openRequestWaitQueueIsSuspended = YES;
             dispatch_suspend(openRequestWaitQueue);
         }
@@ -223,17 +223,17 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 }
 
 + (void) waitForOpenResponseLock {
-    BNCLogDebug(@"Wait for openRequestWaitQueue.");
+    BNCLogDebugSDK(@"Waiting for openRequestWaitQueue.");
     [BNCDeviceInfo userAgentString];    //  Make sure we do this lock first to prevent a deadlock.
     dispatch_sync(openRequestWaitQueue, ^ {
-        BNCLogDebug(@"Finished waitForOpenResponseLock");
+        BNCLogDebugSDK(@"Finished waitForOpenResponseLock.");
     });
 }
 
 + (void) releaseOpenResponseLock {
     @synchronized (self) {
         if (openRequestWaitQueueIsSuspended) {
-            BNCLogDebug(@"Resume openRequestWaitQueue.");
+            BNCLogDebugSDK(@"Resuming openRequestWaitQueue.");
             openRequestWaitQueueIsSuspended = NO;
             dispatch_resume(openRequestWaitQueue);
         }

@@ -125,7 +125,7 @@ static BNCDeviceInfo *bncDeviceInfo;
             BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
             preferences.browserUserAgentString = browserUserAgentString;
             preferences.lastSystemBuildVersion = self.systemBuildVersion;
-			BNCLogDebug(@"userAgentString: '%@'.", browserUserAgentString);
+			BNCLogDebugSDK(@"userAgentString: '%@'.", browserUserAgentString);
 		}
 	};
 
@@ -170,9 +170,9 @@ static BNCDeviceInfo *bncDeviceInfo;
             DISPATCH_BLOCK_DETACHED | DISPATCH_BLOCK_ENFORCE_QOS_CLASS,
             QOS_CLASS_USER_INTERACTIVE,
             0,  ^ {
-                BNCLogDebug(@"Will userAgent.");
+                BNCLogDebugSDK(@"Will set userAgent.");
                 setBrowserUserAgent();
-                BNCLogDebug(@"Did  userAgent.");
+                BNCLogDebugSDK(@"Did set userAgent.");
             });
         dispatch_async(dispatch_get_main_queue(), agentBlock);
 

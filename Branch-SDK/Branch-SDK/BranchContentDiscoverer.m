@@ -54,7 +54,7 @@
 
 - (void)startDiscoveryTask {
     if (![NSThread isMainThread]) {
-        BNCLogError(@"Error: Should be called on main thread!");
+        BNCLogError(@"Discovery should be called on main thread.");
     }
     [_contentDiscoveryTimer invalidate];
     _contentDiscoveryTimer =

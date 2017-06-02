@@ -297,7 +297,7 @@
         buildDate = [self dateForPathComponent:@"xctest" inURLs:fileInfoURLs];
     }
     if (buildDate == nil || [buildDate timeIntervalSince1970] <= 0.0) {
-        BNCLogError(@"Error: Invalid build date.");
+        BNCLogError(@"Invalid build date.");
         return nil;
     }
     return buildDate;

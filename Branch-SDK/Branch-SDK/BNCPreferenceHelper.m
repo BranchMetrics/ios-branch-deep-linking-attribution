@@ -738,7 +738,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             NSError *error = nil;
             [data writeToURL:prefsURL options:NSDataWritingAtomic error:&error];
             if (error) {
-                BNCLogWarning(@"Failed to persist preferences to disk: %@.", error);
+                BNCLogWarning(@"Failed to persist preferences: %@.", error);
             }
         }];
         [self.persistPrefsQueue addOperation:newPersistOp];
@@ -758,7 +758,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
                 persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
         }
         @catch (NSException *exception) {
-            BNCLogWarning(@"Failed to load preferences from disk.");
+            BNCLogWarning(@"Failed to load preferences from storage.");
         }
 
         if ([persistenceDict isKindOfClass:[NSDictionary class]])
@@ -832,7 +832,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
                 removeItemAtURL:oldURL
                 error:&error];
         } else {
-            BNCLogError(@"Error moving prefs file: %@.", error);
+            BNCLogError(@"Can't move prefs file: %@.", error);
         }
     }
 }
@@ -865,7 +865,7 @@ NSURL* _Null_unspecified BNCCreateDirectoryForBranchURLWithPath(NSSearchPathDire
         if (success) {
             return branchURL;
         } else  {
-            BNCLogError(@"CreateBranchURL error: %@ URL: %@.", error, branchURL);
+            BNCLogError(@"CreateBranchURL failed: %@ URL: %@.", error, branchURL);
         }
     }
     return nil;

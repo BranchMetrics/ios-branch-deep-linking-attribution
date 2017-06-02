@@ -525,14 +525,14 @@ void BNCLogWriteMessageFormat(
             lastPathComponent];
 
     NSString *logLevels[BNCLogLevelMax] = {
-        @"  Debug",
-        @"  Break",
-        @"   Info",
+        @"DebugSDK",
+        @"Break",
+        @"Debug",
         @"Warning",
-        @"  Error",
-        @" Assert",
-        @"    Log",
-        @"   None",
+        @"Error",
+        @"Assert",
+        @"Log",
+        @"None",
     };
 
     logLevel = MAX(MIN(logLevel, BNCLogLevelMax-1), 0);

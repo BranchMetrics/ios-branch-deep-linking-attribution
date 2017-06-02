@@ -307,7 +307,7 @@
         objc_registerClassPair(BNCMatchViewControllerSubclass);
     }
 
-    BNCLogDebug(@"Safari initializing.");
+    BNCLogDebugSDK(@"Safari is initializing.");
     self.primaryWindow = [self keyWindow];
 
     self.matchViewController = [[BNCMatchViewControllerSubclass alloc] initWithURL:matchURL];
@@ -332,7 +332,7 @@
 }
 
 - (void) unloadViewController {
-    BNCLogDebug(@"Safari unloadViewController");
+    BNCLogDebugSDK(@"Safari unloadViewController called.");
     
     [self.matchViewController willMoveToParentViewController:nil];
     [self.matchViewController.view removeFromSuperview];
@@ -352,7 +352,7 @@
 
 - (void)safariViewController:(SFSafariViewController *)controller
       didCompleteInitialLoad:(BOOL)didLoadSuccessfully {
-    BNCLogDebug(@"Safari Did load. Success: %d.", didLoadSuccessfully);
+    BNCLogDebugSDK(@"Safari did load. Success: %d.", didLoadSuccessfully);
     [self unloadViewController];
 }
 

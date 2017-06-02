@@ -186,7 +186,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         }
         
         if (!openOrInstallRequest) {
-            BNCLogError(@"No install or open request in queue while trying to move it to the front");
+            BNCLogError(@"No install or open request in queue while trying to move it to the front.");
             return nil;
         }
         
@@ -261,12 +261,12 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             [data writeToURL:self.class.URLForQueueFile
                 options:NSDataWritingAtomic error:&error];
             if (error) {
-                BNCLogError(@"Failed to persist queue to disk: %@", error);
+                BNCLogError(@"Failed to persist queue to disk: %@.", error);
             }
         }
         @catch (NSException *exception) {
             BNCLogError(
-                @"An exception occurred while attempting to save the queue. Exception information:\n\n%@",
+                @"An exception occurred while attempting to save the queue. Exception information:\n\n%@.",
                 [self.class exceptionString:exception]
             );
         }
@@ -300,7 +300,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         @catch (NSException *exception) {
             BNCLogError(
                 @"An exception occurred while attempting to load the queue file, "
-                "proceeding without requests. Exception information:\n\n%@",
+                "proceeding without requests. Exception information:\n\n%@.",
                 [self.class exceptionString:exception]
             );
             self.queue = queue;
@@ -375,7 +375,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
                 removeItemAtURL:oldURL
                 error:&error];
         } else {
-            BNCLogError(@"Error moving queue file: %@.", error);
+            BNCLogError(@"Failed to move the queue file: %@.", error);
         }
     }
 }
@@ -395,7 +395,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     dispatch_once(&onceToken, ^ {
         sharedQueue = [[BNCServerRequestQueue alloc] init];
         [sharedQueue retrieve];
-        BNCLogDebug(@"Retrieved from Persist: %@.", sharedQueue);
+        BNCLogDebugSDK(@"Retrieved from storage: %@.", sharedQueue);
     });
     return sharedQueue;
 }

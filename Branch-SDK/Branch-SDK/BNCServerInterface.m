@@ -106,7 +106,7 @@ NSString *requestEndpoint;
             dispatch_time_t dispatchTime = dispatch_time(DISPATCH_TIME_NOW, self.preferenceHelper.retryInterval * NSEC_PER_SEC);
             dispatch_after(dispatchTime, dispatch_get_main_queue(), ^{
 
-                BNCLogInfo(@"Replaying request with url %@", request.URL.relativePath);
+                BNCLogDebug(@"Retrying request with url %@.", request.URL.relativePath);
                 
                 // Create the next request
                 NSURLRequest *retryRequest = retryHandler(retryNumber);
@@ -217,7 +217,7 @@ NSString *requestEndpoint;
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
 
-    BNCLogDebug(@" URL: %@.", url);
+    BNCLogDebug(@"URL: %@.", url);
     BNCLogDebug(@"Body: %@.", preparedParams);
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];

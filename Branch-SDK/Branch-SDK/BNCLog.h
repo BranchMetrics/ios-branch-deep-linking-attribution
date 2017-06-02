@@ -30,9 +30,9 @@ extern "C" {
 /// Log message severity
 typedef NS_ENUM(NSInteger, BNCLogLevel) {
     BNCLogLevelAll = 0,
-    BNCLogLevelDebug = BNCLogLevelAll,
+    BNCLogLevelDebugSDK = BNCLogLevelAll,
     BNCLogLevelBreakPoint,
-    BNCLogLevelInfo,
+    BNCLogLevelDebug,
     BNCLogLevelWarning,
     BNCLogLevelError,
     BNCLogLevelAssert,
@@ -151,13 +151,13 @@ extern void BNCLogFlushMessages();
 #pragma mark - Logging
 ///@info Logging
 
+///@param format Log an info message with the specified formatting.
+#define BNCLogDebugSDK(...) \
+    do  { BNCLogWriteMessageFormat(BNCLogLevelDebugSDK, __FILE__, __LINE__, __VA_ARGS__); } while (0)
+
 ///@param format Log a debug message with the specified formatting.
 #define BNCLogDebug(...) \
     do  { BNCLogWriteMessageFormat(BNCLogLevelDebug, __FILE__, __LINE__, __VA_ARGS__); } while (0)
-
-///@param format Log an info message with the specified formatting.
-#define BNCLogInfo(...) \
-    do  { BNCLogWriteMessageFormat(BNCLogLevelInfo, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
 ///@param format Log a warning message with the specified formatting.
 #define BNCLogWarning(...) \

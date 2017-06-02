@@ -267,7 +267,7 @@ static const short _base64DecodingTable[256] = {
 
     [encodedDictionary appendString:@"}"];
 
-    BNCLogDebug(@"Encoded dictionary: %@.", encodedDictionary);
+    BNCLogDebugSDK(@"Encoded dictionary: %@.", encodedDictionary);
     return encodedDictionary;
 }
 
@@ -327,7 +327,7 @@ static const short _base64DecodingTable[256] = {
     [encodedArray deleteCharactersInRange:NSMakeRange([encodedArray length] - 1, 1)];
     [encodedArray appendString:@"]"];
     
-    BNCLogDebug(@"Encoded array: %@.", encodedArray);
+    BNCLogDebugSDK(@"Encoded array: %@.", encodedArray);
     return encodedArray;
 }
 
@@ -360,7 +360,7 @@ static const short _base64DecodingTable[256] = {
             }
             else {
                 // If this type is not a known type, don't attempt to encode it.
-                BNCLogError(@"Cannot encode value %@. The value is not an of accepted type.", obj);
+                BNCLogError(@"Cannot encode value %@. The value is not an accepted type.", obj);
                 continue;
             }
             

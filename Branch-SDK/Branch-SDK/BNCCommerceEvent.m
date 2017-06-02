@@ -335,7 +335,7 @@ BNCCurrency BNCCurrencyZMW = @"ZMW";
 	if (!self) return self;
 
     if ([commerceEvent.revenue isEqualToNumber:[NSDecimalNumber numberWithDouble:0.0]]) {
-        BNCLogWarning(@"Sending a commerce event with zero revenue!");
+        BNCLogWarning(@"Sending a commerce event with zero revenue.");
     }
 
 	self.commerceDictionary = [commerceEvent dictionary];

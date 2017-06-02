@@ -162,7 +162,7 @@ void ForceCategoriesToLoad() {
         preferenceHelper.branchKey = branchKey;
     }
     else {
-        BNCLogError(@"Invalid Branch Key format!");
+        BNCLogError(@"Invalid Branch key format!");
         return nil;
     }
     
@@ -237,7 +237,7 @@ void ForceCategoriesToLoad() {
 
 - (void)setDebug {
     self.preferenceHelper.isDebug = YES;
-    BNCLogSetDisplayLevel(BNCLogLevelAll);
+    BNCLogSetDisplayLevel(BNCLogLevelDebug);
 }
 
 - (void)resetUserSession {
@@ -750,12 +750,12 @@ void ForceCategoriesToLoad() {
             if (callback) {
                 callback(YES, nil);
             }
-            BNCLogDebug(@"Logout Success");
+            BNCLogDebug(@"Logout success.");
         } else /*failure*/ {
             if (callback) {
                 callback(NO, error);
             }
-            BNCLogDebug(@"Logout Failure");
+            BNCLogDebug(@"Logout failure.");
         }
     }];
     
@@ -839,7 +839,7 @@ void ForceCategoriesToLoad() {
             callback(false, [NSError errorWithDomain:BNCErrorDomain code:BNCRedeemCreditsError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot redeem zero credits." }]);
         }
         else {
-            BNCLogWarning(@"Cannot redeem zero credits");
+            BNCLogWarning(@"Cannot redeem zero credits.");
         }
         return;
     }
@@ -1250,7 +1250,7 @@ void ForceCategoriesToLoad() {
                 linkCache:self.linkCache];
         
         if (self.isInitialized) {
-            BNCLogDebug(@"Created custom url synchronously");
+            BNCLogDebug(@"Created a custom URL synchronously.");
             BNCServerResponse *serverResponse = [req makeRequest:self.bServerInterface key:self.branchKey];
             shortURL = [req processResponse:serverResponse];
             
@@ -1266,7 +1266,7 @@ void ForceCategoriesToLoad() {
                             channel:channel feature:feature stage:stage params:params];
                 }
             }
-            BNCLogError(@"Branch SDK Error: making request before init succeeded!");
+            BNCLogError(@"Making a Branch request before init has succeeded!");
         }
     }
     
@@ -1497,7 +1497,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                 BNCLogError(@"Missing session items!");
                 BNCPerformBlockOnMainThreadSync(^{
                     [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError
-                        userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
+                        userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized." }]];
                 });
                 return;
             }
@@ -1622,7 +1622,8 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                 [branchSharingController configureControlWithData:latestReferringParams];
             }
             else {
-                BNCLogWarning(@"View controller does not implement 'configureControlWithData:'");
+                BNCLogWarning(@"The automatic deeplink view controller '%@' for key '%@' does not implement 'configureControlWithData:'.",
+                    branchSharingController, key);
             }
             branchSharingController.deepLinkingCompletionDelegate = self;
             self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
