@@ -38,46 +38,35 @@
     
     [branch setWhiteListedSchemes:@[@"branchtest"]];
 
-    // Automatic Deeplinking on "deeplink_text"
-    NavigationController *navigationController =
-        [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]]
-            instantiateInitialViewController];
-
-    [branch registerDeepLinkController:navigationController forKey:@"deeplink_text"];
-    
     /**
      * // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
      * [self onboardUserOnInstall];
      */
-
-    // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is NO).
-    [branch initSessionWithLaunchOptions:launchOptions
-        automaticallyDisplayDeepLinkController:YES
-        deepLinkHandler:^(NSDictionary *params, NSError *error) {
+    
+    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
         if (!error) {
-
+            
             NSLog(@"initSession succeeded with params: %@", params);
-           
-            // Deeplinking logic for use when automaticallyDisplayDeepLinkController = NO
-            /*
-             NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
-             if (params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] && deeplinkText) {
-             
-             UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
-             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-             LogOutputViewController *logOutputViewController = [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
-             
-             [navigationController pushViewController:logOutputViewController animated:YES];
-             NSString *logOutput = [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@", deeplinkText, [[branch getLatestReferringParams] description]];
-             logOutputViewController.logOutput = logOutput;
-             
-             } else {
-             NSLog(@"Branch TestBed: Finished init with params\n%@", params.description);
-             }
-             */
+            
+            NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
+            if (params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] && deeplinkText) {
+                
+                UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
+                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                LogOutputViewController *logOutputViewController = [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
+                
+                [navigationController pushViewController:logOutputViewController animated:YES];
+                NSString *logOutput = [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@", deeplinkText, [[branch getLatestReferringParams] description]];
+                logOutputViewController.logOutput = logOutput;
+                
+            } else {
+                NSLog(@"Branch TestBed: Finished init with params\n%@", params.description);
+            }
+            
         } else {
             NSLog(@"Branch TestBed: Initialization failed\n%@", error.localizedDescription);
         }
+
     }];
 
     return YES;

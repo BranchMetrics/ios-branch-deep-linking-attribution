@@ -427,6 +427,10 @@ void ForceCategoriesToLoad() {
     return [self handleDeepLink:url fromSelf:NO];
 }
 
+-(BOOL)handleDeepLinkWithNewSession:(NSURL *)url{
+    return [self handleDeepLink:url fromSelf:YES];
+}
+
 - (BOOL)handleDeepLink:(NSURL *)url fromSelf:(BOOL)isFromSelf {
     BOOL handled = NO;
     if (url && ![url isEqual:[NSNull null]]) {
@@ -577,6 +581,16 @@ void ForceCategoriesToLoad() {
     if (!self.delayForAppleAds)
         return NO;
 
+    NSNumber *hasAppleSearchAdAttribution = self.preferenceHelper.appleSearchAdDetails[@"iad-attribution"];
+    if ([hasAppleSearchAdAttribution boolValue])
+        return NO;
+
+    NSDate *installDatePlus30 =
+        [[BNCSystemObserver appInstallDate] dateByAddingTimeInterval:(30.0*24.0*60.0*60.0)];
+    if ([installDatePlus30 compare:[NSDate date]] < 0) {
+        return NO;
+    }
+
     Class ADClientClass = NSClassFromString(@"ADClient");
     SEL sharedClient = NSSelectorFromString(@"sharedClient");
     SEL requestAttribution = NSSelectorFromString(@"requestAttributionDetailsWithBlock:");
@@ -623,7 +637,9 @@ void ForceCategoriesToLoad() {
             
             self.preferenceHelper.appleSearchAdDetails = testInfo;
         }
-        
+
+
+
         // if there's another async attribution check in flight, don't continue with init
         if (self.asyncRequestCount > 0) { return; }
         

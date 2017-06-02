@@ -1,14 +1,32 @@
 Branch iOS SDK Change Log
 
+  * Added a `BNCCurrency` type for commerce events.
+
+- v0.15.3
+  * *Master Release*
+
+- v0.15.2
+  * *QA Release*
+  * Updated BNCStrongMatchHelper to handle UISplitViewController (#625).
+
+- v0.15.1
+  * *Beta Release*
+  * Master release candidate.
+  * Added an example of opening a Branch link in-app. (#621)
+
 - v0.15.0
-  * Added The Planets WebView example.
+  * *Beta Release*
+  * Added 'The Planets' WebView example.
     - This example demonstrates how to use Branch links in an app that has table view and web view.
   * Added unit tests and fixed bugs as needed.
     - Changed the NSTimer to a dispatch_timer.  NSTimers only fire in certain run modes.
     - Added environment parameters to control the test cases without re-compiling.
     - Standardized test cases.
     - All tests pass.
-  * Updated README.md SDK integration documentation.
+  * Updated README.md SDK integration documentation to include the new
+    `[Branch application:openURL:sourceApplication:annotation:annotation]` method.
+  * Added Email HTML support to BranchActivityItemProvider.
+  * Added logging functions for Swift.
 
 - v0.14.12
   * Fixed headers for Swift compatibility AIS-242 (#615).
