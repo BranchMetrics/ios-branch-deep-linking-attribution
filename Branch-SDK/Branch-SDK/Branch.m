@@ -545,14 +545,14 @@ void ForceCategoriesToLoad() {
     
     // Check to see if a spotlight activity needs to be handled
     NSString *spotlightIdentifier =
-    [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
+	    [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     
     if (spotlightIdentifier) {
         self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
     }
     else {
         NSString *nonBranchSpotlightIdentifier =
-        [self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
+        	[self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
         if (nonBranchSpotlightIdentifier) {
             self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
         }
