@@ -35,6 +35,8 @@
 #import "BranchRegisterViewRequest.h"
 #import "BranchContentDiscoverer.h"
 #import "NSMutableDictionary+Branch.h"
+#import "BNCNetworkService.h"
+#import "BNCLog.h"
 
 //Fabric
 #import "../Fabric/FABKitProtocol.h"
@@ -1170,8 +1172,12 @@ void ForceCategoriesToLoad() {
         }
         
         preferenceHelper.lastRunBranchKey = key;
-        
-        branch = [[Branch alloc] initWithInterface:[[BNCServerInterface alloc] init] queue:[BNCServerRequestQueue getInstance] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:key];
+        branch =
+            [[Branch alloc] initWithInterface:[[BNCServerInterface alloc] init]
+                queue:[BNCServerRequestQueue getInstance]
+                cache:[[BNCLinkCache alloc] init]
+                preferenceHelper:preferenceHelper
+                key:key];
     });
     
     return branch;
@@ -1665,3 +1671,31 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 }
 
 @end
+
+#pragma mark - BranchNetworkServiceClass
+
+static Class bnc_networkServiceClass = NULL;
+
+void  BranchSetNetworkServiceClass(Class networkServiceClass) {
+    @synchronized ([Branch class]) {
+        if (bnc_networkServiceClass) {
+            BNCLogError(@"The Branch network service class is already set. It can be set only once.");
+            return;
+        }
+        if (![networkServiceClass conformsToProtocol:@protocol(BNCNetworkServiceProtocol)]) {
+            BNCLogError(@"Class '%@' doesn't conform to protocol '%@'.",
+                NSStringFromClass(networkServiceClass),
+                NSStringFromProtocol(@protocol(BNCNetworkServiceProtocol))
+            );
+            return;
+        }
+        bnc_networkServiceClass = networkServiceClass;
+    }
+}
+
+Class BranchNetworkServiceClass() {
+    @synchronized ([Branch class]) {
+        if (!bnc_networkServiceClass) bnc_networkServiceClass = [BNCNetworkService class];
+        return bnc_networkServiceClass;
+    }
+}

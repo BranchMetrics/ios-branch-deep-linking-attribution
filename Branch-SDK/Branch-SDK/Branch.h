@@ -1370,3 +1370,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
 
 @end
+
+// eDebug Document
+extern void  BranchSetNetworkServiceClass(Class networkServiceClass);
+extern Class BranchNetworkServiceClass();
