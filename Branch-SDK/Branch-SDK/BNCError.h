@@ -19,7 +19,8 @@ enum {
     BNCBadRequestError,
     BNCServerProblemError,
     BNCNilLogError,
-    BNCVersionError
+    BNCVersionError,
+    BNCNetworkProtocolError,
 };
 
 @interface BNCError : NSObject
