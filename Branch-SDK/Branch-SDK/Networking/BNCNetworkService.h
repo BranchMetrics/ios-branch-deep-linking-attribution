@@ -18,8 +18,8 @@
 @property (readonly, copy)   NSError             *error;
 @property (strong)           NSDate              *timeoutDate;
 
-@property (strong, readonly) NSDate              *dateStart;
-@property (strong, readonly) NSDate              *dateFinish;
+@property (readonly, copy)   NSDate              *dateStart;
+@property (readonly, copy)   NSDate              *dateFinish;
 
 - (void) start;
 - (void) cancel;

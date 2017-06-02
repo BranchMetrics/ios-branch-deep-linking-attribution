@@ -17,7 +17,6 @@
 #import "Branch.h"
 
 @interface BNCServerInterface ()
-@property (strong) NSDate *startTime;
 @property (strong) NSString *requestEndpoint;
 @property (strong) id<BNCNetworkServiceProtocol> networkService;
 @end
@@ -86,13 +85,15 @@
 
 - (void)genericHTTPRequest:(NSURLRequest *)request
                retryNumber:(NSInteger)retryNumber
-                  callback:(BNCServerCallback)callback retryHandler:(NSURLRequest *(^)(NSInteger))retryHandler {
+                  callback:(BNCServerCallback)callback
+              retryHandler:(NSURLRequest *(^)(NSInteger))retryHandler {
 
     void (^completionHandler)(id<BNCNetworkOperationProtocol>operation) =
         ^void (id<BNCNetworkOperationProtocol>operation) {
 
             BNCServerResponse *serverResponse =
                 [self processServerResponse:operation.response data:operation.responseData error:operation.error log:YES];
+            [self collectInstrumentationMetricsWithOperation:operation];
 
             NSError *error = operation.error;
             NSInteger status = [serverResponse.statusCode integerValue];
@@ -145,13 +146,18 @@
                 callback(serverResponse, error);
         };
 
-    // start the reqeust timer here. This will account for retries.
-    self.startTime = [NSDate date];
-
-
-
     id<BNCNetworkOperationProtocol> operation =
         [self.networkService networkOperationWithURLRequest:request.copy completion:completionHandler];
+    if (![operation conformsToProtocol:@protocol(BNCNetworkOperationProtocol)]) {
+        NSError *error =
+            [NSError errorWithDomain:BNCErrorDomain code:BNCNetworkProtocolError userInfo:@{NSLocalizedDescriptionKey:
+                @"Network object of class '%@' does not conform to the BNCNetworkOperationProtocol."}];
+        BNCLogError(@"Protocol error: %@.", error);
+        if (callback) {
+            callback(nil, error);
+        }
+        return;
+    }
     [operation start];
 }
 
@@ -166,10 +172,18 @@
             completion:^void (id<BNCNetworkOperationProtocol>operation) {
                 serverResponse =
                     [self processServerResponse:operation.response data:operation.responseData error:operation.error log:YES];
+                [self collectInstrumentationMetricsWithOperation:operation];                    
                 dispatch_semaphore_signal(semaphore);
             }];
-    [operation start];
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    if (![operation conformsToProtocol:@protocol(BNCNetworkOperationProtocol)]) {
+        NSError *error =
+            [NSError errorWithDomain:BNCErrorDomain code:BNCNetworkProtocolError userInfo:@{NSLocalizedDescriptionKey:
+                @"Network object of class '%@' does not conform to the BNCNetworkOperationProtocol."}];
+        BNCLogError(@"Protocol error: %@.", error);
+    } else {
+        [operation start];
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    }
     return serverResponse;
 }
 
@@ -263,13 +277,12 @@
         [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned = %@", serverResponse];
     }
     
-    [self collectInstrumentationMetrics];
     return serverResponse;
 }
 
-- (void) collectInstrumentationMetrics {
+- (void) collectInstrumentationMetricsWithOperation:(id<BNCNetworkOperationProtocol>)operation {
     // multiplying by negative because startTime happened in the past
-    NSTimeInterval elapsedTime = [self.startTime timeIntervalSinceNow] * -1000.0;
+    NSTimeInterval elapsedTime = [operation.dateStart timeIntervalSinceNow] * -1000.0;
     NSString *lastRoundTripTime = [[NSNumber numberWithDouble:floor(elapsedTime)] stringValue];
     NSString * brttKey = [NSString stringWithFormat:@"%@-brtt", self.requestEndpoint];
     [self.preferenceHelper clearInstrumentationDictionary];

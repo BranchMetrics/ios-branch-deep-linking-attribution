@@ -18,8 +18,8 @@
 @property (copy)   NSHTTPURLResponse  *response;
 @property (strong) NSData             *responseData;
 @property (copy)   NSError            *error;
-@property (strong) NSDate             *dateStart;
-@property (strong) NSDate             *dateFinish;
+@property (copy)   NSDate             *dateStart;
+@property (copy)   NSDate             *dateFinish;
 
 @property (strong) BNCNetworkService  *networkService;
 @property (strong) NSURLSessionTask   *sessionTask;
