@@ -432,6 +432,15 @@ void ForceCategoriesToLoad() {
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url fromSelf:(BOOL)isFromSelf {
+    NSString *scheme = [url scheme];
+    if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
+        return [self handleUniversalDeepLink:url fromSelf:isFromSelf];
+    } else {
+        return [self handleSchemeDeepLink:url fromSelf:isFromSelf];
+    }
+}
+
+- (BOOL)handleSchemeDeepLink:(NSURL*)url fromSelf:(BOOL)isFromSelf {
     BOOL handled = NO;
     if (url && ![url isEqual:[NSNull null]]) {
         
@@ -446,7 +455,7 @@ void ForceCategoriesToLoad() {
         } else {
             self.preferenceHelper.externalIntentURI = [url absoluteString];
         }
-
+        
         NSString *query = [url fragment];
         if (!query) {
             query = [url query];
@@ -466,6 +475,7 @@ void ForceCategoriesToLoad() {
     
     return handled;
 }
+
 
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
@@ -494,43 +504,55 @@ void ForceCategoriesToLoad() {
     return [self application:application openURL:url sourceApplication:source annotation:annotation];
 }
 
+- (BOOL)handleUniversalDeepLink:(NSURL*)url fromSelf:(BOOL)isFromSelf {
+    if (isFromSelf) {
+        [self resetUserSession];
+    }
+    
+    NSString *urlString = [url absoluteString];
+    self.preferenceHelper.universalLinkUrl = urlString;
+    self.preferenceHelper.shouldWaitForInit = NO;
+    [self initUserSessionAndCallCallback:YES];
+    
+    id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
+    if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] &&
+        [urlString containsString:branchUniversalLinkDomains]) {
+        return YES;
+    }
+    else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
+        for (id oneDomain in branchUniversalLinkDomains) {
+            if ([oneDomain isKindOfClass:[NSString class]] && [urlString containsString:oneDomain]) {
+                return YES;
+            }
+        }
+    }
+    
+    NSString *userActivityURL = urlString;
+    NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
+    for (NSString* domain in branchDomains) {
+        if ([userActivityURL containsString:domain])
+            return YES;
+    }
+    
+    return NO;
+}
+
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
     //check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        self.preferenceHelper.universalLinkUrl = [userActivity.webpageURL absoluteString];
-        self.preferenceHelper.shouldWaitForInit = NO;
-        [self initUserSessionAndCallCallback:YES];
-        
-        id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
-        if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] && [[userActivity.webpageURL absoluteString] containsString:branchUniversalLinkDomains]) {
-            return YES;
-        }
-        else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
-            for (id oneDomain in branchUniversalLinkDomains) {
-                if ([oneDomain isKindOfClass:[NSString class]] && [[userActivity.webpageURL absoluteString] containsString:oneDomain]) {
-                    return YES;
-                }
-            }
-        }
-        
-        NSString *userActivityURL = [userActivity.webpageURL absoluteString];
-        NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
-        for (NSString* domain in branchDomains) {
-            if ([userActivityURL containsString:domain])
-                return YES;
-        }
-        
-        return NO;
+        return [self handleUniversalDeepLink:userActivity.webpageURL fromSelf:NO];
     }
     
     // Check to see if a spotlight activity needs to be handled
-    NSString *spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
+    NSString *spotlightIdentifier =
+	    [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     
     if (spotlightIdentifier) {
         self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
     }
     else {
-        NSString *nonBranchSpotlightIdentifier = [self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
+        NSString *nonBranchSpotlightIdentifier =
+        	[self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
         if (nonBranchSpotlightIdentifier) {
             self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
         }
@@ -541,7 +563,6 @@ void ForceCategoriesToLoad() {
     
     return spotlightIdentifier != nil;
 }
-
 
 #pragma mark - Push Notification support
 
