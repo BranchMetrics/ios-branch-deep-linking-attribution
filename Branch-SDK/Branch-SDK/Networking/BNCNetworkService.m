@@ -9,11 +9,12 @@
 #import "BNCNetworkService.h"
 #import "BNCEncodingUtils.h"
 #import "BNCLog.h"
+#import "BNCDebug.h"
 
 #pragma mark BNCNetworkOperation
 
 @interface BNCNetworkOperation ()
-@property (copy)   NSURLRequest       *request;
+@property (copy)   NSMutableURLRequest*request;
 @property (copy)   NSHTTPURLResponse  *response;
 @property (strong) NSData             *responseData;
 @property (copy)   NSError            *error;
@@ -28,7 +29,8 @@
 #pragma mark - BNCNetworkService
 
 @interface BNCNetworkService () <NSURLSessionDelegate, NSURLSessionTaskDelegate> {
-    NSURLSession *_session;
+    NSURLSession    *_session;
+    NSTimeInterval  _defaultTimeoutInterval;
 }
 
 - (void) startOperation:(BNCNetworkOperation*)operation;
@@ -76,7 +78,23 @@
 
 - (instancetype) init {
     self = [super init];
+    if (!self) return self;
+    _defaultTimeoutInterval = 60.0;
     return self;
+}
+
+#pragma mark - Setters & Getters
+
+- (void) setDefaultTimeoutInterval:(NSTimeInterval)defaultTimeoutInterval {
+    @synchronized (self) {
+        _defaultTimeoutInterval = MAX(defaultTimeoutInterval, 0.0);
+    }
+}
+
+- (NSTimeInterval) defaultTimeoutInterval {
+    @synchronized (self) {
+        return _defaultTimeoutInterval;
+    }
 }
 
 - (NSURLSession*) session {
@@ -125,7 +143,7 @@
     return self.sessionQueue.isSuspended;
 }
 
-- (BNCNetworkOperation*) networkOperationWithURLRequest:(NSURLRequest*)request
+- (BNCNetworkOperation*) networkOperationWithURLRequest:(NSMutableURLRequest*)request
                 completion:(void (^)(BNCNetworkOperation*operation))completion {
 
     BNCNetworkOperation *operation = [BNCNetworkOperation new];
@@ -139,6 +157,11 @@
     operation.networkService = self;
     if (!operation.dateStart)
         operation.dateStart = [NSDate date];
+    if (!operation.timeoutDate) {
+        operation.timeoutDate =
+            [[operation dateStart] dateByAddingTimeInterval:self.defaultTimeoutInterval];
+    }
+    operation.request.timeoutInterval = [operation.timeoutDate timeIntervalSinceDate:[NSDate date]];
     operation.sessionTask =
         [self.session dataTaskWithRequest:operation.request
             completionHandler:
@@ -204,10 +227,13 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
     if (!hostPolicy) goto exit;
     SecTrustSetPolicies(serverTrust, (__bridge CFTypeRef _Nonnull)(@[ (__bridge id)hostPolicy ]));
 
-    // Evaluate server certificate
-    SecTrustEvaluate(serverTrust, &trustResult);
-    if (! (trustResult == kSecTrustResultUnspecified || trustResult == kSecTrustResultProceed)) {
-        goto exit;
+    // TODO: SecTrustEvaluate is not thread safe. This is a temporary fix.
+    @synchronized (self.class) {
+        // Evaluate server certificate
+        SecTrustEvaluate(serverTrust, &trustResult);
+        if (! (trustResult == kSecTrustResultUnspecified || trustResult == kSecTrustResultProceed)) {
+            goto exit;
+        }
     }
 
     hostName = task.originalRequest.URL.host;
