@@ -7,13 +7,14 @@
 //
 
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+@import UIKit;
+
 #import "BranchContentDiscoverer.h"
 #import "BranchContentDiscoveryManifest.h"
 #import "BranchContentPathProperties.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
-#import <UIKit/UIKit.h>
 #import <CommonCrypto/CommonDigest.h>
 #import "BNCEncodingUtils.h"
 
