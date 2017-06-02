@@ -25,4 +25,6 @@
 + (NSDictionary *)decodeQueryStringToDictionary:(NSString *)queryString;
 + (NSString *)encodeDictionaryToQueryString:(NSDictionary *)dictionary;
 
++ (NSString *) hexStringFromData:(NSData*)data;
+
 @end

@@ -179,13 +179,15 @@
                                 url:(NSString *)url
                                 key:(NSString *)key
                         retryNumber:(NSInteger)retryNumber {
+
     NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"GET"];
-    
     NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:preparedParams]];
     BNCLogDebug(@"URL: %@", requestUrlString);
 
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setURL:[NSURL URLWithString:requestUrlString]];
+    NSMutableURLRequest *request =
+        [NSMutableURLRequest requestWithURL:[NSURL URLWithString:requestUrlString]
+            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
+            timeoutInterval:self.preferenceHelper.timeout];
     [request setHTTPMethod:@"GET"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     
@@ -196,16 +198,18 @@
                                  url:(NSString *)url
                                  key:(NSString *)key
                          retryNumber:(NSInteger)retryNumber {
-    NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"POST"];
 
+    NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"POST"];
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
 
     BNCLogDebug(@"URL: %@.", url);
     BNCLogDebug(@"Body: %@.", preparedParams);
     
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    [request setTimeoutInterval:self.preferenceHelper.timeout];
+    NSMutableURLRequest *request =
+        [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]
+            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
+            timeoutInterval:self.preferenceHelper.timeout];
     [request setHTTPMethod:@"POST"];
     [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
