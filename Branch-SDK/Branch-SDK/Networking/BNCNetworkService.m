@@ -31,6 +31,7 @@
 @interface BNCNetworkService () <NSURLSessionDelegate, NSURLSessionTaskDelegate> {
     NSURLSession    *_session;
     NSTimeInterval  _defaultTimeoutInterval;
+    NSInteger       _maximumConcurrentOperations;
 }
 
 - (void) startOperation:(BNCNetworkOperation*)operation;
@@ -80,6 +81,7 @@
     self = [super init];
     if (!self) return self;
     _defaultTimeoutInterval = 60.0;
+    _maximumConcurrentOperations = 3;
     return self;
 }
 
@@ -97,19 +99,32 @@
     }
 }
 
+- (void) setMaximumConcurrentOperations:(NSInteger)maximumConcurrentOperations {
+    @synchronized (self) {
+        _maximumConcurrentOperations = MAX(maximumConcurrentOperations, 0);
+        self.sessionQueue.maxConcurrentOperationCount = _maximumConcurrentOperations;
+    }
+}
+
+- (NSInteger) maximumConcurrentOperations {
+    @synchronized (self) {
+        return _maximumConcurrentOperations;
+    }
+}
+
 - (NSURLSession*) session {
     @synchronized (self) {
         if (_session) return _session;
 
         NSURLSessionConfiguration *configuration =
             [NSURLSessionConfiguration defaultSessionConfiguration];
-        configuration.timeoutIntervalForRequest = 60.0;
-        configuration.timeoutIntervalForResource = 60.0;
+        configuration.timeoutIntervalForRequest = self.defaultTimeoutInterval;
+        configuration.timeoutIntervalForResource = self.defaultTimeoutInterval;
         configuration.URLCache = nil;
 
         self.sessionQueue = [NSOperationQueue new];
         self.sessionQueue.name = @"io.branch.network.queue";
-        self.sessionQueue.maxConcurrentOperationCount = 3;
+        self.sessionQueue.maxConcurrentOperationCount = self.maximumConcurrentOperations;
         self.sessionQueue.qualityOfService = NSQualityOfServiceUserInteractive;
 
         _session =
@@ -122,19 +137,6 @@
     }
 }
 
-- (void) setMaximumConcurrentOperations:(NSInteger)maximumConcurrentOperations {
-    @synchronized (self) {
-        maximumConcurrentOperations = MAX(maximumConcurrentOperations, 0);
-        self.sessionQueue.maxConcurrentOperationCount = maximumConcurrentOperations;
-    }
-}
-
-- (NSInteger) maximumConcurrentOperations {
-    @synchronized (self) {
-        return self.sessionQueue.maxConcurrentOperationCount;
-    }
-}
-
 - (void) setSuspendOperations:(BOOL)suspendOperations {
     self.sessionQueue.suspended = suspendOperations;
 }
@@ -142,6 +144,8 @@
 - (BOOL) operationsAreSuspended {
     return self.sessionQueue.isSuspended;
 }
+
+#pragma mark - Operations
 
 - (BNCNetworkOperation*) networkOperationWithURLRequest:(NSMutableURLRequest*)request
                 completion:(void (^)(BNCNetworkOperation*operation))completion {
