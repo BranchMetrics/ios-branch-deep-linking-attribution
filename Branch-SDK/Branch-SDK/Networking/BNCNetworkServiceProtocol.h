@@ -14,7 +14,7 @@
     The `BNCNetworkServiceProtocol` and `BNCNetworkOperationProtocol` define protocols for 
     a drop in replacement for the standard Branch SDK networking.
 
-    To use your own networking class, it must conforms to these network protocols., set the
+    To use your own networking class, it must conforms to these network protocols. Set your
     networking class at run time by calling:
         
         `BranchSetNetworkServiceClass(Class networkServiceClass)`
