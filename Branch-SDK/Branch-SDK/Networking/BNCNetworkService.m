@@ -7,6 +7,7 @@
 //
 
 #import "BNCNetworkService.h"
+#import "BNCEncodingUtils.h"
 #import "BNCLog.h"
 
 #pragma mark BNCNetworkOperation
@@ -86,11 +87,7 @@
             [NSURLSessionConfiguration defaultSessionConfiguration];
         configuration.timeoutIntervalForRequest = 60.0;
         configuration.timeoutIntervalForResource = 60.0;
-        configuration.URLCache =
-            [[NSURLCache alloc]
-                initWithMemoryCapacity:20*1024*1024
-                diskCapacity:200*1024*1024
-                diskPath:@"io.branch.network.cache"];
+        configuration.URLCache = nil;
 
         self.sessionQueue = [NSOperationQueue new];
         self.sessionQueue.name = @"io.branch.network.queue";
@@ -166,6 +163,87 @@
 - (void) cancelAllOperations {
     [self.session invalidateAndCancel];
     _session = nil;
+}
+
+- (void) URLSession:(NSURLSession *)session
+               task:(NSURLSessionTask *)task
+didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
+  completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler {
+
+    BOOL trusted = NO;
+    uint8_t kNonce[] = "Branch Rocks";
+    uint8_t encryptedString[2048];
+    size_t encryptedLength = sizeof(encryptedString);
+    SecTrustResultType trustResult = 0;
+    OSStatus err = 0;
+    NSData *data = nil;
+    NSString *string = nil;
+    NSString *hostName = nil;
+
+    // Release these:
+    SecKeyRef key = nil;
+    SecPolicyRef hostPolicy = nil;
+
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wobjc-string-concatenation"
+    NSArray<NSString*> *encodedNonces = @[
+        @"BD26E0318889E71233FD5570D6FCAF111CF2C8F7793C67DC4CF2101142B2F581AB5695FDB4EE8F2DFF561311"
+         "AE3C025447ACE3BEB0CD9A14C4CDF56F15DBD37C371B1598A4172BF7E386709FC60AEEF7ED72B37C3C5226E0"
+         "618EA7B2224E019B44161A4A6CCEE929A4F6C3B61C06CBAA0E38C572192442CB1921A97CB7FA358A26974D35"
+         "986AFDC108B6E052C8176DED421F9DBDBD7963D7146208AC3EA378F8AACDDE65287A5A9815C18F3D02CDFB98"
+         "523C65357FC7F633F26755F64FFFBFC03B444ACF169564D17CD80A7976B5665AD3645DAC931257CE5759BD9A"
+         "608C981BF38694293C0F9F6CBA7E2707642D87FF6B2A7EE26B62A52646620BADA70A11A5",
+    ];
+    #pragma clang diagnostic pop
+
+    // Get remote certificate
+    SecTrustRef serverTrust = challenge.protectionSpace.serverTrust;
+
+    // Set SSL policies for domain name check
+    hostPolicy = SecPolicyCreateSSL(true, (__bridge CFStringRef)challenge.protectionSpace.host);
+    if (!hostPolicy) goto exit;
+    SecTrustSetPolicies(serverTrust, (__bridge CFTypeRef _Nonnull)(@[ (__bridge id)hostPolicy ]));
+
+    // Evaluate server certificate
+    SecTrustEvaluate(serverTrust, &trustResult);
+    if (! (trustResult == kSecTrustResultUnspecified || trustResult == kSecTrustResultProceed)) {
+        goto exit;
+    }
+
+    hostName = task.originalRequest.URL.host;
+    if (![hostName hasSuffix:@"branch.io"]) {
+        trusted = YES;
+        goto exit;
+    }
+
+    key = SecTrustCopyPublicKey(serverTrust);
+    if (!key) goto exit;
+    err = SecKeyEncrypt(key, kSecPaddingNone, kNonce, sizeof(kNonce), encryptedString, &encryptedLength);
+    if (err)  goto exit;
+
+    data = [NSData dataWithBytes:encryptedString length:encryptedLength];
+    string = [BNCEncodingUtils hexStringFromData:data];
+    for (NSString* encodedNonce in encodedNonces) {
+        if ([string isEqualToString:encodedNonce]) {
+            trusted = YES;
+            goto exit;
+        }
+    }
+
+exit:
+    if (err) {
+        NSError *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
+        BNCLogError(@"Error while validating cert: %@.", error);
+    }
+    if (key) CFRelease(key);
+    if (hostPolicy) CFRelease(hostPolicy);
+
+    if (trusted) {
+        NSURLCredential *credential = [NSURLCredential credentialForTrust:serverTrust];
+        completionHandler(NSURLSessionAuthChallengeUseCredential, credential);
+    } else {
+        completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, NULL);
+    }
 }
 
 @end
