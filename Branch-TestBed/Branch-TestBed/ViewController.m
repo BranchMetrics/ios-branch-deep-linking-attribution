@@ -220,6 +220,7 @@ NSString *type = @"some type";
 
 - (IBAction)oldShareLinkButtonTouchUpInside:(id)sender {
     // This method uses the old way of sharing Branch links.
+    // Use the new shiny way!  Use BNCShareLink!
 
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
