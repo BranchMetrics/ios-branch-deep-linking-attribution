@@ -32,6 +32,7 @@ typedef NS_ENUM(NSInteger, BNCLogLevel) {
     BNCLogLevelAll = 0,
     BNCLogLevelDebug = BNCLogLevelAll,
     BNCLogLevelBreakPoint,
+    BNCLogLevelInfo,
     BNCLogLevelWarning,
     BNCLogLevelError,
     BNCLogLevelAssert,
@@ -97,6 +98,9 @@ extern void BNCLogSetOutputFunction(BNCLogOutputFunctionPtr _Nullable functionPt
 ///@return Returns the current logging function.
 extern BNCLogOutputFunctionPtr _Nullable BNCLogOutputFunction();
 
+/// If a predefined log handler is being used, the function closes the output file.
+extern void BNCLogCloseLogFile();
+
 ///@param URL Sets the log output function to a function that writes messages to the file at URL.
 extern void BNCLogSetOutputToURL(NSURL *_Nullable URL);
 
@@ -150,6 +154,10 @@ extern void BNCLogFlushMessages();
 ///@param format Log a debug message with the specified formatting.
 #define BNCLogDebug(...) \
     do  { BNCLogWriteMessageFormat(BNCLogLevelDebug, __FILE__, __LINE__, __VA_ARGS__); } while (0)
+
+///@param format Log an info message with the specified formatting.
+#define BNCLogInfo(...) \
+    do  { BNCLogWriteMessageFormat(BNCLogLevelInfo, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
 ///@param format Log a warning message with the specified formatting.
 #define BNCLogWarning(...) \
