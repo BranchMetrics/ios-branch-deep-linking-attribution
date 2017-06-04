@@ -7,15 +7,16 @@
 //
 
 #import "BNCServerRequest.h"
+#import "BNCLog.h"
 
 @implementation BNCServerRequest
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    NSLog(@"[Improper BNCServerRequest] BNCServerRequest subclasses must implement makeRequest:key:callback:");
+    BNCLogError(@"BNCServerRequest subclasses must implement makeRequest:key:callback:.");
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
-    NSLog(@"[Improper BNCServerRequest] BNCServerRequest subclasses must implement processResponse:error:");
+    BNCLogError(@"BNCServerRequest subclasses must implement processResponse:error:.");
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
