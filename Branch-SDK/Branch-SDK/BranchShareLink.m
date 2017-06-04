@@ -12,6 +12,7 @@
 #import "BranchActivityItemProvider.h"
 #import "BNCDeviceInfo.h"
 #import "BNCXcode7Support.h"
+#import "BNCLog.h"
 @class BranchShareActivityItem;
 
 typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
@@ -93,7 +94,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     if (!(self.universalObject.canonicalIdentifier ||
           self.universalObject.canonicalUrl ||
           self.universalObject.title)) {
-        NSLog(@"Warning: A canonicalIdentifier, canonicalURL, or title are required to uniquely"
+        BNCLogWarning(@"A canonicalIdentifier, canonicalURL, or title are required to uniquely"
                " identify content. In order to not break the end user experience with sharing,"
                " Branch SDK will proceed to create a URL, but content analytics may not properly"
                " include this URL.");
@@ -179,7 +180,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
                 forKey:@"subject"];
         }
         @catch (NSException *exception) {
-            NSLog(@"Warning: Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController.");
+            BNCLogWarning(@"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController.");
         }
     }
 
@@ -195,7 +196,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     }
 
     if (!presentingViewController) {
-        NSLog(@"[Branch] Error: No view controller is present to show the share sheet. Aborting.");
+        BNCLogError(@"No view controller is present to show the share sheet. Not showing sheet.");
         return;
     }
 
