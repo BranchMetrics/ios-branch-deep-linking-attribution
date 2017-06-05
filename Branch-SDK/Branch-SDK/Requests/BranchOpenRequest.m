@@ -18,6 +18,7 @@
 #import "BranchContentDiscoveryManifest.h"
 #import "BranchContentDiscoverer.h"
 #import "NSMutableDictionary+Branch.h"
+#import "BNCLog.h"
 
 @interface BranchOpenRequest ()
 @property (assign, nonatomic) BOOL isInstall;
@@ -214,7 +215,7 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 + (void) setWaitNeededForOpenResponseLock {
     @synchronized (self) {
         if (!openRequestWaitQueueIsSuspended) {
-            //NSLog(@"Suspend openRequestWaitQueue.");
+            BNCLogDebugSDK(@"Suspended for openRequestWaitQueue.");
             openRequestWaitQueueIsSuspended = YES;
             dispatch_suspend(openRequestWaitQueue);
         }
@@ -222,17 +223,17 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 }
 
 + (void) waitForOpenResponseLock {
-    //NSLog(@"Wait for openRequestWaitQueue.");
+    BNCLogDebugSDK(@"Waiting for openRequestWaitQueue.");
     [BNCDeviceInfo userAgentString];    //  Make sure we do this lock first to prevent a deadlock.
     dispatch_sync(openRequestWaitQueue, ^ {
-        //NSLog(@"Finished waitForOpenResponseLock");
+        BNCLogDebugSDK(@"Finished waitForOpenResponseLock.");
     });
 }
 
 + (void) releaseOpenResponseLock {
     @synchronized (self) {
         if (openRequestWaitQueueIsSuspended) {
-            //NSLog(@"Resume openRequestWaitQueue.");
+            BNCLogDebugSDK(@"Resuming openRequestWaitQueue.");
             openRequestWaitQueueIsSuspended = NO;
             dispatch_resume(openRequestWaitQueue);
         }

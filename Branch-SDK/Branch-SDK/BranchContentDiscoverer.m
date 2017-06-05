@@ -16,6 +16,7 @@
 #import <UIKit/UIKit.h>
 #import <CommonCrypto/CommonDigest.h>
 #import "BNCEncodingUtils.h"
+#import "BNCLog.h"
 
 
 @interface BranchContentDiscoverer ()
@@ -53,7 +54,7 @@
 
 - (void)startDiscoveryTask {
     if (![NSThread isMainThread]) {
-        NSLog(@"Error: Should be called on main thread!");
+        BNCLogError(@"Discovery should be called on main thread.");
     }
     [_contentDiscoveryTimer invalidate];
     _contentDiscoveryTimer =
