@@ -24,30 +24,42 @@
 @protocol BNCNetworkOperationProtocol <NSObject>
 
 /// The initial NSMutableURLRequest.
+@required
 @property (readonly, copy)   NSMutableURLRequest *request;
 
 /// The response from the server.
+@required
 @property (readonly, copy)   NSHTTPURLResponse   *response;
 
 /// The data from the server.
+@required
 @property (readonly, strong) NSData              *responseData;
 
 /// Any errors that occured during the request.
+@required
 @property (readonly, copy)   NSError             *error;
 
-/// The timeout date for the operation.
-@property (strong)           NSDate              *timeoutDate;
+/// The original start date of the operation. This should be set by the network service provider
+/// when the operation is started.
+@required
+@property (readonly, copy)   NSDate              *startDate;
 
-/// The start date of the operation.
-@property (readonly, copy)   NSDate              *dateStart;
+/// The timeout date for the operation.  This is calculated and set by the underlying network service
+/// provider by taking the original start date and adding the timeout interval of the URL request.
+/// It should be set once (and not recalculated for each retry) by the network service.
+@required
+@property (readonly, copy)   NSDate              *timeoutDate;
 
-/// The date the operation actually finished.
-@property (readonly, copy)   NSDate              *dateFinish;
+/// A dictionary for the Branch SDK to store operation user info.
+@required
+@property (strong)          NSDictionary         *userInfo;
 
 /// Starts the network operation.
+@required
 - (void) start;
 
 /// Cancels a queued or in progress network operation.
+@required
 - (void) cancel;
 @end
 
@@ -60,21 +72,24 @@
 @protocol BNCNetworkServiceProtocol <NSObject>
 
 /// Creates and returns a new network service.
+@optional
 + (id<BNCNetworkServiceProtocol>) new;
 
-/// Sets the maximum number of concurrent network operations.
-@property (assign) NSInteger maximumConcurrentOperations;
-
-/// Temporarily suspend network operations. In-flight network operations may continue.
-@property (assign, getter=operationsAreSuspended) BOOL suspendOperations;
+/// Creates and returns a new network service pinned to an array of public keys.
+@optional
++ (id<BNCNetworkServiceProtocol>) networkServiceWithPinnedPublicKeys:(NSArray<NSData*>*/*_Nullable*/)keyArray;
 
 /// Cancel all current and queued network operations.
+@required
 - (void) cancelAllOperations;
 
-
-/// Create a new network operation object. The network operation is not started until
+/// Create and return a new network operation object. The network operation is not started until
 /// `[operation start]` is called.
+@required
 - (id<BNCNetworkOperationProtocol>) networkOperationWithURLRequest:(NSMutableURLRequest*)request
                 completion:(void (^)(id<BNCNetworkOperationProtocol>operation))completion;
 
+/// A dictionary for the Branch SDK to store operation user info.
+@required
+@property (strong)          NSDictionary         *userInfo;
 @end

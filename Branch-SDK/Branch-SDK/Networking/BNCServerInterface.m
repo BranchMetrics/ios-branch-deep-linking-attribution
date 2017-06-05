@@ -26,7 +26,16 @@
 - (instancetype) init {
     self = [super init];
     if (!self) return self;
-    self.networkService = [[BranchNetworkServiceClass() alloc] init];
+
+    NSArray *publicKeys = @[];
+    id networkClass = [Branch networkServiceClass];
+    if ([networkClass respondsToSelector:@selector(networkServiceWithPinnedPublicKeys:)]) {
+        self.networkService = [[Branch networkServiceClass] networkServiceWithPinnedPublicKeys:publicKeys];
+    } else
+    if ([networkClass respondsToSelector:@selector(new)]) {
+        self.networkService = [[Branch networkServiceClass] new];
+    }
+
     return self;
 }
 
@@ -150,13 +159,34 @@
         [self.networkService networkOperationWithURLRequest:request.copy completion:completionHandler];
     if (![operation conformsToProtocol:@protocol(BNCNetworkOperationProtocol)]) {
         NSError *error =
-            [NSError errorWithDomain:BNCErrorDomain code:BNCNetworkProtocolError userInfo:@{NSLocalizedDescriptionKey:
-                @"Network object of class '%@' does not conform to the BNCNetworkOperationProtocol."}];
+            [NSError errorWithDomain:BNCErrorDomain code:BNCNetworkProtocolError userInfo:
+                @{NSLocalizedDescriptionKey:
+                    @"Network object of class '%@' does not conform to the BNCNetworkOperationProtocol."}];
         BNCLogError(@"Protocol error: %@.", error);
         if (callback) {
             callback(nil, error);
         }
         return;
+    }
+
+    // Check for required fields
+    if (operation.startDate) {
+        BNCLogError(
+            @"The network operation start date is not set. The Branch SDK expects the network operation"
+             " start date to be set by the network provider."
+        );
+    }
+    if (!operation.timeoutDate) {
+        BNCLogError(
+            @"The network operation timeout date is not set. The Branch SDK expects the network operation"
+             " timeout date to be set by the network provider."
+        );
+    }
+    if (!operation.request) {
+        BNCLogError(
+            @"The network operation request is not set. The Branch SDK expects the network operation"
+             " request to be set by the network provider."
+        );
     }
     [operation start];
 }
@@ -282,7 +312,7 @@
 
 - (void) collectInstrumentationMetricsWithOperation:(id<BNCNetworkOperationProtocol>)operation {
     // multiplying by negative because startTime happened in the past
-    NSTimeInterval elapsedTime = [operation.dateStart timeIntervalSinceNow] * -1000.0;
+    NSTimeInterval elapsedTime = [operation.startDate timeIntervalSinceNow] * -1000.0;
     NSString *lastRoundTripTime = [[NSNumber numberWithDouble:floor(elapsedTime)] stringValue];
     NSString * brttKey = [NSString stringWithFormat:@"%@-brtt", self.requestEndpoint];
     [self.preferenceHelper clearInstrumentationDictionary];

@@ -16,10 +16,10 @@
 @property (readonly, copy)   NSHTTPURLResponse   *response;
 @property (readonly, strong) NSData              *responseData;
 @property (readonly, copy)   NSError             *error;
-@property (strong)           NSDate              *timeoutDate;
+@property (readonly, copy)   NSDate              *startDate;
+@property (copy)             NSDate              *timeoutDate;
 
-@property (readonly, copy)   NSDate              *dateStart;
-@property (readonly, copy)   NSDate              *dateFinish;
+@property (strong)           NSDictionary        *userInfo;
 
 - (void) start;
 - (void) cancel;
@@ -29,13 +29,12 @@
 
 @interface BNCNetworkService : NSObject <BNCNetworkServiceProtocol>
 + (id<BNCNetworkServiceProtocol>) new;
-
-@property (assign) NSInteger maximumConcurrentOperations;
-@property (assign, getter=operationsAreSuspended) BOOL suspendOperations;
-@property (assign) NSTimeInterval defaultTimeoutInterval;
++ (id<BNCNetworkServiceProtocol>) networkServiceWithPinnedPublicKeys:(NSArray<NSData*>*/*_Nullable*/)keyArray;
 
 - (void) cancelAllOperations;
 
 - (BNCNetworkOperation*) networkOperationWithURLRequest:(NSMutableURLRequest*)request
                 completion:(void (^)(BNCNetworkOperation*operation))completion;
+
+@property (strong) NSDictionary *userInfo;
 @end
