@@ -18,9 +18,7 @@
 @property (copy)   NSHTTPURLResponse  *response;
 @property (strong) NSData             *responseData;
 @property (copy)   NSError            *error;
-@property (copy)   NSDate             *dateStart;
-@property (copy)   NSDate             *dateFinish;
-
+@property (copy)   NSDate             *startDate;
 @property (strong) BNCNetworkService  *networkService;
 @property (strong) NSURLSessionTask   *sessionTask;
 @property (copy) void (^completionBlock)(BNCNetworkOperation*operation);
@@ -38,6 +36,7 @@
 
 @property (strong, readonly) NSURLSession *session;
 @property (strong) NSOperationQueue *sessionQueue;
+@property (strong) NSArray<NSData*> *publicKeys;
 @end
 
 #pragma mark - BNCNetworkOperation
@@ -74,14 +73,19 @@
 @implementation BNCNetworkService
 
 + (id<BNCNetworkServiceProtocol>) new {
-    return [[self alloc] init];
+    return [[self alloc] initWithPinnedPublicKeys:nil];
 }
 
-- (instancetype) init {
++ (id<BNCNetworkServiceProtocol>) networkServiceWithPinnedPublicKeys:(NSArray<NSData*>*/*_Nullable*/)keyArray {
+    return [[self alloc] initWithPinnedPublicKeys:keyArray];
+}
+
+- (instancetype) initWithPinnedPublicKeys:(NSArray<NSData*>*)publicKeys {
     self = [super init];
     if (!self) return self;
-    _defaultTimeoutInterval = 60.0;
+    _defaultTimeoutInterval = 30.0;
     _maximumConcurrentOperations = 3;
+    _publicKeys = publicKeys;
     return self;
 }
 
@@ -159,11 +163,14 @@
 
 - (void) startOperation:(BNCNetworkOperation*)operation {
     operation.networkService = self;
-    if (!operation.dateStart)
-        operation.dateStart = [NSDate date];
+    if (!operation.startDate) {
+        operation.startDate = [NSDate date];
+    }
     if (!operation.timeoutDate) {
+        NSTimeInterval timeoutInterval = operation.request.timeoutInterval;
+        timeoutInterval = MAX(timeoutInterval, self.defaultTimeoutInterval);
         operation.timeoutDate =
-            [[operation dateStart] dateByAddingTimeInterval:self.defaultTimeoutInterval];
+            [[operation startDate] dateByAddingTimeInterval:self.defaultTimeoutInterval];
     }
     operation.request.timeoutInterval = [operation.timeoutDate timeIntervalSinceDate:[NSDate date]];
     operation.sessionTask =
@@ -173,10 +180,9 @@
                 operation.responseData = data;
                 operation.response = (NSHTTPURLResponse*) response;
                 operation.error = error;
-                operation.dateFinish = [NSDate date];
                 BNCLogDebug(@"Network finish operation %@ %1.3fs. Status %ld error %@.\n%@.",
                     operation.request.URL.absoluteString,
-                    [operation.dateFinish timeIntervalSinceDate:operation.dateStart],
+                    [[NSDate date] timeIntervalSinceDate:operation.startDate],
                     (long)operation.response.statusCode,
                     operation.error,
                     operation.stringFromResponseData);

@@ -154,6 +154,26 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 + (Branch *)getInstance:(NSString *)branchKey;
 
+/**
+ Set the network service class.
+ 
+ The class must conform to the `BNCNetworkServiceProtocol` and be a drop in replacement for the 
+ standard Branch SDK networking.
+ 
+ This allows the use of Branch SDK with your own apps network service.
+ 
+ The NetworkServiceClass can be set only once, before the Branch SDK initialization.
+ 
+ @param networkServiceClass     The class to use as the network service class.
+*/
++ (void)  setNetworkServiceClass:(Class)networkServiceClass;
+
+/**
+ Return the Branch SDK network service class.
+
+ @return Returns the network service class.
+ */
++ (Class) networkServiceClass;
 
 #pragma mark - BranchActivityItemProvider methods
 
@@ -1370,7 +1390,3 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
 
 @end
-
-// eDebug Document
-extern void  BranchSetNetworkServiceClass(Class networkServiceClass);
-extern Class BranchNetworkServiceClass();

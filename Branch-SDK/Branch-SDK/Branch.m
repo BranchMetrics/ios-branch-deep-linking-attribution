@@ -160,7 +160,11 @@ void ForceCategoriesToLoad() {
     return [Branch getInstanceInternal:branchKey returnNilIfNoCurrentInstance:NO];
 }
 
-- (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache preferenceHelper:(BNCPreferenceHelper *)preferenceHelper key:(NSString *)key {
+- (id)initWithInterface:(BNCServerInterface *)interface
+                  queue:(BNCServerRequestQueue *)queue
+                  cache:(BNCLinkCache *)cache
+       preferenceHelper:(BNCPreferenceHelper *)preferenceHelper
+                    key:(NSString *)key {
     if (self = [super init]) {
 
         ForceCategoriesToLoad();
@@ -192,6 +196,31 @@ void ForceCategoriesToLoad() {
     return self;
 }
 
+static Class bnc_networkServiceClass = NULL;
+
++ (void)  setNetworkServiceClass:(Class)networkServiceClass {
+    @synchronized ([Branch class]) {
+        if (bnc_networkServiceClass) {
+            BNCLogError(@"The Branch network service class is already set. It can be set only once.");
+            return;
+        }
+        if (![networkServiceClass conformsToProtocol:@protocol(BNCNetworkServiceProtocol)]) {
+            BNCLogError(@"Class '%@' doesn't conform to protocol '%@'.",
+                NSStringFromClass(networkServiceClass),
+                NSStringFromProtocol(@protocol(BNCNetworkServiceProtocol))
+            );
+            return;
+        }
+        bnc_networkServiceClass = networkServiceClass;
+    }
+}
+
++ (Class) networkServiceClass {
+    @synchronized ([Branch class]) {
+        if (!bnc_networkServiceClass) bnc_networkServiceClass = [BNCNetworkService class];
+        return bnc_networkServiceClass;
+    }
+}
 
 #pragma mark - BrachActivityItemProvider methods
 
@@ -1671,31 +1700,3 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 }
 
 @end
-
-#pragma mark - BranchNetworkServiceClass
-
-static Class bnc_networkServiceClass = NULL;
-
-void  BranchSetNetworkServiceClass(Class networkServiceClass) {
-    @synchronized ([Branch class]) {
-        if (bnc_networkServiceClass) {
-            BNCLogError(@"The Branch network service class is already set. It can be set only once.");
-            return;
-        }
-        if (![networkServiceClass conformsToProtocol:@protocol(BNCNetworkServiceProtocol)]) {
-            BNCLogError(@"Class '%@' doesn't conform to protocol '%@'.",
-                NSStringFromClass(networkServiceClass),
-                NSStringFromProtocol(@protocol(BNCNetworkServiceProtocol))
-            );
-            return;
-        }
-        bnc_networkServiceClass = networkServiceClass;
-    }
-}
-
-Class BranchNetworkServiceClass() {
-    @synchronized ([Branch class]) {
-        if (!bnc_networkServiceClass) bnc_networkServiceClass = [BNCNetworkService class];
-        return bnc_networkServiceClass;
-    }
-}
