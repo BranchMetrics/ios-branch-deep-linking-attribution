@@ -9,7 +9,8 @@
 #import <UIKit/UIKit.h>
 @protocol BranchDeepLinkingControllerCompletionDelegate <NSObject>
 
-- (void)deepLinkingControllerCompleted;
+- (void)deepLinkingControllerCompleted __attribute__((deprecated(("This API is deprecated. Instead, use deepLinkingControllerCompletedFrom: viewController"))));;
+- (void)deepLinkingControllerCompletedFrom:(UIViewController*) viewController;
 
 @end
 

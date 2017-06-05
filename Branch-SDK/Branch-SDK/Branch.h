@@ -416,7 +416,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  Allow Branch to handle a view controller with options to push, present or show.
  Note:
  * If push option is used and the rootviewcontroller of window is not of type UINavigationViewController, than the sharing View controller would be presented automatically
- * If UIViewController is pushed, than it wouldn't be popped on calling deepLinkingControllerCompleted delegate
  */
 - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withOption:(BNCViewControllerOption)option;
 

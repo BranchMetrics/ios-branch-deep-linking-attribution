@@ -1650,6 +1650,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                             }
                         }
                         else {
+                            deepLinkModel.option = BNCViewControllerOptionPresent;
                             [self presentSharingViewController:branchSharingController];
                         }
                         
@@ -1666,10 +1667,12 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                                 [self.deepLinkPresentingController showViewController:branchSharingController sender:self];
                             }
                             else {
+                                deepLinkModel.option = BNCViewControllerOptionPush;
                                 [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:true];
                             }
                         }
                         else {
+                            deepLinkModel.option = BNCViewControllerOptionPresent;
                             [self presentSharingViewController:branchSharingController];
                         }
                         break;
@@ -1703,12 +1706,16 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 }
 
 -(void)removeInstanceFromRootNavigationController:(UIViewController*)branchSharingController{
+
     NSMutableArray* viewControllers = [NSMutableArray arrayWithArray: [(UINavigationController*)self.deepLinkPresentingController viewControllers]];
     
-    [viewControllers removeObject:branchSharingController];
-    
-    ((UINavigationController*)self.deepLinkPresentingController).viewControllers = viewControllers;
-    
+    if ([viewControllers lastObject] == branchSharingController) {
+        
+        [(UINavigationController*)self.deepLinkPresentingController popViewControllerAnimated:YES];
+    }else {
+        [viewControllers removeObject:branchSharingController];
+        ((UINavigationController*)self.deepLinkPresentingController).viewControllers = viewControllers;
+    }
 }
 
 -(void)presentSharingViewController: (UIViewController <BranchDeepLinkingController> *)branchSharingController{
@@ -1744,6 +1751,35 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
 - (void)deepLinkingControllerCompleted {
     [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
+}
+
+- (void)deepLinkingControllerCompletedFrom:(UIViewController *)viewController {
+    
+    [self.deepLinkControllers enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        
+        if([obj isKindOfClass:[BranchDeepLinkModel class]]) {
+            BranchDeepLinkModel* deepLinkModel = (BranchDeepLinkModel*) obj;
+            
+            if (deepLinkModel.viewController == viewController) {
+                
+                switch (deepLinkModel.option) {
+                    case BNCViewControllerOptionPresent:
+                        [viewController dismissViewControllerAnimated:YES completion:nil];
+                        break;
+                        
+                    default:
+                        [self removeInstanceFromRootNavigationController:viewController];
+                        break;
+                }
+            }
+            
+        }else {
+            //Support for old API
+            if ((UIViewController*)obj == viewController)
+                [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:nil];
+        }
+        
+    }];
 }
 
 #pragma mark - FABKit methods
