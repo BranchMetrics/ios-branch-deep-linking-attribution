@@ -14,6 +14,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BNCXcode7Support.h"
+#import "BNCLog.h"
 
 
 @interface BNCDeviceInfo()
@@ -124,7 +125,7 @@ static BNCDeviceInfo *bncDeviceInfo;
             BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
             preferences.browserUserAgentString = browserUserAgentString;
             preferences.lastSystemBuildVersion = self.systemBuildVersion;
-			//NSLog(@"[Branch] userAgentString: '%@'.", browserUserAgentString);
+			BNCLogDebugSDK(@"userAgentString: '%@'.", browserUserAgentString);
 		}
 	};
 
@@ -169,9 +170,9 @@ static BNCDeviceInfo *bncDeviceInfo;
             DISPATCH_BLOCK_DETACHED | DISPATCH_BLOCK_ENFORCE_QOS_CLASS,
             QOS_CLASS_USER_INTERACTIVE,
             0,  ^ {
-                //NSLog(@"Will userAgent.");
+                BNCLogDebugSDK(@"Will set userAgent.");
                 setBrowserUserAgent();
-                //NSLog(@"Did  userAgent.");
+                BNCLogDebugSDK(@"Did set userAgent.");
             });
         dispatch_async(dispatch_get_main_queue(), agentBlock);
 

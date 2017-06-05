@@ -118,6 +118,16 @@ void ForceCategoriesToLoad() {
 
 #pragma mark - GetInstance methods
 
++ (void) initialize {
+    if (self == [Branch self]) {
+        NSURL *logURL = BNCURLForBranchDirectory();
+        logURL = [logURL URLByAppendingPathComponent:@"Branch.log"];
+        BNCLogSetOutputToURLByteWrap(logURL,  102400);
+        BNCLogSetDisplayLevel(BNCLogLevelWarning);
+        BNCLogDebug(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
+    }
+}
+
 + (Branch *)getInstance {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     
@@ -125,7 +135,7 @@ void ForceCategoriesToLoad() {
     NSString *branchKey = [preferenceHelper getBranchKey:YES];
     NSString *keyToUse = branchKey;
     if (!branchKey) {
-        [preferenceHelper logWarning:@"Please enter your branch_key in the plist!"];
+        BNCLogWarning(@"Please enter your branch_key in the plist!");
         return nil;
     }
 
@@ -139,7 +149,7 @@ void ForceCategoriesToLoad() {
     NSString *branchKey = [preferenceHelper getBranchKey:NO];
     NSString *keyToUse = branchKey;
     if (!branchKey) {
-        [preferenceHelper logWarning:@"Please enter your branch_key in the plist!"];
+        BNCLogWarning(@"Please enter your branch_key in the plist!");
         return nil;
     }
     
@@ -153,7 +163,7 @@ void ForceCategoriesToLoad() {
         preferenceHelper.branchKey = branchKey;
     }
     else {
-        [preferenceHelper logWarning:@"Invalid Branch Key format!"];
+        BNCLogError(@"Invalid Branch key format!");
         return nil;
     }
     
@@ -257,6 +267,7 @@ static Class bnc_networkServiceClass = NULL;
 
 - (void)setDebug {
     self.preferenceHelper.isDebug = YES;
+    BNCLogSetDisplayLevel(BNCLogLevelDebug);
 }
 
 - (void)resetUserSession {
@@ -288,7 +299,7 @@ static Class bnc_networkServiceClass = NULL;
 }
 
 - (void)suppressWarningLogs {
-    self.preferenceHelper.suppressWarningLogs = YES;
+    BNCLogSetDisplayLevel(BNCLogLevelError);
 }
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value {
@@ -312,10 +323,10 @@ static Class bnc_networkServiceClass = NULL;
 - (void)resumeInit {
     self.preferenceHelper.shouldWaitForInit = NO;
     if (self.isInitialized) {
-        NSLog(@"[Branch Error] User session has already been initialized, so resumeInit is aborting.");
+        BNCLogError(@"User session has already been initialized, so resumeInit is aborting.");
     }
     else if (![self.requestQueue containsInstallOrOpen]) {
-        NSLog(@"[Branch Error] No install or open request, so resumeInit is aborting.");
+        BNCLogError(@"No install or open request, so resumeInit is aborting.");
     }
     else {
         [self processNextQueueItem];
@@ -463,6 +474,15 @@ static Class bnc_networkServiceClass = NULL;
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url fromSelf:(BOOL)isFromSelf {
+    NSString *scheme = [url scheme];
+    if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
+        return [self handleUniversalDeepLink:url fromSelf:isFromSelf];
+    } else {
+        return [self handleSchemeDeepLink:url fromSelf:isFromSelf];
+    }
+}
+
+- (BOOL)handleSchemeDeepLink:(NSURL*)url fromSelf:(BOOL)isFromSelf {
     BOOL handled = NO;
     if (url && ![url isEqual:[NSNull null]]) {
         
@@ -477,7 +497,7 @@ static Class bnc_networkServiceClass = NULL;
         } else {
             self.preferenceHelper.externalIntentURI = [url absoluteString];
         }
-
+        
         NSString *query = [url fragment];
         if (!query) {
             query = [url query];
@@ -497,6 +517,7 @@ static Class bnc_networkServiceClass = NULL;
     
     return handled;
 }
+
 
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
@@ -525,43 +546,55 @@ static Class bnc_networkServiceClass = NULL;
     return [self application:application openURL:url sourceApplication:source annotation:annotation];
 }
 
+- (BOOL)handleUniversalDeepLink:(NSURL*)url fromSelf:(BOOL)isFromSelf {
+    if (isFromSelf) {
+        [self resetUserSession];
+    }
+    
+    NSString *urlString = [url absoluteString];
+    self.preferenceHelper.universalLinkUrl = urlString;
+    self.preferenceHelper.shouldWaitForInit = NO;
+    [self initUserSessionAndCallCallback:YES];
+    
+    id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
+    if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] &&
+        [urlString containsString:branchUniversalLinkDomains]) {
+        return YES;
+    }
+    else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
+        for (id oneDomain in branchUniversalLinkDomains) {
+            if ([oneDomain isKindOfClass:[NSString class]] && [urlString containsString:oneDomain]) {
+                return YES;
+            }
+        }
+    }
+    
+    NSString *userActivityURL = urlString;
+    NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
+    for (NSString* domain in branchDomains) {
+        if ([userActivityURL containsString:domain])
+            return YES;
+    }
+    
+    return NO;
+}
+
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
     //check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        self.preferenceHelper.universalLinkUrl = [userActivity.webpageURL absoluteString];
-        self.preferenceHelper.shouldWaitForInit = NO;
-        [self initUserSessionAndCallCallback:YES];
-        
-        id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
-        if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] && [[userActivity.webpageURL absoluteString] containsString:branchUniversalLinkDomains]) {
-            return YES;
-        }
-        else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
-            for (id oneDomain in branchUniversalLinkDomains) {
-                if ([oneDomain isKindOfClass:[NSString class]] && [[userActivity.webpageURL absoluteString] containsString:oneDomain]) {
-                    return YES;
-                }
-            }
-        }
-        
-        NSString *userActivityURL = [userActivity.webpageURL absoluteString];
-        NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
-        for (NSString* domain in branchDomains) {
-            if ([userActivityURL containsString:domain])
-                return YES;
-        }
-        
-        return NO;
+        return [self handleUniversalDeepLink:userActivity.webpageURL fromSelf:NO];
     }
     
     // Check to see if a spotlight activity needs to be handled
-    NSString *spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
+    NSString *spotlightIdentifier =
+	    [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     
     if (spotlightIdentifier) {
         self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
     }
     else {
-        NSString *nonBranchSpotlightIdentifier = [self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
+        NSString *nonBranchSpotlightIdentifier =
+        	[self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
         if (nonBranchSpotlightIdentifier) {
             self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
         }
@@ -572,7 +605,6 @@ static Class bnc_networkServiceClass = NULL;
     
     return spotlightIdentifier != nil;
 }
-
 
 #pragma mark - Push Notification support
 
@@ -632,8 +664,7 @@ static Class bnc_networkServiceClass = NULL;
         [ADClientClass methodForSelector:sharedClient];
 
     if (!ADClientIsAvailable) {
-        NSString *warning = @"delayForAppleAds is true but ADClient is not available. Is the iAD.framework included and iOS 10?";
-        [[BNCPreferenceHelper preferenceHelper] logWarning:warning];
+        BNCLogWarning(@"delayForAppleAds is true but ADClient is not available. Is the iAD.framework included and iOS 10?");
         return NO;
     }
 
@@ -758,7 +789,7 @@ static Class bnc_networkServiceClass = NULL;
 
 - (void)logoutWithCallback:(callbackWithStatus)callback {
     if (!self.isInitialized) {
-        NSLog(@"Branch is not initialized, cannot logout");
+        BNCLogError(@"Branch is not initialized, cannot logout.");
         if (callback) {callback(NO, nil);}
     }
     
@@ -770,16 +801,12 @@ static Class bnc_networkServiceClass = NULL;
             if (callback) {
                 callback(YES, nil);
             }
-            if (self.preferenceHelper.isDebug) {
-                NSLog(@"Logout Success");
-            }
+            BNCLogDebug(@"Logout success.");
         } else /*failure*/ {
             if (callback) {
                 callback(NO, error);
             }
-            if (self.preferenceHelper.isDebug) {
-                NSLog(@"Logout Failure");
-            }
+            BNCLogDebug(@"Logout failure.");
         }
     }];
     
@@ -863,7 +890,7 @@ static Class bnc_networkServiceClass = NULL;
             callback(false, [NSError errorWithDomain:BNCErrorDomain code:BNCRedeemCreditsError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot redeem zero credits." }]);
         }
         else {
-            [self.preferenceHelper logWarning:@"Cannot redeem zero credits"];
+            BNCLogWarning(@"Cannot redeem zero credits.");
         }
         return;
     }
@@ -874,7 +901,7 @@ static Class bnc_networkServiceClass = NULL;
             callback(false, [NSError errorWithDomain:BNCErrorDomain code:BNCRedeemCreditsError userInfo:@{ NSLocalizedDescriptionKey: @"You're trying to redeem more credits than are available. Have you loaded rewards?" }]);
         }
         else {
-            [self.preferenceHelper logWarning:@"You're trying to redeem more credits than are available. Have you loaded rewards?"];
+            BNCLogWarning(@"You're trying to redeem more credits than are available. Have you loaded rewards?");
         }
         return;
     }
@@ -1187,7 +1214,7 @@ static Class bnc_networkServiceClass = NULL;
         // If there was stored key and it isn't the same as the currently used (or doesn't exist), we need to clean up
         // Note: Link Click Identifier is not cleared because of the potential for that to mess up a deep link
         if (preferenceHelper.lastRunBranchKey && ![key isEqualToString:preferenceHelper.lastRunBranchKey]) {
-            [preferenceHelper logWarning:@"The Branch Key has changed, clearing relevant items"];
+            BNCLogWarning(@"The Branch Key has changed, clearing relevant items.");
             
             preferenceHelper.appVersion = nil;
             preferenceHelper.deviceFingerprintID = nil;
@@ -1278,7 +1305,7 @@ static Class bnc_networkServiceClass = NULL;
                 linkCache:self.linkCache];
         
         if (self.isInitialized) {
-            [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"Created custom url synchronously"];
+            BNCLogDebug(@"Created a custom URL synchronously.");
             BNCServerResponse *serverResponse = [req makeRequest:self.bServerInterface key:self.branchKey];
             shortURL = [req processResponse:serverResponse];
             
@@ -1294,7 +1321,7 @@ static Class bnc_networkServiceClass = NULL;
                             channel:channel feature:feature stage:stage params:params];
                 }
             }
-            NSLog(@"Branch SDK Error: making request before init succeeded!");
+            BNCLogError(@"Making a Branch request before init has succeeded!");
         }
     }
     
@@ -1513,7 +1540,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         if (req) {
 
             if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.identityID) {
-                NSLog(@"[Branch Error] User session has not been initialized!");
+                BNCLogError(@"User session has not been initialized!");
                 BNCPerformBlockOnMainThreadSync(^{
                     [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError
                         userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
@@ -1522,10 +1549,10 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
             }
             else if (![req isKindOfClass:[BranchOpenRequest class]] &&
                 (!self.preferenceHelper.deviceFingerprintID || !self.preferenceHelper.sessionID)) {
-                NSLog(@"[Branch Error] Missing session items!");
+                BNCLogError(@"Missing session items!");
                 BNCPerformBlockOnMainThreadSync(^{
                     [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError
-                        userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
+                        userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized." }]];
                 });
                 return;
             }
@@ -1578,11 +1605,14 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
 - (void)initializeSession {
     if (!self.branchKey) {
-        [self.preferenceHelper logWarning:@"Please enter your branch_key in the plist!"];
+        BNCLogWarning(@"Please enter your branch_key in the plist!");
         return;
     }
     else if ([self.branchKey rangeOfString:@"key_test_"].location != NSNotFound) {
-        [self.preferenceHelper logWarning:@"You are using your test app's Branch Key. Remember to change it to live Branch Key for deployment."];
+        BNCLogWarning(
+            @"You are using your test app's Branch Key. "
+             "Remember to change it to live Branch Key for deployment."
+        );
     }
 
 	Class clazz = [BranchInstallRequest class];
@@ -1647,8 +1677,8 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                 [branchSharingController configureControlWithData:latestReferringParams];
             }
             else {
-                [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:
-                    @"[Branch Warning] View controller does not implement configureControlWithData:"];
+                BNCLogWarning(@"The automatic deeplink view controller '%@' for key '%@' does not implement 'configureControlWithData:'.",
+                    branchSharingController, key);
             }
             branchSharingController.deepLinkingCompletionDelegate = self;
             self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
