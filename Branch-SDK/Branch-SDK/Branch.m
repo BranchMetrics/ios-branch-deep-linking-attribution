@@ -1649,8 +1649,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         // If we find a matching key, configure and show the controller
         if ([keysInParams count]) {
             NSString *key = [[keysInParams allObjects] firstObject];
-<<<<<<< HEAD
-=======
             UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
             if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
                 [branchSharingController configureControlWithData:latestReferringParams];
@@ -1661,7 +1659,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
             }
             branchSharingController.deepLinkingCompletionDelegate = self;
             self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
->>>>>>> staging
             
             if([self.deepLinkControllers[key] isKindOfClass:[BranchDeepLinkModel class]]) {
                 BranchDeepLinkModel* deepLinkModel = self.deepLinkControllers[key];
