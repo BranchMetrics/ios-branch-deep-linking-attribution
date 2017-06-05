@@ -101,7 +101,7 @@
         ^void (id<BNCNetworkOperationProtocol>operation) {
 
             BNCServerResponse *serverResponse =
-                [self processServerResponse:operation.response data:operation.responseData error:operation.error log:YES];
+                [self processServerResponse:operation.response data:operation.responseData error:operation.error];
             [self collectInstrumentationMetricsWithOperation:operation];
 
             NSError *error = operation.error;
@@ -201,7 +201,7 @@
             networkOperationWithURLRequest:request.copy
             completion:^void (id<BNCNetworkOperationProtocol>operation) {
                 serverResponse =
-                    [self processServerResponse:operation.response data:operation.responseData error:operation.error log:YES];
+                    [self processServerResponse:operation.response data:operation.responseData error:operation.error];
                 [self collectInstrumentationMetricsWithOperation:operation];                    
                 dispatch_semaphore_signal(semaphore);
             }];
@@ -291,7 +291,9 @@
     return fullParamDict;
 }
 
-- (BNCServerResponse *)processServerResponse:(NSURLResponse *)response data:(NSData *)data error:(NSError *)error log:(BOOL)log {
+- (BNCServerResponse *)processServerResponse:(NSURLResponse *)response
+                                        data:(NSData *)data
+                                       error:(NSError *)error {
     BNCServerResponse *serverResponse = [[BNCServerResponse alloc] init];
 
     if (!error) {
@@ -302,11 +304,7 @@
         serverResponse.statusCode = @(error.code);
         serverResponse.data = error.userInfo;
     }
-
-    if (log) {
-        [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned = %@", serverResponse];
-    }
-    
+    BNCLogDebug(@"Server returned: %@.", serverResponse);
     return serverResponse;
 }
 

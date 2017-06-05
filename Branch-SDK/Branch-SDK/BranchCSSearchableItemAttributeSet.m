@@ -13,6 +13,7 @@
 #import "BNCError.h"
 #import "BranchConstants.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import "BNCLog.h"
 
 #ifndef kUTTypeGeneric
 #define kUTTypeGeneric @"public.content"
@@ -38,7 +39,7 @@
 
 - (void)setIdentifier:(NSString *)identifier {
     if (![identifier hasPrefix:BRANCH_SPOTLIGHT_PREFIX]) {
-        NSLog(@"Warning: do not set BranchCSSearchableItemAttributeSet's identifier. It will be overwritten.");
+        BNCLogWarning(@"Do not set BranchCSSearchableItemAttributeSet's identifier. It will be overwritten.");
     }
 }
 

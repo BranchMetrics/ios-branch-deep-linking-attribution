@@ -11,6 +11,8 @@
 #define FILE_NAME   [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
 #define LINE_NUM    __LINE__
 
+NSURL* /* _Nonnull */ BNCURLForBranchDirectory();
+
 @interface BNCPreferenceHelper : NSObject
 
 @property (strong, nonatomic) NSString *branchKey;
@@ -29,7 +31,6 @@
 @property (strong, nonatomic) NSString *installParams;
 @property (assign, nonatomic) BOOL isDebug;
 @property (assign, nonatomic) BOOL shouldWaitForInit;
-@property (assign, nonatomic) BOOL suppressWarningLogs;
 @property (assign, nonatomic) BOOL checkedFacebookAppLinks;
 @property (assign, nonatomic) BOOL checkedAppleSearchAdAttribution;
 @property (assign, nonatomic) NSInteger retryCount;
@@ -44,7 +45,6 @@
 @property (strong) NSString *branchAPIURL;
 
 + (BNCPreferenceHelper *)preferenceHelper;
-+ (NSURL*) URLForBranchDirectory;
 
 - (NSString *)getAPIBaseURL;
 - (NSString *)getAPIURL:(NSString *)endpoint;
@@ -73,9 +73,6 @@
 - (void)addInstrumentationDictionaryKey:(NSString *)key value:(NSString *)value;
 - (NSMutableDictionary *)instrumentationDictionary;
 - (void)clearInstrumentationDictionary;
-
-- (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
-- (void)logWarning:(NSString *)message;
 
 - (void)saveBranchAnalyticsData:(NSDictionary *)analyticsData;
 - (void)clearBranchAnalyticsData;
