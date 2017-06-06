@@ -1668,8 +1668,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                     [branchSharingController configureControlWithData:latestReferringParams];
                 }
                 else {
-                    [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:
-                     @"[Branch Warning] View controller does not implement configureControlWithData:"];
+                    BNCLogWarning(@"[Branch Warning] View controller does not implement configureControlWithData:");
                 }
                 branchSharingController.deepLinkingCompletionDelegate = self;
                 self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
@@ -1727,8 +1726,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                     [branchSharingController configureControlWithData:latestReferringParams];
                 }
                 else {
-                    [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:
-                     @"[Branch Warning] View controller does not implement configureControlWithData:"];
+                    BNCLogWarning(@"[Branch Warning] View controller does not implement configureControlWithData:");
                 }
                 branchSharingController.deepLinkingCompletionDelegate = self;
                 self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
