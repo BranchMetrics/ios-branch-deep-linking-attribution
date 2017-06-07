@@ -15,7 +15,7 @@
 #pragma mark BNCNetworkOperation
 
 @interface BNCNetworkOperation ()
-@property (copy)   NSMutableURLRequest*request;
+@property (copy)   NSURLRequest       *request;
 @property (copy)   NSHTTPURLResponse  *response;
 @property (strong) NSData             *responseData;
 @property (copy)   NSError            *error;
@@ -175,6 +175,10 @@
                 completion:(void (^)(BNCNetworkOperation*operation))completion {
 
     BNCNetworkOperation *operation = [BNCNetworkOperation new];
+    if (![request isKindOfClass:[NSMutableURLRequest class]]) {
+        BNCLogError(@"A `NSMutableURLRequest` request parameter was expected.");
+        return nil;
+    }
     operation.request = request;
     operation.networkService = self;
     operation.completionBlock = completion;
@@ -193,7 +197,12 @@
         operation.timeoutDate =
             [[operation startDate] dateByAddingTimeInterval:timeoutInterval];
     }
-    operation.request.timeoutInterval = [operation.timeoutDate timeIntervalSinceDate:[NSDate date]];
+    if ([operation.request isKindOfClass:[NSMutableURLRequest class]]) {
+        ((NSMutableURLRequest*)operation.request).timeoutInterval =
+            [operation.timeoutDate timeIntervalSinceDate:[NSDate date]];
+    } else {
+        BNCLogError(@"SDK logic error. Expected mutable request in `start` method.");
+    }
     operation.sessionTask =
         [self.session dataTaskWithRequest:operation.request
             completionHandler:
