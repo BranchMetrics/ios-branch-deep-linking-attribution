@@ -42,7 +42,7 @@
 
 /// The initial NSMutableURLRequest.
 @required
-@property (readonly, copy) NSMutableURLRequest *request;
+@property (readonly, copy) NSURLRequest *request;
 
 /// The response from the server.
 @required
