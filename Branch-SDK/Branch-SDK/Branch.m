@@ -1571,9 +1571,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
     }
 }
 
-
 #pragma mark - Session Initialization
-
 
 - (void)initSessionIfNeededAndNotInProgress {
     if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen]) {

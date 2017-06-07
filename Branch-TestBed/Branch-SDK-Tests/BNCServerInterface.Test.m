@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-
 #import <XCTest/XCTest.h>
 #import "BNCTestCase.h"
 #import "BNCServerInterface.h"
@@ -15,13 +14,10 @@
 #import <OHHTTPStubs/OHHTTPStubs.h>
 #import "OHHTTPStubsResponse+JSON.h"
 
-
 typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
-
 
 @interface BNCServerInterfaceTests : BNCTestCase
 @end
-
 
 @implementation BNCServerInterfaceTests
 
@@ -36,8 +32,8 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 #pragma mark - Key tests
 
 //==================================================================================
-//TEST 01
-//This test checks to see that the branch key has been added to the GET request
+// TEST 01
+// This test checks to see that the branch key has been added to the GET request
 
 - (void)testParamAddForBranchKey {
   [OHHTTPStubs removeAllStubs];
@@ -72,8 +68,8 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 #pragma mark - Retry tests
 
 //==================================================================================
-//TEST 03
-//This test simulates a poor network, with three failed GET attempts and one final success,
+// TEST 03
+// This test simulates a poor network, with three failed GET attempts and one final success,
 // for 4 connections.
 
 - (void)testGetRequestAsyncRetriesWhenAppropriate {
@@ -83,7 +79,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
   serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
   serverInterface.preferenceHelper.retryCount = 3;
-  
+
   XCTestExpectation* successExpectation = [self expectationWithDescription:@"success"];
   
   __block NSUInteger connectionAttempts = 0;
@@ -121,7 +117,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 }
 
 //==================================================================================
-//TEST 04
+// TEST 04
 // This test checks to make sure that GET retries are not attempted when they have a retry
 // count > 0, but retries aren't needed. Based on Test #3 above.
 
@@ -158,7 +154,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 }
 
 //==================================================================================
-//TEST 05
+// TEST 05
 // This test checks to make sure that GET retries are not attempted when they have a retry
 // count == 0, but retries aren't needed. Based on Test #4 above
 
@@ -193,9 +189,9 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 }
 
 //==================================================================================
-//TEST 06
-//This test simulates a poor network, with three failed GET attempts and one final success,
-//for 4 connections. Based on Test #3 above
+// TEST 06
+// This test simulates a poor network, with three failed GET attempts and one final success,
+// for 4 connections. Based on Test #3 above
 
 - (void)testPostRequestAsyncRetriesWhenAppropriate {
   [OHHTTPStubs removeAllStubs];
@@ -242,7 +238,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 }
 
 //==================================================================================
-//TEST 07
+// TEST 07
 // This test checks to make sure that POST retries are not attempted when they have a retry
 // count == 0, and retries aren't needed. Based on Test #4 above
 
@@ -279,7 +275,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 }
 
 //==================================================================================
-//TEST 08
+// TEST 08
 // This test checks to make sure that GET retries are not attempted when they have a retry
 // count == 0, and retries aren't needed. Based on Test #4 above
 
@@ -312,6 +308,50 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   
   [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
   [self waitForExpectationsWithTimeout:1.0 handler:nil];
+}
+
+//==================================================================================
+// TEST 09
+// Test certifcate pinning functionality.
+
+- (void) testCertificatePinning {
+
+    [OHHTTPStubs removeAllStubs];
+    BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
+
+    XCTestExpectation* pinSuccess = [self expectationWithDescription:@"PinSuccess1"];
+    [serverInterface getRequest:[NSDictionary new]
+        url:@"https://branch.io"
+        key:@""
+        callback:^ (BNCServerResponse*response, NSError*error) {
+            XCTAssertEqualObjects(response.statusCode, @200);
+            [pinSuccess fulfill];
+        }];
+
+    XCTestExpectation* pinFail1 = [self expectationWithDescription:@"PinFail1"];
+    [serverInterface getRequest:[NSDictionary new]
+        url:@"https://google.com"
+        key:@""
+        callback:^ (BNCServerResponse*response, NSError*error) {
+            XCTAssertEqualObjects(response.statusCode, @-999);
+            [pinFail1 fulfill];
+        }];
+
+#if 1
+    // TODO: Fix so the end point so the test works on external networks.
+
+    XCTestExpectation* pinFail2 = [self expectationWithDescription:@"PinFail2"];
+    [serverInterface getRequest:[NSDictionary new]
+        url:@"https://internal-cert-pinning-test-470549067.us-west-1.elb.amazonaws.com/"
+        key:@""
+        callback:^ (BNCServerResponse*response, NSError*error) {
+            XCTAssertEqualObjects(response.statusCode, @-999);
+            //XCTAssertEqualObjects(response.statusCode, @200);
+            [pinFail2 fulfill];
+        }];
+#endif
+
+  [self waitForExpectationsWithTimeout:10.0 handler:nil];
 }
 
 @end

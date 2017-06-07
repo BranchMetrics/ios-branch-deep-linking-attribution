@@ -158,7 +158,7 @@ continueUserActivity:(NSUserActivity *)userActivity
         [application registerForRemoteNotificationTypes:
             (UIRemoteNotificationTypeNewsstandContentAvailability| UIRemoteNotificationTypeBadge |
                 UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
-        #pragma clang diagnostic push
+        #pragma clang diagnostic pop
     }
 }
 

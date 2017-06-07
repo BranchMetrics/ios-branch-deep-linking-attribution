@@ -9,6 +9,13 @@
 #import <Foundation/Foundation.h>
 #import "BNCNetworkServiceProtocol.h"
 
+/**
+ BNCNetworkService and BNCNetworkOperation
+
+ The BNCNetworkService and BNCNetworkOperation classes are concrete implementations of the
+ BNCNetworkServiceProtocol and BNCNetworkOperationProtocol protocols.
+*/
+
 #pragma mark BNCNetworkOperation
 
 @interface BNCNetworkOperation : NSObject <BNCNetworkOperationProtocol>
@@ -17,8 +24,7 @@
 @property (readonly, strong) NSData              *responseData;
 @property (readonly, copy)   NSError             *error;
 @property (readonly, copy)   NSDate              *startDate;
-@property (copy)             NSDate              *timeoutDate;
-
+@property (readonly, copy)   NSDate              *timeoutDate;
 @property (strong)           NSDictionary        *userInfo;
 
 - (void) start;
@@ -29,12 +35,13 @@
 
 @interface BNCNetworkService : NSObject <BNCNetworkServiceProtocol>
 + (id<BNCNetworkServiceProtocol>) new;
-+ (id<BNCNetworkServiceProtocol>) networkServiceWithPinnedPublicKeys:(NSArray<NSData*>*/*_Nullable*/)keyArray;
 
 - (void) cancelAllOperations;
 
 - (BNCNetworkOperation*) networkOperationWithURLRequest:(NSMutableURLRequest*)request
                 completion:(void (^)(BNCNetworkOperation*operation))completion;
+
+- (NSError*) pinSessionToPublicSecKeyRefs:(NSArray/*<SecKeyRef>*/*)publicKeys;
 
 @property (strong) NSDictionary *userInfo;
 @end
