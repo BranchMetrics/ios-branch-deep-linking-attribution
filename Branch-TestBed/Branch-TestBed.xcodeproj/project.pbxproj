@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */; };
-		464EA3981ACB1797000E4094 /* BNCServerInterfaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */; };
+		464EA3981ACB1797000E4094 /* BNCServerInterface.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA3971ACB1797000E4094 /* BNCServerInterface.Test.m */; };
 		4665AF231B28965E00184037 /* BranchSDKLoadTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4665AF1D1B28923900184037 /* BranchSDKLoadTests.m */; };
 		4665AF241B28B7E000184037 /* BranchSetIdentityRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4665AF201B2892F700184037 /* BranchSetIdentityRequestTests.m */; };
 		4665AF261B28B9BB00184037 /* BranchConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 4665AF251B28B9BB00184037 /* BranchConstants.m */; };
@@ -128,7 +128,7 @@
 /* Begin PBXFileReference section */
 		423ACD2DEBB9A2E4FAF64B08 /* libPods-Branch-SDK-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchNetworkScenarioTests.m; sourceTree = "<group>"; };
-		464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerInterfaceTests.m; sourceTree = "<group>"; };
+		464EA3971ACB1797000E4094 /* BNCServerInterface.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerInterface.Test.m; sourceTree = "<group>"; };
 		464EA3991ACB38EC000E4094 /* BNCEncodingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCEncodingUtils.h; sourceTree = "<group>"; };
 		464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtils.m; sourceTree = "<group>"; };
 		4665AF1D1B28923900184037 /* BranchSDKLoadTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchSDKLoadTests.m; sourceTree = "<group>"; };
@@ -561,15 +561,15 @@
 				46DBB42B1B330CF300642FC8 /* BNCLinkDataTests.m */,
 				4DA577191E67B1EB00A43BDD /* BNCLog.Test.m */,
 				46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */,
-				464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */,
+				464EA3971ACB1797000E4094 /* BNCServerInterface.Test.m */,
 				46DBB42C1B330CF300642FC8 /* BNCServerRequestQueueTests.m */,
 				46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */,
+				467309471AF2C4FB005B8848 /* BNCTestCase.h */,
+				467309481AF2C4FB005B8848 /* BNCTestCase.m */,
 				461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */,
 				4665AF1F1B2892CF00184037 /* BranchRequestsTests */,
 				7E6B3B551AA42D0E005F45BF /* BranchSDKFunctionalityTests.m */,
 				4665AF1D1B28923900184037 /* BranchSDKLoadTests.m */,
-				467309471AF2C4FB005B8848 /* BNCTestCase.h */,
-				467309481AF2C4FB005B8848 /* BNCTestCase.m */,
 				4DA577231E67B2A000A43BDD /* NSString+Branch.Test.m */,
 				7E6B3B531AA42D0E005F45BF /* Supporting Files */,
 			);
@@ -880,7 +880,7 @@
 				4665AF281B28C1DE00184037 /* BranchLogoutRequestTests.m in Sources */,
 				46DC40781B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m in Sources */,
 				4DA5771F1E67B23D00A43BDD /* BNCDebug.Test.m in Sources */,
-				464EA3981ACB1797000E4094 /* BNCServerInterfaceTests.m in Sources */,
+				464EA3981ACB1797000E4094 /* BNCServerInterface.Test.m in Sources */,
 				4665AF241B28B7E000184037 /* BranchSetIdentityRequestTests.m in Sources */,
 				46DBB42D1B330CF300642FC8 /* BNCLinkDataTests.m in Sources */,
 				46DC40741B2B31A300D2D203 /* BranchLoadRewardsRequestTests.m in Sources */,

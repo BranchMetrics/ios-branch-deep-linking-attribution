@@ -464,4 +464,56 @@ static const short _base64DecodingTable[256] = {
     return hexString;
 }
 
++ (NSData *) dataFromHexString:(NSString*)string {
+    if (!string) return nil;
+
+    NSData *data = nil;
+    NSData *inputData = [string dataUsingEncoding:NSUTF8StringEncoding];
+
+    size_t length = (inputData.length+1)/2;
+    uint8_t *bytes = malloc(length);
+    uint8_t *b = bytes;
+    if (!bytes) goto exit;
+
+    int highValue = -1;
+    uint8_t *p = (uint8_t*) [inputData bytes];
+    for (long i = 0; i < inputData.length; ++i) {
+        int value = -1;
+        if (*p >= '0' && *p <= '9')
+            value = *p - '0';
+        else
+        if (*p >= 'A' && *p <= 'F')
+            value = *p - 'A' + 10;
+        else
+        if (*p >= 'a' && *p <= 'f')
+            value = *p - 'a' + 10;
+        else
+        if (isspace(*p)) {
+            p++;
+            continue;
+        } else {
+            goto exit; // Invalid character.
+        }
+        
+        if (highValue == -1) {
+            highValue = value;
+        } else {
+            *b++ = (highValue << 4) | value;
+            highValue = -1;
+        }
+        p++;
+    }
+
+    // If highValue != -1 then we got an odd number of hex values, which is an error.
+    if (highValue == -1)
+        data = [NSData dataWithBytes:bytes length:b-bytes];
+
+exit:
+    if (bytes) {
+        BNCLogAssert(b-bytes<=length);
+        free(bytes);
+    }
+    return data;
+}
+
 @end
