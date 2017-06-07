@@ -432,7 +432,7 @@
         (allowSelfSigned && trustType != kSecTrustResultInvalid)) {
         secKey = SecTrustCopyPublicKey(trust);
     } else {
-        status = errSecVerifyFailed;
+        status = errSecAuthFailed;
     }
 
 exit:
