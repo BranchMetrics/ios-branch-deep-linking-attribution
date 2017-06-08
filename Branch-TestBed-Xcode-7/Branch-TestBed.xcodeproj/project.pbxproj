@@ -167,6 +167,13 @@
 			remoteGlobalIDString = 466B58371B17773000A69EDE;
 			remoteInfo = Branch;
 		};
+		4D0A79411EE9D696000D4C82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 670016581940F51400A9E103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6700165F1940F51400A9E103;
+			remoteInfo = "Branch-TestBed";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -759,6 +766,7 @@
 			);
 			dependencies = (
 				4683F07C1B20AC6300A432E7 /* PBXTargetDependency */,
+				4D0A79421EE9D696000D4C82 /* PBXTargetDependency */,
 			);
 			name = "Branch-SDK-Tests";
 			productName = "Branch-SDK Functionality Tests";
@@ -791,6 +799,7 @@
 					7E6B3B501AA42D0E005F45BF = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = R63EM248DP;
+						TestTargetID = 6700165F1940F51400A9E103;
 					};
 				};
 			};
@@ -865,7 +874,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		CA6C45DB44005B39B2D6B322 /* [CP] Embed Pods Frameworks */ = {
@@ -996,6 +1005,11 @@
 			isa = PBXTargetDependency;
 			target = 466B58371B17773000A69EDE /* Branch */;
 			targetProxy = 4683F07B1B20AC6300A432E7 /* PBXContainerItemProxy */;
+		};
+		4D0A79421EE9D696000D4C82 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
+			targetProxy = 4D0A79411EE9D696000D4C82 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1159,7 +1173,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1180,7 +1194,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1189,6 +1203,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BD1915E2CE30909947ECEB14 /* Pods-Branch-SDK-Tests.debug.xcconfig */;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				DEVELOPMENT_TEAM = R63EM248DP;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1200,6 +1215,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Branch-TestBed.app/Branch-TestBed";
 			};
 			name = Debug;
 		};
@@ -1207,6 +1223,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 69347EDA2E4ED874ED5DA0B3 /* Pods-Branch-SDK-Tests.release.xcconfig */;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				DEVELOPMENT_TEAM = R63EM248DP;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1214,6 +1231,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Branch-TestBed.app/Branch-TestBed";
 			};
 			name = Release;
 		};
