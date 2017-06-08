@@ -116,7 +116,7 @@ static BNCDeviceInfo *bncDeviceInfo;
 + (NSString*) userAgentString {
 
     static NSString* browserUserAgentString = nil;
-	void (^setBrowserUserAgent)() = ^() {
+	void (^setBrowserUserAgent)(void) = ^() {
 		if (!browserUserAgentString) {
 			browserUserAgentString =
 				[[[UIWebView alloc]

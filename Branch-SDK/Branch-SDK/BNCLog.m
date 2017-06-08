@@ -583,7 +583,7 @@ void BNCLogFlushMessages() {
 
 #pragma mark - BNCLogInitialize
 
-void BNCLogInitialize() __attribute__((constructor));
+void BNCLogInitialize(void) __attribute__((constructor));
 void BNCLogInitialize() {
     static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
