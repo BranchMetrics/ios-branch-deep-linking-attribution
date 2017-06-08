@@ -149,7 +149,10 @@
         self.sessionQueue = [NSOperationQueue new];
         self.sessionQueue.name = @"io.branch.network.queue";
         self.sessionQueue.maxConcurrentOperationCount = self.maximumConcurrentOperations;
-        self.sessionQueue.qualityOfService = NSQualityOfServiceUserInteractive;
+        if ([self.sessionQueue respondsToSelector:@selector(setQualityOfService:)]) {
+            // qualityOfService is iOS 8 and above.
+            self.sessionQueue.qualityOfService = NSQualityOfServiceUserInteractive;
+        }
 
         _session =
             [NSURLSession sessionWithConfiguration:configuration
