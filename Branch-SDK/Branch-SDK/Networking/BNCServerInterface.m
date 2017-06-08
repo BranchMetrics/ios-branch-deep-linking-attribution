@@ -393,16 +393,16 @@
 
     NSMutableArray *array = [NSMutableArray array];
     for (NSString* hexKey in hexKeys) {
-        NSData *key = [BNCEncodingUtils dataFromHexString:hexKey];
-        if (key) {
-            SecKeyRef secKey = [self secKeyFromPublicKeyData:key allowSelfSigned:YES];
+        NSData *data = [BNCEncodingUtils dataFromHexString:hexKey];
+        if (data) {
+            SecKeyRef secKey = [self publicSecKeyFromPKCS12CertChainData:data];
             if (secKey) [array addObject:(__bridge id)secKey];
         }
     }
     return array;
 }
 
-+ (SecKeyRef) secKeyFromPublicKeyData:(NSData*)keyData allowSelfSigned:(BOOL)allowSelfSigned {
++ (SecKeyRef) publicSecKeyFromPKCS12CertChainData:(NSData*)keyData {
     OSStatus    status = errSecSuccess;
     NSArray     *items = nil;
     SecKeyRef   secKey = NULL;
@@ -425,19 +425,15 @@
     if (!trust) goto exit;
 
     status = SecTrustEvaluate(trust, &trustType);
-    if (status != errSecSuccess) goto exit;
-
-    if (trustType == kSecTrustResultProceed ||
-        trustType == kSecTrustResultUnspecified ||
-        (allowSelfSigned && trustType != kSecTrustResultInvalid)) {
+    if (trustType != kSecTrustResultInvalid) {
         secKey = SecTrustCopyPublicKey(trust);
     } else {
-        status = errSecAuthFailed;
+        status = errSecDecode;
     }
 
 exit:
     if (secKey == NULL && status == errSecSuccess) {
-        status = errSecParam;
+        status = errSecItemNotFound;
     }
     if (status != errSecSuccess) {
         NSError *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:nil];
