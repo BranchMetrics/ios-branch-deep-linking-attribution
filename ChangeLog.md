@@ -1,6 +1,19 @@
 Branch iOS SDK Change Log
 
-  * Added functionality to show deep link Controller with new API (registerDeepLinkController: forKey: withOption:) and depreciated registerDeepLinkController:controller forKey:.
+  * Added functionality to show deep link Controller with new API 
+
+```
+        - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)
+                controller forKey:(NSString *)key 
+                withOption:(BNCViewControllerOption)option;
+
+```
+  and depreciated API
+```
+        - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)
+                controller forKey:(NSString *)key;
+
+```
   Reference: https://dev.branch.io/getting-started/deep-link-routing/advanced/ios/#register-view-controller-for-deep-link-routing
 
   * Added a `BNCCurrency` type for commerce events.
