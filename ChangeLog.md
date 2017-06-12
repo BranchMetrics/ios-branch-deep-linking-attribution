@@ -1,8 +1,11 @@
 Branch iOS SDK Change Log
 
-  * Added an option so that the Branch SDK can use a client networking stack instead of the
-    standard Branch networking stack. See the documentation in the `BNCNetworkServiceProtocol.h`
-    file for details.
+- v0.16.0
+  * Added support for using a provided network stack instead of the standard Branch SDK network calls.
+    See the documentation in the `BNCNetworkServiceProtocol.h` file for details.
+  * Added certificate pining for branch.io server calls.
+  * Removed support for iOS 6 networking.
+  * The iOS Security.framework is now required for linking with the Branch SDK.
   * Added a `BNCCurrency` type for commerce events.
 
 - v0.15.3
