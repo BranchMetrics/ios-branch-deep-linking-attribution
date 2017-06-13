@@ -417,7 +417,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  Note:
  * If push option is used and the rootviewcontroller of window is not of type UINavigationViewController, than the sharing View controller would be presented automatically
  */
-- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withOption:(BNCViewControllerOption)option;
+- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withPresentation:(BNCViewControllerPresentationOption)option;
 
 #pragma mark - Configuration methods
 

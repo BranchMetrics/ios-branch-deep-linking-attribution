@@ -1,5 +1,5 @@
 //
-//  BranchDeepLinkModel.h
+//  BNCDeepLinkViewControllerInstance.h
 //  Branch-TestBed
 //
 //  Created by Parth Kalavadia on 5/15/17.
@@ -7,9 +7,9 @@
 //
 #import <Foundation/Foundation.h>
 #import "BranchDeepLinkingController.h"
-@interface BranchDeepLinkModel : NSObject
+@interface BNCDeepLinkViewControllerInstance : NSObject
 
 @property (strong, nonatomic)UIViewController<BranchDeepLinkingController>* viewController;
-@property (assign)BNCViewControllerOption option;
+@property (assign)BNCViewControllerPresentationOption option;
 
 @end

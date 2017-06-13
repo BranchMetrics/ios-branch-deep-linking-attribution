@@ -14,7 +14,7 @@
 
 @end
 
-typedef NS_ENUM(NSInteger, BNCViewControllerOption) {
+typedef NS_ENUM(NSInteger, BNCViewControllerPresentationOption) {
     BNCViewControllerOptionShow,
     BNCViewControllerOptionPush,
     BNCViewControllerOptionPresent
