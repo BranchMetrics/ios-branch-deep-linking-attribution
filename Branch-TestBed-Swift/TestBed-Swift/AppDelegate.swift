@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } else {
                 DataStore.setActivePendingSetDebugEnabled(false)
             }
-            
+            branch.registerDeepLinkController(kCATransitionFromLeft, forKey: <#T##String!#>, withPresentation: <#T##BNCViewControllerPresentationOption#>)
             branch.initSession(launchOptions: launchOptions, andRegisterDeepLinkHandler: { (params, error) in
                 if (error == nil) {
                     

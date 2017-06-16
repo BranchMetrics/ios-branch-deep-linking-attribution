@@ -391,7 +391,7 @@ Register a controller for Branch to show when specific keys are present in the B
 ###### Swift
 
 ```swift
-Branch.getInstance().registerDeepLinkController(myController forKey:"my-key" with: .optionShow)
+Branch.getInstance().registerDeepLinkController(myController forKey:"my-key" withPresentation: .optionShow)
 ```
 
 #### Parameters
