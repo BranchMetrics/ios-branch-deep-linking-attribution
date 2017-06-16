@@ -34,19 +34,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     branch.registerDeepLinkController(navigationController, forKey:"~referring_link")
  
          */
-
         
         if let branch = Branch.getInstance(branchKey) {
             
+            branch.setDebug();
             if DataStore.getPendingSetDebugEnabled()! {
                 branch.setDebug()
                 DataStore.setActivePendingSetDebugEnabled(true)
             } else {
                 DataStore.setActivePendingSetDebugEnabled(false)
             }
-            
-            let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UINavigationController
-            branch.registerDeepLinkController(navigationController, forKey: "~referring_link", with: .show)
             
             branch.initSession(launchOptions: launchOptions, andRegisterDeepLinkHandler: { (params, error) in
                 if (error == nil) {

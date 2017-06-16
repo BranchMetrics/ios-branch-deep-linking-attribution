@@ -19,37 +19,30 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application
-    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     /**
      * // Push notification support (Optional)
      * [self registerForPushNotifications:application];
      */
-
+    
     Branch *branch = [Branch getInstance];
     
     // Comment / un-comment to toggle debugging:
     [branch setDebug];
-
+    
     // For Apple Search Ads
     [branch delayInitToCheckForSearchAds];
-
+    
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
     
     [branch setWhiteListedSchemes:@[@"branchtest"]];
-
-    // Automatic Deeplinking on "deeplink_text"
-    NavigationController *navigationController =
-        [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]]
-            instantiateInitialViewController];
-
-    [branch registerDeepLinkController:navigationController forKey:@"deeplink_text" withOption:BNCViewControllerOptionShow];
-
+    
     /**
      * // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
      * [self onboardUserOnInstall];
      */
-    
+
     [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
         if (!error) {
             
@@ -73,11 +66,12 @@
         } else {
             NSLog(@"Branch TestBed: Initialization failed\n%@", error.localizedDescription);
         }
-
+        
     }];
-
+    
     return YES;
 }
+
 
 - (void)onboardUserOnInstall {
     NSURL *urlForOnboarding = [NSURL URLWithString:@"http://example.com"]; // Put your onboarding link here

@@ -3,9 +3,7 @@ Branch iOS SDK Change Log
   * Added functionality to show deep link Controller with new API 
 
 ```
-        - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)
-                controller forKey:(NSString *)key 
-                withOption:(BNCViewControllerOption)option;
+        - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withPresentation:(BNCViewControllerPresentationOption)option;
 
 ```
   and depreciated API
