@@ -15,6 +15,13 @@ Branch iOS SDK Change Log
   Reference: https://dev.branch.io/getting-started/deep-link-routing/advanced/ios/#register-view-controller-for-deep-link-routing
 
   * Added a `BNCCurrency` type for commerce events.
+- v0.16.0
+  * *QA Release* - June 14, 2017
+  * Branch support for opening Branch links inside an app once a session is already started (like AppBoy) (AIS-264).
+  * Updated logging. Logging is more robust and consistant. Fixed the punctuation and grammer for logging messages.
+  * Added a standard `BNCCurrency` type for commerce events.
+  * Stop sending the Apple search ad data after attribution has been found or 30 days (AIS-267).
+  * Added a deprecation warning added for older BranchActivityItems in BranchUniversalObject.h (#631).
 
 - v0.15.3
   * *Master Release*
