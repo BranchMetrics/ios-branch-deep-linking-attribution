@@ -77,7 +77,8 @@
 		63F65BFA1D654EF30055A2F6 /* DictionaryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F65BF91D654EF30055A2F6 /* DictionaryTableViewCell.swift */; };
 		63F8BB201D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F8BB1F1D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift */; };
 		63F8BB241D57E7730013B6F7 /* ArrayTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F8BB231D57E7730013B6F7 /* ArrayTableViewController.swift */; };
-		F11999831ED36EF40043CA84 /* BranchDeepLinkModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F11999821ED36EF40043CA84 /* BranchDeepLinkModel.m */; };
+		F155BFEF1EF37EDB00BF4566 /* BNCLog.m in Sources */ = {isa = PBXBuildFile; fileRef = F155BFEE1EF37EDB00BF4566 /* BNCLog.m */; };
+		F155BFF21EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = F155BFF11EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -207,8 +208,10 @@
 		63F65BF91D654EF30055A2F6 /* DictionaryTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryTableViewCell.swift; sourceTree = "<group>"; };
 		63F8BB1F1D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkPropertiesTableViewController.swift; sourceTree = "<group>"; };
 		63F8BB231D57E7730013B6F7 /* ArrayTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayTableViewController.swift; sourceTree = "<group>"; };
-		F11999811ED36EF40043CA84 /* BranchDeepLinkModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchDeepLinkModel.h; sourceTree = "<group>"; };
-		F11999821ED36EF40043CA84 /* BranchDeepLinkModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchDeepLinkModel.m; sourceTree = "<group>"; };
+		F155BFED1EF37EDB00BF4566 /* BNCLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLog.h; sourceTree = "<group>"; };
+		F155BFEE1EF37EDB00BF4566 /* BNCLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLog.m; sourceTree = "<group>"; };
+		F155BFF01EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
+		F155BFF11EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeepLinkViewControllerInstance.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -297,8 +300,6 @@
 				4D4F280C1E400F9800282A34 /* BranchCSSearchableItemAttributeSet.h */,
 				4D4F280D1E400F9800282A34 /* BranchCSSearchableItemAttributeSet.m */,
 				4D4F280E1E400F9800282A34 /* BranchDeepLinkingController.h */,
-				F11999811ED36EF40043CA84 /* BranchDeepLinkModel.h */,
-				F11999821ED36EF40043CA84 /* BranchDeepLinkModel.m */,
 				4D4F280F1E400F9800282A34 /* BranchLinkProperties.h */,
 				4D4F28101E400F9800282A34 /* BranchLinkProperties.m */,
 				4D9E765A1E774DB100BD0620 /* BranchShareLink.h */,
@@ -311,6 +312,10 @@
 				4D4F28161E400F9800282A34 /* BranchViewHandler.m */,
 				4D4F28171E400F9800282A34 /* NSMutableDictionary+Branch.h */,
 				4D4F28181E400F9800282A34 /* NSMutableDictionary+Branch.m */,
+				F155BFF01EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.h */,
+				F155BFF11EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.m */,
+				F155BFED1EF37EDB00BF4566 /* BNCLog.h */,
+				F155BFEE1EF37EDB00BF4566 /* BNCLog.m */,
 				4D4F28191E400F9800282A34 /* Requests */,
 			);
 			path = "Branch-SDK";
@@ -547,6 +552,7 @@
 				4D4F28571E400F9800282A34 /* BranchView.m in Sources */,
 				4D4F28591E400F9800282A34 /* NSMutableDictionary+Branch.m in Sources */,
 				4D4F28601E400F9800282A34 /* BranchOpenRequest.m in Sources */,
+				F155BFF21EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.m in Sources */,
 				4D4F28401E400F9800282A34 /* BNCContentDiscoveryManager.m in Sources */,
 				4D4F28411E400F9800282A34 /* BNCDeviceInfo.m in Sources */,
 				4D4F28451E400F9800282A34 /* BNCLinkCache.m in Sources */,
@@ -557,12 +563,12 @@
 				63F8BB241D57E7730013B6F7 /* ArrayTableViewController.swift in Sources */,
 				63AAF1011CF7F58900CA98BD /* ContentViewController.swift in Sources */,
 				63F8BB201D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift in Sources */,
+				F155BFEF1EF37EDB00BF4566 /* BNCLog.m in Sources */,
 				6306FFF11D6BEFA30031D2E3 /* ArrayTableViewCell.swift in Sources */,
 				4D4F285B1E400F9800282A34 /* BranchCloseRequest.m in Sources */,
 				4D9E765C1E774DB100BD0620 /* BranchShareLink.m in Sources */,
 				4D4F28671E400F9800282A34 /* BranchUserCompletedActionRequest.m in Sources */,
 				4D4F28521E400F9800282A34 /* BranchContentDiscoveryManifest.m in Sources */,
-				F11999831ED36EF40043CA84 /* BranchDeepLinkModel.m in Sources */,
 				63865EB11D60E7B6006071CE /* DictionaryTableViewController.swift in Sources */,
 				63AAF0F11CF7594400CA98BD /* Branch.m in Sources */,
 				4D4F283F1E400F9800282A34 /* BNCConfig.m in Sources */,

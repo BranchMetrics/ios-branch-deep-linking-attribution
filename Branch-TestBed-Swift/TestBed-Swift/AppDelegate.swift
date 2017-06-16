@@ -27,14 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             DataStore.setActiveBranchKey(defaultBranchKey)
         }
         
-        
-        // Deeplinking logic for use when automaticallyDisplayDeepLinkController = true
-        /*
-                    let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UINavigationController
-                    branch.registerDeepLinkController(navigationController, forKey:"~referring_link")
- 
-         */
-        
         if let branch = Branch.getInstance(branchKey) {
             
             branch.setDebug();
