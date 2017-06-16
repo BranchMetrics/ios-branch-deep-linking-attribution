@@ -912,7 +912,11 @@ linkProperties.addControlParam("$email_html_link_text", withValue: "Tap here")
 
 #### Changing share Text on the fly
 
-You have the option of changing the link shareText and other link parameters based on the choice the user makes on the Sharesheet Activity. For this to work your View Controller will need to inherit the BranchShareLink Delegate.
+> You can change the link shareText and other link parameters based on the choice the user makes on the sharesheet activity.  First, set the `BranchShareLink` delegate with an object that follows the `BranchShareLinkDelegate` protocol.
+
+> The optional `- (void) branchShareLinkWillShare:` delegate method will be called just after the user selects a share action, like share by email for instance, and before the share action is shown to the user, like when the email composer is shown to the user with the share text. This is an ideal time to change the share text based on the user action.
+
+> The optional `- (void) branchShareLink:didComplete:withError:` delegate method will be called after the user has completed the share action.  The `didComplete` boolean will be `YES` if the user shared the item, and `NO` if the user cancelled.  The `error` value will indicate any errors that may have occurred.
 
 ###### Objective-C
 ```objc
