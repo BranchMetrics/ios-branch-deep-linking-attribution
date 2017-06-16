@@ -910,6 +910,40 @@ linkProperties.addControlParam("$email_html_footer", withValue: "Thanks!")
 linkProperties.addControlParam("$email_html_link_text", withValue: "Tap here")
 ```
 
+#### Changing share Text on the fly
+
+You have the option of changing the link shareText and other link parameters based on the choice the user makes on the Sharesheet Activity. For this to work your View Controller will need to inherit the BranchShareLink Delegate.
+
+```objc
+class ViewController: UITableViewController, BranchShareLinkDelegate
+```
+
+```swift
+class ViewController: UITableViewController, BranchShareLinkDelegate
+```
+
+Override the branchShareLinkWillShare function to change your shareText
+
+```objc
+- (void) branchShareLinkWillShare:(BranchShareLink*)shareLink {
+    // Link properties, such as alias or channel can be overridden here based on the users'
+    // choice stored in shareSheet.activityType.
+    shareLink.shareText = [NSString stringWithFormat:
+        @"Shared through '%@'\nfrom Branch's Branch-TestBed\nat %@.",
+        shareLink.linkProperties.channel,
+        [self.dateFormatter stringFromDate:[NSDate date]]];
+}
+```
+```swift
+func branchShareLinkWillShare(_ shareLink: BranchShareLink) {
+	// Link properties, such as alias or channel can be overridden here based on the users'
+	// choice stored in shareSheet.activityType.
+	shareLink.shareText =
+	    "Shared through '\(shareLink.linkProperties.channel!)'\nfrom Branch's TestBed-Swift" +
+	    "\nat \(self.dateFormatter().string(from: Date()))."
+}
+```
+
 #### Returns
 
 None
