@@ -915,7 +915,7 @@ linkProperties.addControlParam("$email_html_link_text", withValue: "Tap here")
 You have the option of changing the link shareText and other link parameters based on the choice the user makes on the Sharesheet Activity. For this to work your View Controller will need to inherit the BranchShareLink Delegate.
 
 ```objc
-class ViewController: UITableViewController, BranchShareLinkDelegate
+@interface ViewController () <BranchShareLinkDelegate> 
 ```
 
 ```swift
