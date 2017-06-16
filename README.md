@@ -914,14 +914,10 @@ linkProperties.addControlParam("$email_html_link_text", withValue: "Tap here")
 
 You have the option of changing the link shareText and other link parameters based on the choice the user makes on the Sharesheet Activity. For this to work your View Controller will need to inherit the BranchShareLink Delegate.
 
+###### Objective-C
 ```objc
 @interface ViewController () <BranchShareLinkDelegate> 
 ```
-
-```swift
-class ViewController: UITableViewController, BranchShareLinkDelegate
-```
-
 Override the branchShareLinkWillShare function to change your shareText
 
 ```objc
@@ -934,6 +930,14 @@ Override the branchShareLinkWillShare function to change your shareText
         [self.dateFormatter stringFromDate:[NSDate date]]];
 }
 ```
+###### Swift
+
+```swift
+class ViewController: UITableViewController, BranchShareLinkDelegate
+```
+
+Override the branchShareLinkWillShare function to change your shareText
+
 ```swift
 func branchShareLinkWillShare(_ shareLink: BranchShareLink) {
 	// Link properties, such as alias or channel can be overridden here based on the users'
