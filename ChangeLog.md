@@ -1,12 +1,19 @@
 Branch iOS SDK Change Log
 
-- v0.16.0
+- v0.16.1
   * Added support for using a provided network stack instead of the standard Branch SDK network calls.
     See the documentation in the `BNCNetworkServiceProtocol.h` file for details.
   * Added certificate pining for branch.io server calls.
   * Removed support for iOS 6 networking.
   * The iOS Security.framework is now required for linking with the Branch SDK.
-  * Added a `BNCCurrency` type for commerce events.
+
+- v0.16.0
+  * *QA Release* - June 14, 2017
+  * Branch support for opening Branch links inside an app once a session is already started (like AppBoy) (AIS-264).
+  * Updated logging. Logging is more robust and consistant. Fixed the punctuation and grammer for logging messages.
+  * Added a standard `BNCCurrency` type for commerce events.
+  * Stop sending the Apple search ad data after attribution has been found or 30 days (AIS-267).
+  * Added a deprecation warning added for older BranchActivityItems in BranchUniversalObject.h (#631).
 
 - v0.15.3
   * *Master Release*
