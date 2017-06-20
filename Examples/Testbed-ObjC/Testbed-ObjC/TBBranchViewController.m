@@ -1,13 +1,16 @@
 //
-//  TBViewController.m
+//  TBBranchViewController.m
 //  Testbed-ObjC
 //
 //  Created by edward on 6/12/17.
 //  Copyright © 2017 Branch. All rights reserved.
 //
 
-#import "TBViewController.h"
+#import "TBBranchViewController.h"
 #import "TBTableData.h"
+#import "TBDataViewController.h"
+#import "TBWaitingView.h"
+#import "BNCLog.h"
 #import "Branch.h"
 
 NSString *cononicalIdentifier = @"item/12345";
@@ -20,19 +23,20 @@ NSString *channel = @"Distribution Channel";
 NSString *desktop_url = @"http://branch.io";
 NSString *ios_url = @"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/";
 NSString *shareText = @"Super amazing thing I want to share";
-NSString *user_id1 = @"abe@emailaddress.io";
-NSString *user_id2 = @"ben@emailaddress.io";
-NSString *live_key = @"live_key";
-NSString *test_key = @"test_key";
+//NSString *user_id1 = @"abe@emailaddress.io";
+//NSString *user_id2 = @"ben@emailaddress.io";
+//NSString *live_key = @"live_key";
+//NSString *test_key = @"test_key";
 NSString *type = @"some type";
 
-@interface TBViewController () <UITableViewDelegate, UITableViewDataSource>
-@property (nonatomic, weak)     IBOutlet UITableView *tableView;
+@interface TBBranchViewController () <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong)   TBTableData *tableData;
 @property (nonatomic, strong)   BranchUniversalObject *branchUniversalObject;
+@property (nonatomic, weak)     IBOutlet UITableView *tableView;
+@property (nonatomic, strong)   IBOutlet UINavigationItem *navigationItem;
 @end
 
-@implementation TBViewController
+@implementation TBBranchViewController
 
 - (void)initializeTableData {
 
@@ -52,7 +56,13 @@ NSString *type = @"some type";
 
     section(@"Branch Links");
     row(@"Create a Branch Link", createBranchLink:);
+    row(@"Open a Branch link in a new session", openBranchLinkInApp:);
 
+    section(@"Events");
+    row(@"Send Commerce Event", sendCommerceEvent:);
+
+    #undef section
+    #undef row
 }
 
 - (void)viewDidLoad {
@@ -78,11 +88,18 @@ NSString *type = @"some type";
     UILabel *versionLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     versionLabel.textAlignment = NSTextAlignmentCenter;
     versionLabel.text =
-        [NSString stringWithFormat:@"iOS %@ / TestBed %@ / SDK %@",
+        [NSString stringWithFormat:@"iOS %@\nTestBed %@ SDK %@",
             [UIDevice currentDevice].systemVersion,
             [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"],
             BNC_SDK_VERSION];
+    versionLabel.numberOfLines = 0;
+    versionLabel.backgroundColor = self.tableView.backgroundColor;
+    versionLabel.textColor = [UIColor darkGrayColor];
+    versionLabel.font = [UIFont systemFontOfSize:12.0];
     [versionLabel sizeToFit];
+    CGRect r = versionLabel.bounds;
+    r.size.height *= 1.75f;
+    versionLabel.frame = r;
     self.tableView.tableHeaderView = versionLabel;
 }
 
@@ -127,7 +144,27 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 #pragma mark - Utility Methods
 
-- (void) showDictionary:(NSDictionary*)dictionary withTitle:(NSString*)title {
+- (void) showResultsWithDictionary:(NSDictionary*)dictionary
+                             title:(NSString*)title
+                           message:(NSString*)message {
+    TBDataViewController *dataViewController = [[TBDataViewController alloc] initWithData:dictionary];
+    dataViewController.title = title;
+    [self.navigationController pushViewController:dataViewController animated:YES];
+}
+
+- (void) showAlertWithTitle:(NSString*)title message:(NSString*)message {
+    UIAlertController* alert = [UIAlertController
+        alertControllerWithTitle:title
+        message:message
+        preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"OK"
+        style:UIAlertActionStyleCancel
+        handler:nil]];
+    UIViewController *rootViewController =
+        [UIApplication sharedApplication].delegate.window.rootViewController;
+    [rootViewController presentViewController:alert
+        animated:YES
+        completion:nil];
 }
 
 #pragma mark - Actions
@@ -148,16 +185,88 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     }];
 }
 
+- (IBAction) openBranchLinkInApp:(id)sender {
+    NSURL *URL = [NSURL URLWithString:@"https://bnc.lt/ZPOc/Y6aKU0rzcy"]; // <= Your URL goes here.
+    [[Branch getInstance] handleDeepLinkWithNewSession:URL];
+}
+
 - (IBAction)showFirstReferringParams:(TBTableRow*)sender {
-    [self showDictionary:[[Branch getInstance] getFirstReferringParams]
-        withTitle:@"First Referring Parameters"];
+    [self showResultsWithDictionary:[[Branch getInstance] getFirstReferringParams]
+        title:@"First Referring Parameters"
+        message:nil];
 }
 
 - (IBAction)showLatestReferringParams:(TBTableRow*)sender {
+    [self showResultsWithDictionary:[[Branch getInstance] getLatestReferringParamsSynchronous]
+        title:@"Latest Referring Parameters"
+        message:nil];
 }
+
 - (IBAction)setUserIdentity:(TBTableRow*)sender {
+    [TBWaitingView showWithMessage:@"Setting User Identity"
+        activityIndicator:YES
+        disableTouches:YES];
+
+    [[Branch getInstance] setIdentity:@"my-identity-for-this-user@testbed-objc.io"
+        withCallback:^(NSDictionary *params, NSError *error) {
+            BNCLogAssert([NSThread isMainThread]);
+            [TBWaitingView hide];
+            if (error) {
+                NSLog(@"Set identity error: %@.", error);
+                [self showAlertWithTitle:@"Can't set identity." message:error.localizedDescription];
+            } else {
+                [self showResultsWithDictionary:params title:@"Set Identity" message:@"Identity set"];
+            }
+        }];
 }
+
 - (IBAction)logOutUserIdentity:(TBTableRow*)sender {
+    [[Branch getInstance] logoutWithCallback:^(BOOL changed, NSError *error) {
+        if (error || !changed) {
+            [self showAlertWithTitle:@"Logout Error" message:error.localizedDescription];
+        } else {
+            [self showAlertWithTitle:@"Logout Succeeded" message:nil];
+        }
+    }];
+}
+
+- (IBAction) sendCommerceEvent:(id)sender {
+    BNCProduct *product = [BNCProduct new];
+    product.price = [NSDecimalNumber decimalNumberWithString:@"1000.99"];
+    product.sku = @"acme007";
+    product.name = @"Acme brand 1 ton weight";
+    product.quantity = @(1.0);
+    product.brand = @"Acme";
+    product.category = BNCProductCategoryMedia;
+    product.variant = @"Lite Weight";
+
+    BNCCommerceEvent *commerceEvent = [BNCCommerceEvent new];
+    commerceEvent.revenue = [NSDecimalNumber decimalNumberWithString:@"1101.99"];
+    commerceEvent.currency = @"USD";
+    commerceEvent.transactionID = @"tr00x8";
+    commerceEvent.shipping = [NSDecimalNumber decimalNumberWithString:@"100.00"];
+    commerceEvent.tax = [NSDecimalNumber decimalNumberWithString:@"1.00"];
+    commerceEvent.coupon = @"Acme weights coupon";
+    commerceEvent.affiliation = @"ACME by Amazon";
+    commerceEvent.products = @[ product ];
+
+    [TBWaitingView showWithMessage:@"Sending Commerce Event"
+        activityIndicator:YES
+        disableTouches:YES];
+    [[Branch getInstance]
+        sendCommerceEvent:commerceEvent
+        metadata:@{ @"Meta": @"Never meta dog I didn't like." }
+        withCompletion:
+        ^ (NSDictionary *response, NSError *error) {
+            [TBWaitingView hide];
+            if (error) {
+                [self showAlertWithTitle:@"Commere Event Error" message:error.localizedDescription];
+            } else {
+                [self showResultsWithDictionary:response
+                    title:@"Commerce Event"
+                    message:nil];
+            }
+        }];
 }
 
 @end

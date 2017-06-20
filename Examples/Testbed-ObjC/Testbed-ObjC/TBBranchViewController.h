@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  TBBranchViewController.h
 //  Testbed-ObjC
 //
 //  Created by edward on 6/12/17.
@@ -8,5 +8,5 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TBViewController : UIViewController
+@interface TBBranchViewController : UIViewController
 @end

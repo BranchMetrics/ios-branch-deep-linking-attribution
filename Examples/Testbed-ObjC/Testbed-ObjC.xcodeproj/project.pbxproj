@@ -7,12 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D2AF33F1EF882DF00220F4A /* TBDataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D2AF33D1EF882DF00220F4A /* TBDataViewController.m */; };
+		4D2AF3401EF882DF00220F4A /* TBDataViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2AF33E1EF882DF00220F4A /* TBDataViewController.xib */; };
+		4D2AF3461EF89FC800220F4A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D2AF3441EF89FC800220F4A /* Main.storyboard */; };
+		4D2AF3491EF8A05100220F4A /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D2AF3471EF8A05100220F4A /* Launch Screen.storyboard */; };
+		4D2AF34E1EF8FF6200220F4A /* TBBranchViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2AF34D1EF8FF6200220F4A /* TBBranchViewController.xib */; };
+		4D2AF3521EF9B3BF00220F4A /* TBWaitingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D2AF3501EF9B3BF00220F4A /* TBWaitingView.m */; };
+		4D2AF3531EF9B3BF00220F4A /* TBWaitingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2AF3511EF9B3BF00220F4A /* TBWaitingView.xib */; };
 		4DFF2B6E1EEF3B150043F840 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2B6D1EEF3B150043F840 /* main.m */; };
 		4DFF2B711EEF3B150043F840 /* TBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2B701EEF3B150043F840 /* TBAppDelegate.m */; };
-		4DFF2B741EEF3B150043F840 /* TBViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2B731EEF3B150043F840 /* TBViewController.m */; };
-		4DFF2B771EEF3B150043F840 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4DFF2B751EEF3B150043F840 /* Main.storyboard */; };
+		4DFF2B741EEF3B150043F840 /* TBBranchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2B731EEF3B150043F840 /* TBBranchViewController.m */; };
 		4DFF2B791EEF3B150043F840 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DFF2B781EEF3B150043F840 /* Assets.xcassets */; };
-		4DFF2B7C1EEF3B150043F840 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4DFF2B7A1EEF3B150043F840 /* LaunchScreen.storyboard */; };
 		4DFF2BBC1EEF44CF0043F840 /* TBTableData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2BBB1EEF44CF0043F840 /* TBTableData.m */; };
 		4DFF2C291EEF4E940043F840 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2BC11EEF4E940043F840 /* BNCCommerceEvent.m */; };
 		4DFF2C2A1EEF4E940043F840 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2BC31EEF4E940043F840 /* BNCConfig.m */; };
@@ -63,15 +68,22 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4D2AF33C1EF882DF00220F4A /* TBDataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBDataViewController.h; sourceTree = "<group>"; };
+		4D2AF33D1EF882DF00220F4A /* TBDataViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBDataViewController.m; sourceTree = "<group>"; };
+		4D2AF33E1EF882DF00220F4A /* TBDataViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TBDataViewController.xib; sourceTree = "<group>"; };
+		4D2AF3451EF89FC800220F4A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4D2AF3481EF8A05100220F4A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Testbed-ObjC/Base.lproj/Launch Screen.storyboard"; sourceTree = "<group>"; };
+		4D2AF34D1EF8FF6200220F4A /* TBBranchViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TBBranchViewController.xib; sourceTree = "<group>"; };
+		4D2AF34F1EF9B3BF00220F4A /* TBWaitingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBWaitingView.h; sourceTree = "<group>"; };
+		4D2AF3501EF9B3BF00220F4A /* TBWaitingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBWaitingView.m; sourceTree = "<group>"; };
+		4D2AF3511EF9B3BF00220F4A /* TBWaitingView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TBWaitingView.xib; sourceTree = "<group>"; };
 		4DFF2B691EEF3B150043F840 /* Testbed-ObjC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Testbed-ObjC.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DFF2B6D1EEF3B150043F840 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4DFF2B6F1EEF3B150043F840 /* TBAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBAppDelegate.h; sourceTree = "<group>"; };
 		4DFF2B701EEF3B150043F840 /* TBAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TBAppDelegate.m; sourceTree = "<group>"; };
-		4DFF2B721EEF3B150043F840 /* TBViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBViewController.h; sourceTree = "<group>"; };
-		4DFF2B731EEF3B150043F840 /* TBViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TBViewController.m; sourceTree = "<group>"; };
-		4DFF2B761EEF3B150043F840 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4DFF2B721EEF3B150043F840 /* TBBranchViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBBranchViewController.h; sourceTree = "<group>"; };
+		4DFF2B731EEF3B150043F840 /* TBBranchViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TBBranchViewController.m; sourceTree = "<group>"; };
 		4DFF2B781EEF3B150043F840 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4DFF2B7B1EEF3B150043F840 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4DFF2B7D1EEF3B150043F840 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4DFF2BBA1EEF44CF0043F840 /* TBTableData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBTableData.h; sourceTree = "<group>"; };
 		4DFF2BBB1EEF44CF0043F840 /* TBTableData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBTableData.m; sourceTree = "<group>"; };
@@ -213,10 +225,17 @@
 				4DFF2B6C1EEF3B150043F840 /* Supporting Files */,
 				4DFF2B6F1EEF3B150043F840 /* TBAppDelegate.h */,
 				4DFF2B701EEF3B150043F840 /* TBAppDelegate.m */,
+				4D2AF33C1EF882DF00220F4A /* TBDataViewController.h */,
+				4D2AF33D1EF882DF00220F4A /* TBDataViewController.m */,
+				4D2AF33E1EF882DF00220F4A /* TBDataViewController.xib */,
 				4DFF2BBA1EEF44CF0043F840 /* TBTableData.h */,
 				4DFF2BBB1EEF44CF0043F840 /* TBTableData.m */,
-				4DFF2B721EEF3B150043F840 /* TBViewController.h */,
-				4DFF2B731EEF3B150043F840 /* TBViewController.m */,
+				4DFF2B721EEF3B150043F840 /* TBBranchViewController.h */,
+				4DFF2B731EEF3B150043F840 /* TBBranchViewController.m */,
+				4D2AF34D1EF8FF6200220F4A /* TBBranchViewController.xib */,
+				4D2AF34F1EF9B3BF00220F4A /* TBWaitingView.h */,
+				4D2AF3501EF9B3BF00220F4A /* TBWaitingView.m */,
+				4D2AF3511EF9B3BF00220F4A /* TBWaitingView.xib */,
 			);
 			path = "Testbed-ObjC";
 			sourceTree = "<group>";
@@ -224,11 +243,11 @@
 		4DFF2B6C1EEF3B150043F840 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4D2AF3441EF89FC800220F4A /* Main.storyboard */,
+				4D2AF3471EF8A05100220F4A /* Launch Screen.storyboard */,
 				4DFF2B781EEF3B150043F840 /* Assets.xcassets */,
 				4DFF2B7D1EEF3B150043F840 /* Info.plist */,
-				4DFF2B7A1EEF3B150043F840 /* LaunchScreen.storyboard */,
 				4DFF2B6D1EEF3B150043F840 /* main.m */,
-				4DFF2B751EEF3B150043F840 /* Main.storyboard */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -443,9 +462,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4DFF2B7C1EEF3B150043F840 /* LaunchScreen.storyboard in Resources */,
+				4D2AF3401EF882DF00220F4A /* TBDataViewController.xib in Resources */,
 				4DFF2B791EEF3B150043F840 /* Assets.xcassets in Resources */,
-				4DFF2B771EEF3B150043F840 /* Main.storyboard in Resources */,
+				4D2AF34E1EF8FF6200220F4A /* TBBranchViewController.xib in Resources */,
+				4D2AF3531EF9B3BF00220F4A /* TBWaitingView.xib in Resources */,
+				4D2AF3491EF8A05100220F4A /* Launch Screen.storyboard in Resources */,
+				4D2AF3461EF89FC800220F4A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,7 +478,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4DFF2B741EEF3B150043F840 /* TBViewController.m in Sources */,
+				4DFF2B741EEF3B150043F840 /* TBBranchViewController.m in Sources */,
 				4DFF2C331EEF4E940043F840 /* BNCLog.m in Sources */,
 				4DFF2C341EEF4E940043F840 /* BNCPreferenceHelper.m in Sources */,
 				4DFF2C2D1EEF4E940043F840 /* BNCDeviceInfo.m in Sources */,
@@ -478,6 +500,7 @@
 				4DFF2C491EEF4E940043F840 /* BNCServerRequest.m in Sources */,
 				4DFF2C451EEF4E940043F840 /* BranchView.m in Sources */,
 				4DFF2C441EEF4E940043F840 /* BranchUniversalObject.m in Sources */,
+				4D2AF33F1EF882DF00220F4A /* TBDataViewController.m in Sources */,
 				4DFF2C531EEF4E940043F840 /* BranchShortUrlRequest.m in Sources */,
 				4DFF2C2B1EEF4E940043F840 /* BNCContentDiscoveryManager.m in Sources */,
 				4DFF2C381EEF4E940043F840 /* BNCStrongMatchHelper.m in Sources */,
@@ -492,6 +515,7 @@
 				4DFF2C4A1EEF4E940043F840 /* BranchCloseRequest.m in Sources */,
 				4DFF2C4B1EEF4E940043F840 /* BranchCreditHistoryRequest.m in Sources */,
 				4DFF2C471EEF4E940043F840 /* NSMutableDictionary+Branch.m in Sources */,
+				4D2AF3521EF9B3BF00220F4A /* TBWaitingView.m in Sources */,
 				4DFF2C4F1EEF4E940043F840 /* BranchOpenRequest.m in Sources */,
 				4DFF2C431EEF4E940043F840 /* BranchShareLink.m in Sources */,
 				4DFF2C421EEF4E940043F840 /* BranchLinkProperties.m in Sources */,
@@ -512,20 +536,21 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		4DFF2B751EEF3B150043F840 /* Main.storyboard */ = {
+		4D2AF3441EF89FC800220F4A /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				4DFF2B761EEF3B150043F840 /* Base */,
+				4D2AF3451EF89FC800220F4A /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		4DFF2B7A1EEF3B150043F840 /* LaunchScreen.storyboard */ = {
+		4D2AF3471EF8A05100220F4A /* Launch Screen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				4DFF2B7B1EEF3B150043F840 /* Base */,
+				4D2AF3481EF8A05100220F4A /* Base */,
 			);
-			name = LaunchScreen.storyboard;
+			name = "Launch Screen.storyboard";
+			path = ..;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -666,6 +691,7 @@
 				4DFF2B821EEF3B150043F840 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
