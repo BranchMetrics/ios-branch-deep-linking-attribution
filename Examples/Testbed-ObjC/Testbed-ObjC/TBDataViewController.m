@@ -140,6 +140,11 @@
     }
 }
 
+- (void) setMessage:(NSString *)message {
+    _message = message;
+    [self.tableView reloadData];
+}
+
 - (NSArray<TBRowData*>*) dataRows {
     if (!_dataRows) {
         _dataRows = [TBRowData rowsFromDictionaryOrArray:_dictionaryOrArray];
@@ -163,7 +168,13 @@
 }
 
 - (NSString*) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return (self.dataRows.count == 0) ? @"Empty" : nil;
+    if (self.message.length)
+        return self.message;
+    else
+    if (self.dataRows.count == 0)
+        return @"No results to show";
+    else
+        return nil;
 }
 
 - (UITableViewCell*) tableView:(UITableView *)tableView

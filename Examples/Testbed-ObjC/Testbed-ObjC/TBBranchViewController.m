@@ -23,10 +23,6 @@ NSString *channel = @"Distribution Channel";
 NSString *desktop_url = @"http://branch.io";
 NSString *ios_url = @"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/";
 NSString *shareText = @"Super amazing thing I want to share";
-//NSString *user_id1 = @"abe@emailaddress.io";
-//NSString *user_id2 = @"ben@emailaddress.io";
-//NSString *live_key = @"live_key";
-//NSString *test_key = @"test_key";
 NSString *type = @"some type";
 
 @interface TBBranchViewController () <UITableViewDelegate, UITableViewDataSource>
@@ -149,6 +145,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
                            message:(NSString*)message {
     TBDataViewController *dataViewController = [[TBDataViewController alloc] initWithData:dictionary];
     dataViewController.title = title;
+    dataViewController.message = message;
     [self.navigationController pushViewController:dataViewController animated:YES];
 }
 
@@ -215,17 +212,20 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
                 NSLog(@"Set identity error: %@.", error);
                 [self showAlertWithTitle:@"Can't set identity." message:error.localizedDescription];
             } else {
-                [self showResultsWithDictionary:params title:@"Set Identity" message:@"Identity set"];
+                [self showResultsWithDictionary:params title:@"Set Identity" message:@"User Identity Set"];
             }
         }];
 }
 
 - (IBAction)logOutUserIdentity:(TBTableRow*)sender {
+    [TBWaitingView showWithMessage:@"Logging out..." activityIndicator:YES disableTouches:YES];
     [[Branch getInstance] logoutWithCallback:^(BOOL changed, NSError *error) {
+        [TBWaitingView hide];
         if (error || !changed) {
             [self showAlertWithTitle:@"Logout Error" message:error.localizedDescription];
         } else {
-            [self showAlertWithTitle:@"Logout Succeeded" message:nil];
+            [self showResultsWithDictionary:@{@"changed": @(YES)}
+                title:@"Log Out User" message:@"Logged User Identity Out"];
         }
     }];
 }

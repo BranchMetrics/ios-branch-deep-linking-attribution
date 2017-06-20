@@ -11,4 +11,5 @@
 @interface TBDataViewController : UIViewController
 - (instancetype) initWithData:(id<NSObject>)dictionaryOrArray;
 @property (nonatomic, strong) id<NSObject> dictionaryOrArray;
+@property (nonatomic, strong) NSString *message;
 @end
