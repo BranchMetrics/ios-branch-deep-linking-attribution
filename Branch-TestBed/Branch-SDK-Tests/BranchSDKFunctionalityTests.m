@@ -44,7 +44,7 @@ NSInteger const  TEST_CREDITS = 30;
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.branchKey = @"foo";
+    Branch.branchKey = @"key_live_foo";
     
     Branch *branch =
         [[Branch alloc]
@@ -52,7 +52,7 @@ NSInteger const  TEST_CREDITS = 30;
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
             preferenceHelper:preferenceHelper
-            key:@"foo"];
+            key:@"key_live_foo"];
     
     BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
     openInstallResponse.data = @{
@@ -558,10 +558,11 @@ NSInteger const  TEST_CREDITS = 30;
         url:openOrInstallUrlCheckBlock
         key:[OCMArg any]
         callback:openOrInstallCallbackCheckBlock];
-    
-    // Fake branch key
-    id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
-    [[[preferenceHelperMock stub] andReturn:@"foo"] getBranchKey:YES];
+
+//TODO
+//    // Fake branch key
+//    id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
+//    [[[preferenceHelperMock stub] andReturn:@"key_live_foo"] getBranchKey:YES];
 }
 
 @end

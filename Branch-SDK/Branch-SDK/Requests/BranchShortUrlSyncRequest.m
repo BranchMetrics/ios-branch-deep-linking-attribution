@@ -11,6 +11,7 @@
 #import "BNCEncodingUtils.h"
 #import "BranchConstants.h"
 #import "BNCConfig.h"
+#import "BNCLog.h"
 
 @interface BranchShortUrlSyncRequest ()
 
@@ -65,8 +66,8 @@
 
 - (NSString *)processResponse:(BNCServerResponse *)response {
     if (![response.statusCode isEqualToNumber:@200]) {
-        NSLog(@"Short link creation received HTTP status code %@.", response.statusCode);
-        NSLog(@"Warning: Using long link instead.");
+        BNCLogWarning(@"Short link creation received HTTP status code %@. Using long link instead.",
+            response.statusCode);
         NSString *failedUrl = nil;
         NSString *userUrl = [BNCPreferenceHelper preferenceHelper].userUrl;
         if (userUrl) {

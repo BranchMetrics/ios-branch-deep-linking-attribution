@@ -9,6 +9,7 @@
 
 #import "BNCCommerceEvent.h"
 #import "BranchConstants.h"
+#import "BNCLog.h"
 
 
 #pragma mark BNCProductCategory
@@ -34,6 +35,201 @@ BNCProductCategory BNCProductCategorySoftware           = @"Software";
 BNCProductCategory BNCProductCategorySportingGoods      = @"Sporting Goods";
 BNCProductCategory BNCProductCategoryToysGames          = @"Toys & Games";
 BNCProductCategory BNCProductCategoryVehiclesParts      = @"Vehicles & Parts";
+
+#pragma mark - BNCCurrency
+
+BNCCurrency BNCCurrencyAED = @"AED";
+BNCCurrency BNCCurrencyAFN = @"AFN";
+BNCCurrency BNCCurrencyALL = @"ALL";
+BNCCurrency BNCCurrencyAMD = @"AMD";
+BNCCurrency BNCCurrencyANG = @"ANG";
+BNCCurrency BNCCurrencyAOA = @"AOA";
+BNCCurrency BNCCurrencyARS = @"ARS";
+BNCCurrency BNCCurrencyAUD = @"AUD";
+BNCCurrency BNCCurrencyAWG = @"AWG";
+BNCCurrency BNCCurrencyAZN = @"AZN";
+BNCCurrency BNCCurrencyBAM = @"BAM";
+BNCCurrency BNCCurrencyBBD = @"BBD";
+
+BNCCurrency BNCCurrencyBDT = @"BDT";
+BNCCurrency BNCCurrencyBGN = @"BGN";
+BNCCurrency BNCCurrencyBHD = @"BHD";
+BNCCurrency BNCCurrencyBIF = @"BIF";
+BNCCurrency BNCCurrencyBMD = @"BMD";
+BNCCurrency BNCCurrencyBND = @"BND";
+BNCCurrency BNCCurrencyBOB = @"BOB";
+BNCCurrency BNCCurrencyBOV = @"BOV";
+BNCCurrency BNCCurrencyBRL = @"BRL";
+BNCCurrency BNCCurrencyBSD = @"BSD";
+BNCCurrency BNCCurrencyBTN = @"BTN";
+BNCCurrency BNCCurrencyBWP = @"BWP";
+
+BNCCurrency BNCCurrencyBYN = @"BYN";
+BNCCurrency BNCCurrencyBYR = @"BYR";
+BNCCurrency BNCCurrencyBZD = @"BZD";
+BNCCurrency BNCCurrencyCAD = @"CAD";
+BNCCurrency BNCCurrencyCDF = @"CDF";
+BNCCurrency BNCCurrencyCHE = @"CHE";
+BNCCurrency BNCCurrencyCHF = @"CHF";
+BNCCurrency BNCCurrencyCHW = @"CHW";
+BNCCurrency BNCCurrencyCLF = @"CLF";
+BNCCurrency BNCCurrencyCLP = @"CLP";
+BNCCurrency BNCCurrencyCNY = @"CNY";
+BNCCurrency BNCCurrencyCOP = @"COP";
+
+BNCCurrency BNCCurrencyCOU = @"COU";
+BNCCurrency BNCCurrencyCRC = @"CRC";
+BNCCurrency BNCCurrencyCUC = @"CUC";
+BNCCurrency BNCCurrencyCUP = @"CUP";
+BNCCurrency BNCCurrencyCVE = @"CVE";
+BNCCurrency BNCCurrencyCZK = @"CZK";
+BNCCurrency BNCCurrencyDJF = @"DJF";
+BNCCurrency BNCCurrencyDKK = @"DKK";
+BNCCurrency BNCCurrencyDOP = @"DOP";
+BNCCurrency BNCCurrencyDZD = @"DZD";
+BNCCurrency BNCCurrencyEGP = @"EGP";
+BNCCurrency BNCCurrencyERN = @"ERN";
+
+BNCCurrency BNCCurrencyETB = @"ETB";
+BNCCurrency BNCCurrencyEUR = @"EUR";
+BNCCurrency BNCCurrencyFJD = @"FJD";
+BNCCurrency BNCCurrencyFKP = @"FKP";
+BNCCurrency BNCCurrencyGBP = @"GBP";
+BNCCurrency BNCCurrencyGEL = @"GEL";
+BNCCurrency BNCCurrencyGHS = @"GHS";
+BNCCurrency BNCCurrencyGIP = @"GIP";
+BNCCurrency BNCCurrencyGMD = @"GMD";
+BNCCurrency BNCCurrencyGNF = @"GNF";
+BNCCurrency BNCCurrencyGTQ = @"GTQ";
+BNCCurrency BNCCurrencyGYD = @"GYD";
+
+BNCCurrency BNCCurrencyHKD = @"HKD";
+BNCCurrency BNCCurrencyHNL = @"HNL";
+BNCCurrency BNCCurrencyHRK = @"HRK";
+BNCCurrency BNCCurrencyHTG = @"HTG";
+BNCCurrency BNCCurrencyHUF = @"HUF";
+BNCCurrency BNCCurrencyIDR = @"IDR";
+BNCCurrency BNCCurrencyILS = @"ILS";
+BNCCurrency BNCCurrencyINR = @"INR";
+BNCCurrency BNCCurrencyIQD = @"IQD";
+BNCCurrency BNCCurrencyIRR = @"IRR";
+BNCCurrency BNCCurrencyISK = @"ISK";
+BNCCurrency BNCCurrencyJMD = @"JMD";
+
+BNCCurrency BNCCurrencyJOD = @"JOD";
+BNCCurrency BNCCurrencyJPY = @"JPY";
+BNCCurrency BNCCurrencyKES = @"KES";
+BNCCurrency BNCCurrencyKGS = @"KGS";
+BNCCurrency BNCCurrencyKHR = @"KHR";
+BNCCurrency BNCCurrencyKMF = @"KMF";
+BNCCurrency BNCCurrencyKPW = @"KPW";
+BNCCurrency BNCCurrencyKRW = @"KRW";
+BNCCurrency BNCCurrencyKWD = @"KWD";
+BNCCurrency BNCCurrencyKYD = @"KYD";
+BNCCurrency BNCCurrencyKZT = @"KZT";
+BNCCurrency BNCCurrencyLAK = @"LAK";
+
+BNCCurrency BNCCurrencyLBP = @"LBP";
+BNCCurrency BNCCurrencyLKR = @"LKR";
+BNCCurrency BNCCurrencyLRD = @"LRD";
+BNCCurrency BNCCurrencyLSL = @"LSL";
+BNCCurrency BNCCurrencyLYD = @"LYD";
+BNCCurrency BNCCurrencyMAD = @"MAD";
+BNCCurrency BNCCurrencyMDL = @"MDL";
+BNCCurrency BNCCurrencyMGA = @"MGA";
+BNCCurrency BNCCurrencyMKD = @"MKD";
+BNCCurrency BNCCurrencyMMK = @"MMK";
+BNCCurrency BNCCurrencyMNT = @"MNT";
+BNCCurrency BNCCurrencyMOP = @"MOP";
+
+BNCCurrency BNCCurrencyMRO = @"MRO";
+BNCCurrency BNCCurrencyMUR = @"MUR";
+BNCCurrency BNCCurrencyMVR = @"MVR";
+BNCCurrency BNCCurrencyMWK = @"MWK";
+BNCCurrency BNCCurrencyMXN = @"MXN";
+BNCCurrency BNCCurrencyMXV = @"MXV";
+BNCCurrency BNCCurrencyMYR = @"MYR";
+BNCCurrency BNCCurrencyMZN = @"MZN";
+BNCCurrency BNCCurrencyNAD = @"NAD";
+BNCCurrency BNCCurrencyNGN = @"NGN";
+BNCCurrency BNCCurrencyNIO = @"NIO";
+BNCCurrency BNCCurrencyNOK = @"NOK";
+
+BNCCurrency BNCCurrencyNPR = @"NPR";
+BNCCurrency BNCCurrencyNZD = @"NZD";
+BNCCurrency BNCCurrencyOMR = @"OMR";
+BNCCurrency BNCCurrencyPAB = @"PAB";
+BNCCurrency BNCCurrencyPEN = @"PEN";
+BNCCurrency BNCCurrencyPGK = @"PGK";
+BNCCurrency BNCCurrencyPHP = @"PHP";
+BNCCurrency BNCCurrencyPKR = @"PKR";
+BNCCurrency BNCCurrencyPLN = @"PLN";
+BNCCurrency BNCCurrencyPYG = @"PYG";
+BNCCurrency BNCCurrencyQAR = @"QAR";
+BNCCurrency BNCCurrencyRON = @"RON";
+
+BNCCurrency BNCCurrencyRSD = @"RSD";
+BNCCurrency BNCCurrencyRUB = @"RUB";
+BNCCurrency BNCCurrencyRWF = @"RWF";
+BNCCurrency BNCCurrencySAR = @"SAR";
+BNCCurrency BNCCurrencySBD = @"SBD";
+BNCCurrency BNCCurrencySCR = @"SCR";
+BNCCurrency BNCCurrencySDG = @"SDG";
+BNCCurrency BNCCurrencySEK = @"SEK";
+BNCCurrency BNCCurrencySGD = @"SGD";
+BNCCurrency BNCCurrencySHP = @"SHP";
+BNCCurrency BNCCurrencySLL = @"SLL";
+BNCCurrency BNCCurrencySOS = @"SOS";
+
+BNCCurrency BNCCurrencySRD = @"SRD";
+BNCCurrency BNCCurrencySSP = @"SSP";
+BNCCurrency BNCCurrencySTD = @"STD";
+BNCCurrency BNCCurrencySYP = @"SYP";
+BNCCurrency BNCCurrencySZL = @"SZL";
+BNCCurrency BNCCurrencyTHB = @"THB";
+BNCCurrency BNCCurrencyTJS = @"TJS";
+BNCCurrency BNCCurrencyTMT = @"TMT";
+BNCCurrency BNCCurrencyTND = @"TND";
+BNCCurrency BNCCurrencyTOP = @"TOP";
+BNCCurrency BNCCurrencyTRY = @"TRY";
+BNCCurrency BNCCurrencyTTD = @"TTD";
+
+BNCCurrency BNCCurrencyTWD = @"TWD";
+BNCCurrency BNCCurrencyTZS = @"TZS";
+BNCCurrency BNCCurrencyUAH = @"UAH";
+BNCCurrency BNCCurrencyUGX = @"UGX";
+BNCCurrency BNCCurrencyUSD = @"USD";
+BNCCurrency BNCCurrencyUSN = @"USN";
+BNCCurrency BNCCurrencyUYI = @"UYI";
+BNCCurrency BNCCurrencyUYU = @"UYU";
+BNCCurrency BNCCurrencyUZS = @"UZS";
+BNCCurrency BNCCurrencyVEF = @"VEF";
+BNCCurrency BNCCurrencyVND = @"VND";
+BNCCurrency BNCCurrencyVUV = @"VUV";
+
+BNCCurrency BNCCurrencyWST = @"WST";
+BNCCurrency BNCCurrencyXAF = @"XAF";
+BNCCurrency BNCCurrencyXAG = @"XAG";
+BNCCurrency BNCCurrencyXAU = @"XAU";
+BNCCurrency BNCCurrencyXBA = @"XBA";
+BNCCurrency BNCCurrencyXBB = @"XBB";
+BNCCurrency BNCCurrencyXBC = @"XBC";
+BNCCurrency BNCCurrencyXBD = @"XBD";
+BNCCurrency BNCCurrencyXCD = @"XCD";
+BNCCurrency BNCCurrencyXDR = @"XDR";
+BNCCurrency BNCCurrencyXFU = @"XFU";
+BNCCurrency BNCCurrencyXOF = @"XOF";
+
+BNCCurrency BNCCurrencyXPD = @"XPD";
+BNCCurrency BNCCurrencyXPF = @"XPF";
+BNCCurrency BNCCurrencyXPT = @"XPT";
+BNCCurrency BNCCurrencyXSU = @"XSU";
+BNCCurrency BNCCurrencyXTS = @"XTS";
+BNCCurrency BNCCurrencyXUA = @"XUA";
+BNCCurrency BNCCurrencyXXX = @"XXX";
+BNCCurrency BNCCurrencyYER = @"YER";
+BNCCurrency BNCCurrencyZAR = @"ZAR";
+BNCCurrency BNCCurrencyZMW = @"ZMW";
 
 #pragma mark - BNCProduct
 
@@ -139,7 +335,7 @@ BNCProductCategory BNCProductCategoryVehiclesParts      = @"Vehicles & Parts";
 	if (!self) return self;
 
     if ([commerceEvent.revenue isEqualToNumber:[NSDecimalNumber numberWithDouble:0.0]]) {
-        NSLog(@"[Branch] Warning: Sending a commerce event with zero value!!");
+        BNCLogWarning(@"Sending a commerce event with zero revenue.");
     }
 
 	self.commerceDictionary = [commerceEvent dictionary];

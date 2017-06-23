@@ -30,8 +30,9 @@ extern "C" {
 /// Log message severity
 typedef NS_ENUM(NSInteger, BNCLogLevel) {
     BNCLogLevelAll = 0,
-    BNCLogLevelDebug = BNCLogLevelAll,
+    BNCLogLevelDebugSDK = BNCLogLevelAll,
     BNCLogLevelBreakPoint,
+    BNCLogLevelDebug,
     BNCLogLevelWarning,
     BNCLogLevelError,
     BNCLogLevelAssert,
@@ -97,6 +98,9 @@ extern void BNCLogSetOutputFunction(BNCLogOutputFunctionPtr _Nullable functionPt
 ///@return Returns the current logging function.
 extern BNCLogOutputFunctionPtr _Nullable BNCLogOutputFunction();
 
+/// If a predefined log handler is being used, the function closes the output file.
+extern void BNCLogCloseLogFile();
+
 ///@param URL Sets the log output function to a function that writes messages to the file at URL.
 extern void BNCLogSetOutputToURL(NSURL *_Nullable URL);
 
@@ -146,6 +150,10 @@ extern void BNCLogFlushMessages();
 
 #pragma mark - Logging
 ///@info Logging
+
+///@param format Log an info message with the specified formatting.
+#define BNCLogDebugSDK(...) \
+    do  { BNCLogWriteMessageFormat(BNCLogLevelDebugSDK, __FILE__, __LINE__, __VA_ARGS__); } while (0)
 
 ///@param format Log a debug message with the specified formatting.
 #define BNCLogDebug(...) \
