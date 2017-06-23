@@ -140,13 +140,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 + (Branch *)getInstance;
 
 /**
- Gets the global, test Branch instance.
- 
- @warning This method is not meant to be used in production!
- */
-+ (Branch *)getTestInstance;
-
-/**
  Gets the global Branch instance, configures using the specified key
  
  @param branchKey The Branch key to be used by the Branch instance. This can be any live or test key.
@@ -154,6 +147,33 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 + (Branch *)getInstance:(NSString *)branchKey;
 
+/// TODO: Document:
+/**
+    Sets Branch to use the test `key_test_...` Branch key found in the Info.plist.
+    This can only be set before `[Branch getInstance...]` is called.
+    
+ @param useTestKey If YES then Branch to use the Branch test found in your app's Info.plist.
+*/
++ (void) setUseTestBranchKey:(BOOL)useTestKey;
+
+/// @return Returns true if the Branch test key should be used.
++ (BOOL) useTestBranchKey;
+
+/**
+ Directly sets the Branch key to be used.  Branch usually reads the Branch key from your app's
+ Info.plist file which is recommended and more convenient.  But the Branch key can also be set 
+ with this method. See the documentation at
+   https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project
+ for information about configuring your app with Branch keys.
+ 
+ You can only set the Branch key once per app run.
+
+ @param branchKey The Branch key to use.
+*/
++ (void) setBranchKey:(NSString*)branchKey;
+
+/// @return Returns the current Branch key.
++ (NSString*) branchKey;
 
 #pragma mark - BranchActivityItemProvider methods
 
