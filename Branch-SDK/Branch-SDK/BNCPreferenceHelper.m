@@ -11,7 +11,7 @@
 #import "BNCConfig.h"
 #import "Branch.h"
 #import "BNCLog.h"
-#import "../Fabric/Fabric+FABKits.h"
+#import "BNCFabricAnswers.h"
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
@@ -44,9 +44,6 @@ NSString * const BRANCH_PREFS_KEY_CREDIT_BASE = @"bnc_credit_base_";
 NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usage_cnt_";
 NSString * const BRANCH_PREFS_KEY_ANALYTICAL_DATA = @"bnc_branch_analytical_data";
 NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_manifest";
-
-// The name of this key was specified in the account-creation API integration
-static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 
 @interface BNCPreferenceHelper () {
     NSOperationQueue *_persistPrefsQueue;
@@ -209,6 +206,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     self.isUsingLiveKey = isLive;
 
     id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
+    if (!ret) ret = [BNCFabricAnswers branchConfigurationDictionary];
     if (ret) {
         if ([ret isKindOfClass:[NSString class]]) {
             self.branchKey = ret;
@@ -217,26 +215,6 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             self.branchKey = isLive ? ret[@"live"] : ret[@"test"];
         }
 
-    } else {
-
-        Class fabric = NSClassFromString(@"Fabric");
-        if ([fabric respondsToSelector:@selector(configurationDictionaryForKitClass:)]) {
-
-            NSDictionary *configDictionary = [fabric configurationDictionaryForKitClass:[Branch class]];
-            ret = [configDictionary objectForKey:BNC_BRANCH_FABRIC_APP_KEY_KEY];
-            
-            if ([ret isKindOfClass:[NSString class]]) {
-
-                self.branchKey = ret;
-
-            } else if ([ret isKindOfClass:[NSDictionary class]]) {
-
-                self.branchKey = isLive ? ret[@"live"] : ret[@"test"];
-                if (![self.branchKey isKindOfClass:NSString.class])
-                    self.branchKey = nil;
-
-            }
-        }
     }
     
     return _branchKey;

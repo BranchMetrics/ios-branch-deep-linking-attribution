@@ -36,10 +36,7 @@
 #import "BranchContentDiscoverer.h"
 #import "NSMutableDictionary+Branch.h"
 #import "BNCLog.h"
-
-//Fabric
-#import "../Fabric/FABKitProtocol.h"
-#import "../Fabric/Fabric+FABKits.h"
+#import "../Fabric/FABKitProtocol.h" // Fabric
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
