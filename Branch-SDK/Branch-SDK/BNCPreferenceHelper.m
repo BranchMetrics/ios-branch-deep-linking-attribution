@@ -214,7 +214,6 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
         else if ([ret isKindOfClass:[NSDictionary class]]) {
             self.branchKey = isLive ? ret[@"live"] : ret[@"test"];
         }
-
     }
     
     return _branchKey;
