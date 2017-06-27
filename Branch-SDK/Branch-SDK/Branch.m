@@ -140,7 +140,11 @@ void ForceCategoriesToLoad() {
     return [Branch getInstanceInternal:self.branchKey returnNilIfNoCurrentInstance:NO];
 }
 
-- (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache preferenceHelper:(BNCPreferenceHelper *)preferenceHelper key:(NSString *)key {
+- (id)initWithInterface:(BNCServerInterface *)interface
+                  queue:(BNCServerRequestQueue *)queue
+                  cache:(BNCLinkCache *)cache
+       preferenceHelper:(BNCPreferenceHelper *)preferenceHelper
+                    key:(NSString *)key {
     if (self = [super init]) {
 
         ForceCategoriesToLoad();
@@ -160,7 +164,7 @@ void ForceCategoriesToLoad() {
         _deepLinkControllers = [[NSMutableDictionary alloc] init];
         _whiteListedSchemeList = [[NSMutableArray alloc] init];
         _useCookieBasedMatching = YES;
-
+        self.class.branchKey = key;
         [BranchOpenRequest setWaitNeededForOpenResponseLock];
 
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
