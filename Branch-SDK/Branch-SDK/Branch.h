@@ -135,6 +135,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 ///--------------------------------
 
 /**
+ Gets the global, test Branch instance.
+
+ @warning This method is not meant to be used in production!
+*/
++ (Branch *) getTestInstance __attribute__((deprecated(("Use `Branch.useTestBranchKey = YES;` instead."))));
+
+
+/**
  Gets the global, live Branch instance.
  */
 + (Branch *)getInstance;

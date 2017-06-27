@@ -126,6 +126,11 @@ void ForceCategoriesToLoad() {
     }
 }
 
++ (Branch *) getTestInstance {
+    Branch.useTestBranchKey = YES;
+    return Branch.getInstance;
+}
+
 + (Branch *)getInstance {
     return [Branch getInstanceInternal:self.class.branchKey returnNilIfNoCurrentInstance:NO];
 }
@@ -201,13 +206,12 @@ void ForceCategoriesToLoad() {
 #pragma mark - Configuration methods
 
 static BOOL bnc_useTestBranchKey = NO;
+static NSString *bnc_branchKey = nil;
 
 + (void) setUseTestBranchKey:(BOOL)useTestKey {
     @synchronized (self) {
         if (bnc_branchKey && !!useTestKey != !!bnc_useTestBranchKey) {
-            NSString*message=@"The Branch key is already set. The key can only be set only  once.";
-            BNCLogError(message);
-            [NSException raise:NSInternalInconsistencyException format:@"%@", message];
+            BNCLogError(@"Can't switch the Branch key once it's in use.");
             return;
         }
         bnc_useTestBranchKey = useTestKey;
@@ -220,19 +224,17 @@ static BOOL bnc_useTestBranchKey = NO;
     }
 }
 
-static NSString *bnc_branchKey = nil;
-
 + (void) setBranchKey:(NSString*)branchKey {
     @synchronized (self) {
         if (bnc_branchKey) {
-            if (![bnc_branchKey isEqualToString:branchKey]) {
-                NSString*message=@"The Branch key is already set. The key can only be set only once.";
-                BNCLogError(@"%@", message);
-                [NSException raise:NSInternalInconsistencyException format:@"%@", message];
+            if (branchKey &&
+                [branchKey isKindOfClass:[NSString class]] &&
+                [branchKey isEqualToString:bnc_branchKey]) {
+                return;
             }
+            BNCLogError(@"Branch key can only be set once.");
             return;
         }
-
         if (![branchKey isKindOfClass:[NSString class]]) {
             [NSException raise:NSInternalInconsistencyException
                 format:@"Invalid Branch key of type '%@'.", NSStringFromClass(branchKey.class)];
@@ -243,14 +245,14 @@ static NSString *bnc_branchKey = nil;
             bnc_useTestBranchKey = YES;
             BNCLogWarning(
                 @"You are using your test app's Branch Key. "
-                 "Remember to change it to live Branch Key for deployment."
+                 "Remember to change it to live Branch Key for production deployment."
             );
         } else
         if ([branchKey hasPrefix:@"key_live"]) {
             bnc_useTestBranchKey = NO;
         } else {
             [NSException raise:NSInternalInconsistencyException
-                format:@"Invalid Branch key format '%@'.", branchKey];
+                format:@"Invalid Branch key format. Passed key is '%@'.", branchKey];
             return;
         }
 
@@ -276,12 +278,6 @@ static NSString *bnc_branchKey = nil;
             }
         }
 
-        if (!branchDictionary) {
-            BNCLogError(@"Your Branch key is not set in your Info.plist file."
-                " See https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project for configuration instructions.");
-            return nil;
-        }
-
         NSString *branchKey = nil;
         if ([branchDictionary isKindOfClass:[NSString class]]) {
             branchKey = (NSString*) branchDictionary;
@@ -292,6 +288,11 @@ static NSString *bnc_branchKey = nil;
         }
 
         self.branchKey = branchKey;
+        if (!bnc_branchKey) {
+            BNCLogError(@"Your Branch key is not set in your Info.plist file. See "
+                "https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project"
+                " for configuration instructions.");
+        }
         return bnc_branchKey;
     }
 }
