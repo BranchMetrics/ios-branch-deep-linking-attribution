@@ -19,18 +19,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         /*
-         * Use the test instance if USE_BRANCH_TEST_INSTANCE is defined. This is defined in the
-         * Test-Debug and Test-Release configurations, which are used by the WebViewExample-Test
-         * schema. Use that schema for the test environment and the WebViewExample schema for the
-         * live environment. This allows, e.g., building an archive for distribution using TestFlight
-         * or Crashlytics that connects to the Branch test environment using the WebViewExample-Test
-         * schema.
+         * The Branch key is loaded from the Info.plist.
+         *
+         * The value in the plist is set at compile time depending on the xcconfig file used 
+         * by the Xcode scheme. This avoids having to use a compile time define.
          */
-        #if USE_BRANCH_TEST_INSTANCE
-            branch = Branch.getTestInstance()
-        #else
-            branch = Branch.getInstance()
-        #endif
+        branch = Branch.getInstance()
 
         // Store the NavigationController for later link routing.
         navigationController = window?.rootViewController as? NavigationController
