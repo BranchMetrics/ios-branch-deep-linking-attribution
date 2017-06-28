@@ -51,6 +51,9 @@
 		4D4F28661E400F9800282A34 /* BranchSpotlightUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F28331E400F9800282A34 /* BranchSpotlightUrlRequest.m */; };
 		4D4F28671E400F9800282A34 /* BranchUserCompletedActionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F28351E400F9800282A34 /* BranchUserCompletedActionRequest.m */; };
 		4D9E765C1E774DB100BD0620 /* BranchShareLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D9E765B1E774DB100BD0620 /* BranchShareLink.m */; };
+		4DB47D5E1F042C5900C53C29 /* BNCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D591F042C5900C53C29 /* BNCDebug.m */; };
+		4DB47D5F1F042C5900C53C29 /* BNCLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D5B1F042C5900C53C29 /* BNCLog.m */; };
+		4DB47D601F042C5900C53C29 /* NSString+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D5D1F042C5900C53C29 /* NSString+Branch.m */; };
 		4DF867F41E6DDC4E00BE4C5F /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DF867F31E6DDC4E00BE4C5F /* AdSupport.framework */; };
 		6306D5BF1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306D5BE1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift */; };
 		6306FFEF1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306FFEE1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift */; };
@@ -177,6 +180,12 @@
 		4D4F283D1E400F9800282A34 /* Fabric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fabric.h; sourceTree = "<group>"; };
 		4D9E765A1E774DB100BD0620 /* BranchShareLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchShareLink.h; sourceTree = "<group>"; };
 		4D9E765B1E774DB100BD0620 /* BranchShareLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShareLink.m; sourceTree = "<group>"; };
+		4DB47D581F042C5900C53C29 /* BNCDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDebug.h; sourceTree = "<group>"; };
+		4DB47D591F042C5900C53C29 /* BNCDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDebug.m; sourceTree = "<group>"; };
+		4DB47D5A1F042C5900C53C29 /* BNCLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLog.h; sourceTree = "<group>"; };
+		4DB47D5B1F042C5900C53C29 /* BNCLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLog.m; sourceTree = "<group>"; };
+		4DB47D5C1F042C5900C53C29 /* NSString+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Branch.h"; sourceTree = "<group>"; };
+		4DB47D5D1F042C5900C53C29 /* NSString+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Branch.m"; sourceTree = "<group>"; };
 		4DF867F31E6DDC4E00BE4C5F /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		6306D5BE1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BranchUniversalObjectPropertiesTableViewController.swift; sourceTree = "<group>"; };
 		6306FFEE1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldFormTableViewController.swift; sourceTree = "<group>"; };
@@ -252,6 +261,8 @@
 				4D4F27E21E400F9800282A34 /* BNCConfig.m */,
 				4D4F27E31E400F9800282A34 /* BNCContentDiscoveryManager.h */,
 				4D4F27E41E400F9800282A34 /* BNCContentDiscoveryManager.m */,
+				4DB47D581F042C5900C53C29 /* BNCDebug.h */,
+				4DB47D591F042C5900C53C29 /* BNCDebug.m */,
 				4D4F27E51E400F9800282A34 /* BNCDeviceInfo.h */,
 				4D4F27E61E400F9800282A34 /* BNCDeviceInfo.m */,
 				4D4F27E71E400F9800282A34 /* BNCEncodingUtils.h */,
@@ -264,6 +275,8 @@
 				4D4F27EE1E400F9800282A34 /* BNCLinkCache.m */,
 				4D4F27EF1E400F9800282A34 /* BNCLinkData.h */,
 				4D4F27F01E400F9800282A34 /* BNCLinkData.m */,
+				4DB47D5A1F042C5900C53C29 /* BNCLog.h */,
+				4DB47D5B1F042C5900C53C29 /* BNCLog.m */,
 				4D4F27F11E400F9800282A34 /* BNCPreferenceHelper.h */,
 				4D4F27F21E400F9800282A34 /* BNCPreferenceHelper.m */,
 				4D4F27F31E400F9800282A34 /* BNCServerInterface.h */,
@@ -306,6 +319,8 @@
 				4D4F28161E400F9800282A34 /* BranchViewHandler.m */,
 				4D4F28171E400F9800282A34 /* NSMutableDictionary+Branch.h */,
 				4D4F28181E400F9800282A34 /* NSMutableDictionary+Branch.m */,
+				4DB47D5C1F042C5900C53C29 /* NSString+Branch.h */,
+				4DB47D5D1F042C5900C53C29 /* NSString+Branch.m */,
 				4D4F28191E400F9800282A34 /* Requests */,
 			);
 			path = "Branch-SDK";
@@ -538,6 +553,7 @@
 				4D4F28471E400F9800282A34 /* BNCPreferenceHelper.m in Sources */,
 				4D4F28461E400F9800282A34 /* BNCLinkData.m in Sources */,
 				4D4F28491E400F9800282A34 /* BNCServerRequestQueue.m in Sources */,
+				4DB47D5F1F042C5900C53C29 /* BNCLog.m in Sources */,
 				4D4F28561E400F9800282A34 /* BranchUniversalObject.m in Sources */,
 				4D4F28571E400F9800282A34 /* BranchView.m in Sources */,
 				4D4F28591E400F9800282A34 /* NSMutableDictionary+Branch.m in Sources */,
@@ -547,6 +563,7 @@
 				4D4F28451E400F9800282A34 /* BNCLinkCache.m in Sources */,
 				63865EB71D617BED006071CE /* DataStore.swift in Sources */,
 				4D4F28621E400F9800282A34 /* BranchRegisterViewRequest.m in Sources */,
+				4DB47D5E1F042C5900C53C29 /* BNCDebug.m in Sources */,
 				4D4F284B1E400F9800282A34 /* BNCStrongMatchHelper.m in Sources */,
 				4D4F28651E400F9800282A34 /* BranchShortUrlSyncRequest.m in Sources */,
 				63F8BB241D57E7730013B6F7 /* ArrayTableViewController.swift in Sources */,
@@ -575,6 +592,7 @@
 				4D4F28501E400F9800282A34 /* BranchConstants.m in Sources */,
 				633EEA6C1CF942C4000AE1BC /* NavigationController.swift in Sources */,
 				63F65BFA1D654EF30055A2F6 /* DictionaryTableViewCell.swift in Sources */,
+				4DB47D601F042C5900C53C29 /* NSString+Branch.m in Sources */,
 				4D4F28581E400F9800282A34 /* BranchViewHandler.m in Sources */,
 				63AAF0C21CF758AF00CA98BD /* AppDelegate.swift in Sources */,
 			);
