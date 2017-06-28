@@ -1,0 +1,9 @@
+//
+//  Live.xcconfig
+//  WebViewExample
+//
+//  Created by Edward Smith on 6/27/17.
+//  Copyright © 2017 Branch Metrics. All rights reserved.
+//
+BRANCH_KEY = key_live_feebgAAhbH9Tv85H5wLQhpdaefiZv5Dv
+#include "Pods/Target Support Files/Pods-WebViewExample/Pods-WebViewExample.release.xcconfig"

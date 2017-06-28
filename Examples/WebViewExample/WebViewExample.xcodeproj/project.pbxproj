@@ -24,6 +24,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4D47F6C41F02FBAA00EA2D56 /* LiveBranch.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LiveBranch.xcconfig; sourceTree = "<group>"; };
+		4D47F6C51F02FBCE00EA2D56 /* TestBranch.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = TestBranch.xcconfig; path = ../TestBranch.xcconfig; sourceTree = "<group>"; };
 		6D6117909230007A384D2046 /* Pods-WebViewExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebViewExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-WebViewExample/Pods-WebViewExample.release.xcconfig"; sourceTree = "<group>"; };
 		73F43B2C303E9BF5A6714F1B /* Pods-WebViewExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebViewExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WebViewExample/Pods-WebViewExample.debug.xcconfig"; sourceTree = "<group>"; };
 		7B016F1E1E97F29000C34EBA /* BNCLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BNCLog.swift; sourceTree = "<group>"; };
@@ -42,7 +44,9 @@
 		7B3B97A91E8C31A60089C04B /* ArticleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
 		7B3B97AB1E8C32BD0089C04B /* ArticleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleView.swift; sourceTree = "<group>"; };
 		7B3B97AD1E8C40400089C04B /* WebViewExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WebViewExample.entitlements; sourceTree = "<group>"; };
+		7EEC722811A5537AB20D41AA /* Pods-WebViewExample.test-debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebViewExample.test-debug.xcconfig"; path = "Pods/Target Support Files/Pods-WebViewExample/Pods-WebViewExample.test-debug.xcconfig"; sourceTree = "<group>"; };
 		8529F4248FBBE54B064721F2 /* Pods_WebViewExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WebViewExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E6846A05958705A5BBB219C8 /* Pods-WebViewExample.test-release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebViewExample.test-release.xcconfig"; path = "Pods/Target Support Files/Pods-WebViewExample/Pods-WebViewExample.test-release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +113,8 @@
 				7B3B978A1E8C1B650089C04B /* Assets.xcassets */,
 				7B3B978C1E8C1B650089C04B /* LaunchScreen.storyboard */,
 				7B3B978F1E8C1B650089C04B /* Info.plist */,
+				4D47F6C51F02FBCE00EA2D56 /* TestBranch.xcconfig */,
+				4D47F6C41F02FBAA00EA2D56 /* LiveBranch.xcconfig */,
 			);
 			path = WebViewExample;
 			sourceTree = "<group>";
@@ -118,6 +124,8 @@
 			children = (
 				73F43B2C303E9BF5A6714F1B /* Pods-WebViewExample.debug.xcconfig */,
 				6D6117909230007A384D2046 /* Pods-WebViewExample.release.xcconfig */,
+				7EEC722811A5537AB20D41AA /* Pods-WebViewExample.test-debug.xcconfig */,
+				E6846A05958705A5BBB219C8 /* Pods-WebViewExample.test-release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -288,6 +296,7 @@
 /* Begin XCBuildConfiguration section */
 		7B3B97901E8C1B650089C04B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4D47F6C51F02FBCE00EA2D56 /* TestBranch.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -339,6 +348,7 @@
 		};
 		7B3B97911E8C1B650089C04B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4D47F6C41F02FBAA00EA2D56 /* LiveBranch.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -383,7 +393,7 @@
 		};
 		7B3B97931E8C1B650089C04B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 73F43B2C303E9BF5A6714F1B /* Pods-WebViewExample.debug.xcconfig */;
+			baseConfigurationReference = 4D47F6C51F02FBCE00EA2D56 /* TestBranch.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -401,7 +411,7 @@
 		};
 		7B3B97941E8C1B650089C04B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6D6117909230007A384D2046 /* Pods-WebViewExample.release.xcconfig */;
+			baseConfigurationReference = 4D47F6C41F02FBAA00EA2D56 /* LiveBranch.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

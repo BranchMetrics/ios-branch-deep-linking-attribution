@@ -69,7 +69,7 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
 
     // MARK: - ArticleViewDelegate
 
-    // MARK: Calls BUO.showShareSheet
+    // MARK: Uses BranchShareLink to share a Branch BUO
     func articleViewDidShare(_ articleView: ArticleView) {
         let linkProperties = BranchLinkProperties()
         linkProperties.feature = "share"
@@ -77,10 +77,9 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
         linkProperties.addControlParam("$desktop_url", withValue: planetData.url.absoluteString)
         linkProperties.addControlParam("$email_subject", withValue: "The Planet \(planetData.title)")
 
-        buo.showShareSheet(with: linkProperties, andShareText: "Read about the planet \(planetData.title).", from: self) {
-            channel, success in
-            BNCLog("Share to channel \(channel ?? "(nil)") complete. success = \(success)")
-        }
+        let shareLink = BranchShareLink(universalObject: buo, linkProperties: linkProperties)
+        shareLink?.shareText = "Read about the planet \(planetData.title)."
+        shareLink?.presentActivityViewController(from: self, anchor: nil)
     }
 
     // MARK: - Branch Universal Object setup
@@ -88,7 +87,6 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
     private func setupBUO() {
         // Initialization and configuration.
         buo = BranchUniversalObject(planetData: planetData)
-        
         BNCLog("Created Branch Universal Object")
     }
 }

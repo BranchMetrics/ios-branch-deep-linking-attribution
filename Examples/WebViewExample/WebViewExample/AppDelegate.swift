@@ -13,16 +13,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var navigationController: NavigationController!
+    var branch: Branch!
 
     // MARK: - UIApplicationDelegate methods
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        /*
+         * The Branch key is loaded from the Info.plist.
+         *
+         * The value in the plist is set at compile time depending on the xcconfig file used 
+         * by the Xcode scheme. This avoids having to use a compile time define.
+         */
+        branch = Branch.getInstance()
 
         // Store the NavigationController for later link routing.
         navigationController = window?.rootViewController as? NavigationController
 
         // Initialize Branch SDK
-        Branch.getInstance().initSession(launchOptions: launchOptions) {
+        branch.initSession(launchOptions: launchOptions) {
             (buo: BranchUniversalObject?, linkProperties: BranchLinkProperties?, error: Error?) in
             guard error == nil else {
                 BNCLogError("Error from Branch: \(error!)")
@@ -37,11 +45,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        return Branch.getInstance().application(app, open: url, options: options)
+        return branch.application(app, open: url, options: options)
     }
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
-        return Branch.getInstance().continue(userActivity)
+        return branch.continue(userActivity)
     }
 
     // MARK: - Branch link routing

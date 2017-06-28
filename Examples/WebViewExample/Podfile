@@ -20,3 +20,9 @@ pod "TextAttributes"
 # ----- Application target
 
 target "WebViewExample"
+
+# Add custom configurations. This informs CocoaPods that Test-Debug should be treated like
+# a debug build, not a release build, when building pods. In particular this means the
+# Branch SDK will be built with the DEBUG flag when using this configuration.
+# https://github.com/BranchMetrics/react-native-branch-deep-linking/blob/master/docs/branch-environments.md#step-7-update-podfile
+project "WebViewExample", "Test-Debug" => :debug
