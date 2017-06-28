@@ -23,13 +23,13 @@
 
 @implementation BNCDeviceInfo
 
-static BNCDeviceInfo *bncDeviceInfo;
-
 + (BNCDeviceInfo *)getInstance {
-    if (!bncDeviceInfo) {
-        bncDeviceInfo = [[BNCDeviceInfo alloc] init];
-    }
-    return bncDeviceInfo;
+    static BNCDeviceInfo *bnc_deviceInfo = 0;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        bnc_deviceInfo = [[BNCDeviceInfo alloc] init];
+    });
+    return bnc_deviceInfo;
 }
 
 - (id)init {
@@ -58,31 +58,31 @@ static BNCDeviceInfo *bncDeviceInfo;
     self.screenHeight = [BNCSystemObserver getScreenHeight];
     self.isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
 
-    //  Get the locale info --
-    CGFloat systemVersion = [UIDevice currentDevice].systemVersion.floatValue;
-    if (systemVersion < 9.0) {
+    NSLocale *currentLocale = [NSLocale currentLocale];
+    if ([currentLocale respondsToSelector:@selector(countryCode)] &&
+        [currentLocale respondsToSelector:@selector(languageCode)]) {
+        // Should work on iOS 10
+        self.country = [currentLocale countryCode];
+        self.language = [currentLocale languageCode];
+    }
 
+    if (!self.country) {
+        // Should work on iOS 9
+        NSString *rawLanguage = [[NSLocale preferredLanguages] firstObject];
+        NSDictionary *languageDictionary = [NSLocale componentsFromLocaleIdentifier:rawLanguage];
+        self.country = [languageDictionary objectForKey:@"kCFLocaleCountryCodeKey"];
+        self.language = [languageDictionary  objectForKey:@"kCFLocaleLanguageCodeKey"];
+    }
+
+    if (!self.country) {
+        // Should work on iOS 8 and below.
         self.language = [[NSLocale preferredLanguages] firstObject];
-        NSString *rawLocale = [NSLocale currentLocale].localeIdentifier;
+        NSString *rawLocale = currentLocale.localeIdentifier;
         NSRange range = [rawLocale rangeOfString:@"_"];
         if (range.location != NSNotFound) {
             range = NSMakeRange(range.location+1, rawLocale.length-range.location-1);
             self.country = [rawLocale substringWithRange:range];
         }
-
-    } else if (systemVersion < 10.0) {
-
-        NSString *rawLanguage = [[NSLocale preferredLanguages] firstObject];
-        NSDictionary *languageDictionary = [NSLocale componentsFromLocaleIdentifier:rawLanguage];
-        self.country = [languageDictionary objectForKey:@"kCFLocaleCountryCodeKey"];
-        self.language = [languageDictionary  objectForKey:@"kCFLocaleLanguageCodeKey"];
-
-    } else {
-
-        NSLocale *locale = [NSLocale currentLocale];
-        self.country = [locale countryCode];
-        self.language = [locale languageCode ];
-
     }
 
     self.browserUserAgent = [self.class userAgentString];
