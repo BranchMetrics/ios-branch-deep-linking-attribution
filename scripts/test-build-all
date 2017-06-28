@@ -32,15 +32,6 @@ fi
 iOSDevice="iPhone 7 Plus"
 iOSVersion="10.0"
 
-# printf "${textBlue}>>> During the test sudo may ask for your password to switch Xcode versions.${textNormal}\n"
-# if ! askYN "Continue?"; then
-#     printf "${textRed}>>> Test discontinued.${textNormal}\n"
-#     exit 1
-# fi
-#
-# echo "xcode-switch 8"
-# sudo xcode-switch 8
-
 
 function fileExtension() {
     echo ${1##*.}

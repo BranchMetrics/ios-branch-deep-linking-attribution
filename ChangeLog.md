@@ -1,5 +1,16 @@
 Branch iOS SDK Change Log
 
+- v0.16.1
+  * *QA Release* - June 28, 2017
+  * Added a WebViewExample-Test schema to illustrate how to use custom configurations and schemas
+    to select the Branch environment.
+  * Make it easier to use the Branch test key.
+    - Added the Branch class methods `useTestBranchKey` and `branchKey` to set the Branch key to use.
+    - If `useTestBranchKey` is set to true, Branch will attempt to use the `test` key from the
+      Info.plist.
+   * Updated the docs to show BranchShareLink usage, especially how the use the BranchShareLink
+     delegate to change the share text based on user selection.
+
 - v0.16.0
   * *QA Release* - June 14, 2017
   * Branch support for opening Branch links inside an app once a session is already started (like AppBoy) (AIS-264).
