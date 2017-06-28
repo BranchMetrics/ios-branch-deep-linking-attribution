@@ -56,13 +56,12 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
 @property (strong, nonatomic) NSMutableDictionary *creditsDictionary;
 @property (strong, nonatomic) NSMutableDictionary *requestMetadataDictionary;
 @property (strong, nonatomic) NSMutableDictionary *instrumentationDictionary;
-@property (assign, nonatomic) BOOL isUsingLiveKey;
 
 @end
 
 @implementation BNCPreferenceHelper
 
-@synthesize branchKey = _branchKey,
+@synthesize
             lastRunBranchKey = _lastRunBranchKey,
             appVersion = _appVersion,
             deviceFingerprintID = _deviceFingerprintID,
@@ -196,32 +195,6 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
 }
 
 #pragma mark - Preference Storage
-
-- (NSString *)getBranchKey:(BOOL)isLive {
-    // Already loaded a key, and it's the same state (live/test)
-    if (_branchKey && isLive == self.isUsingLiveKey) {
-        return _branchKey;
-    }
-    
-    self.isUsingLiveKey = isLive;
-
-    id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
-    if (!ret) ret = [BNCFabricAnswers branchConfigurationDictionary];
-    if (ret) {
-        if ([ret isKindOfClass:[NSString class]]) {
-            self.branchKey = ret;
-        }
-        else if ([ret isKindOfClass:[NSDictionary class]]) {
-            self.branchKey = isLive ? ret[@"live"] : ret[@"test"];
-        }
-    }
-    
-    return _branchKey;
-}
-
-- (void)setBranchKey:(NSString *)branchKey {
-    _branchKey = branchKey;
-}
 
 - (NSString *)lastRunBranchKey {
     if (!_lastRunBranchKey) {
