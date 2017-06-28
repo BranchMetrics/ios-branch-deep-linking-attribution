@@ -20,13 +20,13 @@
 
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    /**
-     * // Push notification support (Optional)
-     * [self registerForPushNotifications:application];
-     */
+
+    // Have Branch use the Branch test key that is in the app's Info.plist file.
+    // This makes Branch test against the test environment instead of the live environment.
+    Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
 
     Branch *branch = [Branch getInstance];
-    
+
     // Comment / un-comment to toggle debugging:
     [branch setDebug];
 
@@ -68,6 +68,11 @@
         }
 
     }];
+
+    /**
+     * // Push notification support (Optional)
+     * [self registerForPushNotifications:application];
+     */
 
     return YES;
 }
@@ -162,7 +167,8 @@ continueUserActivity:(NSUserActivity *)userActivity
     }
 }
 
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+- (void)application:(UIApplication *)application
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     NSLog(@"Registered for remote notifications with APN device token: %@", deviceToken);
 }
 
@@ -171,7 +177,8 @@ continueUserActivity:(NSUserActivity *)userActivity
     // process your non-Branch notification payload items here...
 }
 
--(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+-(void)application:(UIApplication *)application
+didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"Error registering for remote notifications: %@", error);
 }
 
