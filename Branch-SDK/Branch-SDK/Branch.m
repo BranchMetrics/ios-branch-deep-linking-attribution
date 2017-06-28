@@ -98,7 +98,6 @@ void ForceCategoriesToLoad() {
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
 @property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
-@property (strong, nonatomic) NSString *branchKey;
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
 @property (weak,   nonatomic) UIViewController *deepLinkPresentingController;
 @property (assign, nonatomic) BOOL useCookieBasedMatching;
@@ -127,49 +126,25 @@ void ForceCategoriesToLoad() {
     }
 }
 
-+ (Branch *)getInstance {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    
-    // If no Branch Key
-    NSString *branchKey = [preferenceHelper getBranchKey:YES];
-    NSString *keyToUse = branchKey;
-    if (!branchKey) {
-        BNCLogWarning(@"Please enter your branch_key in the plist!");
-        return nil;
-    }
-
-    return [Branch getInstanceInternal:keyToUse returnNilIfNoCurrentInstance:NO];
++ (Branch *) getTestInstance {
+    Branch.useTestBranchKey = YES;
+    return Branch.getInstance;
 }
 
-+ (Branch *)getTestInstance {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    
-    // If no Branch Key
-    NSString *branchKey = [preferenceHelper getBranchKey:NO];
-    NSString *keyToUse = branchKey;
-    if (!branchKey) {
-        BNCLogWarning(@"Please enter your branch_key in the plist!");
-        return nil;
-    }
-    
-    return [Branch getInstanceInternal:keyToUse returnNilIfNoCurrentInstance:NO];
++ (Branch *)getInstance {
+    return [Branch getInstanceInternal:self.class.branchKey returnNilIfNoCurrentInstance:NO];
 }
 
 + (Branch *)getInstance:(NSString *)branchKey {
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    
-    if ([branchKey hasPrefix:@"key_"]) {
-        preferenceHelper.branchKey = branchKey;
-    }
-    else {
-        BNCLogError(@"Invalid Branch key format!");
-        return nil;
-    }
-    
-    return [Branch getInstanceInternal:branchKey returnNilIfNoCurrentInstance:NO];
+    self.branchKey = branchKey;
+    return [Branch getInstanceInternal:self.branchKey returnNilIfNoCurrentInstance:NO];
 }
 
-- (id)initWithInterface:(BNCServerInterface *)interface queue:(BNCServerRequestQueue *)queue cache:(BNCLinkCache *)cache preferenceHelper:(BNCPreferenceHelper *)preferenceHelper key:(NSString *)key {
+- (id)initWithInterface:(BNCServerInterface *)interface
+                  queue:(BNCServerRequestQueue *)queue
+                  cache:(BNCLinkCache *)cache
+       preferenceHelper:(BNCPreferenceHelper *)preferenceHelper
+                    key:(NSString *)key {
     if (self = [super init]) {
 
         ForceCategoriesToLoad();
@@ -179,7 +154,6 @@ void ForceCategoriesToLoad() {
         _requestQueue = queue;
         _linkCache = cache;
         _preferenceHelper = preferenceHelper;
-        _branchKey = key;
         
         _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
         _isInitialized = NO;
@@ -190,7 +164,7 @@ void ForceCategoriesToLoad() {
         _deepLinkControllers = [[NSMutableDictionary alloc] init];
         _whiteListedSchemeList = [[NSMutableArray alloc] init];
         _useCookieBasedMatching = YES;
-
+        self.class.branchKey = key;
         [BranchOpenRequest setWaitNeededForOpenResponseLock];
 
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
@@ -234,6 +208,98 @@ void ForceCategoriesToLoad() {
 
 
 #pragma mark - Configuration methods
+
+static BOOL bnc_useTestBranchKey = NO;
+static NSString *bnc_branchKey = nil;
+
++ (void) setUseTestBranchKey:(BOOL)useTestKey {
+    @synchronized (self) {
+        if (bnc_branchKey && !!useTestKey != !!bnc_useTestBranchKey) {
+            BNCLogError(@"Can't switch the Branch key once it's in use.");
+            return;
+        }
+        bnc_useTestBranchKey = useTestKey;
+    }
+}
+
++ (BOOL) useTestBranchKey {
+    @synchronized (self) {
+        return bnc_useTestBranchKey;
+    }
+}
+
++ (void) setBranchKey:(NSString*)branchKey {
+    @synchronized (self) {
+        if (bnc_branchKey) {
+            if (branchKey &&
+                [branchKey isKindOfClass:[NSString class]] &&
+                [branchKey isEqualToString:bnc_branchKey]) {
+                return;
+            }
+            BNCLogError(@"Branch key can only be set once.");
+            return;
+        }
+        if (![branchKey isKindOfClass:[NSString class]]) {
+            [NSException raise:NSInternalInconsistencyException
+                format:@"Invalid Branch key of type '%@'.", NSStringFromClass(branchKey.class)];
+            return;
+        }
+
+        if ([branchKey hasPrefix:@"key_test"]) {
+            bnc_useTestBranchKey = YES;
+            BNCLogWarning(
+                @"You are using your test app's Branch Key. "
+                 "Remember to change it to live Branch Key for production deployment."
+            );
+        } else
+        if ([branchKey hasPrefix:@"key_live"]) {
+            bnc_useTestBranchKey = NO;
+        } else {
+            [NSException raise:NSInternalInconsistencyException
+                format:@"Invalid Branch key format. Passed key is '%@'.", branchKey];
+            return;
+        }
+
+        bnc_branchKey = branchKey;
+    }
+}
+
++ (NSString*) branchKey {
+    @synchronized (self) {
+        if (bnc_branchKey) return bnc_branchKey;
+
+        // The name of this key was specified in the Fabric account-creation API integration
+        NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
+
+        NSDictionary *branchDictionary =
+            [[[NSBundle mainBundle] infoDictionary] objectForKey:BNC_BRANCH_FABRIC_APP_KEY_KEY];
+
+        if (!branchDictionary) {
+            Class fabric = NSClassFromString(@"Fabric");
+            if ([fabric respondsToSelector:@selector(configurationDictionaryForKitClass:)]) {
+                NSDictionary *configDictionary = [fabric configurationDictionaryForKitClass:[Branch class]];
+                branchDictionary = [configDictionary objectForKey:BNC_BRANCH_FABRIC_APP_KEY_KEY];
+            }
+        }
+
+        NSString *branchKey = nil;
+        if ([branchDictionary isKindOfClass:[NSString class]]) {
+            branchKey = (NSString*) branchDictionary;
+        } else
+        if ([branchDictionary isKindOfClass:[NSDictionary class]]) {
+            branchKey =
+                (self.useTestBranchKey) ? branchDictionary[@"test"] : branchDictionary[@"live"];
+        }
+
+        self.branchKey = branchKey;
+        if (!bnc_branchKey) {
+            BNCLogError(@"Your Branch key is not set in your Info.plist file. See "
+                "https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project"
+                " for configuration instructions.");
+        }
+        return bnc_branchKey;
+    }
+}
 
 - (void)setDebug {
     self.preferenceHelper.isDebug = YES;
@@ -287,7 +353,7 @@ void ForceCategoriesToLoad() {
 }
 
 - (NSURL *)getUrlForOnboardingWithRedirectUrl:(NSString *)redirectUrl {
-    return [BNCStrongMatchHelper getUrlForCookieBasedMatchingWithBranchKey:self.branchKey redirectUrl:redirectUrl];
+    return [BNCStrongMatchHelper getUrlForCookieBasedMatchingWithBranchKey:self.class.branchKey redirectUrl:redirectUrl];
 }
 
 - (void)resumeInit {
@@ -1272,7 +1338,7 @@ void ForceCategoriesToLoad() {
         
         if (self.isInitialized) {
             BNCLogDebug(@"Created a custom URL synchronously.");
-            BNCServerResponse *serverResponse = [req makeRequest:self.bServerInterface key:self.branchKey];
+            BNCServerResponse *serverResponse = [req makeRequest:self.bServerInterface key:self.class.branchKey];
             shortURL = [req processResponse:serverResponse];
             
             // cache the link
@@ -1281,8 +1347,8 @@ void ForceCategoriesToLoad() {
             }
         } else {
             if (forceLinkCreation) {
-                if (self.branchKey) {
-                    return [BranchShortUrlSyncRequest createLinkFromBranchKey:self.branchKey
+                if (self.class.branchKey) {
+                    return [BranchShortUrlSyncRequest createLinkFromBranchKey:self.class.branchKey
                         tags:tags alias:alias type:type matchDuration:duration
                             channel:channel feature:feature stage:stage params:params];
                 }
@@ -1301,7 +1367,7 @@ void ForceCategoriesToLoad() {
                                andStage:(NSString *)stage
                                andAlias:(NSString *)alias {
 
-    NSString *baseLongUrl = [NSString stringWithFormat:@"%@/a/%@", BNC_LINK_URL, self.branchKey];
+    NSString *baseLongUrl = [NSString stringWithFormat:@"%@/a/%@", BNC_LINK_URL, self.class.branchKey];
     
     return [self longUrlWithBaseUrl:baseLongUrl params:params tags:tags feature:feature
         channel:nil stage:stage alias:alias duration:0 type:BranchLinkTypeUnlimitedUse];
@@ -1525,7 +1591,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
             dispatch_async(queue, ^ {
-                [req makeRequest:self.bServerInterface key:self.branchKey callback:
+                [req makeRequest:self.bServerInterface key:self.class.branchKey callback:
                     ^(BNCServerResponse* response, NSError* error) {
                         [self processRequest:req response:response error:error];
                 }];
@@ -1570,17 +1636,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 }
 
 - (void)initializeSession {
-    if (!self.branchKey) {
-        BNCLogWarning(@"Please enter your branch_key in the plist!");
-        return;
-    }
-    else if ([self.branchKey rangeOfString:@"key_test_"].location != NSNotFound) {
-        BNCLogWarning(
-            @"You are using your test app's Branch Key. "
-             "Remember to change it to live Branch Key for deployment."
-        );
-    }
-
 	Class clazz = [BranchInstallRequest class];
 	if (self.preferenceHelper.identityID) {
 		clazz = [BranchOpenRequest class];
@@ -1597,7 +1652,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
     };
 
     if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.useCookieBasedMatching) {
-        [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.branchKey];
+        [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.class.branchKey];
     }
 
 	@synchronized (self) {
