@@ -73,8 +73,8 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 #pragma mark - Load Categories
 
-void ForceCategoriesToLoad();
-void ForceCategoriesToLoad() {
+void ForceCategoriesToLoad(void);
+void ForceCategoriesToLoad(void) {
     ForceNSMutableDictionaryToLoad();
 }
 
