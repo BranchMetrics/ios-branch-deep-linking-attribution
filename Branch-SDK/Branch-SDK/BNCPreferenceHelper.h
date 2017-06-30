@@ -11,7 +11,7 @@
 #define FILE_NAME   [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
 #define LINE_NUM    __LINE__
 
-NSURL* /* _Nonnull */ BNCURLForBranchDirectory();
+NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 
 @interface BNCPreferenceHelper : NSObject
 
