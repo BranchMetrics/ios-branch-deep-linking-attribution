@@ -79,17 +79,49 @@
                     forKey:BRANCH_REQUEST_KEY_SEARCH_AD
                     onDict:params];
     }
-    /**/
+
+    // Notify everyone
+
+    NSURL *originalURL = [NSURL URLWithString:@"http://whatever.io"]; // TODO add real key.
+    NSDictionary *userInfo = @{
+        BNCOriginalURLKey: @"http://Whatever",
+    };
+    Branch *branch = [Branch getInstance];
+    if ([branch.delegate respondsToSelector:@selector(branch:willOpenURL:)]) {
+        [branch.delegate performSelector:@selector(branch:willOpenURL:) withObject:branch withObject:originalURL];
+    }
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:BNCBranchWillOpenURLNotification
+        object:[Branch getInstance]
+        userInfo:userInfo];
+
+    // Do it
 
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
+
+    NSURL *originalURL = [NSURL URLWithString:@"http://whatever"]; // TODO
+
     if (error) {
         [BranchOpenRequest releaseOpenResponseLock];
         if (self.callback) {
             self.callback(NO, error);
         }
+        Branch *branch = [Branch getInstance];
+        if ([branch.delegate respondsToSelector:@selector(branch:didOpenURL:withError:)]) {
+            [branch.delegate performSelector:@selector(branch:didOpenURL:withError:)
+                withObject:branch withObject:originalURL withObject:error];
+        }
+        NSDictionary *userInfo = @{
+            BNCErrorKey: error,
+            BNCOriginalURLKey: originalURL
+        };
+        [[NSNotificationCenter defaultCenter]
+            postNotificationName:BNCBranchDidOpenURLNotification
+            object:[Branch getInstance]
+            userInfo:userInfo];
         return;
     }
 
