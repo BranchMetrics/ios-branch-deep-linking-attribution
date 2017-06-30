@@ -16,7 +16,7 @@
 #import "NSString+Branch.h"
 
 
-void BNCForceNSStringCategoryToLoad() __attribute__((constructor));
+void BNCForceNSStringCategoryToLoad(void) __attribute__((constructor));
 void BNCForceNSStringCategoryToLoad() {
     //  Nothing here, but forces linker to load the category.
 }
