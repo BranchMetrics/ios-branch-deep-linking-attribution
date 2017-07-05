@@ -9,15 +9,18 @@ scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 scriptfile="${scriptfile}"/$(basename "$0")
 cd $(dirname "$scriptfile")/..
 
+function updatePodsInDirectory() {
+    local prevDir=$(pwd)
+    local projDir="$1"
 
-cd Branch-TestBed
-echo ""
-echo ">>> Updating `pwd`."
-pod update
-cd ..
+    cd "$projDir"
+    echo ""
+    echo ">>> Updating `pwd`."
+    pod install
+    pod update
+    cd "$prevDir"
+}
 
-cd Branch-TestBed-Xcode-7
-echo ""
-echo ">>> Updating `pwd`."
-pod update
-cd ..
+updatePodsInDirectory Branch-TestBed
+updatePodsInDirectory Branch-TestBed-Xcode-7
+updatePodsInDirectory Examples/WebViewExample
