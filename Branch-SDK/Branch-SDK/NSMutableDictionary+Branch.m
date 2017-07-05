@@ -31,6 +31,6 @@
 @end
 
 
-void ForceNSMutableDictionaryToLoad() {
+void ForceNSMutableDictionaryToLoad(void) {
     //  Does nothing.  But will force the linker to include this category.
 }

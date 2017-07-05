@@ -11,11 +11,10 @@
 #define FILE_NAME   [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
 #define LINE_NUM    __LINE__
 
-NSURL* /* _Nonnull */ BNCURLForBranchDirectory();
+NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 
 @interface BNCPreferenceHelper : NSObject
 
-@property (strong, nonatomic) NSString *branchKey;
 @property (strong, nonatomic) NSString *lastRunBranchKey;
 @property (strong, nonatomic) NSDate   *lastStrongMatchDate;
 @property (strong, nonatomic) NSString *appVersion;
@@ -49,8 +48,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory();
 - (NSString *)getAPIBaseURL;
 - (NSString *)getAPIURL:(NSString *)endpoint;
 - (NSString *)getEndpointFromURL:(NSString *)url;
-
-- (NSString *)getBranchKey:(BOOL)isLive;
 
 - (void)clearUserCreditsAndCounts;
 - (void)clearUserCredits;

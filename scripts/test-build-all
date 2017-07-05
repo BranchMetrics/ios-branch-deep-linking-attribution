@@ -1,0 +1,96 @@
+#!/bin/bash
+set -euo pipefail
+
+#   test-build-all  -  Makes sure all the example projects build.
+#
+#   Edward Smith, February 2017
+
+scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )"
+scriptfile="${scriptfile}"/$(basename "$0")
+cd $(dirname "$scriptfile")/..
+pwd
+
+if [[ ${CLICOLOR:-0} == 1 && -t 1 ]]; then
+    textBold="\e[1m"
+    textBlue="\e[94m"
+    textDarkBlue="\e[1m\e[34m"
+    textYellow="\e[93m"
+    textRed="\e[31m"
+    textNormal="\e[0m"
+    textDim="\e[2m"
+else
+    textBold=""
+    textBlue=""
+    textDarkBlue=""
+    textYellow=""
+    textRed=""
+    textNormal=""
+    textDim=""
+fi
+
+
+iOSDevice="iPhone 7 Plus"
+iOSVersion="10.0"
+
+
+function fileExtension() {
+    echo ${1##*.}
+}
+
+function buildDirectoryProjectScheme() {
+    local directory="$1"
+    local project="$2"
+    local scheme="$3"
+    cd "$directory"
+    printf "${textBlue}>>> Building '%s'...${textNormal}\n" "$(basename `pwd`)"
+    if [[ $(fileExtension "$project") = "xcworkspace" ]];
+    then
+        xcodebuild \
+            -workspace "$project" \
+            -scheme "$scheme" \
+            -destination name="${iOSDevice}",OS="${iOSVersion}" \
+                clean build -quiet
+    else
+        xcodebuild \
+            -project "$project" \
+            -scheme "$scheme" \
+            -destination name="${iOSDevice}",OS="${iOSVersion}" \
+                clean build -quiet
+    fi
+    printf "${textBlue}>>> '%s' built okay.${textNormal}\n" "$(basename `pwd`)"
+    cd $(dirname "$scriptfile")/..
+}
+
+
+buildDirectoryProjectScheme \
+    carthage-files \
+    BranchSDK.xcodeproj \
+    "Branch iOS SDK Carthage"
+
+buildDirectoryProjectScheme \
+    Branch-TestBed \
+    Branch-TestBed.xcworkspace \
+    Branch-TestBed
+
+buildDirectoryProjectScheme \
+    Branch-TestBed-iMessage \
+    Branch-TestBed-iMessage.xcodeproj \
+    MessagesExtension
+
+buildDirectoryProjectScheme \
+    Branch-TestBed-Swift \
+    TestBed-Swift.xcodeproj \
+    TestBed-Swift
+
+buildDirectoryProjectScheme \
+    Examples/WebViewExample \
+    WebViewExample.xcworkspace \
+    WebViewExample
+
+buildDirectoryProjectScheme \
+    Branch-TestBed-Xcode-7 \
+    Branch-TestBed.xcworkspace \
+    Branch-TestBed
+
+
+printf "${textBlue}>>> All builds complete.${textNormal}\n"

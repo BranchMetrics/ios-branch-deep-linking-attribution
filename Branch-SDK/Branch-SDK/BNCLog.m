@@ -583,8 +583,8 @@ void BNCLogFlushMessages() {
 
 #pragma mark - BNCLogInitialize
 
-void BNCLogInitialize() __attribute__((constructor));
-void BNCLogInitialize() {
+void BNCLogInitialize(void) __attribute__((constructor));
+void BNCLogInitialize(void) {
     static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
         bnc_LogQueue = dispatch_queue_create("io.branch.log", DISPATCH_QUEUE_SERIAL);
