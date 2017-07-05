@@ -19,6 +19,7 @@
 #import "BNCEncodingUtils.h"
 #import "BNCContentDiscoveryManager.h"
 #import "BNCStrongMatchHelper.h"
+#import "BNCDeepLinkViewControllerInstance.h"
 #import "BranchUniversalObject.h"
 #import "BranchSetIdentityRequest.h"
 #import "BranchLogoutRequest.h"
@@ -694,7 +695,7 @@ static NSString *bnc_branchKey = nil;
         [ADClientClass methodForSelector:sharedClient];
 
     if (!ADClientIsAvailable) {
-        BNCLogWarning(@"delayForAppleAds is true but ADClient is not available. Is the iAD.framework included and iOS 10?");
+        BNCLogWarning(@"`delayForAppleAds` is true but ADClient is not available. Is the iAD.framework included and iOS 10?");
         return NO;
     }
 
@@ -788,6 +789,16 @@ static NSString *bnc_branchKey = nil;
 
 - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key {
     self.deepLinkControllers[key] = controller;
+}
+
+- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withPresentation:(BNCViewControllerPresentationOption)option{
+
+    BNCDeepLinkViewControllerInstance* deepLinkModal = [[BNCDeepLinkViewControllerInstance alloc] init];
+    
+    deepLinkModal.viewController = controller;
+    deepLinkModal.option         = option;
+    
+    self.deepLinkControllers[key] = deepLinkModal;
 }
 
 
@@ -1660,7 +1671,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 }
 
 - (void)handleInitSuccess {
-
+    
     self.isInitialized = YES;
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
     if (self.shouldCallSessionInitCallback) {
@@ -1669,10 +1680,10 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         }
         else if (self.sessionInitWithBranchUniversalObjectCallback) {
             self.sessionInitWithBranchUniversalObjectCallback(
-                [self getLatestReferringBranchUniversalObject],
-                [self getLatestReferringBranchLinkProperties],
-                nil
-            );
+                                                              [self getLatestReferringBranchUniversalObject],
+                                                              [self getLatestReferringBranchLinkProperties],
+                                                              nil
+                                                              );
         }
     }
     
@@ -1698,15 +1709,111 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
             branchSharingController.deepLinkingCompletionDelegate = self;
             self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
             
-            if ([self.deepLinkPresentingController presentedViewController]) {
-                [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
-                    [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
-                }];
+            if([self.deepLinkControllers[key] isKindOfClass:[BNCDeepLinkViewControllerInstance class]]) {
+                BNCDeepLinkViewControllerInstance* deepLinkInstance = self.deepLinkControllers[key];
+                UIViewController <BranchDeepLinkingController> *branchSharingController = deepLinkInstance.viewController;
+                
+                if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
+                    [branchSharingController configureControlWithData:latestReferringParams];
+                }
+                else {
+                    BNCLogWarning(@"View controller does not implement configureControlWithData:");
+                }
+                branchSharingController.deepLinkingCompletionDelegate = self;
+                self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
+                switch (deepLinkInstance.option) {
+                    case BNCViewControllerOptionPresent:
+                        [self presentSharingViewController:branchSharingController];
+                        break;
+                        
+                    case BNCViewControllerOptionPush:
+                        
+                        if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
+                            
+                            if ([[(UINavigationController*)self.deepLinkPresentingController viewControllers] containsObject:branchSharingController]) {
+                                [self removeViewControllerFromRootNavigationController:branchSharingController];
+                                [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:false];
+                            }
+                            else {
+                                [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:true];
+                            }
+                        }
+                        else {
+                            deepLinkInstance.option = BNCViewControllerOptionPresent;
+                            [self presentSharingViewController:branchSharingController];
+                        }
+                        
+                        break;
+                        
+                    default:
+                        if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
+                            if ([self.deepLinkPresentingController respondsToSelector:@selector(showViewController:sender:)]) {
+                                
+                                if ([[(UINavigationController*)self.deepLinkPresentingController viewControllers] containsObject:branchSharingController]) {
+                                    [self removeViewControllerFromRootNavigationController:branchSharingController];
+                                }
+                                
+                                [self.deepLinkPresentingController showViewController:branchSharingController sender:self];
+                            }
+                            else {
+                                deepLinkInstance.option = BNCViewControllerOptionPush;
+                                [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:true];
+                            }
+                        }
+                        else {
+                            deepLinkInstance.option = BNCViewControllerOptionPresent;
+                            [self presentSharingViewController:branchSharingController];
+                        }
+                        break;
+                }
             }
             else {
-                [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
+                
+                //Support for old API
+                UIViewController <BranchDeepLinkingController> *branchSharingController = self.deepLinkControllers[key];
+                if ([branchSharingController respondsToSelector:@selector(configureControlWithData:)]) {
+                    [branchSharingController configureControlWithData:latestReferringParams];
+                }
+                else {
+                    BNCLogWarning(@"View controller does not implement configureControlWithData:");
+                }
+                branchSharingController.deepLinkingCompletionDelegate = self;
+                self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
+                
+                if ([self.deepLinkPresentingController presentedViewController]) {
+                    [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
+                        [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
+                    }];
+                }
+                else {
+                    [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
+                }
             }
         }
+    }
+}
+
+-(void)removeViewControllerFromRootNavigationController:(UIViewController*)branchSharingController{
+
+    NSMutableArray* viewControllers = [NSMutableArray arrayWithArray: [(UINavigationController*)self.deepLinkPresentingController viewControllers]];
+    
+    if ([viewControllers lastObject] == branchSharingController) {
+        
+        [(UINavigationController*)self.deepLinkPresentingController popViewControllerAnimated:YES];
+    }else {
+        [viewControllers removeObject:branchSharingController];
+        ((UINavigationController*)self.deepLinkPresentingController).viewControllers = viewControllers;
+    }
+}
+
+-(void)presentSharingViewController: (UIViewController <BranchDeepLinkingController> *)branchSharingController{
+    if ([self.deepLinkPresentingController presentedViewController]) {
+        [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
+            [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
+        }];
+    }
+    else {
+        [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
     }
 }
 
@@ -1732,6 +1839,35 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
 - (void)deepLinkingControllerCompleted {
     [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
+}
+
+- (void)deepLinkingControllerCompletedFrom:(UIViewController *)viewController {
+    
+    [self.deepLinkControllers enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        
+        if([obj isKindOfClass:[BNCDeepLinkViewControllerInstance class]]) {
+            BNCDeepLinkViewControllerInstance* deepLinkInstance = (BNCDeepLinkViewControllerInstance*) obj;
+            
+            if (deepLinkInstance.viewController == viewController) {
+                
+                switch (deepLinkInstance.option) {
+                    case BNCViewControllerOptionPresent:
+                        [viewController dismissViewControllerAnimated:YES completion:nil];
+                        break;
+                        
+                    default:
+                        [self removeViewControllerFromRootNavigationController:viewController];
+                        break;
+                }
+            }
+            
+        }else {
+            //Support for old API
+            if ((UIViewController*)obj == viewController)
+                [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:nil];
+        }
+        
+    }];
 }
 
 #pragma mark - FABKit methods

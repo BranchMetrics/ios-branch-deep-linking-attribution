@@ -366,6 +366,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (BOOL)handleDeepLink:(NSURL *)url;
 
+
 /**
  Have Branch end the current deep link session and start a new session with the provided URL.
 
@@ -437,7 +438,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /// @name Deep Link Controller
 ///---------------------------
 
-- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key;
+- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key __attribute__((deprecated(("This API is deprecated. Please use registerDeepLinkController: forKey: withOption:"))));
+
+/**
+ Allow Branch to handle a view controller with options to push, present or show.
+ Note:
+ * If push option is used and the rootviewcontroller of window is not of type UINavigationViewController, than the sharing View controller would be presented automatically
+ */
+- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withPresentation:(BNCViewControllerPresentationOption)option;
 
 #pragma mark - Configuration methods
 
