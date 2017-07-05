@@ -16,18 +16,25 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.license          = 'Proprietary'
   s.author           = { "Branch" => "support@branch.io" }
   s.source           = { :git => "https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK.git", :tag => s.version.to_s }
-  s.platform     = :ios, '7.0'
-  s.requires_arc = true
+  s.platform         = :ios, '7.0'
+  s.requires_arc     = true
 
   s.subspec 'Core' do |core|
     core.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Branch-SDK/Requests/*.{h,m}", "Branch-SDK/Fabric/*.h"
     core.private_header_files = "Branch-SDK/Fabric/*.h"
-    core.frameworks = 'AdSupport', 'CoreTelephony', 'MobileCoreServices'
+    core.frameworks = 'AdSupport', 'MobileCoreServices'
   end
 
   s.subspec 'without-IDFA' do |idfa|
     idfa.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Branch-SDK/Requests/*.{h,m}", "Branch-SDK/Fabric/*.h"
     idfa.private_header_files = "Branch-SDK/Fabric/*.h"
-    idfa.frameworks = 'CoreTelephony', 'MobileCoreServices'
+    idfa.frameworks = 'MobileCoreServices'
   end
+
+  s.subspec 'without-Safari' do |safari|
+    core.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Branch-SDK/Requests/*.{h,m}", "Branch-SDK/Fabric/*.h"
+    core.private_header_files = "Branch-SDK/Fabric/*.h"
+    core.frameworks = 'AdSupport', 'MobileCoreServices'
+  end
+
 end

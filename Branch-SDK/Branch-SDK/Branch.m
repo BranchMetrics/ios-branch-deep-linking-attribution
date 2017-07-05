@@ -36,10 +36,8 @@
 #import "BranchContentDiscoverer.h"
 #import "NSMutableDictionary+Branch.h"
 #import "BNCLog.h"
-
-//Fabric
-#import "../Fabric/FABKitProtocol.h"
-#import "../Fabric/Fabric+FABKits.h"
+#import "BNCFabricAnswers.h"
+#import "../Fabric/FABKitProtocol.h" // Fabric
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
@@ -275,11 +273,7 @@ static NSString *bnc_branchKey = nil;
             [[[NSBundle mainBundle] infoDictionary] objectForKey:BNC_BRANCH_FABRIC_APP_KEY_KEY];
 
         if (!branchDictionary) {
-            Class fabric = NSClassFromString(@"Fabric");
-            if ([fabric respondsToSelector:@selector(configurationDictionaryForKitClass:)]) {
-                NSDictionary *configDictionary = [fabric configurationDictionaryForKitClass:[Branch class]];
-                branchDictionary = [configDictionary objectForKey:BNC_BRANCH_FABRIC_APP_KEY_KEY];
-            }
+            branchDictionary = [BNCFabricAnswers branchConfigurationDictionary];
         }
 
         NSString *branchKey = nil;
