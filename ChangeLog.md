@@ -1,5 +1,25 @@
 Branch iOS SDK Change Log
 
+- v0.16.2
+  * *QA Release* - July 5, 2017
+  * Added a new method to the API for registering a deep link controller. The API adds presentation
+    options for showing the deep link controller:
+```
+        - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller
+                                    forKey:(NSString *)key
+                          withPresentation:(BNCViewControllerPresentationOption)option;
+```
+
+  and depreciated the old API:
+
+```
+        - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)
+                controller forKey:(NSString *)key;
+
+```
+
+  See [Registering a view controller to handle deep linking" in the documentation.](https://dev.branch.io/getting-started/deep-link-routing/advanced/ios/#register-view-controller-for-deep-link-routing)
+
 - v0.16.1
   * *QA Release* - June 28, 2017
   * Added a WebViewExample-Test schema to illustrate how to use custom configurations and schemas

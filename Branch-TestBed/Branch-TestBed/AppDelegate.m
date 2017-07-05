@@ -19,31 +19,31 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application
-    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Have Branch use the Branch test key that is in the app's Info.plist file.
     // This makes Branch test against the test environment instead of the live environment.
     Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
-
     Branch *branch = [Branch getInstance];
 
     // Comment / un-comment to toggle debugging:
     // [branch setDebug];
 
-    // For Apple Search Ads
+    // Check for Apple Search Ad attribution:
     [branch delayInitToCheckForSearchAds];
-
+    
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
     
     [branch setWhiteListedSchemes:@[@"branchtest"]];
-
+    
     /**
      * // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
      * [self onboardUserOnInstall];
      */
-    
-    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
+
+    [branch initSessionWithLaunchOptions:launchOptions
+        andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
         if (!error) {
             
             NSLog(@"initSession succeeded with params: %@", params);
@@ -66,7 +66,7 @@
         } else {
             NSLog(@"Branch TestBed: Initialization failed\n%@", error.localizedDescription);
         }
-
+        
     }];
 
     /**
@@ -76,6 +76,7 @@
 
     return YES;
 }
+
 
 - (void)onboardUserOnInstall {
     NSURL *urlForOnboarding = [NSURL URLWithString:@"http://example.com"]; // Put your onboarding link here
