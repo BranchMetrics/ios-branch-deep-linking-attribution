@@ -286,7 +286,10 @@
     //  when it is.
 
     Class SFSafariViewControllerClass = NSClassFromString(@"SFSafariViewController");
-    if (!SFSafariViewControllerClass) return NO;
+    if (!SFSafariViewControllerClass) {
+        BNCLogWarning(@"cookieBasedMatching is enabled but SafariServices framework is not available.");
+        return NO;
+    }
 
     Class BNCMatchViewControllerSubclass = NSClassFromString(@"BNCMatchViewController_Safari");
     if (!BNCMatchViewControllerSubclass) {
