@@ -29,7 +29,6 @@
 		4665AF261B28B9BB00184037 /* BranchConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 4665AF251B28B9BB00184037 /* BranchConstants.m */; };
 		4665AF281B28C1DE00184037 /* BranchLogoutRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4665AF271B28C1DE00184037 /* BranchLogoutRequestTests.m */; };
 		466B584F1B17775900A69EDE /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67BBCF271A69E49A009C7DAE /* AdSupport.framework */; };
-		466B58511B17776000A69EDE /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 466B58501B17776000A69EDE /* CoreTelephony.framework */; };
 		466B58521B17776500A69EDE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016631940F51400A9E103 /* Foundation.framework */; };
 		466B58531B17776A00A69EDE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016671940F51400A9E103 /* UIKit.framework */; };
 		466B58551B17779C00A69EDE /* Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016BE1946309100A9E103 /* Branch.m */; };
@@ -337,7 +336,6 @@
 			files = (
 				466B58531B17776A00A69EDE /* UIKit.framework in Frameworks */,
 				466B58521B17776500A69EDE /* Foundation.framework in Frameworks */,
-				466B58511B17776000A69EDE /* CoreTelephony.framework in Frameworks */,
 				466B584F1B17775900A69EDE /* AdSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

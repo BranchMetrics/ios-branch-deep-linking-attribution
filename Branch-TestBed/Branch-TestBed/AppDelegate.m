@@ -27,9 +27,9 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     Branch *branch = [Branch getInstance];
 
     // Comment / un-comment to toggle debugging:
-    [branch setDebug];
-    
-    // For Apple Search Ads
+    // [branch setDebug];
+
+    // Check for Apple Search Ad attribution:
     [branch delayInitToCheckForSearchAds];
     
     // Turn this on to debug Apple Search Ads.  Should not be included for production.

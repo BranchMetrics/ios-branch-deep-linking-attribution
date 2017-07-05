@@ -11,7 +11,7 @@
 #import "BNCConfig.h"
 #import "Branch.h"
 #import "BNCLog.h"
-#import "../Fabric/Fabric+FABKits.h"
+#import "BNCFabricAnswers.h"
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
@@ -56,7 +56,6 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
 @property (strong, nonatomic) NSMutableDictionary *creditsDictionary;
 @property (strong, nonatomic) NSMutableDictionary *requestMetadataDictionary;
 @property (strong, nonatomic) NSMutableDictionary *instrumentationDictionary;
-@property (assign, nonatomic) BOOL isUsingLiveKey;
 
 @end
 
