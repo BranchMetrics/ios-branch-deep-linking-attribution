@@ -701,7 +701,7 @@ static NSString *bnc_branchKey = nil;
         [ADClientClass methodForSelector:sharedClient];
 
     if (!ADClientIsAvailable) {
-        BNCLogWarning(@"delayForAppleAds is true but ADClient is not available. Is the iAD.framework included and iOS 10?");
+        BNCLogWarning(@"`delayForAppleAds` is true but ADClient is not available. Is the iAD.framework included and iOS 10?");
         return NO;
     }
 
