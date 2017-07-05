@@ -82,6 +82,10 @@ buildDirectoryProjectScheme \
     TestBed-Swift.xcodeproj \
     TestBed-Swift
 
+cd Examples/WebViewExample
+pod install
+pod update
+cd ../..
 buildDirectoryProjectScheme \
     Examples/WebViewExample \
     WebViewExample.xcworkspace \
