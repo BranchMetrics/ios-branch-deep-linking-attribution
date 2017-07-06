@@ -58,35 +58,80 @@
     self.screenHeight = [BNCSystemObserver getScreenHeight];
     self.isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
 
-    NSLocale *currentLocale = [NSLocale currentLocale];
-    if ([currentLocale respondsToSelector:@selector(countryCode)] &&
-        [currentLocale respondsToSelector:@selector(languageCode)]) {
-        // Should work on iOS 10
-        self.country = [currentLocale countryCode];
-        self.language = [currentLocale languageCode];
-    }
-
-    if (!self.country) {
-        // Should work on iOS 9
-        NSString *rawLanguage = [[NSLocale preferredLanguages] firstObject];
-        NSDictionary *languageDictionary = [NSLocale componentsFromLocaleIdentifier:rawLanguage];
-        self.country = [languageDictionary objectForKey:@"kCFLocaleCountryCodeKey"];
-        self.language = [languageDictionary  objectForKey:@"kCFLocaleLanguageCodeKey"];
-    }
-
-    if (!self.country) {
-        // Should work on iOS 8 and below.
-        self.language = [[NSLocale preferredLanguages] firstObject];
-        NSString *rawLocale = currentLocale.localeIdentifier;
-        NSRange range = [rawLocale rangeOfString:@"_"];
-        if (range.location != NSNotFound) {
-            range = NSMakeRange(range.location+1, rawLocale.length-range.location-1);
-            self.country = [rawLocale substringWithRange:range];
-        }
-    }
-
+    self.country = [self.class bnc_country];
+    self.language = [self.class bnc_language];
     self.browserUserAgent = [self.class userAgentString];
     return self;
+}
+
++ (NSString*) bnc_country {
+
+    NSString *country = nil;
+    #define returnIfValidCountry() \
+        if ([country isKindOfClass:[NSString class]] && country.length) { \
+            return country; \
+        } else { \
+            country = nil; \
+        }
+
+    // Should work on iOS 10
+    NSLocale *currentLocale = [NSLocale currentLocale];
+    if ([currentLocale respondsToSelector:@selector(countryCode)]) {
+        country = [currentLocale countryCode];
+    }
+    returnIfValidCountry();
+
+    // Should work on iOS 9
+    NSString *rawLanguage = [[NSLocale preferredLanguages] firstObject];
+    NSDictionary *languageDictionary = [NSLocale componentsFromLocaleIdentifier:rawLanguage];
+    country = [languageDictionary objectForKey:@"kCFLocaleCountryCodeKey"];
+    returnIfValidCountry();
+
+    // Should work on iOS 8 and below.
+    //NSString* language = [[NSLocale preferredLanguages] firstObject];
+    NSString *rawLocale = currentLocale.localeIdentifier;
+    NSRange range = [rawLocale rangeOfString:@"_"];
+    if (range.location != NSNotFound) {
+        range = NSMakeRange(range.location+1, rawLocale.length-range.location-1);
+        country = [rawLocale substringWithRange:range];
+    }
+    returnIfValidCountry();
+
+    #undef returnIfValidCountry
+
+    return nil;
+}
+
++ (NSString*) bnc_language {
+
+    NSString *language = nil;
+    #define returnIfValidLaunguage() \
+        if ([language isKindOfClass:[NSString class]] && language.length) { \
+            return language; \
+        } else { \
+            language = nil; \
+        } \
+
+    // Should work on iOS 10
+    NSLocale *currentLocale = [NSLocale currentLocale];
+    if ([currentLocale respondsToSelector:@selector(languageCode)]) {
+        language = [currentLocale languageCode];
+    }
+    returnIfValidLaunguage();
+
+    // Should work on iOS 9
+    NSString *rawLanguage = [[NSLocale preferredLanguages] firstObject];
+    NSDictionary *languageDictionary = [NSLocale componentsFromLocaleIdentifier:rawLanguage];
+    language = [languageDictionary  objectForKey:@"kCFLocaleLanguageCodeKey"];
+    returnIfValidLaunguage();
+
+    // Should work on iOS 8 and below.
+    language = [[NSLocale preferredLanguages] firstObject];
+    returnIfValidLaunguage();
+
+    #undef returnIfValidLaunguage
+
+    return nil;
 }
 
 + (NSString*) systemBuildVersion {
