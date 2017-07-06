@@ -105,7 +105,7 @@
 + (NSString*) bnc_language {
 
     NSString *language = nil;
-    #define returnIfValidLaunguage() \
+    #define returnIfValidLanguage() \
         if ([language isKindOfClass:[NSString class]] && language.length) { \
             return language; \
         } else { \
@@ -117,19 +117,19 @@
     if ([currentLocale respondsToSelector:@selector(languageCode)]) {
         language = [currentLocale languageCode];
     }
-    returnIfValidLaunguage();
+    returnIfValidLanguage();
 
     // Should work on iOS 9
     NSString *rawLanguage = [[NSLocale preferredLanguages] firstObject];
     NSDictionary *languageDictionary = [NSLocale componentsFromLocaleIdentifier:rawLanguage];
     language = [languageDictionary  objectForKey:@"kCFLocaleLanguageCodeKey"];
-    returnIfValidLaunguage();
+    returnIfValidLanguage();
 
     // Should work on iOS 8 and below.
     language = [[NSLocale preferredLanguages] firstObject];
-    returnIfValidLaunguage();
+    returnIfValidLanguage();
 
-    #undef returnIfValidLaunguage
+    #undef returnIfValidLanguage
 
     return nil;
 }
