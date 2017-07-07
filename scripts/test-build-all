@@ -30,7 +30,7 @@ fi
 
 
 iOSDevice="iPhone 7 Plus"
-iOSVersion="10.0"
+iOSVersion="10.1"
 
 
 function fileExtension() {
