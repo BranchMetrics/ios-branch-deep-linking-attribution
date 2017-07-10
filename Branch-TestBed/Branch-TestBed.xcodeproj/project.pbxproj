@@ -143,6 +143,8 @@
 		E2133B731D01297E00763049 /* BNCFabricAnswers.h in Headers */ = {isa = PBXBuildFile; fileRef = E2133B711D0125EF00763049 /* BNCFabricAnswers.h */; };
 		E2133B751D01477200763049 /* BNCFabricAnswers.m in Sources */ = {isa = PBXBuildFile; fileRef = E2133B741D01477200763049 /* BNCFabricAnswers.m */; };
 		E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B947491D15D73900F2270D /* BNCCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F1CD5BE91F142EA400A12B67 /* BNCLocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = F1CD5BE71F142EA400A12B67 /* BNCLocalization.h */; };
+		F1CD5BEA1F142EA400A12B67 /* BNCLocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = F1CD5BE81F142EA400A12B67 /* BNCLocalization.m */; };
 		F1D359201ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */; };
 		F1D359211ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */; };
 /* End PBXBuildFile section */
@@ -325,6 +327,8 @@
 		E2B597061D063EEF00A089A6 /* Answers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Answers.h; path = "../Branch-SDK/Fabric/Answers.h"; sourceTree = "<group>"; };
 		E2B597081D063F1D00A089A6 /* ANSCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ANSCompatibility.h; path = "../Branch-SDK/Fabric/ANSCompatibility.h"; sourceTree = "<group>"; };
 		E2B947491D15D73900F2270D /* BNCCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCCallbacks.h; sourceTree = "<group>"; };
+		F1CD5BE71F142EA400A12B67 /* BNCLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLocalization.h; sourceTree = "<group>"; };
+		F1CD5BE81F142EA400A12B67 /* BNCLocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLocalization.m; sourceTree = "<group>"; };
 		F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
 		F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeepLinkViewControllerInstance.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -528,6 +532,8 @@
 				7E30BCF31A71EEEE00AC7402 /* BNCLinkData.m */,
 				4DA577151E67B1D600A43BDD /* BNCLog.h */,
 				4DA577161E67B1D600A43BDD /* BNCLog.m */,
+				F1CD5BE71F142EA400A12B67 /* BNCLocalization.h */,
+				F1CD5BE81F142EA400A12B67 /* BNCLocalization.m */,
 				670016C11946309100A9E103 /* BNCPreferenceHelper.h */,
 				670016C21946309100A9E103 /* BNCPreferenceHelper.m */,
 				670016C31946309100A9E103 /* BNCServerInterface.h */,
@@ -687,6 +693,7 @@
 				46946B861B26898B00627BCC /* BranchSetIdentityRequest.h in Headers */,
 				466B58771B17780A00A69EDE /* BNCSystemObserver.h in Headers */,
 				46946B881B26899100627BCC /* BranchUserCompletedActionRequest.h in Headers */,
+				F1CD5BE91F142EA400A12B67 /* BNCLocalization.h in Headers */,
 				466B587A1B17780A00A69EDE /* BNCError.h in Headers */,
 				46946BA01B2689A100627BCC /* BranchCloseRequest.h in Headers */,
 				E2133B731D01297E00763049 /* BNCFabricAnswers.h in Headers */,
@@ -884,6 +891,7 @@
 				466B58551B17779C00A69EDE /* Branch.m in Sources */,
 				7D4DAC261C8FA908008E37DB /* BranchView.m in Sources */,
 				463F0A3D1B20A663004235D2 /* BranchShortUrlSyncRequest.m in Sources */,
+				F1CD5BEA1F142EA400A12B67 /* BNCLocalization.m in Sources */,
 				54FF1F8E1BD1D4AE0004CE2E /* BranchUniversalObject.m in Sources */,
 				54FF1F961BD20EB50004CE2E /* BranchRegisterViewRequest.m in Sources */,
 				463F0A321B20A663004235D2 /* BranchSetIdentityRequest.m in Sources */,
@@ -1158,7 +1166,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
+				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1179,7 +1187,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
+				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
