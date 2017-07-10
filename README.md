@@ -385,13 +385,13 @@ Register a controller for Branch to show when specific keys are present in the B
 ###### Objective-C
 
 ```objc
-[[Branch getInstance] registerDeepLinkController:myController forKey:@"my-key"];
+[[Branch getInstance] registerDeepLinkController:myController forKey:@"my-key" withPresentation:BNCViewControllerOptionShow];
 ```
 
 ###### Swift
 
 ```swift
-Branch.getInstance().registerDeepLinkController(myController forKey:"my-key")
+Branch.getInstance().registerDeepLinkController(myController forKey:"my-key" withPresentation: .optionShow)
 ```
 
 #### Parameters
@@ -401,6 +401,13 @@ Branch.getInstance().registerDeepLinkController(myController forKey:"my-key")
 
 **key** (NSString *) _required_
 : The key checked for in open / install dictionaries.
+
+**Option** (BNCViewControllerPresentationOption) _required_
+| **Option** | **Meaning**
+| --- | ---
+| BNCViewControllerOptionShow | This option pushes view controller onto the navigation stack in a similar way as the showViewController
+| BNCViewControllerOptionPush | This option pushes view controller onto the navigation stack in a similar way as the pushViewController
+| BNCViewControllerOptionPresent | This option presents view controller onto the root view controller of window in a similar way as the presentViewController
 
 #### Returns
 
@@ -908,6 +915,48 @@ You can also optionally add HTML to the email option and customize the link text
 linkProperties.addControlParam("$email_html_header", withValue: "<style>your awesome CSS</style>\nOr Dear Friend,")
 linkProperties.addControlParam("$email_html_footer", withValue: "Thanks!")
 linkProperties.addControlParam("$email_html_link_text", withValue: "Tap here")
+```
+
+#### Changing share text on the fly
+
+You can change the link shareText and other link parameters based on the choice the user makes on the sharesheet activity.  First, set the `BranchShareLink` delegate with an object that follows the `BranchShareLinkDelegate` protocol.
+
+The optional `- (void) branchShareLinkWillShare:` delegate method will be called just after the user selects a share action, like share by email for instance, and before the share action is shown to the user, like when the email composer is shown to the user with the share text. This is an ideal time to change the share text based on the user action.
+
+The optional `- (void) branchShareLink:didComplete:withError:` delegate method will be called after the user has completed the share action.  The `didComplete` boolean will be `YES` if the user shared the item, and `NO` if the user cancelled.  The `error` value will indicate any errors that may have occurred.
+
+###### Objective-C
+```objc
+@interface ViewController () <BranchShareLinkDelegate> 
+```
+Override the branchShareLinkWillShare function to change your shareText
+
+```objc
+- (void) branchShareLinkWillShare:(BranchShareLink*)shareLink {
+    // Link properties, such as alias or channel can be overridden here based on the users'
+    // choice stored in shareSheet.activityType.
+    shareLink.shareText = [NSString stringWithFormat:
+        @"Shared through '%@'\nfrom Branch's Branch-TestBed\nat %@.",
+        shareLink.linkProperties.channel,
+        [self.dateFormatter stringFromDate:[NSDate date]]];
+}
+```
+###### Swift
+
+```swift
+class ViewController: UITableViewController, BranchShareLinkDelegate
+```
+
+Override the branchShareLinkWillShare function to change your shareText
+
+```swift
+func branchShareLinkWillShare(_ shareLink: BranchShareLink) {
+	// Link properties, such as alias or channel can be overridden here based on the users'
+	// choice stored in shareSheet.activityType.
+	shareLink.shareText =
+	    "Shared through '\(shareLink.linkProperties.channel!)'\nfrom Branch's TestBed-Swift" +
+	    "\nat \(self.dateFormatter().string(from: Date()))."
+}
 ```
 
 #### Returns

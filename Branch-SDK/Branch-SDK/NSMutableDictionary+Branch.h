@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 
 
-void ForceNSMutableDictionaryToLoad();
+void ForceNSMutableDictionaryToLoad(void);
 
 
 @interface NSMutableDictionary (Branch)

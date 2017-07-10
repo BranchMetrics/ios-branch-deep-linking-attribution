@@ -11,6 +11,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BranchCloseRequest.h"
 #import "BranchOpenRequest.h"
+#import "BNCLog.h"
 
 
 NSString * const BRANCH_QUEUE_FILE = @"BNCServerRequestQueue";
@@ -56,7 +57,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 - (void)insert:(BNCServerRequest *)request at:(unsigned int)index {
     @synchronized (self) {
         if (index > self.queue.count) {
-            [[BNCPreferenceHelper preferenceHelper] log:FILE_NAME line:LINE_NUM message:@"Invalid queue operation: index out of bound!"];
+            BNCLogError(@"Invalid queue operation: index out of bound!");
             return;
         }
         if (request) {
@@ -82,9 +83,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     @synchronized (self) {
         BNCServerRequest *request = nil;
         if (index >= self.queue.count) {
-            [[BNCPreferenceHelper preferenceHelper]
-                log:FILE_NAME line:LINE_NUM
-                    message:@"Invalid queue operation: index out of bound!"];
+            BNCLogError(@"Invalid queue operation: index out of bound!");
             return nil;
         }
         
@@ -109,9 +108,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 - (BNCServerRequest *)peekAt:(unsigned int)index {
     @synchronized (self) {
         if (index >= self.queue.count) {
-            [[BNCPreferenceHelper preferenceHelper]
-                log:FILE_NAME line:LINE_NUM
-                    message:@"Invalid queue operation: index out of bound!"];
+            BNCLogError(@"Invalid queue operation: index out of bound!");
             return nil;
         }
         
@@ -189,8 +186,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         }
         
         if (!openOrInstallRequest) {
-            [[BNCPreferenceHelper preferenceHelper]
-                logWarning:@"No install or open request in queue while trying to move it to the front"];
+            BNCLogError(@"No install or open request in queue while trying to move it to the front.");
             return nil;
         }
         
@@ -258,24 +254,21 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             }
             NSData *data = [NSKeyedArchiver archivedDataWithRootObject:encodedRequests];
             if (!data) {
-                [[BNCPreferenceHelper preferenceHelper]
-                    logWarning:@"Cannot create archive data."];
+                BNCLogError(@"Cannot create archive data.");
                 return;
             }
             NSError *error = nil;
             [data writeToURL:self.class.URLForQueueFile
                 options:NSDataWritingAtomic error:&error];
             if (error) {
-                [[BNCPreferenceHelper preferenceHelper] logWarning:
-                    [NSString stringWithFormat:@"Failed to persist queue to disk: %@", error]];
+                BNCLogError(@"Failed to persist queue to disk: %@.", error);
             }
         }
         @catch (NSException *exception) {
-            NSString *warningMessage =
-                [NSString stringWithFormat:
-                    @"An exception occurred while attempting to save the queue. Exception information:\n\n%@",
-                        [self.class exceptionString:exception]];
-            [[BNCPreferenceHelper preferenceHelper] logWarning:warningMessage];
+            BNCLogError(
+                @"An exception occurred while attempting to save the queue. Exception information:\n\n%@.",
+                [self.class exceptionString:exception]
+            );
         }
     }
 }
@@ -305,12 +298,11 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             }
         }
         @catch (NSException *exception) {
-            NSString *warningMessage =
-                [NSString stringWithFormat:
-                    @"An exception occurred while attempting to load the queue file, "
-                     "proceeding without requests. Exception information:\n\n%@",
-                        [self.class exceptionString:exception]];
-            [[BNCPreferenceHelper preferenceHelper] logWarning:warningMessage];
+            BNCLogError(
+                @"An exception occurred while attempting to load the queue file, "
+                "proceeding without requests. Exception information:\n\n%@.",
+                [self.class exceptionString:exception]
+            );
             self.queue = queue;
             return;
         }
@@ -323,14 +315,13 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
                 request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
             }
             @catch (NSException *exception) {
-                [[BNCPreferenceHelper preferenceHelper]
-                    logWarning:@"An exception occurred while attempting to parse a queued request, discarding."];
+                BNCLogWarning(@"An exception occurred while attempting to parse a queued request, discarding.");
                 continue;
             }
             
             // Throw out invalid request types
             if (![request isKindOfClass:[BNCServerRequest class]]) {
-                [[BNCPreferenceHelper preferenceHelper] logWarning:@"Found an invalid request object, discarding."];
+                BNCLogWarning(@"Found an invalid request object, discarding. Object is: %@.", request);
                 continue;
             }
             
@@ -361,7 +352,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 + (NSURL* _Nonnull) URLForQueueFile {
-    NSURL *URL = [BNCPreferenceHelper URLForBranchDirectory];
+    NSURL *URL = BNCURLForBranchDirectory();
     URL = [URL URLByAppendingPathComponent:BRANCH_QUEUE_FILE isDirectory:NO];
     return URL;
 }
@@ -384,7 +375,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
                 removeItemAtURL:oldURL
                 error:&error];
         } else {
-            NSLog(@"Error moving queue file: %@.", error);
+            BNCLogError(@"Failed to move the queue file: %@.", error);
         }
     }
 }
@@ -404,10 +395,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     dispatch_once(&onceToken, ^ {
         sharedQueue = [[BNCServerRequestQueue alloc] init];
         [sharedQueue retrieve];
-        [[BNCPreferenceHelper preferenceHelper]
-            log:FILE_NAME
-            line:LINE_NUM
-            message:@"Retrieved from Persist: %@", sharedQueue];
+        BNCLogDebugSDK(@"Retrieved from storage: %@.", sharedQueue);
     });
     return sharedQueue;
 }

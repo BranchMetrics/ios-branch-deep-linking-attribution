@@ -13,16 +13,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var navigationController: NavigationController!
+    var branch: Branch!
 
     // MARK: - UIApplicationDelegate methods
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        /*
+         * Use the test instance if USE_BRANCH_TEST_INSTANCE is defined. This is defined in the
+         * Test-Debug and Test-Release configurations, which are used by the WebViewExample-Test
+         * schema. Use that schema for the test environment and the WebViewExample schema for the
+         * live environment. This allows, e.g., building an archive for distribution using TestFlight
+         * or Crashlytics that connects to the Branch test environment using the WebViewExample-Test
+         * schema.
+         */
+        #if USE_BRANCH_TEST_INSTANCE
+            branch = Branch.getTestInstance()
+        #else
+            branch = Branch.getInstance()
+        #endif
 
         // Store the NavigationController for later link routing.
         navigationController = window?.rootViewController as? NavigationController
 
         // Initialize Branch SDK
-        Branch.getInstance().initSession(launchOptions: launchOptions) {
+        branch.initSession(launchOptions: launchOptions) {
             (buo: BranchUniversalObject?, linkProperties: BranchLinkProperties?, error: Error?) in
             guard error == nil else {
                 BNCLogError("Error from Branch: \(error!)")
@@ -37,11 +51,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        return Branch.getInstance().application(app, open: url, options: options)
+        return branch.application(app, open: url, options: options)
     }
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
-        return Branch.getInstance().continue(userActivity)
+        return branch.continue(userActivity)
     }
 
     // MARK: - Branch link routing

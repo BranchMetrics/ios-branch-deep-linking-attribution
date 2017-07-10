@@ -40,6 +40,11 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>branch_key</key>
-	<string>key_live_feebgAAhbH9Tv85H5wLQhpdaefiZv5Dv</string>
+	<dict>
+		<key>live</key>
+		<string>key_live_feebgAAhbH9Tv85H5wLQhpdaefiZv5Dv</string>
+		<key>test</key>
+		<string>key_test_hdcBLUy1xZ1JD0tKg7qrLcgirFmPPVJc</string>
+	</dict>
 </dict>
 </plist>

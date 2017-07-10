@@ -103,6 +103,8 @@
 		4D44E7D21E68F46800793D79 /* Branch-SDK-Tests.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4D44E7BE1E68F31B00793D79 /* Branch-SDK-Tests.strings */; };
 		4D46F63B1E7B4588002317B6 /* BranchShareLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D46F6391E7B4588002317B6 /* BranchShareLink.h */; };
 		4D46F63C1E7B4588002317B6 /* BranchShareLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D46F63A1E7B4588002317B6 /* BranchShareLink.m */; };
+		4D60C7761F0D66290090DD5B /* BNCDeepLinkViewControllerInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D60C7741F0D66280090DD5B /* BNCDeepLinkViewControllerInstance.h */; };
+		4D60C7771F0D66290090DD5B /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D60C7751F0D66290090DD5B /* BNCDeepLinkViewControllerInstance.m */; };
 		4D8999EC1DC108FF00F7EE0A /* BNCXcode7Support.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8999EA1DC108FF00F7EE0A /* BNCXcode7Support.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4D8999ED1DC108FF00F7EE0A /* BNCXcode7Support.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D8999EB1DC108FF00F7EE0A /* BNCXcode7Support.m */; };
 		4D8DFD971EC6399F00D47413 /* BNCTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D8DFD941EC6394300D47413 /* BNCTestCase.m */; };
@@ -162,6 +164,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 466B58371B17773000A69EDE;
 			remoteInfo = Branch;
+		};
+		4DED9ECE1F032EDD0033A6C3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 670016581940F51400A9E103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6700165F1940F51400A9E103;
+			remoteInfo = "Branch-TestBed";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -236,6 +245,8 @@
 		4D44E7C81E68F34E00793D79 /* NSString+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Branch.m"; sourceTree = "<group>"; };
 		4D46F6391E7B4588002317B6 /* BranchShareLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchShareLink.h; sourceTree = "<group>"; };
 		4D46F63A1E7B4588002317B6 /* BranchShareLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShareLink.m; sourceTree = "<group>"; };
+		4D60C7741F0D66280090DD5B /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
+		4D60C7751F0D66290090DD5B /* BNCDeepLinkViewControllerInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeepLinkViewControllerInstance.m; sourceTree = "<group>"; };
 		4D8999EA1DC108FF00F7EE0A /* BNCXcode7Support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCXcode7Support.h; sourceTree = "<group>"; };
 		4D8999EB1DC108FF00F7EE0A /* BNCXcode7Support.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCXcode7Support.m; sourceTree = "<group>"; };
 		4D8DFD931EC6394300D47413 /* BNCTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCTestCase.h; sourceTree = "<group>"; };
@@ -513,6 +524,8 @@
 				466D5A101B5991E3009DB845 /* BNCContentDiscoveryManager.m */,
 				4D44E7C31E68F34E00793D79 /* BNCDebug.h */,
 				4D44E7C41E68F34E00793D79 /* BNCDebug.m */,
+				4D60C7741F0D66280090DD5B /* BNCDeepLinkViewControllerInstance.h */,
+				4D60C7751F0D66290090DD5B /* BNCDeepLinkViewControllerInstance.m */,
 				7D5882301CA1BEEA00FF6358 /* BNCDeviceInfo.h */,
 				7D5882391CA1DF2700FF6358 /* BNCDeviceInfo.m */,
 				464EA3991ACB38EC000E4094 /* BNCEncodingUtils.h */,
@@ -670,6 +683,7 @@
 				466D5A111B5991E3009DB845 /* BNCContentDiscoveryManager.h in Headers */,
 				54FF1F8D1BD1D4AE0004CE2E /* BranchUniversalObject.h in Headers */,
 				46946B9F1B2689A100627BCC /* BranchShortUrlSyncRequest.h in Headers */,
+				4D60C7761F0D66290090DD5B /* BNCDeepLinkViewControllerInstance.h in Headers */,
 				46946B9E1B2689A100627BCC /* BranchShortUrlRequest.h in Headers */,
 				466B58781B17780A00A69EDE /* BNCServerRequestQueue.h in Headers */,
 				466B58751B17780A00A69EDE /* BNCServerInterface.h in Headers */,
@@ -745,6 +759,7 @@
 			);
 			dependencies = (
 				4683F07C1B20AC6300A432E7 /* PBXTargetDependency */,
+				4DED9ECF1F032EDD0033A6C3 /* PBXTargetDependency */,
 			);
 			name = "Branch-SDK-Tests";
 			productName = "Branch-SDK Functionality Tests";
@@ -851,7 +866,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		CA6C45DB44005B39B2D6B322 /* [CP] Embed Pods Frameworks */ = {
@@ -897,6 +912,7 @@
 				463F0A3E1B20A663004235D2 /* BranchCloseRequest.m in Sources */,
 				463F0A381B20A663004235D2 /* BranchCreditHistoryRequest.m in Sources */,
 				466B585F1B17779C00A69EDE /* BNCSystemObserver.m in Sources */,
+				4D60C7771F0D66290090DD5B /* BNCDeepLinkViewControllerInstance.m in Sources */,
 				466B58611B17779C00A69EDE /* BNCServerRequestQueue.m in Sources */,
 				4D46F63C1E7B4588002317B6 /* BranchShareLink.m in Sources */,
 				4D3FA94B1DFF31EB00E2B6A9 /* BNCConfig.m in Sources */,
@@ -981,6 +997,11 @@
 			isa = PBXTargetDependency;
 			target = 466B58371B17773000A69EDE /* Branch */;
 			targetProxy = 4683F07B1B20AC6300A432E7 /* PBXContainerItemProxy */;
+		};
+		4DED9ECF1F032EDD0033A6C3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
+			targetProxy = 4DED9ECE1F032EDD0033A6C3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

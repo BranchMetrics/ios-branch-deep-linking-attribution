@@ -13,6 +13,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
+#import "BNCLog.h"
 
 
 #pragma mark BNCStrongMatchHelper iOS 8.0
@@ -155,7 +156,7 @@
         [BNCSystemObserver getUniqueHardwareId:&isRealHardwareId
             isDebug:preferenceHelper.isDebug andType:&hardwareIdType];
     if (!hardwareId || !isRealHardwareId) {
-        [preferenceHelper logWarning:@"Cannot use cookie-based matching while setDebug is enabled"];
+        BNCLogWarning(@"Cannot use cookie-based matching while setDebug is enabled.");
         return nil;
     }
     
@@ -285,7 +286,10 @@
     //  when it is.
 
     Class SFSafariViewControllerClass = NSClassFromString(@"SFSafariViewController");
-    if (!SFSafariViewControllerClass) return NO;
+    if (!SFSafariViewControllerClass) {
+        BNCLogWarning(@"cookieBasedMatching is enabled but SafariServices framework is not available.");
+        return NO;
+    }
 
     Class BNCMatchViewControllerSubclass = NSClassFromString(@"BNCMatchViewController_Safari");
     if (!BNCMatchViewControllerSubclass) {
@@ -306,7 +310,7 @@
         objc_registerClassPair(BNCMatchViewControllerSubclass);
     }
 
-    //NSLog(@"Safari initializing."); //  eDebug
+    BNCLogDebugSDK(@"Safari is initializing.");
     self.primaryWindow = [self keyWindow];
 
     self.matchViewController = [[BNCMatchViewControllerSubclass alloc] initWithURL:matchURL];
@@ -331,7 +335,7 @@
 }
 
 - (void) unloadViewController {
-    //NSLog(@"Safari unloadViewController");  // eDebug
+    BNCLogDebugSDK(@"Safari unloadViewController called.");
     
     [self.matchViewController willMoveToParentViewController:nil];
     [self.matchViewController.view removeFromSuperview];
@@ -351,7 +355,7 @@
 
 - (void)safariViewController:(SFSafariViewController *)controller
       didCompleteInitialLoad:(BOOL)didLoadSuccessfully {
-    //NSLog(@"Safari Did load. Success: %d.", didLoadSuccessfully);   //  eDebug
+    BNCLogDebugSDK(@"Safari did load. Success: %d.", didLoadSuccessfully);
     [self unloadViewController];
 }
 

@@ -69,8 +69,11 @@ function analyzeBuild() {
 
 
 xcodeversion=$(xcodebuild -version)
-if [[ ! "$xcodeversion" =~ "Xcode 8" ]]; then
-    echo "Requires Xcode 8! Use xcode-select to switch versions of Xcode." >&2
+if [[ "$xcodeversion" =~ "Xcode 8" ]] || [[ "$xcodeversion" =~ "Xcode 9" ]]
+then
+    : # All good.  Keep going.
+else
+    echo "Requires Xcode 8 or above! Use xcode-select to switch versions of Xcode." >&2
     exit 1
 fi
 

@@ -13,6 +13,7 @@
 #import "BranchConstants.h"
 #import "BNCDeviceInfo.h"
 #import "NSMutableDictionary+Branch.h"
+#import "BNCLog.h"
 
 typedef void (^NSURLSessionCompletionHandler) (NSData *data, NSURLResponse *response, NSError *error);
 typedef void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *responseData, NSError *error);
@@ -104,9 +105,8 @@ NSString *requestEndpoint;
         if (retryNumber < self.preferenceHelper.retryCount && isRetryableStatusCode) {
             dispatch_time_t dispatchTime = dispatch_time(DISPATCH_TIME_NOW, self.preferenceHelper.retryInterval * NSEC_PER_SEC);
             dispatch_after(dispatchTime, dispatch_get_main_queue(), ^{
-                if (log) {
-                    [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"Replaying request with url %@", request.URL.relativePath];
-                }
+
+                BNCLogDebug(@"Retrying request with url %@.", request.URL.relativePath);
                 
                 // Create the next request
                 NSURLRequest *retryRequest = retryHandler(retryNumber);
@@ -135,7 +135,7 @@ NSString *requestEndpoint;
             }
             
             if (error && log) {
-                [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, error.localizedDescription];
+                BNCLogError(@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, error.localizedDescription);
             }
             
         }
@@ -200,11 +200,9 @@ NSString *requestEndpoint;
     NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"GET"];
     
     NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:preparedParams]];
-    
-    if (log) {
-        [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
-    }
-    
+
+    BNCLogDebug(@"Using URL %@.", url);
+
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setURL:[NSURL URLWithString:requestUrlString]];
     [request setHTTPMethod:@"GET"];
@@ -218,11 +216,9 @@ NSString *requestEndpoint;
 
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
-    
-    if (log) {
-        [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"using url = %@", url];
-        [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"body = %@", preparedParams];
-    }
+
+    BNCLogDebug(@"URL: %@.", url);
+    BNCLogDebug(@"Body: %@.", preparedParams);
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setTimeoutInterval:self.preferenceHelper.timeout];
@@ -275,10 +271,7 @@ NSString *requestEndpoint;
         serverResponse.data = error.userInfo;
     }
 
-    if (log) {
-        [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned = %@", serverResponse];
-    }
-    
+    BNCLogDebug(@"Response: %@.", serverResponse);
     [self collectInstrumentationMetrics];
     return serverResponse;
 }

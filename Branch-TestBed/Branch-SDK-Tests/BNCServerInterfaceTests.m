@@ -47,11 +47,11 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
   __block int callCount = 0;
   [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        // We're not sending a request, just verifying a "branch_key=key_foo" is present.
+        // We're not sending a request, just verifying a "branch_key=key_xxx" is present.
         callCount++;
         NSLog(@"\n\nCall count %d.\nRequest: %@\n", callCount, request);
         if (callCount == 1) {
-            BOOL foundIt = ([request.URL.query rangeOfString:@"branch_key=key_foo"].location != NSNotFound);
+            BOOL foundIt = ([request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound);
             XCTAssertTrue(foundIt, @"Branch Key not added");
             BNCAfterSecondsPerformBlock(0.01, ^{ [expectation fulfill]; });
             return YES;
@@ -86,33 +86,41 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   
   XCTestExpectation* successExpectation = [self expectationWithDescription:@"success"];
   
-  __block NSUInteger connectionAttempts = 0;
-  __block NSUInteger failedConnections = 0;
-  __block NSUInteger successfulConnections = 0;
+  __block NSInteger connectionAttempts = 0;
+  __block NSInteger failedConnections = 0;
+  __block NSInteger successfulConnections = 0;
   
   [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_foo"].location != NSNotFound;
+    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
     XCTAssertEqual(foundBranchKey, TRUE);
     return foundBranchKey;
     
   } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
     connectionAttempts++;
-    NSLog(@"attempt # %lu", (unsigned long)connectionAttempts);
+    NSLog(@"Attempt # %lu", (unsigned long)connectionAttempts);
     if (connectionAttempts < 3) {
+
       // Return an error the first three times
       NSDictionary* dummyJSONResponse = @{@"bad": @"data"};
       
       ++failedConnections;
       return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:504 headers:nil];
       
-    } else {
+    } else if (connectionAttempts == 3) {
+
       // Return actual data afterwards
       ++successfulConnections;
-      NSDictionary* dummyJSONResponse = @{@"key": @"value"};
       XCTAssertEqual(connectionAttempts, failedConnections + successfulConnections);
       BNCAfterSecondsPerformBlock(0.01, ^{ NSLog(@"==> Fullfill."); [successExpectation fulfill]; });
-      
+
+      NSDictionary* dummyJSONResponse = @{@"key": @"value"};
       return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+
+    } else {
+
+        XCTFail(@"Too many connection attempts: %ld.", (long) connectionAttempts);
+        return [OHHTTPStubsResponse responseWithJSONObject:[NSDictionary new] statusCode:200 headers:nil];
+
     }
   }];
   
@@ -137,7 +145,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   __block NSUInteger connectionAttempts = 0;
   
   [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_foo"].location != NSNotFound;
+    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
     XCTAssertEqual(foundBranchKey, TRUE);
     return foundBranchKey;
     
@@ -174,7 +182,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   __block NSUInteger connectionAttempts = 0;
   
   [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_foo"].location != NSNotFound;
+    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
     XCTAssertEqual(foundBranchKey, TRUE);
     return foundBranchKey;
     
@@ -213,7 +221,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   __block NSUInteger successfulConnections = 0;
   
   [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_foo"].location != NSNotFound;
+    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
     XCTAssertEqual(foundBranchKey, TRUE);
     return foundBranchKey;
     
@@ -227,13 +235,20 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
       ++failedConnections;
       return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:504 headers:nil];
       
-    } else {
+    } else if (connectionAttempts == 3) {
+
       // Return actual data afterwards
       ++successfulConnections;
       NSDictionary* dummyJSONResponse = @{@"key": @"value"};
       XCTAssertEqual(connectionAttempts, failedConnections + successfulConnections);
       BNCAfterSecondsPerformBlock(0.01, ^ { NSLog(@"==>> Fullfill <<=="); [successExpectation fulfill]; });
       return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+
+    } else {
+
+        XCTFail(@"Too many connection attempts: %ld.", (long) connectionAttempts);
+        return [OHHTTPStubsResponse responseWithJSONObject:[NSDictionary new] statusCode:200 headers:nil];
+
     }
   }];
   
@@ -258,7 +273,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   __block NSUInteger connectionAttempts = 0;
   
   [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_foo"].location != NSNotFound;
+    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
     XCTAssertEqual(foundBranchKey, TRUE);
     return foundBranchKey;
     
@@ -295,7 +310,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   __block NSUInteger connectionAttempts = 0;
   
   [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_foo"].location != NSNotFound;
+    BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
     XCTAssertEqual(foundBranchKey, TRUE);
     return foundBranchKey;
     

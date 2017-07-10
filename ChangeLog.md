@@ -1,5 +1,42 @@
 Branch iOS SDK Change Log
 
+- v0.16.1
+  * *QA Release* - July 5, 2017
+  * Added a new method to the API for registering a deep link controller. The API adds presentation
+    options for showing the deep link controller:
+```
+        - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller
+                                    forKey:(NSString *)key
+                          withPresentation:(BNCViewControllerPresentationOption)option;
+```
+
+    and depreciated the old API:
+
+```
+        - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)
+                controller forKey:(NSString *)key;
+
+```
+
+    See [Registering a view controller to handle deep linking" in the documentation.](https://dev.branch.io/getting-started/deep-link-routing/advanced/ios/#register-view-controller-for-deep-link-routing)
+
+  * Added a WebViewExample-Test schema to illustrate how to use custom configurations and schemas
+    to select the Branch environment.
+  * Make it easier to use the Branch test key.
+    - Added the Branch class methods `useTestBranchKey` and `branchKey` to set the Branch key to use.
+    - If `useTestBranchKey` is set to true, Branch will attempt to use the `test` key from the
+      Info.plist.
+   * Updated the docs to show BranchShareLink usage, especially how the use the BranchShareLink
+     delegate to change the share text based on user selection.
+
+- v0.16.0
+  * *QA Release* - June 14, 2017
+  * Branch support for opening Branch links inside an app once a session is already started (like AppBoy) (AIS-264).
+  * Updated logging. Logging is more robust and consistant. Fixed the punctuation and grammer for logging messages.
+  * Added a standard `BNCCurrency` type for commerce events.
+  * Stop sending the Apple search ad data after attribution has been found or 30 days (AIS-267).
+  * Added a deprecation warning added for older BranchActivityItems in BranchUniversalObject.h (#631).
+
 - v0.15.3
   * *Master Release*
 

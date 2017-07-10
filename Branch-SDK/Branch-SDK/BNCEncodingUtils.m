@@ -8,6 +8,7 @@
 
 #import "BNCEncodingUtils.h"
 #import "BNCPreferenceHelper.h"
+#import "BNCLog.h"
 #import <CommonCrypto/CommonDigest.h>
 
 @implementation BNCEncodingUtils
@@ -244,7 +245,7 @@ static const short _base64DecodingTable[256] = {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            NSLog(@"[encodeDictionaryToJsonString] Cannot encode value for key %@, type is not in list of accepted types", key);
+            BNCLogError(@"Cannot encode value for key %@. The value is not an accepted type.", key);
             continue;
         }
         
@@ -265,11 +266,8 @@ static const short _base64DecodingTable[256] = {
     }
 
     [encodedDictionary appendString:@"}"];
-    
-    if ([[BNCPreferenceHelper preferenceHelper] isDebug]) {
-        NSLog(@"encoded dictionary : %@", encodedDictionary);
-    }
-    
+
+    BNCLogDebugSDK(@"Encoded dictionary: %@.", encodedDictionary);
     return encodedDictionary;
 }
 
@@ -311,7 +309,7 @@ static const short _base64DecodingTable[256] = {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            NSLog(@"[encodedArray] Cannot encode value %@, type is not in list of accepted types", obj);
+            BNCLogError(@"Cannot encode value %@. The value is not an accepted type.", obj);
             continue;
         }
         
@@ -329,10 +327,7 @@ static const short _base64DecodingTable[256] = {
     [encodedArray deleteCharactersInRange:NSMakeRange([encodedArray length] - 1, 1)];
     [encodedArray appendString:@"]"];
     
-    if ([[BNCPreferenceHelper preferenceHelper] isDebug]) {
-        NSLog(@"encoded array : %@", encodedArray);
-    }
-
+    BNCLogDebugSDK(@"Encoded array: %@.", encodedArray);
     return encodedArray;
 }
 
@@ -365,7 +360,7 @@ static const short _base64DecodingTable[256] = {
             }
             else {
                 // If this type is not a known type, don't attempt to encode it.
-                NSLog(@"[encodeDictionaryToQueryString] Cannot encode value %@, type is not in list of accepted types", obj);
+                BNCLogError(@"Cannot encode value %@. The value is not an accepted type.", obj);
                 continue;
             }
             
