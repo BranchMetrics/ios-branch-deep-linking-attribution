@@ -1,5 +1,13 @@
 Branch iOS SDK Change Log
 
+- v0.16.2
+  * *Master Release* - July 13, 2017
+  * Decoupled logic for determining app language and app country code.
+  * Updated the project for Xcode 9 beta and iOS 11 beta.
+  * Removed the dependency on the CoreTelephony framework.
+  * Fixed an occasional crash when retrieving country code and language.
+  * Made SafariServices an optional CocoaPod podspec.
+
 - v0.16.1
   * *QA Release* - July 5, 2017
   * Added a new method to the API for registering a deep link controller. The API adds presentation
