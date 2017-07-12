@@ -21,9 +21,11 @@
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    // Have Branch use the Branch test key that is in the app's Info.plist file.
-    // This makes Branch test against the test environment instead of the live environment.
-    Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
+    // Set Branch.useTestBranchKey = YES; to have Branch use the test key that's in the app's
+    // Info.plist file. This makes Branch test against your test environment (As shown in the Branch
+    // Dashboard) instead of the live environment.
+    //
+    // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
 
     // Comment / un-comment to toggle debugging:
