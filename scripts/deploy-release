@@ -46,7 +46,7 @@ pod lib lint Branch.podspec --verbose
 
 # Build the framework
 echo ">>> Building the framework..." 1>&2
-./scripts/build_framework.sh
+./scripts/deploy-build-framework
 
 # Make the zip files and get the checksums
 echo ">>> Zipping and checksumming framework files..." 1>&2
