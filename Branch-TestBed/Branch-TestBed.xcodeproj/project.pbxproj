@@ -145,6 +145,7 @@
 		E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B947491D15D73900F2270D /* BNCCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F1CD5BE91F142EA400A12B67 /* BNCLocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = F1CD5BE71F142EA400A12B67 /* BNCLocalization.h */; };
 		F1CD5BEA1F142EA400A12B67 /* BNCLocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = F1CD5BE81F142EA400A12B67 /* BNCLocalization.m */; };
+		F1CD5BEE1F18249800A12B67 /* BNCLocalizationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F1CD5BED1F18249800A12B67 /* BNCLocalizationTests.m */; };
 		F1D359201ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */; };
 		F1D359211ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */; };
 /* End PBXBuildFile section */
@@ -329,6 +330,7 @@
 		E2B947491D15D73900F2270D /* BNCCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCCallbacks.h; sourceTree = "<group>"; };
 		F1CD5BE71F142EA400A12B67 /* BNCLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLocalization.h; sourceTree = "<group>"; };
 		F1CD5BE81F142EA400A12B67 /* BNCLocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLocalization.m; sourceTree = "<group>"; };
+		F1CD5BED1F18249800A12B67 /* BNCLocalizationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLocalizationTests.m; sourceTree = "<group>"; };
 		F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
 		F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeepLinkViewControllerInstance.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -600,6 +602,7 @@
 				46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */,
 				46DBB42B1B330CF300642FC8 /* BNCLinkDataTests.m */,
 				4DA577191E67B1EB00A43BDD /* BNCLog.Test.m */,
+				F1CD5BED1F18249800A12B67 /* BNCLocalizationTests.m */,
 				46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */,
 				464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */,
 				46DBB42C1B330CF300642FC8 /* BNCServerRequestQueueTests.m */,
@@ -961,6 +964,7 @@
 				461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */,
 				46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */,
 				4665AF281B28C1DE00184037 /* BranchLogoutRequestTests.m in Sources */,
+				F1CD5BEE1F18249800A12B67 /* BNCLocalizationTests.m in Sources */,
 				46DC40781B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m in Sources */,
 				4DA5771F1E67B23D00A43BDD /* BNCDebug.Test.m in Sources */,
 				464EA3981ACB1797000E4094 /* BNCServerInterfaceTests.m in Sources */,
