@@ -6,12 +6,16 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-
 #import "BNCError.h"
-
 
 NSString * const BNCErrorDomain = @"io.branch";
 
 @implementation BNCError
+
++ (NSError*) branchErrorWithCode:(BNCErrorCode)errorCode reason:(NSString*_Nullable)reason {
+    NSError *error = [NSError errorWithDomain:BNCErrorDomain code:errorCode userInfo:
+                      @{ NSLocalizedDescriptionKey: BNCLocalizedString(reason)}];
+    return error;
+}
 
 @end

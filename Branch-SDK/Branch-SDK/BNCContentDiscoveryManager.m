@@ -299,7 +299,7 @@
             spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
 
     if ([BNCSystemObserver getOSVersion].integerValue < 9) {
-        NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service prior to iOS 9" }];
+        NSError *error = [BNCError branchErrorWithCode:BNCVersionError reason:@"Cannot use CoreSpotlight indexing service prior to iOS 9"];
         if (callback) {
             callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         }
@@ -309,7 +309,7 @@
         return;
     }
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
-    NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"CoreSpotlight is not available because the base SDK for this project is less than 9.0" }];
+    NSError *error = [BNCError branchErrorWithCode:BNCVersionError reason:@"CoreSpotlight is not available because the base SDK for this project is less than 9.0"];
     if (callback) {
         callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
     }
@@ -324,7 +324,7 @@
     isIndexingAvailable = ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])(CSSearchableIndexClass, isIndexingAvailableSelector);
     
     if (!isIndexingAvailable) {
-        NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service on this device/OS" }];
+        NSError *error = [BNCError branchErrorWithCode:BNCVersionError reason:@"Cannot use CoreSpotlight indexing service on this device/OS"];
         if (callback) {
             callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         }
@@ -335,7 +335,7 @@
         return;
     }
     if (!title) {
-        NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title" }];
+        NSError *error = [BNCError branchErrorWithCode:BNCBadRequestError reason:@"Spotlight Indexing requires a title"];
         if (callback) {
             callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         }

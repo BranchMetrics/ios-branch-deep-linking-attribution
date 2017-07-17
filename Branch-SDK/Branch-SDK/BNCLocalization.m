@@ -21,20 +21,19 @@ extern NSString* BNCLocalizedString (NSString* string){
 }
 
 +(NSDictionary*) getSupportedLanguages {
-    NSDictionary* supportedLanguages = @{@"en":[BNCLocalization en_localised],@"ru":[BNCLocalization ru_localised]};
+    NSDictionary* supportedLanguages = @{@"en":[BNCLocalization en_localised]};
     return supportedLanguages;
 }
 
 +(NSDictionary*) en_localised {
     NSDictionary* en_dic = @{@"YES":@"Yes"};
+    @"Cannot use CoreSpotlight indexing service prior to iOS 9"
+    @"CoreSpotlight is not available because the base SDK for this project is less than 9.0"
+    @"Cannot use CoreSpotlight indexing service on this device/OS"
+    @"Spotlight Indexing requires a title"
+    
     
     return en_dic;
-}
-
-+(NSDictionary*) ru_localised {
-    NSDictionary* ru_dic = @{@"YES":@"ДА"};
-    
-    return ru_dic;
 }
 
 @end
