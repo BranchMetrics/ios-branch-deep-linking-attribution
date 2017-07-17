@@ -1,6 +1,6 @@
 //
 //  BNCLocalization.m
-//  Branch-TestBed
+//  Branch-SDK
 //
 //  Created by Parth Kalavadia on 7/10/17.
 //  Copyright © 2017 Branch Metrics. All rights reserved.
