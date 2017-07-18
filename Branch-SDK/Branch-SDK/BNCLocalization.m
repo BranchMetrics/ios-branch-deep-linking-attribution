@@ -40,9 +40,7 @@ extern NSString* BNCLocalizedString (NSString* string){
     @"Cannot use CoreSpotlight indexing service on this device":@"Cannot use CoreSpotlight indexing service on this device",
     @"Spotlight Indexing requires a title":@"Spotlight Indexing requires a title",
     @"A canonicalIdentifier or title are required to uniquely identify content, so could not register view.":@"A canonicalIdentifier or title are required to uniquely identify content, so could not register view.",
-    @"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.":@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL."
-                             };
-    
+    @"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.":@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL."};
     
     return en_dic;
 }

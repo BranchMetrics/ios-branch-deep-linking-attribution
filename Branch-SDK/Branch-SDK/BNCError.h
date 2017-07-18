@@ -22,6 +22,6 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCVersionError =           1006
 };
 
-@interface BNCError : NSError
+@interface BNCError : NSObject
 + (NSError*_Nullable) branchErrorWithCode:(BNCErrorCode)errorCode reason:(NSString*_Nullable)reason;
 @end
