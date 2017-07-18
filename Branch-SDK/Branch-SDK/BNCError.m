@@ -13,8 +13,9 @@ NSString * const BNCErrorDomain = @"io.branch";
 @implementation BNCError
 
 + (NSError*) branchErrorWithCode:(BNCErrorCode)errorCode reason:(NSString*_Nullable)reason {
+    NSString* reasonStr = BNCLocalizedString(reason);
     NSError *error = [NSError errorWithDomain:BNCErrorDomain code:errorCode userInfo:
-                      @{ NSLocalizedDescriptionKey: BNCLocalizedString(reason)}];
+                      reasonStr == nil? nil:@{ NSLocalizedDescriptionKey: BNCLocalizedString(reason)}];
     return error;
 }
 
