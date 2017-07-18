@@ -582,7 +582,7 @@
     // Bad requests callback should be captured at this point, call it to trigger the failure.
 
 	if (badRequestCallback) {
-		NSError * error = [NSError errorWithDomain:BNCErrorDomain code:BNCServerProblemError userInfo:nil];
+        NSError * error = [BNCError branchErrorWithCode:BNCServerProblemError reason:nil];
     	badRequestCallback(nil, error);
 	} else {
 		XCTAssert(badRequestCallback);
@@ -638,7 +638,7 @@
 
         sleep(1); // Sleep so that network queue can processes
         if (badRequestCallback) {
-            badRequestCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:nil]);
+            badRequestCallback(nil, [BNCError branchErrorWithCode:BNCBadRequestError reason:nil]);
             badRequestCallback = nil;
         } else if (goodRequestCallback) {
             goodRequestCallback([[BNCServerResponse alloc] init], nil);

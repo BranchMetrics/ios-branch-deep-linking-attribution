@@ -119,10 +119,10 @@ NSString *requestEndpoint;
         else if (callback) {
             // Wrap up bad statuses w/ specific error messages
             if (status >= 500) {
-                error = [NSError errorWithDomain:BNCErrorDomain code:BNCServerProblemError userInfo:@{ NSLocalizedDescriptionKey: @"Trouble reaching the Branch servers, please try again shortly" }];
+                error = [BNCError branchErrorWithCode:BNCServerProblemError reason:@"Trouble reaching the Branch servers, please try again shortly"];
             }
             else if (status == 409) {
-                error = [NSError errorWithDomain:BNCErrorDomain code:BNCDuplicateResourceError userInfo:@{ NSLocalizedDescriptionKey: @"A resource with this identifier already exists" }];
+                error = [BNCError branchErrorWithCode:BNCDuplicateResourceError reason:@"A resource with this identifier already exists"];
             }
             else if (status >= 400) {
                 NSString *errorString = @"The request was invalid.";
@@ -131,7 +131,7 @@ NSString *requestEndpoint;
                     errorString = [serverResponse.data objectForKey:@"error"];
                 }
                 
-                error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: errorString }];
+                error = [BNCError branchErrorWithCode:BNCBadRequestError reason:errorString];
             }
             
             if (error && log) {
