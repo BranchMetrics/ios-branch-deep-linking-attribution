@@ -20,6 +20,7 @@
 #import "BNCContentDiscoveryManager.h"
 #import "BNCStrongMatchHelper.h"
 #import "BNCDeepLinkViewControllerInstance.h"
+#import "BNCCrashlyticsWrapper.h"
 #import "BranchUniversalObject.h"
 #import "BranchSetIdentityRequest.h"
 #import "BranchLogoutRequest.h"
@@ -122,6 +123,7 @@ void ForceCategoriesToLoad(void) {
         BNCLogSetOutputToURLByteWrap(logURL,  102400);
         BNCLogSetDisplayLevel(BNCLogLevelWarning);
         BNCLogDebug(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
+        [self enhanceCrashlyticsReports];
     }
 }
 
@@ -1878,6 +1880,14 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
 + (NSString *)kitDisplayVersion {
 	return BNC_SDK_VERSION;
+}
+
+#pragma mark - Crashlytics reporting enhancements
+
++ (void)enhanceCrashlyticsReports
+{
+    BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
+    [crashlytics setObjectValue:BNC_SDK_VERSION forKey:@"io.branch.sdk.version"];
 }
 
 @end
