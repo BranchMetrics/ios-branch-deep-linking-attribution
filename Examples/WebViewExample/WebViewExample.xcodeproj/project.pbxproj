@@ -21,6 +21,8 @@
 		7B3B979C1E8C267E0089C04B /* PlanetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3B979B1E8C267E0089C04B /* PlanetCell.swift */; };
 		7B3B97AA1E8C31A60089C04B /* ArticleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3B97A91E8C31A60089C04B /* ArticleViewController.swift */; };
 		7B3B97AC1E8C32BD0089C04B /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3B97AB1E8C32BD0089C04B /* ArticleView.swift */; };
+		7BFB4C6D1F1D78180005DB6A /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BFB4C6C1F1D78180005DB6A /* SafariServices.framework */; };
+		7BFB4C6F1F1D78220005DB6A /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BFB4C6E1F1D78220005DB6A /* AdSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +44,8 @@
 		7B3B97A91E8C31A60089C04B /* ArticleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
 		7B3B97AB1E8C32BD0089C04B /* ArticleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleView.swift; sourceTree = "<group>"; };
 		7B3B97AD1E8C40400089C04B /* WebViewExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WebViewExample.entitlements; sourceTree = "<group>"; };
+		7BFB4C6C1F1D78180005DB6A /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
+		7BFB4C6E1F1D78220005DB6A /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		7EEC722811A5537AB20D41AA /* Pods-WebViewExample.test-debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebViewExample.test-debug.xcconfig"; path = "Pods/Target Support Files/Pods-WebViewExample/Pods-WebViewExample.test-debug.xcconfig"; sourceTree = "<group>"; };
 		8529F4248FBBE54B064721F2 /* Pods_WebViewExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WebViewExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6846A05958705A5BBB219C8 /* Pods-WebViewExample.test-release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebViewExample.test-release.xcconfig"; path = "Pods/Target Support Files/Pods-WebViewExample/Pods-WebViewExample.test-release.xcconfig"; sourceTree = "<group>"; };
@@ -52,6 +56,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BFB4C6F1F1D78220005DB6A /* AdSupport.framework in Frameworks */,
+				7BFB4C6D1F1D78180005DB6A /* SafariServices.framework in Frameworks */,
 				44B41F44A1783294F78E3DCC /* Pods_WebViewExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -62,6 +68,8 @@
 		3AFB5C04BFAF3CFD5D3B84F2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7BFB4C6E1F1D78220005DB6A /* AdSupport.framework */,
+				7BFB4C6C1F1D78180005DB6A /* SafariServices.framework */,
 				8529F4248FBBE54B064721F2 /* Pods_WebViewExample.framework */,
 			);
 			name = Frameworks;
@@ -139,6 +147,7 @@
 				7B3B977E1E8C1B650089C04B /* Resources */,
 				B83EB663911AC8B2CA5E28B1 /* [CP] Embed Pods Frameworks */,
 				DF74DA356D0CBFBBC39E6377 /* [CP] Copy Pods Resources */,
+				7B18DF421F1EA8F600C25C84 /* Run Fabric script */,
 			);
 			buildRules = (
 			);
@@ -161,7 +170,7 @@
 				TargetAttributes = {
 					7B3B977F1E8C1B650089C04B = {
 						CreatedOnToolsVersion = 8.3;
-						DevelopmentTeam = R63EM248DP;
+						DevelopmentTeam = RAARD2VX57;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -204,6 +213,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		7B18DF421F1EA8F600C25C84 /* Run Fabric script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Fabric script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\" 31a38fee5ad09d47253e4a99df04d09514c1d302 9ba78dc92b9df7f67889d6cf197db348b2580069e56b1632f515caa171271044";
+		};
 		B83EB663911AC8B2CA5E28B1 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -315,6 +338,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -349,7 +373,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
-				DEVELOPMENT_TEAM = R63EM248DP;
+				DEVELOPMENT_TEAM = RAARD2VX57;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -357,7 +381,7 @@
 				);
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
+				PRODUCT_BUNDLE_IDENTIFIER = "info.dubsar.TestBed-ReactNative";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG USE_BRANCH_TEST_INSTANCE";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -390,6 +414,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -417,14 +442,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
-				DEVELOPMENT_TEAM = R63EM248DP;
+				DEVELOPMENT_TEAM = RAARD2VX57;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"USE_BRANCH_TEST_INSTANCE=1",
 				);
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
+				PRODUCT_BUNDLE_IDENTIFIER = "info.dubsar.TestBed-ReactNative";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = USE_BRANCH_TEST_INSTANCE;
 				SWIFT_VERSION = 3.0;
@@ -456,6 +481,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -507,6 +533,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -534,10 +561,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
-				DEVELOPMENT_TEAM = R63EM248DP;
+				DEVELOPMENT_TEAM = RAARD2VX57;
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
+				PRODUCT_BUNDLE_IDENTIFIER = "info.dubsar.TestBed-ReactNative";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -552,10 +579,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
-				DEVELOPMENT_TEAM = R63EM248DP;
+				DEVELOPMENT_TEAM = RAARD2VX57;
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
+				PRODUCT_BUNDLE_IDENTIFIER = "info.dubsar.TestBed-ReactNative";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
