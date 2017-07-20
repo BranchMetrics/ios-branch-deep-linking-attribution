@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <mach/mach.h>
+#import <mach/mach_host.h>
 #include <sys/utsname.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
@@ -282,7 +284,7 @@
             options:0
             error:&error];            
     if (error) {
-        BNCLogError(@"Error retreiving bundle info: %@.", error);
+        BNCLogError(@"Error retrieving bundle info: %@.", error);
         return nil;
     }
     NSDate *buildDate = nil;
@@ -307,6 +309,53 @@
     NSString *currentAppVersion = [BNCSystemObserver getAppVersion];
     [BNCPreferenceHelper preferenceHelper].appVersion = currentAppVersion;
     [[BNCPreferenceHelper preferenceHelper] synchronize];
+}
+
+// https://stackoverflow.com/a/8540665/875725
++ (NSInteger)freeMemoryBytes
+{
+    mach_port_t host_port;
+    mach_msg_type_number_t host_size;
+    vm_size_t pagesize;
+    
+    host_port = mach_host_self();
+    host_size = sizeof(vm_statistics_data_t) / sizeof(integer_t);
+    host_page_size(host_port, &pagesize);
+    
+    vm_statistics_data_t vm_stat;
+    
+    if (host_statistics(host_port, HOST_VM_INFO, (host_info_t)&vm_stat, &host_size) != KERN_SUCCESS) {
+        BNCLogWarning(@"Failed to fetch vm statistics");
+        return -1;
+    }
+    
+    /* Stats in bytes */
+    return vm_stat.free_count * pagesize;
+}
+
++ (NSInteger)totalMemoryBytes
+{
+    mach_port_t host_port;
+    mach_msg_type_number_t host_size;
+    vm_size_t pagesize;
+    
+    host_port = mach_host_self();
+    host_size = sizeof(vm_statistics_data_t) / sizeof(integer_t);
+    host_page_size(host_port, &pagesize);
+    
+    vm_statistics_data_t vm_stat;
+    
+    if (host_statistics(host_port, HOST_VM_INFO, (host_info_t)&vm_stat, &host_size) != KERN_SUCCESS) {
+        BNCLogWarning(@"Failed to fetch vm statistics");
+        return -1;
+    }
+    
+    /* Stats in bytes */
+    NSUInteger mem_used = (vm_stat.active_count +
+                           vm_stat.inactive_count +
+                           vm_stat.wire_count) * pagesize;
+    NSUInteger mem_free = vm_stat.free_count * pagesize;
+    return mem_used + mem_free;
 }
 
 @end

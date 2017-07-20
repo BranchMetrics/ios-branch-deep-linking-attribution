@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CrashlyticsDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         Crashlytics.sharedInstance().delegate = self
-        Fabric.with([Crashlytics.self])
+        Fabric.with([Branch.self, Crashlytics.self])
 
         /*
          * Use the test instance if USE_BRANCH_TEST_INSTANCE is defined. This is defined in the
@@ -52,15 +52,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CrashlyticsDelegate {
             self.routeURLFromBranch(buo)
         }
 
+        //*
         let userDefaults = UserDefaults.standard
         var attempt = 0
         if userDefaults.object(forKey: "attempt_count") != nil {
             attempt = userDefaults.integer(forKey: "attempt_count")
         }
         attempt += 1
+        userDefaults.set(attempt, forKey: "attempt_count")
         Crashlytics.sharedInstance().setObjectValue(attempt, forKey: "attempt")
+        // */
 
-        logDeviceInfo()
+        // logDeviceInfo()
+        let totalMemoryBytes = BNCSystemObserver.totalMemoryBytes()
+        let freeMemoryBytes = BNCSystemObserver.freeMemoryBytes()
+        let freePercentage = Double(freeMemoryBytes) / Double(totalMemoryBytes) * 100
+
+        CLSLogv("Total memory: %ld bytes", getVaList([totalMemoryBytes]))
+        CLSLogv("At launch, free memory: %ld bytes (%f %%)", getVaList([freeMemoryBytes, freePercentage]))
 
         return true
     }
