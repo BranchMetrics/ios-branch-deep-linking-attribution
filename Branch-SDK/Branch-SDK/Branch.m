@@ -1269,7 +1269,10 @@ static NSString *bnc_branchKey = nil;
             
             [[BNCServerRequestQueue getInstance] clearQueue];
         }
-        
+        BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
+        // may be nil
+        [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID forKey:@"io.branch.device.fingerprintid"];
+
         preferenceHelper.lastRunBranchKey = key;
         
         branch = [[Branch alloc] initWithInterface:[[BNCServerInterface alloc] init] queue:[BNCServerRequestQueue getInstance] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:key];
