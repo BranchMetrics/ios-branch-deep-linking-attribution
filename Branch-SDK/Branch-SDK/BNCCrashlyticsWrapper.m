@@ -35,7 +35,10 @@
             if ([Crashlytics respondsToSelector:@selector(sharedInstance)]) {
                 id crashlyticsInstance = [Crashlytics sharedInstance];
                 if ([crashlyticsInstance isKindOfClass:Crashlytics] &&
-                    [crashlyticsInstance respondsToSelector:@selector(setObjectValue:forKey:)])
+                    [crashlyticsInstance respondsToSelector:@selector(setObjectValue:forKey:)] &&
+                    [crashlyticsInstance respondsToSelector:@selector(setBoolValue:forKey:)] &&
+                    [crashlyticsInstance respondsToSelector:@selector(setFloatValue:forKey:)] &&
+                    [crashlyticsInstance respondsToSelector:@selector(setIntValue:forKey:)])
                     _crashlytics = crashlyticsInstance;
             }
         }
@@ -46,8 +49,25 @@
 - (void)setObjectValue:(id)value forKey:(NSString *)key
 {
     if (!self.crashlytics) return;
-
     [self.crashlytics setObjectValue:value forKey:key];
+}
+
+- (void)setIntValue:(int)value forKey:(NSString *)key
+{
+    if (!self.crashlytics) return;
+    [self.crashlytics setIntValue:value forKey:key];
+}
+
+- (void)setFloatValue:(float)value forKey:(NSString *)key
+{
+    if (!self.crashlytics) return;
+    [self.crashlytics setFloatValue:value forKey:key];
+}
+
+- (void)setBoolValue:(BOOL)value forKey:(NSString *)key
+{
+    if (!self.crashlytics) return;
+    [self.crashlytics setBoolValue:value forKey:key];
 }
 
 @end

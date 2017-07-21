@@ -21,14 +21,10 @@
 + (instancetype _Nonnull)wrapper;
 
 /**
- * Use this method to set key values in a Crashlytics report. Note that
- * nil is acceptable for the value. Presumably this removes any key
- * previously set.
- *
- * This method name is deliberately chosen to match the Crashlytics
- * name in order to eliminate some compilation issues involving
- * unknown selectors.
+ * Use these methods to set key values in a Crashlytics report.
  */
 - (void)setObjectValue:(id _Nullable)value forKey:(NSString * _Nonnull)key;
-
+- (void)setIntValue:(int)value forKey:(NSString * _Nonnull)key;
+- (void)setBoolValue:(BOOL)value forKey:(NSString * _Nonnull)key;
+- (void)setFloatValue:(float)value forKey:(NSString * _Nonnull)key;
 @end

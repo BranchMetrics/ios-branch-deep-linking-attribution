@@ -36,6 +36,7 @@
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchRegisterViewRequest.h"
 #import "BranchContentDiscoverer.h"
+#import "BranchConstants.h"
 #import "NSMutableDictionary+Branch.h"
 #import "BNCLog.h"
 #import "BNCFabricAnswers.h"
@@ -212,6 +213,7 @@ void ForceCategoriesToLoad(void) {
 
 static BOOL bnc_useTestBranchKey = NO;
 static NSString *bnc_branchKey = nil;
+static BOOL bnc_disableFingerprintIDInCrashlyticsReports = NO;
 
 + (void) setUseTestBranchKey:(BOOL)useTestKey {
     @synchronized (self) {
@@ -295,6 +297,20 @@ static NSString *bnc_branchKey = nil;
                 " for configuration instructions.");
         }
         return bnc_branchKey;
+    }
+}
+
++ (void)setDisableFingerprintIDInCrashlyticsReports:(BOOL)disabled
+{
+    @synchronized(self) {
+        bnc_disableFingerprintIDInCrashlyticsReports = disabled;
+    }
+}
+
++ (BOOL) disableFingerprintIDInCrashlyticsReports
+{
+    @synchronized (self) {
+        return bnc_disableFingerprintIDInCrashlyticsReports;
     }
 }
 
@@ -423,6 +439,9 @@ static NSString *bnc_branchKey = nil;
 
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController {
+    // Log this early. Not consistently showing up when logged from [Branch initialize].
+    [self.class addBranchSDKVersionToCrashlyticsReport];
+
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
     
     // If the SDK is already initialized, this means that initSession is being called later in the app lifecycle
@@ -1269,9 +1288,12 @@ static NSString *bnc_branchKey = nil;
             
             [[BNCServerRequestQueue getInstance] clearQueue];
         }
-        BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-        // may be nil
-        [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID forKey:@"io.branch.device.fingerprintid"];
+
+        if (!self.disableFingerprintIDInCrashlyticsReports) {
+            BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
+            // may be nil
+            [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
+        }
 
         preferenceHelper.lastRunBranchKey = key;
         
@@ -1889,8 +1911,23 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
 + (void)enhanceCrashlyticsReports
 {
+    /* Not consistently showing up. Moving to a later method.
+    [self addBranchSDKVersionToCrashlyticsReport];
+    // */
+
+    [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
+                                                    object:nil
+                                                     queue:NSOperationQueue.mainQueue
+                                                usingBlock:^(NSNotification *notification) {
+                                                    BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
+                                                    [crashlytics setBoolValue:YES forKey:BRANCH_CRASHLYTICS_LOW_MEMORY_KEY];
+                                                }];
+}
+
++ (void)addBranchSDKVersionToCrashlyticsReport
+{
     BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-    [crashlytics setObjectValue:BNC_SDK_VERSION forKey:@"io.branch.sdk.version"];
+    [crashlytics setObjectValue:BNC_SDK_VERSION forKey:BRANCH_CRASHLYTICS_SDK_VERSION_KEY];
 }
 
 @end
