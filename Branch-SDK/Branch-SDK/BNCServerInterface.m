@@ -284,11 +284,12 @@ NSString *requestEndpoint;
     [self.preferenceHelper clearInstrumentationDictionary];
     [self.preferenceHelper addInstrumentationDictionaryKey:brttKey value:lastRoundTripTime];
 }
+
 - (void)updateDeviceInfoToMutableDictionary:(NSMutableDictionary *)dict {
     BNCDeviceInfo *deviceInfo  = [BNCDeviceInfo getInstance];
 
-    NSString *hardwareId = [deviceInfo.hardwareId copy];
-    NSString *hardwareIdType = [deviceInfo.hardwareIdType copy];
+    NSString *hardwareId = deviceInfo.hardwareId;
+    NSString *hardwareIdType = deviceInfo.hardwareIdType;
     NSNumber *isRealHardwareId = @(deviceInfo.isRealHardwareId);
 
     if (hardwareId && hardwareIdType && isRealHardwareId) {

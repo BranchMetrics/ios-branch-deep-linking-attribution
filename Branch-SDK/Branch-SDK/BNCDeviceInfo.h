@@ -16,21 +16,21 @@
 @interface BNCDeviceInfo : NSObject
 
 //---------Properties-------------//
-@property (nonatomic, strong) NSString *hardwareId;
-@property (nonatomic, strong) NSString *hardwareIdType;
-@property (nonatomic) BOOL isRealHardwareId;
-@property (nonatomic, strong) NSString *vendorId;
-@property (nonatomic, strong) NSString *brandName;
-@property (nonatomic, strong) NSString *modelName;
-@property (nonatomic, strong) NSString *osName;
-@property (nonatomic, strong) NSString *osVersion;
-@property (nonatomic, strong) NSNumber *screenWidth;
-@property (nonatomic, strong) NSNumber *screenHeight;
-@property (nonatomic) BOOL isAdTrackingEnabled;
+@property (atomic, copy) NSString *hardwareId;
+@property (atomic, copy) NSString *hardwareIdType;
+@property (atomic) BOOL isRealHardwareId;
+@property (atomic, copy) NSString *vendorId;
+@property (atomic, copy) NSString *brandName;
+@property (atomic, copy) NSString *modelName;
+@property (atomic, copy) NSString *osName;
+@property (atomic, copy) NSString *osVersion;
+@property (atomic, copy) NSNumber *screenWidth;
+@property (atomic, copy) NSNumber *screenHeight;
+@property (atomic) BOOL isAdTrackingEnabled;
 
-@property (nonatomic, strong) NSString* country;            //  iso2 Country name (us, in,etc).
-@property (nonatomic, strong) NSString* language;           //  iso2 language code (en, ml).
-@property (nonatomic, strong) NSString* browserUserAgent;   //  Simple user agent string.
+@property (atomic, copy) NSString* country;            //  iso2 Country name (us, in,etc).
+@property (atomic, copy) NSString* language;           //  iso2 language code (en, ml).
+@property (atomic, copy) NSString* browserUserAgent;   //  Simple user agent string.
 
 
 //----------Methods----------------//

@@ -44,23 +44,23 @@
             isDebug:preferenceHelper.isDebug
             andType:&hardwareIdType];
     if (hardwareId) {
-        self.hardwareId = hardwareId;
-        self.isRealHardwareId = isRealHardwareId;
-        self.hardwareIdType = hardwareIdType;
+        _hardwareId = hardwareId.copy;
+        _isRealHardwareId = isRealHardwareId;
+        _hardwareIdType = hardwareIdType.copy;
     }
 
-    self.vendorId = [BNCSystemObserver getVendorId];
-    self.brandName = [BNCSystemObserver getBrand];
-    self.modelName = [BNCSystemObserver getModel];
-    self.osName = [BNCSystemObserver getOS];
-    self.osVersion = [BNCSystemObserver getOSVersion];
-    self.screenWidth = [BNCSystemObserver getScreenWidth];
-    self.screenHeight = [BNCSystemObserver getScreenHeight];
-    self.isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
+    _vendorId = [BNCSystemObserver getVendorId].copy;
+    _brandName = [BNCSystemObserver getBrand].copy;
+    _modelName = [BNCSystemObserver getModel].copy;
+    _osName = [BNCSystemObserver getOS].copy;
+    _osVersion = [BNCSystemObserver getOSVersion].copy;
+    _screenWidth = [BNCSystemObserver getScreenWidth].copy;
+    _screenHeight = [BNCSystemObserver getScreenHeight].copy;
+    _isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
 
-    self.country = [self.class bnc_country];
-    self.language = [self.class bnc_language];
-    self.browserUserAgent = [self.class userAgentString];
+    _country = [BNCDeviceInfo bnc_country].copy;
+    _language = [BNCDeviceInfo bnc_language].copy;
+    _browserUserAgent = [BNCDeviceInfo userAgentString].copy;
     return self;
 }
 
