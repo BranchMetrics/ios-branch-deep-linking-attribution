@@ -31,16 +31,14 @@
     if (self) {
         // Dynamically obtain Crashlytics.sharedInstance if the Crashlytics SDK is linked.
         Class Crashlytics = NSClassFromString(@"Crashlytics");
-        if (Crashlytics) {
-            if ([Crashlytics respondsToSelector:@selector(sharedInstance)]) {
-                id crashlyticsInstance = [Crashlytics sharedInstance];
-                if ([crashlyticsInstance isKindOfClass:Crashlytics] &&
-                    [crashlyticsInstance respondsToSelector:@selector(setObjectValue:forKey:)] &&
-                    [crashlyticsInstance respondsToSelector:@selector(setBoolValue:forKey:)] &&
-                    [crashlyticsInstance respondsToSelector:@selector(setFloatValue:forKey:)] &&
-                    [crashlyticsInstance respondsToSelector:@selector(setIntValue:forKey:)])
-                    _crashlytics = crashlyticsInstance;
-            }
+        if ([Crashlytics respondsToSelector:@selector(sharedInstance)]) {
+            id crashlyticsInstance = [Crashlytics sharedInstance];
+            if ([crashlyticsInstance isKindOfClass:Crashlytics] &&
+                [crashlyticsInstance respondsToSelector:@selector(setObjectValue:forKey:)] &&
+                [crashlyticsInstance respondsToSelector:@selector(setBoolValue:forKey:)] &&
+                [crashlyticsInstance respondsToSelector:@selector(setFloatValue:forKey:)] &&
+                [crashlyticsInstance respondsToSelector:@selector(setIntValue:forKey:)])
+                _crashlytics = crashlyticsInstance;
         }
     }
     return self;
