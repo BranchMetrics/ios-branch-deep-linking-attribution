@@ -189,9 +189,20 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  * prevent reporting the device fingerprint ID to Crashlytics, call
  * [Branch setDisableFingerPrintIDInCrashlyticsReports:YES] before
  * [Branch getInstance] or [Branch getTestInstance].
+ *
+ * This method is thread-safe.
+ *
+ * @param disabled Set to YES to disable reporting of the device fingerprint ID to Crashlytics.
  */
 + (void) setDisableFingerprintIDInCrashlyticsReports:(BOOL)disabled;
 
+/**
+ * Determine whether device fingerprint ID reporting to Crashlytics is disabled.
+ *
+ * This method is thread-safe.
+ *
+ * @return YES if device fingerprint ID reporting to Crashlytics is disabled. NO otherwise.
+ */
 + (BOOL) disableFingerprintIDInCrashlyticsReports;
 
 #pragma mark - BranchActivityItemProvider methods
