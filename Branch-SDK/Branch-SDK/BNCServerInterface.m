@@ -297,20 +297,45 @@ NSString *requestEndpoint;
         dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = hardwareIdType;
         dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = isRealHardwareId;
     }
-    
-    [self safeSetValue:deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
-    [self safeSetValue:deviceInfo.brandName forKey:BRANCH_REQUEST_KEY_BRAND onDict:dict];
-    [self safeSetValue:deviceInfo.modelName forKey:BRANCH_REQUEST_KEY_MODEL onDict:dict];
-    [self safeSetValue:deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
-    [self safeSetValue:deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
-    [self safeSetValue:deviceInfo.screenWidth forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
-    [self safeSetValue:deviceInfo.screenHeight forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
 
-    [self safeSetValue:deviceInfo.browserUserAgent forKey:@"user_agent" onDict:dict];
-    [self safeSetValue:deviceInfo.country forKey:@"country" onDict:dict];
-    [self safeSetValue:deviceInfo.language forKey:@"language" onDict:dict];
+    NSString *vendorId = deviceInfo.vendorId;
+    NSString *brandName = deviceInfo.brandName;
+    NSString *modelName = deviceInfo.modelName;
+    NSString *osName = deviceInfo.osName;
+    NSString *osVersion = deviceInfo.osVersion;
+    NSNumber *screenWidth = deviceInfo.screenWidth;
+    NSNumber *screenHeight = deviceInfo.screenHeight;
+    NSString *browserUserAgent = deviceInfo.browserUserAgent;
+    NSString *country = deviceInfo.country;
+    NSString *language = deviceInfo.language;
+    BOOL isAdTrackingEnabled = deviceInfo.isAdTrackingEnabled;
 
-    dict[BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED] = @(deviceInfo.isAdTrackingEnabled);
+    // dict[@"foo"] = nil;
+    /*
+     * The line above does not crash. This is a legitimate way to remove a key from
+     * a mutable dictionary. It would be possible to remove the safeSetValue:forKey:onDict: methods
+     * throughout the SDK (and the category on NSMutableDictionary) in favor of:
+     *
+     * dict[BRANCH_REQUEST_KEY_IOS_VENDOR_ID] = vendorId;
+     * dict[BRANCH_REQUEST_KEY_BRANCH] = brandName;
+     * // etc.
+     *
+     * This would modernize the Obj-C, remove this method from a number of classes and
+     * simplify methods like this.
+     */
+    [self safeSetValue:vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
+    [self safeSetValue:brandName forKey:BRANCH_REQUEST_KEY_BRAND onDict:dict];
+    [self safeSetValue:modelName forKey:BRANCH_REQUEST_KEY_MODEL onDict:dict];
+    [self safeSetValue:osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
+    [self safeSetValue:osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
+    [self safeSetValue:screenWidth forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
+    [self safeSetValue:screenHeight forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
+
+    [self safeSetValue:browserUserAgent forKey:@"user_agent" onDict:dict];
+    [self safeSetValue:country forKey:@"country" onDict:dict];
+    [self safeSetValue:language forKey:@"language" onDict:dict];
+
+    dict[BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED] = @(isAdTrackingEnabled);
     
 }
 
