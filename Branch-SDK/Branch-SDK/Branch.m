@@ -1922,6 +1922,21 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
 + (void)addBranchSDKVersionToCrashlyticsReport
 {
+    /* Not consistently showing up. Moving to a later method.
+    [self addBranchSDKVersionToCrashlyticsReport];
+    // */
+
+    [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
+                                                    object:nil
+                                                     queue:NSOperationQueue.mainQueue
+                                                usingBlock:^(NSNotification *notification) {
+                                                    BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
+                                                    [crashlytics setBoolValue:YES forKey:BRANCH_CRASHLYTICS_LOW_MEMORY_KEY];
+                                                }];
+}
+
++ (void)addBranchSDKVersionToCrashlyticsReport
+{
     BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
     [crashlytics setObjectValue:BNC_SDK_VERSION forKey:BRANCH_CRASHLYTICS_SDK_VERSION_KEY];
 }
