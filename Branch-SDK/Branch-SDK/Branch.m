@@ -124,7 +124,7 @@ void ForceCategoriesToLoad(void) {
         BNCLogSetOutputToURLByteWrap(logURL,  102400);
         BNCLogSetDisplayLevel(BNCLogLevelWarning);
         BNCLogDebug(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
-        [self enhanceCrashlyticsReports];
+        [self logLowMemoryToCrashlytics];
     }
 }
 
@@ -1909,12 +1909,8 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
 #pragma mark - Crashlytics reporting enhancements
 
-+ (void)enhanceCrashlyticsReports
++ (void)logLowMemoryToCrashlytics
 {
-    /* Not consistently showing up. Moving to a later method.
-    [self addBranchSDKVersionToCrashlyticsReport];
-    // */
-
     [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
                                                     object:nil
                                                      queue:NSOperationQueue.mainQueue
