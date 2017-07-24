@@ -109,7 +109,7 @@
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
     [BNCSystemObserver setUpdateState];
 
-    if (!Branch.disableFingerprintIDInCrashlyticsReports) {
+    if (Branch.enableFingerprintIDInCrashlyticsReports) {
         BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
         [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
     }

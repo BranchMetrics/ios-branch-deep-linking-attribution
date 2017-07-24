@@ -187,23 +187,23 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  * By default, the Branch SDK will include the device fingerprint ID as metadata in Crashlytics
  * reports. This can help locate problems by correlating API traffic with a crash. To
  * prevent reporting the device fingerprint ID to Crashlytics, call
- * [Branch setDisableFingerPrintIDInCrashlyticsReports:YES] before
+ * [Branch setEnableFingerPrintIDInCrashlyticsReports:NO] before
  * [Branch getInstance] or [Branch getTestInstance].
  *
  * This method is thread-safe.
  *
- * @param disabled Set to YES to disable reporting of the device fingerprint ID to Crashlytics.
+ * @param enabled Set to NO to disable reporting of the device fingerprint ID to Crashlytics.
  */
-+ (void) setDisableFingerprintIDInCrashlyticsReports:(BOOL)disabled;
++ (void) setEnableFingerprintIDInCrashlyticsReports:(BOOL)enabled;
 
 /**
- * Determine whether device fingerprint ID reporting to Crashlytics is disabled.
+ * Determine whether device fingerprint ID reporting to Crashlytics is enabled.
  *
  * This method is thread-safe.
  *
- * @return YES if device fingerprint ID reporting to Crashlytics is disabled. NO otherwise.
+ * @return YES if device fingerprint ID reporting to Crashlytics is enabled. NO otherwise.
  */
-+ (BOOL) disableFingerprintIDInCrashlyticsReports;
++ (BOOL) enableFingerprintIDInCrashlyticsReports;
 
 #pragma mark - BranchActivityItemProvider methods
 

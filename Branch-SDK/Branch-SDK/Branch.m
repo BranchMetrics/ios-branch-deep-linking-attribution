@@ -213,7 +213,7 @@ void ForceCategoriesToLoad(void) {
 
 static BOOL bnc_useTestBranchKey = NO;
 static NSString *bnc_branchKey = nil;
-static BOOL bnc_disableFingerprintIDInCrashlyticsReports = NO;
+static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 + (void) setUseTestBranchKey:(BOOL)useTestKey {
     @synchronized (self) {
@@ -300,17 +300,17 @@ static BOOL bnc_disableFingerprintIDInCrashlyticsReports = NO;
     }
 }
 
-+ (void)setDisableFingerprintIDInCrashlyticsReports:(BOOL)disabled
++ (void)setEnableFingerprintIDInCrashlyticsReports:(BOOL)enabled
 {
     @synchronized(self) {
-        bnc_disableFingerprintIDInCrashlyticsReports = disabled;
+        bnc_enableFingerprintIDInCrashlyticsReports = enabled;
     }
 }
 
-+ (BOOL) disableFingerprintIDInCrashlyticsReports
++ (BOOL) enableFingerprintIDInCrashlyticsReports
 {
     @synchronized (self) {
-        return bnc_disableFingerprintIDInCrashlyticsReports;
+        return bnc_enableFingerprintIDInCrashlyticsReports;
     }
 }
 
@@ -1289,7 +1289,7 @@ static BOOL bnc_disableFingerprintIDInCrashlyticsReports = NO;
             [[BNCServerRequestQueue getInstance] clearQueue];
         }
 
-        if (!self.disableFingerprintIDInCrashlyticsReports) {
+        if (self.enableFingerprintIDInCrashlyticsReports) {
             BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
             // may be nil
             [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
