@@ -15,6 +15,8 @@
 		4D3FA94D1DFF3F6C00E2B6A9 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FA94C1DFF3F6C00E2B6A9 /* BNCConfig.m */; };
 		4D510D721F0D6014003D720B /* BNCDeepLinkViewControllerInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D510D701F0D6014003D720B /* BNCDeepLinkViewControllerInstance.h */; };
 		4D510D731F0D6014003D720B /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D510D711F0D6014003D720B /* BNCDeepLinkViewControllerInstance.m */; };
+		4D78C9651F2679F000EEDD5F /* BNCCrashlyticsWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D78C9631F2679F000EEDD5F /* BNCCrashlyticsWrapper.h */; };
+		4D78C9661F2679F000EEDD5F /* BNCCrashlyticsWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D78C9641F2679F000EEDD5F /* BNCCrashlyticsWrapper.m */; };
 		4DA40A8F1E1F0011004D2534 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA40A8D1E1F0011004D2534 /* BNCCommerceEvent.m */; };
 		4DB47D461F0424B200C53C29 /* BNCDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB47D401F0424B200C53C29 /* BNCDebug.h */; };
 		4DB47D471F0424B200C53C29 /* BNCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D411F0424B200C53C29 /* BNCDebug.m */; };
@@ -115,6 +117,8 @@
 		4D3FA94C1DFF3F6C00E2B6A9 /* BNCConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCConfig.m; sourceTree = "<group>"; };
 		4D510D701F0D6014003D720B /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
 		4D510D711F0D6014003D720B /* BNCDeepLinkViewControllerInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeepLinkViewControllerInstance.m; sourceTree = "<group>"; };
+		4D78C9631F2679F000EEDD5F /* BNCCrashlyticsWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCCrashlyticsWrapper.h; sourceTree = "<group>"; };
+		4D78C9641F2679F000EEDD5F /* BNCCrashlyticsWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCCrashlyticsWrapper.m; sourceTree = "<group>"; };
 		4DA40A8D1E1F0011004D2534 /* BNCCommerceEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCCommerceEvent.m; sourceTree = "<group>"; };
 		4DB47D401F0424B200C53C29 /* BNCDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDebug.h; sourceTree = "<group>"; };
 		4DB47D411F0424B200C53C29 /* BNCDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDebug.m; sourceTree = "<group>"; };
@@ -230,6 +234,8 @@
 		E230A1141D03DB9E006181D8 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
+				4D78C9631F2679F000EEDD5F /* BNCCrashlyticsWrapper.h */,
+				4D78C9641F2679F000EEDD5F /* BNCCrashlyticsWrapper.m */,
 				E2B9477A1D15E31700F2270D /* BNCCallbacks.h */,
 				4D3922BC1E1F0C85004FB7C8 /* BNCCommerceEvent.h */,
 				4DA40A8D1E1F0011004D2534 /* BNCCommerceEvent.m */,
@@ -397,6 +403,7 @@
 				E230A1921D03DB9E006181D8 /* BranchUniversalObject.h in Headers */,
 				E230A1771D03DB9E006181D8 /* BNCLinkData.h in Headers */,
 				E230A1851D03DB9E006181D8 /* Branch-SDK-Prefix.pch in Headers */,
+				4D78C9651F2679F000EEDD5F /* BNCCrashlyticsWrapper.h in Headers */,
 				4DB5673A1E79FDAF00A8A324 /* BranchShareLink.h in Headers */,
 				E230A1B61D03DB9F006181D8 /* BranchSpotlightUrlRequest.h in Headers */,
 				4D19C1C21DC110FB008D8B38 /* BNCXcode7Support.h in Headers */,
@@ -532,6 +539,7 @@
 				4DB47D4B1F0424B200C53C29 /* NSString+Branch.m in Sources */,
 				7DA3BF1D1D889CE500CA8AE0 /* BranchContentDiscoverer.m in Sources */,
 				4D291AAC1E322ECC007ED118 /* NSMutableDictionary+Branch.m in Sources */,
+				4D78C9661F2679F000EEDD5F /* BNCCrashlyticsWrapper.m in Sources */,
 				E230A1971D03DB9E006181D8 /* BranchViewHandler.m in Sources */,
 				E230A1801D03DB9E006181D8 /* BNCServerResponse.m in Sources */,
 				4DB47D491F0424B200C53C29 /* BNCLog.m in Sources */,
