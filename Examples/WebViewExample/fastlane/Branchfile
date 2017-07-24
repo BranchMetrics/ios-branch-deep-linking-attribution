@@ -1,8 +1,10 @@
-live_key: "key_live_feebgAAhbH9Tv85H5wLQhpdaefiZv5Dv"
-test_key: "key_test_hdcBLUy1xZ1JD0tKg7qrLcgirFmPPVJc"
-app_link_subdomain: "bnctestbed"
-xcodeproj: "WebViewExample.xcodeproj"
-# This app is not currently set up properly for test in the Dashboard. Use the :force for now.
-force: true
+live_key "key_live_jixgYiNQ5mIoxwuSag5U7niavqp6LiFW"
+test_key "key_test_jmzd0lUR9gIiAAEQfo42onbcExe1MeHg"
+app_link_subdomain "l1mv"
+xcodeproj "WebViewExample.xcodeproj"
 # In case you want to change the keys/domains. Harmless here otherwise.
-remove_existing_domains: true
+remove_existing_domains true
+# See https://github.com/BranchMetrics/fastlane-plugin-branch/issues/16
+# Currently validates domains to be removed, so if you change, validation
+# will fail.
+force true

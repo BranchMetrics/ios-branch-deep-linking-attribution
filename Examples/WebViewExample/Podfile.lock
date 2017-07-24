@@ -1,0 +1,37 @@
+PODS:
+  - Branch (0.16.2):
+    - Branch/Core (= 0.16.2)
+    - Branch/without-IDFA (= 0.16.2)
+    - Branch/without-Safari (= 0.16.2)
+  - Branch/Core (0.16.2)
+  - Branch/without-IDFA (0.16.2)
+  - Branch/without-Safari (0.16.2)
+  - Cartography (1.1.0)
+  - Crashlytics (3.8.5):
+    - Fabric (~> 1.6.3)
+  - Fabric (1.6.12)
+  - MBProgressHUD (1.0.0)
+  - TextAttributes (1.0)
+
+DEPENDENCIES:
+  - Branch (from `../..`)
+  - Cartography
+  - Crashlytics
+  - MBProgressHUD
+  - TextAttributes
+
+EXTERNAL SOURCES:
+  Branch:
+    :path: "../.."
+
+SPEC CHECKSUMS:
+  Branch: 41b7ee6b45f914cf58c10a9d555ac802142bc91c
+  Cartography: '0538ccb4044acbbda2266335fc58cb4228794d90'
+  Crashlytics: dfbae35ef22ca189240d230ad501feea4ee85d2d
+  Fabric: f050464eac45a2ce5a8e6e6a07e977c0df32fe28
+  MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
+  TextAttributes: 45b2713a1d174c377d320b51129c304eac381638
+
+PODFILE CHECKSUM: 2f2a98694cb2c65d76bf5941a6edbe03e8f1b836
+
+COCOAPODS: 1.2.1

@@ -7,3 +7,13 @@ desc "Add Branch keys and Universal Link domains to WebViewExample and commit to
 lane :setup_and_commit do
   setup_branch commit: true # Use a string here for a custom commit message
 end
+
+desc "Validate Universal Link setup"
+lane :validate do
+  validate_universal_links domains: %w{
+    l1mv.app.link
+    l1mv-alternate.app.link
+    l1mv.test-app.link
+    l1mv-alternate.test-app.link
+  }
+end

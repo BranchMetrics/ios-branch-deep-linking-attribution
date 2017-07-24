@@ -1,5 +1,6 @@
-PATH
-  remote: ../../../fastlane-plugin-branch
+GIT
+  remote: https://github.com/BranchMetrics/fastlane-plugin-branch
+  revision: 49c03604dca9ef3eba93ee9bf67a98c2d13a0ce3
   specs:
     fastlane-plugin-branch (0.1.0)
       nokogiri
@@ -198,4 +199,4 @@ DEPENDENCIES
   fastlane-plugin-branch!
 
 BUNDLED WITH
-   1.15.1
+   1.15.3
