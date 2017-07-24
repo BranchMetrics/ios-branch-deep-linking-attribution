@@ -20,6 +20,7 @@
 #import "BNCContentDiscoveryManager.h"
 #import "BNCStrongMatchHelper.h"
 #import "BNCDeepLinkViewControllerInstance.h"
+#import "BNCCrashlyticsWrapper.h"
 #import "BranchUniversalObject.h"
 #import "BranchSetIdentityRequest.h"
 #import "BranchLogoutRequest.h"
@@ -35,6 +36,7 @@
 #import "BranchSpotlightUrlRequest.h"
 #import "BranchRegisterViewRequest.h"
 #import "BranchContentDiscoverer.h"
+#import "BranchConstants.h"
 #import "NSMutableDictionary+Branch.h"
 #import "BNCLog.h"
 #import "BNCFabricAnswers.h"
@@ -122,6 +124,7 @@ void ForceCategoriesToLoad(void) {
         BNCLogSetOutputToURLByteWrap(logURL,  102400);
         BNCLogSetDisplayLevel(BNCLogLevelWarning);
         BNCLogDebug(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
+        [self logLowMemoryToCrashlytics];
     }
 }
 
@@ -210,6 +213,7 @@ void ForceCategoriesToLoad(void) {
 
 static BOOL bnc_useTestBranchKey = NO;
 static NSString *bnc_branchKey = nil;
+static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 + (void) setUseTestBranchKey:(BOOL)useTestKey {
     @synchronized (self) {
@@ -293,6 +297,20 @@ static NSString *bnc_branchKey = nil;
                 " for configuration instructions.");
         }
         return bnc_branchKey;
+    }
+}
+
++ (void)setEnableFingerprintIDInCrashlyticsReports:(BOOL)enabled
+{
+    @synchronized(self) {
+        bnc_enableFingerprintIDInCrashlyticsReports = enabled;
+    }
+}
+
++ (BOOL) enableFingerprintIDInCrashlyticsReports
+{
+    @synchronized (self) {
+        return bnc_enableFingerprintIDInCrashlyticsReports;
     }
 }
 
@@ -421,6 +439,9 @@ static NSString *bnc_branchKey = nil;
 
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController {
+    // Log this early. Not consistently showing up when logged from [Branch initialize].
+    [self.class addBranchSDKVersionToCrashlyticsReport];
+
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
     
     // If the SDK is already initialized, this means that initSession is being called later in the app lifecycle
@@ -1267,7 +1288,13 @@ static NSString *bnc_branchKey = nil;
             
             [[BNCServerRequestQueue getInstance] clearQueue];
         }
-        
+
+        if (self.enableFingerprintIDInCrashlyticsReports) {
+            BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
+            // may be nil
+            [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
+        }
+
         preferenceHelper.lastRunBranchKey = key;
         
         branch = [[Branch alloc] initWithInterface:[[BNCServerInterface alloc] init] queue:[BNCServerRequestQueue getInstance] cache:[[BNCLinkCache alloc] init] preferenceHelper:preferenceHelper key:key];
@@ -1878,6 +1905,25 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
 + (NSString *)kitDisplayVersion {
 	return BNC_SDK_VERSION;
+}
+
+#pragma mark - Crashlytics reporting enhancements
+
++ (void)logLowMemoryToCrashlytics
+{
+    [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
+                                                    object:nil
+                                                     queue:NSOperationQueue.mainQueue
+                                                usingBlock:^(NSNotification *notification) {
+                                                    BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
+                                                    [crashlytics setBoolValue:YES forKey:BRANCH_CRASHLYTICS_LOW_MEMORY_KEY];
+                                                }];
+}
+
++ (void)addBranchSDKVersionToCrashlyticsReport
+{
+    BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
+    [crashlytics setObjectValue:BNC_SDK_VERSION forKey:BRANCH_CRASHLYTICS_SDK_VERSION_KEY];
 }
 
 @end
