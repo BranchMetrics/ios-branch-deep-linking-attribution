@@ -1,0 +1,8 @@
+live_key: "key_live_feebgAAhbH9Tv85H5wLQhpdaefiZv5Dv"
+test_key: "key_test_hdcBLUy1xZ1JD0tKg7qrLcgirFmPPVJc"
+app_link_subdomain: "bnctestbed"
+xcodeproj: "WebViewExample.xcodeproj"
+# This app is not currently set up properly for test in the Dashboard. Use the :force for now.
+force: true
+# In case you want to change the keys/domains. Harmless here otherwise.
+remove_existing_domains: true

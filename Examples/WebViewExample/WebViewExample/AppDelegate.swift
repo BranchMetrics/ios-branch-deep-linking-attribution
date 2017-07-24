@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CrashlyticsDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         Crashlytics.sharedInstance().delegate = self
-        Fabric.with([Branch.self, Crashlytics.self])
+        Fabric.with([Crashlytics.self])
 
         /*
          * Use the test instance if USE_BRANCH_TEST_INSTANCE is defined. This is defined in the
@@ -52,24 +52,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CrashlyticsDelegate {
             self.routeURLFromBranch(buo)
         }
 
-        //*
-        let userDefaults = UserDefaults.standard
-        var attempt = 0
-        if userDefaults.object(forKey: "attempt_count") != nil {
-            attempt = userDefaults.integer(forKey: "attempt_count")
-        }
-        attempt += 1
-        userDefaults.set(attempt, forKey: "attempt_count")
-        Crashlytics.sharedInstance().setObjectValue(attempt, forKey: "attempt")
-        // */
-
+        // This initializes the BNCDeviceInfo on the main thread and may conflict with the crash in
+        // question. Uncomment this to see the BNCDeviceInfo in Crashlytics logs.
         // logDeviceInfo()
-        let totalMemoryBytes = BNCSystemObserver.totalMemoryBytes()
-        let freeMemoryBytes = BNCSystemObserver.freeMemoryBytes()
-        let freePercentage = Double(freeMemoryBytes) / Double(totalMemoryBytes) * 100
 
-        CLSLogv("Total memory: %ld bytes", getVaList([totalMemoryBytes]))
-        CLSLogv("At launch, free memory: %ld bytes (%f %%)", getVaList([freeMemoryBytes, freePercentage]))
+        // This only logs the memory usage at launch. Crashlytics reports memory usage at crash time
+        // anyway, but this can be useful to verify.
+        logMemoryStats()
 
         return true
     }
@@ -104,7 +93,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CrashlyticsDelegate {
         completionHandler(true)
     }
 
-    func logDeviceInfo() {
+    // MARK: - Crashlytics logging enhancements
+
+    private func logDeviceInfo() {
         guard let deviceInfo = BNCDeviceInfo.getInstance() else {
             BNCLogWarning("Failed to get BNCDeviceInfo")
             CLSLogv("Failed to get BNCDeviceInfo", getVaList([]))
@@ -130,6 +121,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CrashlyticsDelegate {
         Answers.logCustomEvent(withName: "BNCDeviceInfo", customAttributes: params)
         BNCLog("BNCDeviceInfo: \(params)")
         CLSLogv("BNCDeviceInfo: %@", getVaList([params]))
+    }
+
+    private func logMemoryStats() {
+        let totalMemoryBytes = BNCSystemObserver.totalMemoryBytes()
+        let freeMemoryBytes = BNCSystemObserver.freeMemoryBytes()
+        let freePercentage = Double(freeMemoryBytes) / Double(totalMemoryBytes) * 100
+
+        CLSLogv("Total memory: %ld bytes", getVaList([totalMemoryBytes]))
+        CLSLogv("At launch, free memory: %ld bytes (%f %%)", getVaList([freeMemoryBytes, freePercentage]))
     }
 }
 

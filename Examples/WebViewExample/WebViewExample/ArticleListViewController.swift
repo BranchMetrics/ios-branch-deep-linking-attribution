@@ -87,7 +87,9 @@ class ArticleListViewController: UIViewController, UITableViewDelegate, UITableV
         let viewController = ArticleViewController(planetData: planetData)
         navigationController?.pushViewController(viewController, animated: true)
     }
-    
+
+    // MARK: - Selector to generate a crash for testing with Crashlytics
+
     func crash() {
         Crashlytics.sharedInstance().crash()
     }
