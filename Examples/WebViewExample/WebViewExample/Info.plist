@@ -21,7 +21,7 @@
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
-		<string>31a38fee5ad09d47253e4a99df04d09514c1d302</string>
+		<string>c4388b5f8ac113622406b4f451d20fce9f5316a4</string>
 		<key>Kits</key>
 		<array>
 			<dict>
@@ -56,9 +56,9 @@
 	<key>branch_key</key>
 	<dict>
 		<key>live</key>
-		<string>key_live_jixgYiNQ5mIoxwuSag5U7niavqp6LiFW</string>
+		<string>key_live_dczvWn3zrK8575YRe07IgjblAAmfx51S</string>
 		<key>test</key>
-		<string>key_test_jmzd0lUR9gIiAAEQfo42onbcExe1MeHg</string>
+		<string>key_test_fbqC9k2BqS68Y1XQi7YVjakhCxomD6Z9</string>
 	</dict>
 </dict>
 </plist>

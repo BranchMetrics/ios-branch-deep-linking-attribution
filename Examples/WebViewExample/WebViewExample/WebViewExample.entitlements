@@ -4,10 +4,10 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:l1mv.app.link</string>
-		<string>applinks:l1mv-alternate.app.link</string>
-		<string>applinks:l1mv.test-app.link</string>
-		<string>applinks:l1mv-alternate.test-app.link</string>
+		<string>applinks:wujv.app.link</string>
+		<string>applinks:wujv-alternate.app.link</string>
+		<string>applinks:wujv.test-app.link</string>
+		<string>applinks:wujv-alternate.test-app.link</string>
 	</array>
 </dict>
 </plist>

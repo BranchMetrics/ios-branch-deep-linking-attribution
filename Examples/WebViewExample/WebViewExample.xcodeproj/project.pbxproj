@@ -170,7 +170,7 @@
 				TargetAttributes = {
 					7B3B977F1E8C1B650089C04B = {
 						CreatedOnToolsVersion = 8.3;
-						DevelopmentTeam = RAARD2VX57;
+						DevelopmentTeam = R63EM248DP;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -225,7 +225,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Fabric/run\" 31a38fee5ad09d47253e4a99df04d09514c1d302 9ba78dc92b9df7f67889d6cf197db348b2580069e56b1632f515caa171271044";
+			shellScript = "\"${PODS_ROOT}/Fabric/run\" c4388b5f8ac113622406b4f451d20fce9f5316a4 a259ef93e56297c7e832c63dffa7ae3b172f07d523a059607d8d414f1cd06317";
 		};
 		B83EB663911AC8B2CA5E28B1 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -373,7 +373,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
-				DEVELOPMENT_TEAM = RAARD2VX57;
+				DEVELOPMENT_TEAM = R63EM248DP;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -381,7 +381,7 @@
 				);
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "info.dubsar.TestBed-ReactNative";
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.sdk.WebViewExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG USE_BRANCH_TEST_INSTANCE";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -442,14 +442,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
-				DEVELOPMENT_TEAM = RAARD2VX57;
+				DEVELOPMENT_TEAM = R63EM248DP;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"USE_BRANCH_TEST_INSTANCE=1",
 				);
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "info.dubsar.TestBed-ReactNative";
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.sdk.WebViewExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = USE_BRANCH_TEST_INSTANCE;
 				SWIFT_VERSION = 3.0;
@@ -561,10 +561,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
-				DEVELOPMENT_TEAM = RAARD2VX57;
+				DEVELOPMENT_TEAM = R63EM248DP;
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "info.dubsar.TestBed-ReactNative";
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.sdk.WebViewExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -579,10 +579,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WebViewExample/WebViewExample.entitlements;
-				DEVELOPMENT_TEAM = RAARD2VX57;
+				DEVELOPMENT_TEAM = R63EM248DP;
 				INFOPLIST_FILE = WebViewExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "info.dubsar.TestBed-ReactNative";
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.sdk.WebViewExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
