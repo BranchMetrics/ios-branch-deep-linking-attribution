@@ -4,7 +4,3 @@ app_link_subdomain "l1mv"
 xcodeproj "WebViewExample.xcodeproj"
 # In case you want to change the keys/domains. Harmless here otherwise.
 remove_existing_domains true
-# See https://github.com/BranchMetrics/fastlane-plugin-branch/issues/16
-# Currently validates domains to be removed, so if you change, validation
-# will fail.
-force true
