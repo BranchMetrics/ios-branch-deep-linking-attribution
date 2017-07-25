@@ -88,7 +88,7 @@
 
 #pragma mark - Getters & Setters
 
-- (NSError*) pinSessionToPublicSecKeyRefs:(NSArray/*<SecKeyRef>*/*)publicKeys {
+- (NSError*) pinSessionToPublicSecKeyRefs:(NSArray/**<SecKeyRef>*/*)publicKeys {
     @synchronized (self) {
         _pinnedPublicKeys = [NSMutableArray array];
         for (id secKey in publicKeys) {

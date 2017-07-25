@@ -41,7 +41,7 @@
 - (BNCNetworkOperation*) networkOperationWithURLRequest:(NSMutableURLRequest*)request
                 completion:(void (^)(BNCNetworkOperation*operation))completion;
 
-- (NSError*) pinSessionToPublicSecKeyRefs:(NSArray/*<SecKeyRef>*/*)publicKeys;
+- (NSError*) pinSessionToPublicSecKeyRefs:(NSArray/**<SecKeyRef>*/*)publicKeys;
 
 @property (strong) NSDictionary *userInfo;
 @end

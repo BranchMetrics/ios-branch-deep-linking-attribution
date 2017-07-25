@@ -321,7 +321,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             
             // Throw out invalid request types
             if (![request isKindOfClass:[BNCServerRequest class]]) {
-                BNCLogWarning(@"Found an invalid request object, discarding.");
+                BNCLogWarning(@"Found an invalid request object, discarding. Object is: %@.", request);
                 continue;
             }
             

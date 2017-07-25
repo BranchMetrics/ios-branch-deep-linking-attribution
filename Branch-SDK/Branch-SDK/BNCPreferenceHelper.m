@@ -11,7 +11,7 @@
 #import "BNCConfig.h"
 #import "Branch.h"
 #import "BNCLog.h"
-#import "../Fabric/Fabric+FABKits.h"
+#import "BNCFabricAnswers.h"
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
@@ -45,9 +45,6 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
 NSString * const BRANCH_PREFS_KEY_ANALYTICAL_DATA = @"bnc_branch_analytical_data";
 NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_manifest";
 
-// The name of this key was specified in the account-creation API integration
-static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
-
 @interface BNCPreferenceHelper () {
     NSOperationQueue *_persistPrefsQueue;
     NSString         *_lastSystemBuildVersion;
@@ -59,13 +56,12 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 @property (strong, nonatomic) NSMutableDictionary *creditsDictionary;
 @property (strong, nonatomic) NSMutableDictionary *requestMetadataDictionary;
 @property (strong, nonatomic) NSMutableDictionary *instrumentationDictionary;
-@property (assign, nonatomic) BOOL isUsingLiveKey;
 
 @end
 
 @implementation BNCPreferenceHelper
 
-@synthesize branchKey = _branchKey,
+@synthesize
             lastRunBranchKey = _lastRunBranchKey,
             appVersion = _appVersion,
             deviceFingerprintID = _deviceFingerprintID,
@@ -199,52 +195,6 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 }
 
 #pragma mark - Preference Storage
-
-- (NSString *)getBranchKey:(BOOL)isLive {
-    // Already loaded a key, and it's the same state (live/test)
-    if (_branchKey && isLive == self.isUsingLiveKey) {
-        return _branchKey;
-    }
-    
-    self.isUsingLiveKey = isLive;
-
-    id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
-    if (ret) {
-        if ([ret isKindOfClass:[NSString class]]) {
-            self.branchKey = ret;
-        }
-        else if ([ret isKindOfClass:[NSDictionary class]]) {
-            self.branchKey = isLive ? ret[@"live"] : ret[@"test"];
-        }
-
-    } else {
-
-        Class fabric = NSClassFromString(@"Fabric");
-        if ([fabric respondsToSelector:@selector(configurationDictionaryForKitClass:)]) {
-
-            NSDictionary *configDictionary = [fabric configurationDictionaryForKitClass:[Branch class]];
-            ret = [configDictionary objectForKey:BNC_BRANCH_FABRIC_APP_KEY_KEY];
-            
-            if ([ret isKindOfClass:[NSString class]]) {
-
-                self.branchKey = ret;
-
-            } else if ([ret isKindOfClass:[NSDictionary class]]) {
-
-                self.branchKey = isLive ? ret[@"live"] : ret[@"test"];
-                if (![self.branchKey isKindOfClass:NSString.class])
-                    self.branchKey = nil;
-
-            }
-        }
-    }
-    
-    return _branchKey;
-}
-
-- (void)setBranchKey:(NSString *)branchKey {
-    _branchKey = branchKey;
-}
 
 - (NSString *)lastRunBranchKey {
     if (!_lastRunBranchKey) {
