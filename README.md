@@ -385,13 +385,13 @@ Register a controller for Branch to show when specific keys are present in the B
 ###### Objective-C
 
 ```objc
-[[Branch getInstance] registerDeepLinkController:myController forKey:@"my-key"];
+[[Branch getInstance] registerDeepLinkController:myController forKey:@"my-key" withPresentation:BNCViewControllerOptionShow];
 ```
 
 ###### Swift
 
 ```swift
-Branch.getInstance().registerDeepLinkController(myController forKey:"my-key")
+Branch.getInstance().registerDeepLinkController(myController forKey:"my-key" withPresentation: .optionShow)
 ```
 
 #### Parameters
@@ -401,6 +401,13 @@ Branch.getInstance().registerDeepLinkController(myController forKey:"my-key")
 
 **key** (NSString *) _required_
 : The key checked for in open / install dictionaries.
+
+**Option** (BNCViewControllerPresentationOption) _required_
+| **Option** | **Meaning**
+| --- | ---
+| BNCViewControllerOptionShow | This option pushes view controller onto the navigation stack in a similar way as the showViewController
+| BNCViewControllerOptionPush | This option pushes view controller onto the navigation stack in a similar way as the pushViewController
+| BNCViewControllerOptionPresent | This option presents view controller onto the root view controller of window in a similar way as the presentViewController
 
 #### Returns
 

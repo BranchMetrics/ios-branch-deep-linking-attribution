@@ -133,3 +133,7 @@ extern NSString * const BRANCH_PACKAGE_NAME_KEY;
 extern NSString * const BRANCH_ENTITIES_KEY;
 
 extern NSString * const BRANCH_REQUEST_KEY_SEARCH_AD;
+
+extern NSString * const BRANCH_CRASHLYTICS_SDK_VERSION_KEY;
+extern NSString * const BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY;
+extern NSString * const BRANCH_CRASHLYTICS_LOW_MEMORY_KEY;

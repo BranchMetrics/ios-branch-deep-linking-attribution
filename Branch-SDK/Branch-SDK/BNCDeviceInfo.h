@@ -16,21 +16,22 @@
 @interface BNCDeviceInfo : NSObject
 
 //---------Properties-------------//
-@property (nonatomic, strong) NSString *hardwareId;
-@property (nonatomic, strong) NSString *hardwareIdType;
-@property (nonatomic) BOOL isRealHardwareId;
-@property (nonatomic, strong) NSString *vendorId;
-@property (nonatomic, strong) NSString *brandName;
-@property (nonatomic, strong) NSString *modelName;
-@property (nonatomic, strong) NSString *osName;
-@property (nonatomic, strong) NSString *osVersion;
-@property (nonatomic, strong) NSNumber *screenWidth;
-@property (nonatomic, strong) NSNumber *screenHeight;
-@property (nonatomic) BOOL isAdTrackingEnabled;
+@property (atomic, copy, readonly) NSString *hardwareId;
+@property (atomic, copy, readonly) NSString *hardwareIdType;
+@property (atomic, readonly) BOOL isRealHardwareId;
+// vendorId can be nil initially and non-nil later.
+@property (atomic, copy, readonly) NSString *vendorId;
+@property (atomic, copy, readonly) NSString *brandName;
+@property (atomic, copy, readonly) NSString *modelName;
+@property (atomic, copy, readonly) NSString *osName;
+@property (atomic, copy, readonly) NSString *osVersion;
+@property (atomic, copy, readonly) NSNumber *screenWidth;
+@property (atomic, copy, readonly) NSNumber *screenHeight;
+@property (atomic, readonly) BOOL isAdTrackingEnabled;
 
-@property (nonatomic, strong) NSString* country;            //  iso2 Country name (us, in,etc).
-@property (nonatomic, strong) NSString* language;           //  iso2 language code (en, ml).
-@property (nonatomic, strong) NSString* browserUserAgent;   //  Simple user agent string.
+@property (atomic, copy, readonly) NSString* country;            //  iso2 Country name (us, in,etc).
+@property (atomic, copy, readonly) NSString* language;           //  iso2 language code (en, ml).
+@property (atomic, copy, readonly) NSString* browserUserAgent;   //  Simple user agent string.
 
 
 //----------Methods----------------//

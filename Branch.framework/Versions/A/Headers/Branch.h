@@ -135,16 +135,17 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 ///--------------------------------
 
 /**
+ Gets the global, test Branch instance.
+
+ @warning This method is not meant to be used in production!
+*/
++ (Branch *) getTestInstance __attribute__((deprecated(("Use `Branch.useTestBranchKey = YES;` instead."))));
+
+
+/**
  Gets the global, live Branch instance.
  */
 + (Branch *)getInstance;
-
-/**
- Gets the global, test Branch instance.
- 
- @warning This method is not meant to be used in production!
- */
-+ (Branch *)getTestInstance;
 
 /**
  Gets the global Branch instance, configures using the specified key
@@ -154,6 +155,33 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 + (Branch *)getInstance:(NSString *)branchKey;
 
+/// TODO: Document:
+/**
+    Sets Branch to use the test `key_test_...` Branch key found in the Info.plist.
+    This can only be set before `[Branch getInstance...]` is called.
+    
+ @param useTestKey If YES then Branch to use the Branch test found in your app's Info.plist.
+*/
++ (void) setUseTestBranchKey:(BOOL)useTestKey;
+
+/// @return Returns true if the Branch test key should be used.
++ (BOOL) useTestBranchKey;
+
+/**
+ Directly sets the Branch key to be used.  Branch usually reads the Branch key from your app's
+ Info.plist file which is recommended and more convenient.  But the Branch key can also be set 
+ with this method. See the documentation at
+   https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project
+ for information about configuring your app with Branch keys.
+ 
+ You can only set the Branch key once per app run.
+
+ @param branchKey The Branch key to use.
+*/
++ (void) setBranchKey:(NSString*)branchKey;
+
+/// @return Returns the current Branch key.
++ (NSString*) branchKey;
 
 #pragma mark - BranchActivityItemProvider methods
 
@@ -338,12 +366,23 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (BOOL)handleDeepLink:(NSURL *)url;
 
+
+/**
+ Have Branch end the current deep link session and start a new session with the provided URL.
+
+ @param url     The URL to use to start the new session.
+ @return        Returns true if the passed URL can be handled by Branch.
+ */
+
+-(BOOL)handleDeepLinkWithNewSession:(NSURL *)url;
+
 /**
  Allow Branch to handle restoration from an NSUserActivity, returning whether or not it was
  from a Branch link.
  
  @param userActivity The NSUserActivity that caused the app to be opened.
  */
+
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity;
 
 /**
@@ -399,7 +438,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /// @name Deep Link Controller
 ///---------------------------
 
-- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key;
+- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key __attribute__((deprecated(("This API is deprecated. Please use registerDeepLinkController: forKey: withOption:"))));
+
+/**
+ Allow Branch to handle a view controller with options to push, present or show.
+ Note:
+ * If push option is used and the rootviewcontroller of window is not of type UINavigationViewController, than the sharing View controller would be presented automatically
+ */
+- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withPresentation:(BNCViewControllerPresentationOption)option;
 
 #pragma mark - Configuration methods
 

@@ -38,7 +38,7 @@
     return self;
 }
 
-+ (NSArray/*<SecKeyRef>*/*) publicSecKeyRefs {
++ (NSArray/**<SecKeyRef>*/*) publicSecKeyRefs {
 
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wobjc-string-concatenation"
