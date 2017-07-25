@@ -33,5 +33,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
 + (BOOL)isSimulator;
 + (BOOL)adTrackingSafe;
 + (NSDate*) appInstallDate;
++ (NSInteger) freeMemoryBytes;
++ (NSInteger) totalMemoryBytes;
 
 @end

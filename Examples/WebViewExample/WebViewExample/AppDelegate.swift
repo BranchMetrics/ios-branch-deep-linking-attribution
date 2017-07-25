@@ -7,9 +7,11 @@
 //
 
 import Branch
+import Crashlytics
+import Fabric
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, CrashlyticsDelegate {
 
     var window: UIWindow?
     var navigationController: NavigationController!
@@ -18,6 +20,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - UIApplicationDelegate methods
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        Crashlytics.sharedInstance().delegate = self
+        Fabric.with([Crashlytics.self])
+
         /*
          * Use the test instance if USE_BRANCH_TEST_INSTANCE is defined. This is defined in the
          * Test-Debug and Test-Release configurations, which are used by the WebViewExample-Test
@@ -47,6 +52,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.routeURLFromBranch(buo)
         }
 
+        // This initializes the BNCDeviceInfo on the main thread and may conflict with the crash in
+        // question. Uncomment this to see the BNCDeviceInfo in Crashlytics logs.
+        // logDeviceInfo()
+
+        // This only logs the memory usage at launch. Crashlytics reports memory usage at crash time
+        // anyway, but this can be useful to verify.
+        logMemoryStats()
+
         return true
     }
 
@@ -58,6 +71,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return branch.continue(userActivity)
     }
 
+    func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
+        BNCLogWarning("Application did receive memory warning.")
+        CLSLogv("Application did receive memory warning.", getVaList([]))
+        Answers.logCustomEvent(withName: "UIApplicationDidReceiveMemoryWarning", customAttributes: nil)
+    }
+
     // MARK: - Branch link routing
 
     private func routeURLFromBranch(_ buo: BranchUniversalObject) {
@@ -65,6 +84,52 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let articleViewController = ArticleViewController(planetData: planetData)
         navigationController.pushViewController(articleViewController, animated: true)
+    }
+
+    // MARK: - CrashlyticsDelegate
+
+    func crashlyticsDidDetectReport(forLastExecution report: CLSReport, completionHandler: @escaping (Bool) -> Void) {
+        BNCLog("Found Crashlytics report: \(report.identifier)")
+        completionHandler(true)
+    }
+
+    // MARK: - Crashlytics logging enhancements
+
+    private func logDeviceInfo() {
+        guard let deviceInfo = BNCDeviceInfo.getInstance() else {
+            BNCLogWarning("Failed to get BNCDeviceInfo")
+            CLSLogv("Failed to get BNCDeviceInfo", getVaList([]))
+            return
+        }
+
+        let params: [String: Any] = [
+            "hardwareId": deviceInfo.hardwareId,
+            "hardwareIdType": deviceInfo.hardwareIdType,
+            "isRealHardwareId": deviceInfo.isRealHardwareId ? "YES" : "NO",
+            "vendorId": deviceInfo.vendorId,
+            "brandName": deviceInfo.brandName,
+            "modelName": deviceInfo.modelName,
+            "osName": deviceInfo.osName,
+            "osVersion": deviceInfo.osVersion,
+            "screenWidth": "\(deviceInfo.screenWidth)",
+            "screenHeight": "\(deviceInfo.screenHeight)",
+            "isAdTrackingEnabled": deviceInfo.isAdTrackingEnabled ? "YES" : "NO",
+            "country": deviceInfo.country,
+            "language": deviceInfo.language,
+            "browserUserAgent": deviceInfo.browserUserAgent
+        ]
+        Answers.logCustomEvent(withName: "BNCDeviceInfo", customAttributes: params)
+        BNCLog("BNCDeviceInfo: \(params)")
+        CLSLogv("BNCDeviceInfo: %@", getVaList([params]))
+    }
+
+    private func logMemoryStats() {
+        let totalMemoryBytes = BNCSystemObserver.totalMemoryBytes()
+        let freeMemoryBytes = BNCSystemObserver.freeMemoryBytes()
+        let freePercentage = Double(freeMemoryBytes) / Double(totalMemoryBytes) * 100
+
+        CLSLogv("Total memory: %ld bytes", getVaList([totalMemoryBytes]))
+        CLSLogv("At launch, free memory: %ld bytes (%f %%)", getVaList([freeMemoryBytes, freePercentage]))
     }
 }
 

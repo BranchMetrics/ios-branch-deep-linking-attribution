@@ -1,0 +1,19 @@
+desc "Add Branch keys and Universal Link domains to WebViewExample"
+lane :setup do
+  setup_branch
+end
+
+desc "Add Branch keys and Universal Link domains to WebViewExample and commit to Git"
+lane :setup_and_commit do
+  setup_branch commit: true # Use a string here for a custom commit message
+end
+
+desc "Validate Universal Link setup"
+lane :validate do
+  validate_universal_links domains: %w{
+    wujv.app.link
+    wujv-alternate.app.link
+    wujv.test-app.link
+    wujv-alternate.test-app.link
+  }
+end

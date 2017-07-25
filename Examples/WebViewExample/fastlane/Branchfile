@@ -1,0 +1,6 @@
+live_key "key_live_dczvWn3zrK8575YRe07IgjblAAmfx51S"
+test_key "key_test_fbqC9k2BqS68Y1XQi7YVjakhCxomD6Z9"
+app_link_subdomain "wujv"
+xcodeproj "WebViewExample.xcodeproj"
+# In case you want to change the keys/domains. Harmless here otherwise.
+remove_existing_domains true

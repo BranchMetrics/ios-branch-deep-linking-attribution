@@ -7,6 +7,7 @@
 //
 
 import Cartography
+import Crashlytics
 import UIKit
 
 /**
@@ -43,6 +44,9 @@ class ArticleListViewController: UIViewController, UITableViewDelegate, UITableV
         }
 
         tableView.register(PlanetCell.self, forCellReuseIdentifier: PlanetCell.identifier)
+        
+        let crashButton = UIBarButtonItem(title: "Crash", style: .plain, target: self, action: #selector(crash))
+        navigationItem.rightBarButtonItem = crashButton
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -82,5 +86,11 @@ class ArticleListViewController: UIViewController, UITableViewDelegate, UITableV
 
         let viewController = ArticleViewController(planetData: planetData)
         navigationController?.pushViewController(viewController, animated: true)
+    }
+
+    // MARK: - Selector to generate a crash for testing with Crashlytics
+
+    func crash() {
+        Crashlytics.sharedInstance().crash()
     }
 }

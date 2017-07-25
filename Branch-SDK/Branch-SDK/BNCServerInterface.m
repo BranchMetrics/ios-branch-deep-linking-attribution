@@ -340,8 +340,7 @@ NSString *requestEndpoint;
 }
 
 - (NSDictionary*)updateDeviceInfoToParams:(NSDictionary *)params {
-    NSMutableDictionary *extendedParams=[[NSMutableDictionary alloc] init];
-    [extendedParams addEntriesFromDictionary:params];
+    NSMutableDictionary *extendedParams = params.mutableCopy;
     [self updateDeviceInfoToMutableDictionary:extendedParams];
     return extendedParams;
 }
