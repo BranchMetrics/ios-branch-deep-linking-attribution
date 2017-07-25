@@ -105,6 +105,8 @@
 		4DA80E9F1EA1A74F00440F52 /* BNCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA5771C1E67B22700A43BDD /* BNCDebug.m */; };
 		4DB567331E79F46000A8A324 /* BranchShareLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB567311E79F46000A8A324 /* BranchShareLink.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DB567341E79F46000A8A324 /* BranchShareLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB567321E79F46000A8A324 /* BranchShareLink.m */; };
+		4DB68FBD1F26D97E00BC3405 /* BNCEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB68FBB1F26D97E00BC3405 /* BNCEvent.h */; };
+		4DB68FBE1F26D97E00BC3405 /* BNCEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB68FBC1F26D97E00BC3405 /* BNCEvent.m */; };
 		4DDC52621DCC08E700CFB737 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DDC52611DCC08E700CFB737 /* iAd.framework */; };
 		54391A151BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 54391A131BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.h */; };
 		54391A161BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 54391A141BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m */; };
@@ -244,6 +246,8 @@
 		4DA577251E688C6000A43BDD /* Branch-SDK-Tests.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = "Branch-SDK-Tests.strings"; sourceTree = "<group>"; };
 		4DB567311E79F46000A8A324 /* BranchShareLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchShareLink.h; sourceTree = "<group>"; };
 		4DB567321E79F46000A8A324 /* BranchShareLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShareLink.m; sourceTree = "<group>"; };
+		4DB68FBB1F26D97E00BC3405 /* BNCEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCEvent.h; sourceTree = "<group>"; };
+		4DB68FBC1F26D97E00BC3405 /* BNCEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEvent.m; sourceTree = "<group>"; };
 		4DC351441DF0AFB300646A1D /* Simulate-FirstRun.xcappdata */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = "Simulate-FirstRun.xcappdata"; sourceTree = "<group>"; };
 		4DDC52611DCC08E700CFB737 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		54391A131BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchCSSearchableItemAttributeSet.h; sourceTree = "<group>"; };
@@ -522,12 +526,16 @@
 				7B18DF481F1F00E200C25C84 /* BNCCrashlyticsWrapper.m */,
 				4DA5771B1E67B22700A43BDD /* BNCDebug.h */,
 				4DA5771C1E67B22700A43BDD /* BNCDebug.m */,
+				F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */,
+				F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */,
 				7D5882301CA1BEEA00FF6358 /* BNCDeviceInfo.h */,
 				7D5882391CA1DF2700FF6358 /* BNCDeviceInfo.m */,
 				464EA3991ACB38EC000E4094 /* BNCEncodingUtils.h */,
 				464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */,
 				7E38829E1A37E22A004BDABE /* BNCError.h */,
 				7E38829F1A37E22A004BDABE /* BNCError.m */,
+				4DB68FBB1F26D97E00BC3405 /* BNCEvent.h */,
+				4DB68FBC1F26D97E00BC3405 /* BNCEvent.m */,
 				E2133B711D0125EF00763049 /* BNCFabricAnswers.h */,
 				E2133B741D01477200763049 /* BNCFabricAnswers.m */,
 				7E30BCF51A72FE7900AC7402 /* BNCLinkCache.h */,
@@ -575,8 +583,6 @@
 				4D35141A1E3201D80085EBA1 /* NSMutableDictionary+Branch.m */,
 				4DA577201E67B28700A43BDD /* NSString+Branch.h */,
 				4DA577211E67B28700A43BDD /* NSString+Branch.m */,
-				F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */,
-				F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */,
 			);
 			name = "Branch-SDK";
 			path = "../Branch-SDK/Branch-SDK";
@@ -662,6 +668,7 @@
 				46946B9A1B2689A100627BCC /* BranchCreditHistoryRequest.h in Headers */,
 				46946B871B26898E00627BCC /* BranchLogoutRequest.h in Headers */,
 				46946B991B2689A100627BCC /* BranchRedeemRewardsRequest.h in Headers */,
+				4DB68FBD1F26D97E00BC3405 /* BNCEvent.h in Headers */,
 				466B587D1B17780A00A69EDE /* BNCLinkCache.h in Headers */,
 				466B587C1B17780A00A69EDE /* BNCLinkData.h in Headers */,
 				462B50461B449DF000967B81 /* BranchDeepLinkingController.h in Headers */,
@@ -897,6 +904,7 @@
 				463F0A3D1B20A663004235D2 /* BranchShortUrlSyncRequest.m in Sources */,
 				54FF1F8E1BD1D4AE0004CE2E /* BranchUniversalObject.m in Sources */,
 				54FF1F961BD20EB50004CE2E /* BranchRegisterViewRequest.m in Sources */,
+				4DB68FBE1F26D97E00BC3405 /* BNCEvent.m in Sources */,
 				463F0A321B20A663004235D2 /* BranchSetIdentityRequest.m in Sources */,
 				4DA577181E67B1D600A43BDD /* BNCLog.m in Sources */,
 				4D8EE7A61E1F0A5D00B1F450 /* BNCCommerceEvent.m in Sources */,
