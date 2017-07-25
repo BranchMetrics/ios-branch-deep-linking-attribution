@@ -1,5 +1,12 @@
 Branch iOS SDK Change Log
 
+- v0.17.1
+  * Added support for using a provided network stack instead of the standard Branch SDK network calls.
+    See the documentation in the `BNCNetworkServiceProtocol.h` file for details.
+  * Added certificate pining for branch.io server calls.
+  * Removed support for iOS 6 networking.
+  * The iOS Security.framework is now required for linking with the Branch SDK.
+
 - v0.17.0
   * _*Beta Release*_ - July 24, 2017
   * Added Crashlytics reporting enhancements (#653)
