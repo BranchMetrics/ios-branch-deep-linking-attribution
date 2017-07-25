@@ -10,39 +10,48 @@
 
 // Commerce events
 
-BNCStandardEvent BNCEventAddToCart          = @"ADD_TO_CART";
-BNCStandardEvent BNCEventAddToWishlist      = @"ADD_TO_WISHLIST";
-BNCStandardEvent BNCEventViewCart           = @"VIEW_CART";
-BNCStandardEvent BNCEventInitiatePurchase   = @"INITIATE_PURCHASE";
-BNCStandardEvent BNCEventAddPaymentInfo     = @"ADD_PAYMENT_INFO";
-BNCStandardEvent BNCEventPurchase           = @"PURCHASE";
-BNCStandardEvent BNCEventSpendCredits       = @"SPEND_CREDITS";
+BNCStandardEvent BNCStandardEventAddToCart          = @"ADD_TO_CART";
+BNCStandardEvent BNCStandardEventAddToWishlist      = @"ADD_TO_WISHLIST";
+BNCStandardEvent BNCStandardEventViewCart           = @"VIEW_CART";
+BNCStandardEvent BNCStandardEventInitiatePurchase   = @"INITIATE_PURCHASE";
+BNCStandardEvent BNCStandardEventAddPaymentInfo     = @"ADD_PAYMENT_INFO";
+BNCStandardEvent BNCStandardEventPurchase           = @"PURCHASE";
+BNCStandardEvent BNCStandardEventSpendCredits       = @"SPEND_CREDITS";
 
 // Content Events
 
-BNCStandardEvent BNCEventSearch             = @"SEARCH";
-BNCStandardEvent BNCEventViewContent        = @"VIEW_CONTENT";
-BNCStandardEvent BNCEventViewContentList    = @"VIEW_CONTENT_LIST";
-BNCStandardEvent BNCEventRate               = @"RATE";
-BNCStandardEvent BNCEventShareContent       = @"SHARE_CONTENT";
+BNCStandardEvent BNCStandardEventSearch             = @"SEARCH";
+BNCStandardEvent BNCStandardEventViewContent        = @"VIEW_CONTENT";
+BNCStandardEvent BNCStandardEventViewContentList    = @"VIEW_CONTENT_LIST";
+BNCStandardEvent BNCStandardEventRate               = @"RATE";
+BNCStandardEvent BNCStandardEventShareContent       = @"SHARE_CONTENT";
 
 // User Lifecycle Events
 
-BNCStandardEvent BNCEventCompleteRegistration   = @"COMPLETE_REGISTRATION";
-BNCStandardEvent BNCEventCompleteTutorial       = @"COMPLETE_TUTORIAL";
-BNCStandardEvent BNCEventAchieveLevel           = @"ACHIEVE_LEVEL";
-BNCStandardEvent BNCEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
+BNCStandardEvent BNCStandardEventCompleteRegistration   = @"COMPLETE_REGISTRATION";
+BNCStandardEvent BNCStandardEventCompleteTutorial       = @"COMPLETE_TUTORIAL";
+BNCStandardEvent BNCStandardEventAchieveLevel           = @"ACHIEVE_LEVEL";
+BNCStandardEvent BNCStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
 
 @implementation Branch (BNCStandardEvents)
 
+- (void) trackStandardEvent:(BNCStandardEvent)event
+             withCustomData:(NSDictionary<NSString*, id<NSObject>>*)customData {
+}
+
 - (void) trackStandardEvent:(BNCStandardEvent)standardEvent
-              withEventData:(NSDictionary*)dictionary
+              withEventData:(NSDictionary<NSString*, id<NSObject>>*)dictionary
                contentItems:(NSArray<BranchUniversalObject*>*)contentItems {
 }
 
+- (void) trackStandardEvent:(BNCStandardEvent)event
+              withEventData:(NSDictionary<NSString*, id<NSObject>>*)eventData
+               contentItems:(NSArray<BranchUniversalObject*>*)universalObject
+                 customData:(NSDictionary<NSString*, id<NSObject>>*)customData {
+}
+
 - (void) trackCustomEvent:(NSString*)event
-            withEventData:(NSDictionary*)dictionary
-             contentItems:(NSArray<BranchUniversalObject*>*)contentItems {
+           withCustomData:(NSDictionary<NSString*, id<NSObject>>*)dictionary {
 }
 
 @end
