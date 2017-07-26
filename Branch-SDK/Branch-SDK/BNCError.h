@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "BNCLocalization.h"
 
 FOUNDATION_EXPORT NSString *_Nonnull const BNCErrorDomain;
 
@@ -17,14 +16,15 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCRedeemCreditsError           = 1002,
     BNCBadRequestError              = 1003,
     BNCServerProblemError           = 1004,
-    BNCNilLogError                  = 1005,
-    BNCVersionError                 = 1006,
+    BNCNilLogError                  = 1005, // Not used.
+    BNCVersionError                 = 1006, // Not used.
     BNCNetworkServiceInterfaceError = 1007,
-    BNCInvalidPublicKeyError        = 1008,
+    BNCInvalidNetworkPublicKeyError = 1008,
     BNCContentIdentifierError       = 1009,
     BNCSpotlightNotAvailableError   = 1010,
     BNCSpotlightTitleError          = 1011,
     BNCRedeemZeroCreditsError       = 1012,
+    BNCHighestError,
 };
 
 @interface NSError (Branch)

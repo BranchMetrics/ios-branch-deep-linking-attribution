@@ -95,7 +95,7 @@
             if (CFGetTypeID((SecKeyRef)secKey) == SecKeyGetTypeID())
                 [_pinnedPublicKeys addObject:secKey];
             else {
-                return [NSError branchErrorWithCode:BNCInvalidPublicKeyError];
+                return [NSError branchErrorWithCode:BNCInvalidNetworkPublicKeyError];
             }
         }
         return nil;
