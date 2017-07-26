@@ -185,13 +185,13 @@ NSInteger const  TEST_CREDITS = 30;
             return YES;
         }]];
     
-    [[serverInterfaceMock reject] postRequest:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+    [[serverInterfaceMock reject] postRequestSynchronous:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
         return [params[@"channel"] isEqualToString:@"facebook"];
-    }] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any] log:YES];
+    }] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any]];
     
-    [[[serverInterfaceMock expect] andReturn:twLinkResponse] postRequest:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+    [[[serverInterfaceMock expect] andReturn:twLinkResponse] postRequestSynchronous:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
         return [params[@"channel"] isEqualToString:@"twitter"];
-    }] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any] log:YES];
+    }] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any]];
     
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL"];
     
@@ -251,18 +251,18 @@ NSInteger const  TEST_CREDITS = 30;
         twLinkResponse.data = @{ @"url": @"https://bnc.lt/l/-03N4BGtJj" };
         
         // FB should only be called once
-        [[[serverInterfaceMock expect] andReturn:fbLinkResponse] postRequest:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+        [[[serverInterfaceMock expect] andReturn:fbLinkResponse] postRequestSynchronous:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
             return [params[@"channel"] isEqualToString:@"facebook"];
-        }] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any] log:YES];
+        }] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any]];
         
-        [[serverInterfaceMock reject] postRequest:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+        [[serverInterfaceMock reject] postRequestSynchronous:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
             return [params[@"channel"] isEqualToString:@"facebook"];
-        }] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any] log:YES];
+        }] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any]];
         
         // TW should be allowed still
-        [[[serverInterfaceMock expect] andReturn:twLinkResponse] postRequest:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
+        [[[serverInterfaceMock expect] andReturn:twLinkResponse] postRequestSynchronous:[OCMArg checkWithBlock:^BOOL(NSDictionary *params) {
             return [params[@"channel"] isEqualToString:@"twitter"];
-        }] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any] log:YES];
+        }] url:[preferenceHelper getAPIURL:@"url"] key:[OCMArg any]];
         
         NSString *url1 = [branch getShortURLWithParams:nil andChannel:@"facebook" andFeature:nil];
         XCTAssertNotNil(url1);
@@ -460,10 +460,9 @@ NSInteger const  TEST_CREDITS = 30;
 
     [[[serverInterfaceMock expect]
         andReturn:urlResp]
-            postRequest:[OCMArg any]
+            postRequestSynchronous:[OCMArg any]
             url:[preferenceHelper getAPIURL:@"url"]
-            key:[OCMArg any]
-            log:YES];
+            key:[OCMArg any]];
 
     NSString *url1 = [branch getShortURLWithParams:nil andChannel:nil andFeature:nil];
     XCTAssertEqual(urlTruthString, url1);
@@ -504,10 +503,9 @@ NSInteger const  TEST_CREDITS = 30;
 
     [[[serverInterfaceMock expect]
         andReturn:urlResp]
-            postRequest:[OCMArg any]
+            postRequestSynchronous:[OCMArg any]
             url:[preferenceHelper getAPIURL:@"url"]
-            key:[OCMArg any]
-            log:YES];
+            key:[OCMArg any]];
 
     NSString *url2 = [branch getShortURLWithParams:nil andChannel:nil andFeature:nil];
     XCTAssertEqualObjects(url1, url2);
