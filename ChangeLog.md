@@ -1,5 +1,33 @@
 Branch iOS SDK Change Log
 
+- v0.17.1
+  * Added support for using a provided network stack instead of the standard Branch SDK network calls.
+    See the documentation in the `BNCNetworkServiceProtocol.h` file for details.
+  * Added certificate pining for branch.io server calls.
+  * Removed support for iOS 6 networking.
+  * The iOS Security.framework is now required for linking with the Branch SDK.
+
+- v0.17.0
+  * _*Beta Release*_ - July 24, 2017
+  * Added Crashlytics reporting enhancements (#653)
+    - The Branch SDK version number is now recorded in Crashlytics logs.
+    - The Branch deviceFingerprintId is also recorded in Crashlytics by default. This is optional.
+    - Added BNCCrashlyticsWrapper.
+    - Added and updated unit tests.
+  * BNCDeviceInfo thread safety to prevent crash during initialization (#654).
+    - Updated all instance properties on BNCDeviceInfo to be totally thread-safe.
+    - Made all BNCDeviceInfo properties readonly. Lazy initialization of vendorId due to idiosyncrasy
+      of UIDevice.identifierForVendor.
+    - Separated messages to deviceInfo from messages to self in a troublesome stack frame.
+
+- v0.16.2
+  * *Master Release* - July 13, 2017
+  * Decoupled logic for determining app language and app country code.
+  * Updated the project for Xcode 9 beta and iOS 11 beta.
+  * Removed the dependency on the CoreTelephony framework.
+  * Fixed an occasional crash when retrieving country code and language.
+  * Made SafariServices an optional CocoaPod podspec.
+
 - v0.16.1
   * *QA Release* - July 5, 2017
   * Added a new method to the API for registering a deep link controller. The API adds presentation

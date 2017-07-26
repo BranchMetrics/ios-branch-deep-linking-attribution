@@ -73,10 +73,9 @@
 
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect]
-        postRequest:expectedParams
+        postRequestSynchronous:expectedParams
         url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]
-        key:[OCMArg any]
-        log:YES];
+        key:[OCMArg any]];
     
     [request makeRequest:serverInterfaceMock key:nil];
     
@@ -114,11 +113,10 @@
             linkCache:LINK_CACHE];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect]
-        postRequest:expectedParams
+        postRequestSynchronous:expectedParams
         url:[OCMArg any]
-        key:[OCMArg any]
-        log:YES];
-    
+        key:[OCMArg any]];
+
     [request makeRequest:serverInterfaceMock key:nil];
     
     [serverInterfaceMock verify];

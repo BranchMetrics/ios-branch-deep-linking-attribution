@@ -30,7 +30,7 @@ fi
 
 
 iOSDevice="iPhone 7 Plus"
-iOSVersion="10.0"
+iOSVersion="10.1"
 
 
 function fileExtension() {
@@ -83,6 +83,7 @@ buildDirectoryProjectScheme \
     TestBed-Swift
 
 cd Examples/WebViewExample
+printf "${textBlue}>>> Building '%s'...${textNormal}\n" "$(basename `pwd`)"
 pod install
 pod update
 cd ../..

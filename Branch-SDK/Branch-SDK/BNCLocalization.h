@@ -8,8 +8,4 @@
 
 #import <Foundation/Foundation.h>
 
-@interface BNCLocalization : NSObject
-
-extern NSString* BNCLocalizedString (NSString* string);
-
-@end
+NSString* BNCLocalizedString(NSString*string);

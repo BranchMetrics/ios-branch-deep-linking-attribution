@@ -51,15 +51,11 @@
 
 - (void)registerViewWithCallback:(callbackWithParams)callback {
     if (!self.canonicalIdentifier && !self.title) {
-        if (callback) {
-            callback([[NSDictionary alloc] init], [BNCError branchErrorWithCode:BNCInitError reason:@"A canonicalIdentifier or title are required to uniquely identify content, so could not register view."]);
-        }
-        else {
-            BNCLogWarning(@"A canonicalIdentifier or title are required to uniquely identify content, so could not register view.");
-        }
+        NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError message:@"Could not register view."];
+        BNCLogWarning(@"%@", error);
+        if (callback) callback([[NSDictionary alloc] init], error);
         return;
     }
-    
     if (self.automaticallyListOnSpotlight) {
         [self listOnSpotlight];
     }
@@ -162,12 +158,9 @@
 
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback {
     if (!self.canonicalIdentifier && !self.title) {
-        if (callback) {
-            callback([BNCPreferenceHelper preferenceHelper].userUrl, [BNCError branchErrorWithCode:BNCInitError reason:@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL."]);
-        }
-        else {
-            BNCLogWarning(@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.");
-        }
+        NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError message:@"Could not generate a URL."];
+        BNCLogWarning(@"%@", error);
+        if (callback) callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         return;
     }
     
@@ -184,7 +177,8 @@
 
 - (NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.title) {
-        BNCLogWarning(@"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.");
+        NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError message:@"Could not generate a URL."];
+        BNCLogWarning(@"%@", error);
         return nil;
     }
     // keep this operation outside of sync operation below.

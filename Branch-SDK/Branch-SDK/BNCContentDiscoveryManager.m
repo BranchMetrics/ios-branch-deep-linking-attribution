@@ -299,7 +299,7 @@
             spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
 
     if ([BNCSystemObserver getOSVersion].integerValue < 9) {
-        NSError *error = [BNCError branchErrorWithCode:BNCVersionError reason:@"Cannot use CoreSpotlight indexing service prior to iOS 9"];
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];
         if (callback) {
             callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         }
@@ -308,8 +308,9 @@
         }
         return;
     }
+
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
-    NSError *error = [BNCError branchErrorWithCode:BNCVersionError reason:@"CoreSpotlight is not available because the base SDK for this project is less than 9.0"];
+    NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];
     if (callback) {
         callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
     }
@@ -318,31 +319,33 @@
     }
     return;
 #endif
+
     BOOL isIndexingAvailable = NO;
     Class CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
     SEL isIndexingAvailableSelector = NSSelectorFromString(@"isIndexingAvailable");
-    isIndexingAvailable = ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])(CSSearchableIndexClass, isIndexingAvailableSelector);
+    isIndexingAvailable =
+        ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])
+            (CSSearchableIndexClass, isIndexingAvailableSelector);
     
     if (!isIndexingAvailable) {
-        NSError *error = [BNCError branchErrorWithCode:BNCVersionError reason:@"Cannot use CoreSpotlight indexing service on this device/OS"];
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];
         if (callback) {
             callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         }
         else if (spotlightCallback) {
             spotlightCallback(nil, nil, error);
         }
-
         return;
     }
+
     if (!title) {
-        NSError *error = [BNCError branchErrorWithCode:BNCBadRequestError reason:@"Spotlight Indexing requires a title"];
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightTitleError];
         if (callback) {
             callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         }
         else if (spotlightCallback) {
             spotlightCallback(nil, nil, error);
         }
-
         return;
     }
     
