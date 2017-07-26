@@ -46,21 +46,19 @@
 - (void)indexWithCallback:(callbackWithUrlAndSpotlightIdentifier)callback {
     if ([BNCSystemObserver getOSVersion].integerValue < 9) {
         if (callback) {
-            callback(nil, nil, [BNCError branchErrorWithCode:BNCSpotlightNotAvailableError message:
-                @"Cannot use CoreSpotlight indexing service prior to iOS 9."]);
+            callback(nil, nil, [NSError branchErrorWithCode:BNCSpotlightNotAvailableError]);
         }
         return;
     }
     if (![CSSearchableIndex isIndexingAvailable]) {
         if (callback) {
-            callback(nil, nil, [BNCError branchErrorWithCode:BNCSpotlightNotAvailableError message:
-                @"Cannot use CoreSpotlight indexing service on this device."]);
+            callback(nil, nil, [NSError branchErrorWithCode:BNCSpotlightNotAvailableError]);
         }
         return;
     }
     if (!self.title) {
         if (callback) {
-            callback(nil, nil, [BNCError branchErrorWithCode:BNCSpotlightTitleError]);
+            callback(nil, nil, [NSError branchErrorWithCode:BNCSpotlightTitleError]);
         }
         return;
     }

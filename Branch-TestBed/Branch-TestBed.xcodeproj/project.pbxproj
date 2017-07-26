@@ -347,17 +347,17 @@
 		4665AF1F1B2892CF00184037 /* BranchRequestsTests */ = {
 			isa = PBXGroup;
 			children = (
-				4665AF201B2892F700184037 /* BranchSetIdentityRequestTests.m */,
-				4665AF271B28C1DE00184037 /* BranchLogoutRequestTests.m */,
-				46DC406F1B2A34EE00D2D203 /* BranchUserCompletedActionTests.m */,
-				46DC40731B2B31A300D2D203 /* BranchLoadRewardsRequestTests.m */,
-				46DC40751B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m */,
+				46DBB4381B34B22F00642FC8 /* BranchCloseRequestTests.m */,
 				46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */,
+				4677EB501B3B384C00A13964 /* BranchInstallRequestTests.m */,
+				46DC40731B2B31A300D2D203 /* BranchLoadRewardsRequestTests.m */,
+				4665AF271B28C1DE00184037 /* BranchLogoutRequestTests.m */,
+				46DBB43C1B34B7A300642FC8 /* BranchOpenRequestTests.m */,
+				46DC40751B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m */,
+				4665AF201B2892F700184037 /* BranchSetIdentityRequestTests.m */,
 				46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */,
 				46DBB4361B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m */,
-				46DBB4381B34B22F00642FC8 /* BranchCloseRequestTests.m */,
-				46DBB43C1B34B7A300642FC8 /* BranchOpenRequestTests.m */,
-				4677EB501B3B384C00A13964 /* BranchInstallRequestTests.m */,
+				46DC406F1B2A34EE00D2D203 /* BranchUserCompletedActionTests.m */,
 			);
 			name = BranchRequestsTests;
 			sourceTree = "<group>";

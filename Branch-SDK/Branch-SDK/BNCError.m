@@ -66,45 +66,47 @@ void BNCForceNSErrorCategoryToLoad() {
 
     #define _countof(array) (sizeof(array)/sizeof(array[0]))
 
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wunreachable-code"
+
     // Sanity check
     if (_countof(messages) != (BNCHighestError - BNCInitError)) {
         [NSException raise:NSInternalInconsistencyException format:@"Branch error message count is wrong."];
-        return @"Branch error.";
+        return @"Branch encountered an error.";
     }
 
+    #pragma clang diagnostic pop
+
     if (code < BNCInitError || code >= BNCHighestError)
-        return @"Branch error.";
+        return @"Branch encountered an error.";
 
     return messages[code - BNCInitError];
 }
 
 + (NSError*_Nonnull) branchErrorWithCode:(BNCErrorCode)errorCode
                            error:(NSError*)error
-                         message:(NSString*_Nullable)message {
+                localizedMessage:(NSString*_Nullable)message {
 
     NSMutableDictionary *userInfo = [NSMutableDictionary new];
 
     NSString *localizedString = BNCLocalizedString([self messageForCode:errorCode]);
     if (localizedString) userInfo[NSLocalizedDescriptionKey] = localizedString;
-
-    NSString* localizedReason = BNCLocalizedString(message);
-    if (localizedReason) userInfo[NSLocalizedFailureReasonErrorKey] = localizedReason;
-
+    if (message) userInfo[NSLocalizedFailureReasonErrorKey] = message;
     if (error) userInfo[NSUnderlyingErrorKey] = error;
 
     return [NSError errorWithDomain:BNCErrorDomain code:errorCode userInfo:userInfo];
 }
 
 + (NSError*_Nonnull) branchErrorWithCode:(BNCErrorCode)errorCode {
-    return [NSError branchErrorWithCode:errorCode error:nil message:nil];
+    return [NSError branchErrorWithCode:errorCode error:nil localizedMessage:nil];
 }
 
 + (NSError*_Nonnull) branchErrorWithCode:(BNCErrorCode)errorCode error:(NSError*_Nullable)error {
-    return [NSError branchErrorWithCode:errorCode error:error message:nil];
+    return [NSError branchErrorWithCode:errorCode error:error localizedMessage:nil];
 }
 
-+ (NSError*_Nonnull) branchErrorWithCode:(BNCErrorCode)errorCode message:(NSString*_Nullable)message {
-    return [NSError branchErrorWithCode:errorCode error:nil message:message];
++ (NSError*_Nonnull) branchErrorWithCode:(BNCErrorCode)errorCode localizedMessage:(NSString*_Nullable)message {
+    return [NSError branchErrorWithCode:errorCode error:nil localizedMessage:message];
 }
 
 @end

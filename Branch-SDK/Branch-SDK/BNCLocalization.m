@@ -16,60 +16,102 @@
 @implementation BNCLocalization
 
 +(NSDictionary*) supportedLanguages {
-    NSDictionary* languages = @{@"en":[BNCLocalization en_localised]};
+    NSDictionary* languages = @{@"en":[BNCLocalization en_localized]};
     return languages;
 }
 
-+(NSDictionary*) en_localised {
-    NSDictionary* en_dic = @{
-    @"YES":
-    @"Yes",
-    
-    @"Can't use CoreSpotlight indexing service prior to iOS 9.":
-    @"Can't use CoreSpotlight indexing service prior to iOS 9.",
++ (NSDictionary*) en_localized {
+    NSDictionary* en_dict = @{
 
-    @"CoreSpotlight is not available because the base SDK for this project is less than iOS 9.0.":
-    @"CoreSpotlight is not available because the base SDK for this project is less than iOS 9.0.",
+    // BNCInitError
+    @"The Branch user session has not been initialized.":
+    @"The Branch user session has not been initialized.",
 
-    @"Cannot use CoreSpotlight indexing service on this device/OS.":
-    @"Cannot use CoreSpotlight indexing service on this device/OS.",
-
-    @"Spotlight Indexing requires a title.":
-    @"Spotlight Indexing requires a title.",
-
-    @"Trouble reaching the Branch servers, please try again shortly.":
-    @"Trouble reaching the Branch servers, please try again shortly.",
-
+    // BNCDuplicateResourceError
     @"A resource with this identifier already exists.":
     @"A resource with this identifier already exists.",
 
-    @"Can't redeem zero credits.":
-    @"Can't redeem zero credits.",
-
+    // BNCRedeemCreditsError
     @"You're trying to redeem more credits than are available. Have you loaded rewards?":
     @"You're trying to redeem more credits than are available. Have you loaded rewards?",
 
-    @"Branch User Session has not been initialized.":
-    @"Branch User Session has not been initialized.",
+    // BNCBadRequestError
+    @"The network request was invalid.":
+    @"The network request was invalid.",
 
+    // BNCServerProblemError
+    @"Trouble reaching the Branch servers, please try again shortly.":
+    @"Trouble reaching the Branch servers, please try again shortly.",
+
+    // BNCNilLogError
+    @"Can't log error messages because the logger is set to nil.":
+    @"Can't log error messages because the logger is set to nil.",
+
+    // BNCVersionError
+    @"Incompatible version.":
+    @"Incompatible version.",
+
+    // BNCNetworkServiceInterfaceError
+    @"The underlying network service does not conform to the BNCNetworkOperationProtocol.":
+    @"The underlying network service does not conform to the BNCNetworkOperationProtocol.",
+
+    // BNCInvalidNetworkPublicKeyError
+    @"Public key is not an SecKeyRef type.":
+    @"Public key is not an SecKeyRef type.",
+
+    // BNCContentIdentifierError
+    @"A canonical identifier or title are required to uniquely identify content.":
+    @"A canonical identifier or title are required to uniquely identify content.",
+
+    // BNCSpotlightNotAvailableError
+    @"The Core Spotlight indexing service is not available on this device.":
+    @"The Core Spotlight indexing service is not available on this device.",
+
+    // BNCSpotlightTitleError
+    @"Spotlight indexing requires a title.":
+    @"Spotlight indexing requires a title.",
+
+    // BNCRedeemZeroCreditsError
+    @"Can't redeem zero credits.":
+    @"Can't redeem zero credits.",
+
+    // Unknown error
+    @"Branch encountered an error.":
+    @"Branch encountered an error.",
+
+    // Network provider error messages
+    @"A network operation instance is expected to be returned by the networkOperationWithURLRequest:completion: method.":
+    @"A network operation instance is expected to be returned by the networkOperationWithURLRequest:completion: method.",
+
+    @"Network operation of class '%@' does not conform to the BNCNetworkOperationProtocol.":
+    @"Network operation of class '%@' does not conform to the BNCNetworkOperationProtocol.",
+
+    @"The network operation start date is not set. The Branch SDK expects the network operation start date to be set by the network provider.":
+    @"The network operation start date is not set. The Branch SDK expects the network operation start date to be set by the network provider.",
+
+    @"The network operation timeout date is not set. The Branch SDK expects the network operation timeout date to be set by the network provider.":
+    @"The network operation timeout date is not set. The Branch SDK expects the network operation timeout date to be set by the network provider.",
+
+    @"The network operation request is not set. The Branch SDK expects the network operation request to be set by the network provider.":
+    @"The network operation request is not set. The Branch SDK expects the network operation request to be set by the network provider.",
+
+    // Other errors
+    @"The request was invalid.":
+    @"The request was invalid.",
+
+    @"Could not register view.":
+    @"Could not register view.",
+
+    @"Could not generate a URL.":
+    @"Could not generate a URL.",
+
+    // Spotlight
     @"Cannot use CoreSpotlight indexing service prior to iOS 9.":
     @"Cannot use CoreSpotlight indexing service prior to iOS 9.",
 
-    @"Cannot use CoreSpotlight indexing service on this device.":
-    @"Cannot use CoreSpotlight indexing service on this device.",
-
-    @"Spotlight Indexing requires a title.":
-    @"Spotlight Indexing requires a title.",
-
-    @"A canonicalIdentifier or title are required to uniquely identify content, so could not register view.":
-    @"A canonicalIdentifier or title are required to uniquely identify content, so could not register view.",
-
-    @"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL.":
-    @"A canonicalIdentifier or title are required to uniquely identify content, so could not generate a URL."
-
     };
-    
-    return en_dic;
+
+    return en_dict;
 }
 
 @end
@@ -80,7 +122,7 @@ NSString* /**Nonnull*/ BNCLocalizedString(NSString* string) {
     
     NSString* preferredLang = [[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0];
     NSDictionary* localizedLanguage = [BNCLocalization supportedLanguages][preferredLang];
-    localizedLanguage == nil?[BNCLocalization en_localised]:localizedLanguage;
+    localizedLanguage == nil?[BNCLocalization en_localized]:localizedLanguage;
     NSString* localizedString = localizedLanguage[string];
 
     return localizedString == nil?string:localizedString;

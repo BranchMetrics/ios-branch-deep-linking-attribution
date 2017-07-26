@@ -20,7 +20,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.requires_arc     = true
 
   s.subspec 'Core' do |core|
-    core.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Branch-SDK/Requests/*.{h,m}", "Branch-SDK/Fabric/*.h"
+    core.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Branch-SDK/**/*.{h,m}", "Branch-SDK/Fabric/*.h"
     core.private_header_files = "Branch-SDK/Fabric/*.h"
     core.frameworks = 'AdSupport', 'MobileCoreServices'
   end

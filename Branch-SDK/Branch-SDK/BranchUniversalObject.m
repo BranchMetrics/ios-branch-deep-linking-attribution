@@ -12,6 +12,7 @@
 #import "BNCFabricAnswers.h"
 #import "BNCDeviceInfo.h"
 #import "BNCLog.h"
+#import "BNCLocalization.h"
 
 @implementation BranchUniversalObject
 
@@ -51,7 +52,8 @@
 
 - (void)registerViewWithCallback:(callbackWithParams)callback {
     if (!self.canonicalIdentifier && !self.title) {
-        NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError message:@"Could not register view."];
+        NSString *message = BNCLocalizedString(@"Could not register view.");
+        NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
         BNCLogWarning(@"%@", error);
         if (callback) callback([[NSDictionary alloc] init], error);
         return;
@@ -158,7 +160,8 @@
 
 - (void)getShortUrlWithLinkProperties:(BranchLinkProperties *)linkProperties andCallback:(callbackWithUrl)callback {
     if (!self.canonicalIdentifier && !self.title) {
-        NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError message:@"Could not generate a URL."];
+        NSString *message = BNCLocalizedString(@"Could not generate a URL.");
+        NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
         BNCLogWarning(@"%@", error);
         if (callback) callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         return;
@@ -177,7 +180,8 @@
 
 - (NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.title) {
-        NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError message:@"Could not generate a URL."];
+        NSString *message = BNCLocalizedString(@"Could not generate a URL.");
+        NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError localizedMessage:message];
         BNCLogWarning(@"%@", error);
         return nil;
     }

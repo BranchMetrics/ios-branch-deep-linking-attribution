@@ -9,3 +9,6 @@
 #import <Foundation/Foundation.h>
 
 NSString* BNCLocalizedString(NSString*string);
+
+#define BNCLocalizedFormattedString(fmt, ...) \
+    [NSString stringWithFormat:BNCLocalizedString(fmt), __VA_ARGS__]

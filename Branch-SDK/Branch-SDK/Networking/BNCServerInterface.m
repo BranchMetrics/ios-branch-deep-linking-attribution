@@ -15,6 +15,7 @@
 #import "NSMutableDictionary+Branch.h"
 #import "BNCLog.h"
 #import "Branch.h"
+#import "BNCLocalization.h"
 
 @interface BNCServerInterface ()
 @property (strong) NSString *requestEndpoint;
@@ -556,8 +557,8 @@ exit:
                 if (!errorString)
                     errorString = underlyingError.localizedDescription;
                 if (!errorString)
-                    errorString = @"The request was invalid.";
-                branchError = [NSError branchErrorWithCode:BNCBadRequestError message:errorString];
+                    errorString = BNCLocalizedString(@"The request was invalid.");
+                branchError = [NSError branchErrorWithCode:BNCBadRequestError localizedMessage:errorString];
             }
             else if (underlyingError) {
                 branchError = [NSError branchErrorWithCode:BNCServerProblemError error:underlyingError];
@@ -590,36 +591,42 @@ exit:
 - (NSError*) verifyNetworkOperation:(id<BNCNetworkOperationProtocol>)operation {
 
     if (!operation) {
-        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError message:
-            @"A network operation instance is expected to be returned by the networkOperationWithURLRequest:completion: method."];
+        NSString *message = BNCLocalizedString(
+            @"A network operation instance is expected to be returned by the networkOperationWithURLRequest:completion: method."
+        );
+        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError localizedMessage:message];
         return error;
     }
     if (![operation conformsToProtocol:@protocol(BNCNetworkOperationProtocol)]) {
         NSString *message =
-            [NSString stringWithFormat:@"Network operation of class '%@' does not conform to the BNCNetworkOperationProtocol.",
-                NSStringFromClass([operation class])];
-        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError message:message];
+            BNCLocalizedFormattedString(
+                @"Network operation of class '%@' does not conform to the BNCNetworkOperationProtocol.",
+                NSStringFromClass([operation class]));
+        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError localizedMessage:message];
         return error;
     }
     if (!operation.startDate) {
-        NSString *message =
+        NSString *message = BNCLocalizedString(
             @"The network operation start date is not set. The Branch SDK expects the network operation"
-             " start date to be set by the network provider.";
-        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError message:message];
+             " start date to be set by the network provider."
+        );
+        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError localizedMessage:message];
         return error;
     }
     if (!operation.timeoutDate) {
-        NSString *message =
+        NSString*message = BNCLocalizedString(
             @"The network operation timeout date is not set. The Branch SDK expects the network operation"
-             " timeout date to be set by the network provider.";
-        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError message:message];
+             " timeout date to be set by the network provider."
+        );
+        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError localizedMessage:message];
         return error;
     }
     if (!operation.request) {
-        NSString *message =
+        NSString *message = BNCLocalizedString(
             @"The network operation request is not set. The Branch SDK expects the network operation"
-             " request to be set by the network provider.";
-        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError message:message];
+             " request to be set by the network provider."
+        );
+        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError localizedMessage:message];
         return error;
     }
     return nil;
