@@ -432,6 +432,36 @@ void BNCLogSetDisplayLevel(BNCLogLevel level) {
     }
 }
 
+NSString*const bnc_logLevelStrings[] = {
+    @"BNCLogLevelAll",
+    @"BNCLogLevelBreakPoint",
+    @"BNCLogLevelDebug",
+    @"BNCLogLevelWarning",
+    @"BNCLogLevelError",
+    @"BNCLogLevelAssert",
+    @"BNCLogLevelLog",
+    @"BNCLogLevelNone",
+    @"BNCLogLevelMax"
+};
+
+NSString*const BNCLogStringFromLogLevel(BNCLogLevel level) {
+    level = MAX(MIN(level, BNCLogLevelMax), 0);
+    return bnc_logLevelStrings[level];
+}
+
+BNCLogLevel BNBLogLevelFromString(NSString*string) {
+    if (!string) return BNCLogLevelNone;
+    for (NSInteger i = 0; i < _countof(bnc_logLevelStrings); ++i) {
+        if ([bnc_logLevelStrings[i] isEqualToString:string]) {
+            return i;
+        }
+    }
+    if ([string isEqualToString:@"BNCLogLevelDebugSDK"]) {
+        return BNCLogLevelDebugSDK;
+    }
+    return BNCLogLevelNone;
+}
+
 #pragma mark - Log Synchronization
 
 static BOOL bnc_SynchronizeMessages = YES;

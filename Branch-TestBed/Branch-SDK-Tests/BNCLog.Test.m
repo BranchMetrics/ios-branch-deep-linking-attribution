@@ -963,4 +963,20 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     XCTAssert([string bnc_isEqualToMaskedString:truth]);
 }
 
+- (void) testLogLevelString {
+    XCTAssertEqual(BNCLogLevelAll,      BNBLogLevelFromString(@"BNCLogLevelAll"));
+    XCTAssertEqual(BNCLogLevelDebugSDK, BNBLogLevelFromString(@"BNCLogLevelDebugSDK"));
+    XCTAssertEqual(BNCLogLevelWarning,  BNBLogLevelFromString(@"BNCLogLevelWarning"));
+    XCTAssertEqual(BNCLogLevelNone,     BNBLogLevelFromString(@"BNCLogLevelNone"));
+    XCTAssertEqual(BNCLogLevelMax,      BNBLogLevelFromString(@"BNCLogLevelMax"));
+}
+
+- (void) testLogLevelEnum {
+    XCTAssertEqualObjects(@"BNCLogLevelAll",        BNCLogStringFromLogLevel(BNCLogLevelAll));
+    XCTAssertEqualObjects(@"BNCLogLevelAll",        BNCLogStringFromLogLevel(BNCLogLevelDebugSDK));
+    XCTAssertEqualObjects(@"BNCLogLevelWarning",    BNCLogStringFromLogLevel(BNCLogLevelWarning));
+    XCTAssertEqualObjects(@"BNCLogLevelNone",       BNCLogStringFromLogLevel(BNCLogLevelNone));
+    XCTAssertEqualObjects(@"BNCLogLevelMax",        BNCLogStringFromLogLevel(BNCLogLevelMax));
+}
+
 @end
