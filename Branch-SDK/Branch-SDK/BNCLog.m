@@ -181,15 +181,15 @@ BOOL BNCLogRecordWrapOpenURL(NSURL *url, long maxRecords, long recordSize) {
 
     // Truncate the file if the file size > max file size.
 
-    off_t n = 0;
+    off_t fileOffset = 0;
     off_t maxSz = bnc_LogOffsetMax * bnc_LogRecordSize;
     off_t sz = lseek(bnc_LogDescriptor, 0, SEEK_END);
     if (sz < 0) {
         int e = errno;
         BNCLogInternalError(@"Can't seek in log (%d): %s.", e, strerror(e));
     } else if (sz > maxSz) {
-        n = ftruncate(bnc_LogDescriptor, maxSz);
-        if (n < 0) {
+        fileOffset = ftruncate(bnc_LogDescriptor, maxSz);
+        if (fileOffset < 0) {
             int e = errno;
             BNCLogInternalError(@"Can't truncate log (%d): %s.", e, strerror(e));
         }
@@ -203,8 +203,8 @@ BOOL BNCLogRecordWrapOpenURL(NSURL *url, long maxRecords, long recordSize) {
 
     off_t offset = 0;
     char buffer[bnc_LogRecordSize];
-    n = read(bnc_LogDescriptor, &buffer, sizeof(buffer));
-    while (n == sizeof(buffer)) {
+    ssize_t bytesRead = read(bnc_LogDescriptor, &buffer, sizeof(buffer));
+    while (bytesRead == sizeof(buffer)) {
         NSString *dateString =
             [[NSString alloc] initWithBytes:buffer length:27 encoding:NSUTF8StringEncoding];
         NSDate *date = [bnc_LogDateFormatter dateFromString:dateString];
@@ -213,7 +213,7 @@ BOOL BNCLogRecordWrapOpenURL(NSURL *url, long maxRecords, long recordSize) {
             oldestDate = date;
         }
         offset++;
-        n = read(bnc_LogDescriptor, &buffer, sizeof(buffer));
+        bytesRead = read(bnc_LogDescriptor, &buffer, sizeof(buffer));
     }
     if (offset < bnc_LogOffsetMax)
         bnc_LogOffset = offset;
@@ -222,8 +222,8 @@ BOOL BNCLogRecordWrapOpenURL(NSURL *url, long maxRecords, long recordSize) {
         bnc_LogOffset = 0;
     else
         bnc_LogOffset = oldestOffset;
-    n = lseek(bnc_LogDescriptor, bnc_LogOffset*bnc_LogRecordSize, SEEK_SET);
-    if (n < 0) {
+    sz = lseek(bnc_LogDescriptor, bnc_LogOffset*bnc_LogRecordSize, SEEK_SET);
+    if (sz < 0) {
         int e = errno;
         BNCLogInternalError(@"Can't seek in log (%d): %s.", e, strerror(e));
     }
@@ -300,16 +300,16 @@ NSString *BNCLogByteWrapReadNextRecord() {
             goto error_exit;
         }
 
-        off_t n = lseek(bnc_LogDescriptor, originalOffset, SEEK_SET);
-        if (n < 0) {
+        off_t newOffset = lseek(bnc_LogDescriptor, originalOffset, SEEK_SET);
+        if (newOffset < 0) {
             int e = errno;
             BNCLogInternalError(@"Can't seek in log file (%d): %s.", e, strerror(e));
             goto error_exit;
         }
-        n = read(bnc_LogDescriptor, buffer, bufferSize);
-        if (n == 0) {
+        ssize_t bytesRead = read(bnc_LogDescriptor, buffer, bufferSize);
+        if (bytesRead == 0) {
             goto error_exit;
-        } else if (n < 0) {
+        } else if (bytesRead < 0) {
             int e = errno;
             if (e != EOF) {
                 BNCLogInternalError(@"Can't read log message (%d): %s.", e, strerror(e));
@@ -318,16 +318,17 @@ NSString *BNCLogByteWrapReadNextRecord() {
         }
 
         char* p = buffer;
-        while ( (p-buffer) < n && *p != '\n') {
+        while ( (p-buffer) < bytesRead && *p != '\n') {
             p++;
         }
         if (*p == '\n') {
-            long offset = (p-buffer)+1;
-            NSString *result = [[NSString alloc]
-                initWithBytes:buffer length:offset encoding:NSUTF8StringEncoding];
+            intptr_t offset = (p-buffer)+1;
+            NSString *result =
+                [[NSString alloc]
+                    initWithBytes:buffer length:offset encoding:NSUTF8StringEncoding];
             bnc_LogOffset = originalOffset + offset;
-            n = lseek(bnc_LogDescriptor, bnc_LogOffset, SEEK_SET);
-            if (n < 0) {
+            newOffset = lseek(bnc_LogDescriptor, bnc_LogOffset, SEEK_SET);
+            if (newOffset < 0) {
                 int e = errno;
                 BNCLogInternalError(@"Can't seek in log file (%d): %s.", e, strerror(e));
             }
@@ -361,15 +362,15 @@ BOOL BNCLogByteWrapOpenURL(NSURL *url, long maxBytes) {
 
     // Truncate the file if the file size > max file size.
 
-    off_t n = 0;
+    off_t newOffset = 0;
     off_t maxSz = bnc_LogOffsetMax;
     off_t sz = lseek(bnc_LogDescriptor, 0, SEEK_END);
     if (sz < 0) {
         int e = errno;
         BNCLogInternalError(@"Can't seek in log (%d): %s.", e, strerror(e));
     } else if (sz > maxSz) {
-        n = ftruncate(bnc_LogDescriptor, maxSz);
-        if (n < 0) {
+        newOffset = ftruncate(bnc_LogDescriptor, maxSz);
+        if (newOffset < 0) {
             int e = errno;
             BNCLogInternalError(@"Can't truncate log (%d): %s.", e, strerror(e));
         }
@@ -402,8 +403,8 @@ BOOL BNCLogByteWrapOpenURL(NSURL *url, long maxBytes) {
         bnc_LogOffset = wrapOffset;
     } else if (bnc_LogOffset >= bnc_LogOffsetMax)
         bnc_LogOffset = 0;
-    n = lseek(bnc_LogDescriptor, bnc_LogOffset, SEEK_SET);
-    if (n < 0) {
+    newOffset = lseek(bnc_LogDescriptor, bnc_LogOffset, SEEK_SET);
+    if (newOffset < 0) {
         int e = errno;
         BNCLogInternalError(@"Can't seek in log (%d): %s.", e, strerror(e));
     }
@@ -561,11 +562,11 @@ void BNCLogWriteMessageFormat(
 }
 
 void BNCLogWriteMessage(
-                           BNCLogLevel logLevel,
-                           NSString *_Nonnull file,
-                           NSUInteger lineNumber,
-                           NSString *_Nonnull message
-                           ) {
+        BNCLogLevel logLevel,
+        NSString *_Nonnull file,
+        NSUInteger lineNumber,
+        NSString *_Nonnull message
+    ) {
     BNCLogWriteMessageFormat(logLevel, file.UTF8String, (int)lineNumber, @"%@", message);
 }
 
