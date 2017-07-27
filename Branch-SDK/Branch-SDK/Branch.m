@@ -115,14 +115,19 @@ void ForceCategoriesToLoad(void) {
 
 #pragma mark - GetInstance methods
 
-+ (void) initialize {
-    if (self == [Branch self]) {
-        NSURL *logURL = BNCURLForBranchDirectory();
-        logURL = [logURL URLByAppendingPathComponent:@"Branch.log"];
-        BNCLogSetOutputToURLByteWrap(logURL,  102400);
-        BNCLogSetDisplayLevel(BNCLogLevelWarning);
-        BNCLogDebug(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
-    }
++ (void) load {
+    if (self != [Branch self]) return;
+    
+    ForceCategoriesToLoad();
+
+    // Initialize the log
+
+    BNCLogInitialize();
+    NSURL *logURL = BNCURLForBranchDirectory();
+    logURL = [logURL URLByAppendingPathComponent:@"Branch.log"];
+    BNCLogSetOutputToURLByteWrap(logURL, 102400);
+    BNCLogSetDisplayLevel(BNCLogLevelWarning);
+    BNCLogDebug(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
 }
 
 + (Branch *) getTestInstance {
@@ -144,33 +149,45 @@ void ForceCategoriesToLoad(void) {
                   cache:(BNCLinkCache *)cache
        preferenceHelper:(BNCPreferenceHelper *)preferenceHelper
                     key:(NSString *)key {
-    if (self = [super init]) {
 
-        ForceCategoriesToLoad();
+    self = [super init];
+    if (!self) return self;
 
-        _bServerInterface = interface;
-        _bServerInterface.preferenceHelper = preferenceHelper;
-        _requestQueue = queue;
-        _linkCache = cache;
-        _preferenceHelper = preferenceHelper;
-        
-        _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
-        _isInitialized = NO;
-        _shouldCallSessionInitCallback = YES;
-        _processing_sema = dispatch_semaphore_create(1);
-        _networkCount = 0;
-        _asyncRequestCount = 0;
-        _deepLinkControllers = [[NSMutableDictionary alloc] init];
-        _whiteListedSchemeList = [[NSMutableArray alloc] init];
-        _useCookieBasedMatching = YES;
-        self.class.branchKey = key;
-        [BranchOpenRequest setWaitNeededForOpenResponseLock];
+    // Initialize instance variables
 
-        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-        [notificationCenter addObserver:self selector:@selector(applicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
-        [notificationCenter addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
-    }
+    _bServerInterface = interface;
+    _bServerInterface.preferenceHelper = preferenceHelper;
+    _requestQueue = queue;
+    _linkCache = cache;
+    _preferenceHelper = preferenceHelper;
     
+    _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
+    _isInitialized = NO;
+    _shouldCallSessionInitCallback = YES;
+    _processing_sema = dispatch_semaphore_create(1);
+    _networkCount = 0;
+    _asyncRequestCount = 0;
+    _deepLinkControllers = [[NSMutableDictionary alloc] init];
+    _whiteListedSchemeList = [[NSMutableArray alloc] init];
+    _useCookieBasedMatching = YES;
+    self.class.branchKey = key;
+    [BranchOpenRequest setWaitNeededForOpenResponseLock];
+
+    // Register for notifications
+
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter
+        addObserver:self
+        selector:@selector(applicationWillResignActive)
+        name:UIApplicationWillResignActiveNotification
+        object:nil];
+
+    [notificationCenter
+        addObserver:self
+        selector:@selector(applicationDidBecomeActive)
+        name:UIApplicationDidBecomeActiveNotification
+        object:nil];
+
     return self;
 }
 

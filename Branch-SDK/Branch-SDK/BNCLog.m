@@ -165,8 +165,6 @@ BOOL BNCLogRecordWrapOpenURL(NSURL *url, long maxRecords, long recordSize) {
         // Can't have odd-length records.
         bnc_LogRecordSize++;
     }
-    BNCLogSetOutputFunction(BNCLogRecordWrapWrite);
-    BNCLogSetFlushFunction(BNCLogRecordWrapFlush);
     bnc_LogDescriptor = open(
         url.path.UTF8String,
         O_RDWR|O_CREAT,
@@ -227,6 +225,8 @@ BOOL BNCLogRecordWrapOpenURL(NSURL *url, long maxRecords, long recordSize) {
         int e = errno;
         BNCLogInternalError(@"Can't seek in log (%d): %s.", e, strerror(e));
     }
+    BNCLogSetOutputFunction(BNCLogRecordWrapWrite);
+    BNCLogSetFlushFunction(BNCLogRecordWrapFlush);    
     return YES;
 }
 
@@ -318,7 +318,8 @@ NSString *BNCLogByteWrapReadNextRecord() {
         }
 
         char* p = buffer;
-        while ( (p-buffer) < bytesRead && *p != '\n') {
+        intptr_t endByte = bytesRead;
+        while ( (p-buffer) < endByte && *p != '\n') {
             p++;
         }
         if (*p == '\n') {
@@ -346,8 +347,6 @@ error_exit:
 BOOL BNCLogByteWrapOpenURL(NSURL *url, long maxBytes) {
     if (url == nil) return NO;
     bnc_LogOffsetMax = MAX(256, maxBytes);
-    BNCLogSetOutputFunction(BNCLogByteWrapWrite);
-    BNCLogSetFlushFunction(BNCLogByteWrapFlush);
     bnc_LogDescriptor = open(
         url.path.UTF8String,
         O_RDWR|O_CREAT,
@@ -408,6 +407,8 @@ BOOL BNCLogByteWrapOpenURL(NSURL *url, long maxBytes) {
         int e = errno;
         BNCLogInternalError(@"Can't seek in log (%d): %s.", e, strerror(e));
     }
+    BNCLogSetOutputFunction(BNCLogByteWrapWrite);
+    BNCLogSetFlushFunction(BNCLogByteWrapFlush);
     return YES;
 }
 
@@ -525,7 +526,7 @@ void BNCLogWriteMessageFormat(
         [[NSString stringWithCString:file encoding:NSMacOSRomanStringEncoding]
             lastPathComponent];
 
-    NSString *logLevels[BNCLogLevelMax] = {
+    NSString * const logLevels[BNCLogLevelMax] = {
         @"DebugSDK",
         @"Break",
         @"Debug",
@@ -547,7 +548,7 @@ void BNCLogWriteMessageFormat(
     va_end(args);
 
     if (logLevel >= bnc_LogDisplayLevel) {
-        NSLog(@"%@", s);
+        NSLog(@"%@", s); // Upgrade this to unified logging when we can.
     }
 
     if (BNCLogSynchronizeMessages()) {
@@ -584,8 +585,7 @@ void BNCLogFlushMessages() {
 
 #pragma mark - BNCLogInitialize
 
-void BNCLogInitialize(void) __attribute__((constructor));
-void BNCLogInitialize(void) {
+__attribute__((constructor)) void BNCLogInitialize(void) {
     static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
         bnc_LogQueue = dispatch_queue_create("io.branch.log", DISPATCH_QUEUE_SERIAL);

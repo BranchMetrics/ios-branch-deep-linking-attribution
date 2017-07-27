@@ -24,6 +24,10 @@ extern "C" {
 
 ///@functiongroup Branch Logging Functions
 
+#pragma mark Log Initialization
+
+/// Log facility initialization. Usually there is no need to call this directly.
+extern void BNCLogInitialize(void) __attribute__((constructor));
 
 #pragma mark Log Message Severity
 
