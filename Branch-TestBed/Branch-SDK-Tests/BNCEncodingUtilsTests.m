@@ -197,6 +197,9 @@
     XCTAssertEqualObjects(decodedValue, expectedDataDict);
 }
 
+#if 0
+
+// From Ed: See not below
 - (void)testDecodeJsonStringToDictionaryWithNilDecodedString {
     char badCStr[5] = { '{', 'f', ':', 'o', '}' }; // not nil terminated
     NSString *encodedString = [NSString stringWithUTF8String:badCStr];
@@ -206,6 +209,17 @@
     
     XCTAssertEqualObjects(decodedValue, expectedDataDict);
 }
+
+#else 
+
+- (void)testDecodeJsonStringToDictionaryWithNilDecodedString {
+    NSString *encodedString = nil;
+    NSDictionary *expectedDataDict = @{ };
+    NSDictionary *decodedValue = [BNCEncodingUtils decodeJsonStringToDictionary:encodedString];
+    XCTAssertEqualObjects(decodedValue, expectedDataDict);
+}
+
+#endif
 
 - (void)testDecodeBase64EncodedJsonStringToDictionary {
     NSString *encodedString = [BNCEncodingUtils base64EncodeStringToString:@"{\"foo\":\"bar\"}"];
@@ -222,6 +236,11 @@
     XCTAssertNil(result);
 }
 
+#if 0
+
+// From Ed: I don't get the point of this test.
+// It reads memory from the stack as a C string and decodes it as an NSString?
+// The test itself won't run consistently and may fault sometimes.
 - (void)testDecodeBase64JsonStringToDictionaryWithNilDecodedString {
     char badCStr[5] = { '{', 'f', ':', 'o', '}' }; // not nil terminated
     NSString *encodedString = [NSString stringWithUTF8String:badCStr];
@@ -232,6 +251,18 @@
     
     XCTAssertEqualObjects(decodedValue, expectedDataDict);
 }
+
+#else 
+
+// This should do the same thing without faulting during the test.
+- (void)testDecodeBase64JsonStringToDictionaryWithNilDecodedString {
+    NSString *base64EncodedString = nil;
+    NSDictionary *expectedDataDict = @{ };
+    NSDictionary *decodedValue = [BNCEncodingUtils decodeJsonStringToDictionary:base64EncodedString];
+    XCTAssertEqualObjects(decodedValue, expectedDataDict);
+}
+
+#endif
 
 - (void)testDecodeQueryStringToDictionary {
     NSString *encodedString = @"foo=bar&baz=1&quux=&quo=Hi%20there";

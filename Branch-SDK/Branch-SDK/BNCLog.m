@@ -53,7 +53,7 @@ void BNCLogFunctionOutputToStdOut(
         int e = errno;
         BNCLogInternalError(@"Can't write log message (%d): %s.", e, strerror(e));
     }
-    write(STDOUT_FILENO, "\n", sizeof('\n'));
+    write(STDOUT_FILENO, "\n   ", sizeof('\n'));
 }
 
 void BNCLogFunctionOutputToStdErr(
@@ -68,7 +68,7 @@ void BNCLogFunctionOutputToStdErr(
         int e = errno;
         BNCLogInternalError(@"Can't write log message (%d): %s.", e, strerror(e));
     }
-    write(STDERR_FILENO, "\n", sizeof('\n'));
+    write(STDERR_FILENO, "\n   ", sizeof('\n'));
 }
 
 void BNCLogFunctionOutputToFileDescriptor(
