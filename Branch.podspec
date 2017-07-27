@@ -24,6 +24,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
     "Branch-SDK/Branch-SDK/Networking/*.{h,m}",
     "Branch-SDK/Branch-SDK/Networking/Requests/*.{h,m}",
     "Branch-SDK/Fabric/*.h"
+  s.default_subspec = 'Core'
 
   s.subspec 'Core' do |core|
     core.source_files = source_files
