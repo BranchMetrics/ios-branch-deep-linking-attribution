@@ -8,7 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-NSString* BNCLocalizedString(NSString*string);
+// Localization defaults to the default. TODO: 
+void BNCLocalizationSetLanguage(NSString*localization);
+NSString* BNCLocalizationLanguage(void);
+
+NSString* /**Nonnull*/ BNCLocalizedString(NSString*string);
 
 #define BNCLocalizedFormattedString(fmt, ...) \
     [NSString stringWithFormat:BNCLocalizedString(fmt), __VA_ARGS__]

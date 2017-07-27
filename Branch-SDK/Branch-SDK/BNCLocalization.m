@@ -7,6 +7,7 @@
 //
 
 #import "BNCLocalization.h"
+#import "BNCLog.h"
 
 #pragma mark BNCLocalization
 
@@ -16,7 +17,10 @@
 @implementation BNCLocalization
 
 +(NSDictionary*) supportedLanguages {
-    NSDictionary* languages = @{@"en":[BNCLocalization en_localized]};
+    NSDictionary* languages = @{
+        @"en":  [BNCLocalization en_localized],
+        @"es":  [BNCLocalization es_localized]
+    };
     return languages;
 }
 
@@ -105,26 +109,52 @@
     @"Could not generate a URL.":
     @"Could not generate a URL.",
 
-    // Spotlight
-    @"Cannot use CoreSpotlight indexing service prior to iOS 9.":
-    @"Cannot use CoreSpotlight indexing service prior to iOS 9.",
-
     };
-
     return en_dict;
 }
 
++ (NSDictionary*) es_localized {
+    NSDictionary* es_dict = @{
+
+    @"Could not generate a URL.":
+    @"No se pudo generar una URL.",
+    
+    };
+    return es_dict;
+}
 @end
 
 #pragma mark - BNCLocalizedString
 
-NSString* /**Nonnull*/ BNCLocalizedString(NSString* string) {
-    
-    NSString* preferredLang = [[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0];
-    NSDictionary* localizedLanguage = [BNCLocalization supportedLanguages][preferredLang];
-    localizedLanguage == nil?[BNCLocalization en_localized]:localizedLanguage;
-    NSString* localizedString = localizedLanguage[string];
+static NSString *bnc_localizationLanguage = nil;
 
-    return localizedString == nil?string:localizedString;
+void BNCLocalizationSetLanguage(NSString*localization) {
+    bnc_localizationLanguage = localization;
+}
+
+NSString* BNCLocalizationLanguage(void) {
+    return bnc_localizationLanguage;
+}
+
+NSString* /**Nonnull*/ BNCLocalizedString(NSString* string) {
+    if (!string) return @"";
+
+    //  TODO: Fix the main bundle version of this determining default language.
+    
+    NSString *language =
+        (bnc_localizationLanguage.length)
+        ? bnc_localizationLanguage
+        : [[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0];
+
+    NSDictionary* languageDictionary = [BNCLocalization supportedLanguages][language];
+    languageDictionary = languageDictionary ?: [BNCLocalization en_localized];
+
+    NSString* localizedString = languageDictionary[string];
+    if (!localizedString) {
+        BNCLogWarning(@"Branch is missing the localization missing for language '%@' string '%@'.",
+            language, string);
+        localizedString = string;
+    }
+    return localizedString;
 }
 
