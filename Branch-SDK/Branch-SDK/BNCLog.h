@@ -55,6 +55,18 @@ extern BNCLogLevel BNCLogDisplayLevel(void);
 */
 extern void BNCLogSetDisplayLevel(BNCLogLevel level);
 
+/*!
+* @param level The log level to convert to a string.
+* @return Returns the string indicating the log level.
+*/
+extern NSString *_Nonnull const BNCLogStringFromLogLevel(BNCLogLevel level);
+
+/*!
+* @param level A string indicating the log level.
+* @return Returns The log level corresponding to the string.
+*/
+extern BNCLogLevel BNBLogLevelFromString(NSString*_Null_unspecified string);
+
 
 #pragma mark - Log Message Synchronization
 
