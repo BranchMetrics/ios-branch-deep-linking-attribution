@@ -66,15 +66,13 @@ void BNCForceNSErrorCategoryToLoad() {
 
     #define _countof(array) (sizeof(array)/sizeof(array[0]))
 
+    // Sanity check
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wunreachable-code"
-
-    // Sanity check
     if (_countof(messages) != (BNCHighestError - BNCInitError)) {
         [NSException raise:NSInternalInconsistencyException format:@"Branch error message count is wrong."];
         return @"Branch encountered an error.";
     }
-
     #pragma clang diagnostic pop
 
     if (code < BNCInitError || code >= BNCHighestError)

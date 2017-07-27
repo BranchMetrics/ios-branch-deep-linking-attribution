@@ -34,12 +34,12 @@
     string = BNCLocalizedString(truth);
     XCTAssertEqual(string, truth);
 
-    truth = @"String not found: Should print a warning.";
+    truth = @"String not found: Should print a warning and return same string.";
     string = BNCLocalizedString(truth);
     XCTAssertEqual(string, truth);
 
     truth = @"";
-    string = BNCLocalizedString(nil);
+    string = BNCLocalizedString(nil); // nil input should return empty string output.
     XCTAssertEqual(string, truth);
 }
 
