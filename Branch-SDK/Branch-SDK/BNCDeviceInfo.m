@@ -21,7 +21,9 @@
 @end
 
 
-@implementation BNCDeviceInfo
+@implementation BNCDeviceInfo {
+    NSString * volatile _vendorId;
+}
 
 + (BNCDeviceInfo *)getInstance {
     static BNCDeviceInfo *bnc_deviceInfo = 0;
@@ -44,24 +46,44 @@
             isDebug:preferenceHelper.isDebug
             andType:&hardwareIdType];
     if (hardwareId) {
-        self.hardwareId = hardwareId;
-        self.isRealHardwareId = isRealHardwareId;
-        self.hardwareIdType = hardwareIdType;
+        _hardwareId = hardwareId.copy;
+        _isRealHardwareId = isRealHardwareId;
+        _hardwareIdType = hardwareIdType.copy;
     }
 
-    self.vendorId = [BNCSystemObserver getVendorId];
-    self.brandName = [BNCSystemObserver getBrand];
-    self.modelName = [BNCSystemObserver getModel];
-    self.osName = [BNCSystemObserver getOS];
-    self.osVersion = [BNCSystemObserver getOSVersion];
-    self.screenWidth = [BNCSystemObserver getScreenWidth];
-    self.screenHeight = [BNCSystemObserver getScreenHeight];
-    self.isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
+    _brandName = [BNCSystemObserver getBrand].copy;
+    _modelName = [BNCSystemObserver getModel].copy;
+    _osName = [BNCSystemObserver getOS].copy;
+    _osVersion = [BNCSystemObserver getOSVersion].copy;
+    _screenWidth = [BNCSystemObserver getScreenWidth].copy;
+    _screenHeight = [BNCSystemObserver getScreenHeight].copy;
+    _isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
 
-    self.country = [self.class bnc_country];
-    self.language = [self.class bnc_language];
-    self.browserUserAgent = [self.class userAgentString];
+    _country = [BNCDeviceInfo bnc_country].copy;
+    _language = [BNCDeviceInfo bnc_language].copy;
+    _browserUserAgent = [BNCDeviceInfo userAgentString].copy;
     return self;
+}
+
+- (NSString *)vendorId
+{
+    @synchronized (self) {
+        if (_vendorId) return _vendorId;
+
+        /*
+         * https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
+         * BNCSystemObserver.getVendorId is based on UIDevice.identifierForVendor. Note from the
+         * docs above:
+         *
+         * If the value is nil, wait and get the value again later. This happens, for example,
+         * after the device has been restarted but before the user has unlocked the device.
+         *
+         * It's not clear if that specific example scenario would apply to opening Branch links,
+         * but this lazy initialization is probably safer.
+         */
+        _vendorId = [BNCSystemObserver getVendorId].copy;
+        return _vendorId;
+    }
 }
 
 + (NSString*) bnc_country {
