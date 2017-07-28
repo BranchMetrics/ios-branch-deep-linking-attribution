@@ -566,8 +566,7 @@ exit:
 
             if (branchError) {
                 BNCLogError(@"An error prevented request to %@ from completing: %@",
-                    request.URL.absoluteString,
-                    branchError.localizedDescription);
+                    request.URL.absoluteString, branchError);
             }
             
             //	Don't call on the main queue since it might be blocked.

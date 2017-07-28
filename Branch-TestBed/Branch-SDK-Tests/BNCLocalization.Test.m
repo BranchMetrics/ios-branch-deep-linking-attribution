@@ -28,31 +28,58 @@
 
     NSString *truth = nil;
     NSString *string = nil;
-    BNCLocalizationSetLanguage(@"en");
+    [BNCLocalization shared].currentLanguage = @"en";
 
     truth = @"Could not generate a URL.";
     string = BNCLocalizedString(truth);
-    XCTAssertEqual(string, truth);
+    XCTAssertEqualObjects(string, truth);
 
-    truth = @"String not found: Should print a warning and return same string.";
+    truth = @"This string is not in table: Should print a warning and return same string.";
     string = BNCLocalizedString(truth);
-    XCTAssertEqual(string, truth);
+    XCTAssertEqualObjects(string, truth);
+
+    // Nil input should return empty string output.
+    truth = @"";
+    string = BNCLocalizedString(nil);
+    XCTAssertEqualObjects(string, truth);
+
+    // Test formatted language strings.
+    truth = @"Test formatted language strings.";
+    string = BNCLocalizedFormattedString(@"Test formatted %@ strings.", @"language");
+    XCTAssertEqualObjects(string, truth);
+
+    // Test formatted language strings with format checking:
+    truth = @"Test formatted language strings float 1.00.";
+    string = BNCLocalizedFormattedString(@"Test formatted %@ strings float %1.2f.", @"language", 1.0);
+    XCTAssertEqualObjects(string, truth);
 
     truth = @"";
-    string = BNCLocalizedString(nil); // nil input should return empty string output.
-    XCTAssertEqual(string, truth);
+    string = BNCLocalizedFormattedString(nil, 1.0);
+    XCTAssertEqualObjects(string, truth);
 }
 
 - (void) testLocalizationSpanish {
 
     NSString *truth = nil;
     NSString *string = nil;
-    BNCLocalizationSetLanguage(@"es");
+    [BNCLocalization shared].currentLanguage = @"es";
 
     string = @"Could not generate a URL.";
     truth = @"No se pudo generar una URL.";
     string = BNCLocalizedString(string);
-    XCTAssertEqual(string, truth);
+    XCTAssertEqualObjects(string, truth);
+}
+
+- (void) testApplicationLanguage {
+    // TODO: Write test for checking application language for different language bundles.
+    XCTAssertEqualObjects([BNCLocalization applicationLanguage], @"en");
+}
+
+- (void) testSetWeirdLanguage {
+
+    // App doesn't speak that.  Default to english.
+    [BNCLocalization shared].currentLanguage = @"UFOAlienSpeak";
+    XCTAssertEqualObjects([BNCLocalization shared].currentLanguage, @"en");
 }
 
 @end

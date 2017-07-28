@@ -9,14 +9,95 @@
 #import "BNCLocalization.h"
 #import "BNCLog.h"
 
+#pragma mark Convenience Functions
+
+NSString* _Nonnull BNCLocalizedFormattedString(NSString* _Nonnull const format, ...) {
+    NSString *string = @"";
+    if (format) {
+        va_list args;
+        va_start(args, format);
+        string = [[NSString alloc] initWithFormat:format arguments:args];
+        va_end(args);
+    }
+    return string;
+}
+
 #pragma mark BNCLocalization
 
-@interface BNCLocalization : NSObject
+@interface BNCLocalization () {
+    NSString     *_currentLanguage;
+}
 @end
 
 @implementation BNCLocalization
 
-+(NSDictionary*) supportedLanguages {
++ (instancetype) shared {
+    static BNCLocalization *bnc_shared = 0;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        bnc_shared = [[BNCLocalization alloc] init];
+    });
+    return bnc_shared;
+}
+
++ (NSString*_Nonnull) applicationLanguage {
+    return [[[NSBundle mainBundle] preferredLocalizations] firstObject];
+}
+
+- (instancetype) init {
+    self = [super init];
+    if (!self) return self;
+    self.currentLanguage = [self.class applicationLanguage];
+    return self;
+}
+
+- (NSString*_Nonnull) currentLanguage {
+    @synchronized (self) {
+        return _currentLanguage;
+    }
+}
+
+- (void) setCurrentLanguage:(NSString*_Null_unspecified)language {
+    @synchronized (self) {
+
+        if (!language.length) {
+            language = [self.class applicationLanguage];
+        }
+
+        NSRange range =
+            [language rangeOfCharacterFromSet:
+                [[NSCharacterSet letterCharacterSet] invertedSet]];
+        if (range.location != NSNotFound)
+            language = [language substringToIndex:range.location];
+        language = [language lowercaseString];
+
+        _currentLanguageDictionary = self.class.languageDictionaries[language];
+        if (_currentLanguageDictionary) {
+            _currentLanguage = language.copy;
+        } else {
+            _currentLanguage = @"en";
+            _currentLanguageDictionary = [BNCLocalization en_localized];
+        }
+    }
+}
+
+- (NSString*_Nonnull) localizeString:(NSString *)string {
+    if (!string) return @"";
+
+    NSString *localized = self.currentLanguageDictionary[string];
+    if (localized) return localized;
+
+    BNCLogWarning(
+        @"Branch is missing the localization missing for language '%@' string '%@'.",
+            self.currentLanguage, string);
+
+    localized = self.class.languageDictionaries[@"en"][string];
+    if (localized) return localized;
+
+    return string;
+}
+
++(NSDictionary<NSString*, NSDictionary*>*_Nonnull) languageDictionaries {
     NSDictionary* languages = @{
         @"en":  [BNCLocalization en_localized],
         @"es":  [BNCLocalization es_localized]
@@ -24,7 +105,7 @@
     return languages;
 }
 
-+ (NSDictionary*) en_localized {
++ (NSDictionary*_Nonnull) en_localized {
     NSDictionary* en_dict = @{
 
     // BNCInitError
@@ -113,7 +194,7 @@
     return en_dict;
 }
 
-+ (NSDictionary*) es_localized {
++ (NSDictionary*_Nonnull) es_localized {
     NSDictionary* es_dict = @{
 
     @"Could not generate a URL.":
@@ -122,39 +203,5 @@
     };
     return es_dict;
 }
+
 @end
-
-#pragma mark - BNCLocalizedString
-
-static NSString *bnc_localizationLanguage = nil;
-
-void BNCLocalizationSetLanguage(NSString*localization) {
-    bnc_localizationLanguage = localization;
-}
-
-NSString* BNCLocalizationLanguage(void) {
-    return bnc_localizationLanguage;
-}
-
-NSString* /**Nonnull*/ BNCLocalizedString(NSString* string) {
-    if (!string) return @"";
-
-    //  TODO: Fix the main bundle version of this determining default language.
-    
-    NSString *language =
-        (bnc_localizationLanguage.length)
-        ? bnc_localizationLanguage
-        : [[[NSBundle mainBundle] preferredLocalizations] objectAtIndex:0];
-
-    NSDictionary* languageDictionary = [BNCLocalization supportedLanguages][language];
-    languageDictionary = languageDictionary ?: [BNCLocalization en_localized];
-
-    NSString* localizedString = languageDictionary[string];
-    if (!localizedString) {
-        BNCLogWarning(@"Branch is missing the localization missing for language '%@' string '%@'.",
-            language, string);
-        localizedString = string;
-    }
-    return localizedString;
-}
-

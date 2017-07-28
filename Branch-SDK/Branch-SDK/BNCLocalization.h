@@ -8,11 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
-// Localization defaults to the default. TODO: 
-void BNCLocalizationSetLanguage(NSString*localization);
-NSString* BNCLocalizationLanguage(void);
+@interface BNCLocalization : NSObject
 
-NSString* /**Nonnull*/ BNCLocalizedString(NSString*string);
++ (instancetype) shared;
++ (NSString*) applicationLanguage;
++ (NSDictionary<NSString*, NSDictionary*>*) languageDictionaries;
+- (NSString*) localizeString:(NSString*)string;
 
-#define BNCLocalizedFormattedString(fmt, ...) \
-    [NSString stringWithFormat:BNCLocalizedString(fmt), __VA_ARGS__]
+@property (copy) NSString* currentLanguage;
+@property (strong, readonly) NSDictionary *currentLanguageDictionary;
+@end
+
+#pragma mark Convenience Functions
+
+static inline NSString* /**_Nonnull*/ BNCLocalizedString(NSString*const string) {
+    return [[BNCLocalization shared] localizeString:string];
+}
+
+extern NSString* /**_Nonnull*/ BNCLocalizedFormattedString(NSString*const format, ...) NS_FORMAT_FUNCTION(1,2);
