@@ -18,7 +18,7 @@
 		4DA40A8F1E1F0011004D2534 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA40A8D1E1F0011004D2534 /* BNCCommerceEvent.m */; };
 		4DB47D461F0424B200C53C29 /* BNCDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB47D401F0424B200C53C29 /* BNCDebug.h */; };
 		4DB47D471F0424B200C53C29 /* BNCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D411F0424B200C53C29 /* BNCDebug.m */; };
-		4DB47D481F0424B200C53C29 /* BNCLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB47D421F0424B200C53C29 /* BNCLog.h */; };
+		4DB47D481F0424B200C53C29 /* BNCLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB47D421F0424B200C53C29 /* BNCLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DB47D491F0424B200C53C29 /* BNCLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D431F0424B200C53C29 /* BNCLog.m */; };
 		4DB47D4A1F0424B200C53C29 /* NSString+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB47D441F0424B200C53C29 /* NSString+Branch.h */; };
 		4DB47D4B1F0424B200C53C29 /* NSString+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D451F0424B200C53C29 /* NSString+Branch.m */; };
@@ -386,7 +386,6 @@
 				E230A1861D03DB9E006181D8 /* Branch.h in Headers */,
 				E230A1791D03DB9E006181D8 /* BNCPreferenceHelper.h in Headers */,
 				4D510D721F0D6014003D720B /* BNCDeepLinkViewControllerInstance.h in Headers */,
-				4DB47D481F0424B200C53C29 /* BNCLog.h in Headers */,
 				E230A17B1D03DB9E006181D8 /* BNCServerInterface.h in Headers */,
 				E230A1961D03DB9E006181D8 /* BranchViewHandler.h in Headers */,
 				7DA3BF211D889CE500CA8AE0 /* BranchContentPathProperties.h in Headers */,
@@ -398,6 +397,7 @@
 				E230A1771D03DB9E006181D8 /* BNCLinkData.h in Headers */,
 				E230A1851D03DB9E006181D8 /* Branch-SDK-Prefix.pch in Headers */,
 				4DB5673A1E79FDAF00A8A324 /* BranchShareLink.h in Headers */,
+				4DB47D481F0424B200C53C29 /* BNCLog.h in Headers */,
 				E230A1B61D03DB9F006181D8 /* BranchSpotlightUrlRequest.h in Headers */,
 				4D19C1C21DC110FB008D8B38 /* BNCXcode7Support.h in Headers */,
 				E230A1AA1D03DB9E006181D8 /* BranchOpenRequest.h in Headers */,
