@@ -62,7 +62,7 @@ extern void BNCLogSetDisplayLevel(BNCLogLevel level);
 extern NSString *_Nonnull const BNCLogStringFromLogLevel(BNCLogLevel level);
 
 /*!
-* @param level A string indicating the log level.
+* @param string A string indicating the log level.
 * @return Returns The log level corresponding to the string.
 */
 extern BNCLogLevel BNBLogLevelFromString(NSString*_Null_unspecified string);
