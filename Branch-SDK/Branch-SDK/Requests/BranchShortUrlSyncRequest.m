@@ -132,7 +132,8 @@
     
     NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:params];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
-    [baseUrl appendFormat:@"source=ios&data=%@", base64EncodedParams];
+    NSString *urlEncodedBase64EncodedParams = [BNCEncodingUtils urlEncodedString:base64EncodedParams];
+    [baseUrl appendFormat:@"source=ios&data=%@", urlEncodedBase64EncodedParams];
     
     return baseUrl;
 }
