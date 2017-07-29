@@ -267,8 +267,8 @@
 
     BNCServerRequestQueue *queue = [[BNCServerRequestQueue alloc] init];
     [queue performSelector:@selector(retrieve)];
-    XCTAssertEqual([queue queueDepth], 1);
     [nsdataMock verify];
+    XCTAssertEqual([queue queueDepth], 1);
 }
 
 // Fool the compiler by defining the 'retrieve', which normally wouldn't be visible.

@@ -10,7 +10,7 @@
 
 @interface BNCFabricAnswers : NSObject
 
++ (NSDictionary*) branchConfigurationDictionary;
 + (void)sendEventWithName:(NSString*)name andAttributes:(NSDictionary*)attributes;
-+ (NSDictionary *)prepareBranchDataForAnswers:(NSDictionary *)dictionary;
 
 @end
