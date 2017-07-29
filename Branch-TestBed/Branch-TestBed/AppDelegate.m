@@ -20,6 +20,7 @@
 
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    BNCLogSetDisplayLevel(BNCLogLevelAll);
 
     // Set Branch.useTestBranchKey = YES; to have Branch use the test key that's in the app's
     // Info.plist file. This makes Branch test against your test environment (As shown in the Branch
@@ -32,7 +33,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // [branch setDebug];
 
     // Check for Apple Search Ad attribution:
-    [branch delayInitToCheckForSearchAds];
+    // [branch delayInitToCheckForSearchAds];
     
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
