@@ -72,7 +72,7 @@
             if (userUrl) {
                 failedUrl = [self createLongUrlForUserUrl:userUrl];
             }
-            self.callback(failedUrl, nil);
+            self.callback(failedUrl, error);
         }
         return;
     }
