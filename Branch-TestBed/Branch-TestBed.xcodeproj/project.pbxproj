@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		460F4FA71B618A38002E84D6 /* BranchSpotlightUrlRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 460F4FA51B618A38002E84D6 /* BranchSpotlightUrlRequest.h */; };
 		460F4FA81B618A38002E84D6 /* BranchSpotlightUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 460F4FA61B618A38002E84D6 /* BranchSpotlightUrlRequest.m */; };
-		461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */; };
+		461019461AE551A500379A15 /* BranchNetworkScenario.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 461019451AE551A500379A15 /* BranchNetworkScenario.Test.m */; };
 		462B50461B449DF000967B81 /* BranchDeepLinkingController.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DBB42F1B335A9B00642FC8 /* BranchDeepLinkingController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		463F0A311B20A663004235D2 /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B3491B0FD4620019767C /* BNCServerRequest.m */; };
 		463F0A321B20A663004235D2 /* BranchSetIdentityRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4659B34C1B0FD5BF0019767C /* BranchSetIdentityRequest.m */; };
@@ -168,7 +168,7 @@
 		423ACD2DEBB9A2E4FAF64B08 /* libPods-Branch-SDK-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		460F4FA51B618A38002E84D6 /* BranchSpotlightUrlRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchSpotlightUrlRequest.h; sourceTree = "<group>"; };
 		460F4FA61B618A38002E84D6 /* BranchSpotlightUrlRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchSpotlightUrlRequest.m; sourceTree = "<group>"; };
-		461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchNetworkScenarioTests.m; sourceTree = "<group>"; };
+		461019451AE551A500379A15 /* BranchNetworkScenario.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchNetworkScenario.Test.m; sourceTree = "<group>"; };
 		464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerInterfaceTests.m; sourceTree = "<group>"; };
 		464EA3991ACB38EC000E4094 /* BNCEncodingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCEncodingUtils.h; sourceTree = "<group>"; };
 		464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtils.m; sourceTree = "<group>"; };
@@ -598,7 +598,7 @@
 				464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */,
 				46DBB42C1B330CF300642FC8 /* BNCServerRequestQueueTests.m */,
 				46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */,
-				461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */,
+				461019451AE551A500379A15 /* BranchNetworkScenario.Test.m */,
 				4665AF1F1B2892CF00184037 /* BranchRequestsTests */,
 				7E6B3B551AA42D0E005F45BF /* BranchSDKFunctionalityTests.m */,
 				4665AF1D1B28923900184037 /* BranchSDKLoadTests.m */,
@@ -950,7 +950,7 @@
 				7E6B3B561AA42D0E005F45BF /* BranchSDKFunctionalityTests.m in Sources */,
 				4DA577221E67B28700A43BDD /* NSString+Branch.m in Sources */,
 				4677EB511B3B384C00A13964 /* BranchInstallRequestTests.m in Sources */,
-				461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */,
+				461019461AE551A500379A15 /* BranchNetworkScenario.Test.m in Sources */,
 				46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */,
 				4665AF281B28C1DE00184037 /* BranchLogoutRequestTests.m in Sources */,
 				46DC40781B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m in Sources */,
@@ -1158,7 +1158,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
+				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1179,7 +1179,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
+				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
