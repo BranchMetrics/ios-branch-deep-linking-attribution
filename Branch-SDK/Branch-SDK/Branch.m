@@ -1498,6 +1498,7 @@ static NSString *bnc_branchKey = nil;
     [self callClose];
     [self.requestQueue persistImmediately];
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
+    NSLog(@"Resigned active."); // TODO: Remove
     BNCLogDebugSDK(@"Application resigned active.");
     [self.class closeLog];
     [self.class openLog];
