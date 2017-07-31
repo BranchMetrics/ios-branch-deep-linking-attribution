@@ -25,7 +25,8 @@ void BNCForceNSStringCategoryToLoad() {
 @implementation NSString (Branch)
 
 - (BOOL) bnc_isEqualToMaskedString:(NSString*_Nullable)string {
-    NSLog(@"bnc_isEqualToMaskedString self/string:\n%@\n%@.", self, string);  // TODO
+    // Un-comment for debugging:
+    // NSLog(@"bnc_isEqualToMaskedString self/string:\n%@\n%@.", self, string);
     if (!string) return NO;
     if (self.length != string.length) return NO;
     for (NSInteger idx = 0; idx < self.length; idx++) {

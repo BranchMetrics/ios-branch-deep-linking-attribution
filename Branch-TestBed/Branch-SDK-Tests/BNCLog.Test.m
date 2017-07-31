@@ -437,6 +437,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
          "****-**-**T**:**:**.******Z 6 [branch.io] BNCLog.Test.m(***) Log: Log 21.      \n"
          "****-**-**T**:**:**.******Z 6 [branch.io] BNCLog.Test.m(***) Log: Log 22.      \n";
     XCTAssert([string bnc_isEqualToMaskedString:truth]);
+    NSLog(@"testLogFunctionOutputToURLRecordWrap truth/string:\n%@\n%@.", truth, string); // TODO
 }
 
 - (void) testLogRecordWrapPerformanceTesting {

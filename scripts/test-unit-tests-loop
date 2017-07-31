@@ -29,13 +29,13 @@ fi
 
 loopCount=0
 function finish {
-    printf "${textBlue}>>> Completed %s test iterations.${textNormal}\n" $loopCount
+    printf "${textYellow}>>> Completed %s test iterations.${textNormal}\n" $loopCount
 }
 trap finish EXIT
 
 while true
 do
-    printf "${textBlue}>>> Starting iteration number %s.${textNormal}\n" $((loopCount+1))
+    printf "${textYellow}>>> Starting iteration number %s.${textNormal}\n" $((loopCount+1))
     ./scripts/test-unit-tests
     # ./scripts/test-unit-tests-xcode7
    (( loopCount++ )) || true
