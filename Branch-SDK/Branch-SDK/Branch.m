@@ -116,18 +116,24 @@ void ForceCategoriesToLoad(void) {
 #pragma mark - GetInstance methods
 
 + (void) load {
-    if (self != [Branch self]) return;
-    
+    if (self != [Branch self])
+        return;
     ForceCategoriesToLoad();
+    [self openLog];
+}
 
++ (void) openLog {
     // Initialize the log
-
     BNCLogInitialize();
     NSURL *logURL = BNCURLForBranchDirectory();
     logURL = [logURL URLByAppendingPathComponent:@"Branch.log"];
     BNCLogSetOutputToURLByteWrap(logURL, 102400);
     BNCLogSetDisplayLevel(BNCLogLevelWarning);
     BNCLogDebug(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
+}
+
++ (void) closeLog {
+    BNCLogCloseLogFile();
 }
 
 + (Branch *) getTestInstance {
@@ -1492,6 +1498,9 @@ static NSString *bnc_branchKey = nil;
     [self callClose];
     [self.requestQueue persistImmediately];
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
+    BNCLogDebugSDK(@"Application resigned active.");
+    [self.class closeLog];
+    [self.class openLog];
 }
 
 - (void)callClose {

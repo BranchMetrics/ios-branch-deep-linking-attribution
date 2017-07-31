@@ -150,8 +150,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 
     BNCLogSetOutputToURL(URL);
     BNCLog(@"Hi to file1.");
-    BNCLogFlushMessages();
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     NSString *string =
         [[NSString stringWithContentsOfURL:URL
@@ -161,6 +160,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     NSString *test = @"[branch.io] BNCLog.Test.m(***) Log: Hi to file1. \n";
     XCTAssert([string bnc_isEqualToMaskedString:test]);
 
+    BNCLogCloseLogFile();
     BNCLogSetOutputFunction(NULL);
     BNCLog(@"Hi to null.");
 
@@ -168,8 +168,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     BNCLogSetOutputToURL(URL);
     BNCLog(@"Hi to file2.");
     BNCLog(@"Hi to file3.");
-    BNCLogFlushMessages();
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     NSData * data = [NSData dataWithContentsOfURL:URL options:NSDataReadingUncached error:&error];
     XCTAssert(!error && data);
@@ -213,8 +212,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 
     BNCLogSetOutputToURL(URL);
     BNCLog(@"Hi to file01.");
-    BNCLogFlushMessages();
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     NSString *string =
         [[NSString stringWithContentsOfURL:URL
@@ -228,8 +226,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     BNCLogSetOutputToURL(URL);
     BNCLog(@"Hi to file02.");
     BNCLog(@"Hi to file03.");
-    BNCLogFlushMessages();
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     NSData * data = [NSData dataWithContentsOfURL:URL options:NSDataReadingUncached error:&error];
     XCTAssert(!error && data);
@@ -270,8 +267,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 
     BNCLogSetOutputToURL(URL);
     BNCLog(@"Hi to file001.");
-    BNCLogFlushMessages();
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     NSString *string =
         [[NSString stringWithContentsOfURL:URL
@@ -285,8 +281,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     BNCLogSetOutputToURL(URL);
     BNCLog(@"Hi to file002.");
     BNCLog(@"Hi to file003.");
-    BNCLogFlushMessages();
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     NSData * data = [NSData dataWithContentsOfURL:URL options:NSDataReadingUncached error:&error];
     XCTAssert(!error && data);
@@ -491,8 +486,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     });
 
     dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
-    BNCLogFlushMessages();
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
     NSLog(@"%@: Synchronized time: %1.5f",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
 
@@ -521,8 +515,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     });
 
     dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
-    BNCLogFlushMessages();
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
     NSLog(@"%@: Non-synchronized time: %1.5f",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
 */
@@ -558,7 +551,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     for (long i = 0; i < 23; i++) {
         BNCLog(@"Log %ld.", i);
     }
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     NSData *data;
     NSString *string;
@@ -571,7 +564,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     for (long i = 0; i < 23; i++) {
         BNCLog(@"Log %ld.", i);
     }
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     data = [NSData dataWithContentsOfURL:URL options:NSDataReadingUncached error:&error];
     XCTAssert(!error && data);
@@ -620,7 +613,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     BNCLog(@"Log 01.");
     BNCLog(@"Log 02.");
     BNCLog(@"Log 03.");
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     // Check the file.
 
@@ -639,7 +632,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     BNCLogSetOutputToURLByteWrap(URL, kLogSize);
     BNCLog(@"Log 04.");
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     // Check the file again.
 
@@ -659,7 +652,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     BNCLog(@"Log 05.");
     BNCLog(@"Log 06.");
     BNCLog(@"Log 07.");
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     // Check the file: make sure it wrapped in the right place.
 
@@ -678,7 +671,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     BNCLogSetOutputToURLByteWrap(URL, kLogSize);
     BNCLog(@"Log 08.");
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     // Check the file: make sure it wrapped in the right place.
 
@@ -698,7 +691,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     BNCLogSetOutputToURLByteWrap(URL, kLogSize);
     for (long i = 1; i <= 23; i++)
         BNCLog(@"Log %ld.", i);
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     data = [NSData dataWithContentsOfURL:URL options:NSDataReadingUncached error:&error];
     XCTAssert(!error && data);
@@ -762,8 +755,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     });
 
     dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
-    BNCLogFlushMessages();
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
     NSLog(@"%@: Synchronized time: %1.5f",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
 
@@ -792,8 +784,8 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     });
 
     dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
+    BNCLogCloseLogFile();
     BNCLogFlushMessages();
-    BNCLogSetOutputFunction(NULL);
     NSLog(@"%@: Non-synchronized time: %1.5f",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
 */
@@ -829,7 +821,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     for (long i = 0; i < 100; i++) {
         BNCLog(@"Log %ld.", i);
     }
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     NSData *data;
     NSString *string;
@@ -842,7 +834,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     for (long i = 0; i < 100; i++) {
         BNCLog(@"Log %ld.", i);
     }
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     data = [NSData dataWithContentsOfURL:URL options:NSDataReadingUncached error:&error];
     XCTAssert(!error && data);
@@ -888,7 +880,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     BNCLog(@"Log 1.");
     BNCLog(@"Log 12.");
     BNCLog(@"Log 123.");
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     // Check the file.
 
@@ -909,7 +901,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     BNCLog(@"Log 1234.");
     BNCLog(@"Log 12345.");
     BNCLog(@"Log 123456.");
-    BNCLogSetOutputFunction(NULL);
+    BNCLogCloseLogFile();
 
     // Check the file.
 

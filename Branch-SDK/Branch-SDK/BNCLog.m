@@ -498,7 +498,9 @@ BNCLogOutputFunctionPtr _Nullable BNCLogOutputFunction() {
 }
 
 void BNCLogCloseLogFile() {
-    dispatch_async(bnc_LogQueue, ^{
+    dispatch_sync(bnc_LogQueue, ^{
+        if (bnc_LogFlushFunction)
+            bnc_LogFlushFunction();
         if (bnc_LogDescriptor >= 0) {
             close(bnc_LogDescriptor);
             bnc_LogDescriptor = -1;
