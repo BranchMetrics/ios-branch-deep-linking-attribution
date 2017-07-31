@@ -423,7 +423,7 @@ void BNCLogSetOutputToURLByteWrap(NSURL *_Nullable URL, long maxBytes) {
 static BNCLogLevel bnc_LogDisplayLevel = BNCLogLevelWarning;
 
 BNCLogLevel BNCLogDisplayLevel() {
-    __block BNCLogLevel level;
+    __block BNCLogLevel level = BNCLogLevelAll;
     dispatch_sync(bnc_LogQueue, ^{
         level = bnc_LogDisplayLevel;
     });
@@ -471,7 +471,7 @@ BNCLogLevel BNBLogLevelFromString(NSString*string) {
 static BOOL bnc_LogBreakPointsAreEnabled = NO;
 
 BOOL BNCLogBreakPointsAreEnabled() {
-    __block BOOL enabled;
+    __block BOOL enabled = NO;
     dispatch_sync(bnc_LogQueue, ^{
         enabled = bnc_LogBreakPointsAreEnabled;
     });
@@ -490,7 +490,7 @@ static BNCLogOutputFunctionPtr bnc_LoggingFunction = nil; // Default to just NSL
 static BNCLogFlushFunctionPtr bnc_LogFlushFunction = BNCLogFlushFileDescriptor;
 
 BNCLogOutputFunctionPtr _Nullable BNCLogOutputFunction() {
-    __block BNCLogOutputFunctionPtr ptr;
+    __block BNCLogOutputFunctionPtr ptr = NULL;
     dispatch_sync(bnc_LogQueue, ^{
         ptr = bnc_LoggingFunction;
     });
@@ -513,7 +513,7 @@ void BNCLogSetOutputFunction(BNCLogOutputFunctionPtr _Nullable logFunction) {
 }
 
 BNCLogFlushFunctionPtr BNCLogFlushFunction() {
-    __block BNCLogFlushFunctionPtr ptr;
+    __block BNCLogFlushFunctionPtr ptr = NULL;
     dispatch_sync(bnc_LogQueue, ^{
         ptr = bnc_LogFlushFunction;
     });
