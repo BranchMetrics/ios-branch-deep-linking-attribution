@@ -19,9 +19,11 @@
 #define _countof(array)  (sizeof(array)/sizeof(array[0]))
 static NSNumber *bnc_LogIsInitialized = nil;
 
-// An 'inner', last attempt at logging if an error occurs in BNCLog.
-// BNCLog can't log itself, but if an error occurs it uses this simple define:
+// All log synchronization and globals are coordinated through the bnc_LogQueue.
+static dispatch_queue_t bnc_LogQueue = nil;
 
+// A fallback attempt at logging if an error occurs in BNCLog.
+// BNCLog can't log itself, but if an error occurs it uses this simple define:
 extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...) {
 
@@ -421,15 +423,17 @@ void BNCLogSetOutputToURLByteWrap(NSURL *_Nullable URL, long maxBytes) {
 static BNCLogLevel bnc_LogDisplayLevel = BNCLogLevelWarning;
 
 BNCLogLevel BNCLogDisplayLevel() {
-    @synchronized (bnc_LogIsInitialized) {
-        return bnc_LogDisplayLevel;
-    }
+    __block BNCLogLevel level;
+    dispatch_sync(bnc_LogQueue, ^{
+        level = bnc_LogDisplayLevel;
+    });
+    return level;
 }
 
 void BNCLogSetDisplayLevel(BNCLogLevel level) {
-    @synchronized (bnc_LogIsInitialized) {
+    dispatch_async(bnc_LogQueue, ^{
         bnc_LogDisplayLevel = level;
-    }
+    });
 }
 
 NSString*const bnc_logLevelStrings[] = {
@@ -462,36 +466,22 @@ BNCLogLevel BNBLogLevelFromString(NSString*string) {
     return BNCLogLevelNone;
 }
 
-#pragma mark - Log Synchronization
-
-static BOOL bnc_SynchronizeMessages = YES;
-
-void BNCLogSetSynchronizeMessages(BOOL enable) {
-    @synchronized (bnc_LogIsInitialized) {
-        bnc_SynchronizeMessages = enable;
-    }
-}
-
-BOOL BNCLogSynchronizeMessages() {
-    @synchronized (bnc_LogIsInitialized) {
-        return bnc_SynchronizeMessages;
-    }
-}
-
 #pragma mark - Break Points
 
 static BOOL bnc_LogBreakPointsAreEnabled = NO;
 
 BOOL BNCLogBreakPointsAreEnabled() {
-    @synchronized (bnc_LogIsInitialized) {
-        return bnc_LogBreakPointsAreEnabled;
-    }
+    __block BOOL enabled;
+    dispatch_sync(bnc_LogQueue, ^{
+        enabled = bnc_LogBreakPointsAreEnabled;
+    });
+    return enabled;
 }
 
 void BNCLogSetBreakPointsEnabled(BOOL enabled) {
-    @synchronized (bnc_LogIsInitialized) {
+    dispatch_async(bnc_LogQueue, ^{
         bnc_LogBreakPointsAreEnabled = enabled;
-    }
+    });
 }
 
 #pragma mark - Log Functions
@@ -500,43 +490,43 @@ static BNCLogOutputFunctionPtr bnc_LoggingFunction = nil; // Default to just NSL
 static BNCLogFlushFunctionPtr bnc_LogFlushFunction = BNCLogFlushFileDescriptor;
 
 BNCLogOutputFunctionPtr _Nullable BNCLogOutputFunction() {
-    @synchronized (bnc_LogIsInitialized) {
-        return bnc_LoggingFunction;
-    }
+    __block BNCLogOutputFunctionPtr ptr;
+    dispatch_sync(bnc_LogQueue, ^{
+        ptr = bnc_LoggingFunction;
+    });
+    return ptr;
 }
 
 void BNCLogCloseLogFile() {
-    @synchronized(bnc_LogIsInitialized) {
+    dispatch_async(bnc_LogQueue, ^{
         if (bnc_LogDescriptor >= 0) {
-            BNCLogFlushMessages();
             close(bnc_LogDescriptor);
             bnc_LogDescriptor = -1;
         }
-    }
+    });
 }
 
 void BNCLogSetOutputFunction(BNCLogOutputFunctionPtr _Nullable logFunction) {
-    @synchronized (bnc_LogIsInitialized) {
-        BNCLogFlushMessages();
+    dispatch_async(bnc_LogQueue, ^{
         bnc_LoggingFunction = logFunction;
-    }
+    });
 }
 
 BNCLogFlushFunctionPtr BNCLogFlushFunction() {
-    @synchronized (bnc_LogIsInitialized) {
-        return bnc_LogFlushFunction;
-    }
+    __block BNCLogFlushFunctionPtr ptr;
+    dispatch_sync(bnc_LogQueue, ^{
+        ptr = bnc_LogFlushFunction;
+    });
+    return ptr;
 }
 
 void BNCLogSetFlushFunction(BNCLogFlushFunctionPtr flushFunction) {
-    @synchronized (bnc_LogIsInitialized) {
+    dispatch_async(bnc_LogQueue, ^{
         bnc_LogFlushFunction = flushFunction;
-    }
+    });
 }
 
 #pragma mark - BNCLogInternal
-
-static dispatch_queue_t bnc_LogQueue = nil;
 
 void BNCLogWriteMessageFormat(
         BNCLogLevel logLevel,
@@ -581,15 +571,10 @@ void BNCLogWriteMessageFormat(
         NSLog(@"%@", s); // Upgrade this to unified logging when we can.
     }
 
-    if (BNCLogSynchronizeMessages()) {
-        dispatch_async(bnc_LogQueue, ^{
-            if (bnc_LoggingFunction)
-                bnc_LoggingFunction([NSDate date], logLevel, s);
-        });
-    } else {
+    dispatch_async(bnc_LogQueue, ^{
         if (bnc_LoggingFunction)
             bnc_LoggingFunction([NSDate date], logLevel, s);
-    }
+    });
 }
 
 void BNCLogWriteMessage(
@@ -602,15 +587,10 @@ void BNCLogWriteMessage(
 }
 
 void BNCLogFlushMessages() {
-    if (BNCLogSynchronizeMessages()) {
-        dispatch_sync(bnc_LogQueue, ^{
-            if (bnc_LogFlushFunction)
-                bnc_LogFlushFunction();
-        });
-    } else {
+    dispatch_sync(bnc_LogQueue, ^{
         if (bnc_LogFlushFunction)
             bnc_LogFlushFunction();
-    }
+    });
 }
 
 #pragma mark - BNCLogInitialize

@@ -50,7 +50,8 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     XCTAssertTrue(BNCLogOutputFunction() == TestLogProcedure);
 
     // Set SynchronizeMessages so that messages don't lag for testing.
-    BNCLogSetSynchronizeMessages(NO);
+    // Alternate synchronization of log messages has been removed.
+    // BNCLogSetSynchronizeMessages(NO);
 
     //  Test the log message facility --
     //  Warning!  If these line numbers change the tests will fail!
@@ -58,9 +59,9 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     //  Extra line
     //  Extra line
     //  Extra line
-    //  Extra line
 
     BNCLog(@"Debug message with no parameters.");
+    BNCLogFlushMessages();
     XCTAssertEqualObjects(globalTestLogString,
         @"[branch.io] BNCLog.Test.m(63) Log: Debug message with no parameters.");
 }
@@ -75,20 +76,20 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     BNCLogSetOutputFunction(TestLogProcedure);
     XCTAssertTrue(BNCLogOutputFunction() == TestLogProcedure);
 
-    // Set SynchronizeMessages so that messages don't lag for testing.
-    BNCLogSetSynchronizeMessages(NO);
-
     //  Test the log message facility --
 
     BNCLog(@"Debug message with no parameters.");
+    BNCLogFlushMessages();
     XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
         @"[branch.io] BNCLog.Test.m(**) Log: Debug message with no parameters."]);
 
     BNCLog(@"Debug message with one parameter: %d.", 1);
+    BNCLogFlushMessages();
     XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
         @"[branch.io] BNCLog.Test.m(**) Log: Debug message with one parameter: 1."]);
 
     BNCLogMethodName();
+    BNCLogFlushMessages();
     XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
         @"[branch.io] BNCLog.Test.m(**) Debug: Method 'testLog'."]);
 
@@ -301,9 +302,9 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 
 - (void) testLogObject {
     BNCLogSetOutputFunction(TestLogProcedure);
-    BNCLogSetSynchronizeMessages(NO);
     NSData *data = [@"Test string." dataUsingEncoding:NSUTF8StringEncoding];
     BNCLog(data);
+    BNCLogFlushMessages();
     XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
         @"[branch.io] BNCLog.Test.m(***) Log: "
          "0x**************** <NSConcreteMutableData> "
@@ -470,7 +471,6 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     //  Test sychronized first --
 
     BNCLogSetOutputToURLRecordWrap(URL, 5);
-    BNCLogSetSynchronizeMessages(YES);
 
     NSDate *startTime = [NSDate date];
     dispatch_group_t waitGroup = dispatch_group_create();
@@ -496,7 +496,8 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     NSLog(@"%@: Synchronized time: %1.5f",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
 
-    //  Non-sychronized --
+/*
+    //  Non-sychronized -- There is only synchronized.
 
     BNCLogSetOutputToURLRecordWrap(URL, 5);
     BNCLogSetSynchronizeMessages(NO);
@@ -524,6 +525,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     BNCLogSetOutputFunction(NULL);
     NSLog(@"%@: Non-synchronized time: %1.5f",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
+*/
 }
 
 - (void) testRecordWrapTruncate {
@@ -552,7 +554,6 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     error = nil;
     NSLog(@"Log is %@.", URL);
 
-    BNCLogSetSynchronizeMessages(YES);
     BNCLogSetOutputToURLRecordWrapSize(URL, 23, 80);
     for (long i = 0; i < 23; i++) {
         BNCLog(@"Log %ld.", i);
@@ -741,7 +742,6 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     //  Test sychronized first --
 
     BNCLogSetOutputToURLByteWrap(URL, kLogSize);
-    BNCLogSetSynchronizeMessages(YES);
 
     NSDate *startTime = [NSDate date];
     dispatch_group_t waitGroup = dispatch_group_create();
@@ -767,8 +767,9 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     NSLog(@"%@: Synchronized time: %1.5f",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
 
-    //  Non-sychronized --
-
+/*  //  Non-sychronized --
+    //  EBS: Non-sychronized is no longer a thing.
+    
     BNCLogSetOutputToURLByteWrap(URL, kLogSize);
     BNCLogSetSynchronizeMessages(NO);
 
@@ -795,7 +796,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     BNCLogSetOutputFunction(NULL);
     NSLog(@"%@: Non-synchronized time: %1.5f",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
-
+*/
 }
 
 - (void) testByteWrapTruncate {
@@ -824,7 +825,6 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     NSLog(@"Remove error is '%@'.\nLog is %@.", error, URL);
     error = nil;
 
-    BNCLogSetSynchronizeMessages(YES);
     BNCLogSetOutputToURLByteWrap(URL, 1024);
     for (long i = 0; i < 100; i++) {
         BNCLog(@"Log %ld.", i);
