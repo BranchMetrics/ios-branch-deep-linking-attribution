@@ -385,7 +385,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         }
         
         branchUniversalObject.getShortUrl(with: branchLinkProperties) { (url, error) in
-            if (error == nil) {
+            if (url != nil) {
                 print(self.branchLinkProperties.description())
                 print(self.branchUniversalObject.description())
                 print("Link Created: \(String(describing: url?.description))")
