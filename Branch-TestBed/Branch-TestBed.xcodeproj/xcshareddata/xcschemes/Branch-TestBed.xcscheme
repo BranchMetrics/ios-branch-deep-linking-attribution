@@ -43,6 +43,16 @@
                resolvedPath = "../Simulate-FirstRun.xcappdata">
             </DeviceAppData>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F1405BF11F2BC56700254D24"
+               BuildableName = "Branch-TestBedUITests.xctest"
+               BlueprintName = "Branch-TestBedUITests"
+               ReferencedContainer = "container:Branch-TestBed.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
