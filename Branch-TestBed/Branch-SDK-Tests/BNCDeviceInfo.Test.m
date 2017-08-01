@@ -64,10 +64,19 @@
     //+ (NSString*) userAgentString;
     //+ (NSString*) systemBuildVersion;
 
+    NSString *truth = nil;
     NSString *string = [BNCDeviceInfo userAgentString];
-    NSString *truth =
-        @"Mozilla/5.0 (iPhone; CPU iPhone OS **** like Mac OS X) AppleWebKit/******** (KHTML, like Gecko) Mobile/*****";
-    XCTAssertTrue([string bnc_isEqualToMaskedString:truth]);
+    NSString *pattern =
+        @"Mozilla\\/..0 \\(iPhone; CPU iPhone OS .+ like Mac OS X\\) AppleWebKit\\/.+ \\(KHTML, like Gecko\\) Mobile\\/.+";
+    NSError *error = NULL;
+    NSRegularExpression *regex = [NSRegularExpression
+        regularExpressionWithPattern:pattern
+        options:NSRegularExpressionCaseInsensitive
+        error:&error];
+
+    NSRange range = NSMakeRange(0, string.length);
+    NSArray<NSTextCheckingResult*>*matches = [regex matchesInString:string options:0 range:range];
+    XCTAssert(matches.count == 1 && NSEqualRanges(matches[0].range, range));
 
     string = [BNCDeviceInfo systemBuildVersion];
     truth = @"*****";
