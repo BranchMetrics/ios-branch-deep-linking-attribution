@@ -87,7 +87,7 @@
 		46DC40781B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */; };
 		46DC40801B2B84CD00D2D203 /* BranchShortUrlRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */; };
 		46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */; };
-		46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */; };
+		46FFCF171ACC321A00039CE0 /* BNCEncodingUtils.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FFCF161ACC321A00039CE0 /* BNCEncodingUtils.Test.m */; };
 		4D35141B1E3201D80085EBA1 /* NSMutableDictionary+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3514191E3201D80085EBA1 /* NSMutableDictionary+Branch.h */; };
 		4D35141C1E3201D80085EBA1 /* NSMutableDictionary+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D35141A1E3201D80085EBA1 /* NSMutableDictionary+Branch.m */; };
 		4D3FA94B1DFF31EB00E2B6A9 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FA94A1DFF31EB00E2B6A9 /* BNCConfig.m */; };
@@ -221,7 +221,7 @@
 		46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchGetCreditHistoryRequestTests.m; sourceTree = "<group>"; };
 		46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShortUrlRequestTests.m; sourceTree = "<group>"; };
 		46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserverTests.m; sourceTree = "<group>"; };
-		46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
+		46FFCF161ACC321A00039CE0 /* BNCEncodingUtils.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtils.Test.m; sourceTree = "<group>"; };
 		4D3514191E3201D80085EBA1 /* NSMutableDictionary+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableDictionary+Branch.h"; sourceTree = "<group>"; };
 		4D35141A1E3201D80085EBA1 /* NSMutableDictionary+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDictionary+Branch.m"; sourceTree = "<group>"; };
 		4D3FA94A1DFF31EB00E2B6A9 /* BNCConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCConfig.m; sourceTree = "<group>"; };
@@ -591,7 +591,7 @@
 			isa = PBXGroup;
 			children = (
 				4DA5771E1E67B23D00A43BDD /* BNCDebug.Test.m */,
-				46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */,
+				46FFCF161ACC321A00039CE0 /* BNCEncodingUtils.Test.m */,
 				46DBB42B1B330CF300642FC8 /* BNCLinkDataTests.m */,
 				4DA577191E67B1EB00A43BDD /* BNCLog.Test.m */,
 				46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */,
@@ -966,7 +966,7 @@
 				4673094A1AF2C4FB005B8848 /* BNCTestCase.m in Sources */,
 				46DC40801B2B84CD00D2D203 /* BranchShortUrlRequestTests.m in Sources */,
 				46DBB4391B34B22F00642FC8 /* BranchCloseRequestTests.m in Sources */,
-				46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */,
+				46FFCF171ACC321A00039CE0 /* BNCEncodingUtils.Test.m in Sources */,
 				4DA577241E67B2A000A43BDD /* NSString+Branch.Test.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
