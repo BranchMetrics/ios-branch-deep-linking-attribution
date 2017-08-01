@@ -68,24 +68,6 @@ extern NSString *_Nonnull const BNCLogStringFromLogLevel(BNCLogLevel level);
 extern BNCLogLevel BNBLogLevelFromString(NSString*_Null_unspecified string);
 
 
-#pragma mark - Log Message Synchronization
-
-
-/*!
-* @discussion   When log messages are synchronized they are written to the log in order, including
-*   across separate threads. Synchronizing log messages usually improves performance since it
-*   reduces global resource lock contention. Note that synchronization has the side effect of some
-*   messages not being available immediately since they are written on a separate thread.
-*
-* @param enable Enable log message synchronization.
-*/
-extern void BNCLogSetSynchronizeMessages(BOOL enable);
-
-/*!@return Returns YES if log messages are synchronized between threads.
-*/
-extern BOOL BNCLogSynchronizeMessages(void);
-
-
 #pragma mark - Programmatic Breakpoints
 
 
