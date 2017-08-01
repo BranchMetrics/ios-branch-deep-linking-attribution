@@ -382,6 +382,11 @@
     data = [BNCEncodingUtils base64DecodeString:
         @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"];
     XCTAssertTrue( data.length == _countof(b2) && memcmp(data.bytes, b2, _countof(b2)) == 0 );
+
+    // Test decode invalid data
+    data = [BNCEncodingUtils base64DecodeString:
+        @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcde (Junk:%&*^**) fghijklmnopqrstuvwxyz0123456789+/"];
+    XCTAssertEqual(data, nil);
 }
 
 @end
