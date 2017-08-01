@@ -55,14 +55,18 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 
 - (nullable UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(nonnull BranchLinkProperties *)linkProperties;
 
-- (void)showShareSheetWithShareText:(nullable NSString *)shareText completion:(nullable shareCompletion)completion __attribute__((deprecated(("Use presentActivityViewControllerFromViewController in BranchShareLink"))));
-- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties andShareText:(nullable NSString *)shareText fromViewController:(nullable UIViewController *)viewController completion:(nullable shareCompletion)completion __attribute__((deprecated(("Use presentActivityViewControllerFromViewController in BranchShareLink"))));
+- (void)showShareSheetWithShareText:(nullable NSString *)shareText completion:(nullable shareCompletion)completion;
+
+- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties andShareText:(nullable NSString *)shareText fromViewController:(nullable UIViewController *)viewController completion:(nullable shareCompletion)completion;
+
 // Returns with activityError as well
-- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties andShareText:(nullable NSString *)shareText fromViewController:(nullable UIViewController *)viewController completionWithError:(nullable shareCompletionWithError)completion __attribute__((deprecated(("Use presentActivityViewControllerFromViewController in BranchShareLink"))));
+- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties andShareText:(nullable NSString *)shareText fromViewController:(nullable UIViewController *)viewController completionWithError:(nullable shareCompletionWithError)completion;
+
 //iPad
-- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties andShareText:(nullable NSString *)shareText fromViewController:(nullable UIViewController *)viewController anchor:(nullable UIBarButtonItem *)anchor completion:(nullable shareCompletion)completion __attribute__((deprecated(("Use presentActivityViewControllerFromViewController in BranchShareLink"))));
+- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties andShareText:(nullable NSString *)shareText fromViewController:(nullable UIViewController *)viewController anchor:(nullable UIBarButtonItem *)anchor completion:(nullable shareCompletion)completion;
+
 // Returns with activityError as well
-- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties andShareText:(nullable NSString *)shareText fromViewController:(nullable UIViewController *)viewController anchor:(nullable UIBarButtonItem *)anchor completionWithError:(nullable shareCompletionWithError)completion __attribute__((deprecated(("Use presentActivityViewControllerFromViewController in BranchShareLink"))));
+- (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties andShareText:(nullable NSString *)shareText fromViewController:(nullable UIViewController *)viewController anchor:(nullable UIBarButtonItem *)anchor completionWithError:(nullable shareCompletionWithError)completion;
 
 - (void)listOnSpotlight;
 - (void)listOnSpotlightWithCallback:(nullable callbackWithUrl)callback;
