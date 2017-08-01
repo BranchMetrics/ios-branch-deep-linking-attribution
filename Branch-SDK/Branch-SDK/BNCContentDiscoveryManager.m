@@ -452,9 +452,6 @@
     SEL initAttributesSelector = NSSelectorFromString(@"initWithItemContentType:");
     attributes = ((id (*)(id, SEL, NSString *))[attributes methodForSelector:initAttributesSelector])(attributes, initAttributesSelector, type);
     
-    SEL setIdentifierSelector = NSSelectorFromString(@"setIdentifier:");
-    ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setIdentifierSelector])(attributes, setIdentifierSelector, spotlightIdentifier);
-    
     SEL setTitleSelector = NSSelectorFromString(@"setTitle:");
     ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setTitleSelector])(attributes, setTitleSelector, title);
     SEL setContentDescriptionSelector = NSSelectorFromString(@"setContentDescription:");
@@ -463,12 +460,9 @@
     ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setThumbnailURLSelector])(attributes, setThumbnailURLSelector, thumbnailUrl);
     SEL setThumbnailDataSelector = NSSelectorFromString(@"setThumbnailData:");
     ((void (*)(id, SEL, NSData *))[attributes methodForSelector:setThumbnailDataSelector])(attributes, setThumbnailDataSelector, thumbnailData);
-    // NSUserActivity.CSSearchableItemAttributeSet.contentURL
-    SEL setContentURLSelector = NSSelectorFromString(@"setContentURL:");
-    ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setContentURLSelector])(attributes, setContentURLSelector, [NSURL URLWithString:url]);
     
-    SEL setWeakRelatedUniqueIdentifierSelector = NSSelectorFromString(@"setWeakRelatedUniqueIdentifier:");
     if (canonicalId) {
+        SEL setWeakRelatedUniqueIdentifierSelector = NSSelectorFromString(@"setWeakRelatedUniqueIdentifier:");
         ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setWeakRelatedUniqueIdentifierSelector])(attributes, setWeakRelatedUniqueIdentifierSelector, canonicalId);
     }
     
@@ -542,7 +536,7 @@
     activeViewController.userActivity.keywords = params[@"keywords"];
     SEL setContentAttributeSetSelector = NSSelectorFromString(@"setContentAttributeSet:");
     ((void (*)(id, SEL, id))[activeViewController.userActivity methodForSelector:setContentAttributeSetSelector])(activeViewController.userActivity, setContentAttributeSetSelector, params[@"attributeSet"]);
-
+    
     [activeViewController.userActivity becomeCurrent];
 }
 
