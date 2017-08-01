@@ -29,6 +29,8 @@
     // UI tests must launch the application that they test. Doing this in setup will make sure it happens for each test method.
     [[[XCUIApplication alloc] init] launch];
     
+    
+    
     // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
 }
 
@@ -46,11 +48,8 @@
 -(void)testDeepLinking {
     [XCUIDevice sharedDevice].orientation = UIDeviceOrientationFaceUp;
     
-    XCUIApplication *currentApp = [[XCUIApplication alloc] init];
-   
-    //    XCUIApplication *safariApp = [self openSafariWithUrl:@"parthkalavadia.github.io/branch-web"];
-//    [self deepLinkForSafari:safariApp];
-    
+    XCUIApplication *safariApp = [self openSafariWithUrl:@"parthkalavadia.github.io/branch-web"];
+    [self deepLinkForSafari:safariApp];
     
 }
 
@@ -63,8 +62,6 @@
     [app typeText:url];
     [app.buttons[@"Go"] tap];
     sleep(3);
-    XCUIApplication *currentApp = [[XCUIApplication alloc] init];
-
     return app;
 
 }
@@ -72,8 +69,15 @@
 -(void) deepLinkForSafari:(XCUIApplication *) safariApp {
     NSLog(@"%@",safariApp.debugDescription);
     [safariApp.links[@"Universal Link TestBed Obj-c"] tap];
-    
- //   NSLog(@"%@",);
+    sleep(10);
+
+    XCUIApplication *currentApp = [[XCUIApplication alloc] init];
+    NSLog(@"%@",currentApp.debugDescription);
+
+    XCUIElement* element = [currentApp.textFields elementMatchingPredicate:[NSPredicate predicateWithFormat:@"value CONTAINS[cd] Successfully"]];
+    NSLog(@"Contains %@",element.exists?@"YES":@"NO");
+
+    NSLog(@"%@",element);
 }
 
 @end
