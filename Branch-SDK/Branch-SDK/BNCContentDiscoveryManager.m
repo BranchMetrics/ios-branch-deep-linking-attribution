@@ -469,7 +469,6 @@
     
     SEL setWeakRelatedUniqueIdentifierSelector = NSSelectorFromString(@"setWeakRelatedUniqueIdentifier:");
     if (canonicalId) {
-        NSLog(@"PRINT CANONICAL ID %@", canonicalId);
         ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setWeakRelatedUniqueIdentifierSelector])(attributes, setWeakRelatedUniqueIdentifierSelector, canonicalId);
     }
     
