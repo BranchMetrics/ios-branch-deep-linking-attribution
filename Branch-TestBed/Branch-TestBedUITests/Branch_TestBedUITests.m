@@ -7,7 +7,8 @@
 //
 
 #import <XCTest/XCTest.h>
-
+#define DEEPLINK_SLEEP 10
+#define LOADWIKIPAGE_SLEEP 3
 @interface Branch_TestBedUITests : XCTestCase
 
 @end
@@ -29,8 +30,6 @@
     // UI tests must launch the application that they test. Doing this in setup will make sure it happens for each test method.
     [[[XCUIApplication alloc] init] launch];
     
-    
-    
     // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
 }
 
@@ -39,18 +38,11 @@
     [super tearDown];
 }
 
-- (void)testExample {
-    // Use recording to get started writing UI tests.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-    
-}
-
 -(void)testDeepLinking {
     [XCUIDevice sharedDevice].orientation = UIDeviceOrientationFaceUp;
     
-    XCUIApplication *safariApp = [self openSafariWithUrl:@"parthkalavadia.github.io/branch-web"];
+    XCUIApplication *safariApp = [self openSafariWithUrl:@"https://github.com/BranchMetrics/ios-branch-deep-linking/wiki/UITest-for-Testbed-App-for-Universal-links"];
     [self deepLinkForSafari:safariApp];
-    
 }
 
 -(XCUIApplication *) openSafariWithUrl: (NSString*) url {
@@ -61,7 +53,7 @@
     [app.textFields[@"Search or enter website name"] tap];
     [app typeText:url];
     [app.buttons[@"Go"] tap];
-    sleep(3);
+    sleep(LOADWIKIPAGE_SLEEP);
     return app;
 
 }
@@ -69,15 +61,12 @@
 -(void) deepLinkForSafari:(XCUIApplication *) safariApp {
     NSLog(@"%@",safariApp.debugDescription);
     [safariApp.links[@"Universal Link TestBed Obj-c"] tap];
-    sleep(10);
+
+    sleep(DEEPLINK_SLEEP);
 
     XCUIApplication *currentApp = [[XCUIApplication alloc] init];
-    NSLog(@"%@",currentApp.debugDescription);
-
-    XCUIElement* element = [currentApp.textFields elementMatchingPredicate:[NSPredicate predicateWithFormat:@"value CONTAINS[cd] Successfully"]];
-    NSLog(@"Contains %@",element.exists?@"YES":@"NO");
-
-    NSLog(@"%@",element);
+    XCUIElement* element = currentApp.textViews[@"DeepLinkData"];
+    XCTAssertTrue([element.value containsString:@"Successfully Deeplinked"]);
 }
 
 @end
