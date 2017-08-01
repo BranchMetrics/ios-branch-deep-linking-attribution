@@ -59,7 +59,8 @@ static const short _base64DecodingTable[256] = {
     // Do not forget about trailing zero
     unsigned char *output = malloc(outputLength + 1);
     output[outputLength] = 0;
-    
+
+    // There is a memory access error below. This reads past the end of the array.
     // Here are no checks inside the loop, so it works much faster than other implementations
     for (unsigned long i = 0; i < inputLength; i += 3) {
         output[j++] = _base64EncodingTable[ (input[i] & 0xFC) >> 2 ];

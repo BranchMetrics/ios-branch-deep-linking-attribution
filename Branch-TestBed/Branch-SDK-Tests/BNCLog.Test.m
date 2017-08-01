@@ -473,22 +473,22 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 1x%ld", i);
+            BNCLog(@"Message 1x%ld.", i);
     });
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 2x%ld", i);
+            BNCLog(@"Message 2x%ld.", i);
     });
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 3x%ld", i);
+            BNCLog(@"Message 3x%ld.", i);
     });
 
     dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
     BNCLogCloseLogFile();
-    NSLog(@"%@: Synchronized time: %1.5f",
+    NSLog(@"%@: Synchronized time: %1.5f.",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
 
 /*
@@ -742,22 +742,22 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 1x%ld", i);
+            BNCLog(@"Message 1x%ld.", i);
     });
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 2x%ld", i);
+            BNCLog(@"Message 2x%ld.", i);
     });
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 3x%ld", i);
+            BNCLog(@"Message 3x%ld.", i);
     });
 
     dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
     BNCLogCloseLogFile();
-    NSLog(@"%@: Synchronized time: %1.5f",
+    NSLog(@"%@: Synchronized time: %1.5f.",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
 
 /*  //  Non-sychronized --
