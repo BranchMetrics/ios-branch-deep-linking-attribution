@@ -13,6 +13,7 @@
 + (NSString *)base64EncodeStringToString:(NSString *)strData;
 + (NSString *)base64DecodeStringToString:(NSString *)strData;
 + (NSString *)base64EncodeData:(NSData *)objData;
++ (NSData *)base64DecodeString:(NSString *)strBase64;
 
 + (NSString *)md5Encode:(NSString *)input;
 

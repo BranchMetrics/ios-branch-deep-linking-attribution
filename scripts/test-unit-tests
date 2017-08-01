@@ -64,9 +64,22 @@ function analyzeBuild() {
         -workspace Branch-TestBed.xcworkspace \
         -scheme Branch-TestBed \
         -destination name="iPhone 7",OS=latest \
-            clean analyze -quiet
+            analyze -quiet
 }
 
+function cleanAll() {
+    printf "${textBlue}Cleaning all projects...${textNormal}\n"
+    xcodebuild \
+        -workspace Branch-TestBed.xcworkspace \
+        -scheme Branch-TestBed \
+        -destination name="iPhone 7",OS=latest \
+            clean -quiet
+    xcodebuild \
+        -workspace Branch-TestBed.xcworkspace \
+        -scheme Branch-SDK-Tests \
+        -destination name="iPhone 7",OS=latest \
+            clean -quiet
+}
 
 xcodeversion=$(xcodebuild -version)
 if [[ "$xcodeversion" =~ "Xcode 8" ]] || [[ "$xcodeversion" =~ "Xcode 9" ]]
@@ -78,6 +91,7 @@ else
 fi
 
 
+cleanAll
 analyzeBuild
 for i in {1..10}
 do
