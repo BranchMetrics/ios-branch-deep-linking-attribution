@@ -88,6 +88,7 @@
 		46DC40801B2B84CD00D2D203 /* BranchShortUrlRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */; };
 		46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */; };
 		46FFCF171ACC321A00039CE0 /* BNCEncodingUtils.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FFCF161ACC321A00039CE0 /* BNCEncodingUtils.Test.m */; };
+		4D1B72581F3120CB00992F20 /* BNCDeviceInfo.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B72571F3120CB00992F20 /* BNCDeviceInfo.Test.m */; };
 		4D35141B1E3201D80085EBA1 /* NSMutableDictionary+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3514191E3201D80085EBA1 /* NSMutableDictionary+Branch.h */; };
 		4D35141C1E3201D80085EBA1 /* NSMutableDictionary+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D35141A1E3201D80085EBA1 /* NSMutableDictionary+Branch.m */; };
 		4D3FA94B1DFF31EB00E2B6A9 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FA94A1DFF31EB00E2B6A9 /* BNCConfig.m */; };
@@ -222,6 +223,7 @@
 		46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShortUrlRequestTests.m; sourceTree = "<group>"; };
 		46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserverTests.m; sourceTree = "<group>"; };
 		46FFCF161ACC321A00039CE0 /* BNCEncodingUtils.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtils.Test.m; sourceTree = "<group>"; };
+		4D1B72571F3120CB00992F20 /* BNCDeviceInfo.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeviceInfo.Test.m; sourceTree = "<group>"; };
 		4D3514191E3201D80085EBA1 /* NSMutableDictionary+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableDictionary+Branch.h"; sourceTree = "<group>"; };
 		4D35141A1E3201D80085EBA1 /* NSMutableDictionary+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDictionary+Branch.m"; sourceTree = "<group>"; };
 		4D3FA94A1DFF31EB00E2B6A9 /* BNCConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCConfig.m; sourceTree = "<group>"; };
@@ -591,6 +593,7 @@
 			isa = PBXGroup;
 			children = (
 				4DA5771E1E67B23D00A43BDD /* BNCDebug.Test.m */,
+				4D1B72571F3120CB00992F20 /* BNCDeviceInfo.Test.m */,
 				46FFCF161ACC321A00039CE0 /* BNCEncodingUtils.Test.m */,
 				46DBB42B1B330CF300642FC8 /* BNCLinkDataTests.m */,
 				4DA577191E67B1EB00A43BDD /* BNCLog.Test.m */,
@@ -598,12 +601,12 @@
 				464EA3971ACB1797000E4094 /* BNCServerInterfaceTests.m */,
 				46DBB42C1B330CF300642FC8 /* BNCServerRequestQueueTests.m */,
 				46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */,
+				467309471AF2C4FB005B8848 /* BNCTestCase.h */,
+				467309481AF2C4FB005B8848 /* BNCTestCase.m */,
 				461019451AE551A500379A15 /* BranchNetworkScenario.Test.m */,
 				4665AF1F1B2892CF00184037 /* BranchRequestsTests */,
 				7E6B3B551AA42D0E005F45BF /* BranchSDKFunctionalityTests.m */,
 				4665AF1D1B28923900184037 /* BranchSDKLoadTests.m */,
-				467309471AF2C4FB005B8848 /* BNCTestCase.h */,
-				467309481AF2C4FB005B8848 /* BNCTestCase.m */,
 				4DA577231E67B2A000A43BDD /* NSString+Branch.Test.m */,
 				7E6B3B531AA42D0E005F45BF /* Supporting Files */,
 			);
@@ -949,6 +952,7 @@
 				46DBB4371B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m in Sources */,
 				7E6B3B561AA42D0E005F45BF /* BranchSDKFunctionalityTests.m in Sources */,
 				4DA577221E67B28700A43BDD /* NSString+Branch.m in Sources */,
+				4D1B72581F3120CB00992F20 /* BNCDeviceInfo.Test.m in Sources */,
 				4677EB511B3B384C00A13964 /* BranchInstallRequestTests.m in Sources */,
 				461019461AE551A500379A15 /* BranchNetworkScenario.Test.m in Sources */,
 				46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */,
