@@ -28,7 +28,8 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       language = ""
       shouldUseLaunchSchemeArgsEnv = "NO"
-      codeCoverageEnabled = "YES">
+      codeCoverageEnabled = "YES"
+      enableThreadSanitizer = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
