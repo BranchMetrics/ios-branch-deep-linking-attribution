@@ -340,9 +340,9 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         let branchUniversalObject = DataStore.getBranchUniversalObject()
         
         branchUniversalObject.getShortUrl(with: branchLinkProperties) { (url, error) in
-            if (error == nil) {
-                print(branchLinkProperties.description())
-                print(branchUniversalObject.description())
+            if (url != nil) {
+                print(self.branchLinkProperties.description())
+                print(self.branchUniversalObject.description())
                 print("Link Created: \(String(describing: url?.description))")
                 self.linkTextField.text = url
             } else {
