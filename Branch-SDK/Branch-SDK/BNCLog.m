@@ -193,6 +193,8 @@ BOOL BNCLogRecordWrapOpenURL_Internal(NSURL *url, long maxRecords, long recordSi
         BNCLogInternalError(@"Can't open log file (%d): %s.", e, strerror(e));
         return NO;
     }
+    bnc_LoggingFunction = BNCLogRecordWrapWrite;
+    bnc_LogFlushFunction = BNCLogRecordWrapFlush;
 
     // Truncate the file if the file size > max file size.
 
@@ -242,8 +244,6 @@ BOOL BNCLogRecordWrapOpenURL_Internal(NSURL *url, long maxRecords, long recordSi
         int e = errno;
         BNCLogInternalError(@"Can't seek in log (%d): %s.", e, strerror(e));
     }
-    bnc_LoggingFunction = BNCLogRecordWrapWrite;
-    bnc_LogFlushFunction = BNCLogRecordWrapFlush;
     return YES;
 }
 
@@ -256,6 +256,8 @@ BOOL BNCLogRecordWrapOpenURL(NSURL *url, long maxRecords, long recordSize) {
             close(bnc_LogDescriptor);
             bnc_LogDescriptor = -1;
         }
+        bnc_LoggingFunction = NULL;
+        bnc_LogFlushFunction = NULL;
         result = BNCLogRecordWrapOpenURL_Internal(url, maxRecords, recordSize);
     });
     return result;
@@ -389,6 +391,8 @@ BOOL BNCLogByteWrapOpenURL_Internal(NSURL *url, long maxBytes) {
         BNCLogInternalError(@"Can't open log file (%d): %s.", e, strerror(e));
         return NO;
     }
+    bnc_LoggingFunction = BNCLogByteWrapWrite;
+    bnc_LogFlushFunction = BNCLogByteWrapFlush;
 
     // Truncate the file if the file size > max file size.
 
@@ -438,8 +442,6 @@ BOOL BNCLogByteWrapOpenURL_Internal(NSURL *url, long maxBytes) {
         int e = errno;
         BNCLogInternalError(@"Can't seek in log (%d): %s.", e, strerror(e));
     }
-    bnc_LoggingFunction = BNCLogByteWrapWrite;
-    bnc_LogFlushFunction = BNCLogByteWrapFlush;
     return YES;
 }
 
