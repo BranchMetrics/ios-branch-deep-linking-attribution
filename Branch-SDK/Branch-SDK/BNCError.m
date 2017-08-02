@@ -89,8 +89,14 @@ void BNCForceNSErrorCategoryToLoad() {
 
     NSString *localizedString = BNCLocalizedString([self messageForCode:errorCode]);
     if (localizedString) userInfo[NSLocalizedDescriptionKey] = localizedString;
-    if (message) userInfo[NSLocalizedFailureReasonErrorKey] = message;
-    if (error) userInfo[NSUnderlyingErrorKey] = error;
+    if (message) {
+        userInfo[NSLocalizedFailureReasonErrorKey] = message;
+    }
+    if (error) {
+        userInfo[NSUnderlyingErrorKey] = error;
+        if (!userInfo[NSLocalizedFailureReasonErrorKey] && error.localizedDescription)
+            userInfo[NSLocalizedFailureReasonErrorKey] = error.localizedDescription;
+    }
 
     return [NSError errorWithDomain:BNCErrorDomain code:errorCode userInfo:userInfo];
 }

@@ -13,7 +13,6 @@
 //--------------------------------------------------------------------------------------------------
 
 
-#import <XCTest/XCTest.h>
 #import "BNCTestCase.h"
 #import "BNCLocalization.h"
 
@@ -58,14 +57,14 @@
     XCTAssertEqualObjects(string, truth);
 }
 
-- (void) testLocalizationSpanish {
+- (void) testLocalizationRussian {
 
     NSString *truth = nil;
     NSString *string = nil;
-    [BNCLocalization shared].currentLanguage = @"es";
+    [BNCLocalization shared].currentLanguage = @"ru";
 
     string = @"Could not generate a URL.";
-    truth = @"No se pudo generar una URL.";
+    truth = @"Не получилось сгенерировать URL.";
     string = BNCLocalizedString(string);
     XCTAssertEqualObjects(string, truth);
 }
@@ -76,7 +75,6 @@
 }
 
 - (void) testSetWeirdLanguage {
-
     // App doesn't speak that.  Default to english.
     [BNCLocalization shared].currentLanguage = @"UFOAlienSpeak";
     XCTAssertEqualObjects([BNCLocalization shared].currentLanguage, @"en");

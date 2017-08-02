@@ -16,8 +16,8 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCRedeemCreditsError           = 1002,
     BNCBadRequestError              = 1003,
     BNCServerProblemError           = 1004,
-    BNCNilLogError                  = 1005, // Not used.
-    BNCVersionError                 = 1006, // Not used.
+    BNCNilLogError                  = 1005, // Not used at the moment.
+    BNCVersionError                 = 1006, // Not used at the moment.
     BNCNetworkServiceInterfaceError = 1007,
     BNCInvalidNetworkPublicKeyError = 1008,
     BNCContentIdentifierError       = 1009,

@@ -100,7 +100,7 @@ NSString* _Nonnull BNCLocalizedFormattedString(NSString* _Nonnull const format, 
 +(NSDictionary<NSString*, NSDictionary*>*_Nonnull) languageDictionaries {
     NSDictionary* languages = @{
         @"en":  [BNCLocalization en_localized],
-        @"es":  [BNCLocalization es_localized]
+        @"ru":  [BNCLocalization ru_localized],
     };
     return languages;
 }
@@ -194,14 +194,97 @@ NSString* _Nonnull BNCLocalizedFormattedString(NSString* _Nonnull const format, 
     return en_dict;
 }
 
-+ (NSDictionary*_Nonnull) es_localized {
-    NSDictionary* es_dict = @{
++ (NSDictionary*_Nonnull) ru_localized {
+
+    NSDictionary* ru_dict = @{
+
+    // BNCInitError
+    @"The Branch user session has not been initialized.":
+    // Бранч/Branch/Ветка? =D
+    @"Бранч сессия не была инициализирована.",
+
+    // BNCDuplicateResourceError
+    @"A resource with this identifier already exists.":
+    @"Русурс с таким идентификационным номером уже существует.",
+
+    // BNCRedeemCreditsError
+    @"You're trying to redeem more credits than are available. Have you loaded rewards?":
+    // This is really fucked up ('rededm' and 'rewards' translation depends on how it is being used.)
+    @"Вы попытались выкупить больше кредитов ,чем доступно. Были ли награды загружены?",
+
+    // BNCBadRequestError
+    @"The network request was invalid.":
+    @"Неправильный сетевой запрос.",
+
+    // BNCServerProblemError
+    @"Trouble reaching the Branch servers, please try again shortly.":
+    @"Проблемы с контактированием серверов Бранч, попробуйте повторить операцию позже.",
+
+    // BNCNilLogError
+    @"Can't log error messages because the logger is set to nil.":
+    @"Значение логгера nil. Ошибка не будет записана.",
+
+    // BNCVersionError
+    @"Incompatible version.":
+    @"Несовместимая версия.",
+
+    // BNCNetworkServiceInterfaceError
+    @"The underlying network service does not conform to the BNCNetworkOperationProtocol.":
+    // Cannot come up with something for 'underlying'
+    @"Используемый сетевой сервис не соблюдает протокол BNCNetworkOperationProtocol.",
+
+    // BNCInvalidNetworkPublicKeyError
+    @"Public key is not an SecKeyRef type.":
+    @"Публичный ключ неверного типа. Ожидаемый тип: SecKeyRef.",
+
+    // BNCContentIdentifierError
+    @"A canonical identifier or title are required to uniquely identify content.":
+    @"Канонический идентификатор или название необходимы для идентификации контента.",
+
+    // BNCSpotlightNotAvailableError
+    @"The Core Spotlight indexing service is not available on this device.":
+    @"The Core Spotlight индексировачный сервис не доступер на этом устройстве.",
+
+    // BNCSpotlightTitleError
+    @"Spotlight indexing requires a title.":
+    @"Spotlight indexing необходим для названия.",
+
+    // BNCRedeemZeroCreditsError
+    @"Can't redeem zero credits.":
+    @"Нельзя выкупить ноль кредитов.",
+
+    // Unknown error
+    @"Branch encountered an error.":
+    @"Неизвестная ошибка.",
+
+    // Network provider error messages
+    @"A network operation instance is expected to be returned by the networkOperationWithURLRequest:completion: method.":
+    @"Объект сетевого оператора должен был быть возвращен после запроса к networkOperationWithURLRequest:completion: методу.",
+
+    @"Network operation of class '%@' does not conform to the BNCNetworkOperationProtocol.":
+    @"Сетевая операция класса '%@' не соответствует протоколу BNCNetworkOperationProtocol.",
+
+    @"The network operation start date is not set. The Branch SDK expects the network operation start date to be set by the network provider.":
+    @"Дата старта сетевого запроса не была назначена. Бранч SDK ожидает дату старта сетевой опетации быть назначенной сетевым провайдером.",
+
+    @"The network operation timeout date is not set. The Branch SDK expects the network operation timeout date to be set by the network provider.":
+    @"Тайм-аут сетевого запроса не был назначен. Бранч SDK ожидает тайм-аут сетевого запроса быть назначенной сетевым провайдером.",
+
+    @"The network operation request is not set. The Branch SDK expects the network operation request to be set by the network provider.":
+    @"Cетевой запрос не назначен. Бранч SDK ожидает сетевой запрос быть назначенным сетевым провайдером.",
+
+    // Other errors
+    @"The request was invalid.":
+    @"Неверный запрос.",
+
+    @"Could not register view.":
+    @"Не получилось зарегестрировать view.",
 
     @"Could not generate a URL.":
-    @"No se pudo generar una URL.",
-    
+    @"Не получилось сгенерировать URL.",
     };
-    return es_dict;
+
+    return ru_dict;
 }
 
 @end
