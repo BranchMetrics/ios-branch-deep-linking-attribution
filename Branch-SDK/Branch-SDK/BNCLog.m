@@ -608,11 +608,10 @@ void BNCLogWriteMessageFormat(
         @"[branch.io] %@(%d) %@: %@", filename, lineNumber, levelString, m];
     va_end(args);
 
-    if (logLevel >= bnc_LogDisplayLevel) {
-        NSLog(@"%@", s); // Upgrade this to unified logging when we can.
-    }
-
     dispatch_async(bnc_LogQueue, ^{
+        if (logLevel >= bnc_LogDisplayLevel) {
+            NSLog(@"%@", s); // Upgrade this to unified logging when we can.
+        }
         if (bnc_LoggingFunction)
             bnc_LoggingFunction([NSDate date], logLevel, s);
     });

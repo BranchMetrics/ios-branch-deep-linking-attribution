@@ -111,23 +111,13 @@
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
     if (sessionData == nil || [sessionData isKindOfClass:[NSString class]]) {
     } else
-    if (([sessionData isKindOfClass:[NSDictionary class]] ||
-         [sessionData isKindOfClass:[NSArray class]]) &&
-            [NSJSONSerialization isValidJSONObject:sessionData]) {
+    if ([sessionData isKindOfClass:[NSDictionary class]]) {
         BNCLogWarning(@"Received session data of type '%@'.", NSStringFromClass(sessionData.class));
-        @try {
-            NSError *error = nil;
-            NSData* data = [NSJSONSerialization dataWithJSONObject:sessionData options:0 error:&error];
-            if (error || data == nil) {
-                BNCLogError(@"Error converting JSON: %@.", error);
-                sessionData = nil;
-            } else {
-                sessionData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            }
-        }
-        @catch (id) {
-            sessionData = nil;
-        }
+        sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:(NSDictionary*)sessionData];
+    } else
+    if ([sessionData isKindOfClass:[NSArray class]]) {
+        BNCLogWarning(@"Received session data of type '%@'.", NSStringFromClass(sessionData.class));
+        sessionData = [BNCEncodingUtils encodeArrayToJsonString:(NSArray*)sessionData];
     } else {
         BNCLogError(@"Received session data of type '%@'.", NSStringFromClass(sessionData.class));
         sessionData = nil;
