@@ -112,14 +112,17 @@
     if (sessionData == nil || [sessionData isKindOfClass:[NSString class]]) {
     } else
     if ([sessionData isKindOfClass:[NSDictionary class]]) {
-        BNCLogWarning(@"Received session data of type '%@'.", NSStringFromClass(sessionData.class));
+        BNCLogWarning(@"Received session data of type '%@' data is '%@'.",
+            NSStringFromClass(sessionData.class), sessionData);
         sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:(NSDictionary*)sessionData];
     } else
     if ([sessionData isKindOfClass:[NSArray class]]) {
-        BNCLogWarning(@"Received session data of type '%@'.", NSStringFromClass(sessionData.class));
+        BNCLogWarning(@"Received session data of type '%@' data is '%@'.",
+            NSStringFromClass(sessionData.class), sessionData);
         sessionData = [BNCEncodingUtils encodeArrayToJsonString:(NSArray*)sessionData];
     } else {
-        BNCLogError(@"Received session data of type '%@'.", NSStringFromClass(sessionData.class));
+        BNCLogError(@"Received session data of type '%@' data is '%@'.",
+            NSStringFromClass(sessionData.class), sessionData);
         sessionData = nil;
     }
 
