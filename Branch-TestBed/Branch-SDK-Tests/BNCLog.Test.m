@@ -742,17 +742,17 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 1x%ld.", i);
+            BNCLog(@"Message 1 1x%ld.", i);
     });
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 2x%ld.", i);
+            BNCLog(@"Message 1 2x%ld.", i);
     });
 
     dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
         for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 3x%ld.", i);
+            BNCLog(@"Message 1 3x%ld.", i);
     });
 
     dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
@@ -760,8 +760,50 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     NSLog(@"%@: Synchronized time: %1.5f.",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
 
+    // Test open and closed synchronization & threading --
+
+    startTime = [NSDate date];
+    waitGroup = dispatch_group_create();
+    BNCLogSetDisplayLevel(BNCLogLevelAll);
+
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+        for (long i = 0; i < 2000; i++) {
+            BNCLog(@"Message 2 1x%ld.", i);
+            if (i % 100 == 0) {
+                BNCLogCloseLogFile();
+                BNCLogSetOutputToURLByteWrap(URL, kLogSize);
+            }
+        }
+    });
+
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+        for (long i = 0; i < 2000; i++) {
+            BNCLog(@"Message 2 2x%ld.", i);
+            if (i % 25 == 0) {
+                BNCLogCloseLogFile();
+                BNCLogSetOutputToURLByteWrap(URL, kLogSize);
+            }
+        }
+    });
+
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+        for (long i = 0; i < 2000; i++) {
+            BNCLog(@"Message 2 3x%ld.", i);
+            if (i % 10 == 0) {
+                BNCLogCloseLogFile();
+                BNCLogSetOutputToURLByteWrap(URL, kLogSize);
+            }
+        }
+    });
+
+    dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
+    BNCLogCloseLogFile();
+    NSLog(@"%@: Synchronized time: %1.5f.",
+        BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
+
+
 /*  //  Non-sychronized --
-    //  EBS: Non-sychronized is no longer a thing.
+    //  EBS: Non-sychronized is no longer a thing. It was slower and less safe.
     
     BNCLogSetOutputToURLByteWrap(URL, kLogSize);
     BNCLogSetSynchronizeMessages(NO);

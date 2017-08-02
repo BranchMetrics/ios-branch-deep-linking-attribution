@@ -64,7 +64,6 @@
     //+ (NSString*) userAgentString;
     //+ (NSString*) systemBuildVersion;
 
-    NSString *truth = nil;
     NSString *string = [BNCDeviceInfo userAgentString];
     NSString *pattern =
         @"Mozilla\\/..0 \\(iPhone; CPU iPhone OS .+ like Mac OS X\\) AppleWebKit\\/.+ \\(KHTML, like Gecko\\) Mobile\\/.+";
@@ -79,8 +78,7 @@
     XCTAssert(matches.count == 1 && NSEqualRanges(matches[0].range, range));
 
     string = [BNCDeviceInfo systemBuildVersion];
-    truth = @"*****";
-    XCTAssertTrue([string bnc_isEqualToMaskedString:truth]);
+    XCTAssertTrue([string isKindOfClass:[NSString class]] && string.length > 0);
 }
 
 - (void)testStress {
