@@ -45,7 +45,12 @@
             @"Trouble reaching the Branch servers, please try again shortly."]
     );
     XCTAssert(error.userInfo[NSUnderlyingErrorKey] == underlyingError);
-    XCTAssert([error.localizedFailureReason isEqualToString:@"The file doesn’t exist."]);
+    if ([UIDevice currentDevice].systemVersion.floatValue < 9.0) {
+        XCTAssert([error.localizedFailureReason isEqualToString:
+            @"The operation couldn’t be completed. (Cocoa error 4.)"]);
+    } else {
+        XCTAssert([error.localizedFailureReason isEqualToString:@"The file doesn’t exist."]);
+    }
 
     NSString *message =
         BNCLocalizedFormattedString(
