@@ -332,6 +332,7 @@
     [[Branch getInstance] createDiscoverableContentWithTitle:self.title
                                                  description:self.contentDescription
                                                 thumbnailUrl:[NSURL URLWithString:self.imageUrl]
+                                                 canonicalId:self.canonicalIdentifier
                                                   linkParams:metadataAndProperties.copy
                                                         type:self.type
                                            publiclyIndexable:publiclyIndexable
@@ -362,6 +363,7 @@
     [[Branch getInstance] createDiscoverableContentWithTitle:self.title
                                                  description:self.contentDescription
                                                 thumbnailUrl:[NSURL URLWithString:self.imageUrl]
+                                                 canonicalId:self.canonicalIdentifier
                                                   linkParams:metadataAndProperties.copy
                                                         type:self.type
                                            publiclyIndexable:publiclyIndexable
