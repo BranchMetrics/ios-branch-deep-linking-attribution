@@ -61,5 +61,7 @@
 		<key>test</key>
 		<string>key_test_hdcBLUy1xZ1JD0tKg7qrLcgirFmPPVJc</string>
 	</dict>
+	<key>branch_log_level</key>
+	<string>debug</string>
 </dict>
 </plist>

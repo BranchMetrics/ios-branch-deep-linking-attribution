@@ -20,6 +20,9 @@
 
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // uncomment to set the SDK log level programmatically. Or specify
+    // branch_log_level in the Info.plist.
+    // BNCLogSetDisplayLevel(BNCLogLevelAll);
 
     // Set Branch.useTestBranchKey = YES; to have Branch use the test key that's in the app's
     // Info.plist file. This makes Branch test against your test environment (As shown in the Branch

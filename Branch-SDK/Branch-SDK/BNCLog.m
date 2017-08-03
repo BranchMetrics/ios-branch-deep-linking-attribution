@@ -416,7 +416,13 @@ void BNCLogSetOutputToURLByteWrap(NSURL *_Nullable URL, long maxBytes) {
 
 #pragma mark - Log Message Severity
 
-static BNCLogLevel bnc_LogDisplayLevel = BNCLogLevelWarning;
+#ifdef DEBUG
+#define BNC_DEFAULT_LOG_LEVEL BNCLogLevelDebug
+#else
+#define BNC_DEFAULT_LOG_LEVEL BNCLogLevelNone
+#endif // DEBUG
+
+static BNCLogLevel bnc_LogDisplayLevel = BNC_DEFAULT_LOG_LEVEL;
 
 BNCLogLevel BNCLogDisplayLevel() {
     @synchronized (bnc_LogIsInitialized) {
@@ -595,5 +601,39 @@ void BNCLogInitialize(void) {
         bnc_LogDateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
 
         bnc_LogIsInitialized = @(YES);
+
+        id logLevelEntry = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"branch_log_level"];
+        if (!logLevelEntry || ![logLevelEntry isKindOfClass:NSString.class]) return;
+
+        NSString *logLevelString = logLevelEntry;
+
+        // initialize the log level to whatever is specified in the Info.plist, if present
+        if ([logLevelString.lowercaseString isEqualToString:@"debugsdk"]) {
+            bnc_LogDisplayLevel = BNCLogLevelDebugSDK;
+        }
+        else if ([logLevelString.lowercaseString isEqualToString:@"breakpoint"]) {
+            bnc_LogDisplayLevel = BNCLogLevelBreakPoint;
+        }
+        else if ([logLevelString.lowercaseString isEqualToString:@"debug"]) {
+            bnc_LogDisplayLevel = BNCLogLevelDebug;
+        }
+        else if ([logLevelString.lowercaseString isEqualToString:@"warning"]) {
+            bnc_LogDisplayLevel = BNCLogLevelWarning;
+        }
+        else if ([logLevelString.lowercaseString isEqualToString:@"error"]) {
+            bnc_LogDisplayLevel = BNCLogLevelError;
+        }
+        else if ([logLevelString.lowercaseString isEqualToString:@"assert"]) {
+            bnc_LogDisplayLevel = BNCLogLevelAssert;
+        }
+        else if ([logLevelString.lowercaseString isEqualToString:@"log"]) {
+            bnc_LogDisplayLevel = BNCLogLevelLog;
+        }
+        else if ([logLevelString.lowercaseString isEqualToString:@"none"]) {
+            bnc_LogDisplayLevel = BNCLogLevelNone;
+        }
+        else {
+            // ignore for now. log somewhere?
+        }
     });
 }
