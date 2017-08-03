@@ -53,6 +53,7 @@
 		4D4F28581E400F9800282A34 /* BranchViewHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F28161E400F9800282A34 /* BranchViewHandler.m */; };
 		4D4F28591E400F9800282A34 /* NSMutableDictionary+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F28181E400F9800282A34 /* NSMutableDictionary+Branch.m */; };
 		4D510D771F0D61BE003D720B /* Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0F01CF7594400CA98BD /* Branch.m */; };
+		4D6A275E1F2955C400027264 /* BNCLocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6A275D1F2955C400027264 /* BNCLocalization.m */; };
 		4D9E765C1E774DB100BD0620 /* BranchShareLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D9E765B1E774DB100BD0620 /* BranchShareLink.m */; };
 		4DB47D5E1F042C5900C53C29 /* BNCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D591F042C5900C53C29 /* BNCDebug.m */; };
 		4DB47D601F042C5900C53C29 /* NSString+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D5D1F042C5900C53C29 /* NSString+Branch.m */; };
@@ -190,6 +191,8 @@
 		4D4F283B1E400F9800282A34 /* FABKitProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FABKitProtocol.h; sourceTree = "<group>"; };
 		4D4F283C1E400F9800282A34 /* Fabric+FABKits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Fabric+FABKits.h"; sourceTree = "<group>"; };
 		4D4F283D1E400F9800282A34 /* Fabric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fabric.h; sourceTree = "<group>"; };
+		4D6A275C1F2955C400027264 /* BNCLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLocalization.h; sourceTree = "<group>"; };
+		4D6A275D1F2955C400027264 /* BNCLocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLocalization.m; sourceTree = "<group>"; };
 		4D9E765A1E774DB100BD0620 /* BranchShareLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchShareLink.h; sourceTree = "<group>"; };
 		4D9E765B1E774DB100BD0620 /* BranchShareLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShareLink.m; sourceTree = "<group>"; };
 		4DB47D581F042C5900C53C29 /* BNCDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDebug.h; sourceTree = "<group>"; };
@@ -327,7 +330,6 @@
 		4D4F27DD1E400F9800282A34 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
-				2BD7C4201F27D65D003696AF /* Networking */,
 				4D4F27DE1E400F9800282A34 /* BNCCallbacks.h */,
 				4D4F27DF1E400F9800282A34 /* BNCCommerceEvent.h */,
 				4D4F27E01E400F9800282A34 /* BNCCommerceEvent.m */,
@@ -353,6 +355,8 @@
 				4D4F27EE1E400F9800282A34 /* BNCLinkCache.m */,
 				4D4F27EF1E400F9800282A34 /* BNCLinkData.h */,
 				4D4F27F01E400F9800282A34 /* BNCLinkData.m */,
+				4D6A275C1F2955C400027264 /* BNCLocalization.h */,
+				4D6A275D1F2955C400027264 /* BNCLocalization.m */,
 				F155BFED1EF37EDB00BF4566 /* BNCLog.h */,
 				4D351A0F1F0D6362004BD4AA /* BNCLog.m */,
 				4D4F27F11E400F9800282A34 /* BNCPreferenceHelper.h */,
@@ -389,6 +393,7 @@
 				4D4F28141E400F9800282A34 /* BranchView.m */,
 				4D4F28151E400F9800282A34 /* BranchViewHandler.h */,
 				4D4F28161E400F9800282A34 /* BranchViewHandler.m */,
+				2BD7C4201F27D65D003696AF /* Networking */,
 				4D4F28171E400F9800282A34 /* NSMutableDictionary+Branch.h */,
 				4D4F28181E400F9800282A34 /* NSMutableDictionary+Branch.m */,
 				4DB47D5C1F042C5900C53C29 /* NSString+Branch.h */,
@@ -602,6 +607,7 @@
 				4D4F28541E400F9800282A34 /* BranchCSSearchableItemAttributeSet.m in Sources */,
 				4D4F28441E400F9800282A34 /* BNCFabricAnswers.m in Sources */,
 				4D4F28511E400F9800282A34 /* BranchContentDiscoverer.m in Sources */,
+				4D6A275E1F2955C400027264 /* BNCLocalization.m in Sources */,
 				2BD7C4521F27D65D003696AF /* BranchRedeemRewardsRequest.m in Sources */,
 				2BD7C4481F27D65D003696AF /* BNCServerInterface.m in Sources */,
 				4D351A101F0D6362004BD4AA /* BNCLog.m in Sources */,
