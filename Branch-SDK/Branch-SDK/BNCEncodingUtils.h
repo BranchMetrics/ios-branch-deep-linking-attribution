@@ -17,6 +17,7 @@
 
 + (NSString *)md5Encode:(NSString *)input;
 
++ (NSString *)urlEncodedString:(NSString *)string;
 + (NSString *)encodeArrayToJsonString:(NSArray *)dictionary;
 + (NSString *)encodeDictionaryToJsonString:(NSDictionary *)dictionary;
 + (NSData *)encodeDictionaryToJsonData:(NSDictionary *)dictionary;
@@ -26,4 +27,6 @@
 + (NSDictionary *)decodeQueryStringToDictionary:(NSString *)queryString;
 + (NSString *)encodeDictionaryToQueryString:(NSDictionary *)dictionary;
 
++ (NSString *) hexStringFromData:(NSData*)data;
++ (NSData *)   dataFromHexString:(NSString*)string;
 @end

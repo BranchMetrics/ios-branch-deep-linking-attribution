@@ -5,7 +5,7 @@
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
-#import "Branch/Branch.h"
+#import "Branch.h"
 #import "AppDelegate.h"
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
@@ -30,15 +30,13 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     Branch *branch = [Branch getInstance];
 
     // Comment / un-comment to toggle debugging:
-    // [branch setDebug];
+    [branch setDebug];
 
     // Check for Apple Search Ad attribution:
     // [branch delayInitToCheckForSearchAds];
     
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
-    
-    [branch setWhiteListedSchemes:@[@"branchtest"]];
     
     /**
      * // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
@@ -167,7 +165,7 @@ continueUserActivity:(NSUserActivity *)userActivity
         [application registerForRemoteNotificationTypes:
             (UIRemoteNotificationTypeNewsstandContentAvailability| UIRemoteNotificationTypeBadge |
                 UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
-        #pragma clang diagnostic push
+        #pragma clang diagnostic pop
     }
 }
 

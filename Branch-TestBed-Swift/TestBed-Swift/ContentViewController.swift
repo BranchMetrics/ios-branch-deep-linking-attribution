@@ -13,12 +13,11 @@ class ContentViewController: UIViewController {
     @IBOutlet weak var contentTextView: UITextView!
     @IBOutlet weak var contentTextViewHeightConstraint: NSLayoutConstraint!
     
+    var content = ""
     var contentType: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        var content = ""
         
         if contentType == "Content" {
             
@@ -57,18 +56,18 @@ class ContentViewController: UIViewController {
         
         contentTextView.text = content
         print(content)
-
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
-
+        
         self.contentTextView.sizeToFit()
         var frame: CGRect = self.contentTextView.frame
         frame.size.height = self.contentTextView.contentSize.height
         self.contentTextView.frame = frame
         
         super.viewDidAppear(animated)
-
+        
     }
     
 }

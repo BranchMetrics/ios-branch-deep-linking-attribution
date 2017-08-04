@@ -58,10 +58,9 @@
         params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
     params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
 
-    return [serverInterface postRequest:params
+    return [serverInterface postRequestSynchronous:params
 		url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]
-		key:key
-		log:YES];
+		key:key];
 }
 
 - (NSString *)processResponse:(BNCServerResponse *)response {
@@ -132,7 +131,8 @@
     
     NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:params];
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
-    [baseUrl appendFormat:@"source=ios&data=%@", base64EncodedParams];
+    NSString *urlEncodedBase64EncodedParams = [BNCEncodingUtils urlEncodedString:base64EncodedParams];
+    [baseUrl appendFormat:@"source=ios&data=%@", urlEncodedBase64EncodedParams];
     
     return baseUrl;
 }
