@@ -6,10 +6,11 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 #import <XCTest/XCTest.h>
-#define DEEPLINK_SLEEP 10
-#define LOADWIKIPAGE_SLEEP 3
-#define WEBPAGE_URL @"https://github.com/BranchMetrics/ios-branch-deep-linking/wiki/UITest-for-Testbed-App-for-Universal-links"
-#define UNIVERSAL_LINK_TAG @"Universal Link TestBed Obj-c"
+
+static NSTimeInterval const kDeepLinkSleepTimeInterval = 10.0;
+static NSTimeInterval const kLoadWikiPageTimeInterval  = 3.0;
+static NSString* const kWikiPageURL      = @"https://github.com/BranchMetrics/ios-branch-deep-linking/wiki/UITest-for-Testbed-App-for-Universal-links";
+static NSString* const kUniversalLinkTag = @"Universal Link TestBed Obj-c";
 @interface Branch_TestBedUITests : XCTestCase
 
 
@@ -43,8 +44,13 @@
 -(void)testDeepLinking {
     [XCUIDevice sharedDevice].orientation = UIDeviceOrientationFaceUp;
     
-    XCUIApplication *safariApp = [self openSafariWithUrl:WEBPAGE_URL];
-    [self deepLinkForSafari:safariApp];
+    XCUIApplication *safariApp = [self openSafariWithUrl:kWikiPageURL];
+    [safariApp.links[kUniversalLinkTag] tap];
+    sleep(kDeepLinkSleepTimeInterval);
+    
+    XCUIApplication *currentApp = [[XCUIApplication alloc] init];
+    XCUIElement* element = currentApp.textViews[@"DeepLinkData"];
+    XCTAssertTrue([element.value containsString:@"Successfully Deeplinked"]);
 }
 
 -(XCUIApplication *) openSafariWithUrl: (NSString*) url {
@@ -55,20 +61,9 @@
     [app.textFields[@"Search or enter website name"] tap];
     [app typeText:url];
     [app.buttons[@"Go"] tap];
-    sleep(LOADWIKIPAGE_SLEEP);
+    sleep(kLoadWikiPageTimeInterval);
     return app;
     
-}
-
--(void) deepLinkForSafari:(XCUIApplication *) safariApp {
-    NSLog(@"%@",safariApp.debugDescription);
-    [safariApp.links[UNIVERSAL_LINK_TAG] tap];
-    
-    sleep(DEEPLINK_SLEEP);
-    
-    XCUIApplication *currentApp = [[XCUIApplication alloc] init];
-    XCUIElement* element = currentApp.textViews[@"DeepLinkData"];
-    XCTAssertTrue([element.value containsString:@"Successfully Deeplinked"]);
 }
 
 @end
