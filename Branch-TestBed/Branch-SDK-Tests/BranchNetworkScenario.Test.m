@@ -541,8 +541,10 @@
 
     __block BNCServerCallback badRequestCallback = nil;
     id badRequestCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-        badRequestCallback = callback;
-        return YES;
+        @synchronized (self) {
+            badRequestCallback = callback;
+            return YES;
+        }
     }];
     
     // Only one request should make it to the server
@@ -581,12 +583,14 @@
     sleep(1); // Sleep to allow server queue time to process.
     // Bad requests callback should be captured at this point, call it to trigger the failure.
 
-	if (badRequestCallback) {
-        NSError * error = [NSError branchErrorWithCode:BNCServerProblemError];
-    	badRequestCallback(nil, error);
-	} else {
-		XCTAssert(badRequestCallback);
-	}
+    @synchronized (self) {
+        if (badRequestCallback) {
+            NSError * error = [NSError errorWithDomain:BNCErrorDomain code:BNCServerProblemError userInfo:nil];
+            badRequestCallback(nil, error);
+        } else {
+            XCTAssert(badRequestCallback);
+        }
+    }
 }
 
 - (void)enqueueTwoNonReplayableRequestsWithFirstFailingBecauseRequestIsBad:(Branch *)branch
@@ -597,15 +601,17 @@
     __block BNCServerCallback badRequestCallback = nil;
     __block BNCServerCallback goodRequestCallback = nil;
     id requestCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
-        callNumber++;
-        if (callNumber == 1)
-            badRequestCallback = callback;
-        else if (callNumber == 2)
-            goodRequestCallback = callback;
-        else
-            XCTFail(@"Bad callNumber %d.", callNumber);
-        NSLog(@"Call number %d.", callNumber);
-        return YES;
+        @synchronized (self) {
+            callNumber++;
+            if (callNumber == 1)
+                badRequestCallback = callback;
+            else if (callNumber == 2)
+                goodRequestCallback = callback;
+            else
+                XCTFail(@"Bad callNumber %d.", callNumber);
+            NSLog(@"Call number %d.", callNumber);
+            return YES;
+        }
     }];
     
     // Only one request should make it to the server
@@ -637,15 +643,16 @@
     while ([timeoutDate timeIntervalSinceNow] > 0.0) {
 
         sleep(1); // Sleep so that network queue can processes
-        if (badRequestCallback) {
-            badRequestCallback(nil, [NSError branchErrorWithCode:BNCBadRequestError]);
-            badRequestCallback = nil;
-        } else if (goodRequestCallback) {
-            goodRequestCallback([[BNCServerResponse alloc] init], nil);
-            goodRequestCallback = nil;
-            return;
+        @synchronized (self) {
+            if (badRequestCallback) {
+                badRequestCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:nil]);
+                badRequestCallback = nil;
+            } else if (goodRequestCallback) {
+                goodRequestCallback([[BNCServerResponse alloc] init], nil);
+                goodRequestCallback = nil;
+                return;
+            }
         }
-
     }
 	XCTAssert(badRequestCallback && goodRequestCallback);
 }

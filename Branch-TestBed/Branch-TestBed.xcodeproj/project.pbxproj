@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */; };
 		464EA3981ACB1797000E4094 /* BNCServerInterface.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA3971ACB1797000E4094 /* BNCServerInterface.Test.m */; };
 		4665AF231B28965E00184037 /* BranchSDKLoadTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4665AF1D1B28923900184037 /* BranchSDKLoadTests.m */; };
 		4665AF241B28B7E000184037 /* BranchSetIdentityRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4665AF201B2892F700184037 /* BranchSetIdentityRequestTests.m */; };
@@ -44,7 +43,6 @@
 		46DC40781B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */; };
 		46DC40801B2B84CD00D2D203 /* BranchShortUrlRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */; };
 		46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */; };
-		46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */; };
 		4D130E731EE0C7B100A69A0A /* BNCNetworkService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E4D1EE0C7B000A69A0A /* BNCNetworkService.m */; };
 		4D130E761EE0C7B100A69A0A /* BNCServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E501EE0C7B000A69A0A /* BNCServerInterface.m */; };
 		4D130E781EE0C7B100A69A0A /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E521EE0C7B000A69A0A /* BNCServerRequest.m */; };
@@ -81,6 +79,9 @@
 		4DB567341E79F46000A8A324 /* BranchShareLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB567321E79F46000A8A324 /* BranchShareLink.m */; };
 		4DC32D6F1F323F0B00EAA896 /* BNCError.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC32D6E1F323F0B00EAA896 /* BNCError.Test.m */; };
 		4DDC52621DCC08E700CFB737 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DDC52611DCC08E700CFB737 /* iAd.framework */; };
+		4DED5FB41F34F6CE00919C54 /* BNCDeviceInfo.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DED5FB01F34F6CE00919C54 /* BNCDeviceInfo.Test.m */; };
+		4DED5FB51F34F6CE00919C54 /* BNCEncodingUtils.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DED5FB11F34F6CE00919C54 /* BNCEncodingUtils.Test.m */; };
+		4DED5FB71F34F6CE00919C54 /* BranchNetworkScenario.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DED5FB31F34F6CE00919C54 /* BranchNetworkScenario.Test.m */; };
 		54391A161BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 54391A141BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m */; };
 		54FF1F8E1BD1D4AE0004CE2E /* BranchUniversalObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F8C1BD1D4AE0004CE2E /* BranchUniversalObject.m */; };
 		54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */; };
@@ -143,7 +144,6 @@
 
 /* Begin PBXFileReference section */
 		423ACD2DEBB9A2E4FAF64B08 /* libPods-Branch-SDK-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Branch-SDK-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchNetworkScenarioTests.m; sourceTree = "<group>"; };
 		464EA3971ACB1797000E4094 /* BNCServerInterface.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerInterface.Test.m; sourceTree = "<group>"; };
 		464EA3991ACB38EC000E4094 /* BNCEncodingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCEncodingUtils.h; sourceTree = "<group>"; };
 		464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtils.m; sourceTree = "<group>"; };
@@ -172,7 +172,6 @@
 		46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchGetCreditHistoryRequestTests.m; sourceTree = "<group>"; };
 		46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShortUrlRequestTests.m; sourceTree = "<group>"; };
 		46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserverTests.m; sourceTree = "<group>"; };
-		46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
 		4D130E4C1EE0C7B000A69A0A /* BNCNetworkService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCNetworkService.h; sourceTree = "<group>"; };
 		4D130E4D1EE0C7B000A69A0A /* BNCNetworkService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCNetworkService.m; sourceTree = "<group>"; };
 		4D130E4E1EE0C7B000A69A0A /* BNCNetworkServiceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCNetworkServiceProtocol.h; sourceTree = "<group>"; };
@@ -236,6 +235,9 @@
 		4DC32D6E1F323F0B00EAA896 /* BNCError.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCError.Test.m; sourceTree = "<group>"; };
 		4DC351441DF0AFB300646A1D /* Simulate-FirstRun.xcappdata */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = "Simulate-FirstRun.xcappdata"; sourceTree = "<group>"; };
 		4DDC52611DCC08E700CFB737 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		4DED5FB01F34F6CE00919C54 /* BNCDeviceInfo.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeviceInfo.Test.m; sourceTree = "<group>"; };
+		4DED5FB11F34F6CE00919C54 /* BNCEncodingUtils.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtils.Test.m; sourceTree = "<group>"; };
+		4DED5FB31F34F6CE00919C54 /* BranchNetworkScenario.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchNetworkScenario.Test.m; sourceTree = "<group>"; };
 		54391A131BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchCSSearchableItemAttributeSet.h; sourceTree = "<group>"; };
 		54391A141BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchCSSearchableItemAttributeSet.m; sourceTree = "<group>"; };
 		54FF1F8B1BD1D4AE0004CE2E /* BranchUniversalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchUniversalObject.h; sourceTree = "<group>"; };
@@ -315,7 +317,7 @@
 		E2B947491D15D73900F2270D /* BNCCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCCallbacks.h; sourceTree = "<group>"; };
 		F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
 		F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeepLinkViewControllerInstance.m; sourceTree = "<group>"; };
-		F1D4F9AC1F323F01002D13FF /* Branch-TestBedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBedUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBed-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1D4F9AE1F323F01002D13FF /* Branch_TestBedUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_TestBedUITests.m; sourceTree = "<group>"; };
 		F1D4F9B01F323F01002D13FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -443,8 +445,8 @@
 				670016BB1946309100A9E103 /* Branch-SDK */,
 				7E6B3B521AA42D0E005F45BF /* Branch-SDK-Tests */,
 				670016691940F51400A9E103 /* Branch-TestBed */,
-				E220F4281C7D39D500F5B126 /* Fabric */,
 				F1D4F9AD1F323F01002D13FF /* Branch-TestBedUITests */,
+				E220F4281C7D39D500F5B126 /* Fabric */,
 				670016621940F51400A9E103 /* Frameworks */,
 				670016611940F51400A9E103 /* Products */,
 				A6E26825FE85E5DCFA05D4AB /* Pods */,
@@ -457,7 +459,7 @@
 				670016601940F51400A9E103 /* Branch-TestBed.app */,
 				7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */,
 				466B58381B17773000A69EDE /* libBranch.a */,
-				F1D4F9AC1F323F01002D13FF /* Branch-TestBedUITests.xctest */,
+				F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -600,7 +602,8 @@
 			children = (
 				7B18DF511F1F049F00C25C84 /* BNCCrashlyticsWrapper.Test.m */,
 				4DA5771E1E67B23D00A43BDD /* BNCDebug.Test.m */,
-				46FFCF161ACC321A00039CE0 /* BNCEncodingUtilsTests.m */,
+				4DED5FB01F34F6CE00919C54 /* BNCDeviceInfo.Test.m */,
+				4DED5FB11F34F6CE00919C54 /* BNCEncodingUtils.Test.m */,
 				4DC32D6E1F323F0B00EAA896 /* BNCError.Test.m */,
 				46DBB42B1B330CF300642FC8 /* BNCLinkDataTests.m */,
 				4DA1EA361F296471009BB698 /* BNCLocalization.Test.m */,
@@ -611,7 +614,7 @@
 				46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */,
 				467309471AF2C4FB005B8848 /* BNCTestCase.h */,
 				467309481AF2C4FB005B8848 /* BNCTestCase.m */,
-				461019451AE551A500379A15 /* BranchNetworkScenarioTests.m */,
+				4DED5FB31F34F6CE00919C54 /* BranchNetworkScenario.Test.m */,
 				4665AF1F1B2892CF00184037 /* BranchRequestsTests */,
 				7E6B3B551AA42D0E005F45BF /* BranchSDKFunctionalityTests.m */,
 				4665AF1D1B28923900184037 /* BranchSDKLoadTests.m */,
@@ -734,9 +737,9 @@
 			productReference = 7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		F1D4F9AB1F323F01002D13FF /* Branch-TestBedUITests */ = {
+		F1D4F9AB1F323F01002D13FF /* Branch-TestBed-UITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBedUITests" */;
+			buildConfigurationList = F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBed-UITests" */;
 			buildPhases = (
 				F1D4F9A81F323F01002D13FF /* Sources */,
 				F1D4F9A91F323F01002D13FF /* Frameworks */,
@@ -747,9 +750,9 @@
 			dependencies = (
 				F1D4F9B21F323F01002D13FF /* PBXTargetDependency */,
 			);
-			name = "Branch-TestBedUITests";
+			name = "Branch-TestBed-UITests";
 			productName = "Branch-TestBedUITests";
-			productReference = F1D4F9AC1F323F01002D13FF /* Branch-TestBedUITests.xctest */;
+			productReference = F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -803,7 +806,7 @@
 				466B58371B17773000A69EDE /* Branch */,
 				6700165F1940F51400A9E103 /* Branch-TestBed */,
 				7E6B3B501AA42D0E005F45BF /* Branch-SDK-Tests */,
-				F1D4F9AB1F323F01002D13FF /* Branch-TestBedUITests */,
+				F1D4F9AB1F323F01002D13FF /* Branch-TestBed-UITests */,
 			);
 		};
 /* End PBXProject section */
@@ -964,13 +967,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				4665AF231B28965E00184037 /* BranchSDKLoadTests.m in Sources */,
+				4DED5FB41F34F6CE00919C54 /* BNCDeviceInfo.Test.m in Sources */,
 				4DA5771A1E67B1EB00A43BDD /* BNCLog.Test.m in Sources */,
 				46DC40761B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m in Sources */,
 				46DBB4371B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m in Sources */,
 				7E6B3B561AA42D0E005F45BF /* BranchSDKFunctionalityTests.m in Sources */,
 				4DA577221E67B28700A43BDD /* NSString+Branch.m in Sources */,
 				4677EB511B3B384C00A13964 /* BranchInstallRequestTests.m in Sources */,
-				461019461AE551A500379A15 /* BranchNetworkScenarioTests.m in Sources */,
 				46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */,
 				4DC32D6F1F323F0B00EAA896 /* BNCError.Test.m in Sources */,
 				4665AF281B28C1DE00184037 /* BranchLogoutRequestTests.m in Sources */,
@@ -986,11 +989,12 @@
 				46DBB43D1B34B7A300642FC8 /* BranchOpenRequestTests.m in Sources */,
 				46DBB42E1B330CF300642FC8 /* BNCServerRequestQueueTests.m in Sources */,
 				4673094A1AF2C4FB005B8848 /* BNCTestCase.m in Sources */,
+				4DED5FB51F34F6CE00919C54 /* BNCEncodingUtils.Test.m in Sources */,
 				46DC40801B2B84CD00D2D203 /* BranchShortUrlRequestTests.m in Sources */,
 				46DBB4391B34B22F00642FC8 /* BranchCloseRequestTests.m in Sources */,
 				4DA1EA371F296471009BB698 /* BNCLocalization.Test.m in Sources */,
-				46FFCF171ACC321A00039CE0 /* BNCEncodingUtilsTests.m in Sources */,
 				4DA577241E67B2A000A43BDD /* NSString+Branch.Test.m in Sources */,
+				4DED5FB71F34F6CE00919C54 /* BranchNetworkScenario.Test.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1194,7 +1198,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
+				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1215,7 +1219,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
+				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1259,13 +1263,12 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = R63EM248DP;
 				INFOPLIST_FILE = "Branch-TestBedUITests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "branch.Branch-TestBedUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_TARGET_NAME = "Branch-TestBed";
 			};
@@ -1282,10 +1285,9 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = R63EM248DP;
 				INFOPLIST_FILE = "Branch-TestBedUITests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "branch.Branch-TestBedUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_TARGET_NAME = "Branch-TestBed";
 			};
@@ -1330,7 +1332,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBedUITests" */ = {
+		F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBed-UITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F1D4F9B31F323F01002D13FF /* Debug */,
