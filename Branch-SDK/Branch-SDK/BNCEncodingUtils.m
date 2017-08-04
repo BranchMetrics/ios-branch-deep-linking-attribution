@@ -8,6 +8,7 @@
 
 #import "BNCEncodingUtils.h"
 #import "BNCPreferenceHelper.h"
+#import "BNCLog.h"
 #import <CommonCrypto/CommonDigest.h>
 
 @implementation BNCEncodingUtils
@@ -244,7 +245,7 @@ static const short _base64DecodingTable[256] = {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            NSLog(@"[encodeDictionaryToJsonString] Cannot encode value for key %@, type is not in list of accepted types", key);
+            BNCLogError(@"Cannot encode value for key %@. The value is not an accepted type.", key);
             continue;
         }
         
@@ -265,11 +266,8 @@ static const short _base64DecodingTable[256] = {
     }
 
     [encodedDictionary appendString:@"}"];
-    
-    if ([[BNCPreferenceHelper preferenceHelper] isDebug]) {
-        NSLog(@"encoded dictionary : %@", encodedDictionary);
-    }
-    
+
+    BNCLogDebugSDK(@"Encoded dictionary: %@.", encodedDictionary);
     return encodedDictionary;
 }
 
@@ -311,7 +309,7 @@ static const short _base64DecodingTable[256] = {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            NSLog(@"[encodedArray] Cannot encode value %@, type is not in list of accepted types", obj);
+            BNCLogError(@"Cannot encode value %@. The value is not an accepted type.", obj);
             continue;
         }
         
@@ -329,10 +327,7 @@ static const short _base64DecodingTable[256] = {
     [encodedArray deleteCharactersInRange:NSMakeRange([encodedArray length] - 1, 1)];
     [encodedArray appendString:@"]"];
     
-    if ([[BNCPreferenceHelper preferenceHelper] isDebug]) {
-        NSLog(@"encoded array : %@", encodedArray);
-    }
-
+    BNCLogDebugSDK(@"Encoded array: %@.", encodedArray);
     return encodedArray;
 }
 
@@ -365,7 +360,7 @@ static const short _base64DecodingTable[256] = {
             }
             else {
                 // If this type is not a known type, don't attempt to encode it.
-                NSLog(@"[encodeDictionaryToQueryString] Cannot encode value %@, type is not in list of accepted types", obj);
+                BNCLogError(@"Cannot encode value %@. The value is not an accepted type.", obj);
                 continue;
             }
             
@@ -443,6 +438,82 @@ static const short _base64DecodingTable[256] = {
     }
 
     return params;
+}
+
+#pragma mark - Hex Strings
+
++ (NSString *) hexStringFromData:(NSData*)data {
+
+    NSUInteger bytesCount = data.length;
+    if (bytesCount <= 0) return @"";
+
+    const char *hexChars = "0123456789ABCDEF";
+    const char *dataBuffer = data.bytes;
+    char *chars = malloc(sizeof(char) * (bytesCount * 2 + 1));
+    if (!chars) return @"";
+    char *s = chars;
+    for (unsigned i = 0; i < bytesCount; ++i) {
+        *s++ = hexChars[((*dataBuffer & 0xF0) >> 4)];
+        *s++ = hexChars[(*dataBuffer & 0x0F)];
+        dataBuffer++;
+    }
+    *s = '\0';
+
+    NSString *hexString = [NSString stringWithUTF8String:chars];
+    if (chars) free(chars);
+    return hexString;
+}
+
++ (NSData *) dataFromHexString:(NSString*)string {
+    if (!string) return nil;
+
+    NSData *data = nil;
+    NSData *inputData = [string dataUsingEncoding:NSUTF8StringEncoding];
+
+    size_t length = (inputData.length+1)/2;
+    uint8_t *bytes = malloc(length);
+    uint8_t *b = bytes;
+    if (!bytes) goto exit;
+
+    int highValue = -1;
+    uint8_t *p = (uint8_t*) [inputData bytes];
+    for (long i = 0; i < inputData.length; ++i) {
+        int value = -1;
+        if (*p >= '0' && *p <= '9')
+            value = *p - '0';
+        else
+        if (*p >= 'A' && *p <= 'F')
+            value = *p - 'A' + 10;
+        else
+        if (*p >= 'a' && *p <= 'f')
+            value = *p - 'a' + 10;
+        else
+        if (isspace(*p)) {
+            p++;
+            continue;
+        } else {
+            goto exit; // Invalid character.
+        }
+        
+        if (highValue == -1) {
+            highValue = value;
+        } else {
+            *b++ = (highValue << 4) | value;
+            highValue = -1;
+        }
+        p++;
+    }
+
+    // If highValue != -1 then we got an odd number of hex values, which is an error.
+    if (highValue == -1)
+        data = [NSData dataWithBytes:bytes length:b-bytes];
+
+exit:
+    if (bytes) {
+        BNCLogAssert(b-bytes<=length);
+        free(bytes);
+    }
+    return data;
 }
 
 @end

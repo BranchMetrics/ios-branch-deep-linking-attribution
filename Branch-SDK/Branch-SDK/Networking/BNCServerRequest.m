@@ -1,21 +1,22 @@
 //
 //  BNCServerRequest.m
-//  Branch-TestBed
+//  Branch-SDK
 //
 //  Created by Graham Mueller on 5/22/15.
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
 #import "BNCServerRequest.h"
+#import "BNCLog.h"
 
 @implementation BNCServerRequest
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
-    NSLog(@"[Improper BNCServerRequest] BNCServerRequest subclasses must implement makeRequest:key:callback:");
+    BNCLogError(@"BNCServerRequest subclasses must implement makeRequest:key:callback:.");
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
-    NSLog(@"[Improper BNCServerRequest] BNCServerRequest subclasses must implement processResponse:error:");
+    BNCLogError(@"BNCServerRequest subclasses must implement processResponse:error:.");
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {

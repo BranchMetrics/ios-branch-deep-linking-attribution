@@ -10,7 +10,8 @@
 #import "BNCEncodingUtils.h"
 #import "BNCConfig.h"
 #import "Branch.h"
-#import "../Fabric/Fabric+FABKits.h"
+#import "BNCLog.h"
+#import "BNCFabricAnswers.h"
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
@@ -44,9 +45,6 @@ NSString * const BRANCH_PREFS_KEY_BRANCH_VIEW_USAGE_CNT = @"bnc_branch_view_usag
 NSString * const BRANCH_PREFS_KEY_ANALYTICAL_DATA = @"bnc_branch_analytical_data";
 NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_manifest";
 
-// The name of this key was specified in the account-creation API integration
-static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
-
 @interface BNCPreferenceHelper () {
     NSOperationQueue *_persistPrefsQueue;
     NSString         *_lastSystemBuildVersion;
@@ -58,13 +56,12 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 @property (strong, nonatomic) NSMutableDictionary *creditsDictionary;
 @property (strong, nonatomic) NSMutableDictionary *requestMetadataDictionary;
 @property (strong, nonatomic) NSMutableDictionary *instrumentationDictionary;
-@property (assign, nonatomic) BOOL isUsingLiveKey;
 
 @end
 
 @implementation BNCPreferenceHelper
 
-@synthesize branchKey = _branchKey,
+@synthesize
             lastRunBranchKey = _lastRunBranchKey,
             appVersion = _appVersion,
             deviceFingerprintID = _deviceFingerprintID,
@@ -80,7 +77,6 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             externalIntentURI = _externalIntentURI,
             isDebug = _isDebug,
             shouldWaitForInit = _shouldWaitForInit,
-            suppressWarningLogs = _suppressWarningLogs,
             retryCount = _retryCount,
             retryInterval = _retryInterval,
             timeout = _timeout,
@@ -109,7 +105,6 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         _retryInterval = DEFAULT_RETRY_INTERVAL;
         
         _isDebug = NO;
-        _suppressWarningLogs = NO;
     }
     
     return self;
@@ -163,23 +158,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     [self synchronize];
 }
 
-#pragma mark - Debug methods
-
-- (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ... {
-    if (self.isDebug) {
-        va_list args;
-        va_start(args, format);
-        NSString *log = [NSString stringWithFormat:@"[%@:%d] %@", filename, line, [[NSString alloc] initWithFormat:format arguments:args]];
-        va_end(args);
-        NSLog(@"%@", log);
-    }
-}
-
-- (void)logWarning:(NSString *)message {
-    if (!self.suppressWarningLogs) {
-        NSLog(@"[Branch Warning] %@", message);
-    }
-}
+#pragma mark - API methods
 
 - (void) setBranchAPIURL:(NSString*)branchAPIURL_ {
     @synchronized (self) {
@@ -216,52 +195,6 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 }
 
 #pragma mark - Preference Storage
-
-- (NSString *)getBranchKey:(BOOL)isLive {
-    // Already loaded a key, and it's the same state (live/test)
-    if (_branchKey && isLive == self.isUsingLiveKey) {
-        return _branchKey;
-    }
-    
-    self.isUsingLiveKey = isLive;
-
-    id ret = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
-    if (ret) {
-        if ([ret isKindOfClass:[NSString class]]) {
-            self.branchKey = ret;
-        }
-        else if ([ret isKindOfClass:[NSDictionary class]]) {
-            self.branchKey = isLive ? ret[@"live"] : ret[@"test"];
-        }
-
-    } else {
-
-        Class fabric = NSClassFromString(@"Fabric");
-        if ([fabric respondsToSelector:@selector(configurationDictionaryForKitClass:)]) {
-
-            NSDictionary *configDictionary = [fabric configurationDictionaryForKitClass:[Branch class]];
-            ret = [configDictionary objectForKey:BNC_BRANCH_FABRIC_APP_KEY_KEY];
-            
-            if ([ret isKindOfClass:[NSString class]]) {
-
-                self.branchKey = ret;
-
-            } else if ([ret isKindOfClass:[NSDictionary class]]) {
-
-                self.branchKey = isLive ? ret[@"live"] : ret[@"test"];
-                if (![self.branchKey isKindOfClass:NSString.class])
-                    self.branchKey = nil;
-
-            }
-        }
-    }
-    
-    return _branchKey;
-}
-
-- (void)setBranchKey:(NSString *)branchKey {
-    _branchKey = branchKey;
-}
 
 - (NSString *)lastRunBranchKey {
     if (!_lastRunBranchKey) {
@@ -744,12 +677,10 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
         }
         @catch (id exception) {
             data = nil;
-            [self logWarning:
-                [NSString stringWithFormat:@"Exception creating preferences data: %@.",
-                    exception]];
+            BNCLogWarning(@"Exception creating preferences data: %@.", exception);
         }
         if (!data) {
-            [self logWarning:@"Can't create preferences data."];
+            BNCLogWarning(@"Can't create preferences data.");
             return;
         }
         NSURL *prefsURL = [self.class.URLForPrefsFile copy];
@@ -757,9 +688,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
             NSError *error = nil;
             [data writeToURL:prefsURL options:NSDataWritingAtomic error:&error];
             if (error) {
-                [self logWarning:
-                    [NSString stringWithFormat:
-                        @"Failed to persist preferences to disk: %@.", error]];
+                BNCLogWarning(@"Failed to persist preferences: %@.", error);
             }
         }];
         [self.persistPrefsQueue addOperation:newPersistOp];
@@ -779,7 +708,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
                 persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
         }
         @catch (NSException *exception) {
-            [self logWarning:@"Failed to load preferences from disk."];
+            BNCLogWarning(@"Failed to load preferences from storage.");
         }
 
         if ([persistenceDict isKindOfClass:[NSDictionary class]])
@@ -828,63 +757,8 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
     return path;
 }
 
-+ (NSURL* _Nonnull) URLForBranchDirectory {
-    NSSearchPathDirectory kSearchDirectories[] = {
-        NSApplicationSupportDirectory,
-        NSCachesDirectory,
-        NSDocumentDirectory,
-    };
-
-    #define _countof(array)     (sizeof(array)/sizeof(array[0]))
-
-    for (NSSearchPathDirectory directory = 0; directory < _countof(kSearchDirectories); directory++) {
-        NSURL *URL = [self createDirectoryForBranchURLWithPath:kSearchDirectories[directory]];
-        if (URL) return URL;
-    }
-
-    #undef _countof
-
-    //  Worst case backup plan:
-    NSString *path = [@"~/Library/io.branch" stringByExpandingTildeInPath];
-    NSURL *branchURL = [NSURL fileURLWithPath:path isDirectory:YES];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSError *error = nil;
-    BOOL success =
-        [fileManager
-            createDirectoryAtURL:branchURL
-            withIntermediateDirectories:YES
-            attributes:nil
-            error:&error];
-    if (!success) {
-        NSLog(@"Worst case CreateBranchURL error: %@ URL: %@.", error, branchURL);
-    }
-    return branchURL;
-}
-
-+ (NSURL* _Null_unspecified) createDirectoryForBranchURLWithPath:(NSSearchPathDirectory)directory {
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSArray *URLs = [fileManager URLsForDirectory:directory inDomains:NSUserDomainMask | NSLocalDomainMask];
-
-    for (NSURL *URL in URLs) {
-        NSError *error = nil;
-        NSURL *branchURL = [URL URLByAppendingPathComponent:@"io.branch" isDirectory:YES];
-        BOOL success =
-            [fileManager
-                createDirectoryAtURL:branchURL
-                withIntermediateDirectories:YES
-                attributes:nil
-                error:&error];
-        if (success) {
-            return branchURL;
-        } else  {
-            NSLog(@"CreateBranchURL error: %@ URL: %@.", error, branchURL);
-        }
-    }
-    return nil;
-}
-
 + (NSURL* _Nonnull) URLForPrefsFile {
-    NSURL *URL = [self URLForBranchDirectory];
+    NSURL *URL = BNCURLForBranchDirectory();
     URL = [URL URLByAppendingPathComponent:BRANCH_PREFS_FILE isDirectory:NO];
     return URL;
 }
@@ -908,7 +782,7 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
                 removeItemAtURL:oldURL
                 error:&error];
         } else {
-            NSLog(@"Error moving prefs file: %@.", error);
+            BNCLogError(@"Can't move prefs file: %@.", error);
         }
     }
 }
@@ -920,3 +794,62 @@ static NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
 }
 
 @end
+
+
+#pragma mark - URLForBranchDirectory
+
+
+NSURL* _Null_unspecified BNCCreateDirectoryForBranchURLWithPath(NSSearchPathDirectory directory) {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSArray *URLs = [fileManager URLsForDirectory:directory inDomains:NSUserDomainMask | NSLocalDomainMask];
+
+    for (NSURL *URL in URLs) {
+        NSError *error = nil;
+        NSURL *branchURL = [URL URLByAppendingPathComponent:@"io.branch" isDirectory:YES];
+        BOOL success =
+            [fileManager
+                createDirectoryAtURL:branchURL
+                withIntermediateDirectories:YES
+                attributes:nil
+                error:&error];
+        if (success) {
+            return branchURL;
+        } else  {
+            BNCLogError(@"CreateBranchURL failed: %@ URL: %@.", error, branchURL);
+        }
+    }
+    return nil;
+}
+
+NSURL* _Nonnull BNCURLForBranchDirectory() {
+    NSSearchPathDirectory kSearchDirectories[] = {
+        NSApplicationSupportDirectory,
+        NSCachesDirectory,
+        NSDocumentDirectory,
+    };
+
+    #define _countof(array)     (sizeof(array)/sizeof(array[0]))
+
+    for (NSSearchPathDirectory directory = 0; directory < _countof(kSearchDirectories); directory++) {
+        NSURL *URL = BNCCreateDirectoryForBranchURLWithPath(kSearchDirectories[directory]);
+        if (URL) return URL;
+    }
+
+    #undef _countof
+
+    //  Worst case backup plan:
+    NSString *path = [@"~/Library/io.branch" stringByExpandingTildeInPath];
+    NSURL *branchURL = [NSURL fileURLWithPath:path isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *error = nil;
+    BOOL success =
+        [fileManager
+            createDirectoryAtURL:branchURL
+            withIntermediateDirectories:YES
+            attributes:nil
+            error:&error];
+    if (!success) {
+        BNCLogError(@"Worst case CreateBranchURL error: %@ URL: %@.", error, branchURL);
+    }
+    return branchURL;
+}

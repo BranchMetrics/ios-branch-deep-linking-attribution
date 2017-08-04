@@ -11,6 +11,7 @@
 #import "BranchConstants.h"
 #import "BranchViewHandler.h"
 #import "BNCEncodingUtils.h"
+#import "BNCLog.h"
 
 @interface BranchUserCompletedActionRequest ()
 
@@ -42,7 +43,7 @@
 
     //  Emit a warning if the action is collides with the Branch commerce 'purchase' event.
     if (self.action && [self.action isEqualToString:@"purchase"]) {
-        NSLog(@"[Branch] Warning: You are sending a purchase event with our non-dedicated purchase "
+        BNCLogWarning(@"You are sending a purchase event with our non-dedicated purchase "
                "method. Please use the sendCommerceEvent:metadata:withCompletion: method.");
     }
 

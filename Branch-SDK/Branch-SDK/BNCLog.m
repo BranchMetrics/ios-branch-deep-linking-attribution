@@ -387,7 +387,8 @@ BOOL BNCLogByteWrapOpenURL(NSURL *url, long maxBytes) {
 
     NSString *record = BNCLogByteWrapReadNextRecord();
     while (record) {
-        NSString *dateString = [record substringWithRange:NSMakeRange(0, 27)];
+        NSString *dateString = @"";
+        if (record.length >= 27) dateString = [record substringWithRange:NSMakeRange(0, 27)];
         NSDate *date = [bnc_LogDateFormatter dateFromString:dateString];
         if (!date || [date compare:lastDate] < 0) {
             wrapOffset = lastOffset;
@@ -472,12 +473,19 @@ BNCLogOutputFunctionPtr _Nullable BNCLogOutputFunction() {
     }
 }
 
+void BNCLogCloseLogFile() {
+    @synchronized(bnc_LogIsInitialized) {
+        if (bnc_LogDescriptor >= 0) {
+            BNCLogFlushMessages();
+            close(bnc_LogDescriptor);
+            bnc_LogDescriptor = -1;
+        }
+    }
+}
+
 void BNCLogSetOutputFunction(BNCLogOutputFunctionPtr _Nullable logFunction) {
     @synchronized (bnc_LogIsInitialized) {
         BNCLogFlushMessages();
-        if (bnc_LogDescriptor >= 0)
-            close(bnc_LogDescriptor);
-        bnc_LogDescriptor = -1;
         bnc_LoggingFunction = logFunction;
     }
 }
@@ -517,13 +525,14 @@ void BNCLogWriteMessageFormat(
             lastPathComponent];
 
     NSString *logLevels[BNCLogLevelMax] = {
-        @"  Debug",
-        @"  Break",
+        @"DebugSDK",
+        @"Break",
+        @"Debug",
         @"Warning",
-        @"  Error",
-        @" Assert",
-        @"    Log",
-        @"   None",
+        @"Error",
+        @"Assert",
+        @"Log",
+        @"None",
     };
 
     logLevel = MAX(MIN(logLevel, BNCLogLevelMax-1), 0);
@@ -574,8 +583,8 @@ void BNCLogFlushMessages() {
 
 #pragma mark - BNCLogInitialize
 
-void BNCLogInitialize() __attribute__((constructor));
-void BNCLogInitialize() {
+void BNCLogInitialize(void) __attribute__((constructor));
+void BNCLogInitialize(void) {
     static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
         bnc_LogQueue = dispatch_queue_create("io.branch.log", DISPATCH_QUEUE_SERIAL);

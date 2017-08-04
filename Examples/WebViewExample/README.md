@@ -1,4 +1,4 @@
-# webview_example
+# WebViewExample
 
 This app presents a list of the planets in a UITableView. When each
 row is tapped, a custom ArticleView is displayed using the a UINavigationController.

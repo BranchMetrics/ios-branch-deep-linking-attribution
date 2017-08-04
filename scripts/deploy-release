@@ -3,6 +3,8 @@ set -euo pipefail
 
 # deploy-release  -  The release deployment master script.
 #
+# This script is written to be excessively modular so it can be debugged or restarted easily.
+#
 # Edward Smith, December 2016
 
 scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -33,7 +35,7 @@ if ! ./scripts/askYN "Deploy Branch release version ${version}?"; then
 fi
 
 # Check that deployment software is installed
-./scripts/deploy-check
+./scripts/deploy-preflight
 
 # Prompt for editor input for ChangeLog.
 vim +4 +star ChangeLog.md
@@ -44,7 +46,7 @@ pod lib lint Branch.podspec --verbose
 
 # Build the framework
 echo ">>> Building the framework..." 1>&2
-./scripts/build_framework.sh
+./scripts/deploy-build-framework
 
 # Make the zip files and get the checksums
 echo ">>> Zipping and checksumming framework files..." 1>&2
@@ -68,17 +70,14 @@ echo '>>> Commit and tag...' 1>&2
 echo '>>> Pushing Branch CocoaPod...' 1>&2
 pod trunk push Branch.podspec
 
-# Finally, deploy the zips to AWS:
 echo '>>> Uploading to AWS...' 1>&2
-aws s3 cp --acl public-read Branch-iOS-SDK.zip s3://branchhost/
-aws s3 cp --acl public-read Branch-iOS-TestBed.zip s3://branchhost/
+./scripts/deploy-aws
 
 # Prompts for SDK Release announcements
 ./scripts/deploy-announce
 
 # Remove remnants:
-(rm Branch-iOS-SDK.zip || true)
-(rm Branch-iOS-TestBed.zip || true)
+./scripts/deploy-cleanup
 
 echo ""
 echo "The Branch SDK has been released.  Rejoice and pay tribute to Steve Jobs!"

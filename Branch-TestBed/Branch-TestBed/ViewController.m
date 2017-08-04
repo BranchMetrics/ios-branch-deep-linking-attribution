@@ -226,7 +226,10 @@ NSString *type = @"some type";
     linkProperties.campaign = @"sharing campaign";
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
     [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
-    
+
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
     [self.branchUniversalObject showShareSheetWithLinkProperties:linkProperties
         andShareText:shareText
         fromViewController:self.parentViewController
@@ -238,6 +241,8 @@ NSString *type = @"some type";
             }
         }
     ];
+
+    #pragma clang diagnostic pop
 }
 
 - (IBAction)shareLinkButtonTouchUpInside:(id)sender {
@@ -320,6 +325,15 @@ NSString *type = @"some type";
 
 #pragma mark - Commerce Events
 
+- (IBAction) openBranchLinkInApp:(id)sender {
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+    NSURL *URL = [NSURL URLWithString:@"https://bnc.lt/ZPOc/Y6aKU0rzcy"]; // <= Your URL goes here.
+    activity.webpageURL = URL;
+    Branch *branch = [Branch getInstance];
+    [branch resetUserSession];
+    [branch continueUserActivity:activity];
+}
+
 - (IBAction) sendCommerceEvent:(id)sender {
     BNCProduct *product = [BNCProduct new];
     product.price = [NSDecimalNumber decimalNumberWithString:@"1000.99"];
@@ -357,6 +371,8 @@ NSString *type = @"some type";
 					show];
         }];
 }
+
+#pragma mark - Spotlight
 
 //example using callbackWithURLandSpotlightIdentifier
 - (IBAction)registerWithSpotlightButtonTouchUpInside:(id)sender {

@@ -14,21 +14,24 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BNCXcode7Support.h"
+#import "BNCLog.h"
 
 
 @interface BNCDeviceInfo()
 @end
 
 
-@implementation BNCDeviceInfo
-
-static BNCDeviceInfo *bncDeviceInfo;
+@implementation BNCDeviceInfo {
+    NSString * volatile _vendorId;
+}
 
 + (BNCDeviceInfo *)getInstance {
-    if (!bncDeviceInfo) {
-        bncDeviceInfo = [[BNCDeviceInfo alloc] init];
-    }
-    return bncDeviceInfo;
+    static BNCDeviceInfo *bnc_deviceInfo = 0;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        bnc_deviceInfo = [[BNCDeviceInfo alloc] init];
+    });
+    return bnc_deviceInfo;
 }
 
 - (id)init {
@@ -43,49 +46,114 @@ static BNCDeviceInfo *bncDeviceInfo;
             isDebug:preferenceHelper.isDebug
             andType:&hardwareIdType];
     if (hardwareId) {
-        self.hardwareId = hardwareId;
-        self.isRealHardwareId = isRealHardwareId;
-        self.hardwareIdType = hardwareIdType;
+        _hardwareId = hardwareId.copy;
+        _isRealHardwareId = isRealHardwareId;
+        _hardwareIdType = hardwareIdType.copy;
     }
 
-    self.vendorId = [BNCSystemObserver getVendorId];
-    self.brandName = [BNCSystemObserver getBrand];
-    self.modelName = [BNCSystemObserver getModel];
-    self.osName = [BNCSystemObserver getOS];
-    self.osVersion = [BNCSystemObserver getOSVersion];
-    self.screenWidth = [BNCSystemObserver getScreenWidth];
-    self.screenHeight = [BNCSystemObserver getScreenHeight];
-    self.isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
+    _brandName = [BNCSystemObserver getBrand].copy;
+    _modelName = [BNCSystemObserver getModel].copy;
+    _osName = [BNCSystemObserver getOS].copy;
+    _osVersion = [BNCSystemObserver getOSVersion].copy;
+    _screenWidth = [BNCSystemObserver getScreenWidth].copy;
+    _screenHeight = [BNCSystemObserver getScreenHeight].copy;
+    _isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
 
-    //  Get the locale info --
-    CGFloat systemVersion = [UIDevice currentDevice].systemVersion.floatValue;
-    if (systemVersion < 9.0) {
+    _country = [BNCDeviceInfo bnc_country].copy;
+    _language = [BNCDeviceInfo bnc_language].copy;
+    _browserUserAgent = [BNCDeviceInfo userAgentString].copy;
+    return self;
+}
 
-        self.language = [[NSLocale preferredLanguages] firstObject];
-        NSString *rawLocale = [NSLocale currentLocale].localeIdentifier;
-        NSRange range = [rawLocale rangeOfString:@"_"];
-        if (range.location != NSNotFound) {
-            range = NSMakeRange(range.location+1, rawLocale.length-range.location-1);
-            self.country = [rawLocale substringWithRange:range];
+- (NSString *)vendorId
+{
+    @synchronized (self) {
+        if (_vendorId) return _vendorId;
+
+        /*
+         * https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
+         * BNCSystemObserver.getVendorId is based on UIDevice.identifierForVendor. Note from the
+         * docs above:
+         *
+         * If the value is nil, wait and get the value again later. This happens, for example,
+         * after the device has been restarted but before the user has unlocked the device.
+         *
+         * It's not clear if that specific example scenario would apply to opening Branch links,
+         * but this lazy initialization is probably safer.
+         */
+        _vendorId = [BNCSystemObserver getVendorId].copy;
+        return _vendorId;
+    }
+}
+
++ (NSString*) bnc_country {
+
+    NSString *country = nil;
+    #define returnIfValidCountry() \
+        if ([country isKindOfClass:[NSString class]] && country.length) { \
+            return country; \
+        } else { \
+            country = nil; \
         }
 
-    } else if (systemVersion < 10.0) {
-
-        NSString *rawLanguage = [[NSLocale preferredLanguages] firstObject];
-        NSDictionary *languageDictionary = [NSLocale componentsFromLocaleIdentifier:rawLanguage];
-        self.country = [languageDictionary objectForKey:@"kCFLocaleCountryCodeKey"];
-        self.language = [languageDictionary  objectForKey:@"kCFLocaleLanguageCodeKey"];
-
-    } else {
-
-        NSLocale *locale = [NSLocale currentLocale];
-        self.country = [locale countryCode];
-        self.language = [locale languageCode ];
-
+    // Should work on iOS 10
+    NSLocale *currentLocale = [NSLocale currentLocale];
+    if ([currentLocale respondsToSelector:@selector(countryCode)]) {
+        country = [currentLocale countryCode];
     }
+    returnIfValidCountry();
 
-    self.browserUserAgent = [self.class userAgentString];
-    return self;
+    // Should work on iOS 9
+    NSString *rawLanguage = [[NSLocale preferredLanguages] firstObject];
+    NSDictionary *languageDictionary = [NSLocale componentsFromLocaleIdentifier:rawLanguage];
+    country = [languageDictionary objectForKey:@"kCFLocaleCountryCodeKey"];
+    returnIfValidCountry();
+
+    // Should work on iOS 8 and below.
+    //NSString* language = [[NSLocale preferredLanguages] firstObject];
+    NSString *rawLocale = currentLocale.localeIdentifier;
+    NSRange range = [rawLocale rangeOfString:@"_"];
+    if (range.location != NSNotFound) {
+        range = NSMakeRange(range.location+1, rawLocale.length-range.location-1);
+        country = [rawLocale substringWithRange:range];
+    }
+    returnIfValidCountry();
+
+    #undef returnIfValidCountry
+
+    return nil;
+}
+
++ (NSString*) bnc_language {
+
+    NSString *language = nil;
+    #define returnIfValidLanguage() \
+        if ([language isKindOfClass:[NSString class]] && language.length) { \
+            return language; \
+        } else { \
+            language = nil; \
+        } \
+
+    // Should work on iOS 10
+    NSLocale *currentLocale = [NSLocale currentLocale];
+    if ([currentLocale respondsToSelector:@selector(languageCode)]) {
+        language = [currentLocale languageCode];
+    }
+    returnIfValidLanguage();
+
+    // Should work on iOS 9
+    NSString *rawLanguage = [[NSLocale preferredLanguages] firstObject];
+    NSDictionary *languageDictionary = [NSLocale componentsFromLocaleIdentifier:rawLanguage];
+    language = [languageDictionary  objectForKey:@"kCFLocaleLanguageCodeKey"];
+    returnIfValidLanguage();
+
+    // Should work on iOS 8 and below.
+    language = [[NSLocale preferredLanguages] firstObject];
+    returnIfValidLanguage();
+
+    #undef returnIfValidLanguage
+
+    return nil;
 }
 
 + (NSString*) systemBuildVersion {
@@ -115,7 +183,7 @@ static BNCDeviceInfo *bncDeviceInfo;
 + (NSString*) userAgentString {
 
     static NSString* browserUserAgentString = nil;
-	void (^setBrowserUserAgent)() = ^() {
+	void (^setBrowserUserAgent)(void) = ^() {
 		if (!browserUserAgentString) {
 			browserUserAgentString =
 				[[[UIWebView alloc]
@@ -124,7 +192,7 @@ static BNCDeviceInfo *bncDeviceInfo;
             BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
             preferences.browserUserAgentString = browserUserAgentString;
             preferences.lastSystemBuildVersion = self.systemBuildVersion;
-			//NSLog(@"[Branch] userAgentString: '%@'.", browserUserAgentString);
+			BNCLogDebugSDK(@"userAgentString: '%@'.", browserUserAgentString);
 		}
 	};
 
@@ -169,9 +237,9 @@ static BNCDeviceInfo *bncDeviceInfo;
             DISPATCH_BLOCK_DETACHED | DISPATCH_BLOCK_ENFORCE_QOS_CLASS,
             QOS_CLASS_USER_INTERACTIVE,
             0,  ^ {
-                //NSLog(@"Will userAgent.");
+                BNCLogDebugSDK(@"Will set userAgent.");
                 setBrowserUserAgent();
-                //NSLog(@"Did  userAgent.");
+                BNCLogDebugSDK(@"Did set userAgent.");
             });
         dispatch_async(dispatch_get_main_queue(), agentBlock);
 

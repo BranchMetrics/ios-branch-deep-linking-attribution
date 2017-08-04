@@ -1,7 +1,87 @@
 Branch iOS SDK Change Log
 
+- v0.17.1
+  * Added support for using a provided network stack instead of the standard Branch SDK network calls.
+    See the documentation in the `BNCNetworkServiceProtocol.h` file for details.
+  * Added certificate pining for branch.io server calls.
+  * Removed support for iOS 6 networking.
+  * The iOS Security.framework is now required for linking with the Branch SDK.
+  * Cleaned up NSError error messages.
+  * Added support for localization of error messages. Send us your localizations!
+
+- v0.17.0
+  * _*Beta Release*_ - July 24, 2017
+  * Added Crashlytics reporting enhancements (#653)
+    - The Branch SDK version number is now recorded in Crashlytics logs.
+    - The Branch deviceFingerprintId is also recorded in Crashlytics by default. This is optional.
+    - Added BNCCrashlyticsWrapper.
+    - Added and updated unit tests.
+  * BNCDeviceInfo thread safety to prevent crash during initialization (#654).
+    - Updated all instance properties on BNCDeviceInfo to be totally thread-safe.
+    - Made all BNCDeviceInfo properties readonly. Lazy initialization of vendorId due to idiosyncrasy
+      of UIDevice.identifierForVendor.
+    - Separated messages to deviceInfo from messages to self in a troublesome stack frame.
+
+- v0.16.2
+  * *Master Release* - July 13, 2017
+  * Decoupled logic for determining app language and app country code.
+  * Updated the project for Xcode 9 beta and iOS 11 beta.
+  * Removed the dependency on the CoreTelephony framework.
+  * Fixed an occasional crash when retrieving country code and language.
+  * Made SafariServices an optional CocoaPod podspec.
+
+- v0.16.1
+  * *QA Release* - July 5, 2017
+  * Added a new method to the API for registering a deep link controller. The API adds presentation
+    options for showing the deep link controller:
+```
+        - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller
+                                    forKey:(NSString *)key
+                          withPresentation:(BNCViewControllerPresentationOption)option;
+```
+
+    and depreciated the old API:
+
+```
+        - (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)
+                controller forKey:(NSString *)key;
+
+```
+
+    See [Registering a view controller to handle deep linking" in the documentation.](https://dev.branch.io/getting-started/deep-link-routing/advanced/ios/#register-view-controller-for-deep-link-routing)
+
+  * Added a WebViewExample-Test schema to illustrate how to use custom configurations and schemas
+    to select the Branch environment.
+  * Make it easier to use the Branch test key.
+    - Added the Branch class methods `useTestBranchKey` and `branchKey` to set the Branch key to use.
+    - If `useTestBranchKey` is set to true, Branch will attempt to use the `test` key from the
+      Info.plist.
+   * Updated the docs to show BranchShareLink usage, especially how the use the BranchShareLink
+     delegate to change the share text based on user selection.
+
+- v0.16.0
+  * *QA Release* - June 14, 2017
+  * Branch support for opening Branch links inside an app once a session is already started (like AppBoy) (AIS-264).
+  * Updated logging. Logging is more robust and consistant. Fixed the punctuation and grammer for logging messages.
+  * Added a standard `BNCCurrency` type for commerce events.
+  * Stop sending the Apple search ad data after attribution has been found or 30 days (AIS-267).
+  * Added a deprecation warning added for older BranchActivityItems in BranchUniversalObject.h (#631).
+
+- v0.15.3
+  * *Master Release*
+
+- v0.15.2
+  * *QA Release*
+  * Updated BNCStrongMatchHelper to handle UISplitViewController (#625).
+
+- v0.15.1
+  * *Beta Release*
+  * Master release candidate.
+  * Added an example of opening a Branch link in-app. (#621)
+
 - v0.15.0
-  * Added The Planets WebView example.
+  * *Beta Release*
+  * Added 'The Planets' WebView example.
     - This example demonstrates how to use Branch links in an app that has table view and web view.
   * Added unit tests and fixed bugs as needed.
     - Changed the NSTimer to a dispatch_timer.  NSTimers only fire in certain run modes.
@@ -11,6 +91,7 @@ Branch iOS SDK Change Log
   * Updated README.md SDK integration documentation to include the new
     `[Branch application:openURL:sourceApplication:annotation:annotation]` method.
   * Added Email HTML support to BranchActivityItemProvider.
+  * Added logging functions for Swift.
 
 - v0.14.12
   * Fixed headers for Swift compatibility AIS-242 (#615).

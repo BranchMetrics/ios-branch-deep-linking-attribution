@@ -11,6 +11,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BNCDeviceInfo.h"
+#import "BNCCrashlyticsWrapper.h"
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
 #import "BranchViewHandler.h"
@@ -18,6 +19,7 @@
 #import "BranchContentDiscoveryManifest.h"
 #import "BranchContentDiscoverer.h"
 #import "NSMutableDictionary+Branch.h"
+#import "BNCLog.h"
 
 @interface BranchOpenRequest ()
 @property (assign, nonatomic) BOOL isInstall;
@@ -106,6 +108,11 @@
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
     [BNCSystemObserver setUpdateState];
+
+    if (Branch.enableFingerprintIDInCrashlyticsReports) {
+        BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
+        [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
+    }
 
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
 
@@ -214,7 +221,7 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 + (void) setWaitNeededForOpenResponseLock {
     @synchronized (self) {
         if (!openRequestWaitQueueIsSuspended) {
-            //NSLog(@"Suspend openRequestWaitQueue.");
+            BNCLogDebugSDK(@"Suspended for openRequestWaitQueue.");
             openRequestWaitQueueIsSuspended = YES;
             dispatch_suspend(openRequestWaitQueue);
         }
@@ -222,17 +229,17 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 }
 
 + (void) waitForOpenResponseLock {
-    //NSLog(@"Wait for openRequestWaitQueue.");
+    BNCLogDebugSDK(@"Waiting for openRequestWaitQueue.");
     [BNCDeviceInfo userAgentString];    //  Make sure we do this lock first to prevent a deadlock.
     dispatch_sync(openRequestWaitQueue, ^ {
-        //NSLog(@"Finished waitForOpenResponseLock");
+        BNCLogDebugSDK(@"Finished waitForOpenResponseLock.");
     });
 }
 
 + (void) releaseOpenResponseLock {
     @synchronized (self) {
         if (openRequestWaitQueueIsSuspended) {
-            //NSLog(@"Resume openRequestWaitQueue.");
+            BNCLogDebugSDK(@"Resuming openRequestWaitQueue.");
             openRequestWaitQueueIsSuspended = NO;
             dispatch_resume(openRequestWaitQueue);
         }

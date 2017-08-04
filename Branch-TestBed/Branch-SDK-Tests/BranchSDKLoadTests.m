@@ -34,7 +34,7 @@
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
             preferenceHelper:preferenceHelper
-            key:@"key_foo"];
+            key:@"key_live_foo"];
 
     BNCServerResponse *linkResponse = [[BNCServerResponse alloc] init];
     linkResponse.data = @{ @"url": @"https://bnc.lt/l/3PxZVFU-BK" };
@@ -89,7 +89,7 @@
             callback:openOrInstallCallbackCheckBlock];
 
     // Fake branch key
-    preferenceHelper.branchKey = @"foo";
+    Branch.branchKey = @"key_live_foo";
 
     __block int32_t completedCount = 0;
     for (int i = 0; i < 1000; i++) {
