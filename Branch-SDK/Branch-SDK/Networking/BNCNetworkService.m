@@ -95,10 +95,7 @@
             if (CFGetTypeID((SecKeyRef)secKey) == SecKeyGetTypeID())
                 [_pinnedPublicKeys addObject:secKey];
             else {
-                NSError *error =
-                    [NSError errorWithDomain:BNCErrorDomain code:BNCInvalidPublicKeyError
-                        userInfo:@{ NSLocalizedDescriptionKey:  @"Public key is not an SecKeyRef type." }];
-                return error;
+                return [NSError branchErrorWithCode:BNCInvalidNetworkPublicKeyError];
             }
         }
         return nil;

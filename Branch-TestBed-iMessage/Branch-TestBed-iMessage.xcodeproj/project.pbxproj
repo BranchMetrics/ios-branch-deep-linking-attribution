@@ -28,6 +28,7 @@
 		4D510D761F0D6059003D720B /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D510D751F0D6059003D720B /* BNCDeepLinkViewControllerInstance.m */; };
 		4D698FF11E04B566006DA451 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D698FEF1E04B566006DA451 /* BNCCommerceEvent.m */; };
 		4D698FF21E04B566006DA451 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D698FF01E04B566006DA451 /* BNCConfig.m */; };
+		4D6A275B1F29557200027264 /* BNCLocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6A275A1F29557200027264 /* BNCLocalization.m */; };
 		4DB47D541F042BB900C53C29 /* BNCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D4D1F042BB900C53C29 /* BNCDebug.m */; };
 		4DB47D551F042BB900C53C29 /* BNCLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D4F1F042BB900C53C29 /* BNCLog.m */; };
 		4DB47D561F042BB900C53C29 /* BNCXcode7Support.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D511F042BB900C53C29 /* BNCXcode7Support.m */; };
@@ -131,6 +132,8 @@
 		4D698FEE1E04B566006DA451 /* BNCCommerceEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCCommerceEvent.h; sourceTree = "<group>"; };
 		4D698FEF1E04B566006DA451 /* BNCCommerceEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCCommerceEvent.m; sourceTree = "<group>"; };
 		4D698FF01E04B566006DA451 /* BNCConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCConfig.m; sourceTree = "<group>"; };
+		4D6A27591F29557200027264 /* BNCLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLocalization.h; sourceTree = "<group>"; };
+		4D6A275A1F29557200027264 /* BNCLocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLocalization.m; sourceTree = "<group>"; };
 		4DB47D4C1F042BB900C53C29 /* BNCDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDebug.h; sourceTree = "<group>"; };
 		4DB47D4D1F042BB900C53C29 /* BNCDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDebug.m; sourceTree = "<group>"; };
 		4DB47D4E1F042BB900C53C29 /* BNCLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLog.h; sourceTree = "<group>"; };
@@ -335,7 +338,6 @@
 		67E91F651D769FE30039F1C4 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
-				2BD7C3E71F27D4E3003696AF /* Networking */,
 				67E91F661D769FE30039F1C4 /* BNCCallbacks.h */,
 				4D698FEE1E04B566006DA451 /* BNCCommerceEvent.h */,
 				4D698FEF1E04B566006DA451 /* BNCCommerceEvent.m */,
@@ -361,6 +363,8 @@
 				67E91F731D769FE30039F1C4 /* BNCLinkCache.m */,
 				67E91F741D769FE30039F1C4 /* BNCLinkData.h */,
 				67E91F751D769FE30039F1C4 /* BNCLinkData.m */,
+				4D6A27591F29557200027264 /* BNCLocalization.h */,
+				4D6A275A1F29557200027264 /* BNCLocalization.m */,
 				4DB47D4E1F042BB900C53C29 /* BNCLog.h */,
 				4DB47D4F1F042BB900C53C29 /* BNCLog.m */,
 				67E91F761D769FE30039F1C4 /* BNCPreferenceHelper.h */,
@@ -397,6 +401,7 @@
 				67E91F911D769FE30039F1C4 /* BranchView.m */,
 				67E91F921D769FE30039F1C4 /* BranchViewHandler.h */,
 				67E91F931D769FE30039F1C4 /* BranchViewHandler.m */,
+				2BD7C3E71F27D4E3003696AF /* Networking */,
 				4DE887D21E3FFF9A00732E20 /* NSMutableDictionary+Branch.h */,
 				4DE887D31E3FFF9A00732E20 /* NSMutableDictionary+Branch.m */,
 				4DB47D521F042BB900C53C29 /* NSString+Branch.h */,
@@ -532,6 +537,7 @@
 				67E91FCA1D769FE30039F1C4 /* BranchLinkProperties.m in Sources */,
 				67E91FCD1D769FE30039F1C4 /* BranchViewHandler.m in Sources */,
 				67E91FC41D769FE30039F1C4 /* BNCStrongMatchHelper.m in Sources */,
+				4D6A275B1F29557200027264 /* BNCLocalization.m in Sources */,
 				2BD7C40E1F27D4E3003696AF /* BNCNetworkService.m in Sources */,
 				7B18DF501F1F028600C25C84 /* BNCCrashlyticsWrapper.m in Sources */,
 				4DB567371E79FD5E00A8A324 /* BranchShareLink.m in Sources */,

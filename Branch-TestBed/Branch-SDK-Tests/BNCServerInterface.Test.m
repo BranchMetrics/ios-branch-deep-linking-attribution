@@ -353,7 +353,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
         }];
 
 #if 0
-    // TODO: Fix so the end point so the test works on external networks.
+    // TODO: Fix so the end point so the test works on external (outside the Branch office) networks.
 
     XCTestExpectation* pinFail2 = [self expectationWithDescription:@"PinFail2"];
     [serverInterface getRequest:[NSDictionary new]

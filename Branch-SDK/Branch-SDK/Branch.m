@@ -975,7 +975,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket callback:(callbackWithStatus)callback {
     if (count == 0) {
         if (callback) {
-            callback(false, [NSError errorWithDomain:BNCErrorDomain code:BNCRedeemCreditsError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot redeem zero credits." }]);
+            callback(false, [NSError branchErrorWithCode:BNCRedeemZeroCreditsError]);
         }
         else {
             BNCLogWarning(@"Cannot redeem zero credits.");
@@ -986,7 +986,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     NSInteger totalAvailableCredits = [self.preferenceHelper getCreditCountForBucket:bucket];
     if (count > totalAvailableCredits) {
         if (callback) {
-            callback(false, [NSError errorWithDomain:BNCErrorDomain code:BNCRedeemCreditsError userInfo:@{ NSLocalizedDescriptionKey: @"You're trying to redeem more credits than are available. Have you loaded rewards?" }]);
+            callback(false, [NSError branchErrorWithCode:BNCRedeemCreditsError]);
         }
         else {
             BNCLogWarning(@"You're trying to redeem more credits than are available. Have you loaded rewards?");
@@ -1670,8 +1670,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
             if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.identityID) {
                 BNCLogError(@"User session has not been initialized!");
                 BNCPerformBlockOnMainThreadSync(^{
-                    [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError
-                        userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized" }]];
+                    [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
                 });
                 return;
             }
@@ -1679,8 +1678,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                 (!self.preferenceHelper.deviceFingerprintID || !self.preferenceHelper.sessionID)) {
                 BNCLogError(@"Missing session items!");
                 BNCPerformBlockOnMainThreadSync(^{
-                    [req processResponse:nil error:[NSError errorWithDomain:BNCErrorDomain code:BNCInitError
-                        userInfo:@{ NSLocalizedDescriptionKey: @"Branch User Session has not been initialized." }]];
+                    [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];
                 });
                 return;
             }

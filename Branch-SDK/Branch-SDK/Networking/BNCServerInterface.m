@@ -15,6 +15,7 @@
 #import "NSMutableDictionary+Branch.h"
 #import "BNCLog.h"
 #import "Branch.h"
+#import "BNCLocalization.h"
 
 @interface BNCServerInterface ()
 @property (strong) NSString *requestEndpoint;
@@ -516,7 +517,7 @@ exit:
                 [self processServerResponse:operation.response data:operation.responseData error:operation.error];
             [self collectInstrumentationMetricsWithOperation:operation];
 
-            NSError *error = operation.error;
+            NSError *underlyingError = operation.error;
             NSInteger status = [serverResponse.statusCode integerValue];
 
             // If the phone is in a poor network condition,
@@ -539,32 +540,38 @@ exit:
                 // Do not continue on if retrying, else the callback will be called incorrectly
                 return;
             }
-            else if (callback) {
-                // Wrap up bad statuses w/ specific error messages
-                if (status >= 500) {
-                    error = [NSError errorWithDomain:BNCErrorDomain code:BNCServerProblemError userInfo:@{ NSLocalizedDescriptionKey: @"Trouble reaching the Branch servers, please try again shortly" }];
-                }
-                else if (status == 409) {
-                    error = [NSError errorWithDomain:BNCErrorDomain code:BNCDuplicateResourceError userInfo:@{ NSLocalizedDescriptionKey: @"A resource with this identifier already exists" }];
-                }
-                else if (status >= 400) {
-                    NSString *errorString = @"The request was invalid.";
-                    
-                    if ([serverResponse.data objectForKey:@"error"] && [[serverResponse.data objectForKey:@"error"] isKindOfClass:[NSString class]]) {
-                        errorString = [serverResponse.data objectForKey:@"error"];
-                    }
-                    
-                    error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: errorString }];
-                }
-                
-                if (error) {
-                    BNCLogError(@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, error.localizedDescription);
-                }
-                
+
+            NSError *branchError = nil;
+
+            // Wrap up bad statuses w/ specific error messages
+            if (status >= 500) {
+                branchError = [NSError branchErrorWithCode:BNCServerProblemError error:underlyingError];
             }
+            else if (status == 409) {
+                branchError = [NSError branchErrorWithCode:BNCDuplicateResourceError error:underlyingError];
+            }
+            else if (status >= 400) {
+                NSString *errorString = [serverResponse.data objectForKey:@"error"];
+                if (![errorString isKindOfClass:[NSString class]])
+                    errorString = nil;
+                if (!errorString)
+                    errorString = underlyingError.localizedDescription;
+                if (!errorString)
+                    errorString = BNCLocalizedString(@"The request was invalid.");
+                branchError = [NSError branchErrorWithCode:BNCBadRequestError localizedMessage:errorString];
+            }
+            else if (underlyingError) {
+                branchError = [NSError branchErrorWithCode:BNCServerProblemError error:underlyingError];
+            }
+
+            if (branchError) {
+                BNCLogError(@"An error prevented request to %@ from completing: %@",
+                    request.URL.absoluteString, branchError);
+            }
+            
             //	Don't call on the main queue since it might be blocked.
             if (callback)
-                callback(serverResponse, error);
+                callback(serverResponse, branchError);
         };
 
     id<BNCNetworkOperationProtocol> operation =
@@ -572,6 +579,7 @@ exit:
     [operation start];
     NSError *error = [self verifyNetworkOperation:operation];
     if (error) {
+        BNCLogError(@"Network service error: %@.", error);
         if (callback) {
             callback(nil, error);
         }
@@ -582,53 +590,42 @@ exit:
 - (NSError*) verifyNetworkOperation:(id<BNCNetworkOperationProtocol>)operation {
 
     if (!operation) {
-        NSString *message =
-            @"A network operation instance is expected to be returned by the "
-             "networkOperationWithURLRequest:completion: method.";
-        NSError *error =
-            [NSError errorWithDomain:BNCErrorDomain code:BNCNetworkServiceInterfaceError userInfo:
-                @{NSLocalizedDescriptionKey: message}];
-        BNCLogError(@"Network service error: %@.", error);
+        NSString *message = BNCLocalizedString(
+            @"A network operation instance is expected to be returned by the networkOperationWithURLRequest:completion: method."
+        );
+        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError localizedMessage:message];
         return error;
     }
     if (![operation conformsToProtocol:@protocol(BNCNetworkOperationProtocol)]) {
         NSString *message =
-            [NSString stringWithFormat:@"Network operation of class '%@' does not conform to the BNCNetworkOperationProtocol.",
-                NSStringFromClass([operation class])];
-        NSError *error =
-            [NSError errorWithDomain:BNCErrorDomain code:BNCNetworkServiceInterfaceError userInfo:
-                @{NSLocalizedDescriptionKey: message}];
-        BNCLogError(@"Network service error: %@.", error);
+            BNCLocalizedFormattedString(
+                @"Network operation of class '%@' does not conform to the BNCNetworkOperationProtocol.",
+                NSStringFromClass([operation class]));
+        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError localizedMessage:message];
         return error;
     }
     if (!operation.startDate) {
-        NSString *message =
+        NSString *message = BNCLocalizedString(
             @"The network operation start date is not set. The Branch SDK expects the network operation"
-             " start date to be set by the network provider.";
-        NSError *error =
-            [NSError errorWithDomain:BNCErrorDomain code:BNCNetworkServiceInterfaceError userInfo:
-                @{NSLocalizedDescriptionKey: message}];
-        BNCLogError(@"Network service error: %@.", error);
+             " start date to be set by the network provider."
+        );
+        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError localizedMessage:message];
         return error;
     }
     if (!operation.timeoutDate) {
-        NSString *message =
+        NSString*message = BNCLocalizedString(
             @"The network operation timeout date is not set. The Branch SDK expects the network operation"
-             " timeout date to be set by the network provider.";
-        NSError *error =
-            [NSError errorWithDomain:BNCErrorDomain code:BNCNetworkServiceInterfaceError userInfo:
-                @{NSLocalizedDescriptionKey: message}];
-        BNCLogError(@"Network service error: %@.", error);
+             " timeout date to be set by the network provider."
+        );
+        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError localizedMessage:message];
         return error;
     }
     if (!operation.request) {
-        NSString *message =
+        NSString *message = BNCLocalizedString(
             @"The network operation request is not set. The Branch SDK expects the network operation"
-             " request to be set by the network provider.";
-        NSError *error =
-            [NSError errorWithDomain:BNCErrorDomain code:BNCNetworkServiceInterfaceError userInfo:
-                @{NSLocalizedDescriptionKey: message}];
-        BNCLogError(@"Network service error: %@.", error);
+             " request to be set by the network provider."
+        );
+        NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError localizedMessage:message];
         return error;
     }
     return nil;

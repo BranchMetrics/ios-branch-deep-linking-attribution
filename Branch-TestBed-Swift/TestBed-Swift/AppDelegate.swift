@@ -29,42 +29,56 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if let branch = Branch.getInstance(branchKey) {
             
-            branch.setDebug();
             if DataStore.getPendingSetDebugEnabled()! {
                 branch.setDebug()
                 DataStore.setActivePendingSetDebugEnabled(true)
             } else {
                 DataStore.setActivePendingSetDebugEnabled(false)
             }
-            branch.initSession(launchOptions: launchOptions, andRegisterDeepLinkHandler: { (params, error) in
-                if (error == nil) {
-                    
-                    // Deeplinking logic for use when automaticallyDisplayDeepLinkController = false
-                    if let clickedBranchLink = params?[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool? {
-                        
-                        if clickedBranchLink {
-                            
-                            let nc = self.window!.rootViewController as! UINavigationController
-                            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                            let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
-                            nc.pushViewController(contentViewController, animated: true)
-                            contentViewController.contentType = "Content"
-                            
-                            
-                        }
-                    } else {
-                        print(String(format: "Branch TestBed: Finished init with params\n%@", (params?.description)!))
-                    }
-                    
-                    
-                } else {
-                    print("Branch TestBed: Initialization failed: " + error!.localizedDescription)
-                }
-                let notificationName = Notification.Name("BranchCallbackCompleted")
-                NotificationCenter.default.post(name: notificationName, object: nil)
-
-            })
+            // To use automaticallyDisplayDeepLinkController:
+            // 1) Uncomment the following code block
+            // 2) Comment out the code in the 'if (error == nil)' code block in initSession callback below
+            // 3) Change automaticallyDisplayDeepLinkController to true
+            /* let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UINavigationController
+             branch.registerDeepLinkController(navigationController, forKey:"~referring_link")*/
             
+            // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is false).
+            branch.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: false, deepLinkHandler: { params, error in
+                
+                defer {
+                    let notificationName = Notification.Name("BranchCallbackCompleted")
+                    NotificationCenter.default.post(name: notificationName, object: nil)
+                }
+                
+                guard error == nil else {
+                    print("Branch TestBed: Initialization failed: " + error!.localizedDescription)
+                    return
+                }
+                
+                guard let paramsDictionary = (params as? Dictionary<String, Any>) else {
+                    print("No Branch parameters returned")
+                    return
+                }
+                
+                // Deeplinking logic for use when automaticallyDisplayDeepLinkController = false
+                if let clickedBranchLink = params?[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool? {
+                    
+                    if clickedBranchLink {
+                        
+                        let nc = self.window!.rootViewController as! UINavigationController
+                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
+                        nc.pushViewController(contentViewController, animated: true)
+                        
+                        let referringLink = paramsDictionary["~referring_link"] as! String
+                        let content = String(format:"\nReferring link: \(referringLink)\n\nSession Details:\n\(paramsDictionary.JSONDescription())")
+                        contentViewController.content = content
+                        contentViewController.contentType = "Content"
+                    }
+                } else {
+                    print(String(format: "Branch TestBed: Finished init with params\n%@", paramsDictionary.description))
+                }
+            })
         } else {
             print("Branch TestBed: Invalid Key\n")
             DataStore.setActiveBranchKey("")
@@ -75,14 +89,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // Respond to URL scheme links
     func application(_ application: UIApplication,
-                          open url: URL,
-                 sourceApplication: String?,
-                        annotation: Any) -> Bool {
-
+                     open url: URL,
+                     sourceApplication: String?,
+                     annotation: Any) -> Bool {
+        
         let branchHandled = Branch.getInstance().application(application,
-            open: url,
-            sourceApplication: sourceApplication,
-            annotation: annotation
+                                                             open: url,
+                                                             sourceApplication: sourceApplication,
+                                                             annotation: annotation
         )
         if (!branchHandled) {
             // If not handled by Branch, do other deep link routing for the Facebook SDK, Pinterest SDK, etc
