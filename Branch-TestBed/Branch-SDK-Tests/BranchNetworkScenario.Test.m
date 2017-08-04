@@ -583,6 +583,7 @@
     sleep(1); // Sleep to allow server queue time to process.
     // Bad requests callback should be captured at this point, call it to trigger the failure.
 
+<<<<<<< HEAD:Branch-TestBed/Branch-SDK-Tests/BranchNetworkScenario.Test.m
     @synchronized (self) {
         if (badRequestCallback) {
             NSError * error = [NSError errorWithDomain:BNCErrorDomain code:BNCServerProblemError userInfo:nil];
@@ -591,6 +592,14 @@
             XCTAssert(badRequestCallback);
         }
     }
+=======
+	if (badRequestCallback) {
+        NSError * error = [NSError branchErrorWithCode:BNCServerProblemError];
+    	badRequestCallback(nil, error);
+	} else {
+		XCTAssert(badRequestCallback);
+	}
+>>>>>>> af7d0cfb6c36b785f4e8c8827785ad426db7a64e:Branch-TestBed/Branch-SDK-Tests/BranchNetworkScenarioTests.m
 }
 
 - (void)enqueueTwoNonReplayableRequestsWithFirstFailingBecauseRequestIsBad:(Branch *)branch
@@ -643,6 +652,7 @@
     while ([timeoutDate timeIntervalSinceNow] > 0.0) {
 
         sleep(1); // Sleep so that network queue can processes
+<<<<<<< HEAD:Branch-TestBed/Branch-SDK-Tests/BranchNetworkScenario.Test.m
         @synchronized (self) {
             if (badRequestCallback) {
                 badRequestCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:nil]);
@@ -652,6 +662,15 @@
                 goodRequestCallback = nil;
                 return;
             }
+=======
+        if (badRequestCallback) {
+            badRequestCallback(nil, [NSError branchErrorWithCode:BNCBadRequestError]);
+            badRequestCallback = nil;
+        } else if (goodRequestCallback) {
+            goodRequestCallback([[BNCServerResponse alloc] init], nil);
+            goodRequestCallback = nil;
+            return;
+>>>>>>> af7d0cfb6c36b785f4e8c8827785ad426db7a64e:Branch-TestBed/Branch-SDK-Tests/BranchNetworkScenarioTests.m
         }
     }
 	XCTAssert(badRequestCallback && goodRequestCallback);
