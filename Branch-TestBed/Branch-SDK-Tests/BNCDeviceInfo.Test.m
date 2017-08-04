@@ -16,6 +16,7 @@
 #import "BNCTestCase.h"
 #import "BNCDeviceInfo.h"
 #import "NSString+Branch.h"
+#import "BNCLog.h"
 
 @interface BNCDeviceInfoTest : BNCTestCase
 @end
@@ -82,9 +83,43 @@
 }
 
 - (void)testStress {
-    for (int i = 0; i < 5000; i++) {
-        [self testGetDeviceInfo];
-    }
+    NSDate *startTime = [NSDate date];
+    dispatch_group_t  waitGroup = dispatch_group_create();
+
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+        for (int i = 0; i < 5000; i++) {
+            [self testGetDeviceInfo];
+        }
+    });
+
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+        for (int i = 0; i < 5000; i++) {
+            [self testGetDeviceInfo];
+        }
+    });
+
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+        for (int i = 0; i < 5000; i++) {
+            [self testGetDeviceInfo];
+        }
+    });
+
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+        for (int i = 0; i < 5000; i++) {
+            [self testGetDeviceInfo];
+        }
+    });
+
+    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
+        for (int i = 0; i < 5000; i++) {
+            [self testGetDeviceInfo];
+        }
+    });
+
+    dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
+    BNCLogCloseLogFile();
+    NSLog(@"%@: Synchronized time: %1.5f.",
+        BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
 }
 
 @end

@@ -96,6 +96,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     return foundBranchKey;
     
   } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+    @synchronized (self) {
     connectionAttempts++;
     NSLog(@"Attempt # %lu", (unsigned long)connectionAttempts);
     if (connectionAttempts < 3) {
@@ -122,7 +123,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
         return [OHHTTPStubsResponse responseWithJSONObject:[NSDictionary new] statusCode:200 headers:nil];
 
     }
-  }];
+  }}];
   
   [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
@@ -150,6 +151,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     return foundBranchKey;
     
   } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+    @synchronized (self) {
     // Return actual data on first attempt
     NSDictionary* dummyJSONResponse = @{@"key": @"value"};
     connectionAttempts++;
@@ -157,12 +159,10 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     BNCAfterSecondsPerformBlock(0.01, ^ { [successExpectation fulfill]; });
     
     return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
-    
-  }];
+  }}];
   
   [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
   [self waitForExpectationsWithTimeout:1.0 handler:nil];
-  
 }
 
 //==================================================================================
