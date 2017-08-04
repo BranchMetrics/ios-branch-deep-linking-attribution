@@ -12,3 +12,4 @@ extern NSString * const BNC_SDK_VERSION;
 extern NSString * const BNC_API_BASE_URL;
 extern NSString * const BNC_LINK_URL;
 extern NSString * const BNC_API_VERSION;
+extern NSString * const BNC_STRONG_MATCH_URL;
