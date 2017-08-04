@@ -288,7 +288,6 @@
     return [dateFormatter stringFromDate:date];
 }
 
-<<<<<<< HEAD:Branch-TestBed/Branch-SDK-Tests/BNCEncodingUtils.Test.m
 #pragma mark - Base64EncodeData Tests
 
 #define _countof(array)  (sizeof(array)/sizeof(array[0]))
@@ -388,7 +387,8 @@
     data = [BNCEncodingUtils base64DecodeString:
         @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcde (Junk:%&*^**) fghijklmnopqrstuvwxyz0123456789+/"];
     XCTAssertEqual(data, nil);
-=======
+}
+
 #pragma mark - Hex String Tests
 
 - (void) testHexStringFromData {
@@ -485,7 +485,6 @@
     unsigned char stringShortShort2Bytes[] = { 0xaf };
     data = [BNCEncodingUtils dataFromHexString:stringShortShort2];
     XCTAssertEqualObjects(data, [NSData dataWithBytes:stringShortShort2Bytes length:1]);
->>>>>>> af7d0cfb6c36b785f4e8c8827785ad426db7a64e:Branch-TestBed/Branch-SDK-Tests/BNCEncodingUtilsTests.m
 }
 
 @end
