@@ -317,7 +317,7 @@
 		E2B947491D15D73900F2270D /* BNCCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCCallbacks.h; sourceTree = "<group>"; };
 		F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
 		F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeepLinkViewControllerInstance.m; sourceTree = "<group>"; };
-		F1D4F9AC1F323F01002D13FF /* Branch-TestBedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBedUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBed-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1D4F9AE1F323F01002D13FF /* Branch_TestBedUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_TestBedUITests.m; sourceTree = "<group>"; };
 		F1D4F9B01F323F01002D13FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -459,7 +459,7 @@
 				670016601940F51400A9E103 /* Branch-TestBed.app */,
 				7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */,
 				466B58381B17773000A69EDE /* libBranch.a */,
-				F1D4F9AC1F323F01002D13FF /* Branch-TestBedUITests.xctest */,
+				F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -737,9 +737,9 @@
 			productReference = 7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		F1D4F9AB1F323F01002D13FF /* Branch-TestBedUITests */ = {
+		F1D4F9AB1F323F01002D13FF /* Branch-TestBed-UITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBedUITests" */;
+			buildConfigurationList = F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBed-UITests" */;
 			buildPhases = (
 				F1D4F9A81F323F01002D13FF /* Sources */,
 				F1D4F9A91F323F01002D13FF /* Frameworks */,
@@ -750,9 +750,9 @@
 			dependencies = (
 				F1D4F9B21F323F01002D13FF /* PBXTargetDependency */,
 			);
-			name = "Branch-TestBedUITests";
+			name = "Branch-TestBed-UITests";
 			productName = "Branch-TestBedUITests";
-			productReference = F1D4F9AC1F323F01002D13FF /* Branch-TestBedUITests.xctest */;
+			productReference = F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -806,7 +806,7 @@
 				466B58371B17773000A69EDE /* Branch */,
 				6700165F1940F51400A9E103 /* Branch-TestBed */,
 				7E6B3B501AA42D0E005F45BF /* Branch-SDK-Tests */,
-				F1D4F9AB1F323F01002D13FF /* Branch-TestBedUITests */,
+				F1D4F9AB1F323F01002D13FF /* Branch-TestBed-UITests */,
 			);
 		};
 /* End PBXProject section */
@@ -1263,13 +1263,12 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = R63EM248DP;
 				INFOPLIST_FILE = "Branch-TestBedUITests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "branch.Branch-TestBedUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_TARGET_NAME = "Branch-TestBed";
 			};
@@ -1286,10 +1285,9 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = R63EM248DP;
 				INFOPLIST_FILE = "Branch-TestBedUITests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "branch.Branch-TestBedUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_TARGET_NAME = "Branch-TestBed";
 			};
@@ -1334,7 +1332,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBedUITests" */ = {
+		F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBed-UITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F1D4F9B31F323F01002D13FF /* Debug */,
