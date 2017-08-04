@@ -197,6 +197,9 @@
     XCTAssertEqualObjects(decodedValue, expectedDataDict);
 }
 
+#if 0
+
+// From Ed: See note below
 - (void)testDecodeJsonStringToDictionaryWithNilDecodedString {
     char badCStr[5] = { '{', 'f', ':', 'o', '}' }; // not nil terminated
     NSString *encodedString = [NSString stringWithUTF8String:badCStr];
@@ -206,6 +209,17 @@
     
     XCTAssertEqualObjects(decodedValue, expectedDataDict);
 }
+
+#else 
+
+- (void)testDecodeJsonStringToDictionaryWithNilDecodedString {
+    NSString *encodedString = nil;
+    NSDictionary *expectedDataDict = @{ };
+    NSDictionary *decodedValue = [BNCEncodingUtils decodeJsonStringToDictionary:encodedString];
+    XCTAssertEqualObjects(decodedValue, expectedDataDict);
+}
+
+#endif
 
 - (void)testDecodeBase64EncodedJsonStringToDictionary {
     NSString *encodedString = [BNCEncodingUtils base64EncodeStringToString:@"{\"foo\":\"bar\"}"];
@@ -222,6 +236,11 @@
     XCTAssertNil(result);
 }
 
+#if 0
+
+// From Ed: I don't get the point of this test.
+// It reads memory from the stack as a C string and decodes it as an NSString?
+// The test itself won't run consistently and may fault sometimes.
 - (void)testDecodeBase64JsonStringToDictionaryWithNilDecodedString {
     char badCStr[5] = { '{', 'f', ':', 'o', '}' }; // not nil terminated
     NSString *encodedString = [NSString stringWithUTF8String:badCStr];
@@ -232,6 +251,18 @@
     
     XCTAssertEqualObjects(decodedValue, expectedDataDict);
 }
+
+#else 
+
+// This should do the same thing without faulting during the test.
+- (void)testDecodeBase64JsonStringToDictionaryWithNilDecodedString {
+    NSString *base64EncodedString = nil;
+    NSDictionary *expectedDataDict = @{ };
+    NSDictionary *decodedValue = [BNCEncodingUtils decodeJsonStringToDictionary:base64EncodedString];
+    XCTAssertEqualObjects(decodedValue, expectedDataDict);
+}
+
+#endif
 
 - (void)testDecodeQueryStringToDictionary {
     NSString *encodedString = @"foo=bar&baz=1&quux=&quo=Hi%20there";
@@ -255,6 +286,107 @@
     });
     
     return [dateFormatter stringFromDate:date];
+}
+
+#pragma mark - Base64EncodeData Tests
+
+#define _countof(array)  (sizeof(array)/sizeof(array[0]))
+
+- (void)testBase64EncodeData {
+    NSData   *data = nil;
+    NSString *truth = nil;
+    NSString *string = nil;
+
+    string = [BNCEncodingUtils base64EncodeData:nil];
+    XCTAssertEqualObjects(string, @"");
+
+    string = [BNCEncodingUtils base64EncodeData:[NSData new]];
+    XCTAssertEqualObjects(string, @"");
+
+    uint8_t b1[] = {0, 1, 2, 3, 4, 5};
+    data = [[NSData alloc] initWithBytes:b1 length:_countof(b1)];
+    truth = @"AAECAwQF";
+    string = [BNCEncodingUtils base64EncodeData:data];
+    XCTAssertEqualObjects(string, truth);
+
+    // Test that 1, 2, 3, 4, 5 length data encode correctly.
+
+    data = [[NSData alloc] initWithBytes:b1 length:1];
+    truth = @"AA==";
+    string = [BNCEncodingUtils base64EncodeData:data];
+    XCTAssertEqualObjects(string, truth);
+
+    data = [[NSData alloc] initWithBytes:b1 length:2];
+    truth = @"AAE=";
+    string = [BNCEncodingUtils base64EncodeData:data];
+    XCTAssertEqualObjects(string, truth);
+
+    data = [[NSData alloc] initWithBytes:b1 length:3];
+    truth = @"AAEC";
+    string = [BNCEncodingUtils base64EncodeData:data];
+    XCTAssertEqualObjects(string, truth);
+
+    data = [[NSData alloc] initWithBytes:b1 length:4];
+    truth = @"AAECAw==";
+    string = [BNCEncodingUtils base64EncodeData:data];
+    XCTAssertEqualObjects(string, truth);
+
+    data = [[NSData alloc] initWithBytes:b1 length:5];
+    truth = @"AAECAwQ=";
+    string = [BNCEncodingUtils base64EncodeData:data];
+    XCTAssertEqualObjects(string, truth);
+
+    uint8_t b2[] = {
+        0x00, 0x10, 0x83, 0x10, 0x51, 0x87, 0x20, 0x92, 0x8B, 0x30, 0xD3, 0x8F, 0x41, 0x14, 0x93, 0x51,
+        0x55, 0x97, 0x61, 0x96, 0x9B, 0x71, 0xD7, 0x9F, 0x82, 0x18, 0xA3, 0x92, 0x59, 0xA7, 0xA2, 0x9A,
+        0xAB, 0xB2, 0xDB, 0xAF, 0xC3, 0x1C, 0xB3, 0xD3, 0x5D, 0xB7, 0xE3, 0x9E, 0xBB, 0xF3, 0xDF, 0xBF,
+    };
+    data = [[NSData alloc] initWithBytes:b2 length:_countof(b2)];
+    truth = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    string = [BNCEncodingUtils base64EncodeData:data];
+    XCTAssertEqualObjects(string, truth);
+}
+
+- (void)testBase64DecodeString {
+    NSData   *data = nil;
+
+    data = [BNCEncodingUtils base64DecodeString:nil];
+    XCTAssertEqual(data, nil);
+
+    data = [BNCEncodingUtils base64DecodeString:@""];
+    XCTAssertEqualObjects(data, [NSData new]);
+
+    uint8_t truth[] = {0, 1, 2, 3, 4, 5};
+
+    data = [BNCEncodingUtils base64DecodeString:@"AAECAwQF"];
+    XCTAssertTrue( data.length == 6 && memcmp(data.bytes, truth, 6) == 0 );
+
+    // Test that 1, 2, 3, 4, 5 length data encode correctly.
+
+    #define testDecode(string, dataLength) { \
+        data = [BNCEncodingUtils base64DecodeString:string]; \
+        XCTAssertTrue( data.length == dataLength && memcmp(data.bytes, truth, dataLength) == 0 ); \
+    }
+
+    testDecode(@"AA==", 1);
+    testDecode(@"AAE=", 2);
+    testDecode(@"AAEC", 3);
+    testDecode(@"AAECAw==", 4);
+    testDecode(@"AAECAwQ=", 5);
+
+    uint8_t b2[] = {
+        0x00, 0x10, 0x83, 0x10, 0x51, 0x87, 0x20, 0x92, 0x8B, 0x30, 0xD3, 0x8F, 0x41, 0x14, 0x93, 0x51,
+        0x55, 0x97, 0x61, 0x96, 0x9B, 0x71, 0xD7, 0x9F, 0x82, 0x18, 0xA3, 0x92, 0x59, 0xA7, 0xA2, 0x9A,
+        0xAB, 0xB2, 0xDB, 0xAF, 0xC3, 0x1C, 0xB3, 0xD3, 0x5D, 0xB7, 0xE3, 0x9E, 0xBB, 0xF3, 0xDF, 0xBF,
+    };
+    data = [BNCEncodingUtils base64DecodeString:
+        @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"];
+    XCTAssertTrue( data.length == _countof(b2) && memcmp(data.bytes, b2, _countof(b2)) == 0 );
+
+    // Test decode invalid data
+    data = [BNCEncodingUtils base64DecodeString:
+        @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcde (Junk:%&*^**) fghijklmnopqrstuvwxyz0123456789+/"];
+    XCTAssertEqual(data, nil);
 }
 
 #pragma mark - Hex String Tests

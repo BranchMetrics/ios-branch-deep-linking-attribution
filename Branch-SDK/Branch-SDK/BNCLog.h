@@ -24,6 +24,10 @@ extern "C" {
 
 ///@functiongroup Branch Logging Functions
 
+#pragma mark Log Initialization
+
+/// Log facility initialization. Usually there is no need to call this directly.
+extern void BNCLogInitialize(void) __attribute__((constructor));
 
 #pragma mark Log Message Severity
 
@@ -51,23 +55,17 @@ extern BNCLogLevel BNCLogDisplayLevel(void);
 */
 extern void BNCLogSetDisplayLevel(BNCLogLevel level);
 
-
-#pragma mark - Log Message Synchronization
-
+/*!
+* @param level The log level to convert to a string.
+* @return Returns the string indicating the log level.
+*/
+extern NSString *_Nonnull const BNCLogStringFromLogLevel(BNCLogLevel level);
 
 /*!
-* @discussion   When log messages are synchronized they are written to the log in order, including
-*   across separate threads. Synchronizing log messages usually improves performance since it
-*   reduces global resource lock contention. Note that synchronization has the side effect of some
-*   messages not being available immediately since they are written on a separate thread.
-*
-* @param enable Enable log message synchronization.
+* @param string A string indicating the log level.
+* @return Returns The log level corresponding to the string.
 */
-extern void BNCLogSetSynchronizeMessages(BOOL enable);
-
-/*!@return Returns YES if log messages are synchronized between threads.
-*/
-extern BOOL BNCLogSynchronizeMessages(void);
+extern BNCLogLevel BNBLogLevelFromString(NSString*_Null_unspecified string);
 
 
 #pragma mark - Programmatic Breakpoints
