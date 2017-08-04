@@ -114,6 +114,7 @@
 		E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B947491D15D73900F2270D /* BNCCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F1D359201ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */; };
 		F1D359211ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */; };
+		F1D4F9AF1F323F01002D13FF /* Branch_TestBedUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D4F9AE1F323F01002D13FF /* Branch_TestBedUITests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,6 +131,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 466B58371B17773000A69EDE;
 			remoteInfo = Branch;
+		};
+		F1D4F9B11F323F01002D13FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 670016581940F51400A9E103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6700165F1940F51400A9E103;
+			remoteInfo = "Branch-TestBed";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -307,6 +315,9 @@
 		E2B947491D15D73900F2270D /* BNCCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCCallbacks.h; sourceTree = "<group>"; };
 		F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
 		F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeepLinkViewControllerInstance.m; sourceTree = "<group>"; };
+		F1D4F9AC1F323F01002D13FF /* Branch-TestBedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBedUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1D4F9AE1F323F01002D13FF /* Branch_TestBedUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_TestBedUITests.m; sourceTree = "<group>"; };
+		F1D4F9B01F323F01002D13FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -342,6 +353,13 @@
 			files = (
 				4683F07A1B20AC5E00A432E7 /* libBranch.a in Frameworks */,
 				BC659371001A4A77B4CCE51C /* libPods-Branch-SDK-Tests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1D4F9A91F323F01002D13FF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,6 +444,7 @@
 				7E6B3B521AA42D0E005F45BF /* Branch-SDK-Tests */,
 				670016691940F51400A9E103 /* Branch-TestBed */,
 				E220F4281C7D39D500F5B126 /* Fabric */,
+				F1D4F9AD1F323F01002D13FF /* Branch-TestBedUITests */,
 				670016621940F51400A9E103 /* Frameworks */,
 				670016611940F51400A9E103 /* Products */,
 				A6E26825FE85E5DCFA05D4AB /* Pods */,
@@ -438,6 +457,7 @@
 				670016601940F51400A9E103 /* Branch-TestBed.app */,
 				7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */,
 				466B58381B17773000A69EDE /* libBranch.a */,
+				F1D4F9AC1F323F01002D13FF /* Branch-TestBedUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -632,6 +652,15 @@
 			name = Fabric;
 			sourceTree = "<group>";
 		};
+		F1D4F9AD1F323F01002D13FF /* Branch-TestBedUITests */ = {
+			isa = PBXGroup;
+			children = (
+				F1D4F9AE1F323F01002D13FF /* Branch_TestBedUITests.m */,
+				F1D4F9B01F323F01002D13FF /* Info.plist */,
+			);
+			path = "Branch-TestBedUITests";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -705,6 +734,24 @@
 			productReference = 7E6B3B511AA42D0E005F45BF /* Branch-SDK-Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		F1D4F9AB1F323F01002D13FF /* Branch-TestBedUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBedUITests" */;
+			buildPhases = (
+				F1D4F9A81F323F01002D13FF /* Sources */,
+				F1D4F9A91F323F01002D13FF /* Frameworks */,
+				F1D4F9AA1F323F01002D13FF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F1D4F9B21F323F01002D13FF /* PBXTargetDependency */,
+			);
+			name = "Branch-TestBedUITests";
+			productName = "Branch-TestBedUITests";
+			productReference = F1D4F9AC1F323F01002D13FF /* Branch-TestBedUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -732,6 +779,12 @@
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = R63EM248DP;
 					};
+					F1D4F9AB1F323F01002D13FF = {
+						CreatedOnToolsVersion = 8.3.1;
+						DevelopmentTeam = R63EM248DP;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 6700165F1940F51400A9E103;
+					};
 				};
 			};
 			buildConfigurationList = 6700165B1940F51400A9E103 /* Build configuration list for PBXProject "Branch-TestBed" */;
@@ -750,6 +803,7 @@
 				466B58371B17773000A69EDE /* Branch */,
 				6700165F1940F51400A9E103 /* Branch-TestBed */,
 				7E6B3B501AA42D0E005F45BF /* Branch-SDK-Tests */,
+				F1D4F9AB1F323F01002D13FF /* Branch-TestBedUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -772,6 +826,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				4DA577261E688C6000A43BDD /* Branch-SDK-Tests.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1D4F9AA1F323F01002D13FF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -930,6 +991,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F1D4F9A81F323F01002D13FF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1D4F9AF1F323F01002D13FF /* Branch_TestBedUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -942,6 +1011,11 @@
 			isa = PBXTargetDependency;
 			target = 466B58371B17773000A69EDE /* Branch */;
 			targetProxy = 4683F07B1B20AC6300A432E7 /* PBXContainerItemProxy */;
+		};
+		F1D4F9B21F323F01002D13FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
+			targetProxy = F1D4F9B11F323F01002D13FF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1175,6 +1249,45 @@
 			};
 			name = Release;
 		};
+		F1D4F9B31F323F01002D13FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = R63EM248DP;
+				INFOPLIST_FILE = "Branch-TestBedUITests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "branch.Branch-TestBedUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = "Branch-TestBed";
+			};
+			name = Debug;
+		};
+		F1D4F9B41F323F01002D13FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = R63EM248DP;
+				INFOPLIST_FILE = "Branch-TestBedUITests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "branch.Branch-TestBedUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = "Branch-TestBed";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1210,6 +1323,15 @@
 			buildConfigurations = (
 				7E6B3B581AA42D0E005F45BF /* Debug */,
 				7E6B3B591AA42D0E005F45BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F1D4F9B51F323F01002D13FF /* Build configuration list for PBXNativeTarget "Branch-TestBedUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1D4F9B31F323F01002D13FF /* Debug */,
+				F1D4F9B41F323F01002D13FF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
