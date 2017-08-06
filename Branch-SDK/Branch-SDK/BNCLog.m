@@ -217,6 +217,7 @@ BOOL BNCLogRecordWrapOpenURL_Internal(NSURL *url, long maxRecords, long recordSi
 
     off_t oldestOffset = 0;
     NSDate * oldestDate = [NSDate distantFuture];
+    NSDate * lastDate = [NSDate distantFuture];
 
     off_t offset = 0;
     char buffer[bnc_LogRecordSize];
@@ -225,11 +226,13 @@ BOOL BNCLogRecordWrapOpenURL_Internal(NSURL *url, long maxRecords, long recordSi
         NSString *dateString =
             [[NSString alloc] initWithBytes:buffer length:27 encoding:NSUTF8StringEncoding];
         NSDate *date = [bnc_LogDateFormatter dateFromString:dateString];
-        if (date && [date compare:oldestDate] < 0) {
+        if ([date compare:oldestDate] < 0 ||
+              [date compare:lastDate] < 0) {
             oldestOffset = offset;
             oldestDate = date;
         }
         offset++;
+        if (date) lastDate = date;
         bytesRead = read(bnc_LogDescriptor, &buffer, sizeof(buffer));
     }
     if (offset < bnc_LogOffsetMax)
@@ -638,7 +641,7 @@ void BNCLogFlushMessages() {
 __attribute__((constructor)) void BNCLogInitialize(void) {
     static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^ {
-        bnc_LogQueue = dispatch_queue_create("io.branch.log", DISPATCH_QUEUE_SERIAL);
+        bnc_LogQueue = dispatch_queue_create("io.branch.sdk.log", DISPATCH_QUEUE_SERIAL);
 
         bnc_LogDateFormatter = [[NSDateFormatter alloc] init];
         bnc_LogDateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];

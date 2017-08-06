@@ -5,15 +5,18 @@
 //  Created by Parth Kalavadia on 8/2/17.
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
+
 #import <XCTest/XCTest.h>
 
 static NSTimeInterval const kDeepLinkSleepTimeInterval = 10.0;
 static NSTimeInterval const kLoadWikiPageTimeInterval  = 3.0;
-static NSString* const kWikiPageURL      = @"https://github.com/BranchMetrics/ios-branch-deep-linking/wiki/UITest-for-Testbed-App-for-Universal-links";
+static NSString* const kWikiPageURL =
+    @"https://github.com/BranchMetrics/ios-branch-deep-linking/wiki/"
+     "UITest-for-Testbed-App-for-Universal-links";
 static NSString* const kUniversalLinkTag = @"Universal Link TestBed Obj-c";
-@interface Branch_TestBedUITests : XCTestCase
 
 
+@interface TestBedUITests : XCTestCase
 @end
 
 @interface XCUIApplication (Private)
@@ -21,19 +24,20 @@ static NSString* const kUniversalLinkTag = @"Universal Link TestBed Obj-c";
 - (void)resolve;
 @end
 
-@implementation Branch_TestBedUITests
+@implementation TestBedUITests
 
 - (void)setUp {
     [super setUp];
-    
-    // Put setup code here. This method is called before the invocation of each test method in the class.
-    
+
     // In UI tests it is usually best to stop immediately when a failure occurs.
     self.continueAfterFailure = NO;
-    // UI tests must launch the application that they test. Doing this in setup will make sure it happens for each test method.
+
+    // UI tests must launch the application that they test.
+    // Doing this in setup will make sure it happens for each test method.
     [[[XCUIApplication alloc] init] launch];
     
-    // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+    // In UI tests it’s important to set the initial state - such as interface orientation -
+    // required for your tests before they run. The setUp method is a good place to do this.
 }
 
 - (void)tearDown {
@@ -54,16 +58,15 @@ static NSString* const kUniversalLinkTag = @"Universal Link TestBed Obj-c";
 }
 
 -(XCUIApplication *) openSafariWithUrl: (NSString*) url {
-    XCUIApplication *app = [[XCUIApplication alloc] initPrivateWithPath:nil bundleID:@"com.apple.mobilesafari"];
+    XCUIApplication *app =
+        [[XCUIApplication alloc] initPrivateWithPath:nil bundleID:@"com.apple.mobilesafari"];
     [app launch];
-    
     [app.otherElements[@"URL"] tap];
     [app.textFields[@"Search or enter website name"] tap];
     [app typeText:url];
     [app.buttons[@"Go"] tap];
     sleep(kLoadWikiPageTimeInterval);
     return app;
-    
 }
 
 @end
