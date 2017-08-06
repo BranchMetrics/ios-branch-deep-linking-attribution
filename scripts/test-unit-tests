@@ -91,6 +91,8 @@ else
 fi
 
 
+pod install
+pod update
 cleanAll
 analyzeBuild
 for i in {1..10}
