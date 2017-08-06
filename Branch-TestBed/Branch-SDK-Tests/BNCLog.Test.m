@@ -436,8 +436,12 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
          "****-**-**T**:**:**.******Z 6 [branch.io] BNCLog.Test.m(***) Log: Log 20.      \n"
          "****-**-**T**:**:**.******Z 6 [branch.io] BNCLog.Test.m(***) Log: Log 21.      \n"
          "****-**-**T**:**:**.******Z 6 [branch.io] BNCLog.Test.m(***) Log: Log 22.      \n";
-    NSLog(@"testLogFunctionOutputToURLRecordWrap truth/string:\n%@\n%@.", truth, string); // TODO: Remove log.
     XCTAssert([string bnc_isEqualToMaskedString:truth]);
+}
+
+- (void) testStressRecordWrap {
+    for (int i = 0; i < 1000; i++)
+        [self testLogFunctionOutputToURLRecordWrap];
 }
 
 - (void) testLogRecordWrapPerformanceTesting {
@@ -706,6 +710,11 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     XCTAssert([string bnc_isEqualToMaskedString:truth]);
 }
 
+- (void) testStressByteWrap {
+    for (int i = 0; i < 1000; i++)
+        [self testLogFunctionOutputToURLByteWrap];
+}
+
 - (void) testLogByteWrapPerformanceTesting {
 
     NSError *error = nil;
@@ -800,7 +809,6 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     BNCLogCloseLogFile();
     NSLog(@"%@: Synchronized time: %1.5f.",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
-
 
 /*  //  Non-sychronized --
     //  EBS: Non-sychronized is no longer a thing. It was slower and less safe.

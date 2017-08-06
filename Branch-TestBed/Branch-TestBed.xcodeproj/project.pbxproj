@@ -115,7 +115,7 @@
 		E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B947491D15D73900F2270D /* BNCCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F1D359201ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */; };
 		F1D359211ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */; };
-		F1D4F9AF1F323F01002D13FF /* Branch_TestBedUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D4F9AE1F323F01002D13FF /* Branch_TestBedUITests.m */; };
+		F1D4F9AF1F323F01002D13FF /* TestBedUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D4F9AE1F323F01002D13FF /* TestBedUITests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -318,7 +318,7 @@
 		F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
 		F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeepLinkViewControllerInstance.m; sourceTree = "<group>"; };
 		F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBed-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F1D4F9AE1F323F01002D13FF /* Branch_TestBedUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_TestBedUITests.m; sourceTree = "<group>"; };
+		F1D4F9AE1F323F01002D13FF /* TestBedUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestBedUITests.m; sourceTree = "<group>"; };
 		F1D4F9B01F323F01002D13FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -445,7 +445,7 @@
 				670016BB1946309100A9E103 /* Branch-SDK */,
 				7E6B3B521AA42D0E005F45BF /* Branch-SDK-Tests */,
 				670016691940F51400A9E103 /* Branch-TestBed */,
-				F1D4F9AD1F323F01002D13FF /* Branch-TestBedUITests */,
+				F1D4F9AD1F323F01002D13FF /* Branch-TestBed-UITests */,
 				E220F4281C7D39D500F5B126 /* Fabric */,
 				670016621940F51400A9E103 /* Frameworks */,
 				670016611940F51400A9E103 /* Products */,
@@ -655,13 +655,13 @@
 			name = Fabric;
 			sourceTree = "<group>";
 		};
-		F1D4F9AD1F323F01002D13FF /* Branch-TestBedUITests */ = {
+		F1D4F9AD1F323F01002D13FF /* Branch-TestBed-UITests */ = {
 			isa = PBXGroup;
 			children = (
-				F1D4F9AE1F323F01002D13FF /* Branch_TestBedUITests.m */,
+				F1D4F9AE1F323F01002D13FF /* TestBedUITests.m */,
 				F1D4F9B01F323F01002D13FF /* Info.plist */,
 			);
-			path = "Branch-TestBedUITests";
+			path = "Branch-TestBed-UITests";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -804,8 +804,8 @@
 			projectRoot = "";
 			targets = (
 				466B58371B17773000A69EDE /* Branch */,
-				6700165F1940F51400A9E103 /* Branch-TestBed */,
 				7E6B3B501AA42D0E005F45BF /* Branch-SDK-Tests */,
+				6700165F1940F51400A9E103 /* Branch-TestBed */,
 				F1D4F9AB1F323F01002D13FF /* Branch-TestBed-UITests */,
 			);
 		};
@@ -1002,7 +1002,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1D4F9AF1F323F01002D13FF /* Branch_TestBedUITests.m in Sources */,
+				F1D4F9AF1F323F01002D13FF /* TestBedUITests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1265,7 +1265,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = R63EM248DP;
-				INFOPLIST_FILE = "Branch-TestBedUITests/Info.plist";
+				INFOPLIST_FILE = "Branch-TestBed-UITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1284,7 +1284,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = R63EM248DP;
-				INFOPLIST_FILE = "Branch-TestBedUITests/Info.plist";
+				INFOPLIST_FILE = "Branch-TestBed-UITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";

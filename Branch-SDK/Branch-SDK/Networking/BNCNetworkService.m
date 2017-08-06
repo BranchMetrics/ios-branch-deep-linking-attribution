@@ -144,7 +144,7 @@
         configuration.URLCache = nil;
 
         self.sessionQueue = [NSOperationQueue new];
-        self.sessionQueue.name = @"io.branch.network.queue";
+        self.sessionQueue.name = @"io.branch.sdk.network.queue";
         self.sessionQueue.maxConcurrentOperationCount = self.maximumConcurrentOperations;
         if ([self.sessionQueue respondsToSelector:@selector(setQualityOfService:)]) {
             // qualityOfService is iOS 8 and above.
@@ -155,7 +155,7 @@
             [NSURLSession sessionWithConfiguration:configuration
                 delegate:self
                 delegateQueue:self.sessionQueue];
-        _session.sessionDescription = @"io.branch.network.session";
+        _session.sessionDescription = @"io.branch.sdk.network.session";
 
         return _session;
     }
