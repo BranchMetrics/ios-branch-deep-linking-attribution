@@ -48,7 +48,10 @@
     }
 
     maskedStringAssert(hardwareId,      @"********-****-****-*****************");
-    maskedStringAssert(hardwareIdType,  @"vendor_id");
+    XCTAssertTrue(
+        [device.hardwareIdType isEqualToString:@"idfa"] ||
+        [device.hardwareIdType isEqualToString:@"vendor_id"]
+    );
     XCTAssertTrue(device.isRealHardwareId);
     maskedStringAssert(vendorId,        @"********-****-****-*****************");
     maskedStringAssert(brandName,       @"Apple");
@@ -67,7 +70,7 @@
 
     NSString *string = [BNCDeviceInfo userAgentString];
     NSString *pattern =
-        @"Mozilla\\/..0 \\(iPhone; CPU iPhone OS .+ like Mac OS X\\) AppleWebKit\\/.+ \\(KHTML, like Gecko\\) Mobile\\/.+";
+        @"Mozilla\\/..0 \\(iP.+; CPU.+OS.+like Mac OS X\\) AppleWebKit\\/.+ \\(KHTML, like Gecko\\) Mobile\\/.+";
     NSError *error = NULL;
     NSRegularExpression *regex = [NSRegularExpression
         regularExpressionWithPattern:pattern
