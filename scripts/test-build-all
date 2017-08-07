@@ -84,8 +84,8 @@ buildDirectoryProjectScheme \
 
 cd Examples/WebViewExample
 printf "${textBlue}>>> Building '%s'...${textNormal}\n" "$(basename `pwd`)"
-pod install
-pod update
+# pod install
+# pod update
 cd ../..
 buildDirectoryProjectScheme \
     Examples/WebViewExample \

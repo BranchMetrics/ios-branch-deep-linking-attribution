@@ -21,6 +21,7 @@ function updatePodsInDirectory() {
     cd "$prevDir"
 }
 
+gem install cocoapods
 updatePodsInDirectory Branch-TestBed
 updatePodsInDirectory Branch-TestBed-Xcode-7
 updatePodsInDirectory Examples/WebViewExample
