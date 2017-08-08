@@ -447,7 +447,21 @@
 }
 
 
-- (void)indexContentWithUrl:(NSString *)url spotlightIdentifier:(NSString *)spotlightIdentifier canonicalId:(NSString *)canonicalId title:(NSString *)title description:(NSString *)description type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl thumbnailData:(NSData *)thumbnailData publiclyIndexable:(BOOL)publiclyIndexable userInfo:(NSDictionary *)userInfo keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate callback:(callbackWithUrl)callback spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
+- (void)indexContentWithUrl:(NSString *)url
+        spotlightIdentifier:(NSString *)spotlightIdentifier
+                canonicalId:(NSString *)canonicalId
+                      title:(NSString *)title
+                description:(NSString *)description
+                       type:(NSString *)type
+               thumbnailUrl:(NSURL *)thumbnailUrl
+              thumbnailData:(NSData *)thumbnailData
+          publiclyIndexable:(BOOL)publiclyIndexable
+                   userInfo:(NSDictionary *)userInfo
+                   keywords:(NSSet *)keywords
+             expirationDate:(NSDate *)expirationDate
+                   callback:(callbackWithUrl)callback
+          spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
+
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     
     id CSSearchableItemAttributeSetClass = NSClassFromString(@"CSSearchableItemAttributeSet");
@@ -463,12 +477,15 @@
     ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setThumbnailURLSelector])(attributes, setThumbnailURLSelector, thumbnailUrl);
     SEL setThumbnailDataSelector = NSSelectorFromString(@"setThumbnailData:");
     ((void (*)(id, SEL, NSData *))[attributes methodForSelector:setThumbnailDataSelector])(attributes, setThumbnailDataSelector, thumbnailData);
-    
-    if (canonicalId) {
-        SEL setWeakRelatedUniqueIdentifierSelector = NSSelectorFromString(@"setWeakRelatedUniqueIdentifier:");
-        ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setWeakRelatedUniqueIdentifierSelector])(attributes, setWeakRelatedUniqueIdentifierSelector, canonicalId);
+
+    SEL setWeakRelatedUniqueIdentifierSelector = NSSelectorFromString(@"setWeakRelatedUniqueIdentifier:");
+    if (canonicalId && [attributes respondsToSelector:setWeakRelatedUniqueIdentifierSelector]) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        [attributes performSelector:setWeakRelatedUniqueIdentifierSelector withObject:canonicalId];
+        #pragma clang diagnostic pop
     }
-    
+
     NSDictionary *userActivityIndexingParams = @{@"title": title,
                                                  @"url": url,
                                                  @"spotlightId": spotlightIdentifier,
@@ -487,6 +504,7 @@
             spotlightCallback(url, spotlightIdentifier, nil);
         }
     }
+
 #endif
 }
 
