@@ -72,11 +72,11 @@
 		4DA577181E67B1D600A43BDD /* BNCLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA577161E67B1D600A43BDD /* BNCLog.m */; };
 		4DA5771A1E67B1EB00A43BDD /* BNCLog.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA577191E67B1EB00A43BDD /* BNCLog.Test.m */; };
 		4DA5771F1E67B23D00A43BDD /* BNCDebug.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA5771E1E67B23D00A43BDD /* BNCDebug.Test.m */; };
-		4DA577221E67B28700A43BDD /* NSString+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA577211E67B28700A43BDD /* NSString+Branch.m */; };
 		4DA577241E67B2A000A43BDD /* NSString+Branch.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA577231E67B2A000A43BDD /* NSString+Branch.Test.m */; };
 		4DA577261E688C6000A43BDD /* Branch-SDK-Tests.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4DA577251E688C6000A43BDD /* Branch-SDK-Tests.strings */; };
 		4DA80E9F1EA1A74F00440F52 /* BNCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA5771C1E67B22700A43BDD /* BNCDebug.m */; };
 		4DB567341E79F46000A8A324 /* BranchShareLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB567321E79F46000A8A324 /* BranchShareLink.m */; };
+		4DBC88651F3A55B700E119BF /* NSString+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA577211E67B28700A43BDD /* NSString+Branch.m */; };
 		4DC32D6F1F323F0B00EAA896 /* BNCError.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC32D6E1F323F0B00EAA896 /* BNCError.Test.m */; };
 		4DDC52621DCC08E700CFB737 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DDC52611DCC08E700CFB737 /* iAd.framework */; };
 		4DED5FB41F34F6CE00919C54 /* BNCDeviceInfo.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DED5FB01F34F6CE00919C54 /* BNCDeviceInfo.Test.m */; };
@@ -902,6 +902,7 @@
 				7D0C971D1D875465004E14B1 /* BranchContentDiscoveryManifest.m in Sources */,
 				466D5A121B5991E3009DB845 /* BNCContentDiscoveryManager.m in Sources */,
 				466B58551B17779C00A69EDE /* Branch.m in Sources */,
+				4DBC88651F3A55B700E119BF /* NSString+Branch.m in Sources */,
 				7D4DAC261C8FA908008E37DB /* BranchView.m in Sources */,
 				54FF1F8E1BD1D4AE0004CE2E /* BranchUniversalObject.m in Sources */,
 				4DA577181E67B1D600A43BDD /* BNCLog.m in Sources */,
@@ -972,7 +973,6 @@
 				46DC40761B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m in Sources */,
 				46DBB4371B34AF8C00642FC8 /* BranchShortUrlSyncRequestTests.m in Sources */,
 				7E6B3B561AA42D0E005F45BF /* BranchSDKFunctionalityTests.m in Sources */,
-				4DA577221E67B28700A43BDD /* NSString+Branch.m in Sources */,
 				4677EB511B3B384C00A13964 /* BranchInstallRequestTests.m in Sources */,
 				46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */,
 				4DC32D6F1F323F0B00EAA896 /* BNCError.Test.m in Sources */,
@@ -1198,7 +1198,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
+				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1219,7 +1219,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
+				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

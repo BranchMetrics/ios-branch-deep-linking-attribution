@@ -32,3 +32,5 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
 + (NSError*_Nonnull) branchErrorWithCode:(BNCErrorCode)errorCode error:(NSError*_Nullable)error;
 + (NSError*_Nonnull) branchErrorWithCode:(BNCErrorCode)errorCode localizedMessage:(NSString*_Nullable)message;
 @end
+
+void BNCForceNSErrorCategoryToLoad(void) __attribute__((constructor));

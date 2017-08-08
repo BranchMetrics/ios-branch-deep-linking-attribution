@@ -40,6 +40,7 @@
 #import "NSMutableDictionary+Branch.h"
 #import "BNCNetworkService.h"
 #import "BNCLog.h"
+#import "NSString+Branch.h"
 #import "BNCFabricAnswers.h"
 #import "../Fabric/FABKitProtocol.h" // Fabric
 
@@ -77,7 +78,9 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 void ForceCategoriesToLoad(void);
 void ForceCategoriesToLoad(void) {
-    ForceNSMutableDictionaryToLoad();
+    BNCForceNSErrorCategoryToLoad();
+    BNCForceNSStringCategoryToLoad();
+    BNCForceNSMutableDictionaryCategoryToLoad();
 }
 
 
@@ -125,15 +128,23 @@ void ForceCategoriesToLoad(void) {
     [self openLog];
 }
 
+static NSURL* bnc_logURL = nil;
+
 + (void) openLog {
     // Initialize the log
-    BNCLogInitialize();
-    BNCLogSetDisplayLevel(BNCLogLevelAll);    
-    NSURL *logURL = BNCURLForBranchDirectory();
-    logURL = [logURL URLByAppendingPathComponent:@"Branch.log"];
-    BNCLogSetOutputToURLByteWrap(logURL, 102400);
-    BNCLogSetDisplayLevel(BNCLogLevelWarning);
-    BNCLogDebug(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
+    @synchronized (self) {
+        if (!bnc_logURL) {
+            BNCLogInitialize();
+            BNCLogSetDisplayLevel(BNCLogLevelAll);    
+            bnc_logURL = BNCURLForBranchDirectory();
+            bnc_logURL = [bnc_logURL URLByAppendingPathComponent:@"Branch.log"];
+            BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
+            BNCLogSetDisplayLevel(BNCLogLevelWarning);
+            BNCLogDebug(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
+        } else {
+            BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
+        }
+    }
 }
 
 + (void) closeLog {
@@ -365,7 +376,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (void)setDebug {
     self.preferenceHelper.isDebug = YES;
-    BNCLogSetDisplayLevel(BNCLogLevelDebug);
+    if (BNCLogDisplayLevel() > BNCLogLevelDebug)
+        BNCLogSetDisplayLevel(BNCLogLevelDebug);
 }
 
 - (void)resetUserSession {
@@ -1652,6 +1664,8 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
     }
     // On network problems, or Branch down, call the other callbacks and stop processing.
     else {
+        BNCLogDebugSDK(@"Network error: failing queued requests.");
+
         // First, gather all the requests to fail
         NSMutableArray *requestsToFail = [[NSMutableArray alloc] init];
         for (int i = 0; i < self.requestQueue.queueDepth; i++) {
@@ -1727,7 +1741,9 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 #pragma mark - Session Initialization
 
 - (void)initSessionIfNeededAndNotInProgress {
-    if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen]) {
+    if (!self.isInitialized &&
+        !self.preferenceHelper.shouldWaitForInit &&
+        ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:NO];
     }
 }

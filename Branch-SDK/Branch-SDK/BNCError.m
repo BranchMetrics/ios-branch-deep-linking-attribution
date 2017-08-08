@@ -11,8 +11,7 @@
 
 NSString * const BNCErrorDomain = @"io.branch.sdk.error";
 
-void BNCForceNSErrorCategoryToLoad(void) __attribute__((constructor));
-void BNCForceNSErrorCategoryToLoad() {
+__attribute__((constructor)) void BNCForceNSErrorCategoryToLoad() {
     // Nothing here, but forces linker to load the category.
 }
 
