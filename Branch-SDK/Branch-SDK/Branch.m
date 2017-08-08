@@ -128,6 +128,7 @@ void ForceCategoriesToLoad(void) {
 + (void) openLog {
     // Initialize the log
     BNCLogInitialize();
+    BNCLogSetDisplayLevel(BNCLogLevelAll);    
     NSURL *logURL = BNCURLForBranchDirectory();
     logURL = [logURL URLByAppendingPathComponent:@"Branch.log"];
     BNCLogSetOutputToURLByteWrap(logURL, 102400);
