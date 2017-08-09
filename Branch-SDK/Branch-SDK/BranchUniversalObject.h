@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Branch.h"
+#import <CoreSpotlight/CoreSpotlight.h>
 
 @class BranchLinkProperties;
 
@@ -36,7 +37,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 @property (nonatomic, assign) CGFloat price;
 @property (nonatomic, strong, nullable) NSString *currency;
 @property (nonatomic, assign) BOOL automaticallyListOnSpotlight;
-
+@property (nonatomic, strong) CSSearchableItem* _Nullable searchableItem;
 
 - (nonnull instancetype)initWithCanonicalIdentifier:(nonnull NSString *)canonicalIdentifier;
 - (nonnull instancetype)initWithTitle:(nonnull NSString *)title;
