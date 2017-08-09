@@ -92,31 +92,33 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     return foundBranchKey;
     
   } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
-    connectionAttempts++;
-    NSLog(@"Attempt # %lu", (unsigned long)connectionAttempts);
-    if (connectionAttempts < 3) {
+    @synchronized (self) {
+        connectionAttempts++;
+        NSLog(@"Attempt # %lu", (unsigned long)connectionAttempts);
+        if (connectionAttempts < 3) {
 
-      // Return an error the first three times
-      NSDictionary* dummyJSONResponse = @{@"bad": @"data"};
-      
-      ++failedConnections;
-      return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:504 headers:nil];
-      
-    } else if (connectionAttempts == 3) {
+          // Return an error the first three times
+          NSDictionary* dummyJSONResponse = @{@"bad": @"data"};
+          
+          ++failedConnections;
+          return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:504 headers:nil];
+          
+        } else if (connectionAttempts == 3) {
 
-      // Return actual data afterwards
-      ++successfulConnections;
-      XCTAssertEqual(connectionAttempts, failedConnections + successfulConnections);
-      BNCAfterSecondsPerformBlock(0.01, ^{ NSLog(@"==> Fullfill."); [successExpectation fulfill]; });
+          // Return actual data afterwards
+          ++successfulConnections;
+          XCTAssertEqual(connectionAttempts, failedConnections + successfulConnections);
+          BNCAfterSecondsPerformBlock(0.01, ^{ NSLog(@"==> Fullfill."); [successExpectation fulfill]; });
 
-      NSDictionary* dummyJSONResponse = @{@"key": @"value"};
-      return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+          NSDictionary* dummyJSONResponse = @{@"key": @"value"};
+          return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
 
-    } else {
+        } else {
 
-        XCTFail(@"Too many connection attempts: %ld.", (long) connectionAttempts);
-        return [OHHTTPStubsResponse responseWithJSONObject:[NSDictionary new] statusCode:200 headers:nil];
+            XCTFail(@"Too many connection attempts: %ld.", (long) connectionAttempts);
+            return [OHHTTPStubsResponse responseWithJSONObject:[NSDictionary new] statusCode:200 headers:nil];
 
+        }
     }
   }];
   
@@ -146,19 +148,20 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     return foundBranchKey;
     
   } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
-    // Return actual data on first attempt
-    NSDictionary* dummyJSONResponse = @{@"key": @"value"};
-    connectionAttempts++;
-    XCTAssertEqual(connectionAttempts, 1);
-    BNCAfterSecondsPerformBlock(0.01, ^ { [successExpectation fulfill]; });
-    
-    return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
-    
+    @synchronized (self) {
+        // Return actual data on first attempt
+        NSDictionary* dummyJSONResponse = @{@"key": @"value"};
+        connectionAttempts++;
+        XCTAssertEqual(connectionAttempts, 1);
+        BNCAfterSecondsPerformBlock(0.01, ^ {
+            [successExpectation fulfill];
+        });
+        return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+    }
   }];
   
   [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
-  [self waitForExpectationsWithTimeout:1.0 handler:nil];
-  
+  [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
 
 //==================================================================================
@@ -183,17 +186,20 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     return foundBranchKey;
     
   } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
-    // Return actual data on first attempt
-    NSDictionary* dummyJSONResponse = @{@"key": @"value"};
-    connectionAttempts++;
-    XCTAssertEqual(connectionAttempts, 1);
-    BNCAfterSecondsPerformBlock(0.01, ^{ [successExpectation fulfill]; });
-    return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+    @synchronized (self) {
+        // Return actual data on first attempt
+        NSDictionary* dummyJSONResponse = @{@"key": @"value"};
+        connectionAttempts++;
+        XCTAssertEqual(connectionAttempts, 1);
+        BNCAfterSecondsPerformBlock(0.01, ^{
+            [successExpectation fulfill];
+        });
+        return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+    }
   }];
   
   [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
-  [self waitForExpectationsWithTimeout:1.0 handler:nil];
-  
+  [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
 
 //==================================================================================
@@ -353,7 +359,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
         }];
 
 #if 0
-    // TODO: Fix so the end point so the test works on external networks.
+    // TODO: Fix so the end point so the test works on external (outside the Branch office) networks.
 
     XCTestExpectation* pinFail2 = [self expectationWithDescription:@"PinFail2"];
     [serverInterface getRequest:[NSDictionary new]

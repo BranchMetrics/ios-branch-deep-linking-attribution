@@ -111,9 +111,17 @@
             self.callback(NO, error);
         }
         Branch *branch = [Branch getInstance];
-        if ([branch.delegate respondsToSelector:@selector(branch:didOpenURL:withError:)]) {
-            [branch.delegate performSelector:@selector(branch:didOpenURL:withError:)
-                withObject:branch withObject:originalURL withObject:error];
+        SEL selector = @selector(branch:didOpenURL:universalObject:error:);
+        if ([branch.delegate respondsToSelector:selector]) {
+            NSMethodSignature *signature =
+                [NSObject<BranchDelegate> instanceMethodSignatureForSelector:selector];
+            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+            invocation.target = branch.delegate;
+            invocation.selector = selector;
+            [invocation setArgument:&branch atIndex:0];
+            [invocation setArgument:&originalURL atIndex:1];
+            [invocation setArgument:&error atIndex:2];
+            [invocation invoke];
         }
         NSDictionary *userInfo = @{
             BNCErrorKey: error,
@@ -147,6 +155,22 @@
     }
 
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
+    if (sessionData == nil || [sessionData isKindOfClass:[NSString class]]) {
+    } else
+    if ([sessionData isKindOfClass:[NSDictionary class]]) {
+        BNCLogWarning(@"Received session data of type '%@' data is '%@'.",
+            NSStringFromClass(sessionData.class), sessionData);
+        sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:(NSDictionary*)sessionData];
+    } else
+    if ([sessionData isKindOfClass:[NSArray class]]) {
+        BNCLogWarning(@"Received session data of type '%@' data is '%@'.",
+            NSStringFromClass(sessionData.class), sessionData);
+        sessionData = [BNCEncodingUtils encodeArrayToJsonString:(NSArray*)sessionData];
+    } else {
+        BNCLogError(@"Received session data of type '%@' data is '%@'.",
+            NSStringFromClass(sessionData.class), sessionData);
+        sessionData = nil;
+    }
 
     // Update session params
     preferenceHelper.sessionParams = sessionData;

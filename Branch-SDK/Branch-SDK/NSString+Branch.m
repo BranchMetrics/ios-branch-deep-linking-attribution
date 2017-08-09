@@ -16,8 +16,7 @@
 #import "NSString+Branch.h"
 
 
-void BNCForceNSStringCategoryToLoad(void) __attribute__((constructor));
-void BNCForceNSStringCategoryToLoad() {
+__attribute__((constructor)) void BNCForceNSStringCategoryToLoad() {
     //  Nothing here, but forces linker to load the category.
 }
 
@@ -25,6 +24,8 @@ void BNCForceNSStringCategoryToLoad() {
 @implementation NSString (Branch)
 
 - (BOOL) bnc_isEqualToMaskedString:(NSString*_Nullable)string {
+    // Un-comment for debugging:
+    // NSLog(@"bnc_isEqualToMaskedString self/string:\n%@\n%@.", self, string);
     if (!string) return NO;
     if (self.length != string.length) return NO;
     for (NSInteger idx = 0; idx < self.length; idx++) {

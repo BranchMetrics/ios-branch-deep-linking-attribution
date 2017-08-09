@@ -9,17 +9,16 @@ platform :ios, '9.0'
 #
 # pod "Branch"
 
-pod "Branch", path: "../.."
-
-# ----- Other app dependencies
-
-pod "Cartography"
-pod "MBProgressHUD"
-pod "TextAttributes"
-
 # ----- Application target
 
-target "WebViewExample"
+target "WebViewExample" do
+    project 'WebViewExample'
+    pod 'Branch', path: "../.."
+    # ----- Other app dependencies
+    pod "Cartography"
+    pod "MBProgressHUD"
+    pod "TextAttributes"
+end
 
 # Add custom configurations. This informs CocoaPods that Test-Debug should be treated like
 # a debug build, not a release build, when building pods. In particular this means the

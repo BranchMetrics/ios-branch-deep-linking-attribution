@@ -77,17 +77,15 @@
     for (NSDictionary *urlType in urlTypes) {
         NSArray *urlSchemes = [urlType objectForKey:@"CFBundleURLSchemes"];
         for (NSString *uriScheme in urlSchemes) {
-            BOOL isFBScheme = [uriScheme hasPrefix:@"fb"];
-            BOOL isDBScheme = [uriScheme hasPrefix:@"db"];
-            BOOL isPinScheme = [uriScheme hasPrefix:@"pin"];
-            
-            // Don't use the schemes set aside for other integrations.
-            if (!isFBScheme && !isDBScheme && !isPinScheme) {
-                return uriScheme;
-            }
+            if ([uriScheme hasPrefix:@"fb"]) continue;  // Facebook
+            if ([uriScheme hasPrefix:@"db"]) continue;  // DB?
+            if ([uriScheme hasPrefix:@"pin"]) continue; // Pinterest
+            if ([uriScheme hasPrefix:@"com.googleusercontent.apps"]) continue; // Google
+
+            // Otherwise this must be it!
+            return uriScheme;
         }
     }
-
     return nil;
 }
 

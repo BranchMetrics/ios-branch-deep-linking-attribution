@@ -13,7 +13,12 @@
 
 @optional
 - (void) branch:(Branch*)branch willOpenURL:(NSURL*)url;
-- (void) branch:(Branch*)branch didOpenURL:(NSURL*)url withUniversalObject:(BranchUniversalObject*)branchUniversalObject;
+
+@optional
+- (void) branch:(Branch*)branch
+     didOpenURL:(NSURL*)url
+universalObject:(BranchUniversalObject*)branchUniversalObject
+          error:(NSError*)error;
 
 @end
 
@@ -24,4 +29,3 @@ extern NSString* const BNCBranchDidOpenURLNotification;
 extern NSString* const BNCErrorKey;
 extern NSString* const BNCOriginalURLKey;
 extern NSString* const BNCDeepLinkParametersKey;
-extern NSString* const BNCShortURLKey;
