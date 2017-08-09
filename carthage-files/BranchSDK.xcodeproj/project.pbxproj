@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2BD7C3DD1F27CEDB003696AF /* BNCDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD7C3D71F27CEDB003696AF /* BNCDebug.h */; };
+		2BD7C3DD1F27CEDB003696AF /* BNCDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD7C3D71F27CEDB003696AF /* BNCDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2BD7C3DE1F27CEDB003696AF /* BNCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD7C3D81F27CEDB003696AF /* BNCDebug.m */; };
 		2BD7C3DF1F27CEDB003696AF /* BNCLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD7C3D91F27CEDB003696AF /* BNCLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2BD7C3E01F27CEDB003696AF /* BNCLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD7C3DA1F27CEDB003696AF /* BNCLog.m */; };
@@ -412,7 +412,6 @@
 				4DAB17B81EE8A31B0079EEB4 /* BranchSetIdentityRequest.h in Headers */,
 				4DAB17A21EE8A31B0079EEB4 /* BNCServerRequest.h in Headers */,
 				E230A1791D03DB9E006181D8 /* BNCPreferenceHelper.h in Headers */,
-				2BD7C3DD1F27CEDB003696AF /* BNCDebug.h in Headers */,
 				4D510D721F0D6014003D720B /* BNCDeepLinkViewControllerInstance.h in Headers */,
 				E230A1961D03DB9E006181D8 /* BranchViewHandler.h in Headers */,
 				4DAB17BA1EE8A31B0079EEB4 /* BranchShortUrlRequest.h in Headers */,
@@ -422,6 +421,7 @@
 				E230A1731D03DB9E006181D8 /* BNCError.h in Headers */,
 				E230A16C1D03DB9E006181D8 /* BNCConfig.h in Headers */,
 				2BD7C3DF1F27CEDB003696AF /* BNCLog.h in Headers */,
+				2BD7C3DD1F27CEDB003696AF /* BNCDebug.h in Headers */,
 				4DAB17AC1EE8A31B0079EEB4 /* BranchInstallRequest.h in Headers */,
 				7DA3BF1E1D889CE500CA8AE0 /* BranchContentDiscoverer.h in Headers */,
 				E230A18E1D03DB9E006181D8 /* BranchDeepLinkingController.h in Headers */,
