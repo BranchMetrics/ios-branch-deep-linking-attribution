@@ -234,6 +234,30 @@
                      callback:(callbackWithUrl)callback {
     [self indexContentWithTitle:title
                     description:description
+                    canonicalId:nil
+              publiclyIndexable:publiclyIndexable
+                           type:type
+                   thumbnailUrl:thumbnailUrl
+                       keywords:keywords
+                       userInfo:userInfo
+                 expirationDate:nil
+                       callback:callback
+              spotlightCallback:nil];
+}
+
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+                  canonicalId:(NSString *)canonicalId
+            publiclyIndexable:(BOOL)publiclyIndexable
+                         type:(NSString *)type
+                 thumbnailUrl:(NSURL *)thumbnailUrl
+                     keywords:(NSSet *)keywords
+                     userInfo:(NSDictionary *)userInfo
+               expirationDate:(NSDate*)expirationDate
+                     callback:(callbackWithUrl)callback {
+    [self indexContentWithTitle:title
+                    description:description
+                    canonicalId:canonicalId
               publiclyIndexable:publiclyIndexable
                            type:type
                    thumbnailUrl:thumbnailUrl
@@ -255,6 +279,7 @@
                      callback:(callbackWithUrl)callback {
     [self indexContentWithTitle:title
                     description:description
+                    canonicalId:nil
               publiclyIndexable:publiclyIndexable
                            type:type
                    thumbnailUrl:thumbnailUrl
@@ -275,6 +300,7 @@
             spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
     [self indexContentWithTitle:title
                     description:description
+                    canonicalId:nil
               publiclyIndexable:publiclyIndexable
                            type:type
                    thumbnailUrl:thumbnailUrl
@@ -289,6 +315,7 @@
 // The simpler callbackWithURL overrides spotlightCallback, so don't send both
 - (void)indexContentWithTitle:(NSString *)title
                   description:(NSString *)description
+                  canonicalId:(NSString *)canonicalId
             publiclyIndexable:(BOOL)publiclyIndexable
                          type:(NSString *)type
                  thumbnailUrl:(NSURL *)thumbnailUrl
@@ -299,7 +326,7 @@
             spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
 
     if ([BNCSystemObserver getOSVersion].integerValue < 9) {
-        NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service prior to iOS 9" }];
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];
         if (callback) {
             callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         }
@@ -308,8 +335,9 @@
         }
         return;
     }
+
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
-    NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"CoreSpotlight is not available because the base SDK for this project is less than 9.0" }];
+    NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];
     if (callback) {
         callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
     }
@@ -318,31 +346,33 @@
     }
     return;
 #endif
+
     BOOL isIndexingAvailable = NO;
     Class CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
     SEL isIndexingAvailableSelector = NSSelectorFromString(@"isIndexingAvailable");
-    isIndexingAvailable = ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])(CSSearchableIndexClass, isIndexingAvailableSelector);
+    isIndexingAvailable =
+        ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])
+            (CSSearchableIndexClass, isIndexingAvailableSelector);
     
     if (!isIndexingAvailable) {
-        NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCVersionError userInfo:@{ NSLocalizedDescriptionKey: @"Cannot use CoreSpotlight indexing service on this device/OS" }];
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];
         if (callback) {
             callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         }
         else if (spotlightCallback) {
             spotlightCallback(nil, nil, error);
         }
-
         return;
     }
+
     if (!title) {
-        NSError *error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: @"Spotlight Indexing requires a title" }];
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightTitleError];
         if (callback) {
             callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         }
         else if (spotlightCallback) {
             spotlightCallback(nil, nil, error);
         }
-
         return;
     }
     
@@ -351,6 +381,10 @@
     
     // Include spotlight info in params
     NSMutableDictionary *spotlightLinkData = [[NSMutableDictionary alloc] init];
+    
+    if (canonicalId) {
+        spotlightLinkData[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER] = canonicalId;
+    }
     spotlightLinkData[BRANCH_LINK_DATA_KEY_TITLE] = title;
     spotlightLinkData[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] = @(publiclyIndexable);
     spotlightLinkData[BRANCH_LINK_DATA_KEY_TYPE] = typeOrDefault;
@@ -402,26 +436,39 @@
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 NSData *thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:thumbnailData publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords expirationDate:expirationDate callback:callback spotlightCallback:spotlightCallback];
+                    [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] canonicalId:canonicalId title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:thumbnailData publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords expirationDate:expirationDate callback:callback spotlightCallback:spotlightCallback];
                 });
             });
         }
         else {
-            [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:nil publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords expirationDate:expirationDate callback:callback spotlightCallback:spotlightCallback];
+            [self indexContentWithUrl:data[BRANCH_RESPONSE_KEY_URL] spotlightIdentifier:data[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER] canonicalId:canonicalId title:title description:description type:typeOrDefault thumbnailUrl:thumbnailUrl thumbnailData:nil publiclyIndexable:publiclyIndexable userInfo:userInfo keywords:keywords expirationDate:expirationDate callback:callback spotlightCallback:spotlightCallback];
         }
     }];
 }
 
 
-- (void)indexContentWithUrl:(NSString *)url spotlightIdentifier:(NSString *)spotlightIdentifier title:(NSString *)title description:(NSString *)description type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl thumbnailData:(NSData *)thumbnailData publiclyIndexable:(BOOL)publiclyIndexable userInfo:(NSDictionary *)userInfo keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate callback:(callbackWithUrl)callback spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
+- (void)indexContentWithUrl:(NSString *)url
+        spotlightIdentifier:(NSString *)spotlightIdentifier
+                canonicalId:(NSString *)canonicalId
+                      title:(NSString *)title
+                description:(NSString *)description
+                       type:(NSString *)type
+               thumbnailUrl:(NSURL *)thumbnailUrl
+              thumbnailData:(NSData *)thumbnailData
+          publiclyIndexable:(BOOL)publiclyIndexable
+                   userInfo:(NSDictionary *)userInfo
+                   keywords:(NSSet *)keywords
+             expirationDate:(NSDate *)expirationDate
+                   callback:(callbackWithUrl)callback
+          spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
+
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     
     id CSSearchableItemAttributeSetClass = NSClassFromString(@"CSSearchableItemAttributeSet");
     id attributes = [CSSearchableItemAttributeSetClass alloc];
     SEL initAttributesSelector = NSSelectorFromString(@"initWithItemContentType:");
     attributes = ((id (*)(id, SEL, NSString *))[attributes methodForSelector:initAttributesSelector])(attributes, initAttributesSelector, type);
-    SEL setIdentifierSelector = NSSelectorFromString(@"setIdentifier:");
-    ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setIdentifierSelector])(attributes, setIdentifierSelector, spotlightIdentifier);
+    
     SEL setTitleSelector = NSSelectorFromString(@"setTitle:");
     ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setTitleSelector])(attributes, setTitleSelector, title);
     SEL setContentDescriptionSelector = NSSelectorFromString(@"setContentDescription:");
@@ -430,10 +477,15 @@
     ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setThumbnailURLSelector])(attributes, setThumbnailURLSelector, thumbnailUrl);
     SEL setThumbnailDataSelector = NSSelectorFromString(@"setThumbnailData:");
     ((void (*)(id, SEL, NSData *))[attributes methodForSelector:setThumbnailDataSelector])(attributes, setThumbnailDataSelector, thumbnailData);
-    // NSUserActivity.CSSearchableItemAttributeSet.contentURL
-    SEL setContentURLSelector = NSSelectorFromString(@"setContentURL:");
-    ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setContentURLSelector])(attributes, setContentURLSelector, [NSURL URLWithString:url]);
-    
+
+    SEL setWeakRelatedUniqueIdentifierSelector = NSSelectorFromString(@"setWeakRelatedUniqueIdentifier:");
+    if (canonicalId && [attributes respondsToSelector:setWeakRelatedUniqueIdentifierSelector]) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        [attributes performSelector:setWeakRelatedUniqueIdentifierSelector withObject:canonicalId];
+        #pragma clang diagnostic pop
+    }
+
     NSDictionary *userActivityIndexingParams = @{@"title": title,
                                                  @"url": url,
                                                  @"spotlightId": spotlightIdentifier,
@@ -452,6 +504,7 @@
             spotlightCallback(url, spotlightIdentifier, nil);
         }
     }
+
 #endif
 }
 
@@ -504,7 +557,7 @@
     activeViewController.userActivity.keywords = params[@"keywords"];
     SEL setContentAttributeSetSelector = NSSelectorFromString(@"setContentAttributeSet:");
     ((void (*)(id, SEL, id))[activeViewController.userActivity methodForSelector:setContentAttributeSetSelector])(activeViewController.userActivity, setContentAttributeSetSelector, params[@"attributeSet"]);
-
+    
     [activeViewController.userActivity becomeCurrent];
 }
 

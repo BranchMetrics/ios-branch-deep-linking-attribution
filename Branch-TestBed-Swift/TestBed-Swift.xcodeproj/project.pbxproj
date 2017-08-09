@@ -53,6 +53,7 @@
 		4D4F28581E400F9800282A34 /* BranchViewHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F28161E400F9800282A34 /* BranchViewHandler.m */; };
 		4D4F28591E400F9800282A34 /* NSMutableDictionary+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F28181E400F9800282A34 /* NSMutableDictionary+Branch.m */; };
 		4D510D771F0D61BE003D720B /* Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0F01CF7594400CA98BD /* Branch.m */; };
+		4D6A275E1F2955C400027264 /* BNCLocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6A275D1F2955C400027264 /* BNCLocalization.m */; };
 		4D9E765C1E774DB100BD0620 /* BranchShareLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D9E765B1E774DB100BD0620 /* BranchShareLink.m */; };
 		4DB47D5E1F042C5900C53C29 /* BNCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D591F042C5900C53C29 /* BNCDebug.m */; };
 		4DB47D601F042C5900C53C29 /* NSString+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB47D5D1F042C5900C53C29 /* NSString+Branch.m */; };
@@ -60,6 +61,13 @@
 		6306D5BF1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306D5BE1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift */; };
 		6306FFEF1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306FFEE1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift */; };
 		6306FFF11D6BEFA30031D2E3 /* ArrayTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6306FFF01D6BEFA30031D2E3 /* ArrayTableViewCell.swift */; };
+		6318D80A1F2954010050D256 /* WaitingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6318D8081F2954010050D256 /* WaitingViewController.swift */; };
+		6318D80B1F2954010050D256 /* WaitingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6318D8091F2954010050D256 /* WaitingViewController.xib */; };
+		6318D80D1F2954720050D256 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6318D80C1F2954720050D256 /* Main.storyboard */; };
+		6318D8101F2954ED0050D256 /* CommerceEventDetailsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6318D80F1F2954ED0050D256 /* CommerceEventDetailsTableViewController.swift */; };
+		6318D8141F29550D0050D256 /* ProductArrayTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6318D8111F29550D0050D256 /* ProductArrayTableViewCell.swift */; };
+		6318D8151F29550D0050D256 /* ProductArrayTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6318D8121F29550D0050D256 /* ProductArrayTableViewController.swift */; };
+		6318D8161F29550D0050D256 /* ProductTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6318D8131F29550D0050D256 /* ProductTableViewController.swift */; };
 		633EEA6A1CF88817000AE1BC /* TestBed-Swift.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 633EEA691CF88817000AE1BC /* TestBed-Swift.entitlements */; };
 		633EEA6C1CF942C4000AE1BC /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633EEA6B1CF942C4000AE1BC /* NavigationController.swift */; };
 		6340D2471D983B5C00B7F35C /* UIImageView+loadImageFromUrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6340D2461D983B5C00B7F35C /* UIImageView+loadImageFromUrl.swift */; };
@@ -70,7 +78,6 @@
 		63865EB71D617BED006071CE /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63865EB61D617BED006071CE /* DataStore.swift */; };
 		63AAF0C21CF758AF00CA98BD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0C11CF758AF00CA98BD /* AppDelegate.swift */; };
 		63AAF0C41CF758AF00CA98BD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0C31CF758AF00CA98BD /* ViewController.swift */; };
-		63AAF0C71CF758AF00CA98BD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63AAF0C51CF758AF00CA98BD /* Main.storyboard */; };
 		63AAF0C91CF758AF00CA98BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63AAF0C81CF758AF00CA98BD /* Assets.xcassets */; };
 		63AAF0CC1CF758AF00CA98BD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63AAF0CA1CF758AF00CA98BD /* LaunchScreen.storyboard */; };
 		63AAF0FD1CF7F4AD00CA98BD /* CreditHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0FC1CF7F4AD00CA98BD /* CreditHistoryViewController.swift */; };
@@ -184,6 +191,8 @@
 		4D4F283B1E400F9800282A34 /* FABKitProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FABKitProtocol.h; sourceTree = "<group>"; };
 		4D4F283C1E400F9800282A34 /* Fabric+FABKits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Fabric+FABKits.h"; sourceTree = "<group>"; };
 		4D4F283D1E400F9800282A34 /* Fabric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fabric.h; sourceTree = "<group>"; };
+		4D6A275C1F2955C400027264 /* BNCLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLocalization.h; sourceTree = "<group>"; };
+		4D6A275D1F2955C400027264 /* BNCLocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLocalization.m; sourceTree = "<group>"; };
 		4D9E765A1E774DB100BD0620 /* BranchShareLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchShareLink.h; sourceTree = "<group>"; };
 		4D9E765B1E774DB100BD0620 /* BranchShareLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShareLink.m; sourceTree = "<group>"; };
 		4DB47D581F042C5900C53C29 /* BNCDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDebug.h; sourceTree = "<group>"; };
@@ -194,6 +203,13 @@
 		6306D5BE1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BranchUniversalObjectPropertiesTableViewController.swift; sourceTree = "<group>"; };
 		6306FFEE1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldFormTableViewController.swift; sourceTree = "<group>"; };
 		6306FFF01D6BEFA30031D2E3 /* ArrayTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayTableViewCell.swift; sourceTree = "<group>"; };
+		6318D8081F2954010050D256 /* WaitingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitingViewController.swift; sourceTree = "<group>"; };
+		6318D8091F2954010050D256 /* WaitingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WaitingViewController.xib; sourceTree = "<group>"; };
+		6318D80C1F2954720050D256 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		6318D80F1F2954ED0050D256 /* CommerceEventDetailsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommerceEventDetailsTableViewController.swift; sourceTree = "<group>"; };
+		6318D8111F29550D0050D256 /* ProductArrayTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductArrayTableViewCell.swift; sourceTree = "<group>"; };
+		6318D8121F29550D0050D256 /* ProductArrayTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductArrayTableViewController.swift; sourceTree = "<group>"; };
+		6318D8131F29550D0050D256 /* ProductTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductTableViewController.swift; sourceTree = "<group>"; };
 		633EEA691CF88817000AE1BC /* TestBed-Swift.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "TestBed-Swift.entitlements"; sourceTree = "<group>"; };
 		633EEA6B1CF942C4000AE1BC /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		6340D2461D983B5C00B7F35C /* UIImageView+loadImageFromUrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+loadImageFromUrl.swift"; sourceTree = "<group>"; };
@@ -205,7 +221,6 @@
 		63AAF0BE1CF758AF00CA98BD /* TestBed-Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TestBed-Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63AAF0C11CF758AF00CA98BD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		63AAF0C31CF758AF00CA98BD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		63AAF0C61CF758AF00CA98BD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		63AAF0C81CF758AF00CA98BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		63AAF0CB1CF758AF00CA98BD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		63AAF0CD1CF758AF00CA98BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -315,7 +330,6 @@
 		4D4F27DD1E400F9800282A34 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
-				2BD7C4201F27D65D003696AF /* Networking */,
 				4D4F27DE1E400F9800282A34 /* BNCCallbacks.h */,
 				4D4F27DF1E400F9800282A34 /* BNCCommerceEvent.h */,
 				4D4F27E01E400F9800282A34 /* BNCCommerceEvent.m */,
@@ -341,6 +355,8 @@
 				4D4F27EE1E400F9800282A34 /* BNCLinkCache.m */,
 				4D4F27EF1E400F9800282A34 /* BNCLinkData.h */,
 				4D4F27F01E400F9800282A34 /* BNCLinkData.m */,
+				4D6A275C1F2955C400027264 /* BNCLocalization.h */,
+				4D6A275D1F2955C400027264 /* BNCLocalization.m */,
 				F155BFED1EF37EDB00BF4566 /* BNCLog.h */,
 				4D351A0F1F0D6362004BD4AA /* BNCLog.m */,
 				4D4F27F11E400F9800282A34 /* BNCPreferenceHelper.h */,
@@ -377,6 +393,7 @@
 				4D4F28141E400F9800282A34 /* BranchView.m */,
 				4D4F28151E400F9800282A34 /* BranchViewHandler.h */,
 				4D4F28161E400F9800282A34 /* BranchViewHandler.m */,
+				2BD7C4201F27D65D003696AF /* Networking */,
 				4D4F28171E400F9800282A34 /* NSMutableDictionary+Branch.h */,
 				4D4F28181E400F9800282A34 /* NSMutableDictionary+Branch.m */,
 				4DB47D5C1F042C5900C53C29 /* NSString+Branch.h */,
@@ -416,6 +433,26 @@
 			name = "Link Properties";
 			sourceTree = "<group>";
 		};
+		6318D8071F2953EB0050D256 /* WaitingView */ = {
+			isa = PBXGroup;
+			children = (
+				6318D8081F2954010050D256 /* WaitingViewController.swift */,
+				6318D8091F2954010050D256 /* WaitingViewController.xib */,
+			);
+			name = WaitingView;
+			sourceTree = "<group>";
+		};
+		6318D80E1F2954DD0050D256 /* Commerce Events */ = {
+			isa = PBXGroup;
+			children = (
+				6318D8111F29550D0050D256 /* ProductArrayTableViewCell.swift */,
+				6318D8121F29550D0050D256 /* ProductArrayTableViewController.swift */,
+				6318D8131F29550D0050D256 /* ProductTableViewController.swift */,
+				6318D80F1F2954ED0050D256 /* CommerceEventDetailsTableViewController.swift */,
+			);
+			name = "Commerce Events";
+			sourceTree = "<group>";
+		};
 		63AAF0B51CF758AF00CA98BD = {
 			isa = PBXGroup;
 			children = (
@@ -437,11 +474,12 @@
 		63AAF0C01CF758AF00CA98BD /* TestBed-Swift */ = {
 			isa = PBXGroup;
 			children = (
+				6318D80E1F2954DD0050D256 /* Commerce Events */,
 				63AAF0C11CF758AF00CA98BD /* AppDelegate.swift */,
-				63AAF1001CF7F58900CA98BD /* ContentViewController.swift */,
 				63AAF0C81CF758AF00CA98BD /* Assets.xcassets */,
 				63AAF0F01CF7594400CA98BD /* Branch.m */,
 				6306D5BE1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift */,
+				63AAF1001CF7F58900CA98BD /* ContentViewController.swift */,
 				63AAF0FC1CF7F4AD00CA98BD /* CreditHistoryViewController.swift */,
 				6306FFF21D6BEFB20031D2E3 /* Custom Events */,
 				63865EB61D617BED006071CE /* DataStore.swift */,
@@ -452,7 +490,7 @@
 				63AAF0CA1CF758AF00CA98BD /* LaunchScreen.storyboard */,
 				6306FFF31D6BEFD60031D2E3 /* Link Properties */,
 				63F8BB1F1D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift */,
-				63AAF0C51CF758AF00CA98BD /* Main.storyboard */,
+				6318D80C1F2954720050D256 /* Main.storyboard */,
 				633EEA6B1CF942C4000AE1BC /* NavigationController.swift */,
 				63AAF0EF1CF7594400CA98BD /* TestBed-Swift-Bridging-Header.h */,
 				633EEA691CF88817000AE1BC /* TestBed-Swift.entitlements */,
@@ -460,6 +498,7 @@
 				63865EAE1D601123006071CE /* TextViewFormTableViewController.swift */,
 				6340D2461D983B5C00B7F35C /* UIImageView+loadImageFromUrl.swift */,
 				63AAF0C31CF758AF00CA98BD /* ViewController.swift */,
+				6318D8071F2953EB0050D256 /* WaitingView */,
 			);
 			path = "TestBed-Swift";
 			sourceTree = "<group>";
@@ -538,9 +577,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6318D80D1F2954720050D256 /* Main.storyboard in Resources */,
 				63AAF0CC1CF758AF00CA98BD /* LaunchScreen.storyboard in Resources */,
+				6318D80B1F2954010050D256 /* WaitingViewController.xib in Resources */,
 				63AAF0C91CF758AF00CA98BD /* Assets.xcassets in Resources */,
-				63AAF0C71CF758AF00CA98BD /* Main.storyboard in Resources */,
 				63BCC3591D5AC8D600CE0EB1 /* cancel-28.png in Resources */,
 				63BCC35B1D5AC8DF00CE0EB1 /* cancel-56.png in Resources */,
 				633EEA6A1CF88817000AE1BC /* TestBed-Swift.entitlements in Resources */,
@@ -559,6 +599,7 @@
 				63865EAF1D601123006071CE /* TextViewFormTableViewController.swift in Sources */,
 				4D4F283E1E400F9800282A34 /* BNCCommerceEvent.m in Sources */,
 				2BD7C44D1F27D65D003696AF /* BranchCreditHistoryRequest.m in Sources */,
+				6318D8141F29550D0050D256 /* ProductArrayTableViewCell.swift in Sources */,
 				4D4F28431E400F9800282A34 /* BNCError.m in Sources */,
 				4D4F28531E400F9800282A34 /* BranchContentPathProperties.m in Sources */,
 				4D4F284D1E400F9800282A34 /* BNCXcode7Support.m in Sources */,
@@ -566,6 +607,7 @@
 				4D4F28541E400F9800282A34 /* BranchCSSearchableItemAttributeSet.m in Sources */,
 				4D4F28441E400F9800282A34 /* BNCFabricAnswers.m in Sources */,
 				4D4F28511E400F9800282A34 /* BranchContentDiscoverer.m in Sources */,
+				4D6A275E1F2955C400027264 /* BNCLocalization.m in Sources */,
 				2BD7C4521F27D65D003696AF /* BranchRedeemRewardsRequest.m in Sources */,
 				2BD7C4481F27D65D003696AF /* BNCServerInterface.m in Sources */,
 				4D351A101F0D6362004BD4AA /* BNCLog.m in Sources */,
@@ -574,6 +616,7 @@
 				4D4F28471E400F9800282A34 /* BNCPreferenceHelper.m in Sources */,
 				4D4F28461E400F9800282A34 /* BNCLinkData.m in Sources */,
 				4D4F28561E400F9800282A34 /* BranchUniversalObject.m in Sources */,
+				6318D8151F29550D0050D256 /* ProductArrayTableViewController.swift in Sources */,
 				2BD7C44F1F27D65D003696AF /* BranchLoadRewardsRequest.m in Sources */,
 				4D4F28571E400F9800282A34 /* BranchView.m in Sources */,
 				4D4F28591E400F9800282A34 /* NSMutableDictionary+Branch.m in Sources */,
@@ -598,7 +641,9 @@
 				4D4F28521E400F9800282A34 /* BranchContentDiscoveryManifest.m in Sources */,
 				63865EB11D60E7B6006071CE /* DictionaryTableViewController.swift in Sources */,
 				2BD7C4511F27D65D003696AF /* BranchOpenRequest.m in Sources */,
+				6318D8161F29550D0050D256 /* ProductTableViewController.swift in Sources */,
 				4D4F283F1E400F9800282A34 /* BNCConfig.m in Sources */,
+				6318D8101F2954ED0050D256 /* CommerceEventDetailsTableViewController.swift in Sources */,
 				2BD7C4551F27D65D003696AF /* BranchShortUrlRequest.m in Sources */,
 				4D4F284F1E400F9800282A34 /* BranchActivityItemProvider.m in Sources */,
 				2BD7C4581F27D65D003696AF /* BranchUserCompletedActionRequest.m in Sources */,
@@ -618,6 +663,7 @@
 				2BD7C44B1F27D65D003696AF /* BNCServerResponse.m in Sources */,
 				4DB47D601F042C5900C53C29 /* NSString+Branch.m in Sources */,
 				4D510D771F0D61BE003D720B /* Branch.m in Sources */,
+				6318D80A1F2954010050D256 /* WaitingViewController.swift in Sources */,
 				4D4F28581E400F9800282A34 /* BranchViewHandler.m in Sources */,
 				2BD7C44E1F27D65D003696AF /* BranchInstallRequest.m in Sources */,
 				63AAF0C21CF758AF00CA98BD /* AppDelegate.swift in Sources */,
@@ -627,14 +673,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		63AAF0C51CF758AF00CA98BD /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				63AAF0C61CF758AF00CA98BD /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		63AAF0CA1CF758AF00CA98BD /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -668,7 +706,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;

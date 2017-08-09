@@ -19,7 +19,6 @@ function finish {
 }
 trap finish EXIT
 
-
 xcodebuild -scheme 'Branch iOS SDK Carthage' clean build
 carthage build --no-skip-current && carthage archive Branch
 scriptFailed=0
