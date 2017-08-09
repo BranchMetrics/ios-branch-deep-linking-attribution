@@ -62,6 +62,8 @@
 		4D130E941EE0C7B100A69A0A /* BranchSpotlightUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E6F1EE0C7B100A69A0A /* BranchSpotlightUrlRequest.m */; };
 		4D130E961EE0C7B100A69A0A /* BranchUserCompletedActionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E711EE0C7B100A69A0A /* BranchUserCompletedActionRequest.m */; };
 		4D35141C1E3201D80085EBA1 /* NSMutableDictionary+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D35141A1E3201D80085EBA1 /* NSMutableDictionary+Branch.m */; };
+		4D35340D1F3BA72D0043F7FD /* BNCEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D35340B1F3BA72D0043F7FD /* BNCEvent.h */; };
+		4D35340E1F3BA72D0043F7FD /* BNCEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D35340C1F3BA72D0043F7FD /* BNCEvent.m */; };
 		4D385D0B1EE1D53200A549EC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D385D0A1EE1D53200A549EC /* Security.framework */; };
 		4D3FA94B1DFF31EB00E2B6A9 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FA94A1DFF31EB00E2B6A9 /* BNCConfig.m */; };
 		4D8999ED1DC108FF00F7EE0A /* BNCXcode7Support.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D8999EB1DC108FF00F7EE0A /* BNCXcode7Support.m */; };
@@ -211,6 +213,8 @@
 		4D130E711EE0C7B100A69A0A /* BranchUserCompletedActionRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUserCompletedActionRequest.m; sourceTree = "<group>"; };
 		4D3514191E3201D80085EBA1 /* NSMutableDictionary+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableDictionary+Branch.h"; sourceTree = "<group>"; };
 		4D35141A1E3201D80085EBA1 /* NSMutableDictionary+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDictionary+Branch.m"; sourceTree = "<group>"; };
+		4D35340B1F3BA72D0043F7FD /* BNCEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCEvent.h; sourceTree = "<group>"; };
+		4D35340C1F3BA72D0043F7FD /* BNCEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEvent.m; sourceTree = "<group>"; };
 		4D385D0A1EE1D53200A549EC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		4D3FA94A1DFF31EB00E2B6A9 /* BNCConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCConfig.m; sourceTree = "<group>"; };
 		4D8999EA1DC108FF00F7EE0A /* BNCXcode7Support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCXcode7Support.h; sourceTree = "<group>"; };
@@ -536,6 +540,8 @@
 				464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */,
 				7E38829E1A37E22A004BDABE /* BNCError.h */,
 				7E38829F1A37E22A004BDABE /* BNCError.m */,
+				4D35340B1F3BA72D0043F7FD /* BNCEvent.h */,
+				4D35340C1F3BA72D0043F7FD /* BNCEvent.m */,
 				E2133B711D0125EF00763049 /* BNCFabricAnswers.h */,
 				E2133B741D01477200763049 /* BNCFabricAnswers.m */,
 				7E30BCF51A72FE7900AC7402 /* BNCLinkCache.h */,
@@ -672,6 +678,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */,
+				4D35340D1F3BA72D0043F7FD /* BNCEvent.h in Headers */,
 				F1D359201ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h in Headers */,
 				7B18DF491F1F00E200C25C84 /* BNCCrashlyticsWrapper.h in Headers */,
 				4D9726BA1F27FF7400028BDE /* BNCLocalization.h in Headers */,
@@ -922,6 +929,7 @@
 				4665AF261B28B9BB00184037 /* BranchConstants.m in Sources */,
 				466B58641B17779C00A69EDE /* BNCError.m in Sources */,
 				4D130E901EE0C7B100A69A0A /* BranchShortUrlRequest.m in Sources */,
+				4D35340E1F3BA72D0043F7FD /* BNCEvent.m in Sources */,
 				4D130E841EE0C7B100A69A0A /* BranchLoadRewardsRequest.m in Sources */,
 				4D35141C1E3201D80085EBA1 /* NSMutableDictionary+Branch.m in Sources */,
 				7D0C97191D8753C9004E14B1 /* BranchContentDiscoverer.m in Sources */,

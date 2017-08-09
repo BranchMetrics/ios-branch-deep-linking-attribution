@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "Branch.h"
 
+///@functiongroup Branch Event Logging
+
 typedef NSString*const BNCStandardEvent;
 
 // Commerce Events
