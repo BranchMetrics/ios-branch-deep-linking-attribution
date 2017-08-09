@@ -11,7 +11,6 @@
 NSString* const BNCBranchWillOpenURLNotification = @"BNCBranchWillOpenURLNotification";
 NSString* const BNCBranchDidOpenURLNotification  = @"BNCBranchDidOpenURLNotification";
 
-NSString* const BNCErrorKey              = @"BNCErrorKey";
-NSString* const BNCOriginalURLKey        = @"BNCOriginalURLKey";
-NSString* const BNCShortURLKey           = @"BNCShortURLKey";
-NSString* const BNCDeepLinkParametersKey = @"BNCDeepLinkParametersKey";
+NSString* const BNCErrorKey             = @"BNCErrorKey";
+NSString* const BNCOriginalURLKey       = @"BNCOriginalURLKey";
+NSString* const BNCLinkParametersKey    = @"BNCLinkParametersKey";

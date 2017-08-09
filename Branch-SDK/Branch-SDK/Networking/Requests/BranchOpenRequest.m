@@ -22,7 +22,8 @@
 #import "BNCLog.h"
 
 @interface BranchOpenRequest ()
-@property (assign, nonatomic) BOOL isInstall;
+@property (assign) BOOL isInstall;
+@property (strong) NSURL *originalURL;
 @end
 
 
@@ -83,13 +84,14 @@
 
     // Notify everyone
 
-    NSURL *originalURL = [NSURL URLWithString:@"http://whatever.io"]; // TODO add real key.
+    self.originalURL = [NSURL URLWithString:@"http://whatever.io"]; // TODO add real key.
     NSDictionary *userInfo = @{
-        BNCOriginalURLKey: @"http://Whatever",
+        BNCOriginalURLKey: self.originalURL,
     };
     Branch *branch = [Branch getInstance];
     if ([branch.delegate respondsToSelector:@selector(branch:willOpenURL:)]) {
-        [branch.delegate performSelector:@selector(branch:willOpenURL:) withObject:branch withObject:originalURL];
+        [branch.delegate performSelector:@selector(branch:willOpenURL:)
+            withObject:branch withObject:self.originalURL];
     }
     [[NSNotificationCenter defaultCenter]
         postNotificationName:BNCBranchWillOpenURLNotification
@@ -98,39 +100,14 @@
 
     // Do it
 
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN]
+        key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
 
-    NSURL *originalURL = [NSURL URLWithString:@"http://whatever"]; // TODO
-
     if (error) {
-        [BranchOpenRequest releaseOpenResponseLock];
-        if (self.callback) {
-            self.callback(NO, error);
-        }
-        Branch *branch = [Branch getInstance];
-        SEL selector = @selector(branch:didOpenURL:universalObject:error:);
-        if ([branch.delegate respondsToSelector:selector]) {
-            NSMethodSignature *signature =
-                [NSObject<BranchDelegate> instanceMethodSignatureForSelector:selector];
-            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-            invocation.target = branch.delegate;
-            invocation.selector = selector;
-            [invocation setArgument:&branch atIndex:0];
-            [invocation setArgument:&originalURL atIndex:1];
-            [invocation setArgument:&error atIndex:2];
-            [invocation invoke];
-        }
-        NSDictionary *userInfo = @{
-            BNCErrorKey: error,
-            BNCOriginalURLKey: originalURL
-        };
-        [[NSNotificationCenter defaultCenter]
-            postNotificationName:BNCBranchDidOpenURLNotification
-            object:[Branch getInstance]
-            userInfo:userInfo];
+        [self sendNotificationWithOriginalURL:self.originalURL linkParameters:nil error:error];
         return;
     }
 
@@ -243,10 +220,44 @@
             andWithDelegate:nil];
     }
 
-    if (self.callback) {
-        self.callback(YES, nil);
-    }
+    [self sendNotificationWithOriginalURL:[NSURL URLWithString:referredUrl]
+        linkParameters:[Branch getInstance].getLatestReferringParams error:nil];
+}
 
+- (void) sendNotificationWithOriginalURL:(NSURL*)originalURL
+                          linkParameters:(NSDictionary*)linkParameters
+                                   error:(NSError*)error {
+
+    [BranchOpenRequest releaseOpenResponseLock];
+    if (self.callback) {
+        if (error)
+            self.callback(NO, error);
+        else
+            self.callback(YES, error);
+    }
+    Branch *branch = [Branch getInstance];
+    SEL selector = @selector(branch:didOpenURL:linkParameters:error:);
+    if ([branch.delegate respondsToSelector:selector]) {
+        NSMethodSignature *signature =
+            [NSObject<BranchDelegate> instanceMethodSignatureForSelector:selector];
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+        invocation.target = branch.delegate;
+        invocation.selector = selector;
+        [invocation setArgument:&branch atIndex:0];
+        [invocation setArgument:&originalURL atIndex:1];
+        [invocation setArgument:&linkParameters atIndex:2];
+        [invocation setArgument:&error atIndex:3];
+        [invocation invoke];
+    }
+    NSDictionary *userInfo = @{
+        BNCErrorKey: error,
+        BNCOriginalURLKey: originalURL,
+        BNCLinkParametersKey: linkParameters
+    };
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:BNCBranchDidOpenURLNotification
+        object:branch
+        userInfo:userInfo];
 }
 
 - (NSString *)getActionName {

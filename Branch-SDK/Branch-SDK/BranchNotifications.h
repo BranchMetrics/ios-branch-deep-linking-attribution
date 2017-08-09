@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@class Branch, BranchUniversalObject;
+@class Branch;
 
 @protocol BranchDelegate <NSObject>
 
@@ -17,7 +17,7 @@
 @optional
 - (void) branch:(Branch*)branch
      didOpenURL:(NSURL*)url
-universalObject:(BranchUniversalObject*)branchUniversalObject
+ linkParameters:(NSDictionary*)linkParameters
           error:(NSError*)error;
 
 @end
@@ -28,4 +28,4 @@ extern NSString* const BNCBranchDidOpenURLNotification;
 
 extern NSString* const BNCErrorKey;
 extern NSString* const BNCOriginalURLKey;
-extern NSString* const BNCDeepLinkParametersKey;
+extern NSString* const BNCLinkParametersKey;
