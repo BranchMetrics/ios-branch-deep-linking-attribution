@@ -28,14 +28,14 @@
 		4DA40A8F1E1F0011004D2534 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA40A8D1E1F0011004D2534 /* BNCCommerceEvent.m */; };
 		4DAB179D1EE8A31B0079EEB4 /* BNCNetworkService.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DAB17711EE8A31B0079EEB4 /* BNCNetworkService.h */; };
 		4DAB179E1EE8A31B0079EEB4 /* BNCNetworkService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DAB17721EE8A31B0079EEB4 /* BNCNetworkService.m */; };
-		4DAB179F1EE8A31B0079EEB4 /* BNCNetworkServiceProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DAB17731EE8A31B0079EEB4 /* BNCNetworkServiceProtocol.h */; };
-		4DAB17A01EE8A31B0079EEB4 /* BNCServerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DAB17741EE8A31B0079EEB4 /* BNCServerInterface.h */; };
+		4DAB179F1EE8A31B0079EEB4 /* BNCNetworkServiceProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DAB17731EE8A31B0079EEB4 /* BNCNetworkServiceProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DAB17A01EE8A31B0079EEB4 /* BNCServerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DAB17741EE8A31B0079EEB4 /* BNCServerInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DAB17A11EE8A31B0079EEB4 /* BNCServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DAB17751EE8A31B0079EEB4 /* BNCServerInterface.m */; };
-		4DAB17A21EE8A31B0079EEB4 /* BNCServerRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DAB17761EE8A31B0079EEB4 /* BNCServerRequest.h */; };
+		4DAB17A21EE8A31B0079EEB4 /* BNCServerRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DAB17761EE8A31B0079EEB4 /* BNCServerRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DAB17A31EE8A31B0079EEB4 /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DAB17771EE8A31B0079EEB4 /* BNCServerRequest.m */; };
-		4DAB17A41EE8A31B0079EEB4 /* BNCServerRequestQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DAB17781EE8A31B0079EEB4 /* BNCServerRequestQueue.h */; };
+		4DAB17A41EE8A31B0079EEB4 /* BNCServerRequestQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DAB17781EE8A31B0079EEB4 /* BNCServerRequestQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DAB17A51EE8A31B0079EEB4 /* BNCServerRequestQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DAB17791EE8A31B0079EEB4 /* BNCServerRequestQueue.m */; };
-		4DAB17A61EE8A31B0079EEB4 /* BNCServerResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DAB177A1EE8A31B0079EEB4 /* BNCServerResponse.h */; };
+		4DAB17A61EE8A31B0079EEB4 /* BNCServerResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DAB177A1EE8A31B0079EEB4 /* BNCServerResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DAB17A71EE8A31B0079EEB4 /* BNCServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DAB177B1EE8A31B0079EEB4 /* BNCServerResponse.m */; };
 		4DAB17A81EE8A31B0079EEB4 /* BranchCloseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DAB177D1EE8A31B0079EEB4 /* BranchCloseRequest.h */; };
 		4DAB17A91EE8A31B0079EEB4 /* BranchCloseRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DAB177E1EE8A31B0079EEB4 /* BranchCloseRequest.m */; };
@@ -410,7 +410,6 @@
 				E230A1861D03DB9E006181D8 /* Branch.h in Headers */,
 				4DAB179D1EE8A31B0079EEB4 /* BNCNetworkService.h in Headers */,
 				4DAB17B81EE8A31B0079EEB4 /* BranchSetIdentityRequest.h in Headers */,
-				4DAB17A21EE8A31B0079EEB4 /* BNCServerRequest.h in Headers */,
 				E230A1791D03DB9E006181D8 /* BNCPreferenceHelper.h in Headers */,
 				4D510D721F0D6014003D720B /* BNCDeepLinkViewControllerInstance.h in Headers */,
 				E230A1961D03DB9E006181D8 /* BranchViewHandler.h in Headers */,
@@ -422,7 +421,12 @@
 				E230A16C1D03DB9E006181D8 /* BNCConfig.h in Headers */,
 				2BD7C3DF1F27CEDB003696AF /* BNCLog.h in Headers */,
 				2BD7C3DD1F27CEDB003696AF /* BNCDebug.h in Headers */,
+				4DAB17A61EE8A31B0079EEB4 /* BNCServerResponse.h in Headers */,
+				4DAB17A01EE8A31B0079EEB4 /* BNCServerInterface.h in Headers */,
+				4DAB17A41EE8A31B0079EEB4 /* BNCServerRequestQueue.h in Headers */,
 				4DAB17AC1EE8A31B0079EEB4 /* BranchInstallRequest.h in Headers */,
+				4DAB17A21EE8A31B0079EEB4 /* BNCServerRequest.h in Headers */,
+				4DAB179F1EE8A31B0079EEB4 /* BNCNetworkServiceProtocol.h in Headers */,
 				7DA3BF1E1D889CE500CA8AE0 /* BranchContentDiscoverer.h in Headers */,
 				E230A18E1D03DB9E006181D8 /* BranchDeepLinkingController.h in Headers */,
 				E230A1921D03DB9E006181D8 /* BranchUniversalObject.h in Headers */,
@@ -431,18 +435,15 @@
 				4DAB17AE1EE8A31B0079EEB4 /* BranchLoadRewardsRequest.h in Headers */,
 				4D78C9651F2679F000EEDD5F /* BNCCrashlyticsWrapper.h in Headers */,
 				4DB5673A1E79FDAF00A8A324 /* BranchShareLink.h in Headers */,
-				4DAB17A01EE8A31B0079EEB4 /* BNCServerInterface.h in Headers */,
 				4DAB17B21EE8A31B0079EEB4 /* BranchOpenRequest.h in Headers */,
 				4D19C1C21DC110FB008D8B38 /* BNCXcode7Support.h in Headers */,
 				E230A16F1D03DB9E006181D8 /* BNCDeviceInfo.h in Headers */,
 				4D6A27571F2954DE00027264 /* BNCLocalization.h in Headers */,
 				E2B9477B1D15E31700F2270D /* BNCCallbacks.h in Headers */,
-				4DAB179F1EE8A31B0079EEB4 /* BNCNetworkServiceProtocol.h in Headers */,
 				E2B9477E1D15E3C100F2270D /* BNCFabricAnswers.h in Headers */,
 				2BD7C3E51F27CF68003696AF /* NSString+Branch.h in Headers */,
 				E230A1811D03DB9E006181D8 /* BNCStrongMatchHelper.h in Headers */,
 				4DAB17B01EE8A31B0079EEB4 /* BranchLogoutRequest.h in Headers */,
-				4DAB17A41EE8A31B0079EEB4 /* BNCServerRequestQueue.h in Headers */,
 				4DAB17A81EE8A31B0079EEB4 /* BranchCloseRequest.h in Headers */,
 				E230A16D1D03DB9E006181D8 /* BNCContentDiscoveryManager.h in Headers */,
 				E230A1711D03DB9E006181D8 /* BNCEncodingUtils.h in Headers */,
@@ -456,7 +457,6 @@
 				E230A18A1D03DB9E006181D8 /* BranchConstants.h in Headers */,
 				E230A1751D03DB9E006181D8 /* BNCLinkCache.h in Headers */,
 				4DAB17BC1EE8A31B0079EEB4 /* BranchShortUrlSyncRequest.h in Headers */,
-				4DAB17A61EE8A31B0079EEB4 /* BNCServerResponse.h in Headers */,
 				7DA3BF1F1D889CE500CA8AE0 /* BranchContentDiscoveryManifest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
