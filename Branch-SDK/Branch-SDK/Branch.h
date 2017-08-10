@@ -1484,4 +1484,5 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
 
+- (void) sendServerRequest:(BNCServerRequest*)request;
 @end

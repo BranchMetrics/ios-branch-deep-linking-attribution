@@ -37,7 +37,6 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 @property (nonatomic, strong, nullable) NSString *currency;
 @property (nonatomic, assign) BOOL automaticallyListOnSpotlight;
 
-
 - (nonnull instancetype)initWithCanonicalIdentifier:(nonnull NSString *)canonicalIdentifier;
 - (nonnull instancetype)initWithTitle:(nonnull NSString *)title;
 
@@ -77,6 +76,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 
 - (nonnull NSString *)description;
 
+- (NSDictionary*_Nonnull)getParamsForServerRequest;
 - (NSDictionary*_Nonnull)getDictionaryWithCompleteLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
 - (NSDictionary*_Nonnull)getParamsForServerRequestWithAddedLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
 @end

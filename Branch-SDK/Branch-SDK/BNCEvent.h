@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Branch.h"
+#import "BNCCommerceEvent.h"
 
 ///@functiongroup Branch Event Logging
 
@@ -38,35 +39,31 @@ extern BNCStandardEvent BNCStandardEventCompleteTutorial;
 extern BNCStandardEvent BNCStandardEventAchieveLevel;
 extern BNCStandardEvent BNCStandardEventUnlockAchievement;
 
+// Event properties
+
+@interface BNCEventProperties : NSObject
+@property (nonatomic, strong) NSString *transactionID;
+@property (nonatomic, strong) BNCCurrency currency;
+@property (nonatomic, strong) NSDecimalNumber *revenue;
+@property (nonatomic, strong) NSDecimalNumber *shipping;
+@property (nonatomic, strong) NSDecimalNumber *tax;
+@property (nonatomic, strong) NSString *coupon;
+@property (nonatomic, strong) NSString *affiliation;
+@property (nonatomic, strong) NSString *detail;
+@property (nonatomic, strong) NSDictionary<NSString*, id<NSObject>> *customData;
+@end
+
 
 // Extend the Branch class for standard events
 
-@class BranchEventProperties;
-
-@interface BranchEvent : NSObject
-
-+ (BranchEvent*) newStandardEvent:(BNCStandardEvent)event;
-- (BranchEvent*) addProperties:(BranchEventProperties*)properties;
-- (BranchEvent*) addContentItems:(NSArray<BranchUniversalObject*>*)contentItems;
-- (void) track;
-
-@end
-
 @interface Branch (BNCStandardEvents)
 
-- (void) trackStandardEvent:(BNCStandardEvent)event
-             withCustomData:(NSDictionary<NSString*, id<NSObject>>*)customData;
+- (void) logStandardEvent:(BNCStandardEvent)event
+           withProperties:(BNCEventProperties*)properties
+             contentItems:(NSArray<BranchUniversalObject*>*)universalObjects;
 
-- (void) trackStandardEvent:(BNCStandardEvent)standardEvent
-              withEventData:(NSDictionary<NSString*, id<NSObject>>*)dictionary
-               contentItems:(NSArray<BranchUniversalObject*>*)contentItems;
-
-- (void) trackStandardEvent:(BNCStandardEvent)event
-              withEventData:(NSDictionary<NSString*, id<NSObject>>*)eventData
-               contentItems:(NSArray<BranchUniversalObject*>*)universalObject
-                 customData:(NSDictionary<NSString*, id<NSObject>>*)customData;
-
-- (void) trackCustomEvent:(NSString*)event
-           withCustomData:(NSDictionary<NSString*, id<NSObject>>*)dictionary;
+- (void) logCustomEvent:(NSString*)eventName
+         withProperties:(BNCEventProperties*)properties
+           contentItems:(NSArray<BranchUniversalObject*>*)universalObjects;
 
 @end

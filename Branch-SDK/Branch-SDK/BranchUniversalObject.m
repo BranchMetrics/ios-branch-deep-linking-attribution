@@ -370,7 +370,7 @@
 
 #pragma mark - Private methods
 
-- (NSDictionary *)getParamsForServerRequest {
+- (NSDictionary*_Nonnull) getParamsForServerRequest {
     NSMutableDictionary *temp = [[NSMutableDictionary alloc] init];
     [self safeSetValue:self.canonicalIdentifier forKey:BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER onDict:temp];
     [self safeSetValue:self.canonicalUrl forKey:BRANCH_LINK_DATA_KEY_CANONICAL_URL onDict:temp];
