@@ -190,18 +190,20 @@ Branch *branch = [Branch getInstance];
 let branch: Branch = Branch.getInstance()
 ```
 
+##### Testing
+
 ###### Objective-C
 
 ```objc
 #warning Remove for launch
-Branch *branch = [Branch getTestInstance];
+[Branch setUseTestBranchKey:YES];
 ```
 
 ###### Swift
 
 ```swift
 //TODO: Remove for launch
-let branch: Branch = Branch.getTestInstance();
+Branch.useTestBranchKey = YES;
 ```
 
 #### Parameters
