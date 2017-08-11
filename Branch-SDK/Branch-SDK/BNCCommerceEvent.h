@@ -248,6 +248,7 @@ extern BNCCurrency BNCCurrencyZMW;
 
 #pragma mark - BNCCommerceEvent
 
+//__attribute__((deprecated(("Please use BNCEvent to track commerce events."))))
 @interface BNCCommerceEvent : NSObject
 @property (nonatomic, strong) NSDecimalNumber *revenue;
 @property (nonatomic, strong) BNCCurrency currency;

@@ -14,6 +14,177 @@
 #import "BNCLog.h"
 #import "BNCLocalization.h"
 
+#pragma mark - BranchContentSchema
+
+BranchContentSchema _Nonnull BranchContentSchemaCommerceAuction     = @"COMMERCE_AUCTION";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceBusiness    = @"COMMERCE_BUSINESS";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceOther       = @"COMMERCE_OTHER";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceProduct     = @"COMMERCE_PRODUCT";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceRestaurant  = @"COMMERCE_RESTAURANT";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceService     = @"COMMERCE_SERVICE";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelFlight= @"COMMERCE_TRAVEL_FLIGHT";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelHotel = @"COMMERCE_TRAVEL_HOTEL";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelOther = @"COMMERCE_TRAVEL_OTHER";
+BranchContentSchema _Nonnull BranchContentSchemaGameState   = @"GAME_STATE";
+BranchContentSchema _Nonnull BranchContentSchemaMediaImage  = @"MEDIA_IMAGE";
+BranchContentSchema _Nonnull BranchContentSchemaMediaMixed  = @"MEDIA_MIXED";
+BranchContentSchema _Nonnull BranchContentSchemaMediaMusic  = @"MEDIA_MUSIC";
+BranchContentSchema _Nonnull BranchContentSchemaMediaOther  = @"MEDIA_OTHER";
+BranchContentSchema _Nonnull BranchContentSchemaMediaVideo  = @"MEDIA_VIDEO";
+BranchContentSchema _Nonnull BranchContentSchemaOther       = @"OTHER";
+BranchContentSchema _Nonnull BranchContentSchemaTextArticle = @"TEXT_ARTICLE";
+BranchContentSchema _Nonnull BranchContentSchemaTextBlog    = @"TEXT_BLOG";
+BranchContentSchema _Nonnull BranchContentSchemaTextOther   = @"TEXT_OTHER";
+BranchContentSchema _Nonnull BranchContentSchemaTextRecipe  = @"TEXT_RECIPE";
+BranchContentSchema _Nonnull BranchContentSchemaTextReview  = @"TEXT_REVIEW";
+BranchContentSchema _Nonnull BranchContentSchemaTextSearchResults   = @"TEXT_SEARCH_RESULTS";
+BranchContentSchema _Nonnull BranchContentSchemaTextStory           = @"TEXT_STORY";
+BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc    = @"TEXT_TECHNICAL_DOC";
+
+#pragma mark - BranchProductCondition
+
+BranchProductCondition _Nonnull BranchProductConditionOther = @"OTHER";
+BranchProductCondition _Nonnull BranchProductConditionNew   = @"NEW";
+BranchProductCondition _Nonnull BranchProductConditionGood  = @"GOOD";
+BranchProductCondition _Nonnull BranchProductConditionFair  = @"FAIR";
+BranchProductCondition _Nonnull BranchProductConditionPoor  = @"POOR";
+BranchProductCondition _Nonnull BranchProductConditionUsed  = @"USED";
+BranchProductCondition _Nonnull BranchProductConditionRefurbished = @"REFURBISHED";
+
+#pragma mark - BranchMetadata
+
+@implementation BranchMetadata : NSObject
+
+- (NSDictionary*_Nonnull) dictionary {
+    NSMutableDictionary*dictionary = [NSMutableDictionary new];
+
+    #define setStringItem(field, name) { \
+        if (self.field.length) { \
+            dictionary[@#name] = self.field; \
+        } \
+    }
+
+    #define setDoubleItem(field, name) { \
+        if (self.field != 0.0) { \
+            dictionary[@#name] = [NSNumber numberWithDouble:self.field]; \
+        } \
+    }
+
+    #define setIntegerItem(field, name) { \
+        if (self.field != 0) { \
+            dictionary[@#name] = [NSNumber numberWithInteger:self.field]; \
+        } \
+    }
+
+    setStringItem(contentSchema, $content_schema);
+    setDoubleItem(quantity, $quantity);
+    if (self.price) {
+        dictionary[@"$price"] = self.price;
+    }
+    setStringItem(currency, $currency);
+    setStringItem(sku, $sku);
+    setStringItem(productName, $product_name);
+    setStringItem(productBrand, $product_brand);
+    setStringItem(productCategory, $product_category);
+    setStringItem(productVariant, $product_variant);
+    setDoubleItem(averageRating, $rating_average);
+    setIntegerItem(ratingCount, $rating_count);
+    setDoubleItem(maximumRating, $rating_max);
+    setStringItem(addressStreet, $address_street);
+    setStringItem(addressCity, $address_city);
+    setStringItem(addressRegion, $address_region);
+    setStringItem(addressCountry, $address_country);
+    setStringItem(addressPostalCode, $address_postal_code);
+    setDoubleItem(latitude, $latitude);
+    setDoubleItem(longitude, $longitude);
+    if (self.imageCaptions.count) {
+        dictionary[@"$image_captions"] = [self.imageCaptions copy];
+    }
+    setStringItem(condition, $condition);
+    if (self.customMetadata.count) {
+        dictionary[@"$custom_fields"] = [self.customMetadata copy];
+    }
+
+    #undef setStringItem
+    #undef setDoubleItem
+    #undef setIntegerItem
+
+    return dictionary;
+}
+
++ (BranchMetadata*_Nonnull) metadataWithDictionary:(NSDictionary*_Nullable)dictionary {
+    BranchMetadata*metadata = [BranchMetadata new];
+    if (!dictionary) return metadata;
+
+    #define setStringItem(field, name) { \
+        NSString*string = dictionary[@#name]; \
+        if ([string isKindOfClass:NSString.class]) { \
+            metadata.field = string; \
+        } \
+    }
+
+    #define setDoubleItem(field, name) { \
+        NSNumber *number = dictionary[@#name]; \
+        if ([number isKindOfClass:NSNumber.class] || [number isKindOfClass:NSString.class]) { \
+            metadata.field = number.doubleValue; \
+        } \
+    }
+
+    #define setIntegerItem(field, name) { \
+        NSNumber *number = dictionary[@#name]; \
+        if ([number isKindOfClass:NSNumber.class] || [number isKindOfClass:NSString.class]) { \
+            metadata.field = number.integerValue; \
+        } \
+    }
+
+    setStringItem(contentSchema, $content_schema);
+    setDoubleItem(quantity, $quantity);
+    NSString *string = dictionary[@"$price"];
+    if ([string isKindOfClass:NSString.class]) {
+        metadata.price = [NSDecimalNumber decimalNumberWithString:string];
+    } else
+    if ([string isKindOfClass:NSNumber.class]) {
+        metadata.price = [NSDecimalNumber decimalNumberWithString:((NSNumber*)string).stringValue];
+    } else {
+        BNCLogWarning(@"Unknown type found in metadata '%@'.", NSStringFromClass(string.class));
+    }
+    setStringItem(currency, $currency);
+    setStringItem(sku, $sku);
+    setStringItem(productName, $product_name);
+    setStringItem(productBrand, $product_brand);
+    setStringItem(productCategory, $product_category);
+    setStringItem(productVariant, $product_variant);
+    setDoubleItem(averageRating, $rating_average);
+    setIntegerItem(ratingCount, $rating_count);
+    setDoubleItem(maximumRating, $rating_max);
+    setStringItem(addressStreet, $address_street);
+    setStringItem(addressCity, $address_city);
+    setStringItem(addressRegion, $address_region);
+    setStringItem(addressCountry, $address_country);
+    setStringItem(addressPostalCode, $address_postal_code);
+    setDoubleItem(latitude, $latitude);
+    setDoubleItem(longitude, $longitude);
+    NSArray *a = dictionary[@"$image_captions"];
+    if ([a isKindOfClass:NSArray.class]) {
+        metadata.imageCaptions = a;
+    }
+    setStringItem(condition, $condition);
+    NSDictionary *d = dictionary[@"$custom_fields"];
+    if ([d isKindOfClass:NSDictionary.class]) {
+        metadata.customMetadata = d;
+    }
+
+    #undef setStringItem
+    #undef setDoubleItem
+    #undef setIntegerItem
+
+    return metadata;
+}
+
+@end
+
+#pragma mark - BranchUniversalObject
+
 @implementation BranchUniversalObject
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier {
@@ -109,16 +280,17 @@
     }
     if (dictionary[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE]) {
         if (dictionary[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] == 0) {
-            universalObject.contentIndexMode = ContentIndexModePrivate;
+            universalObject.contentIndexMode = BranchContentIndexModePrivate;
         }
         else {
-            universalObject.contentIndexMode = ContentIndexModePublic;
+            universalObject.contentIndexMode = BranchContentIndexModePublic;
         }
     }
-    
-    if (dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE] && [dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE] isKindOfClass:[NSNumber class]]) {
-        NSNumber *millisecondsSince1970 = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE];
-        universalObject.expirationDate = [NSDate dateWithTimeIntervalSince1970:millisecondsSince1970.integerValue/1000];
+
+    NSNumber *number = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE];
+    if ([number isKindOfClass:[NSNumber class]]) {
+        // Number is millisecondsSince1970
+        universalObject.expirationDate = [NSDate dateWithTimeIntervalSince1970:number.integerValue/1000];
     }
     if (dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS]) {
         universalObject.keywords = dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS];
@@ -310,7 +482,7 @@
 
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback {
     BOOL publiclyIndexable;
-    if (self.contentIndexMode == ContentIndexModePrivate) {
+    if (self.contentIndexMode == BranchContentIndexModePrivate) {
         publiclyIndexable = NO;
     }
     else {
@@ -341,7 +513,7 @@
 //This one uses a callback that returns the SpotlightIdentifier
 - (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
     BOOL publiclyIndexable;
-    if (self.contentIndexMode == ContentIndexModePrivate) {
+    if (self.contentIndexMode == BranchContentIndexModePrivate) {
         publiclyIndexable = NO;
     }
     else {
@@ -377,7 +549,7 @@
     [self safeSetValue:self.title forKey:BRANCH_LINK_DATA_KEY_OG_TITLE onDict:temp];
     [self safeSetValue:self.contentDescription forKey:BRANCH_LINK_DATA_KEY_OG_DESCRIPTION onDict:temp];
     [self safeSetValue:self.imageUrl forKey:BRANCH_LINK_DATA_KEY_OG_IMAGE_URL onDict:temp];
-    if (self.contentIndexMode == ContentIndexModePrivate) {
+    if (self.contentIndexMode == BranchContentIndexModePrivate) {
         [self safeSetValue:@(0) forKey:BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE onDict:temp];
     }
     else {

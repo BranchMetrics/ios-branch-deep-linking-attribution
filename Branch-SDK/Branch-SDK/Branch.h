@@ -833,6 +833,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param commerceEvent 	The BNCCommerceEvent that describes the purchase.
  @param metadata        Optional metadata you may want add to the event.
  @param completion 		The optional completion callback.
+ 
+ @deprecated Please use BNCEvent to send commerce events instead.
  */
 - (void) sendCommerceEvent:(BNCCommerceEvent*)commerceEvent
 				  metadata:(NSDictionary<NSString*,id>*)metadata
