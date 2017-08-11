@@ -471,7 +471,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 #pragma mark - Branch Delegate
 
-@property (weak) id<BranchDelegate> delegate;
+// TODO: Document
+@property (weak) NSObject<BranchDelegate> *delegate;
 
 ///--------------------------------
 /// @name Push Notification Support

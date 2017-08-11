@@ -61,6 +61,8 @@
 		4D130E921EE0C7B100A69A0A /* BranchShortUrlSyncRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E6D1EE0C7B100A69A0A /* BranchShortUrlSyncRequest.m */; };
 		4D130E941EE0C7B100A69A0A /* BranchSpotlightUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E6F1EE0C7B100A69A0A /* BranchSpotlightUrlRequest.m */; };
 		4D130E961EE0C7B100A69A0A /* BranchUserCompletedActionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E711EE0C7B100A69A0A /* BranchUserCompletedActionRequest.m */; };
+		4D2AF5411F3E2CAC006CD229 /* APWaitingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D2AF53F1F3E2CAC006CD229 /* APWaitingView.m */; };
+		4D2AF5421F3E2CAC006CD229 /* APWaitingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2AF5401F3E2CAC006CD229 /* APWaitingView.xib */; };
 		4D35141C1E3201D80085EBA1 /* NSMutableDictionary+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D35141A1E3201D80085EBA1 /* NSMutableDictionary+Branch.m */; };
 		4D3534051F3B6A930043F7FD /* BranchNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3534031F3B6A930043F7FD /* BranchNotifications.h */; };
 		4D3534061F3B6A930043F7FD /* BranchNotifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3534041F3B6A930043F7FD /* BranchNotifications.m */; };
@@ -211,6 +213,9 @@
 		4D130E6F1EE0C7B100A69A0A /* BranchSpotlightUrlRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchSpotlightUrlRequest.m; sourceTree = "<group>"; };
 		4D130E701EE0C7B100A69A0A /* BranchUserCompletedActionRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchUserCompletedActionRequest.h; sourceTree = "<group>"; };
 		4D130E711EE0C7B100A69A0A /* BranchUserCompletedActionRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUserCompletedActionRequest.m; sourceTree = "<group>"; };
+		4D2AF53E1F3E2CAC006CD229 /* APWaitingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APWaitingView.h; sourceTree = "<group>"; };
+		4D2AF53F1F3E2CAC006CD229 /* APWaitingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APWaitingView.m; sourceTree = "<group>"; };
+		4D2AF5401F3E2CAC006CD229 /* APWaitingView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = APWaitingView.xib; sourceTree = "<group>"; };
 		4D3514191E3201D80085EBA1 /* NSMutableDictionary+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableDictionary+Branch.h"; sourceTree = "<group>"; };
 		4D35141A1E3201D80085EBA1 /* NSMutableDictionary+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDictionary+Branch.m"; sourceTree = "<group>"; };
 		4D3534031F3B6A930043F7FD /* BranchNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchNotifications.h; sourceTree = "<group>"; };
@@ -503,6 +508,9 @@
 				6700166A1940F51400A9E103 /* Supporting Files */,
 				670016781940F51400A9E103 /* ViewController.h */,
 				670016791940F51400A9E103 /* ViewController.m */,
+				4D2AF53E1F3E2CAC006CD229 /* APWaitingView.h */,
+				4D2AF53F1F3E2CAC006CD229 /* APWaitingView.m */,
+				4D2AF5401F3E2CAC006CD229 /* APWaitingView.xib */,
 			);
 			path = "Branch-TestBed";
 			sourceTree = "<group>";
@@ -826,6 +834,7 @@
 				6700166E1940F51400A9E103 /* InfoPlist.strings in Resources */,
 				670016771940F51400A9E103 /* Main.storyboard in Resources */,
 				63E4C4901D25E1BC00A45FD8 /* LaunchScreen.storyboard in Resources */,
+				4D2AF5421F3E2CAC006CD229 /* APWaitingView.xib in Resources */,
 				63E4C4921D25E1CA00A45FD8 /* Assets.xcassets in Resources */,
 				677F4CB51C1FB1910029F2B3 /* Branch-TestBed.entitlements in Resources */,
 			);
@@ -968,6 +977,7 @@
 				4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,
 				63E4C48B1D25E17B00A45FD8 /* NavigationController.m in Sources */,
+				4D2AF5411F3E2CAC006CD229 /* APWaitingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

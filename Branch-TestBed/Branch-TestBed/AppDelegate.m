@@ -10,9 +10,10 @@
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
+#import "APWaitingView.h"
 #import <SafariServices/SafariServices.h>
 
-@interface AppDelegate() <SFSafariViewControllerDelegate>
+@interface AppDelegate() <SFSafariViewControllerDelegate, BranchDelegate>
 @property (nonatomic, strong) SFSafariViewController *onboardingVC;
 @end
 
@@ -28,6 +29,23 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     //
     // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
+
+    // Set the delegate if you want delegate calls
+    branch.delegate = self;
+
+    // Or if it suits your architecture better, you can get NSNotificationCenter notifications too.
+    // Usually using delegate callbacks AND notifications is overkill, but this demonstrates both.
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+        selector:@selector(branchWillOpenURLNotification:)
+        name:BNCBranchWillOpenURLNotification
+        object:nil];
+
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+        selector:@selector(branchDidOpenURLNotification:)
+        name:BNCBranchDidOpenURLNotification
+        object:nil];
 
     // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
     [branch setDebug];
@@ -184,5 +202,66 @@ didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"Error registering for remote notifications: %@", error);
 }
 
+#pragma mark - Branch Delegate Handlers
+
+- (void) branch:(Branch*)branch willOpenURL:(NSURL*)url {
+    NSLog(@"branch:willOpenURL: called with URL '%@'.", url);
+}
+
+- (void) branch:(Branch*)branch
+     didOpenURL:(NSURL*)url
+ linkParameters:(NSDictionary*)linkParameters
+          error:(NSError*)error {
+    NSLog(@"branch:didOpenURL:linkParameters:error: called with URL '%@'.", url);
+}
+
+#pragma mark - Branch Notification Handlers
+
+- (void) branchWillOpenURLNotification:(NSNotification*)notification {
+    NSLog(@"branchWillOpenURLNotification: was called.");
+
+    // Show a waiting view as the Branch servers check for a
+    // deferred deep link or decode the passed URL.
+
+    NSString *message = nil;
+    NSURL *originalURL = notification.userInfo[BNCOriginalURLKey];
+    if (originalURL) {
+        message = [NSString stringWithFormat:@"Checking URL\n%@", originalURL];
+    } else {
+        message = @"Checking for deferred deep link.";
+    }
+    [APWaitingView showWithMessage:message activityIndicator:YES disableTouches:YES];
+}
+
+- (void) branchDidOpenURLNotification:(NSNotification*)notification {
+    NSLog(@"branchDidOpenURLNotification: was called.");
+
+    NSError *error = notification.userInfo[BNCErrorKey];
+    NSURL *originalURL = notification.userInfo[BNCOriginalURLKey];
+    NSDictionary *parameters = notification.userInfo[BNCLinkParametersKey];
+
+    NSString *message = nil;
+    if (error) {
+        message = [NSString stringWithFormat:@"An error occurred while opening the link:\n\n%@",
+            error.localizedDescription];
+    } else {
+        if (originalURL) {
+            message = [NSString stringWithFormat:@"Deep link URL:\n%@\n\nLink with %ld parameters.",
+                originalURL, (long) parameters.count];
+        } else {
+            message = [NSString stringWithFormat:@"Branch returned %ld parameters.",
+                (long) parameters.count];
+        }
+
+        // You can check the parameters for a value that's signifigant to your application:
+
+        if (((NSNumber*)parameters[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK]).boolValue) {
+            NSLog(@"This was a Branch link!!!");
+        } else {
+            NSLog(@"Not a Branch link.");
+        }
+    }
+    [APWaitingView hideWithMessage:message];
+}
 
 @end

@@ -1601,7 +1601,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self callClose];
     [self.requestQueue persistImmediately];
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
-    NSLog(@"Resigned active."); // TODO: Remove
     BNCLogDebugSDK(@"Application resigned active.");
     [self.class closeLog];
     [self.class openLog];
