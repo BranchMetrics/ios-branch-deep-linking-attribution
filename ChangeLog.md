@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.17.6
+  * _*Master Release*_ - August 11, 2017
+  * Added a check for buffer length before reading a pointer.
+
 - v0.17.5
   * _*Master Release*_ - August 8, 2017
   * Fixed Carthage build.
