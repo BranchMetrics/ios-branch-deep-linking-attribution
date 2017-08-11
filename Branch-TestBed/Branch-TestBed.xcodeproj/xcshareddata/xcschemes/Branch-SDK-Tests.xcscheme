@@ -29,7 +29,7 @@
       language = ""
       shouldUseLaunchSchemeArgsEnv = "YES"
       codeCoverageEnabled = "YES"
-      enableThreadSanitizer = "YES">
+      enableAddressSanitizer = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
