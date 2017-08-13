@@ -1330,48 +1330,49 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 #pragma mark - Private methods
 
 + (Branch *)getInstanceInternal:(NSString *)key returnNilIfNoCurrentInstance:(BOOL)returnNilIfNoCurrentInstance {
-    static Branch *branch;
 
-    if (!branch && returnNilIfNoCurrentInstance) {
-        return nil;
+    static Branch *branch = nil;
+    @synchronized (self) {
+        if (!branch && returnNilIfNoCurrentInstance) {
+            return nil;
+        }
+
+        static dispatch_once_t onceToken = 0;
+        dispatch_once(&onceToken, ^{
+            BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+
+            // If there was stored key and it isn't the same as the currently used (or doesn't exist), we need to clean up
+            // Note: Link Click Identifier is not cleared because of the potential for that to mess up a deep link
+            if (preferenceHelper.lastRunBranchKey && ![key isEqualToString:preferenceHelper.lastRunBranchKey]) {
+                BNCLogWarning(@"The Branch Key has changed, clearing relevant items.");
+
+                preferenceHelper.appVersion = nil;
+                preferenceHelper.deviceFingerprintID = nil;
+                preferenceHelper.sessionID = nil;
+                preferenceHelper.identityID = nil;
+                preferenceHelper.userUrl = nil;
+                preferenceHelper.installParams = nil;
+                preferenceHelper.sessionParams = nil;
+
+                [[BNCServerRequestQueue getInstance] clearQueue];
+            }
+
+            if (self.enableFingerprintIDInCrashlyticsReports) {
+                BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
+                // may be nil
+                [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
+            }
+
+            preferenceHelper.lastRunBranchKey = key;
+            branch =
+                [[Branch alloc] initWithInterface:[[BNCServerInterface alloc] init]
+                    queue:[BNCServerRequestQueue getInstance]
+                    cache:[[BNCLinkCache alloc] init]
+                    preferenceHelper:preferenceHelper
+                    key:key];
+        });
+        return branch;
     }
-
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-
-        // If there was stored key and it isn't the same as the currently used (or doesn't exist), we need to clean up
-        // Note: Link Click Identifier is not cleared because of the potential for that to mess up a deep link
-        if (preferenceHelper.lastRunBranchKey && ![key isEqualToString:preferenceHelper.lastRunBranchKey]) {
-            BNCLogWarning(@"The Branch Key has changed, clearing relevant items.");
-
-            preferenceHelper.appVersion = nil;
-            preferenceHelper.deviceFingerprintID = nil;
-            preferenceHelper.sessionID = nil;
-            preferenceHelper.identityID = nil;
-            preferenceHelper.userUrl = nil;
-            preferenceHelper.installParams = nil;
-            preferenceHelper.sessionParams = nil;
-
-            [[BNCServerRequestQueue getInstance] clearQueue];
-        }
-
-        if (self.enableFingerprintIDInCrashlyticsReports) {
-            BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-            // may be nil
-            [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
-        }
-
-        preferenceHelper.lastRunBranchKey = key;
-        branch =
-            [[Branch alloc] initWithInterface:[[BNCServerInterface alloc] init]
-                queue:[BNCServerRequestQueue getInstance]
-                cache:[[BNCLinkCache alloc] init]
-                preferenceHelper:preferenceHelper
-                key:key];
-    });
-
-    return branch;
 }
 
 

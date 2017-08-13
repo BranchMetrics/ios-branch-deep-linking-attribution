@@ -253,12 +253,12 @@ didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
                 (long) parameters.count];
         }
 
-        // You can check the parameters for a value that's signifigant to your application:
+        // You can check the parameters for a value that's significant to your application:
 
         if (((NSNumber*)parameters[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK]).boolValue) {
-            NSLog(@"This was a Branch link!!!");
+            message = [message stringByAppendingString:@"\n\nThis was a Branch link!!!"];
         } else {
-            NSLog(@"Not a Branch link.");
+            message = [message stringByAppendingString:@"\n\nNot a Branch link."];
         }
     }
     [APWaitingView hideWithMessage:message];

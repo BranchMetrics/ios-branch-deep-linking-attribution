@@ -327,9 +327,7 @@ NSString *type = @"some type";
 
 - (IBAction) openBranchLinkInApp:(id)sender {
     NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
-    // TODO: Remove
-    // NSURL *URL = [NSURL URLWithString:@"https://bnc.lt/ZPOc/Y6aKU0rzcy"]; // <= Your URL goes here.
-    NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"];
+    NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"]; // <= Your URL goes here.
     activity.webpageURL = URL;
     Branch *branch = [Branch getInstance];
     [branch resetUserSession];

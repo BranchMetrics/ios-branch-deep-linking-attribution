@@ -33,8 +33,15 @@ NSString * const TEST_NEW_USER_LINK = @"https://bnc.lt/i/2kkbX6k-As";
 NSInteger const  TEST_CREDITS = 30;
 
 
-@interface BranchSDKFunctionalityTests : BNCTestCase
+@interface BranchSDKFunctionalityTests : BNCTestCase <BranchDelegate>
 @property (assign, nonatomic) BOOL hasExceededExpectations;
+
+@property (assign, nonatomic) NSInteger notificationOrder;
+@property (strong, nonatomic) XCTestExpectation *branchWillOpenURLExpectation;
+@property (strong, nonatomic) XCTestExpectation *branchWillOpenURLNotificationExpectation;
+@property (strong, nonatomic) XCTestExpectation *branchDidOpenURLExpectation;
+@property (strong, nonatomic) XCTestExpectation *branchDidOpenURLNotificationExpectation;
+
 @end
 
 
@@ -140,7 +147,7 @@ NSInteger const  TEST_CREDITS = 30;
         XCTAssertEqualObjects(preferenceHelper.identityID, @"98687515069776101");
         NSDictionary *installParams = [nonRetainedBranch getFirstReferringParams];
         
-        XCTAssertEqualObjects(installParams[@"$og_title"], @"Kindred"); //TODO: equal to params?
+        XCTAssertEqualObjects(installParams[@"$og_title"], @"Kindred");
         XCTAssertEqualObjects(installParams[@"key1"], @"test_object");
         
         [self safelyFulfillExpectation:setIdentityExpectation];
@@ -509,6 +516,171 @@ NSInteger const  TEST_CREDITS = 30;
 
     NSString *url2 = [branch getShortURLWithParams:nil andChannel:nil andFeature:nil];
     XCTAssertEqualObjects(url1, url2);
+}
+
+// Test that Branch notifications work.
+// Test that they 1) work and 2) are sent in the right order.
+- (void) XtestNotifications {
+
+    self.notificationOrder = 0;
+    self.branchWillOpenURLExpectation =
+        [self expectationWithDescription:@"branchWillOpenURLExpectation"];
+    self.branchWillOpenURLNotificationExpectation =
+        [self expectationWithDescription:@"branchWillOpenURLNotificationExpectation"];
+    self.branchDidOpenURLExpectation =
+        [self expectationWithDescription:@"branchDidOpenURLExpectation"];
+    self.branchDidOpenURLNotificationExpectation =
+        [self expectationWithDescription:@"branchDidOpenURLNotificationExpectation"];
+
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    [self setupDefaultStubsForServerInterfaceMock:serverInterfaceMock];
+
+    BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
+    openInstallResponse.data = @{
+        @"browser_fingerprint_id": TEST_BROWSER_FINGERPRINT_ID,
+        @"device_fingerprint_id": TEST_DEVICE_FINGERPRINT_ID,
+        @"identity_id": TEST_IDENTITY_ID,
+        @"link": TEST_IDENTITY_LINK,
+        @"session_id": TEST_SESSION_ID
+    };
+    
+    __block BNCServerCallback openOrInstallCallback;
+    id openOrInstallCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        openOrInstallCallback = callback;
+        return YES;
+    }];
+    
+    id openOrInstallInvocation = ^(NSInvocation *invocation) {
+        openOrInstallCallback(openInstallResponse, nil);
+    };
+
+    id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
+        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+    }];
+    [[[serverInterfaceMock expect]
+        andDo:openOrInstallInvocation]
+        postRequest:[OCMArg any]
+        url:openOrInstallUrlCheckBlock
+        key:[OCMArg any]
+        callback:openOrInstallCallbackCheckBlock];
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    Branch *branch =
+		[[Branch alloc]
+			initWithInterface:serverInterfaceMock
+			queue:[[BNCServerRequestQueue alloc] init]
+			cache:[[BNCLinkCache alloc] init]
+			preferenceHelper:preferenceHelper
+			key:@"key_live_foo"];
+    branch.delegate = self;
+
+    XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
+    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:
+    ^ (NSDictionary *params, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertEqualObjects(preferenceHelper.sessionID, TEST_SESSION_ID);
+        [openExpectation fulfill];
+    }];
+    [branch handleDeepLinkWithNewSession:[NSURL URLWithString:@"https://branch.io/link"]];
+    
+    [self waitForExpectationsWithTimeout:2.0 handler:nil];
+    XCTAssertTrue(self.notificationOrder == 4);
+}
+
+- (void) testNotifications {
+
+    self.notificationOrder = 0;
+//    self.branchWillOpenURLExpectation =
+//        [self expectationWithDescription:@"branchWillOpenURLExpectation"];
+//    self.branchWillOpenURLNotificationExpectation =
+//        [self expectationWithDescription:@"branchWillOpenURLNotificationExpectation"];
+//    self.branchDidOpenURLExpectation =
+//        [self expectationWithDescription:@"branchDidOpenURLExpectation"];
+//    self.branchDidOpenURLNotificationExpectation =
+//        [self expectationWithDescription:@"branchDidOpenURLNotificationExpectation"];
+
+    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    Branch.branchKey = @"key_live_foo";
+    
+    Branch *branch =
+        [[Branch alloc]
+            initWithInterface:serverInterfaceMock
+            queue:[[BNCServerRequestQueue alloc] init]
+            cache:[[BNCLinkCache alloc] init]
+            preferenceHelper:preferenceHelper
+            key:@"key_live_foo"];
+    branch.delegate = self;
+
+    BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
+    openInstallResponse.data = @{
+        @"browser_fingerprint_id": TEST_BROWSER_FINGERPRINT_ID,
+        @"device_fingerprint_id": TEST_DEVICE_FINGERPRINT_ID,
+        @"identity_id": TEST_IDENTITY_ID,
+        @"link": TEST_IDENTITY_LINK,
+        @"session_id": TEST_SESSION_ID
+    };
+    
+    __block BNCServerCallback openOrInstallCallback;
+    id openOrInstallCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
+        openOrInstallCallback = callback;
+        return YES;
+    }];
+    
+    id openOrInstallInvocation = ^(NSInvocation *invocation) {
+        openOrInstallCallback(openInstallResponse, nil);
+    };
+
+    id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
+        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+    }];
+    [[[serverInterfaceMock expect]
+        andDo:openOrInstallInvocation]
+        postRequest:[OCMArg any]
+        url:openOrInstallUrlCheckBlock
+        key:[OCMArg any]
+        callback:openOrInstallCallbackCheckBlock];
+    
+    XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
+    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+        XCTAssertNil(error);
+        XCTAssertEqualObjects(preferenceHelper.sessionID, TEST_SESSION_ID);
+        [openExpectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:2 handler:NULL];
+}
+
+- (void) branch:(Branch*)branch willOpenURL:(NSURL*)url {
+    XCTAssertTrue([NSThread isMainThread]);
+    XCTAssertTrue(self.notificationOrder == 0);
+    self.notificationOrder++;
+    [self.branchWillOpenURLExpectation fulfill];
+}
+
+- (void) branchWillOpenURLNotification:(NSNotification*)notification {
+    XCTAssertTrue([NSThread isMainThread]);
+    XCTAssertTrue(self.notificationOrder == 1);
+    self.notificationOrder++;
+    [self.branchWillOpenURLNotificationExpectation fulfill];
+}
+
+- (void) branch:(Branch*)branch
+     didOpenURL:(NSURL*)url
+ linkParameters:(NSDictionary*)linkParameters
+          error:(NSError*)error {
+    XCTAssertTrue([NSThread isMainThread]);
+    XCTAssertTrue(self.notificationOrder == 2);
+    self.notificationOrder++;
+    [self.branchDidOpenURLExpectation fulfill];
+}
+
+- (void) branchDidOpenURLNotification:(NSNotification*)notification {
+    XCTAssertTrue([NSThread isMainThread]);
+    XCTAssertTrue(self.notificationOrder == 3);
+    self.notificationOrder++;
+    [self.branchDidOpenURLNotificationExpectation fulfill];
 }
 
 #pragma mark - Test Utility

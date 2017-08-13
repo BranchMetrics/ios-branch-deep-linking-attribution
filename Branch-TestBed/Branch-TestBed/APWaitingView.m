@@ -96,9 +96,14 @@ static const CGFloat kScale = 0.9950;
 
     const CGFloat kIndent = 40.0f;
 
+    CGRect screenRect = [[UIScreen mainScreen] applicationFrame];
     if (message.length > 0) {
         self.label.text = message;
-        labelRect.size = [self.label sizeThatFits:self.maxLabelRect.size];
+        CGSize size;
+        size.height = MIN(self.maxLabelRect.size.height, screenRect.size.height);
+        size.width = MIN(self.maxLabelRect.size.width, screenRect.size.width);
+        size.width -= 2.0 * kIndent;
+        labelRect.size = [self.label sizeThatFits:size];
         labelRect.size.width += 2.0 * kIndent;
     }
 
@@ -112,7 +117,6 @@ static const CGFloat kScale = 0.9950;
     }
     viewRect = CGRectInset(viewRect, -kIndent, -kIndent);
 
-    CGRect screenRect = [[UIScreen mainScreen] applicationFrame];
     self.view.frame = ZCenterRectOverRect(viewRect, screenRect);
     self.view.layer.cornerRadius = 5.0f;
     self.view.layer.borderWidth = 0.5f;
