@@ -41,7 +41,7 @@ NSInteger const  TEST_CREDITS = 30;
 @property (strong, nonatomic) XCTestExpectation *branchWillOpenURLNotificationExpectation;
 @property (strong, nonatomic) XCTestExpectation *branchDidOpenURLExpectation;
 @property (strong, nonatomic) XCTestExpectation *branchDidOpenURLNotificationExpectation;
-
+@property (strong, nonatomic) NSDictionary *deepLinkParams;
 @end
 
 
@@ -590,14 +590,26 @@ NSInteger const  TEST_CREDITS = 30;
 - (void) testNotifications {
 
     self.notificationOrder = 0;
-//    self.branchWillOpenURLExpectation =
-//        [self expectationWithDescription:@"branchWillOpenURLExpectation"];
-//    self.branchWillOpenURLNotificationExpectation =
-//        [self expectationWithDescription:@"branchWillOpenURLNotificationExpectation"];
-//    self.branchDidOpenURLExpectation =
-//        [self expectationWithDescription:@"branchDidOpenURLExpectation"];
-//    self.branchDidOpenURLNotificationExpectation =
-//        [self expectationWithDescription:@"branchDidOpenURLNotificationExpectation"];
+    self.branchWillOpenURLExpectation =
+        [self expectationWithDescription:@"branchWillOpenURLExpectation"];
+    self.branchWillOpenURLNotificationExpectation =
+        [self expectationWithDescription:@"branchWillOpenURLNotificationExpectation"];
+    self.branchDidOpenURLExpectation =
+        [self expectationWithDescription:@"branchDidOpenURLExpectation"];
+    self.branchDidOpenURLNotificationExpectation =
+        [self expectationWithDescription:@"branchDidOpenURLNotificationExpectation"];
+
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+        selector:@selector(branchWillOpenURLNotification:)
+        name:BNCBranchWillOpenURLNotification
+        object:nil];
+
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+        selector:@selector(branchDidOpenURLNotification:)
+        name:BNCBranchDidOpenURLNotification
+        object:nil];
 
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
 
@@ -643,13 +655,20 @@ NSInteger const  TEST_CREDITS = 30;
         callback:openOrInstallCallbackCheckBlock];
     
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
-    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
-        XCTAssertNil(error);
-        XCTAssertEqualObjects(preferenceHelper.sessionID, TEST_SESSION_ID);
-        [openExpectation fulfill];
-    }];
+    [branch initSessionWithLaunchOptions:@{}
+        andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+            XCTAssertNil(error);
+            XCTAssertEqualObjects(preferenceHelper.sessionID, TEST_SESSION_ID);
+            XCTAssertTrue(self.notificationOrder == 1);
+            self.notificationOrder++;
+            self.deepLinkParams = params;
+            [openExpectation fulfill];
+        }
+    ];
     
-    [self waitForExpectationsWithTimeout:2 handler:NULL];
+    [self waitForExpectationsWithTimeout:2.0 handler:NULL];
+    XCTAssertTrue(self.notificationOrder == 3);
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void) branch:(Branch*)branch willOpenURL:(NSURL*)url {
@@ -661,8 +680,18 @@ NSInteger const  TEST_CREDITS = 30;
 
 - (void) branchWillOpenURLNotification:(NSNotification*)notification {
     XCTAssertTrue([NSThread isMainThread]);
-    XCTAssertTrue(self.notificationOrder == 1);
+    XCTAssertTrue(self.notificationOrder == 0);
     self.notificationOrder++;
+
+    NSError *error = notification.userInfo[BNCErrorKey];
+    XCTAssertNil(error);
+
+    NSURL *URL = notification.userInfo[BNCOriginalURLKey];
+    XCTAssertNil(URL);
+
+    NSDictionary *params = notification.userInfo[BNCLinkParametersKey];
+    XCTAssertNil(params);
+
     [self.branchWillOpenURLNotificationExpectation fulfill];
 }
 
@@ -678,8 +707,18 @@ NSInteger const  TEST_CREDITS = 30;
 
 - (void) branchDidOpenURLNotification:(NSNotification*)notification {
     XCTAssertTrue([NSThread isMainThread]);
-    XCTAssertTrue(self.notificationOrder == 3);
+    XCTAssertTrue(self.notificationOrder == 2);
     self.notificationOrder++;
+
+    NSError *error = notification.userInfo[BNCErrorKey];
+    XCTAssertNil(error);
+
+    NSURL *URL = notification.userInfo[BNCOriginalURLKey];
+    XCTAssertNil(URL);
+
+    NSDictionary *params = notification.userInfo[BNCLinkParametersKey];
+    XCTAssertTrue(params != nil && [params isEqualToDictionary:self.deepLinkParams]);
+
     [self.branchDidOpenURLNotificationExpectation fulfill];
 }
 

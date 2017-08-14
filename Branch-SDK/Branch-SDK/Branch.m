@@ -1637,7 +1637,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
 }
 
-void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
+static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     if ([NSThread isMainThread]) {
         block();
     } else {
@@ -1645,9 +1645,9 @@ void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-void BNCPerformBlockOnMainThread(dispatch_block_t block) {
-    dispatch_async(dispatch_get_main_queue(), block);
-}
+//static inline void BNCPerformBlockOnMainThread(dispatch_block_t block) {
+//    dispatch_async(dispatch_get_main_queue(), block);
+//}
 
 - (void) processRequest:(BNCServerRequest*)req
                response:(BNCServerResponse*)response
@@ -1790,6 +1790,23 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.class.branchKey];
     }
 
+    // Notify everyone --
+
+    NSString *URLString = [self referringURLUsingSessionData:nil];
+    self.originalURL = (URLString.length) ? [NSURL URLWithString:URLString] : nil;
+
+    NSMutableDictionary *userInfo = [NSMutableDictionary new];
+    userInfo[BNCOriginalURLKey] = self.originalURL;
+    Branch *branch = [Branch getInstance];
+    if ([self.delegate respondsToSelector:@selector(branch:willOpenURL:)]) {
+        [branch.delegate performSelector:@selector(branch:willOpenURL:)
+            withObject:branch withObject:self.originalURL];
+    }
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:BNCBranchWillOpenURLNotification
+        object:[Branch getInstance]
+        userInfo:userInfo];
+
 	@synchronized (self) {
 		if ([self.requestQueue removeInstallOrOpen])
 			self.networkCount = 0;
@@ -1810,12 +1827,14 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         }
         else if (self.sessionInitWithBranchUniversalObjectCallback) {
             self.sessionInitWithBranchUniversalObjectCallback(
-                                                              [self getLatestReferringBranchUniversalObject],
-                                                              [self getLatestReferringBranchLinkProperties],
-                                                              nil
-                                                              );
+                [self getLatestReferringBranchUniversalObject],
+                [self getLatestReferringBranchLinkProperties],
+                nil
+            );
         }
     }
+
+    [self sendOpenNotificationWithOriginalURL:URL linkParameters:latestReferringParams error:nil];
 
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (self.shouldAutomaticallyDeepLink) {
@@ -1923,6 +1942,35 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
     }
 }
 
+- (void) sendOpenNotificationWithOriginalURL:(NSURL*)originalURL
+                              linkParameters:(NSDictionary*)linkParameters
+                                       error:(NSError*)error {
+
+    NSMethodSignature *signature = nil;
+    SEL selector = @selector(branch:didOpenURL:linkParameters:error:);
+    if ([self.delegate respondsToSelector:selector]) {
+        signature = [self.delegate methodSignatureForSelector:selector];
+    }
+    if (signature) {
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+        invocation.target = self.delegate;
+        invocation.selector = selector;
+        [invocation setArgument:(void*)&self atIndex:2];
+        [invocation setArgument:&originalURL atIndex:3];
+        [invocation setArgument:&linkParameters atIndex:4];
+        [invocation setArgument:&error atIndex:5];
+        [invocation invoke];
+    }
+    NSMutableDictionary *userInfo = [NSMutableDictionary new];
+    userInfo[BNCErrorKey] = error;
+    userInfo[BNCOriginalURLKey] = originalURL;
+    userInfo[BNCLinkParametersKey] = linkParameters;
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:BNCBranchDidOpenURLNotification
+        object:self
+        userInfo:userInfo];
+}
+
 -(void)removeViewControllerFromRootNavigationController:(UIViewController*)branchSharingController{
 
     NSMutableArray* viewControllers = [NSMutableArray arrayWithArray: [(UINavigationController*)self.deepLinkPresentingController viewControllers]];
@@ -1949,7 +1997,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
 - (void)handleInitFailure:(NSError *)error {
     self.isInitialized = NO;
-
     if (self.shouldCallSessionInitCallback) {
         if (self.sessionInitWithParamsCallback) {
             self.sessionInitWithParamsCallback([[NSDictionary alloc] init], error);
@@ -1958,6 +2005,8 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
             self.sessionInitWithBranchUniversalObjectCallback([[BranchUniversalObject alloc] init], [[BranchLinkProperties alloc] init], error);
         }
     }
+
+    [self sendOpenNotificationWithOriginalURL:URL linkParameters:@{} error:error];
 }
 
 - (void)dealloc {

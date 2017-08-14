@@ -22,8 +22,7 @@
 #import "BNCLog.h"
 
 @interface BranchOpenRequest ()
-@property (assign) BOOL isInstall;
-@property (strong) NSURL *originalURL;
+@property (assign, nonatomic) BOOL isInstall;
 @end
 
 
@@ -81,52 +80,17 @@
                     forKey:BRANCH_REQUEST_KEY_SEARCH_AD
                     onDict:params];
     }
+    /**/
 
-    // Notify everyone
-
-    NSString *URLString = [self referringURLUsingSessionData:nil];
-    self.originalURL = (URLString.length) ? [NSURL URLWithString:URLString] : nil;
-
-    NSMutableDictionary *userInfo = [NSMutableDictionary new];
-    userInfo[BNCOriginalURLKey] = self.originalURL;
-    Branch *branch = [Branch getInstance];
-    if ([branch.delegate respondsToSelector:@selector(branch:willOpenURL:)]) {
-        [branch.delegate performSelector:@selector(branch:willOpenURL:)
-            withObject:branch withObject:self.originalURL];
-    }
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:BNCBranchWillOpenURLNotification
-        object:[Branch getInstance]
-        userInfo:userInfo];
-
-    // Do it
-
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN]
-        key:key callback:callback];
-}
-
-- (NSString*) referringURLUsingSessionData:(NSString*)sessionData {
-    NSString *referredUrl = nil;
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    if (preferenceHelper.universalLinkUrl) {
-        referredUrl = preferenceHelper.universalLinkUrl;
-    }
-    else if (preferenceHelper.externalIntentURI) {
-        referredUrl = preferenceHelper.externalIntentURI;
-    }
-    else if (sessionData.length) {
-        NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
-        if (sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK]) {
-            referredUrl = sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
-        }
-    }
-    return referredUrl;
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
-
     if (error) {
-        [self sendNotificationWithOriginalURL:self.originalURL linkParameters:nil error:error];
+        [BranchOpenRequest releaseOpenResponseLock];
+        if (self.callback) {
+            self.callback(NO, error);
+        }
         return;
     }
 
@@ -197,7 +161,19 @@
         }
     }
 
-    NSString *referredUrl = [self referringURLUsingSessionData:sessionData];
+    NSString *referredUrl = nil;
+    if (preferenceHelper.universalLinkUrl) {
+        referredUrl = preferenceHelper.universalLinkUrl;
+    }
+    else if (preferenceHelper.externalIntentURI) {
+        referredUrl = preferenceHelper.externalIntentURI;
+    }
+    else {
+        NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
+        if (sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK]) {
+            referredUrl = sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
+        }
+    }
     BranchContentDiscoveryManifest *cdManifest = [BranchContentDiscoveryManifest getInstance];
     [cdManifest onBranchInitialised:data withUrl:referredUrl];
     if ([cdManifest isCDEnabled]) {
@@ -227,45 +203,10 @@
             andWithDelegate:nil];
     }
 
-    [self sendNotificationWithOriginalURL:[NSURL URLWithString:referredUrl]
-        linkParameters:[Branch getInstance].getLatestReferringParams error:nil];
-}
-
-- (void) sendNotificationWithOriginalURL:(NSURL*)originalURL
-                          linkParameters:(NSDictionary*)linkParameters
-                                   error:(NSError*)error {
-
-    [BranchOpenRequest releaseOpenResponseLock];
     if (self.callback) {
-        if (error)
-            self.callback(NO, error);
-        else
-            self.callback(YES, error);
+        self.callback(YES, nil);
     }
-    Branch *branch = [Branch getInstance];
-    NSMethodSignature *signature = nil;
-    SEL selector = @selector(branch:didOpenURL:linkParameters:error:);
-    if ([branch.delegate respondsToSelector:selector]) {
-        signature = [branch.delegate methodSignatureForSelector:selector];
-    }
-    if (signature) {
-        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-        invocation.target = branch.delegate;
-        invocation.selector = selector;
-        [invocation setArgument:&branch atIndex:2];
-        [invocation setArgument:&originalURL atIndex:3];
-        [invocation setArgument:&linkParameters atIndex:4];
-        [invocation setArgument:&error atIndex:5];
-        [invocation invoke];
-    }
-    NSMutableDictionary *userInfo = [NSMutableDictionary new];
-    userInfo[BNCErrorKey] = error;
-    userInfo[BNCOriginalURLKey] = originalURL;
-    userInfo[BNCLinkParametersKey] = linkParameters;
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:BNCBranchDidOpenURLNotification
-        object:branch
-        userInfo:userInfo];
+
 }
 
 - (NSString *)getActionName {
