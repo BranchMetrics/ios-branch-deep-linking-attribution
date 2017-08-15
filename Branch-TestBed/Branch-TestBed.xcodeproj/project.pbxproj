@@ -202,7 +202,6 @@
 		4665AF251B28B9BB00184037 /* BranchConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchConstants.m; sourceTree = "<group>"; };
 		4665AF271B28C1DE00184037 /* BranchLogoutRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLogoutRequestTests.m; sourceTree = "<group>"; };
 		466B58381B17773000A69EDE /* libBranch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBranch.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		466B58501B17776000A69EDE /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		466D5A0F1B5991E3009DB845 /* BNCContentDiscoveryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCContentDiscoveryManager.h; sourceTree = "<group>"; };
 		466D5A101B5991E3009DB845 /* BNCContentDiscoveryManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCContentDiscoveryManager.m; sourceTree = "<group>"; };
 		467309471AF2C4FB005B8848 /* BNCTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCTestCase.h; sourceTree = "<group>"; };
@@ -520,7 +519,6 @@
 				4DDC52611DCC08E700CFB737 /* iAd.framework */,
 				67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */,
 				67163AAD1B9A036F007A8AB1 /* SafariServices.framework */,
-				466B58501B17776000A69EDE /* CoreTelephony.framework */,
 				67BBCF271A69E49A009C7DAE /* AdSupport.framework */,
 				670016631940F51400A9E103 /* Foundation.framework */,
 				670016651940F51400A9E103 /* CoreGraphics.framework */,

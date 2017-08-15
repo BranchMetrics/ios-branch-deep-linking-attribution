@@ -4,6 +4,5 @@ framework module Branch {
     export *
     module * { export * }
 
-    link framework "CoreTelephony"
     link framework "MobileCoreServices"
 }

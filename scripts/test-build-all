@@ -49,13 +49,15 @@ function buildDirectoryProjectScheme() {
             -workspace "$project" \
             -scheme "$scheme" \
             -destination name="${iOSDevice}",OS="${iOSVersion}" \
-                clean build -quiet
+            -quiet \
+                clean build
     else
         xcodebuild \
             -project "$project" \
             -scheme "$scheme" \
             -destination name="${iOSDevice}",OS="${iOSVersion}" \
-                clean build -quiet
+            -quiet \
+                clean build
     fi
     printf "${textBlue}>>> '%s' built okay.${textNormal}\n" "$(basename `pwd`)"
     cd $(dirname "$scriptfile")/..
