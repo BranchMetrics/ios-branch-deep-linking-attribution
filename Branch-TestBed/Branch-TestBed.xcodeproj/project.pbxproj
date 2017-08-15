@@ -78,6 +78,55 @@
 		4DB567341E79F46000A8A324 /* BranchShareLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB567321E79F46000A8A324 /* BranchShareLink.m */; };
 		4DBC88651F3A55B700E119BF /* NSString+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA577211E67B28700A43BDD /* NSString+Branch.m */; };
 		4DC32D6F1F323F0B00EAA896 /* BNCError.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC32D6E1F323F0B00EAA896 /* BNCError.Test.m */; };
+		4DCAC8011F426F7C00405D1D /* BNCCommerceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8EE7A31E1F0A5D00B1F450 /* BNCCommerceEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC8021F426F7C00405D1D /* BNCConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6ACAF919E324120066913E /* BNCConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC8031F426F7C00405D1D /* BNCContentDiscoveryManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 466D5A0F1B5991E3009DB845 /* BNCContentDiscoveryManager.h */; };
+		4DCAC8041F426F7C00405D1D /* BNCDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA5771B1E67B22700A43BDD /* BNCDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC8051F426F7C00405D1D /* BNCDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D5882301CA1BEEA00FF6358 /* BNCDeviceInfo.h */; };
+		4DCAC8061F426F7C00405D1D /* BNCEncodingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 464EA3991ACB38EC000E4094 /* BNCEncodingUtils.h */; };
+		4DCAC8071F426F7C00405D1D /* BNCError.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E38829E1A37E22A004BDABE /* BNCError.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC8081F426F7C00405D1D /* BNCFabricAnswers.h in Headers */ = {isa = PBXBuildFile; fileRef = E2133B711D0125EF00763049 /* BNCFabricAnswers.h */; };
+		4DCAC8091F426F7C00405D1D /* BNCLinkCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E30BCF51A72FE7900AC7402 /* BNCLinkCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC80A1F426F7C00405D1D /* BNCLinkData.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E30BCF21A71EEEE00AC7402 /* BNCLinkData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC80B1F426F7C00405D1D /* BNCLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA577151E67B1D600A43BDD /* BNCLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC80C1F426F7C00405D1D /* BNCPreferenceHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 670016C11946309100A9E103 /* BNCPreferenceHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC80D1F426F7C00405D1D /* BNCStrongMatchHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 67486B8B1B93B48A0044D872 /* BNCStrongMatchHelper.h */; };
+		4DCAC80E1F426F7C00405D1D /* BNCSystemObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 670016C71946309100A9E103 /* BNCSystemObserver.h */; };
+		4DCAC80F1F426F7C00405D1D /* BNCXcode7Support.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8999EA1DC108FF00F7EE0A /* BNCXcode7Support.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC8101F426F7C00405D1D /* Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 670016BD1946309100A9E103 /* Branch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC8111F426F7C00405D1D /* BranchActivityItemProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = D258D2C41A794D64004A1C90 /* BranchActivityItemProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC8121F426F7C00405D1D /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 4665AF221B28935700184037 /* BranchConstants.h */; };
+		4DCAC8131F426F7C00405D1D /* BranchContentDiscoverer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D0C971A1D8753EA004E14B1 /* BranchContentDiscoverer.h */; };
+		4DCAC8141F426F7C00405D1D /* BranchContentDiscoveryManifest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D0C971B1D875445004E14B1 /* BranchContentDiscoveryManifest.h */; };
+		4DCAC8151F426F7C00405D1D /* BranchContentPathProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D0C971E1D875487004E14B1 /* BranchContentPathProperties.h */; };
+		4DCAC8161F426F7C00405D1D /* BranchCSSearchableItemAttributeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 54391A131BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.h */; };
+		4DCAC8171F426F7C00405D1D /* BranchDeepLinkingController.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DBB42F1B335A9B00642FC8 /* BranchDeepLinkingController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC8181F426F7C00405D1D /* BranchLinkProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF1F8F1BD1DC320004CE2E /* BranchLinkProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC8191F426F7C00405D1D /* BranchShareLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB567311E79F46000A8A324 /* BranchShareLink.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC81A1F426F7C00405D1D /* BranchUniversalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 54FF1F8B1BD1D4AE0004CE2E /* BranchUniversalObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC81B1F426F7C00405D1D /* BranchView.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D4DAC201C8FA8C0008E37DB /* BranchView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC81C1F426F7C00405D1D /* BranchViewHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D4DAC241C8FA908008E37DB /* BranchViewHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC81D1F426F7C00405D1D /* BNCNetworkService.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E4C1EE0C7B000A69A0A /* BNCNetworkService.h */; };
+		4DCAC81E1F426F7C00405D1D /* BNCNetworkServiceProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E4E1EE0C7B000A69A0A /* BNCNetworkServiceProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC81F1F426F7C00405D1D /* BNCServerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E4F1EE0C7B000A69A0A /* BNCServerInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC8201F426F7C00405D1D /* BNCServerRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E511EE0C7B000A69A0A /* BNCServerRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC8211F426F7C00405D1D /* BNCServerRequestQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E531EE0C7B000A69A0A /* BNCServerRequestQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC8221F426F7C00405D1D /* BNCServerResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E551EE0C7B000A69A0A /* BNCServerResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DCAC8231F426F7C00405D1D /* BranchCloseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E581EE0C7B100A69A0A /* BranchCloseRequest.h */; };
+		4DCAC8241F426F7C00405D1D /* BranchCreditHistoryRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E5A1EE0C7B100A69A0A /* BranchCreditHistoryRequest.h */; };
+		4DCAC8251F426F7C00405D1D /* BranchInstallRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E5C1EE0C7B100A69A0A /* BranchInstallRequest.h */; };
+		4DCAC8261F426F7C00405D1D /* BranchLoadRewardsRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E5E1EE0C7B100A69A0A /* BranchLoadRewardsRequest.h */; };
+		4DCAC8271F426F7C00405D1D /* BranchLogoutRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E601EE0C7B100A69A0A /* BranchLogoutRequest.h */; };
+		4DCAC8281F426F7C00405D1D /* BranchOpenRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E621EE0C7B100A69A0A /* BranchOpenRequest.h */; };
+		4DCAC8291F426F7C00405D1D /* BranchRedeemRewardsRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E641EE0C7B100A69A0A /* BranchRedeemRewardsRequest.h */; };
+		4DCAC82A1F426F7C00405D1D /* BranchRegisterViewRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E661EE0C7B100A69A0A /* BranchRegisterViewRequest.h */; };
+		4DCAC82B1F426F7C00405D1D /* BranchSetIdentityRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E681EE0C7B100A69A0A /* BranchSetIdentityRequest.h */; };
+		4DCAC82C1F426F7C00405D1D /* BranchShortUrlRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E6A1EE0C7B100A69A0A /* BranchShortUrlRequest.h */; };
+		4DCAC82D1F426F7C00405D1D /* BranchShortUrlSyncRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E6C1EE0C7B100A69A0A /* BranchShortUrlSyncRequest.h */; };
+		4DCAC82E1F426F7C00405D1D /* BranchSpotlightUrlRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E6E1EE0C7B100A69A0A /* BranchSpotlightUrlRequest.h */; };
+		4DCAC82F1F426F7C00405D1D /* BranchUserCompletedActionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D130E701EE0C7B100A69A0A /* BranchUserCompletedActionRequest.h */; };
+		4DCAC8301F426F7C00405D1D /* NSMutableDictionary+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3514191E3201D80085EBA1 /* NSMutableDictionary+Branch.h */; };
+		4DCAC8311F426F7C00405D1D /* NSString+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA577201E67B28700A43BDD /* NSString+Branch.h */; };
 		4DDC52621DCC08E700CFB737 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DDC52611DCC08E700CFB737 /* iAd.framework */; };
 		4DED5FB41F34F6CE00919C54 /* BNCDeviceInfo.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DED5FB01F34F6CE00919C54 /* BNCDeviceInfo.Test.m */; };
 		4DED5FB51F34F6CE00919C54 /* BNCEncodingUtils.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DED5FB11F34F6CE00919C54 /* BNCEncodingUtils.Test.m */; };
@@ -672,6 +721,55 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */,
+				4DCAC8011F426F7C00405D1D /* BNCCommerceEvent.h in Headers */,
+				4DCAC8021F426F7C00405D1D /* BNCConfig.h in Headers */,
+				4DCAC8041F426F7C00405D1D /* BNCDebug.h in Headers */,
+				4DCAC8091F426F7C00405D1D /* BNCLinkCache.h in Headers */,
+				4DCAC80A1F426F7C00405D1D /* BNCLinkData.h in Headers */,
+				4DCAC80B1F426F7C00405D1D /* BNCLog.h in Headers */,
+				4DCAC8071F426F7C00405D1D /* BNCError.h in Headers */,
+				4DCAC80C1F426F7C00405D1D /* BNCPreferenceHelper.h in Headers */,
+				4DCAC81E1F426F7C00405D1D /* BNCNetworkServiceProtocol.h in Headers */,
+				4DCAC81F1F426F7C00405D1D /* BNCServerInterface.h in Headers */,
+				4DCAC8221F426F7C00405D1D /* BNCServerResponse.h in Headers */,
+				4DCAC8201F426F7C00405D1D /* BNCServerRequest.h in Headers */,
+				4DCAC8211F426F7C00405D1D /* BNCServerRequestQueue.h in Headers */,
+				4DCAC80F1F426F7C00405D1D /* BNCXcode7Support.h in Headers */,
+				4DCAC8101F426F7C00405D1D /* Branch.h in Headers */,
+				4DCAC8111F426F7C00405D1D /* BranchActivityItemProvider.h in Headers */,
+				4DCAC8171F426F7C00405D1D /* BranchDeepLinkingController.h in Headers */,
+				4DCAC8181F426F7C00405D1D /* BranchLinkProperties.h in Headers */,
+				4DCAC8191F426F7C00405D1D /* BranchShareLink.h in Headers */,
+				4DCAC81A1F426F7C00405D1D /* BranchUniversalObject.h in Headers */,
+				4DCAC81B1F426F7C00405D1D /* BranchView.h in Headers */,
+				4DCAC81C1F426F7C00405D1D /* BranchViewHandler.h in Headers */,
+				4DCAC8031F426F7C00405D1D /* BNCContentDiscoveryManager.h in Headers */,
+				4DCAC8051F426F7C00405D1D /* BNCDeviceInfo.h in Headers */,
+				4DCAC8061F426F7C00405D1D /* BNCEncodingUtils.h in Headers */,
+				4DCAC8081F426F7C00405D1D /* BNCFabricAnswers.h in Headers */,
+				4DCAC8121F426F7C00405D1D /* BranchConstants.h in Headers */,
+				4DCAC80D1F426F7C00405D1D /* BNCStrongMatchHelper.h in Headers */,
+				4DCAC81D1F426F7C00405D1D /* BNCNetworkService.h in Headers */,
+				4DCAC80E1F426F7C00405D1D /* BNCSystemObserver.h in Headers */,
+				4DCAC8131F426F7C00405D1D /* BranchContentDiscoverer.h in Headers */,
+				4DCAC8141F426F7C00405D1D /* BranchContentDiscoveryManifest.h in Headers */,
+				4DCAC8151F426F7C00405D1D /* BranchContentPathProperties.h in Headers */,
+				4DCAC8161F426F7C00405D1D /* BranchCSSearchableItemAttributeSet.h in Headers */,
+				4DCAC8231F426F7C00405D1D /* BranchCloseRequest.h in Headers */,
+				4DCAC8241F426F7C00405D1D /* BranchCreditHistoryRequest.h in Headers */,
+				4DCAC8251F426F7C00405D1D /* BranchInstallRequest.h in Headers */,
+				4DCAC8261F426F7C00405D1D /* BranchLoadRewardsRequest.h in Headers */,
+				4DCAC8271F426F7C00405D1D /* BranchLogoutRequest.h in Headers */,
+				4DCAC8281F426F7C00405D1D /* BranchOpenRequest.h in Headers */,
+				4DCAC8291F426F7C00405D1D /* BranchRedeemRewardsRequest.h in Headers */,
+				4DCAC82A1F426F7C00405D1D /* BranchRegisterViewRequest.h in Headers */,
+				4DCAC82B1F426F7C00405D1D /* BranchSetIdentityRequest.h in Headers */,
+				4DCAC82C1F426F7C00405D1D /* BranchShortUrlRequest.h in Headers */,
+				4DCAC82D1F426F7C00405D1D /* BranchShortUrlSyncRequest.h in Headers */,
+				4DCAC82E1F426F7C00405D1D /* BranchSpotlightUrlRequest.h in Headers */,
+				4DCAC82F1F426F7C00405D1D /* BranchUserCompletedActionRequest.h in Headers */,
+				4DCAC8301F426F7C00405D1D /* NSMutableDictionary+Branch.h in Headers */,
+				4DCAC8311F426F7C00405D1D /* NSString+Branch.h in Headers */,
 				F1D359201ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h in Headers */,
 				7B18DF491F1F00E200C25C84 /* BNCCrashlyticsWrapper.h in Headers */,
 				4D9726BA1F27FF7400028BDE /* BNCLocalization.h in Headers */,

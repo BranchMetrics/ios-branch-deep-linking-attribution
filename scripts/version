@@ -110,6 +110,10 @@ if [[ $update ]]; then
     plutil -replace CFBundleVersion -string "$version"  ../carthage-files/Info.plist
     plutil -replace CFBundleShortVersionString -string "$version"  ../carthage-files/Info.plist
 
+    # Update the Carthage version:
+    plutil -replace CFBundleVersion -string "$version"  ../Branch-TestBed/Framework-Info.plist
+    plutil -replace CFBundleShortVersionString -string "$version"  ../Branch-TestBed/Framework-Info.plist
+
 fi
 
 
