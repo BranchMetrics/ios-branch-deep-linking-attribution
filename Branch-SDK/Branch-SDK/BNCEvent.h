@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "Branch.h"
 #import "BNCCommerceEvent.h"
+#import "BranchUniversalObject.h"
 
 ///@functiongroup Branch Event Logging
 

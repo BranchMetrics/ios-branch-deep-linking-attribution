@@ -1,0 +1,55 @@
+#!/bin/bash
+set -euo pipefail
+
+# deploy-build-framework-dynamic  --  Use the Carthage project to make a framework build of the SDK.
+#
+# Edward Smith, August 2017
+
+scriptname=$(basename "${BASH_SOURCE[0]}")
+scriptpath="${BASH_SOURCE[0]}"
+scriptpath=$(cd "$(dirname "${scriptpath}")" && pwd)
+cd ${scriptpath}/..
+
+function xcodeBuildTarget() {
+    local platform="$1"
+    echo ">>> Compiling for platform ${platform}." 1>&2
+    xcodebuild \
+        -project BranchSDK.xcodeproj \
+        -scheme "Branch iOS SDK Carthage" \
+        -sdk $platform \
+        -configuration Release \
+        -quiet \
+        clean build \
+        OTHER_CFLAGS="-fembed-bitcode"
+}
+
+# Clean up old frameworks and build directories:
+echo ">>> Removing old frameworks..." 1>&2
+rm -rf Branch.framework || true
+rm -f  Branch.framework.zip || true
+cd carthage-files
+rm -rf Build
+
+xcodeBuildTarget "iphoneos"
+xcodeBuildTarget "iphonesimulator"
+
+# Merge static libraries into a universal library
+
+ditto Build/Release-iphoneos  Build/Release
+lipo \
+    -create \
+        Build/Release-iphoneos/Branch.framework/Branch \
+        Build/Release-iphonesimulator/Branch.framework/Branch \
+    -output \
+        Build/Release/Branch.framework/Branch
+
+lipo \
+    -create \
+        Build/Release-iphoneos/Branch.framework.dSYM/Contents/Resources/DWARF/Branch \
+        Build/Release-iphonesimulator/Branch.framework.dSYM/Contents/Resources/DWARF/Branch \
+    -output \
+        Build/Release/Branch.framework.dSYM/Contents/Resources/DWARF/Branch \
+
+# Copy result:
+ditto Build/Release ../
+

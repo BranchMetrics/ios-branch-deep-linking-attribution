@@ -31,7 +31,7 @@ Options:
 USAGE
 }
 
-version=0.17.5
+version=0.17.9
 
 if (( $# == 0 )); then
     echo $version
@@ -109,6 +109,10 @@ if [[ $update ]]; then
     # Update the Carthage version:
     plutil -replace CFBundleVersion -string "$version"  ../carthage-files/Info.plist
     plutil -replace CFBundleShortVersionString -string "$version"  ../carthage-files/Info.plist
+
+    # Update the Carthage version:
+    plutil -replace CFBundleVersion -string "$version"  ../Branch-TestBed/Framework-Info.plist
+    plutil -replace CFBundleShortVersionString -string "$version"  ../Branch-TestBed/Framework-Info.plist
 
 fi
 
