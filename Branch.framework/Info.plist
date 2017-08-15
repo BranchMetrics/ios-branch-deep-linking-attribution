@@ -2,29 +2,29 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleName</key>
-	<string>Branch</string>
 	<key>CFBundleDisplayName</key>
 	<string>Branch</string>
-	<key>CFBundleIdentifier</key>
-	<string>io.branch.sdk.ios</string>
-	<key>CFBundleVersion</key>
-	<string>0.17.7</string>
-	<key>CFBundleShortVersionString</key>
-	<string>0.17.7</string>
 	<key>CFBundleExecutable</key>
 	<string>Branch</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundlePackageType</key>
-	<string>FMWK</string>
-	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2017 Branch Metrics. All rights reserved.</string>
 	<key>CFBundleGetInfoString</key>
 	<string>The Branch iOS SDK Framework</string>
+	<key>CFBundleIdentifier</key>
+	<string>io.branch.sdk.ios</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Branch</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.17.8</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.17.8</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2017 Branch Metrics. All rights reserved.</string>
 </dict>
 </plist>
