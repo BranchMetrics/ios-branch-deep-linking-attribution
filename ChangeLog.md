@@ -1,6 +1,6 @@
 Branch iOS SDK Change Log
 
-- v0.17.8
+- v0.17.9
   * _*Master Release*_ - August 15, 2017
   * Fixed the Branch.framework static library build. How long was this broken? A year? Since 12.2?
     Good grief.
