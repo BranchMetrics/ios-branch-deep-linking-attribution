@@ -1,57 +1,50 @@
 #!/bin/bash
 set -euo pipefail
 
-export PROJECT_DIR=Branch-TestBed
-export LIBRARY_BINARY_NAME=libBranch.a
-export BUILD_DIR=build
-export XCODE_BUILD_TARGET=Branch
-export CONFIGURATION=Release
-export FRAMEWORK_DIR=Branch.framework
-export FRAMEWORK_BINARY_NAME=Branch
+# deploy-build-framework-dynamic  --  Use the Carthage project to make a framework build of the SDK.
+#
+# Edward Smith, August 2017
 
-yell() { echo "$0: $*" >&2; }
-die()  { yell "$*"; exit 111; }
-try()  { "$@" || die "cannot $*"; }
+scriptname=$(basename "${BASH_SOURCE[0]}")
+scriptpath="${BASH_SOURCE[0]}"
+scriptpath=$(cd "$(dirname "${scriptpath}")" && pwd)
+cd ${scriptpath}/..
 
-function xcode_build_target() {
-    echo "Compiling for platform ${1}"
-
+function xcodeBuildTarget() {
+    local platform="$1"
+    echo ">>> Compiling for platform ${platform}." 1>&2
     xcodebuild \
         -project Branch-TestBed.xcodeproj \
-        -target $XCODE_BUILD_TARGET \
-        -sdk $1 \
-        -configuration $2 \
+        -target Branch \
+        -sdk $platform \
+        -configuration Release \
+        -quiet \
         clean build \
-        OTHER_CFLAGS="-fembed-bitcode" \
-        || die "Xcode build failed for platform: ${1}"
+        OTHER_CFLAGS="-fembed-bitcode"
 }
 
-# Compile static libraries
+# Clean up old frameworks and build directories:
+echo ">>> Removing old frameworks..." 1>&2
+rm -rf Branch.framework || true
+rm -f  Branch.framework.zip || true
+cd Branch-TestBed
+rm -rf build
 
-cd $PROJECT_DIR
-
-rm -rf $BUILD_DIR
-
-xcode_build_target "iphoneos" $CONFIGURATION
-xcode_build_target "iphonesimulator" $CONFIGURATION
-
-cd ..
+xcodeBuildTarget "iphoneos"
+xcodeBuildTarget "iphonesimulator"
 
 # Merge static libraries into a universal static library
-
+ditto build/Release-iphoneos build/Release
 lipo \
     -create \
-        $PROJECT_DIR/$BUILD_DIR/$CONFIGURATION-iphoneos/$LIBRARY_BINARY_NAME \
-        $PROJECT_DIR/$BUILD_DIR/$CONFIGURATION-iphonesimulator/$LIBRARY_BINARY_NAME \
+        build/Release-iphoneos/libBranch.a \
+        build/Release-iphonesimulator/libBranch.a \
     -output \
-        $PROJECT_DIR/$BUILD_DIR/$LIBRARY_BINARY_NAME \
-    || die "lipo failed -- could not create universal static library"
+        build/Release/libBranch.a
 
+# Create a static .framework
 
-# Create .framework
-
-rm -rf $FRAMEWORK_DIR
-
+FRAMEWORK_DIR=build/Branch.framework
 mkdir -p $FRAMEWORK_DIR
 mkdir -p $FRAMEWORK_DIR/Versions
 mkdir -p $FRAMEWORK_DIR/Versions/A
@@ -59,17 +52,20 @@ mkdir -p $FRAMEWORK_DIR/Versions/A/Headers
 #Fabric
 mkdir -p $FRAMEWORK_DIR/Modules
 
-cp $PROJECT_DIR/$BUILD_DIR/$CONFIGURATION-iphoneos/Headers/* $FRAMEWORK_DIR/Versions/A/Headers/
-cp $PROJECT_DIR/$BUILD_DIR/$LIBRARY_BINARY_NAME $FRAMEWORK_DIR/Versions/A/$FRAMEWORK_BINARY_NAME
+cp build/Release/headers/* $FRAMEWORK_DIR/Versions/A/Headers/
+cp build/Release/libBranch.a $FRAMEWORK_DIR/Versions/A/Branch
 #Fabric
-cp $PROJECT_DIR/module.modulemap $FRAMEWORK_DIR/Modules/
-cp $PROJECT_DIR/Framework-Info.plist $FRAMEWORK_DIR/Info.plist
-# Clean up build dir. This must be done *before* the end of the script, otherwise it doesn't seem to do anything.
-rm -rf $PROJECT_DIR/$BUILD_DIR
+cp module.modulemap $FRAMEWORK_DIR/Modules/
+cp Framework-Info.plist $FRAMEWORK_DIR/Info.plist
 
 # Make symlinks
 cd $FRAMEWORK_DIR
 ln -s Versions/Current/Headers Headers
-ln -s Versions/Current/$FRAMEWORK_BINARY_NAME $FRAMEWORK_BINARY_NAME
+ln -s Versions/Current/Branch Branch
 cd Versions
 ln -s A Current
+
+# Copy it into place:
+
+cd ${scriptpath}/..
+ditto Branch-TestBed/build/Branch.framework ./Branch.framework

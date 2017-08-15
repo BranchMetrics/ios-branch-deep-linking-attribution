@@ -7,32 +7,29 @@
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "BNCConfig.h"
-#import "BranchView.h"
 #import "BNCCallbacks.h"
+#import "BNCCommerceEvent.h"
+#import "BNCConfig.h"
+#import "BNCDebug.h"
+#import "BNCError.h"
 #import "BNCLinkCache.h"
-#import "BranchViewHandler.h"
-#import "BNCServerInterface.h"
+#import "BNCLog.h"
 #import "BNCPreferenceHelper.h"
-#import "BranchLinkProperties.h"
-#import "BranchUniversalObject.h"
+#import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
+#import "BNCXcode7Support.h"
 #import "BranchActivityItemProvider.h"
 #import "BranchDeepLinkingController.h"
-#import "BNCCommerceEvent.h"
+#import "BranchLinkProperties.h"
 #import "BranchShareLink.h"
-#import "BNCXcode7Support.h"
-#import "BranchNotifications.h"
-#import "BNCLog.h"
+#import "BranchUniversalObject.h"
+#import "BranchView.h"
+#import "BranchViewHandler.h"
 
 /**
- `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make 
-  are funneled through this class. It is not meant to be instantiated or subclassed, usage should be
-  limited to the global instance.
+ `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.
 
-  Note, when `getInstance` is called, it assumes that you have already placed a Branch Key in your
-  main `Info.plist` file for your project. For additional information on configuring the Branch SDK,
-  check out the getting started guides in the Readme.
+  Note, when `getInstance` is called, it assumes that you have already placed a Branch Key in your main `Info.plist` file for your project. For additional information on configuring the Branch SDK, check out the getting started guides in the Readme.
  */
 
 ///----------------
@@ -464,15 +461,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options;
-
-///---------------
-/// @name Delegate
-///---------------
-
-#pragma mark - Branch Delegate
-
-// TODO: Document
-@property (weak) NSObject<BranchDelegate> *delegate;
 
 ///--------------------------------
 /// @name Push Notification Support

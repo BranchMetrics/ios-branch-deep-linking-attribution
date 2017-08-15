@@ -1,5 +1,14 @@
 Branch iOS SDK Change Log
 
+- v0.17.9
+  * _*Master Release*_ - August 15, 2017
+  * Fixed the Branch.framework static library build. How long was this broken? A year? Since 12.2?
+    Good grief.
+
+- v0.17.7
+  * _*Master Release*_ - August 14, 2017
+  * Fixed some header inclusion and the framework upload.
+
 - v0.17.6
   * _*Master Release*_ - August 11, 2017
   * Added a check for buffer length before reading a pointer.
