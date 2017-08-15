@@ -659,7 +659,7 @@ NSInteger const  TEST_CREDITS = 30;
         andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
             XCTAssertNil(error);
             XCTAssertEqualObjects(preferenceHelper.sessionID, TEST_SESSION_ID);
-            XCTAssertTrue(self.notificationOrder == 1);
+            XCTAssertTrue(self.notificationOrder == 2);
             self.notificationOrder++;
             self.deepLinkParams = params;
             [openExpectation fulfill];
@@ -667,7 +667,7 @@ NSInteger const  TEST_CREDITS = 30;
     ];
     
     [self waitForExpectationsWithTimeout:2.0 handler:NULL];
-    XCTAssertTrue(self.notificationOrder == 3);
+    XCTAssertTrue(self.notificationOrder == 5);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -680,7 +680,7 @@ NSInteger const  TEST_CREDITS = 30;
 
 - (void) branchWillOpenURLNotification:(NSNotification*)notification {
     XCTAssertTrue([NSThread isMainThread]);
-    XCTAssertTrue(self.notificationOrder == 0);
+    XCTAssertTrue(self.notificationOrder == 1);
     self.notificationOrder++;
 
     NSError *error = notification.userInfo[BNCErrorKey];
@@ -700,14 +700,14 @@ NSInteger const  TEST_CREDITS = 30;
  linkParameters:(NSDictionary*)linkParameters
           error:(NSError*)error {
     XCTAssertTrue([NSThread isMainThread]);
-    XCTAssertTrue(self.notificationOrder == 2);
+    XCTAssertTrue(self.notificationOrder == 3);
     self.notificationOrder++;
     [self.branchDidOpenURLExpectation fulfill];
 }
 
 - (void) branchDidOpenURLNotification:(NSNotification*)notification {
     XCTAssertTrue([NSThread isMainThread]);
-    XCTAssertTrue(self.notificationOrder == 2);
+    XCTAssertTrue(self.notificationOrder == 4);
     self.notificationOrder++;
 
     NSError *error = notification.userInfo[BNCErrorKey];

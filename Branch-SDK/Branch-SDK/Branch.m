@@ -515,6 +515,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
         if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
             self.preferenceHelper.universalLinkUrl = branchUrlFromPush;
+            self.preferenceHelper.referredUrl = branchUrlFromPush;
         }
     }
 
@@ -593,6 +594,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (BOOL)handleSchemeDeepLink:(NSURL*)url fromSelf:(BOOL)isFromSelf {
     BOOL handled = NO;
+    self.preferenceHelper.referredUrl = nil;
     if (url && ![url isEqual:[NSNull null]]) {
 
         // save the incoming url in the preferenceHelper in the externalIntentURI field
@@ -600,11 +602,13 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             for (NSString *scheme in self.whiteListedSchemeList) {
                 if ([scheme isEqualToString:[url scheme]]) {
                     self.preferenceHelper.externalIntentURI = [url absoluteString];
+                    self.preferenceHelper.referredUrl = [url absoluteString];
                     break;
                 }
             }
         } else {
             self.preferenceHelper.externalIntentURI = [url absoluteString];
+            self.preferenceHelper.referredUrl = [url absoluteString];
         }
 
         NSString *query = [url fragment];
@@ -662,6 +666,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     NSString *urlString = [url absoluteString];
     self.preferenceHelper.universalLinkUrl = urlString;
+    self.preferenceHelper.referredUrl = urlString;
     self.preferenceHelper.shouldWaitForInit = NO;
     [self initUserSessionAndCallCallback:YES];
 
@@ -731,6 +736,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     if (urlStr) {
         // reusing this field, so as not to create yet another url slot on prefshelper
         self.preferenceHelper.universalLinkUrl = urlStr;
+        self.preferenceHelper.referredUrl = urlStr;
     }
 
     // Again, if app is active, then close out the session and start a new one
@@ -1788,20 +1794,24 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     // Notify everyone --
 
-    NSString *URLString = [self referringURLUsingSessionData:nil];
-    self.originalURL = (URLString.length) ? [NSURL URLWithString:URLString] : nil;
+    NSURL *URL =
+        (self.preferenceHelper.referredUrl.length)
+        ? [NSURL URLWithString:self.preferenceHelper.referredUrl]
+        : nil;
+
+    if ([self.delegate respondsToSelector:@selector(branch:willOpenURL:)]) {
+        [self.delegate performSelector:@selector(branch:willOpenURL:)
+            withObject:self withObject:URL];
+    }
 
     NSMutableDictionary *userInfo = [NSMutableDictionary new];
-    userInfo[BNCOriginalURLKey] = self.originalURL;
-    Branch *branch = [Branch getInstance];
-    if ([self.delegate respondsToSelector:@selector(branch:willOpenURL:)]) {
-        [branch.delegate performSelector:@selector(branch:willOpenURL:)
-            withObject:branch withObject:self.originalURL];
-    }
+    userInfo[BNCOriginalURLKey] = URL;
     [[NSNotificationCenter defaultCenter]
         postNotificationName:BNCBranchWillOpenURLNotification
-        object:[Branch getInstance]
+        object:self
         userInfo:userInfo];
+
+    // Fix the queue order and open --
 
 	@synchronized (self) {
 		if ([self.requestQueue removeInstallOrOpen])
@@ -1829,7 +1839,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             );
         }
     }
-
+    NSURL *URL =
+        (self.preferenceHelper.referredUrl.length)
+        ? [NSURL URLWithString:self.preferenceHelper.referredUrl]
+        : nil;
     [self sendOpenNotificationWithOriginalURL:URL linkParameters:latestReferringParams error:nil];
 
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
@@ -1998,10 +2011,18 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             self.sessionInitWithParamsCallback([[NSDictionary alloc] init], error);
         }
         else if (self.sessionInitWithBranchUniversalObjectCallback) {
-            self.sessionInitWithBranchUniversalObjectCallback([[BranchUniversalObject alloc] init], [[BranchLinkProperties alloc] init], error);
+            self.sessionInitWithBranchUniversalObjectCallback(
+                [[BranchUniversalObject alloc] init],
+                [[BranchLinkProperties alloc] init],
+                error
+            );
         }
     }
 
+    NSURL *URL =
+        (self.preferenceHelper.referredUrl.length)
+        ? [NSURL URLWithString:self.preferenceHelper.referredUrl]
+        : nil;
     [self sendOpenNotificationWithOriginalURL:URL linkParameters:@{} error:error];
 }
 

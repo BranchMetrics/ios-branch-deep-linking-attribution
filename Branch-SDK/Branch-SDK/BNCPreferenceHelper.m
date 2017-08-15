@@ -345,6 +345,13 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
     }
 }
 
+- (void) setReferredUrl:(NSString *)referredUrl {
+    @synchronized (self) {
+        _referredUrl = [referredUrl copy];
+        [self writeObjectToDefaults:@"referredUrl" value:_referredUrl];
+    }
+}
+
 - (NSString *)universalLinkUrl {
     if (!_universalLinkUrl) {
         _universalLinkUrl = [self readStringFromDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL];

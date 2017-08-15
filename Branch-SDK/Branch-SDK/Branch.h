@@ -21,6 +21,7 @@
 #import "BranchActivityItemProvider.h"
 #import "BranchDeepLinkingController.h"
 #import "BranchLinkProperties.h"
+#import "BranchNotifications.h"
 #import "BranchShareLink.h"
 #import "BranchUniversalObject.h"
 #import "BranchView.h"
@@ -227,6 +228,9 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  * @return YES if device fingerprint ID reporting to Crashlytics is enabled. NO otherwise.
  */
 + (BOOL) enableFingerprintIDInCrashlyticsReports;
+
+/// TODO: Add documentation.
+@property (weak) NSObject<BranchDelegate>* delegate;
 
 #pragma mark - BranchActivityItemProvider methods
 

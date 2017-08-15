@@ -131,6 +131,10 @@
 		4DED5FB41F34F6CE00919C54 /* BNCDeviceInfo.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DED5FB01F34F6CE00919C54 /* BNCDeviceInfo.Test.m */; };
 		4DED5FB51F34F6CE00919C54 /* BNCEncodingUtils.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DED5FB11F34F6CE00919C54 /* BNCEncodingUtils.Test.m */; };
 		4DED5FB71F34F6CE00919C54 /* BranchNetworkScenario.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DED5FB31F34F6CE00919C54 /* BranchNetworkScenario.Test.m */; };
+		4DF79D101F4370D200165385 /* BranchNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DF79D0E1F4370D200165385 /* BranchNotifications.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DF79D111F4370D200165385 /* BranchNotifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF79D0F1F4370D200165385 /* BranchNotifications.m */; };
+		4DF79D151F43780500165385 /* APWaitingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF79D131F43780500165385 /* APWaitingView.m */; };
+		4DF79D161F43780500165385 /* APWaitingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DF79D141F43780500165385 /* APWaitingView.xib */; };
 		54391A161BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 54391A141BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m */; };
 		54FF1F8E1BD1D4AE0004CE2E /* BranchUniversalObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F8C1BD1D4AE0004CE2E /* BranchUniversalObject.m */; };
 		54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */; };
@@ -287,6 +291,11 @@
 		4DED5FB01F34F6CE00919C54 /* BNCDeviceInfo.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeviceInfo.Test.m; sourceTree = "<group>"; };
 		4DED5FB11F34F6CE00919C54 /* BNCEncodingUtils.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtils.Test.m; sourceTree = "<group>"; };
 		4DED5FB31F34F6CE00919C54 /* BranchNetworkScenario.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchNetworkScenario.Test.m; sourceTree = "<group>"; };
+		4DF79D0E1F4370D200165385 /* BranchNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchNotifications.h; sourceTree = "<group>"; };
+		4DF79D0F1F4370D200165385 /* BranchNotifications.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchNotifications.m; sourceTree = "<group>"; };
+		4DF79D121F43780500165385 /* APWaitingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APWaitingView.h; sourceTree = "<group>"; };
+		4DF79D131F43780500165385 /* APWaitingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APWaitingView.m; sourceTree = "<group>"; };
+		4DF79D141F43780500165385 /* APWaitingView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = APWaitingView.xib; sourceTree = "<group>"; };
 		54391A131BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchCSSearchableItemAttributeSet.h; sourceTree = "<group>"; };
 		54391A141BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchCSSearchableItemAttributeSet.m; sourceTree = "<group>"; };
 		54FF1F8B1BD1D4AE0004CE2E /* BranchUniversalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchUniversalObject.h; sourceTree = "<group>"; };
@@ -535,6 +544,9 @@
 			children = (
 				670016721940F51400A9E103 /* AppDelegate.h */,
 				670016731940F51400A9E103 /* AppDelegate.m */,
+				4DF79D121F43780500165385 /* APWaitingView.h */,
+				4DF79D131F43780500165385 /* APWaitingView.m */,
+				4DF79D141F43780500165385 /* APWaitingView.xib */,
 				63E4C4911D25E1CA00A45FD8 /* Assets.xcassets */,
 				677F4CB41C1FB0FA0029F2B3 /* Branch-TestBed.entitlements */,
 				7EAA790019E89F67008D4A83 /* CreditHistoryViewController.h */,
@@ -615,6 +627,8 @@
 				46DBB42F1B335A9B00642FC8 /* BranchDeepLinkingController.h */,
 				54FF1F8F1BD1DC320004CE2E /* BranchLinkProperties.h */,
 				54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */,
+				4DF79D0E1F4370D200165385 /* BranchNotifications.h */,
+				4DF79D0F1F4370D200165385 /* BranchNotifications.m */,
 				4DB567311E79F46000A8A324 /* BranchShareLink.h */,
 				4DB567321E79F46000A8A324 /* BranchShareLink.m */,
 				54FF1F8B1BD1D4AE0004CE2E /* BranchUniversalObject.h */,
@@ -739,6 +753,7 @@
 				4DCAC8111F426F7C00405D1D /* BranchActivityItemProvider.h in Headers */,
 				4DCAC8171F426F7C00405D1D /* BranchDeepLinkingController.h in Headers */,
 				4DCAC8181F426F7C00405D1D /* BranchLinkProperties.h in Headers */,
+				4DF79D101F4370D200165385 /* BranchNotifications.h in Headers */,
 				4DCAC8191F426F7C00405D1D /* BranchShareLink.h in Headers */,
 				4DCAC81A1F426F7C00405D1D /* BranchUniversalObject.h in Headers */,
 				4DCAC81B1F426F7C00405D1D /* BranchView.h in Headers */,
@@ -917,6 +932,7 @@
 				6700166E1940F51400A9E103 /* InfoPlist.strings in Resources */,
 				670016771940F51400A9E103 /* Main.storyboard in Resources */,
 				63E4C4901D25E1BC00A45FD8 /* LaunchScreen.storyboard in Resources */,
+				4DF79D161F43780500165385 /* APWaitingView.xib in Resources */,
 				63E4C4921D25E1CA00A45FD8 /* Assets.xcassets in Resources */,
 				677F4CB51C1FB1910029F2B3 /* Branch-TestBed.entitlements in Resources */,
 			);
@@ -999,6 +1015,7 @@
 				7B18DF4A1F1F00E200C25C84 /* BNCCrashlyticsWrapper.m in Sources */,
 				7D0C971D1D875465004E14B1 /* BranchContentDiscoveryManifest.m in Sources */,
 				466D5A121B5991E3009DB845 /* BNCContentDiscoveryManager.m in Sources */,
+				4DF79D111F4370D200165385 /* BranchNotifications.m in Sources */,
 				466B58551B17779C00A69EDE /* Branch.m in Sources */,
 				4DBC88651F3A55B700E119BF /* NSString+Branch.m in Sources */,
 				7D4DAC261C8FA908008E37DB /* BranchView.m in Sources */,
@@ -1058,6 +1075,7 @@
 				4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,
 				63E4C48B1D25E17B00A45FD8 /* NavigationController.m in Sources */,
+				4DF79D151F43780500165385 /* APWaitingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
