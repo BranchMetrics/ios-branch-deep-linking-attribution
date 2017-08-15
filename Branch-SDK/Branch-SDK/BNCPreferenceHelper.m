@@ -50,6 +50,7 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
     NSString         *_lastSystemBuildVersion;
     NSString         *_browserUserAgentString;
     NSString         *_branchAPIURL;
+    NSString         *_referredUrl;
 }
 
 @property (strong, nonatomic) NSMutableDictionary *persistenceDict;
@@ -342,6 +343,13 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
     if (![_externalIntentURI isEqualToString:externalIntentURI]) {
         _externalIntentURI = externalIntentURI;
         [self writeObjectToDefaults:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI value:externalIntentURI];
+    }
+}
+
+- (NSString*) referredUrl {
+    @synchronized (self) {
+        if (!_referredUrl) _referredUrl = [self readStringFromDefaults:@"referredUrl"];
+        return _referredUrl;
     }
 }
 
