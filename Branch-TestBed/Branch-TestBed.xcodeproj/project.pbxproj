@@ -113,6 +113,8 @@
 		BC659371001A4A77B4CCE51C /* libPods-Branch-SDK-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 423ACD2DEBB9A2E4FAF64B08 /* libPods-Branch-SDK-Tests.a */; };
 		E2133B751D01477200763049 /* BNCFabricAnswers.m in Sources */ = {isa = PBXBuildFile; fileRef = E2133B741D01477200763049 /* BNCFabricAnswers.m */; };
 		E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B947491D15D73900F2270D /* BNCCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F185BAAA1F3D30D70056300C /* BNCSpotlightService.h in Headers */ = {isa = PBXBuildFile; fileRef = F185BAA81F3D30D70056300C /* BNCSpotlightService.h */; };
+		F185BAAB1F3D30D70056300C /* BNCSpotlightService.m in Sources */ = {isa = PBXBuildFile; fileRef = F185BAA91F3D30D70056300C /* BNCSpotlightService.m */; };
 		F1D359201ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */; };
 		F1D359211ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */; };
 		F1D4F9AF1F323F01002D13FF /* TestBedUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D4F9AE1F323F01002D13FF /* TestBedUITests.m */; };
@@ -315,6 +317,8 @@
 		E2B597061D063EEF00A089A6 /* Answers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Answers.h; path = "../Branch-SDK/Fabric/Answers.h"; sourceTree = "<group>"; };
 		E2B597081D063F1D00A089A6 /* ANSCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ANSCompatibility.h; path = "../Branch-SDK/Fabric/ANSCompatibility.h"; sourceTree = "<group>"; };
 		E2B947491D15D73900F2270D /* BNCCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCCallbacks.h; sourceTree = "<group>"; };
+		F185BAA81F3D30D70056300C /* BNCSpotlightService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSpotlightService.h; sourceTree = "<group>"; };
+		F185BAA91F3D30D70056300C /* BNCSpotlightService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSpotlightService.m; sourceTree = "<group>"; };
 		F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
 		F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeepLinkViewControllerInstance.m; sourceTree = "<group>"; };
 		F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-TestBed-UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -568,6 +572,8 @@
 				54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */,
 				4DB567311E79F46000A8A324 /* BranchShareLink.h */,
 				4DB567321E79F46000A8A324 /* BranchShareLink.m */,
+				F185BAA81F3D30D70056300C /* BNCSpotlightService.h */,
+				F185BAA91F3D30D70056300C /* BNCSpotlightService.m */,
 				54FF1F8B1BD1D4AE0004CE2E /* BranchUniversalObject.h */,
 				54FF1F8C1BD1D4AE0004CE2E /* BranchUniversalObject.m */,
 				7D4DAC201C8FA8C0008E37DB /* BranchView.h */,
@@ -671,6 +677,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F185BAAA1F3D30D70056300C /* BNCSpotlightService.h in Headers */,
 				E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */,
 				F1D359201ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h in Headers */,
 				7B18DF491F1F00E200C25C84 /* BNCCrashlyticsWrapper.h in Headers */,
@@ -917,6 +924,7 @@
 				4DB567341E79F46000A8A324 /* BranchShareLink.m in Sources */,
 				4D130E8C1EE0C7B100A69A0A /* BranchRegisterViewRequest.m in Sources */,
 				4D3FA94B1DFF31EB00E2B6A9 /* BNCConfig.m in Sources */,
+				F185BAAB1F3D30D70056300C /* BNCSpotlightService.m in Sources */,
 				4D130E8A1EE0C7B100A69A0A /* BranchRedeemRewardsRequest.m in Sources */,
 				4665AF261B28B9BB00184037 /* BranchConstants.m in Sources */,
 				466B58641B17779C00A69EDE /* BNCError.m in Sources */,
@@ -1198,7 +1206,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
+				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1219,7 +1227,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
+				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

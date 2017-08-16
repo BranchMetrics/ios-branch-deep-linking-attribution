@@ -42,7 +42,42 @@
 
 /* This one has a different callback, which includes the spotlightIdentifier, and requires a different signature
     It cannot be part of the stack of method signatures above, because of the different callback type.*/
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description canonicalId:(NSString *)canonicalId publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords userInfo:(NSDictionary *)userInfo expirationDate:(NSDate *)expirationDate callback:(callbackWithUrl)callback spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+                  canonicalId:(NSString *)canonicalId
+            publiclyIndexable:(BOOL)publiclyIndexable
+                         type:(NSString *)type
+                 thumbnailUrl:(NSURL *)thumbnailUrl
+                     keywords:(NSSet *)keywords
+                     userInfo:(NSDictionary *)userInfo
+               expirationDate:(NSDate *)expirationDate
+                     callback:(callbackWithUrl)callback
+            spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
 
+/*
+ * Indexing single BUO on Spotlight
+ */
+
+-(void) indexObject:(BranchUniversalObject*)universalObject
+       onCompletion:(void (^) (BranchUniversalObject *universalObject, NSString *url, NSError *error))completion;
+
+/*
+ * Indexing using SearchableItem would use dynamic (long) url to index objects
+ * No limit on number of object indexed through this API
+ * Content privately indexed irrestive of the value of contentIndexMode
+ */
+-(void) indexObjectUsingSearchableItem:(BranchUniversalObject*)universalObject
+                          onCompletion:(void (^) (BranchUniversalObject *universalObject, NSError *error))completion;
+
+
+/*
+ * Indexing of multiple BUOs
+ *
+ * Content privately indexed irrestive of the value of contentIndexMode
+ */
+
+-(void) indexObjectsUsingSearchableItem:(NSArray<BranchUniversalObject*>*)universalObjects
+                           onCompletion:(void (^) (NSArray<BranchUniversalObject*>*universalObjects))completion
+                              onFailure:(void (^) (BranchUniversalObject *universalObject, NSError* error))failure;
 
 @end
