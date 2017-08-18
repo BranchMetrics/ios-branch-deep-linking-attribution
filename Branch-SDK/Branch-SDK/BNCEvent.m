@@ -55,24 +55,20 @@ BNCStandardEvent BNCStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
 - (NSDictionary*) dictionary {
     NSMutableDictionary *dictionary = [NSMutableDictionary new];
 
-    #define addProperty(name) { \
-        if (_##name) dictionary[@#name] = _##name; \
-    }
+    #define BNCFieldDefinesDictionaryFromSelf
+    #include "BNCAddFieldDefines.h"
 
-    if (_transactionID.length) dictionary[@"transaction_id"] = _transactionID;
-    addProperty(currency);
-    addProperty(revenue);
-    addProperty(shipping);
-    addProperty(tax);
-    addProperty(coupon);
-    addProperty(affiliation);
-    addProperty(detail);
+    addString(transactionID, transaction_id);
+    addString(currency,     currency);
+    addDecimal(revenue,     revenue);
+    addDecimal(shipping,    shipping);
+    addDecimal(tax,         tax);
+    addString(coupon,       coupon);
+    addString(affiliation,  affiliation);
+    addString(detail,       detail);
+    addDictionary(userInfo, custom_data);
 
-    if (_customData.count) {
-        dictionary[@"custom_data"] = [_customData copy];
-    }
-
-    #undef addProperty
+    #include "BNCAddFieldDefines.h"
 
     return dictionary;
 }
@@ -91,7 +87,6 @@ BNCStandardEvent BNCStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
 @property (strong) NSURL *serverURL;
 @property (copy)   void (^completion)(NSDictionary* response, NSError* error);
 @end
-
 
 @implementation BranchEventRequest
 
@@ -297,7 +292,6 @@ BNCStandardEvent BNCStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
         ([self.class.standardEvents containsObject:event])
         ? [preferenceHelper getAPIURL:@"v2/event/standard"]
         : [preferenceHelper getAPIURL:@"v2/event/custom"];
-
 
     BranchEventRequest *request =
 		[[BranchEventRequest alloc]

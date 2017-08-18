@@ -13,6 +13,7 @@
 #import "BNCDeviceInfo.h"
 #import "BNCXcode7Support.h"
 #import "BNCLog.h"
+#import "Branch.h"
 @class BranchShareActivityItem;
 
 typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {

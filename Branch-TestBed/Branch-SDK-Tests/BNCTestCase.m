@@ -72,6 +72,14 @@
     }];
 }
 
+- (NSString*) stringFromBundleWithKey:(NSString*)key {
+    NSString *const kItemNotFound = @"<Item-Not-Found>";
+    NSString *resource =
+        [[NSBundle bundleForClass:self.class] localizedStringForKey:key value:kItemNotFound table:@"Branch-SDK-Tests"];
+    if ([resource isEqualToString:kItemNotFound]) resource = nil;
+    return resource;
+}
+
 static BOOL _testBreakpoints = NO;
 
 + (BOOL) testBreakpoints {

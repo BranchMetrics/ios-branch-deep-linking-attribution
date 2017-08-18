@@ -82,19 +82,6 @@
 
 @end
 
-#pragma mark - LoadStringResourceWithKey
-
-NSString *BNCLoadStringResourceWithKey(NSString *key) {
-    NSString *resource =
-        NSLocalizedStringFromTableInBundle(
-            key,
-            @"Branch-SDK-Tests",
-            [NSBundle bundleForClass:NSClassFromString(@"BRDebugTest")],
-            @""
-        );
-    return resource;
-}
-
 #pragma mark - BRDebugTest
 
 @interface BRDebugTest : BNCTestCase
@@ -104,7 +91,7 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
 
 - (void) testClassDump {
 
-    NSString *truthString = BNCLoadStringResourceWithKey(@"DumpClassTest");
+    NSString *truthString = [self stringFromResourceWithKey:@"DumpClassTest"];
     XCTAssertTrue(truthString, @"Can't load DumpClassTest resource from plist!");
 
     NSString *dumpString = BNCDebugStringFromObject(NSClassFromString(@"DumpClass"));
@@ -137,7 +124,7 @@ NSString *BNCLoadStringResourceWithKey(NSString *key) {
 }
 
 - (void) testInstanceDump {
-    NSString *truthString = BNCLoadStringResourceWithKey(@"DumpInstanceTest");
+    NSString *truthString = [self stringFromResourceWithKey:@"DumpInstanceTest"];
     XCTAssertTrue(truthString, @"Can't load DumpInstanceTest resource from plist!");
 
     DumpClass *testInstance = [DumpClass new];

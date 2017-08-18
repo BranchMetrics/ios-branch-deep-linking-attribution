@@ -34,6 +34,7 @@ static inline void BNCSleepForTimeInterval(NSTimeInterval seconds) {
 - (void)awaitExpectations;
 - (void)resetExpectations;
 - (id)stringMatchingPattern:(NSString *)pattern;
+- (NSString*)stringFromBundleWithKey:(NSString*)key;
 
 + (BOOL) testBreakpoints;
 @end

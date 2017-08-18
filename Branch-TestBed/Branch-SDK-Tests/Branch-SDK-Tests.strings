@@ -69,3 +69,113 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
 	Method name: 'intProp'.
 	Method name: 'stringProp'.
 ";
+"BranchUniversalObjectJSON" =
+"
+{
+    \"$content_schema\": \"COMMERCE_PRODUCT\",
+    \"$quantity\": 2,
+    \"$price\": 23.2,
+    \"$currency\": \"USD\",
+    \"$sku\": \"1994320302\",
+    \"$product_name\": \"my_product_name1\",
+    \"$product_brand\": \"my_prod_Brand1\",
+    \"$product_category\": \"Baby & Toddler\",
+    \"$product_variant\": \"3T\",
+    \"$rating_average\": 5,
+    \"$rating_count\": 5,
+    \"$rating_max\": 7,
+    \"$address_street\": \"Street_name1\",
+    \"$address_city\": \"city1\",
+    \"$address_region\": \"Region1\",
+    \"$address_country\": \"Country1\",
+    \"$address_postal_code\": \"postal_code\",
+    \"$latitude\": 12.07,
+    \"$longitude\": -97.5,
+    \"$image_captions\": [\"my_img_caption1\", \"my_img_caption_2\"],
+    \"$custom_fields\": \"{\\\"Custom_Content_metadata_key1\\\":\\\"Custom_Content_metadata_val1\\\"}\",
+    \"$og_title\": \"My Content Title\",
+    \"$canonical_identifier\": \"item\/12345\",
+    \"$canonical_url\": \"https:\/\/branch.io\/deepviews\",
+    \"$keywords\": [\"My_Keyword1\", \"My_Keyword2\"],
+    \"$og_description\": \"my_product_description1\",
+    \"$og_image_url\": \"https:\/\/test_img_url\",
+    \"$exp_date\": 212123232544,
+    \"$publicly_indexable\": false,
+    \"$locally_indexable\": true,
+    \"$creation_timestamp\": 1501869445321
+}
+";
+"V2EventJSON" =
+"
+{
+    \"name\": \"PURCHASE\",
+    \"custom_data\": {
+        \"Custom_Event_Property_Key1\": \"Custom_Event_Property_val1\",
+        \"Custom_Event_Property_Key2\": \"Custom_Event_Property_val2\"
+    },
+    \"event_data\": {
+        \"affiliation\": \"test_affiliation\",
+        \"coupon\": \"test_coupon\",
+        \"currency\": \"USD\",
+        \"description\": \"Event _description\",
+        \"shipping\": 10.2,
+        \"tax\": 12.3,
+        \"revenue\": 1.5,
+        \"$condition\": \"FAIR\",
+        \"transaction_id\": \"12344555\"
+    },
+    \"content_items\": [{
+        \"$content_schema\": \"COMMERCE_PRODUCT\",
+        \"$quantity\": 2,
+        \"$price\": 23.2,
+        \"$currency\": \"USD\",
+        \"$sku\": \"1994320302\",
+        \"$product_name\": \"my_product_name1\",
+        \"$product_brand\": \"my_prod_Brand1\",
+        \"$product_category\": \"Baby & Toddler\",
+        \"$product_variant\": \"3T\",
+        \"$rating_average\": 5,
+        \"$rating_count\": 5,
+        \"$rating_max\": 7,
+        \"$address_street\": \"Street_name1\",
+        \"$address_city\": \"city1\",
+        \"$address_region\": \"Region1\",
+        \"$address_country\": \"Country1\",
+        \"$address_postal_code\": \"postal_code\",
+        \"$latitude\": 12.07,
+        \"$longitude\": -97.5,
+        \"$image_captions\": [\"my_img_caption1\", \"my_img_caption_2\"],
+        \"$custom_fields\": \"{\\\"Custom_Content_metadata_key1\\\":\\\"Custom_Content_metadata_val1\\\"}\",
+        \"$og_title\": \"My Content Title\",
+        \"$canonical_identifier\": \"item\/12345\",
+        \"$canonical_url\": \"https:\/\/branch.io\/deepviews\",
+        \"$keywords\": [\"My_Keyword1\", \"My_Keyword2\"],
+        \"$og_description\": \"my_product_description1\",
+        \"$og_image_url\": \"https:\/\/test_img_url\",
+        \"$exp_date\": 212123232544,
+        \"$publicly_indexable\": false,
+        \"$locally_indexable\": true,
+        \"$creation_timestamp\": 1501869445321
+    }],
+    \"metadata\": {},
+    \"hardware_id\": \"dff82788-eaa5-4591-a81c-806c92a9b277\",
+    \"is_hardware_id_real\": false,
+    \"brand\": \"LGE\",
+    \"model\": \"Nexus 5X\",
+    \"screen_dpi\": 420,
+    \"screen_height\": 1794,
+    \"screen_width\": 1080,
+    \"wifi\": true,
+    \"os\": \"Android\",
+    \"os_version\": 25,
+    \"country\": \"US\",
+    \"language\": \"en\",
+    \"local_ip\": \"192.168.3.209\",
+    \"instrumentation\": {
+        \"v2\/event\/standard-brtt\": \"165\",
+        \"v2\/event\/standard-qwt\": \"2\"
+    },
+    \"sdk\": \"android2.10.3\",
+    \"branch_key\": \"key_test_hdcBLUy1xZ1JD0tKg7qrLcgirFmPPVJc\"
+}
+";

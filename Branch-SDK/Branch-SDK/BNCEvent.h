@@ -51,9 +51,10 @@ extern BNCStandardEvent BNCStandardEventUnlockAchievement;
 @property (nonatomic, strong) NSString *coupon;
 @property (nonatomic, strong) NSString *affiliation;
 @property (nonatomic, strong) NSString *detail;
-@property (nonatomic, strong) NSDictionary<NSString*, id<NSObject>> *customData;
+@property (nonatomic, strong) NSDictionary<NSString*, NSString*> *userInfo;
 @end
 
+#pragma mark - Branch (BNCStandardEvents)
 
 // Extend the Branch class for standard events
 
