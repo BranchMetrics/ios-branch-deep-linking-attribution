@@ -98,35 +98,38 @@
     expectedRequest[@"ios_vendor_id"]   = device.vendorId;
     expectedRequest[@"user_agent"]      = [BNCDeviceInfo userAgentString];
 
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"v2 Event"];
-    id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
+    Branch *branch = [Branch getInstance:@"key_live_foo"];
+    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"v2-event"];
+    id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
+
     OCMStub(
-        [serverInterfaceMock
-            postRequest:[OCMArg any]
-            url:[OCMArg any]
-            key:[OCMArg any]
-            callback:[OCMArg any]]
+        [serverInterfaceMock genericHTTPRequest:[OCMArg any]
+            retryNumber:0
+            callback:[OCMArg any]
+            retryHandler:[OCMArg any]]
     ).andDo(^(NSInvocation *invocation) {
-        [expectation fulfill];
+
+        __unsafe_unretained NSURLRequest *request = nil;
+        [invocation getArgument:&request atIndex:2];
+
+        NSError *error = nil;
+        NSString *url = request.URL.absoluteString;
+        NSData *bodyData = request.HTTPBody;
+        NSDictionary *parameters = [NSJSONSerialization JSONObjectWithData:bodyData options:0 error:&error];
+        XCTAssertNil(error);
+
+        if ([url containsString:@"v2/event/standard"]) {
+            XCTAssertEqualObjects(expectedRequest, parameters);
+            [expectation fulfill];
+        }
     });
 
-
-//    [[serverInterfaceMock expect]
-//        postRequest:expectedRequest
-//        url:[self stringMatchingPattern:@"v2/event/standard"]
-//        key:[OCMArg any]
-//        callback:[OCMArg any]];
-
-    Branch *branch = [Branch getInstance:@"key_live_foo"];
     [[BNCServerRequestQueue getInstance] clearQueue];
     [branch logStandardEvent:BNCStandardEventPurchase
         withProperties:eventProperties
         contentItems:@[buo]];
 
-//    sleep(1); // Sleep to let the event fire.
-//    [serverInterfaceMock verify];
-
-    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+    [self waitForExpectations:@[expectation] timeout:2.0];
 }
 
 @end

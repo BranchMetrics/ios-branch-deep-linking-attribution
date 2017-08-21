@@ -1490,6 +1490,9 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 - (void) sendServerRequest:(BNCServerRequest*)request;
 - (void) sendServerRequestWithoutSession:(BNCServerRequest*)request;
+
+// Read-only properties exposed for unit testing.
+@property (strong, readonly) BNCServerInterface *serverInterface;
 @end
 
 #import "BNCEvent.h" // TODO: Weird but true.
