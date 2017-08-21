@@ -21,72 +21,71 @@ typedef NS_ENUM(NSInteger, BranchContentIndexMode) {
     BranchContentIndexModeNone
 };
 
-#pragma mark - BranchContentSchema
+#pragma mark - BNCContentSchema
 
-typedef NSString * const BranchContentSchema;
+typedef NSString * const BNCContentSchema;
 
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceAuction;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceBusiness;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceOther;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceProduct;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceRestaurant;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceService;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelFlight;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelHotel;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelOther;
-extern BranchContentSchema _Nonnull BranchContentSchemaGameState;
-extern BranchContentSchema _Nonnull BranchContentSchemaMediaImage;
-extern BranchContentSchema _Nonnull BranchContentSchemaMediaMixed;
-extern BranchContentSchema _Nonnull BranchContentSchemaMediaMusic;
-extern BranchContentSchema _Nonnull BranchContentSchemaMediaOther;
-extern BranchContentSchema _Nonnull BranchContentSchemaMediaVideo;
-extern BranchContentSchema _Nonnull BranchContentSchemaOther;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextArticle;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextBlog;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextOther;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextRecipe;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextReview;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextSearchResults;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextStory;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc;
+extern BNCContentSchema _Nonnull BNCContentSchemaCommerceAuction;
+extern BNCContentSchema _Nonnull BNCContentSchemaCommerceBusiness;
+extern BNCContentSchema _Nonnull BNCContentSchemaCommerceOther;
+extern BNCContentSchema _Nonnull BNCContentSchemaCommerceProduct;
+extern BNCContentSchema _Nonnull BNCContentSchemaCommerceRestaurant;
+extern BNCContentSchema _Nonnull BNCContentSchemaCommerceService;
+extern BNCContentSchema _Nonnull BNCContentSchemaCommerceTravelFlight;
+extern BNCContentSchema _Nonnull BNCContentSchemaCommerceTravelHotel;
+extern BNCContentSchema _Nonnull BNCContentSchemaCommerceTravelOther;
+extern BNCContentSchema _Nonnull BNCContentSchemaGameState;
+extern BNCContentSchema _Nonnull BNCContentSchemaMediaImage;
+extern BNCContentSchema _Nonnull BNCContentSchemaMediaMixed;
+extern BNCContentSchema _Nonnull BNCContentSchemaMediaMusic;
+extern BNCContentSchema _Nonnull BNCContentSchemaMediaOther;
+extern BNCContentSchema _Nonnull BNCContentSchemaMediaVideo;
+extern BNCContentSchema _Nonnull BNCContentSchemaOther;
+extern BNCContentSchema _Nonnull BNCContentSchemaTextArticle;
+extern BNCContentSchema _Nonnull BNCContentSchemaTextBlog;
+extern BNCContentSchema _Nonnull BNCContentSchemaTextOther;
+extern BNCContentSchema _Nonnull BNCContentSchemaTextRecipe;
+extern BNCContentSchema _Nonnull BNCContentSchemaTextReview;
+extern BNCContentSchema _Nonnull BNCContentSchemaTextSearchResults;
+extern BNCContentSchema _Nonnull BNCContentSchemaTextStory;
+extern BNCContentSchema _Nonnull BNCContentSchemaTextTechnicalDoc;
 
-#pragma mark - BranchProductCondition
+#pragma mark - BNCProductCondition
 
-typedef NSString * const BranchProductCondition;
+typedef NSString * const BNCProductCondition;
 
-extern BranchProductCondition _Nonnull BranchProductConditionOther;
-extern BranchProductCondition _Nonnull BranchProductConditionNew;
-extern BranchProductCondition _Nonnull BranchProductConditionGood;
-extern BranchProductCondition _Nonnull BranchProductConditionFair;
-extern BranchProductCondition _Nonnull BranchProductConditionPoor;
-extern BranchProductCondition _Nonnull BranchProductConditionUsed;
-extern BranchProductCondition _Nonnull BranchProductConditionRefurbished;
+extern BNCProductCondition _Nonnull BNCProductConditionOther;
+extern BNCProductCondition _Nonnull BNCProductConditionNew;
+extern BNCProductCondition _Nonnull BNCProductConditionGood;
+extern BNCProductCondition _Nonnull BNCProductConditionFair;
+extern BNCProductCondition _Nonnull BNCProductConditionPoor;
+extern BNCProductCondition _Nonnull BNCProductConditionUsed;
+extern BNCProductCondition _Nonnull BNCProductConditionRefurbished;
 
 #pragma mark - BranchSchemaData
 
 @interface BranchSchemaData : NSObject
 
-@property (nonatomic, strong, nullable) BranchContentSchema contentSchema;
-@property (nonatomic, assign)           double quantity;
+@property (nonatomic, strong, nullable) BNCContentSchema contentSchema;
+@property (nonatomic, assign)           double          quantity;
 @property (nonatomic, strong, nullable) NSDecimalNumber *price;
-@property (nonatomic, strong, nullable) BNCCurrency currency;
-@property (nonatomic, strong, nullable) NSString *sku;
-@property (nonatomic, strong, nullable) NSString *productName;
-@property (nonatomic, strong, nullable) NSString *productBrand;
-@property (nonatomic, strong, nullable) NSString *productCategory;
-@property (nonatomic, strong, nullable) NSString *productVariant;
-@property (nonatomic, assign)           double    ratingAverage;
-@property (nonatomic, assign)           NSInteger ratingCount;
-@property (nonatomic, assign)           double    ratingMaximum;
-@property (nonatomic, strong, nullable) NSString *addressStreet;
-@property (nonatomic, strong, nullable) NSString *addressCity;
-@property (nonatomic, strong, nullable) NSString *addressRegion;
-@property (nonatomic, strong, nullable) NSString *addressCountry;
-@property (nonatomic, strong, nullable) NSString *addressPostalCode;
-@property (nonatomic, assign)           double latitude;
-@property (nonatomic, assign)           double longitude;
+@property (nonatomic, strong, nullable) BNCCurrency     currency;
+@property (nonatomic, strong, nullable) NSString        *sku;
+@property (nonatomic, strong, nullable) NSString        *productName;
+@property (nonatomic, strong, nullable) NSString        *productBrand;
+@property (nonatomic, strong, nullable) NSString        *productCategory;
+@property (nonatomic, strong, nullable) NSString        *productVariant;
+@property (nonatomic, assign)           double          ratingAverage;
+@property (nonatomic, assign)           NSInteger       ratingCount;
+@property (nonatomic, assign)           double          ratingMaximum;
+@property (nonatomic, strong, nullable) NSString        *addressStreet;
+@property (nonatomic, strong, nullable) NSString        *addressCity;
+@property (nonatomic, strong, nullable) NSString        *addressRegion;
+@property (nonatomic, strong, nullable) NSString        *addressCountry;
+@property (nonatomic, strong, nullable) NSString        *addressPostalCode;
+@property (nonatomic, assign)           double          latitude;
+@property (nonatomic, assign)           double          longitude;
 @property (nonatomic, strong, nullable) NSArray<NSString*> *imageCaptions;
-@property (nonatomic, strong, nullable) BranchProductCondition condition;
 @property (nonatomic, strong, nullable) NSMutableDictionary<NSString*, NSString*> *userInfo;
 
 - (NSDictionary*_Nonnull) dictionary;

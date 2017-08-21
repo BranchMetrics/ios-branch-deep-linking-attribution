@@ -91,7 +91,7 @@
 
 - (void) testClassDump {
 
-    NSString *truthString = [self stringFromResourceWithKey:@"DumpClassTest"];
+    NSString *truthString = [self stringFromBundleWithKey:@"DumpClassTest"];
     XCTAssertTrue(truthString, @"Can't load DumpClassTest resource from plist!");
 
     NSString *dumpString = BNCDebugStringFromObject(NSClassFromString(@"DumpClass"));
@@ -124,7 +124,7 @@
 }
 
 - (void) testInstanceDump {
-    NSString *truthString = [self stringFromResourceWithKey:@"DumpInstanceTest"];
+    NSString *truthString = [self stringFromBundleWithKey:@"DumpInstanceTest"];
     XCTAssertTrue(truthString, @"Can't load DumpInstanceTest resource from plist!");
 
     DumpClass *testInstance = [DumpClass new];

@@ -30,14 +30,14 @@
     BranchUniversalObject *buo = [BranchUniversalObject objectWithDictionary:dictionary];
     XCTAssert(buo);
 
-    XCTAssertEqualObjects(buo.schemaData.contentSchema,     BranchContentSchemaCommerceProduct);
+    XCTAssertEqualObjects(buo.schemaData.contentSchema,     BNCContentSchemaCommerceProduct);
     XCTAssertEqual(buo.schemaData.quantity,                 2);
     XCTAssertEqualObjects(buo.schemaData.price,             [NSDecimalNumber decimalNumberWithString:@"23.20"]);
     XCTAssertEqualObjects(buo.schemaData.currency,          BNCCurrencyUSD);
     XCTAssertEqualObjects(buo.schemaData.sku,               @"1994320302");
     XCTAssertEqualObjects(buo.schemaData.productName,       @"my_product_name1");
     XCTAssertEqualObjects(buo.schemaData.productBrand,      @"my_prod_Brand1");
-    XCTAssertEqualObjects(buo.schemaData.productCategory,   @"Baby & Toddler");
+    XCTAssertEqualObjects(buo.schemaData.productCategory,   BNCProductCategoryBabyToddler);
     XCTAssertEqualObjects(buo.schemaData.productVariant,    @"3T");
     XCTAssertEqual(buo.schemaData.ratingAverage,            5);
     XCTAssertEqual(buo.schemaData.ratingCount,              5);

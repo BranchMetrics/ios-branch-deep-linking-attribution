@@ -105,6 +105,24 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
     \"$creation_timestamp\": 1501869445321
 }
 ";
+"V2EventProperties" =
+"
+{
+    \"affiliation\": \"test_affiliation\",
+    \"coupon\": \"test_coupon\",
+    \"currency\": \"USD\",
+    \"description\": \"Event _description\",
+    \"shipping\": 10.2,
+    \"tax\": 12.3,
+    \"revenue\": 1.5,
+    \"$condition\": \"FAIR\",
+    \"transaction_id\": \"12344555\",
+    \"custom_data\": {
+        \"Custom_Event_Property_Key1\": \"Custom_Event_Property_val1\",
+        \"Custom_Event_Property_Key2\": \"Custom_Event_Property_val2\"
+    }
+}
+";
 "V2EventJSON" =
 "
 {
@@ -153,29 +171,19 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
         \"$og_description\": \"my_product_description1\",
         \"$og_image_url\": \"https:\/\/test_img_url\",
         \"$exp_date\": 212123232544,
-        \"$publicly_indexable\": false,
         \"$locally_indexable\": true,
         \"$creation_timestamp\": 1501869445321
     }],
-    \"metadata\": {},
+    \"ad_tracking_enabled\": 1,
     \"hardware_id\": \"dff82788-eaa5-4591-a81c-806c92a9b277\",
-    \"is_hardware_id_real\": false,
-    \"brand\": \"LGE\",
-    \"model\": \"Nexus 5X\",
-    \"screen_dpi\": 420,
+    \"hardware_id_type\": \"vendor_id\",
+    \"is_hardware_id_real\": 1,
+    \"brand\": \"Apple\",
     \"screen_height\": 1794,
     \"screen_width\": 1080,
-    \"wifi\": true,
-    \"os\": \"Android\",
-    \"os_version\": 25,
     \"country\": \"US\",
     \"language\": \"en\",
-    \"local_ip\": \"192.168.3.209\",
-    \"instrumentation\": {
-        \"v2\/event\/standard-brtt\": \"165\",
-        \"v2\/event\/standard-qwt\": \"2\"
-    },
-    \"sdk\": \"android2.10.3\",
-    \"branch_key\": \"key_test_hdcBLUy1xZ1JD0tKg7qrLcgirFmPPVJc\"
+    \"branch_key\": \"key_live_foo\",
+    \"retryNumber\": 0
 }
 ";

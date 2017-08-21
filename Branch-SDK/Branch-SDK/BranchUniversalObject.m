@@ -16,42 +16,42 @@
 #import "BNCEncodingUtils.h"
 #import "Branch.h"
 
-#pragma mark - BranchContentSchema
+#pragma mark - BNCContentSchema
 
-BranchContentSchema _Nonnull BranchContentSchemaCommerceAuction     = @"COMMERCE_AUCTION";
-BranchContentSchema _Nonnull BranchContentSchemaCommerceBusiness    = @"COMMERCE_BUSINESS";
-BranchContentSchema _Nonnull BranchContentSchemaCommerceOther       = @"COMMERCE_OTHER";
-BranchContentSchema _Nonnull BranchContentSchemaCommerceProduct     = @"COMMERCE_PRODUCT";
-BranchContentSchema _Nonnull BranchContentSchemaCommerceRestaurant  = @"COMMERCE_RESTAURANT";
-BranchContentSchema _Nonnull BranchContentSchemaCommerceService     = @"COMMERCE_SERVICE";
-BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelFlight= @"COMMERCE_TRAVEL_FLIGHT";
-BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelHotel = @"COMMERCE_TRAVEL_HOTEL";
-BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelOther = @"COMMERCE_TRAVEL_OTHER";
-BranchContentSchema _Nonnull BranchContentSchemaGameState           = @"GAME_STATE";
-BranchContentSchema _Nonnull BranchContentSchemaMediaImage          = @"MEDIA_IMAGE";
-BranchContentSchema _Nonnull BranchContentSchemaMediaMixed          = @"MEDIA_MIXED";
-BranchContentSchema _Nonnull BranchContentSchemaMediaMusic          = @"MEDIA_MUSIC";
-BranchContentSchema _Nonnull BranchContentSchemaMediaOther          = @"MEDIA_OTHER";
-BranchContentSchema _Nonnull BranchContentSchemaMediaVideo          = @"MEDIA_VIDEO";
-BranchContentSchema _Nonnull BranchContentSchemaOther               = @"OTHER";
-BranchContentSchema _Nonnull BranchContentSchemaTextArticle         = @"TEXT_ARTICLE";
-BranchContentSchema _Nonnull BranchContentSchemaTextBlog            = @"TEXT_BLOG";
-BranchContentSchema _Nonnull BranchContentSchemaTextOther           = @"TEXT_OTHER";
-BranchContentSchema _Nonnull BranchContentSchemaTextRecipe          = @"TEXT_RECIPE";
-BranchContentSchema _Nonnull BranchContentSchemaTextReview          = @"TEXT_REVIEW";
-BranchContentSchema _Nonnull BranchContentSchemaTextSearchResults   = @"TEXT_SEARCH_RESULTS";
-BranchContentSchema _Nonnull BranchContentSchemaTextStory           = @"TEXT_STORY";
-BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc    = @"TEXT_TECHNICAL_DOC";
+BNCContentSchema _Nonnull BNCContentSchemaCommerceAuction     = @"COMMERCE_AUCTION";
+BNCContentSchema _Nonnull BNCContentSchemaCommerceBusiness    = @"COMMERCE_BUSINESS";
+BNCContentSchema _Nonnull BNCContentSchemaCommerceOther       = @"COMMERCE_OTHER";
+BNCContentSchema _Nonnull BNCContentSchemaCommerceProduct     = @"COMMERCE_PRODUCT";
+BNCContentSchema _Nonnull BNCContentSchemaCommerceRestaurant  = @"COMMERCE_RESTAURANT";
+BNCContentSchema _Nonnull BNCContentSchemaCommerceService     = @"COMMERCE_SERVICE";
+BNCContentSchema _Nonnull BNCContentSchemaCommerceTravelFlight= @"COMMERCE_TRAVEL_FLIGHT";
+BNCContentSchema _Nonnull BNCContentSchemaCommerceTravelHotel = @"COMMERCE_TRAVEL_HOTEL";
+BNCContentSchema _Nonnull BNCContentSchemaCommerceTravelOther = @"COMMERCE_TRAVEL_OTHER";
+BNCContentSchema _Nonnull BNCContentSchemaGameState           = @"GAME_STATE";
+BNCContentSchema _Nonnull BNCContentSchemaMediaImage          = @"MEDIA_IMAGE";
+BNCContentSchema _Nonnull BNCContentSchemaMediaMixed          = @"MEDIA_MIXED";
+BNCContentSchema _Nonnull BNCContentSchemaMediaMusic          = @"MEDIA_MUSIC";
+BNCContentSchema _Nonnull BNCContentSchemaMediaOther          = @"MEDIA_OTHER";
+BNCContentSchema _Nonnull BNCContentSchemaMediaVideo          = @"MEDIA_VIDEO";
+BNCContentSchema _Nonnull BNCContentSchemaOther               = @"OTHER";
+BNCContentSchema _Nonnull BNCContentSchemaTextArticle         = @"TEXT_ARTICLE";
+BNCContentSchema _Nonnull BNCContentSchemaTextBlog            = @"TEXT_BLOG";
+BNCContentSchema _Nonnull BNCContentSchemaTextOther           = @"TEXT_OTHER";
+BNCContentSchema _Nonnull BNCContentSchemaTextRecipe          = @"TEXT_RECIPE";
+BNCContentSchema _Nonnull BNCContentSchemaTextReview          = @"TEXT_REVIEW";
+BNCContentSchema _Nonnull BNCContentSchemaTextSearchResults   = @"TEXT_SEARCH_RESULTS";
+BNCContentSchema _Nonnull BNCContentSchemaTextStory           = @"TEXT_STORY";
+BNCContentSchema _Nonnull BNCContentSchemaTextTechnicalDoc    = @"TEXT_TECHNICAL_DOC";
 
-#pragma mark - BranchProductCondition
+#pragma mark - BNCProductCondition
 
-BranchProductCondition _Nonnull BranchProductConditionOther         = @"OTHER";
-BranchProductCondition _Nonnull BranchProductConditionNew           = @"NEW";
-BranchProductCondition _Nonnull BranchProductConditionGood          = @"GOOD";
-BranchProductCondition _Nonnull BranchProductConditionFair          = @"FAIR";
-BranchProductCondition _Nonnull BranchProductConditionPoor          = @"POOR";
-BranchProductCondition _Nonnull BranchProductConditionUsed          = @"USED";
-BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBISHED";
+BNCProductCondition _Nonnull BNCProductConditionOther         = @"OTHER";
+BNCProductCondition _Nonnull BNCProductConditionNew           = @"NEW";
+BNCProductCondition _Nonnull BNCProductConditionGood          = @"GOOD";
+BNCProductCondition _Nonnull BNCProductConditionFair          = @"FAIR";
+BNCProductCondition _Nonnull BNCProductConditionPoor          = @"POOR";
+BNCProductCondition _Nonnull BNCProductConditionUsed          = @"USED";
+BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
 
 #pragma mark - BranchSchemaData
 
@@ -83,7 +83,6 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addDouble(latitude,         $latitude);
     addDouble(longitude,        $longitude);
     addStringArray(imageCaptions,$image_captions);
-    addString(condition,        $condition);
     addStringifiedDictionary(userData, $custom_fields);
 
     #include "BNCAddFieldDefines.h"
@@ -118,7 +117,6 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addDouble(latitude,         $latitude);
     addDouble(longitude,        $longitude);
     addStringArray(imageCaptions,$image_captions);
-    addString(condition,        $condition);
     addStringifiedDictionary(userInfo, $custom_fields);
 
     #include "BNCAddFieldDefines.h"
@@ -130,6 +128,17 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     if (!_userInfo) _userInfo = [NSMutableDictionary new];
     return _userInfo;
 }
+
+- (void) setUserData:(NSMutableDictionary*)dictionary {
+    if ([dictionary isKindOfClass:[NSMutableDictionary class]]) {
+        _userInfo = dictionary;
+    } else if ([dictionary isKindOfClass:[NSDictionary class]]) {
+        _userInfo = [NSMutableDictionary dictionaryWithDictionary:dictionary];
+    } else {
+        _userInfo = nil;
+    }
+}
+
 
 - (NSString*) description {
     return [NSString stringWithFormat:@"<%@ %p Schema: %@ userData: %ld items>",

@@ -43,15 +43,18 @@ extern BNCStandardEvent BNCStandardEventUnlockAchievement;
 // Event properties
 
 @interface BNCEventProperties : NSObject
-@property (nonatomic, strong) NSString *transactionID;
-@property (nonatomic, strong) BNCCurrency currency;
-@property (nonatomic, strong) NSDecimalNumber *revenue;
-@property (nonatomic, strong) NSDecimalNumber *shipping;
-@property (nonatomic, strong) NSDecimalNumber *tax;
-@property (nonatomic, strong) NSString *coupon;
-@property (nonatomic, strong) NSString *affiliation;
-@property (nonatomic, strong) NSString *detail;
-@property (nonatomic, strong) NSDictionary<NSString*, NSString*> *userInfo;
+@property (nonatomic, strong) NSString              *transactionID;
+@property (nonatomic, strong) BNCCurrency           currency;
+@property (nonatomic, strong) NSDecimalNumber       *revenue;
+@property (nonatomic, strong) NSDecimalNumber       *shipping;
+@property (nonatomic, strong) NSDecimalNumber       *tax;
+@property (nonatomic, strong) NSString              *coupon;
+@property (nonatomic, strong) NSString              *affiliation;
+@property (nonatomic, strong) NSString              *eventDescription;
+@property (nonatomic, strong) BNCProductCondition   productCondition;   // <= TODO: Really?
+@property (nonatomic, strong) NSMutableDictionary<NSString*, NSString*> *userInfo;
+
+- (NSDictionary*) dictionary;
 @end
 
 #pragma mark - Branch (BNCStandardEvents)

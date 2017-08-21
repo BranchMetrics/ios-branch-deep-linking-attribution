@@ -8,6 +8,7 @@
 
 #import "BNCTestCase.h"
 #import "BNCPreferenceHelper.h"
+#import "BNCLog.h"
 
 @interface BNCTestCase ()
 @property (assign, nonatomic) BOOL hasExceededExpectations;
@@ -17,7 +18,7 @@
 
 + (void)setUp {
     [super setUp];
-    
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     if (!preferenceHelper.deviceFingerprintID) {
         preferenceHelper.deviceFingerprintID = @"foo_fingerprint";
@@ -80,6 +81,21 @@
     return resource;
 }
 
+- (NSMutableDictionary*) mutableDictionaryFromBundleJSONWithKey:(NSString*)key {
+
+    NSString *jsonString = [self stringFromBundleWithKey:key];
+    XCTAssertTrue(jsonString, @"Can't load '%@' resource from bundle JSON!", key);
+
+    NSError *error = nil;
+    NSDictionary *dictionary =
+        [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding]
+            options:0 error:&error];
+    XCTAssertNil(error);
+    XCTAssert(dictionary);
+    NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionaryWithDictionary:dictionary];
+    return mutableDictionary;
+}
+
 static BOOL _testBreakpoints = NO;
 
 + (BOOL) testBreakpoints {
@@ -88,6 +104,7 @@ static BOOL _testBreakpoints = NO;
 
 + (void) initialize {
     if (self != [BNCTestCase self]) return;
+    BNCLogSetDisplayLevel(BNCLogLevelAll);
 
     // Load test options from environment variables:
 

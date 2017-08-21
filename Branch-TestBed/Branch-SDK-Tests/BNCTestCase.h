@@ -34,7 +34,11 @@ static inline void BNCSleepForTimeInterval(NSTimeInterval seconds) {
 - (void)awaitExpectations;
 - (void)resetExpectations;
 - (id)stringMatchingPattern:(NSString *)pattern;
+
+// Load Resources from the test bundle:
+
 - (NSString*)stringFromBundleWithKey:(NSString*)key;
+- (NSMutableDictionary*) mutableDictionaryFromBundleJSONWithKey:(NSString*)key;
 
 + (BOOL) testBreakpoints;
 @end

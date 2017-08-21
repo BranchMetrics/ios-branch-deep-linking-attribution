@@ -965,6 +965,11 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self processNextQueueItem];
 }
 
+- (void) sendServerRequestWithoutSession:(BNCServerRequest*)request {
+    [self.requestQueue enqueue:request];
+    [self processNextQueueItem];
+}
+
 - (void) sendCommerceEvent:(BNCCommerceEvent *)commerceEvent
 				  metadata:(NSDictionary*)metadata
 			withCompletion:(void (^)(NSDictionary *, NSError *))completion {

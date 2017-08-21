@@ -1489,6 +1489,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
 
 - (void) sendServerRequest:(BNCServerRequest*)request;
+- (void) sendServerRequestWithoutSession:(BNCServerRequest*)request;
 @end
 
 #import "BNCEvent.h" // TODO: Weird but true.

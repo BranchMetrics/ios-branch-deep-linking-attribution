@@ -38,19 +38,25 @@ BNCStandardEvent BNCStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
 
 #pragma mark - BNCEventProperties
 
-/*
-@property (nonatomic, strong) NSString *transactionID;
-@property (nonatomic, strong) BNCCurrency currency;
-@property (nonatomic, strong) NSDecimalNumber *revenue;
-@property (nonatomic, strong) NSDecimalNumber *shipping;
-@property (nonatomic, strong) NSDecimalNumber *tax;
-@property (nonatomic, strong) NSString *coupon;
-@property (nonatomic, strong) NSString *affiliation;
-@property (nonatomic, strong) NSString *detail;
-@property (nonatomic, strong) NSDictionary<NSString*, id<NSObject>> *customData;
-*/
+@interface BNCEventProperties () {
+    NSMutableDictionary *_userInfo;
+}
+@end
 
 @implementation BNCEventProperties : NSObject
+
+- (NSMutableDictionary*) userInfo {
+    if (!_userInfo) _userInfo = [NSMutableDictionary new];
+    return _userInfo;
+}
+
+- (void) setUserInfo:(NSMutableDictionary<NSString *,NSString *> *)userInfo {
+    if ([userInfo isKindOfClass:[NSMutableDictionary class]]) {
+        _userInfo = userInfo;
+    } else if ([userInfo isKindOfClass:[NSDictionary class]]) {
+        _userInfo = [NSMutableDictionary dictionaryWithDictionary:userInfo];
+    }
+}
 
 - (NSDictionary*) dictionary {
     NSMutableDictionary *dictionary = [NSMutableDictionary new];
@@ -58,16 +64,17 @@ BNCStandardEvent BNCStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
     #define BNCFieldDefinesDictionaryFromSelf
     #include "BNCAddFieldDefines.h"
 
-    addString(transactionID, transaction_id);
-    addString(currency,     currency);
-    addDecimal(revenue,     revenue);
-    addDecimal(shipping,    shipping);
-    addDecimal(tax,         tax);
-    addString(coupon,       coupon);
-    addString(affiliation,  affiliation);
-    addString(detail,       detail);
-    addDictionary(userInfo, custom_data);
-
+    addString(transactionID,    transaction_id);
+    addString(currency,         currency);
+    addDecimal(revenue,         revenue);
+    addDecimal(shipping,        shipping);
+    addDecimal(tax,             tax);
+    addString(coupon,           coupon);
+    addString(affiliation,      affiliation);
+    addString(eventDescription, description);
+    addString(productCondition, $condition);
+    addDictionary(userInfo,     custom_data);
+    
     #include "BNCAddFieldDefines.h"
 
     return dictionary;
@@ -106,7 +113,6 @@ BNCStandardEvent BNCStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
 - (void)makeRequest:(BNCServerInterface *)serverInterface
 			    key:(NSString *)key
            callback:(BNCServerCallback)callback {
-
     [serverInterface postRequest:self.eventDictionary
 							 url:[self.serverURL absoluteString]
 							 key:key
@@ -115,7 +121,6 @@ BNCStandardEvent BNCStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
 
 - (void)processResponse:(BNCServerResponse*)response
 				  error:(NSError*)error {
-
 	NSDictionary *dictionary =
 		([response.data isKindOfClass:[NSDictionary class]])
 		? (NSDictionary*) response.data
@@ -125,9 +130,7 @@ BNCStandardEvent BNCStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
 		self.completion(dictionary, error);
 }
 
-
 #pragma mark BranchEventRequest NSCoding
-
 
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];
@@ -171,6 +174,7 @@ BNCStandardEvent BNCStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
     ];
 }
 
+//TODO: Remove
 /*
 {
 	"name": "PURCHASE",
@@ -255,7 +259,6 @@ BNCStandardEvent BNCStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
 	"sdk": "android2.10.3",
 	"branch_key": "key_test_hdcBLUy1xZ1JD0tKg7qrLcgirFmPPVJc"
 }
-
 */
 
 - (void) logEventInternal:(NSString*)event
@@ -274,10 +277,12 @@ BNCStandardEvent BNCStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
     if (propertyDictionary.count) {
         eventDictionary[@"event_data"] = propertyDictionary;
     }
+    eventDictionary[@"custom_data"] = eventDictionary[@"event_data"][@"custom_data"];
+    eventDictionary[@"event_data"][@"custom_data"] = nil;
 
     NSMutableArray *contentItemDictionaries = [NSMutableArray new];
     for (BranchUniversalObject *contentItem in universalObjects) {
-        NSDictionary *dictionary = [contentItem getParamsForServerRequest];
+        NSDictionary *dictionary = [contentItem dictionary];
         if (dictionary.count) {
             [contentItemDictionaries addObject:dictionary];
         }
@@ -298,7 +303,7 @@ BNCStandardEvent BNCStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
 			initWithServerURL:[NSURL URLWithString:serverURL]
 			eventDictionary:eventDictionary
 			completion:nil];
-    [self sendServerRequest:request];
+    [self sendServerRequestWithoutSession:request];
 }
 
 - (void) logStandardEvent:(BNCStandardEvent)event
