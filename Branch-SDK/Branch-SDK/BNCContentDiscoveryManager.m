@@ -12,6 +12,7 @@
 #import "BNCError.h"
 #import "BranchConstants.h"
 #import "BNCSpotlightService.h"
+#import "BNCPreferenceHelper.h"
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -32,10 +33,21 @@ static NSString* const kUTTypeGeneric = @"public.content";
 
 @property (strong, readonly) dispatch_queue_t workQueue;
 @property (strong, nonatomic) NSMutableDictionary *userInfo;
+@property (strong, atomic) BNCSpotlightService* spotlight;
 
 @end
 
 @implementation BNCContentDiscoveryManager
+
+
+- (id) init {
+    self = [super init];
+    
+    if (self) {
+        self.spotlight = [[BNCSpotlightService alloc] init];
+    }
+    return self;
+}
 
 #pragma mark - Launch handling
 
@@ -349,10 +361,9 @@ static NSString* const kUTTypeGeneric = @"public.content";
                      callback:(callbackWithUrl)callback
             spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
 
-    BNCSpotlightService* spotlight = [[BNCSpotlightService alloc] init];
     
     if(publiclyIndexable) {
-        [spotlight indexContentUsingUserActivityWithTitle:title
+        [self.spotlight indexContentUsingUserActivityWithTitle:title
                                               description:description
                                               canonicalId:canonicalId
                                                      type:type
@@ -363,7 +374,7 @@ static NSString* const kUTTypeGeneric = @"public.content";
                                                  callback:callback
                                         spotlightCallback:spotlightCallback];
     } else {
-        [spotlight indexContentUsingCSSearchableItemWithTitle:title
+        [self.spotlight indexContentUsingCSSearchableItemWithTitle:title
                                                   CanonicalId:canonicalId
                                                   description:description
                                                          type:type
@@ -428,4 +439,35 @@ static NSString* const kUTTypeGeneric = @"public.content";
     dispatch_group_wait(workGroup, DISPATCH_TIME_FOREVER);
     completion(completedBUO);
 }
+
+-(void) removePrivateObjectFromSpotlight:(BranchUniversalObject *)universalObject
+                               completion:(completion)completion {
+    
+    if (universalObject.spotlightIdentifier == nil || [universalObject.spotlightIdentifier isEqualToString:@""]) {
+        NSError* error = [NSError errorWithDomain:BNCErrorDomain code:BNCSpotlightTitleError userInfo:nil];
+        completion(error);
+        return;
+    }
+    
+    [self.spotlight removePrivateContentWithSpotlightIdentifier:universalObject.spotlightIdentifier
+                                              completionHandler:completion];
+}
+
+-(void) removePrivateObjectsFromSpotlight:(NSArray<BranchUniversalObject *> *)universalObjects
+                               completion:(completion)completion {
+    
+    NSMutableArray<NSString *> *spotlightIdentifiers = [[NSMutableArray alloc] init];
+    
+    for (BranchUniversalObject* universalObject in universalObjects) {
+        [spotlightIdentifiers addObject:universalObject.spotlightIdentifier];
+    }
+    
+    [self.spotlight removeMultiplePrivateContentOfSpotlightIdentifiers:spotlightIdentifiers
+                                                     completionHandler:completion];
+}
+
+-(void) removeAllPrivateContentByBranchWithcompletionHandler:(completion)completion {
+    [self.spotlight removeAllPrivateContentByBranchWithcompletionHandler:completion];
+}
+
 @end

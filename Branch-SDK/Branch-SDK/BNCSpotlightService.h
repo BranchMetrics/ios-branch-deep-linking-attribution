@@ -31,4 +31,10 @@
                                           keywords:(NSSet *)keywords
                                           callback:(callbackWithUrl)callback
                                  spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
+
+- (void)removePrivateContentWithSpotlightIdentifier:(NSString *)spotLightIdentifier completionHandler:(completion)completion;
+
+- (void)removeMultiplePrivateContentOfSpotlightIdentifiers:(NSArray<NSString *> *)identifiers completionHandler:(completion)completion;
+
+- (void)removeAllPrivateContentByBranchWithcompletionHandler:(completion)completion;
 @end

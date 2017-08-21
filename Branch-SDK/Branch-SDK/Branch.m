@@ -690,7 +690,11 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 	    [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
 
     if (spotlightIdentifier) {
-        self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
+        if ([self isBranchLink:spotlightIdentifier]) {
+            return [self handleDeepLinkWithNewSession:[NSURL URLWithString:spotlightIdentifier]];
+        } else {
+            self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
+        }
     }
     else {
         NSString *nonBranchSpotlightIdentifier =
@@ -704,6 +708,29 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self initUserSessionAndCallCallback:YES];
 
     return spotlightIdentifier != nil;
+}
+
+- (BOOL)isBranchLink: (NSString*)urlString {
+    id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
+    if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] &&
+        [urlString containsString:branchUniversalLinkDomains]) {
+        return YES;
+    }
+    else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
+        for (id oneDomain in branchUniversalLinkDomains) {
+            if ([oneDomain isKindOfClass:[NSString class]] && [urlString containsString:oneDomain]) {
+                return YES;
+            }
+        }
+    }
+    
+    NSString *userActivityURL = urlString;
+    NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
+    for (NSString* domain in branchDomains) {
+        if ([userActivityURL containsString:domain])
+            return YES;
+    }
+    return NO;
 }
 
 #pragma mark - Push Notification support

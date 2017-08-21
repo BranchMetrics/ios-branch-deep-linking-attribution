@@ -432,4 +432,23 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     [userActivity addUserInfoEntriesFromDictionary:self.userInfo];
 }
 
+#pragma remove private content from spotlight
+
+- (void)removePrivateContentWithSpotlightIdentifier:(NSString *)spotLightIdentifier completionHandler:(completion)completion {
+    [self removeMultiplePrivateContentOfSpotlightIdentifiers:@[spotLightIdentifier] completionHandler:completion];
+}
+
+- (void)removeMultiplePrivateContentOfSpotlightIdentifiers:(NSArray<NSString *> *)identifiers completionHandler:(completion)completion {
+    [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithIdentifiers:identifiers completionHandler:^(NSError * _Nullable error) {
+        completion(error);
+    }];
+    
+}
+
+- (void)removeAllPrivateContentByBranchWithcompletionHandler:(completion)completion {
+    [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithDomainIdentifiers:@[kDomainIdentifier] completionHandler:^(NSError * _Nullable error) {
+        completion(error);
+    }];
+}
+
 @end

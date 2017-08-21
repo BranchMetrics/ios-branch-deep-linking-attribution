@@ -80,4 +80,11 @@
                            onCompletion:(void (^) (NSArray<BranchUniversalObject*>*universalObjects))completion
                               onFailure:(void (^) (BranchUniversalObject *universalObject, NSError* error))failure;
 
+-(void) removePrivateObjectFromSpotlight:(BranchUniversalObject*)universalObject
+                        completion:(completion)completion;
+
+-(void) removePrivateObjectsFromSpotlight:(NSArray<BranchUniversalObject*> *)universalObjects
+                               completion:(completion)completion;
+
+- (void)removeAllPrivateContentByBranchWithcompletionHandler:(completion)completion;
 @end
