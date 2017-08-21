@@ -133,7 +133,7 @@
 
 + (NSURL *)getUrlForCookieBasedMatchingWithBranchKey:(NSString *)branchKey
                                          redirectUrl:(NSString *)redirectUrl {
-    if (!branchKey) {
+    if (!branchKey || !self.cookiesAvailableInOS) {
         return nil;
     }
     
@@ -192,7 +192,14 @@
     #pragma clang diagnostic pop
 }
 
++ (BOOL)cookiesAvailableInOS
+{
+    return [UIDevice currentDevice].systemVersion.floatValue < 11.0;
+}
+
 - (void)createStrongMatchWithBranchKey:(NSString *)branchKey {
+    if (!self.class.cookiesAvailableInOS) return;
+
     @synchronized (self) {
         if (self.requestInProgress) return;
 
