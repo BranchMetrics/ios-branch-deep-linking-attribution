@@ -1,6 +1,6 @@
 //
 //  BranchUniversalObject.h
-//  Branch-TestBed
+//  Branch-SDK
 //
 //  Created by Derrick Staten on 10/16/15.
 //  Copyright © 2015 Branch Metrics. All rights reserved.
@@ -14,41 +14,39 @@
 
 #pragma mark BranchContentIndexMode
 
-typedef NS_ENUM(NSInteger, BranchContentIndexMode) {
-    BranchContentIndexModePublic,
-    BranchContentIndexModePrivate,
-    BranchContentIndexModeLocal = BranchContentIndexModePrivate,
-    BranchContentIndexModeNone
+typedef NS_ENUM(NSInteger, BNCContentIndexMode) {
+    BNCContentIndexModePublic,
+    BNCContentIndexModePrivate
 };
 
-#pragma mark - BNCContentSchema
+#pragma mark - BranchContentSchema
 
-typedef NSString * const BNCContentSchema;
+typedef NSString * const BranchContentSchema;
 
-extern BNCContentSchema _Nonnull BNCContentSchemaCommerceAuction;
-extern BNCContentSchema _Nonnull BNCContentSchemaCommerceBusiness;
-extern BNCContentSchema _Nonnull BNCContentSchemaCommerceOther;
-extern BNCContentSchema _Nonnull BNCContentSchemaCommerceProduct;
-extern BNCContentSchema _Nonnull BNCContentSchemaCommerceRestaurant;
-extern BNCContentSchema _Nonnull BNCContentSchemaCommerceService;
-extern BNCContentSchema _Nonnull BNCContentSchemaCommerceTravelFlight;
-extern BNCContentSchema _Nonnull BNCContentSchemaCommerceTravelHotel;
-extern BNCContentSchema _Nonnull BNCContentSchemaCommerceTravelOther;
-extern BNCContentSchema _Nonnull BNCContentSchemaGameState;
-extern BNCContentSchema _Nonnull BNCContentSchemaMediaImage;
-extern BNCContentSchema _Nonnull BNCContentSchemaMediaMixed;
-extern BNCContentSchema _Nonnull BNCContentSchemaMediaMusic;
-extern BNCContentSchema _Nonnull BNCContentSchemaMediaOther;
-extern BNCContentSchema _Nonnull BNCContentSchemaMediaVideo;
-extern BNCContentSchema _Nonnull BNCContentSchemaOther;
-extern BNCContentSchema _Nonnull BNCContentSchemaTextArticle;
-extern BNCContentSchema _Nonnull BNCContentSchemaTextBlog;
-extern BNCContentSchema _Nonnull BNCContentSchemaTextOther;
-extern BNCContentSchema _Nonnull BNCContentSchemaTextRecipe;
-extern BNCContentSchema _Nonnull BNCContentSchemaTextReview;
-extern BNCContentSchema _Nonnull BNCContentSchemaTextSearchResults;
-extern BNCContentSchema _Nonnull BNCContentSchemaTextStory;
-extern BNCContentSchema _Nonnull BNCContentSchemaTextTechnicalDoc;
+extern BranchContentSchema _Nonnull BranchContentSchemaCommerceAuction;
+extern BranchContentSchema _Nonnull BranchContentSchemaCommerceBusiness;
+extern BranchContentSchema _Nonnull BranchContentSchemaCommerceOther;
+extern BranchContentSchema _Nonnull BranchContentSchemaCommerceProduct;
+extern BranchContentSchema _Nonnull BranchContentSchemaCommerceRestaurant;
+extern BranchContentSchema _Nonnull BranchContentSchemaCommerceService;
+extern BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelFlight;
+extern BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelHotel;
+extern BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelOther;
+extern BranchContentSchema _Nonnull BranchContentSchemaGameState;
+extern BranchContentSchema _Nonnull BranchContentSchemaMediaImage;
+extern BranchContentSchema _Nonnull BranchContentSchemaMediaMixed;
+extern BranchContentSchema _Nonnull BranchContentSchemaMediaMusic;
+extern BranchContentSchema _Nonnull BranchContentSchemaMediaOther;
+extern BranchContentSchema _Nonnull BranchContentSchemaMediaVideo;
+extern BranchContentSchema _Nonnull BranchContentSchemaOther;
+extern BranchContentSchema _Nonnull BranchContentSchemaTextArticle;
+extern BranchContentSchema _Nonnull BranchContentSchemaTextBlog;
+extern BranchContentSchema _Nonnull BranchContentSchemaTextOther;
+extern BranchContentSchema _Nonnull BranchContentSchemaTextRecipe;
+extern BranchContentSchema _Nonnull BranchContentSchemaTextReview;
+extern BranchContentSchema _Nonnull BranchContentSchemaTextSearchResults;
+extern BranchContentSchema _Nonnull BranchContentSchemaTextStory;
+extern BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc;
 
 #pragma mark - BNCProductCondition
 
@@ -66,7 +64,7 @@ extern BNCProductCondition _Nonnull BNCProductConditionRefurbished;
 
 @interface BranchSchemaData : NSObject
 
-@property (nonatomic, strong, nullable) BNCContentSchema contentSchema;
+@property (nonatomic, strong, nullable) BranchContentSchema contentSchema;
 @property (nonatomic, assign)           double          quantity;
 @property (nonatomic, strong, nullable) NSDecimalNumber *price;
 @property (nonatomic, strong, nullable) BNCCurrency     currency;
@@ -90,6 +88,7 @@ extern BNCProductCondition _Nonnull BNCProductConditionRefurbished;
 
 - (NSDictionary*_Nonnull) dictionary;
 + (BranchSchemaData*_Nonnull) schemaDataWithDictionary:(NSDictionary*_Nullable)dictionary;
+
 @end
 
 #pragma mark - BranchUniversalObject
@@ -107,8 +106,8 @@ extern BNCProductCondition _Nonnull BNCProductConditionRefurbished;
 @property (nonatomic, strong, nullable) NSArray<NSString*> *keywords;
 @property (nonatomic, strong, nullable) NSDate   *creationDate;
 @property (nonatomic, strong, nullable) NSDate   *expirationDate;
-@property (nonatomic, assign)           BOOL      indexLocally;
-@property (nonatomic, assign)           BOOL      indexPublicly;
+@property (nonatomic, assign)           BOOL      indexLocally;     // Index on Spotlight.
+@property (nonatomic, assign)           BOOL      indexPublicly;    // Index on Google, Branch, etc.
 
 @property (nonatomic, strong, nonnull) BranchSchemaData *schemaData;
 
@@ -131,33 +130,40 @@ extern BNCProductCondition _Nonnull BNCProductConditionRefurbished;
 
 @property (nonatomic, assign)
     __attribute__((deprecated(("Use `BranchUniversalObject.indexLocally and BranchUniversalObject.indexPublicly` instead."))))
-    BranchContentIndexMode contentIndexMode;
+    BNCContentIndexMode contentIndexMode;
 
 @property (nonatomic, strong, nullable)
     __attribute__((deprecated(("Not used due to iOS 10.0 Spotlight changes."))))
     NSString *spotlightIdentifier;
 
 @property (nonatomic, assign)
-    __attribute__((deprecated(("Use `BranchUniversalObject.metadata.price` instead."))))
+    __attribute__((deprecated(("Use `BranchUniversalObject.schemaData.price` instead."))))
     CGFloat price;
 
 @property (nonatomic, strong, nullable)
-    __attribute__((deprecated(("Use `BranchUniversalObject.metadata.currency` instead."))))
+    __attribute__((deprecated(("Use `BranchUniversalObject.schemaData.currency` instead."))))
     NSString *currency;
 
 @property (nonatomic, assign)
-    __attribute__((deprecated(("Use `BranchUniversalObject.metadata.indexLocally` instead."))))
+    __attribute__((deprecated(("Use `BranchUniversalObject.schemaData.indexLocally` instead."))))
     BOOL automaticallyListOnSpotlight;
+
+/*!
+ @name Log a User Content View Event
+*/
 
 - (void)registerView;
 - (void)registerViewWithCallback:(nullable callbackWithParams)callback;
 
 /*!
- @name Event Tracking
+ @name User Event Tracking
 */
 
 - (void)userCompletedAction:(nonnull NSString *)action;
+    // __attribute__((deprecated(("Use `[BranchEvent logEvent...]` instead."))));
+
 - (void)userCompletedAction:(nonnull NSString *)action withState:(nullable NSDictionary *)state;
+    // __attribute__((deprecated(("Use `[BranchEvent logEvent...]` instead."))));
 
 /*!
  @name Short Links

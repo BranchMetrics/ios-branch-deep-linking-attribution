@@ -1,6 +1,6 @@
 //
 //  BranchUniversalObject.m
-//  Branch-TestBed
+//  Branch-SDK
 //
 //  Created by Derrick Staten on 10/16/15.
 //  Copyright © 2015 Branch Metrics. All rights reserved.
@@ -16,32 +16,32 @@
 #import "BNCEncodingUtils.h"
 #import "Branch.h"
 
-#pragma mark - BNCContentSchema
+#pragma mark BranchContentSchema
 
-BNCContentSchema _Nonnull BNCContentSchemaCommerceAuction     = @"COMMERCE_AUCTION";
-BNCContentSchema _Nonnull BNCContentSchemaCommerceBusiness    = @"COMMERCE_BUSINESS";
-BNCContentSchema _Nonnull BNCContentSchemaCommerceOther       = @"COMMERCE_OTHER";
-BNCContentSchema _Nonnull BNCContentSchemaCommerceProduct     = @"COMMERCE_PRODUCT";
-BNCContentSchema _Nonnull BNCContentSchemaCommerceRestaurant  = @"COMMERCE_RESTAURANT";
-BNCContentSchema _Nonnull BNCContentSchemaCommerceService     = @"COMMERCE_SERVICE";
-BNCContentSchema _Nonnull BNCContentSchemaCommerceTravelFlight= @"COMMERCE_TRAVEL_FLIGHT";
-BNCContentSchema _Nonnull BNCContentSchemaCommerceTravelHotel = @"COMMERCE_TRAVEL_HOTEL";
-BNCContentSchema _Nonnull BNCContentSchemaCommerceTravelOther = @"COMMERCE_TRAVEL_OTHER";
-BNCContentSchema _Nonnull BNCContentSchemaGameState           = @"GAME_STATE";
-BNCContentSchema _Nonnull BNCContentSchemaMediaImage          = @"MEDIA_IMAGE";
-BNCContentSchema _Nonnull BNCContentSchemaMediaMixed          = @"MEDIA_MIXED";
-BNCContentSchema _Nonnull BNCContentSchemaMediaMusic          = @"MEDIA_MUSIC";
-BNCContentSchema _Nonnull BNCContentSchemaMediaOther          = @"MEDIA_OTHER";
-BNCContentSchema _Nonnull BNCContentSchemaMediaVideo          = @"MEDIA_VIDEO";
-BNCContentSchema _Nonnull BNCContentSchemaOther               = @"OTHER";
-BNCContentSchema _Nonnull BNCContentSchemaTextArticle         = @"TEXT_ARTICLE";
-BNCContentSchema _Nonnull BNCContentSchemaTextBlog            = @"TEXT_BLOG";
-BNCContentSchema _Nonnull BNCContentSchemaTextOther           = @"TEXT_OTHER";
-BNCContentSchema _Nonnull BNCContentSchemaTextRecipe          = @"TEXT_RECIPE";
-BNCContentSchema _Nonnull BNCContentSchemaTextReview          = @"TEXT_REVIEW";
-BNCContentSchema _Nonnull BNCContentSchemaTextSearchResults   = @"TEXT_SEARCH_RESULTS";
-BNCContentSchema _Nonnull BNCContentSchemaTextStory           = @"TEXT_STORY";
-BNCContentSchema _Nonnull BNCContentSchemaTextTechnicalDoc    = @"TEXT_TECHNICAL_DOC";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceAuction     = @"COMMERCE_AUCTION";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceBusiness    = @"COMMERCE_BUSINESS";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceOther       = @"COMMERCE_OTHER";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceProduct     = @"COMMERCE_PRODUCT";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceRestaurant  = @"COMMERCE_RESTAURANT";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceService     = @"COMMERCE_SERVICE";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelFlight= @"COMMERCE_TRAVEL_FLIGHT";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelHotel = @"COMMERCE_TRAVEL_HOTEL";
+BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelOther = @"COMMERCE_TRAVEL_OTHER";
+BranchContentSchema _Nonnull BranchContentSchemaGameState           = @"GAME_STATE";
+BranchContentSchema _Nonnull BranchContentSchemaMediaImage          = @"MEDIA_IMAGE";
+BranchContentSchema _Nonnull BranchContentSchemaMediaMixed          = @"MEDIA_MIXED";
+BranchContentSchema _Nonnull BranchContentSchemaMediaMusic          = @"MEDIA_MUSIC";
+BranchContentSchema _Nonnull BranchContentSchemaMediaOther          = @"MEDIA_OTHER";
+BranchContentSchema _Nonnull BranchContentSchemaMediaVideo          = @"MEDIA_VIDEO";
+BranchContentSchema _Nonnull BranchContentSchemaOther               = @"OTHER";
+BranchContentSchema _Nonnull BranchContentSchemaTextArticle         = @"TEXT_ARTICLE";
+BranchContentSchema _Nonnull BranchContentSchemaTextBlog            = @"TEXT_BLOG";
+BranchContentSchema _Nonnull BranchContentSchemaTextOther           = @"TEXT_OTHER";
+BranchContentSchema _Nonnull BranchContentSchemaTextRecipe          = @"TEXT_RECIPE";
+BranchContentSchema _Nonnull BranchContentSchemaTextReview          = @"TEXT_REVIEW";
+BranchContentSchema _Nonnull BranchContentSchemaTextSearchResults   = @"TEXT_SEARCH_RESULTS";
+BranchContentSchema _Nonnull BranchContentSchemaTextStory           = @"TEXT_STORY";
+BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc    = @"TEXT_TECHNICAL_DOC";
 
 #pragma mark - BNCProductCondition
 
@@ -55,7 +55,12 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
 
 #pragma mark - BranchSchemaData
 
-@implementation BranchSchemaData : NSObject
+@interface BranchSchemaData () {
+    NSMutableDictionary *_userInfo;
+}
+@end
+
+@implementation BranchSchemaData
 
 - (NSDictionary*_Nonnull) dictionary {
     NSMutableDictionary*dictionary = [NSMutableDictionary new];
@@ -83,7 +88,7 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
     addDouble(latitude,         $latitude);
     addDouble(longitude,        $longitude);
     addStringArray(imageCaptions,$image_captions);
-    addStringifiedDictionary(userData, $custom_fields);
+    addStringifiedDictionary(userInfo, $custom_fields);
 
     #include "BNCAddFieldDefines.h"
 
@@ -124,24 +129,23 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
     return object;
 }
 
-- (NSMutableDictionary*) userData {
+- (NSMutableDictionary*) userInfo {
     if (!_userInfo) _userInfo = [NSMutableDictionary new];
     return _userInfo;
 }
 
-- (void) setUserData:(NSMutableDictionary*)dictionary {
+- (void) setUserInfo:(NSMutableDictionary*)dictionary {
     if ([dictionary isKindOfClass:[NSMutableDictionary class]]) {
         _userInfo = dictionary;
     } else if ([dictionary isKindOfClass:[NSDictionary class]]) {
         _userInfo = [NSMutableDictionary dictionaryWithDictionary:dictionary];
-    } else {
+    } else if (dictionary == nil) {
         _userInfo = nil;
     }
 }
 
-
 - (NSString*) description {
-    return [NSString stringWithFormat:@"<%@ %p Schema: %@ userData: %ld items>",
+    return [NSString stringWithFormat:@"<%@ %p schema: %@ userData: %ld items>",
         NSStringFromClass(self.class),
         self,
         _contentSchema,
@@ -169,26 +173,102 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
     return self;
 }
 
+#pragma mark - Deprecated Fields
+
 - (NSDictionary *)metadata {
-    if (!_metadata) {
-        _metadata = [[NSDictionary alloc] init];
-    }
-    return _metadata;
+    return self.schemaData.userInfo;
 }
+
+- (void) setMetadata:(NSDictionary *)metadata {
+    self.schemaData.userInfo = (NSMutableDictionary*) metadata;
+}
+
+- (void)addMetadataKey:(NSString *)key value:(NSString *)value {
+    if (key) [self.schemaData.userInfo setValue:value forKey:key];
+}
+
+- (CGFloat) price {
+    return [self.schemaData.price floatValue];
+}
+
+- (void) setPrice:(CGFloat)price {
+    NSString *string = [NSString stringWithFormat:@"%f", price];
+    self.schemaData.price = [NSDecimalNumber decimalNumberWithString:string];
+}
+
+- (NSString*) currency {
+    return self.schemaData.currency;
+}
+
+- (void) setCurrency:(NSString *)currency {
+    self.schemaData.currency = currency;
+}
+
+- (NSString*) type {
+    return self.schemaData.contentSchema;
+}
+
+- (void) setType:(NSString*)type {
+    self.schemaData.contentSchema = type;
+}
+
+- (BNCContentIndexMode) contentIndexMode {
+    if (self.indexPublicly)
+        return BNCContentIndexModePublic;
+    else
+        return BNCContentIndexModePrivate;
+}
+
+- (void) setContentIndexMode:(BNCContentIndexMode)contentIndexMode {
+    if (contentIndexMode == BNCContentIndexModePublic)
+        self.indexPublicly = YES;
+    else
+        self.indexLocally = YES;
+}
+
+- (BOOL) automaticallyListOnSpotlight {
+    return self.indexLocally;
+}
+
+- (void) setAutomaticallyListOnSpotlight:(BOOL)automaticallyListOnSpotlight {
+    self.indexLocally = automaticallyListOnSpotlight;
+}
+
+#pragma mark - Setters / Getters / Standard Methods
 
 - (BranchSchemaData*) schemaData {
     if (!_schemaData) _schemaData = [BranchSchemaData new];
     return _schemaData;
 }
 
-- (void)addMetadataKey:(NSString *)key value:(NSString *)value {
-    if (!key || !value) {
-        return;
-    }
-    NSMutableDictionary *temp = [self.metadata mutableCopy];
-    temp[key] = value;
-    _metadata = [temp copy];
+- (NSString *)description {
+    return [NSString stringWithFormat:
+        @"<%@ %p"
+         "\n canonicalIdentifier: %@"
+         "\n title: %@"
+         "\n contentDescription: %@"
+         "\n imageUrl: %@"
+         "\n metadata: %@"
+         "\n type: %@"
+         "\n indexLocally: %d"
+         "\n indexPublically: %d"
+         "\n keywords: %@"
+         "\n expirationDate: %@"
+         "\n>",
+         NSStringFromClass(self.class), self,
+        self.canonicalIdentifier,
+        self.title,
+        self.contentDescription,
+        self.imageUrl,
+        self.schemaData.userInfo,
+        self.schemaData.contentSchema,
+        self.indexLocally,
+        self.indexPublicly,
+        self.keywords,
+        self.expirationDate];
 }
+
+#pragma mark - User Event Logging
 
 - (void)registerView {
     [self registerViewWithCallback:nil];
@@ -202,87 +282,32 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
         if (callback) callback([[NSDictionary alloc] init], error);
         return;
     }
-    if (self.automaticallyListOnSpotlight) {
+    if (self.indexLocally) {
         [self listOnSpotlight];
     }
     [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest] andCallback:callback];
 }
 
-- (void)userCompletedAction:(NSString *)action
-{
+- (void)userCompletedAction:(NSString *)action {
     [self userCompletedAction:action withState:nil];
 }
 
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
-    NSMutableDictionary *actionPayload = [[NSMutableDictionary alloc] init];
+    if (state) [self.schemaData.userInfo addEntriesFromDictionary:state];
+    [[BranchEvent customEventWithName:action contentItem:self] logEvent];
+
+    // Maybe list on spotlight --
     NSDictionary *linkParams = [self getParamsForServerRequest];
-    if (self.canonicalIdentifier && linkParams) {
+    if (self.indexLocally && self.canonicalIdentifier && linkParams) {
+
+        NSMutableDictionary *actionPayload = [[NSMutableDictionary alloc] init];
         actionPayload[BNCCanonicalIdList] = @[self.canonicalIdentifier];
         actionPayload[self.canonicalIdentifier] = linkParams;
+        if (state) [actionPayload addEntriesFromDictionary:state];
 
-        if (state) {
-            // Add in user params
-            [actionPayload addEntriesFromDictionary:state];
-        }
-
-        [[Branch getInstance] userCompletedAction:action withState:actionPayload];
-        if (self.automaticallyListOnSpotlight && [action isEqualToString:BNCRegisterViewEvent])
+        if ([action isEqualToString:BNCRegisterViewEvent])
             [self listOnSpotlight];
     }
-}
-
-+ (BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(NSDictionary *)dictionary {
-    BranchUniversalObject *universalObject = [[BranchUniversalObject alloc] init];
-    
-    // Build BranchUniversalObject base properties
-    universalObject.metadata = [dictionary copy];
-    if (dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER]) {
-        universalObject.canonicalIdentifier = dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER];
-    }
-    if (dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_URL]) {
-        universalObject.canonicalUrl = dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_URL];
-    }
-    if (dictionary[BRANCH_LINK_DATA_KEY_OG_TITLE]) {
-        universalObject.title = dictionary[BRANCH_LINK_DATA_KEY_OG_TITLE];
-    }
-    if (dictionary[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION]) {
-        universalObject.contentDescription = dictionary[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION];
-    }
-    if (dictionary[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL]) {
-        universalObject.imageUrl = dictionary[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL];
-    }
-    if (dictionary[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE]) {
-        if (dictionary[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] == 0) {
-            universalObject.contentIndexMode = BranchContentIndexModePrivate;
-        }
-        else {
-            universalObject.contentIndexMode = BranchContentIndexModePublic;
-        }
-    }
-
-    NSNumber *number = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE];
-    if ([number isKindOfClass:[NSNumber class]]) {
-        // Number is millisecondsSince1970
-        universalObject.expirationDate = [NSDate dateWithTimeIntervalSince1970:number.integerValue/1000];
-    }
-    if (dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS]) {
-        universalObject.keywords = dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS];
-    }
-    if (dictionary[BNCPurchaseAmount]) {
-        universalObject.price = [dictionary[BNCPurchaseAmount] floatValue];
-    }
-    if (dictionary[BNCPurchaseCurrency]) {
-        universalObject.currency = dictionary[BNCPurchaseCurrency];
-    }
-    
-    if (dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE]) {
-        universalObject.type = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE];
-    }
-    return universalObject;
-}
-
-- (NSString *)description {
-    return [NSString stringWithFormat:@"BranchUniversalObject \n canonicalIdentifier: %@ \n title: %@ \n contentDescription: %@ \n imageUrl: %@ \n metadata: %@ \n type: %@ \n contentIndexMode: %ld \n keywords: %@ \n expirationDate: %@", self.canonicalIdentifier, self.title, self.contentDescription, self.imageUrl, self.metadata, self.type, (long)self.contentIndexMode, self.keywords, self.expirationDate];
 }
 
 #pragma mark - Link Creation Methods
@@ -338,7 +363,7 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
                                      andChannel:linkProperties.channel
                                      andFeature:linkProperties.feature
                                        andStage:linkProperties.stage
-                                           andCampaign:linkProperties.campaign
+                                    andCampaign:linkProperties.campaign
                                        andAlias:linkProperties.alias
                                  ignoreUAString:UAString
                               forceLinkCreation:YES];
@@ -413,7 +438,7 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
                    orCompletionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completionError {
 
     // Log share initiated event
-    [self userCompletedAction:BNCShareInitiatedEvent];
+    [[BranchEvent customEventWithName:BNCShareInitiatedEvent contentItem:self] logEvent];
     UIActivityItemProvider *itemProvider = [self getBranchActivityItemWithLinkProperties:linkProperties];
     NSMutableArray *items = [NSMutableArray arrayWithObject:itemProvider];
     if (shareText) {
@@ -424,7 +449,7 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
     if ([shareViewController respondsToSelector:@selector(completionWithItemsHandler)]) {
         shareViewController.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
             // Log share completed event
-            [self userCompletedAction:BNCShareCompletedEvent];
+            [[BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self] logEvent];
             if (completion || completionError) {
                 if (completion) { completion(activityType, completed); }
                 else if (completionError) { completionError(activityType, completed, activityError); }
@@ -432,11 +457,11 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
             }
         };
     } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         // Deprecated in iOS 8.  Safe to hide deprecation warnings as the new completion handler is checked for above
         shareViewController.completionHandler = completion;
-#pragma clang diagnostic pop
+        #pragma clang diagnostic pop
     }
     
     UIViewController *presentingViewController;
@@ -481,15 +506,7 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
 }
 
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback {
-    BOOL publiclyIndexable;
-    if (self.contentIndexMode == BranchContentIndexModePrivate) {
-        publiclyIndexable = NO;
-    }
-    else {
-        publiclyIndexable = YES;
-    }
-    
-    NSMutableDictionary *metadataAndProperties = [self.metadata mutableCopy];
+    NSMutableDictionary *metadataAndProperties = [self.schemaData.userInfo mutableCopy];
     if (self.canonicalIdentifier) {
         metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER] = self.canonicalIdentifier;
     }
@@ -502,8 +519,8 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
                                                 thumbnailUrl:[NSURL URLWithString:self.imageUrl]
                                                  canonicalId:self.canonicalIdentifier
                                                   linkParams:metadataAndProperties.copy
-                                                        type:self.type
-                                           publiclyIndexable:publiclyIndexable
+                                                        type:self.schemaData.contentSchema
+                                           publiclyIndexable:self.indexPublicly
                                                     keywords:[NSSet setWithArray:self.keywords]
                                               expirationDate:self.expirationDate
                                                     callback:callback];
@@ -513,7 +530,7 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
 //This one uses a callback that returns the SpotlightIdentifier
 - (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
     BOOL publiclyIndexable;
-    if (self.contentIndexMode == BranchContentIndexModePrivate) {
+    if (self.contentIndexMode == BNCContentIndexModePrivate) {
         publiclyIndexable = NO;
     }
     else {
@@ -542,6 +559,50 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
 
 #pragma mark - Dictionary Methods
 
++ (BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(NSDictionary *)dictionary {
+    BranchUniversalObject *universalObject = [[BranchUniversalObject alloc] init];
+    
+    // Build BranchUniversalObject base properties
+    universalObject.schemaData.userInfo = [dictionary copy];
+    if (dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER]) {
+        universalObject.canonicalIdentifier = dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER];
+    }
+    if (dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_URL]) {
+        universalObject.canonicalUrl = dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_URL];
+    }
+    if (dictionary[BRANCH_LINK_DATA_KEY_OG_TITLE]) {
+        universalObject.title = dictionary[BRANCH_LINK_DATA_KEY_OG_TITLE];
+    }
+    if (dictionary[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION]) {
+        universalObject.contentDescription = dictionary[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION];
+    }
+    if (dictionary[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL]) {
+        universalObject.imageUrl = dictionary[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL];
+    }
+    universalObject.indexPublicly = [dictionary[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] boolValue];
+    universalObject.indexLocally  = [dictionary[BRANCH_LINK_DATA_KEY_LOCALLY_INDEXABLE] boolValue];
+
+    NSNumber *number = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE];
+    if ([number isKindOfClass:[NSNumber class]]) {
+        // Number is millisecondsSince1970
+        universalObject.expirationDate = [NSDate dateWithTimeIntervalSince1970:number.integerValue/1000];
+    }
+    if (dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS]) {
+        universalObject.keywords = dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS];
+    }
+    if (dictionary[BNCPurchaseAmount]) {
+        universalObject.schemaData.price = [NSDecimalNumber decimalNumberWithString:dictionary[BNCPurchaseAmount]];
+    }
+    if (dictionary[BNCPurchaseCurrency]) {
+        universalObject.schemaData.currency = dictionary[BNCPurchaseCurrency];
+    }
+    
+    if (dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE]) {
+        universalObject.schemaData.contentSchema = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE];
+    }
+    return universalObject;
+}
+
 - (NSDictionary*_Nonnull) getParamsForServerRequest {
     NSMutableDictionary *temp = [[NSMutableDictionary alloc] init];
     [self safeSetValue:self.canonicalIdentifier forKey:BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER onDict:temp];
@@ -549,23 +610,14 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
     [self safeSetValue:self.title forKey:BRANCH_LINK_DATA_KEY_OG_TITLE onDict:temp];
     [self safeSetValue:self.contentDescription forKey:BRANCH_LINK_DATA_KEY_OG_DESCRIPTION onDict:temp];
     [self safeSetValue:self.imageUrl forKey:BRANCH_LINK_DATA_KEY_OG_IMAGE_URL onDict:temp];
-    if (self.contentIndexMode == BranchContentIndexModePrivate) {
-        [self safeSetValue:@(0) forKey:BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE onDict:temp];
-    }
-    else {
-        [self safeSetValue:@(1) forKey:BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE onDict:temp];
-    }
+    temp[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE]  = [NSNumber numberWithBool:self.indexPublicly];
+    temp[BRANCH_LINK_DATA_KEY_LOCALLY_INDEXABLE]   = [NSNumber numberWithBool:self.indexLocally];
     [self safeSetValue:self.keywords forKey:BRANCH_LINK_DATA_KEY_KEYWORDS onDict:temp];
     [self safeSetValue:@(1000 * [self.expirationDate timeIntervalSince1970]) forKey:BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE onDict:temp];
-    [self safeSetValue:self.type forKey:BRANCH_LINK_DATA_KEY_CONTENT_TYPE onDict:temp];
-    [self safeSetValue:self.currency forKey:BNCPurchaseCurrency onDict:temp];
-    if (self.price) {
-        // have to add if statement because safeSetValue only accepts objects so even if self.price is not set
-        // a valid NSNumber object will be created and the request will have amount:0 in all cases.
-        [self safeSetValue:[NSNumber numberWithFloat:self.price] forKey:BNCPurchaseAmount onDict:temp];
-    }
-    
-    [temp addEntriesFromDictionary:[self.metadata copy]];
+    [self safeSetValue:self.schemaData.contentSchema forKey:BRANCH_LINK_DATA_KEY_CONTENT_TYPE onDict:temp];
+    [self safeSetValue:self.schemaData.currency forKey:BNCPurchaseCurrency onDict:temp];
+    temp[BNCPurchaseAmount] = self.schemaData.price;
+    [temp addEntriesFromDictionary:[self.schemaData.userInfo copy]];
     return [temp copy];
 }
 

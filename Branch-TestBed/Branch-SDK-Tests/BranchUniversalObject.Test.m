@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "BNCTestCase.h"
 #import "BranchUniversalObject.h"
+#import "NSString+Branch.h"
 
 @interface BranchUniversalObjectTest : BNCTestCase
 @end
@@ -30,7 +31,7 @@
     BranchUniversalObject *buo = [BranchUniversalObject objectWithDictionary:dictionary];
     XCTAssert(buo);
 
-    XCTAssertEqualObjects(buo.schemaData.contentSchema,     BNCContentSchemaCommerceProduct);
+    XCTAssertEqualObjects(buo.schemaData.contentSchema,     BranchContentSchemaCommerceProduct);
     XCTAssertEqual(buo.schemaData.quantity,                 2);
     XCTAssertEqualObjects(buo.schemaData.price,             [NSDecimalNumber decimalNumberWithString:@"23.20"]);
     XCTAssertEqualObjects(buo.schemaData.currency,          BNCCurrencyUSD);
@@ -83,6 +84,85 @@
     // NSString *newString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     // Can't compare strings since the item order may be different.
     // XCTAssertEqualObjects(jsonString, newString);
+}
+
+- (void) testSchemaDescription {
+    NSDictionary *d = [self mutableDictionaryFromBundleJSONWithKey:@"BranchUniversalObjectJSON"];
+    BranchUniversalObject *b = [BranchUniversalObject objectWithDictionary:d];
+    NSString *s = b.schemaData.description;
+    NSLog(@"%@", s);
+    XCTAssertTrue(s && [s bnc_isEqualToMaskedString:
+        @"<BranchSchemaData 0x************ schema: COMMERCE_PRODUCT userData: 1 items>"]);
+}
+
+- (void) testBUODescription {
+    NSString *mask = [self stringFromBundleWithKey:@"BUODescription"];
+    NSDictionary *d = [self mutableDictionaryFromBundleJSONWithKey:@"BranchUniversalObjectJSON"];
+    BranchUniversalObject *b = [BranchUniversalObject objectWithDictionary:d];
+    NSString *s = b.description;
+    NSLog(@"%@\n%@", s, mask);
+    XCTAssertTrue([s bnc_isEqualToMaskedString:mask]);
+}
+
+- (void) testDeprecations {
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+    buo.price = 10.00;
+    buo.currency = BNCCurrencyUSD;
+    buo.type = @"Purchase";
+    buo.contentIndexMode = BNCContentIndexModePublic;
+    buo.metadata = @{ @"Key1": @"Value1" };
+    buo.automaticallyListOnSpotlight = YES;
+
+    XCTAssertEqualObjects(buo.schemaData.price, [NSDecimalNumber decimalNumberWithString:@"10.00"]);
+    XCTAssertEqualObjects(buo.schemaData.currency, BNCCurrencyUSD);
+    XCTAssertEqualObjects(buo.schemaData.contentSchema, @"Purchase");
+    XCTAssertEqual(buo.indexLocally, YES);
+    XCTAssertEqual(buo.indexPublicly, YES);
+    XCTAssertEqualObjects(buo.schemaData.userInfo, @{ @"Key1": @"Value1" } );
+
+    XCTAssertEqual(buo.price, 10.00);
+    XCTAssertEqualObjects(buo.currency, BNCCurrencyUSD);
+    XCTAssertEqualObjects(buo.type, @"Purchase");;
+    XCTAssertEqual(buo.contentIndexMode, BNCContentIndexModePublic);
+    XCTAssertEqualObjects(buo.metadata, @{ @"Key1": @"Value1" });
+    XCTAssertEqual(buo.automaticallyListOnSpotlight, YES);
+
+    buo.schemaData.userInfo = (NSMutableDictionary*) @{ @"Key2": @"Value2" };
+    buo.schemaData.userInfo[@"Key3"] = @"Value3";
+    [buo addMetadataKey:@"Key4" value:@"Value4"];
+    NSDictionary *d = @{
+        @"Key2": @"Value2",
+        @"Key3": @"Value3",
+        @"Key4": @"Value4",
+    };
+    XCTAssertEqualObjects(buo.metadata, d);
+
+    #pragma clang diagnostic pop
+}
+
+- (void) testDictionary {
+    NSDictionary *d = nil;
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+
+    buo.schemaData.userInfo = nil;
+    d = [NSDictionary new];
+    XCTAssertEqualObjects(buo.schemaData.userInfo, d);
+
+    buo.schemaData.userInfo = nil;
+    buo.schemaData.userInfo[@"a"] = @"b";
+    d = @{ @"a": @"b" };
+    XCTAssertEqualObjects(buo.schemaData.userInfo, d);
+
+    buo.schemaData.userInfo = [NSMutableDictionary dictionaryWithDictionary:@{@"1": @"2"}];
+    buo.schemaData.userInfo[@"3"] = @"4";
+    d = @{
+        @"1": @"2",
+        @"3": @"4",
+    };
+    XCTAssertEqualObjects(buo.schemaData.userInfo, d);
 }
 
 @end

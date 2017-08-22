@@ -187,3 +187,21 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
     \"retryNumber\": 0
 }
 ";
+"BUODescription" =
+"<BranchUniversalObject 0x************
+ canonicalIdentifier: item/12345
+ title: My Content Title
+ contentDescription: my_product_description1
+ imageUrl: https://test_img_url
+ metadata: {
+    \"Custom_Content_metadata_key1\" = \"Custom_Content_metadata_val1\";
+}
+ type: COMMERCE_PRODUCT
+ indexLocally: 1
+ indexPublically: 0
+ keywords: (
+    \"My_Keyword1\",
+    \"My_Keyword2\"
+)
+ expirationDate: 1976-09-21 03:07:12 +0000
+>";

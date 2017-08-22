@@ -20,6 +20,7 @@
 #import "BNCXcode7Support.h"
 #import "BranchActivityItemProvider.h"
 #import "BranchDeepLinkingController.h"
+#import "BranchEvent.h"
 #import "BranchLinkProperties.h"
 #import "BranchShareLink.h"
 #import "BranchUniversalObject.h"
@@ -1491,8 +1492,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void) sendServerRequest:(BNCServerRequest*)request;
 - (void) sendServerRequestWithoutSession:(BNCServerRequest*)request;
 
-// Read-only properties exposed for unit testing.
+// Read-only property exposed for unit testing.
 @property (strong, readonly) BNCServerInterface *serverInterface;
+- (void) clearNetworkQueue;
 @end
-
-#import "BNCEvent.h" // TODO: Weird but true.

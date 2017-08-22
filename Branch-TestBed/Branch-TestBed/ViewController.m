@@ -26,7 +26,6 @@ NSString *user_id1 = @"abe@emailaddress.io";
 NSString *user_id2 = @"ben@emailaddress.io";
 NSString *live_key = @"live_key";
 NSString *test_key = @"test_key";
-NSString *type = @"some type";
 
 @interface ViewController () <BranchShareLinkDelegate> {
     NSDateFormatter *_dateFormatter;
@@ -62,15 +61,14 @@ NSString *type = @"some type";
     _branchUniversalObject.title = contentTitle;
     _branchUniversalObject.contentDescription = contentDescription;
     _branchUniversalObject.imageUrl = imageUrl;
-    _branchUniversalObject.price = 1000;
-    _branchUniversalObject.currency = @"$";
-    _branchUniversalObject.type = type;
-    [_branchUniversalObject
-        addMetadataKey:@"deeplink_text"
-        value:[NSString stringWithFormat:
+    _branchUniversalObject.schemaData.price = [NSDecimalNumber decimalNumberWithString:@"1000.00"];
+    _branchUniversalObject.schemaData.currency = BNCCurrencyUSD;
+    _branchUniversalObject.schemaData.contentSchema = BranchContentSchemaCommerceProduct;
+    _branchUniversalObject.schemaData.userInfo[@"deeplink_text"] =
+        [NSString stringWithFormat:
             @"This text was embedded as data in a Branch link with the following characteristics:\n\n"
              "canonicalUrl: %@\n  title: %@\n  contentDescription: %@\n  imageUrl: %@\n",
-                canonicalUrl, contentTitle, contentDescription, imageUrl]];
+                canonicalUrl, contentTitle, contentDescription, imageUrl];
 
     self.versionLabel.text =
         [NSString stringWithFormat:@"v %@ / %@ / %@",
@@ -378,8 +376,8 @@ NSString *type = @"some type";
 
 //example using callbackWithURLandSpotlightIdentifier
 - (IBAction)registerWithSpotlightButtonTouchUpInside:(id)sender {
-    [self.branchUniversalObject addMetadataKey:@"deeplink_text" value:@"This link was generated for Spotlight registration"];
-    self.branchUniversalObject.automaticallyListOnSpotlight = YES;
+    self.branchUniversalObject.schemaData.userInfo[@"deeplink_text"] = @"This link was generated for Spotlight registration";
+    self.branchUniversalObject.indexLocally = YES;
     [self.branchUniversalObject userCompletedAction:BNCRegisterViewEvent];
 }
 

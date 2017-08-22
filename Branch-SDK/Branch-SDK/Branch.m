@@ -1608,7 +1608,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self callClose];
     [self.requestQueue persistImmediately];
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
-    NSLog(@"Resigned active."); // TODO: Remove
     BNCLogDebugSDK(@"Application resigned active.");
     [self.class closeLog];
     [self.class openLog];
@@ -1743,6 +1742,13 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
     else {
         dispatch_semaphore_signal(self.processing_sema);
     }
+}
+
+- (void) clearNetworkQueue {
+    dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
+    self.networkCount = 0;
+    [[BNCServerRequestQueue getInstance] clearQueue];
+    dispatch_semaphore_signal(self.processing_sema);    
 }
 
 #pragma mark - Session Initialization
