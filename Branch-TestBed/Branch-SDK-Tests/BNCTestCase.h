@@ -27,6 +27,11 @@ static inline void BNCSleepForTimeInterval(NSTimeInterval seconds) {
     nanosleep(&sleepTime, NULL);
 }
 
+#define BNCTAssertEqualMaskedString(string, mask) { \
+    if (!string || !mask || ![string bnc_isEqualToMaskedString:mask]) { \
+        XCTAssertEqualObjects(string, mask); \
+    } \
+}
 
 @interface BNCTestCase : XCTestCase
 

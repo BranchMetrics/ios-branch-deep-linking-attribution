@@ -188,7 +188,7 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
 }
 ";
 "BUODescription" =
-"<BranchUniversalObject 0x************
+"<BranchUniversalObject 0x****************
  canonicalIdentifier: item/12345
  title: My Content Title
  contentDescription: my_product_description1

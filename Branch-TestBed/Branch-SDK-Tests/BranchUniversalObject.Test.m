@@ -60,10 +60,10 @@
     XCTAssertEqualObjects(buo.keywords,                     array);
     XCTAssertEqualObjects(buo.contentDescription,           @"my_product_description1");
     XCTAssertEqualObjects(buo.imageUrl,                     @"https://test_img_url");
-    XCTAssertEqualObjects(buo.expirationDate,               [NSDate dateWithTimeIntervalSince1970:212123232544.0/1000.0]);
+    XCTAssertEqualObjects(buo.expirationDate,               [NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0]);
     XCTAssertEqual(buo.indexPublicly,                       NO);
     XCTAssertEqual(buo.indexLocally,                        YES);
-    XCTAssertEqualObjects(buo.creationDate,                 [NSDate dateWithTimeIntervalSince1970:1501869445321.0/1000.0]);
+    XCTAssertEqualObjects(buo.creationDate,                 [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0]);
 
     XCTAssertEqualObjects(buo.expirationDate.description,   @"1976-09-21 03:07:12 +0000");
     XCTAssertEqualObjects(buo.creationDate.description,     @"2017-08-04 17:57:25 +0000");
@@ -90,9 +90,8 @@
     NSDictionary *d = [self mutableDictionaryFromBundleJSONWithKey:@"BranchUniversalObjectJSON"];
     BranchUniversalObject *b = [BranchUniversalObject objectWithDictionary:d];
     NSString *s = b.schemaData.description;
-    NSLog(@"%@", s);
-    XCTAssertTrue(s && [s bnc_isEqualToMaskedString:
-        @"<BranchSchemaData 0x************ schema: COMMERCE_PRODUCT userData: 1 items>"]);
+    BNCTAssertEqualMaskedString(s,
+        @"<BranchSchemaData 0x**************** schema: COMMERCE_PRODUCT userData: 1 items>");
 }
 
 - (void) testBUODescription {

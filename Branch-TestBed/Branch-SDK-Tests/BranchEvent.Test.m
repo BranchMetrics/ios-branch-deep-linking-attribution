@@ -24,7 +24,7 @@
 
 - (void) testEvent {
 
-    // Set up the Branch Univseral Object --
+    // Set up the Branch Universal Object --
 
     BranchUniversalObject *buo = [BranchUniversalObject new];
     buo.canonicalIdentifier = @"item/12345";

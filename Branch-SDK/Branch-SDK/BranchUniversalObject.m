@@ -145,9 +145,9 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
 }
 
 - (NSString*) description {
-    return [NSString stringWithFormat:@"<%@ %p schema: %@ userData: %ld items>",
+    return [NSString stringWithFormat:@"<%@ 0x%016llx schema: %@ userData: %ld items>",
         NSStringFromClass(self.class),
-        self,
+        (uint64_t) self,
         _contentSchema,
         (long) _userInfo.count
     ];
@@ -243,7 +243,7 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
 
 - (NSString *)description {
     return [NSString stringWithFormat:
-        @"<%@ %p"
+        @"<%@ 0x%016llx"
          "\n canonicalIdentifier: %@"
          "\n title: %@"
          "\n contentDescription: %@"
@@ -255,7 +255,7 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
          "\n keywords: %@"
          "\n expirationDate: %@"
          "\n>",
-         NSStringFromClass(self.class), self,
+         NSStringFromClass(self.class), (uint64_t) self,
         self.canonicalIdentifier,
         self.title,
         self.contentDescription,

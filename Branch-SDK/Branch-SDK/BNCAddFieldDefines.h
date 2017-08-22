@@ -114,7 +114,7 @@
     #define addDate(field, name) { \
         if (self.field) { \
             NSTimeInterval t = self.field.timeIntervalSince1970; \
-            dictionary[@#name] = [NSNumber numberWithInteger:t*1000.0]; \
+            dictionary[@#name] = [NSNumber numberWithLongLong:(long long)(t*1000.0)]; \
         } \
     }
 
