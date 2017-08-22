@@ -160,6 +160,8 @@
 		E2133B731D01297E00763049 /* BNCFabricAnswers.h in Headers */ = {isa = PBXBuildFile; fileRef = E2133B711D0125EF00763049 /* BNCFabricAnswers.h */; };
 		E2133B751D01477200763049 /* BNCFabricAnswers.m in Sources */ = {isa = PBXBuildFile; fileRef = E2133B741D01477200763049 /* BNCFabricAnswers.m */; };
 		E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B947491D15D73900F2270D /* BNCCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F1CF14081F4CBADD00BB2694 /* BNCSpotlightService.h in Headers */ = {isa = PBXBuildFile; fileRef = F1CF14061F4CBADD00BB2694 /* BNCSpotlightService.h */; };
+		F1CF14091F4CBADD00BB2694 /* BNCSpotlightService.m in Sources */ = {isa = PBXBuildFile; fileRef = F1CF14071F4CBADD00BB2694 /* BNCSpotlightService.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -360,6 +362,8 @@
 		E2B597061D063EEF00A089A6 /* Answers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Answers.h; path = "../Branch-SDK/Fabric/Answers.h"; sourceTree = "<group>"; };
 		E2B597081D063F1D00A089A6 /* ANSCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ANSCompatibility.h; path = "../Branch-SDK/Fabric/ANSCompatibility.h"; sourceTree = "<group>"; };
 		E2B947491D15D73900F2270D /* BNCCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCCallbacks.h; sourceTree = "<group>"; };
+		F1CF14061F4CBADD00BB2694 /* BNCSpotlightService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSpotlightService.h; sourceTree = "<group>"; };
+		F1CF14071F4CBADD00BB2694 /* BNCSpotlightService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSpotlightService.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -580,6 +584,8 @@
 				4D44E7C61E68F34E00793D79 /* BNCLog.m */,
 				670016C11946309100A9E103 /* BNCPreferenceHelper.h */,
 				670016C21946309100A9E103 /* BNCPreferenceHelper.m */,
+				F1CF14061F4CBADD00BB2694 /* BNCSpotlightService.h */,
+				F1CF14071F4CBADD00BB2694 /* BNCSpotlightService.m */,
 				67486B8B1B93B48A0044D872 /* BNCStrongMatchHelper.h */,
 				67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */,
 				670016C71946309100A9E103 /* BNCSystemObserver.h */,
@@ -722,6 +728,7 @@
 				466B58791B17780A00A69EDE /* BNCConfig.h in Headers */,
 				4D8999EC1DC108FF00F7EE0A /* BNCXcode7Support.h in Headers */,
 				2BD7C45F1F27D7AB003696AF /* BNCDeepLinkViewControllerInstance.h in Headers */,
+				F1CF14081F4CBADD00BB2694 /* BNCSpotlightService.h in Headers */,
 				7D4DAC211C8FA8C0008E37DB /* BranchView.h in Headers */,
 				7D4DAC271C8FA908008E37DB /* BranchViewHandler.h in Headers */,
 				4D9921151EE208B400A4AB92 /* BNCServerInterface.h in Headers */,
@@ -940,6 +947,7 @@
 				7D0C971D1D875465004E14B1 /* BranchContentDiscoveryManifest.m in Sources */,
 				466D5A121B5991E3009DB845 /* BNCContentDiscoveryManager.m in Sources */,
 				4D9921301EE208B400A4AB92 /* BranchShortUrlRequest.m in Sources */,
+				F1CF14091F4CBADD00BB2694 /* BNCSpotlightService.m in Sources */,
 				466B58551B17779C00A69EDE /* Branch.m in Sources */,
 				4D9921261EE208B400A4AB92 /* BranchLogoutRequest.m in Sources */,
 				4D99211A1EE208B400A4AB92 /* BNCServerRequestQueue.m in Sources */,

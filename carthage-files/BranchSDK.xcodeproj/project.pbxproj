@@ -109,6 +109,8 @@
 		E2B9477B1D15E31700F2270D /* BNCCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B9477A1D15E31700F2270D /* BNCCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E2B9477E1D15E3C100F2270D /* BNCFabricAnswers.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B9477C1D15E3C100F2270D /* BNCFabricAnswers.h */; };
 		E2B9477F1D15E3C100F2270D /* BNCFabricAnswers.m in Sources */ = {isa = PBXBuildFile; fileRef = E2B9477D1D15E3C100F2270D /* BNCFabricAnswers.m */; };
+		F1CF140F1F4CBBC500BB2694 /* BNCSpotlightService.h in Headers */ = {isa = PBXBuildFile; fileRef = F1CF140D1F4CBBC500BB2694 /* BNCSpotlightService.h */; };
+		F1CF14101F4CBBC500BB2694 /* BNCSpotlightService.m in Sources */ = {isa = PBXBuildFile; fileRef = F1CF140E1F4CBBC500BB2694 /* BNCSpotlightService.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -225,6 +227,8 @@
 		E2B9477C1D15E3C100F2270D /* BNCFabricAnswers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCFabricAnswers.h; sourceTree = "<group>"; };
 		E2B9477D1D15E3C100F2270D /* BNCFabricAnswers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCFabricAnswers.m; sourceTree = "<group>"; };
 		E2B947861D15E78700F2270D /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		F1CF140D1F4CBBC500BB2694 /* BNCSpotlightService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSpotlightService.h; sourceTree = "<group>"; };
+		F1CF140E1F4CBBC500BB2694 /* BNCSpotlightService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSpotlightService.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -324,6 +328,8 @@
 				2BD7C3DA1F27CEDB003696AF /* BNCLog.m */,
 				E230A1221D03DB9E006181D8 /* BNCPreferenceHelper.h */,
 				E230A1231D03DB9E006181D8 /* BNCPreferenceHelper.m */,
+				F1CF140D1F4CBBC500BB2694 /* BNCSpotlightService.h */,
+				F1CF140E1F4CBBC500BB2694 /* BNCSpotlightService.m */,
 				E230A12A1D03DB9E006181D8 /* BNCStrongMatchHelper.h */,
 				E230A12B1D03DB9E006181D8 /* BNCStrongMatchHelper.m */,
 				E230A12C1D03DB9E006181D8 /* BNCSystemObserver.h */,
@@ -407,6 +413,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2B9477B1D15E31700F2270D /* BNCCallbacks.h in Headers */,
+				F1CF140F1F4CBBC500BB2694 /* BNCSpotlightService.h in Headers */,
 				4D3922BD1E1F0C85004FB7C8 /* BNCCommerceEvent.h in Headers */,
 				E230A16C1D03DB9E006181D8 /* BNCConfig.h in Headers */,
 				2BD7C3DD1F27CEDB003696AF /* BNCDebug.h in Headers */,
@@ -534,6 +541,7 @@
 				E230A1701D03DB9E006181D8 /* BNCDeviceInfo.m in Sources */,
 				7DA3BF201D889CE500CA8AE0 /* BranchContentDiscoveryManifest.m in Sources */,
 				4DAB17AF1EE8A31B0079EEB4 /* BranchLoadRewardsRequest.m in Sources */,
+				F1CF14101F4CBBC500BB2694 /* BNCSpotlightService.m in Sources */,
 				E230A1931D03DB9E006181D8 /* BranchUniversalObject.m in Sources */,
 				4DAB17C11EE8A31B0079EEB4 /* BranchUserCompletedActionRequest.m in Sources */,
 				E230A1741D03DB9E006181D8 /* BNCError.m in Sources */,
