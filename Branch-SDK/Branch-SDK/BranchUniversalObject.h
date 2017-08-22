@@ -14,9 +14,9 @@
 
 #pragma mark BranchContentIndexMode
 
-typedef NS_ENUM(NSInteger, BNCContentIndexMode) {
-    BNCContentIndexModePublic,
-    BNCContentIndexModePrivate
+typedef NS_ENUM(NSInteger, BranchContentIndexMode) {
+    BranchContentIndexModePublic,
+    BranchContentIndexModePrivate
 };
 
 #pragma mark - BranchContentSchema
@@ -50,15 +50,15 @@ extern BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc;
 
 #pragma mark - BNCProductCondition
 
-typedef NSString * const BNCProductCondition;
+typedef NSString * const BranchProductCondition;
 
-extern BNCProductCondition _Nonnull BNCProductConditionOther;
-extern BNCProductCondition _Nonnull BNCProductConditionNew;
-extern BNCProductCondition _Nonnull BNCProductConditionGood;
-extern BNCProductCondition _Nonnull BNCProductConditionFair;
-extern BNCProductCondition _Nonnull BNCProductConditionPoor;
-extern BNCProductCondition _Nonnull BNCProductConditionUsed;
-extern BNCProductCondition _Nonnull BNCProductConditionRefurbished;
+extern BranchProductCondition _Nonnull BranchProductConditionOther;
+extern BranchProductCondition _Nonnull BranchProductConditionNew;
+extern BranchProductCondition _Nonnull BranchProductConditionGood;
+extern BranchProductCondition _Nonnull BranchProductConditionFair;
+extern BranchProductCondition _Nonnull BranchProductConditionPoor;
+extern BranchProductCondition _Nonnull BranchProductConditionUsed;
+extern BranchProductCondition _Nonnull BranchProductConditionRefurbished;
 
 #pragma mark - BranchSchemaData
 
@@ -130,7 +130,7 @@ extern BNCProductCondition _Nonnull BNCProductConditionRefurbished;
 
 @property (nonatomic, assign)
     __attribute__((deprecated(("Use `BranchUniversalObject.indexLocally and BranchUniversalObject.indexPublicly` instead."))))
-    BNCContentIndexMode contentIndexMode;
+    BranchContentIndexMode contentIndexMode;
 
 @property (nonatomic, strong, nullable)
     __attribute__((deprecated(("Not used due to iOS 10.0 Spotlight changes."))))

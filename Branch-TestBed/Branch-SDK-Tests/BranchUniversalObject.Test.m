@@ -111,7 +111,7 @@
     buo.price = 10.00;
     buo.currency = BNCCurrencyUSD;
     buo.type = @"Purchase";
-    buo.contentIndexMode = BNCContentIndexModePublic;
+    buo.contentIndexMode = BranchContentIndexModePublic;
     buo.metadata = @{ @"Key1": @"Value1" };
     buo.automaticallyListOnSpotlight = YES;
 
@@ -125,7 +125,7 @@
     XCTAssertEqual(buo.price, 10.00);
     XCTAssertEqualObjects(buo.currency, BNCCurrencyUSD);
     XCTAssertEqualObjects(buo.type, @"Purchase");;
-    XCTAssertEqual(buo.contentIndexMode, BNCContentIndexModePublic);
+    XCTAssertEqual(buo.contentIndexMode, BranchContentIndexModePublic);
     XCTAssertEqualObjects(buo.metadata, @{ @"Key1": @"Value1" });
     XCTAssertEqual(buo.automaticallyListOnSpotlight, YES);
 

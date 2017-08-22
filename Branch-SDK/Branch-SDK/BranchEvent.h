@@ -63,7 +63,7 @@ extern BranchStandardEvent BranchStandardEventUnlockAchievement;
 @property (nonatomic, strong) NSString              *coupon;
 @property (nonatomic, strong) NSString              *affiliation;
 @property (nonatomic, strong) NSString              *eventDescription;
-@property (nonatomic, strong) BNCProductCondition   productCondition;
+@property (nonatomic, strong) BranchProductCondition productCondition;
 @property (nonatomic, strong) NSArray<BranchUniversalObject*> *contentItems;
 @property (nonatomic, strong) NSMutableDictionary<NSString*, NSString*> *userInfo;
 

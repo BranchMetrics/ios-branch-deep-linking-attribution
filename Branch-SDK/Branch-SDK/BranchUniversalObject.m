@@ -43,15 +43,15 @@ BranchContentSchema _Nonnull BranchContentSchemaTextSearchResults   = @"TEXT_SEA
 BranchContentSchema _Nonnull BranchContentSchemaTextStory           = @"TEXT_STORY";
 BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc    = @"TEXT_TECHNICAL_DOC";
 
-#pragma mark - BNCProductCondition
+#pragma mark - BranchProductCondition
 
-BNCProductCondition _Nonnull BNCProductConditionOther         = @"OTHER";
-BNCProductCondition _Nonnull BNCProductConditionNew           = @"NEW";
-BNCProductCondition _Nonnull BNCProductConditionGood          = @"GOOD";
-BNCProductCondition _Nonnull BNCProductConditionFair          = @"FAIR";
-BNCProductCondition _Nonnull BNCProductConditionPoor          = @"POOR";
-BNCProductCondition _Nonnull BNCProductConditionUsed          = @"USED";
-BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
+BranchProductCondition _Nonnull BranchProductConditionOther         = @"OTHER";
+BranchProductCondition _Nonnull BranchProductConditionNew           = @"NEW";
+BranchProductCondition _Nonnull BranchProductConditionGood          = @"GOOD";
+BranchProductCondition _Nonnull BranchProductConditionFair          = @"FAIR";
+BranchProductCondition _Nonnull BranchProductConditionPoor          = @"POOR";
+BranchProductCondition _Nonnull BranchProductConditionUsed          = @"USED";
+BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBISHED";
 
 #pragma mark - BranchSchemaData
 
@@ -212,15 +212,15 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
     self.schemaData.contentSchema = type;
 }
 
-- (BNCContentIndexMode) contentIndexMode {
+- (BranchContentIndexMode) contentIndexMode {
     if (self.indexPublicly)
-        return BNCContentIndexModePublic;
+        return BranchContentIndexModePublic;
     else
-        return BNCContentIndexModePrivate;
+        return BranchContentIndexModePrivate;
 }
 
-- (void) setContentIndexMode:(BNCContentIndexMode)contentIndexMode {
-    if (contentIndexMode == BNCContentIndexModePublic)
+- (void) setContentIndexMode:(BranchContentIndexMode)contentIndexMode {
+    if (contentIndexMode == BranchContentIndexModePublic)
         self.indexPublicly = YES;
     else
         self.indexLocally = YES;
@@ -530,7 +530,7 @@ BNCProductCondition _Nonnull BNCProductConditionRefurbished   = @"REFURBISHED";
 //This one uses a callback that returns the SpotlightIdentifier
 - (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
     BOOL publiclyIndexable;
-    if (self.contentIndexMode == BNCContentIndexModePrivate) {
+    if (self.contentIndexMode == BranchContentIndexModePrivate) {
         publiclyIndexable = NO;
     }
     else {

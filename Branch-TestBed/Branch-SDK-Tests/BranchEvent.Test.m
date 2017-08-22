@@ -73,7 +73,7 @@
     event.coupon          = @"test_coupon";
     event.affiliation     = @"test_affiliation";
     event.eventDescription= @"Event _description";
-    event.productCondition= BNCProductConditionFair;
+    event.productCondition= BranchProductConditionFair;
     event.userInfo        = (NSMutableDictionary*) @{
         @"Custom_Event_Property_Key1": @"Custom_Event_Property_val1",
         @"Custom_Event_Property_Key2": @"Custom_Event_Property_val2"
@@ -103,7 +103,7 @@
     expectedRequest[@"user_agent"]      = [BNCDeviceInfo userAgentString];
 
     Branch *branch = [Branch getInstance:@"key_live_foo"];
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"v2-event"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"v2-event"];
     id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
 
     OCMStub(
@@ -135,7 +135,7 @@
     [branch clearNetworkQueue];
     event.contentItems = @[ buo ];
     [event logEvent];
-    [self waitForExpectations:@[expectation] timeout:2.0];
+    [self waitForExpectationsWithTimeout:2.0 handler:nil];
     [serverInterfaceMock stopMocking];
 }
 
@@ -158,7 +158,7 @@
     expectedRequest[@"custom_data"]     = nil;
 
     Branch *branch = [Branch getInstance:@"key_live_foo"];
-    XCTestExpectation *expectation = [[XCTestExpectation alloc] initWithDescription:@"v2-event-user-action"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"v2-event-user-action"];
     id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
 
     OCMStub(
@@ -230,7 +230,7 @@
     [buo userCompletedAction:BranchStandardEventPurchase];
 //    [branch processNextQueueItem];
 //    [branch processNextQueueItem];
-    [self waitForExpectations:@[expectation] timeout:2.0];
+    [self waitForExpectationsWithTimeout:2.0 handler:nil];
     [serverInterfaceMock stopMocking];
 }
 
