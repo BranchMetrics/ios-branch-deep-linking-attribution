@@ -164,6 +164,8 @@
 		E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B947491D15D73900F2270D /* BNCCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F185BAAA1F3D30D70056300C /* BNCSpotlightService.h in Headers */ = {isa = PBXBuildFile; fileRef = F185BAA81F3D30D70056300C /* BNCSpotlightService.h */; };
 		F185BAAB1F3D30D70056300C /* BNCSpotlightService.m in Sources */ = {isa = PBXBuildFile; fileRef = F185BAA91F3D30D70056300C /* BNCSpotlightService.m */; };
+		F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; };
+		F1CF14121F4CC7AC00BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; };
 		F1D359201ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */; };
 		F1D359211ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */; };
 		F1D4F9AF1F323F01002D13FF /* TestBedUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D4F9AE1F323F01002D13FF /* TestBedUITests.m */; };
@@ -380,6 +382,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */,
 				466B58531B17776A00A69EDE /* UIKit.framework in Frameworks */,
 				466B58521B17776500A69EDE /* Foundation.framework in Frameworks */,
 				466B584F1B17775900A69EDE /* AdSupport.framework in Frameworks */,
@@ -406,6 +409,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1CF14121F4CC7AC00BB2694 /* CoreSpotlight.framework in Frameworks */,
 				4683F07A1B20AC5E00A432E7 /* libBranch.a in Frameworks */,
 				BC659371001A4A77B4CCE51C /* libPods-Branch-SDK-Tests.a in Frameworks */,
 			);
