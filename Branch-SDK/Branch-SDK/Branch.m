@@ -1341,6 +1341,46 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self.contentDiscoveryManager indexContentWithTitle:title description:description canonicalId:canonicalId publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:linkParams expirationDate:expirationDate callback:nil spotlightCallback:spotlightCallback];
 }
 
+-(void) createDiscoverableObjectUsingSearchableItem:(BranchUniversalObject*)universalObject
+                                       onCompletion:(void (^) (BranchUniversalObject *universalObject, NSError *error))completion {
+    [self.contentDiscoveryManager indexObjectUsingSearchableItem:universalObject
+                                                    onCompletion:completion];
+}
+
+/* Indexing of multiple BUOs
+ * Content privately indexed irrestive of the value of contentIndexMode
+ */
+-(void) createDiscoverableContentsUsingSearchableItems:(NSArray<BranchUniversalObject*>*)universalObjects
+                                          onCompletion:(void (^) (NSArray<BranchUniversalObject*>*universalObjects))completion
+                                             onFailure:(void (^) (BranchUniversalObject *universalObject, NSError* error))failure {
+    [self.contentDiscoveryManager indexObjectsUsingSearchableItem:universalObjects
+                                                     onCompletion:completion
+                                                        onFailure:failure];
+}
+
+-(void) removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject *)universalObject
+                                            completion:(completion)completion {
+    [self.contentDiscoveryManager removeSearchableItemWithBranchUniversalObject:universalObject
+                                                                     completion:completion];
+}
+
+/* Only removes the indexing of BUOs indexed through CSSearchable item
+ */
+-(void) removeSearchableItemsWithBranchUniversalObjects:(NSArray<BranchUniversalObject*> *)universalObjects
+                                             completion:(completion)completion {
+    [self.contentDiscoveryManager removeSearchableItemsWithBranchUniversalObjects:universalObjects
+                                                                       completion:completion];
+}
+
+/* Removes all content from spotlight indexed through CSSearchable item and has set the Domain identifier = "com.branch.io"
+ */
+
+-(void) removeAllPrivateContentFromSpotLightWithCompletion:(completion)completion {
+    [self.contentDiscoveryManager removeSearchableItemsByBranchSpotlightDomainWithCompletionHandler:completion];
+}
+
+
+
 #pragma mark - Private methods
 
 + (Branch *)getInstanceInternal:(NSString *)key returnNilIfNoCurrentInstance:(BOOL)returnNilIfNoCurrentInstance {

@@ -69,7 +69,6 @@
 -(void) indexObjectUsingSearchableItem:(BranchUniversalObject*)universalObject
                           onCompletion:(void (^) (BranchUniversalObject *universalObject, NSError *error))completion;
 
-
 /*
  * Indexing of multiple BUOs
  *
@@ -80,11 +79,11 @@
                            onCompletion:(void (^) (NSArray<BranchUniversalObject*>*universalObjects))completion
                               onFailure:(void (^) (BranchUniversalObject *universalObject, NSError* error))failure;
 
--(void) removePrivateObjectFromSpotlight:(BranchUniversalObject*)universalObject
-                        completion:(completion)completion;
+-(void) removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject*)universalObject
+                                           completion:(completion)completion;
 
--(void) removePrivateObjectsFromSpotlight:(NSArray<BranchUniversalObject*> *)universalObjects
-                               completion:(completion)completion;
+-(void) removeSearchableItemsWithBranchUniversalObjects:(NSArray<BranchUniversalObject*> *)universalObjects
+                                             completion:(completion)completion;
 
-- (void)removeAllPrivateContentByBranchWithcompletionHandler:(completion)completion;
+- (void) removeSearchableItemsByBranchSpotlightDomainWithCompletionHandler:(completion)completion;
 @end

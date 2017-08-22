@@ -72,7 +72,9 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 - (void)listOnSpotlight;
 - (void)listOnSpotlightWithCallback:(nullable callbackWithUrl)callback;
 - (void)listOnSpotlightWithIdentifierCallback:(nullable callbackWithUrlAndSpotlightIdentifier)spotlightCallback __attribute__((deprecated(("iOS 10 has changed how Spotlight indexing works and we’ve updated the SDK to reflect this. Please see https://dev.branch.io/features/spotlight-indexing/overview/ for instructions on migration"))));;
+- (void)listOnSpotlightUsingSearchableItemWithCallback:(void (^_Nullable) (BranchUniversalObject * _Nullable universalObject, NSError * _Nullable error))completion;
 
+- (void)removeFromSpotlightWithCompletion:(_Nullable completion)completion;
 // Convenience method for initSession methods that return BranchUniversalObject, but can be used safely by anyone.
 + (nonnull BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(nonnull NSDictionary *)dictionary;
 

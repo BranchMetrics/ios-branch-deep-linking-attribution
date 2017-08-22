@@ -32,9 +32,7 @@
                                           callback:(callbackWithUrl)callback
                                  spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
 
-- (void)removePrivateContentWithSpotlightIdentifier:(NSString *)spotLightIdentifier completionHandler:(completion)completion;
-
-- (void)removeMultiplePrivateContentOfSpotlightIdentifiers:(NSArray<NSString *> *)identifiers completionHandler:(completion)completion;
-
-- (void)removeAllPrivateContentByBranchWithcompletionHandler:(completion)completion;
+- (void)removeSearchableItemsWithIdentifier:(NSString *)identifier completionHandler:(completion)completion;
+- (void)removeSearchableItemsWithIdentifiers:(NSArray<NSString *> *)identifiers completionHandler:(completion)completion;
+- (void)removeSearchableItemsByBranchSpotlightDomainWithCompletionHandler:(completion)completion;
 @end

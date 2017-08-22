@@ -32,7 +32,6 @@ static NSString* const kUTTypeGeneric = @"public.content";
 }
 
 @property (strong, readonly) dispatch_queue_t workQueue;
-@property (strong, nonatomic) NSMutableDictionary *userInfo;
 @property (strong, atomic) BNCSpotlightService* spotlight;
 
 @end
@@ -440,8 +439,8 @@ static NSString* const kUTTypeGeneric = @"public.content";
     completion(completedBUO);
 }
 
--(void) removePrivateObjectFromSpotlight:(BranchUniversalObject *)universalObject
-                               completion:(completion)completion {
+-(void) removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject *)universalObject
+                                           completion:(completion)completion {
     
     if (universalObject.spotlightIdentifier == nil || [universalObject.spotlightIdentifier isEqualToString:@""]) {
         NSError* error = [NSError errorWithDomain:BNCErrorDomain code:BNCSpotlightTitleError userInfo:nil];
@@ -449,12 +448,12 @@ static NSString* const kUTTypeGeneric = @"public.content";
         return;
     }
     
-    [self.spotlight removePrivateContentWithSpotlightIdentifier:universalObject.spotlightIdentifier
-                                              completionHandler:completion];
+    [self.spotlight removeSearchableItemsWithIdentifier:universalObject.spotlightIdentifier
+                                      completionHandler:completion];
 }
 
--(void) removePrivateObjectsFromSpotlight:(NSArray<BranchUniversalObject *> *)universalObjects
-                               completion:(completion)completion {
+-(void) removeSearchableItemsWithBranchUniversalObjects:(NSArray<BranchUniversalObject *> *)universalObjects
+                                  completion:(completion)completion {
     
     NSMutableArray<NSString *> *spotlightIdentifiers = [[NSMutableArray alloc] init];
     
@@ -462,12 +461,12 @@ static NSString* const kUTTypeGeneric = @"public.content";
         [spotlightIdentifiers addObject:universalObject.spotlightIdentifier];
     }
     
-    [self.spotlight removeMultiplePrivateContentOfSpotlightIdentifiers:spotlightIdentifiers
-                                                     completionHandler:completion];
+    [self.spotlight removeSearchableItemsWithIdentifiers:spotlightIdentifiers
+                                       completionHandler:completion];
 }
 
--(void) removeAllPrivateContentByBranchWithcompletionHandler:(completion)completion {
-    [self.spotlight removeAllPrivateContentByBranchWithcompletionHandler:completion];
+-(void) removeSearchableItemsByBranchSpotlightDomainWithCompletionHandler:(completion)completion {
+    [self.spotlight removeSearchableItemsByBranchSpotlightDomainWithCompletionHandler:completion];
 }
 
 @end

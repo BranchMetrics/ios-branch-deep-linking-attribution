@@ -327,6 +327,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     return spotlightLinkData;
 }
 
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 -(CSSearchableItemAttributeSet *)getAttributeSetFromCanonicalId:(NSString *)canonicalId
                                                           title:(NSString *)title
                                                     description:(NSString *)description
@@ -335,7 +336,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                                   thumbnailData:(NSData *)thumbnailData
                                                        userInfo:(NSDictionary *)userInfo
                                                        keywords:(NSSet *)keywords {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     
     if([CSSearchableItemAttributeSet class]) {
         CSSearchableItemAttributeSet *attributeSet = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:type];
@@ -405,9 +405,14 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                                                spotlightCallback(url, url, nil);
                                                            }
                                                        }];
-
-    }
-    
+    } else {
+        NSError* error = [NSError errorWithDomain:BNCErrorDomain code:BNCSpotlightNotAvailableError userInfo:nil];
+        if (callback) {
+            callback(nil, error);
+        } else if (spotlightCallback) {
+            spotlightCallback(nil, nil, error);
+        }
+    }    
 }
 
 #pragma mark Helper Methods
@@ -432,23 +437,36 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     [userActivity addUserInfoEntriesFromDictionary:self.userInfo];
 }
 
-#pragma remove private content from spotlight
+#pragma remove private content from spotlight indexed using Searchable Item
 
-- (void)removePrivateContentWithSpotlightIdentifier:(NSString *)spotLightIdentifier completionHandler:(completion)completion {
-    [self removeMultiplePrivateContentOfSpotlightIdentifiers:@[spotLightIdentifier] completionHandler:completion];
+- (void)removeSearchableItemsWithIdentifier:(NSString *)identifier completionHandler:(completion)completion {
+    [self removeSearchableItemsWithIdentifiers:@[identifier] completionHandler:completion];
 }
 
-- (void)removeMultiplePrivateContentOfSpotlightIdentifiers:(NSArray<NSString *> *)identifiers completionHandler:(completion)completion {
-    [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithIdentifiers:identifiers completionHandler:^(NSError * _Nullable error) {
+- (void)removeSearchableItemsWithIdentifiers:(NSArray<NSString *> *)identifiers completionHandler:(completion)completion {
+   
+    if ([CSSearchableIndex class]) {
+        [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithIdentifiers:identifiers completionHandler:^(NSError * _Nullable error) {
+            completion(error);
+        }];
+    }else {
+        NSError* error = [NSError errorWithDomain:BNCErrorDomain code:BNCSpotlightNotAvailableError userInfo:nil];
         completion(error);
-    }];
+    }
     
 }
 
-- (void)removeAllPrivateContentByBranchWithcompletionHandler:(completion)completion {
-    [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithDomainIdentifiers:@[kDomainIdentifier] completionHandler:^(NSError * _Nullable error) {
+- (void)removeSearchableItemsByBranchSpotlightDomainWithCompletionHandler:(completion)completion {
+    
+    if ([CSSearchableIndex class]) {
+        [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithDomainIdentifiers:@[kDomainIdentifier] completionHandler:^(NSError * _Nullable error) {
+            completion(error);
+        }];
+    }else {
+        NSError* error = [NSError errorWithDomain:BNCErrorDomain code:BNCSpotlightNotAvailableError userInfo:nil];
         completion(error);
-    }];
+    }
+
 }
 
 @end

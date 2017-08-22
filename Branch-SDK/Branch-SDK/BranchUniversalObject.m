@@ -368,6 +368,18 @@
                                            spotlightCallback:spotlightCallback];
 }
 
+-(void) listOnSpotlightUsingSearchableItemWithCallback:(void (^)(BranchUniversalObject * _Nullable, NSError * _Nullable))completion {
+    [[Branch getInstance] createDiscoverableObjectUsingSearchableItem:self
+                                                         onCompletion:completion];
+}
+
+- (void) removeFromSpotlightWithCompletion:(completion)completion {
+    if (self.contentIndexMode == ContentIndexModePrivate) {
+        [[Branch getInstance] removeSearchableItemWithBranchUniversalObject:self
+                                                                 completion:completion];
+    }
+}
+
 #pragma mark - Private methods
 
 - (NSDictionary *)getParamsForServerRequest {
