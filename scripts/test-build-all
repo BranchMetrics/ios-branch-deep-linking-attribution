@@ -83,9 +83,9 @@ buildDirectoryProjectScheme \
     TestBed-Swift
 
 cd Examples/WebViewExample
-printf "${textBlue}>>> Building '%s'...${textNormal}\n" "$(basename `pwd`)"
-pod install
-pod update
+# printf "${textBlue}>>> Updating '%s'...${textNormal}\n" "$(basename `pwd`)"
+# pod install
+# pod update
 cd ../..
 buildDirectoryProjectScheme \
     Examples/WebViewExample \

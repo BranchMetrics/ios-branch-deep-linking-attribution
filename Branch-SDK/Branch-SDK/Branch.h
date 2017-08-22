@@ -7,22 +7,24 @@
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "BNCConfig.h"
-#import "BranchView.h"
 #import "BNCCallbacks.h"
+#import "BNCCommerceEvent.h"
+#import "BNCConfig.h"
+#import "BNCDebug.h"
+#import "BNCError.h"
 #import "BNCLinkCache.h"
-#import "BranchViewHandler.h"
-#import "BNCServerInterface.h"
+#import "BNCLog.h"
 #import "BNCPreferenceHelper.h"
-#import "BranchLinkProperties.h"
-#import "BranchUniversalObject.h"
+#import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
+#import "BNCXcode7Support.h"
 #import "BranchActivityItemProvider.h"
 #import "BranchDeepLinkingController.h"
-#import "BNCCommerceEvent.h"
+#import "BranchLinkProperties.h"
 #import "BranchShareLink.h"
-#import "BNCXcode7Support.h"
-#import "BNCLog.h"
+#import "BranchUniversalObject.h"
+#import "BranchView.h"
+#import "BranchViewHandler.h"
 
 /**
  `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.

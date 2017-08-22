@@ -358,7 +358,7 @@ NSString *BNCLogByteWrapReadNextRecord() {
         while ( (p-buffer) < endByte && *p != '\n') {
             p++;
         }
-        if (*p == '\n') {
+        if ((p-buffer) < endByte && *p == '\n') {
             intptr_t offset = (p-buffer)+1;
             NSString *result =
                 [[NSString alloc]

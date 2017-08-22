@@ -27,7 +27,7 @@
 
 + (BNCDeviceInfo *)getInstance {
     static BNCDeviceInfo *bnc_deviceInfo = 0;
-    static dispatch_once_t onceToken;
+    static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
         bnc_deviceInfo = [[BNCDeviceInfo alloc] init];
     });

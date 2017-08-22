@@ -29,7 +29,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
 
-    // Comment / un-comment to toggle debugging:
+    // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
     [branch setDebug];
 
     // Check for Apple Search Ad attribution:

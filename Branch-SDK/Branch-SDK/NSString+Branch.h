@@ -28,3 +28,5 @@
 - (NSString*_Nonnull) bnc_stringTruncatedAtNull;
 
 @end
+
+void BNCForceNSStringCategoryToLoad(void) __attribute__((constructor));

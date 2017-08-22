@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 
 
-void ForceNSMutableDictionaryToLoad(void) __attribute__((constructor));
+void BNCForceNSMutableDictionaryCategoryToLoad(void) __attribute__((constructor));
 
 
 @interface NSMutableDictionary (Branch)
