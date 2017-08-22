@@ -126,7 +126,7 @@
         NSLog(@"URL: %@.", url);
         NSLog(@"Body: %@.", parameters);
 
-        if ([url containsString:@"v2/event/standard"]) {
+        if ([url containsString:@"branch.io/v2/event/standard"]) {
             XCTAssertEqualObjects(expectedRequest, parameters);
             [expectation fulfill];
         }
@@ -181,7 +181,7 @@
         NSLog(@"URL: %@.", url);
         NSLog(@"Body: %@.", parameters);
 
-        if ([url containsString:@"v2/event/standard"]) {
+        if ([url containsString:@"branch.io/v2/event/standard"]) {
             XCTAssertEqualObjects(expectedRequest, parameters);
             [expectation fulfill];
         }

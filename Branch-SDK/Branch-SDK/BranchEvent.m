@@ -234,8 +234,8 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSString *serverURL =
         ([self.class.standardEvents containsObject:self.eventName])
-        ? [preferenceHelper getAPIURL:@"v2/event/standard"]
-        : [preferenceHelper getAPIURL:@"v2/event/custom"];
+        ? [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/standard"]
+        : [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/custom"];
 
     BranchEventRequest *request =
 		[[BranchEventRequest alloc]
