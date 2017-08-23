@@ -1,5 +1,11 @@
 Branch iOS SDK Change Log
 
+- v0.17.10
+  * _*Master Release*_ - August 23, 2017
+  * Don't do cookie based matching in iOS 11 (AIS-307, GH-#681).
+  * Fix an initialization problem in iOS 8.
+    Logging was calling a protocol method which would lock up initialization on iOS 8 (GH-#694).
+
 - v0.17.9
   * _*Master Release*_ - August 15, 2017
   * Fixed the Branch.framework static library build. How long was this broken? A year? Since 12.2?
