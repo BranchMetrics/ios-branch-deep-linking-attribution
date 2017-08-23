@@ -167,6 +167,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                       thumbnailUrl:(NSURL *)thumbnailUrl
                                           userInfo:(NSDictionary *)userInfo
                                           keywords:(NSSet *)keywords
+                                    linkProperties:(BranchLinkProperties*)linkProperties
                                           callback:(callbackWithUrl)callback
                                  spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
     
@@ -191,7 +192,15 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                                                          typeOrDefault:typeOrDefault
                                                                      publiclyIndexable:NO
                                                                               keywords:keywords];
-    NSString* dynamicUrl = [[Branch getInstance] getLongURLWithParams:spotlightLinkData];
+    
+
+    NSString* dynamicUrl = [[Branch getInstance]
+                            getLongURLWithParams:spotlightLinkData
+                            andChannel:linkProperties.channel
+                            andTags:linkProperties.tags
+                            andFeature:linkProperties.feature
+                            andStage:linkProperties.stage
+                            andAlias:linkProperties.alias];
     
     BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
     if (thumbnailIsRemote) {

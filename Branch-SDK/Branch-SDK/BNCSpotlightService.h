@@ -29,6 +29,7 @@
                                       thumbnailUrl:(NSURL *)thumbnailUrl
                                           userInfo:(NSDictionary *)userInfo
                                           keywords:(NSSet *)keywords
+                                    linkProperties:(BranchLinkProperties*)linkProperties
                                           callback:(callbackWithUrl)callback
                                  spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
 

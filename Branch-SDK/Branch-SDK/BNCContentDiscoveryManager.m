@@ -380,13 +380,16 @@ static NSString* const kUTTypeGeneric = @"public.content";
                                                  thumbnailUrl:thumbnailUrl
                                                      userInfo:userInfo
                                                      keywords:keywords
+                                               linkProperties:nil
                                                      callback:callback
                                             spotlightCallback:spotlightCallback];
     }
 }
 
 -(void) indexObjectUsingSearchableItem:(BranchUniversalObject *)universalObject
-                          onCompletion:(void (^)(BranchUniversalObject *, NSError *))completion {
+                        linkProperties:(BranchLinkProperties*)linkProperties
+                            completion:(void (^)(BranchUniversalObject *, NSError *))completion {
+    
     BNCSpotlightService* spotlight = [[BNCSpotlightService alloc] init];
     [spotlight indexContentUsingCSSearchableItemWithTitle:universalObject.title
                                          CanonicalId:universalObject.canonicalIdentifier
@@ -395,6 +398,7 @@ static NSString* const kUTTypeGeneric = @"public.content";
                                         thumbnailUrl:[NSURL URLWithString:universalObject.imageUrl]
                                             userInfo:nil
                                             keywords:[NSSet setWithArray:universalObject.keywords]
+                                      linkProperties:linkProperties
                                             callback:nil
                                    spotlightCallback:^(NSString * _Nullable url, NSString * _Nullable spotlightIdentifier, NSError * _Nullable error) {
                                        if (!error) {
@@ -422,15 +426,15 @@ static NSString* const kUTTypeGeneric = @"public.content";
     for (BranchUniversalObject* universalObject in universalObjects) {
         dispatch_group_async(workGroup, self.workQueue, ^{
             dispatch_semaphore_t indexingSema = dispatch_semaphore_create(0);
-            [self indexObjectUsingSearchableItem:universalObject
-                                    onCompletion:^(BranchUniversalObject *universalObject, NSError *error) {
-                                        if (error)
-                                            failure(universalObject,error);
-                                        else
-                                            [completedBUO addObject:universalObject];
-                                        
-                                        dispatch_semaphore_signal(indexingSema);
-                                    }];
+            [self indexObjectUsingSearchableItem:universalObject linkProperties:nil completion:^(BranchUniversalObject *universalObject, NSError *error) {
+                if (error)
+                    failure(universalObject,error);
+                else
+                    [completedBUO addObject:universalObject];
+                
+                dispatch_semaphore_signal(indexingSema);
+            }];
+            
             dispatch_semaphore_wait(indexingSema, DISPATCH_TIME_FOREVER);
         });
     }

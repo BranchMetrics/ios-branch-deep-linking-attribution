@@ -368,9 +368,13 @@
                                            spotlightCallback:spotlightCallback];
 }
 
--(void) listOnSpotlightUsingSearchableItemWithCallback:(void (^)(BranchUniversalObject * _Nullable, NSError * _Nullable))completion {
+-(void) listOnSpotlightUsingSearchableItemWithLinkProperties:(BranchLinkProperties*)linkProperties
+                                                    Callback:(void (^)(BranchUniversalObject * _Nullable, NSError * _Nullable))completion {
     [[Branch getInstance] createDiscoverableObjectUsingSearchableItem:self
-                                                         onCompletion:completion];
+                                                       linkProperties:linkProperties
+                                                           completion:completion];
+    
+    
 }
 
 - (void) removeFromSpotlightWithCompletion:(completion)completion {

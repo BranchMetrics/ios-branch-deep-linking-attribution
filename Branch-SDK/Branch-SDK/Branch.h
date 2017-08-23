@@ -1478,7 +1478,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 -(void) createDiscoverableObjectUsingSearchableItem:(BranchUniversalObject*)universalObject
-                                       onCompletion:(void (^) (BranchUniversalObject *universalObject, NSError *error))completion;
+                                     linkProperties:(BranchLinkProperties*)linkproperties
+                                         completion:(void (^) (BranchUniversalObject *universalObject, NSError *error))completion;
 
 /**
  Index multiple Branch Univeral Objects using SearchableItem of Apple's CoreSpotlight, where content indexed is private irrespective of Buo's ContentIndexMode value.

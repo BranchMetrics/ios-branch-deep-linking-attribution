@@ -1351,9 +1351,11 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 -(void) createDiscoverableObjectUsingSearchableItem:(BranchUniversalObject*)universalObject
-                                       onCompletion:(void (^) (BranchUniversalObject *universalObject, NSError *error))completion {
+                                     linkProperties:(BranchLinkProperties*)linkproperties
+                                         completion:(void (^) (BranchUniversalObject *universalObject, NSError *error))completion {
     [self.contentDiscoveryManager indexObjectUsingSearchableItem:universalObject
-                                                    onCompletion:completion];
+                                                  linkProperties:linkproperties
+                                                      completion:completion];
 }
 
 /* Indexing of multiple BUOs

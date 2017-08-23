@@ -58,16 +58,17 @@
  * Indexing single BUO on Spotlight
  */
 
--(void) indexObject:(BranchUniversalObject*)universalObject
-       onCompletion:(void (^) (BranchUniversalObject *universalObject, NSString *url, NSError *error))completion;
-
+//-(void) indexObject:(BranchUniversalObject*)universalObject
+//       onCompletion:(void (^) (BranchUniversalObject *universalObject, NSString *url, NSError *error))completion;
+//
 /*
  * Indexing using SearchableItem would use dynamic (long) url to index objects
  * No limit on number of object indexed through this API
  * Content privately indexed irrestive of the value of contentIndexMode
  */
--(void) indexObjectUsingSearchableItem:(BranchUniversalObject*)universalObject
-                          onCompletion:(void (^) (BranchUniversalObject *universalObject, NSError *error))completion;
+-(void) indexObjectUsingSearchableItem:(BranchUniversalObject *)universalObject
+                        linkProperties:(BranchLinkProperties*)linkProperties
+                            completion:(void (^)(BranchUniversalObject *, NSError *))completion;
 
 /*
  * Indexing of multiple BUOs
