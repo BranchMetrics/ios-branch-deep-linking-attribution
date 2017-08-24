@@ -120,13 +120,13 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
     return self;
 }
 
-+ (instancetype) standardEventWithType:(BranchStandardEvent)standardEvent {
++ (instancetype) standardEvent:(BranchStandardEvent)standardEvent {
     return [[BranchEvent alloc] initWithName:standardEvent];
 }
 
-+ (instancetype) standardEventWithType:(BranchStandardEvent)standardEvent
-                           contentItem:(BranchUniversalObject*)contentItem {
-    BranchEvent *e = [BranchEvent standardEventWithType:standardEvent];
++ (instancetype) standardEvent:(BranchStandardEvent)standardEvent
+               withContentItem:(BranchUniversalObject*)contentItem {
+    BranchEvent *e = [BranchEvent standardEvent:standardEvent];
     if (contentItem) {
         e.contentItems = @[ contentItem ];
     }

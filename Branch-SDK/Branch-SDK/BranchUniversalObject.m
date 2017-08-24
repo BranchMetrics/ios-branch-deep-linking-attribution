@@ -646,9 +646,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     }
 }
 
-+ (BranchUniversalObject*_Null_unspecified) objectWithDictionary:(NSDictionary*_Null_unspecified)dictionary {
-    if (!dictionary) return nil;
-
++ (BranchUniversalObject*_Nonnull) objectWithDictionary:(NSDictionary*_Null_unspecified)dictionary {
     BranchUniversalObject *object = [BranchUniversalObject new];
 
     #define BNCFieldDefinesObjectFromDictionary

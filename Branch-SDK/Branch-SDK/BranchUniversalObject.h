@@ -233,5 +233,7 @@ extern BranchProductCondition _Nonnull BranchProductConditionRefurbished;
 - (NSDictionary*_Nonnull)getParamsForServerRequestWithAddedLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
 
 - (NSDictionary*_Nonnull) dictionary;
-+ (BranchUniversalObject*_Null_unspecified) objectWithDictionary:(NSDictionary*_Null_unspecified)dictionary;
++ (BranchUniversalObject*_Nonnull) objectWithDictionary:(NSDictionary*_Null_unspecified)dictionary;
+
+- (NSString*_Nonnull) description;
 @end

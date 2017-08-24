@@ -17,56 +17,58 @@ typedef NSString*const BranchStandardEvent;
 
 // Commerce Events
 
-extern BranchStandardEvent BranchStandardEventAddToCart;
-extern BranchStandardEvent BranchStandardEventAddToWishlist;
-extern BranchStandardEvent BranchStandardEventViewCart;
-extern BranchStandardEvent BranchStandardEventInitiatePurchase;
-extern BranchStandardEvent BranchStandardEventAddPaymentInfo;
-extern BranchStandardEvent BranchStandardEventPurchase;
-extern BranchStandardEvent BranchStandardEventSpendCredits;
+extern BranchStandardEvent _Nonnull BranchStandardEventAddToCart;
+extern BranchStandardEvent _Nonnull BranchStandardEventAddToWishlist;
+extern BranchStandardEvent _Nonnull BranchStandardEventViewCart;
+extern BranchStandardEvent _Nonnull BranchStandardEventInitiatePurchase;
+extern BranchStandardEvent _Nonnull BranchStandardEventAddPaymentInfo;
+extern BranchStandardEvent _Nonnull BranchStandardEventPurchase;
+extern BranchStandardEvent _Nonnull BranchStandardEventSpendCredits;
 
 // Content Events
 
-extern BranchStandardEvent BranchStandardEventSearch;
-extern BranchStandardEvent BranchStandardEventViewContent;
-extern BranchStandardEvent BranchStandardEventViewContentList;
-extern BranchStandardEvent BranchStandardEventRate;
-extern BranchStandardEvent BranchStandardEventShareContent; // TODO: Share start/complete/cancel?
+extern BranchStandardEvent _Nonnull BranchStandardEventSearch;
+extern BranchStandardEvent _Nonnull BranchStandardEventViewContent;
+extern BranchStandardEvent _Nonnull BranchStandardEventViewContentList;
+extern BranchStandardEvent _Nonnull BranchStandardEventRate;
+extern BranchStandardEvent _Nonnull BranchStandardEventShareContent; // TODO: Share start/complete/cancel?
 
 // User Lifecycle Events
 
-extern BranchStandardEvent BranchStandardEventCompleteRegistration;
-extern BranchStandardEvent BranchStandardEventCompleteTutorial;
-extern BranchStandardEvent BranchStandardEventAchieveLevel;
-extern BranchStandardEvent BranchStandardEventUnlockAchievement;
+extern BranchStandardEvent _Nonnull BranchStandardEventCompleteRegistration;
+extern BranchStandardEvent _Nonnull BranchStandardEventCompleteTutorial;
+extern BranchStandardEvent _Nonnull BranchStandardEventAchieveLevel;
+extern BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievement;
 
 #pragma mark - BranchEvent
 
 @interface BranchEvent : NSObject
 
-- (instancetype) initWithName:(NSString*)name NS_DESIGNATED_INITIALIZER;
+- (instancetype _Nonnull) initWithName:(NSString*_Nonnull)name NS_DESIGNATED_INITIALIZER;
 
-+ (instancetype) standardEventWithType:(BranchStandardEvent)standardEvent;
-+ (instancetype) standardEventWithType:(BranchStandardEvent)standardEvent contentItem:(BranchUniversalObject*)contentItem;
++ (instancetype _Nonnull) standardEvent:(BranchStandardEvent _Nonnull)standardEvent;
++ (instancetype _Nonnull) standardEvent:(BranchStandardEvent _Nonnull)standardEvent
+                        withContentItem:(BranchUniversalObject* _Nonnull)contentItem;
 
-+ (instancetype) customEventWithName:(NSString*)name;
-+ (instancetype) customEventWithName:(NSString*)name contentItem:(BranchUniversalObject*)contentItem;
++ (instancetype _Nonnull) customEventWithName:(NSString*_Nonnull)name;
++ (instancetype _Nonnull) customEventWithName:(NSString*_Nonnull)name
+                                  contentItem:(BranchUniversalObject*_Nonnull)contentItem;
 
-- (instancetype) init __attribute((unavailable));
-+ (instancetype) new __attribute((unavailable));
+- (instancetype _Nonnull) init __attribute((unavailable));
++ (instancetype _Nonnull) new __attribute((unavailable));
 
-@property (nonatomic, strong) NSString              *transactionID;
-@property (nonatomic, strong) BNCCurrency           currency;
-@property (nonatomic, strong) NSDecimalNumber       *revenue;
-@property (nonatomic, strong) NSDecimalNumber       *shipping;
-@property (nonatomic, strong) NSDecimalNumber       *tax;
-@property (nonatomic, strong) NSString              *coupon;
-@property (nonatomic, strong) NSString              *affiliation;
-@property (nonatomic, strong) NSString              *eventDescription;
-@property (nonatomic, strong) BranchProductCondition productCondition;
-@property (nonatomic, strong) NSArray<BranchUniversalObject*> *contentItems;
-@property (nonatomic, strong) NSMutableDictionary<NSString*, NSString*> *userInfo;
+@property (nonatomic, strong) NSString*_Nullable                transactionID;
+@property (nonatomic, strong) BNCCurrency _Nullable             currency;
+@property (nonatomic, strong) NSDecimalNumber*_Nullable         revenue;
+@property (nonatomic, strong) NSDecimalNumber*_Nullable         shipping;
+@property (nonatomic, strong) NSDecimalNumber*_Nullable         tax;
+@property (nonatomic, strong) NSString*_Nullable                coupon;
+@property (nonatomic, strong) NSString*_Nullable                affiliation;
+@property (nonatomic, strong) NSString*_Nullable                eventDescription;
+@property (nonatomic, strong) BranchProductCondition _Nullable          productCondition;
+@property (nonatomic, strong) NSArray<BranchUniversalObject*>*_Nullable contentItems;
+@property (nonatomic, strong) NSMutableDictionary<NSString*, NSString*> *_Nullable userInfo;
 
-- (void) logEvent;              //!> Logs the event on the Branch server.
-- (NSDictionary*) dictionary;   //!> Returns a dictionary representation of the event.
+- (void) logEvent;                      //!> Logs the event on the Branch server.
+- (NSDictionary*_Nonnull) dictionary;   //!> Returns a dictionary representation of the event.
 @end
