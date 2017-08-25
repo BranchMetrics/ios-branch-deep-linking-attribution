@@ -8,98 +8,108 @@
 
 #if defined(addString) // --------------------------------------------------------------------------
 
-// Already defined so undefine them:
+    // Already defined so undefine them:
 
-#undef addString
-#undef addDate
-#undef addDouble
-#undef addBoolean
-#undef addDecimal
-#undef addInteger
-#undef addStringifiedDictionary
-#undef addStringArray
-#undef addDictionary
-#undef BNCFieldDefinesObjectFromDictionary
-#undef BNCFieldDefinesDictionaryFromSelf
+    #undef addString
+    #undef addDate
+    #undef addDouble
+    #undef addBoolean
+    #undef addDecimal
+    #undef addNumber
+    #undef addInteger
+    #undef addStringifiedDictionary
+    #undef addStringArray
+    #undef addDictionary
+    #undef BNCFieldDefinesObjectFromDictionary
+    #undef BNCFieldDefinesDictionaryFromSelf
 
 #elif defined(BNCFieldDefinesObjectFromDictionary) // ----------------------------------------------
 
-#define addString(field, name) { \
-    NSString *string = dictionary[@#name]; \
-    if ([string isKindOfClass:[NSString class]]) { \
-        object.field = string; \
-    } \
-}
+    #define addString(field, name) { \
+        NSString *string = dictionary[@#name]; \
+        if ([string isKindOfClass:[NSString class]]) { \
+            object.field = string; \
+        } \
+    }
 
-#define addDate(field, name) { \
-    NSNumber *number = dictionary[@#name]; \
-    if ([number isKindOfClass:[NSNumber class]] || \
-        [number isKindOfClass:[NSString class]]) { \
-        NSTimeInterval t = [number doubleValue]; \
-        if (t) object.field = [NSDate dateWithTimeIntervalSince1970:t/1000.0]; \
-    } \
-}
+    #define addDate(field, name) { \
+        NSNumber *number = dictionary[@#name]; \
+        if ([number isKindOfClass:[NSNumber class]] || \
+            [number isKindOfClass:[NSString class]]) { \
+            NSTimeInterval t = [number doubleValue]; \
+            if (t) object.field = [NSDate dateWithTimeIntervalSince1970:t/1000.0]; \
+        } \
+    }
 
-#define addDouble(field, name) { \
-    NSNumber *number = dictionary[@#name]; \
-    if ([number isKindOfClass:[NSNumber class]] || \
-        [number isKindOfClass:[NSString class]]) { \
-        object.field = [number doubleValue]; \
-    } \
-}
+    #define addDouble(field, name) { \
+        NSNumber *number = dictionary[@#name]; \
+        if ([number isKindOfClass:[NSNumber class]] || \
+            [number isKindOfClass:[NSString class]]) { \
+            object.field = [number doubleValue]; \
+        } \
+    }
 
-#define addBoolean(field, name) { \
-    NSNumber *number = dictionary[@#name]; \
-    if ([number isKindOfClass:[NSNumber class]] || \
-        [number isKindOfClass:[NSString class]]) { \
-        object.field = [number boolValue]; \
-    } \
-}
+    #define addBoolean(field, name) { \
+        NSNumber *number = dictionary[@#name]; \
+        if ([number isKindOfClass:[NSNumber class]] || \
+            [number isKindOfClass:[NSString class]]) { \
+            object.field = [number boolValue]; \
+        } \
+    }
 
-#define addDecimal(field, name) { \
-    NSString *string = dictionary[@#name]; \
-    if ([string isKindOfClass:[NSNumber class]]) \
-        string = [string description]; \
-    if ([string isKindOfClass:[NSString class]]) { \
-        object.field = [NSDecimalNumber decimalNumberWithString:string]; \
-    } \
-}
+    #define addDecimal(field, name) { \
+        NSString *string = dictionary[@#name]; \
+        if ([string isKindOfClass:[NSNumber class]]) \
+            string = [string description]; \
+        if ([string isKindOfClass:[NSString class]]) { \
+            object.field = [NSDecimalNumber decimalNumberWithString:string]; \
+        } \
+    }
 
-#define addInteger(field, name) { \
-    NSNumber *number = dictionary[@#name]; \
-    if ([number isKindOfClass:[NSNumber class]] || \
-        [number isKindOfClass:[NSString class]]) { \
-        object.field = [number integerValue]; \
-    } \
-}
+    #define addNumber(field, name) { \
+        NSNumber *number = dictionary[@#name]; \
+        if ([number isKindOfClass:[NSString class]]) \
+            number = [number doubleValue]; \
+        if ([number isKindOfClass:[NSNumber class]]) { \
+            object.field = number; \
+        } \
+    }
 
-#define addStringifiedDictionary(field, name) { \
-    NSString *string = dictionary[@#name]; \
-    if ([string isKindOfClass:[NSString class]]) { \
-        NSDictionary *d = [BNCEncodingUtils decodeJsonStringToDictionary:string]; \
-        object.field = [NSMutableDictionary dictionaryWithDictionary:d]; \
-    } \
-}
+    #define addInteger(field, name) { \
+        NSNumber *number = dictionary[@#name]; \
+        if ([number isKindOfClass:[NSNumber class]] || \
+            [number isKindOfClass:[NSString class]]) { \
+            object.field = [number integerValue]; \
+        } \
+    }
 
-#define addStringArray(field, name) { \
-    NSMutableArray *newArray = [NSMutableArray array]; \
-    object.field = newArray; \
-    NSArray *a = dictionary[@#name]; \
-    if ([a isKindOfClass:[NSArray class]]) { \
-        for (NSString *s in a) { \
-            if ([s isKindOfClass:[NSString class]]) { \
-                [newArray addObject:s]; \
+    #define addStringifiedDictionary(field, name) { \
+        NSString *string = dictionary[@#name]; \
+        if ([string isKindOfClass:[NSString class]]) { \
+            NSDictionary *d = [BNCEncodingUtils decodeJsonStringToDictionary:string]; \
+            object.field = [NSMutableDictionary dictionaryWithDictionary:d]; \
+        } \
+    }
+
+    #define addStringArray(field, name) { \
+        NSMutableArray *newArray = [NSMutableArray array]; \
+        object.field = newArray; \
+        NSArray *a = dictionary[@#name]; \
+        if ([a isKindOfClass:[NSArray class]]) { \
+            for (NSString *s in a) { \
+                if ([s isKindOfClass:[NSString class]]) { \
+                    [newArray addObject:s]; \
+                } \
             } \
         } \
-    } \
-}
+    }
 
-#define addDictionary(field, name) { \
-    NSDictionary *d = dictionary[@#name]; \
-    if ([d isKindOfClass:[NSDictionary class]]) { \
-        object.field = [NSMutableDictionary dictionaryWithDictionary:d]; \
-    } \
-}
+    #define addDictionary(field, name) { \
+        NSDictionary *d = dictionary[@#name]; \
+        if ([d isKindOfClass:[NSDictionary class]]) { \
+            object.field = [NSMutableDictionary dictionaryWithDictionary:d]; \
+        } \
+    }
 
 #elif defined(BNCFieldDefinesDictionaryFromSelf) // ----------------------------------------------
 
@@ -129,6 +139,12 @@
     }
 
     #define addDecimal(field, name) { \
+        if (self.field) { \
+            dictionary[@#name] = self.field; \
+        } \
+    }
+
+    #define addNumber(field, name) { \
         if (self.field) { \
             dictionary[@#name] = self.field; \
         } \

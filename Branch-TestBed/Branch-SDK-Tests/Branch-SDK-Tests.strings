@@ -205,3 +205,25 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
 )
  expirationDate: 1976-09-21 03:07:12 +0000
 >";
+"BNCDeviceDictionaryV2" =
+"{
+    \"os\": \"iOS\",
+    \"os_version\": 25,
+    \"environment\": \"FULL_APP\",
+    \"idfa\": \"\",
+    \"idfv\": \"\",
+    \"limit_ad_tracking\": false,
+    \"user_agent\": \"\",
+    \"developer_identity\": \"edsojan\",
+    \"country\": \"US\",
+    \"language\": \"en\",
+    \"brand\": \"Apple\",
+    \"device_fingerprint_id\": \"\",
+    \"sdk\": \"ios0.17.10\",
+    \"app_version\": \"whatever\",
+    \"model\": \"x86_64\",
+    \"screen_dpi\": 3,
+    \"screen_height\": 2208,
+    \"screen_width\": 1242,
+}";
+

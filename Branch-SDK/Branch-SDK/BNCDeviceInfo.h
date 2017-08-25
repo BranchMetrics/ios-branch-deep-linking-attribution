@@ -5,13 +5,16 @@
 //  Created by Sojan P.R. on 3/22/16.
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
+
 #import <Foundation/Foundation.h>
-#ifndef BNCDeviceInfo_h
-#define BNCDeviceInfo_h
+#import <CoreGraphics/CoreGraphics.h>
 
+typedef NSString*const BNCFrameworkType NS_STRING_ENUM;
 
+FOUNDATION_EXPORT BNCFrameworkType BNCFrameworkTypeApplication;
+FOUNDATION_EXPORT BNCFrameworkType BNCFrameworkTypeMessages;
 
-#endif /* BNCDeviceInfo_h */
+#pragma mark - BNCDeviceInfo
 
 @interface BNCDeviceInfo : NSObject
 
@@ -33,10 +36,16 @@
 @property (atomic, copy, readonly) NSString* language;           //  iso2 language code (en, ml).
 @property (atomic, copy, readonly) NSString* browserUserAgent;   //  Simple user agent string.
 
+@property (atomic, copy, readonly) BNCFrameworkType frameworkType;
+@property (atomic, copy, readonly) NSString         *branchSDKVersion;
+@property (atomic, copy, readonly) NSString         *applicationVersion;
+@property (atomic, assign, readonly) CGFloat        screenScale;
+@property (atomic, copy,   readonly) NSString*      adId;
 
 //----------Methods----------------//
 + (BNCDeviceInfo *)getInstance;
 + (NSString*) userAgentString;          // Warning:  Has an implied lock on main thread on first call.
 + (NSString*) systemBuildVersion;
 
+- (NSDictionary*) v2dictionary;
 @end

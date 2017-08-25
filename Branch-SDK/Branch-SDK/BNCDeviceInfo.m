@@ -15,6 +15,7 @@
 #import "BNCSystemObserver.h"
 #import "BNCXcode7Support.h"
 #import "BNCLog.h"
+#import "BNCConfig.h"
 
 
 @interface BNCDeviceInfo()
@@ -62,6 +63,16 @@
     _country = [BNCDeviceInfo bnc_country].copy;
     _language = [BNCDeviceInfo bnc_language].copy;
     _browserUserAgent = [BNCDeviceInfo userAgentString].copy;
+
+//@property (atomic, copy, readonly) BNCFrameworkType frameworkType;    // TODO: Add it.
+
+    _branchSDKVersion = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
+    _applicationVersion = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
+    if (!_applicationVersion.length)
+        _applicationVersion = [NSBundle mainBundle].infoDictionary[@"CFBundleVersionKey"];
+    _screenScale = [UIScreen mainScreen].scale;
+    _adId = [BNCSystemObserver getAdId];
+
     return self;
 }
 
@@ -248,6 +259,38 @@
 		retries--;
 	}
 	return browserUserAgentString;
+}
+
+- (NSDictionary*) v2dictionary {
+    NSMutableDictionary *dictionary = [NSMutableDictionary new];
+
+    #define BNCFieldDefinesDictionaryFromSelf
+    #include "BNCFieldDefines.h"
+
+    addString(osName,               os);
+    addString(osVersion,            os_version);
+    addString(frameworkType,        environment);
+    addString(vendorId,             idfv);
+    addString(adId,                 idfa);
+    addString(browserUserAgent,     user_agent);
+    //addString(identifierForDeveloper, developer_identity);
+    addString(country,              country);
+    addString(language,             language);
+    addString(brandName,            brand);
+    addString(hardwareId,           device_fingerprint_id);
+    addString(branchSDKVersion,     sdk);
+    addString(applicationVersion,   app_version);
+    addString(modelName,            model);
+    addDouble(screenScale,          screen_dpi);
+    addNumber(screenHeight,         screen_height);
+    addNumber(screenWidth,          screen_width);
+
+    #include "BNCFieldDefines.h"
+
+    if (!self.isAdTrackingEnabled)
+        dictionary[@"limit_ad_tracking"] = CFBridgingRelease(kCFBooleanTrue);
+
+    return dictionary;
 }
 
 @end

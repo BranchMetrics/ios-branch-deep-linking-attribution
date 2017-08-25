@@ -17,6 +17,7 @@
 #import "BNCDeviceInfo.h"
 #import "NSString+Branch.h"
 #import "BNCLog.h"
+#import "BNCConfig.h"
 
 @interface BNCDeviceInfoTest : BNCTestCase
 @end
@@ -124,5 +125,20 @@
     NSLog(@"%@: Synchronized time: %1.5f.",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
 }
+
+/* TODO: Finish
+
+- (void) testV2Dictionary {
+    NSMutableDictionary *truth = [self mutableDictionaryFromBundleJSONWithKey:@"BNCDeviceDictionaryV2"];
+    truth[@"app_version"] = nil;
+    truth[@"os_version"] = [UIDevice currentDevice].systemVersion;
+    truth[@"sdk"] = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
+    truth[@"user_agent"] = [BNCDeviceInfo userAgentString];
+    XCTAssertTrue(((NSString*)truth[@"user_agent"]).length > 0);
+
+    NSDictionary *d = [[BNCDeviceInfo getInstance] v2dictionary];
+    XCTAssertEqualObjects(truth, d);
+}
+*/
 
 @end
