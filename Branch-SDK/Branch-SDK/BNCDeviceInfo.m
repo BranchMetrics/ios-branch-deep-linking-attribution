@@ -78,8 +78,7 @@
     return self;
 }
 
-- (NSString *)vendorId
-{
+- (NSString *)vendorId {
     @synchronized (self) {
         if (_vendorId) return _vendorId;
 
