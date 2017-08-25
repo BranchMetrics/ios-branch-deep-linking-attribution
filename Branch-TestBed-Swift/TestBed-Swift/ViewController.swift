@@ -200,7 +200,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
         shareBranchObject.keywords = [ "example", "short", "share", "link" ]
         shareBranchObject.contentDescription = "This is an example shared short link."
-        shareBranchObject.addMetadataKey("publicSlug", value: canonicalIdentifier)
+        shareBranchObject.schemaData.userInfo["publicSlug"] = canonicalIdentifier;
         
         let shareLinkProperties = BranchLinkProperties()
         shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]

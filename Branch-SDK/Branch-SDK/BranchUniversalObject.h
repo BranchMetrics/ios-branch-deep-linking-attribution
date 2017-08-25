@@ -48,7 +48,7 @@ FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextSearchResu
 FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextStory;
 FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc;
 
-#pragma mark - BNCProductCondition
+#pragma mark - BranchProductCondition
 
 typedef NSString * const BranchProductCondition NS_STRING_ENUM;
 
@@ -84,7 +84,7 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbis
 @property (nonatomic, assign)           double          latitude;
 @property (nonatomic, assign)           double          longitude;
 @property (nonatomic, strong, nullable) NSArray<NSString*> *imageCaptions;
-@property (nonatomic, strong, nullable) NSMutableDictionary<NSString*, NSString*> *userInfo;
+@property (nonatomic, copy,   nonnull)  NSMutableDictionary<NSString*, NSString*> *userInfo;
 
 - (NSDictionary*_Nonnull) dictionary;
 + (BranchSchemaData*_Nonnull) schemaDataWithDictionary:(NSDictionary*_Nullable)dictionary;

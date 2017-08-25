@@ -135,13 +135,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 }
 
 - (void) setUserInfo:(NSMutableDictionary*)dictionary {
-    if ([dictionary isKindOfClass:[NSMutableDictionary class]]) {
-        _userInfo = dictionary;
-    } else if ([dictionary isKindOfClass:[NSDictionary class]]) {
-        _userInfo = [NSMutableDictionary dictionaryWithDictionary:dictionary];
-    } else if (dictionary == nil) {
-        _userInfo = nil;
-    }
+    _userInfo = [dictionary mutableCopy];
 }
 
 - (NSString*) description {

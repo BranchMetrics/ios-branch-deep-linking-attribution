@@ -11,7 +11,7 @@
 
 #pragma mark BNCProductCategory
 
-typedef NSString*const BNCProductCategory;// NS_STRING_ENUM;
+typedef NSString*const BNCProductCategory; // NS_STRING_ENUM;
 
 FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryAnimalSupplies;
 FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryApparel;

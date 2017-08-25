@@ -195,14 +195,14 @@ struct DataStore {
                     branchUniversalObject.imageUrl = imageURL as? String
                 }
             case "$keywords":
-                branchUniversalObject.keywords = universalObject[key] as! [AnyObject]
+                branchUniversalObject.keywords = universalObject[key] as! [AnyObject] as! [String]
             case "$og_title":
                 if let title = universalObject[key] {
                     branchUniversalObject.title = title as? String
                 }
             case "$content_type":
                 if let contentType = universalObject[key] {
-                    branchUniversalObject.type = contentType as? String
+                    branchUniversalObject.schemaData.contentSchema = contentType as? String
                 }
             case "$price":
                 if let price = universalObject[key] as? String {
@@ -418,7 +418,7 @@ struct DataStore {
             "tax": "\(bncCommerceEvent.tax)",
             "revenue": "\(bncCommerceEvent.revenue)"
         ]
-        self.setBNCProducts(bncCommerceEvent.products)
+        self.setBNCProducts(bncCommerceEvent.products!)
         self.setCommerceEvent(commerceEvent)
     }
     

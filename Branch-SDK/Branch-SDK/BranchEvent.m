@@ -153,11 +153,7 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
 }
 
 - (void) setUserInfo:(NSMutableDictionary<NSString *,NSString *> *)userInfo {
-    if ([userInfo isKindOfClass:[NSMutableDictionary class]]) {
-        _userInfo = userInfo;
-    } else if ([userInfo isKindOfClass:[NSDictionary class]]) {
-        _userInfo = [NSMutableDictionary dictionaryWithDictionary:userInfo];
-    }
+    _userInfo = [userInfo mutableCopy];
 }
 
 - (NSMutableArray*) contentItems {

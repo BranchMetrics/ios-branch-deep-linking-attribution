@@ -146,11 +146,11 @@
     NSDictionary *d = nil;
     BranchUniversalObject *buo = [BranchUniversalObject new];
 
-    buo.schemaData.userInfo = nil;
+    buo.schemaData.userInfo = (id) @{};
     d = [NSDictionary new];
     XCTAssertEqualObjects(buo.schemaData.userInfo, d);
 
-    buo.schemaData.userInfo = nil;
+    buo.schemaData.userInfo = (id) @{};
     buo.schemaData.userInfo[@"a"] = @"b";
     d = @{ @"a": @"b" };
     XCTAssertEqualObjects(buo.schemaData.userInfo, d);
