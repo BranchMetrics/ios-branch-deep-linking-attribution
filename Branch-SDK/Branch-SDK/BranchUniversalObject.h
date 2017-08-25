@@ -21,44 +21,44 @@ typedef NS_ENUM(NSInteger, BranchContentIndexMode) {
 
 #pragma mark - BranchContentSchema
 
-typedef NSString * const BranchContentSchema;
+typedef NSString * const BranchContentSchema NS_STRING_ENUM;
 
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceAuction;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceBusiness;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceOther;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceProduct;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceRestaurant;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceService;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelFlight;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelHotel;
-extern BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelOther;
-extern BranchContentSchema _Nonnull BranchContentSchemaGameState;
-extern BranchContentSchema _Nonnull BranchContentSchemaMediaImage;
-extern BranchContentSchema _Nonnull BranchContentSchemaMediaMixed;
-extern BranchContentSchema _Nonnull BranchContentSchemaMediaMusic;
-extern BranchContentSchema _Nonnull BranchContentSchemaMediaOther;
-extern BranchContentSchema _Nonnull BranchContentSchemaMediaVideo;
-extern BranchContentSchema _Nonnull BranchContentSchemaOther;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextArticle;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextBlog;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextOther;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextRecipe;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextReview;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextSearchResults;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextStory;
-extern BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaCommerceAuction;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaCommerceBusiness;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaCommerceOther;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaCommerceProduct;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaCommerceRestaurant;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaCommerceService;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelFlight;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelHotel;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaCommerceTravelOther;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaGameState;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaMediaImage;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaMediaMixed;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaMediaMusic;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaMediaOther;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaMediaVideo;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaOther;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextArticle;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextBlog;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextOther;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextRecipe;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextReview;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextSearchResults;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextStory;
+FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc;
 
 #pragma mark - BNCProductCondition
 
-typedef NSString * const BranchProductCondition;
+typedef NSString * const BranchProductCondition NS_STRING_ENUM;
 
-extern BranchProductCondition _Nonnull BranchProductConditionOther;
-extern BranchProductCondition _Nonnull BranchProductConditionNew;
-extern BranchProductCondition _Nonnull BranchProductConditionGood;
-extern BranchProductCondition _Nonnull BranchProductConditionFair;
-extern BranchProductCondition _Nonnull BranchProductConditionPoor;
-extern BranchProductCondition _Nonnull BranchProductConditionUsed;
-extern BranchProductCondition _Nonnull BranchProductConditionRefurbished;
+FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionOther;
+FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionNew;
+FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionGood;
+FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionFair;
+FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionPoor;
+FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionUsed;
+FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbished;
 
 #pragma mark - BranchSchemaData
 
@@ -106,16 +106,12 @@ extern BranchProductCondition _Nonnull BranchProductConditionRefurbished;
 @property (nonatomic, strong, nullable) NSArray<NSString*> *keywords;
 @property (nonatomic, strong, nullable) NSDate   *creationDate;
 @property (nonatomic, strong, nullable) NSDate   *expirationDate;
-@property (nonatomic, assign)           BOOL      indexLocally;     // Index on Spotlight.
-@property (nonatomic, assign)           BOOL      indexPublicly;    // Index on Google, Branch, etc.
+@property (nonatomic, assign)           BOOL      indexLocally;     //!< Index on Spotlight.
+@property (nonatomic, assign)           BOOL      indexPublicly;    //!< Index on Google, Branch, etc.
 
 @property (nonatomic, strong, nonnull) BranchSchemaData *schemaData;
 
-/*!
- @name Deprecated Properties
-*/
-
-// Note: properties found in metadata will overwrite properties on the BranchUniversalObject itself
+///@name Deprecated Properties
 
 @property (nonatomic, strong, nullable)
     __attribute__((deprecated(("Use `BranchUniversalObject.schemaData.userInfo` instead."))))
@@ -148,16 +144,16 @@ extern BranchProductCondition _Nonnull BranchProductConditionRefurbished;
     __attribute__((deprecated(("Use `BranchUniversalObject.schemaData.indexLocally` instead."))))
     BOOL automaticallyListOnSpotlight;
 
-/*!
- @name Log a User Content View Event
-*/
+
+/// @name Log a User Content View Event
+
 
 - (void)registerView;
 - (void)registerViewWithCallback:(nullable callbackWithParams)callback;
 
-/*!
- @name User Event Tracking
-*/
+
+/// @name User Event Tracking
+
 
 - (void)userCompletedAction:(nonnull NSString *)action;
     // __attribute__((deprecated(("Use `[BranchEvent logEvent...]` instead."))));
@@ -165,9 +161,9 @@ extern BranchProductCondition _Nonnull BranchProductConditionRefurbished;
 - (void)userCompletedAction:(nonnull NSString *)action withState:(nullable NSDictionary *)state;
     // __attribute__((deprecated(("Use `[BranchEvent logEvent...]` instead."))));
 
-/*!
- @name Short Links
-*/
+
+/// @name Short Links
+
 
 /// Returns a Branch short URL to the content item with the passed link properties.
 - (nullable NSString *)getShortUrlWithLinkProperties:(nonnull BranchLinkProperties *)linkProperties;
@@ -179,9 +175,9 @@ extern BranchProductCondition _Nonnull BranchProductConditionRefurbished;
 /// Returns a Branch short URL to the content item with the passed link properties with a callback.
 - (void)getShortUrlWithLinkProperties:(nonnull BranchLinkProperties *)linkProperties andCallback:(nonnull callbackWithUrl)callback;
 
-/*!
- @name Share Sheet Handling
-*/
+
+/// @name Share Sheet Handling
+
 
 - (nullable UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(nonnull BranchLinkProperties *)linkProperties;
 
@@ -193,7 +189,7 @@ extern BranchProductCondition _Nonnull BranchProductConditionRefurbished;
                       fromViewController:(nullable UIViewController *)viewController
                               completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion;
 
-// Returns with activityError as well
+/// Returns with activityError as well
 - (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
                             andShareText:(nullable NSString *)shareText
                       fromViewController:(nullable UIViewController *)viewController
@@ -213,9 +209,9 @@ extern BranchProductCondition _Nonnull BranchProductConditionRefurbished;
                                   anchor:(nullable UIBarButtonItem *)anchor
                      completionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completion;
 
-/*!
- @name List items on Spotlight
-*/
+
+/// @name List items on Spotlight
+
 
 - (void)listOnSpotlight;
 - (void)listOnSpotlightWithCallback:(nullable callbackWithUrl)callback;
@@ -225,7 +221,7 @@ extern BranchProductCondition _Nonnull BranchProductConditionRefurbished;
         "Please see https://dev.branch.io/features/spotlight-indexing/overview/ for instructions on migration"
     ))));;
 
-// Convenience method for initSession methods that return BranchUniversalObject, but can be used safely by anyone.
+/// Convenience method for initSession methods that return BranchUniversalObject, but can be used safely by anyone.
 + (nonnull BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(nonnull NSDictionary *)dictionary;
 
 - (NSDictionary*_Nonnull)getParamsForServerRequest;

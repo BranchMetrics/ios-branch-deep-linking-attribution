@@ -22,6 +22,22 @@
 
 @implementation BranchEventTest
 
+- (void) testDescription {
+    BranchEvent *event    = [BranchEvent standardEvent:BranchStandardEventPurchase];
+    event.transactionID   = @"1234";
+    event.currency        = BNCCurrencyUSD;
+    event.revenue         = [NSDecimalNumber decimalNumberWithString:@"10.50"];
+    event.eventDescription= @"Event description.";
+    event.userInfo        = (NSMutableDictionary*) @{
+        @"Key1": @"Value1"
+    };
+
+    NSString *d = event.description;
+    BNCTAssertEqualMaskedString(d,
+        @"<BranchEvent 0x**************** PURCHASE txID: 1234 Amt: USD 10.5 desc: Event description. "
+         "items: 0 userInfo: {\n    Key1 = Value1;\n}>");
+}
+
 - (void) testEvent {
 
     // Set up the Branch Universal Object --
@@ -64,7 +80,7 @@
 
     // Set up the event properties --
 
-    BranchEvent *event    = [BranchEvent standardEventWithType:BranchStandardEventPurchase];
+    BranchEvent *event    = [BranchEvent standardEvent:BranchStandardEventPurchase];
     event.transactionID   = @"12344555";
     event.currency        = BNCCurrencyUSD;
     event.revenue         = [NSDecimalNumber decimalNumberWithString:@"1.5"];
@@ -133,7 +149,7 @@
     });
 
     [branch clearNetworkQueue];
-    event.contentItems = @[ buo ];
+    event.contentItems = (id) @[ buo ];
     [event logEvent];
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
     [serverInterfaceMock stopMocking];

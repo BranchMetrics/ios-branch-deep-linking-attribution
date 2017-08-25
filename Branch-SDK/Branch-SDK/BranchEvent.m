@@ -107,6 +107,7 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
 
 @interface BranchEvent () {
     NSMutableDictionary *_userInfo;
+    NSMutableArray      *_contentItems;
 }
 @property (nonatomic, strong) NSString*  eventName;
 @end
@@ -128,7 +129,7 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
                withContentItem:(BranchUniversalObject*)contentItem {
     BranchEvent *e = [BranchEvent standardEvent:standardEvent];
     if (contentItem) {
-        e.contentItems = @[ contentItem ];
+        e.contentItems = (NSMutableArray*) @[ contentItem ];
     }
     return e;
 }
@@ -141,7 +142,7 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
                          contentItem:(BranchUniversalObject*)contentItem {
     BranchEvent *e = [[BranchEvent alloc] initWithName:name];
     if (contentItem) {
-        e.contentItems = @[ contentItem ];
+        e.contentItems = (NSMutableArray*) @[ contentItem ];
     }
     return e;
 }
@@ -159,11 +160,26 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
     }
 }
 
+- (NSMutableArray*) contentItems {
+    if (!_contentItems) _contentItems = [NSMutableArray new];
+    return _contentItems;
+}
+
+- (void) setContentItems:(NSMutableArray<BranchUniversalObject *> *)contentItems {
+    if ([contentItems isKindOfClass:[NSMutableArray class]]) {
+        _contentItems = contentItems;
+    } else if ([contentItems isKindOfClass:[NSArray class]]) {
+        _contentItems = [contentItems mutableCopy];
+    } else if (contentItems == nil) {
+        _contentItems = nil;
+    }
+}
+
 - (NSDictionary*) dictionary {
     NSMutableDictionary *dictionary = [NSMutableDictionary new];
 
     #define BNCFieldDefinesDictionaryFromSelf
-    #include "BNCAddFieldDefines.h"
+    #include "BNCFieldDefines.h"
 
     addString(transactionID,    transaction_id);
     addString(currency,         currency);
@@ -176,7 +192,7 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
     addString(productCondition, $condition);
     addDictionary(userInfo,     custom_data);
     
-    #include "BNCAddFieldDefines.h"
+    #include "BNCFieldDefines.h"
 
     return dictionary;
 }
@@ -244,6 +260,21 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
 			completion:nil];
 
     [[Branch getInstance] sendServerRequestWithoutSession:request];
+}
+
+- (NSString*_Nonnull) description {
+    return [NSString stringWithFormat:
+        @"<%@ 0x%016llx %@ txID: %@ Amt: %@ %@ desc: %@ items: %ld userInfo: %@>",
+        NSStringFromClass(self.class),
+        (uint64_t) self,
+        self.eventName,
+        self.transactionID,
+        self.currency,
+        self.revenue,
+        self.eventDescription,
+        (long) self.contentItems.count,
+        self.userInfo
+    ];
 }
 
 @end

@@ -746,5 +746,26 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         alert.addAction(okAction)
         present(alert, animated: true, completion: nil)
     }
-    
+
+    @IBAction func sendPurchaseEvent(_ sender: AnyObject) {
+        let universalObject = BranchUniversalObject.init()// = vc.univeraslObject// DataStore.getUniversalObject()
+        universalObject.title = "Big Bad Dog"
+        universalObject.contentDescription = "This dog is big. And bad. Bad dog."
+        universalObject.keywords = [ "big", "bad", "dog" ]
+        universalObject.schemaData.contentSchema = BranchContentSchema.commerceProduct
+        universalObject.schemaData.price = 10.00
+        universalObject.schemaData.currency = BNCCurrencyUSD
+
+        let event = BranchEvent.standardEvent(
+            BranchStandardEvent.viewContent,
+            withContentItem: universalObject
+        )
+        event.productCondition = BranchProductCondition.poor
+        event.revenue = 10.00;
+        event.currency = BNCCurrencyUSD
+        event.contentItems = [ universalObject ]
+        event.userInfo = [ "DiggityDog": "Hot" ]
+        event.userInfo["snoop"] = "dog"
+        BranchEvent.standardEvent(BranchStandardEvent.purchase, withContentItem: universalObject).logEvent()
+    }
 }

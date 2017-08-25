@@ -66,7 +66,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     NSMutableDictionary*dictionary = [NSMutableDictionary new];
 
     #define BNCFieldDefinesDictionaryFromSelf
-    #include "BNCAddFieldDefines.h"
+    #include "BNCFieldDefines.h"
 
     addString(contentSchema,    $content_schema);
     addDouble(quantity,         $quantity);
@@ -90,7 +90,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addStringArray(imageCaptions,$image_captions);
     addStringifiedDictionary(userInfo, $custom_fields);
 
-    #include "BNCAddFieldDefines.h"
+    #include "BNCFieldDefines.h"
 
     return dictionary;
 }
@@ -100,7 +100,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     if (!dictionary) return object;
 
     #define BNCFieldDefinesObjectFromDictionary
-    #include "BNCAddFieldDefines.h"
+    #include "BNCFieldDefines.h"
 
     addString(contentSchema,    $content_schema);
     addDouble(quantity,         $quantity);
@@ -124,7 +124,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addStringArray(imageCaptions,$image_captions);
     addStringifiedDictionary(userInfo, $custom_fields);
 
-    #include "BNCAddFieldDefines.h"
+    #include "BNCFieldDefines.h"
 
     return object;
 }
@@ -650,7 +650,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     BranchUniversalObject *object = [BranchUniversalObject new];
 
     #define BNCFieldDefinesObjectFromDictionary
-    #include "BNCAddFieldDefines.h"
+    #include "BNCFieldDefines.h"
 
     addString(canonicalIdentifier,          $canonical_identifier);
     addString(canonicalUrl,                 $canonical_url);
@@ -663,7 +663,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addString(title,                        $og_title);
     addBoolean(indexPublicly,               $publicly_indexable);
 
-    #include "BNCAddFieldDefines.h"
+    #include "BNCFieldDefines.h"
 
     BranchSchemaData *data = [BranchSchemaData schemaDataWithDictionary:dictionary];
     object.schemaData = data;
@@ -676,7 +676,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 
     #define BNCFieldDefinesDictionaryFromSelf
-    #include "BNCAddFieldDefines.h"
+    #include "BNCFieldDefines.h"
 
     addString(canonicalIdentifier,          $canonical_identifier);
     addString(canonicalUrl,                 $canonical_url);
@@ -689,7 +689,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addString(title,                        $og_title);
     addBoolean(indexPublicly,               $publicly_indexable);
 
-    #include "BNCAddFieldDefines.h"
+    #include "BNCFieldDefines.h"
 
     NSDictionary *schemaDictionary = [self.schemaData dictionary];
     if (schemaDictionary) [dictionary addEntriesFromDictionary:schemaDictionary];

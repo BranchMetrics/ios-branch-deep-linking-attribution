@@ -1,12 +1,10 @@
 //
-//  BNCAddFieldDefines.h
+//  BNCFieldDefines.h
 //  Branch-TestBed
 //
 //  Created by edward on 8/17/17.
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
-
-#import <Foundation/Foundation.h>
 
 #if defined(addString) // --------------------------------------------------------------------------
 

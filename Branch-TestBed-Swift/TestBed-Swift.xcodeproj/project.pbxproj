@@ -131,7 +131,7 @@
 		2BD7C4441F27D65D003696AF /* BranchSpotlightUrlRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchSpotlightUrlRequest.m; sourceTree = "<group>"; };
 		2BD7C4451F27D65D003696AF /* BranchUserCompletedActionRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchUserCompletedActionRequest.h; sourceTree = "<group>"; };
 		2BD7C4461F27D65D003696AF /* BranchUserCompletedActionRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUserCompletedActionRequest.m; sourceTree = "<group>"; };
-		4D2FAF761F4E5278004760FF /* BNCAddFieldDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCAddFieldDefines.h; sourceTree = "<group>"; };
+		4D0BD6091F4FA737006D73DE /* BNCFieldDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCFieldDefines.h; sourceTree = "<group>"; };
 		4D2FAF771F4E5278004760FF /* BranchEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchEvent.h; sourceTree = "<group>"; };
 		4D2FAF781F4E5278004760FF /* BranchEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchEvent.m; sourceTree = "<group>"; };
 		4D351A0F1F0D6362004BD4AA /* BNCLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLog.m; sourceTree = "<group>"; };
@@ -334,7 +334,6 @@
 		4D4F27DD1E400F9800282A34 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
-				4D2FAF761F4E5278004760FF /* BNCAddFieldDefines.h */,
 				4D4F27DE1E400F9800282A34 /* BNCCallbacks.h */,
 				4D4F27DF1E400F9800282A34 /* BNCCommerceEvent.h */,
 				4D4F27E01E400F9800282A34 /* BNCCommerceEvent.m */,
@@ -356,6 +355,7 @@
 				4D4F27EA1E400F9800282A34 /* BNCError.m */,
 				4D4F27EB1E400F9800282A34 /* BNCFabricAnswers.h */,
 				4D4F27EC1E400F9800282A34 /* BNCFabricAnswers.m */,
+				4D0BD6091F4FA737006D73DE /* BNCFieldDefines.h */,
 				4D4F27ED1E400F9800282A34 /* BNCLinkCache.h */,
 				4D4F27EE1E400F9800282A34 /* BNCLinkCache.m */,
 				4D4F27EF1E400F9800282A34 /* BNCLinkData.h */,

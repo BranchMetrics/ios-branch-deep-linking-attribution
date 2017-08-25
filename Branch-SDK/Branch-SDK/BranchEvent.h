@@ -13,32 +13,32 @@
 
 ///@functiongroup Branch Event Logging
 
-typedef NSString*const BranchStandardEvent;
+typedef NSString*const BranchStandardEvent NS_STRING_ENUM;
 
-// Commerce Events
+///@name Commerce Events
 
-extern BranchStandardEvent _Nonnull BranchStandardEventAddToCart;
-extern BranchStandardEvent _Nonnull BranchStandardEventAddToWishlist;
-extern BranchStandardEvent _Nonnull BranchStandardEventViewCart;
-extern BranchStandardEvent _Nonnull BranchStandardEventInitiatePurchase;
-extern BranchStandardEvent _Nonnull BranchStandardEventAddPaymentInfo;
-extern BranchStandardEvent _Nonnull BranchStandardEventPurchase;
-extern BranchStandardEvent _Nonnull BranchStandardEventSpendCredits;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventAddToCart;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventAddToWishlist;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventViewCart;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventInitiatePurchase;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventAddPaymentInfo;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventPurchase;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventSpendCredits;
 
-// Content Events
+///@name Content Events
 
-extern BranchStandardEvent _Nonnull BranchStandardEventSearch;
-extern BranchStandardEvent _Nonnull BranchStandardEventViewContent;
-extern BranchStandardEvent _Nonnull BranchStandardEventViewContentList;
-extern BranchStandardEvent _Nonnull BranchStandardEventRate;
-extern BranchStandardEvent _Nonnull BranchStandardEventShareContent; // TODO: Share start/complete/cancel?
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventSearch;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventViewContent;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventViewContentList;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventRate;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventShareContent; // TODO: Share start/complete/cancel?
 
-// User Lifecycle Events
+///@name User Lifecycle Events
 
-extern BranchStandardEvent _Nonnull BranchStandardEventCompleteRegistration;
-extern BranchStandardEvent _Nonnull BranchStandardEventCompleteTutorial;
-extern BranchStandardEvent _Nonnull BranchStandardEventAchieveLevel;
-extern BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievement;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventCompleteRegistration;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventCompleteTutorial;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventAchieveLevel;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievement;
 
 #pragma mark - BranchEvent
 
@@ -65,10 +65,11 @@ extern BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievement;
 @property (nonatomic, strong) NSString*_Nullable                coupon;
 @property (nonatomic, strong) NSString*_Nullable                affiliation;
 @property (nonatomic, strong) NSString*_Nullable                eventDescription;
-@property (nonatomic, strong) BranchProductCondition _Nullable          productCondition;
-@property (nonatomic, strong) NSArray<BranchUniversalObject*>*_Nullable contentItems;
-@property (nonatomic, strong) NSMutableDictionary<NSString*, NSString*> *_Nullable userInfo;
+@property (nonatomic, strong) BranchProductCondition _Nullable                    productCondition;
+@property (nonatomic, strong) NSMutableArray<BranchUniversalObject*>*_Nonnull     contentItems;
+@property (nonatomic, strong) NSMutableDictionary<NSString*, NSString*> *_Nonnull userInfo;
 
-- (void) logEvent;                      //!> Logs the event on the Branch server.
-- (NSDictionary*_Nonnull) dictionary;   //!> Returns a dictionary representation of the event.
+- (void) logEvent;                      //!< Logs the event on the Branch server.
+- (NSDictionary*_Nonnull) dictionary;   //!< Returns a dictionary representation of the event.
+- (NSString* _Nonnull) description;     //!< Returns a string description of the event.
 @end
