@@ -16,6 +16,7 @@
 #import "BNCXcode7Support.h"
 #import "BNCLog.h"
 #import "BNCConfig.h"
+#import "BNCPreferenceHelper.h"
 
 
 @interface BNCDeviceInfo()
@@ -64,7 +65,8 @@
     _language = [BNCDeviceInfo bnc_language].copy;
     _browserUserAgent = [BNCDeviceInfo userAgentString].copy;
 
-//@property (atomic, copy, readonly) BNCFrameworkType frameworkType;    // TODO: Add it.
+    _extensionType = [NSBundle mainBundle].infoDictionary[@"NSExtension"][@"NSExtensionPointIdentifier"];
+    if (!_extensionType.length) _extensionType = @"application";
 
     _branchSDKVersion = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
     _applicationVersion = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
@@ -269,11 +271,10 @@
 
     addString(osName,               os);
     addString(osVersion,            os_version);
-    addString(frameworkType,        environment);
+    addString(extensionType,        environment);
     addString(vendorId,             idfv);
     addString(adId,                 idfa);
     addString(browserUserAgent,     user_agent);
-    //addString(identifierForDeveloper, developer_identity);
     addString(country,              country);
     addString(language,             language);
     addString(brandName,            brand);
@@ -289,6 +290,15 @@
 
     if (!self.isAdTrackingEnabled)
         dictionary[@"limit_ad_tracking"] = CFBridgingRelease(kCFBooleanTrue);
+
+    NSString *s = nil;
+    BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+
+    s = preferences.userIdentity;
+    if (s.length) dictionary[@"developer_identity"] = s;
+
+    s = preferences.deviceFingerprintID;
+    if (s.length) dictionary[@"device_fingerprint_id"] = s;
 
     return dictionary;
 }

@@ -209,10 +209,9 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
 "{
     \"os\": \"iOS\",
     \"os_version\": 25,
-    \"environment\": \"FULL_APP\",
+    \"environment\": \"application\",
     \"idfa\": \"\",
     \"idfv\": \"\",
-    \"limit_ad_tracking\": false,
     \"user_agent\": \"\",
     \"developer_identity\": \"edsojan\",
     \"country\": \"US\",

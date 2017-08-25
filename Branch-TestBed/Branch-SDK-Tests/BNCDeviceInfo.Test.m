@@ -18,6 +18,8 @@
 #import "NSString+Branch.h"
 #import "BNCLog.h"
 #import "BNCConfig.h"
+#import "BNCPreferenceHelper.h"
+#import "BNCSystemObserver.h"
 
 @interface BNCDeviceInfoTest : BNCTestCase
 @end
@@ -126,19 +128,29 @@
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
 }
 
-/* TODO: Finish
-
 - (void) testV2Dictionary {
+    BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+
     NSMutableDictionary *truth = [self mutableDictionaryFromBundleJSONWithKey:@"BNCDeviceDictionaryV2"];
     truth[@"app_version"] = nil;
     truth[@"os_version"] = [UIDevice currentDevice].systemVersion;
     truth[@"sdk"] = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
+    truth[@"developer_identity"] = preferences.userIdentity;
+    truth[@"device_fingerprint_id"] = preferences.deviceFingerprintID;
+    truth[@"idfa"] = [BNCSystemObserver getAdId];
+    truth[@"idfv"] = [UIDevice currentDevice].identifierForVendor.UUIDString;
     truth[@"user_agent"] = [BNCDeviceInfo userAgentString];
     XCTAssertTrue(((NSString*)truth[@"user_agent"]).length > 0);
 
     NSDictionary *d = [[BNCDeviceInfo getInstance] v2dictionary];
+
+//    for (NSString *key in truth.keyEnumerator) {
+//        if (![truth[key] isEqual:d[key]]) {
+//            NSLog(@"Bing!");
+//        }
+//    }
+
     XCTAssertEqualObjects(truth, d);
 }
-*/
 
 @end

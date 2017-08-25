@@ -9,11 +9,6 @@
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 
-typedef NSString*const BNCFrameworkType NS_STRING_ENUM;
-
-FOUNDATION_EXPORT BNCFrameworkType BNCFrameworkTypeApplication;
-FOUNDATION_EXPORT BNCFrameworkType BNCFrameworkTypeMessages;
-
 #pragma mark - BNCDeviceInfo
 
 @interface BNCDeviceInfo : NSObject
@@ -36,7 +31,7 @@ FOUNDATION_EXPORT BNCFrameworkType BNCFrameworkTypeMessages;
 @property (atomic, copy, readonly) NSString* language;           //  iso2 language code (en, ml).
 @property (atomic, copy, readonly) NSString* browserUserAgent;   //  Simple user agent string.
 
-@property (atomic, copy, readonly) BNCFrameworkType frameworkType;
+@property (atomic, copy, readonly) NSString         *extensionType;
 @property (atomic, copy, readonly) NSString         *branchSDKVersion;
 @property (atomic, copy, readonly) NSString         *applicationVersion;
 @property (atomic, assign, readonly) CGFloat        screenScale;
