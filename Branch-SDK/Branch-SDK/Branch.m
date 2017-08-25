@@ -131,9 +131,9 @@ static NSURL* bnc_logURL = nil;
     @synchronized (self) {
         if (!bnc_logURL) {
             BNCLogInitialize();
-            BNCLogSetDisplayLevel(BNCLogLevelAll);    
+            BNCLogSetDisplayLevel(BNCLogLevelAll);
             bnc_logURL = BNCURLForBranchDirectory();
-            bnc_logURL = [bnc_logURL URLByAppendingPathComponent:@"Branch.log"];
+            bnc_logURL = [[NSURL alloc] initWithString:@"Branch.log" relativeToURL:bnc_logURL];
             BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
             BNCLogSetDisplayLevel(BNCLogLevelWarning);
             BNCLogDebug(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
