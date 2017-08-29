@@ -167,7 +167,7 @@
 
 - (void) testRegisterView {
     Branch *branch = [Branch getInstance:@"key_live_foo"];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"v2-event"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"testRegisterView"];
     id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
 
     OCMStub(
@@ -197,6 +197,7 @@
         }
     });
 
+    [branch clearNetworkQueue];
     BranchUniversalObject *buo = [BranchUniversalObject new];
     buo.canonicalIdentifier = @"Uniq!";
     buo.title = @"Object Title";
