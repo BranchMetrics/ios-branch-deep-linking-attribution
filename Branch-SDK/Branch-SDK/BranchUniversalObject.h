@@ -83,7 +83,7 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbis
 @property (nonatomic, strong, nullable) NSString        *addressPostalCode;
 @property (nonatomic, assign)           double          latitude;
 @property (nonatomic, assign)           double          longitude;
-@property (nonatomic, copy, nullable)   NSMutableArray<NSString*> *imageCaptions;
+@property (nonatomic, copy, nonnull)    NSMutableArray<NSString*> *imageCaptions;
 @property (nonatomic, copy, nonnull)    NSMutableDictionary<NSString*, NSString*> *userInfo;
 
 - (NSDictionary*_Nonnull) dictionary;

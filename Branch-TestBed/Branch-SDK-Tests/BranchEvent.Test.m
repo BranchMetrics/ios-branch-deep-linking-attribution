@@ -73,7 +73,7 @@
     buo.schemaData.addressPostalCode= @"postal_code";
     buo.schemaData.latitude         = 12.07;
     buo.schemaData.longitude        = -97.5;
-    buo.schemaData.imageCaptions    = @[@"my_img_caption1", @"my_img_caption_2"];
+    buo.schemaData.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
     buo.schemaData.userInfo         = (NSMutableDictionary*) @{
         @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"
     };
@@ -217,7 +217,7 @@
     buo.schemaData.addressPostalCode= @"postal_code";
     buo.schemaData.latitude         = 12.07;
     buo.schemaData.longitude        = -97.5;
-    buo.schemaData.imageCaptions    = @[@"my_img_caption1", @"my_img_caption_2"];
+    buo.schemaData.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
     buo.schemaData.userInfo         = (NSMutableDictionary*) @{
         @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"
     };

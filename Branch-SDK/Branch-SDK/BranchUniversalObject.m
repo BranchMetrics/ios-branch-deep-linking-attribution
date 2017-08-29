@@ -56,6 +56,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 #pragma mark - BranchSchemaData
 
 @interface BranchSchemaData () {
+    NSMutableArray      *_imageCaptions;
     NSMutableDictionary *_userInfo;
 }
 @end
@@ -136,6 +137,15 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 
 - (void) setUserInfo:(NSMutableDictionary*)dictionary {
     _userInfo = [dictionary mutableCopy];
+}
+
+- (void) setImageCaptions:(NSMutableArray<NSString *> *)imageCaptions {
+    _imageCaptions = [imageCaptions mutableCopy];
+}
+
+- (NSMutableArray<NSString *> *) imageCaptions {
+    if (!_imageCaptions) _imageCaptions = [NSMutableArray new];
+    return _imageCaptions;
 }
 
 - (NSString*) description {

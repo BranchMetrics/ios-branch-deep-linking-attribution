@@ -92,15 +92,17 @@
     }
 
     #define addStringArray(field, name) { \
-        NSMutableArray *newArray = [NSMutableArray array]; \
-        object.field = newArray; \
         NSArray *a = dictionary[@#name]; \
         if ([a isKindOfClass:[NSArray class]]) { \
+            NSMutableArray *newArray = [NSMutableArray array]; \
             for (NSString *s in a) { \
                 if ([s isKindOfClass:[NSString class]]) { \
                     [newArray addObject:s]; \
                 } \
             } \
+            object.field = newArray; \
+        } else { \
+            object.field = (id) [NSArray new]; \
         } \
     }
 
