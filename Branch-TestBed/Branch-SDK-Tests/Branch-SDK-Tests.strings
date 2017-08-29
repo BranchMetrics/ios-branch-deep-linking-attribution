@@ -174,15 +174,25 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
         \"$locally_indexable\": true,
         \"$creation_timestamp\": 1501869445321
     }],
-    \"ad_tracking_enabled\": 1,
-    \"hardware_id\": \"dff82788-eaa5-4591-a81c-806c92a9b277\",
-    \"hardware_id_type\": \"vendor_id\",
-    \"is_hardware_id_real\": 1,
-    \"brand\": \"Apple\",
-    \"screen_height\": 1794,
-    \"screen_width\": 1080,
-    \"country\": \"US\",
-    \"language\": \"en\",
+    \"user_data\": {
+        \"os\": \"iOS\",
+        \"os_version\": 25,
+        \"environment\": \"application\",
+        \"idfa\": \"\",
+        \"idfv\": \"\",
+        \"user_agent\": \"\",
+        \"developer_identity\": \"edsojan\",
+        \"country\": \"US\",
+        \"language\": \"en\",
+        \"brand\": \"Apple\",
+        \"device_fingerprint_id\": \"\",
+        \"sdk\": \"ios0.17.10\",
+        \"app_version\": \"whatever\",
+        \"model\": \"x86_64\",
+        \"screen_dpi\": 3,
+        \"screen_height\": 2208,
+        \"screen_width\": 1242
+    },
     \"branch_key\": \"key_live_foo\",
     \"retryNumber\": 0
 }
@@ -223,6 +233,6 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
     \"model\": \"x86_64\",
     \"screen_dpi\": 3,
     \"screen_height\": 2208,
-    \"screen_width\": 1242,
+    \"screen_width\": 1242
 }";
 

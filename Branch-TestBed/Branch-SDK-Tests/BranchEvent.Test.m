@@ -106,17 +106,8 @@
 
     // Mock the result. Fix up the expectedParameters for simulator hardware --
 
-    BNCDeviceInfo *device = [BNCDeviceInfo getInstance];
     NSMutableDictionary *expectedRequest = [self mutableDictionaryFromBundleJSONWithKey:@"V2EventJSON"];
-    expectedRequest[@"hardware_id"]     = device.hardwareId;
-    expectedRequest[@"screen_height"]   = device.screenHeight;
-    expectedRequest[@"screen_width"]    = device.screenWidth;
-    expectedRequest[@"os"]              = device.osName;
-    expectedRequest[@"os_version"]      = device.osVersion;
-    expectedRequest[@"model"]           = device.modelName;
-    expectedRequest[@"sdk"]             = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
-    expectedRequest[@"ios_vendor_id"]   = device.vendorId;
-    expectedRequest[@"user_agent"]      = [BNCDeviceInfo userAgentString];
+    expectedRequest[@"user_data"] = [[BNCDeviceInfo getInstance] v2dictionary];
 
     Branch *branch = [Branch getInstance:@"key_live_foo"];
     XCTestExpectation *expectation = [self expectationWithDescription:@"v2-event"];
@@ -158,20 +149,10 @@
 - (void) testUserCompletedAction {
     // Mock the result. Fix up the expectedParameters for simulator hardware --
 
-    BNCDeviceInfo *device = [BNCDeviceInfo getInstance];
     NSMutableDictionary *expectedRequest = [self mutableDictionaryFromBundleJSONWithKey:@"V2EventJSON"];
-    expectedRequest[@"hardware_id"]     = device.hardwareId;
-    expectedRequest[@"screen_height"]   = device.screenHeight;
-    expectedRequest[@"screen_width"]    = device.screenWidth;
-    expectedRequest[@"os"]              = device.osName;
-    expectedRequest[@"os_version"]      = device.osVersion;
-    expectedRequest[@"model"]           = device.modelName;
-    expectedRequest[@"sdk"]             = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
-    expectedRequest[@"ios_vendor_id"]   = device.vendorId;
-    expectedRequest[@"user_agent"]      = [BNCDeviceInfo userAgentString];
-
-    expectedRequest[@"event_data"]      = nil;
-    expectedRequest[@"custom_data"]     = nil;
+    expectedRequest[@"user_data"] = [[BNCDeviceInfo getInstance] v2dictionary];
+    expectedRequest[@"event_data"] = nil;
+    expectedRequest[@"custom_data"] = nil;
 
     Branch *branch = [Branch getInstance:@"key_live_foo"];
     XCTestExpectation *expectation = [self expectationWithDescription:@"v2-event-user-action"];
@@ -244,8 +225,6 @@
     // Set up and invoke --
     [branch clearNetworkQueue];
     [buo userCompletedAction:BranchStandardEventPurchase];
-//    [branch processNextQueueItem];
-//    [branch processNextQueueItem];
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
     [serverInterfaceMock stopMocking];
 }

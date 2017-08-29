@@ -140,16 +140,18 @@
     truth[@"idfa"] = [BNCSystemObserver getAdId];
     truth[@"idfv"] = [UIDevice currentDevice].identifierForVendor.UUIDString;
     truth[@"user_agent"] = [BNCDeviceInfo userAgentString];
+
+    // Fix up the screen:
+    CGRect bounds = [UIScreen mainScreen].bounds;
+    CGFloat scale = [UIScreen mainScreen].scale;
+    truth[@"screen_dpi"] = [NSNumber numberWithFloat:scale];
+    truth[@"screen_height"] = [NSNumber numberWithFloat:bounds.size.height * scale];
+    truth[@"screen_width"] = [NSNumber numberWithFloat:bounds.size.width * scale];
+
+    // Check that *something* is in user agent:
     XCTAssertTrue(((NSString*)truth[@"user_agent"]).length > 0);
 
     NSDictionary *d = [[BNCDeviceInfo getInstance] v2dictionary];
-
-//    for (NSString *key in truth.keyEnumerator) {
-//        if (![truth[key] isEqual:d[key]]) {
-//            NSLog(@"Bing!");
-//        }
-//    }
-
     XCTAssertEqualObjects(truth, d);
 }
 
