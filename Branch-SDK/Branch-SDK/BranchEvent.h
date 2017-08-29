@@ -66,7 +66,7 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievem
 @property (nonatomic, strong) NSString*_Nullable                affiliation;
 @property (nonatomic, strong) NSString*_Nullable                eventDescription;
 @property (nonatomic, strong) BranchProductCondition _Nullable                    productCondition;
-@property (nonatomic, strong) NSMutableArray<BranchUniversalObject*>*_Nonnull     contentItems;
+@property (nonatomic, copy) NSMutableArray<BranchUniversalObject*>*_Nonnull       contentItems;
 @property (nonatomic, copy) NSMutableDictionary<NSString*, NSString*> *_Nonnull   userInfo;
 
 - (void) logEvent;                      //!< Logs the event on the Branch server.

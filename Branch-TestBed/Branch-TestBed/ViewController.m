@@ -321,18 +321,17 @@ NSString *test_key = @"test_key";
     }
 }
 
-#pragma mark - Commerce Events
-
 - (IBAction) openBranchLinkInApp:(id)sender {
     NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
-    // TODO: Remove
-    // NSURL *URL = [NSURL URLWithString:@"https://bnc.lt/ZPOc/Y6aKU0rzcy"]; // <= Your URL goes here.
+    // <= Your Branch link URL goes here:
     NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"];
     activity.webpageURL = URL;
     Branch *branch = [Branch getInstance];
     [branch resetUserSession];
     [branch continueUserActivity:activity];
 }
+
+#pragma mark - Commerce Events
 
 - (IBAction) sendCommerceEvent:(id)sender {
     BNCProduct *product = [BNCProduct new];
@@ -370,6 +369,26 @@ NSString *test_key = @"test_key";
 				otherButtonTitles:nil]
 					show];
         }];
+}
+
+- (IBAction) sendV2Event:(id)sender {
+    BranchEvent *event    = [BranchEvent standardEvent:BranchStandardEventPurchase];
+    event.transactionID   = @"12344555";
+    event.currency        = BNCCurrencyUSD;
+    event.revenue         = [NSDecimalNumber decimalNumberWithString:@"1.5"];
+    event.shipping        = [NSDecimalNumber decimalNumberWithString:@"10.2"];
+    event.tax             = [NSDecimalNumber decimalNumberWithString:@"12.3"];
+    event.coupon          = @"test_coupon";
+    event.affiliation     = @"test_affiliation";
+    event.eventDescription= @"Event _description";
+    event.productCondition= BranchProductConditionFair;
+    event.userInfo        = (NSMutableDictionary*) @{
+        @"Custom_Event_Property_Key1": @"Custom_Event_Property_val1",
+        @"Custom_Event_Property_Key2": @"Custom_Event_Property_val2"
+    };
+    if (self.branchUniversalObject)
+        event.contentItems = (id) @[self.branchUniversalObject];
+    [event logEvent];
 }
 
 #pragma mark - Spotlight
