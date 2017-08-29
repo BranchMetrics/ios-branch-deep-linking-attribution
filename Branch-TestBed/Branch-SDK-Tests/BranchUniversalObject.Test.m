@@ -10,6 +10,7 @@
 #import "BNCTestCase.h"
 #import "BranchUniversalObject.h"
 #import "NSString+Branch.h"
+#import "Branch.h"
 
 @interface BranchUniversalObjectTest : BNCTestCase
 @end
@@ -162,6 +163,47 @@
         @"3": @"4",
     };
     XCTAssertEqualObjects(buo.schemaData.userInfo, d);
+}
+
+- (void) testRegisterView {
+    Branch *branch = [Branch getInstance:@"key_live_foo"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"v2-event"];
+    id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
+
+    OCMStub(
+        [serverInterfaceMock genericHTTPRequest:[OCMArg any]
+            retryNumber:0
+            callback:[OCMArg any]
+            retryHandler:[OCMArg any]]
+    ).andDo(^(NSInvocation *invocation) {
+
+        __unsafe_unretained NSURLRequest *request = nil;
+        [invocation getArgument:&request atIndex:2];
+
+        NSError *error = nil;
+        NSString *url = request.URL.absoluteString;
+        NSData *bodyData = request.HTTPBody;
+        NSDictionary *parameters = [NSJSONSerialization JSONObjectWithData:bodyData options:0 error:&error];
+        XCTAssertNil(error);
+
+        NSLog(@"1");
+        NSLog(@"URL: %@.", url);
+        NSLog(@"Body: %@.", parameters);
+
+        NSString *eventName = parameters[@"name"];
+        if ([url containsString:@"branch.io/v2/event/standard"] &&
+            [eventName isEqualToString:@"VIEW_CONTENT"]) {
+            [expectation fulfill];
+        }
+    });
+
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+    buo.canonicalIdentifier = @"Uniq!";
+    buo.title = @"Object Title";
+    [buo registerViewWithCallback:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
+        XCTAssertNil(error);
+    }];
+    [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
 
 @end

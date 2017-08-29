@@ -289,7 +289,8 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     if (self.indexLocally) {
         [self listOnSpotlight];
     }
-    [[Branch getInstance] registerViewWithParams:[self getParamsForServerRequest] andCallback:callback];
+    [[BranchEvent standardEvent:BranchStandardEventViewContent withContentItem:self] logEvent];
+    if (callback) callback(@{}, nil);
 }
 
 - (void)userCompletedAction:(NSString *)action {
