@@ -536,14 +536,14 @@ NSInteger const  TEST_CREDITS = 30;
 
     [[NSNotificationCenter defaultCenter]
         addObserver:self
-        selector:@selector(branchWillOpenURLNotification:)
-        name:BranchWillOpenURLNotification
+        selector:@selector(branchWillStartSessionNotification:)
+        name:BranchWillStartSessionNotification
         object:nil];
 
     [[NSNotificationCenter defaultCenter]
         addObserver:self
-        selector:@selector(branchDidOpenURLNotification:)
-        name:BranchDidOpenURLNotification
+        selector:@selector(branchDidStartSessionNotification:)
+        name:BranchWillStartSessionNotification
         object:nil];
 
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
@@ -636,7 +636,7 @@ withUniversalObject:(BranchUniversalObject*)univseralObject
     [self.branchDidOpenURLExpectation fulfill];
 }
 
-- (void) branchWillOpenURLNotification:(NSNotification*)notification {
+- (void) branchWillStartSessionNotification:(NSNotification*)notification {
     XCTAssertTrue([NSThread isMainThread]);
     XCTAssertTrue(self.notificationOrder == 1);
     self.notificationOrder++;
@@ -656,7 +656,7 @@ withUniversalObject:(BranchUniversalObject*)univseralObject
     [self.branchWillOpenURLNotificationExpectation fulfill];
 }
 
-- (void) branchDidOpenURLNotification:(NSNotification*)notification {
+- (void) branchDidStartSessionNotification:(NSNotification*)notification {
     XCTAssertTrue([NSThread isMainThread]);
     XCTAssertTrue(self.notificationOrder == 4);
     self.notificationOrder++;

@@ -1799,15 +1799,13 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         ? [NSURL URLWithString:self.preferenceHelper.referredUrl]
         : nil;
 
-    if ([self.delegate respondsToSelector:@selector(branch:willOpenURL:)]) {
-        [self.delegate performSelector:@selector(branch:willOpenURL:)
-            withObject:self withObject:URL];
-    }
+    if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)])
+        [self.delegate branch:self willStartSessionWithURL:URL];
 
     NSMutableDictionary *userInfo = [NSMutableDictionary new];
     userInfo[BranchOriginalURLKey] = URL;
     [[NSNotificationCenter defaultCenter]
-        postNotificationName:BranchWillOpenURLNotification
+        postNotificationName:BranchWillStartSessionNotification
         object:self
         userInfo:userInfo];
 
@@ -1967,15 +1965,15 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     if (error) {
 
-        if ([self.delegate respondsToSelector:@selector(branch:didOpenURL:withError:)])
-            [self.delegate branch:self didOpenURL:originalURL withError:error];
+        if ([self.delegate respondsToSelector:@selector(branch:didStartSessionWithURL:error:)])
+            [self.delegate branch:self didStartSessionWithURL:originalURL error:error];
 
     } else {
 
-        if ([self.delegate respondsToSelector:@selector(branch:didOpenURL:withUniversalObject:linkProperties:)])
+        if ([self.delegate respondsToSelector:@selector(branch:didStartSessionWithURL:universalObject:linkProperties:)])
             [self.delegate branch:self
-                       didOpenURL:originalURL
-              withUniversalObject:universalObject
+           didStartSessionWithURL:originalURL
+                  universalObject:universalObject
                    linkProperties:linkProperties];
     }
 
@@ -1985,7 +1983,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     userInfo[BranchUniversalObjectKey] = universalObject;
     userInfo[BranchLinkPropertiesKey] = linkProperties;
     [[NSNotificationCenter defaultCenter]
-        postNotificationName:BranchDidOpenURLNotification
+        postNotificationName:BranchDidStartSessionNotification
         object:self
         userInfo:userInfo];
 }

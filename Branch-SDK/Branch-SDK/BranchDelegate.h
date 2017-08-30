@@ -2,34 +2,36 @@
 //  BranchDelegate.h
 //  Branch-SDK
 //
-//  Created by edward on 6/30/17.
+//  Created by Edward Smith on 6/30/17.
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 @class Branch, BranchUniversalObject, BranchLinkProperties;
 
+#pragma mark BranchDelegate Protocol
+
 @protocol BranchDelegate <NSObject>
 
 @optional
-- (void) branch:(Branch*)branch willOpenURL:(NSURL*)url;
+- (void) branch:(Branch*)branch willStartSessionWithURL:(NSURL*)branch;
 
 @optional
 - (void) branch:(Branch*)branch
-     didOpenURL:(NSURL*)url
-withUniversalObject:(BranchUniversalObject*)univseralObject
- linkProperties:(BranchLinkProperties*)linkParameters;
+     didStartSessionWithURL:(NSURL*)url
+            universalObject:(BranchUniversalObject*)univseralObject
+             linkProperties:(BranchLinkProperties*)linkParameters;
 
 @optional
 - (void) branch:(Branch*)branch
-     didOpenURL:(NSURL*)url
-      withError:(NSError*)error;
-
+didStartSessionWithURL:(NSURL*)url
+                 error:(NSError*)error;
 @end
 
+#pragma mark - Branch Notifications
 
-FOUNDATION_EXPORT NSString* const BranchWillOpenURLNotification;
-FOUNDATION_EXPORT NSString* const BranchDidOpenURLNotification;
+FOUNDATION_EXPORT NSString* const BranchWillStartSessionNotification;
+FOUNDATION_EXPORT NSString* const BranchDidStartSessionNotification;
 
 FOUNDATION_EXPORT NSString* const BranchErrorKey;
 FOUNDATION_EXPORT NSString* const BranchOriginalURLKey;

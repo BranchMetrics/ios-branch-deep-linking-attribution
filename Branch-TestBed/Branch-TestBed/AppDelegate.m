@@ -37,14 +37,14 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Usually using delegate callbacks AND notifications is overkill, but this demonstrates both.
     [[NSNotificationCenter defaultCenter]
         addObserver:self
-        selector:@selector(branchWillOpenURLNotification:)
-        name:BranchWillOpenURLNotification
+        selector:@selector(branchWillStartSessionNotification:)
+        name:BranchWillStartSessionNotification
         object:nil];
 
     [[NSNotificationCenter defaultCenter]
         addObserver:self
-        selector:@selector(branchDidOpenURLNotification:)
-        name:BranchDidOpenURLNotification
+        selector:@selector(branchDidStartSessionNotification:)
+        name:BranchDidStartSessionNotification
         object:nil];
 
     // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
@@ -223,7 +223,7 @@ withUniversalObject:(BranchUniversalObject*)univseralObject
 
 #pragma mark - Branch Notification Handlers
 
-- (void) branchWillOpenURLNotification:(NSNotification*)notification {
+- (void) branchWillStartSessionNotification:(NSNotification*)notification {
     NSLog(@"branchWillOpenURLNotification: was called.");
 
     // Show a waiting view as the Branch servers check for a
@@ -239,7 +239,7 @@ withUniversalObject:(BranchUniversalObject*)univseralObject
     [APWaitingView showWithMessage:message activityIndicator:YES disableTouches:YES];
 }
 
-- (void) branchDidOpenURLNotification:(NSNotification*)notification {
+- (void) branchDidStartSessionNotification:(NSNotification*)notification {
     NSLog(@"branchDidOpenURLNotification: was called.");
 
     NSError *error = notification.userInfo[BranchErrorKey];
