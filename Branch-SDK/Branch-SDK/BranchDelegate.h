@@ -14,26 +14,26 @@
 @protocol BranchDelegate <NSObject>
 
 @optional
-- (void) branch:(Branch*)branch willStartSessionWithURL:(NSURL*)branch;
+- (void) branch:(Branch*_Nonnull)branch willStartSessionWithURL:(NSURL*_Nullable)url;
 
 @optional
-- (void) branch:(Branch*)branch
-     didStartSessionWithURL:(NSURL*)url
-            universalObject:(BranchUniversalObject*)univseralObject
-             linkProperties:(BranchLinkProperties*)linkParameters;
+- (void) branch:(Branch*_Nonnull)branch
+     didStartSessionWithURL:(NSURL*_Nullable)url
+            universalObject:(BranchUniversalObject*_Nonnull)univseralObject
+             linkProperties:(BranchLinkProperties*_Nonnull)linkParameters;
 
 @optional
-- (void) branch:(Branch*)branch
-didStartSessionWithURL:(NSURL*)url
-                 error:(NSError*)error;
+- (void) branch:(Branch*_Nonnull)branch
+didStartSessionWithURL:(NSURL*_Nullable)url
+                 error:(NSError*_Nullable)error;
 @end
 
 #pragma mark - Branch Notifications
 
-FOUNDATION_EXPORT NSString* const BranchWillStartSessionNotification;
-FOUNDATION_EXPORT NSString* const BranchDidStartSessionNotification;
+FOUNDATION_EXPORT NSString*_Nonnull const BranchWillStartSessionNotification;
+FOUNDATION_EXPORT NSString*_Nonnull const BranchDidStartSessionNotification;
 
-FOUNDATION_EXPORT NSString* const BranchErrorKey;
-FOUNDATION_EXPORT NSString* const BranchOriginalURLKey;
-FOUNDATION_EXPORT NSString* const BranchUniversalObjectKey;
-FOUNDATION_EXPORT NSString* const BranchLinkPropertiesKey;
+FOUNDATION_EXPORT NSString*_Nonnull const BranchErrorKey;
+FOUNDATION_EXPORT NSString*_Nonnull const BranchOriginalURLKey;
+FOUNDATION_EXPORT NSString*_Nonnull const BranchUniversalObjectKey;
+FOUNDATION_EXPORT NSString*_Nonnull const BranchLinkPropertiesKey;
