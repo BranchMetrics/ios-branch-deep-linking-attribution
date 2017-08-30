@@ -783,30 +783,35 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     self.preferenceHelper.checkedAppleSearchAdAttribution = YES;
     self.asyncRequestCount++;
 
-    void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) = ^void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
+    void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) =
+      ^ void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
         self.asyncRequestCount--;
 
-        if (attrDetails && [attrDetails count]) {
+        attrDetails = nil; // eDebug
+        if (attrDetails.count) {
             self.preferenceHelper.appleSearchAdDetails = attrDetails;
         }
         else if (self.searchAdsDebugMode) {
-            NSMutableDictionary *testInfo = [[NSMutableDictionary alloc] init];
 
-            NSMutableDictionary *testDetails = [[NSMutableDictionary alloc] init];
-            [testDetails setObject:[NSNumber numberWithBool:YES] forKey:@"iad-attribution"];
-            [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-campaign-id"];
-            [testDetails setObject:@"DebugAppleSearchAdsCampaignName" forKey:@"iad-campaign-name"];
-            [testDetails setObject:@"2016-09-09T01:33:17Z" forKey:@"iad-click-date"];
-            [testDetails setObject:@"2016-09-09T01:33:17Z" forKey:@"iad-conversion-date"];
-            [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-creative-id"];
-            [testDetails setObject:@"CreativeName" forKey:@"iad-creative-name"];
-            [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-lineitem-id"];
-            [testDetails setObject:@"LineName" forKey:@"iad-lineitem-name"];
-            [testDetails setObject:@"OrgName" forKey:@"iad-org-name"];
+            NSDictionary *debugSearchAd = @{
+                @"Version3.1": @{
+                    @"iad-adgroup-id":      @1234567890,
+                    @"iad-adgroup-name":    @"AdGroupName",
+                    @"iad-attribution":     (id)kCFBooleanTrue, //@true,
+                    @"iad-campaign-id":     @1234567890,
+                    @"iad-campaign-name":   @"CampaignName",
+                    @"iad-click-date":      [NSDate date],
+                    @"iad-conversion-date": [NSDate date],
+                    @"iad-creative-id":     @1234567890,
+                    @"iad-creative-name":   @"CreativeName",
+                    @"iad-keyword":         @"Keyword",
+                    @"iad-lineitem-id":     @1234567890,
+                    @"iad-lineitem-name":   @"LineName",
+                    @"iad-org-name":        @"OrgName"
+                }
+            };
 
-            [testInfo setObject:testDetails forKey:@"Version3.1"];
-
-            self.preferenceHelper.appleSearchAdDetails = testInfo;
+            self.preferenceHelper.appleSearchAdDetails = debugSearchAd;
         }
 
 
