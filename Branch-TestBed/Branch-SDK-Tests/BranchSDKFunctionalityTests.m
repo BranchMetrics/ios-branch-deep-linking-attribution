@@ -11,6 +11,8 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "Branch.h"
+#import "BranchUniversalObject.h"
+#import "BranchLinkProperties.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
 #import "BNCConfig.h"
@@ -535,13 +537,13 @@ NSInteger const  TEST_CREDITS = 30;
     [[NSNotificationCenter defaultCenter]
         addObserver:self
         selector:@selector(branchWillOpenURLNotification:)
-        name:BNCBranchWillOpenURLNotification
+        name:BranchWillOpenURLNotification
         object:nil];
 
     [[NSNotificationCenter defaultCenter]
         addObserver:self
         selector:@selector(branchDidOpenURLNotification:)
-        name:BNCBranchDidOpenURLNotification
+        name:BranchDidOpenURLNotification
         object:nil];
 
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
@@ -611,31 +613,47 @@ NSInteger const  TEST_CREDITS = 30;
     [self.branchWillOpenURLExpectation fulfill];
 }
 
+- (void) branch:(Branch*)branch
+     didOpenURL:(NSURL*)url
+withUniversalObject:(BranchUniversalObject*)univseralObject
+ linkProperties:(BranchLinkProperties*)linkProperties {
+    XCTAssertTrue([NSThread isMainThread]);
+    XCTAssertTrue(self.notificationOrder == 3);
+    self.notificationOrder++;
+    XCTAssertNotNil(univseralObject);
+    XCTAssertNotNil(linkProperties);
+    [self.branchDidOpenURLExpectation fulfill];
+}
+
+- (void) branch:(Branch*)branch
+     didOpenURL:(NSURL*)url
+      withError:(NSError*)error {
+    XCTAssertTrue([NSThread isMainThread]);
+    XCTAssertTrue(self.notificationOrder == 3);
+    self.notificationOrder++;
+    XCTAssertNotNil(error);
+    [NSException raise:NSInternalInconsistencyException format:@"Shouldn't return an error here."];
+    [self.branchDidOpenURLExpectation fulfill];
+}
+
 - (void) branchWillOpenURLNotification:(NSNotification*)notification {
     XCTAssertTrue([NSThread isMainThread]);
     XCTAssertTrue(self.notificationOrder == 1);
     self.notificationOrder++;
 
-    NSError *error = notification.userInfo[BNCErrorKey];
+    NSError *error = notification.userInfo[BranchErrorKey];
     XCTAssertNil(error);
 
-    NSURL *URL = notification.userInfo[BNCOriginalURLKey];
+    NSURL *URL = notification.userInfo[BranchOriginalURLKey];
     XCTAssertNil(URL);
 
-    NSDictionary *params = notification.userInfo[BNCLinkParametersKey];
-    XCTAssertNil(params);
+    BranchUniversalObject *object = notification.userInfo[BranchUniversalObjectKey];
+    XCTAssertNil(object);
+
+    BranchLinkProperties *properties = notification.userInfo[BranchLinkPropertiesKey];
+    XCTAssertNil(properties);
 
     [self.branchWillOpenURLNotificationExpectation fulfill];
-}
-
-- (void) branch:(Branch*)branch
-     didOpenURL:(NSURL*)url
- linkParameters:(NSDictionary*)linkParameters
-          error:(NSError*)error {
-    XCTAssertTrue([NSThread isMainThread]);
-    XCTAssertTrue(self.notificationOrder == 3);
-    self.notificationOrder++;
-    [self.branchDidOpenURLExpectation fulfill];
 }
 
 - (void) branchDidOpenURLNotification:(NSNotification*)notification {
@@ -643,14 +661,21 @@ NSInteger const  TEST_CREDITS = 30;
     XCTAssertTrue(self.notificationOrder == 4);
     self.notificationOrder++;
 
-    NSError *error = notification.userInfo[BNCErrorKey];
+    NSError *error = notification.userInfo[BranchErrorKey];
     XCTAssertNil(error);
 
-    NSURL *URL = notification.userInfo[BNCOriginalURLKey];
+    NSURL *URL = notification.userInfo[BranchOriginalURLKey];
     XCTAssertNil(URL);
 
-    NSDictionary *params = notification.userInfo[BNCLinkParametersKey];
-    XCTAssertTrue(params != nil && [params isEqualToDictionary:self.deepLinkParams]);
+    BranchUniversalObject *object = notification.userInfo[BranchUniversalObjectKey];
+    XCTAssertNotNil(object);
+
+    BranchLinkProperties *properties = notification.userInfo[BranchLinkPropertiesKey];
+    XCTAssertNotNil(object);
+
+    NSDictionary *d = [object getDictionaryWithCompleteLinkProperties:properties];
+    XCTAssertTrue(d.count == self.deepLinkParams.count);
+    XCTAssertTrue(!d || [d isEqualToDictionary:self.deepLinkParams]);
 
     [self.branchDidOpenURLNotificationExpectation fulfill];
 }

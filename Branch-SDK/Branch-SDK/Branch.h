@@ -21,7 +21,7 @@
 #import "BranchActivityItemProvider.h"
 #import "BranchDeepLinkingController.h"
 #import "BranchLinkProperties.h"
-#import "BranchNotifications.h"
+#import "BranchDelegate.h"
 #import "BranchShareLink.h"
 #import "BranchUniversalObject.h"
 #import "BranchView.h"

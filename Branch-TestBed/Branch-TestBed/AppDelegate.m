@@ -38,13 +38,13 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [[NSNotificationCenter defaultCenter]
         addObserver:self
         selector:@selector(branchWillOpenURLNotification:)
-        name:BNCBranchWillOpenURLNotification
+        name:BranchWillOpenURLNotification
         object:nil];
 
     [[NSNotificationCenter defaultCenter]
         addObserver:self
         selector:@selector(branchDidOpenURLNotification:)
-        name:BNCBranchDidOpenURLNotification
+        name:BranchDidOpenURLNotification
         object:nil];
 
     // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
@@ -210,9 +210,15 @@ didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
 
 - (void) branch:(Branch*)branch
      didOpenURL:(NSURL*)url
- linkParameters:(NSDictionary*)linkParameters
-          error:(NSError*)error {
-    NSLog(@"branch:didOpenURL:linkParameters:error: called with URL '%@'.", url);
+withUniversalObject:(BranchUniversalObject*)univseralObject
+ linkProperties:(BranchLinkProperties*)linkParameters {
+    NSLog(@"branch:didOpenURL:withUniversalObject:linkProperties: was called with URL '%@'.", url);
+}
+
+- (void) branch:(Branch*)branch
+     didOpenURL:(NSURL*)url
+      withError:(NSError*)error {
+   NSLog(@"branch:didOpenURL:withError: called with URL '%@'.", url);
 }
 
 #pragma mark - Branch Notification Handlers
@@ -224,7 +230,7 @@ didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     // deferred deep link or decode the passed URL.
 
     NSString *message = nil;
-    NSURL *originalURL = notification.userInfo[BNCOriginalURLKey];
+    NSURL *originalURL = notification.userInfo[BranchOriginalURLKey];
     if (originalURL) {
         message = [NSString stringWithFormat:@"Checking URL\n%@", originalURL];
     } else {
@@ -236,30 +242,37 @@ didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
 - (void) branchDidOpenURLNotification:(NSNotification*)notification {
     NSLog(@"branchDidOpenURLNotification: was called.");
 
-    NSError *error = notification.userInfo[BNCErrorKey];
-    NSURL *originalURL = notification.userInfo[BNCOriginalURLKey];
-    NSDictionary *parameters = notification.userInfo[BNCLinkParametersKey];
+    NSError *error = notification.userInfo[BranchErrorKey];
+    NSURL *originalURL = notification.userInfo[BranchOriginalURLKey];
+    BranchUniversalObject *universalObject = notification.userInfo[BranchUniversalObjectKey];
+    BranchLinkProperties *linkProperties = notification.userInfo[BranchLinkPropertiesKey];
 
     NSString *message = nil;
     if (error) {
-        message = [NSString stringWithFormat:@"An error occurred while opening the link:\n\n%@",
-            error.localizedDescription];
-    } else {
+
+        message =
+            [NSString stringWithFormat:@"An error occurred while opening the link:\n\n%@",
+                error.localizedDescription];
+
+    } else if (universalObject) {
+
         if (originalURL) {
-            message = [NSString stringWithFormat:@"Deep link URL:\n%@\n\nLink with %ld parameters.",
-                originalURL, (long) parameters.count];
+            message = [NSString stringWithFormat:@"Deep link URL:\n%@\n\nBranch Object: %@.",
+                originalURL, universalObject];
         } else {
-            message = [NSString stringWithFormat:@"Branch returned %ld parameters.",
-                (long) parameters.count];
+            message = [NSString stringWithFormat:@"Deferred Branch Object:\n\n%@.",
+                universalObject];
         }
 
         // You can check the parameters for a value that's significant to your application:
 
-        if (((NSNumber*)parameters[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK]).boolValue) {
-            message = [message stringByAppendingString:@"\n\nThis was a Branch link!!!"];
-        } else {
-            message = [message stringByAppendingString:@"\n\nNot a Branch link."];
-        }
+        if ([linkProperties.channel isEqualToString:@"Twitter"])
+            message = [message stringByAppendingString:@"\nShared via Twitter."];
+
+    } else {
+
+        message = @"Not a Branch link.";
+
     }
     [APWaitingView hideWithMessage:message];
 }

@@ -1805,9 +1805,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 
     NSMutableDictionary *userInfo = [NSMutableDictionary new];
-    userInfo[BNCOriginalURLKey] = URL;
+    userInfo[BranchOriginalURLKey] = URL;
     [[NSNotificationCenter defaultCenter]
-        postNotificationName:BNCBranchWillOpenURLNotification
+        postNotificationName:BranchWillOpenURLNotification
         object:self
         userInfo:userInfo];
 
@@ -1955,27 +1955,37 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                               linkParameters:(NSDictionary*)linkParameters
                                        error:(NSError*)error {
 
-    NSMethodSignature *signature = nil;
-    SEL selector = @selector(branch:didOpenURL:linkParameters:error:);
-    if ([self.delegate respondsToSelector:selector]) {
-        signature = [self.delegate methodSignatureForSelector:selector];
+    BranchLinkProperties *linkProperties = nil;
+    BranchUniversalObject *universalObject = nil;
+
+    if (linkParameters.count) {
+        universalObject =
+            [BranchUniversalObject getBranchUniversalObjectFromDictionary:linkParameters];
+        linkProperties =
+            [BranchLinkProperties getBranchLinkPropertiesFromDictionary:linkParameters];
     }
-    if (signature) {
-        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-        invocation.target = self.delegate;
-        invocation.selector = selector;
-        [invocation setArgument:(void*)&self atIndex:2];
-        [invocation setArgument:&originalURL atIndex:3];
-        [invocation setArgument:&linkParameters atIndex:4];
-        [invocation setArgument:&error atIndex:5];
-        [invocation invoke];
+
+    if (error) {
+
+        if ([self.delegate respondsToSelector:@selector(branch:didOpenURL:withError:)])
+            [self.delegate branch:self didOpenURL:originalURL withError:error];
+
+    } else {
+
+        if ([self.delegate respondsToSelector:@selector(branch:didOpenURL:withUniversalObject:linkProperties:)])
+            [self.delegate branch:self
+                       didOpenURL:originalURL
+              withUniversalObject:universalObject
+                   linkProperties:linkProperties];
     }
+
     NSMutableDictionary *userInfo = [NSMutableDictionary new];
-    userInfo[BNCErrorKey] = error;
-    userInfo[BNCOriginalURLKey] = originalURL;
-    userInfo[BNCLinkParametersKey] = linkParameters;
+    userInfo[BranchErrorKey] = error;
+    userInfo[BranchOriginalURLKey] = originalURL;
+    userInfo[BranchUniversalObjectKey] = universalObject;
+    userInfo[BranchLinkPropertiesKey] = linkProperties;
     [[NSNotificationCenter defaultCenter]
-        postNotificationName:BNCBranchDidOpenURLNotification
+        postNotificationName:BranchDidOpenURLNotification
         object:self
         userInfo:userInfo];
 }
