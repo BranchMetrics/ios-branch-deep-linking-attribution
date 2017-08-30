@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString * const BNC_SDK_VERSION;
-extern NSString * const BNC_API_BASE_URL;
-extern NSString * const BNC_LINK_URL;
-extern NSString * const BNC_API_VERSION;
+FOUNDATION_EXPORT NSString*_Nonnull const BNC_SDK_VERSION;
+FOUNDATION_EXPORT NSString*_Nonnull const BNC_API_BASE_URL;
+FOUNDATION_EXPORT BOOL              const BNC_API_PINNED;
+FOUNDATION_EXPORT NSString*_Nonnull const BNC_LINK_URL;
+FOUNDATION_EXPORT NSString*_Nonnull const BNC_API_VERSION;

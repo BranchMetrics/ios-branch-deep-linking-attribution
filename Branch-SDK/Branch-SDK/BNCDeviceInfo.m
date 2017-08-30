@@ -64,10 +64,7 @@
     _country = [BNCDeviceInfo bnc_country].copy;
     _language = [BNCDeviceInfo bnc_language].copy;
     _browserUserAgent = [BNCDeviceInfo userAgentString].copy;
-
-    _extensionType = [NSBundle mainBundle].infoDictionary[@"NSExtension"][@"NSExtensionPointIdentifier"];
-    if (!_extensionType.length) _extensionType = @"application";
-
+    _extensionType = self.class.extensionType.copy;
     _branchSDKVersion = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
     _applicationVersion = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
     if (!_applicationVersion.length)
@@ -76,6 +73,19 @@
     _adId = [BNCSystemObserver getAdId];
 
     return self;
+}
+
++ (NSString*) extensionType {
+
+    NSDictionary *extensionTypes = @{
+        @"com.apple.message-payload-provider": @"IMESSAGE_APP"
+    };
+
+    NSString *result = nil;
+    NSString *extensionType = [NSBundle mainBundle].infoDictionary[@"NSExtension"][@"NSExtensionPointIdentifier"];
+    if (extensionType) result = extensionTypes[extensionType];
+
+    return (result.length) ? result : @"FULL_APP";
 }
 
 - (NSString *)vendorId {

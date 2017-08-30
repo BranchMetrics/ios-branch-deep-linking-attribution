@@ -372,6 +372,41 @@ NSString *test_key = @"test_key";
 }
 
 - (IBAction) sendV2Event:(id)sender {
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+
+    buo.schemaData.contentSchema    = BranchContentSchemaCommerceProduct;
+    buo.schemaData.quantity         = 2;
+    buo.schemaData.price            = [NSDecimalNumber decimalNumberWithString:@"23.20"];
+    buo.schemaData.currency         = BNCCurrencyUSD;
+    buo.schemaData.sku              = @"1994320302";
+    buo.schemaData.productName      = @"my_product_name1";
+    buo.schemaData.productBrand     = @"my_prod_Brand1";
+    buo.schemaData.productCategory  = BNCProductCategoryBabyToddler;
+    buo.schemaData.productVariant   = @"3T";
+    buo.schemaData.ratingAverage    = 5;
+    buo.schemaData.ratingCount      = 5;
+    buo.schemaData.ratingMaximum    = 7;
+    buo.schemaData.addressStreet    = @"Street_name1";
+    buo.schemaData.addressCity      = @"city1";
+    buo.schemaData.addressRegion    = @"Region1";
+    buo.schemaData.addressCountry   = @"Country1";
+    buo.schemaData.addressPostalCode= @"postal_code";
+    buo.schemaData.latitude         = 12.07;
+    buo.schemaData.longitude        = -97.5;
+    buo.schemaData.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
+    buo.schemaData.userInfo         = (id) @{@"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"};
+    buo.title                       = @"My Content Title";
+    buo.canonicalIdentifier         = @"item/12345";
+    buo.canonicalUrl                = @"https://branch.io/deepviews";
+    buo.keywords                    = @[@"My_Keyword1", @"My_Keyword2"];
+    buo.contentDescription          = @"my_product_description1";
+    buo.imageUrl                    = @"https://test_img_url";
+    buo.expirationDate              = [NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0];
+    buo.indexPublicly               = NO;
+    buo.indexLocally                = YES;
+    buo.creationDate                = [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0];
+
+
     BranchEvent *event    = [BranchEvent standardEvent:BranchStandardEventPurchase];
     event.transactionID   = @"12344555";
     event.currency        = BNCCurrencyUSD;
@@ -386,8 +421,7 @@ NSString *test_key = @"test_key";
         @"Custom_Event_Property_Key1": @"Custom_Event_Property_val1",
         @"Custom_Event_Property_Key2": @"Custom_Event_Property_val2"
     };
-    if (self.branchUniversalObject)
-        event.contentItems = (id) @[self.branchUniversalObject];
+    event.contentItems = (id) @[ buo ];
     [event logEvent];
 }
 

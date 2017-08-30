@@ -54,10 +54,12 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
                 
                 UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
                 UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                LogOutputViewController *logOutputViewController = [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
-                
+                LogOutputViewController *logOutputViewController =
+                    [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
                 [navigationController pushViewController:logOutputViewController animated:YES];
-                NSString *logOutput = [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@", deeplinkText, [[branch getLatestReferringParams] description]];
+                NSString *logOutput =
+                    [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@",
+                        deeplinkText, [[branch getLatestReferringParams] description]];
                 logOutputViewController.logOutput = logOutput;
                 
             } else {

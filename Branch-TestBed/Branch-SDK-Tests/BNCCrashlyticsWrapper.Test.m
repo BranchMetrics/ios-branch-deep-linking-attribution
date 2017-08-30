@@ -10,44 +10,41 @@
 #import "BNCTestCase.h"
 #import <OCMock/OCMock.h>
 
-// stand-in for Crashlytics SDK
+#pragma mark Crashlytics SDK Stand-in
+
 @interface Crashlytics : NSObject
 + (Crashlytics *)sharedInstance;
-
 - (void)setObjectValue:(id)value forKey:(NSString *)key;
+- (void)setIntValue:(int)value forKey:(NSString *)key;
+- (void)setFloatValue:(float)value forKey:(NSString *)key;
+- (void)setBoolValue:(BOOL)value forKey:(NSString *)key;
 @end
 
 @implementation Crashlytics
-+ (Crashlytics *)sharedInstance
-{
-    return [[self alloc] init];
+
++ (Crashlytics *)sharedInstance {
+    @synchronized (self) {
+        static Crashlytics * sharedCrashlytics = nil;
+        if (!sharedCrashlytics) sharedCrashlytics = [[self alloc] init];
+        return sharedCrashlytics;
+    }
 }
 
-- (void)setObjectValue:(id)value forKey:(NSString *)key
-{
-}
+- (void)setObjectValue:(id)value forKey:(NSString *)key     {}
+- (void)setIntValue:(int)value forKey:(NSString *)key       {}
+- (void)setFloatValue:(float)value forKey:(NSString *)key   {}
+- (void)setBoolValue:(BOOL)value forKey:(NSString *)key     {}
 
-- (void)setIntValue:(int)value forKey:(NSString *)key
-{
-}
-
-- (void)setFloatValue:(float)value forKey:(NSString *)key
-{
-}
-
-- (void)setBoolValue:(BOOL)value forKey:(NSString *)key
-{
-}
 @end
 
-// test case
+#pragma mark - BNCCrashlyticsWrapperTest
+
 @interface BNCCrashlyticsWrapperTest : BNCTestCase
 @end
 
 @implementation BNCCrashlyticsWrapperTest
 
-- (void)testInitialization
-{
+- (void)testInitialization {
     id classMock = OCMClassMock(Crashlytics.class);
     Crashlytics *expected = [[Crashlytics alloc] init];
 
@@ -60,6 +57,20 @@
     XCTAssertEqual(expected, actual);
 }
 
-// TODO: Test setObjectValue:forKey:
+- (void) testSetValue {
+    id classMock = OCMClassMock(Crashlytics.class);
+    OCMStub([classMock setObjectValue:[OCMArg any] forKey:[OCMArg any]]);
+    OCMStub([classMock setIntValue:0 forKey:[OCMArg any]]);
+    OCMStub([classMock setFloatValue:0.0 forKey:[OCMArg any]]);
+    OCMStub([classMock setBoolValue:YES forKey:[OCMArg any]]);
+
+    BNCCrashlyticsWrapper *wrapper = [BNCCrashlyticsWrapper wrapper];
+    [wrapper setObjectValue:@"stringValue" forKey:@"stringKey"];
+    [wrapper setIntValue:0 forKey:@"intKey"];
+    [wrapper setFloatValue:0.0 forKey:@"floatKey"];
+    [wrapper setIntValue:YES forKey:@"boolKey"];
+
+    [classMock verify];
+}
 
 @end
