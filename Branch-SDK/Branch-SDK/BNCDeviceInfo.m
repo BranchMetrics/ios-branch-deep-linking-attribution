@@ -65,11 +65,9 @@
     return self;
 }
 
-- (NSString *)vendorId
-{
+- (NSString *)vendorId {
     @synchronized (self) {
         if (_vendorId) return _vendorId;
-
         /*
          * https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
          * BNCSystemObserver.getVendorId is based on UIDevice.identifierForVendor. Note from the
@@ -181,7 +179,7 @@
 
 
 + (NSString*) userAgentString {
-
+    
     static NSString* browserUserAgentString = nil;
 	void (^setBrowserUserAgent)(void) = ^() {
 		if (!browserUserAgentString) {
@@ -247,6 +245,7 @@
         dispatch_block_wait(agentBlock, timeoutTime);
 		retries--;
 	}
+
 	return browserUserAgentString;
 }
 
