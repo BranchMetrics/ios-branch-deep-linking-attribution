@@ -75,7 +75,7 @@
     return self;
 }
 
-+ (NSString*) extensionType {
++ (NSString*_Nonnull) extensionType {
 
     NSDictionary *extensionTypes = @{
         @"com.apple.message-payload-provider": @"IMESSAGE_APP"
@@ -83,9 +83,14 @@
 
     NSString *result = nil;
     NSString *extensionType = [NSBundle mainBundle].infoDictionary[@"NSExtension"][@"NSExtensionPointIdentifier"];
-    if (extensionType) result = extensionTypes[extensionType];
+    if (extensionType) {
+        result = extensionTypes[extensionType];
+        if (!result) result = extensionType;
+    } else {
+        result = @"FULL_APP";
+    }
 
-    return (result.length) ? result : @"FULL_APP";
+    return result;
 }
 
 - (NSString *)vendorId {
