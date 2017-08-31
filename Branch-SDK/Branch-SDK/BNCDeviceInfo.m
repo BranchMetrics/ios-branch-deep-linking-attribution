@@ -78,7 +78,20 @@
 + (NSString*_Nonnull) extensionType {
 
     NSDictionary *extensionTypes = @{
-        @"com.apple.message-payload-provider": @"IMESSAGE_APP"
+        @"com.apple.ui-services":                       @"ACTION_UI",
+        @"com.apple.services":                          @"ACTION",
+        @"com.apple.broadcast-services":                @"BROADCAST",
+        @"com.apple.keyboard-service":                  @"KEYBOARD",
+        @"com.apple.fileprovider-ui":                   @"FILE_UI",
+        @"com.apple.fileprovider-nonui":                @"FILE",
+        @"com.apple.fileprovider-actionsui":            @"FILE_ACTION",
+        @"com.apple.FinderSync":                        @"FINDER_SYNC",
+        @"com.apple.identitylookup.message-filter":     @"IMESSAGE",
+        @"com.apple.photo-editing":                     @"PHOTO_EDIT",
+        @"com.apple.share-services":                    @"SHARE",
+        @"com.apple.widget-extension":                  @"TODAY",
+        @"com.apple.tv-services":                       @"TV_SERVICE",
+        @"com.apple.watchkit":                          @"WATCH_APP",
     };
 
     NSString *result = nil;
