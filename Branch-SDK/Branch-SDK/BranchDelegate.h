@@ -19,8 +19,8 @@
 @optional
 - (void) branch:(Branch*_Nonnull)branch
      didStartSessionWithURL:(NSURL*_Nullable)url
-            universalObject:(BranchUniversalObject*_Nonnull)univseralObject
-             linkProperties:(BranchLinkProperties*_Nonnull)linkParameters;
+            universalObject:(BranchUniversalObject*_Nonnull)universalObject
+             linkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
 
 @optional
 - (void) branch:(Branch*_Nonnull)branch
