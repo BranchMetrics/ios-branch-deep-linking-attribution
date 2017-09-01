@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+  * Fixed a race condition on startup while getting the browser string (GH-#700).
+    - QA notes: To reproduce, turn on the thread sanitizer, remove the app from the device,
+      then run the app.  Test on iOS 7,8,9,10,11.
+
 - v0.17.10
   * _*Master Release*_ - August 23, 2017
   * Don't do cookie based matching in iOS 11 (AIS-307, GH-#681).
@@ -33,7 +37,7 @@ Branch iOS SDK Change Log
   * Added a guard to prevent a crash bug from when bad data was accidentally passed back from the
     Branch servers (GitHub #672).
   * Fixed a crash bug that sometimes occurred when logging to the Branch log file (GitHub #661).
-  * Added 'com.googleusercontent.apps' as an oauth scheme (GitHub #678).
+  * Added 'com.googleusercontent.apps' as an o-auth scheme (GitHub #678).
   * Used address sanitizer & thread sanitizer to find and fix several thread and memory errors.
   * Escape extra html tags in dynamic Branch links (INTENG-3466).
 
