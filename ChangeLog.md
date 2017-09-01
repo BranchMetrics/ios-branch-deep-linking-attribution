@@ -1,5 +1,10 @@
 Branch iOS SDK Change Log
 
+- v0.18.0
+  * Branch links opened via Air Drop now open correctly (GH-#699).
+    Testing notes:  Test this heavily on many iOS, and test opening links when app is quit,
+    and when app is in background.  Also test regular links from Notepad, etc.
+
 - v0.17.10
   * _*Master Release*_ - August 23, 2017
   * Don't do cookie based matching in iOS 11 (AIS-307, GH-#681).
