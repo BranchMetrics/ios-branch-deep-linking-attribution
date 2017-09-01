@@ -228,9 +228,11 @@
 
         //  Different case for iOS 7.0:
         if ([UIDevice currentDevice].systemVersion.floatValue  < 8.0) {
+            BNCLogDebugSDK(@"Getting iOS 7 UserAgent.");
             dispatch_sync(dispatch_get_main_queue(), ^ {
                 setBrowserUserAgent();
             });
+            BNCLogDebugSDK(@"Got iOS 7 UserAgent.");            
             return brn_browserUserAgentString;
         }
     }
