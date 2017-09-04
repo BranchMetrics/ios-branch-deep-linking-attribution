@@ -125,4 +125,9 @@
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
 }
 
+- (void) testLocalIPAddress {
+    NSString *address = [BNCDeviceInfo getInstance].localIPAddress;
+    XCTAssertNotNil(address);
+}
+
 @end
