@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+  * Fixed remote push notification handling.
+    - Testing notes: you'll need to send a push notification to the testbed app via
+      the `./apns-send-token` script.
+
 - v0.17.10
   * _*Master Release*_ - August 23, 2017
   * Don't do cookie based matching in iOS 11 (AIS-307, GH-#681).
