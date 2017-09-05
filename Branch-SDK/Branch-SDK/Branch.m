@@ -69,6 +69,7 @@ NSString * const BNCPurchasedEvent = @"Purchased";
 NSString * const BNCShareInitiatedEvent = @"Share Started";
 NSString * const BNCShareCompletedEvent = @"Share Completed";
 
+NSString * const BNCLogLevelKey = @"io.branch.sdk.BNCLogLevel";
 
 #pragma mark - Load Categories
 
@@ -129,16 +130,30 @@ static NSURL* bnc_logURL = nil;
 + (void) openLog {
     // Initialize the log
     @synchronized (self) {
-        if (!bnc_logURL) {
+        if (bnc_logURL) {
+            BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
+        } else {
             BNCLogInitialize();
             BNCLogSetDisplayLevel(BNCLogLevelAll);
             bnc_logURL = BNCURLForBranchDirectory();
             bnc_logURL = [[NSURL alloc] initWithString:@"Branch.log" relativeToURL:bnc_logURL];
             BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
-            BNCLogSetDisplayLevel(BNCLogLevelWarning);
+            BNCLogSetDisplayLevel(BNCLogLevelWarning);  // Default
+
+            // Try loading from the Info.plist
+            NSString *logLevelString = [[NSBundle mainBundle] infoDictionary][@"BranchLogLevel"];
+            if ([logLevelString isKindOfClass:[NSString class]]) {
+                BNCLogLevel logLevel = BNBLogLevelFromString(logLevelString);
+                BNCLogSetDisplayLevel(logLevel);
+            }
+
+            // Try loading from user defaults
+            NSNumber *logLevel = [[NSUserDefaults standardUserDefaults] objectForKey:BNCLogLevelKey];
+            if ([logLevel isKindOfClass:[NSNumber class]]) {
+                BNCLogSetDisplayLevel([logLevel integerValue]);
+            }
+
             BNCLogDebug(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
-        } else {
-            BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
         }
     }
 }
@@ -1745,6 +1760,26 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 - (void)initUserSessionAndCallCallback:(BOOL)callCallback {
     self.shouldCallSessionInitCallback = callCallback;
 
+    NSString *urlstring = nil;
+    if (self.preferenceHelper.universalLinkUrl.length)
+        urlstring = self.preferenceHelper.universalLinkUrl;
+    else
+    if (self.preferenceHelper.externalIntentURI.length)
+        urlstring = self.preferenceHelper.externalIntentURI;
+
+    if (urlstring) {
+        NSURLComponents *URLComponents = [NSURLComponents componentsWithString:urlstring];
+        for (NSURLQueryItem*item in URLComponents.queryItems) {
+            if ([item.name isEqualToString:@"BranchLogLevel"]) {
+                BNCLogLevel logLevel = BNBLogLevelFromString(item.value);
+                [[NSUserDefaults standardUserDefaults]
+                    setObject:[NSNumber numberWithInteger:logLevel]
+                        forKey:BNCLogLevelKey];
+                BNCLogSetDisplayLevel(logLevel);
+                NSLog(@"[io.branch.sdk] BNCLogLevel set to %ld.", (long) logLevel);
+            }
+        }
+    }
     // If the session is not yet initialized
     if (!self.isInitialized) {
         [self initializeSession];
