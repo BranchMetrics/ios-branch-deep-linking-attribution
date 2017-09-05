@@ -65,11 +65,9 @@
     return self;
 }
 
-- (NSString *)vendorId
-{
+- (NSString *)vendorId {
     @synchronized (self) {
         if (_vendorId) return _vendorId;
-
         /*
          * https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
          * BNCSystemObserver.getVendorId is based on UIDevice.identifierForVendor. Note from the
@@ -179,59 +177,71 @@
     return version;
 }
 
-
 + (NSString*) userAgentString {
+    
+    static NSString* brn_browserUserAgentString = nil;
 
-    static NSString* browserUserAgentString = nil;
-	void (^setBrowserUserAgent)(void) = ^() {
-		if (!browserUserAgentString) {
-			browserUserAgentString =
-				[[[UIWebView alloc]
-				  initWithFrame:CGRectZero]
-					stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
-            BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
-            preferences.browserUserAgentString = browserUserAgentString;
-            preferences.lastSystemBuildVersion = self.systemBuildVersion;
-			BNCLogDebugSDK(@"userAgentString: '%@'.", browserUserAgentString);
-		}
+    void (^setBrowserUserAgent)(void) = ^() {
+        @synchronized (self) {
+            if (!brn_browserUserAgentString) {
+                brn_browserUserAgentString =
+                    [[[UIWebView alloc]
+                      initWithFrame:CGRectZero]
+                        stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+                BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+                preferences.browserUserAgentString = brn_browserUserAgentString;
+                preferences.lastSystemBuildVersion = self.systemBuildVersion;
+                BNCLogDebugSDK(@"userAgentString: '%@'.", brn_browserUserAgentString);
+            }
+        }
 	};
 
-	//	We only get the string once per app run:
+    NSString* (^browserUserAgent)(void) = ^ NSString* () {
+        @synchronized (self) {
+            return brn_browserUserAgentString;
+        }
+    };
 
-	if (browserUserAgentString)
-		return browserUserAgentString;
+    @synchronized (self) {
+        //	We only get the string once per app run:
 
-    //  Did we cache it?
+        if (brn_browserUserAgentString)
+            return brn_browserUserAgentString;
 
-    BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
-    if (preferences.browserUserAgentString &&
-        preferences.lastSystemBuildVersion &&
-        [preferences.lastSystemBuildVersion isEqualToString:self.systemBuildVersion]) {
-        browserUserAgentString = [preferences.browserUserAgentString copy];
-        return browserUserAgentString;
-    }
+        //  Did we cache it?
 
-	//	Make sure this executes on the main thread.
-	//	Uses an implied lock through dispatch_queues:  This can deadlock if mis-used!
+        BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+        if (preferences.browserUserAgentString &&
+            preferences.lastSystemBuildVersion &&
+            [preferences.lastSystemBuildVersion isEqualToString:self.systemBuildVersion]) {
+            brn_browserUserAgentString = [preferences.browserUserAgentString copy];
+            return brn_browserUserAgentString;
+        }
 
-	if (NSThread.isMainThread) {
-		setBrowserUserAgent();
-		return browserUserAgentString;
-	}
+        //	Make sure this executes on the main thread.
+        //	Uses an implied lock through dispatch_queues:  This can deadlock if mis-used!
 
-    //  Different case for iOS 7.0:
-    if ([UIDevice currentDevice].systemVersion.floatValue  < 8.0) {
-        dispatch_sync(dispatch_get_main_queue(), ^ {
+        if (NSThread.isMainThread) {
             setBrowserUserAgent();
-        });
-        return browserUserAgentString;
+            return brn_browserUserAgentString;
+        }
+
+        //  Different case for iOS 7.0:
+        if ([UIDevice currentDevice].systemVersion.floatValue  < 8.0) {
+            BNCLogDebugSDK(@"Getting iOS 7 UserAgent.");
+            dispatch_sync(dispatch_get_main_queue(), ^ {
+                setBrowserUserAgent();
+            });
+            BNCLogDebugSDK(@"Got iOS 7 UserAgent.");            
+            return brn_browserUserAgentString;
+        }
     }
 
-	//	Wait and yield to prevent deadlock:
+    //	Wait and yield to prevent deadlock:
 
-	int retries = 10;
-	int64_t timeoutDelta = (dispatch_time_t)((long double)NSEC_PER_SEC * (long double)0.100);
-	while (!browserUserAgentString && retries > 0) {
+    int retries = 10;
+    int64_t timeoutDelta = (dispatch_time_t)((long double)NSEC_PER_SEC * (long double)0.100);
+    while (!browserUserAgent() && retries > 0) {
 
         dispatch_block_t agentBlock = dispatch_block_create_with_qos_class(
             DISPATCH_BLOCK_DETACHED | DISPATCH_BLOCK_ENFORCE_QOS_CLASS,
@@ -243,11 +253,13 @@
             });
         dispatch_async(dispatch_get_main_queue(), agentBlock);
 
-		dispatch_time_t timeoutTime = dispatch_time(DISPATCH_TIME_NOW, timeoutDelta);
+        dispatch_time_t timeoutTime = dispatch_time(DISPATCH_TIME_NOW, timeoutDelta);
         dispatch_block_wait(agentBlock, timeoutTime);
-		retries--;
-	}
-	return browserUserAgentString;
+        retries--;
+    }
+    BNCLogDebugSDK(@"Retries: %d", 10-retries);
+
+    return browserUserAgent();
 }
 
 @end
