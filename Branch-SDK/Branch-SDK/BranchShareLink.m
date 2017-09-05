@@ -127,8 +127,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
             andFeature:self.linkProperties.feature
             andStage:self.linkProperties.stage
             andAlias:self.linkProperties.alias];
-    NSURL *URL = [[NSURL alloc] initWithString:URLString];
-    item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:URL];
+    self.shareURL = [[NSURL alloc] initWithString:URLString];
+    item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareURL];
     item.itemType = BranchShareActivityItemTypeBranchURL;
     item.parent = self;
     [items addObject:item];
@@ -257,7 +257,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
             andAlias:self.linkProperties.alias
             ignoreUAString:userAgentString
             forceLinkCreation:YES];
-    return [NSURL URLWithString:URLString];
+    self.shareURL = [NSURL URLWithString:URLString];
+    return self.shareURL;
 }
 
 @end
