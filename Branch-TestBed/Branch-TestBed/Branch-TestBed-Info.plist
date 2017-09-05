@@ -54,6 +54,8 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>BranchLogLevel</key>
+	<string>BNCLogLevelDebugSDK</string>
 	<key>branch_key</key>
 	<dict>
 		<key>live</key>

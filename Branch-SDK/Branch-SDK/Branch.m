@@ -69,6 +69,7 @@ NSString * const BNCPurchasedEvent = @"Purchased";
 NSString * const BNCShareInitiatedEvent = @"Share Started";
 NSString * const BNCShareCompletedEvent = @"Share Completed";
 
+NSString * const BNCLogLevelKey = @"io.branch.sdk.BNCLogLevel";
 
 #pragma mark - Load Categories
 
@@ -129,16 +130,30 @@ static NSURL* bnc_logURL = nil;
 + (void) openLog {
     // Initialize the log
     @synchronized (self) {
-        if (!bnc_logURL) {
+        if (bnc_logURL) {
+            BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
+        } else {
             BNCLogInitialize();
             BNCLogSetDisplayLevel(BNCLogLevelAll);
             bnc_logURL = BNCURLForBranchDirectory();
             bnc_logURL = [[NSURL alloc] initWithString:@"Branch.log" relativeToURL:bnc_logURL];
             BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
-            BNCLogSetDisplayLevel(BNCLogLevelWarning);
+            BNCLogSetDisplayLevel(BNCLogLevelWarning);  // Default
+
+            // Try loading from the Info.plist
+            NSString *logLevelString = [[NSBundle mainBundle] infoDictionary][@"BranchLogLevel"];
+            if ([logLevelString isKindOfClass:[NSString class]]) {
+                BNCLogLevel logLevel = BNBLogLevelFromString(logLevelString);
+                BNCLogSetDisplayLevel(logLevel);
+            }
+
+            // Try loading from user defaults
+            NSNumber *logLevel = [[NSUserDefaults standardUserDefaults] objectForKey:BNCLogLevelKey];
+            if ([logLevel isKindOfClass:[NSNumber class]]) {
+                BNCLogSetDisplayLevel([logLevel integerValue]);
+            }
+
             BNCLogDebug(@"Branch version %@ started at %@.", BNC_SDK_VERSION, [NSDate date]);
-        } else {
-            BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
         }
     }
 }
@@ -544,7 +559,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             // Note that this is no longer a recommended path, and that we tell developers to just return YES
             if (self.accountForFacebookSDK) {
                 // does not work in Swift, because Objective-C to Swift interop is bad
-                id activity = [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
+                id activity =
+                    [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]
+                        objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
                 if (activity && [activity isKindOfClass:[NSUserActivity class]]) {
                     [self continueUserActivity:activity];
                     return;
@@ -689,9 +706,18 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
-    //check to see if a browser activity needs to be handled
+    BNCLogDebugSDK(@"continueUserActivity:");
+
+    // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        return [self handleUniversalDeepLink:userActivity.webpageURL fromSelf:NO];
+
+        // If we're already in-progress cancel the last open and do this one.
+        BOOL isNewSession = NO;
+        if (![self removeInstallOrOpen]) {
+            isNewSession = YES;
+        }
+
+        return [self handleUniversalDeepLink:userActivity.webpageURL fromSelf:isNewSession];
     }
 
     // Check to see if a spotlight activity needs to be handled
@@ -717,25 +743,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 #pragma mark - Push Notification support
 
-// handle push notification if app is already launched
 - (void)handlePushNotification:(NSDictionary *)userInfo {
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
-
-    // If app is active, then close out the session and start a new one
-    if ([[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
-        [self callClose];
-    }
-
     // look for a branch shortlink in the payload (shortlink because iOS7 only supports 256 bytes)
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
     if (urlStr) {
-        // reusing this field, so as not to create yet another url slot on prefshelper
-        self.preferenceHelper.universalLinkUrl = urlStr;
-    }
-
-    // Again, if app is active, then close out the session and start a new one
-    if ([[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
-        [self applicationDidBecomeActive];
+        NSURL *url = [NSURL URLWithString:urlStr];
+        if (url) [self handleDeepLink:url fromSelf:YES];
     }
 }
 
@@ -1765,6 +1778,26 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 - (void)initUserSessionAndCallCallback:(BOOL)callCallback {
     self.shouldCallSessionInitCallback = callCallback;
 
+    NSString *urlstring = nil;
+    if (self.preferenceHelper.universalLinkUrl.length)
+        urlstring = self.preferenceHelper.universalLinkUrl;
+    else
+    if (self.preferenceHelper.externalIntentURI.length)
+        urlstring = self.preferenceHelper.externalIntentURI;
+
+    if (urlstring) {
+        NSURLComponents *URLComponents = [NSURLComponents componentsWithString:urlstring];
+        for (NSURLQueryItem*item in URLComponents.queryItems) {
+            if ([item.name isEqualToString:@"BranchLogLevel"]) {
+                BNCLogLevel logLevel = BNBLogLevelFromString(item.value);
+                [[NSUserDefaults standardUserDefaults]
+                    setObject:[NSNumber numberWithInteger:logLevel]
+                        forKey:BNCLogLevelKey];
+                BNCLogSetDisplayLevel(logLevel);
+                NSLog(@"[io.branch.sdk] BNCLogLevel set to %ld.", (long) logLevel);
+            }
+        }
+    }
     // If the session is not yet initialized
     if (!self.isInitialized) {
         [self initializeSession];
@@ -1805,13 +1838,22 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
     }
 
 	@synchronized (self) {
-		if ([self.requestQueue removeInstallOrOpen])
-			self.networkCount = 0;
+        [self removeInstallOrOpen];
 		[BranchOpenRequest setWaitNeededForOpenResponseLock];
 		BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
 		[self insertRequestAtFront:req];
 		[self processNextQueueItem];
 	}
+}
+
+- (BOOL) removeInstallOrOpen {
+	@synchronized (self) {
+		if ([self.requestQueue removeInstallOrOpen]) {
+			self.networkCount = 0;
+            return YES;
+        }
+        return NO;
+    }
 }
 
 - (void)handleInitSuccess {
@@ -1986,7 +2028,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 }
 
 - (void)deepLinkingControllerCompletedFrom:(UIViewController *)viewController {
-
     [self.deepLinkControllers enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
 
         if([obj isKindOfClass:[BNCDeepLinkViewControllerInstance class]]) {
@@ -2005,7 +2046,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                 }
             }
 
-        }else {
+        } else {
             //Support for old API
             if ((UIViewController*)obj == viewController)
                 [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:nil];
@@ -2026,19 +2067,19 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
 #pragma mark - Crashlytics reporting enhancements
 
-+ (void)logLowMemoryToCrashlytics
-{
-    [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
-                                                    object:nil
-                                                     queue:NSOperationQueue.mainQueue
-                                                usingBlock:^(NSNotification *notification) {
-                                                    BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-                                                    [crashlytics setBoolValue:YES forKey:BRANCH_CRASHLYTICS_LOW_MEMORY_KEY];
-                                                }];
++ (void)logLowMemoryToCrashlytics {
+    [NSNotificationCenter.defaultCenter
+        addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
+        object:nil
+        queue:NSOperationQueue.mainQueue
+        usingBlock:^(NSNotification *notification) {
+            BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
+            [crashlytics setBoolValue:YES forKey:BRANCH_CRASHLYTICS_LOW_MEMORY_KEY];
+        }
+    ];
 }
 
-+ (void)addBranchSDKVersionToCrashlyticsReport
-{
++ (void)addBranchSDKVersionToCrashlyticsReport {
     BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
     [crashlytics setObjectValue:BNC_SDK_VERSION forKey:BRANCH_CRASHLYTICS_SDK_VERSION_KEY];
 }
