@@ -1,17 +1,23 @@
 Branch iOS SDK Change Log
 
 - v0.18.0
-  * Branch links opened via Air Drop now open correctly (GH-#699).
-    - Testing notes:  Test this heavily on many iOS, and test opening links when app is quit,
-      is in background, and in foreground.  Also test regular links from Notepad, etc.
+  * Branch links opened via Air Drop now open correctly (GH-#699,#701).
+    - Testing notes:  Test this heavily on all the iOS versions, and test opening links when app is
+      not running, when it is in background, and when it is in the foreground.  Also, test links
+      opened from Notepad, etc.
 
-  * Fixed remote push notification handling (GH-#703).
+  * Fixed remote push notification handling (GH-#703,#704).
     - Testing notes: you'll need to send a push notification to the testbed app via
       the `./apns-send-token` script.
 
-  * Fixed a race condition on startup while getting the browser string (GH-#700).
-    - QA notes: To reproduce, turn on the thread sanitizer, remove the app from the device,
-      then run the app.  Test on iOS 7,8,9,10,11.
+  * Fixed a race condition on startup while getting the browser string (GH-#700,#702).
+    - Testing notes: To reproduce, turn on the thread sanitizer, remove the app from the device,
+      then run the app from Xcode.  Test on iOS 7,8,9,10,11 and make sure there are no race
+      conditions and that the initialization does not deadlock.
+  * Removed vestigial CoreTelephony references (GH-#689).
+  * Updated project for Xcode 9 compatibility.
+  * Update the BranchShareLink.shareURL member field correctly after share event (#696).
+  * Added ability to turn logging on and off via links / Info.plist (GH-#697).
 
 - v0.17.10
   * _*Master Release*_ - August 23, 2017
