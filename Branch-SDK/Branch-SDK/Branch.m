@@ -544,7 +544,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             // Note that this is no longer a recommended path, and that we tell developers to just return YES
             if (self.accountForFacebookSDK) {
                 // does not work in Swift, because Objective-C to Swift interop is bad
-                id activity = [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
+                id activity =
+                    [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]
+                        objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
                 if (activity && [activity isKindOfClass:[NSUserActivity class]]) {
                     [self continueUserActivity:activity];
                     return;
@@ -689,9 +691,18 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
-    //check to see if a browser activity needs to be handled
+    BNCLogDebugSDK(@"continueUserActivity:");
+
+    // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        return [self handleUniversalDeepLink:userActivity.webpageURL fromSelf:NO];
+
+        // If we're already in-progress cancel the last open and do this one.
+        BOOL isNewSession = NO;
+        if (![self removeInstallOrOpen]) {
+            isNewSession = YES;
+        }
+
+        return [self handleUniversalDeepLink:userActivity.webpageURL fromSelf:isNewSession];
     }
 
     // Check to see if a spotlight activity needs to be handled
@@ -1774,13 +1785,22 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
     }
 
 	@synchronized (self) {
-		if ([self.requestQueue removeInstallOrOpen])
-			self.networkCount = 0;
+        [self removeInstallOrOpen];
 		[BranchOpenRequest setWaitNeededForOpenResponseLock];
 		BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
 		[self insertRequestAtFront:req];
 		[self processNextQueueItem];
 	}
+}
+
+- (BOOL) removeInstallOrOpen {
+	@synchronized (self) {
+		if ([self.requestQueue removeInstallOrOpen]) {
+			self.networkCount = 0;
+            return YES;
+        }
+        return NO;
+    }
 }
 
 - (void)handleInitSuccess {
@@ -1955,7 +1975,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 }
 
 - (void)deepLinkingControllerCompletedFrom:(UIViewController *)viewController {
-
     [self.deepLinkControllers enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
 
         if([obj isKindOfClass:[BNCDeepLinkViewControllerInstance class]]) {
@@ -1974,7 +1993,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                 }
             }
 
-        }else {
+        } else {
             //Support for old API
             if ((UIViewController*)obj == viewController)
                 [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:nil];
@@ -1995,19 +2014,19 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
 #pragma mark - Crashlytics reporting enhancements
 
-+ (void)logLowMemoryToCrashlytics
-{
-    [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
-                                                    object:nil
-                                                     queue:NSOperationQueue.mainQueue
-                                                usingBlock:^(NSNotification *notification) {
-                                                    BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-                                                    [crashlytics setBoolValue:YES forKey:BRANCH_CRASHLYTICS_LOW_MEMORY_KEY];
-                                                }];
++ (void)logLowMemoryToCrashlytics {
+    [NSNotificationCenter.defaultCenter
+        addObserverForName:UIApplicationDidReceiveMemoryWarningNotification
+        object:nil
+        queue:NSOperationQueue.mainQueue
+        usingBlock:^(NSNotification *notification) {
+            BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
+            [crashlytics setBoolValue:YES forKey:BRANCH_CRASHLYTICS_LOW_MEMORY_KEY];
+        }
+    ];
 }
 
-+ (void)addBranchSDKVersionToCrashlyticsReport
-{
++ (void)addBranchSDKVersionToCrashlyticsReport {
     BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
     [crashlytics setObjectValue:BNC_SDK_VERSION forKey:BRANCH_CRASHLYTICS_SDK_VERSION_KEY];
 }

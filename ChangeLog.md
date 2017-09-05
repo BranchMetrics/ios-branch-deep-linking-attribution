@@ -1,10 +1,15 @@
 Branch iOS SDK Change Log
 
-* Fixed remote push notification handling (GH-#703).
+- v0.18.0
+  * Branch links opened via Air Drop now open correctly (GH-#699).
+    - Testing notes:  Test this heavily on many iOS, and test opening links when app is quit,
+      is in background, and in foreground.  Also test regular links from Notepad, etc.
+
+  * Fixed remote push notification handling (GH-#703).
     - Testing notes: you'll need to send a push notification to the testbed app via
       the `./apns-send-token` script.
 
-* Fixed a race condition on startup while getting the browser string (GH-#700).
+  * Fixed a race condition on startup while getting the browser string (GH-#700).
     - QA notes: To reproduce, turn on the thread sanitizer, remove the app from the device,
       then run the app.  Test on iOS 7,8,9,10,11.
 
