@@ -11,9 +11,10 @@
 #define FILE_NAME   [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
 #define LINE_NUM    __LINE__
 
+NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
+
 @interface BNCPreferenceHelper : NSObject
 
-@property (strong, nonatomic) NSString *branchKey;
 @property (strong, nonatomic) NSString *lastRunBranchKey;
 @property (strong, nonatomic) NSDate   *lastStrongMatchDate;
 @property (strong, nonatomic) NSString *appVersion;
@@ -29,7 +30,6 @@
 @property (strong, nonatomic) NSString *installParams;
 @property (assign, nonatomic) BOOL isDebug;
 @property (assign, nonatomic) BOOL shouldWaitForInit;
-@property (assign, nonatomic) BOOL suppressWarningLogs;
 @property (assign, nonatomic) BOOL checkedFacebookAppLinks;
 @property (assign, nonatomic) BOOL checkedAppleSearchAdAttribution;
 @property (assign, nonatomic) NSInteger retryCount;
@@ -46,13 +46,10 @@
 @property (assign, nonatomic) BOOL isProductionApp;
 
 + (BNCPreferenceHelper *)preferenceHelper;
-+ (NSURL*) URLForBranchDirectory;
 
 - (NSString *)getAPIBaseURL;
 - (NSString *)getAPIURL:(NSString *)endpoint;
 - (NSString *)getEndpointFromURL:(NSString *)url;
-
-- (NSString *)getBranchKey:(BOOL)isLive;
 
 - (void)clearUserCreditsAndCounts;
 - (void)clearUserCredits;
@@ -75,9 +72,6 @@
 - (void)addInstrumentationDictionaryKey:(NSString *)key value:(NSString *)value;
 - (NSMutableDictionary *)instrumentationDictionary;
 - (void)clearInstrumentationDictionary;
-
-- (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
-- (void)logWarning:(NSString *)message;
 
 - (void)saveBranchAnalyticsData:(NSDictionary *)analyticsData;
 - (void)clearBranchAnalyticsData;

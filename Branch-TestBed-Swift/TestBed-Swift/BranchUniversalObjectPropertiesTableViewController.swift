@@ -40,7 +40,7 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
     @IBOutlet weak var customDataTextView: UITextView!
     
     let datePicker = UIDatePicker()
-    var universalObjectProperties = [String: AnyObject]()
+    var universalObject = [String: AnyObject]()
     
     // MARK: - Core View Functions
     
@@ -78,8 +78,8 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         self.expDateTextField.inputView = datePicker
         self.expDateTextField.inputAccessoryView = createToolbar(true)
         
-        clearAllValuesButton.isEnabled = universalObjectProperties.count > 0 ? true : false
-
+        clearAllValuesButton.isEnabled = universalObject.count > 0 ? true : false
+        
         
         refreshControls()
     }
@@ -96,7 +96,7 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
     }
     
     @IBAction func clearAllValuesButtonTouchUpInside(_ sender: AnyObject) {
-        universalObjectProperties.removeAll()
+        universalObject.removeAll()
         clearAllValuesButton.isEnabled = false
         refreshControls()
     }
@@ -115,12 +115,12 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        refreshUniversalObjectProperties()
+        refreshUniversalObject()
         
         switch segue.identifier! {
         case "ShowKeywords":
             let vc = segue.destination as! ArrayTableViewController
-            if let keywords = universalObjectProperties["$keywords"] as? [String] {
+            if let keywords = universalObject["$keywords"] as? [String] {
                 vc.array = keywords
             }
             vc.viewTitle = "Keywords"
@@ -130,7 +130,7 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
             vc.keyboardType = UIKeyboardType.default
         case "ShowCustomData":
             let vc = segue.destination as! DictionaryTableViewController
-            if let customData = universalObjectProperties["customData"] as? [String: AnyObject] {
+            if let customData = universalObject["customData"] as? [String: AnyObject] {
                 vc.dictionary = customData
             }
             vc.viewTitle = "Custom Data"
@@ -150,27 +150,27 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
     @IBAction func unwindDictionaryTableViewController(_ segue:UIStoryboardSegue) {
         if let vc = segue.source as? DictionaryTableViewController {
             let customData = vc.dictionary
-            universalObjectProperties["customData"] = customData as AnyObject?
+            universalObject["customData"] = customData as AnyObject?
             if customData.count > 0 {
                 customDataTextView.text = customData.description
             } else {
                 customDataTextView.text = ""
             }
         }
-        clearAllValuesButton.isEnabled = universalObjectProperties.count > 0 ? true : false
+        clearAllValuesButton.isEnabled = universalObject.count > 0 ? true : false
     }
     
     @IBAction func unwindArrayTableViewController(_ segue:UIStoryboardSegue) {
         if let vc = segue.source as? ArrayTableViewController {
             let keywords = vc.array
-            universalObjectProperties["$keywords"] = keywords as AnyObject?
+            universalObject["$keywords"] = keywords as AnyObject?
             if keywords.count > 0 {
                 keywordsTextView.text = keywords.description
             } else {
                 keywordsTextView.text = ""
             }
         }
-        clearAllValuesButton.isEnabled = universalObjectProperties.count > 0 ? true : false
+        clearAllValuesButton.isEnabled = universalObject.count > 0 ? true : false
     }
     
     //MARK: - Date Picker
@@ -188,15 +188,6 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         }
         
         return toolbar
-    }
-    
-    func createPicker() -> UIPickerView {
-        let picker = UIPickerView()
-        picker.dataSource = self
-        picker.delegate = self
-        picker.showsSelectionIndicator = true
-        
-        return picker
     }
     
     func donePicking() {
@@ -222,23 +213,23 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
     }
     
     func switchhDidChangeState() {
-        refreshUniversalObjectProperties()
+        refreshUniversalObject()
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        refreshUniversalObjectProperties()
+        refreshUniversalObject()
     }
     
     
     func refreshControls() {
         publiclyIndexableSwitch.isOn = true
-        if let publiclyIndexable = universalObjectProperties["$publicly_indexable"] as? String {
+        if let publiclyIndexable = universalObject["$publicly_indexable"] as? String {
             if publiclyIndexable != "1" {
                 publiclyIndexableSwitch.isOn = false
             }
         }
         
-        if let contentKeywords = universalObjectProperties["$keywords"] as? [String] {
+        if let contentKeywords = universalObject["$keywords"] as? [String] {
             if contentKeywords.count > 0 {
                 keywordsTextView.text = contentKeywords.description
             } else {
@@ -248,31 +239,31 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
             keywordsTextView.text = ""
         }
         
-        canonicalIdentifierTextField.text = universalObjectProperties["$canonical_identifier"] as? String
-        expDateTextField.text = universalObjectProperties["$exp_date"] as? String
-        contentTypeTextField.text = universalObjectProperties["$content_type"] as? String
-        ogTitleTextField.text = universalObjectProperties["$og_title"] as? String
-        ogDescriptionTextField.text = universalObjectProperties["$og_description"] as? String
-        ogImageURLTextField.text = universalObjectProperties["$og_image_url"] as? String
-        ogImageWidthTextField.text = universalObjectProperties["$og_image_width"] as? String
-        ogImageHeightTextField.text = universalObjectProperties["$og_image_height"] as? String
-        ogVideoTextField.text = universalObjectProperties["$og_video"] as? String
-        ogURLTextField.text = universalObjectProperties["$og_url"] as? String
-        ogTypeTextField.text = universalObjectProperties["$og_type"] as? String
-        ogRedirectTextField.text = universalObjectProperties["$og_redirect"] as? String
-        ogAppIDTextField.text = universalObjectProperties["$og_app_id"] as? String
-        twitterCardTextField.text = universalObjectProperties["$twitter_card"] as? String
-        twitterTitleTextField.text = universalObjectProperties["$twitter_title"] as? String
-        twitterDescriptionTextField.text = universalObjectProperties["$twitter_description"] as? String
-        twitterSiteTextField.text = universalObjectProperties["$twitter_site"] as? String
-        twitterAppCountryTextField.text = universalObjectProperties["$twitter_app_country"] as? String
-        twitterPlayerTextField.text = universalObjectProperties["$twitter_player"] as? String
-        twitterPlayerWidthTextField.text = universalObjectProperties["$twitter_player_width"] as? String
-        twitterPlayerHeightTextField.text = universalObjectProperties["$twitter_player_height"] as? String
-        priceTextField.text = universalObjectProperties["$price"] as? String
-        currencyTextField.text = universalObjectProperties["$currency"] as? String
+        canonicalIdentifierTextField.text = universalObject["$canonical_identifier"] as? String
+        expDateTextField.text = universalObject["$exp_date"] as? String
+        contentTypeTextField.text = universalObject["$content_type"] as? String
+        ogTitleTextField.text = universalObject["$og_title"] as? String
+        ogDescriptionTextField.text = universalObject["$og_description"] as? String
+        ogImageURLTextField.text = universalObject["$og_image_url"] as? String
+        ogImageWidthTextField.text = universalObject["$og_image_width"] as? String
+        ogImageHeightTextField.text = universalObject["$og_image_height"] as? String
+        ogVideoTextField.text = universalObject["$og_video"] as? String
+        ogURLTextField.text = universalObject["$og_url"] as? String
+        ogTypeTextField.text = universalObject["$og_type"] as? String
+        ogRedirectTextField.text = universalObject["$og_redirect"] as? String
+        ogAppIDTextField.text = universalObject["$og_app_id"] as? String
+        twitterCardTextField.text = universalObject["$twitter_card"] as? String
+        twitterTitleTextField.text = universalObject["$twitter_title"] as? String
+        twitterDescriptionTextField.text = universalObject["$twitter_description"] as? String
+        twitterSiteTextField.text = universalObject["$twitter_site"] as? String
+        twitterAppCountryTextField.text = universalObject["$twitter_app_country"] as? String
+        twitterPlayerTextField.text = universalObject["$twitter_player"] as? String
+        twitterPlayerWidthTextField.text = universalObject["$twitter_player_width"] as? String
+        twitterPlayerHeightTextField.text = universalObject["$twitter_player_height"] as? String
+        priceTextField.text = universalObject["$price"] as? String
+        currencyTextField.text = universalObject["$currency"] as? String
         
-        if let customData = universalObjectProperties["customData"] as? [String: String] {
+        if let customData = universalObject["customData"] as? [String: String] {
             if customData.count > 0 {
                 customDataTextView.text = customData.description
             } else {
@@ -281,15 +272,15 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         } else {
             customDataTextView.text = ""
         }
-
+        
     }
-
-    func refreshUniversalObjectProperties() {
+    
+    func refreshUniversalObject() {
         
         if publiclyIndexableSwitch.isOn {
-            universalObjectProperties.removeValue(forKey: "$publicly_indexable")
+            universalObject.removeValue(forKey: "$publicly_indexable")
         } else {
-            universalObjectProperties["$publicly_indexable"] = "0" as AnyObject?
+            universalObject["$publicly_indexable"] = "0" as AnyObject?
         }
         
         addProperty("$canonical_identifier", value: canonicalIdentifierTextField.text!)
@@ -316,15 +307,15 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         addProperty("$price", value: priceTextField.text!)
         addProperty("$currency", value: currencyTextField.text!)
         
-        clearAllValuesButton.isEnabled = universalObjectProperties.count > 0 ? true : false
+        clearAllValuesButton.isEnabled = universalObject.count > 0 ? true : false
     }
     
     func addProperty(_ key: String, value: String) {
         guard value.characters.count > 0 else {
-            universalObjectProperties.removeValue(forKey: key)
+            universalObject.removeValue(forKey: key)
             return
         }
-        universalObjectProperties[key] = value as AnyObject?
+        universalObject[key] = value as AnyObject?
     }
     
 }

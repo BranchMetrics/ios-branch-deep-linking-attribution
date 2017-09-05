@@ -6,9 +6,11 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
+#import "Branch.h"
 #import "BNCFabricAnswers.h"
 #import "BNCPreferenceHelper.h"
 #import "../Fabric/Answers.h"
+#import "../Fabric/Fabric+FABKits.h"
 
 @implementation BNCFabricAnswers
 
@@ -49,6 +51,21 @@
     }
     
     return temp;
+}
+
++ (NSDictionary*) branchConfigurationDictionary {
+    Class fabric = NSClassFromString(@"Fabric");
+    if ([fabric respondsToSelector:@selector(configurationDictionaryForKitClass:)]) {
+
+        // The name of this key was specified in the account-creation API integration
+        NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
+
+        NSDictionary *configDictionary = [fabric configurationDictionaryForKitClass:[Branch class]];
+        NSDictionary *dictionary = [configDictionary objectForKey:BNC_BRANCH_FABRIC_APP_KEY_KEY];
+
+        return dictionary;
+    }
+    return nil;
 }
 
 @end

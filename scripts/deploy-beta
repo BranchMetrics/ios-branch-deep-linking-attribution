@@ -24,7 +24,7 @@ fi
 # Update the changes in QA:
 # Don't tag beta releases.  It messes up Carthage.
 git add --all
-git commit -m "Beta Release ${version}."
+git commit -m "Beta Release ${version}." --allow-empty
 # git tag "${version}"
 git push
 # git push --tags origin QA

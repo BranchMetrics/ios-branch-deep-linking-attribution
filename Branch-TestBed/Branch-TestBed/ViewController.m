@@ -226,7 +226,10 @@ NSString *type = @"some type";
     linkProperties.campaign = @"sharing campaign";
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
     [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
-    
+
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
     [self.branchUniversalObject showShareSheetWithLinkProperties:linkProperties
         andShareText:shareText
         fromViewController:self.parentViewController
@@ -238,6 +241,8 @@ NSString *type = @"some type";
             }
         }
     ];
+
+    #pragma clang diagnostic pop
 }
 
 - (IBAction)shareLinkButtonTouchUpInside:(id)sender {
@@ -264,7 +269,7 @@ NSString *type = @"some type";
 }
 
 - (IBAction)shareLinkAsActivityItem:(id)sender {
-    // Share as an activity item.
+    // Share as an activity item. Doesn't receive all share started / completed events.
 
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
@@ -322,7 +327,9 @@ NSString *type = @"some type";
 
 - (IBAction) openBranchLinkInApp:(id)sender {
     NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
-    NSURL *URL = [NSURL URLWithString:@"https://bnc.lt/ZPOc/Y6aKU0rzcy"]; // <= Your URL goes here.
+    // TODO: Remove
+    // NSURL *URL = [NSURL URLWithString:@"https://bnc.lt/ZPOc/Y6aKU0rzcy"]; // <= Your URL goes here.
+    NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"];
     activity.webpageURL = URL;
     Branch *branch = [Branch getInstance];
     [branch resetUserSession];

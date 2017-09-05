@@ -13,29 +13,7 @@
 
 @implementation BNCEncodingUtils
 
-#pragma mark - Base 64 encoding
-
-// BASE 64 encoding brought to you by http://ios-dev-blog.com/base64-encodingdecoding/
-
-static const char _base64EncodingTable[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-static const short _base64DecodingTable[256] = {
-    -2, -2, -2, -2, -2, -2, -2, -2, -2, -1, -1, -2, -1, -1, -2, -2,
-    -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-    -1, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, 62, -2, -2, -2, 63,
-    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -2, -2, -2, -2, -2, -2,
-    -2,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -2, -2, -2, -2, -2,
-    -2, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -2, -2, -2, -2, -2,
-    -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-    -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-    -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-    -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-    -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-    -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-    -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
-    -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2
-};
+#pragma mark - Base 64 Encoding
 
 + (NSString *)base64EncodeStringToString:(NSString *)strData {
     return [self base64EncodeData:[strData dataUsingEncoding:NSUTF8StringEncoding]];
@@ -50,115 +28,14 @@ static const short _base64DecodingTable[256] = {
 }
 
 + (NSString *)base64EncodeData:(NSData *)data {
-    const char * input = [data bytes];
-    unsigned long inputLength = [data length];
-    unsigned long modulo = inputLength % 3;
-    unsigned long outputLength = (inputLength / 3) * 4 + (modulo ? 4 : 0);
-    unsigned long j = 0;
-    
-    // Do not forget about trailing zero
-    unsigned char *output = malloc(outputLength + 1);
-    output[outputLength] = 0;
-    
-    // Here are no checks inside the loop, so it works much faster than other implementations
-    for (unsigned long i = 0; i < inputLength; i += 3) {
-        output[j++] = _base64EncodingTable[ (input[i] & 0xFC) >> 2 ];
-        output[j++] = _base64EncodingTable[ ((input[i] & 0x03) << 4) | ((input[i + 1] & 0xF0) >> 4) ];
-        output[j++] = _base64EncodingTable[ ((input[i + 1] & 0x0F)) << 2 | ((input[i + 2] & 0xC0) >> 6) ];
-        output[j++] = _base64EncodingTable[ (input[i + 2] & 0x3F) ];
-    }
-    
-    // Padding in the end of encoded string directly depends of modulo
-    if (modulo > 0) {
-        output[outputLength - 1] = '=';
-        if (modulo == 1) {
-            output[outputLength - 2] = '=';
-        }
-    }
-    
-    NSString *s = [NSString stringWithUTF8String:(const char *)output];
-    free(output);
-    return s;
+    if (data) return [data base64EncodedStringWithOptions:0];
+    return @"";
 }
 
 + (NSData *)base64DecodeString:(NSString *)strBase64 {
-    const char * objPointer = [strBase64 cStringUsingEncoding:NSASCIIStringEncoding];
-    if (objPointer == NULL) {
-        return nil;
-    }
-    long intLength = strlen(objPointer);
-    int intCurrent;
-    int i = 0, j = 0, k;
-    
-    char * objResult;
-    objResult = calloc(intLength, sizeof(char));
-    
-    // Run through the whole string, converting as we go
-    while ( ((intCurrent = *objPointer++) != '\0') && (intLength-- > 0) ) {
-        if (intCurrent == '=') {
-            if (*objPointer != '=' && ((i % 4) == 1)) {// || (intLength > 0)) {
-                // the padding character is invalid at this point -- so this entire string is invalid
-                free(objResult);
-                return nil;
-            }
-            continue;
-        }
-        
-        intCurrent = _base64DecodingTable[intCurrent];
-        if (intCurrent == -1) {
-            // we're at a whitespace -- simply skip over
-            continue;
-        } else if (intCurrent == -2) {
-            // we're at an invalid character
-            free(objResult);
-            return nil;
-        }
-        
-        switch (i % 4) {
-            case 0:
-                objResult[j] = intCurrent << 2;
-                break;
-                
-            case 1:
-                objResult[j++] |= intCurrent >> 4;
-                objResult[j] = (intCurrent & 0x0f) << 4;
-                break;
-                
-            case 2:
-                objResult[j++] |= intCurrent >>2;
-                objResult[j] = (intCurrent & 0x03) << 6;
-                break;
-                
-            case 3:
-                objResult[j++] |= intCurrent;
-                break;
-        }
-        i++;
-    }
-    
-    // mop things up if we ended on a boundary
-    k = j;
-    if (intCurrent == '=') {
-        switch (i % 4) {
-            case 1:
-                // Invalid state
-                free(objResult);
-                return nil;
-                
-            case 2:
-                k++;
-                // flow through
-            case 3:
-                objResult[k] = 0;
-        }
-    }
-    
-    // Cleanup and setup the return NSData
-    NSData * objData = [[NSData alloc] initWithBytes:objResult length:j] ;
-    free(objResult);
-    return objData;
+    if (strBase64) return [[NSData alloc] initWithBase64EncodedString:strBase64 options:0];
+    return nil;
 }
-
 
 #pragma mark - MD5 methods
 
@@ -245,7 +122,7 @@ static const short _base64DecodingTable[256] = {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            BNCLogError(@"Cannot encode value for key %@, type is not in list of accepted types", key);
+            BNCLogError(@"Cannot encode value for key %@. The value is not an accepted type.", key);
             continue;
         }
         
@@ -264,10 +141,9 @@ static const short _base64DecodingTable[256] = {
     if (encodedDictionary.length > 1) {
         [encodedDictionary deleteCharactersInRange:NSMakeRange([encodedDictionary length] - 1, 1)];
     }
-
     [encodedDictionary appendString:@"}"];
-    BNCLogDebug(@"Encoded dictionary: %@", encodedDictionary);
 
+    BNCLogDebugSDK(@"Encoded dictionary: %@.", encodedDictionary);
     return encodedDictionary;
 }
 
@@ -309,7 +185,7 @@ static const short _base64DecodingTable[256] = {
         }
         else {
             // If this type is not a known type, don't attempt to encode it.
-            BNCLogError(@"Cannot encode value %@, type is not in list of accepted types", obj);
+            BNCLogError(@"Cannot encode value %@. The value is not an accepted type.", obj);
             continue;
         }
         
@@ -326,8 +202,8 @@ static const short _base64DecodingTable[256] = {
     // Delete the trailing comma
     [encodedArray deleteCharactersInRange:NSMakeRange([encodedArray length] - 1, 1)];
     [encodedArray appendString:@"]"];
-    BNCLogDebug(@"Encoded array: %@", encodedArray);
 
+    BNCLogDebugSDK(@"Encoded array: %@.", encodedArray);
     return encodedArray;
 }
 
@@ -360,7 +236,7 @@ static const short _base64DecodingTable[256] = {
             }
             else {
                 // If this type is not a known type, don't attempt to encode it.
-                BNCLogError(@"Cannot encode value %@, type is not in list of accepted types", obj);
+                BNCLogError(@"Cannot encode value %@. The value is not an accepted type.", obj);
                 continue;
             }
             
@@ -445,23 +321,75 @@ static const short _base64DecodingTable[256] = {
 + (NSString *) hexStringFromData:(NSData*)data {
 
     NSUInteger bytesCount = data.length;
-	if (bytesCount <= 0) return @"";
+    if (bytesCount <= 0) return @"";
 
-	const char *hexChars = "0123456789ABCDEF";
-	const unsigned char *dataBuffer = data.bytes;
-	char *chars = malloc(sizeof(char) * (bytesCount * 2 + 1));
-	if (!chars) return @"";
-	char *s = chars;
-	for (unsigned i = 0; i < bytesCount; ++i) {
-		*s++ = hexChars[((*dataBuffer & 0xF0) >> 4)];
-		*s++ = hexChars[(*dataBuffer & 0x0F)];
-		dataBuffer++;
+    const char *hexChars = "0123456789ABCDEF";
+    const char *dataBuffer = data.bytes;
+    char *chars = malloc(sizeof(char) * (bytesCount * 2 + 1));
+    if (!chars) return @"";
+    char *s = chars;
+    for (unsigned i = 0; i < bytesCount; ++i) {
+        *s++ = hexChars[((*dataBuffer & 0xF0) >> 4)];
+        *s++ = hexChars[(*dataBuffer & 0x0F)];
+        dataBuffer++;
     }
-	*s = '\0';
+    *s = '\0';
 
-	NSString *hexString = [NSString stringWithUTF8String:chars];
-	if (chars) free(chars);
-	return hexString;
+    NSString *hexString = [NSString stringWithUTF8String:chars];
+    if (chars) free(chars);
+    return hexString;
+}
+
++ (NSData *) dataFromHexString:(NSString*)string {
+    if (!string) return nil;
+
+    NSData *data = nil;
+    NSData *inputData = [string dataUsingEncoding:NSUTF8StringEncoding];
+
+    size_t length = (inputData.length+1)/2;
+    uint8_t *bytes = malloc(length);
+    uint8_t *b = bytes;
+    if (!bytes) goto exit;
+
+    int highValue = -1;
+    uint8_t *p = (uint8_t*) [inputData bytes];
+    for (long i = 0; i < inputData.length; ++i) {
+        int value = -1;
+        if (*p >= '0' && *p <= '9')
+            value = *p - '0';
+        else
+        if (*p >= 'A' && *p <= 'F')
+            value = *p - 'A' + 10;
+        else
+        if (*p >= 'a' && *p <= 'f')
+            value = *p - 'a' + 10;
+        else
+        if (isspace(*p)) {
+            p++;
+            continue;
+        } else {
+            goto exit; // Invalid character.
+        }
+        
+        if (highValue == -1) {
+            highValue = value;
+        } else {
+            *b++ = (highValue << 4) | value;
+            highValue = -1;
+        }
+        p++;
+    }
+
+    // If highValue != -1 then we got an odd number of hex values, which is an error.
+    if (highValue == -1)
+        data = [NSData dataWithBytes:bytes length:b-bytes];
+
+exit:
+    if (bytes) {
+        BNCLogAssert(b-bytes<=length);
+        free(bytes);
+    }
+    return data;
 }
 
 @end

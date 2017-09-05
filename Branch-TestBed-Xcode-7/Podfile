@@ -4,6 +4,6 @@ platform :ios, '7.0'
 
 target 'Branch-SDK-Tests' do
   project 'Branch-TestBed'
-  pod 'OCMock'
+  pod 'OCMock' # , '2.2.4' # I dropped iOS 6 support.
   pod 'OHHTTPStubs'
 end

@@ -31,6 +31,6 @@
 @end
 
 
-void ForceNSMutableDictionaryToLoad() {
+__attribute__((constructor)) void BNCForceNSMutableDictionaryCategoryToLoad(void) {
     //  Does nothing.  But will force the linker to include this category.
 }

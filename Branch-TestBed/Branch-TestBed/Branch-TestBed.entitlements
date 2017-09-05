@@ -7,6 +7,8 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:bnc.lt</string>
+		<string>applinks:bnctestbed.app.link</string>
+		<string>applinks:bnctestbed.test-app.link</string>
 	</array>
 </dict>
 </plist>

@@ -32,5 +32,6 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
 + (void)setUpdateState;
 + (BOOL)isSimulator;
 + (BOOL)adTrackingSafe;
++ (NSDate*) appInstallDate;
 
 @end

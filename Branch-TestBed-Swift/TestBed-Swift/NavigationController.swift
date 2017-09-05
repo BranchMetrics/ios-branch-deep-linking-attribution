@@ -8,7 +8,7 @@
 import UIKit
 
 class NavigationController: UINavigationController, BranchDeepLinkingController {
-
+    
     
     var deepLinkingCompletionDelegate: BranchDeepLinkingControllerCompletionDelegate?
     

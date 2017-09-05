@@ -84,7 +84,6 @@ static BOOL _testBreakpoints = NO;
     // Load test options from environment variables:
 
     NSDictionary<NSString*, NSString*> *environment = [NSProcessInfo processInfo].environment;
-
     NSString *BNCTestBreakpoints = environment[@"BNCTestBreakpoints"];
     if ([BNCTestBreakpoints boolValue]) {
         _testBreakpoints = YES;

@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euo pipefail
+
+# deploy-aws  -  Upload files to AWS.
+#
+# Edward Smith, January 2017
+
+aws s3 cp --acl public-read Branch-iOS-SDK.zip s3://branchhost/
+aws s3 cp --acl public-read Branch-iOS-TestBed.zip s3://branchhost/

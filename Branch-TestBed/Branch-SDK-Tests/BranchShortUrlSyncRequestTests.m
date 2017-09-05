@@ -73,10 +73,9 @@
 
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect]
-        postRequest:expectedParams
+        postRequestSynchronous:expectedParams
         url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]
-        key:[OCMArg any]
-        log:YES];
+        key:[OCMArg any]];
     
     [request makeRequest:serverInterfaceMock key:nil];
     
@@ -114,11 +113,10 @@
             linkCache:LINK_CACHE];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect]
-        postRequest:expectedParams
+        postRequestSynchronous:expectedParams
         url:[OCMArg any]
-        key:[OCMArg any]
-        log:YES];
-    
+        key:[OCMArg any]];
+
     [request makeRequest:serverInterfaceMock key:nil];
     
     [serverInterfaceMock verify];
@@ -167,13 +165,14 @@
     NSDictionary * const PARAMS = @{ @"foo-param": @"bar-value" };
     NSData * const PARAMS_DATA = [BNCEncodingUtils encodeDictionaryToJsonData:PARAMS];
     NSString * const ENCODED_PARAMS = [BNCEncodingUtils base64EncodeData:PARAMS_DATA];
+    NSString * const URL_ENCODED_PARAMS = [BNCEncodingUtils urlEncodedString:ENCODED_PARAMS];
     
     NSString * EXPECTED_URL =
         [NSString stringWithFormat:
             @"%@?tags=%@&tags=%@&alias=%@&channel=%@&feature=%@&stage=%@&type=%ld"
              "&duration=%ld&source=ios&data=%@",
              USER_URL, TAG1, TAG2, ALIAS, CHANNEL, FEATURE, STAGE,
-             (long)LINK_TYPE, (long)DURATION, ENCODED_PARAMS];
+             (long)LINK_TYPE, (long)DURATION, URL_ENCODED_PARAMS];
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.userUrl = USER_URL;

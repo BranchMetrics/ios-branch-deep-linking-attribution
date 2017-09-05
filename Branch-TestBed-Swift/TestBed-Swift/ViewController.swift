@@ -5,26 +5,28 @@
 //  Created by David Westgate on 8/29/16.
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
+// TODO: rearrange Branch Link section layout
+// TODO: fix wording when latestReferringParams are shown
 import UIKit
 
 fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l < r
-  case (nil, _?):
-    return true
-  default:
-    return false
-  }
+    switch (lhs, rhs) {
+    case let (l?, r?):
+        return l < r
+    case (nil, _?):
+        return true
+    default:
+        return false
+    }
 }
 
 fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l > r
-  default:
-    return rhs < lhs
-  }
+    switch (lhs, rhs) {
+    case let (l?, r?):
+        return l > r
+    default:
+        return rhs < lhs
+    }
 }
 
 class ViewController: UITableViewController, BranchShareLinkDelegate {
@@ -40,43 +42,18 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
     @IBOutlet weak var rewardPointsToRedeemTextField: UITextField!
     @IBOutlet weak var customEventNameTextField: UITextField!
     @IBOutlet weak var customEventMetadataTextView: UITextView!
+    @IBOutlet weak var commerceEventCustomMetadataTextView: UITextView!
     @IBOutlet weak var activeBranchKeyTextField: UITextField!
     @IBOutlet weak var activeSetDebugEnabledSwitch: UISwitch!
     @IBOutlet weak var pendingBranchKeyTextField: UITextField!
     @IBOutlet weak var pendingSetDebugEnabledSwitch: UISwitch!
-
+    
     var _dateFormatter: DateFormatter?
-    var linkProperties = [String: AnyObject]()
-    var universalObjectProperties = [String: AnyObject]()
     var creditHistory: Array<AnyObject>?
     var customEventMetadata = [String: AnyObject]()
+    var commerceEventCustomMetadata = [String: AnyObject]()
     
-    let branchLinkProperties = BranchLinkProperties()
-    var branchUniversalObject = BranchUniversalObject()
-
     let shareText = "Shared from Branch's TestBed-Swift"
-    
-    let linkKeys: Set = ["~channel","~feature","~campaign","~stage",
-                         "~tags","+spotlight_type","$fallback_url","$desktop_url",
-                         "$ios_url","$ipad_url","$android_url","$windows_phone_url",
-                         "$blackberry_url","$fire_url","$ios_wechat_url","$ios_weibo_url",
-                         "$after_click_url","$web_only","$deeplink_path","$android_deeplink_path",
-                         "$ios_deeplink_path","$match_duration","$always_deeplink","$ios_redirect_timeout",
-                         "$android_redirect_timeout","$one_time_use","$ios_deepview","$android_deepview",
-                         "$desktop_deepview"]
-    
-    let objectKeys: Set = ["$publicly_indexable","$keywords","$canonical_identifier",
-                           "$exp_date","$content_type", "$og_title",
-                           "$og_description","$og_image_url", "$og_image_width",
-                           "$og_image_height","$og_video", "$og_url",
-                           "$og_type","$og_redirect", "$og_app_id",
-                           "$twitter_card","$twitter_title", "$twitter_description",
-                           "$twitter_site","$twitter_app_country", "$twitter_player",
-                           "$twitter_player_width","$twitter_player_height"]
-    
-    let systemKeys: Set = ["+clicked_branch_link","+referrer","~referring_link","+is_first_session",
-                           "~id","~creation_source","+match_guaranteed","$identity_id",
-                           "$one_time_use_used","+click_timestamp"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,18 +75,18 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         linkTextField.text = ""
         refreshControlValues()
         refreshEnabledButtons()
-
+        
         // Add version to footer
         let footerView = UILabel.init(frame: CGRect.zero);
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"]
-        footerView.text = String(format:"Version %@ / %@ / %@",
-            UIDevice.current.systemVersion,
-            appVersion as! CVarArg,
-            BNC_SDK_VERSION
+        footerView.text = String(format:"iOS %@ / v%@ / SDK v%@",
+                                 UIDevice.current.systemVersion,
+                                 appVersion as! CVarArg,
+                                 BNC_SDK_VERSION
         )
-        footerView.font = UIFont.systemFont(ofSize:14.0)
+        footerView.font = UIFont.systemFont(ofSize:11.0)
         footerView.textAlignment = NSTextAlignment.center
-        footerView.textColor = UIColor.darkText
+        footerView.textColor = UIColor.darkGray
         footerView.sizeToFit()
         var box = footerView.bounds
         box.size.height += 10.0
@@ -179,26 +156,28 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
             self.performSegue(withIdentifier: "ShowTextViewFormNavigationBar", sender: "CustomEventName")
         case (3,1) :
             self.performSegue(withIdentifier: "ShowDictionaryTableView", sender: "CustomEventMetadata")
-        case (3,3) :
-            self.sendCommerceEvent(self)
         case (4,0) :
+            self.performSegue(withIdentifier: "ShowCommerceEventDetailsTableView", sender: "CommerceEventDetails")
+        case (4,1) :
+            self.performSegue(withIdentifier: "ShowDictionaryTableView", sender: "CommerceEventCustomMetadata")
+        case (5,0) :
             if let params = Branch.getInstance().getLatestReferringParams() {
                 let content = String(format:"LatestReferringParams:\n\n%@", (params.JSONDescription()))
                 self.performSegue(withIdentifier: "ShowContentView", sender: "LatestReferringParams")
                 print("Branch TestBed: LatestReferringParams:\n", content)
             }
-        case (4,1) :
+        case (6,1) :
             if let params = Branch.getInstance().getFirstReferringParams() {
                 let content = String(format:"FirstReferringParams:\n\n%@", (params.JSONDescription()))
                 self.performSegue(withIdentifier: "ShowContentView", sender: "FirstReferringParams")
                 print("Branch TestBed: FirstReferringParams:\n", content)
             }
-        case (6,0) :
+        case (7,0) :
             self.performSegue(withIdentifier: "ShowTextViewFormNavigationBar", sender: "pendingBranchKey")
         default : break
         }
     }
-
+    
     func dateFormatter() -> DateFormatter {
         if _dateFormatter != nil {
             return _dateFormatter!;
@@ -209,12 +188,12 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         _dateFormatter?.timeZone = TimeZone(secondsFromGMT: 0)
         return _dateFormatter!
     }
-
-//MARK: - Share a Branch Universal Object with BranchShareLink
-
+    
+    //MARK: - Share a Branch Universal Object with BranchShareLink
+    
     @IBAction func shareBranchLinkAction(_ sender: AnyObject) {
         let canonicalIdentifier = "id-" + self.dateFormatter().string(from: Date.init())
-
+        
         let shareBranchObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
         shareBranchObject.title = "Share Branch Link Example"
         shareBranchObject.canonicalUrl = "https://developer.branch.io/"
@@ -222,14 +201,14 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         shareBranchObject.keywords = [ "example", "short", "share", "link" ]
         shareBranchObject.contentDescription = "This is an example shared short link."
         shareBranchObject.addMetadataKey("publicSlug", value: canonicalIdentifier)
-
+        
         let shareLinkProperties = BranchLinkProperties()
         shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
-
+        
         if let branchShareLink = BranchShareLink.init(
             universalObject: shareBranchObject,
             linkProperties:  shareLinkProperties
-        ) {
+            ) {
             branchShareLink.title = "Share your test link!"
             branchShareLink.shareText = "Shared from Branch's TestBed-Swift at \(self.dateFormatter().string(from: Date()))"
             branchShareLink.presentActivityViewController(
@@ -238,13 +217,13 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
             )
         }
     }
-
+    
     @IBAction func shareAliasBranchLinkAction(_ sender: AnyObject) {
         //  Share an alias Branch link:
-
+        
         let alias = "Share-Alias-Link-Example"
         let canonicalIdentifier = alias
-
+        
         let shareBranchObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
         shareBranchObject.title = "Share Branch Link Example"
         shareBranchObject.canonicalUrl = "https://developer.branch.io/"
@@ -252,32 +231,31 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         shareBranchObject.keywords = [ "example", "short", "share", "link" ]
         shareBranchObject.contentDescription = "This is an example shared alias link."
         shareBranchObject.addMetadataKey("publicSlug", value: canonicalIdentifier)
-
+        
         let shareLinkProperties = BranchLinkProperties()
         shareLinkProperties.alias = alias
         shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
-
+        
         if let branchShareLink = BranchShareLink.init(
             universalObject: shareBranchObject,
             linkProperties:  shareLinkProperties
-        ) {
+            ) {
             branchShareLink.title = "Share your alias link!"
             branchShareLink.delegate = self
-            branchShareLink.shareText = 
-                "Shared from Branch's TestBed-Swift at \(self.dateFormatter().string(from: Date()))"
+            branchShareLink.shareText =
+            "Shared from Branch's TestBed-Swift at \(self.dateFormatter().string(from: Date()))"
             branchShareLink.presentActivityViewController(
                 from: self,
                 anchor: actionButton
             )
         }
     }
-
+    
     @IBAction func shareAliasActivityViewController(_ sender: AnyObject) {
         //  Share an alias Branch link:
-
         let alias = "Share-Alias-Link-Example"
         let canonicalIdentifier = alias
-
+        
         let shareBranchObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
         shareBranchObject.title = "Share Branch Link Example"
         shareBranchObject.canonicalUrl = "https://developer.branch.io/"
@@ -285,15 +263,15 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         shareBranchObject.keywords = [ "example", "short", "share", "link" ]
         shareBranchObject.contentDescription = "This is an example shared alias link."
         shareBranchObject.addMetadataKey("publicSlug", value: canonicalIdentifier)
-
+        
         let shareLinkProperties = BranchLinkProperties()
         shareLinkProperties.alias = alias
         shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
-
+        
         if let branchShareLink = BranchShareLink.init(
             universalObject: shareBranchObject,
             linkProperties:  shareLinkProperties
-        ) {
+            ) {
             branchShareLink.shareText = "Shared with TestBed-Swift"
             branchShareLink.delegate = self
             let activityViewController = UIActivityViewController.init(
@@ -303,20 +281,19 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
             self.present(activityViewController, animated: true, completion: nil)
         }
     }
-
+    
     func branchShareLinkWillShare(_ shareLink: BranchShareLink) {
-
         // Link properties, such as alias or channel can be overridden here based on the users'
         // choice stored in shareSheet.activityType.
         shareLink.shareText =
             "Shared through '\(shareLink.linkProperties.channel!)'\nfrom Branch's TestBed-Swift" +
-            "\nat \(self.dateFormatter().string(from: Date()))."
-
-        // In this example, we over-ride the channel so that the channel in the Branch short link 
+        "\nat \(self.dateFormatter().string(from: Date()))."
+        
+        // In this example, we over-ride the channel so that the channel in the Branch short link
         // is always 'ios-share'. This allows a short alias link to always be created.
         shareLink.linkProperties.channel = "ios-share"
     }
-
+    
     func branchShareLink(_ shareLink: BranchShareLink, didComplete completed: Bool, withError error: Error?) {
         if (error != nil) {
             print("Branch: Error while sharing! Error: \(error!.localizedDescription).")
@@ -329,65 +306,43 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
             print("Branch: User cancelled sharing.")
         }
     }
-
-//MARK: - Link Properties
-
+    
+    //MARK: - Link Properties
+    
     @IBAction func loadLinkPropertiesButtonTouchUpInside(_ sender: AnyObject) {
         let branch = Branch.getInstance()
-        let params: Dictionary = (branch?.getLatestReferringParams())!
         
-        linkProperties.removeAll()
-        for key in linkKeys {
-            if let value = params[key] {
-                linkProperties[key] = value as AnyObject?
-            }
+        if let params = branch?.getLatestReferringParams() as? [String: AnyObject] {
+            DataStore.setLinkProperties(params)
+            self.showAlert("Link Properties Loadded", withDescription: "")
+        } else {
+            // The button should be greyed out to prevent this, but just in case...
+            self.showAlert("Error: No Link Properties", withDescription: "This is not a referred session")
         }
-        self.showAlert("Link Properties Loadded", withDescription: "")
     }
     
     
     @IBAction func loadObjectPropertiesButtonTouchUpInside(_ sender: AnyObject) {
         let branch = Branch.getInstance()
-        var params: Dictionary = (branch?.getLatestReferringParams())!
         
-        universalObjectProperties.removeAll()
-        for key in linkKeys { params.removeValue(forKey: key) }
-        for key in systemKeys { params.removeValue(forKey: key) }
-        for key in objectKeys {
-            if let value = params[key] {
-                universalObjectProperties[key] = value as AnyObject?
-                params.removeValue(forKey: key)
-            }
+        if let params = branch?.getLatestReferringParams() as? [String: AnyObject] {
+            DataStore.setUniversalObject(params)
+        } else {
+            DataStore.clearUniversalObject()
         }
-        universalObjectProperties["customData"] = params as AnyObject?
         
         self.showAlert("Branch Universal Object Properties Loadded", withDescription: "")
     }
     
     @IBAction func createBranchLinkButtonTouchUpInside(_ sender: AnyObject) {
         
-        for key in linkProperties.keys {
-            setBranchLinkProperty(key)
-        }
-        
-        if let canonicalIdentifier = universalObjectProperties["$canonical_identifier"] as? String {
-            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
-        } else {
-            var canonicalIdentifier = ""
-            for _ in 1...18 {
-                canonicalIdentifier.append(String(arc4random_uniform(10)))
-            }
-            branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
-        }
-        
-        for key in universalObjectProperties.keys {
-            setBranchUniversalObjectProperty(key)
-        }
+        let branchLinkProperties = DataStore.getBranchLinkProperties()
+        let branchUniversalObject = DataStore.getBranchUniversalObject()
         
         branchUniversalObject.getShortUrl(with: branchLinkProperties) { (url, error) in
-            if (error == nil) {
-                print(self.branchLinkProperties.description())
-                print(self.branchUniversalObject.description())
+            if (url != nil) {
+                print(branchLinkProperties.description())
+                print(branchUniversalObject.description())
                 print("Link Created: \(String(describing: url?.description))")
                 self.linkTextField.text = url
             } else {
@@ -433,7 +388,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         if customEventNameTextField.text != "" {
             customEventName = customEventNameTextField.text!
         }
-
+        
         if customEventMetadata.count == 0 {
             branch?.userCompletedAction(customEventName)
         } else {
@@ -442,30 +397,20 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         refreshRewardsBalanceOfBucket()
         self.showAlert(String(format: "Custom event '%@' dispatched", customEventName), withDescription: "")
     }
-
+    
     @IBAction func sendCommerceEvent(_ sender: AnyObject) {
-        let product = BNCProduct.init()
-        product.price = NSDecimalNumber.init(string:"1000.99")
-        product.sku = "acme007"
-        product.name = "Acme brand 1 ton weight"
-        product.quantity = 1.0;
-        product.brand = "Acme";
-        product.category = BNCProductCategoryMedia;
-        product.variant = "Lite Weight";
-
-        let commerceEvent = BNCCommerceEvent.init()
-        commerceEvent.revenue = NSDecimalNumber.init(string:"1101.99")
-        commerceEvent.currency = "USD"
-        commerceEvent.transactionID = "tr00x8"
-        commerceEvent.shipping = NSDecimalNumber.init(string:"100.00")
-        commerceEvent.tax = NSDecimalNumber.init(string:"1.00");
-        commerceEvent.coupon = "Acme weights coupon"
-        commerceEvent.affiliation = "ACME by Amazon"
-        commerceEvent.products = [ product ];
-
+        
+        let commerceEvent = DataStore.getBNCCommerceEvent()
+        
+        WaitingViewController.showWithMessage(
+            message: "Getting parameters...",
+            activityIndicator:true,
+            disableTouches:true
+        )
+        
         Branch.getInstance()?.send(
             commerceEvent,
-            metadata: ["Meta": "Never meta dog I didn't like." ],
+            metadata: commerceEventCustomMetadata,
             withCompletion: { (response, error) in
                 let errorMessage: String = (error?.localizedDescription != nil) ?
                     error!.localizedDescription : "<nil>"
@@ -477,11 +422,12 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
                     responseMessage
                 )
                 NSLog("%@", message)
+                WaitingViewController.hide()
                 self.showAlert("Commerce Event", withDescription: message)
-            }
+        }
         )
     }
-
+    
     @IBAction func showRewardsHistoryButtonTouchUpInside(_ sender: AnyObject) {
         let branch = Branch.getInstance()
         branch?.getCreditHistory { (creditHistory, error) in
@@ -537,10 +483,10 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
             vc.incumbantValue = userIDTextField.text!
         case "LinkProperties":
             let vc = (segue.destination as! LinkPropertiesTableViewController)
-            vc.linkProperties = self.linkProperties
+            vc.linkProperties = DataStore.getLinkProperties()
         case "BranchUniversalObjectProperties":
             let vc = (segue.destination as! BranchUniversalObjectPropertiesTableViewController)
-            vc.universalObjectProperties = self.universalObjectProperties
+            vc.universalObject = DataStore.getUniversalObject()
         case "CreditHistory":
             let vc = (segue.destination as! CreditHistoryViewController)
             vc.creditTransactions = creditHistory
@@ -583,10 +529,24 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
             vc.valueFooter = ""
             vc.keyKeyboardType = UIKeyboardType.default
             vc.valueKeyboardType = UIKeyboardType.default
+            vc.sender = sender as! String
+        case "CommerceEventCustomMetadata":
+            let vc = segue.destination as! DictionaryTableViewController
+            commerceEventCustomMetadata = DataStore.getCommerceEventCustomMetadata()
+            vc.dictionary = commerceEventCustomMetadata
+            vc.viewTitle = "Commerce Metadata"
+            vc.keyHeader = "Key"
+            vc.keyPlaceholder = "key"
+            vc.keyFooter = ""
+            vc.valueHeader = "Value"
+            vc.valueFooter = ""
+            vc.keyKeyboardType = UIKeyboardType.default
+            vc.valueKeyboardType = UIKeyboardType.default
+            vc.sender = sender as! String
         case "LatestReferringParams":
             let vc = (segue.destination as! ContentViewController)
             let dict: Dictionary = Branch.getInstance().getLatestReferringParams()
-        
+            
             if dict["~referring_link"] != nil {
                 vc.contentType = "LatestReferringParams"
             } else {
@@ -615,12 +575,12 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
     }
     
     @IBAction func unwindTextViewFormTableViewController(_ segue:UIStoryboardSegue) {
-
+        
         if let vc = segue.source as? TextViewFormTableViewController {
             
             switch vc.sender {
             case "userID":
-                    
+                
                 if let userID = vc.textView.text {
                     
                     guard self.userIDTextField.text != userID else {
@@ -708,107 +668,40 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
     
     @IBAction func unwindDictionaryTableViewController(_ segue:UIStoryboardSegue) {
         if let vc = segue.source as? DictionaryTableViewController {
-            customEventMetadata = vc.dictionary
-            DataStore.setCustomEventMetadata(customEventMetadata)
-            if customEventMetadata.count > 0 {
-                customEventMetadataTextView.text = customEventMetadata.description
-            } else {
-                customEventMetadataTextView.text = ""
+            
+            if vc.sender == "CustomEventMetadata" {
+                customEventMetadata = vc.dictionary
+                DataStore.setCustomEventMetadata(customEventMetadata)
+                if customEventMetadata.count > 0 {
+                    customEventMetadataTextView.text = customEventMetadata.description
+                } else {
+                    customEventMetadataTextView.text = ""
+                }
+            } else if vc.sender == "CommerceEventCustomMetadata" {
+                commerceEventCustomMetadata = vc.dictionary
+                DataStore.setCommerceEventCustomMetadata(commerceEventCustomMetadata)
+                if commerceEventCustomMetadata.count > 0 {
+                    commerceEventCustomMetadataTextView.text = commerceEventCustomMetadata.description
+                } else {
+                    commerceEventCustomMetadataTextView.text = ""
+                }
             }
         }
     }
     
     @IBAction func unwindLinkPropertiesTableViewController(_ segue:UIStoryboardSegue) {
         if let vc = segue.source as? LinkPropertiesTableViewController {
-            linkProperties = vc.linkProperties
-            DataStore.setLinkProperties(linkProperties)
+            DataStore.setLinkProperties(vc.linkProperties)
         }
     }
     
     @IBAction func unwindBranchUniversalObjectTableViewController(_ segue:UIStoryboardSegue) {
         if let vc = segue.source as? BranchUniversalObjectPropertiesTableViewController {
-            universalObjectProperties = vc.universalObjectProperties
-            DataStore.setUniversalObjectProperties(universalObjectProperties)
+            DataStore.setUniversalObject(vc.universalObject)
         }
     }
     
-    func setBranchLinkProperty(_ key: String) {
-        
-        guard linkProperties[key] != nil else {
-            return
-        }
-        print(key)
-        switch key {
-        case "~alias":
-            branchLinkProperties.alias = linkProperties[key] as! String
-        case "~channel":
-            branchLinkProperties.channel = linkProperties[key] as! String
-        case "~feature":
-            branchLinkProperties.feature = linkProperties[key] as! String
-        case "~stage":
-            branchLinkProperties.stage = linkProperties[key] as! String
-        case "~tags":
-            branchLinkProperties.tags = linkProperties[key] as! [AnyObject]
-        default:
-            branchLinkProperties.addControlParam(key, withValue: linkProperties[key] as! String)
-        }
-    }
-    
-    func setBranchUniversalObjectProperty(_ key: String) {
-        
-        guard universalObjectProperties[key] != nil else {
-            return
-        }
-
-        switch key {
-        case "$canonical_identifier":
-            branchUniversalObject.canonicalIdentifier = universalObjectProperties[key] as! String
-        case "$og_description":
-            if let description = universalObjectProperties[key] {
-                branchUniversalObject.contentDescription = description as? String
-            }
-        case "$exp_date":
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd"
-            let expirationDate = dateFormatter.date(from: universalObjectProperties[key] as! String)
-            branchUniversalObject.expirationDate = expirationDate
-        case "$og_image_url":
-            if let imageURL = universalObjectProperties[key] {
-                branchUniversalObject.imageUrl = imageURL as? String
-            }
-        case "$keywords":
-            branchUniversalObject.keywords = universalObjectProperties[key] as! [AnyObject]
-        case "$og_title":
-            if let title = universalObjectProperties[key] {
-                branchUniversalObject.title = title as? String
-            }
-        case "$content_type":
-            if let contentType = universalObjectProperties[key] {
-                branchUniversalObject.type = contentType as? String
-            }
-        case "$price":
-            if let price = universalObjectProperties[key] as? String {
-                if let float_price = Float(price) {
-                    branchUniversalObject.price = CGFloat(float_price)
-                } else {
-                    branchUniversalObject.price = 0.0
-                }
-            }
-        case "$currency":
-            if let currency = universalObjectProperties[key] as? String {
-                branchUniversalObject.currency = currency
-            }
-        case "customData":
-            if let data = universalObjectProperties[key] as? [String: String] {
-                for customDataKey in data.keys {
-                    branchUniversalObject.addMetadataKey(customDataKey, value: data[customDataKey]!)
-                }
-            }
-        default:
-            branchUniversalObject.addMetadataKey(key, value: universalObjectProperties[key] as! String)
-        }
-        print(branchUniversalObject.description())
-    }
+    @IBAction func unwindCommerceEventDetailsTableViewController(_ segue:UIStoryboardSegue) {}
     
     func refreshControlValues() {
         // First load the three values required to refresh the rewards balance
@@ -820,8 +713,6 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         refreshRewardsBalanceOfBucket()
         
         // Now get about populating the other controls
-        linkProperties = DataStore.getLinkProperties()
-        universalObjectProperties = DataStore.getUniversalObjectProperties()
         rewardPointsToRedeemTextField.text = DataStore.getRewardPointsToRedeem()
         customEventNameTextField.text = DataStore.getCustomEventName()
         customEventMetadata = DataStore.getCustomEventMetadata()
@@ -829,6 +720,12 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
             customEventMetadataTextView.text = customEventMetadata.description
         } else {
             customEventMetadataTextView.text = ""
+        }
+        commerceEventCustomMetadata = DataStore.getCommerceEventCustomMetadata()
+        if (commerceEventCustomMetadata.count > 0) {
+            commerceEventCustomMetadataTextView.text = commerceEventCustomMetadata.description
+        } else {
+            commerceEventCustomMetadataTextView.text = ""
         }
         activeBranchKeyTextField.text = DataStore.getActiveBranchKey()
         activeSetDebugEnabledSwitch.isOn = DataStore.getActiveSetDebugEnabled()!
@@ -851,4 +748,3 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
     }
     
 }
-

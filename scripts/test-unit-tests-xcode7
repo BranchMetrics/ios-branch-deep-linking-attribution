@@ -36,7 +36,7 @@ function testSimulatorVersion() {
     printf "${textBlue}Testing %s %s...${textNormal}\n" "${name}" "${version}"
     xcodebuild \
         -workspace Branch-TestBed.xcworkspace \
-        -scheme Branch-TestBed \
+        -scheme Branch-SDK-Tests \
         -destination name="${name}",OS="${version}" \
             clean test
 }
@@ -50,7 +50,7 @@ function testSimulatorStress() {
     printf "${textBlue}   Stress test %d.${textNormal}\n" $stressTest
     xcodebuild \
         -workspace Branch-TestBed.xcworkspace \
-        -scheme Branch-TestBed \
+        -scheme Branch-SDK-Tests \
         -destination name="iPhone 6s",OS=$latest \
             test
 }
@@ -77,11 +77,12 @@ for i in {1..10}
 do
     testSimulatorStress
 done
-testSimulatorVersion "iPhone 6s Plus" $latest
-testSimulatorVersion "iPhone 5s"     9.3
-testSimulatorVersion "iPad 2"        9.1
-testSimulatorVersion "iPhone 4s"     8.4
-# The iOS 7.1 Simulator isn't available after Mac OS 10.10.5
+testSimulatorVersion "iPhone 6s Plus" "$latest"
+testSimulatorVersion "iPhone 5s"      9.3
+testSimulatorVersion "iPad 2"         9.1
+testSimulatorVersion "iPhone 4s"      8.4
+
+# The iOS 7.1 Simulator isn't available after Mac OS 10.10.5 so this is commented out:
 # testSimulatorVersion "iPhone 4s"     7.1
 
 printf "${textBlue}All tests completed successfully.${textNormal}\n"

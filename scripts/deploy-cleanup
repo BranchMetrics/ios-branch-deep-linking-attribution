@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euo pipefail
+
+# deploy-cleanup  -  Clean up deployment remnants.
+#
+# Edward Smith, January 2017
+
+(rm Branch-iOS-SDK.zip || true)
+(rm Branch-iOS-TestBed.zip || true)

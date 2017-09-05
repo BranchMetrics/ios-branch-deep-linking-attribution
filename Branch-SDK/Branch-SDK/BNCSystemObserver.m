@@ -13,6 +13,7 @@
 #import <UIKit/UIDevice.h>
 #import <UIKit/UIScreen.h>
 #import <SystemConfiguration/SystemConfiguration.h>
+#import "BNCLog.h"
 
 @implementation BNCSystemObserver
 
@@ -76,17 +77,15 @@
     for (NSDictionary *urlType in urlTypes) {
         NSArray *urlSchemes = [urlType objectForKey:@"CFBundleURLSchemes"];
         for (NSString *uriScheme in urlSchemes) {
-            BOOL isFBScheme = [uriScheme hasPrefix:@"fb"];
-            BOOL isDBScheme = [uriScheme hasPrefix:@"db"];
-            BOOL isPinScheme = [uriScheme hasPrefix:@"pin"];
-            
-            // Don't use the schemes set aside for other integrations.
-            if (!isFBScheme && !isDBScheme && !isPinScheme) {
-                return uriScheme;
-            }
+            if ([uriScheme hasPrefix:@"fb"]) continue;  // Facebook
+            if ([uriScheme hasPrefix:@"db"]) continue;  // DB?
+            if ([uriScheme hasPrefix:@"pin"]) continue; // Pinterest
+            if ([uriScheme hasPrefix:@"com.googleusercontent.apps"]) continue; // Google
+
+            // Otherwise this must be it!
+            return uriScheme;
         }
     }
-
     return nil;
 }
 
@@ -235,12 +234,12 @@
         [[fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] firstObject];
     NSDictionary *attributes = [fileManager attributesOfItemAtPath:libraryURL.path error:&error];
     if (error) {
-        NSLog(@"Error getting library date: %@.", error);
+        BNCLogError(@"Can't get library date: %@.", error);
         return nil;
     }
     NSDate *installDate = [attributes fileCreationDate];
     if (installDate == nil || [installDate timeIntervalSince1970] <= 0.0) {
-        NSLog(@"Error: Invalid install date.");
+        BNCLogError(@"Invalid install date.");
         return nil;
     }
     return installDate;
@@ -259,7 +258,7 @@
         }
     }
     if (!success || error) {
-        NSLog(@"Warning: Can't retrieve bundle attributes. Success: %d Error: %@.", success, error);
+        BNCLogWarning(@"Can't retrieve bundle attributes. Success: %d Error: %@.", success, error);
         return nil;
     }
     return buildDate;
@@ -281,7 +280,7 @@
             options:0
             error:&error];            
     if (error) {
-        NSLog(@"Error retreiving bundle info: %@.", error);
+        BNCLogError(@"Error retreiving bundle info: %@.", error);
         return nil;
     }
     NSDate *buildDate = nil;
@@ -296,7 +295,7 @@
         buildDate = [self dateForPathComponent:@"xctest" inURLs:fileInfoURLs];
     }
     if (buildDate == nil || [buildDate timeIntervalSince1970] <= 0.0) {
-        NSLog(@"Error: Invalid build date.");
+        BNCLogError(@"Invalid build date.");
         return nil;
     }
     return buildDate;
