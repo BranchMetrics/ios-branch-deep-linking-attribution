@@ -38,6 +38,7 @@
 #import "BranchUserCompletedActionRequest.h"
 #import "NSMutableDictionary+Branch.h"
 #import "NSString+Branch.h"
+#import "BNCSpotlightService.h"
 #import "../Fabric/FABKitProtocol.h" // Fabric
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -1350,47 +1351,75 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self.contentDiscoveryManager indexContentWithTitle:title description:description canonicalId:canonicalId publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:linkParams expirationDate:expirationDate callback:nil spotlightCallback:spotlightCallback];
 }
 
--(void) createDiscoverableObjectUsingSearchableItem:(BranchUniversalObject*)universalObject
-                                     linkProperties:(BranchLinkProperties*)linkproperties
-                                         completion:(void (^) (BranchUniversalObject *universalObject, NSError *error))completion {
-    [self.contentDiscoveryManager indexObjectUsingSearchableItem:universalObject
-                                                  linkProperties:linkproperties
-                                                      completion:completion];
+- (void)indexOnSpotlightUsingSearchableItem:(BranchUniversalObject*)universalObject
+                                 completion:(void (^) (BranchUniversalObject *universalObject, NSString * url,NSError *error))completion {
+    BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
+    
+    if (!universalObject) {
+        NSError* error = [NSError branchErrorWithCode:BNCInitError localizedMessage:@"Branch Universal Object is nil"];
+        completion(universalObject,nil,error);
+        return;
+    } else {
+        [spotlight indexPrivatelyWithBranchUniversalObject:universalObject
+                                                  callback:^(BranchUniversalObject * _Nullable universalObject, NSString * _Nullable url, NSError * _Nullable error) {
+                                                      completion(universalObject,url,error);
+                                                  }];
+
+    }
 }
 
 /* Indexing of multiple BUOs
  * Content privately indexed irrestive of the value of contentIndexMode
  */
--(void) createDiscoverableContentsUsingSearchableItems:(NSArray<BranchUniversalObject*>*)universalObjects
-                                          onCompletion:(void (^) (NSArray<BranchUniversalObject*>*universalObjects))completion
-                                             onFailure:(void (^) (BranchUniversalObject *universalObject, NSError* error))failure {
-    [self.contentDiscoveryManager indexObjectsUsingSearchableItem:universalObjects
-                                                     onCompletion:completion
-                                                        onFailure:failure];
+
+
+- (void)indexOnObjectsOnSpotlightUsingSearchableItems:(NSArray<BranchUniversalObject*>* )universalObjects
+                                           completion:(void (^) (NSArray<BranchUniversalObject*>* universalObjects,
+                                                                 NSError* error))completion {
+    
+    BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
+    [spotlight indexPrivatelyWithBranchUniversalObjects:universalObjects
+                                             completion:^(NSArray<BranchUniversalObject *> * _Nullable universalObjects,
+                                                          NSError * _Nullable error) {
+                                                 completion(universalObjects,error);
+                                             }];
 }
 
--(void) removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject *)universalObject
-                                            completion:(completion)completion {
-    [self.contentDiscoveryManager removeSearchableItemWithBranchUniversalObject:universalObject
-                                                                     completion:completion];
+- (void)removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject *)universalObject
+                                             callback:(void (^_Nullable)(NSError * _Nullable error))completion {
+    BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
+
+    [spotlight removeSearchableItemsWithIdentifier:universalObject.spotlightIdentifier
+                                          callback:^(NSError * _Nullable error) {
+                                              completion(error);
+                                          }];
 }
 
 /* Only removes the indexing of BUOs indexed through CSSearchable item
  */
--(void) removeSearchableItemsWithBranchUniversalObjects:(NSArray<BranchUniversalObject*> *)universalObjects
-                                             completion:(completion)completion {
-    [self.contentDiscoveryManager removeSearchableItemsWithBranchUniversalObjects:universalObjects
-                                                                       completion:completion];
+- (void)removeSearchableItemsWithBranchUniversalObjects:(NSArray<BranchUniversalObject*> *)universalObjects
+                                               callback:(void (^)(NSError * error))completion {
+    BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
+    NSMutableArray<NSString *> *identifiers = [[NSMutableArray alloc] init];
+    for (BranchUniversalObject* universalObject in universalObjects) {
+        [identifiers addObject:universalObject.spotlightIdentifier];
+    }
+    
+    [spotlight removeSearchableItemsWithIdentifiers:identifiers
+                                           callback:^(NSError * error) {
+                                               completion(error);
+                                           }];
 }
 
 /* Removes all content from spotlight indexed through CSSearchable item and has set the Domain identifier = "com.branch.io"
  */
 
--(void) removeAllPrivateContentFromSpotLightWithCompletion:(completion)completion {
-    [self.contentDiscoveryManager removeSearchableItemsByBranchSpotlightDomainWithCompletionHandler:completion];
+- (void)removeAllPrivateContentFromSpotLightWithCallback:(void (^)(NSError * error))completion {
+    BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
+    [spotlight removeSearchableItemsByBranchSpotlightDomainWithCallback:^(NSError * error) {
+        completion(error);
+    }];
 }
-
-
 
 #pragma mark - Private methods
 

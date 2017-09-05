@@ -11,29 +11,29 @@
 
 @interface BNCSpotlightService : NSObject
 
-- (void)indexContentUsingUserActivityWithTitle:(NSString *)title
-                                   description:(NSString *)description
-                                   canonicalId:(NSString *)canonicalId
-                                          type:(NSString *)type
-                                  thumbnailUrl:(NSURL *)thumbnailUrl
-                                      keywords:(NSSet *)keywords
-                                      userInfo:(NSDictionary *)userInfo
-                                expirationDate:(NSDate *)expirationDate
-                                      callback:(callbackWithUrl)callback
-                             spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
+//Indexing API
+//indexPublicaly
+- (void)indexPubliclyWithBranchUniversalObject:(BranchUniversalObject* _Nonnull)universalObject
+                                linkProperties:(BranchLinkProperties* _Nullable)linkProperties
+                                      callback:(void (^_Nullable)(BranchUniversalObject * _Nullable universalObject,
+                                                                  NSString* _Nullable url,
+                                                                  NSError * _Nullable error))completion;
+//indexWithBranchShareLink
+- (void)indexPrivatelyWithBranchUniversalObject:(BranchUniversalObject* _Nonnull)universalObject
+                                       callback:(void (^_Nullable)(BranchUniversalObject * _Nullable universalObject,
+                                                                   NSString* _Nullable url,
+                                                                   NSError * _Nullable error))completion;
 
-- (void)indexContentUsingCSSearchableItemWithTitle:(NSString *)title
-                                       CanonicalId:(NSString *)canonicalId
-                                       description:(NSString *)description
-                                              type:(NSString *)type
-                                      thumbnailUrl:(NSURL *)thumbnailUrl
-                                          userInfo:(NSDictionary *)userInfo
-                                          keywords:(NSSet *)keywords
-                                    linkProperties:(BranchLinkProperties*)linkProperties
-                                          callback:(callbackWithUrl)callback
-                                 spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
+- (void)indexPrivatelyWithBranchUniversalObjects:(NSArray<BranchUniversalObject*>* _Nonnull)universalObjects
+                                      completion:(void (^_Nullable) (NSArray<BranchUniversalObject*>* _Nullable,
+                                                                     NSError* _Nullable))completion;
 
-- (void)removeSearchableItemsWithIdentifier:(NSString *)identifier completionHandler:(completion)completion;
-- (void)removeSearchableItemsWithIdentifiers:(NSArray<NSString *> *)identifiers completionHandler:(completion)completion;
-- (void)removeSearchableItemsByBranchSpotlightDomainWithCompletionHandler:(completion)completion;
+//Remove indexing API
+- (void)removeSearchableItemsWithIdentifier:(NSString * _Nonnull)identifier
+                                   callback:(void (^_Nullable)(NSError * _Nullable error))completion;
+
+- (void)removeSearchableItemsWithIdentifiers:(NSArray<NSString *> *_Nonnull)identifiers
+                                    callback:(void (^_Nullable)(NSError * _Nullable error))completion;
+
+- (void)removeSearchableItemsByBranchSpotlightDomainWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion;
 @end

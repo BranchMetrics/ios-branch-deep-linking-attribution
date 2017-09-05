@@ -54,37 +54,4 @@
                      callback:(callbackWithUrl)callback
             spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
 
-/*
- * Indexing single BUO on Spotlight
- */
-
-//-(void) indexObject:(BranchUniversalObject*)universalObject
-//       onCompletion:(void (^) (BranchUniversalObject *universalObject, NSString *url, NSError *error))completion;
-//
-/*
- * Indexing using SearchableItem would use dynamic (long) url to index objects
- * No limit on number of object indexed through this API
- * Content privately indexed irrestive of the value of contentIndexMode
- */
--(void) indexObjectUsingSearchableItem:(BranchUniversalObject *)universalObject
-                        linkProperties:(BranchLinkProperties*)linkProperties
-                            completion:(void (^)(BranchUniversalObject *, NSError *))completion;
-
-/*
- * Indexing of multiple BUOs
- *
- * Content privately indexed irrestive of the value of contentIndexMode
- */
-
--(void) indexObjectsUsingSearchableItem:(NSArray<BranchUniversalObject*>*)universalObjects
-                           onCompletion:(void (^) (NSArray<BranchUniversalObject*>*universalObjects))completion
-                              onFailure:(void (^) (BranchUniversalObject *universalObject, NSError* error))failure;
-
--(void) removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject*)universalObject
-                                           completion:(completion)completion;
-
--(void) removeSearchableItemsWithBranchUniversalObjects:(NSArray<BranchUniversalObject*> *)universalObjects
-                                             completion:(completion)completion;
-
-- (void) removeSearchableItemsByBranchSpotlightDomainWithCompletionHandler:(completion)completion;
 @end

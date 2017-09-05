@@ -360,117 +360,41 @@ static NSString* const kUTTypeGeneric = @"public.content";
                      callback:(callbackWithUrl)callback
             spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
 
+    BNCSpotlightService* spotslightService = [[BNCSpotlightService alloc] init];
+    
+    BranchUniversalObject *universalObject = [[BranchUniversalObject alloc] initWithTitle:title];
+    [universalObject setContentDescription:description];
+    [universalObject setCanonicalUrl:canonicalId];
+    [universalObject setContentIndexMode:publiclyIndexable? ContentIndexModePublic:ContentIndexModePrivate];
+    [universalObject setType:type];
+    [universalObject setImageUrl:[thumbnailUrl absoluteString]];
+    [universalObject setKeywords:[keywords allObjects]];
+    [universalObject setMetadata:userInfo];
+    [universalObject setExpirationDate:expirationDate];
     
     if(publiclyIndexable) {
-        [self.spotlight indexContentUsingUserActivityWithTitle:title
-                                              description:description
-                                              canonicalId:canonicalId
-                                                     type:type
-                                             thumbnailUrl:thumbnailUrl
-                                                 keywords:keywords
-                                                 userInfo:userInfo
-                                           expirationDate:expirationDate
-                                                 callback:callback
-                                        spotlightCallback:spotlightCallback];
+        [spotslightService indexPubliclyWithBranchUniversalObject:universalObject
+                                                   linkProperties:nil callback:^(BranchUniversalObject * _Nullable universalObject, NSString * _Nullable url, NSError * _Nullable error) {
+                                                       if (callback) {
+                                                           callback(url, error);
+                                                       }
+                                                       else if (spotlightCallback) {
+                                                           spotlightCallback(url, url, error);
+                                                       }
+                                                   }];
     } else {
-        [self.spotlight indexContentUsingCSSearchableItemWithTitle:title
-                                                  CanonicalId:canonicalId
-                                                  description:description
-                                                         type:type
-                                                 thumbnailUrl:thumbnailUrl
-                                                     userInfo:userInfo
-                                                     keywords:keywords
-                                               linkProperties:nil
-                                                     callback:callback
-                                            spotlightCallback:spotlightCallback];
-    }
-}
-
--(void) indexObjectUsingSearchableItem:(BranchUniversalObject *)universalObject
-                        linkProperties:(BranchLinkProperties*)linkProperties
-                            completion:(void (^)(BranchUniversalObject *, NSError *))completion {
-    
-    BNCSpotlightService* spotlight = [[BNCSpotlightService alloc] init];
-    [spotlight indexContentUsingCSSearchableItemWithTitle:universalObject.title
-                                         CanonicalId:universalObject.canonicalIdentifier
-                                         description:universalObject.canonicalIdentifier
-                                                type:universalObject.type
-                                        thumbnailUrl:[NSURL URLWithString:universalObject.imageUrl]
-                                            userInfo:nil
-                                            keywords:[NSSet setWithArray:universalObject.keywords]
-                                      linkProperties:linkProperties
-                                            callback:nil
-                                   spotlightCallback:^(NSString * _Nullable url, NSString * _Nullable spotlightIdentifier, NSError * _Nullable error) {
-                                       if (!error) {
-                                           universalObject.spotlightIdentifier = spotlightIdentifier;
-                                       }
-                                       completion(universalObject,error);
-                                   }];
-}
-
-- (dispatch_queue_t) workQueue {
-    @synchronized (self) {
-        if (!_workQueue)
-            _workQueue = dispatch_queue_create("io.branch.sdk.spotlight.indexing", DISPATCH_QUEUE_CONCURRENT);
-        return _workQueue;
-    }
-}
-
--(void) indexObjectsUsingSearchableItem:(NSArray<BranchUniversalObject *> *)universalObjects
-                           onCompletion:(void (^)(NSArray<BranchUniversalObject *> *))completion
-                              onFailure:(void (^)(BranchUniversalObject *, NSError *))failure {
-    
-    dispatch_group_t workGroup = dispatch_group_create();
-    NSMutableArray<BranchUniversalObject*> *completedBUO = [[NSMutableArray alloc] init];
-    
-    for (BranchUniversalObject* universalObject in universalObjects) {
-        dispatch_group_async(workGroup, self.workQueue, ^{
-            dispatch_semaphore_t indexingSema = dispatch_semaphore_create(0);
-            [self indexObjectUsingSearchableItem:universalObject linkProperties:nil completion:^(BranchUniversalObject *universalObject, NSError *error) {
-                if (error)
-                    failure(universalObject,error);
-                else
-                    [completedBUO addObject:universalObject];
-                
-                dispatch_semaphore_signal(indexingSema);
-            }];
+        [spotslightService indexPrivatelyWithBranchUniversalObject:universalObject
+                                                          callback:^(BranchUniversalObject * _Nullable universalObject, NSString * _Nullable url, NSError * _Nullable error) {
+                                                              if (callback) {
+                                                                  callback(url, error);
+                                                              }
+                                                              else if (spotlightCallback) {
+                                                                  spotlightCallback(url, url, error);
+                                                              }
+ 
+                                                          }];
             
-            dispatch_semaphore_wait(indexingSema, DISPATCH_TIME_FOREVER);
-        });
-    }
-    
-    dispatch_group_wait(workGroup, DISPATCH_TIME_FOREVER);
-    completion(completedBUO);
-}
-
--(void) removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject *)universalObject
-                                           completion:(completion)completion {
-    
-    if (universalObject.spotlightIdentifier == nil || [universalObject.spotlightIdentifier isEqualToString:@""]) {
-        NSError* error = [NSError errorWithDomain:BNCErrorDomain code:BNCSpotlightTitleError userInfo:nil];
-        completion(error);
-        return;
-    }
-    
-    [self.spotlight removeSearchableItemsWithIdentifier:universalObject.spotlightIdentifier
-                                      completionHandler:completion];
-}
-
--(void) removeSearchableItemsWithBranchUniversalObjects:(NSArray<BranchUniversalObject *> *)universalObjects
-                                  completion:(completion)completion {
-    
-    NSMutableArray<NSString *> *spotlightIdentifiers = [[NSMutableArray alloc] init];
-    
-    for (BranchUniversalObject* universalObject in universalObjects) {
-        [spotlightIdentifiers addObject:universalObject.spotlightIdentifier];
-    }
-    
-    [self.spotlight removeSearchableItemsWithIdentifiers:spotlightIdentifiers
-                                       completionHandler:completion];
-}
-
--(void) removeSearchableItemsByBranchSpotlightDomainWithCompletionHandler:(completion)completion {
-    [self.spotlight removeSearchableItemsByBranchSpotlightDomainWithCompletionHandler:completion];
+          }
 }
 
 @end

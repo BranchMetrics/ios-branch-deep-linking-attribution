@@ -368,19 +368,25 @@
                                            spotlightCallback:spotlightCallback];
 }
 
--(void) listOnSpotlightUsingSearchableItemWithLinkProperties:(BranchLinkProperties*)linkProperties
-                                                    Callback:(void (^)(BranchUniversalObject * _Nullable, NSError * _Nullable))completion {
-    [[Branch getInstance] createDiscoverableObjectUsingSearchableItem:self
-                                                       linkProperties:linkProperties
-                                                           completion:completion];
+- (void)listPrivatelyOnSpotlightWithCallback:(void (^)(NSString * _Nullable url,
+                                                       NSError * _Nullable error))completion {
     
-    
+    [[Branch getInstance] indexOnSpotlightUsingSearchableItem:self
+                                                   completion:^(BranchUniversalObject *universalObject, NSString *url, NSError *error) {
+                                                       completion(url,error);
+                                                   }];
 }
 
-- (void) removeFromSpotlightWithCompletion:(completion)completion {
+- (void) removeFromSpotlightWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion{
     if (self.contentIndexMode == ContentIndexModePrivate) {
         [[Branch getInstance] removeSearchableItemWithBranchUniversalObject:self
-                                                                 completion:completion];
+                                                                   callback:^(NSError *error) {
+                                                                       completion(error);
+                                                                   }];
+    } else {
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError
+                                     localizedMessage:@"Public indexing cannot be removed from Spotlight"];
+        completion(error);
     }
 }
 

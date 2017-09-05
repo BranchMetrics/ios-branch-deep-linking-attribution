@@ -65,8 +65,11 @@ Creates a BranchShareLink object.
 @param linkProperties   The link properties that the link will have.
 */
 - (instancetype _Nullable) initWithUniversalObject:(BranchUniversalObject*_Nonnull)universalObject
-                                    linkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
+                                    linkProperties:(BranchLinkProperties*_Nonnull)linkProperties
+                                    NS_DESIGNATED_INITIALIZER;
 
+- (instancetype _Nullable) init NS_UNAVAILABLE;
++ (instancetype _Nullable) new NS_UNAVAILABLE;
 
 ///Returns an array of activity item providers, one for the Branch Universal Object,
 ///one for the share text (if provided), and one for the shareObject (if provided).
