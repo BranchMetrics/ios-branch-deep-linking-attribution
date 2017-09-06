@@ -7,8 +7,8 @@
 //
 
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+@import Foundation;
+@import UIKit;
 #import <sys/sysctl.h>
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"

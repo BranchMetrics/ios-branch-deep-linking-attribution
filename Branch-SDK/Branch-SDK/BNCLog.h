@@ -13,7 +13,7 @@
 //--------------------------------------------------------------------------------------------------
 
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "BNCDebug.h"
 
 

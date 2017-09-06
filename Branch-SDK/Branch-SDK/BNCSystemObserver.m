@@ -6,13 +6,11 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
+@import SystemConfiguration;
 #include <sys/utsname.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
-#import <UIKit/UIDevice.h>
-#import <UIKit/UIScreen.h>
-#import <SystemConfiguration/SystemConfiguration.h>
 #import "BNCLog.h"
 
 @implementation BNCSystemObserver

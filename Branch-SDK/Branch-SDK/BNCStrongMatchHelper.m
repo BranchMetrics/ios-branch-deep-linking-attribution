@@ -44,7 +44,7 @@
 
 
 #else   // ------------------------------------------------------------------------------ iOS >= 9.0
-#import <SafariServices/SafariServices.h>
+@import SafariServices;
 
 
 #pragma mark - BNCMatchView

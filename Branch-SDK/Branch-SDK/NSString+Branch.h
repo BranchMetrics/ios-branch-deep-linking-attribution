@@ -12,9 +12,7 @@
 //
 //--------------------------------------------------------------------------------------------------
 
-
-#import <Foundation/Foundation.h>
-
+@import Foundation;
 
 @interface NSString (Branch)
 
