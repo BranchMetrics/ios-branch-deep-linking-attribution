@@ -35,5 +35,5 @@
 - (void)removeSearchableItemsWithIdentifiers:(NSArray<NSString *> *_Nonnull)identifiers
                                     callback:(void (^_Nullable)(NSError * _Nullable error))completion;
 
-- (void)removeSearchableItemsByBranchSpotlightDomainWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion;
+- (void)removeAllBranchSearchableItemsByBranchSpotlightDomainWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion;
 @end

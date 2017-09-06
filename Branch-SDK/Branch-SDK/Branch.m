@@ -1416,7 +1416,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (void)removeAllPrivateContentFromSpotLightWithCallback:(void (^)(NSError * error))completion {
     BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
-    [spotlight removeSearchableItemsByBranchSpotlightDomainWithCallback:^(NSError * error) {
+    [spotlight removeAllBranchSearchableItemsWithCallback:^(NSError * _Nullable error) {
         completion(error);
     }];
 }
