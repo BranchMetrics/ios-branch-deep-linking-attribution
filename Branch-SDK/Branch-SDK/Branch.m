@@ -800,7 +800,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
       ^ void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
         self.asyncRequestCount--;
 
-        attrDetails = nil; // eDebug
         if (attrDetails.count) {
             self.preferenceHelper.appleSearchAdDetails = attrDetails;
         }
@@ -810,7 +809,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 @"Version3.1": @{
                     @"iad-adgroup-id":      @1234567890,
                     @"iad-adgroup-name":    @"AdGroupName",
-                    @"iad-attribution":     (id)kCFBooleanTrue, //@true,
+                    @"iad-attribution":     (id)kCFBooleanTrue,
                     @"iad-campaign-id":     @1234567890,
                     @"iad-campaign-name":   @"CampaignName",
                     @"iad-click-date":      [NSDate date],
@@ -826,8 +825,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
             self.preferenceHelper.appleSearchAdDetails = debugSearchAd;
         }
-
-
 
         // if there's another async attribution check in flight, don't continue with init
         if (self.asyncRequestCount > 0) { return; }
