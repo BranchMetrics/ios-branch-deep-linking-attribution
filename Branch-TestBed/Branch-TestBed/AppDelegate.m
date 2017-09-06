@@ -34,11 +34,11 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
     [branch setDebug];
 
-    // Check for Apple Search Ad attribution:
-    // [branch delayInitToCheckForSearchAds];
+    // Check for Apple Search Ad attribution (trade-off: slows down app startup):
+    [branch delayInitToCheckForSearchAds];
     
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
-    // [branch setAppleSearchAdsDebugMode];
+    [branch setAppleSearchAdsDebugMode];
     
     /**
      * // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
