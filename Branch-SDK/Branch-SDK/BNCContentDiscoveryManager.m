@@ -360,7 +360,7 @@ static NSString* const kUTTypeGeneric = @"public.content";
                      callback:(callbackWithUrl)callback
             spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
 
-    BNCSpotlightService* spotslightService = [[BNCSpotlightService alloc] init];
+    BNCSpotlightService* spotlightService = [[BNCSpotlightService alloc] init];
     
     BranchUniversalObject *universalObject = [[BranchUniversalObject alloc] initWithTitle:title];
     [universalObject setContentDescription:description];
@@ -373,27 +373,32 @@ static NSString* const kUTTypeGeneric = @"public.content";
     [universalObject setExpirationDate:expirationDate];
     
     if(publiclyIndexable) {
-        [spotslightService indexPubliclyWithBranchUniversalObject:universalObject
-                                                   linkProperties:nil callback:^(BranchUniversalObject * _Nullable universalObject, NSString * _Nullable url, NSError * _Nullable error) {
-                                                       if (callback) {
-                                                           callback(url, error);
-                                                       }
-                                                       else if (spotlightCallback) {
-                                                           spotlightCallback(url, url, error);
-                                                       }
-                                                   }];
+        [spotlightService indexWithBranchUniversalObject:universalObject
+                                          linkProperties:nil
+                                                callback:^(BranchUniversalObject * _Nullable universalObject,
+                                                           NSString * _Nullable url,
+                                                           NSError * _Nullable error) {
+                                                    if (callback) {
+                                                        callback(url, error);
+                                                    }
+                                                    else if (spotlightCallback) {
+                                                        spotlightCallback(url, url, error);
+                                                    }
+                                                }];
+
     } else {
-        [spotslightService indexPrivatelyWithBranchUniversalObject:universalObject
-                                                          callback:^(BranchUniversalObject * _Nullable universalObject, NSString * _Nullable url, NSError * _Nullable error) {
-                                                              if (callback) {
-                                                                  callback(url, error);
-                                                              }
-                                                              else if (spotlightCallback) {
-                                                                  spotlightCallback(url, url, error);
-                                                              }
- 
-                                                          }];
-            
+        [spotlightService indexWithBranchUniversalObject:universalObject
+                                          linkProperties:nil
+                                                callback:^(BranchUniversalObject * _Nullable universalObject,
+                                                           NSString * _Nullable url,
+                                                           NSError * _Nullable error) {
+                                                    if (callback) {
+                                                        callback(url, error);
+                                                    }
+                                                    else if (spotlightCallback) {
+                                                        spotlightCallback(url, url, error);
+                                                    }
+                                                }];
           }
 }
 

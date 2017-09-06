@@ -1474,11 +1474,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Index Branch Univeral Objects using SearchableItem of Apple's CoreSpotlight, where content indexed is private irrespective of Buo's ContentIndexMode value.
  @param universalObject Branch Universal Object is indexed on spotlight using meta data of spotlight
+ @param linkproperties  Branch Link Properties is used to generate short url
  @param completion Callback called when all Branch Universal Objects are indexed. Dynamic url generated and saved as spotlight identifier
  @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
-- (void)indexOnSpotlightUsingSearchableItem:(BranchUniversalObject*)universalObject
-                                 completion:(void (^) (BranchUniversalObject *universalObject, NSString * url, NSError *error))completion;
+- (void)indexOnSpotlightWithBranchUniversalObject:(BranchUniversalObject*)universalObject
+                                   linkProperties:(BranchLinkProperties*)linkProperties
+                                       completion:(void (^) (BranchUniversalObject *universalObject, NSString * url,NSError *error))completion;
 
 /**
  Index multiple Branch Univeral Objects using SearchableItem of Apple's CoreSpotlight, where content indexed is private irrespective of Buo's ContentIndexMode value.

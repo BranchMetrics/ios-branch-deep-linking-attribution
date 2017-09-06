@@ -1351,20 +1351,23 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self.contentDiscoveryManager indexContentWithTitle:title description:description canonicalId:canonicalId publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:linkParams expirationDate:expirationDate callback:nil spotlightCallback:spotlightCallback];
 }
 
-- (void)indexOnSpotlightUsingSearchableItem:(BranchUniversalObject*)universalObject
-                                 completion:(void (^) (BranchUniversalObject *universalObject, NSString * url,NSError *error))completion {
-    BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
+- (void)indexOnSpotlightWithBranchUniversalObject:(BranchUniversalObject*)universalObject
+                                   linkProperties:(BranchLinkProperties*)linkProperties
+                                       completion:(void (^) (BranchUniversalObject *universalObject, NSString * url,NSError *error))completion {
+    BNCSpotlightService *spotlightService = [[BNCSpotlightService alloc] init];
     
     if (!universalObject) {
         NSError* error = [NSError branchErrorWithCode:BNCInitError localizedMessage:@"Branch Universal Object is nil"];
         completion(universalObject,nil,error);
         return;
     } else {
-        [spotlight indexPrivatelyWithBranchUniversalObject:universalObject
-                                                  callback:^(BranchUniversalObject * _Nullable universalObject, NSString * _Nullable url, NSError * _Nullable error) {
-                                                      completion(universalObject,url,error);
-                                                  }];
-
+        [spotlightService indexWithBranchUniversalObject:universalObject
+                                          linkProperties:linkProperties
+                                                callback:^(BranchUniversalObject * _Nullable universalObject,
+                                                           NSString * _Nullable url,
+                                                           NSError * _Nullable error) {
+                                              completion(universalObject,url,error);
+                                          }];
     }
 }
 

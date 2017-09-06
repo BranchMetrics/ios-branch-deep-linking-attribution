@@ -368,13 +368,15 @@
                                            spotlightCallback:spotlightCallback];
 }
 
-- (void)listPrivatelyOnSpotlightWithCallback:(void (^)(NSString * _Nullable url,
-                                                       NSError * _Nullable error))completion {
+- (void)lisOnSpotlightWithLinkProperties:(BranchLinkProperties*_Nullable)linkproperties
+                                callback:(void (^_Nullable)(NSString * _Nullable url,
+                                                            NSError * _Nullable error))completion {
     
-    [[Branch getInstance] indexOnSpotlightUsingSearchableItem:self
-                                                   completion:^(BranchUniversalObject *universalObject, NSString *url, NSError *error) {
-                                                       completion(url,error);
-                                                   }];
+    [[Branch getInstance] indexOnSpotlightWithBranchUniversalObject:self
+                                                     linkProperties:linkproperties
+                                                         completion:^(BranchUniversalObject *universalObject, NSString *url, NSError *error) {
+                                                             completion(url,error);
+                                                         }];
 }
 
 - (void) removeFromSpotlightWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion{
