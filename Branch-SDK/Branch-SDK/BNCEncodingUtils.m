@@ -113,8 +113,14 @@
             string = NO;
         }
         else if ([obj isKindOfClass:[NSNumber class]]) {
-            value = [obj stringValue];
             string = NO;
+            if (obj == (id)kCFBooleanFalse)
+                value = @"false";
+            else
+            if (obj == (id)kCFBooleanTrue)
+                value = @"true";
+            else
+                value = [obj stringValue];
         }
         else if ([obj isKindOfClass:[NSNull class]]) {
             value = @"null";
