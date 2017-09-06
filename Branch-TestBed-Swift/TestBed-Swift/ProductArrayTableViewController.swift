@@ -48,14 +48,6 @@ class ProductArrayTableViewController: UITableViewController {
         return cell
     }
     
-    
-//    // Override to support conditional editing of the table view.
-//    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-//        // Return false if you do not want the specified item to be editable.
-//        return true
-//    }
-    
-    
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
@@ -69,19 +61,8 @@ class ProductArrayTableViewController: UITableViewController {
         }
     }
     
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//    }
-    
     
     // MARK: - Navigation
-    
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        if segue.identifier == "AddProduct" {
-//            let nc = segue.destination as! UINavigationController
-//            let vc = nc.topViewController as! ProductTableViewController
-//        }
-//    }
     
     @IBAction func unwindByCancelling(_ segue:UIStoryboardSegue) { }
     
@@ -100,31 +81,7 @@ class ProductArrayTableViewController: UITableViewController {
             
             array = DataStore.getProductsWithAddedProduct(productProperties as! [String : String])
             tableView.reloadData()
-//            let me = vc.productNameTextField.text
-//                    productProperties["name"] = productNameTextField.text
-//                    productProperties["brand"] = vc.productBrandTextField.text
-//                    productProperties["sku"] = vc.productSKUTextField.text
-//                    productProperties["quantity"] = vc.productQuantityTextField.text
-//                    productProperties["price"] = vc.productPriceTextField.text
-//                    productProperties["variant"] = vc.productVariantTextField.text
-//                    productProperties["category"] = vc.productCategoryTextField.text
-            
-            
-//            if let receivedValue = vc.textField.text {
-//                
-//                guard receivedValue.characters.count > 0 else {
-//                    return
-//                }
-//                
-//                guard !array.contains(receivedValue) else {
-//                    return
-//                }
-//                
-//                array.append(receivedValue)
-//                array.sort()
-//                tableView.reloadData()
-//                
-//            }
+
         }
     }
     

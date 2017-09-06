@@ -6,6 +6,7 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 // TODO: add $ios_has_app_url, $twitter_image_url to viewcontrollers
+// TODO: break this up into class-specific data access objects
 import Foundation
 
 struct DataStore {
@@ -126,6 +127,34 @@ struct DataStore {
         setLinkProperties(branchLinkProperties.dictionaryWithValues(forKeys: Array(linkPropertiesKeys)) as [String : AnyObject])
     }
     
+    static func getDefaultBranchEvent() -> BranchEvent {
+        let branchEvent = BranchEvent.standardEvent(BranchStandardEvent.viewContent)
+        
+        return branchEvent
+    }
+    
+    static func getDefaultUniversalObject() -> BranchUniversalObject {
+        let universalObject = BranchUniversalObject.init()
+        universalObject.contentMetadata.contentSchema = BranchContentSchema.commerceProduct
+        universalObject.title = "Nike Woolen Sox"
+        universalObject.canonicalIdentifier = "nike/5324"
+        universalObject.contentDescription = "Fine combed woolen sox for those who love your foot"
+        universalObject.contentMetadata.currency = BNCCurrencyUSD
+        universalObject.contentMetadata.price = 80.2
+        universalObject.contentMetadata.quantity = 5
+        universalObject.contentMetadata.sku = "110112467"
+        universalObject.contentMetadata.productName = "Woolen Sox"
+        universalObject.contentMetadata.productCategory = "Apparel & Accessories"
+        universalObject.contentMetadata.productBrand = "Nike"
+        universalObject.contentMetadata.productVariant = "Xl"
+        universalObject.contentMetadata.ratingAverage = 3.3
+        universalObject.contentMetadata.ratingCount = 5
+        universalObject.contentMetadata.ratingMaximum = 2.8
+        universalObject.contentMetadata.contentSchema = BranchContentSchema.commerceProduct
+        
+        return universalObject
+    }
+    
     static func getUniversalObject() -> [String: AnyObject] {
         if let value = userDefaults.dictionary(forKey: "universalObject") {
             return value as [String : AnyObject]
@@ -151,7 +180,6 @@ struct DataStore {
         universalObject["customData"] = params as AnyObject?
         
         userDefaults.set(universalObject, forKey: "universalObject")
-        
     }
     
     static func clearUniversalObject() {
@@ -202,8 +230,6 @@ struct DataStore {
                 }
             case "$content_type":
                 if let contentType = universalObject[key] {
-                    // TODO: Validate then remove commented code
-//                    branchUniversalObject.schemaData.contentSchema = contentType as? String
                     branchUniversalObject.contentMetadata.contentSchema = contentType as? BranchContentSchema
                 }
             case "$price":
@@ -219,14 +245,16 @@ struct DataStore {
             case "customData":
                 if let data = universalObject[key] as? [String: String] {
                         branchUniversalObject.contentMetadata.userInfo.addEntries(from: data)
-//                        branchUniversalObject.addMetadataKey(customDataKey, value: data[customDataKey]!)
                 }
             default:
                 branchUniversalObject.contentMetadata.userInfo.addEntries(from: [key : universalObject[key] as! String])
-//                branchUniversalObject.addMetadataKey(key, value: universalObject[key] as! String)
             }
         }
         return branchUniversalObject
+    }
+    
+    static func getBranchUniversalObjects() -> [BranchUniversalObject] {
+        return [getBranchUniversalObject()]
     }
     
     static func getRewardsBucket() -> String {
@@ -390,6 +418,41 @@ struct DataStore {
         userDefaults.removeObject(forKey: "CommerceEvent")
     }
     
+    // v2 commerce event function
+    static func getBranchEvent() -> BranchEvent {
+        let branchEvent = BranchEvent.standardEvent(BranchStandardEvent.viewContent)
+        let commerceEvent = getCommerceEvent() as! [String: String]
+        let defaults = getCommerceEventDefaults()
+        
+        branchEvent.transactionID = commerceEvent["transactionID"] != "" ? commerceEvent["transactionID"] : defaults["transactionID"]!
+        branchEvent.affiliation = commerceEvent["affiliation"] != "" ? commerceEvent["affiliation"] :  defaults["affiliation"]!
+        branchEvent.coupon = commerceEvent["coupon"] != "" ? commerceEvent["coupon"] : defaults["coupon"]!
+        branchEvent.currency = commerceEvent["currency"] != "" ? commerceEvent["currency"] : defaults["currency"]!
+        branchEvent.shipping = self.stringToNSDecimalNumber(with: commerceEvent["shipping"] != "" ? commerceEvent["shipping"]! : defaults["shipping"]!)
+        branchEvent.tax = self.stringToNSDecimalNumber(with: commerceEvent["tax"] != "" ? commerceEvent["tax"]! : defaults["tax"]!)
+        branchEvent.revenue = self.stringToNSDecimalNumber(with: commerceEvent["revenue"] != "" ? commerceEvent["revenue"]! : defaults["revenue"]!)
+        branchEvent.contentItems = [getDefaultUniversalObject()]
+        
+        return branchEvent
+    }
+    
+    // v2 commerce event function
+    static func setBranchEvent(_ branchEvent: BranchEvent) {
+        
+        let commerceEvent: [String: Any] = [
+            "transactionID": branchEvent.transactionID ?? "",
+            "affiliation": branchEvent.affiliation ?? "",
+            "coupon": branchEvent.coupon ?? "",
+            "currency": branchEvent.currency ?? "",
+            "shipping": "\(String(describing: branchEvent.shipping))",
+            "tax": "\(String(describing: branchEvent.tax))",
+            "revenue": "\(String(describing: branchEvent.revenue))"
+        ]
+        // self.setBNCProducts(branchEvent.products!)
+        self.setCommerceEvent(commerceEvent)
+    }
+    
+    // v1 commerce event function
     static func getBNCCommerceEvent() -> BNCCommerceEvent {
         let bncCommerceEvent = BNCCommerceEvent.init()
         let commerceEvent = getCommerceEvent() as! [String: String]
@@ -407,6 +470,7 @@ struct DataStore {
         return bncCommerceEvent
     }
     
+    // v1 commerce event function
     static func setBNCCommerceEvent(_ bncCommerceEvent: BNCCommerceEvent) {
         
         let commerceEvent: [String: Any] = [
@@ -452,8 +516,8 @@ struct DataStore {
     
     static func getBNCProducts() -> [BNCProduct] {
         let bncProduct = BNCProduct.init()
-        
         let products = self.getProducts()
+        
         if products.count > 0 {
             return products.map({
                 (product: [String: String]) -> BNCProduct in

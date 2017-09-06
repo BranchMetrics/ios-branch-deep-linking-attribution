@@ -200,8 +200,6 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
         shareBranchObject.keywords = [ "example", "short", "share", "link" ]
         shareBranchObject.contentDescription = "This is an example shared short link."
-        // TODO: Validate then remove commented code
-//        shareBranchObject.schemaData.userInfo["publicSlug"] = canonicalIdentifier
         shareBranchObject.contentMetadata.userInfo["publicSlug"] = canonicalIdentifier
         
         let shareLinkProperties = BranchLinkProperties()
@@ -754,13 +752,9 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         universalObject.title = "Big Bad Dog"
         universalObject.contentDescription = "This dog is big. And bad. Bad dog."
         universalObject.keywords = [ "big", "bad", "dog" ]
-        // TODO: Validate these changes work then delete the comments
         universalObject.contentMetadata.contentSchema = BranchContentSchema.commerceProduct
-//        universalObject.schemaData.contentSchema = BranchContentSchema.commerceProduct
         universalObject.contentMetadata.price = 10.00
-//        universalObject.schemaData.price = 10.00
         universalObject.contentMetadata.currency = BNCCurrencyUSD
-//        universalObject.schemaData.currency = BNCCurrencyUSD
 
         let event = BranchEvent.standardEvent(
             BranchStandardEvent.viewContent,

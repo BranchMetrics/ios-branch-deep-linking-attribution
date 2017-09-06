@@ -37,14 +37,6 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
         taxTextField.delegate = self
         revenueTextField.delegate = self
         
-//        transactionIDTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-//        affiliationTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-//        couponTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-//        currencyTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-//        shippingTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-//        taxTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-//        revenueTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        
         transactionIDTextField.placeholder = defaults["transactionID"]
         affiliationTextField.placeholder = defaults["affiliation"]
         couponTextField.placeholder = defaults["coupon"]
@@ -74,11 +66,6 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
         self.view.endEditing(true)
         return true
     }
-    
-//    func textFieldDidChange(_ textField: UITextField) {
-//        refreshDataStore()
-//        refreshControls()
-//    }
     
     @IBAction func resetAllValuesButtonTouchUpInside(_ sender: AnyObject) {
         clearControls()
