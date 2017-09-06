@@ -94,11 +94,11 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         self.tableView.tableFooterView = footerView;
     }
     
-    func applicationDidBecomeActive() {
+    @objc func applicationDidBecomeActive() {
         refreshEnabledButtons()
     }
     
-    func refreshEnabledButtons() {
+    @objc func refreshEnabledButtons() {
         var enableButtons = false
         
         if let clickedBranchLink = Branch.getInstance().getLatestReferringParams()["+clicked_branch_link"] as! Bool? {
@@ -200,7 +200,9 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
         shareBranchObject.keywords = [ "example", "short", "share", "link" ]
         shareBranchObject.contentDescription = "This is an example shared short link."
-        shareBranchObject.schemaData.userInfo["publicSlug"] = canonicalIdentifier;
+        // TODO: Validate then remove commented code
+//        shareBranchObject.schemaData.userInfo["publicSlug"] = canonicalIdentifier
+        shareBranchObject.contentMetadata.userInfo["publicSlug"] = canonicalIdentifier
         
         let shareLinkProperties = BranchLinkProperties()
         shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
@@ -230,7 +232,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
         shareBranchObject.keywords = [ "example", "short", "share", "link" ]
         shareBranchObject.contentDescription = "This is an example shared alias link."
-        shareBranchObject.addMetadataKey("publicSlug", value: canonicalIdentifier)
+        shareBranchObject.contentMetadata.userInfo.addEntries(from: ["publicSlug": canonicalIdentifier])
         
         let shareLinkProperties = BranchLinkProperties()
         shareLinkProperties.alias = alias
@@ -262,7 +264,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
         shareBranchObject.keywords = [ "example", "short", "share", "link" ]
         shareBranchObject.contentDescription = "This is an example shared alias link."
-        shareBranchObject.addMetadataKey("publicSlug", value: canonicalIdentifier)
+        shareBranchObject.contentMetadata.userInfo.addEntries(from: ["publicSlug": canonicalIdentifier])
         
         let shareLinkProperties = BranchLinkProperties()
         shareLinkProperties.alias = alias
@@ -752,9 +754,13 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
         universalObject.title = "Big Bad Dog"
         universalObject.contentDescription = "This dog is big. And bad. Bad dog."
         universalObject.keywords = [ "big", "bad", "dog" ]
-        universalObject.schemaData.contentSchema = BranchContentSchema.commerceProduct
-        universalObject.schemaData.price = 10.00
-        universalObject.schemaData.currency = BNCCurrencyUSD
+        // TODO: Validate these changes work then delete the comments
+        universalObject.contentMetadata.contentSchema = BranchContentSchema.commerceProduct
+//        universalObject.schemaData.contentSchema = BranchContentSchema.commerceProduct
+        universalObject.contentMetadata.price = 10.00
+//        universalObject.schemaData.price = 10.00
+        universalObject.contentMetadata.currency = BNCCurrencyUSD
+//        universalObject.schemaData.currency = BNCCurrencyUSD
 
         let event = BranchEvent.standardEvent(
             BranchStandardEvent.viewContent,

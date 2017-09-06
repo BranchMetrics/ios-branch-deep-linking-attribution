@@ -184,11 +184,11 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
         return toolbar
     }
     
-    func cancelPicking() {
+    @objc func cancelPicking() {
         currencyTextField.resignFirstResponder()
     }
     
-    func donePicking() {
+    @objc func donePicking() {
         self.currencyTextField.text = String(currencies[picker.selectedRow(inComponent: 0)].characters.prefix(3))
         self.currencyTextField.resignFirstResponder()
     }

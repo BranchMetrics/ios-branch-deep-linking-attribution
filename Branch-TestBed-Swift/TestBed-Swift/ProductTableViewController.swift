@@ -76,11 +76,11 @@ class ProductTableViewController: UITableViewController, UITextFieldDelegate, UI
         return toolbar
     }
     
-    func cancelPicking() {
+    @objc func cancelPicking() {
         productCategoryTextField.resignFirstResponder()
     }
     
-    func donePicking() {
+    @objc func donePicking() {
         self.productCategoryTextField.text = productCategories[picker.selectedRow(inComponent: 0)]
         self.productCategoryTextField.resignFirstResponder()
     }

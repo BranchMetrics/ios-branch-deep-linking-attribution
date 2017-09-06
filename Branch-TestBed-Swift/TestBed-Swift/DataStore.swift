@@ -180,7 +180,7 @@ struct DataStore {
             
             switch key {
             case "$canonical_identifier":
-                branchUniversalObject.canonicalIdentifier = universalObject[key] as! String
+                branchUniversalObject.canonicalIdentifier = universalObject[key] as? String
             case "$og_description":
                 if let description = universalObject[key] {
                     branchUniversalObject.contentDescription = description as? String
@@ -195,35 +195,35 @@ struct DataStore {
                     branchUniversalObject.imageUrl = imageURL as? String
                 }
             case "$keywords":
-                branchUniversalObject.keywords = universalObject[key] as! [AnyObject] as! [String]
+                branchUniversalObject.keywords = universalObject[key] as! [AnyObject] as? [String]
             case "$og_title":
                 if let title = universalObject[key] {
                     branchUniversalObject.title = title as? String
                 }
             case "$content_type":
                 if let contentType = universalObject[key] {
-                    branchUniversalObject.schemaData.contentSchema = contentType as? String
+                    // TODO: Validate then remove commented code
+//                    branchUniversalObject.schemaData.contentSchema = contentType as? String
+                    branchUniversalObject.contentMetadata.contentSchema = contentType as? BranchContentSchema
                 }
             case "$price":
                 if let price = universalObject[key] as? String {
-                    if let float_price = Float(price) {
-                        branchUniversalObject.price = CGFloat(float_price)
-                    } else {
-                        branchUniversalObject.price = 0.0
-                    }
+                    let formatter = NumberFormatter()
+                    formatter.generatesDecimalNumbers = true
+                    branchUniversalObject.contentMetadata.price = formatter.number(from: price) as? NSDecimalNumber ?? 0
                 }
             case "$currency":
                 if let currency = universalObject[key] as? String {
-                    branchUniversalObject.currency = currency
+                    branchUniversalObject.contentMetadata.currency = currency
                 }
             case "customData":
                 if let data = universalObject[key] as? [String: String] {
-                    for customDataKey in data.keys {
-                        branchUniversalObject.addMetadataKey(customDataKey, value: data[customDataKey]!)
-                    }
+                        branchUniversalObject.contentMetadata.userInfo.addEntries(from: data)
+//                        branchUniversalObject.addMetadataKey(customDataKey, value: data[customDataKey]!)
                 }
             default:
-                branchUniversalObject.addMetadataKey(key, value: universalObject[key] as! String)
+                branchUniversalObject.contentMetadata.userInfo.addEntries(from: [key : universalObject[key] as! String])
+//                branchUniversalObject.addMetadataKey(key, value: universalObject[key] as! String)
             }
         }
         return branchUniversalObject
@@ -410,13 +410,13 @@ struct DataStore {
     static func setBNCCommerceEvent(_ bncCommerceEvent: BNCCommerceEvent) {
         
         let commerceEvent: [String: Any] = [
-            "transactionID": bncCommerceEvent.transactionID,
-            "affiliation": bncCommerceEvent.affiliation,
-            "coupon": bncCommerceEvent.coupon,
-            "currency": bncCommerceEvent.currency,
-            "shipping": "\(bncCommerceEvent.shipping)",
-            "tax": "\(bncCommerceEvent.tax)",
-            "revenue": "\(bncCommerceEvent.revenue)"
+            "transactionID": bncCommerceEvent.transactionID ?? "",
+            "affiliation": bncCommerceEvent.affiliation ?? "",
+            "coupon": bncCommerceEvent.coupon ?? "",
+            "currency": bncCommerceEvent.currency ?? "",
+            "shipping": "\(String(describing: bncCommerceEvent.shipping))",
+            "tax": "\(String(describing: bncCommerceEvent.tax))",
+            "revenue": "\(String(describing: bncCommerceEvent.revenue))"
         ]
         self.setBNCProducts(bncCommerceEvent.products!)
         self.setCommerceEvent(commerceEvent)
@@ -492,8 +492,8 @@ struct DataStore {
                 "name": bncProduct.name ?? "",
                 "brand": bncProduct.brand ?? "",
                 "sku": bncProduct.sku ?? "",
-                "price": "\(bncProduct.price)" ,
-                "quantity": "\(bncProduct.quantity)" ,
+                "price": "\(String(describing: bncProduct.price))" ,
+                "quantity": "\(String(describing: bncProduct.quantity))" ,
                 "category": bncProduct.category ?? "",
                 "variant": bncProduct.variant ?? ""
             ]

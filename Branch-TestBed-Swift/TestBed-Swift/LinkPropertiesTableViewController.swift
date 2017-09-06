@@ -141,7 +141,7 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
         clearAllValuesButton.isEnabled = linkProperties.count > 0 ? true : false
     }
     
-    func switchhDidChangeState() {
+    @objc func switchhDidChangeState() {
         refreshLinkProperties()
     }
     

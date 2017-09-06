@@ -190,7 +190,7 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         return toolbar
     }
     
-    func donePicking() {
+    @objc func donePicking() {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd"
         let expirationDate = datePicker.date
@@ -212,7 +212,7 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         present(alert, animated: true, completion: nil);
     }
     
-    func switchhDidChangeState() {
+    @objc func switchhDidChangeState() {
         refreshUniversalObject()
     }
     
