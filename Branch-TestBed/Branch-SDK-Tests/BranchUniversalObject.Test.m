@@ -32,28 +32,28 @@
     BranchUniversalObject *buo = [BranchUniversalObject objectWithDictionary:dictionary];
     XCTAssert(buo);
 
-    XCTAssertEqualObjects(buo.schemaData.contentSchema,     BranchContentSchemaCommerceProduct);
-    XCTAssertEqual(buo.schemaData.quantity,                 2);
-    XCTAssertEqualObjects(buo.schemaData.price,             [NSDecimalNumber decimalNumberWithString:@"23.20"]);
-    XCTAssertEqualObjects(buo.schemaData.currency,          BNCCurrencyUSD);
-    XCTAssertEqualObjects(buo.schemaData.sku,               @"1994320302");
-    XCTAssertEqualObjects(buo.schemaData.productName,       @"my_product_name1");
-    XCTAssertEqualObjects(buo.schemaData.productBrand,      @"my_prod_Brand1");
-    XCTAssertEqualObjects(buo.schemaData.productCategory,   BNCProductCategoryBabyToddler);
-    XCTAssertEqualObjects(buo.schemaData.productVariant,    @"3T");
-    XCTAssertEqual(buo.schemaData.ratingAverage,            5);
-    XCTAssertEqual(buo.schemaData.ratingCount,              5);
-    XCTAssertEqual(buo.schemaData.ratingMaximum,            7);
-    XCTAssertEqualObjects(buo.schemaData.addressStreet,     @"Street_name1");
-    XCTAssertEqualObjects(buo.schemaData.addressCity,       @"city1");
-    XCTAssertEqualObjects(buo.schemaData.addressRegion,     @"Region1");
-    XCTAssertEqualObjects(buo.schemaData.addressCountry,    @"Country1");
-    XCTAssertEqualObjects(buo.schemaData.addressPostalCode, @"postal_code");
-    XCTAssertEqual(buo.schemaData.latitude,                 12.07);
-    XCTAssertEqual(buo.schemaData.longitude,                -97.5);
+    XCTAssertEqualObjects(buo.contentMetadata.contentSchema,     BranchContentSchemaCommerceProduct);
+    XCTAssertEqual(buo.contentMetadata.quantity,                 2);
+    XCTAssertEqualObjects(buo.contentMetadata.price,             [NSDecimalNumber decimalNumberWithString:@"23.20"]);
+    XCTAssertEqualObjects(buo.contentMetadata.currency,          BNCCurrencyUSD);
+    XCTAssertEqualObjects(buo.contentMetadata.sku,               @"1994320302");
+    XCTAssertEqualObjects(buo.contentMetadata.productName,       @"my_product_name1");
+    XCTAssertEqualObjects(buo.contentMetadata.productBrand,      @"my_prod_Brand1");
+    XCTAssertEqualObjects(buo.contentMetadata.productCategory,   BNCProductCategoryBabyToddler);
+    XCTAssertEqualObjects(buo.contentMetadata.productVariant,    @"3T");
+    XCTAssertEqual(buo.contentMetadata.ratingAverage,            5);
+    XCTAssertEqual(buo.contentMetadata.ratingCount,              5);
+    XCTAssertEqual(buo.contentMetadata.ratingMaximum,            7);
+    XCTAssertEqualObjects(buo.contentMetadata.addressStreet,     @"Street_name1");
+    XCTAssertEqualObjects(buo.contentMetadata.addressCity,       @"city1");
+    XCTAssertEqualObjects(buo.contentMetadata.addressRegion,     @"Region1");
+    XCTAssertEqualObjects(buo.contentMetadata.addressCountry,    @"Country1");
+    XCTAssertEqualObjects(buo.contentMetadata.addressPostalCode, @"postal_code");
+    XCTAssertEqual(buo.contentMetadata.latitude,                 12.07);
+    XCTAssertEqual(buo.contentMetadata.longitude,                -97.5);
     NSArray *array = @[@"my_img_caption1", @"my_img_caption_2"];
-    XCTAssertEqualObjects(buo.schemaData.imageCaptions,     array);
-    XCTAssertEqualObjects(buo.schemaData.userInfo,          @{@"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"});
+    XCTAssertEqualObjects(buo.contentMetadata.imageCaptions,     array);
+    XCTAssertEqualObjects(buo.contentMetadata.userInfo,          @{@"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"});
     XCTAssertEqualObjects(buo.title,                        @"My Content Title");
     XCTAssertEqualObjects(buo.canonicalIdentifier,          @"item/12345");
     XCTAssertEqualObjects(buo.canonicalUrl,                 @"https://branch.io/deepviews");
@@ -90,9 +90,9 @@
 - (void) testSchemaDescription {
     NSDictionary *d = [self mutableDictionaryFromBundleJSONWithKey:@"BranchUniversalObjectJSON"];
     BranchUniversalObject *b = [BranchUniversalObject objectWithDictionary:d];
-    NSString *s = b.schemaData.description;
+    NSString *s = b.contentMetadata.description;
     BNCTAssertEqualMaskedString(s,
-        @"<BranchSchemaData 0x**************** schema: COMMERCE_PRODUCT userData: 1 items>");
+        @"<BranchContentMetadata 0x**************** schema: COMMERCE_PRODUCT userData: 1 items>");
 }
 
 - (void) testBUODescription {
@@ -116,12 +116,12 @@
     buo.metadata = @{ @"Key1": @"Value1" };
     buo.automaticallyListOnSpotlight = YES;
 
-    XCTAssertEqualObjects(buo.schemaData.price, [NSDecimalNumber decimalNumberWithString:@"10.00"]);
-    XCTAssertEqualObjects(buo.schemaData.currency, BNCCurrencyUSD);
-    XCTAssertEqualObjects(buo.schemaData.contentSchema, @"Purchase");
+    XCTAssertEqualObjects(buo.contentMetadata.price, [NSDecimalNumber decimalNumberWithString:@"10.00"]);
+    XCTAssertEqualObjects(buo.contentMetadata.currency, BNCCurrencyUSD);
+    XCTAssertEqualObjects(buo.contentMetadata.contentSchema, @"Purchase");
     XCTAssertEqual(buo.indexLocally, YES);
     XCTAssertEqual(buo.indexPublicly, YES);
-    XCTAssertEqualObjects(buo.schemaData.userInfo, @{ @"Key1": @"Value1" } );
+    XCTAssertEqualObjects(buo.contentMetadata.userInfo, @{ @"Key1": @"Value1" } );
 
     XCTAssertEqual(buo.price, 10.00);
     XCTAssertEqualObjects(buo.currency, BNCCurrencyUSD);
@@ -130,8 +130,8 @@
     XCTAssertEqualObjects(buo.metadata, @{ @"Key1": @"Value1" });
     XCTAssertEqual(buo.automaticallyListOnSpotlight, YES);
 
-    buo.schemaData.userInfo = (NSMutableDictionary*) @{ @"Key2": @"Value2" };
-    buo.schemaData.userInfo[@"Key3"] = @"Value3";
+    buo.contentMetadata.userInfo = (NSMutableDictionary*) @{ @"Key2": @"Value2" };
+    buo.contentMetadata.userInfo[@"Key3"] = @"Value3";
     [buo addMetadataKey:@"Key4" value:@"Value4"];
     NSDictionary *d = @{
         @"Key2": @"Value2",
@@ -147,22 +147,22 @@
     NSDictionary *d = nil;
     BranchUniversalObject *buo = [BranchUniversalObject new];
 
-    buo.schemaData.userInfo = (id) @{};
+    buo.contentMetadata.userInfo = (id) @{};
     d = [NSDictionary new];
-    XCTAssertEqualObjects(buo.schemaData.userInfo, d);
+    XCTAssertEqualObjects(buo.contentMetadata.userInfo, d);
 
-    buo.schemaData.userInfo = (id) @{};
-    buo.schemaData.userInfo[@"a"] = @"b";
+    buo.contentMetadata.userInfo = (id) @{};
+    buo.contentMetadata.userInfo[@"a"] = @"b";
     d = @{ @"a": @"b" };
-    XCTAssertEqualObjects(buo.schemaData.userInfo, d);
+    XCTAssertEqualObjects(buo.contentMetadata.userInfo, d);
 
-    buo.schemaData.userInfo = [NSMutableDictionary dictionaryWithDictionary:@{@"1": @"2"}];
-    buo.schemaData.userInfo[@"3"] = @"4";
+    buo.contentMetadata.userInfo = [NSMutableDictionary dictionaryWithDictionary:@{@"1": @"2"}];
+    buo.contentMetadata.userInfo[@"3"] = @"4";
     d = @{
         @"1": @"2",
         @"3": @"4",
     };
-    XCTAssertEqualObjects(buo.schemaData.userInfo, d);
+    XCTAssertEqualObjects(buo.contentMetadata.userInfo, d);
 }
 
 - (void) testRegisterView {

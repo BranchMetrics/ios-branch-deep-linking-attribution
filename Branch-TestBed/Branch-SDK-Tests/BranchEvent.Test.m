@@ -54,27 +54,27 @@
     buo.indexLocally        = YES;
     buo.indexPublicly       = NO;
 
-    buo.schemaData.contentSchema    = BranchContentSchemaCommerceProduct;
-    buo.schemaData.quantity         = 2;
-    buo.schemaData.price            = [NSDecimalNumber decimalNumberWithString:@"23.2"];
-    buo.schemaData.currency         = BNCCurrencyUSD;
-    buo.schemaData.sku              = @"1994320302";
-    buo.schemaData.productName      = @"my_product_name1";
-    buo.schemaData.productBrand     = @"my_prod_Brand1";
-    buo.schemaData.productCategory  = BNCProductCategoryBabyToddler;
-    buo.schemaData.productVariant   = @"3T";
-    buo.schemaData.ratingAverage    = 5;
-    buo.schemaData.ratingCount      = 5;
-    buo.schemaData.ratingMaximum    = 7;
-    buo.schemaData.addressStreet    = @"Street_name1";
-    buo.schemaData.addressCity      = @"city1";
-    buo.schemaData.addressRegion    = @"Region1";
-    buo.schemaData.addressCountry   = @"Country1";
-    buo.schemaData.addressPostalCode= @"postal_code";
-    buo.schemaData.latitude         = 12.07;
-    buo.schemaData.longitude        = -97.5;
-    buo.schemaData.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
-    buo.schemaData.userInfo         = (NSMutableDictionary*) @{
+    buo.contentMetadata.contentSchema    = BranchContentSchemaCommerceProduct;
+    buo.contentMetadata.quantity         = 2;
+    buo.contentMetadata.price            = [NSDecimalNumber decimalNumberWithString:@"23.2"];
+    buo.contentMetadata.currency         = BNCCurrencyUSD;
+    buo.contentMetadata.sku              = @"1994320302";
+    buo.contentMetadata.productName      = @"my_product_name1";
+    buo.contentMetadata.productBrand     = @"my_prod_Brand1";
+    buo.contentMetadata.productCategory  = BNCProductCategoryBabyToddler;
+    buo.contentMetadata.productVariant   = @"3T";
+    buo.contentMetadata.ratingAverage    = 5;
+    buo.contentMetadata.ratingCount      = 5;
+    buo.contentMetadata.ratingMaximum    = 7;
+    buo.contentMetadata.addressStreet    = @"Street_name1";
+    buo.contentMetadata.addressCity      = @"city1";
+    buo.contentMetadata.addressRegion    = @"Region1";
+    buo.contentMetadata.addressCountry   = @"Country1";
+    buo.contentMetadata.addressPostalCode= @"postal_code";
+    buo.contentMetadata.latitude         = 12.07;
+    buo.contentMetadata.longitude        = -97.5;
+    buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
+    buo.contentMetadata.userInfo         = (NSMutableDictionary*) @{
         @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"
     };
 
@@ -198,27 +198,27 @@
     buo.indexLocally        = YES;
     buo.indexPublicly       = NO;
 
-    buo.schemaData.contentSchema    = BranchContentSchemaCommerceProduct;
-    buo.schemaData.quantity         = 2;
-    buo.schemaData.price            = [NSDecimalNumber decimalNumberWithString:@"23.2"];
-    buo.schemaData.currency         = BNCCurrencyUSD;
-    buo.schemaData.sku              = @"1994320302";
-    buo.schemaData.productName      = @"my_product_name1";
-    buo.schemaData.productBrand     = @"my_prod_Brand1";
-    buo.schemaData.productCategory  = BNCProductCategoryBabyToddler;
-    buo.schemaData.productVariant   = @"3T";
-    buo.schemaData.ratingAverage    = 5;
-    buo.schemaData.ratingCount      = 5;
-    buo.schemaData.ratingMaximum    = 7;
-    buo.schemaData.addressStreet    = @"Street_name1";
-    buo.schemaData.addressCity      = @"city1";
-    buo.schemaData.addressRegion    = @"Region1";
-    buo.schemaData.addressCountry   = @"Country1";
-    buo.schemaData.addressPostalCode= @"postal_code";
-    buo.schemaData.latitude         = 12.07;
-    buo.schemaData.longitude        = -97.5;
-    buo.schemaData.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
-    buo.schemaData.userInfo         = (NSMutableDictionary*) @{
+    buo.contentMetadata.contentSchema    = BranchContentSchemaCommerceProduct;
+    buo.contentMetadata.quantity         = 2;
+    buo.contentMetadata.price            = [NSDecimalNumber decimalNumberWithString:@"23.2"];
+    buo.contentMetadata.currency         = BNCCurrencyUSD;
+    buo.contentMetadata.sku              = @"1994320302";
+    buo.contentMetadata.productName      = @"my_product_name1";
+    buo.contentMetadata.productBrand     = @"my_prod_Brand1";
+    buo.contentMetadata.productCategory  = BNCProductCategoryBabyToddler;
+    buo.contentMetadata.productVariant   = @"3T";
+    buo.contentMetadata.ratingAverage    = 5;
+    buo.contentMetadata.ratingCount      = 5;
+    buo.contentMetadata.ratingMaximum    = 7;
+    buo.contentMetadata.addressStreet    = @"Street_name1";
+    buo.contentMetadata.addressCity      = @"city1";
+    buo.contentMetadata.addressRegion    = @"Region1";
+    buo.contentMetadata.addressCountry   = @"Country1";
+    buo.contentMetadata.addressPostalCode= @"postal_code";
+    buo.contentMetadata.latitude         = 12.07;
+    buo.contentMetadata.longitude        = -97.5;
+    buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
+    buo.contentMetadata.userInfo         = (NSMutableDictionary*) @{
         @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"
     };
 

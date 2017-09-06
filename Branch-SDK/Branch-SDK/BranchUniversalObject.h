@@ -60,9 +60,9 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionPoor;
 FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionUsed;
 FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbished;
 
-#pragma mark - BranchSchemaData
+#pragma mark - BranchContentMetadata
 
-@interface BranchSchemaData : NSObject
+@interface BranchContentMetadata : NSObject
 
 @property (nonatomic, strong, nullable) BranchContentSchema contentSchema;
 @property (nonatomic, assign)           double          quantity;
@@ -87,7 +87,7 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbis
 @property (nonatomic, copy, nonnull)    NSMutableDictionary<NSString*, NSString*> *userInfo;
 
 - (NSDictionary*_Nonnull) dictionary;
-+ (BranchSchemaData*_Nonnull) schemaDataWithDictionary:(NSDictionary*_Nullable)dictionary;
++ (BranchContentMetadata*_Nonnull) contentMetadataWithDictionary:(NSDictionary*_Nullable)dictionary;
 
 @end
 
@@ -109,19 +109,19 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbis
 @property (nonatomic, assign)           BOOL      indexLocally;     //!< Index on Spotlight.
 @property (nonatomic, assign)           BOOL      indexPublicly;    //!< Index on Google, Branch, etc.
 
-@property (nonatomic, strong, nonnull) BranchSchemaData *schemaData;
+@property (nonatomic, strong, nonnull) BranchContentMetadata *contentMetadata;
 
 ///@name Deprecated Properties
 
 @property (nonatomic, strong, nullable)
-    __attribute__((deprecated(("Use `BranchUniversalObject.schemaData.userInfo` instead."))))
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.userInfo` instead."))))
     NSDictionary *metadata;
 
 - (void)addMetadataKey:(nonnull NSString *)key value:(nonnull NSString *)value
-    __attribute__((deprecated(("Use `BranchUniversalObject.schemaData.userInfo` instead."))));
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.userInfo` instead."))));
 
 @property (nonatomic, strong, nullable)
-    __attribute__((deprecated(("Use `BranchUniversalObject.schemaData.contentSchema` instead."))))
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.contentSchema` instead."))))
     NSString *type;
 
 @property (nonatomic, assign)
@@ -133,15 +133,15 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbis
     NSString *spotlightIdentifier;
 
 @property (nonatomic, assign)
-    __attribute__((deprecated(("Use `BranchUniversalObject.schemaData.price` instead."))))
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.price` instead."))))
     CGFloat price;
 
 @property (nonatomic, strong, nullable)
-    __attribute__((deprecated(("Use `BranchUniversalObject.schemaData.currency` instead."))))
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.currency` instead."))))
     NSString *currency;
 
 @property (nonatomic, assign)
-    __attribute__((deprecated(("Use `BranchUniversalObject.schemaData.indexLocally` instead."))))
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.indexLocally` instead."))))
     BOOL automaticallyListOnSpotlight;
 
 

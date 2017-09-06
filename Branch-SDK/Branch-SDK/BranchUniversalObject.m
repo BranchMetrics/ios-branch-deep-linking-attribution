@@ -53,15 +53,15 @@ BranchProductCondition _Nonnull BranchProductConditionPoor          = @"POOR";
 BranchProductCondition _Nonnull BranchProductConditionUsed          = @"USED";
 BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBISHED";
 
-#pragma mark - BranchSchemaData
+#pragma mark - BranchContentMetadata
 
-@interface BranchSchemaData () {
+@interface BranchContentMetadata () {
     NSMutableArray      *_imageCaptions;
     NSMutableDictionary *_userInfo;
 }
 @end
 
-@implementation BranchSchemaData
+@implementation BranchContentMetadata
 
 - (NSDictionary*_Nonnull) dictionary {
     NSMutableDictionary*dictionary = [NSMutableDictionary new];
@@ -96,8 +96,8 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     return dictionary;
 }
 
-+ (BranchSchemaData*_Nonnull) schemaDataWithDictionary:(NSDictionary*_Nullable)dictionary {
-    BranchSchemaData*object = [BranchSchemaData new];
++ (BranchContentMetadata*_Nonnull) contentMetadataWithDictionary:(NSDictionary*_Nullable)dictionary {
+    BranchContentMetadata*object = [BranchContentMetadata new];
     if (!dictionary) return object;
 
     #define BNCFieldDefinesObjectFromDictionary
@@ -180,40 +180,40 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 #pragma mark - Deprecated Fields
 
 - (NSDictionary *)metadata {
-    return self.schemaData.userInfo;
+    return self.contentMetadata.userInfo;
 }
 
 - (void) setMetadata:(NSDictionary *)metadata {
-    self.schemaData.userInfo = (NSMutableDictionary*) metadata;
+    self.contentMetadata.userInfo = (NSMutableDictionary*) metadata;
 }
 
 - (void)addMetadataKey:(NSString *)key value:(NSString *)value {
-    if (key) [self.schemaData.userInfo setValue:value forKey:key];
+    if (key) [self.contentMetadata.userInfo setValue:value forKey:key];
 }
 
 - (CGFloat) price {
-    return [self.schemaData.price floatValue];
+    return [self.contentMetadata.price floatValue];
 }
 
 - (void) setPrice:(CGFloat)price {
     NSString *string = [NSString stringWithFormat:@"%f", price];
-    self.schemaData.price = [NSDecimalNumber decimalNumberWithString:string];
+    self.contentMetadata.price = [NSDecimalNumber decimalNumberWithString:string];
 }
 
 - (NSString*) currency {
-    return self.schemaData.currency;
+    return self.contentMetadata.currency;
 }
 
 - (void) setCurrency:(NSString *)currency {
-    self.schemaData.currency = currency;
+    self.contentMetadata.currency = currency;
 }
 
 - (NSString*) type {
-    return self.schemaData.contentSchema;
+    return self.contentMetadata.contentSchema;
 }
 
 - (void) setType:(NSString*)type {
-    self.schemaData.contentSchema = type;
+    self.contentMetadata.contentSchema = type;
 }
 
 - (BranchContentIndexMode) contentIndexMode {
@@ -240,9 +240,9 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 
 #pragma mark - Setters / Getters / Standard Methods
 
-- (BranchSchemaData*) schemaData {
-    if (!_schemaData) _schemaData = [BranchSchemaData new];
-    return _schemaData;
+- (BranchContentMetadata*) contentMetadata {
+    if (!_contentMetadata) _contentMetadata = [BranchContentMetadata new];
+    return _contentMetadata;
 }
 
 - (NSString *)description {
@@ -264,8 +264,8 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
         self.title,
         self.contentDescription,
         self.imageUrl,
-        self.schemaData.userInfo,
-        self.schemaData.contentSchema,
+        self.contentMetadata.userInfo,
+        self.contentMetadata.contentSchema,
         self.indexLocally,
         self.indexPublicly,
         self.keywords,
@@ -298,7 +298,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 }
 
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
-    if (state) [self.schemaData.userInfo addEntriesFromDictionary:state];
+    if (state) [self.contentMetadata.userInfo addEntriesFromDictionary:state];
     [[BranchEvent customEventWithName:action contentItem:self] logEvent];
 
     // Maybe list on spotlight --
@@ -511,7 +511,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 }
 
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback {
-    NSMutableDictionary *metadataAndProperties = [self.schemaData.userInfo mutableCopy];
+    NSMutableDictionary *metadataAndProperties = [self.contentMetadata.userInfo mutableCopy];
     if (self.canonicalIdentifier) {
         metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER] = self.canonicalIdentifier;
     }
@@ -524,7 +524,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
                                                 thumbnailUrl:[NSURL URLWithString:self.imageUrl]
                                                  canonicalId:self.canonicalIdentifier
                                                   linkParams:metadataAndProperties.copy
-                                                        type:self.schemaData.contentSchema
+                                                        type:self.contentMetadata.contentSchema
                                            publiclyIndexable:self.indexPublicly
                                                     keywords:[NSSet setWithArray:self.keywords]
                                               expirationDate:self.expirationDate
@@ -568,7 +568,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     BranchUniversalObject *universalObject = [[BranchUniversalObject alloc] init];
     
     // Build BranchUniversalObject base properties
-    universalObject.schemaData.userInfo = [dictionary copy];
+    universalObject.contentMetadata.userInfo = [dictionary copy];
     if (dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER]) {
         universalObject.canonicalIdentifier = dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER];
     }
@@ -596,14 +596,14 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
         universalObject.keywords = dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS];
     }
     if (dictionary[BNCPurchaseAmount]) {
-        universalObject.schemaData.price = [NSDecimalNumber decimalNumberWithString:dictionary[BNCPurchaseAmount]];
+        universalObject.contentMetadata.price = [NSDecimalNumber decimalNumberWithString:dictionary[BNCPurchaseAmount]];
     }
     if (dictionary[BNCPurchaseCurrency]) {
-        universalObject.schemaData.currency = dictionary[BNCPurchaseCurrency];
+        universalObject.contentMetadata.currency = dictionary[BNCPurchaseCurrency];
     }
     
     if (dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE]) {
-        universalObject.schemaData.contentSchema = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE];
+        universalObject.contentMetadata.contentSchema = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE];
     }
     return universalObject;
 }
@@ -619,10 +619,10 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     temp[BRANCH_LINK_DATA_KEY_LOCALLY_INDEXABLE]   = [NSNumber numberWithBool:self.indexLocally];
     [self safeSetValue:self.keywords forKey:BRANCH_LINK_DATA_KEY_KEYWORDS onDict:temp];
     [self safeSetValue:@(1000 * [self.expirationDate timeIntervalSince1970]) forKey:BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE onDict:temp];
-    [self safeSetValue:self.schemaData.contentSchema forKey:BRANCH_LINK_DATA_KEY_CONTENT_TYPE onDict:temp];
-    [self safeSetValue:self.schemaData.currency forKey:BNCPurchaseCurrency onDict:temp];
-    temp[BNCPurchaseAmount] = self.schemaData.price;
-    [temp addEntriesFromDictionary:[self.schemaData.userInfo copy]];
+    [self safeSetValue:self.contentMetadata.contentSchema forKey:BRANCH_LINK_DATA_KEY_CONTENT_TYPE onDict:temp];
+    [self safeSetValue:self.contentMetadata.currency forKey:BNCPurchaseCurrency onDict:temp];
+    temp[BNCPurchaseAmount] = self.contentMetadata.price;
+    [temp addEntriesFromDictionary:[self.contentMetadata.userInfo copy]];
     return [temp copy];
 }
 
@@ -670,8 +670,8 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 
     #include "BNCFieldDefines.h"
 
-    BranchSchemaData *data = [BranchSchemaData schemaDataWithDictionary:dictionary];
-    object.schemaData = data;
+    BranchContentMetadata *data = [BranchContentMetadata contentMetadataWithDictionary:dictionary];
+    object.contentMetadata = data;
     
     return object;
 }
@@ -696,8 +696,8 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 
     #include "BNCFieldDefines.h"
 
-    NSDictionary *schemaDictionary = [self.schemaData dictionary];
-    if (schemaDictionary) [dictionary addEntriesFromDictionary:schemaDictionary];
+    NSDictionary *contentDictionary = [self.contentMetadata dictionary];
+    if (contentDictionary.count) [dictionary addEntriesFromDictionary:contentDictionary];
 
     return dictionary;
 }
