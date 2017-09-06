@@ -1,5 +1,12 @@
 Branch iOS SDK Change Log
 
+- v0.18.1
+  * Update Apple search ads mock-up for testing and backend (GH-#682,#706).
+    - Encode JSON boolean true as 'true' vs. '1'.
+    - Updated Apple search ad dictionary for testing.
+    - Testing notes: Remove the app from the device, then run the app. The first run
+      will return a 3rd party link for Apple Search Ads.
+
 - v0.18.0
   * Branch links opened via Air Drop now open correctly (GH-#699,#701).
     - Testing notes:  Test this heavily on all the iOS versions, and test opening links when app is
