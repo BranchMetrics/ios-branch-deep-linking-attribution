@@ -7,6 +7,8 @@ Branch iOS SDK Change Log
     some language other than english. When you run the app you'll see country
     and language reported as the language you selected.
 
+  * Getting the user agent in iOS 7 would stall initialization sometimes.
+
 - v0.18.1
   * Update Apple search ads mock-up for testing and backend (GH-#682,#706).
     - Encode JSON boolean true as 'true' vs. '1'.
