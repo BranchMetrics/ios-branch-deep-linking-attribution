@@ -1,5 +1,21 @@
 Branch iOS SDK Change Log
 
+- v0.18.2
+  * Language and locale were reported wrong (GH-#707).
+  - Initializing the log too early made the language bundles load in the wrong order.
+  - Testing notes: In the TestBed scheme, change the system and app language to
+    some language other than english. When you run the app you'll see country
+    and language reported as the language you selected.
+
+  * Getting the user agent in iOS 7 would stall initialization sometimes.
+
+- v0.18.1
+  * Update Apple search ads mock-up for testing and backend (GH-#682,#706).
+    - Encode JSON boolean true as 'true' vs. '1'.
+    - Updated Apple search ad dictionary for testing.
+    - Testing notes: Remove the app from the device, then run the app. The first run
+      will return a 3rd party link for Apple Search Ads.
+
 - v0.18.0
   * Branch links opened via Air Drop now open correctly (GH-#699,#701).
     - Testing notes:  Test this heavily on all the iOS versions, and test opening links when app is

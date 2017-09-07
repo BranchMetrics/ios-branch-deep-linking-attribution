@@ -118,13 +118,6 @@ void ForceCategoriesToLoad(void) {
 
 #pragma mark - GetInstance methods
 
-+ (void) load {
-    if (self != [Branch self])
-        return;
-    ForceCategoriesToLoad();
-    [self openLog];
-}
-
 static NSURL* bnc_logURL = nil;
 
 + (void) openLog {
@@ -143,7 +136,7 @@ static NSURL* bnc_logURL = nil;
             // Try loading from the Info.plist
             NSString *logLevelString = [[NSBundle mainBundle] infoDictionary][@"BranchLogLevel"];
             if ([logLevelString isKindOfClass:[NSString class]]) {
-                BNCLogLevel logLevel = BNBLogLevelFromString(logLevelString);
+                BNCLogLevel logLevel = BNCLogLevelFromString(logLevelString);
                 BNCLogSetDisplayLevel(logLevel);
             }
 
@@ -160,6 +153,18 @@ static NSURL* bnc_logURL = nil;
 
 + (void) closeLog {
     BNCLogCloseLogFile();
+}
+
+void BranchClassInitializeLog(void);
+void BranchClassInitializeLog(void) {
+    [Branch openLog];
+}
+
++ (void) load {
+    static dispatch_once_t onceToken = 0;
+    dispatch_once(&onceToken, ^{
+        BNCLogSetClientInitializeFunction(BranchClassInitializeLog);
+    });
 }
 
 + (Branch *) getTestInstance {
@@ -797,33 +802,34 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     self.asyncRequestCount++;
 
     void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) =
-      ^void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
+      ^ void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
         self.asyncRequestCount--;
 
-        if (attrDetails && [attrDetails count]) {
+        if (attrDetails.count) {
             self.preferenceHelper.appleSearchAdDetails = attrDetails;
         }
         else if (self.searchAdsDebugMode) {
-            NSMutableDictionary *testInfo = [[NSMutableDictionary alloc] init];
 
-            NSMutableDictionary *testDetails = [[NSMutableDictionary alloc] init];
-            [testDetails setObject:[NSNumber numberWithBool:YES] forKey:@"iad-attribution"];
-            [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-campaign-id"];
-            [testDetails setObject:@"DebugAppleSearchAdsCampaignName" forKey:@"iad-campaign-name"];
-            [testDetails setObject:@"2016-09-09T01:33:17Z" forKey:@"iad-click-date"];
-            [testDetails setObject:@"2016-09-09T01:33:17Z" forKey:@"iad-conversion-date"];
-            [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-creative-id"];
-            [testDetails setObject:@"CreativeName" forKey:@"iad-creative-name"];
-            [testDetails setObject:[NSNumber numberWithInteger:1234567890] forKey:@"iad-lineitem-id"];
-            [testDetails setObject:@"LineName" forKey:@"iad-lineitem-name"];
-            [testDetails setObject:@"OrgName" forKey:@"iad-org-name"];
+            NSDictionary *debugSearchAd = @{
+                @"Version3.1": @{
+                    @"iad-adgroup-id":      @1234567890,
+                    @"iad-adgroup-name":    @"AdGroupName",
+                    @"iad-attribution":     (id)kCFBooleanTrue,
+                    @"iad-campaign-id":     @1234567890,
+                    @"iad-campaign-name":   @"CampaignName",
+                    @"iad-click-date":      [NSDate date],
+                    @"iad-conversion-date": [NSDate date],
+                    @"iad-creative-id":     @1234567890,
+                    @"iad-creative-name":   @"CreativeName",
+                    @"iad-keyword":         @"Keyword",
+                    @"iad-lineitem-id":     @1234567890,
+                    @"iad-lineitem-name":   @"LineName",
+                    @"iad-org-name":        @"OrgName"
+                }
+            };
 
-            [testInfo setObject:testDetails forKey:@"Version3.1"];
-
-            self.preferenceHelper.appleSearchAdDetails = testInfo;
+            self.preferenceHelper.appleSearchAdDetails = debugSearchAd;
         }
-
-
 
         // if there's another async attribution check in flight, don't continue with init
         if (self.asyncRequestCount > 0) { return; }
@@ -835,7 +841,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         });
     };
 
-    ((void (*)(id, SEL, void (^ __nullable)(NSDictionary *__nullable attrDetails, NSError * __nullable error)))[sharedClientInstance methodForSelector:requestAttribution])(sharedClientInstance, requestAttribution, completionBlock);
+    ((void (*)(id, SEL, void (^ __nullable)(NSDictionary *__nullable attrDetails, NSError * __nullable error)))
+        [sharedClientInstance methodForSelector:requestAttribution])(sharedClientInstance, requestAttribution, completionBlock);
 
     return YES;
 }
@@ -1789,7 +1796,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         NSURLComponents *URLComponents = [NSURLComponents componentsWithString:urlstring];
         for (NSURLQueryItem*item in URLComponents.queryItems) {
             if ([item.name isEqualToString:@"BranchLogLevel"]) {
-                BNCLogLevel logLevel = BNBLogLevelFromString(item.value);
+                BNCLogLevel logLevel = BNCLogLevelFromString(item.value);
                 [[NSUserDefaults standardUserDefaults]
                     setObject:[NSNumber numberWithInteger:logLevel]
                         forKey:BNCLogLevelKey];
