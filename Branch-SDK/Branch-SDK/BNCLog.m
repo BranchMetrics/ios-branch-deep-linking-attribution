@@ -46,6 +46,13 @@ void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...) {
     BNCLogInternalErrorFunction(__LINE__, __VA_ARGS__)
 
 
+inline static void BNCLogInitializeClient_Internal() {
+    BNCLogClientInitializeFunctionPtr initFunction = BNCLogSetClientInitializeFunction(NULL);
+    if (initFunction) {
+        initFunction();
+    }
+}
+
 #pragma mark - Default Output Functions
 
 static int bnc_LogDescriptor = -1;
@@ -477,6 +484,7 @@ BNCLogLevel BNCLogDisplayLevel() {
 }
 
 void BNCLogSetDisplayLevel(BNCLogLevel level) {
+    BNCLogInitializeClient_Internal();
     dispatch_async(bnc_LogQueue, ^{
         bnc_LogDisplayLevel = level;
     });
@@ -499,7 +507,7 @@ NSString*const BNCLogStringFromLogLevel(BNCLogLevel level) {
     return bnc_logLevelStrings[level];
 }
 
-BNCLogLevel BNBLogLevelFromString(NSString*string) {
+BNCLogLevel BNCLogLevelFromString(NSString*string) {
     if (!string) return BNCLogLevelNone;
     for (NSInteger i = 0; i < _countof(bnc_logLevelStrings); ++i) {
         if ([bnc_logLevelStrings[i] isEqualToString:string]) {
@@ -510,6 +518,19 @@ BNCLogLevel BNBLogLevelFromString(NSString*string) {
         return BNCLogLevelDebugSDK;
     }
     return BNCLogLevelNone;
+}
+
+#pragma mark - Client Initialization Function
+
+#include "stdatomic.h"
+static _Atomic(BNCLogClientInitializeFunctionPtr) bnc_LogClientInitializeFunctionPtr = (BNCLogClientInitializeFunctionPtr) 0;
+
+extern BNCLogClientInitializeFunctionPtr _Null_unspecified BNCLogSetClientInitializeFunction(
+        BNCLogClientInitializeFunctionPtr _Nullable clientInitializationFunction
+    ) {
+    BNCLogClientInitializeFunctionPtr lastPtr =
+        atomic_exchange(&bnc_LogClientInitializeFunctionPtr, clientInitializationFunction);
+    return lastPtr;
 }
 
 #pragma mark - Break Points
@@ -582,6 +603,7 @@ void BNCLogWriteMessageFormat(
         NSString *_Nullable message,
         ...
     ) {
+    BNCLogInitializeClient_Internal();
     if (!file) file = "";
     if (!message) message = @"<nil>";
     if (![message isKindOfClass:[NSString class]]) {
