@@ -36,6 +36,7 @@
 @property (atomic, copy, readonly) NSString         *applicationVersion;
 @property (atomic, assign, readonly) CGFloat        screenScale;
 @property (atomic, copy,   readonly) NSString*      adId;
+@property (atomic, assign, readonly) BOOL           unidentifiedDevice;
 
 //----------Methods----------------//
 + (BNCDeviceInfo *)getInstance;

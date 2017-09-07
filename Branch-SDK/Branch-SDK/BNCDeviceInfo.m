@@ -125,6 +125,10 @@
     }
 }
 
+- (BOOL) unidentifiedDevice {
+    return (self.vendorId == nil && self.adId == nil);
+}
+
 + (NSString*) bnc_country {
 
     NSString *country = nil;
@@ -325,6 +329,7 @@
     addDouble(screenScale,          screen_dpi);
     addNumber(screenHeight,         screen_height);
     addNumber(screenWidth,          screen_width);
+    addBoolean(unidentifiedDevice,  unidentified_device);
 
     #include "BNCFieldDefines.h"
 
