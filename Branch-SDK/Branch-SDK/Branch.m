@@ -118,13 +118,6 @@ void ForceCategoriesToLoad(void) {
 
 #pragma mark - GetInstance methods
 
-+ (void) load {
-    if (self != [Branch self])
-        return;
-    ForceCategoriesToLoad();
-    [self openLog];
-}
-
 static NSURL* bnc_logURL = nil;
 
 + (void) openLog {
@@ -143,7 +136,7 @@ static NSURL* bnc_logURL = nil;
             // Try loading from the Info.plist
             NSString *logLevelString = [[NSBundle mainBundle] infoDictionary][@"BranchLogLevel"];
             if ([logLevelString isKindOfClass:[NSString class]]) {
-                BNCLogLevel logLevel = BNBLogLevelFromString(logLevelString);
+                BNCLogLevel logLevel = BNCLogLevelFromString(logLevelString);
                 BNCLogSetDisplayLevel(logLevel);
             }
 
@@ -160,6 +153,18 @@ static NSURL* bnc_logURL = nil;
 
 + (void) closeLog {
     BNCLogCloseLogFile();
+}
+
+void BranchClassInitializeLog(void);
+void BranchClassInitializeLog(void) {
+    [Branch openLog];
+}
+
++ (void) load {
+    static dispatch_once_t onceToken = 0;
+    dispatch_once(&onceToken, ^{
+        BNCLogSetClientInitializeFunction(BranchClassInitializeLog);
+    });
 }
 
 + (Branch *) getTestInstance {
@@ -1773,7 +1778,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         NSURLComponents *URLComponents = [NSURLComponents componentsWithString:urlstring];
         for (NSURLQueryItem*item in URLComponents.queryItems) {
             if ([item.name isEqualToString:@"BranchLogLevel"]) {
-                BNCLogLevel logLevel = BNBLogLevelFromString(item.value);
+                BNCLogLevel logLevel = BNCLogLevelFromString(item.value);
                 [[NSUserDefaults standardUserDefaults]
                     setObject:[NSNumber numberWithInteger:logLevel]
                         forKey:BNCLogLevelKey];
