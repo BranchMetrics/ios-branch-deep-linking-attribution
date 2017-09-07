@@ -226,19 +226,19 @@
             return brn_browserUserAgentString;
         }
 
-        //  Different case for iOS 7.0:
-        if ([UIDevice currentDevice].systemVersion.floatValue  < 8.0) {
-            BNCLogDebugSDK(@"Getting iOS 7 UserAgent.");
-            dispatch_sync(dispatch_get_main_queue(), ^ {
-                setBrowserUserAgent();
-            });
-            BNCLogDebugSDK(@"Got iOS 7 UserAgent.");            
-            return brn_browserUserAgentString;
-        }
+    }
+
+    //  Different case for iOS 7.0:
+    if ([UIDevice currentDevice].systemVersion.floatValue  < 8.0) {
+        BNCLogDebugSDK(@"Getting iOS 7 UserAgent.");
+        dispatch_sync(dispatch_get_main_queue(), ^ {
+            setBrowserUserAgent();
+        });
+        BNCLogDebugSDK(@"Got iOS 7 UserAgent.");            
+        return browserUserAgent();
     }
 
     //	Wait and yield to prevent deadlock:
-
     int retries = 10;
     int64_t timeoutDelta = (dispatch_time_t)((long double)NSEC_PER_SEC * (long double)0.100);
     while (!browserUserAgent() && retries > 0) {
