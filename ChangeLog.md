@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+- v0.18.3
+  * Fixed query string parsing for iOS 7 and added tests.
+
 - v0.18.2
   * Language and locale were reported wrong (GH-#707).
   - Initializing the log too early made the language bundles load in the wrong order.
