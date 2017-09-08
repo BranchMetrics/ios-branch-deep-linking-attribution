@@ -1774,10 +1774,10 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
     if (self.preferenceHelper.externalIntentURI.length)
         urlstring = self.preferenceHelper.externalIntentURI;
 
-    if (urlstring) {
-        NSURLComponents *URLComponents = [NSURLComponents componentsWithString:urlstring];
-        for (NSURLQueryItem*item in URLComponents.queryItems) {
-            if ([item.name isEqualToString:@"BranchLogLevel"]) {
+    if (urlstring.length) {
+        NSArray<BNCKeyValue*> *queryItems = [BNCEncodingUtils queryItems:[NSURL URLWithString:urlstring]];
+        for (BNCKeyValue*item in queryItems) {
+            if ([item.key isEqualToString:@"BranchLogLevel"]) {
                 BNCLogLevel logLevel = BNCLogLevelFromString(item.value);
                 [[NSUserDefaults standardUserDefaults]
                     setObject:[NSNumber numberWithInteger:logLevel]

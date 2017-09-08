@@ -487,4 +487,94 @@
     XCTAssertEqualObjects(data, [NSData dataWithBytes:stringShortShort2Bytes length:1]);
 }
 
+- (void) testPercentDecoding {
+
+    NSString *s = nil;
+    s = [BNCEncodingUtils stringByPercentDecodingString:nil];
+    XCTAssert(s == nil);
+
+    NSArray* tests = @[
+        @"",
+        @"",
+
+        @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+
+        @"-._~",
+        @"-._~",
+
+        @"one%20two",
+        @"one two",
+
+        // @"one+two",
+        // @"one two",
+
+        @"one%2Btwo",
+        @"one+two",
+
+        @"%21%23%24%26%27%28%29%2A%2B%2C%3A%3B%3D%40%5B%5D",
+        @"!#$&'()*+,:;=@[]",
+    ];
+
+    for (int i = 0; i < tests.count; i+=2) {
+        NSString *result = [BNCEncodingUtils stringByPercentDecodingString:tests[i]];
+        XCTAssertEqualObjects(result, tests[i+1]);
+    }
+}
+
+- (void) testQueryItems {
+
+    NSURL *URL = nil;
+    NSArray<BNCKeyValue*>* items = nil;
+    NSArray<BNCKeyValue*>* expected = nil;
+
+    items = [BNCEncodingUtils queryItems:URL];
+    XCTAssert(items != nil  && items.count == 0);
+
+    URL = [NSURL URLWithString:@"http://example.com/thus?a=1&a=2&b=3"];
+    items = [BNCEncodingUtils queryItems:URL];
+    expected = @[ [BNCKeyValue key:@"a" value:@"1"], [BNCKeyValue key:@"a" value:@"2"], [BNCKeyValue key:@"b" value:@"3"] ];
+    XCTAssertEqualObjects(items, expected);
+
+    URL = [NSURL URLWithString:@"http://example.com/thus"];
+    items = [BNCEncodingUtils queryItems:URL];
+    expected = @[ ];
+    XCTAssertEqualObjects(items, expected);
+
+    URL = [NSURL URLWithString:@"http://example.com/thus?"];
+    items = [BNCEncodingUtils queryItems:URL];
+    expected = @[ ];
+    XCTAssertEqualObjects(items, expected);
+
+    URL = [NSURL URLWithString:@"http://example.com/thus?="];
+    items = [BNCEncodingUtils queryItems:URL];
+    expected = @[ ];
+    XCTAssertEqualObjects(items, expected);
+
+    URL = [NSURL URLWithString:@"http://example.com/thus?a="];
+    items = [BNCEncodingUtils queryItems:URL];
+    expected = @[ [BNCKeyValue key:@"a" value:@""] ];
+    XCTAssertEqualObjects(items, expected);
+
+    URL = [NSURL URLWithString:@"http://example.com/thus?=1"];
+    items = [BNCEncodingUtils queryItems:URL];
+    expected = @[ [BNCKeyValue key:@"" value:@"1"] ];
+    XCTAssertEqualObjects(items, expected);
+
+    URL = [NSURL URLWithString:@"http://example.com/thus?a=1&"];
+    items = [BNCEncodingUtils queryItems:URL];
+    expected = @[ [BNCKeyValue key:@"a" value:@"1"] ];
+    XCTAssertEqualObjects(items, expected);
+
+    URL = [NSURL URLWithString:@"http://example.com/thus?a=1&&b=2"];
+    items = [BNCEncodingUtils queryItems:URL];
+    expected = @[ [BNCKeyValue key:@"a" value:@"1"], [BNCKeyValue key:@"b" value:@"2"] ];
+    XCTAssertEqualObjects(items, expected);
+
+    URL = [NSURL URLWithString:@"http://example.com/thus?a=1&b==2"];
+    items = [BNCEncodingUtils queryItems:URL];
+    expected = @[ [BNCKeyValue key:@"a" value:@"1"], [BNCKeyValue key:@"b" value:@"=2"] ];
+    XCTAssertEqualObjects(items, expected);
+}
+
 @end
