@@ -1,7 +1,11 @@
 Branch iOS SDK Change Log
 
+- v0.18.6
+  * Fixed TestBed-Swift for Xcode 9 without upgrading to Swift 4.
+  * Fixed some thread safety and iOS 11 bugs.
+
 - v0.18.3
-  * Fixed query string parsing for iOS 7 and added tests.
+  * Fixed query string parsing for iOS 7 and added more tests.
 
 - v0.18.2
   * Language and locale were reported wrong (GH-#707).
