@@ -173,40 +173,30 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                                              url:(NSString*)url {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     
+    NSString *type = universalObject.type ?: (NSString *)kUTTypeGeneric;
+    
     id CSSearchableItemAttributeSetClass = NSClassFromString(@"CSSearchableItemAttributeSet");
-    if (![CSSearchableItemAttributeSetClass respondsToSelector:@selector(initWithItemContentType:)]) {
-        return nil;
-    }
-
-    NSString *typeOrDefault = universalObject.type ?: (NSString *)kUTTypeGeneric;
-
-    CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSetClass alloc]
-                                                initWithItemContentType:typeOrDefault];
-
-    if ([attributes respondsToSelector:@selector(setTitle:)] && universalObject.title) {
-        [attributes setTitle:universalObject.title];
-    }
-    if ([attributes respondsToSelector:@selector(setContentDescription:)]) {
-        [attributes setContentDescription:universalObject.description];
-    }
+    id attributes = [CSSearchableItemAttributeSetClass alloc];
+    SEL initAttributesSelector = NSSelectorFromString(@"initWithItemContentType:");
+    attributes = ((id (*)(id, SEL, NSString *))[attributes methodForSelector:initAttributesSelector])(attributes, initAttributesSelector, type);
+    SEL setIdentifierSelector = NSSelectorFromString(@"setIdentifier:");
+    ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setIdentifierSelector])(attributes, setIdentifierSelector, url);
+    SEL setTitleSelector = NSSelectorFromString(@"setTitle:");
+    ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setTitleSelector])(attributes, setTitleSelector, universalObject.title);
+    SEL setContentDescriptionSelector = NSSelectorFromString(@"setContentDescription:");
+    ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setContentDescriptionSelector])(attributes, setContentDescriptionSelector, universalObject.description);
     NSURL* thumbnailUrl = [NSURL URLWithString:universalObject.imageUrl];
     BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
-    
-    if ([attributes respondsToSelector:@selector(setThumbnailURL:)] && !thumbnailIsRemote) {
-        [attributes setThumbnailURL:thumbnailUrl];
+    if (!thumbnailIsRemote) {
+        SEL setThumbnailURLSelector = NSSelectorFromString(@"setThumbnailURL:");
+        ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setThumbnailURLSelector])(attributes, setThumbnailURLSelector, thumbnailUrl);
     }
-    
-    if (thumbnailData && [attributes respondsToSelector:@selector(setThumbnailData:)]) {
-        [attributes setThumbnailData:thumbnailData];
-    }
-    
-    if ([attributes respondsToSelector:@selector(setContentURL:)] && url) {
-        [attributes setContentURL:[NSURL URLWithString:url]];
-    }
-    
-    if ([attributes respondsToSelector:@selector(setKeywords:)] && universalObject.keywords) {
-        [attributes setKeywords:universalObject.keywords];
-    }
+    SEL setThumbnailDataSelector = NSSelectorFromString(@"setThumbnailData:");
+    ((void (*)(id, SEL, NSData *))[attributes methodForSelector:setThumbnailDataSelector])(attributes, setThumbnailDataSelector, thumbnailData);
+    SEL setContentURLSelector = NSSelectorFromString(@"setContentURL:");
+    ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setContentURLSelector])(attributes, setContentURLSelector, [NSURL URLWithString:url]);
+    SEL setKeywordsSelector = NSSelectorFromString(@"setKeywords:");
+    ((void (*)(id, SEL, NSArray<NSString*>*))[attributes methodForSelector:setKeywordsSelector])(attributes, setKeywordsSelector, universalObject.keywords);
 
     SEL setWeakRelatedUniqueIdentifierSelector = NSSelectorFromString(@"setWeakRelatedUniqueIdentifier:");
     if (universalObject.canonicalIdentifier &&
@@ -238,7 +228,8 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     dispatch_group_t workGroup = dispatch_group_create();
     
     NSMutableArray<CSSearchableItem *> *searchableItems = [[NSMutableArray alloc] init];
-    NSMutableDictionary<NSString*,BranchUniversalObject*> *mapSpotlightIdentifier = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary<NSString*,BranchUniversalObject*> *mapSpotlightIdentifier =
+    [[NSMutableDictionary alloc] init];
     
     for (BranchUniversalObject* universalObject in universalObjects) {
         dispatch_group_async(workGroup, self.workQueue, ^{
@@ -350,40 +341,28 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                    thumbnailData:(NSData*)thumbnailData
                         callback:(void (^_Nullable)(NSString* _Nullable url, NSError * _Nullable error))completion {
     
-    id CSSearchableItemClass = NSClassFromString(@"CSSearchableItem");
+    if ([CSSearchableIndex isIndexingAvailable]) {
+        CSSearchableItem *item = [[CSSearchableItem alloc]
+                                  initWithUniqueIdentifier:indexingParam[@"url"]
+                                  domainIdentifier:kDomainIdentifier
+                                  attributeSet:indexingParam[@"attributeSet"]];
+        NSString *dynamicUrl = indexingParam[@"url"];
+        [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[item]
+                                                       completionHandler: ^(NSError * __nullable error) {
+                                                           NSString *url = error == nil?dynamicUrl:nil;
+                                                           if (completion) {
+                                                               completion(url, error);
+                                                           }
+                                                       }];
 
-    if (![CSSearchableItemClass respondsToSelector:@selector(initWithUniqueIdentifier:domainIdentifier:attributeSet:)]) {
+    }
+    else {
         NSError* error = [NSError errorWithDomain:BNCErrorDomain code:BNCSpotlightNotAvailableError userInfo:nil];
         if (completion) {
             completion(nil, error);
         }
         return;
     }
-
-    NSString *dynamicUrl = indexingParam[@"url"];
-        
-    CSSearchableItem *item = [[CSSearchableItem alloc]
-                              initWithUniqueIdentifier:indexingParam[@"url"]
-                              domainIdentifier:kDomainIdentifier
-                              attributeSet:indexingParam[@"attributeSet"]];
-
-    id CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
-
-    if (![CSSearchableIndexClass respondsToSelector:@selector(defaultSearchableIndex)]) {
-        NSError* error = [NSError errorWithDomain:BNCErrorDomain code:BNCSpotlightNotAvailableError userInfo:nil];
-        if (completion) {
-            completion(nil, error);
-        }
-        return;
-    }
-
-    [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[item]
-                                                   completionHandler: ^(NSError * __nullable error) {
-                                                       NSString *url = error == nil?dynamicUrl:nil;
-                                                       if (completion) {
-                                                           completion(url, error);
-                                                       }
-                                                   }];
 }
 
 #pragma mark Helper Methods
