@@ -397,7 +397,7 @@
         NSData *data = [BNCEncodingUtils dataFromHexString:hexKey];
         if (data) {
             SecKeyRef secKey = [self publicSecKeyFromPKCS12CertChainData:data];
-            if (secKey) [array addObject:(__bridge id)secKey];
+            if (secKey) [array addObject:(__bridge_transfer id)secKey];
         }
     }
     return array;
