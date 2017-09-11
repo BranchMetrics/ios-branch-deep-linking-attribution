@@ -1,5 +1,46 @@
 Branch iOS SDK Change Log
 
+- v0.18.2
+  * Language and locale were reported wrong (GH-#707).
+  - Initializing the log too early made the language bundles load in the wrong order.
+  - Testing notes: In the TestBed scheme, change the system and app language to
+    some language other than english. When you run the app you'll see country
+    and language reported as the language you selected.
+
+  * Getting the user agent in iOS 7 would stall initialization sometimes.
+
+- v0.18.1
+  * Update Apple search ads mock-up for testing and backend (GH-#682,#706).
+    - Encode JSON boolean true as 'true' vs. '1'.
+    - Updated Apple search ad dictionary for testing.
+    - Testing notes: Remove the app from the device, then run the app. The first run
+      will return a 3rd party link for Apple Search Ads.
+
+- v0.18.0
+  * Branch links opened via Air Drop now open correctly (GH-#699,#701).
+    - Testing notes:  Test this heavily on all the iOS versions, and test opening links when app is
+      not running, when it is in background, and when it is in the foreground.  Also, test links
+      opened from Notepad, etc.
+
+  * Fixed remote push notification handling (GH-#703,#704).
+    - Testing notes: you'll need to send a push notification to the testbed app via
+      the `./apns-send-token` script.
+
+  * Fixed a race condition on startup while getting the browser string (GH-#700,#702).
+    - Testing notes: To reproduce, turn on the thread sanitizer, remove the app from the device,
+      then run the app from Xcode.  Test on iOS 7,8,9,10,11 and make sure there are no race
+      conditions and that the initialization does not deadlock.
+  * Removed vestigial CoreTelephony references (GH-#689).
+  * Updated project for Xcode 9 compatibility.
+  * Update the BranchShareLink.shareURL member field correctly after share event (#696).
+  * Added ability to turn logging on and off via links / Info.plist (GH-#697).
+
+- v0.17.10
+  * _*Master Release*_ - August 23, 2017
+  * Don't do cookie based matching in iOS 11 (AIS-307, GH-#681).
+  * Fix an initialization problem in iOS 8.
+    Logging was calling a protocol method which would lock up initialization on iOS 8 (GH-#694).
+
 - v0.17.9
   * _*Master Release*_ - August 15, 2017
   * Fixed the Branch.framework static library build. How long was this broken? A year? Since 12.2?
@@ -27,7 +68,7 @@ Branch iOS SDK Change Log
   * Added a guard to prevent a crash bug from when bad data was accidentally passed back from the
     Branch servers (GitHub #672).
   * Fixed a crash bug that sometimes occurred when logging to the Branch log file (GitHub #661).
-  * Added 'com.googleusercontent.apps' as an oauth scheme (GitHub #678).
+  * Added 'com.googleusercontent.apps' as an o-auth scheme (GitHub #678).
   * Used address sanitizer & thread sanitizer to find and fix several thread and memory errors.
   * Escape extra html tags in dynamic Branch links (INTENG-3466).
 

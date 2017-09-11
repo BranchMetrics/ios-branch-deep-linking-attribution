@@ -65,7 +65,7 @@ extern NSString *_Nonnull const BNCLogStringFromLogLevel(BNCLogLevel level);
 * @param string A string indicating the log level.
 * @return Returns The log level corresponding to the string.
 */
-extern BNCLogLevel BNBLogLevelFromString(NSString*_Null_unspecified string);
+extern BNCLogLevel BNCLogLevelFromString(NSString*_Null_unspecified string);
 
 
 #pragma mark - Programmatic Breakpoints
@@ -76,6 +76,16 @@ extern BOOL BNCLogBreakPointsAreEnabled(void);
 
 ///@param enabled Sets programmatic breakpoints enabled or disabled.
 extern void BNCLogSetBreakPointsEnabled(BOOL enabled);
+
+
+#pragma mark - Client Initialization Function
+
+
+typedef void (*BNCLogClientInitializeFunctionPtr)(void);
+
+///@param clientInitializationFunction The client function that should be called before logging starts.
+extern BNCLogClientInitializeFunctionPtr _Null_unspecified
+    BNCLogSetClientInitializeFunction(BNCLogClientInitializeFunctionPtr _Nullable clientInitializationFunction);
 
 
 #pragma mark - Optional Log Output Handlers

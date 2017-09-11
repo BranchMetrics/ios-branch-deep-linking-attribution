@@ -805,7 +805,7 @@ NSURL* _Null_unspecified BNCCreateDirectoryForBranchURLWithPath(NSSearchPathDire
 
     for (NSURL *URL in URLs) {
         NSError *error = nil;
-        NSURL *branchURL = [URL URLByAppendingPathComponent:@"io.branch" isDirectory:YES];
+        NSURL *branchURL = [[NSURL alloc] initWithString:@"io.branch" relativeToURL:URL];
         BOOL success =
             [fileManager
                 createDirectoryAtURL:branchURL
