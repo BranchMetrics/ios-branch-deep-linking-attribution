@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "NSString+Branch.h"
 
 static NSTimeInterval const kDeepLinkSleepTimeInterval = 10.0;
 static NSTimeInterval const kLoadWikiPageTimeInterval  = 3.0;
@@ -54,7 +55,7 @@ static NSString* const kUniversalLinkTag = @"Universal Link TestBed Obj-c";
     
     XCUIApplication *currentApp = [[XCUIApplication alloc] init];
     XCUIElement* element = currentApp.textViews[@"DeepLinkData"];
-    XCTAssertTrue([element.value containsString:@"Successfully Deeplinked"]);
+    XCTAssertTrue([element.value bnc_containsString:@"Successfully Deeplinked"]);
 }
 
 -(XCUIApplication *) openSafariWithUrl: (NSString*) url {

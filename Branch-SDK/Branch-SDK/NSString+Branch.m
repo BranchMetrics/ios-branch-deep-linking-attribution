@@ -45,4 +45,9 @@ __attribute__((constructor)) void BNCForceNSStringCategoryToLoad() {
     return [self substringWithRange:range];
 }
 
+- (BOOL) bnc_containsString:(NSString*_Nullable)string {
+    if (!string) return NO;
+    return ([self rangeOfString:string].location != NSNotFound);
+}
+
 @end

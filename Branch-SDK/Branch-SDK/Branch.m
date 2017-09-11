@@ -689,12 +689,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
     if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] &&
-        [urlString containsString:branchUniversalLinkDomains]) {
+        [urlString bnc_containsString:branchUniversalLinkDomains]) {
         return YES;
     }
     else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
         for (id oneDomain in branchUniversalLinkDomains) {
-            if ([oneDomain isKindOfClass:[NSString class]] && [urlString containsString:oneDomain]) {
+            if ([oneDomain isKindOfClass:[NSString class]] && [urlString bnc_containsString:oneDomain]) {
                 return YES;
             }
         }
@@ -703,7 +703,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     NSString *userActivityURL = urlString;
     NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
     for (NSString* domain in branchDomains) {
-        if ([userActivityURL containsString:domain])
+        if ([userActivityURL bnc_containsString:domain])
             return YES;
     }
 
