@@ -126,7 +126,9 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 - (NSString *)description {
-    return [self.queue description];
+    @synchronized(self) {
+        return [self.queue description];
+    }
 }
 
 - (void)clearQueue {
@@ -230,17 +232,21 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             BNCNanoSecondsFromTimeInterval(BATCH_WRITE_TIMEOUT),
             BNCNanoSecondsFromTimeInterval(BATCH_WRITE_TIMEOUT / 10.0)
         );
-        dispatch_source_set_event_handler(self.persistTimer, ^ { [self persistImmediately]; });
+        __weak typeof(self) weakSelf = self;
+        dispatch_source_set_event_handler(self.persistTimer, ^ {
+            __strong typeof(self) strongSelf = weakSelf;
+            if (strongSelf) {
+                [strongSelf persistImmediately];
+                dispatch_source_cancel(strongSelf.persistTimer);
+                strongSelf.persistTimer = nil;
+            }
+        });
         dispatch_resume(self.persistTimer);
     }
 }
 
 - (void)persistImmediately {
     @synchronized (self) {
-        if (self.persistTimer) {
-            dispatch_source_cancel(self.persistTimer);
-            self.persistTimer = nil;
-        }
         NSArray *requestsToPersist = [self.queue copy];
         @try {
             NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
