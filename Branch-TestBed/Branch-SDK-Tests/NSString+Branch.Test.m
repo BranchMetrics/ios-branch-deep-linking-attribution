@@ -77,6 +77,7 @@
     XCTAssertFalse([testString bnc_containsString:nil]);
     XCTAssertTrue([testString bnc_containsString:testString]);
     XCTAssertFalse([testString bnc_containsString:@"I'm a good girl I am..."]);
+    XCTAssertFalse([testString bnc_containsString:@""]);
 }
 
 @end
