@@ -42,7 +42,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
      * // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
      * [self onboardUserOnInstall];
      */
-
+    
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
         if (!error) {

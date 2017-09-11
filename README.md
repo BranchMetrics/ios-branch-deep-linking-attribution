@@ -642,6 +642,9 @@ Here are a set of best practices to ensure that your analytics are correct, and 
 3. Initialize the Branch Universal Object and call `userCompletedAction` with the `BNCRegisterViewEvent` **on page load**
 4. Call `showShareSheet` and `createShortLink` later in the life cycle, when the user takes an action that needs a link
 5. Call the additional object events (purchase, share completed, etc) when the corresponding user action is taken
+6. Set the `contentIndexMode` to `ContentIndexModePublic` or `ContentIndexModePrivate`. If BranchUniversalObject is set to `ContentIndexModePublic`, then content would indexed using `NSUserActivity`, or else content would be index using `CSSearchableIndex` on Spotlight.
+
+Note: Content indexed using `CSSearchableItem` could be removed from Spotlight but cannot be removed if indexed using `NSUserActivity`.
 
 Practices to _avoid_:
 1. Don't set the same `title`, `contentDescription` and `imageUrl` across all objects
@@ -695,7 +698,7 @@ branchUniversalObject.addMetadataKey("property2", value: "red")
 
 **currency**: The currency representing the price in [ISO 4217 currency code](http://en.wikipedia.org/wiki/ISO_4217). Default is USD.
 
-**contentIndexMode**: Can be set to the ENUM of either `ContentIndexModePublic` or `ContentIndexModePrivate`. Public indicates that you'd like this content to be discovered by other apps. Currently, this is only used for Spotlight indexing but will be used by Branch in the future.
+**contentIndexMode**: Can be set to the ENUM of either `ContentIndexModePublic` or `ContentIndexModePrivate`. Public indicates that you'd like this content to be discovered by other apps. Content would be indexed using `NSUserActivity` if set to pulic, else would be indexed using `CSSearchableIndex`. Currently, this is only used for Spotlight indexing but will be used by Branch in the future.
 
 **expirationDate**: The date when the content will not longer be available or valid. Currently, this is only used for Spotlight indexing but will be used by Branch in the future.
 
@@ -988,6 +991,45 @@ branchUniversalObject.userCompletedAction(BNCRegisterViewEvent)
 #### Parameters
 
 **callback**: Will return the URL that was used to list the content in Spotlight if you'd like to store it for your own records.
+
+#### Returns
+
+None
+
+### List Multiple Branch Universal Objects On Spotlight using CSSearchableIndex
+
+If you'd like to list multiple Branch Universal Object in Spotlight local index, this is the method you'll call in Branch.h. 
+
+#### Methods
+
+###### Objective-C
+
+```objc
+[[Branch getInstance] indexOnSpotlightUsingSearchableItems:universalObjects
+                                                    completion:^(NSArray<BranchUniversalObject *> *universalObjects,
+                                                                 NSError *error) {
+        if (!error) {
+            // Successfully able to index all the BUO on spotloght
+        }
+    }];
+```
+
+###### Swift
+
+```swift
+Branch.getInstance().indexOnSpotlight(usingSearchableItems: universalObjects, 
+                                                completion: { (universalObjects, error) in
+      if (error) {
+           // Successfully able to index all the BUO on spotloght
+      }
+})
+```
+
+#### Parameters
+
+**universalObjects**: An array of all the Branch Universal Object that would indexed using `CSSearchableIdex`
+
+**completion**: Will return Branch Universal Object with dynamic urls as Spotlight identifier when indexing completes.
 
 #### Returns
 

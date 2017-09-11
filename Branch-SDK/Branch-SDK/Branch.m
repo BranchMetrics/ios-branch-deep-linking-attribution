@@ -694,20 +694,23 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         return [self handleUniversalDeepLink:userActivity.webpageURL fromSelf:NO];
     }
+    
+    
+   
+
 
     // Check to see if a spotlight activity needs to be handled
     NSString *spotlightIdentifier =
 	    [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
-
-    if (spotlightIdentifier) {
-        if ([self isBranchLink:spotlightIdentifier]) {
-            return [self handleDeepLinkWithNewSession:[NSURL URLWithString:spotlightIdentifier]];
-        } else {
-            self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
-        }
+    
+    if ([self isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
+        return [self handleDeepLinkWithNewSession:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]]];
+    }
+    else if (spotlightIdentifier) {
+        self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
     }
     else {
-        NSString *nonBranchSpotlightIdentifier =
+            NSString *nonBranchSpotlightIdentifier =
         	[self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
         if (nonBranchSpotlightIdentifier) {
             self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
@@ -1376,15 +1379,16 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
  */
 
 
-- (void)indexOnObjectsOnSpotlightUsingSearchableItems:(NSArray<BranchUniversalObject*>* )universalObjects
-                                           completion:(void (^) (NSArray<BranchUniversalObject*>* universalObjects,
-                                                                 NSError* error))completion {
+- (void)indexOnSpotlightUsingSearchableItems:(NSArray<BranchUniversalObject*>* )universalObjects
+                                  completion:(void (^) (NSArray<BranchUniversalObject*>* universalObjects,
+                                                        NSError* error))completion {
     
     BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
     [spotlight indexPrivatelyWithBranchUniversalObjects:universalObjects
                                              completion:^(NSArray<BranchUniversalObject *> * _Nullable universalObjects,
                                                           NSError * _Nullable error) {
-                                                 completion(universalObjects,error);
+                                                 if (completion)
+                                                     completion(universalObjects,error);
                                              }];
 }
 
@@ -1394,7 +1398,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     [spotlight removeSearchableItemsWithIdentifier:universalObject.spotlightIdentifier
                                           callback:^(NSError * _Nullable error) {
-                                              completion(error);
+                                              if (completion)
+                                                  completion(error);
                                           }];
 }
 
@@ -1410,7 +1415,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     
     [spotlight removeSearchableItemsWithIdentifiers:identifiers
                                            callback:^(NSError * error) {
-                                               completion(error);
+                                               if (completion)
+                                                   completion(error);
                                            }];
 }
 

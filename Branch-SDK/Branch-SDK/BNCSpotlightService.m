@@ -33,7 +33,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];
         if (completion) {
             completion(universalObject,nil,error);
-           // callback([BNCPreferenceHelper preferenceHelper].userUrl, error);
         }
         return;
     }
@@ -74,9 +73,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         spotlightLinkProperties = [[BranchLinkProperties alloc] init];
     }
     [spotlightLinkProperties setFeature:@"spotlight"];
-
-
-    // Include spotlight info in params
         
     NSURL* thumbnailUrl = [NSURL URLWithString:universalObject.imageUrl];
     BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
@@ -98,7 +94,8 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                                                branchUniversalObject:universalObject thumbnailUrl:thumbnailUrl
                                                                        thumbnailData:thumbnailData
                                                                             callback:^(NSString * _Nullable url, NSError * _Nullable error) {
-                                                                                completion(universalObject,url,error);
+                                                                                if (completion)
+                                                                                    completion(universalObject,url,error);
                                                                             }];
                                                        }
                                                    }];
@@ -120,7 +117,8 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                                                 thumbnailUrl:thumbnailUrl
                                                                thumbnailData:nil
                                                                     callback:^(NSString * _Nullable url, NSError * _Nullable error) {
-                                                                        completion(universalObject,url,error);
+                                                                        if (completion)
+                                                                            completion(universalObject,url,error);
                                                                     }];
                                                }
                                            }];
@@ -163,7 +161,8 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         [self indexUsingSearchableItem:indexingParams
                          thumbnailData:thumbnailData
                               callback:^(NSString * _Nullable url, NSError * _Nullable error) {
-                                  completion(url,error);
+                                  if (completion)
+                                      completion(url,error);
                               }];
     }
 #endif
@@ -230,8 +229,8 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                                                      NSError * _Nullable error))completion {
     if ([BNCSystemObserver getOSVersion].floatValue < 9.0) {
         NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];
-        
-        completion(nil,error);
+        if (completion)
+            completion(nil,error);
         return;
     }
     
@@ -302,9 +301,11 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                 BranchUniversalObject *universalObject = mapSpotlightIdentifier[dynamicUrl];
                 universalObject.spotlightIdentifier    = dynamicUrl;
             }
-            completion(universalObjects,nil);
+            if (completion)
+                completion(universalObjects,nil);
         }else {
-            completion(nil,error);
+            if (completion)
+                completion(nil,error);
         }
         
     }];
@@ -412,7 +413,8 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
 - (void)removeSearchableItemsWithIdentifier:(NSString * _Nonnull)identifier
                                    callback:(void (^_Nullable)(NSError * _Nullable error))completion {
     [self removeSearchableItemsWithIdentifiers:@[identifier] callback:^(NSError * _Nullable error) {
-        completion(error);
+        if (completion)
+            completion(error);
     }];
 }
 
@@ -420,22 +422,29 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                     callback:(void (^_Nullable)(NSError * _Nullable error))completion {
     if ([CSSearchableIndex isIndexingAvailable]) {
         [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithIdentifiers:identifiers completionHandler:^(NSError * _Nullable error) {
-            completion(error);
+            if (completion)
+                completion(error);
         }];
     }else {
         NSError* error = [NSError errorWithDomain:BNCErrorDomain code:BNCSpotlightNotAvailableError userInfo:nil];
-        completion(error);
+        if (completion)
+            completion(error);
     }
 }
 
 - (void)removeAllBranchSearchableItemsWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion {
     if ([CSSearchableIndex isIndexingAvailable]) {
-        [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithDomainIdentifiers:@[kDomainIdentifier] completionHandler:^(NSError * _Nullable error) {
-            completion(error);
-        }];
+        [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithDomainIdentifiers:@[kDomainIdentifier]
+                                                                             completionHandler:^(NSError * _Nullable error) {
+                                                                                 if (completion)
+                                                                                     completion(error);
+                                                                             }];
     }else {
-        NSError* error = [NSError errorWithDomain:BNCErrorDomain code:BNCSpotlightNotAvailableError userInfo:nil];
-        completion(error);
+        NSError* error = [NSError errorWithDomain:BNCErrorDomain
+                                             code:BNCSpotlightNotAvailableError
+                                         userInfo:nil];
+        if (completion)
+            completion(error);
     }
 }
 
