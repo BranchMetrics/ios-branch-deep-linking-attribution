@@ -383,7 +383,12 @@
     if (self.contentIndexMode == ContentIndexModePrivate) {
         [[Branch getInstance] removeSearchableItemWithBranchUniversalObject:self
                                                                    callback:^(NSError *error) {
-                                                                       completion(error);
+                                                                       if (!error) {
+                                                                           self.spotlightIdentifier = nil;
+                                                                       }
+                                                                       if (completion) {
+                                                                           completion(error);
+                                                                       }
                                                                    }];
     } else {
         NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError

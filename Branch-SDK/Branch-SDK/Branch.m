@@ -1435,6 +1435,11 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     
     [spotlight removeSearchableItemsWithIdentifiers:identifiers
                                            callback:^(NSError * error) {
+                                               if (!error) {
+                                                   for (BranchUniversalObject* universalObject in universalObjects) {
+                                                       universalObject.spotlightIdentifier = nil;
+                                                   }
+                                               }
                                                if (completion)
                                                    completion(error);
                                            }];

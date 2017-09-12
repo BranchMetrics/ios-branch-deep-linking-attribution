@@ -1035,6 +1035,110 @@ Branch.getInstance().indexOnSpotlight(usingSearchableItems: universalObjects,
 
 None
 
+### Remove Branch Universal Object from Spotlight if privately indexed
+
+Privately indexed Branch Universal Object can be removed from spotlight
+
+#### Methods
+
+###### Objective-C
+
+```objc
+[universalObject removeFromSpotlightWithCallback:^(NSError * _Nullable error) {
+        if (!error) {
+            NSLog(@"universal Object removed from spotlight");
+        }
+    }];
+```
+
+###### Swift
+
+```swift
+universalObject.removeFromSpotlight { (error) in
+            if(error == nil) {
+                print("BUO successfully removed")
+            }
+        }
+```
+
+#### Parameters
+
+**Callback**: Will return once Branch Universal Object is removed from spotlight. If spotlight is removed, the spotlightIdentifier variable of Branch Universal Object would be nil.
+
+#### Returns
+
+None
+
+### Remove multiple Branch Universal Objects from Spotlight if privately indexed
+
+Privately indexed multiple Branch Universal Objects can be removed from spotlight
+
+#### Methods
+
+###### Objective-C
+
+```objc
+[[Branch getInstance] removeSearchableItemsWithBranchUniversalObjects:@[BUO1,BUO2] callback:^(NSError *error) {
+    if (!error) {
+        NSLog(@"An array of BUOs removed from spotlight");
+    }
+}]
+
+```
+
+###### Swift
+
+```swift
+Branch.getInstance().removeSearchableItems(with: [BUO1,BUO2]) { (error) in
+    if (error == nil) {
+        print("An array of BUOs removed from spotlight")
+    }
+}
+```
+
+#### Parameters
+
+**Callback**: Will return once all Branch Universal Object is removed from spotlight. If spotlight is removed, the spotlightIdentifier variable of all Branch Universal Object would be nil.
+
+#### Returns
+
+None
+
+### Remove all Branch Universal Objects from Spotlight if privately indexed
+
+All Privately indexed Branch Universal Objects can be removed from spotlight
+
+#### Methods
+
+###### Objective-C
+
+```objc
+[[Branch getInstance] removeAllPrivateContentFromSpotLightWithCallback:^(NSError *error) {
+    if (!error) {
+      NSLog(@"All branch privately indexed content removed from spotlight");
+    }
+}];
+```
+
+###### Swift
+
+```swift
+Branch.getInstance().removeAllPrivateContentFromSpotLight { (error) in
+    if (error == nil) {
+        print("All branch privately indexed content removed from spotlight")
+    }
+}
+```
+
+#### Parameters
+
+**Callback**: Will return once all Branch Universal Object is removed from spotlight. 
+Note: SpotlightIdentifer would not be nil of all the Branch Universal Object been removed from spotlight as Branch SDK doesn't cache the Branch Universal Objects.
+
+#### Returns
+
+None
+
 ## Referral System Rewarding Functionality
 
 ### Get Reward Balance
