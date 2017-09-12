@@ -76,33 +76,11 @@
 }
 
 + (NSString*_Nonnull) extensionType {
-
-    NSDictionary *extensionTypes = @{
-        @"com.apple.ui-services":                       @"ACTION_UI",
-        @"com.apple.services":                          @"ACTION",
-        @"com.apple.broadcast-services":                @"BROADCAST",
-        @"com.apple.keyboard-service":                  @"KEYBOARD",
-        @"com.apple.fileprovider-ui":                   @"FILE_UI",
-        @"com.apple.fileprovider-nonui":                @"FILE",
-        @"com.apple.fileprovider-actionsui":            @"FILE_ACTION",
-        @"com.apple.FinderSync":                        @"FINDER_SYNC",
-        @"com.apple.identitylookup.message-filter":     @"IMESSAGE",
-        @"com.apple.photo-editing":                     @"PHOTO_EDIT",
-        @"com.apple.share-services":                    @"SHARE",
-        @"com.apple.widget-extension":                  @"TODAY",
-        @"com.apple.tv-services":                       @"TV_SERVICE",
-        @"com.apple.watchkit":                          @"WATCH_APP",
-    };
-
-    NSString *result = nil;
+    NSString *result = @"FULL_APP";
     NSString *extensionType = [NSBundle mainBundle].infoDictionary[@"NSExtension"][@"NSExtensionPointIdentifier"];
-    if (extensionType) {
-        result = extensionTypes[extensionType];
-        if (!result) result = extensionType;
-    } else {
-        result = @"FULL_APP";
+    if ([extensionType isEqualToString:@"com.apple.identitylookup.message-filter"]) {
+        result = @"IMESSAGE_APP";
     }
-
     return result;
 }
 
