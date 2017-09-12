@@ -368,7 +368,7 @@
                                            spotlightCallback:spotlightCallback];
 }
 
-- (void)lisOnSpotlightWithLinkProperties:(BranchLinkProperties*_Nullable)linkproperties
+- (void)listOnSpotlightWithLinkProperties:(BranchLinkProperties*_Nullable)linkproperties
                                 callback:(void (^_Nullable)(NSString * _Nullable url,
                                                             NSError * _Nullable error))completion {
     

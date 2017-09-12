@@ -996,6 +996,40 @@ branchUniversalObject.userCompletedAction(BNCRegisterViewEvent)
 
 None
 
+### List Content On Spotlight with Link properties
+
+If you'd like to list your Branch Universal Object with link properties in Spotlight local and cloud index, this is the method you'll call. You'll want to register views every time the page loads as this contributes to your global ranking in search.
+
+#### Methods
+
+###### Objective-C
+
+```objc
+[universalObject listOnSpotlightWithLinkProperties:linkProperties callback:^(NSString * _Nullable url, NSError * _Nullable error) {
+    if (!error) {
+         NSLog(@"Successfully indexed on spotlight");
+    }
+}];
+```
+
+###### Swift
+
+```swift
+universalObject.listOnSpotlight(with: linkProperty) { (url, error) in
+    if (error == nil) {
+        print("Successfully indexed on spotlight")     
+    }
+}
+```
+
+#### Parameters
+
+**callback**: Will return the URL that was used to list the content in Spotlight if you'd like to store it for your own records.
+
+#### Returns
+
+None
+
 ### List Multiple Branch Universal Objects On Spotlight using CSSearchableIndex
 
 If you'd like to list multiple Branch Universal Object in Spotlight local index, this is the method you'll call in Branch.h. 
