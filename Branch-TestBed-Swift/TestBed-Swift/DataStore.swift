@@ -205,33 +205,37 @@ struct DataStore {
             guard universalObject[key] != nil else {
                 continue
             }
-            
+
+            let value = universalObject[key]!.description!()
+
             switch key {
             case "$canonical_identifier":
+<<<<<<< HEAD
                 branchUniversalObject.canonicalIdentifier = universalObject[key] as? String
+=======
+                branchUniversalObject.canonicalIdentifier = value
+>>>>>>> 240dfe4f6f0c9ebce319be81b2a7899bc4b20aaa
             case "$og_description":
-                if let description = universalObject[key] {
-                    branchUniversalObject.contentDescription = description as? String
-                }
+                branchUniversalObject.contentDescription = value
             case "$exp_date":
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd"
-                let expirationDate = dateFormatter.date(from: universalObject[key] as! String)
+                let expirationDate = dateFormatter.date(from:value)
                 branchUniversalObject.expirationDate = expirationDate
             case "$og_image_url":
-                if let imageURL = universalObject[key] {
-                    branchUniversalObject.imageUrl = imageURL as? String
-                }
+                branchUniversalObject.imageUrl = value
             case "$keywords":
                 branchUniversalObject.keywords = universalObject[key] as! [AnyObject] as? [String]
             case "$og_title":
-                if let title = universalObject[key] {
-                    branchUniversalObject.title = title as? String
-                }
+                branchUniversalObject.title = value
             case "$content_type":
+<<<<<<< HEAD
                 if let contentType = universalObject[key] {
                     branchUniversalObject.contentMetadata.contentSchema = contentType as? BranchContentSchema
                 }
+=======
+                branchUniversalObject.type = value
+>>>>>>> 240dfe4f6f0c9ebce319be81b2a7899bc4b20aaa
             case "$price":
                 if let price = universalObject[key] as? String {
                     let formatter = NumberFormatter()
@@ -239,15 +243,23 @@ struct DataStore {
                     branchUniversalObject.contentMetadata.price = formatter.number(from: price) as? NSDecimalNumber ?? 0
                 }
             case "$currency":
+<<<<<<< HEAD
                 if let currency = universalObject[key] as? String {
                     branchUniversalObject.contentMetadata.currency = currency
                 }
+=======
+                branchUniversalObject.currency = value
+>>>>>>> 240dfe4f6f0c9ebce319be81b2a7899bc4b20aaa
             case "customData":
                 if let data = universalObject[key] as? [String: String] {
                         branchUniversalObject.contentMetadata.userInfo.addEntries(from: data)
                 }
             default:
+<<<<<<< HEAD
                 branchUniversalObject.contentMetadata.userInfo.addEntries(from: [key : universalObject[key] as! String])
+=======
+                branchUniversalObject.addMetadataKey(key, value: value)
+>>>>>>> 240dfe4f6f0c9ebce319be81b2a7899bc4b20aaa
             }
         }
         return branchUniversalObject

@@ -76,8 +76,7 @@ NSString *test_key = @"test_key";
             [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"],
             BNC_SDK_VERSION];
     [self.versionLabel sizeToFit];
-
-   // [self refreshRewardPoints];
+    [self.activityIndicator stopAnimating];
 }
 
 
@@ -427,13 +426,14 @@ NSString *test_key = @"test_key";
 
 #pragma mark - Spotlight
 
-//example using callbackWithURLandSpotlightIdentifier
 - (IBAction)registerWithSpotlightButtonTouchUpInside:(id)sender {
+    //
+    // Example using callbackWithURLandSpotlightIdentifier
+    //
     self.branchUniversalObject.contentMetadata.userInfo[@"deeplink_text"] = @"This link was generated for Spotlight registration";
     self.branchUniversalObject.indexLocally = YES;
     [self.branchUniversalObject userCompletedAction:BNCRegisterViewEvent];
 }
-
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"ShowCreditHistory"]) {
@@ -443,23 +443,19 @@ NSString *test_key = @"test_key";
     }
 }
 
-
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self refreshRewardPoints];
 }
 
 - (void)textFieldFinished:(id)sender {
     [sender resignFirstResponder];
 }
 
-
 - (void)hideKeyboard {
     if ([self.branchLinkTextField isFirstResponder]) {
         [self.branchLinkTextField resignFirstResponder];
     }
 }
-
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     UITouch *touch = [[event allTouches] anyObject];
@@ -469,16 +465,13 @@ NSString *test_key = @"test_key";
     [super touchesBegan:touches withEvent:event];
 }
 
-
 - (void)branchViewVisible: (NSString *)actionName withID:(NSString *)branchViewID {
     NSLog(@"Branch TestBed: branchViewVisible for action : %@ %@", actionName, branchViewID);
 }
 
-
 - (void)branchViewAccepted: (NSString *)actionName withID:(NSString *)branchViewID {
     NSLog(@"Branch TestBed: branchViewAccepted for action : %@ %@", actionName, branchViewID);
 }
-
 
 - (void)branchViewCancelled: (NSString *)actionName withID:(NSString *)branchViewID {
     NSLog(@"Branch TestBed: branchViewCancelled for action : %@ %@", actionName, branchViewID);

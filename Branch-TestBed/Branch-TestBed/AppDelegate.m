@@ -12,7 +12,8 @@
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
-#import <SafariServices/SafariServices.h>
+#import "BNCEncodingUtils.h"
+@import SafariServices;
 
 @interface AppDelegate() <SFSafariViewControllerDelegate>
 @property (nonatomic, strong) SFSafariViewController *onboardingVC;
@@ -43,11 +44,9 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
     // [self onboardUserOnInstall];
 
-
     /*
-    * Required: Initialize Branch, passing a deep link handler block:
-    */
-
+     *    Required: Initialize Branch, passing a deep link handler block:
+     */
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
         if (!error) {

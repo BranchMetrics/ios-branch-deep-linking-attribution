@@ -6,7 +6,7 @@
 //  Copyright (c) 2016 Branch Metrics. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "BNCServerRequest.h"
 
 #pragma mark BNCProductCategory

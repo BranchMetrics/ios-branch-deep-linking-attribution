@@ -6,10 +6,10 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 #import "BNCTestCase.h"
+#import <OCMock/OCMock.h>
 #import "BranchCloseRequest.h"
 #import "BranchConstants.h"
 #import "BNCPreferenceHelper.h"
-#import <OCMock/OCMock.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCEncodingUtils.h"
 

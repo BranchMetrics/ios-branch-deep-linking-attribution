@@ -6,10 +6,8 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreGraphics/CoreGraphics.h>
-
-#pragma mark - BNCDeviceInfo
+@import Foundation;
+@import CoreGraphics;
 
 @interface BNCDeviceInfo : NSObject
 

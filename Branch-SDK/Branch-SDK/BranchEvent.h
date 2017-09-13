@@ -6,7 +6,7 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "Branch.h"
 #import "BNCCommerceEvent.h"
 #import "BranchUniversalObject.h"
