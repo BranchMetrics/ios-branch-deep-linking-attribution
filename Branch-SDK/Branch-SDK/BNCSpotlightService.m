@@ -37,29 +37,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         return;
     }
     
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED < 90000
-    NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];
-    if (callback) {
-        completion(branchShareLink,nil,error);
-    }
-    return;
-#endif
-    
-    BOOL isIndexingAvailable = NO;
-    Class CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
-    SEL isIndexingAvailableSelector = NSSelectorFromString(@"isIndexingAvailable");
-    isIndexingAvailable =
-    ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])
-    (CSSearchableIndexClass, isIndexingAvailableSelector);
-    
-    if (!isIndexingAvailable) {
-        NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];
-        if (completion) {
-            completion(universalObject,[BNCPreferenceHelper preferenceHelper].userUrl, error);
-        }
-        return;
-    }
-    
     if (!universalObject.title) {
         NSError *error = [NSError branchErrorWithCode:BNCSpotlightTitleError];
         if (completion) {
@@ -134,7 +111,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                thumbnailUrl:(NSURL *)thumbnailUrl
               thumbnailData:(NSData *)thumbnailData
                    callback:(void (^_Nullable)(NSString* _Nullable url, NSError * _Nullable error))completion {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     
     id attributes = [self attributeSetWithUniversalObject:universalObject
                                                 thumbnail:thumbnailData
@@ -165,7 +141,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                       completion(url,error);
                               }];
     }
-#endif
 }
 
 - (CSSearchableItemAttributeSet*)attributeSetWithUniversalObject:(BranchUniversalObject*)universalObject
@@ -176,37 +151,34 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     NSString *type = universalObject.type ?: (NSString *)kUTTypeGeneric;
     
     id CSSearchableItemAttributeSetClass = NSClassFromString(@"CSSearchableItemAttributeSet");
+    if (!CSSearchableItemAttributeSetClass)
+        return nil;
+    
     id attributes = [CSSearchableItemAttributeSetClass alloc];
-    SEL initAttributesSelector = NSSelectorFromString(@"initWithItemContentType:");
-    attributes = ((id (*)(id, SEL, NSString *))[attributes methodForSelector:initAttributesSelector])(attributes, initAttributesSelector, type);
-    SEL setIdentifierSelector = NSSelectorFromString(@"setIdentifier:");
-    ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setIdentifierSelector])(attributes, setIdentifierSelector, url);
-    SEL setTitleSelector = NSSelectorFromString(@"setTitle:");
-    ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setTitleSelector])(attributes, setTitleSelector, universalObject.title);
-    SEL setContentDescriptionSelector = NSSelectorFromString(@"setContentDescription:");
-    ((void (*)(id, SEL, NSString *))[attributes methodForSelector:setContentDescriptionSelector])(attributes, setContentDescriptionSelector, universalObject.description);
+    if (!attributes || ![attributes respondsToSelector:@selector(initWithItemContentType:)])
+        return nil;
+    attributes = [attributes initWithItemContentType:type];
+    
+    #define safePerformSelector(_selector, parameter) { \
+        if (parameter != nil && [attributes respondsToSelector:@selector(_selector)]) { \
+            [attributes _selector parameter]; \
+        } \
+    }
+
+    safePerformSelector(setIdentifier:, url);
+    safePerformSelector(setTitle:, universalObject.title);
+    safePerformSelector(setContentDescription:, universalObject.description);
     NSURL* thumbnailUrl = [NSURL URLWithString:universalObject.imageUrl];
     BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
     if (!thumbnailIsRemote) {
-        SEL setThumbnailURLSelector = NSSelectorFromString(@"setThumbnailURL:");
-        ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setThumbnailURLSelector])(attributes, setThumbnailURLSelector, thumbnailUrl);
+       safePerformSelector(setThumbnailURL:, thumbnailUrl);
     }
-    SEL setThumbnailDataSelector = NSSelectorFromString(@"setThumbnailData:");
-    ((void (*)(id, SEL, NSData *))[attributes methodForSelector:setThumbnailDataSelector])(attributes, setThumbnailDataSelector, thumbnailData);
-    SEL setContentURLSelector = NSSelectorFromString(@"setContentURL:");
-    ((void (*)(id, SEL, NSURL *))[attributes methodForSelector:setContentURLSelector])(attributes, setContentURLSelector, [NSURL URLWithString:url]);
-    SEL setKeywordsSelector = NSSelectorFromString(@"setKeywords:");
-    ((void (*)(id, SEL, NSArray<NSString*>*))[attributes methodForSelector:setKeywordsSelector])(attributes, setKeywordsSelector, universalObject.keywords);
+    safePerformSelector(setThumbnailData:, thumbnailData);
+    safePerformSelector(setContentURL:, [NSURL URLWithString:url]);
+    safePerformSelector(setKeywords:, universalObject.keywords);
+    safePerformSelector(setWeakRelatedUniqueIdentifier:, universalObject.canonicalIdentifier);
 
-    SEL setWeakRelatedUniqueIdentifierSelector = NSSelectorFromString(@"setWeakRelatedUniqueIdentifier:");
-    if (universalObject.canonicalIdentifier &&
-        [attributes respondsToSelector:setWeakRelatedUniqueIdentifierSelector]) {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-        [attributes performSelector:setWeakRelatedUniqueIdentifierSelector
-                         withObject:universalObject.canonicalIdentifier];
-        #pragma clang diagnostic pop
-    }
+    #undef safePerformSelector
     return attributes;
 #endif
     
@@ -217,14 +189,26 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
 - (void)indexPrivatelyWithBranchUniversalObjects:(NSArray<BranchUniversalObject*>* _Nonnull)universalObjects
                                       completion:(void (^_Nullable) (NSArray<BranchUniversalObject *> * _Nullable universalObjects,
                                                                      NSError * _Nullable error))completion {
-    if ([BNCSystemObserver getOSVersion].floatValue < 9.0) {
-        NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];
-        if (completion)
-            completion(nil,error);
-        return;
+    BOOL isIndexingAvailable = NO;
+    Class CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
+    Class CSSearchableItemClass = NSClassFromString(@"CSSearchableItem");
+    SEL isIndexingAvailableSelector = NSSelectorFromString(@"isIndexingAvailable");
+    isIndexingAvailable =
+    ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])
+    (CSSearchableIndexClass, isIndexingAvailableSelector);
+
+    #define IndexingNotAvalable() { \
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];\
+        if (completion) {\
+            completion(nil,error);\
+        }\
+        return;\
     }
     
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+    if (!isIndexingAvailable || !CSSearchableIndexClass || !CSSearchableItemClass) {
+        IndexingNotAvalable();
+    }
+    
     dispatch_group_t workGroup = dispatch_group_create();
     
     NSMutableArray<CSSearchableItem *> *searchableItems = [[NSMutableArray alloc] init];
@@ -250,10 +234,10 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                                                     thumbnail:thumbnailData
                                                                           url:dynamicUrl];
                         
-                        CSSearchableItem *item = [[CSSearchableItem alloc]
-                                                  initWithUniqueIdentifier:dynamicUrl
-                                                  domainIdentifier:kDomainIdentifier
-                                                  attributeSet:attributes];
+                        id item = [CSSearchableItemClass alloc];
+                        item = [item initWithUniqueIdentifier:dynamicUrl
+                                             domainIdentifier:kDomainIdentifier
+                                                 attributeSet:attributes];
                         
                         [searchableItems addObject:item];
                         dispatch_semaphore_signal(indexingSema);
@@ -265,11 +249,10 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                 id attributes =  [self attributeSetWithUniversalObject:universalObject
                                                              thumbnail:nil
                                                                    url:dynamicUrl];
-                
-                CSSearchableItem *item = [[CSSearchableItem alloc]
-                                          initWithUniqueIdentifier:dynamicUrl
-                                          domainIdentifier:kDomainIdentifier
-                                          attributeSet:attributes];
+                id item = [CSSearchableItemClass alloc];
+                item = [item initWithUniqueIdentifier:dynamicUrl
+                             domainIdentifier:kDomainIdentifier
+                             attributeSet:attributes];
                 
                 [searchableItems addObject:item];
                 
@@ -282,8 +265,11 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     }
     
     dispatch_group_wait(workGroup, DISPATCH_TIME_FOREVER);
-   
-    CSSearchableIndex *index = [[CSSearchableIndex alloc] init];
+    id index = [CSSearchableIndexClass alloc];
+    if (![index respondsToSelector:@selector(beginIndexBatch)] ||
+        ![index respondsToSelector:@selector(indexSearchableItems:completionHandler:)]) {
+        IndexingNotAvalable();
+    }
     [index beginIndexBatch];
     [index indexSearchableItems:searchableItems completionHandler:^(NSError * _Nullable error) {
         
@@ -300,8 +286,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         }
         
     }];
-    
-#endif
+    #undef IndexingNotAvalable
 }
 
 - (dispatch_queue_t) workQueue {
@@ -327,7 +312,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     activeViewController.userActivity.title = params[@"title"];
     activeViewController.userActivity.webpageURL = [NSURL URLWithString:params[@"url"]];
     activeViewController.userActivity.eligibleForSearch = YES;
-    activeViewController.userActivity.eligibleForPublicIndexing = YES;
+    activeViewController.userActivity.eligibleForPublicIndexing = YES;  // TODO: Update with the new indexPublically.
     activeViewController.userActivity.userInfo = self.userInfo; // This alone doesn't pass userInfo through
     activeViewController.userActivity.requiredUserInfoKeys = [NSSet setWithArray:self.userInfo.allKeys]; // This along with the delegate method userActivityWillSave, however, seem to force the userInfo to come through.
     activeViewController.userActivity.keywords = params[@"keywords"];
@@ -341,28 +326,64 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                    thumbnailData:(NSData*)thumbnailData
                         callback:(void (^_Nullable)(NSString* _Nullable url, NSError * _Nullable error))completion {
     
-    if ([CSSearchableIndex isIndexingAvailable]) {
-        CSSearchableItem *item = [[CSSearchableItem alloc]
-                                  initWithUniqueIdentifier:indexingParam[@"url"]
-                                  domainIdentifier:kDomainIdentifier
-                                  attributeSet:indexingParam[@"attributeSet"]];
-        NSString *dynamicUrl = indexingParam[@"url"];
-        [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[item]
-                                                       completionHandler: ^(NSError * __nullable error) {
-                                                           NSString *url = error == nil?dynamicUrl:nil;
-                                                           if (completion) {
-                                                               completion(url, error);
-                                                           }
-                                                       }];
+    BOOL isIndexingAvailable = NO;
+    Class CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
+    SEL isIndexingAvailableSelector = NSSelectorFromString(@"isIndexingAvailable");
+    isIndexingAvailable =
+    ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])
+    (CSSearchableIndexClass, isIndexingAvailableSelector);
+    
+    #define IndexingNotAvalable() { \
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];\
+        if (completion) {\
+            completion(nil,error);\
+        }\
+        return;\
+    }
+    
+    if (!isIndexingAvailable) {
+        IndexingNotAvalable();
+    }
 
+    NSString *dynamicUrl = indexingParam[@"url"];
+    Class CSSearchableItemClass = NSClassFromString(@"CSSearchableItem");
+    
+    if (CSSearchableItemClass) {
+        IndexingNotAvalable();
+    }
+    
+    id item = [CSSearchableItemClass alloc];
+    
+    if (!item ||
+        [item respondsToSelector:@selector(initWithUniqueIdentifier:domainIdentifier:attributeSet:)]) {
+        IndexingNotAvalable();
+    }
+    
+    item = [item initWithUniqueIdentifier:indexingParam[@"url"] domainIdentifier:kDomainIdentifier attributeSet:indexingParam[@"attributeSet"]];
+    
+    if (CSSearchableIndexClass &&
+        [CSSearchableIndexClass respondsToSelector:@selector(defaultSearchableIndex)]){
+        id defaultSearchableIndex = [CSSearchableIndexClass defaultSearchableIndex];
+        if ([defaultSearchableIndex respondsToSelector:@selector(indexSearchableItems:completionHandler:)]) {
+            [defaultSearchableIndex indexSearchableItems:@[item]
+                                       completionHandler: ^(NSError * __nullable error)
+            {
+                
+                NSString *url = error == nil?dynamicUrl:nil;
+                if (completion) {
+                    completion(url, error);
+                }
+            }];
+            
+        }
+        else {
+            IndexingNotAvalable();
+        }
     }
     else {
-        NSError* error = [NSError errorWithDomain:BNCErrorDomain code:BNCSpotlightNotAvailableError userInfo:nil];
-        if (completion) {
-            completion(nil, error);
-        }
-        return;
+        IndexingNotAvalable();
     }
+    #undef IndexingNotAvalable
 }
 
 #pragma mark Helper Methods
@@ -399,32 +420,92 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
 
 - (void)removeSearchableItemsWithIdentifiers:(NSArray<NSString *> *_Nonnull)identifiers
                                     callback:(void (^_Nullable)(NSError * _Nullable error))completion {
-    if ([CSSearchableIndex isIndexingAvailable]) {
-        [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithIdentifiers:identifiers completionHandler:^(NSError * _Nullable error) {
-            if (completion)
-                completion(error);
-        }];
-    }else {
-        NSError* error = [NSError errorWithDomain:BNCErrorDomain code:BNCSpotlightNotAvailableError userInfo:nil];
-        if (completion)
-            completion(error);
+    
+    BOOL isIndexingAvailable = NO;
+    Class CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
+    SEL isIndexingAvailableSelector = NSSelectorFromString(@"isIndexingAvailable");
+    isIndexingAvailable =
+    ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])
+    (CSSearchableIndexClass, isIndexingAvailableSelector);
+    
+    #define IndexingNotAvalable() { \
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];\
+        if (completion) {\
+            completion(error);\
+        }\
+        return;\
     }
+    
+    if (!isIndexingAvailable) {
+        IndexingNotAvalable();
+    }
+    else {
+        
+        if (CSSearchableIndexClass &&
+            [CSSearchableIndexClass respondsToSelector:@selector(defaultSearchableIndex)]){
+            id defaultSearchableIndex = [CSSearchableIndexClass defaultSearchableIndex];
+            if ([defaultSearchableIndex respondsToSelector:@selector(deleteSearchableItemsWithIdentifiers:completionHandler:)]) {
+                [defaultSearchableIndex deleteSearchableItemsWithIdentifiers:identifiers
+                                                           completionHandler:^(NSError * _Nullable error) {
+                                                               if (completion)
+                                                                   completion(error);
+                                                           }];
+            }
+            else {
+                IndexingNotAvalable();
+            }
+        }
+        else {
+            IndexingNotAvalable();
+        }
+    }
+    
+#undef IndexingNotAvalable
 }
 
 - (void)removeAllBranchSearchableItemsWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion {
-    if ([CSSearchableIndex isIndexingAvailable]) {
-        [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithDomainIdentifiers:@[kDomainIdentifier]
-                                                                             completionHandler:^(NSError * _Nullable error) {
-                                                                                 if (completion)
-                                                                                     completion(error);
-                                                                             }];
-    }else {
-        NSError* error = [NSError errorWithDomain:BNCErrorDomain
-                                             code:BNCSpotlightNotAvailableError
-                                         userInfo:nil];
-        if (completion)
-            completion(error);
+    
+    BOOL isIndexingAvailable = NO;
+    Class CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
+    SEL isIndexingAvailableSelector = NSSelectorFromString(@"isIndexingAvailable");
+    isIndexingAvailable =
+    ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])
+    (CSSearchableIndexClass, isIndexingAvailableSelector);
+    
+    #define IndexingNotAvalable() { \
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];\
+        if (completion) {\
+            completion(error);\
+        }\
+        return;\
     }
-}
 
+    if (!isIndexingAvailable) {
+        IndexingNotAvalable();
+    }
+    else {
+        
+        id CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
+        if (CSSearchableIndexClass &&
+            [CSSearchableIndexClass respondsToSelector:@selector(defaultSearchableIndex)]){
+            id defaultSearchableIndex = [CSSearchableIndexClass defaultSearchableIndex];
+            if ([defaultSearchableIndex respondsToSelector:
+                 @selector(deleteSearchableItemsWithDomainIdentifiers:completionHandler:)]) {
+                [defaultSearchableIndex deleteSearchableItemsWithDomainIdentifiers:@[kDomainIdentifier]
+                                                                 completionHandler:^(NSError * _Nullable error) {
+                                                                     if (completion)
+                                                                         completion(error);
+                                                                 }];
+            }
+            else {
+                IndexingNotAvalable();
+            }
+        }
+        else {
+            IndexingNotAvalable();
+        }
+    }
+    
+    #undef IndexingNotAvalable
+}
 @end
