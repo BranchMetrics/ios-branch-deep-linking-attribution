@@ -8,7 +8,7 @@
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 
-#import <CoreSpotlight/CoreSpotlight.h>
+@import CoreSpotlight;
 #import "Branch.h"
 
 @interface BranchCSSearchableItemAttributeSet : CSSearchableItemAttributeSet
