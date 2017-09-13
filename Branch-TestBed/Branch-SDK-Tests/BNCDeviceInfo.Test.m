@@ -128,6 +128,7 @@
 - (void) testLocalIPAddress {
     NSString *address = [BNCDeviceInfo getInstance].localIPAddress;
     XCTAssertNotNil(address);
+    XCTAssertStringMatchesRegex(address, @"[0-9]*\\.[0-9]*\\.[0-9]*\\.[0-9]*");
 }
 
 @end

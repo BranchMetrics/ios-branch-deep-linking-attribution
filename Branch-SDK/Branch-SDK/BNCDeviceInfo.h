@@ -5,13 +5,8 @@
 //  Created by Sojan P.R. on 3/22/16.
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
+
 #import <Foundation/Foundation.h>
-#ifndef BNCDeviceInfo_h
-#define BNCDeviceInfo_h
-
-
-
-#endif /* BNCDeviceInfo_h */
 
 @interface BNCDeviceInfo : NSObject
 
@@ -31,7 +26,7 @@
 @property (atomic, copy, readonly) NSString* country;            //!< The iso2 Country name (us, in,etc).
 @property (atomic, copy, readonly) NSString* language;           //!< The iso2 language code (en, ml).
 @property (atomic, copy, readonly) NSString* browserUserAgent;   //!< Simple user agent string.
-@property (atomic, copy, readonly) NSString* localIPAddress;     //!< Simple user agent string.
+@property (atomic, copy, readonly) NSString* localIPAddress;     //!< The current local IP address.
 
 //----------Methods----------------//
 + (BNCDeviceInfo *)getInstance;
