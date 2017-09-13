@@ -379,6 +379,7 @@ NSString *type = @"some type";
 //example using callbackWithURLandSpotlightIdentifier
 - (IBAction)registerWithSpotlightButtonTouchUpInside:(id)sender {
     [self.branchUniversalObject addMetadataKey:@"deeplink_text" value:@"This link was generated for Spotlight registration"];
+    self.branchUniversalObject.contentIndexMode = ContentIndexModePrivate;
     self.branchUniversalObject.automaticallyListOnSpotlight = YES;
     [self.branchUniversalObject userCompletedAction:BNCRegisterViewEvent];
 }

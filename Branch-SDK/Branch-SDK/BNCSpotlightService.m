@@ -36,7 +36,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         }
         return;
     }
-    
     if (!universalObject.title) {
         NSError *error = [NSError branchErrorWithCode:BNCSpotlightTitleError];
         if (completion) {
@@ -348,14 +347,14 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     NSString *dynamicUrl = indexingParam[@"url"];
     Class CSSearchableItemClass = NSClassFromString(@"CSSearchableItem");
     
-    if (CSSearchableItemClass) {
+    if (!CSSearchableItemClass) {
         IndexingNotAvalable();
     }
     
     id item = [CSSearchableItemClass alloc];
     
     if (!item ||
-        [item respondsToSelector:@selector(initWithUniqueIdentifier:domainIdentifier:attributeSet:)]) {
+        ![item respondsToSelector:@selector(initWithUniqueIdentifier:domainIdentifier:attributeSet:)]) {
         IndexingNotAvalable();
     }
     
@@ -484,7 +483,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         IndexingNotAvalable();
     }
     else {
-        
         id CSSearchableIndexClass = NSClassFromString(@"CSSearchableIndex");
         if (CSSearchableIndexClass &&
             [CSSearchableIndexClass respondsToSelector:@selector(defaultSearchableIndex)]){
