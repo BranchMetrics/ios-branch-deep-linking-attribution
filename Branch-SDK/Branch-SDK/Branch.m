@@ -118,13 +118,6 @@ void ForceCategoriesToLoad(void) {
 
 #pragma mark - GetInstance methods
 
-+ (void) load {
-    if (self != [Branch self])
-        return;
-    ForceCategoriesToLoad();
-    [self openLog];
-}
-
 static NSURL* bnc_logURL = nil;
 
 + (void) openLog {
@@ -143,7 +136,7 @@ static NSURL* bnc_logURL = nil;
             // Try loading from the Info.plist
             NSString *logLevelString = [[NSBundle mainBundle] infoDictionary][@"BranchLogLevel"];
             if ([logLevelString isKindOfClass:[NSString class]]) {
-                BNCLogLevel logLevel = BNBLogLevelFromString(logLevelString);
+                BNCLogLevel logLevel = BNCLogLevelFromString(logLevelString);
                 BNCLogSetDisplayLevel(logLevel);
             }
 
@@ -160,6 +153,18 @@ static NSURL* bnc_logURL = nil;
 
 + (void) closeLog {
     BNCLogCloseLogFile();
+}
+
+void BranchClassInitializeLog(void);
+void BranchClassInitializeLog(void) {
+    [Branch openLog];
+}
+
++ (void) load {
+    static dispatch_once_t onceToken = 0;
+    dispatch_once(&onceToken, ^{
+        BNCLogSetClientInitializeFunction(BranchClassInitializeLog);
+    });
 }
 
 + (Branch *) getTestInstance {
@@ -684,12 +689,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
     if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] &&
-        [urlString containsString:branchUniversalLinkDomains]) {
+        [urlString bnc_containsString:branchUniversalLinkDomains]) {
         return YES;
     }
     else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
         for (id oneDomain in branchUniversalLinkDomains) {
-            if ([oneDomain isKindOfClass:[NSString class]] && [urlString containsString:oneDomain]) {
+            if ([oneDomain isKindOfClass:[NSString class]] && [urlString bnc_containsString:oneDomain]) {
                 return YES;
             }
         }
@@ -698,7 +703,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     NSString *userActivityURL = urlString;
     NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
     for (NSString* domain in branchDomains) {
-        if ([userActivityURL containsString:domain])
+        if ([userActivityURL bnc_containsString:domain])
             return YES;
     }
 
@@ -1612,7 +1617,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self callClose];
     [self.requestQueue persistImmediately];
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
-    NSLog(@"Resigned active."); // TODO: Remove
     BNCLogDebugSDK(@"Application resigned active.");
     [self.class closeLog];
     [self.class openLog];
@@ -1769,11 +1773,11 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
     if (self.preferenceHelper.externalIntentURI.length)
         urlstring = self.preferenceHelper.externalIntentURI;
 
-    if (urlstring) {
-        NSURLComponents *URLComponents = [NSURLComponents componentsWithString:urlstring];
-        for (NSURLQueryItem*item in URLComponents.queryItems) {
-            if ([item.name isEqualToString:@"BranchLogLevel"]) {
-                BNCLogLevel logLevel = BNBLogLevelFromString(item.value);
+    if (urlstring.length) {
+        NSArray<BNCKeyValue*> *queryItems = [BNCEncodingUtils queryItems:[NSURL URLWithString:urlstring]];
+        for (BNCKeyValue*item in queryItems) {
+            if ([item.key isEqualToString:@"BranchLogLevel"]) {
+                BNCLogLevel logLevel = BNCLogLevelFromString(item.value);
                 [[NSUserDefaults standardUserDefaults]
                     setObject:[NSNumber numberWithInteger:logLevel]
                         forKey:BNCLogLevelKey];

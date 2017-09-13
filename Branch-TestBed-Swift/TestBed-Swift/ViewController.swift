@@ -166,7 +166,7 @@ class ViewController: UITableViewController, BranchShareLinkDelegate {
                 self.performSegue(withIdentifier: "ShowContentView", sender: "LatestReferringParams")
                 print("Branch TestBed: LatestReferringParams:\n", content)
             }
-        case (6,1) :
+        case (5,1) :
             if let params = Branch.getInstance().getFirstReferringParams() {
                 let content = String(format:"FirstReferringParams:\n\n%@", (params.JSONDescription()))
                 self.performSegue(withIdentifier: "ShowContentView", sender: "FirstReferringParams")

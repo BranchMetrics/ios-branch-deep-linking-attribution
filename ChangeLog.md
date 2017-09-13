@@ -1,19 +1,28 @@
 Branch iOS SDK Change Log
 
+- v0.18.8
+  * _*Master Release*_ - September 13, 2017
+
+- v0.18.6
+  * Fixed TestBed-Swift for Xcode 9 (but not upgraded to Swift 4 yet).
+  * Fixed some thread safety and iOS 11 bugs.
+
+- v0.18.3
+  * Fixed query string parsing for iOS 7 and added more tests.
+
+- v0.18.2
+  * Language and locale were reported wrong (GH-#707).
+  * Getting the user agent in iOS 7 would stall initialization sometimes.
+
+- v0.18.1
+  * Update Apple search ads mock-up for testing and backend (GH-#682,#706).
+    - Fixed and tested encoding JSON boolean true as 'true' vs. '1'.
+    - Updated Apple search ad dictionary for testing.
+
 - v0.18.0
   * Branch links opened via Air Drop now open correctly (GH-#699,#701).
-    - Testing notes:  Test this heavily on all the iOS versions, and test opening links when app is
-      not running, when it is in background, and when it is in the foreground.  Also, test links
-      opened from Notepad, etc.
-
   * Fixed remote push notification handling (GH-#703,#704).
-    - Testing notes: you'll need to send a push notification to the testbed app via
-      the `./apns-send-token` script.
-
   * Fixed a race condition on startup while getting the browser string (GH-#700,#702).
-    - Testing notes: To reproduce, turn on the thread sanitizer, remove the app from the device,
-      then run the app from Xcode.  Test on iOS 7,8,9,10,11 and make sure there are no race
-      conditions and that the initialization does not deadlock.
   * Removed vestigial CoreTelephony references (GH-#689).
   * Updated project for Xcode 9 compatibility.
   * Update the BranchShareLink.shareURL member field correctly after share event (#696).

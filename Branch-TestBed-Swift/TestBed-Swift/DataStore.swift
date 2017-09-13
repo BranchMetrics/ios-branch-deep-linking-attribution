@@ -177,33 +177,27 @@ struct DataStore {
             guard universalObject[key] != nil else {
                 continue
             }
-            
+
+            let value = universalObject[key]!.description!()
+
             switch key {
             case "$canonical_identifier":
-                branchUniversalObject.canonicalIdentifier = universalObject[key] as! String
+                branchUniversalObject.canonicalIdentifier = value
             case "$og_description":
-                if let description = universalObject[key] {
-                    branchUniversalObject.contentDescription = description as? String
-                }
+                branchUniversalObject.contentDescription = value
             case "$exp_date":
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd"
-                let expirationDate = dateFormatter.date(from: universalObject[key] as! String)
+                let expirationDate = dateFormatter.date(from:value)
                 branchUniversalObject.expirationDate = expirationDate
             case "$og_image_url":
-                if let imageURL = universalObject[key] {
-                    branchUniversalObject.imageUrl = imageURL as? String
-                }
+                branchUniversalObject.imageUrl = value
             case "$keywords":
                 branchUniversalObject.keywords = universalObject[key] as! [AnyObject]
             case "$og_title":
-                if let title = universalObject[key] {
-                    branchUniversalObject.title = title as? String
-                }
+                branchUniversalObject.title = value
             case "$content_type":
-                if let contentType = universalObject[key] {
-                    branchUniversalObject.type = contentType as? String
-                }
+                branchUniversalObject.type = value
             case "$price":
                 if let price = universalObject[key] as? String {
                     if let float_price = Float(price) {
@@ -213,9 +207,7 @@ struct DataStore {
                     }
                 }
             case "$currency":
-                if let currency = universalObject[key] as? String {
-                    branchUniversalObject.currency = currency
-                }
+                branchUniversalObject.currency = value
             case "customData":
                 if let data = universalObject[key] as? [String: String] {
                     for customDataKey in data.keys {
@@ -223,7 +215,7 @@ struct DataStore {
                     }
                 }
             default:
-                branchUniversalObject.addMetadataKey(key, value: universalObject[key] as! String)
+                branchUniversalObject.addMetadataKey(key, value: value)
             }
         }
         return branchUniversalObject

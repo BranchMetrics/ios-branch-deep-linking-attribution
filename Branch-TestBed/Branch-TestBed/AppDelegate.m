@@ -7,6 +7,7 @@
 //
 
 #import "Branch.h"
+#import "BNCEncodingUtils.h"
 #import "AppDelegate.h"
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
@@ -38,13 +39,14 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [branch delayInitToCheckForSearchAds];
     
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
-    [branch setAppleSearchAdsDebugMode];
+    // [branch setAppleSearchAdsDebugMode];
     
-    /**
-     * // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
-     * [self onboardUserOnInstall];
-     */
+    // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
+    // [self onboardUserOnInstall];
 
+    /*
+     *    Required: Initialize Branch, passing a deep link handler block:
+     */
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
         if (!error) {
@@ -54,9 +56,11 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
             NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
             if (params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] && deeplinkText) {
                 
-                UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
+                UINavigationController *navigationController =
+                    (UINavigationController *)self.window.rootViewController;
                 UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                LogOutputViewController *logOutputViewController = [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
+                LogOutputViewController *logOutputViewController =
+                    [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
                 
                 [navigationController pushViewController:logOutputViewController animated:YES];
                 NSString *logOutput =
