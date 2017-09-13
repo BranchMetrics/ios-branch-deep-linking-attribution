@@ -28,7 +28,8 @@ static inline void BNCSleepForTimeInterval(NSTimeInterval seconds) {
 }
 
 #define BNCTAssertEqualMaskedString(string, mask) { \
-    if (!string || !mask || ![string bnc_isEqualToMaskedString:mask]) { \
+    if ((id)string != nil && (id)mask != nil && [string bnc_isEqualToMaskedString:mask]) { \
+    } else { \
         XCTAssertEqualObjects(string, mask); \
     } \
 }
