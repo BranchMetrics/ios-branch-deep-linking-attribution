@@ -6,13 +6,11 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
+@import SystemConfiguration;
 #include <sys/utsname.h>
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
-#import <UIKit/UIDevice.h>
-#import <UIKit/UIScreen.h>
-#import <SystemConfiguration/SystemConfiguration.h>
 #import "BNCLog.h"
 
 @implementation BNCSystemObserver
@@ -77,17 +75,15 @@
     for (NSDictionary *urlType in urlTypes) {
         NSArray *urlSchemes = [urlType objectForKey:@"CFBundleURLSchemes"];
         for (NSString *uriScheme in urlSchemes) {
-            BOOL isFBScheme = [uriScheme hasPrefix:@"fb"];
-            BOOL isDBScheme = [uriScheme hasPrefix:@"db"];
-            BOOL isPinScheme = [uriScheme hasPrefix:@"pin"];
-            
-            // Don't use the schemes set aside for other integrations.
-            if (!isFBScheme && !isDBScheme && !isPinScheme) {
-                return uriScheme;
-            }
+            if ([uriScheme hasPrefix:@"fb"]) continue;  // Facebook
+            if ([uriScheme hasPrefix:@"db"]) continue;  // DB?
+            if ([uriScheme hasPrefix:@"pin"]) continue; // Pinterest
+            if ([uriScheme hasPrefix:@"com.googleusercontent.apps"]) continue; // Google
+
+            // Otherwise this must be it!
+            return uriScheme;
         }
     }
-
     return nil;
 }
 

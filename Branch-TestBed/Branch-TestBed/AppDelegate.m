@@ -5,12 +5,15 @@
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
-#import "Branch/Branch.h"
+
+#import "Branch.h"
+#import "BNCEncodingUtils.h"
 #import "AppDelegate.h"
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
-#import <SafariServices/SafariServices.h>
+#import "BNCEncodingUtils.h"
+@import SafariServices;
 
 @interface AppDelegate() <SFSafariViewControllerDelegate>
 @property (nonatomic, strong) SFSafariViewController *onboardingVC;
@@ -19,31 +22,33 @@
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application
-    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    /**
-     * // Push notification support (Optional)
-     * [self registerForPushNotifications:application];
-     */
+didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    BNCLogSetDisplayLevel(BNCLogLevelAll);
 
+    // Set Branch.useTestBranchKey = YES; to have Branch use the test key that's in the app's
+    // Info.plist file. This makes Branch test against your test environment (As shown in the Branch
+    // Dashboard) instead of the live environment.
+    //
+    // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
-    
-    // Comment / un-comment to toggle debugging:
+
+    // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
     [branch setDebug];
 
-    // For Apple Search Ads
+    // Check for Apple Search Ad attribution (trade-off: slows down app startup):
     [branch delayInitToCheckForSearchAds];
-
+    
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
     
-    [branch setWhiteListedSchemes:@[@"branchtest"]];
+    // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
+    // [self onboardUserOnInstall];
 
-    /**
-     * // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
-     * [self onboardUserOnInstall];
+    /*
+     *    Required: Initialize Branch, passing a deep link handler block:
      */
-    
-    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
+    [branch initSessionWithLaunchOptions:launchOptions
+        andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
         if (!error) {
             
             NSLog(@"initSession succeeded with params: %@", params);
@@ -51,12 +56,16 @@
             NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
             if (params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] && deeplinkText) {
                 
-                UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
+                UINavigationController *navigationController =
+                    (UINavigationController *)self.window.rootViewController;
                 UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                LogOutputViewController *logOutputViewController = [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
+                LogOutputViewController *logOutputViewController =
+                    [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
                 
                 [navigationController pushViewController:logOutputViewController animated:YES];
-                NSString *logOutput = [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@", deeplinkText, [[branch getLatestReferringParams] description]];
+                NSString *logOutput =
+                    [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@",
+                        deeplinkText, [[branch getLatestReferringParams] description]];
                 logOutputViewController.logOutput = logOutput;
                 
             } else {
@@ -66,11 +75,15 @@
         } else {
             NSLog(@"Branch TestBed: Initialization failed\n%@", error.localizedDescription);
         }
-
+        
     }];
+
+    // Push notification support (Optional)
+    [self registerForPushNotifications:application];
 
     return YES;
 }
+
 
 - (void)onboardUserOnInstall {
     NSURL *urlForOnboarding = [NSURL URLWithString:@"http://example.com"]; // Put your onboarding link here
@@ -158,12 +171,14 @@ continueUserActivity:(NSUserActivity *)userActivity
         [application registerForRemoteNotificationTypes:
             (UIRemoteNotificationTypeNewsstandContentAvailability| UIRemoteNotificationTypeBadge |
                 UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert)];
-        #pragma clang diagnostic push
+        #pragma clang diagnostic pop
     }
 }
 
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    NSLog(@"Registered for remote notifications with APN device token: %@", deviceToken);
+- (void)application:(UIApplication *)application
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
+    NSString *tokenString = [BNCEncodingUtils hexStringFromData:deviceToken];
+    NSLog(@"Registered for remote notifications with APN device token: '%@'.", tokenString);
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
@@ -171,7 +186,8 @@ continueUserActivity:(NSUserActivity *)userActivity
     // process your non-Branch notification payload items here...
 }
 
--(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+-(void)application:(UIApplication *)application
+didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"Error registering for remote notifications: %@", error);
 }
 

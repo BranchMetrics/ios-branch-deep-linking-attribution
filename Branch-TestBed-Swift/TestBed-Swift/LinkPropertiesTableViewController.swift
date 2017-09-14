@@ -42,13 +42,13 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
     @IBOutlet weak var androidDeepviewTextField: UITextField!
     @IBOutlet weak var desktopDeepviewTextField: UITextField!
     
-    var linkProperties = [String: AnyObject]()
+    var linkProperties = [String: Any]()
     
     // MARK: - Core View Functions
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         channelTextField.delegate = self
         featureTextField.delegate = self
         campaignTextField.delegate = self
@@ -80,10 +80,10 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
         
         UITableViewCell.appearance().backgroundColor = UIColor.white
         clearAllValuesButton.isEnabled = linkProperties.count > 0 ? true : false
-
+        
         refreshControls()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -103,12 +103,12 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch((indexPath as NSIndexPath).section) {
-            case 5 :
-                self.performSegue(withIdentifier: "ShowTags", sender: "Tags")
-            default : break
+        case 5 :
+            self.performSegue(withIdentifier: "ShowTags", sender: "Tags")
+        default : break
         }
     }
-
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         refreshLinkProperties()
@@ -192,7 +192,7 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
         deeplinkPathTextField.text = linkProperties["$deeplink_path"] as? String
         androidDeeplinkPathTextField.text = linkProperties["$android_deeplink_path"] as? String
         iosDeeplinkPathTextField.text = linkProperties["$ios_deeplink_path"] as? String
-        matchDurationTextField.text = linkProperties["$match_duration"] as? String
+        matchDurationTextField.text = String(describing: linkProperties["$match_duration"] ?? "")
         
         alwaysDeeplinkSwitch.isOn = false
         if let alwaysDeeplink = linkProperties["$always_deeplink"] as? String {
@@ -238,7 +238,7 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
         addProperty("$ios_wechat_url", value: iosWeChatURLTextField.text!)
         addProperty("$ios_weibo_url", value: iosWeiboURLTextField.text!)
         addProperty("$after_click_url", value: afterClickURLTextField.text!)
-
+        
         if webOnlySwitch.isOn {
             linkProperties["$web_only"] = "1" as AnyObject?
         } else {

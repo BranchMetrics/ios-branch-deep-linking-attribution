@@ -78,8 +78,7 @@ NSString *type = @"some type";
             [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"],
             BNC_SDK_VERSION];
     [self.versionLabel sizeToFit];
-
-   // [self refreshRewardPoints];
+    [self.activityIndicator stopAnimating];
 }
 
 
@@ -269,7 +268,7 @@ NSString *type = @"some type";
 }
 
 - (IBAction)shareLinkAsActivityItem:(id)sender {
-    // Share as an activity item.
+    // Share as an activity item. Doesn't receive all share started / completed events.
 
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
@@ -327,7 +326,9 @@ NSString *type = @"some type";
 
 - (IBAction) openBranchLinkInApp:(id)sender {
     NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
-    NSURL *URL = [NSURL URLWithString:@"https://bnc.lt/ZPOc/Y6aKU0rzcy"]; // <= Your URL goes here.
+    // TODO: Remove
+    // NSURL *URL = [NSURL URLWithString:@"https://bnc.lt/ZPOc/Y6aKU0rzcy"]; // <= Your URL goes here.
+    NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"];
     activity.webpageURL = URL;
     Branch *branch = [Branch getInstance];
     [branch resetUserSession];
@@ -374,13 +375,14 @@ NSString *type = @"some type";
 
 #pragma mark - Spotlight
 
-//example using callbackWithURLandSpotlightIdentifier
 - (IBAction)registerWithSpotlightButtonTouchUpInside:(id)sender {
+    //
+    // Example using callbackWithURLandSpotlightIdentifier
+    //
     [self.branchUniversalObject addMetadataKey:@"deeplink_text" value:@"This link was generated for Spotlight registration"];
     self.branchUniversalObject.automaticallyListOnSpotlight = YES;
     [self.branchUniversalObject userCompletedAction:BNCRegisterViewEvent];
 }
-
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"ShowCreditHistory"]) {
@@ -390,23 +392,19 @@ NSString *type = @"some type";
     }
 }
 
-
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self refreshRewardPoints];
 }
 
 - (void)textFieldFinished:(id)sender {
     [sender resignFirstResponder];
 }
 
-
 - (void)hideKeyboard {
     if ([self.branchLinkTextField isFirstResponder]) {
         [self.branchLinkTextField resignFirstResponder];
     }
 }
-
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     UITouch *touch = [[event allTouches] anyObject];
@@ -416,16 +414,13 @@ NSString *type = @"some type";
     [super touchesBegan:touches withEvent:event];
 }
 
-
 - (void)branchViewVisible: (NSString *)actionName withID:(NSString *)branchViewID {
     NSLog(@"Branch TestBed: branchViewVisible for action : %@ %@", actionName, branchViewID);
 }
 
-
 - (void)branchViewAccepted: (NSString *)actionName withID:(NSString *)branchViewID {
     NSLog(@"Branch TestBed: branchViewAccepted for action : %@ %@", actionName, branchViewID);
 }
-
 
 - (void)branchViewCancelled: (NSString *)actionName withID:(NSString *)branchViewID {
     NSLog(@"Branch TestBed: branchViewCancelled for action : %@ %@", actionName, branchViewID);

@@ -1,0 +1,71 @@
+#!/bin/bash
+set -euo pipefail
+
+# deploy-build-framework-dynamic  --  Use the Carthage project to make a framework build of the SDK.
+#
+# Edward Smith, August 2017
+
+scriptname=$(basename "${BASH_SOURCE[0]}")
+scriptpath="${BASH_SOURCE[0]}"
+scriptpath=$(cd "$(dirname "${scriptpath}")" && pwd)
+cd ${scriptpath}/..
+
+function xcodeBuildTarget() {
+    local platform="$1"
+    echo ">>> Compiling for platform ${platform}." 1>&2
+    xcodebuild \
+        -project Branch-TestBed.xcodeproj \
+        -target Branch \
+        -sdk $platform \
+        -configuration Release \
+        -quiet \
+        clean build \
+        OTHER_CFLAGS="-fembed-bitcode"
+}
+
+# Clean up old frameworks and build directories:
+echo ">>> Removing old frameworks..." 1>&2
+rm -rf Branch.framework || true
+rm -f  Branch.framework.zip || true
+cd Branch-TestBed
+rm -rf build
+
+xcodeBuildTarget "iphoneos"
+xcodeBuildTarget "iphonesimulator"
+
+# Merge static libraries into a universal static library
+ditto build/Release-iphoneos build/Release
+lipo \
+    -create \
+        build/Release-iphoneos/libBranch.a \
+        build/Release-iphonesimulator/libBranch.a \
+    -output \
+        build/Release/libBranch.a
+
+# Create a static .framework
+
+FRAMEWORK_DIR=build/Branch.framework
+mkdir -p $FRAMEWORK_DIR
+mkdir -p $FRAMEWORK_DIR/Versions
+mkdir -p $FRAMEWORK_DIR/Versions/A
+mkdir -p $FRAMEWORK_DIR/Versions/A/Headers
+#Fabric
+mkdir -p $FRAMEWORK_DIR/Modules
+
+cp build/Release/headers/* $FRAMEWORK_DIR/Versions/A/Headers/
+cp build/Release/libBranch.a $FRAMEWORK_DIR/Versions/A/Branch
+#Fabric
+cp module.modulemap $FRAMEWORK_DIR/Modules/
+cp Framework-Info.plist $FRAMEWORK_DIR/Info.plist
+
+# Make symlinks
+cd $FRAMEWORK_DIR
+ln -s Versions/Current/Headers Headers
+ln -s Versions/Current/Branch Branch
+cd Versions
+ln -s A Current
+
+# Copy it into place:
+
+cd ${scriptpath}/..
+ditto Branch-TestBed/build/Branch.framework ./Branch.framework

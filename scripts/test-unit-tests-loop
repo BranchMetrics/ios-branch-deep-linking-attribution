@@ -1,0 +1,43 @@
+#!/bin/bash
+set -euo pipefail
+
+# test-loop  -  Loop all the tests forever (until they fail).
+#
+# Edward Smith, February 2017
+
+scriptfile="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+scriptfile="${scriptfile}"/$(basename "$0")
+cd $(dirname "$scriptfile")/..
+
+if [[ ${CLICOLOR:-0} == 1 && -t 1 ]]; then
+    textBold="\e[1m"
+    textBlue="\e[94m"
+    textDarkBlue="\e[1m\e[34m"
+    textYellow="\e[93m"
+    textRed="\e[31m"
+    textNormal="\e[0m"
+    textDim="\e[2m"
+else
+    textBold=""
+    textBlue=""
+    textDarkBlue=""
+    textYellow=""
+    textRed=""
+    textNormal=""
+    textDim=""
+fi
+
+loopCount=0
+function finish {
+    printf "${textYellow}>>> Completed %s test iterations.${textNormal}\n" $loopCount
+}
+trap finish EXIT
+
+while true
+do
+    printf "${textYellow}>>> Starting iteration number %s.${textNormal}\n" $((loopCount+1))
+    ./scripts/test-unit-tests
+    # ./scripts/test-unit-tests-xcode7
+   (( loopCount++ )) || true
+done
+

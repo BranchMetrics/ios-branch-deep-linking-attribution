@@ -48,9 +48,7 @@
 */
 //--------------------------------------------------------------------------------------------------
 
-
-#import <Foundation/Foundation.h>
-
+@import Foundation;
 
 #ifdef __cplusplus
 extern "C" {
@@ -61,7 +59,7 @@ extern "C" {
 
 
 ///@return  Returns true if the app is currently attached to a debugger.
-extern BOOL BNCDebuggerIsAttached();
+extern BOOL BNCDebuggerIsAttached(void);
 
 
 ///@param   object An obj-c instance, class, or meta-class.
@@ -71,7 +69,7 @@ extern NSString* _Nonnull BNCDebugStringFromObject(id _Nullable object);
 
 
 ///@return  Returns the names of all loaded classes as an array of NSStrings.
-extern NSArray<NSString*> * _Nonnull BNCDebugArrayOfReqisteredClasses();
+extern NSArray<NSString*> * _Nonnull BNCDebugArrayOfReqisteredClasses(void);
 
 
 ///@return  Returns an NSString indicating the name of the enclosing method.

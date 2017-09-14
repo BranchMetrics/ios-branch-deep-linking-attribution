@@ -20,10 +20,12 @@
 
 - (void)setUp {
     [super setUp];
-    
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.installParams = nil;
     preferenceHelper.identityID = nil;
+    preferenceHelper.checkedAppleSearchAdAttribution = NO;
+    [preferenceHelper saveContentAnalyticsManifest:nil];
+    [preferenceHelper synchronize];
 }
 
 - (void)testRequestBody {

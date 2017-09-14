@@ -13,7 +13,7 @@
 //--------------------------------------------------------------------------------------------------
 
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "BNCDebug.h"
 
 
@@ -24,6 +24,10 @@ extern "C" {
 
 ///@functiongroup Branch Logging Functions
 
+#pragma mark Log Initialization
+
+/// Log facility initialization. Usually there is no need to call this directly.
+extern void BNCLogInitialize(void) __attribute__((constructor));
 
 #pragma mark Log Message Severity
 
@@ -44,40 +48,44 @@ typedef NS_ENUM(NSInteger, BNCLogLevel) {
 /*!
 * @return Returns the current log severity display level.
 */
-extern BNCLogLevel BNCLogDisplayLevel();
+extern BNCLogLevel BNCLogDisplayLevel(void);
 
 /*!
 * @param level Sets the current display level for log messages.
 */
 extern void BNCLogSetDisplayLevel(BNCLogLevel level);
 
-
-#pragma mark - Log Message Synchronization
-
+/*!
+* @param level The log level to convert to a string.
+* @return Returns the string indicating the log level.
+*/
+extern NSString *_Nonnull const BNCLogStringFromLogLevel(BNCLogLevel level);
 
 /*!
-* @discussion   When log messages are synchronized they are written to the log in order, including
-*   across separate threads. Synchronizing log messages usually improves performance since it
-*   reduces global resource lock contention. Note that synchronization has the side effect of some
-*   messages not being available immediately since they are written on a separate thread.
-*
-* @param enable Enable log message synchronization.
+* @param string A string indicating the log level.
+* @return Returns The log level corresponding to the string.
 */
-extern void BNCLogSetSynchronizeMessages(BOOL enable);
-
-/*!@return Returns YES if log messages are synchronized between threads.
-*/
-extern BOOL BNCLogSynchronizeMessages();
+extern BNCLogLevel BNCLogLevelFromString(NSString*_Null_unspecified string);
 
 
 #pragma mark - Programmatic Breakpoints
 
 
 ///@return Returns 'YES' if programmatic breakpoints are enabled.
-extern BOOL BNCLogBreakPointsAreEnabled();
+extern BOOL BNCLogBreakPointsAreEnabled(void);
 
 ///@param enabled Sets programmatic breakpoints enabled or disabled.
 extern void BNCLogSetBreakPointsEnabled(BOOL enabled);
+
+
+#pragma mark - Client Initialization Function
+
+
+typedef void (*BNCLogClientInitializeFunctionPtr)(void);
+
+///@param clientInitializationFunction The client function that should be called before logging starts.
+extern BNCLogClientInitializeFunctionPtr _Null_unspecified
+    BNCLogSetClientInitializeFunction(BNCLogClientInitializeFunctionPtr _Nullable clientInitializationFunction);
 
 
 #pragma mark - Optional Log Output Handlers
@@ -96,10 +104,10 @@ extern void BNCLogFunctionOutputToStdErr(NSDate*_Nonnull timestamp, BNCLogLevel 
 extern void BNCLogSetOutputFunction(BNCLogOutputFunctionPtr _Nullable functionPtr);
 
 ///@return Returns the current logging function.
-extern BNCLogOutputFunctionPtr _Nullable BNCLogOutputFunction();
+extern BNCLogOutputFunctionPtr _Nullable BNCLogOutputFunction(void);
 
 /// If a predefined log handler is being used, the function closes the output file.
-extern void BNCLogCloseLogFile();
+extern void BNCLogCloseLogFile(void);
 
 ///@param URL Sets the log output function to a function that writes messages to the file at URL.
 extern void BNCLogSetOutputToURL(NSURL *_Nullable URL);
@@ -112,7 +120,7 @@ extern void BNCLogSetOutputToURLRecordWrap(NSURL *_Nullable URL, long maxRecords
 ///@param maxBytes Wraps the file at `maxBytes` bytes.  Must be an even number of bytes.
 extern void BNCLogSetOutputToURLByteWrap(NSURL *_Nullable URL, long maxBytes);
 
-typedef void (*BNCLogFlushFunctionPtr)();
+typedef void (*BNCLogFlushFunctionPtr)(void);
 
 ///@param flushFunction The logging functions use `flushFunction` to flush the outstanding log
 ///                     messages to the output function.  For instance, this function may call
@@ -120,7 +128,7 @@ typedef void (*BNCLogFlushFunctionPtr)();
 extern void BNCLogSetFlushFunction(BNCLogFlushFunctionPtr _Nullable flushFunction);
 
 ///@return Returns the current flush function.
-extern BNCLogFlushFunctionPtr _Nullable BNCLogFlushFunction();
+extern BNCLogFlushFunctionPtr _Nullable BNCLogFlushFunction(void);
 
 
 #pragma mark - BNCLogWriteMessage
@@ -145,7 +153,7 @@ extern void BNCLogWriteMessage(
 
 /// This function synchronizes all outstanding log messages and writes them to the logging function
 /// set by BNCLogSetOutputFunction.
-extern void BNCLogFlushMessages();
+extern void BNCLogFlushMessages(void);
 
 
 #pragma mark - Logging

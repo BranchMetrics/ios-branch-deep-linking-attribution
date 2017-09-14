@@ -6,12 +6,9 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
+@import Foundation;
 
-#import <Foundation/Foundation.h>
-
-
-void ForceNSMutableDictionaryToLoad();
-
+void BNCForceNSMutableDictionaryCategoryToLoad(void) __attribute__((constructor));
 
 @interface NSMutableDictionary (Branch)
 

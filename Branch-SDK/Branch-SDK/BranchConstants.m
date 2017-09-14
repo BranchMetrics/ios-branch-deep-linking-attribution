@@ -133,3 +133,6 @@ NSString * const BRANCH_ENTITIES_KEY = @"e";
 
 NSString * const BRANCH_REQUEST_KEY_SEARCH_AD = @"search_ad_encoded";
 
+NSString * const BRANCH_CRASHLYTICS_SDK_VERSION_KEY = @"io.branch.sdk.version";
+NSString * const BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY = @"io.branch.device.fingerprintid";
+NSString * const BRANCH_CRASHLYTICS_LOW_MEMORY_KEY = @"io.branch.device.lowmemory";
