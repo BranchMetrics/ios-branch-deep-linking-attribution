@@ -5,13 +5,8 @@
 //  Created by Sojan P.R. on 3/22/16.
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
-#import <Foundation/Foundation.h>
-#ifndef BNCDeviceInfo_h
-#define BNCDeviceInfo_h
 
-
-
-#endif /* BNCDeviceInfo_h */
+@import Foundation;
 
 @interface BNCDeviceInfo : NSObject
 

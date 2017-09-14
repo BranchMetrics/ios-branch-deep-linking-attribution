@@ -229,6 +229,7 @@
 		E2B947861D15E78700F2270D /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		F1CF140D1F4CBBC500BB2694 /* BNCSpotlightService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSpotlightService.h; sourceTree = "<group>"; };
 		F1CF140E1F4CBBC500BB2694 /* BNCSpotlightService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSpotlightService.m; sourceTree = "<group>"; };
+
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -390,7 +391,6 @@
 			isa = PBXGroup;
 			children = (
 				E298D0571C73D1B800589D22 /* Info.plist */,
-				E2B947861D15E78700F2270D /* module.modulemap */,
 				E230A1141D03DB9E006181D8 /* Branch-SDK */,
 				E230A1671D03DB9E006181D8 /* Fabric */,
 				E298D0531C73D1B800589D22 /* Products */,
@@ -495,8 +495,9 @@
 		E298D0491C73D1B800589D22 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = BNC;
 				LastUpgradeCheck = 0830;
-				ORGANIZATIONNAME = "Ahmed Nawar";
+				ORGANIZATIONNAME = "Branch, Inc.";
 				TargetAttributes = {
 					E298D0511C73D1B800589D22 = {
 						CreatedOnToolsVersion = 7.2.1;
@@ -695,7 +696,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "$(SRCROOT)/module.modulemap";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.branch.ios-carthage";
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME)";
@@ -715,7 +715,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "$(SRCROOT)/module.modulemap";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.branch.ios-carthage";
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME)";

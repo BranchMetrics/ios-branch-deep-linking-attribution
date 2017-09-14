@@ -690,12 +690,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
     if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] &&
-        [urlString containsString:branchUniversalLinkDomains]) {
+        [urlString bnc_containsString:branchUniversalLinkDomains]) {
         return YES;
     }
     else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
         for (id oneDomain in branchUniversalLinkDomains) {
-            if ([oneDomain isKindOfClass:[NSString class]] && [urlString containsString:oneDomain]) {
+            if ([oneDomain isKindOfClass:[NSString class]] && [urlString bnc_containsString:oneDomain]) {
                 return YES;
             }
         }
@@ -704,7 +704,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     NSString *userActivityURL = urlString;
     NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
     for (NSString* domain in branchDomains) {
-        if ([userActivityURL containsString:domain])
+        if ([userActivityURL bnc_containsString:domain])
             return YES;
     }
 
@@ -1729,7 +1729,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self callClose];
     [self.requestQueue persistImmediately];
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
-    NSLog(@"Resigned active."); // TODO: Remove
     BNCLogDebugSDK(@"Application resigned active.");
     [self.class closeLog];
     [self.class openLog];
@@ -1886,10 +1885,10 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
     if (self.preferenceHelper.externalIntentURI.length)
         urlstring = self.preferenceHelper.externalIntentURI;
 
-    if (urlstring) {
-        NSURLComponents *URLComponents = [NSURLComponents componentsWithString:urlstring];
-        for (NSURLQueryItem*item in URLComponents.queryItems) {
-            if ([item.name isEqualToString:@"BranchLogLevel"]) {
+    if (urlstring.length) {
+        NSArray<BNCKeyValue*> *queryItems = [BNCEncodingUtils queryItems:[NSURL URLWithString:urlstring]];
+        for (BNCKeyValue*item in queryItems) {
+            if ([item.key isEqualToString:@"BranchLogLevel"]) {
                 BNCLogLevel logLevel = BNCLogLevelFromString(item.value);
                 [[NSUserDefaults standardUserDefaults]
                     setObject:[NSNumber numberWithInteger:logLevel]
