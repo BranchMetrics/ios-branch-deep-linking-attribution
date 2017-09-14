@@ -1,14 +1,14 @@
 //
-//  TBDataViewController.h
+//  TBDetailViewController.h
 //  Testbed-ObjC
 //
 //  Created by edward on 6/19/17.
 //  Copyright © 2017 Branch. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
-@interface TBDataViewController : UIViewController
+@interface TBDetailViewController : UIViewController
 - (instancetype) initWithData:(id<NSObject>)dictionaryOrArray;
 @property (nonatomic, strong) id<NSObject> dictionaryOrArray;
 @property (nonatomic, strong) NSString *message;

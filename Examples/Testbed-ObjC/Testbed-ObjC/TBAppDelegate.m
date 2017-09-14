@@ -8,10 +8,12 @@
 
 #import "TBAppDelegate.h"
 #import "TBBranchViewController.h"
-#import "TBDataViewController.h"
+#import "TBDetailViewController.h"
 #import "Branch.h"
 
 @interface TBAppDelegate () <UISplitViewControllerDelegate>
+@property (nonatomic, strong) TBBranchViewController *branchViewController;
+@property (nonatomic, strong) TBDetailViewController *detailViewController;
 @end
 
 @implementation TBAppDelegate
@@ -34,10 +36,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // [branch setAppleSearchAdsDebugMode];
     [branch setWhiteListedSchemes:@[@"branchtest"]];
 
-    /**
-     * // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
-     * [self onboardUserOnInstall];
-     */
+    // Optional. Use if presenting SFSafariViewController as part of onboarding.
+    // Cannot use with setDebug.
+    // [self onboardUserOnInstall];
+ 
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
             [self handleBranchDeepLinkParameters:params error:error];
@@ -52,16 +54,18 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     splitViewController.delegate = self;
 
+    self.branchViewController = [TBBranchViewController new];
     UINavigationController *masterViewController =
         [[UINavigationController alloc]
-            initWithRootViewController:[TBBranchViewController new]];
+            initWithRootViewController:self.branchViewController];
     masterViewController.title = @"Branch";
-    
-    UINavigationController *detailViewController =
-        [[UINavigationController alloc]
-            initWithRootViewController:[TBDataViewController new]];
 
-    splitViewController.viewControllers = @[masterViewController, detailViewController];
+    self.detailViewController = [TBDetailViewController new];
+    UINavigationController *detailNavigationViewController =
+        [[UINavigationController alloc]
+            initWithRootViewController:self.detailViewController];
+
+    splitViewController.viewControllers = @[masterViewController, detailNavigationViewController];
 
     // Set up the navigation controller
     UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
@@ -72,44 +76,36 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 - (void)handleBranchDeepLinkParameters:(NSDictionary*)params error:(NSError*)error {
     if (error) {
         NSLog(@"Error handling deep link! Error: %@.", error);
-        return;
-    }
-
-    NSLog(@"Received deeplink with params: %@", params);
-
-    NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
-    if (params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] && deeplinkText) {
-        
-//        UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
-//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//        LogOutputViewController *logOutputViewController = [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
-//        
-//        [navigationController pushViewController:logOutputViewController animated:YES];
-//        NSString *logOutput = [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@", deeplinkText, [[branch getLatestReferringParams] description]];
-//        logOutputViewController.logOutput = logOutput;
-    }
+        [self.branchViewController showDataViewControllerWithObject:@{
+            @"Error": [NSString stringWithFormat:@"%@", error]
+            }
+            title:@"Deep Link Error"
+            message:nil];
+    } else {
+        NSLog(@"Received deeplink with params: %@", params);
+        [self.branchViewController showDataViewControllerWithObject:params
+             title:@"Deep Link Opened" message:nil];
+     }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-    // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+    BNCLogMethodName();
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    BNCLogMethodName();
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
-    // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+    BNCLogMethodName();
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    BNCLogMethodName();
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    BNCLogMethodName();
 }
 
 #pragma mark - Split view
@@ -120,8 +116,8 @@ collapseSecondaryViewController:(UIViewController *)secondaryViewController
 
     if ([secondaryViewController isKindOfClass:[UINavigationController class]]) {
         UINavigationController *navigationController = (id) secondaryViewController;
-        if ([[navigationController topViewController] isKindOfClass:[TBDataViewController class]] &&
-            ([(TBDataViewController *)[navigationController topViewController] dictionaryOrArray] == nil)) {
+        if ([[navigationController topViewController] isKindOfClass:[TBDetailViewController class]] &&
+            ([(TBDetailViewController *)[navigationController topViewController] dictionaryOrArray] == nil)) {
             return YES;
         }
     }

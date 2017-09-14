@@ -6,7 +6,12 @@
 //  Copyright © 2017 Branch. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 @interface TBBranchViewController : UIViewController
+
+- (void) showDataViewControllerWithObject:(id<NSObject>)dictionaryOrArray
+                                    title:(NSString*)title
+                                  message:(NSString*)message;
+
 @end

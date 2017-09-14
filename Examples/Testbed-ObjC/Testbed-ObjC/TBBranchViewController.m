@@ -8,7 +8,7 @@
 
 #import "TBBranchViewController.h"
 #import "TBTableData.h"
-#import "TBDataViewController.h"
+#import "TBDetailViewController.h"
 #import "TBWaitingView.h"
 #import "BNCLog.h"
 #import "Branch.h"
@@ -140,10 +140,10 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 #pragma mark - Utility Methods
 
-- (void) showResultsWithDictionary:(NSDictionary*)dictionary
-                             title:(NSString*)title
-                           message:(NSString*)message {
-    TBDataViewController *dataViewController = [[TBDataViewController alloc] initWithData:dictionary];
+- (void) showDataViewControllerWithObject:(id<NSObject>)dictionaryOrArray
+                                    title:(NSString*)title
+                                  message:(NSString*)message {
+    TBDetailViewController *dataViewController = [[TBDetailViewController alloc] initWithData:dictionaryOrArray];
     dataViewController.title = title;
     dataViewController.message = message;
     [self.navigationController pushViewController:dataViewController animated:YES];
@@ -188,15 +188,15 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (IBAction)showFirstReferringParams:(TBTableRow*)sender {
-    [self showResultsWithDictionary:[[Branch getInstance] getFirstReferringParams]
-        title:@"First Referring Parameters"
-        message:nil];
+    [self showDataViewControllerWithObject:[[Branch getInstance] getFirstReferringParams]
+               title:@"First Referring Parameters"
+                 message:nil];
 }
 
 - (IBAction)showLatestReferringParams:(TBTableRow*)sender {
-    [self showResultsWithDictionary:[[Branch getInstance] getLatestReferringParamsSynchronous]
-        title:@"Latest Referring Parameters"
-        message:nil];
+    [self showDataViewControllerWithObject:[[Branch getInstance] getLatestReferringParamsSynchronous]
+               title:@"Latest Referring Parameters"
+                 message:nil];
 }
 
 - (IBAction)setUserIdentity:(TBTableRow*)sender {
@@ -212,7 +212,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
                 NSLog(@"Set identity error: %@.", error);
                 [self showAlertWithTitle:@"Can't set identity." message:error.localizedDescription];
             } else {
-                [self showResultsWithDictionary:params title:@"Set Identity" message:@"User Identity Set"];
+                [self showDataViewControllerWithObject:params title:@"Set Identity" message:@"User Identity Set"];
             }
         }];
 }
@@ -224,7 +224,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         if (error || !changed) {
             [self showAlertWithTitle:@"Logout Error" message:error.localizedDescription];
         } else {
-            [self showResultsWithDictionary:@{@"changed": @(YES)}
+            [self showDataViewControllerWithObject:@{@"changed": @(YES)}
                 title:@"Log Out User" message:@"Logged User Identity Out"];
         }
     }];
@@ -262,7 +262,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
             if (error) {
                 [self showAlertWithTitle:@"Commere Event Error" message:error.localizedDescription];
             } else {
-                [self showResultsWithDictionary:response
+                [self showDataViewControllerWithObject:response
                     title:@"Commerce Event"
                     message:nil];
             }

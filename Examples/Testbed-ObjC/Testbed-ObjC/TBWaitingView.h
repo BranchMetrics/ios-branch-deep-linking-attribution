@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Edward Smith. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 @interface TBWaitingView : UIViewController
 

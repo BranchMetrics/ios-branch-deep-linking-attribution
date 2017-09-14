@@ -1,12 +1,12 @@
 //
-//  TBDataViewController.m
+//  TBDetailViewController.m
 //  Testbed-ObjC
 //
 //  Created by edward on 6/19/17.
 //  Copyright © 2017 Branch. All rights reserved.
 //
 
-#import "TBDataViewController.h"
+#import "TBDetailViewController.h"
 
 @interface TBRowData : NSObject
 @property NSString *key;
@@ -118,12 +118,12 @@
 
 #pragma mark - TBDataViewController
 
-@interface TBDataViewController () <UITableViewDelegate, UITableViewDataSource>
+@interface TBDetailViewController () <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong) NSArray<TBRowData*> *dataRows;
 @property (nonatomic, weak) IBOutlet UITableView *tableView;
 @end
 
-@implementation TBDataViewController
+@implementation TBDetailViewController
 
 - (instancetype) initWithData:(id<NSObject>)dictionaryOrArray {
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nil];
