@@ -28,10 +28,10 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventSpendCredits;
 ///@name Content Events
 
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventSearch;
-FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventViewContent;
-FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventViewContentList;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventViewItem;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventViewItems;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventRate;
-FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventShareContent; // TODO: Share start/complete/cancel?
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventShare;
 
 ///@name User Lifecycle Events
 
@@ -65,7 +65,7 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievem
 @property (nonatomic, strong) NSString*_Nullable                coupon;
 @property (nonatomic, strong) NSString*_Nullable                affiliation;
 @property (nonatomic, strong) NSString*_Nullable                eventDescription;
-@property (nonatomic, strong) BranchProductCondition _Nullable                    productCondition;
+@property (nonatomic, strong) NSString*_Nullable                searchQuery;
 @property (nonatomic, copy) NSMutableArray<BranchUniversalObject*>*_Nonnull       contentItems;
 @property (nonatomic, copy) NSMutableDictionary<NSString*, NSString*> *_Nonnull   userInfo;
 

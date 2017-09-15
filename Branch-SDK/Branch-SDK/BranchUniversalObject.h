@@ -54,6 +54,7 @@ typedef NSString * const BranchProductCondition NS_STRING_ENUM;
 
 FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionOther;
 FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionNew;
+FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionExcellent;
 FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionGood;
 FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionFair;
 FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionPoor;
@@ -73,6 +74,7 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbis
 @property (nonatomic, strong, nullable) NSString        *productBrand;
 @property (nonatomic, strong, nullable) NSString        *productCategory;
 @property (nonatomic, strong, nullable) NSString        *productVariant;
+@property (nonatomic, strong, nullable) BranchProductCondition productCondition;
 @property (nonatomic, assign)           double          ratingAverage;
 @property (nonatomic, assign)           NSInteger       ratingCount;
 @property (nonatomic, assign)           double          ratingMaximum;

@@ -63,6 +63,8 @@
     buo.contentMetadata.productBrand     = @"my_prod_Brand1";
     buo.contentMetadata.productCategory  = BNCProductCategoryBabyToddler;
     buo.contentMetadata.productVariant   = @"3T";
+    buo.contentMetadata.productCondition = BranchProductConditionFair;
+
     buo.contentMetadata.ratingAverage    = 5;
     buo.contentMetadata.ratingCount      = 5;
     buo.contentMetadata.ratingMaximum    = 7;
@@ -89,7 +91,7 @@
     event.coupon          = @"test_coupon";
     event.affiliation     = @"test_affiliation";
     event.eventDescription= @"Event _description";
-    event.productCondition= BranchProductConditionFair;
+    event.searchQuery     = @"Query";
     event.userInfo        = (NSMutableDictionary*) @{
         @"Custom_Event_Property_Key1": @"Custom_Event_Property_val1",
         @"Custom_Event_Property_Key2": @"Custom_Event_Property_val2"
@@ -207,6 +209,7 @@
     buo.contentMetadata.productBrand     = @"my_prod_Brand1";
     buo.contentMetadata.productCategory  = BNCProductCategoryBabyToddler;
     buo.contentMetadata.productVariant   = @"3T";
+    buo.contentMetadata.productCondition = @"FAIR";
     buo.contentMetadata.ratingAverage    = 5;
     buo.contentMetadata.ratingCount      = 5;
     buo.contentMetadata.ratingMaximum    = 7;

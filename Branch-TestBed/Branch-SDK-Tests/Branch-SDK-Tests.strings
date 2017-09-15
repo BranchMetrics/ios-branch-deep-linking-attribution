@@ -84,6 +84,7 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
     \"$rating_average\": 5,
     \"$rating_count\": 5,
     \"$rating_max\": 7,
+    \"$condition\": \"FAIR\",
     \"$address_street\": \"Street_name1\",
     \"$address_city\": \"city1\",
     \"$address_region\": \"Region1\",
@@ -115,7 +116,7 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
     \"shipping\": 10.2,
     \"tax\": 12.3,
     \"revenue\": 1.5,
-    \"$condition\": \"FAIR\",
+    \"search_query\": \"Query\",
     \"transaction_id\": \"12344555\",
     \"custom_data\": {
         \"Custom_Event_Property_Key1\": \"Custom_Event_Property_val1\",
@@ -139,14 +140,15 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
         \"shipping\": 10.2,
         \"tax\": 12.3,
         \"revenue\": 1.5,
-        \"$condition\": \"FAIR\",
-        \"transaction_id\": \"12344555\"
+        \"transaction_id\": \"12344555\",
+        \"search_query\": \"Query\"
     },
     \"content_items\": [{
         \"$content_schema\": \"COMMERCE_PRODUCT\",
         \"$quantity\": 2,
         \"$price\": 23.2,
         \"$currency\": \"USD\",
+        \"$condition\": \"FAIR\",
         \"$sku\": \"1994320302\",
         \"$product_name\": \"my_product_name1\",
         \"$product_brand\": \"my_prod_Brand1\",

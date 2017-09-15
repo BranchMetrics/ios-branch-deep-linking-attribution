@@ -24,10 +24,10 @@ BranchStandardEvent BranchStandardEventSpendCredits       = @"SPEND_CREDITS";
 // Content Events
 
 BranchStandardEvent BranchStandardEventSearch             = @"SEARCH";
-BranchStandardEvent BranchStandardEventViewContent        = @"VIEW_CONTENT";
-BranchStandardEvent BranchStandardEventViewContentList    = @"VIEW_CONTENT_LIST";
+BranchStandardEvent BranchStandardEventViewItem           = @"VIEW_ITEM";
+BranchStandardEvent BranchStandardEventViewItems          = @"VIEW_ITEMS";
 BranchStandardEvent BranchStandardEventRate               = @"RATE";
-BranchStandardEvent BranchStandardEventShareContent       = @"SHARE_CONTENT";
+BranchStandardEvent BranchStandardEventShare              = @"SHARE";
 
 // User Lifecycle Events
 
@@ -179,7 +179,7 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
     addString(coupon,           coupon);
     addString(affiliation,      affiliation);
     addString(eventDescription, description);
-    addString(productCondition, $condition);
+    addString(searchQuery,      search_query)
     addDictionary(userInfo,     custom_data);
     
     #include "BNCFieldDefines.h"
@@ -197,10 +197,10 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
         BranchStandardEventPurchase,
         BranchStandardEventSpendCredits,
         BranchStandardEventSearch,
-        BranchStandardEventViewContent,
-        BranchStandardEventViewContentList,
+        BranchStandardEventViewItem,
+        BranchStandardEventViewItems,
         BranchStandardEventRate,
-        BranchStandardEventShareContent,
+        BranchStandardEventShare,
         BranchStandardEventCompleteRegistration,
         BranchStandardEventCompleteTutorial,
         BranchStandardEventAchieveLevel,

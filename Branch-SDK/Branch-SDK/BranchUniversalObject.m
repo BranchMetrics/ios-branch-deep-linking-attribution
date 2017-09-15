@@ -46,6 +46,7 @@ BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc    = @"TEXT_TEC
 #pragma mark - BranchProductCondition
 
 BranchProductCondition _Nonnull BranchProductConditionOther         = @"OTHER";
+BranchProductCondition _Nonnull BranchProductConditionExcellent     = @"EXCELLENT";
 BranchProductCondition _Nonnull BranchProductConditionNew           = @"NEW";
 BranchProductCondition _Nonnull BranchProductConditionGood          = @"GOOD";
 BranchProductCondition _Nonnull BranchProductConditionFair          = @"FAIR";
@@ -78,6 +79,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addString(productBrand,     $product_brand);
     addString(productCategory,  $product_category);
     addString(productVariant,   $product_variant);
+    addString(productCondition, $condition);
     addDouble(ratingAverage,    $rating_average);
     addInteger(ratingCount,     $rating_count);
     addDouble(ratingMaximum,    $rating_max);
@@ -112,6 +114,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addString(productBrand,     $product_brand);
     addString(productCategory,  $product_category);
     addString(productVariant,   $product_variant);
+    addString(productCondition, $condition);
     addDouble(ratingAverage,    $rating_average);
     addInteger(ratingCount,     $rating_count);
     addDouble(ratingMaximum,    $rating_max);
@@ -289,7 +292,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     if (self.indexLocally) {
         [self listOnSpotlight];
     }
-    [[BranchEvent standardEvent:BranchStandardEventViewContent withContentItem:self] logEvent];
+    [[BranchEvent standardEvent:BranchStandardEventViewItem withContentItem:self] logEvent];
     if (callback) callback(@{}, nil);
 }
 

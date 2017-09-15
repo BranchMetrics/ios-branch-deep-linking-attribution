@@ -41,6 +41,7 @@
     XCTAssertEqualObjects(buo.contentMetadata.productBrand,      @"my_prod_Brand1");
     XCTAssertEqualObjects(buo.contentMetadata.productCategory,   BNCProductCategoryBabyToddler);
     XCTAssertEqualObjects(buo.contentMetadata.productVariant,    @"3T");
+    XCTAssertEqualObjects(buo.contentMetadata.productCondition,  @"FAIR");
     XCTAssertEqual(buo.contentMetadata.ratingAverage,            5);
     XCTAssertEqual(buo.contentMetadata.ratingCount,              5);
     XCTAssertEqual(buo.contentMetadata.ratingMaximum,            7);
@@ -192,7 +193,7 @@
 
         NSString *eventName = parameters[@"name"];
         if ([url containsString:@"branch.io/v2/event/standard"] &&
-            [eventName isEqualToString:@"VIEW_CONTENT"]) {
+            [eventName isEqualToString:@"VIEW_ITEM"]) {
             [expectation fulfill];
         }
     });
