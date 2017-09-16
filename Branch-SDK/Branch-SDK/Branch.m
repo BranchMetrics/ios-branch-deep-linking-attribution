@@ -396,6 +396,53 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         BNCLogSetDisplayLevel(BNCLogLevelDebug);
 }
 
+- (void)debugIntegration {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+        NSString *endpoint = [BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS stringByAppendingPathComponent:preferenceHelper.lastRunBranchKey];
+        [[[BNCServerInterface alloc] init] getRequest:nil url:[preferenceHelper getAPIURL:endpoint] key:nil callback:^(BNCServerResponse *response, NSError *error) {
+            if (error) {
+                NSLog(@"Error with debugIntegration(): %@", error);
+            }
+            else {
+                NSString *passString = @"PASS";
+                NSString *errorString = @"ERROR";
+                
+                NSLog(@"yay! %@", response.data);
+                NSLog(@"** Initiating Branch integration verification **");
+                NSLog(@"-------------------------------------------------");
+                
+                NSLog(@"------ checking for URI scheme correctness ------");
+                NSString *serverUriScheme = response.data[@"ios_uri_scheme"];
+                NSString *clientUriScheme = [NSString stringWithFormat:@"%@%@", [BNCSystemObserver getDefaultUriScheme], @"://"];
+                NSString *uriScheme = [serverUriScheme isEqualToString:clientUriScheme] ? passString : errorString;
+                NSLog(@"%@: server side '%@' compared to client side '%@'", uriScheme, serverUriScheme, clientUriScheme);
+                NSLog(@"-------------------------------------------------");
+
+                NSLog(@"-- checking for bundle identifier correctness ---");
+                NSString *serverBundleIdentifier = response.data[@"ios_bundle_id"];
+                NSString *clientBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+                NSString *bundleIdentifier = [serverBundleIdentifier isEqualToString:clientBundleIdentifier] ? passString : errorString;
+                NSLog(@"%@: server side '%@' compared to client side '%@'", bundleIdentifier, serverBundleIdentifier, clientBundleIdentifier);
+                NSLog(@"-------------------------------------------------");
+                
+                NSLog(@"----- checking for iOS Team ID correctness ------");
+                NSString *serverTeamId = response.data[@"ios_team_id"];
+                NSString *clientTeamId = [BNCSystemObserver getTeamIdentifier];
+                if ([serverTeamId isEqualToString:clientTeamId]) {
+                    NSLog(@"%@: server side '%@' compared to client side '%@'.", passString, serverTeamId, clientTeamId);
+                }
+                else {
+                    NSLog(@"%@: server side '%@' compared to client side '%@'.", errorString, serverTeamId, clientTeamId);
+                    NSLog(@"If you see a null value on the client side, please temporarily add the following key-value pair to your plist: \n\t<key>AppIdentifierPrefix</key><string>$(AppIdentifierPrefix)</string>\n-> then re-run this test.");
+                }
+                NSLog(@"-------------------------------------------------");
+            }
+        }];
+
+    });
+}
+
 - (void)resetUserSession {
     self.isInitialized = NO;
 }

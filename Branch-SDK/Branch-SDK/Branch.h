@@ -506,6 +506,11 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)setDebug;
 
 /**
+ TODO: Better name.
+ */
+- (void)debugIntegration;
+
+/**
  Specify additional constant parameters to be included in the response
 
  @param debugParams dictionary of keystrings/valuestrings that will be added to response
