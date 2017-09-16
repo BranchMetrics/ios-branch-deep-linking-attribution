@@ -44,7 +44,7 @@
     XCTAssertEqualObjects(buo.contentMetadata.productCondition,  @"FAIR");
     XCTAssertEqual(buo.contentMetadata.ratingAverage,            5);
     XCTAssertEqual(buo.contentMetadata.ratingCount,              5);
-    XCTAssertEqual(buo.contentMetadata.ratingMaximum,            7);
+    XCTAssertEqual(buo.contentMetadata.ratingMax,                7);
     XCTAssertEqualObjects(buo.contentMetadata.addressStreet,     @"Street_name1");
     XCTAssertEqualObjects(buo.contentMetadata.addressCity,       @"city1");
     XCTAssertEqualObjects(buo.contentMetadata.addressRegion,     @"Region1");
@@ -54,7 +54,8 @@
     XCTAssertEqual(buo.contentMetadata.longitude,                -97.5);
     NSArray *array = @[@"my_img_caption1", @"my_img_caption_2"];
     XCTAssertEqualObjects(buo.contentMetadata.imageCaptions,     array);
-    XCTAssertEqualObjects(buo.contentMetadata.userInfo,          @{@"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"});
+    XCTAssertEqualObjects(buo.contentMetadata.customMetadata,
+                          @{@"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"});
     XCTAssertEqualObjects(buo.title,                        @"My Content Title");
     XCTAssertEqualObjects(buo.canonicalIdentifier,          @"item/12345");
     XCTAssertEqualObjects(buo.canonicalUrl,                 @"https://branch.io/deepviews");
@@ -63,8 +64,8 @@
     XCTAssertEqualObjects(buo.contentDescription,           @"my_product_description1");
     XCTAssertEqualObjects(buo.imageUrl,                     @"https://test_img_url");
     XCTAssertEqualObjects(buo.expirationDate,               [NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0]);
-    XCTAssertEqual(buo.indexPublicly,                       NO);
-    XCTAssertEqual(buo.indexLocally,                        YES);
+    XCTAssertEqual(buo.publiclyIndex,                       NO);
+    XCTAssertEqual(buo.locallyIndex,                        YES);
     XCTAssertEqualObjects(buo.creationDate,                 [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0]);
 
     XCTAssertEqualObjects(buo.expirationDate.description,   @"1976-09-21 03:07:12 +0000");
@@ -120,9 +121,9 @@
     XCTAssertEqualObjects(buo.contentMetadata.price, [NSDecimalNumber decimalNumberWithString:@"10.00"]);
     XCTAssertEqualObjects(buo.contentMetadata.currency, BNCCurrencyUSD);
     XCTAssertEqualObjects(buo.contentMetadata.contentSchema, @"Purchase");
-    XCTAssertEqual(buo.indexLocally, YES);
-    XCTAssertEqual(buo.indexPublicly, YES);
-    XCTAssertEqualObjects(buo.contentMetadata.userInfo, @{ @"Key1": @"Value1" } );
+    XCTAssertEqual(buo.locallyIndex, YES);
+    XCTAssertEqual(buo.publiclyIndex, YES);
+    XCTAssertEqualObjects(buo.contentMetadata.customMetadata, @{ @"Key1": @"Value1" } );
 
     XCTAssertEqual(buo.price, 10.00);
     XCTAssertEqualObjects(buo.currency, BNCCurrencyUSD);
@@ -131,8 +132,8 @@
     XCTAssertEqualObjects(buo.metadata, @{ @"Key1": @"Value1" });
     XCTAssertEqual(buo.automaticallyListOnSpotlight, YES);
 
-    buo.contentMetadata.userInfo = (NSMutableDictionary*) @{ @"Key2": @"Value2" };
-    buo.contentMetadata.userInfo[@"Key3"] = @"Value3";
+    buo.contentMetadata.customMetadata = (NSMutableDictionary*) @{ @"Key2": @"Value2" };
+    buo.contentMetadata.customMetadata[@"Key3"] = @"Value3";
     [buo addMetadataKey:@"Key4" value:@"Value4"];
     NSDictionary *d = @{
         @"Key2": @"Value2",
@@ -148,22 +149,22 @@
     NSDictionary *d = nil;
     BranchUniversalObject *buo = [BranchUniversalObject new];
 
-    buo.contentMetadata.userInfo = (id) @{};
+    buo.contentMetadata.customMetadata = (id) @{};
     d = [NSDictionary new];
-    XCTAssertEqualObjects(buo.contentMetadata.userInfo, d);
+    XCTAssertEqualObjects(buo.contentMetadata.customMetadata, d);
 
-    buo.contentMetadata.userInfo = (id) @{};
-    buo.contentMetadata.userInfo[@"a"] = @"b";
+    buo.contentMetadata.customMetadata = (id) @{};
+    buo.contentMetadata.customMetadata[@"a"] = @"b";
     d = @{ @"a": @"b" };
-    XCTAssertEqualObjects(buo.contentMetadata.userInfo, d);
+    XCTAssertEqualObjects(buo.contentMetadata.customMetadata, d);
 
-    buo.contentMetadata.userInfo = [NSMutableDictionary dictionaryWithDictionary:@{@"1": @"2"}];
-    buo.contentMetadata.userInfo[@"3"] = @"4";
+    buo.contentMetadata.customMetadata = [NSMutableDictionary dictionaryWithDictionary:@{@"1": @"2"}];
+    buo.contentMetadata.customMetadata[@"3"] = @"4";
     d = @{
         @"1": @"2",
         @"3": @"4",
     };
-    XCTAssertEqualObjects(buo.contentMetadata.userInfo, d);
+    XCTAssertEqualObjects(buo.contentMetadata.customMetadata, d);
 }
 
 - (void) testRegisterView {

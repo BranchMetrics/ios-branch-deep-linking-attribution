@@ -209,8 +209,8 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
     \"Custom_Content_metadata_key1\" = \"Custom_Content_metadata_val1\";
 }
  type: COMMERCE_PRODUCT
- indexLocally: 1
- indexPublically: 0
+ locallyIndex: 1
+ publiclyIndex: 0
  keywords: (
     \"My_Keyword1\",
     \"My_Keyword2\"

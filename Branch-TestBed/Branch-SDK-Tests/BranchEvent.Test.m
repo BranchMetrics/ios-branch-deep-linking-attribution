@@ -28,14 +28,14 @@
     event.currency        = BNCCurrencyUSD;
     event.revenue         = [NSDecimalNumber decimalNumberWithString:@"10.50"];
     event.eventDescription= @"Event description.";
-    event.userInfo        = (NSMutableDictionary*) @{
+    event.customData      = (NSMutableDictionary*) @{
         @"Key1": @"Value1"
     };
 
     NSString *d = event.description;
     BNCTAssertEqualMaskedString(d,
         @"<BranchEvent 0x**************** PURCHASE txID: 1234 Amt: USD 10.5 desc: Event description. "
-         "items: 0 userInfo: {\n    Key1 = Value1;\n}>");
+         "items: 0 customData: {\n    Key1 = Value1;\n}>");
 }
 
 - (void) testEvent {
@@ -51,8 +51,8 @@
     buo.keywords            = @[ @"My_Keyword1", @"My_Keyword2"];
     buo.creationDate        = [NSDate dateWithTimeIntervalSince1970:1501869445321.0/1000.0];
     buo.expirationDate      = [NSDate dateWithTimeIntervalSince1970:212123232544.0/1000.0];
-    buo.indexLocally        = YES;
-    buo.indexPublicly       = NO;
+    buo.locallyIndex        = YES;
+    buo.publiclyIndex       = NO;
 
     buo.contentMetadata.contentSchema    = BranchContentSchemaCommerceProduct;
     buo.contentMetadata.quantity         = 2;
@@ -67,7 +67,7 @@
 
     buo.contentMetadata.ratingAverage    = 5;
     buo.contentMetadata.ratingCount      = 5;
-    buo.contentMetadata.ratingMaximum    = 7;
+    buo.contentMetadata.ratingMax        = 7;
     buo.contentMetadata.addressStreet    = @"Street_name1";
     buo.contentMetadata.addressCity      = @"city1";
     buo.contentMetadata.addressRegion    = @"Region1";
@@ -76,7 +76,7 @@
     buo.contentMetadata.latitude         = 12.07;
     buo.contentMetadata.longitude        = -97.5;
     buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
-    buo.contentMetadata.userInfo         = (NSMutableDictionary*) @{
+    buo.contentMetadata.customMetadata   = (NSMutableDictionary*) @{
         @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"
     };
 
@@ -92,7 +92,7 @@
     event.affiliation     = @"test_affiliation";
     event.eventDescription= @"Event _description";
     event.searchQuery     = @"Query";
-    event.userInfo        = (NSMutableDictionary*) @{
+    event.customData      = (NSMutableDictionary*) @{
         @"Custom_Event_Property_Key1": @"Custom_Event_Property_val1",
         @"Custom_Event_Property_Key2": @"Custom_Event_Property_val2"
     };
@@ -197,8 +197,8 @@
     buo.keywords            = @[ @"My_Keyword1", @"My_Keyword2"];
     buo.creationDate        = [NSDate dateWithTimeIntervalSince1970:1501869445321.0/1000.0];
     buo.expirationDate      = [NSDate dateWithTimeIntervalSince1970:212123232544.0/1000.0];
-    buo.indexLocally        = YES;
-    buo.indexPublicly       = NO;
+    buo.locallyIndex        = YES;
+    buo.publiclyIndex       = NO;
 
     buo.contentMetadata.contentSchema    = BranchContentSchemaCommerceProduct;
     buo.contentMetadata.quantity         = 2;
@@ -212,7 +212,7 @@
     buo.contentMetadata.productCondition = @"FAIR";
     buo.contentMetadata.ratingAverage    = 5;
     buo.contentMetadata.ratingCount      = 5;
-    buo.contentMetadata.ratingMaximum    = 7;
+    buo.contentMetadata.ratingMax        = 7;
     buo.contentMetadata.addressStreet    = @"Street_name1";
     buo.contentMetadata.addressCity      = @"city1";
     buo.contentMetadata.addressRegion    = @"Region1";
@@ -221,7 +221,7 @@
     buo.contentMetadata.latitude         = 12.07;
     buo.contentMetadata.longitude        = -97.5;
     buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
-    buo.contentMetadata.userInfo         = (NSMutableDictionary*) @{
+    buo.contentMetadata.customMetadata   = (NSMutableDictionary*) @{
         @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"
     };
 
