@@ -54,12 +54,14 @@ didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any
     func application(_ app: UIApplication,
                   open url: URL,
                    options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        BNCLog("application:open:options: called.")
         return branch.application(app, open: url, options: options)
     }
     
     func application(_ application: UIApplication,
              continue userActivity: NSUserActivity,
                 restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+        BNCLog("application:continueUserActivity:restorationHandler: called.");
         return branch.continue(userActivity)
     }
 
