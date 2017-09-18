@@ -38,6 +38,7 @@ class ArticleView: UIView, WKNavigationDelegate {
 
     let planetData: PlanetData
     var hud: MBProgressHUD!
+    var showShareButton = true
 
     weak var delegate: ArticleViewDelegate?
 
@@ -112,15 +113,32 @@ class ArticleView: UIView, WKNavigationDelegate {
             web.top == superview.top
             web.bottom == share.top
             share.bottom == superview.bottom
-            share.height == 88
+            if showShareButton {
+                share.height == 88
+                button.isHidden = false
+            } else {
+                share.height == 0
+                button.isHidden = true
+            }
         }
     }
 
     private func setupWebview() {
-        let request = URLRequest(url: planetData.url)
         webView.navigationDelegate = self
-        webView.load(request)
-
+        if planetData.url.scheme == "file" {
+            let baseURL = Bundle.main.bundleURL
+            let indexPath = baseURL.absoluteString + planetData.url.path
+            let indexURL = URL.init(string: indexPath)!
+            webView.loadFileURL(
+                indexURL,
+                allowingReadAccessTo: indexURL.deletingLastPathComponent()
+            )
+            showShareButton = false
+            setupConstraints()
+        } else {
+            let request = URLRequest(url: planetData.url)
+            webView.load(request)
+        }
         hud = MBProgressHUD.showAdded(to: webView, animated: true)
     }
 }

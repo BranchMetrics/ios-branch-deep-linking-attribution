@@ -17,7 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - UIApplicationDelegate methods
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication,
+didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         /*
          * Use the test instance if USE_BRANCH_TEST_INSTANCE is defined. This is defined in the
          * Test-Debug and Test-Release configurations, which are used by the WebViewExample-Test
@@ -50,11 +51,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    func application(_ app: UIApplication,
+                  open url: URL,
+                   options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
         return branch.application(app, open: url, options: options)
     }
     
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+    func application(_ application: UIApplication,
+             continue userActivity: NSUserActivity,
+                restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
         return branch.continue(userActivity)
     }
 
@@ -62,7 +67,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func routeURLFromBranch(_ buo: BranchUniversalObject) {
         guard let planetData = PlanetData(branchUniversalObject: buo) else { return }
-
         let articleViewController = ArticleViewController(planetData: planetData)
         navigationController.pushViewController(articleViewController, animated: true)
     }
