@@ -54,6 +54,7 @@ typedef NSString * const BranchProductCondition NS_STRING_ENUM;
 
 FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionOther;
 FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionNew;
+FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionExcellent;
 FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionGood;
 FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionFair;
 FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionPoor;
@@ -73,9 +74,10 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbis
 @property (nonatomic, strong, nullable) NSString        *productBrand;
 @property (nonatomic, strong, nullable) NSString        *productCategory;
 @property (nonatomic, strong, nullable) NSString        *productVariant;
+@property (nonatomic, strong, nullable) BranchProductCondition productCondition;
 @property (nonatomic, assign)           double          ratingAverage;
 @property (nonatomic, assign)           NSInteger       ratingCount;
-@property (nonatomic, assign)           double          ratingMaximum;
+@property (nonatomic, assign)           double          ratingMax;
 @property (nonatomic, strong, nullable) NSString        *addressStreet;
 @property (nonatomic, strong, nullable) NSString        *addressCity;
 @property (nonatomic, strong, nullable) NSString        *addressRegion;
@@ -84,7 +86,7 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbis
 @property (nonatomic, assign)           double          latitude;
 @property (nonatomic, assign)           double          longitude;
 @property (nonatomic, copy, nonnull)    NSMutableArray<NSString*> *imageCaptions;
-@property (nonatomic, copy, nonnull)    NSMutableDictionary<NSString*, NSString*> *userInfo;
+@property (nonatomic, copy, nonnull)    NSMutableDictionary<NSString*, NSString*> *customMetadata;
 
 - (NSDictionary*_Nonnull) dictionary;
 + (BranchContentMetadata*_Nonnull) contentMetadataWithDictionary:(NSDictionary*_Nullable)dictionary;
@@ -106,8 +108,8 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbis
 @property (nonatomic, strong, nullable) NSArray<NSString*> *keywords;
 @property (nonatomic, strong, nullable) NSDate   *creationDate;
 @property (nonatomic, strong, nullable) NSDate   *expirationDate;
-@property (nonatomic, assign)           BOOL      indexLocally;     //!< Index on Spotlight.
-@property (nonatomic, assign)           BOOL      indexPublicly;    //!< Index on Google, Branch, etc.
+@property (nonatomic, assign)           BOOL      locallyIndex;     //!< Index on Spotlight.
+@property (nonatomic, assign)           BOOL      publiclyIndex;    //!< Index on Google, Branch, etc.
 
 @property (nonatomic, strong, nonnull) BranchContentMetadata *contentMetadata;
 
@@ -125,7 +127,7 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbis
     NSString *type;
 
 @property (nonatomic, assign)
-    __attribute__((deprecated(("Use `BranchUniversalObject.indexLocally and BranchUniversalObject.indexPublicly` instead."))))
+    __attribute__((deprecated(("Use `BranchUniversalObject.locallyIndex and BranchUniversalObject.publiclyIndex` instead."))))
     BranchContentIndexMode contentIndexMode;
 
 @property (nonatomic, strong, nullable)
@@ -141,7 +143,7 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbis
     NSString *currency;
 
 @property (nonatomic, assign)
-    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.indexLocally` instead."))))
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.locallyIndex` instead."))))
     BOOL automaticallyListOnSpotlight;
 
 

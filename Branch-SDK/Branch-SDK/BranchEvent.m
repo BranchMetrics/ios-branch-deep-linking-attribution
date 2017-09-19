@@ -24,10 +24,10 @@ BranchStandardEvent BranchStandardEventSpendCredits       = @"SPEND_CREDITS";
 // Content Events
 
 BranchStandardEvent BranchStandardEventSearch             = @"SEARCH";
-BranchStandardEvent BranchStandardEventViewContent        = @"VIEW_CONTENT";
-BranchStandardEvent BranchStandardEventViewContentList    = @"VIEW_CONTENT_LIST";
+BranchStandardEvent BranchStandardEventViewItem           = @"VIEW_ITEM";
+BranchStandardEvent BranchStandardEventViewItems          = @"VIEW_ITEMS";
 BranchStandardEvent BranchStandardEventRate               = @"RATE";
-BranchStandardEvent BranchStandardEventShareContent       = @"SHARE_CONTENT";
+BranchStandardEvent BranchStandardEventShare              = @"SHARE";
 
 // User Lifecycle Events
 
@@ -106,7 +106,7 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
 #pragma mark - BranchEvent
 
 @interface BranchEvent () {
-    NSMutableDictionary *_userInfo;
+    NSMutableDictionary *_customData;
     NSMutableArray      *_contentItems;
 }
 @property (nonatomic, strong) NSString*  eventName;
@@ -147,13 +147,13 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
     return e;
 }
 
-- (NSMutableDictionary*) userInfo {
-    if (!_userInfo) _userInfo = [NSMutableDictionary new];
-    return _userInfo;
+- (NSMutableDictionary*) customData {
+    if (!_customData) _customData = [NSMutableDictionary new];
+    return _customData;
 }
 
-- (void) setUserInfo:(NSMutableDictionary<NSString *,NSString *> *)userInfo {
-    _userInfo = [userInfo mutableCopy];
+- (void) setCustomData:(NSMutableDictionary<NSString *,NSString *> *)userInfo {
+    _customData = [userInfo mutableCopy];
 }
 
 - (NSMutableArray*) contentItems {
@@ -179,8 +179,8 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
     addString(coupon,           coupon);
     addString(affiliation,      affiliation);
     addString(eventDescription, description);
-    addString(productCondition, $condition);
-    addDictionary(userInfo,     custom_data);
+    addString(searchQuery,      search_query)
+    addDictionary(customData,   custom_data);
     
     #include "BNCFieldDefines.h"
 
@@ -197,10 +197,10 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
         BranchStandardEventPurchase,
         BranchStandardEventSpendCredits,
         BranchStandardEventSearch,
-        BranchStandardEventViewContent,
-        BranchStandardEventViewContentList,
+        BranchStandardEventViewItem,
+        BranchStandardEventViewItems,
         BranchStandardEventRate,
-        BranchStandardEventShareContent,
+        BranchStandardEventShare,
         BranchStandardEventCompleteRegistration,
         BranchStandardEventCompleteTutorial,
         BranchStandardEventAchieveLevel,
@@ -254,7 +254,7 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
 
 - (NSString*_Nonnull) description {
     return [NSString stringWithFormat:
-        @"<%@ 0x%016llx %@ txID: %@ Amt: %@ %@ desc: %@ items: %ld userInfo: %@>",
+        @"<%@ 0x%016llx %@ txID: %@ Amt: %@ %@ desc: %@ items: %ld customData: %@>",
         NSStringFromClass(self.class),
         (uint64_t) self,
         self.eventName,
@@ -263,7 +263,7 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
         self.revenue,
         self.eventDescription,
         (long) self.contentItems.count,
-        self.userInfo
+        self.customData
     ];
 }
 

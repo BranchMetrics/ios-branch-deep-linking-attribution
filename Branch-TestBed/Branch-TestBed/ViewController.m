@@ -64,7 +64,7 @@ NSString *test_key = @"test_key";
     _branchUniversalObject.contentMetadata.price = [NSDecimalNumber decimalNumberWithString:@"1000.00"];
     _branchUniversalObject.contentMetadata.currency = BNCCurrencyUSD;
     _branchUniversalObject.contentMetadata.contentSchema = BranchContentSchemaCommerceProduct;
-    _branchUniversalObject.contentMetadata.userInfo[@"deeplink_text"] =
+    _branchUniversalObject.contentMetadata.customMetadata[@"deeplink_text"] =
         [NSString stringWithFormat:
             @"This text was embedded as data in a Branch link with the following characteristics:\n\n"
              "canonicalUrl: %@\n  title: %@\n  contentDescription: %@\n  imageUrl: %@\n",
@@ -382,9 +382,11 @@ NSString *test_key = @"test_key";
     buo.contentMetadata.productBrand     = @"my_prod_Brand1";
     buo.contentMetadata.productCategory  = BNCProductCategoryBabyToddler;
     buo.contentMetadata.productVariant   = @"3T";
+    buo.contentMetadata.productCondition = BranchProductConditionFair;
+
     buo.contentMetadata.ratingAverage    = 5;
     buo.contentMetadata.ratingCount      = 5;
-    buo.contentMetadata.ratingMaximum    = 7;
+    buo.contentMetadata.ratingMax        = 7;
     buo.contentMetadata.addressStreet    = @"Street_name1";
     buo.contentMetadata.addressCity      = @"city1";
     buo.contentMetadata.addressRegion    = @"Region1";
@@ -393,7 +395,7 @@ NSString *test_key = @"test_key";
     buo.contentMetadata.latitude         = 12.07;
     buo.contentMetadata.longitude        = -97.5;
     buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
-    buo.contentMetadata.userInfo         = (id) @{@"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"};
+    buo.contentMetadata.customMetadata   = (id) @{@"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"};
     buo.title                       = @"My Content Title";
     buo.canonicalIdentifier         = @"item/12345";
     buo.canonicalUrl                = @"https://branch.io/deepviews";
@@ -401,8 +403,8 @@ NSString *test_key = @"test_key";
     buo.contentDescription          = @"my_product_description1";
     buo.imageUrl                    = @"https://test_img_url";
     buo.expirationDate              = [NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0];
-    buo.indexPublicly               = NO;
-    buo.indexLocally                = YES;
+    buo.publiclyIndex               = NO;
+    buo.locallyIndex                = YES;
     buo.creationDate                = [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0];
 
 
@@ -415,8 +417,7 @@ NSString *test_key = @"test_key";
     event.coupon          = @"test_coupon";
     event.affiliation     = @"test_affiliation";
     event.eventDescription= @"Event _description";
-    event.productCondition= BranchProductConditionFair;
-    event.userInfo        = (NSMutableDictionary*) @{
+    event.customData      = (NSMutableDictionary*) @{
         @"Custom_Event_Property_Key1": @"Custom_Event_Property_val1",
         @"Custom_Event_Property_Key2": @"Custom_Event_Property_val2"
     };
@@ -430,8 +431,9 @@ NSString *test_key = @"test_key";
     //
     // Example using callbackWithURLandSpotlightIdentifier
     //
-    self.branchUniversalObject.contentMetadata.userInfo[@"deeplink_text"] = @"This link was generated for Spotlight registration";
-    self.branchUniversalObject.indexLocally = YES;
+    self.branchUniversalObject.contentMetadata.customMetadata[@"deeplink_text"] =
+        @"This link was generated for Spotlight registration";
+    self.branchUniversalObject.locallyIndex = YES;
     [self.branchUniversalObject userCompletedAction:BNCRegisterViewEvent];
 }
 

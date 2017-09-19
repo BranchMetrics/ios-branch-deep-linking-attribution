@@ -46,6 +46,7 @@ BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc    = @"TEXT_TEC
 #pragma mark - BranchProductCondition
 
 BranchProductCondition _Nonnull BranchProductConditionOther         = @"OTHER";
+BranchProductCondition _Nonnull BranchProductConditionExcellent     = @"EXCELLENT";
 BranchProductCondition _Nonnull BranchProductConditionNew           = @"NEW";
 BranchProductCondition _Nonnull BranchProductConditionGood          = @"GOOD";
 BranchProductCondition _Nonnull BranchProductConditionFair          = @"FAIR";
@@ -57,7 +58,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 
 @interface BranchContentMetadata () {
     NSMutableArray      *_imageCaptions;
-    NSMutableDictionary *_userInfo;
+    NSMutableDictionary *_customMetadata;
 }
 @end
 
@@ -78,9 +79,10 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addString(productBrand,     $product_brand);
     addString(productCategory,  $product_category);
     addString(productVariant,   $product_variant);
+    addString(productCondition, $condition);
     addDouble(ratingAverage,    $rating_average);
     addInteger(ratingCount,     $rating_count);
-    addDouble(ratingMaximum,    $rating_max);
+    addDouble(ratingMax,        $rating_max);
     addString(addressStreet,    $address_street);
     addString(addressCity,      $address_city);
     addString(addressRegion,    $address_region);
@@ -89,7 +91,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addDouble(latitude,         $latitude);
     addDouble(longitude,        $longitude);
     addStringArray(imageCaptions,$image_captions);
-    addStringifiedDictionary(userInfo, $custom_fields);
+    addStringifiedDictionary(customMetadata, $custom_fields);
 
     #include "BNCFieldDefines.h"
 
@@ -112,9 +114,10 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addString(productBrand,     $product_brand);
     addString(productCategory,  $product_category);
     addString(productVariant,   $product_variant);
+    addString(productCondition, $condition);
     addDouble(ratingAverage,    $rating_average);
     addInteger(ratingCount,     $rating_count);
-    addDouble(ratingMaximum,    $rating_max);
+    addDouble(ratingMax,        $rating_max);
     addString(addressStreet,    $address_street);
     addString(addressCity,      $address_city);
     addString(addressRegion,    $address_region);
@@ -123,20 +126,20 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addDouble(latitude,         $latitude);
     addDouble(longitude,        $longitude);
     addStringArray(imageCaptions,$image_captions);
-    addStringifiedDictionary(userInfo, $custom_fields);
+    addStringifiedDictionary(customMetadata, $custom_fields);
 
     #include "BNCFieldDefines.h"
 
     return object;
 }
 
-- (NSMutableDictionary*) userInfo {
-    if (!_userInfo) _userInfo = [NSMutableDictionary new];
-    return _userInfo;
+- (NSMutableDictionary*) customMetadata {
+    if (!_customMetadata) _customMetadata = [NSMutableDictionary new];
+    return _customMetadata;
 }
 
-- (void) setUserInfo:(NSMutableDictionary*)dictionary {
-    _userInfo = [dictionary mutableCopy];
+- (void) setCustomMetadata:(NSMutableDictionary*)dictionary {
+    _customMetadata = [dictionary mutableCopy];
 }
 
 - (void) setImageCaptions:(NSMutableArray<NSString *> *)imageCaptions {
@@ -153,7 +156,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
         NSStringFromClass(self.class),
         (uint64_t) self,
         _contentSchema,
-        (long) _userInfo.count
+        (long) _customMetadata.count
     ];
 }
 
@@ -180,15 +183,15 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 #pragma mark - Deprecated Fields
 
 - (NSDictionary *)metadata {
-    return self.contentMetadata.userInfo;
+    return self.contentMetadata.customMetadata;
 }
 
 - (void) setMetadata:(NSDictionary *)metadata {
-    self.contentMetadata.userInfo = (NSMutableDictionary*) metadata;
+    self.contentMetadata.customMetadata = (NSMutableDictionary*) metadata;
 }
 
 - (void)addMetadataKey:(NSString *)key value:(NSString *)value {
-    if (key) [self.contentMetadata.userInfo setValue:value forKey:key];
+    if (key) [self.contentMetadata.customMetadata setValue:value forKey:key];
 }
 
 - (CGFloat) price {
@@ -217,7 +220,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 }
 
 - (BranchContentIndexMode) contentIndexMode {
-    if (self.indexPublicly)
+    if (self.publiclyIndex)
         return BranchContentIndexModePublic;
     else
         return BranchContentIndexModePrivate;
@@ -225,17 +228,17 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 
 - (void) setContentIndexMode:(BranchContentIndexMode)contentIndexMode {
     if (contentIndexMode == BranchContentIndexModePublic)
-        self.indexPublicly = YES;
+        self.publiclyIndex = YES;
     else
-        self.indexLocally = YES;
+        self.locallyIndex = YES;
 }
 
 - (BOOL) automaticallyListOnSpotlight {
-    return self.indexLocally;
+    return self.locallyIndex;
 }
 
 - (void) setAutomaticallyListOnSpotlight:(BOOL)automaticallyListOnSpotlight {
-    self.indexLocally = automaticallyListOnSpotlight;
+    self.locallyIndex = automaticallyListOnSpotlight;
 }
 
 #pragma mark - Setters / Getters / Standard Methods
@@ -254,8 +257,8 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
          "\n imageUrl: %@"
          "\n metadata: %@"
          "\n type: %@"
-         "\n indexLocally: %d"
-         "\n indexPublically: %d"
+         "\n locallyIndex: %d"
+         "\n publiclyIndex: %d"
          "\n keywords: %@"
          "\n expirationDate: %@"
          "\n>",
@@ -264,10 +267,10 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
         self.title,
         self.contentDescription,
         self.imageUrl,
-        self.contentMetadata.userInfo,
+        self.contentMetadata.customMetadata,
         self.contentMetadata.contentSchema,
-        self.indexLocally,
-        self.indexPublicly,
+        self.locallyIndex,
+        self.publiclyIndex,
         self.keywords,
         self.expirationDate];
 }
@@ -286,10 +289,10 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
         if (callback) callback([[NSDictionary alloc] init], error);
         return;
     }
-    if (self.indexLocally) {
+    if (self.locallyIndex) {
         [self listOnSpotlight];
     }
-    [[BranchEvent standardEvent:BranchStandardEventViewContent withContentItem:self] logEvent];
+    [[BranchEvent standardEvent:BranchStandardEventViewItem withContentItem:self] logEvent];
     if (callback) callback(@{}, nil);
 }
 
@@ -298,12 +301,12 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 }
 
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
-    if (state) [self.contentMetadata.userInfo addEntriesFromDictionary:state];
+    if (state) [self.contentMetadata.customMetadata addEntriesFromDictionary:state];
     [[BranchEvent customEventWithName:action contentItem:self] logEvent];
 
     // Maybe list on spotlight --
     NSDictionary *linkParams = [self getParamsForServerRequest];
-    if (self.indexLocally && self.canonicalIdentifier && linkParams) {
+    if (self.locallyIndex && self.canonicalIdentifier && linkParams) {
 
         NSMutableDictionary *actionPayload = [[NSMutableDictionary alloc] init];
         actionPayload[BNCCanonicalIdList] = @[self.canonicalIdentifier];
@@ -511,7 +514,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 }
 
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback {
-    NSMutableDictionary *metadataAndProperties = [self.contentMetadata.userInfo mutableCopy];
+    NSMutableDictionary *metadataAndProperties = [self.contentMetadata.customMetadata mutableCopy];
     if (self.canonicalIdentifier) {
         metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER] = self.canonicalIdentifier;
     }
@@ -525,7 +528,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
                                                  canonicalId:self.canonicalIdentifier
                                                   linkParams:metadataAndProperties.copy
                                                         type:self.contentMetadata.contentSchema
-                                           publiclyIndexable:self.indexPublicly
+                                           publiclyIndexable:self.publiclyIndex
                                                     keywords:[NSSet setWithArray:self.keywords]
                                               expirationDate:self.expirationDate
                                                     callback:callback];
@@ -568,7 +571,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     BranchUniversalObject *universalObject = [[BranchUniversalObject alloc] init];
     
     // Build BranchUniversalObject base properties
-    universalObject.contentMetadata.userInfo = [dictionary copy];
+    universalObject.contentMetadata.customMetadata = [dictionary copy];
     if (dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER]) {
         universalObject.canonicalIdentifier = dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER];
     }
@@ -584,8 +587,8 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     if (dictionary[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL]) {
         universalObject.imageUrl = dictionary[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL];
     }
-    universalObject.indexPublicly = [dictionary[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] boolValue];
-    universalObject.indexLocally  = [dictionary[BRANCH_LINK_DATA_KEY_LOCALLY_INDEXABLE] boolValue];
+    universalObject.publiclyIndex = [dictionary[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] boolValue];
+    universalObject.locallyIndex  = [dictionary[BRANCH_LINK_DATA_KEY_LOCALLY_INDEXABLE] boolValue];
 
     NSNumber *number = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE];
     if ([number isKindOfClass:[NSNumber class]]) {
@@ -615,14 +618,14 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     [self safeSetValue:self.title forKey:BRANCH_LINK_DATA_KEY_OG_TITLE onDict:temp];
     [self safeSetValue:self.contentDescription forKey:BRANCH_LINK_DATA_KEY_OG_DESCRIPTION onDict:temp];
     [self safeSetValue:self.imageUrl forKey:BRANCH_LINK_DATA_KEY_OG_IMAGE_URL onDict:temp];
-    temp[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE]  = [NSNumber numberWithBool:self.indexPublicly];
-    temp[BRANCH_LINK_DATA_KEY_LOCALLY_INDEXABLE]   = [NSNumber numberWithBool:self.indexLocally];
+    temp[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE]  = [NSNumber numberWithBool:self.publiclyIndex];
+    temp[BRANCH_LINK_DATA_KEY_LOCALLY_INDEXABLE]   = [NSNumber numberWithBool:self.locallyIndex];
     [self safeSetValue:self.keywords forKey:BRANCH_LINK_DATA_KEY_KEYWORDS onDict:temp];
     [self safeSetValue:@(1000 * [self.expirationDate timeIntervalSince1970]) forKey:BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE onDict:temp];
     [self safeSetValue:self.contentMetadata.contentSchema forKey:BRANCH_LINK_DATA_KEY_CONTENT_TYPE onDict:temp];
     [self safeSetValue:self.contentMetadata.currency forKey:BNCPurchaseCurrency onDict:temp];
     temp[BNCPurchaseAmount] = self.contentMetadata.price;
-    [temp addEntriesFromDictionary:[self.contentMetadata.userInfo copy]];
+    [temp addEntriesFromDictionary:[self.contentMetadata.customMetadata copy]];
     return [temp copy];
 }
 
@@ -662,11 +665,11 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addDate(creationDate,                   $creation_timestamp);
     addDate(expirationDate,                 $exp_date);
     addStringArray(keywords,                $keywords);
-    addBoolean(indexLocally,                $locally_indexable);
+    addBoolean(locallyIndex,                $locally_indexable);
     addString(contentDescription,           $og_description);
     addString(imageUrl,                     $og_image_url);
     addString(title,                        $og_title);
-    addBoolean(indexPublicly,               $publicly_indexable);
+    addBoolean(publiclyIndex,               $publicly_indexable);
 
     #include "BNCFieldDefines.h"
 
@@ -688,11 +691,11 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addDate(creationDate,                   $creation_timestamp);
     addDate(expirationDate,                 $exp_date);
     addStringArray(keywords,                $keywords);
-    addBoolean(indexLocally,                $locally_indexable);
+    addBoolean(locallyIndex,                $locally_indexable);
     addString(contentDescription,           $og_description);
     addString(imageUrl,                     $og_image_url);
     addString(title,                        $og_title);
-    addBoolean(indexPublicly,               $publicly_indexable);
+    addBoolean(publiclyIndex,               $publicly_indexable);
 
     #include "BNCFieldDefines.h"
 
