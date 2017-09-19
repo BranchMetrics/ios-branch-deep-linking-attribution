@@ -195,7 +195,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     isIndexingAvailable =
     ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])
     (CSSearchableIndexClass, isIndexingAvailableSelector);
-
+    
     #define IndexingNotAvalable() { \
         NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];\
         if (completion) {\
@@ -204,10 +204,12 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         return;\
     }
     
-    if (!isIndexingAvailable || !CSSearchableIndexClass || !CSSearchableItemClass) {
+    if (!isIndexingAvailable ||
+        !CSSearchableIndexClass ||
+        ![CSSearchableIndexClass respondsToSelector:@selector(defaultSearchableIndex)] ||
+        !CSSearchableItemClass) {
         IndexingNotAvalable();
     }
-    
     dispatch_group_t workGroup = dispatch_group_create();
     
     NSMutableArray<CSSearchableItem *> *searchableItems = [[NSMutableArray alloc] init];
@@ -215,76 +217,68 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     [[NSMutableDictionary alloc] init];
     
     for (BranchUniversalObject* universalObject in universalObjects) {
-        dispatch_group_async(workGroup, self.workQueue, ^{
-            dispatch_semaphore_t indexingSema = dispatch_semaphore_create(0);
-                        
-            NSString* dynamicUrl = [[Branch getInstance] getLongURLWithParams:universalObject.metadata
-                                                                   andFeature:@"spotlight"];
-            
-            mapSpotlightIdentifier[dynamicUrl] = universalObject;
-            NSURL* thumbnailUrl = [NSURL URLWithString:universalObject.imageUrl];
-            BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
-            if (thumbnailIsRemote) {
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    NSData *thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        
-                        id attributes = [self attributeSetWithUniversalObject:universalObject
-                                                                    thumbnail:thumbnailData
-                                                                          url:dynamicUrl];
-                        
-                        id item = [CSSearchableItemClass alloc];
-                        item = [item initWithUniqueIdentifier:dynamicUrl
-                                             domainIdentifier:kDomainIdentifier
-                                                 attributeSet:attributes];
-                        
-                        [searchableItems addObject:item];
-                        dispatch_semaphore_signal(indexingSema);
-
-                    });
+        dispatch_group_enter(workGroup);
+        NSString* dynamicUrl = [[Branch getInstance] getLongURLWithParams:universalObject.metadata
+                                                               andFeature:@"spotlight"];
+        
+        mapSpotlightIdentifier[dynamicUrl] = universalObject;
+        NSURL* thumbnailUrl = [NSURL URLWithString:universalObject.imageUrl];
+        BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
+        if (thumbnailIsRemote) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                NSData *thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    id attributes = [self attributeSetWithUniversalObject:universalObject
+                                                                thumbnail:thumbnailData
+                                                                      url:dynamicUrl];
+                    
+                    id item = [CSSearchableItemClass alloc];
+                    item = [item initWithUniqueIdentifier:dynamicUrl
+                                         domainIdentifier:kDomainIdentifier
+                                             attributeSet:attributes];
+                    
+                    [searchableItems addObject:item];
+                    dispatch_group_leave(workGroup);
                 });
-            }
-            else {
-                id attributes =  [self attributeSetWithUniversalObject:universalObject
-                                                             thumbnail:nil
-                                                                   url:dynamicUrl];
-                id item = [CSSearchableItemClass alloc];
-                item = [item initWithUniqueIdentifier:dynamicUrl
-                             domainIdentifier:kDomainIdentifier
-                             attributeSet:attributes];
-                
-                [searchableItems addObject:item];
-                
-                dispatch_semaphore_signal(indexingSema);
-
-            }
+            });
+        }
+        else {
+            id attributes =  [self attributeSetWithUniversalObject:universalObject
+                                                         thumbnail:nil
+                                                               url:dynamicUrl];
+            id item = [CSSearchableItemClass alloc];
+            item = [item initWithUniqueIdentifier:dynamicUrl
+                                 domainIdentifier:kDomainIdentifier
+                                     attributeSet:attributes];
             
-            dispatch_semaphore_wait(indexingSema, DISPATCH_TIME_FOREVER);
-        });
+            [searchableItems addObject:item];
+            dispatch_group_leave(workGroup);
+        }
     }
     
-    dispatch_group_wait(workGroup, DISPATCH_TIME_FOREVER);
-    id index = [CSSearchableIndexClass alloc];
-    if (![index respondsToSelector:@selector(beginIndexBatch)] ||
-        ![index respondsToSelector:@selector(indexSearchableItems:completionHandler:)]) {
-        IndexingNotAvalable();
-    }
-    [index beginIndexBatch];
-    [index indexSearchableItems:searchableItems completionHandler:^(NSError * _Nullable error) {
+    dispatch_group_notify(workGroup, dispatch_get_main_queue(), ^{
+        id index = [CSSearchableIndexClass defaultSearchableIndex];
         
-        if (!error) {
-            for (NSString* dynamicUrl in mapSpotlightIdentifier) {
-                BranchUniversalObject *universalObject = mapSpotlightIdentifier[dynamicUrl];
-                universalObject.spotlightIdentifier    = dynamicUrl;
-            }
-            if (completion)
-                completion(universalObjects,nil);
-        }else {
-            if (completion)
-                completion(nil,error);
+        if (![index respondsToSelector:@selector(indexSearchableItems:completionHandler:)]) {
+            IndexingNotAvalable();
         }
         
-    }];
+        [index indexSearchableItems:searchableItems completionHandler:^(NSError * _Nullable error) {
+            if (!error) {
+                for (NSString* dynamicUrl in mapSpotlightIdentifier) {
+                    BranchUniversalObject *universalObject = mapSpotlightIdentifier[dynamicUrl];
+                    universalObject.spotlightIdentifier    = dynamicUrl;
+                }
+                if (completion)
+                completion(universalObjects,nil);
+            }else {
+                if (completion)
+                completion(nil,error);
+            }
+            
+        }];
+    });
     #undef IndexingNotAvalable
 }
 
