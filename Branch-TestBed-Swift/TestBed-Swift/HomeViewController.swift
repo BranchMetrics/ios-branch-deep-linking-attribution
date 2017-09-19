@@ -177,7 +177,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
         shareBranchObject.keywords = [ "example", "short", "share", "link" ]
         shareBranchObject.contentDescription = "This is an example shared short link."
-        shareBranchObject.setValue(canonicalIdentifier, forKey: "publicSlug")
+        shareBranchObject.contentMetadata.customMetadata["publicSlug"] = canonicalIdentifier;
         let shareLinkProperties = BranchLinkProperties()
         shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
         
@@ -206,7 +206,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
         shareBranchObject.keywords = [ "example", "short", "share", "link" ]
         shareBranchObject.contentDescription = "This is an example shared alias link."
-        shareBranchObject.setValue(canonicalIdentifier, forKey: "publicSlug")
+        shareBranchObject.contentMetadata.customMetadata["publicSlug"] = canonicalIdentifier
         
         let shareLinkProperties = BranchLinkProperties()
         shareLinkProperties.alias = alias
@@ -234,12 +234,12 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         
         let shareBranchObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
         shareBranchObject.title = "Share Branch Link Example"
+        shareBranchObject.canonicalIdentifier = "Share-Link-Example-ID"
         shareBranchObject.canonicalUrl = "https://developer.branch.io/"
         shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
         shareBranchObject.keywords = [ "example", "short", "share", "link" ]
         shareBranchObject.contentDescription = "This is an example shared alias link."
-        shareBranchObject.setValue(canonicalIdentifier, forKey: "publicSlug")
-        
+
         let shareLinkProperties = BranchLinkProperties()
         shareLinkProperties.alias = alias
         shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
@@ -449,24 +449,26 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
     }
 
     @IBAction func sendPurchaseEvent(_ sender: AnyObject) {
-        let universalObject = BranchUniversalObject.init()// = vc.univeraslObject// DataStore.getUniversalObject()
+        let universalObject = BranchUniversalObject.init()
         universalObject.title = "Big Bad Dog"
         universalObject.contentDescription = "This dog is big. And bad. Bad dog."
         universalObject.keywords = [ "big", "bad", "dog" ]
         universalObject.contentMetadata.contentSchema = BranchContentSchema.commerceProduct
         universalObject.contentMetadata.price = 10.00
         universalObject.contentMetadata.currency = BNCCurrencyUSD
+        universalObject.contentMetadata.productCondition = BranchProductCondition.poor
 
         let event = BranchEvent.standardEvent(
             BranchStandardEvent.viewItem,
             withContentItem: universalObject
         )
-//        event.productCondition = BranchProductCondition.poor
+
         event.revenue = 10.00;
         event.currency = BNCCurrencyUSD
         event.contentItems = [ universalObject ]
-//        event.userInfo = [ "DiggityDog": "Hot" ]
-//        event.userInfo["snoop"] = "dog"
-        BranchEvent.standardEvent(BranchStandardEvent.purchase, withContentItem: universalObject).logEvent()
+        event.customData = [ "DiggityDog": "Hot" ]
+        event.customData["snoop"] = "dog"
+        BranchEvent.standardEvent(BranchStandardEvent.purchase,
+            withContentItem: universalObject).logEvent()
     }
 }
