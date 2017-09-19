@@ -14,3 +14,4 @@
 #import "Adjust.h"
 #import "Mixpanel.h"
 #import "Amplitude.h"
+#import "AppsFlyerLib/AppsFlyerTracker.h"

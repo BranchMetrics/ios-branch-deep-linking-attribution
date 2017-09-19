@@ -11,7 +11,6 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
     
     var window: UIWindow?
-    var _dateFormatter: DateFormatter?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
@@ -228,8 +227,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         IntegratedSDKsData.setActiveAdjustKey(key)
         IntegratedSDKsData.setActiveAdjustEnabled(true)
 
-        let environment = ADJEnvironmentSandbox
-        let adjustConfig = ADJConfig(appToken: key, environment: environment)
+        let adjustConfig = ADJConfig(appToken: key, environment: ADJEnvironmentSandbox)
 
         // change the log level
         adjustConfig?.logLevel = ADJLogLevelVerbose
@@ -305,6 +303,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         }
         IntegratedSDKsData.setActiveAppsflyerKey(key)
         IntegratedSDKsData.setActiveAppsflyerEnabled(true)
+        
+        AppsFlyerTracker.shared().appsFlyerDevKey = key
+        AppsFlyerTracker.shared().appleAppID = "1160975066"
     }
     
     func activateMixpanel() {
