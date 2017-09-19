@@ -13,3 +13,4 @@
 #import "BranchConstants.h"
 #import "Adjust.h"
 #import "Mixpanel.h"
+#import "Amplitude.h"

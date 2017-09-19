@@ -18,7 +18,7 @@ struct IntegratedSDKsData {
         if let value = userDefaults.string(forKey: "activeAdjustKey") {
             return value
         } else {
-            let value = ""
+            let value = Bundle.main.object(forInfoDictionaryKey: "adjust_api_key") as! String
             userDefaults.setValue(value, forKey: "activeAdjustKey")
             return value
         }
@@ -32,7 +32,7 @@ struct IntegratedSDKsData {
         if let value = userDefaults.string(forKey: "pendingAdjustKey") {
             return value
         } else {
-            let value = ""
+            let value = Bundle.main.object(forInfoDictionaryKey: "adjust_api_key") as! String
             userDefaults.setValue(value, forKey: "pendingAdjustKey")
             return value
         }
@@ -64,7 +64,7 @@ struct IntegratedSDKsData {
         if let value = userDefaults.string(forKey: "activeAdobeKey") {
             return value
         } else {
-            let value = ""
+            let value = Bundle.main.object(forInfoDictionaryKey: "adobe_api_key") as! String
             userDefaults.setValue(value, forKey: "activeAdobeKey")
             return value
         }
@@ -78,7 +78,7 @@ struct IntegratedSDKsData {
         if let value = userDefaults.string(forKey: "pendingAdobeKey") {
             return value
         } else {
-            let value = ""
+            let value = Bundle.main.object(forInfoDictionaryKey: "adobe_api_key") as! String
             userDefaults.setValue(value, forKey: "pendingAdobeKey")
             return value
         }
@@ -110,7 +110,7 @@ struct IntegratedSDKsData {
         if let value = userDefaults.string(forKey: "activeAmplitudeKey") {
             return value
         } else {
-            let value = ""
+            let value = Bundle.main.object(forInfoDictionaryKey: "amplitude_api_key") as! String
             userDefaults.setValue(value, forKey: "activeAmplitudeKey")
             return value
         }
@@ -124,7 +124,7 @@ struct IntegratedSDKsData {
         if let value = userDefaults.string(forKey: "pendingAmplitudeKey") {
             return value
         } else {
-            let value = ""
+            let value = Bundle.main.object(forInfoDictionaryKey: "amplitude_api_key") as! String
             userDefaults.setValue(value, forKey: "pendingAmplitudeKey")
             return value
         }
@@ -156,7 +156,7 @@ struct IntegratedSDKsData {
         if let value = userDefaults.string(forKey: "activeAppsflyerKey") {
             return value
         } else {
-            let value = ""
+            let value = Bundle.main.object(forInfoDictionaryKey: "appsflyer_api_key") as! String
             userDefaults.setValue(value, forKey: "activeAppsflyerKey")
             return value
         }
@@ -170,7 +170,7 @@ struct IntegratedSDKsData {
         if let value = userDefaults.string(forKey: "pendingAppsflyerKey") {
             return value
         } else {
-            let value = ""
+            let value = Bundle.main.object(forInfoDictionaryKey: "appsflyer_api_key") as! String
             userDefaults.setValue(value, forKey: "pendingAppsflyerKey")
             return value
         }
@@ -202,7 +202,7 @@ struct IntegratedSDKsData {
         if let value = userDefaults.string(forKey: "activeMixpanelKey") {
             return value
         } else {
-            let value = ""
+            let value = Bundle.main.object(forInfoDictionaryKey: "mixpanel_api_key") as! String
             userDefaults.setValue(value, forKey: "activeMixpanelKey")
             return value
         }
@@ -216,7 +216,7 @@ struct IntegratedSDKsData {
         if let value = userDefaults.string(forKey: "pendingMixpanelKey") {
             return value
         } else {
-            let value = ""
+            let value = Bundle.main.object(forInfoDictionaryKey: "mixpanel_api_key") as! String
             userDefaults.setValue(value, forKey: "pendingMixpanelKey")
             return value
         }
@@ -248,7 +248,7 @@ struct IntegratedSDKsData {
         if let value = userDefaults.string(forKey: "activeTuneKey") {
             return value
         } else {
-            let value = ""
+            let value = Bundle.main.object(forInfoDictionaryKey: "tune_api_key") as! String
             userDefaults.setValue(value, forKey: "activeTuneKey")
             return value
         }
@@ -262,7 +262,7 @@ struct IntegratedSDKsData {
         if let value = userDefaults.string(forKey: "pendingTuneKey") {
             return value
         } else {
-            let value = ""
+            let value = Bundle.main.object(forInfoDictionaryKey: "tune_api_key") as! String
             userDefaults.setValue(value, forKey: "pendingTuneKey")
             return value
         }

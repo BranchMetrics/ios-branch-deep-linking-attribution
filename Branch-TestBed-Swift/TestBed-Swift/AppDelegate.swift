@@ -87,6 +87,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
                     print(String(format: "Branch TestBed: Finished init with params\n%@", paramsDictionary.description))
                 }
                 
+                // Amplitude
+                if IntegratedSDKsData.activeMixpanelEnabled()! {
+                    var userID: String
+                    
+                    if paramsDictionary["developer_identity"] != nil {
+                        userID = paramsDictionary["developer_identity"] as! String
+                    } else {
+                        userID = "Anonymous"
+                    }
+                    
+                    Amplitude.instance().setUserId(userID)
+                    branch.setRequestMetadataKey("$amplitude_user_id",
+                                                 value: userID as NSObject)
+                }
+                
                 // Mixpanel
                 if IntegratedSDKsData.activeMixpanelEnabled()! {
                     var userID: String
@@ -98,9 +113,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
                     }
                     
                     Mixpanel.sharedInstance()?.identify(userID)
-                    branch.setRequestMetadataKey("mixpanel_distinct_id",
+                    branch.setRequestMetadataKey("$mixpanel_distinct_id",
                                                  value: userID as NSObject)
                 }
+                
 
             })
         } else {
@@ -250,6 +266,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setPendingAdobeEnabled(false)
             return
         }
+        IntegratedSDKsData.setActiveAdobeKey(key)
+        IntegratedSDKsData.setActiveAdobeEnabled(true)
     }
     
     func activateAmplitude() {
@@ -265,6 +283,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setPendingAmplitudeEnabled(false)
             return
         }
+        IntegratedSDKsData.setActiveAmplitudeKey(key)
+        IntegratedSDKsData.setActiveAmplitudeEnabled(true)
+        
+        Amplitude.instance().initializeApiKey(key)
+        Amplitude.instance().logEvent("Amplitude Initialized")
     }
     
     func activateAppsflyer() {
@@ -280,6 +303,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setPendingAppsflyerEnabled(false)
             return
         }
+        IntegratedSDKsData.setActiveAppsflyerKey(key)
+        IntegratedSDKsData.setActiveAppsflyerEnabled(true)
     }
     
     func activateMixpanel() {
@@ -295,7 +320,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setPendingMixpanelEnabled(false)
             return
         }
-        
         IntegratedSDKsData.setActiveMixpanelKey(key)
         IntegratedSDKsData.setActiveMixpanelEnabled(true)
         
@@ -315,6 +339,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setPendingTuneEnabled(false)
             return
         }
+        IntegratedSDKsData.setActiveTuneKey(key)
+        IntegratedSDKsData.setActiveTuneEnabled(true)
     }
     
 }

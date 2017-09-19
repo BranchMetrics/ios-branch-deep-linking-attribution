@@ -376,10 +376,22 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
                             } else {
                                 print("Branch TestBed: User ID cleared")
                                 self.userIDTextField.text = userID
-                                Mixpanel.sharedInstance()?.identify(userID)
-                                branch?.setRequestMetadataKey("mixpanel_distinct_id",
-                                                             value: userID as NSObject)
                                 HomeData.setUserID(userID)
+                                
+                                // Amplitude
+                                if IntegratedSDKsData.activeAmplitudeEnabled()! {
+                                    Amplitude.instance().setUserId(userID)
+                                    branch?.setRequestMetadataKey("$amplitude_user_id",
+                                                                 value: userID as NSObject)
+                                }
+                                
+                                // Mixpanel
+                                if IntegratedSDKsData.activeMixpanelEnabled()! {
+                                    Mixpanel.sharedInstance()?.identify(userID)
+                                    branch?.setRequestMetadataKey("$mixpanel_distinct_id",
+                                                                  value: userID as NSObject)
+                                }
+                                
                             }
                         }
                         return
@@ -390,12 +402,23 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
                             print(String(format: "Branch TestBed: Identity set: %@", userID))
                             self.userIDTextField.text = userID
                             HomeData.setUserID(userID)
-                            Mixpanel.sharedInstance()?.identify(userID)
-                            branch?.setRequestMetadataKey("mixpanel_distinct_id",
-                                                         value: userID as NSObject)
                             
-                            let defaultContainer = UserDefaults.standard
-                            defaultContainer.setValue(userID, forKey: "userID")
+//                            let defaultContainer = UserDefaults.standard
+//                            defaultContainer.setValue(userID, forKey: "userID")
+                            
+                            // Amplitude
+                            if IntegratedSDKsData.activeMixpanelEnabled()! {
+                                Amplitude.instance().setUserId(userID)
+                                branch?.setRequestMetadataKey("$amplitude_user_id",
+                                                              value: userID as NSObject)
+                            }
+                            
+                            // Mixpanel
+                            if IntegratedSDKsData.activeMixpanelEnabled()! {
+                                Mixpanel.sharedInstance()?.identify(userID)
+                                branch?.setRequestMetadataKey("$mixpanel_distinct_id",
+                                                              value: userID as NSObject)
+                            }
                             
                         } else {
                             print(String(format: "Branch TestBed: Error setting identity: %@", error! as CVarArg))

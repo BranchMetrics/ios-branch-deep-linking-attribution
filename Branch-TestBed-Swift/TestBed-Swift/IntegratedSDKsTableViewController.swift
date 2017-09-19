@@ -85,7 +85,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                 vc.header = "Adjust Key"
                 vc.footer = "This key will be used the next time the application is closed (not merely backgrounded) and re-opened."
                 vc.keyboardType = UIKeyboardType.alphabet
-                vc.incumbantValue = StartupOptionsData.getPendingBranchKey()!
+                vc.incumbantValue = IntegratedSDKsData.pendingAdjustKey()!
             case "pendingAdobeKey":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TextViewFormTableViewController
@@ -94,7 +94,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                 vc.header = "Adobe Key"
                 vc.footer = "This key will be used the next time the application is closed (not merely backgrounded) and re-opened."
                 vc.keyboardType = UIKeyboardType.alphabet
-                vc.incumbantValue = StartupOptionsData.getPendingBranchKey()!
+                vc.incumbantValue = IntegratedSDKsData.pendingAdobeKey()!
             case "pendingAmplitudeKey":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TextViewFormTableViewController
@@ -103,7 +103,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                 vc.header = "Amplitude Key"
                 vc.footer = "This key will be used the next time the application is closed (not merely backgrounded) and re-opened."
                 vc.keyboardType = UIKeyboardType.alphabet
-                vc.incumbantValue = StartupOptionsData.getPendingBranchKey()!
+                vc.incumbantValue = IntegratedSDKsData.pendingAmplitudeKey()!
             case "pendingAppsflyerKey":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TextViewFormTableViewController
@@ -112,7 +112,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                 vc.header = "Appsflyer Key"
                 vc.footer = "This key will be used the next time the application is closed (not merely backgrounded) and re-opened."
                 vc.keyboardType = UIKeyboardType.alphabet
-                vc.incumbantValue = StartupOptionsData.getPendingBranchKey()!
+                vc.incumbantValue = IntegratedSDKsData.pendingAppsflyerKey()!
             case "pendingMixpanelKey":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TextViewFormTableViewController
@@ -121,7 +121,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                 vc.header = "Mixpanel Key"
                 vc.footer = "This key will be used the next time the application is closed (not merely backgrounded) and re-opened."
                 vc.keyboardType = UIKeyboardType.alphabet
-                vc.incumbantValue = StartupOptionsData.getPendingBranchKey()!
+                vc.incumbantValue = IntegratedSDKsData.pendingMixpanelKey()!
             case "pendingTuneKey":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TextViewFormTableViewController
@@ -130,7 +130,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                 vc.header = "Tune Key"
                 vc.footer = "This key will be used the next time the application is closed (not merely backgrounded) and re-opened."
                 vc.keyboardType = UIKeyboardType.alphabet
-                vc.incumbantValue = StartupOptionsData.getPendingBranchKey()!
+                vc.incumbantValue = IntegratedSDKsData.pendingTuneKey()!
             default:
                 break
             }
