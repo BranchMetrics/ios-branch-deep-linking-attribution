@@ -42,7 +42,7 @@ struct CommerceEventsData {
     }
     // v2 commerce event function
     static func getBranchEvent() -> BranchEvent {
-        let branchEvent = BranchEvent.standardEvent(BranchStandardEvent.viewContent)
+        let branchEvent = BranchEvent.standardEvent(BranchStandardEvent.viewItem)
         let commerceEvent = getCommerceEvent() as! [String: String]
         let defaults = getCommerceEventDefaults()
         

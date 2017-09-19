@@ -14,7 +14,7 @@ struct DataStore {
     static let userDefaults = UserDefaults.standard
     
     static func getDefaultBranchEvent() -> BranchEvent {
-        let branchEvent = BranchEvent.standardEvent(BranchStandardEvent.viewContent)
+        let branchEvent = BranchEvent.standardEvent(BranchStandardEvent.viewItem)
         
         return branchEvent
     }

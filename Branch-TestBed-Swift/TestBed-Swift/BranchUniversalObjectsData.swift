@@ -42,7 +42,7 @@ struct BranchUniversalObjectsData {
         universalObject.contentMetadata.productVariant = "Xl"
         universalObject.contentMetadata.ratingAverage = 3.3
         universalObject.contentMetadata.ratingCount = 5
-        universalObject.contentMetadata.ratingMaximum = 2.8
+        universalObject.contentMetadata.ratingMax = 2.8
         universalObject.contentMetadata.contentSchema = BranchContentSchema.commerceProduct
         
         return universalObject
@@ -134,10 +134,10 @@ struct BranchUniversalObjectsData {
                 }
             case "customData":
                 if let data = universalObject[key] as? [String: String] {
-                    branchUniversalObject.contentMetadata.userInfo.addEntries(from: data)
+                    branchUniversalObject.setValuesForKeys(data)
                 }
             default:
-                branchUniversalObject.contentMetadata.userInfo.addEntries(from: [key : universalObject[key] as! String])
+                branchUniversalObject.setValue(universalObject[key], forKey: key)
             }
         }
         return branchUniversalObject
