@@ -62,6 +62,13 @@ class ArticleView: UIView, WKNavigationDelegate {
 
     // MARK: - WKNavigationDelegate
 
+    func webView(_ webView: WKWebView,
+decidePolicyFor navigationAction: WKNavigationAction,
+           decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        BNCLog("Navigating to URL \(String(describing: navigationAction.request.url?.description)).")
+        decisionHandler(.allow)
+    }
+
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         hud.hide(animated: true)
         BNCLogError("could not load \(planetData.url): \(error)")

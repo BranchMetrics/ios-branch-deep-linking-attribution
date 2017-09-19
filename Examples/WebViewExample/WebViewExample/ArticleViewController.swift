@@ -87,7 +87,6 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
     private func setupBUO() {
         // Initialization and configuration.
         buo = BranchUniversalObject(planetData: planetData)
-        
         BNCLog("Created Branch Universal Object")
     }
 }
