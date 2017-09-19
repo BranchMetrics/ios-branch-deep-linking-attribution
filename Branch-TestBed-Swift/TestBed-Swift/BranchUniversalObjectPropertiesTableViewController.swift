@@ -105,9 +105,9 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch((indexPath as NSIndexPath).section) {
         case 2 :
-            self.performSegue(withIdentifier: "ShowKeywords", sender: "Keywords")
+            self.performSegue(withIdentifier: "UniversalObjectPropertiesTableViewToArrayTableView", sender: "Keywords")
         case 26 :
-            self.performSegue(withIdentifier: "ShowCustomData", sender: "CustomData")
+            self.performSegue(withIdentifier: "UniversalObjectPropertiesTableViewToDictionaryTableView", sender: "CustomData")
         default : break
         }
         
@@ -118,7 +118,7 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
         refreshUniversalObject()
         
         switch segue.identifier! {
-        case "ShowKeywords":
+        case "UniversalObjectPropertiesTableViewToArrayTableView":
             let vc = segue.destination as! ArrayTableViewController
             if let keywords = universalObject["$keywords"] as? [String] {
                 vc.array = keywords
@@ -128,7 +128,7 @@ class BranchUniversalObjectPropertiesTableViewController: UITableViewController,
             vc.placeholder = "keyword"
             vc.footer = "Enter a new keyword that describes the content."
             vc.keyboardType = UIKeyboardType.default
-        case "ShowCustomData":
+        case "UniversalObjectPropertiesTableViewToDictionaryTableView":
             let vc = segue.destination as! DictionaryTableViewController
             if let customData = universalObject["customData"] as? [String: AnyObject] {
                 vc.dictionary = customData

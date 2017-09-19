@@ -11,3 +11,5 @@
 #import "BranchUniversalObject.h"
 #import "BranchLinkProperties.h"
 #import "BranchConstants.h"
+#import "Adjust.h"
+#import "Mixpanel.h"

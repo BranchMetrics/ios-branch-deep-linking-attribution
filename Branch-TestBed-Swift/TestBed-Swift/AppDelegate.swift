@@ -8,32 +8,40 @@
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
     
     var window: UIWindow?
+    var _dateFormatter: DateFormatter?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         let defaultBranchKey = Bundle.main.object(forInfoDictionaryKey: "branch_key") as! String
         var branchKey = defaultBranchKey
         
-        if let pendingBranchKey = DataStore.getPendingBranchKey() as String? {
+        if let pendingBranchKey = StartupOptionsData.getPendingBranchKey() as String? {
             if pendingBranchKey != "" {
                 branchKey = pendingBranchKey
             }
-            DataStore.setActiveBranchKey(branchKey)
+            StartupOptionsData.setActiveBranchKey(branchKey)
         } else {
             branchKey = defaultBranchKey
-            DataStore.setActiveBranchKey(defaultBranchKey)
+            StartupOptionsData.setActiveBranchKey(defaultBranchKey)
         }
+        
+        activateAdjust()
+        activateAdobe()
+        activateAmplitude()
+        activateAppsflyer()
+        activateMixpanel()
+        activateTune()
         
         if let branch = Branch.getInstance(branchKey) {
             
-            if DataStore.getPendingSetDebugEnabled()! {
+            if StartupOptionsData.getPendingSetDebugEnabled()! {
                 branch.setDebug()
-                DataStore.setActivePendingSetDebugEnabled(true)
+                StartupOptionsData.setActiveSetDebugEnabled(true)
             } else {
-                DataStore.setActivePendingSetDebugEnabled(false)
+                StartupOptionsData.setActiveSetDebugEnabled(false)
             }
             // To use automaticallyDisplayDeepLinkController:
             // 1) Uncomment the following code block
@@ -78,12 +86,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 } else {
                     print(String(format: "Branch TestBed: Finished init with params\n%@", paramsDictionary.description))
                 }
+                
+                // Mixpanel
+                if IntegratedSDKsData.activeMixpanelEnabled()! {
+                    var userID: String
+                    
+                    if paramsDictionary["developer_identity"] != nil {
+                        userID = paramsDictionary["developer_identity"] as! String
+                    } else {
+                        userID = "Anonymous"
+                    }
+                    
+                    Mixpanel.sharedInstance()?.identify(userID)
+                    branch.setRequestMetadataKey("mixpanel_distinct_id",
+                                                 value: userID as NSObject)
+                }
+
             })
         } else {
             print("Branch TestBed: Invalid Key\n")
-            DataStore.setActiveBranchKey("")
-            DataStore.setPendingBranchKey("")
+            StartupOptionsData.setActiveBranchKey("")
+            StartupOptionsData.setPendingBranchKey("")
         }
+        
         return true
     }
     
@@ -100,6 +125,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
         if (!branchHandled) {
             // If not handled by Branch, do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+            
+
+            // Adjust
+            // TODO: Is this necessary?
+            // Process non-Branch URIs here...
+            // Adjust.appWillOpenUrl(url)
+            
         }
         return true
     }
@@ -108,6 +140,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
         // pass the url to the handle deep link call
         Branch.getInstance().continue(userActivity);
+
+        // Adjust
+        // TODO: Is any of this necessary?
+        // Adjust.appWillOpenUrl(url)
+        // NSURL *oldStyleDeeplink = [Adjust convertUniversalLink:url scheme:@"branchtest"];
+        // [Adjust appWillOpenUrl:oldStyleDeeplink];
+        
         return true
     }
     
@@ -128,6 +167,154 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
+    }
+    
+    // Mark - Adjust callbacks
+    
+    func adjustAttributionChanged(_attribution: ADJAttribution) {
+        NSLog("adjust attribution %@", _attribution)
+    }
+    
+    func adjustEventTrackingSucceeded(_eventSuccessResponseData: ADJEventSuccess) {
+        NSLog("adjust event success %@", _eventSuccessResponseData)
+    }
+    
+    func adjustEventTrackingFailed(_eventFailureResponseData: ADJEventFailure) {
+        NSLog("adjust event failure %@", _eventFailureResponseData)
+    }
+    
+    func adjustSessionTrackingSucceeded(_sessionSuccessResponseData: ADJSessionSuccess) {
+        NSLog("adjust session success %@", _sessionSuccessResponseData)
+    }
+    
+    func adjustSessionTrackingFailed(_sessionFailureResponseData: ADJSessionFailure) {
+        NSLog("adjust session failure %@", _sessionFailureResponseData)
+    }
+    
+    @objc func adjustDeeplinkResponse(_deeplink: NSURL!) -> Bool {
+        return true
+    }
+    
+    func activateAdjust() {
+        guard IntegratedSDKsData.pendingAdjustEnabled()! else {
+            IntegratedSDKsData.setActiveAdjustEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingAdjustKey() as String? else {
+            IntegratedSDKsData.setPendingAdjustEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingAdjustEnabled(false)
+            return
+        }
+        
+        IntegratedSDKsData.setActiveAdjustKey(key)
+        IntegratedSDKsData.setActiveAdjustEnabled(true)
+
+        let environment = ADJEnvironmentSandbox
+        let adjustConfig = ADJConfig(appToken: key, environment: environment)
+
+        // change the log level
+        adjustConfig?.logLevel = ADJLogLevelVerbose
+
+        // Enable event buffering.
+        // adjustConfig.eventBufferingEnabled = true
+        // Set default tracker.
+        // adjustConfig.defaultTracker = "{TrackerToken}"
+        // Send in the background.
+        // adjustConfig.sendInBackground = true
+        // set an attribution delegate
+        adjustConfig?.delegate = self
+
+        // Initialise the SDK.
+        Adjust.appDidLaunch(adjustConfig!)
+
+        // Put the SDK in offline mode.
+        // Adjust.setOfflineMode(true);
+
+        // Disable the SDK
+        // Adjust.setEnabled(false);
+    }
+    
+    func activateAdobe() {
+        guard IntegratedSDKsData.pendingAdobeEnabled()! else {
+            IntegratedSDKsData.setActiveAdobeEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingAdobeKey() as String? else {
+            IntegratedSDKsData.setPendingAdobeEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingAdobeEnabled(false)
+            return
+        }
+    }
+    
+    func activateAmplitude() {
+        guard IntegratedSDKsData.pendingAmplitudeEnabled()! else {
+            IntegratedSDKsData.setActiveAmplitudeEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingAmplitudeKey() as String? else {
+            IntegratedSDKsData.setPendingAmplitudeEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingAmplitudeEnabled(false)
+            return
+        }
+    }
+    
+    func activateAppsflyer() {
+        guard IntegratedSDKsData.pendingAppsflyerEnabled()! else {
+            IntegratedSDKsData.setActiveAppsflyerEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingAppsflyerKey() as String? else {
+            IntegratedSDKsData.setPendingAppsflyerEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingAppsflyerEnabled(false)
+            return
+        }
+    }
+    
+    func activateMixpanel() {
+        guard IntegratedSDKsData.pendingMixpanelEnabled()! else {
+            IntegratedSDKsData.setActiveMixpanelEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingMixpanelKey() as String? else {
+            IntegratedSDKsData.setPendingMixpanelEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingMixpanelEnabled(false)
+            return
+        }
+        
+        IntegratedSDKsData.setActiveMixpanelKey(key)
+        IntegratedSDKsData.setActiveMixpanelEnabled(true)
+        
+        Mixpanel.sharedInstance(withToken: key)
+    }
+    
+    func activateTune() {
+        guard IntegratedSDKsData.pendingTuneEnabled()! else {
+            IntegratedSDKsData.setActiveTuneEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingTuneKey() as String? else {
+            IntegratedSDKsData.setPendingTuneEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingTuneEnabled(false)
+            return
+        }
     }
     
 }

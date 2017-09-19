@@ -21,9 +21,9 @@ class ProductTableViewController: UITableViewController, UITextFieldDelegate, UI
     @IBOutlet weak var productCategoryTextField: UITextField!
     
 
-    var defaults = DataStore.getProductDefaults()
+    var defaults = CommerceEventsData.getProductDefaults()
     let picker = UIPickerView()
-    let productCategories = DataStore.getProductCategories()
+    let productCategories = CommerceEventsData.getProductCategories()
     
     // MARK: - Core View Functions
     

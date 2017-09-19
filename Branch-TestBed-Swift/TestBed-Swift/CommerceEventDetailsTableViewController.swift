@@ -20,9 +20,9 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
     @IBOutlet weak var taxTextField: UITextField!
     @IBOutlet weak var revenueTextField: UITextField!
     
-    var defaults = DataStore.getCommerceEventDefaults()
+    var defaults = CommerceEventsData.getCommerceEventDefaults()
     let picker = UIPickerView()
-    let  currencies = DataStore.getCurrencies()
+    let currencies = CommerceEventsData.getCurrencies()
     
     // MARK: - Core View Functions
     
@@ -101,7 +101,7 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
     }
     
     func refreshControls() {
-        guard var commerceEvent = DataStore.getCommerceEvent() else {
+        guard var commerceEvent = CommerceEventsData.getCommerceEvent() else {
             return
         }
 
@@ -143,7 +143,7 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
     }
     
     func refreshDataStore() {
-        DataStore.setCommerceEvent([
+        CommerceEventsData.setCommerceEvent([
             "transactionID": transactionIDTextField.text!,
             "affiliation": affiliationTextField.text!,
             "coupon": couponTextField.text!,

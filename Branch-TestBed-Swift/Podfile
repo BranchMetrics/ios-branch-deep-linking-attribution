@@ -1,0 +1,6 @@
+platform :ios, '9.0'
+
+target "TestBed-Swift" do
+  pod 'Adjust', '~> 4.11.4'
+  pod 'Mixpanel'
+end

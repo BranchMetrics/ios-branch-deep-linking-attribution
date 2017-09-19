@@ -9,7 +9,7 @@ import UIKit
 
 class ProductArrayTableViewController: UITableViewController {
     
-    var array = DataStore.getProducts()
+    var array = CommerceEventsData.getProducts()
     var incumbantValue = ""
     var viewTitle = "Default Array Title"
     var header = "Default Array Header"
@@ -53,7 +53,7 @@ class ProductArrayTableViewController: UITableViewController {
         if editingStyle == .delete {
             // Delete the row from the data source
             array.remove(at: (indexPath as NSIndexPath).row)
-            DataStore.setProducts(array)
+            CommerceEventsData.setProducts(array)
             
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
@@ -79,7 +79,7 @@ class ProductArrayTableViewController: UITableViewController {
                 "category": (vc.productCategoryTextField.text?.characters.count)! > 0 ? vc.productCategoryTextField.text : vc.productCategoryTextField.placeholder
             ]
             
-            array = DataStore.getProductsWithAddedProduct(productProperties as! [String : String])
+            array = CommerceEventsData.getProductsWithAddedProduct(productProperties as! [String : String])
             tableView.reloadData()
 
         }
