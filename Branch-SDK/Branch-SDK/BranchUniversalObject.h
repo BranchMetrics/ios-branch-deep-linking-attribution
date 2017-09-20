@@ -72,7 +72,7 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbis
 @property (nonatomic, strong, nullable) NSString        *sku;
 @property (nonatomic, strong, nullable) NSString        *productName;
 @property (nonatomic, strong, nullable) NSString        *productBrand;
-@property (nonatomic, strong, nullable) NSString        *productCategory;
+@property (nonatomic, strong, nullable) BNCProductCategory productCategory;
 @property (nonatomic, strong, nullable) NSString        *productVariant;
 @property (nonatomic, strong, nullable) BranchProductCondition productCondition;
 @property (nonatomic, assign)           double          ratingAverage;

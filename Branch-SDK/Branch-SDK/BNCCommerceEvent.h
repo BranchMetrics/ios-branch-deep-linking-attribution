@@ -11,7 +11,7 @@
 
 #pragma mark BNCProductCategory
 
-typedef NSString*const BNCProductCategory; // NS_STRING_ENUM;
+typedef NSString*const BNCProductCategory NS_STRING_ENUM;
 
 FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryAnimalSupplies;
 FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryApparel;
@@ -37,7 +37,7 @@ FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryVehiclesParts;
 
 #pragma mark - BNCCurrency
 
-typedef NSString*const BNCCurrency;// NS_STRING_ENUM;
+typedef NSString*const BNCCurrency NS_STRING_ENUM;
 
 FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyAED;
 FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyAFN;
@@ -246,7 +246,7 @@ FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyZMW;
 
 #pragma mark - BNCCommerceEvent
 
-//__attribute__((deprecated(("Please use BNCEvent to track commerce events."))))
+//__attribute__((deprecated(("Please use BranchEvent to track commerce events."))))
 @interface BNCCommerceEvent : NSObject
 @property (nonatomic, strong) NSDecimalNumber*_Nullable     revenue;
 @property (nonatomic, strong) BNCCurrency _Nullable         currency;
