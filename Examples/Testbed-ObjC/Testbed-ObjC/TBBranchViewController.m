@@ -57,6 +57,9 @@ NSString *type = @"some type";
     section(@"Events");
     row(@"Send Commerce Event", sendCommerceEvent:);
 
+    section(@"Miscellaneous");
+    row(@"Show Local IP Addess", showLocalIPAddress:);
+
     #undef section
     #undef row
 }
@@ -267,6 +270,15 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
                     message:nil];
             }
         }];
+}
+
+- (IBAction)showLocalIPAddress:(id)sender {
+    [self showDataViewControllerWithObject:@{
+            @"Local IP Address": @"0.0.0.0",
+        }
+        title:@"Local IP Address"
+        message:nil
+    ];
 }
 
 @end
