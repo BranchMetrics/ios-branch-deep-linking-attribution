@@ -341,12 +341,12 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tune Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" enabled="NO" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZKe-Vc-0CR" userLabel="activeTuneEnabledLabel">
-                                                    <rect key="frame" x="14" y="12.5" width="104" height="20.5"/>
+                                                    <rect key="frame" x="14" y="12" width="104" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="GIC-b2-Vqc" userLabel="activeTuneEnabledSwitch">
-                                                    <rect key="frame" x="312" y="7.5" width="51" height="31"/>
+                                                    <rect key="frame" x="312" y="7" width="51" height="31"/>
                                                 </switch>
                                             </subviews>
                                             <constraints>
@@ -369,7 +369,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Adjust Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Zk1-s9-Lgg" userLabel="pendingAdjustKeyTextField">
-                                                    <rect key="frame" x="14" y="14" width="326" height="17"/>
+                                                    <rect key="frame" x="14" y="14.5" width="326" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -390,12 +390,12 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Adjust Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V4A-oJ-3do" userLabel="pendingAdjustEnabledLabel">
-                                                    <rect key="frame" x="14" y="12" width="114.5" height="20.5"/>
+                                                    <rect key="frame" x="14" y="12.5" width="114.5" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="lSR-P0-CmV" userLabel="pendingAdjustEnabledSwitch">
-                                                    <rect key="frame" x="312" y="7" width="51" height="31"/>
+                                                    <rect key="frame" x="312" y="7.5" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="pendingAdjustEnabledSwitchValueChanged:" destination="eye-sg-ljH" eventType="valueChanged" id="afb-4F-CVX"/>
                                                     </connections>
@@ -417,7 +417,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Adobe Omniture Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ERh-wV-2WX" userLabel="pendingAdobeKeyTextField">
-                                                    <rect key="frame" x="14" y="14.5" width="326" height="17"/>
+                                                    <rect key="frame" x="14" y="14" width="326" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -438,12 +438,12 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Adobe Omniture Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="etN-a1-nWT" userLabel="pendingAdobeEnabledLabel">
-                                                    <rect key="frame" x="14" y="12.5" width="191" height="20.5"/>
+                                                    <rect key="frame" x="14" y="12" width="191" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="vCX-Ff-Yf4" userLabel="pendingSetDebugEnabledSwitch">
-                                                    <rect key="frame" x="312" y="7.5" width="51" height="31"/>
+                                                    <rect key="frame" x="312" y="7" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="pendingAdobeEnabledSwitchValueChanged:" destination="eye-sg-ljH" eventType="valueChanged" id="ZP5-aC-Hgq"/>
                                                     </connections>
@@ -465,7 +465,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Amplitude Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="cdY-2P-XRX" userLabel="pendingAmplitudeKeyTextField">
-                                                    <rect key="frame" x="14" y="14.5" width="326" height="17"/>
+                                                    <rect key="frame" x="14" y="14" width="326" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -486,12 +486,12 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Amplitude Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MPb-hO-OxF" userLabel="pendingAmplitudeEnabledLabel">
-                                                    <rect key="frame" x="14" y="12.5" width="144" height="20.5"/>
+                                                    <rect key="frame" x="14" y="12" width="144" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="U7a-2d-Qr6" userLabel="pendingAmplitudeEnabledSwitch">
-                                                    <rect key="frame" x="312" y="7.5" width="51" height="31"/>
+                                                    <rect key="frame" x="312" y="7" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="pendingAmplitudeEnabledSwitchValueChanged:" destination="eye-sg-ljH" eventType="valueChanged" id="eSR-QK-CRj"/>
                                                     </connections>
@@ -513,7 +513,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Appsflyer Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="E26-kB-htc" userLabel="pendingAppsflyerKeyTextField">
-                                                    <rect key="frame" x="14" y="14" width="326" height="17"/>
+                                                    <rect key="frame" x="14" y="14.5" width="326" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -534,12 +534,12 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Appsflyer Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zz6-Iu-Yim" userLabel="pendingAppsflyerEnabledLabel">
-                                                    <rect key="frame" x="14" y="12" width="139.5" height="20.5"/>
+                                                    <rect key="frame" x="14" y="12.5" width="139.5" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="xCb-PI-U1G" userLabel="pendingAppsflyerEnabledSwitch">
-                                                    <rect key="frame" x="312" y="7" width="51" height="31"/>
+                                                    <rect key="frame" x="312" y="7.5" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="pendingAppsflyerEnabledSwitchValueChanged:" destination="eye-sg-ljH" eventType="valueChanged" id="KrB-hC-FHN"/>
                                                     </connections>
@@ -560,8 +560,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="342" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Google Analytics Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VbA-HX-0ri" userLabel="pendingGoogleAnalyticsKeyTextField">
-                                                    <rect key="frame" x="14" y="14" width="326" height="17"/>
+                                                <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Google Analytics Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VbA-HX-0ri" userLabel="pendingGoogleAnalyticsTrackingIDTextField">
+                                                    <rect key="frame" x="14" y="14.5" width="326" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -744,7 +744,7 @@
                         <outlet property="activeAppsflyerEnabledSwitch" destination="0hq-iz-oSO" id="ER4-hC-QwE"/>
                         <outlet property="activeAppsflyerKeyTextField" destination="LQ3-Ab-bWn" id="TKH-wm-Crz"/>
                         <outlet property="activeGoogleAnalyticsEnabledSwitch" destination="IcM-3C-jQu" id="VuM-dg-Snr"/>
-                        <outlet property="activeGoogleAnalyticsKeyTextField" destination="M8P-d7-eyd" id="fOV-Rf-TSw"/>
+                        <outlet property="activeGoogleAnalyticsTrackingIDTextField" destination="M8P-d7-eyd" id="fOV-Rf-TSw"/>
                         <outlet property="activeMixpanelEnabledSwitch" destination="C4V-g3-MO1" id="wOf-Cm-7Qc"/>
                         <outlet property="activeMixpanelKeyTextField" destination="sYC-kd-6gd" id="zc8-Ha-Qwa"/>
                         <outlet property="activeTuneAdvertisingIDTextField" destination="bc4-Be-GaQ" id="tee-wS-wq3"/>
@@ -759,7 +759,7 @@
                         <outlet property="pendingAppsflyerEnabledSwitch" destination="xCb-PI-U1G" id="9X8-2f-zAQ"/>
                         <outlet property="pendingAppsflyerKeyTextField" destination="E26-kB-htc" id="aEL-Pj-T5d"/>
                         <outlet property="pendingGoogleAnalyticsEnabledSwitch" destination="koa-nX-zEJ" id="ecN-N8-GuU"/>
-                        <outlet property="pendingGoogleAnalyticsKeyTextField" destination="VbA-HX-0ri" id="nje-KA-pIS"/>
+                        <outlet property="pendingGoogleAnalyticsTrackingIDTextField" destination="VbA-HX-0ri" id="nje-KA-pIS"/>
                         <outlet property="pendingMixpanelEnabledSwitch" destination="Gca-iJ-pBF" id="vUb-Eh-Bh7"/>
                         <outlet property="pendingMixpanelKeyTextField" destination="dJC-DC-2Zd" id="T40-TN-Zq5"/>
                         <outlet property="pendingTuneAdvertisingIDTextField" destination="Rk5-iR-hNL" id="pE2-hJ-dhB"/>

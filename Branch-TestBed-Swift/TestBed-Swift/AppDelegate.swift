@@ -305,7 +305,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setActiveGoogleAnalyticsEnabled(false)
             return
         }
-        guard let key = IntegratedSDKsData.pendingGoogleAnalyticsKey() as String? else {
+        guard let key = IntegratedSDKsData.pendingGoogleAnalyticsTrackingID() as String? else {
             IntegratedSDKsData.setPendingGoogleAnalyticsEnabled(false)
             return
         }
@@ -313,8 +313,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setPendingGoogleAnalyticsEnabled(false)
             return
         }
-        IntegratedSDKsData.setActiveGoogleAnalyticsKey(key)
+        IntegratedSDKsData.setActiveGoogleAnalyticsTrackingID(key)
         IntegratedSDKsData.setActiveGoogleAnalyticsEnabled(true)
+        
+        guard let gai = GAI.sharedInstance() else {
+            assert(false, "Google Analytics not configured correctly")
+        }
+        gai.tracker(withTrackingId: "key")
+        // Optional: automatically report uncaught exceptions.
+        gai.trackUncaughtExceptions = true
+        
+        // Optional: set Logger to VERBOSE for debug information.
+        // Remove before app release.
+        gai.logger.logLevel = .verbose;
+        
     }
     
     func activateMixpanel() {

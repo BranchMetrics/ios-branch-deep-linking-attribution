@@ -16,3 +16,4 @@
 #import "Amplitude.h"
 #import "AppsFlyerLib/AppsFlyerTracker.h"
 #import "Tune/Tune.h"
+#import "GoogleAnalytics/GAI.h"

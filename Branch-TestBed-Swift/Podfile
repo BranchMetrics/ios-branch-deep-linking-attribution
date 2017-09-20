@@ -6,4 +6,5 @@ target "TestBed-Swift" do
   pod 'Amplitude-iOS', '~> 3.14.1'
   pod 'AppsFlyerFramework'
   pod 'Tune'
+  pod 'GoogleAnalytics'
 end

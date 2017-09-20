@@ -206,34 +206,34 @@ struct IntegratedSDKsData {
     
     // Mark - Google Analytics
     
-    static func activeGoogleAnalyticsKey() -> String? {
-        if let value = userDefaults.string(forKey: "activeGoogleAnalyticsKey") {
+    static func activeGoogleAnalyticsTrackingID() -> String? {
+        if let value = userDefaults.string(forKey: "activeGoogleAnalyticsTrackingID") {
             if value.characters.count > 0 {
                 return value
             }
         }
-        let value = Bundle.main.object(forInfoDictionaryKey: "google_analytics_api_key") as! String
-        userDefaults.setValue(value, forKey: "activeGoogleAnalyticsKey")
+        let value = Bundle.main.object(forInfoDictionaryKey: "google_analytics_tracking_id") as! String
+        userDefaults.setValue(value, forKey: "activeGoogleAnalyticsTrackingID")
         return value
     }
     
-    static func setActiveGoogleAnalyticsKey(_ value: String) {
-        userDefaults.setValue(value, forKey: "activeGoogleAnalyticsKey")
+    static func setActiveGoogleAnalyticsTrackingID(_ value: String) {
+        userDefaults.setValue(value, forKey: "activeGoogleAnalyticsTrackingID")
     }
     
-    static func pendingGoogleAnalyticsKey() -> String? {
-        if let value = userDefaults.string(forKey: "pendingGoogleAnalyticsKey") {
+    static func pendingGoogleAnalyticsTrackingID() -> String? {
+        if let value = userDefaults.string(forKey: "pendingGoogleAnalyticsTrackingID") {
             if value.characters.count > 0 {
                 return value
             }
         }
-        let value = Bundle.main.object(forInfoDictionaryKey: "google_analytics_api_key") as! String
-        userDefaults.setValue(value, forKey: "pendingGoogleAnalyticsKey")
+        let value = Bundle.main.object(forInfoDictionaryKey: "google_analytics_tracking_id") as! String
+        userDefaults.setValue(value, forKey: "pendingGoogleAnalyticsTrackingID")
         return value
     }
     
-    static func setPendingGoogleAnalyticsKey(_ value: String) {
-        userDefaults.setValue(value, forKey: "pendingGoogleAnalyticsKey")
+    static func setPendingGoogleAnalyticsTrackingID(_ value: String) {
+        userDefaults.setValue(value, forKey: "pendingGoogleAnalyticsTrackingID")
     }
     
     static func activeGoogleAnalyticsEnabled() -> Bool? {

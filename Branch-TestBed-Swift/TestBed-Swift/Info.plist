@@ -74,8 +74,8 @@
 	<string>01666fc84f9348861e85e751166be811</string>
 	<key>appsflyer_api_key</key>
 	<string>84qHoE3ZXh7SetmHU6boi5</string>
-	<key>google_analytics_api_key</key>
-	<string>Not yet implemented</string>
+	<key>google_analytics_tracking_id</key>
+	<string>UA-106813462-1</string>
 	<key>mixpanel_api_key</key>
 	<string>6c48747de004db9e2913d59658a935aa</string>
 	<key>tune_advertising_id</key>
