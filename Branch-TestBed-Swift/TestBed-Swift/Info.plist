@@ -64,21 +64,21 @@
 	</array>
 	<key>branch_app_domain</key>
 	<string>app.link</string>
-	<key>adobe_api_key</key>
-	<string>Not yet implemented</string>
-	<key>appsflyer_api_key</key>
-	<string>84qHoE3ZXh7SetmHU6boi5</string>
-	<key>mixpanel_api_key</key>
-	<string>6c48747de004db9e2913d59658a935aa</string>
-	<key>amplitude_api_key</key>
-	<string>01666fc84f9348861e85e751166be811</string>
-	<key>tune_api_key</key>
-	<string>Not yet implemented</string>
-	<key>googlel_analytics_api_key</key>
-	<string>Not yet implemented</string>
-	<key>adjust_api_key</key>
-	<string>x66ziay2jtvk</string>
 	<key>branch_key</key>
 	<string>key_live_cnChxhZYcC9rBMAG82xLNjdcFBokyGD0</string>
+	<key>adjust_api_key</key>
+	<string>x66ziay2jtvk</string>
+	<key>adobe_api_key</key>
+	<string>Not yet implemented</string>
+	<key>amplitude_api_key</key>
+	<string>01666fc84f9348861e85e751166be811</string>
+	<key>appsflyer_api_key</key>
+	<string>84qHoE3ZXh7SetmHU6boi5</string>
+	<key>googlel_analytics_api_key</key>
+	<string>Not yet implemented</string>
+	<key>mixpanel_api_key</key>
+	<string>6c48747de004db9e2913d59658a935aa</string>
+	<key>tune_api_key</key>
+	<string>Not yet implemented</string>
 </dict>
 </plist>
