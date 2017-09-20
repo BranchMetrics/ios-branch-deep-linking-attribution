@@ -1,0 +1,27 @@
+PODS:
+  - Branch (0.18.8):
+    - Branch/Core (= 0.18.8)
+  - Branch/Core (0.18.8)
+  - Cartography (1.0.1)
+  - MBProgressHUD (1.0.0)
+  - TextAttributes (1.0)
+
+DEPENDENCIES:
+  - Branch (from `../..`)
+  - Cartography
+  - MBProgressHUD
+  - TextAttributes
+
+EXTERNAL SOURCES:
+  Branch:
+    :path: ../..
+
+SPEC CHECKSUMS:
+  Branch: c8181636136a8ac2477f42ec8b811f50aa359c8c
+  Cartography: c1460e99395b824d9d75360b0382faeb0b33dcd7
+  MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
+  TextAttributes: 45b2713a1d174c377d320b51129c304eac381638
+
+PODFILE CHECKSUM: ac37fb19e79800b6eb8b61c3791cc965b2bf1e66
+
+COCOAPODS: 1.3.1
