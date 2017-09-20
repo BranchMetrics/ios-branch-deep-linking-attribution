@@ -10,7 +10,6 @@ import UIKit
 
 class IntegratedSDKsTableViewController: UITableViewController {
     
-
     @IBOutlet weak var activeAdjustKeyTextField: UITextField!
     @IBOutlet weak var activeAdjustEnabledSwitch: UISwitch!
     @IBOutlet weak var activeAdobeKeyTextField: UITextField!
@@ -19,6 +18,8 @@ class IntegratedSDKsTableViewController: UITableViewController {
     @IBOutlet weak var activeAmplitudeEnabledSwitch: UISwitch!
     @IBOutlet weak var activeAppsflyerKeyTextField: UITextField!
     @IBOutlet weak var activeAppsflyerEnabledSwitch: UISwitch!
+    @IBOutlet weak var activeGoogleAnalyticsKeyTextField: UITextField!
+    @IBOutlet weak var activeGoogleAnalyticsEnabledSwitch: UISwitch!
     @IBOutlet weak var activeMixpanelKeyTextField: UITextField!
     @IBOutlet weak var activeMixpanelEnabledSwitch: UISwitch!
     @IBOutlet weak var activeTuneKeyTextField: UITextField!
@@ -31,6 +32,8 @@ class IntegratedSDKsTableViewController: UITableViewController {
     @IBOutlet weak var pendingAmplitudeEnabledSwitch: UISwitch!
     @IBOutlet weak var pendingAppsflyerKeyTextField: UITextField!
     @IBOutlet weak var pendingAppsflyerEnabledSwitch: UISwitch!
+    @IBOutlet weak var pendingGoogleAnalyticsKeyTextField: UITextField!
+    @IBOutlet weak var pendingGoogleAnalyticsEnabledSwitch: UISwitch!
     @IBOutlet weak var pendingMixpanelKeyTextField: UITextField!
     @IBOutlet weak var pendingMixpanelEnabledSwitch: UISwitch!
     @IBOutlet weak var pendingTuneKeyTextField: UITextField!
@@ -65,8 +68,11 @@ class IntegratedSDKsTableViewController: UITableViewController {
                               sender: "pendingAppsflyerKey")
         case (1,8) :
             self.performSegue(withIdentifier: "IntegratedSDKsToTextViewForm",
-                              sender: "pendingMixpanelKey")
+                              sender: "pendingGoogleAnalyticsKey")
         case (1,10) :
+            self.performSegue(withIdentifier: "IntegratedSDKsToTextViewForm",
+                              sender: "pendingMixpanelKey")
+        case (1,12) :
             self.performSegue(withIdentifier: "IntegratedSDKsToTextViewForm",
                               sender: "pendingTuneKey")
         default : break
@@ -113,6 +119,15 @@ class IntegratedSDKsTableViewController: UITableViewController {
                 vc.footer = "This key will be used the next time the application is closed (not merely backgrounded) and re-opened."
                 vc.keyboardType = UIKeyboardType.alphabet
                 vc.incumbantValue = IntegratedSDKsData.pendingAppsflyerKey()!
+            case "pendingGoogleAnalyticsKey":
+                let nc = segue.destination as! UINavigationController
+                let vc = nc.topViewController as! TextViewFormTableViewController
+                vc.sender = sender as! String
+                vc.viewTitle = "Google Analytics Key"
+                vc.header = "Google Analyitcs Key"
+                vc.footer = "This key will be used the next time the application is closed (not merely backgrounded) and re-opened."
+                vc.keyboardType = UIKeyboardType.alphabet
+                vc.incumbantValue = IntegratedSDKsData.pendingGoogleAnalyticsKey()!
             case "pendingMixpanelKey":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TextViewFormTableViewController
@@ -175,6 +190,14 @@ class IntegratedSDKsTableViewController: UITableViewController {
                     IntegratedSDKsData.setPendingAppsflyerKey(pendingAppsflyerKey)
                     self.pendingAppsflyerKeyTextField.text = pendingAppsflyerKey
                 }
+            case "pendingGoogleAnalyticsKey":
+                if let pendingGoogleAnalyticsKey = vc.textView.text {
+                    guard self.pendingGoogleAnalyticsKeyTextField.text != pendingGoogleAnalyticsKey else {
+                        return
+                    }
+                    IntegratedSDKsData.setPendingGoogleAnalyticsKey(pendingGoogleAnalyticsKey)
+                    self.pendingGoogleAnalyticsKeyTextField.text = pendingGoogleAnalyticsKey
+                }
             case "pendingMixpanelKey":
                 if let pendingMixpanelKey = vc.textView.text {
                     guard self.pendingMixpanelKeyTextField.text != pendingMixpanelKey else {
@@ -212,6 +235,10 @@ class IntegratedSDKsTableViewController: UITableViewController {
         IntegratedSDKsData.setPendingAppsflyerEnabled(self.pendingAppsflyerEnabledSwitch.isOn)
     }
     
+    @IBAction func pendingGoogleAnalyticsEnabledSwitchValueChanged(_ sender: Any) {
+        IntegratedSDKsData.setPendingGoogleAnalyticsEnabled(self.pendingGoogleAnalyticsEnabledSwitch.isOn)
+    }
+    
     @IBAction func pendingMixpanelEnabledSwitchValueChanged(_ sender: Any) {
         IntegratedSDKsData.setPendingMixpanelEnabled(self.pendingMixpanelEnabledSwitch.isOn)
     }
@@ -229,6 +256,8 @@ class IntegratedSDKsTableViewController: UITableViewController {
         activeAmplitudeEnabledSwitch.isOn = IntegratedSDKsData.activeAmplitudeEnabled()!
         activeAppsflyerKeyTextField.text = IntegratedSDKsData.activeAppsflyerKey()
         activeAppsflyerEnabledSwitch.isOn = IntegratedSDKsData.activeAppsflyerEnabled()!
+        activeGoogleAnalyticsKeyTextField.text = IntegratedSDKsData.activeGoogleAnalyticsKey()
+        activeGoogleAnalyticsEnabledSwitch.isOn = IntegratedSDKsData.activeGoogleAnalyticsEnabled()!
         activeMixpanelKeyTextField.text = IntegratedSDKsData.activeMixpanelKey()
         activeMixpanelEnabledSwitch.isOn = IntegratedSDKsData.activeMixpanelEnabled()!
         activeTuneKeyTextField.text = IntegratedSDKsData.activeTuneKey()
@@ -241,6 +270,8 @@ class IntegratedSDKsTableViewController: UITableViewController {
         pendingAmplitudeEnabledSwitch.isOn = IntegratedSDKsData.pendingAmplitudeEnabled()!
         pendingAppsflyerKeyTextField.text = IntegratedSDKsData.pendingAppsflyerKey()
         pendingAppsflyerEnabledSwitch.isOn = IntegratedSDKsData.pendingAppsflyerEnabled()!
+        pendingGoogleAnalyticsKeyTextField.text = IntegratedSDKsData.pendingGoogleAnalyticsKey()
+        pendingGoogleAnalyticsEnabledSwitch.isOn = IntegratedSDKsData.pendingGoogleAnalyticsEnabled()!
         pendingMixpanelKeyTextField.text = IntegratedSDKsData.pendingMixpanelKey()
         pendingMixpanelEnabledSwitch.isOn = IntegratedSDKsData.pendingMixpanelEnabled()!
         pendingTuneKeyTextField.text = IntegratedSDKsData.pendingTuneKey()

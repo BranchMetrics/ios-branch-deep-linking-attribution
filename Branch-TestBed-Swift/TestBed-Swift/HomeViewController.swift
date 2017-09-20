@@ -382,7 +382,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
                                 if IntegratedSDKsData.activeAmplitudeEnabled()! {
                                     Amplitude.instance().setUserId(userID)
                                     branch?.setRequestMetadataKey("$amplitude_user_id",
-                                                                 value: userID as NSObject)
+                                                                 value: userID)
                                 }
                                 
                                 // Mixpanel

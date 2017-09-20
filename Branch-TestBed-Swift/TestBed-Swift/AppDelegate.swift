@@ -31,6 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         activateAdobe()
         activateAmplitude()
         activateAppsflyer()
+        activateGoogleAnalytics()
         activateMixpanel()
         activateTune()
         
@@ -87,7 +88,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
                 }
                 
                 // Amplitude
-                if IntegratedSDKsData.activeMixpanelEnabled()! {
+                if IntegratedSDKsData.activeAmplitudeEnabled()! {
                     var userID: String
                     
                     if paramsDictionary["developer_identity"] != nil {
@@ -308,6 +309,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         AppsFlyerTracker.shared().appleAppID = "1160975066"
     }
     
+    func activateGoogleAnalytics() {
+        guard IntegratedSDKsData.pendingGoogleAnalyticsEnabled()! else {
+            IntegratedSDKsData.setActiveGoogleAnalyticsEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingGoogleAnalyticsKey() as String? else {
+            IntegratedSDKsData.setPendingGoogleAnalyticsEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingGoogleAnalyticsEnabled(false)
+            return
+        }
+        IntegratedSDKsData.setActiveGoogleAnalyticsKey(key)
+        IntegratedSDKsData.setActiveGoogleAnalyticsEnabled(true)
+    }
+    
     func activateMixpanel() {
         guard IntegratedSDKsData.pendingMixpanelEnabled()! else {
             IntegratedSDKsData.setActiveMixpanelEnabled(false)
@@ -342,6 +360,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         }
         IntegratedSDKsData.setActiveTuneKey(key)
         IntegratedSDKsData.setActiveTuneEnabled(true)
+        let conversionId = ""
+        Tune.initialize(withTuneAdvertiserId: conversionId, tuneConversionKey: key)
     }
     
 }

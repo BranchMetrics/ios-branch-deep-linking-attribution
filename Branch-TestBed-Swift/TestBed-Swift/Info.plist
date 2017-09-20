@@ -2,8 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>en_US</string>
 	<key>CFBundleDisplayName</key>
 	<string>Branch TestBed-Swift</string>
 	<key>CFBundleExecutable</key>
@@ -69,8 +74,10 @@
 	<string>01666fc84f9348861e85e751166be811</string>
 	<key>tune_api_key</key>
 	<string>Not yet implemented</string>
+	<key>googlel_analytics_api_key</key>
+	<string>Not yet implemented</string>
 	<key>adjust_api_key</key>
-	<string>wjjvm4JnyzM4Cb3wzuRg</string>
+	<string>x66ziay2jtvk</string>
 	<key>branch_key</key>
 	<string>key_live_cnChxhZYcC9rBMAG82xLNjdcFBokyGD0</string>
 </dict>

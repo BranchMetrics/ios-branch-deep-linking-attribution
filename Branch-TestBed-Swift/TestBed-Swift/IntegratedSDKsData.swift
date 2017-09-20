@@ -196,6 +196,52 @@ struct IntegratedSDKsData {
         userDefaults.setValue(value, forKey: "pendingAppsflyerEnabled")
     }
     
+    // Mark - Google Analytics
+    
+    static func activeGoogleAnalyticsKey() -> String? {
+        if let value = userDefaults.string(forKey: "activeGoogleAnalyticsKey") {
+            return value
+        } else {
+            let value = Bundle.main.object(forInfoDictionaryKey: "google_analytics_api_key") as! String
+            userDefaults.setValue(value, forKey: "activeGoogleAnalyticsKey")
+            return value
+        }
+    }
+    
+    static func setActiveGoogleAnalyticsKey(_ value: String) {
+        userDefaults.setValue(value, forKey: "activeGoogleAnalyticsKey")
+    }
+    
+    static func pendingGoogleAnalyticsKey() -> String? {
+        if let value = userDefaults.string(forKey: "pendingGoogleAnalyticsKey") {
+            return value
+        } else {
+            let value = Bundle.main.object(forInfoDictionaryKey: "google_analytics_api_key") as! String
+            userDefaults.setValue(value, forKey: "pendingGoogleAnalyticsKey")
+            return value
+        }
+    }
+    
+    static func setPendingGoogleAnalyticsKey(_ value: String) {
+        userDefaults.setValue(value, forKey: "pendingGoogleAnalyticsKey")
+    }
+    
+    static func activeGoogleAnalyticsEnabled() -> Bool? {
+        return userDefaults.bool(forKey: "activeGoogleAnalyticsEnabled")
+    }
+    
+    static func setActiveGoogleAnalyticsEnabled(_ value: Bool) {
+        userDefaults.setValue(value, forKey: "activeGoogleAnalyticsEnabled")
+    }
+    
+    static func pendingGoogleAnalyticsEnabled() -> Bool? {
+        return userDefaults.bool(forKey: "pendingGoogleAnalyticsEnabled")
+    }
+    
+    static func setPendingGoogleAnalyticsEnabled(_ value: Bool) {
+        userDefaults.setValue(value, forKey: "pendingGoogleAnalyticsEnabled")
+    }
+    
     // Mark - Mixpanel
     
     static func activeMixpanelKey() -> String? {

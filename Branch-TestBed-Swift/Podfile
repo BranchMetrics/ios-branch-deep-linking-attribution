@@ -5,4 +5,5 @@ target "TestBed-Swift" do
   pod 'Mixpanel'
   pod 'Amplitude-iOS', '~> 3.14.1'
   pod 'AppsFlyerFramework'
+  pod 'Tune'
 end
