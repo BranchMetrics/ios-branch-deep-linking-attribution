@@ -291,14 +291,35 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="lzQ-jP-MOa" userLabel="Active Tune Key">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="ENj-ar-pw0" userLabel="Active Tune Advertising ID">
                                         <rect key="frame" x="0.0" y="583.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ENj-ar-pw0" id="MMe-3S-nQh">
+                                            <rect key="frame" x="0.0" y="0.0" width="342" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Tune Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bc4-Be-GaQ" userLabel="activeTuneAdvertisingIDTextField">
+                                                    <rect key="frame" x="14" y="14" width="326" height="17"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="bc4-Be-GaQ" firstAttribute="leading" secondItem="MMe-3S-nQh" secondAttribute="leadingMargin" constant="6" id="2hP-k6-9CN"/>
+                                                <constraint firstItem="bc4-Be-GaQ" firstAttribute="centerY" secondItem="MMe-3S-nQh" secondAttribute="centerY" id="NSq-GU-zfG"/>
+                                                <constraint firstItem="bc4-Be-GaQ" firstAttribute="trailing" secondItem="MMe-3S-nQh" secondAttribute="trailingMargin" constant="6" id="tX2-MJ-R4H"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="lzQ-jP-MOa" userLabel="Active Tune Conversion Key">
+                                        <rect key="frame" x="0.0" y="627.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lzQ-jP-MOa" id="7eS-Ks-NsM">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Tune Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lw7-qm-OmT" userLabel="activeTuneTextField">
+                                                <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Tune Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lw7-qm-OmT" userLabel="activeTuneConversionKeyTextField">
                                                     <rect key="frame" x="14" y="13.5" width="359" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
@@ -312,20 +333,20 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="S6y-S2-nOM" userLabel="Active Tune Enabled">
-                                        <rect key="frame" x="0.0" y="627.5" width="375" height="44"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="none" indentationWidth="10" id="S6y-S2-nOM" userLabel="Active Tune Enabled">
+                                        <rect key="frame" x="0.0" y="671.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="S6y-S2-nOM" id="BAT-I0-vhM">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tune Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" enabled="NO" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZKe-Vc-0CR" userLabel="activeTuneEnabledLabel">
-                                                    <rect key="frame" x="14" y="11.5" width="104" height="20.5"/>
+                                                    <rect key="frame" x="14" y="12.5" width="104" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="GIC-b2-Vqc" userLabel="activeTuneEnabledSwitch">
-                                                    <rect key="frame" x="312" y="6.5" width="51" height="31"/>
+                                                    <rect key="frame" x="312" y="7.5" width="51" height="31"/>
                                                 </switch>
                                             </subviews>
                                             <constraints>
@@ -341,14 +362,14 @@
                             <tableViewSection headerTitle="Pending SDK Integrations" footerTitle="These are the third-party SDK integrations that will be active when the app is next launched." id="vjP-iX-5ep" userLabel="Pending Integrations">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="XMa-gb-Vhh" userLabel="Pending Adjust Key">
-                                        <rect key="frame" x="0.0" y="763" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="807" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="XMa-gb-Vhh" id="EOw-Vw-0iL">
                                             <rect key="frame" x="0.0" y="0.0" width="342" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Adjust Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Zk1-s9-Lgg" userLabel="pendingAdjustKeyTextField">
-                                                    <rect key="frame" x="14" y="14.5" width="326" height="17"/>
+                                                    <rect key="frame" x="14" y="14" width="326" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -362,19 +383,19 @@
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="none" indentationWidth="10" id="kDU-I9-0zb" userLabel="Pending Adjust Enabled">
-                                        <rect key="frame" x="0.0" y="807" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="851" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kDU-I9-0zb" id="oFz-XE-lgZ">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Adjust Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V4A-oJ-3do" userLabel="pendingAdjustEnabledLabel">
-                                                    <rect key="frame" x="14" y="12.5" width="114.5" height="20.5"/>
+                                                    <rect key="frame" x="14" y="12" width="114.5" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="lSR-P0-CmV" userLabel="pendingAdjustEnabledSwitch">
-                                                    <rect key="frame" x="312" y="7.5" width="51" height="31"/>
+                                                    <rect key="frame" x="312" y="7" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="pendingAdjustEnabledSwitchValueChanged:" destination="eye-sg-ljH" eventType="valueChanged" id="afb-4F-CVX"/>
                                                     </connections>
@@ -389,14 +410,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="Zjb-T2-Asx" userLabel="Pending Adobe Key">
-                                        <rect key="frame" x="0.0" y="851" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="895" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Zjb-T2-Asx" id="Drd-sQ-SNp">
                                             <rect key="frame" x="0.0" y="0.0" width="342" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Adobe Omniture Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ERh-wV-2WX" userLabel="pendingAdobeKeyTextField">
-                                                    <rect key="frame" x="14" y="14" width="326" height="17"/>
+                                                    <rect key="frame" x="14" y="14.5" width="326" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -410,19 +431,19 @@
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="none" indentationWidth="10" id="0bl-VH-aSJ" userLabel="Pending Adobe Enabled">
-                                        <rect key="frame" x="0.0" y="895" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="939" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="0bl-VH-aSJ" id="yRI-t5-KY2">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Adobe Omniture Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="etN-a1-nWT" userLabel="pendingAdobeEnabledLabel">
-                                                    <rect key="frame" x="14" y="12" width="191" height="20.5"/>
+                                                    <rect key="frame" x="14" y="12.5" width="191" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="vCX-Ff-Yf4" userLabel="pendingSetDebugEnabledSwitch">
-                                                    <rect key="frame" x="312" y="7" width="51" height="31"/>
+                                                    <rect key="frame" x="312" y="7.5" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="pendingAdobeEnabledSwitchValueChanged:" destination="eye-sg-ljH" eventType="valueChanged" id="ZP5-aC-Hgq"/>
                                                     </connections>
@@ -437,14 +458,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="yxP-nh-vvT" userLabel="Pending Amplitude Key">
-                                        <rect key="frame" x="0.0" y="939" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="983" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yxP-nh-vvT" id="ejC-Dz-bkR">
                                             <rect key="frame" x="0.0" y="0.0" width="342" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Amplitude Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="cdY-2P-XRX" userLabel="pendingAmplitudeKeyTextField">
-                                                    <rect key="frame" x="14" y="14" width="326" height="17"/>
+                                                    <rect key="frame" x="14" y="14.5" width="326" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -458,19 +479,19 @@
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="none" indentationWidth="10" id="Sdz-zQ-yYc" userLabel="Pending Amplitude Enabled">
-                                        <rect key="frame" x="0.0" y="983" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="1027" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Sdz-zQ-yYc" id="WFU-yh-iem">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Amplitude Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MPb-hO-OxF" userLabel="pendingAmplitudeEnabledLabel">
-                                                    <rect key="frame" x="14" y="12" width="144" height="20.5"/>
+                                                    <rect key="frame" x="14" y="12.5" width="144" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="U7a-2d-Qr6" userLabel="pendingAmplitudeEnabledSwitch">
-                                                    <rect key="frame" x="312" y="7" width="51" height="31"/>
+                                                    <rect key="frame" x="312" y="7.5" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="pendingAmplitudeEnabledSwitchValueChanged:" destination="eye-sg-ljH" eventType="valueChanged" id="eSR-QK-CRj"/>
                                                     </connections>
@@ -485,14 +506,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="kd6-d3-nk2" userLabel="Pending Appsflyer Key">
-                                        <rect key="frame" x="0.0" y="1027" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="1071" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kd6-d3-nk2" id="Jup-Qo-TpR">
                                             <rect key="frame" x="0.0" y="0.0" width="342" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Appsflyer Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="E26-kB-htc" userLabel="pendingAppsflyerKeyTextField">
-                                                    <rect key="frame" x="14" y="14.5" width="326" height="17"/>
+                                                    <rect key="frame" x="14" y="14" width="326" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -506,19 +527,19 @@
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="none" indentationWidth="10" id="joa-qa-qdu" userLabel="Pending Appsflyer Enabled">
-                                        <rect key="frame" x="0.0" y="1071" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="1115" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="joa-qa-qdu" id="j5R-SD-S5e">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Appsflyer Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zz6-Iu-Yim" userLabel="pendingAppsflyerEnabledLabel">
-                                                    <rect key="frame" x="14" y="12.5" width="139.5" height="20.5"/>
+                                                    <rect key="frame" x="14" y="12" width="139.5" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="xCb-PI-U1G" userLabel="pendingAppsflyerEnabledSwitch">
-                                                    <rect key="frame" x="312" y="7.5" width="51" height="31"/>
+                                                    <rect key="frame" x="312" y="7" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="pendingAppsflyerEnabledSwitchValueChanged:" destination="eye-sg-ljH" eventType="valueChanged" id="KrB-hC-FHN"/>
                                                     </connections>
@@ -533,14 +554,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="WCH-nK-m6E" userLabel="Pending Google Analytics Key">
-                                        <rect key="frame" x="0.0" y="1115" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="1159" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WCH-nK-m6E" id="dPH-DA-zbf">
                                             <rect key="frame" x="0.0" y="0.0" width="342" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Google Analytics Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VbA-HX-0ri" userLabel="pendingGoogleAnalyticsKeyTextField">
-                                                    <rect key="frame" x="14" y="14.5" width="326" height="17"/>
+                                                    <rect key="frame" x="14" y="14" width="326" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -554,19 +575,19 @@
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="g3y-0N-eD7" userLabel="Pending Google Analytics Enabled">
-                                        <rect key="frame" x="0.0" y="1159" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="1203" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="g3y-0N-eD7" id="xy3-Zz-JSc">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Google Analytics Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WNm-a2-EUs" userLabel="pendingGoogleAnalyticsEnabledLabel">
-                                                    <rect key="frame" x="14" y="12" width="195" height="20.5"/>
+                                                    <rect key="frame" x="14" y="12.5" width="195" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="koa-nX-zEJ" userLabel="pendingGoogleAnalyticsEnabledSwitch">
-                                                    <rect key="frame" x="312" y="7" width="51" height="31"/>
+                                                    <rect key="frame" x="312" y="7.5" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="pendingGoogleAnalyticsEnabledSwitchValueChanged:" destination="eye-sg-ljH" eventType="valueChanged" id="noT-Vl-l9K"/>
                                                         <action selector="pendingMixpanelEnabledSwitchValueChanged:" destination="eye-sg-ljH" eventType="valueChanged" id="Gnw-zJ-nYZ"/>
@@ -582,14 +603,14 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="dgc-dM-iVc" userLabel="Pending Mixpanel Key">
-                                        <rect key="frame" x="0.0" y="1203" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="1247" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="dgc-dM-iVc" id="d4g-mm-AVQ">
                                             <rect key="frame" x="0.0" y="0.0" width="342" height="44.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Mixpanel Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dJC-DC-2Zd" userLabel="pendingMixpanelTextField">
-                                                    <rect key="frame" x="14" y="14" width="326" height="17"/>
+                                                <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Mixpanel Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dJC-DC-2Zd" userLabel="pendingMixpanelKeyTextField">
+                                                    <rect key="frame" x="14" y="14.5" width="326" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -603,19 +624,19 @@
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="4dB-1z-wvV" userLabel="Pending Mixpanel Enabled">
-                                        <rect key="frame" x="0.0" y="1247" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="1291" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="4dB-1z-wvV" id="2P5-rq-HJm">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mixpanel Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wOO-cI-v8d" userLabel="pendingMixpanelEnabledLabel">
-                                                    <rect key="frame" x="14" y="12" width="134.5" height="20.5"/>
+                                                    <rect key="frame" x="14" y="12.5" width="134.5" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Gca-iJ-pBF" userLabel="pendingMixpanelEnabledSwitch">
-                                                    <rect key="frame" x="312" y="7" width="51" height="31"/>
+                                                    <rect key="frame" x="312" y="7.5" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="pendingMixpanelEnabledSwitchValueChanged:" destination="eye-sg-ljH" eventType="valueChanged" id="Vz1-3e-4WN"/>
                                                     </connections>
@@ -629,15 +650,36 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="jSk-rF-2IM" userLabel="Pending Tune Key">
-                                        <rect key="frame" x="0.0" y="1291" width="375" height="44"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="ZJO-Tf-0ew" userLabel="Pending Tune Advertising ID">
+                                        <rect key="frame" x="0.0" y="1335" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ZJO-Tf-0ew" id="9wL-mb-oXO">
+                                            <rect key="frame" x="0.0" y="0.0" width="342" height="44.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Tune Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Rk5-iR-hNL" userLabel="pendingTuneAdvertisingIDTextField">
+                                                    <rect key="frame" x="14" y="14.5" width="326" height="17"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Rk5-iR-hNL" firstAttribute="trailing" secondItem="9wL-mb-oXO" secondAttribute="trailingMargin" constant="6" id="TaG-pU-UT6"/>
+                                                <constraint firstItem="Rk5-iR-hNL" firstAttribute="centerY" secondItem="9wL-mb-oXO" secondAttribute="centerY" id="WPV-le-FYI"/>
+                                                <constraint firstItem="Rk5-iR-hNL" firstAttribute="leading" secondItem="9wL-mb-oXO" secondAttribute="leadingMargin" constant="6" id="ftr-6v-CsO"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="jSk-rF-2IM" userLabel="Pending Tune Conversion Key">
+                                        <rect key="frame" x="0.0" y="1379" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="jSk-rF-2IM" id="fQl-HU-plu">
                                             <rect key="frame" x="0.0" y="0.0" width="342" height="44.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Tune Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UDs-hu-dd4" userLabel="pendingTuneTextField">
-                                                    <rect key="frame" x="14" y="14" width="326" height="17"/>
+                                                <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Tune Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UDs-hu-dd4" userLabel="pendingTuneConversionKeyTextField">
+                                                    <rect key="frame" x="14" y="14.5" width="326" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -651,19 +693,19 @@
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="bKx-30-tux" userLabel="Pending Tune Enabled">
-                                        <rect key="frame" x="0.0" y="1335" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="1423" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bKx-30-tux" id="L0d-bD-EYp">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tune Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yPg-dg-mu9" userLabel="pendingTuneEnabledLabel">
-                                                    <rect key="frame" x="14" y="12" width="104" height="20.5"/>
+                                                    <rect key="frame" x="14" y="12.5" width="104" height="20.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="lhz-VB-KlR" userLabel="pendingTuneEnabledSwitch">
-                                                    <rect key="frame" x="312" y="7" width="51" height="31"/>
+                                                    <rect key="frame" x="312" y="7.5" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="pendingTuneEnabledSwitchValueChanged:" destination="eye-sg-ljH" eventType="valueChanged" id="y1P-HI-Y2t"/>
                                                     </connections>
@@ -705,8 +747,9 @@
                         <outlet property="activeGoogleAnalyticsKeyTextField" destination="M8P-d7-eyd" id="fOV-Rf-TSw"/>
                         <outlet property="activeMixpanelEnabledSwitch" destination="C4V-g3-MO1" id="wOf-Cm-7Qc"/>
                         <outlet property="activeMixpanelKeyTextField" destination="sYC-kd-6gd" id="zc8-Ha-Qwa"/>
+                        <outlet property="activeTuneAdvertisingIDTextField" destination="bc4-Be-GaQ" id="tee-wS-wq3"/>
+                        <outlet property="activeTuneConversionKeyTextField" destination="lw7-qm-OmT" id="JVP-fI-WBi"/>
                         <outlet property="activeTuneEnabledSwitch" destination="GIC-b2-Vqc" id="wen-dC-TOx"/>
-                        <outlet property="activeTuneKeyTextField" destination="lw7-qm-OmT" id="JVP-fI-WBi"/>
                         <outlet property="pendingAdjustEnabledSwitch" destination="lSR-P0-CmV" id="fSg-V3-a9z"/>
                         <outlet property="pendingAdjustKeyTextField" destination="Zk1-s9-Lgg" id="heT-7E-H2O"/>
                         <outlet property="pendingAdobeEnabledSwitch" destination="vCX-Ff-Yf4" id="dzM-be-w5e"/>
@@ -718,9 +761,10 @@
                         <outlet property="pendingGoogleAnalyticsEnabledSwitch" destination="koa-nX-zEJ" id="ecN-N8-GuU"/>
                         <outlet property="pendingGoogleAnalyticsKeyTextField" destination="VbA-HX-0ri" id="nje-KA-pIS"/>
                         <outlet property="pendingMixpanelEnabledSwitch" destination="Gca-iJ-pBF" id="vUb-Eh-Bh7"/>
-                        <outlet property="pendingMixpanelKeyTextField" destination="dJC-DC-2Zd" id="3wa-HP-Gnr"/>
+                        <outlet property="pendingMixpanelKeyTextField" destination="dJC-DC-2Zd" id="T40-TN-Zq5"/>
+                        <outlet property="pendingTuneAdvertisingIDTextField" destination="Rk5-iR-hNL" id="pE2-hJ-dhB"/>
+                        <outlet property="pendingTuneConversionKeyTextField" destination="UDs-hu-dd4" id="rsW-hW-9rr"/>
                         <outlet property="pendingTuneEnabledSwitch" destination="lhz-VB-KlR" id="hCg-Y0-Dmr"/>
-                        <outlet property="pendingTuneKeyTextField" destination="UDs-hu-dd4" id="rsW-hW-9rr"/>
                         <segue destination="Up8-oX-TtZ" kind="show" identifier="IntegratedSDKsToTextViewForm" id="s50-jN-XUY"/>
                     </connections>
                 </tableViewController>

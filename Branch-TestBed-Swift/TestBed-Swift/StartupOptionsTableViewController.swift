@@ -39,7 +39,7 @@ class StartupOptionsTableViewController: UITableViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        if let vc = segue.source as? TextViewFormTableViewController {
+        if let _ = segue.source as? TextViewFormTableViewController {
             switch sender as! String {
             case "pendingBranchKey":
                 let nc = segue.destination as! UINavigationController
@@ -59,26 +59,25 @@ class StartupOptionsTableViewController: UITableViewController {
     @IBAction func unwindTextViewFormTableViewController(_ segue:UIStoryboardSegue) {
         
         if let vc = segue.source as? TextViewFormTableViewController {
-            
-            switch vc.sender {
-            case "pendingBranchKey":
-                if let pendingBranchKey = vc.textView.text {
-                    guard self.pendingBranchKeyTextField.text != pendingBranchKey else {
-                        return
-                    }
-                    StartupOptionsData.setPendingBranchKey(pendingBranchKey)
-                    self.pendingBranchKeyTextField.text = pendingBranchKey
+            if let pendingBranchKey = vc.textView.text {
+                guard self.pendingBranchKeyTextField.text != pendingBranchKey else {
+                    return
                 }
-            default: break
+                StartupOptionsData.setPendingBranchKey(pendingBranchKey)
+                self.pendingBranchKeyTextField.text = pendingBranchKey
             }
         }
     }
 
-    @IBAction func pendingSetDebugEnabledButtonValueChanged(_ sender: AnyObject) {
+    @IBAction func pendingSetDebugEnabledSwitchValueChanged(_ sender: AnyObject) {
         StartupOptionsData.setPendingSetDebugEnabled(self.pendingSetDebugEnabledSwitch.isOn)
     }
     
     func refreshControlValues() {
+        
+        activeBranchKeyTextField.text = StartupOptionsData.getActiveBranchKey()
+        activeSetDebugEnabledSwitch.isOn = StartupOptionsData.getActiveSetDebugEnabled()!
+        
         pendingBranchKeyTextField.text = StartupOptionsData.getPendingBranchKey()
         pendingSetDebugEnabledSwitch.isOn = StartupOptionsData.getPendingSetDebugEnabled()!
         

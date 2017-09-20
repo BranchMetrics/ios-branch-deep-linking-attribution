@@ -389,7 +389,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
                                 if IntegratedSDKsData.activeMixpanelEnabled()! {
                                     Mixpanel.sharedInstance()?.identify(userID)
                                     branch?.setRequestMetadataKey("$mixpanel_distinct_id",
-                                                                  value: userID as NSObject)
+                                                                  value: userID)
                                 }
                                 
                             }
@@ -410,14 +410,14 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
                             if IntegratedSDKsData.activeMixpanelEnabled()! {
                                 Amplitude.instance().setUserId(userID)
                                 branch?.setRequestMetadataKey("$amplitude_user_id",
-                                                              value: userID as NSObject)
+                                                              value: userID)
                             }
                             
                             // Mixpanel
                             if IntegratedSDKsData.activeMixpanelEnabled()! {
                                 Mixpanel.sharedInstance()?.identify(userID)
                                 branch?.setRequestMetadataKey("$mixpanel_distinct_id",
-                                                              value: userID as NSObject)
+                                                              value: userID)
                             }
                             
                         } else {

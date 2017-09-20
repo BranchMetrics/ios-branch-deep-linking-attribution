@@ -16,12 +16,13 @@ struct IntegratedSDKsData {
     
     static func activeAdjustKey() -> String? {
         if let value = userDefaults.string(forKey: "activeAdjustKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "adjust_api_key") as! String
-            userDefaults.setValue(value, forKey: "activeAdjustKey")
-            return value
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "adjust_api_key") as! String
+        userDefaults.setValue(value, forKey: "activeAdjustKey")
+        return value
     }
     
     static func setActiveAdjustKey(_ value: String) {
@@ -30,12 +31,13 @@ struct IntegratedSDKsData {
     
     static func pendingAdjustKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingAdjustKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "adjust_api_key") as! String
-            userDefaults.setValue(value, forKey: "pendingAdjustKey")
-            return value
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "adjust_api_key") as! String
+        userDefaults.setValue(value, forKey: "pendingAdjustKey")
+        return value
     }
     
     static func setPendingAdjustKey(_ value: String) {
@@ -62,12 +64,13 @@ struct IntegratedSDKsData {
     
     static func activeAdobeKey() -> String? {
         if let value = userDefaults.string(forKey: "activeAdobeKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "adobe_api_key") as! String
-            userDefaults.setValue(value, forKey: "activeAdobeKey")
-            return value
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "adobe_api_key") as! String
+        userDefaults.setValue(value, forKey: "activeAdobeKey")
+        return value
     }
     
     static func setActiveAdobeKey(_ value: String) {
@@ -76,12 +79,13 @@ struct IntegratedSDKsData {
     
     static func pendingAdobeKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingAdobeKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "adobe_api_key") as! String
-            userDefaults.setValue(value, forKey: "pendingAdobeKey")
-            return value
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "adobe_api_key") as! String
+        userDefaults.setValue(value, forKey: "pendingAdobeKey")
+        return value
     }
     
     static func setPendingAdobeKey(_ value: String) {
@@ -108,12 +112,13 @@ struct IntegratedSDKsData {
     
     static func activeAmplitudeKey() -> String? {
         if let value = userDefaults.string(forKey: "activeAmplitudeKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "amplitude_api_key") as! String
-            userDefaults.setValue(value, forKey: "activeAmplitudeKey")
-            return value
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "amplitude_api_key") as! String
+        userDefaults.setValue(value, forKey: "activeAmplitudeKey")
+        return value
     }
     
     static func setActiveAmplitudeKey(_ value: String) {
@@ -122,12 +127,13 @@ struct IntegratedSDKsData {
     
     static func pendingAmplitudeKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingAmplitudeKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "amplitude_api_key") as! String
-            userDefaults.setValue(value, forKey: "pendingAmplitudeKey")
-            return value
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "amplitude_api_key") as! String
+        userDefaults.setValue(value, forKey: "pendingAmplitudeKey")
+        return value
     }
     
     static func setPendingAmplitudeKey(_ value: String) {
@@ -154,12 +160,13 @@ struct IntegratedSDKsData {
     
     static func activeAppsflyerKey() -> String? {
         if let value = userDefaults.string(forKey: "activeAppsflyerKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "appsflyer_api_key") as! String
-            userDefaults.setValue(value, forKey: "activeAppsflyerKey")
-            return value
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "appsflyer_api_key") as! String
+        userDefaults.setValue(value, forKey: "activeAppsflyerKey")
+        return value
     }
     
     static func setActiveAppsflyerKey(_ value: String) {
@@ -168,12 +175,13 @@ struct IntegratedSDKsData {
     
     static func pendingAppsflyerKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingAppsflyerKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "appsflyer_api_key") as! String
-            userDefaults.setValue(value, forKey: "pendingAppsflyerKey")
-            return value
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "appsflyer_api_key") as! String
+        userDefaults.setValue(value, forKey: "pendingAppsflyerKey")
+        return value
     }
     
     static func setPendingAppsflyerKey(_ value: String) {
@@ -200,12 +208,13 @@ struct IntegratedSDKsData {
     
     static func activeGoogleAnalyticsKey() -> String? {
         if let value = userDefaults.string(forKey: "activeGoogleAnalyticsKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "google_analytics_api_key") as! String
-            userDefaults.setValue(value, forKey: "activeGoogleAnalyticsKey")
-            return value
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "google_analytics_api_key") as! String
+        userDefaults.setValue(value, forKey: "activeGoogleAnalyticsKey")
+        return value
     }
     
     static func setActiveGoogleAnalyticsKey(_ value: String) {
@@ -214,12 +223,13 @@ struct IntegratedSDKsData {
     
     static func pendingGoogleAnalyticsKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingGoogleAnalyticsKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "google_analytics_api_key") as! String
-            userDefaults.setValue(value, forKey: "pendingGoogleAnalyticsKey")
-            return value
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "google_analytics_api_key") as! String
+        userDefaults.setValue(value, forKey: "pendingGoogleAnalyticsKey")
+        return value
     }
     
     static func setPendingGoogleAnalyticsKey(_ value: String) {
@@ -246,12 +256,13 @@ struct IntegratedSDKsData {
     
     static func activeMixpanelKey() -> String? {
         if let value = userDefaults.string(forKey: "activeMixpanelKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "mixpanel_api_key") as! String
-            userDefaults.setValue(value, forKey: "activeMixpanelKey")
-            return value
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "mixpanel_api_key") as! String
+        userDefaults.setValue(value, forKey: "activeMixpanelKey")
+        return value
     }
     
     static func setActiveMixpanelKey(_ value: String) {
@@ -260,12 +271,13 @@ struct IntegratedSDKsData {
     
     static func pendingMixpanelKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingMixpanelKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "mixpanel_api_key") as! String
-            userDefaults.setValue(value, forKey: "pendingMixpanelKey")
-            return value
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "mixpanel_api_key") as! String
+        userDefaults.setValue(value, forKey: "pendingMixpanelKey")
+        return value
     }
     
     static func setPendingMixpanelKey(_ value: String) {
@@ -290,32 +302,66 @@ struct IntegratedSDKsData {
     
     // Mark - Tune
     
-    static func activeTuneKey() -> String? {
-        if let value = userDefaults.string(forKey: "activeTuneKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "tune_api_key") as! String
-            userDefaults.setValue(value, forKey: "activeTuneKey")
-            return value
+    // AdvertisingID
+    static func activeTuneAdvertisingID() -> String? {
+        if let value = userDefaults.string(forKey: "activeTuneAdvertisingID") {
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "tune_advertising_id") as! String
+        userDefaults.setValue(value, forKey: "activeTuneAdvertisingID")
+        return value
     }
     
-    static func setActiveTuneKey(_ value: String) {
-        userDefaults.setValue(value, forKey: "activeTuneKey")
+    static func setActiveTuneAdvertisingID(_ value: String) {
+        userDefaults.setValue(value, forKey: "activeTuneAdvertisingID")
     }
     
-    static func pendingTuneKey() -> String? {
-        if let value = userDefaults.string(forKey: "pendingTuneKey") {
-            return value
-        } else {
-            let value = Bundle.main.object(forInfoDictionaryKey: "tune_api_key") as! String
-            userDefaults.setValue(value, forKey: "pendingTuneKey")
-            return value
+    static func pendingTuneAdvertisingID() -> String? {
+        if let value = userDefaults.string(forKey: "pendingTuneAdvertisingID") {
+            if value.characters.count > 0 {
+                return value
+            }
         }
+        let value = Bundle.main.object(forInfoDictionaryKey: "tune_advertising_id") as! String
+        userDefaults.setValue(value, forKey: "pendingTuneAdvertisingID")
+        return value
     }
     
-    static func setPendingTuneKey(_ value: String) {
-        userDefaults.setValue(value, forKey: "pendingTuneKey")
+    static func setPendingTuneAdvertisingID(_ value: String) {
+        userDefaults.setValue(value, forKey: "pendingTuneAdvertisingID")
+    }
+    
+    // ConversionKey
+    static func activeTuneConversionKey() -> String? {
+        if let value = userDefaults.string(forKey: "activeTuneConversionKey") {
+            if value.characters.count > 0 {
+                return value
+            }
+        }
+        let value = Bundle.main.object(forInfoDictionaryKey: "tune_conversion_key") as! String
+        userDefaults.setValue(value, forKey: "activeTuneConversionKey")
+        return value
+    }
+    
+    static func setActiveTuneConversionKey(_ value: String) {
+        userDefaults.setValue(value, forKey: "activeTuneConversionKey")
+    }
+    
+    static func pendingTuneConversionKey() -> String? {
+        if let value = userDefaults.string(forKey: "pendingTuneConversionKey") {
+            if value.characters.count > 0 {
+                return value
+            }
+        }
+        let value = Bundle.main.object(forInfoDictionaryKey: "tune_conversion_key") as! String
+        userDefaults.setValue(value, forKey: "pendingTuneConversionKey")
+        return value
+    }
+    
+    static func setPendingTuneConversionKey(_ value: String) {
+        userDefaults.setValue(value, forKey: "pendingTuneConversionKey")
     }
     
     static func activeTuneEnabled() -> Bool? {

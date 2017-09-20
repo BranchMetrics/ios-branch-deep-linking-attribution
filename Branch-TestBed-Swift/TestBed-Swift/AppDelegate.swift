@@ -99,7 +99,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
                     
                     Amplitude.instance().setUserId(userID)
                     branch.setRequestMetadataKey("$amplitude_user_id",
-                                                 value: userID as NSObject)
+                                                 value: userID)
                 }
                 
                 // Mixpanel
@@ -114,7 +114,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
                     
                     Mixpanel.sharedInstance()?.identify(userID)
                     branch.setRequestMetadataKey("$mixpanel_distinct_id",
-                                                 value: userID as NSObject)
+                                                 value: userID)
                 }
                 
 
@@ -141,28 +141,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         )
         if (!branchHandled) {
             // If not handled by Branch, do other deep link routing for the Facebook SDK, Pinterest SDK, etc
-            
-
-            // Adjust
-            // TODO: Is this necessary?
-            // Process non-Branch URIs here...
-            // Adjust.appWillOpenUrl(url)
-            
         }
         return true
     }
     
     // Respond to Universal Links
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
-        // pass the url to the handle deep link call
         Branch.getInstance().continue(userActivity);
-
-        // Adjust
-        // TODO: Is any of this necessary?
-        // Adjust.appWillOpenUrl(url)
-        // NSURL *oldStyleDeeplink = [Adjust convertUniversalLink:url scheme:@"branchtest"];
-        // [Adjust appWillOpenUrl:oldStyleDeeplink];
-        
         return true
     }
     
@@ -180,6 +165,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
+        
+        // Tune
+        if IntegratedSDKsData.activeTuneEnabled()! {
+            Tune.measureSession()
+        }
+        
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
@@ -350,18 +341,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setActiveTuneEnabled(false)
             return
         }
-        guard let key = IntegratedSDKsData.pendingTuneKey() as String? else {
+        guard let tuneAdvertisingID = IntegratedSDKsData.pendingTuneAdvertisingID() as String? else {
             IntegratedSDKsData.setPendingTuneEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard let tuneConversionKey = IntegratedSDKsData.pendingTuneConversionKey() as String? else {
             IntegratedSDKsData.setPendingTuneEnabled(false)
             return
         }
-        IntegratedSDKsData.setActiveTuneKey(key)
+        guard tuneAdvertisingID.characters.count > 0 else {
+            IntegratedSDKsData.setPendingTuneEnabled(false)
+            return
+        }
+        guard tuneConversionKey.characters.count > 0 else {
+            IntegratedSDKsData.setPendingTuneEnabled(false)
+            return
+        }
+        IntegratedSDKsData.setActiveTuneConversionKey(tuneAdvertisingID)
+        IntegratedSDKsData.setActiveTuneConversionKey(tuneConversionKey)
         IntegratedSDKsData.setActiveTuneEnabled(true)
-        let conversionId = ""
-        Tune.initialize(withTuneAdvertiserId: conversionId, tuneConversionKey: key)
+
+        Tune.initialize(withTuneAdvertiserId: tuneAdvertisingID, tuneConversionKey: tuneConversionKey)
+        Tune.setDebugMode(true)
     }
     
 }

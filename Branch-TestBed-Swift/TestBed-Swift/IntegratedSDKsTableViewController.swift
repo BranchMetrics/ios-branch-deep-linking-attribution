@@ -22,7 +22,8 @@ class IntegratedSDKsTableViewController: UITableViewController {
     @IBOutlet weak var activeGoogleAnalyticsEnabledSwitch: UISwitch!
     @IBOutlet weak var activeMixpanelKeyTextField: UITextField!
     @IBOutlet weak var activeMixpanelEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeTuneKeyTextField: UITextField!
+    @IBOutlet weak var activeTuneAdvertisingIDTextField: UITextField!
+    @IBOutlet weak var activeTuneConversionKeyTextField: UITextField!
     @IBOutlet weak var activeTuneEnabledSwitch: UISwitch!
     @IBOutlet weak var pendingAdjustKeyTextField: UITextField!
     @IBOutlet weak var pendingAdjustEnabledSwitch: UISwitch!
@@ -36,7 +37,8 @@ class IntegratedSDKsTableViewController: UITableViewController {
     @IBOutlet weak var pendingGoogleAnalyticsEnabledSwitch: UISwitch!
     @IBOutlet weak var pendingMixpanelKeyTextField: UITextField!
     @IBOutlet weak var pendingMixpanelEnabledSwitch: UISwitch!
-    @IBOutlet weak var pendingTuneKeyTextField: UITextField!
+    @IBOutlet weak var pendingTuneAdvertisingIDTextField: UITextField!
+    @IBOutlet weak var pendingTuneConversionKeyTextField: UITextField!
     @IBOutlet weak var pendingTuneEnabledSwitch: UISwitch!
     
     override func viewDidLoad() {
@@ -74,7 +76,10 @@ class IntegratedSDKsTableViewController: UITableViewController {
                               sender: "pendingMixpanelKey")
         case (1,12) :
             self.performSegue(withIdentifier: "IntegratedSDKsToTextViewForm",
-                              sender: "pendingTuneKey")
+                              sender: "pendingTuneAdvertisingID")
+        case (1,13) :
+            self.performSegue(withIdentifier: "IntegratedSDKsToTextViewForm",
+                              sender: "pendingTuneConversionKey")
         default : break
         }
     }
@@ -137,15 +142,24 @@ class IntegratedSDKsTableViewController: UITableViewController {
                 vc.footer = "This key will be used the next time the application is closed (not merely backgrounded) and re-opened."
                 vc.keyboardType = UIKeyboardType.alphabet
                 vc.incumbantValue = IntegratedSDKsData.pendingMixpanelKey()!
-            case "pendingTuneKey":
+            case "pendingTuneAdvertisingID":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TextViewFormTableViewController
                 vc.sender = sender as! String
-                vc.viewTitle = "Tune Key"
-                vc.header = "Tune Key"
+                vc.viewTitle = "Tune Advertising ID"
+                vc.header = "Tune Advertising ID"
+                vc.footer = "This Advertising ID will be used the next time the application is closed (not merely backgrounded) and re-opened."
+                vc.keyboardType = UIKeyboardType.alphabet
+                vc.incumbantValue = IntegratedSDKsData.pendingTuneAdvertisingID()!
+            case "pendingTuneConversionKey":
+                let nc = segue.destination as! UINavigationController
+                let vc = nc.topViewController as! TextViewFormTableViewController
+                vc.sender = sender as! String
+                vc.viewTitle = "Tune Conversion Key"
+                vc.header = "Tune Convsrsion Key"
                 vc.footer = "This key will be used the next time the application is closed (not merely backgrounded) and re-opened."
                 vc.keyboardType = UIKeyboardType.alphabet
-                vc.incumbantValue = IntegratedSDKsData.pendingTuneKey()!
+                vc.incumbantValue = IntegratedSDKsData.pendingTuneConversionKey()!
             default:
                 break
             }
@@ -206,13 +220,21 @@ class IntegratedSDKsTableViewController: UITableViewController {
                     IntegratedSDKsData.setPendingMixpanelKey(pendingMixpanelKey)
                     self.pendingMixpanelKeyTextField.text = pendingMixpanelKey
                 }
-            case "pendingTuneKey":
-                if let pendingTuneKey = vc.textView.text {
-                    guard self.pendingTuneKeyTextField.text != pendingTuneKey else {
+            case "pendingTuneAdvertisingID":
+                if let pendingTuneAdvertisingID = vc.textView.text {
+                    guard self.pendingTuneAdvertisingIDTextField.text != pendingTuneAdvertisingID else {
                         return
                     }
-                    IntegratedSDKsData.setPendingTuneKey(pendingTuneKey)
-                    self.pendingTuneKeyTextField.text = pendingTuneKey
+                    IntegratedSDKsData.setPendingTuneAdvertisingID(pendingTuneAdvertisingID)
+                    self.pendingTuneAdvertisingIDTextField.text = pendingTuneAdvertisingID
+                }
+            case "pendingTuneConversionKey":
+                if let pendingTuneConversionKey = vc.textView.text {
+                    guard self.pendingTuneConversionKeyTextField.text != pendingTuneConversionKey else {
+                        return
+                    }
+                    IntegratedSDKsData.setPendingTuneConversionKey(pendingTuneConversionKey)
+                    self.pendingTuneConversionKeyTextField.text = pendingTuneConversionKey
                 }
             default: break
             }
@@ -260,7 +282,8 @@ class IntegratedSDKsTableViewController: UITableViewController {
         activeGoogleAnalyticsEnabledSwitch.isOn = IntegratedSDKsData.activeGoogleAnalyticsEnabled()!
         activeMixpanelKeyTextField.text = IntegratedSDKsData.activeMixpanelKey()
         activeMixpanelEnabledSwitch.isOn = IntegratedSDKsData.activeMixpanelEnabled()!
-        activeTuneKeyTextField.text = IntegratedSDKsData.activeTuneKey()
+        activeTuneAdvertisingIDTextField.text = IntegratedSDKsData.activeTuneAdvertisingID()
+        activeTuneConversionKeyTextField.text = IntegratedSDKsData.activeTuneConversionKey()
         activeTuneEnabledSwitch.isOn = IntegratedSDKsData.activeTuneEnabled()!
         pendingAdjustKeyTextField.text = IntegratedSDKsData.pendingAdjustKey()
         pendingAdjustEnabledSwitch.isOn = IntegratedSDKsData.pendingAdjustEnabled()!
@@ -274,7 +297,8 @@ class IntegratedSDKsTableViewController: UITableViewController {
         pendingGoogleAnalyticsEnabledSwitch.isOn = IntegratedSDKsData.pendingGoogleAnalyticsEnabled()!
         pendingMixpanelKeyTextField.text = IntegratedSDKsData.pendingMixpanelKey()
         pendingMixpanelEnabledSwitch.isOn = IntegratedSDKsData.pendingMixpanelEnabled()!
-        pendingTuneKeyTextField.text = IntegratedSDKsData.pendingTuneKey()
+        pendingTuneAdvertisingIDTextField.text = IntegratedSDKsData.pendingTuneAdvertisingID()
+        pendingTuneConversionKeyTextField.text = IntegratedSDKsData.pendingTuneConversionKey()
         pendingTuneEnabledSwitch.isOn = IntegratedSDKsData.pendingTuneEnabled()!
     }
 

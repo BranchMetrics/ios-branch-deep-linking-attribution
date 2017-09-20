@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13189.4" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13165.3"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -82,6 +82,9 @@
                                                     <rect key="frame" x="14" y="13.5" width="326" height="17"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <segue destination="ndB-RA-Xba" kind="show" identifier="StartupOptionsTableViewToTextViewFormTableView" id="VjS-5f-rlr"/>
+                                                    </connections>
                                                 </textField>
                                             </subviews>
                                             <constraints>
@@ -108,6 +111,7 @@
                                                     <rect key="frame" x="312" y="6.5" width="51" height="31"/>
                                                     <connections>
                                                         <action selector="pendingSetDebugEnabledSwitch:" destination="Ym9-jz-DjF" eventType="valueChanged" id="oH6-iM-0zd"/>
+                                                        <action selector="pendingSetDebugEnabledSwitchValueChanged:" destination="AiS-81-baV" eventType="valueChanged" id="OFe-MG-0Rb"/>
                                                     </connections>
                                                 </switch>
                                             </subviews>
@@ -261,7 +265,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4YZ-yf-rcr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6690" y="339"/>
+            <point key="canvasLocation" x="5076" y="321"/>
         </scene>
         <!--Home-->
         <scene sceneID="zgf-4b-gWH">
@@ -636,7 +640,7 @@
                 <viewControllerPlaceholder storyboardIdentifier="CommerceEventDetails" storyboardName="CommerceEvents" referencedIdentifier="CommerceEvents" id="l7T-5a-FG6" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZOW-of-mh6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1726" y="-102"/>
+            <point key="canvasLocation" x="3835" y="424"/>
         </scene>
         <!--UITableViewController-f9P-iX-WYi-->
         <scene sceneID="98s-V3-bSO">
@@ -644,7 +648,7 @@
                 <viewControllerPlaceholder storyboardName="UniversalObject" referencedIdentifier="UITableViewController-f9P-iX-WYi" id="lNP-uJ-cup" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tOH-Pa-cEO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="815" y="146"/>
+            <point key="canvasLocation" x="5974" y="26"/>
         </scene>
         <!--BranchUniversalObjectProperties-->
         <scene sceneID="Axl-xF-gPr">
@@ -652,7 +656,7 @@
                 <viewControllerPlaceholder storyboardIdentifier="BranchUniversalObjectProperties" storyboardName="UniversalObject" referencedIdentifier="BranchUniversalObjectProperties" id="fpK-rx-X9D" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sNm-1Q-EjD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3471" y="1042"/>
+            <point key="canvasLocation" x="3364" y="505"/>
         </scene>
         <!--LinkProperties-->
         <scene sceneID="KD7-Fe-jaj">
@@ -660,7 +664,7 @@
                 <viewControllerPlaceholder storyboardIdentifier="LinkProperties" storyboardName="LinkProperties" referencedIdentifier="LinkProperties" id="3tQ-m0-Fb6" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BZL-7d-q6K" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1839" y="1042"/>
+            <point key="canvasLocation" x="2905" y="505"/>
         </scene>
         <!--UINavigationController-WPU-Ft-SWB-->
         <scene sceneID="xGX-88-Rzf">
@@ -668,7 +672,7 @@
                 <viewControllerPlaceholder storyboardName="TextViewForm" referencedIdentifier="UINavigationController-WPU-Ft-SWB" id="Kk9-pt-FR9" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="l7h-7N-4ua" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1502" y="689"/>
+            <point key="canvasLocation" x="2402" y="695"/>
         </scene>
         <!--UINavigationController-WPU-Ft-SWB-->
         <scene sceneID="bhV-Y9-OkH">
@@ -676,7 +680,7 @@
                 <viewControllerPlaceholder storyboardName="TextViewForm" referencedIdentifier="UINavigationController-WPU-Ft-SWB" id="ndB-RA-Xba" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VAJ-dr-sF1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4565" y="52"/>
+            <point key="canvasLocation" x="5986" y="-127"/>
         </scene>
         <!--Content-->
         <scene sceneID="pL4-iD-DTQ">
@@ -684,7 +688,7 @@
                 <viewControllerPlaceholder storyboardIdentifier="Content" storyboardName="ContentView" referencedIdentifier="Content" id="cfV-81-rtg" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8Th-Xr-Fc0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3236" y="-1132"/>
+            <point key="canvasLocation" x="3241" y="-550"/>
         </scene>
         <!--Referral Rewards-->
         <scene sceneID="SKp-ek-2oK">
@@ -919,10 +923,11 @@
                 <viewControllerPlaceholder storyboardName="IntegratedSDKs" id="nJR-xo-3qz" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yzh-GE-pcP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-858" y="904"/>
+            <point key="canvasLocation" x="2504" y="540"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Owy-8j-BS0"/>
+        <segue reference="VjS-5f-rlr"/>
+        <segue reference="Y2I-Sr-JDP"/>
     </inferredMetricsTieBreakers>
 </document>
