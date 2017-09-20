@@ -598,7 +598,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param key String to be included in request metadata
  @param value Object to be included in request metadata
  */
-- (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
+- (void)setRequestMetadataKey:(NSString *)key value:(id)value;
 
 - (void)enableDelayedInit;
 
