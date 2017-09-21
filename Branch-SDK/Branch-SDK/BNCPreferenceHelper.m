@@ -99,7 +99,7 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
 }
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _timeout = DEFAULT_TIMEOUT;
         _retryCount = DEFAULT_RETRY_COUNT;
         _retryInterval = DEFAULT_RETRY_INTERVAL;
@@ -150,8 +150,10 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
 }
 
 - (void) synchronize {
-    //  Flushes preference queue to persistence.
-    [_persistPrefsQueue waitUntilAllOperationsAreFinished];
+    @synchronized(self) {
+        //  Flushes preference queue to persistence.
+        [_persistPrefsQueue waitUntilAllOperationsAreFinished];
+    }
 }
 
 - (void) dealloc {
@@ -530,7 +532,7 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
 - (void)clearInstrumentationDictionary {
     @synchronized (self) {
         NSArray *keys = [_instrumentationDictionary allKeys];
-        for (int i = 0 ; i < [keys count]; i++) {
+        for (NSUInteger i = 0 ; i < [keys count]; i++) {
             [_instrumentationDictionary removeObjectForKey:keys[i]];
         }
     }
@@ -707,7 +709,7 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
             if (!error && data)
                 persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
         }
-        @catch (NSException *exception) {
+        @catch (NSException*) {
             BNCLogWarning(@"Failed to load preferences from storage.");
         }
 

@@ -26,7 +26,8 @@
     return [NSString stringWithFormat:@"<%@, %@>", self.key, self.value];
 }
 
-- (BOOL) isEqual:(BNCKeyValue*)object {
+- (BOOL) isEqual:(id)rawObject {
+    BNCKeyValue *object = rawObject;
     return
         [object isKindOfClass:[BNCKeyValue class]] &&
         [self.key isEqualToString:object.key] &&
@@ -391,8 +392,8 @@
     if (!bytes) goto exit;
 
     int highValue = -1;
-    uint8_t *p = (uint8_t*) [inputData bytes];
-    for (long i = 0; i < inputData.length; ++i) {
+    const uint8_t *p = (const uint8_t*) [inputData bytes];
+    for (NSUInteger i = 0; i < inputData.length; ++i) {
         int value = -1;
         if (*p >= '0' && *p <= '9')
             value = *p - '0';
@@ -425,7 +426,7 @@
 
 exit:
     if (bytes) {
-        BNCLogAssert(b-bytes<=length);
+        BNCLogAssert((size_t)(b-bytes)<=length);
         free(bytes);
     }
     return data;

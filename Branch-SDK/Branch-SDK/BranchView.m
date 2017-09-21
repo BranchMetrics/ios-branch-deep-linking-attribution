@@ -10,7 +10,7 @@
 #import "BranchView.h"
 #import "BNCPreferenceHelper.h"
 
-NSInteger const BRANCH_VIEW_USAGE_UNLIMITED = -1;
+NSInteger  const BRANCH_VIEW_USAGE_UNLIMITED = -1;
 NSString * const BRANCH_VIEW_ID = @"id";
 NSString * const BRANCH_VIEW_ACTION = @"action";
 NSString * const BRANCH_VIEW_NUM_USE = @"number_of_use";

@@ -20,7 +20,7 @@
 @implementation BranchLogoutRequest
 
 - (id)initWithCallback:(callbackWithStatus)callback {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _callback = callback;
     }
     

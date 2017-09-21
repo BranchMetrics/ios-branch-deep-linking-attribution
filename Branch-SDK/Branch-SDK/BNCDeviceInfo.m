@@ -9,7 +9,7 @@
 
 @import Foundation;
 @import UIKit;
-#import <sys/sysctl.h>
+@import Darwin.sys.sysctl;
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
@@ -229,7 +229,7 @@
     }
 
     //  Different case for iOS 7.0:
-    if ([UIDevice currentDevice].systemVersion.floatValue  < 8.0) {
+    if ([UIDevice currentDevice].systemVersion.doubleValue  < 8.0) {
         BNCLogDebugSDK(@"Getting iOS 7 UserAgent.");
         dispatch_sync(dispatch_get_main_queue(), ^ {
             setBrowserUserAgent();

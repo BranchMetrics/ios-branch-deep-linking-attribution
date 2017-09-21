@@ -18,7 +18,7 @@
 @implementation BNCLinkCache
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.cache = [[NSMutableDictionary alloc] init];
     }
     return self;
