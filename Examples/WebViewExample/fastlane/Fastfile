@@ -1,0 +1,21 @@
+desc "Set up WebViewExample"
+lane :setup do
+  setup_branch
+end
+
+desc "Validate Universal Link settings for a project"
+lane :validate do
+  # The :domains parameter is optional.
+  # Without it, validation passes if at least one domain exists in the project and
+  # all domains pass validation.
+  # With this parameter, the applinks: domains in the project must match this list.
+  # Order is irrelevant.
+  # This app is not currently set up properly for test in the Dashboard. Don't include
+  # test domains in the project for now.
+  validate_universal_links domains: %w{
+    branchwebview.app.link
+    branchwebview-alternate.app.link
+    branchwebview.test-app.link
+    branchwebview-alternate.test-app.link
+  }
+end
