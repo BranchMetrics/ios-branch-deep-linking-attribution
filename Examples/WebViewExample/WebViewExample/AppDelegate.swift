@@ -13,7 +13,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var navigationController: NavigationController!
-    var branch: Branch!
 
     // MARK: - UIApplicationDelegate methods
 
@@ -28,16 +27,14 @@ didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any
          * schema.
          */
         #if USE_BRANCH_TEST_INSTANCE
-            branch = Branch.getTestInstance()
-        #else
-            branch = Branch.getInstance()
+            Branch.setUseTestBranchKey(true)
         #endif
 
         // Store the NavigationController for later link routing.
         navigationController = window?.rootViewController as? NavigationController
 
         // Initialize Branch SDK
-        branch.initSession(launchOptions: launchOptions) {
+        Branch.getInstance().initSession(launchOptions: launchOptions) {
             (buo: BranchUniversalObject?, linkProperties: BranchLinkProperties?, error: Error?) in
             guard error == nil else {
                 BNCLogError("Error from Branch: \(error!)")
@@ -55,14 +52,14 @@ didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any
                   open url: URL,
                    options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
         BNCLog("application:open:options: called.")
-        return branch.application(app, open: url, options: options)
+        return Branch.getInstance().application(app, open: url, options: options)
     }
     
     func application(_ application: UIApplication,
              continue userActivity: NSUserActivity,
                 restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
         BNCLog("application:continueUserActivity:restorationHandler: called.");
-        return branch.continue(userActivity)
+        return Branch.getInstance().continue(userActivity)
     }
 
     // MARK: - Branch link routing
