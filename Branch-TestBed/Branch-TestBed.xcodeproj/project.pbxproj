@@ -182,13 +182,6 @@
 			remoteGlobalIDString = 466B58371B17773000A69EDE;
 			remoteInfo = Branch;
 		};
-		7BA8665B1F731A75001BB1AF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 670016581940F51400A9E103 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6700165F1940F51400A9E103;
-			remoteInfo = "Branch-TestBed";
-		};
 		F1D4F9B11F323F01002D13FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 670016581940F51400A9E103 /* Project object */;
@@ -834,7 +827,6 @@
 			);
 			dependencies = (
 				4683F07C1B20AC6300A432E7 /* PBXTargetDependency */,
-				7BA8665C1F731A75001BB1AF /* PBXTargetDependency */,
 			);
 			name = "Branch-SDK-Tests";
 			productName = "Branch-SDK Functionality Tests";
@@ -886,7 +878,6 @@
 					7E6B3B501AA42D0E005F45BF = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = R63EM248DP;
-						TestTargetID = 6700165F1940F51400A9E103;
 					};
 					F1D4F9AB1F323F01002D13FF = {
 						CreatedOnToolsVersion = 8.3.1;
@@ -1125,11 +1116,6 @@
 			target = 466B58371B17773000A69EDE /* Branch */;
 			targetProxy = 4683F07B1B20AC6300A432E7 /* PBXContainerItemProxy */;
 		};
-		7BA8665C1F731A75001BB1AF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
-			targetProxy = 7BA8665B1F731A75001BB1AF /* PBXContainerItemProxy */;
-		};
 		F1D4F9B21F323F01002D13FF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
@@ -1348,7 +1334,6 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Branch-TestBed.app/Branch-TestBed";
 			};
 			name = Debug;
 		};
@@ -1363,7 +1348,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Branch-TestBed.app/Branch-TestBed";
 			};
 			name = Release;
 		};
