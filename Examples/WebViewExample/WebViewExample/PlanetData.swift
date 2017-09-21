@@ -65,8 +65,8 @@ struct PlanetData {
     /// Array of PlanetData structs to populate the table view
     static let all = [
         PlanetData(title:"About the App",
-                     url:"file:///AboutTheApp.bundle/index.html",
-                   image:"file:///AboutTheApp.png"
+                     url:"file:///Web.bundle/AboutTheApp/index.html",
+                   image:"file:///Web.bundle/AboutTheApp/Branch.png"
         ),
         PlanetData(title: "Mercury", url: "https://en.wikipedia.org/wiki/Mercury_(planet)",
                    image: "https://upload.wikimedia.org/wikipedia/commons/d/d9/Mercury_in_color_-_Prockter07-edit1.jpg"),

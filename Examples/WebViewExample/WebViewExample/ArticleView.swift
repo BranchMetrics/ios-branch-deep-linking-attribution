@@ -8,9 +8,9 @@
 
 import Cartography
 import MBProgressHUD
-// import TextAttributes
 import UIKit
 import WebKit
+import Branch
 
 /**
  * Delegate protocol for ArticleView. Notified when user taps Share button.
@@ -94,7 +94,7 @@ decidePolicyFor navigationAction: WKNavigationAction,
             .font(name: Style.boldFontName, size: Style.titleFontSize)
             .foregroundColor(red: 0.133, green: 0.4, blue: 0.627, alpha: 1.0)
             .kern(2.4)
-        // */
+        */
         guard let font = UIFont(name: Style.boldFontName, size: Style.titleFontSize) else { return }
 
         let attributes: [NSAttributedStringKey: Any] = [
