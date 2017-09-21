@@ -8,7 +8,7 @@
 
 
 #import "BNCStrongMatchHelper.h"
-#import <objc/runtime.h>
+@import ObjectiveC.runtime;
 #import "BNCConfig.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"

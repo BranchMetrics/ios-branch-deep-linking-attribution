@@ -29,7 +29,7 @@
 @implementation BNCLinkData
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.data = [[NSMutableDictionary alloc] init];
         self.data[@"source"] = @"ios";
     }
@@ -169,7 +169,7 @@
 }
 
 - (id)initWithCoder:(NSCoder *)coder {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.tags = [coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_TAGS];
         self.alias = [coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_ALIAS];
         self.type = [[coder decodeObjectForKey:BRANCH_REQUEST_KEY_URL_LINK_TYPE] integerValue];
