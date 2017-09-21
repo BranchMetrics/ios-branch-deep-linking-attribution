@@ -66,7 +66,11 @@ class ArticleView: UIView, WKNavigationDelegate {
 decidePolicyFor navigationAction: WKNavigationAction,
            decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         BNCLog("Navigating to URL \(String(describing: navigationAction.request.url?.description)).")
-        decisionHandler(.allow)
+        if Branch.getInstance().handleDeepLink(withNewSession:navigationAction.request.url) {
+            decisionHandler(.cancel)
+        } else {
+            decisionHandler(.allow)
+        }
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {

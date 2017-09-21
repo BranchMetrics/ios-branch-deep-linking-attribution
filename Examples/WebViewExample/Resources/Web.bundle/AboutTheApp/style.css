@@ -26,11 +26,18 @@ a {
 h1 {
     text-align: center;
     font-size: 1.1em;
+    margin-top: 1.2em;
+}
+ul {
+    padding-left: 1.1em;
+}
+li {
+    margin-bottom: 1.0em;
 }
 #logo {
-    width: 200px;
-    border-radius: 20px;
-    border: 5px solid rgb(200, 200, 200);
+    width: 75px;
+    border-radius: 8px;
+    border: 2px solid rgb(200, 200, 200);
     text-align: center;
     margin: auto;
     display: block;
