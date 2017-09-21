@@ -31,6 +31,6 @@
 
 + (id)getInstance;
 
-@property (readonly, assign) NSInteger queueDepth;
-@property (readonly, assign) BOOL isDirty;
+@property (readonly, assign, atomic) NSInteger queueDepth;
+@property (readonly, assign, atomic) BOOL isDirty;
 @end

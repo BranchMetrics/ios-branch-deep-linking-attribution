@@ -31,7 +31,7 @@
 @implementation BranchShortUrlRequest
 
 - (id)initWithTags:(NSArray *)tags alias:(NSString *)alias type:(BranchLinkType)type matchDuration:(NSInteger)duration channel:(NSString *)channel feature:(NSString *)feature stage:(NSString *)stage campaign:campaign params:(NSDictionary *)params linkData:(BNCLinkData *)linkData linkCache:(BNCLinkCache *)linkCache callback:(callbackWithUrl)callback {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _tags = tags;
         _alias = alias;
         _type = type;
@@ -127,7 +127,7 @@
 #pragma mark - NSCoding methods
 
 - (id)initWithCoder:(NSCoder *)decoder {
-    if (self = [super initWithCoder:decoder]) {
+    if ((self = [super initWithCoder:decoder])) {
         _tags = [decoder decodeObjectForKey:@"tags"];
         _alias = [decoder decodeObjectForKey:@"alias"];
         _type = [decoder decodeIntegerForKey:@"type"];
