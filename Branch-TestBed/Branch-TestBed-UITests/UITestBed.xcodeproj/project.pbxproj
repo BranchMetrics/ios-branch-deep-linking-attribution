@@ -10,7 +10,6 @@
 		4D2AF33F1EF882DF00220F4A /* TBDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D2AF33D1EF882DF00220F4A /* TBDetailViewController.m */; };
 		4D2AF3401EF882DF00220F4A /* TBDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2AF33E1EF882DF00220F4A /* TBDetailViewController.xib */; };
 		4D2AF3461EF89FC800220F4A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D2AF3441EF89FC800220F4A /* Main.storyboard */; };
-		4D2AF3491EF8A05100220F4A /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D2AF3471EF8A05100220F4A /* Launch Screen.storyboard */; };
 		4D2AF34E1EF8FF6200220F4A /* TBBranchViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2AF34D1EF8FF6200220F4A /* TBBranchViewController.xib */; };
 		4D2AF3521EF9B3BF00220F4A /* TBWaitingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D2AF3501EF9B3BF00220F4A /* TBWaitingView.m */; };
 		4D2AF3531EF9B3BF00220F4A /* TBWaitingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2AF3511EF9B3BF00220F4A /* TBWaitingView.xib */; };
@@ -35,6 +34,7 @@
 		4D7F6CDF1F6B0D3F00D94001 /* BNCCrashlyticsWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D7F6CDC1F6B0D3E00D94001 /* BNCCrashlyticsWrapper.m */; };
 		4D7F6CE01F6B0D3F00D94001 /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D7F6CDD1F6B0D3E00D94001 /* BNCDeepLinkViewControllerInstance.m */; };
 		4D7F6CE31F6B0D6E00D94001 /* BNCLocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D7F6CE21F6B0D6E00D94001 /* BNCLocalization.m */; };
+		4D9AF2D81F7589CC0065EF11 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D9AF2D61F7589CC0065EF11 /* Launch Screen.storyboard */; };
 		4DFF2B6E1EEF3B150043F840 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2B6D1EEF3B150043F840 /* main.m */; };
 		4DFF2B711EEF3B150043F840 /* TBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2B701EEF3B150043F840 /* TBAppDelegate.m */; };
 		4DFF2B741EEF3B150043F840 /* TBBranchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2B731EEF3B150043F840 /* TBBranchViewController.m */; };
@@ -76,7 +76,6 @@
 		4D2AF33D1EF882DF00220F4A /* TBDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBDetailViewController.m; sourceTree = "<group>"; };
 		4D2AF33E1EF882DF00220F4A /* TBDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TBDetailViewController.xib; sourceTree = "<group>"; };
 		4D2AF3451EF89FC800220F4A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		4D2AF3481EF8A05100220F4A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Testbed-ObjC/Base.lproj/Launch Screen.storyboard"; sourceTree = "<group>"; };
 		4D2AF34D1EF8FF6200220F4A /* TBBranchViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TBBranchViewController.xib; sourceTree = "<group>"; };
 		4D2AF34F1EF9B3BF00220F4A /* TBWaitingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBWaitingView.h; sourceTree = "<group>"; };
 		4D2AF3501EF9B3BF00220F4A /* TBWaitingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBWaitingView.m; sourceTree = "<group>"; };
@@ -124,7 +123,8 @@
 		4D7F6CDE1F6B0D3F00D94001 /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
 		4D7F6CE11F6B0D6E00D94001 /* BNCLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLocalization.h; sourceTree = "<group>"; };
 		4D7F6CE21F6B0D6E00D94001 /* BNCLocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLocalization.m; sourceTree = "<group>"; };
-		4DFF2B691EEF3B150043F840 /* Testbed-ObjC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Testbed-ObjC.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D9AF2D71F7589CC0065EF11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/Launch Screen.storyboard"; sourceTree = "<group>"; };
+		4DFF2B691EEF3B150043F840 /* UITestBed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UITestBed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DFF2B6D1EEF3B150043F840 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4DFF2B6F1EEF3B150043F840 /* TBAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBAppDelegate.h; sourceTree = "<group>"; };
 		4DFF2B701EEF3B150043F840 /* TBAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TBAppDelegate.m; sourceTree = "<group>"; };
@@ -270,7 +270,7 @@
 			isa = PBXGroup;
 			children = (
 				4DFF2BBD1EEF4E940043F840 /* Branch-SDK */,
-				4DFF2B6B1EEF3B150043F840 /* Testbed-ObjC */,
+				4DFF2B6B1EEF3B150043F840 /* UITestBed */,
 				4DFF2B6A1EEF3B150043F840 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -278,12 +278,12 @@
 		4DFF2B6A1EEF3B150043F840 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4DFF2B691EEF3B150043F840 /* Testbed-ObjC.app */,
+				4DFF2B691EEF3B150043F840 /* UITestBed.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		4DFF2B6B1EEF3B150043F840 /* Testbed-ObjC */ = {
+		4DFF2B6B1EEF3B150043F840 /* UITestBed */ = {
 			isa = PBXGroup;
 			children = (
 				4DFF2B6C1EEF3B150043F840 /* Supporting Files */,
@@ -301,14 +301,14 @@
 				4D2AF3501EF9B3BF00220F4A /* TBWaitingView.m */,
 				4D2AF3511EF9B3BF00220F4A /* TBWaitingView.xib */,
 			);
-			path = "Testbed-ObjC";
+			path = UITestBed;
 			sourceTree = "<group>";
 		};
 		4DFF2B6C1EEF3B150043F840 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4D9AF2D61F7589CC0065EF11 /* Launch Screen.storyboard */,
 				4D2AF3441EF89FC800220F4A /* Main.storyboard */,
-				4D2AF3471EF8A05100220F4A /* Launch Screen.storyboard */,
 				4DFF2B781EEF3B150043F840 /* Assets.xcassets */,
 				4DFF2B7D1EEF3B150043F840 /* Info.plist */,
 				4DFF2B6D1EEF3B150043F840 /* main.m */,
@@ -417,9 +417,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		4DFF2B681EEF3B150043F840 /* Testbed-ObjC */ = {
+		4DFF2B681EEF3B150043F840 /* UITestBed */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4DFF2B801EEF3B150043F840 /* Build configuration list for PBXNativeTarget "Testbed-ObjC" */;
+			buildConfigurationList = 4DFF2B801EEF3B150043F840 /* Build configuration list for PBXNativeTarget "UITestBed" */;
 			buildPhases = (
 				4DFF2B651EEF3B150043F840 /* Sources */,
 				4DFF2B661EEF3B150043F840 /* Frameworks */,
@@ -429,9 +429,9 @@
 			);
 			dependencies = (
 			);
-			name = "Testbed-ObjC";
+			name = UITestBed;
 			productName = "Testbed-ObjC";
-			productReference = 4DFF2B691EEF3B150043F840 /* Testbed-ObjC.app */;
+			productReference = 4DFF2B691EEF3B150043F840 /* UITestBed.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -451,7 +451,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 4DFF2B641EEF3B150043F840 /* Build configuration list for PBXProject "Testbed-ObjC" */;
+			buildConfigurationList = 4DFF2B641EEF3B150043F840 /* Build configuration list for PBXProject "UITestBed" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -464,7 +464,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4DFF2B681EEF3B150043F840 /* Testbed-ObjC */,
+				4DFF2B681EEF3B150043F840 /* UITestBed */,
 			);
 		};
 /* End PBXProject section */
@@ -474,11 +474,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D9AF2D81F7589CC0065EF11 /* Launch Screen.storyboard in Resources */,
 				4D2AF3401EF882DF00220F4A /* TBDetailViewController.xib in Resources */,
 				4DFF2B791EEF3B150043F840 /* Assets.xcassets in Resources */,
 				4D2AF34E1EF8FF6200220F4A /* TBBranchViewController.xib in Resources */,
 				4D2AF3531EF9B3BF00220F4A /* TBWaitingView.xib in Resources */,
-				4D2AF3491EF8A05100220F4A /* Launch Screen.storyboard in Resources */,
 				4D2AF3461EF89FC800220F4A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -560,13 +560,12 @@
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		4D2AF3471EF8A05100220F4A /* Launch Screen.storyboard */ = {
+		4D9AF2D61F7589CC0065EF11 /* Launch Screen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				4D2AF3481EF8A05100220F4A /* Base */,
+				4D9AF2D71F7589CC0065EF11 /* Base */,
 			);
 			name = "Launch Screen.storyboard";
-			path = ..;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -681,7 +680,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = R63EM248DP;
-				INFOPLIST_FILE = "Testbed-ObjC/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/UITestBed/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.Testbed-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -693,7 +692,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = R63EM248DP;
-				INFOPLIST_FILE = "Testbed-ObjC/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/UITestBed/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.Testbed-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -703,7 +702,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4DFF2B641EEF3B150043F840 /* Build configuration list for PBXProject "Testbed-ObjC" */ = {
+		4DFF2B641EEF3B150043F840 /* Build configuration list for PBXProject "UITestBed" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4DFF2B7E1EEF3B150043F840 /* Debug */,
@@ -712,7 +711,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4DFF2B801EEF3B150043F840 /* Build configuration list for PBXNativeTarget "Testbed-ObjC" */ = {
+		4DFF2B801EEF3B150043F840 /* Build configuration list for PBXNativeTarget "UITestBed" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4DFF2B811EEF3B150043F840 /* Debug */,

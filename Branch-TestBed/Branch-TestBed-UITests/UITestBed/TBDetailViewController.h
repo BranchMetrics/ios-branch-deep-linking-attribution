@@ -2,7 +2,7 @@
 //  TBDetailViewController.h
 //  Testbed-ObjC
 //
-//  Created by edward on 6/19/17.
+//  Created by Edward Smith on 6/19/17.
 //  Copyright © 2017 Branch. All rights reserved.
 //
 
