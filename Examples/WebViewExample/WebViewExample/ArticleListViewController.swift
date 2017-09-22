@@ -72,14 +72,12 @@ class ArticleListViewController: UIViewController, UITableViewDelegate, UITableV
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         guard indexPath.row < PlanetData.all.count else { return }
         guard let planetCell = cell as? PlanetCell else { return }
-
         planetCell.planetData = PlanetData.all[indexPath.row]
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard indexPath.row < PlanetData.all.count else { return }
         let planetData = PlanetData.all[indexPath.row]
-
         let viewController = ArticleViewController(planetData: planetData)
         navigationController?.pushViewController(viewController, animated: true)
     }

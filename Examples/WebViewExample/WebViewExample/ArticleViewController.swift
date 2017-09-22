@@ -26,7 +26,7 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
     init(planetData: PlanetData) {
         self.planetData = planetData
         super.init(nibName: nil, bundle: nil)
-        title = planetData.title
+        title = planetData.title.firstWord()
     }
     
     required init?(coder aDecoder: NSCoder) {
