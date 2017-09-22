@@ -6,7 +6,6 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
-@import Foundation;
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
@@ -14,10 +13,11 @@
 #import "BNCLog.h"
 
 @import UIKit;
-@import Darwin.sys.sysctl;
-@import Darwin.POSIX.ifaddrs;
-@import Darwin.POSIX.net;
-@import Darwin.POSIX.arpa.inet;
+#import <sys/sysctl.h> // @import not available in Xcode 7
+#import <net/if.h>
+#import <ifaddrs.h>
+#import <arpa/inet.h>
+#import <netinet/in.h>
 
 #pragma mark - BRNNetworkInfo
 
