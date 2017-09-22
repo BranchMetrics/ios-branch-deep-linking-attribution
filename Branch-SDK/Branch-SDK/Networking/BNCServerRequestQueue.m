@@ -233,9 +233,9 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             BNCNanoSecondsFromTimeInterval(BATCH_WRITE_TIMEOUT),
             BNCNanoSecondsFromTimeInterval(BATCH_WRITE_TIMEOUT / 10.0)
         );
-        __weak typeof(self) weakSelf = self;
+        __weak __typeof(self) weakSelf = self;
         dispatch_source_set_event_handler(self.persistTimer, ^ {
-            __strong typeof(self) strongSelf = weakSelf;
+            __strong __typeof(self) strongSelf = weakSelf;
             if (strongSelf) {
                 [strongSelf persistImmediately];
                 dispatch_source_cancel(strongSelf.persistTimer);
