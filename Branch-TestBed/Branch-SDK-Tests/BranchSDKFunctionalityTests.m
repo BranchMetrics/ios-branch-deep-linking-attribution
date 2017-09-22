@@ -7,7 +7,7 @@
 //
 
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "Branch.h"

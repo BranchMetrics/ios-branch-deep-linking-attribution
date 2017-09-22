@@ -1,5 +1,5 @@
 //
-//  BNCServerInterface.m
+//  BNCServerInterface.Test.m
 //  Branch
 //
 //  Created by Graham Mueller on 3/31/15.

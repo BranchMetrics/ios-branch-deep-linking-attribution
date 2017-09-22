@@ -7,9 +7,9 @@
 //
 
 
-#import <UIKit/UIKit.h>
-#import "BNCTestCase.h"
+@import UIKit;
 #import <OCMock/OCMock.h>
+#import "BNCTestCase.h"
 #import "Branch.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCPreferenceHelper.h"

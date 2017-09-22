@@ -9,7 +9,6 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 
-
 static inline dispatch_time_t BNCDispatchTimeFromSeconds(NSTimeInterval seconds)	{
 	return dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC);
 }

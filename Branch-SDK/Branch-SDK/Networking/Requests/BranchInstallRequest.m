@@ -43,7 +43,7 @@
         @try {
             NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:preferenceHelper.appleSearchAdDetails];
             encodedSearchData = [BNCEncodingUtils base64EncodeData:jsonData];
-        } @catch (id e) { }
+        } @catch (id) { }
         [self safeSetValue:encodedSearchData
                     forKey:BRANCH_REQUEST_KEY_SEARCH_AD
                     onDict:params];

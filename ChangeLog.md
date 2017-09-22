@@ -1,5 +1,33 @@
 Branch iOS SDK Change Log
 
+- v0.18.8
+  * _*Master Release*_ - September 13, 2017
+
+- v0.18.6
+  * Fixed TestBed-Swift for Xcode 9 (but not upgraded to Swift 4 yet).
+  * Fixed some thread safety and iOS 11 bugs.
+
+- v0.18.3
+  * Fixed query string parsing for iOS 7 and added more tests.
+
+- v0.18.2
+  * Language and locale were reported wrong (GH-#707).
+  * Getting the user agent in iOS 7 would stall initialization sometimes.
+
+- v0.18.1
+  * Update Apple search ads mock-up for testing and backend (GH-#682,#706).
+    - Fixed and tested encoding JSON boolean true as 'true' vs. '1'.
+    - Updated Apple search ad dictionary for testing.
+
+- v0.18.0
+  * Branch links opened via Air Drop now open correctly (GH-#699,#701).
+  * Fixed remote push notification handling (GH-#703,#704).
+  * Fixed a race condition on startup while getting the browser string (GH-#700,#702).
+  * Removed vestigial CoreTelephony references (GH-#689).
+  * Updated project for Xcode 9 compatibility.
+  * Update the BranchShareLink.shareURL member field correctly after share event (#696).
+  * Added ability to turn logging on and off via links / Info.plist (GH-#697).
+
 - v0.17.10
   * _*Master Release*_ - August 23, 2017
   * Don't do cookie based matching in iOS 11 (AIS-307, GH-#681).
@@ -33,7 +61,7 @@ Branch iOS SDK Change Log
   * Added a guard to prevent a crash bug from when bad data was accidentally passed back from the
     Branch servers (GitHub #672).
   * Fixed a crash bug that sometimes occurred when logging to the Branch log file (GitHub #661).
-  * Added 'com.googleusercontent.apps' as an oauth scheme (GitHub #678).
+  * Added 'com.googleusercontent.apps' as an o-auth scheme (GitHub #678).
   * Used address sanitizer & thread sanitizer to find and fix several thread and memory errors.
   * Escape extra html tags in dynamic Branch links (INTENG-3466).
 
