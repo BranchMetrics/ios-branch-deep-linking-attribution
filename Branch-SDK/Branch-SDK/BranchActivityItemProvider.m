@@ -34,7 +34,7 @@
 - (id)initWithParams:(NSDictionary *)params tags:(NSArray *)tags feature:(NSString *)feature stage:(NSString *)stage campaign:(NSString *)campaign alias:(NSString *)alias delegate:(id <BranchActivityItemProviderDelegate>)delegate {
     NSString *url = [[Branch getInstance] getLongURLWithParams:params andChannel:nil andTags:tags andFeature:feature andStage:stage andAlias:alias];
     
-    if (self = [super initWithPlaceholderItem:[NSURL URLWithString:url]]) {
+    if ((self = [super initWithPlaceholderItem:[NSURL URLWithString:url]])) {
         _params = params;
         _tags = tags;
         _feature = feature;
