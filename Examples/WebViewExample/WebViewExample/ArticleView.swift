@@ -21,6 +21,7 @@ protocol ArticleViewDelegate: class {
      * - Parameter articleView: The ArticleView that generated this event
      */
     func articleViewDidShare(_ articleView: ArticleView)
+    func articleViewDidNavigate(_ articleView: ArticleView)
 }
 
 /**
@@ -59,7 +60,7 @@ class ArticleView: UIView, WKNavigationDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     // MARK: - WKNavigationDelegate
 
     func webView(_ webView: WKWebView,
@@ -80,6 +81,7 @@ decidePolicyFor navigationAction: WKNavigationAction,
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         hud.hide(animated: true)
+        delegate?.articleViewDidNavigate(self)
     }
 
     // MARK: - Button action

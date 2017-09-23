@@ -19,7 +19,15 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
     // MARK: - Stored properties
 
     let planetData: PlanetData
+    let forwardBackControl = UISegmentedControl()
     var buo: BranchUniversalObject!
+    var articleView = ArticleView(
+        planetData: PlanetData(
+             title: "",
+               url:"https://no.com",
+             image: "file://Branch.png"
+         )
+     )
 
     // MARK: - Object lifecycle
 
@@ -33,6 +41,11 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+        articleView.delegate = nil
+        navigationItem.rightBarButtonItem = nil
+    }
+
     // MARK: - View lifecycle
 
     override func viewDidLoad() {
@@ -42,7 +55,7 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
          * Add an ArticleView for this planetData as a subview of
          * view.
          */
-        let articleView = ArticleView(planetData: planetData)
+        articleView = ArticleView(planetData: planetData)
         articleView.delegate = self
         articleView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(articleView)
@@ -65,6 +78,7 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
         // Log a BNCRegisterViewEvent each time the user views the page.
         buo.userCompletedAction(BNCRegisterViewEvent)
         BNCLog("Logged BNCRegisterViewEvent on BUO")
+        addForwardBackControl()
     }
 
     // MARK: - ArticleViewDelegate
@@ -82,11 +96,48 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
         shareLink?.presentActivityViewController(from: self, anchor: nil)
     }
 
+    func articleViewDidNavigate(_ articleView: ArticleView) {
+        updateForwardBackControl()
+    }
+
     // MARK: - Branch Universal Object setup
 
     private func setupBUO() {
         // Initialization and configuration.
         buo = BranchUniversalObject(planetData: planetData)
         BNCLog("Created Branch Universal Object")
+    }
+
+    // MARK: - Forward Back Control
+
+    private func addForwardBackControl() {
+        forwardBackControl.frame = CGRect(x: 0, y: 0, width: 40, height: 26)
+        forwardBackControl.removeAllSegments()
+        forwardBackControl.insertSegment(withTitle: "<", at: 0, animated: false)
+        forwardBackControl.insertSegment(withTitle: ">", at: 1, animated: false)
+        forwardBackControl.isMomentary = true
+        navigationItem.rightBarButtonItem =
+            UIBarButtonItem(customView: forwardBackControl)
+        forwardBackControl.addTarget(
+            self,
+            action: #selector(forwardBackControlAction(sender:)),
+            for: .valueChanged
+        )
+        updateForwardBackControl()
+    }
+
+    private func updateForwardBackControl() {
+        if forwardBackControl.numberOfSegments == 2 {
+            forwardBackControl.setEnabled(articleView.webView.canGoBack, forSegmentAt: 0)
+            forwardBackControl.setEnabled(articleView.webView.canGoForward, forSegmentAt: 1)
+        }
+    }
+
+    @IBAction func forwardBackControlAction(sender: Any) {
+        switch forwardBackControl.selectedSegmentIndex {
+        case 0:  articleView.webView.goBack()
+        case 1:  articleView.webView.goForward()
+        default: break
+        }
     }
 }
