@@ -18,7 +18,11 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
 
     // MARK: - Stored properties
 
-    let planetData: PlanetData
+    private var _planetData: PlanetData
+    var planetData: PlanetData {
+        set { _planetData = newValue; updateViewWithPlanetData() }
+        get { return _planetData }
+    }
     let forwardBackControl = UISegmentedControl()
     var buo: BranchUniversalObject!
     var articleView = ArticleView(
@@ -32,11 +36,11 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
     // MARK: - Object lifecycle
 
     init(planetData: PlanetData) {
-        self.planetData = planetData
+        _planetData = planetData
         super.init(nibName: nil, bundle: nil)
-        title = planetData.title.firstWord()
+        updateViewWithPlanetData()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -67,9 +71,6 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
             view.width == superview.width
             view.height == superview.height
         }
-
-        // Initialize BUO at page load.
-        setupBUO()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -101,6 +102,12 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
     }
 
     // MARK: - Branch Universal Object setup
+
+    func updateViewWithPlanetData() {
+        title = planetData.title.firstWord()
+        articleView.planetData = planetData
+        setupBUO()
+    }
 
     private func setupBUO() {
         // Initialization and configuration.

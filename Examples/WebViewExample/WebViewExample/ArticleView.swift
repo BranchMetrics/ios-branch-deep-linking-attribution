@@ -37,7 +37,11 @@ class ArticleView: UIView, WKNavigationDelegate {
 
     // MARK: - Other stored properties
 
-    let planetData: PlanetData
+    private var _planetData: PlanetData
+    var planetData: PlanetData {
+        set { _planetData = newValue; setupWebview() }
+        get { return _planetData }
+    }
     var hud: MBProgressHUD!
     var showShareButton = true
 
@@ -46,7 +50,7 @@ class ArticleView: UIView, WKNavigationDelegate {
     // MARK: - Object lifecycle
 
     init(planetData: PlanetData, frame: CGRect = .zero) {
-        self.planetData = planetData
+        _planetData = planetData
         super.init(frame: frame)
 
         addSubview(webView)

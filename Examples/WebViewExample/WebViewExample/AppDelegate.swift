@@ -66,8 +66,15 @@ didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any
 
     private func routeURLFromBranch(_ buo: BranchUniversalObject) {
         guard let planetData = PlanetData(branchUniversalObject: buo) else { return }
-        let articleViewController = ArticleViewController(planetData: planetData)
-        navigationController.pushViewController(articleViewController, animated: true)
+        if buo.metadata!["useSameView"] as? String == "true" {
+           if let articleViewController =
+                  navigationController.topViewController as? ArticleViewController {
+               articleViewController.planetData = planetData
+            }
+        } else {
+            let articleViewController = ArticleViewController(planetData: planetData)
+            navigationController.pushViewController(articleViewController, animated: true)
+        }
     }
 }
 
