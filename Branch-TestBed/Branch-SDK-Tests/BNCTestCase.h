@@ -26,6 +26,10 @@ static inline void BNCSleepForTimeInterval(NSTimeInterval seconds) {
     nanosleep(&sleepTime, NULL);
 }
 
+extern BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex);
+
+#define XCTAssertStringMatchesRegex(string, regex) \
+    XCTAssertTrue(BNCTestStringMatchesRegex(string, regex))
 
 @interface BNCTestCase : XCTestCase
 
