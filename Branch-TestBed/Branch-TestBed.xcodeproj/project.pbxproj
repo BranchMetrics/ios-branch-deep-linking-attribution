@@ -1163,7 +1163,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = /headers;
 				SKIP_INSTALL = YES;
-				WARNING_CFLAGS = "";
 			};
 			name = Debug;
 		};
@@ -1183,7 +1182,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = /headers;
 				SKIP_INSTALL = YES;
-				WARNING_CFLAGS = "";
 			};
 			name = Release;
 		};

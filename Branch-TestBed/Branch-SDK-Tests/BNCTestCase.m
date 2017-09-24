@@ -9,6 +9,20 @@
 #import "BNCTestCase.h"
 #import "BNCPreferenceHelper.h"
 
+BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex) {
+    NSError *error = nil;
+    NSRegularExpression* nsregex = [NSRegularExpression regularExpressionWithPattern:regex options:0 error:&error];
+    if (error) {
+        NSLog(@"Error in regex pattern: %@.", error);
+        return NO;
+    }
+    NSRange stringRange = NSMakeRange(0, string.length);
+    NSTextCheckingResult *match = [nsregex firstMatchInString:string options:0 range:stringRange];
+    return NSEqualRanges(match.range, stringRange);
+}
+
+#pragma mark - BNCTestCase
+
 @interface BNCTestCase ()
 @property (assign, nonatomic) BOOL hasExceededExpectations;
 @end
