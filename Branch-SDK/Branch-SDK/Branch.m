@@ -807,20 +807,21 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
       ^ void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
         self.asyncRequestCount--;
 
-        if (attrDetails.count) {
-            self.preferenceHelper.appleSearchAdDetails = attrDetails;
-        }
-        else if (self.searchAdsDebugMode) {
+        if (attrDetails.count == 0 && self.searchAdsDebugMode) {
+            // Round down to one day for testing.
+            NSTimeInterval const kOneDay = (60.0*60.0*24.0);
+            NSTimeInterval t = trunc([[NSDate date] timeIntervalSince1970] / kOneDay) * kOneDay;
+            NSDate *date = [NSDate dateWithTimeIntervalSince1970:t];
 
-            NSDictionary *debugSearchAd = @{
+            attrDetails = @{
                 @"Version3.1": @{
                     @"iad-adgroup-id":      @1234567890,
                     @"iad-adgroup-name":    @"AdGroupName",
                     @"iad-attribution":     (id)kCFBooleanTrue,
                     @"iad-campaign-id":     @1234567890,
                     @"iad-campaign-name":   @"CampaignName",
-                    @"iad-click-date":      [NSDate date],
-                    @"iad-conversion-date": [NSDate date],
+                    @"iad-click-date":      date,
+                    @"iad-conversion-date": date,
                     @"iad-creative-id":     @1234567890,
                     @"iad-creative-name":   @"CreativeName",
                     @"iad-keyword":         @"Keyword",
@@ -829,11 +830,17 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                     @"iad-org-name":        @"OrgName"
                 }
             };
-
-            self.preferenceHelper.appleSearchAdDetails = debugSearchAd;
         }
 
-        // if there's another async attribution check in flight, don't continue with init
+        if (attrDetails == nil) attrDetails = @{};
+        if (self.preferenceHelper.appleSearchAdDetails == nil)
+            self.preferenceHelper.appleSearchAdDetails = @{};
+        if (![self.preferenceHelper.appleSearchAdDetails isEqualToDictionary:attrDetails]) {
+            self.preferenceHelper.appleSearchAdDetails = attrDetails;
+            self.preferenceHelper.appleSearchAdNeedsSend = YES;
+        }
+
+        // If there's another async attribution check in flight, don't continue with init
         if (self.asyncRequestCount > 0) { return; }
 
         self.preferenceHelper.shouldWaitForInit = NO;
@@ -843,13 +850,14 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         });
     };
 
-    ((void (*)(id, SEL, void (^ __nullable)(NSDictionary *__nullable attrDetails, NSError * __nullable error)))[sharedClientInstance methodForSelector:requestAttribution])(sharedClientInstance, requestAttribution, completionBlock);
+    ((void (*)(id, SEL, void (^ __nullable)(NSDictionary *__nullable attrDetails, NSError * __nullable error)))
+        [sharedClientInstance methodForSelector:requestAttribution])
+            (sharedClientInstance, requestAttribution, completionBlock);
 
     return YES;
 }
 
-
-# pragma mark - Facebook App Link check
+#pragma mark - Facebook App Link Check
 
 - (void)registerFacebookDeepLinkingClass:(id)FBSDKAppLinkUtility {
     self.FBSDKAppLinkUtility = FBSDKAppLinkUtility;
