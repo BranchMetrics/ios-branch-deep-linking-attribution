@@ -413,7 +413,8 @@ exit:
     addNumber(screenHeight,         screen_height);
     addNumber(screenWidth,          screen_width);
     addBoolean(unidentifiedDevice,  unidentified_device);
-
+    addString(localIPAddress,       local_ip);
+    
     #include "BNCFieldDefines.h"
 
     if (!self.isAdTrackingEnabled)

@@ -149,6 +149,7 @@
     truth[@"screen_dpi"] = [NSNumber numberWithFloat:scale];
     truth[@"screen_height"] = [NSNumber numberWithFloat:bounds.size.height * scale];
     truth[@"screen_width"] = [NSNumber numberWithFloat:bounds.size.width * scale];
+    truth[@"local_ip"] = [BNCDeviceInfo getInstance].localIPAddress;
 
     // Check that *something* is in user agent:
     XCTAssertTrue(((NSString*)truth[@"user_agent"]).length > 0);
