@@ -8,14 +8,16 @@
 
 @import UIKit;
 @import SystemConfiguration;
-#include <sys/utsname.h>
+@import Darwin.POSIX.sys.utsname;
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BNCLog.h"
 
 @implementation BNCSystemObserver
 
-+ (NSString *)getUniqueHardwareId:(BOOL *)isReal isDebug:(BOOL)debug andType:(NSString **)type {
++ (NSString *)getUniqueHardwareId:(BOOL *)isReal
+                          isDebug:(BOOL)debug
+                          andType:(NSString *__autoreleasing*)type {
     NSString *uid = nil;
     *isReal = YES;
 
@@ -147,14 +149,14 @@
 
 + (NSNumber *)getScreenWidth {
     UIScreen *mainScreen = [UIScreen mainScreen];
-    float scaleFactor = mainScreen.scale;
+    CGFloat scaleFactor = mainScreen.scale;
     CGFloat width = mainScreen.bounds.size.width * scaleFactor;
     return [NSNumber numberWithInteger:(NSInteger)width];
 }
 
 + (NSNumber *)getScreenHeight {
     UIScreen *mainScreen = [UIScreen mainScreen];
-    float scaleFactor = mainScreen.scale;
+    CGFloat scaleFactor = mainScreen.scale;
     CGFloat height = mainScreen.bounds.size.height * scaleFactor;
     return [NSNumber numberWithInteger:(NSInteger)height];
 }

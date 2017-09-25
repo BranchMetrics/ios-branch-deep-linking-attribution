@@ -21,7 +21,7 @@
 @implementation BranchRegisterViewRequest
 
 - (id)initWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _params = params;
         if (!_params) {
             _params = [[NSDictionary alloc] init];
@@ -66,7 +66,7 @@
 #pragma mark - NSCoding methods
 
 - (id)initWithCoder:(NSCoder *)decoder {
-    if (self = [super initWithCoder:decoder]) {
+    if ((self = [super initWithCoder:decoder])) {
         _params = [decoder decodeObjectForKey:@"params"];
     }
     

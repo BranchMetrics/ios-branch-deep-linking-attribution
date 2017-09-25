@@ -8,7 +8,7 @@
 
 import Cartography
 import MBProgressHUD
-import TextAttributes
+// import TextAttributes
 import UIKit
 import WebKit
 
@@ -81,10 +81,20 @@ class ArticleView: UIView, WKNavigationDelegate {
     private func setupButton() {
         button.addTarget(self, action: #selector(share), for: .touchUpInside)
 
+        /*
         let attributes = TextAttributes()
             .font(name: Style.boldFontName, size: Style.titleFontSize)
             .foregroundColor(red: 0.133, green: 0.4, blue: 0.627, alpha: 1.0)
             .kern(2.4)
+        // */
+        guard let font = UIFont(name: Style.boldFontName, size: Style.titleFontSize) else { return }
+
+        let attributes: [NSAttributedStringKey: Any] = [
+            NSAttributedStringKey.font: font,
+            NSAttributedStringKey.kern: 2.6,
+            NSAttributedStringKey.foregroundColor: UIColor(red: 0.133, green: 0.4, blue: 0.627, alpha: 1.0)
+        ]
+
         let attributedTitle = NSAttributedString(string: "Share", attributes: attributes)
         button.setAttributedTitle(attributedTitle, for: .normal)
         button.layer.borderColor = UIColor(red: 0.133, green: 0.4, blue: 0.627, alpha: 1.0).cgColor

@@ -34,6 +34,11 @@ static inline void BNCSleepForTimeInterval(NSTimeInterval seconds) {
     } \
 }
 
+extern BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex);
+
+#define XCTAssertStringMatchesRegex(string, regex) \
+    XCTAssertTrue(BNCTestStringMatchesRegex(string, regex))
+
 @interface BNCTestCase : XCTestCase
 
 - (void)safelyFulfillExpectation:(XCTestExpectation *)expectation;

@@ -14,8 +14,8 @@
 
 
 #import "BNCDebug.h"
-#import <sys/sysctl.h>
-#import <objc/runtime.h>
+@import Darwin.sys.sysctl;
+@import ObjectiveC.runtime;
 
 
 BOOL BNCDebuggerIsAttached() {
@@ -60,7 +60,7 @@ NSString * _Nonnull BNCDebugStringFromObject(id _Nullable instance) {
 
     if (!instance) return @"Object is nil.\n";
 
-    const char* superclassname = "nil";
+    const char* superclassname = "<nil>";
     Class class = object_getClass(instance);
     Class superclass = class_getSuperclass(class);
     if (superclass) superclassname = class_getName(superclass);
@@ -69,11 +69,11 @@ NSString * _Nonnull BNCDebugStringFromObject(id _Nullable instance) {
     NSMutableString *result = [NSMutableString stringWithCapacity:512];
     if (class_isMetaClass(class)) {
         [result appendFormat:@"\nClass %p is class '%s' of class '%s':\n",
-            instance, class_getName(class), superclassname];
+            (void*)instance, class_getName(class), superclassname];
         class = instance;
     } else {
         [result appendFormat:@"\nInstance %p is of class '%s' of class '%s':\n",
-            instance, class_getName(class), superclassname];
+            (void*)instance, class_getName(class), superclassname];
     }
 
     //  Ivars --
@@ -94,7 +94,7 @@ NSString * _Nonnull BNCDebugStringFromObject(id _Nullable instance) {
 
     uint count = 0;
     Ivar *ivars = class_copyIvarList(class, &count);
-    for (int i = 0; i < count; ++i) {
+    for (uint i = 0; i < count; ++i) {
         const char* encoding = ivar_getTypeEncoding(ivars[i]);
         const char* ivarName = ivar_getName(ivars[i]);
         const void* ivarPtr = nil;

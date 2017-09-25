@@ -314,7 +314,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
  @param tags An array of tag strings to be associated with the link.
  @param alias The alias for a link.
- @params delegate A delegate allowing you to override any of the parameters provided here based on the user-selected channel
+ @param delegate A delegate allowing you to override any of the parameters provided here based on the user-selected channel
  @warning This can fail if the alias is already taken.
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags alias:(NSString *)alias delegate:(id <BranchActivityItemProviderDelegate>)delegate;

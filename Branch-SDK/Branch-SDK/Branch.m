@@ -69,7 +69,7 @@ NSString * const BNCPurchasedEvent = @"Purchased";
 NSString * const BNCShareInitiatedEvent = @"Share Started";
 NSString * const BNCShareCompletedEvent = @"Share Completed";
 
-NSString * const BNCLogLevelKey = @"io.branch.sdk.BNCLogLevel";
+static NSString * const BNCLogLevelKey = @"io.branch.sdk.BNCLogLevel";
 
 #pragma mark - Load Categories
 
@@ -617,10 +617,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     BOOL handled = NO;
     if (url && ![url isEqual:[NSNull null]]) {
 
+        NSString *urlScheme = [url scheme];
+
         // save the incoming url in the preferenceHelper in the externalIntentURI field
         if ([self.whiteListedSchemeList count]) {
             for (NSString *scheme in self.whiteListedSchemeList) {
-                if ([scheme isEqualToString:[url scheme]]) {
+                if (urlScheme && [scheme isEqualToString:urlScheme]) {
                     self.preferenceHelper.externalIntentURI = [url absoluteString];
                     break;
                 }

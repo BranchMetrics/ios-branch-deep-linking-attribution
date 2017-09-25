@@ -15,11 +15,11 @@
 
 #import "BNCTestCase.h"
 #import "BNCDeviceInfo.h"
-#import "NSString+Branch.h"
 #import "BNCLog.h"
 #import "BNCConfig.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
+
 
 @interface BNCDeviceInfoTest : BNCTestCase
 @end
@@ -27,19 +27,21 @@
 @implementation BNCDeviceInfoTest
 
 - (void)testGetDeviceInfo {
-/*
-@property (nonatomic, strong) NSString *hardwareId;
-@property (nonatomic, strong) NSString *hardwareIdType;
-@property (nonatomic) BOOL isRealHardwareId;
-@property (nonatomic, strong) NSString *vendorId;
-@property (nonatomic, strong) NSString *brandName;
-@property (nonatomic, strong) NSString *modelName;
-@property (nonatomic, strong) NSString *osName;
-@property (nonatomic, strong) NSString *osVersion;
-@property (nonatomic, strong) NSNumber *screenWidth;
-@property (nonatomic, strong) NSNumber *screenHeight;
-@property (nonatomic) BOOL isAdTrackingEnabled;
-*/
+    /*
+    These are the device info properties:
+
+    @property (nonatomic, strong) NSString *hardwareId;
+    @property (nonatomic, strong) NSString *hardwareIdType;
+    @property (nonatomic) BOOL isRealHardwareId;
+    @property (nonatomic, strong) NSString *vendorId;
+    @property (nonatomic, strong) NSString *brandName;
+    @property (nonatomic, strong) NSString *modelName;
+    @property (nonatomic, strong) NSString *osName;
+    @property (nonatomic, strong) NSString *osVersion;
+    @property (nonatomic, strong) NSNumber *screenWidth;
+    @property (nonatomic, strong) NSNumber *screenHeight;
+    @property (nonatomic) BOOL isAdTrackingEnabled;
+    */
     BNCDeviceInfo *device = [BNCDeviceInfo getInstance];
 
     #define maskedStringAssert(field, maskedString) { \
@@ -153,6 +155,12 @@
 
     NSDictionary *d = [[BNCDeviceInfo getInstance] v2dictionary];
     XCTAssertEqualObjects(truth, d);
+}
+
+- (void) testLocalIPAddress {
+    NSString *address = [BNCDeviceInfo getInstance].localIPAddress;
+    XCTAssertNotNil(address);
+    XCTAssertStringMatchesRegex(address, @"[0-9]*\\.[0-9]*\\.[0-9]*\\.[0-9]*");
 }
 
 @end

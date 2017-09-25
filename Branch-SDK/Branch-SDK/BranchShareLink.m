@@ -184,7 +184,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
                 setValue:self.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT]
                 forKey:@"subject"];
         }
-        @catch (NSException *exception) {
+        @catch (NSException*) {
             BNCLogWarning(@"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController.");
         }
     }
