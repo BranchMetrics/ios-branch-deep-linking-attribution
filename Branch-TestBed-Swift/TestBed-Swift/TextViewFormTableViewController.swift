@@ -15,7 +15,8 @@ class TextViewFormTableViewController: UITableViewController, UITextViewDelegate
     @IBOutlet weak var clearButton: UIButton!
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
-    var sender = ""
+    var sender: Any?
+    var senderString = ""
     var incumbantValue = ""
     var viewTitle = "Default Title"
     var header = "Default Header"

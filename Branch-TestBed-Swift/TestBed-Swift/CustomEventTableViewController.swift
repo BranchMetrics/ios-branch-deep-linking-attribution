@@ -1,5 +1,5 @@
 //
-//  ApplicationEventsTableViewController.swift
+//  CustomEventsTableViewController.swift
 //  TestBed-Swift
 //
 //  Created by David Westgate on 9/16/17.
@@ -20,16 +20,12 @@ class CustomEventTableViewController: UITableViewController {
         super.viewDidLoad()
 
         UITableViewCell.appearance().backgroundColor = UIColor.white
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        refreshControlValues()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     // MARK: - Table view data source
@@ -37,9 +33,9 @@ class CustomEventTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch((indexPath as NSIndexPath).section, (indexPath as NSIndexPath).row) {
         case (0,0) :
-            self.performSegue(withIdentifier: "CustomEventTableViewToTextViewFormNavigationBar", sender: "CustomEventName")
+            self.performSegue(withIdentifier: "TextViewForm", sender: "CustomEventName")
         case (0,1) :
-            self.performSegue(withIdentifier: "CustomEventTableViewToDictionaryTableView", sender: "CustomEventMetadata")
+            self.performSegue(withIdentifier: "Dictionary", sender: "CustomEventMetadata")
         default : break
         }
     }
@@ -48,21 +44,18 @@ class CustomEventTableViewController: UITableViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch sender as! String {
-        case "RewardsBucket":
-            let nc = segue.destination as! UINavigationController
-            let vc = nc.topViewController as! TextViewFormTableViewController
-            vc.sender = sender as! String
         case "CustomEventName":
             let nc = segue.destination as! UINavigationController
             let vc = nc.topViewController as! TextViewFormTableViewController
-            vc.sender = sender as! String
-            vc.viewTitle = "Custom Event"
+            vc.senderString = sender as! String
+            vc.viewTitle = "Application Event"
             vc.header = "Custom Event Name"
             vc.footer = "This is the name of the event that is referenced when creating rewards rules and webhooks."
             vc.keyboardType = UIKeyboardType.alphabet
             vc.incumbantValue = customEventNameTextField.text!
         case "CustomEventMetadata":
-            let vc = segue.destination as! DictionaryTableViewController
+            let nc = segue.destination as! UINavigationController
+            let vc = nc.topViewController as! DictionaryTableViewController
             customEventMetadata = CustomEventData.getCustomEventMetadata()
             vc.dictionary = customEventMetadata
             vc.viewTitle = "Custom Event Metadata"
@@ -79,8 +72,12 @@ class CustomEventTableViewController: UITableViewController {
         }
     }
     
-    @IBAction func unwindTextViewFormTableViewController(_ segue:UIStoryboardSegue) {
-        
+    @IBAction func unwindTextViewForm(_ segue:UIStoryboardSegue) {
+        if let vc = segue.source as? TextViewFormTableViewController {
+            let eventName = vc.textView.text ?? ""
+            customEventNameTextField.text = eventName
+            CustomEventData.setCustomEventName(eventName)
+        }
     }
     
     @IBAction func unwindByCancelling(_ segue:UIStoryboardSegue) { }
@@ -88,15 +85,12 @@ class CustomEventTableViewController: UITableViewController {
     
     @IBAction func unwindDictionaryTableViewController(_ segue:UIStoryboardSegue) {
         if let vc = segue.source as? DictionaryTableViewController {
-            
-            if vc.sender == "CustomEventMetadata" {
-                customEventMetadata = vc.dictionary
-                CustomEventData.setCustomEventMetadata(customEventMetadata)
-                if customEventMetadata.count > 0 {
-                    customEventMetadataTextView.text = customEventMetadata.description
-                } else {
-                    customEventMetadataTextView.text = ""
-                }
+            customEventMetadata = vc.dictionary
+            CustomEventData.setCustomEventMetadata(customEventMetadata)
+            if customEventMetadata.count > 0 {
+                customEventMetadataTextView.text = customEventMetadata.description
+            } else {
+                customEventMetadataTextView.text = ""
             }
         }
     }

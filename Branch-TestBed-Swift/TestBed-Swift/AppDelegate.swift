@@ -31,9 +31,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         activateAdobe()
         activateAmplitude()
         activateAppsflyer()
+        activateAppMetrica()
         activateGoogleAnalytics()
         activateMixpanel()
         activateTune()
+        activateAppboy(application: application, withLaunchOptions: launchOptions)
+        activateClearTap()
+        activateConvertro()
+        activateKochava()
+        activateLocalytics()
+        activatemParticle()
+        activateSegment()
+        activateSingular()
+        activateStitch()
         
         if let branch = Branch.getInstance(branchKey) {
             
@@ -74,7 +84,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
                     if clickedBranchLink {
                         
                         let nc = self.window!.rootViewController as! UINavigationController
-                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        let storyboard = UIStoryboard(name: "ContentView", bundle: nil)
                         let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
                         nc.pushViewController(contentViewController, animated: true)
                         
@@ -86,6 +96,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
                 } else {
                     print(String(format: "Branch TestBed: Finished init with params\n%@", paramsDictionary.description))
                 }
+                
+                // Adobe
+                if IntegratedSDKsData.activeAdobeEnabled()! {
+                    branch.setRequestMetadataKey("$adobe_visitor_id", value:ADBMobile.trackingIdentifier() as NSObject!)
+                }
+                
                 
                 // Amplitude
                 if IntegratedSDKsData.activeAmplitudeEnabled()! {
@@ -207,7 +223,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setActiveAdjustEnabled(false)
             return
         }
-        guard let key = IntegratedSDKsData.pendingAdjustKey() as String? else {
+        guard let key = IntegratedSDKsData.pendingAdjustAppToken() as String? else {
             IntegratedSDKsData.setPendingAdjustEnabled(false)
             return
         }
@@ -216,31 +232,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             return
         }
         
-        IntegratedSDKsData.setActiveAdjustKey(key)
+        IntegratedSDKsData.setActiveAdjustAppToken(key)
         IntegratedSDKsData.setActiveAdjustEnabled(true)
 
-        let adjustConfig = ADJConfig(appToken: key, environment: ADJEnvironmentSandbox)
+        let adjustConfig = ADJConfig(appToken: key, environment: ADJEnvironmentProduction)
 
-        // change the log level
         adjustConfig?.logLevel = ADJLogLevelVerbose
-
-        // Enable event buffering.
-        // adjustConfig.eventBufferingEnabled = true
-        // Set default tracker.
-        // adjustConfig.defaultTracker = "{TrackerToken}"
-        // Send in the background.
-        // adjustConfig.sendInBackground = true
-        // set an attribution delegate
         adjustConfig?.delegate = self
 
-        // Initialise the SDK.
         Adjust.appDidLaunch(adjustConfig!)
-
-        // Put the SDK in offline mode.
-        // Adjust.setOfflineMode(true);
-
-        // Disable the SDK
-        // Adjust.setEnabled(false);
     }
     
     func activateAdobe() {
@@ -248,16 +248,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setActiveAdobeEnabled(false)
             return
         }
-        guard let key = IntegratedSDKsData.pendingAdobeKey() as String? else {
-            IntegratedSDKsData.setPendingAdobeEnabled(false)
-            return
-        }
-        guard key.characters.count > 0 else {
-            IntegratedSDKsData.setPendingAdobeEnabled(false)
-            return
-        }
-        IntegratedSDKsData.setActiveAdobeKey(key)
         IntegratedSDKsData.setActiveAdobeEnabled(true)
+        
+        ADBMobile.setDebugLogging(true)
+        ADBMobile.collectLifecycleData()
     }
     
     func activateAmplitude() {
@@ -377,5 +371,182 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         Tune.setDebugMode(true)
     }
     
+    func activateAppboy(application: UIApplication, withLaunchOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
+        guard IntegratedSDKsData.pendingAppboyEnabled()! else {
+            IntegratedSDKsData.setActiveAppboyEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingAppboyAPIKey() as String? else {
+            IntegratedSDKsData.setPendingAppboyEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingAppboyEnabled(false)
+            return
+        }
+        IntegratedSDKsData.setActiveAppboyAPIKey(key)
+        IntegratedSDKsData.setActiveAppboyEnabled(true)
+        
+        // TODO: Delegate method required for IDFA access?
+        // see: https://www.appboy.com/documentation/iOS/#optional-idfa-collection
+        // Appboy.start(withApiKey: key, in: application, withLaunchOptions: launchOptions, withAppboyOptions: appboyOptions)
+        Appboy.start(withApiKey: key, in: application, withLaunchOptions: launchOptions)
+    }
+    
+    func activateAppMetrica() {
+        guard IntegratedSDKsData.pendingAppMetricaEnabled()! else {
+            IntegratedSDKsData.setActiveAppMetricaEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingAppMetricaAPIKey() as String? else {
+            IntegratedSDKsData.setPendingAppMetricaEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingAppMetricaEnabled(false)
+            return
+        }
+        IntegratedSDKsData.setActiveAppMetricaAPIKey(key)
+        IntegratedSDKsData.setActiveAppMetricaEnabled(true)
+        
+        YMMYandexMetrica.activate(withApiKey: key)
+        YMMYandexMetrica.setLoggingEnabled(true)
+    }
+    
+    func activateClearTap() {
+        guard IntegratedSDKsData.pendingClearTapEnabled()! else {
+            IntegratedSDKsData.setActiveClearTapEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingClearTapAPIKey() as String? else {
+            IntegratedSDKsData.setPendingClearTapEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingClearTapEnabled(false)
+            return
+        }
+        IntegratedSDKsData.setActiveClearTapAPIKey(key)
+        IntegratedSDKsData.setActiveClearTapEnabled(true)
+    }
+    
+    func activateConvertro() {
+        guard IntegratedSDKsData.pendingConvertroEnabled()! else {
+            IntegratedSDKsData.setActiveConvertroEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingConvertroAPIKey() as String? else {
+            IntegratedSDKsData.setPendingConvertroEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingConvertroEnabled(false)
+            return
+        }
+        IntegratedSDKsData.setActiveConvertroAPIKey(key)
+        IntegratedSDKsData.setActiveConvertroEnabled(true)
+    }
+    
+    func activateKochava() {
+        guard IntegratedSDKsData.pendingKochavaEnabled()! else {
+            IntegratedSDKsData.setActiveKochavaEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingKochavaAPIKey() as String? else {
+            IntegratedSDKsData.setPendingKochavaEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingKochavaEnabled(false)
+            return
+        }
+        IntegratedSDKsData.setActiveKochavaAPIKey(key)
+        IntegratedSDKsData.setActiveKochavaEnabled(true)
+    }
+    
+    func activateLocalytics() {
+        guard IntegratedSDKsData.pendingLocalyticsEnabled()! else {
+            IntegratedSDKsData.setActiveLocalyticsEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingLocalyticsAPIKey() as String? else {
+            IntegratedSDKsData.setPendingLocalyticsEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingLocalyticsEnabled(false)
+            return
+        }
+        IntegratedSDKsData.setActiveLocalyticsAPIKey(key)
+        IntegratedSDKsData.setActiveLocalyticsEnabled(true)
+    }
+    
+    func activatemParticle() {
+        guard IntegratedSDKsData.pendingmParticleEnabled()! else {
+            IntegratedSDKsData.setActivemParticleEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingmParticleAPIKey() as String? else {
+            IntegratedSDKsData.setPendingmParticleEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingmParticleEnabled(false)
+            return
+        }
+        IntegratedSDKsData.setActivemParticleAPIKey(key)
+        IntegratedSDKsData.setActivemParticleEnabled(true)
+    }
+    
+    func activateSegment() {
+        guard IntegratedSDKsData.pendingSegmentEnabled()! else {
+            IntegratedSDKsData.setActiveSegmentEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingSegmentAPIKey() as String? else {
+            IntegratedSDKsData.setPendingSegmentEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingSegmentEnabled(false)
+            return
+        }
+        IntegratedSDKsData.setActiveSegmentAPIKey(key)
+        IntegratedSDKsData.setActiveSegmentEnabled(true)
+    }
+    
+    func activateSingular() {
+        guard IntegratedSDKsData.pendingSingularEnabled()! else {
+            IntegratedSDKsData.setActiveSingularEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingSingularAPIKey() as String? else {
+            IntegratedSDKsData.setPendingSingularEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingSingularEnabled(false)
+            return
+        }
+        IntegratedSDKsData.setActiveSingularAPIKey(key)
+        IntegratedSDKsData.setActiveSingularEnabled(true)
+    }
+    
+    func activateStitch() {
+        guard IntegratedSDKsData.pendingStitchEnabled()! else {
+            IntegratedSDKsData.setActiveStitchEnabled(false)
+            return
+        }
+        guard let key = IntegratedSDKsData.pendingStitchAPIKey() as String? else {
+            IntegratedSDKsData.setPendingStitchEnabled(false)
+            return
+        }
+        guard key.characters.count > 0 else {
+            IntegratedSDKsData.setPendingStitchEnabled(false)
+            return
+        }
+        IntegratedSDKsData.setActiveStitchAPIKey(key)
+        IntegratedSDKsData.setActiveStitchEnabled(true)
+    }
+    
 }
-

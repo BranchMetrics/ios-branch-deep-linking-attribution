@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13189.4" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13189.4" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Xur-Vh-bZT">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -10,10 +10,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--UniversalObjectPropertiesTableView-->
+        <!--Branch Universal Object Properties-->
         <scene sceneID="MTM-7f-tOE">
             <objects>
-                <tableViewController storyboardIdentifier="BranchUniversalObjectProperties" useStoryboardIdentifierAsRestorationIdentifier="YES" id="dok-LR-mvX" userLabel="UniversalObjectPropertiesTableView" customClass="BranchUniversalObjectPropertiesTableViewController" customModule="TestBed_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="BranchUniversalObjectProperties" useStoryboardIdentifierAsRestorationIdentifier="YES" id="dok-LR-mvX" userLabel="Branch Universal Object Properties" customClass="BranchUniversalObjectPropertiesTableViewController" customModule="TestBed_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="top" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="7fH-Jz-bRg">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -727,40 +727,48 @@
                         <outlet property="twitterPlayerWidthTextField" destination="fMv-V0-cJ3" id="X0o-M3-09W"/>
                         <outlet property="twitterSiteTextField" destination="gZy-37-Vgn" id="lf6-tM-sAY"/>
                         <outlet property="twitterTitleTextField" destination="4Ub-p3-iKJ" id="q7p-bP-lNs"/>
-                        <segue destination="bRv-aq-ddR" kind="show" identifier="UniversalObjectPropertiesTableViewToDictionaryTableView" id="wth-hd-3D7"/>
-                        <segue destination="9cY-W1-idP" kind="show" identifier="UniversalObjectPropertiesTableViewToArrayTableView" id="X7W-cf-8rz"/>
+                        <segue destination="bRv-aq-ddR" kind="show" identifier="Dictionary" id="wth-hd-3D7"/>
+                        <segue destination="9cY-W1-idP" kind="show" identifier="Array" id="X7W-cf-8rz"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mJ5-Ln-vMD" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="3ix-6a-5ra" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3471" y="1042"/>
+            <point key="canvasLocation" x="3808.8000000000002" y="1041.2293853073463"/>
         </scene>
-        <!--ArrayTableViewController-->
+        <!--Array-->
         <scene sceneID="w3R-5M-dX3">
             <objects>
-                <viewControllerPlaceholder storyboardIdentifier="ArrayTableViewController" storyboardName="ArrayTableView" referencedIdentifier="ArrayTableViewController" id="9cY-W1-idP" sceneMemberID="viewController"/>
+                <viewControllerPlaceholder storyboardIdentifier="Array" storyboardName="ArrayTableView" id="9cY-W1-idP" userLabel="Array" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="l3w-PA-uof" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1838" y="1993"/>
+            <point key="canvasLocation" x="4442" y="940"/>
         </scene>
-        <!--KeyValuePair-->
-        <scene sceneID="p8s-Zb-Ev0">
-            <objects>
-                <viewControllerPlaceholder storyboardName="KeyValuePair" id="fRL-m1-jWv" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="Pch-V8-DPt"/>
-                </viewControllerPlaceholder>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2Zf-s8-eao" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="6060" y="705"/>
-        </scene>
-        <!--UITableViewController-f9P-iX-WYi-->
+        <!--Dictionary-->
         <scene sceneID="Acf-VO-TPC">
             <objects>
-                <viewControllerPlaceholder storyboardIdentifier="UITableViewController-f9P-iX-WYi" storyboardName="DictionaryTableView" referencedIdentifier="UITableViewController-f9P-iX-WYi" id="bRv-aq-ddR" sceneMemberID="viewController"/>
+                <viewControllerPlaceholder storyboardIdentifier="Dictionary" storyboardName="DictionaryTableView" id="bRv-aq-ddR" userLabel="Dictionary" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Gn-wf-JOz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4936" y="685"/>
+            <point key="canvasLocation" x="4442" y="1102"/>
+        </scene>
+        <!--UniversalObjectNavigationController-->
+        <scene sceneID="fbT-4p-1NF">
+            <objects>
+                <navigationController storyboardIdentifier="UniversalObjectNavigationController" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Xur-Vh-bZT" userLabel="UniversalObjectNavigationController" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="m4J-es-kI9">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="dok-LR-mvX" kind="relationship" relationship="rootViewController" id="GQC-ij-iaa"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rIM-Jf-bhZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2998" y="1041"/>
         </scene>
     </scenes>
 </document>

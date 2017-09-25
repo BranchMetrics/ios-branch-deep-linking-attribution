@@ -24,7 +24,6 @@ class StartupOptionsTableViewController: UITableViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     // MARK: - Table view data source
@@ -32,19 +31,19 @@ class StartupOptionsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch((indexPath as NSIndexPath).section, (indexPath as NSIndexPath).row) {
         case (1,0) :
-            self.performSegue(withIdentifier: "StartupOptionsTableViewToTextViewFormTableView", sender: "pendingBranchKey")
+            self.performSegue(withIdentifier: "TextViewForm", sender: "pendingBranchKey")
         default : break
         }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        if let _ = segue.source as? TextViewFormTableViewController {
+        if segue.identifier == "TextViewForm" {
             switch sender as! String {
             case "pendingBranchKey":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TextViewFormTableViewController
-                vc.sender = sender as! String
+                vc.senderString = sender as! String
                 vc.viewTitle = "Branch Key"
                 vc.header = "Branch Key"
                 vc.footer = "This Branch key will be used the next time the application is closed (not merely backgrounded) and re-opened."
@@ -56,7 +55,7 @@ class StartupOptionsTableViewController: UITableViewController {
         }
     }
     
-    @IBAction func unwindTextViewFormTableViewController(_ segue:UIStoryboardSegue) {
+    @IBAction func unwindTextViewForm(_ segue:UIStoryboardSegue) {
         
         if let vc = segue.source as? TextViewFormTableViewController {
             if let pendingBranchKey = vc.textView.text {

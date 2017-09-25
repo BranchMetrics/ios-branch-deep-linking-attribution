@@ -70,6 +70,12 @@
 		6318D8141F29550D0050D256 /* ProductArrayTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6318D8111F29550D0050D256 /* ProductArrayTableViewCell.swift */; };
 		6318D8151F29550D0050D256 /* ProductArrayTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6318D8121F29550D0050D256 /* ProductArrayTableViewController.swift */; };
 		6318D8161F29550D0050D256 /* ProductTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6318D8131F29550D0050D256 /* ProductTableViewController.swift */; };
+		632A59A71F7813BB00E27ADD /* TextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632A59A61F7813BB00E27ADD /* TextFieldCell.swift */; };
+		632A59A91F781E3000E27ADD /* ToggleSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632A59A81F781E3000E27ADD /* ToggleSwitchCell.swift */; };
+		6339D5CE1F7450A700C6C562 /* ADBMobileConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 6339D5C91F74506D00C6C562 /* ADBMobileConfig.json */; };
+		6339D5D01F7451A200C6C562 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6339D5CF1F7451A200C6C562 /* SystemConfiguration.framework */; };
+		6339D5D21F7451B300C6C562 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6339D5D11F7451B300C6C562 /* libsqlite3.0.tbd */; };
+		6339D5D31F74528000C6C562 /* AdobeMobileLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6339D5CA1F74506D00C6C562 /* AdobeMobileLibrary.a */; };
 		633EEA6A1CF88817000AE1BC /* TestBed-Swift.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 633EEA691CF88817000AE1BC /* TestBed-Swift.entitlements */; };
 		633EEA6C1CF942C4000AE1BC /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633EEA6B1CF942C4000AE1BC /* NavigationController.swift */; };
 		6340D2471D983B5C00B7F35C /* UIImageView+loadImageFromUrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6340D2461D983B5C00B7F35C /* UIImageView+loadImageFromUrl.swift */; };
@@ -78,8 +84,9 @@
 		636A78C11F6CC86500CB7B37 /* CreditHistoryTableView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 636A78C01F6CC86500CB7B37 /* CreditHistoryTableView.storyboard */; };
 		636A78C31F6CC8D800CB7B37 /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 636A78C21F6CC8D800CB7B37 /* Home.storyboard */; };
 		636DB7911D656D78000EBB5E /* KeyValuePairTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636DB7901D656D78000EBB5E /* KeyValuePairTableViewController.swift */; };
+		636E28BD1F760E8000DBC70E /* TableFormView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 636E28BC1F760E8000DBC70E /* TableFormView.storyboard */; };
 		637E569D1F6D98DC0026AB55 /* CustomEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637E569C1F6D98DC0026AB55 /* CustomEventTableViewController.swift */; };
-		637E569F1F6D9A750026AB55 /* CommerceEventsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637E569E1F6D9A750026AB55 /* CommerceEventsTableViewController.swift */; };
+		637E569F1F6D9A750026AB55 /* CommerceEventTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637E569E1F6D9A750026AB55 /* CommerceEventTableViewController.swift */; };
 		637E56A11F6D9A8D0026AB55 /* ReferralRewardsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637E56A01F6D9A8D0026AB55 /* ReferralRewardsTableViewController.swift */; };
 		637E56A31F6DA7350026AB55 /* StartupOptionsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637E56A21F6DA7350026AB55 /* StartupOptionsTableViewController.swift */; };
 		637E56A51F6DA7790026AB55 /* IntegratedSDKsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637E56A41F6DA7790026AB55 /* IntegratedSDKsTableViewController.swift */; };
@@ -95,6 +102,9 @@
 		639C0EFD1F70801600070C48 /* DictionaryTableView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 639C0EFC1F70801600070C48 /* DictionaryTableView.storyboard */; };
 		639C0EFF1F70AC4F00070C48 /* IntegratedSDKs.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 639C0EFE1F70AC4F00070C48 /* IntegratedSDKs.storyboard */; };
 		639D53CB1F7014E700C90435 /* IntegratedSDKsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639D53CA1F7014E700C90435 /* IntegratedSDKsData.swift */; };
+		63A181451F736F6600021C90 /* TextFieldForm.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63A181441F736F6600021C90 /* TextFieldForm.storyboard */; };
+		63A181471F73701800021C90 /* ReferralRewards.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63A181461F73701800021C90 /* ReferralRewards.storyboard */; };
+		63A849381F76BAFC007705C8 /* TableFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A849371F76BAFB007705C8 /* TableFormViewController.swift */; };
 		63AAF0C21CF758AF00CA98BD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0C11CF758AF00CA98BD /* AppDelegate.swift */; };
 		63AAF0C41CF758AF00CA98BD /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0C31CF758AF00CA98BD /* HomeViewController.swift */; };
 		63AAF0C91CF758AF00CA98BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63AAF0C81CF758AF00CA98BD /* Assets.xcassets */; };
@@ -104,9 +114,11 @@
 		63B5629F1F6F1C2C00F64D36 /* KeyValuePair.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63B5629E1F6F1C2C00F64D36 /* KeyValuePair.storyboard */; };
 		63BCC3591D5AC8D600CE0EB1 /* cancel-28.png in Resources */ = {isa = PBXBuildFile; fileRef = 63BCC3581D5AC8D600CE0EB1 /* cancel-28.png */; };
 		63BCC35B1D5AC8DF00CE0EB1 /* cancel-56.png in Resources */ = {isa = PBXBuildFile; fileRef = 63BCC35A1D5AC8DF00CE0EB1 /* cancel-56.png */; };
-		63C3AD261F6F471B00C2C523 /* CommerceEventsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C3AD251F6F471B00C2C523 /* CommerceEventsData.swift */; };
+		63C3AD261F6F471B00C2C523 /* CommerceEventData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C3AD251F6F471B00C2C523 /* CommerceEventData.swift */; };
+		63C46F8A1F7331D500C9F37C /* StartupOptions.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63C46F891F7331D500C9F37C /* StartupOptions.storyboard */; };
+		63C46F8C1F73326700C9F37C /* CustomEvent.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63C46F8B1F73326700C9F37C /* CustomEvent.storyboard */; };
 		63CB894C1F6B3DC5008E59A7 /* ArrayTableView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63CB894B1F6B3DC5008E59A7 /* ArrayTableView.storyboard */; };
-		63CB894E1F6B6CCD008E59A7 /* CommerceEvents.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63CB894D1F6B6CCC008E59A7 /* CommerceEvents.storyboard */; };
+		63CB894E1F6B6CCD008E59A7 /* CommerceEvent.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63CB894D1F6B6CCC008E59A7 /* CommerceEvent.storyboard */; };
 		63CB89501F6B72FF008E59A7 /* UniversalObject.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63CB894F1F6B72FF008E59A7 /* UniversalObject.storyboard */; };
 		63CB89521F6C4B3F008E59A7 /* LinkProperties.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63CB89511F6C4B3F008E59A7 /* LinkProperties.storyboard */; };
 		63CB89541F6C8BF3008E59A7 /* TextViewForm.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63CB89531F6C8BF3008E59A7 /* TextViewForm.storyboard */; };
@@ -239,6 +251,16 @@
 		6318D8111F29550D0050D256 /* ProductArrayTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductArrayTableViewCell.swift; sourceTree = "<group>"; };
 		6318D8121F29550D0050D256 /* ProductArrayTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductArrayTableViewController.swift; sourceTree = "<group>"; };
 		6318D8131F29550D0050D256 /* ProductTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductTableViewController.swift; sourceTree = "<group>"; };
+		632A59A61F7813BB00E27ADD /* TextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldCell.swift; sourceTree = "<group>"; };
+		632A59A81F781E3000E27ADD /* ToggleSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleSwitchCell.swift; sourceTree = "<group>"; };
+		6339D5C81F74506D00C6C562 /* ADBMobile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ADBMobile.h; sourceTree = "<group>"; };
+		6339D5C91F74506D00C6C562 /* ADBMobileConfig.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ADBMobileConfig.json; sourceTree = "<group>"; };
+		6339D5CA1F74506D00C6C562 /* AdobeMobileLibrary.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = AdobeMobileLibrary.a; sourceTree = "<group>"; };
+		6339D5CB1F74506D00C6C562 /* AdobeMobileLibrary_Extension.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = AdobeMobileLibrary_Extension.a; sourceTree = "<group>"; };
+		6339D5CC1F74506D00C6C562 /* AdobeMobileLibrary_TV.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = AdobeMobileLibrary_TV.a; sourceTree = "<group>"; };
+		6339D5CD1F74506D00C6C562 /* AdobeMobileLibrary_Watch.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = AdobeMobileLibrary_Watch.a; sourceTree = "<group>"; };
+		6339D5CF1F7451A200C6C562 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		6339D5D11F7451B300C6C562 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		633EEA691CF88817000AE1BC /* TestBed-Swift.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "TestBed-Swift.entitlements"; sourceTree = "<group>"; };
 		633EEA6B1CF942C4000AE1BC /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		6340D2461D983B5C00B7F35C /* UIImageView+loadImageFromUrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+loadImageFromUrl.swift"; sourceTree = "<group>"; };
@@ -247,8 +269,9 @@
 		636A78C01F6CC86500CB7B37 /* CreditHistoryTableView.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = CreditHistoryTableView.storyboard; sourceTree = "<group>"; };
 		636A78C21F6CC8D800CB7B37 /* Home.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Home.storyboard; sourceTree = "<group>"; };
 		636DB7901D656D78000EBB5E /* KeyValuePairTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValuePairTableViewController.swift; sourceTree = "<group>"; };
+		636E28BC1F760E8000DBC70E /* TableFormView.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TableFormView.storyboard; sourceTree = "<group>"; };
 		637E569C1F6D98DC0026AB55 /* CustomEventTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEventTableViewController.swift; sourceTree = "<group>"; };
-		637E569E1F6D9A750026AB55 /* CommerceEventsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceEventsTableViewController.swift; sourceTree = "<group>"; };
+		637E569E1F6D9A750026AB55 /* CommerceEventTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceEventTableViewController.swift; sourceTree = "<group>"; };
 		637E56A01F6D9A8D0026AB55 /* ReferralRewardsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferralRewardsTableViewController.swift; sourceTree = "<group>"; };
 		637E56A21F6DA7350026AB55 /* StartupOptionsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartupOptionsTableViewController.swift; sourceTree = "<group>"; };
 		637E56A41F6DA7790026AB55 /* IntegratedSDKsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegratedSDKsTableViewController.swift; sourceTree = "<group>"; };
@@ -264,6 +287,9 @@
 		639C0EFC1F70801600070C48 /* DictionaryTableView.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = DictionaryTableView.storyboard; sourceTree = "<group>"; };
 		639C0EFE1F70AC4F00070C48 /* IntegratedSDKs.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = IntegratedSDKs.storyboard; sourceTree = "<group>"; };
 		639D53CA1F7014E700C90435 /* IntegratedSDKsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegratedSDKsData.swift; sourceTree = "<group>"; };
+		63A181441F736F6600021C90 /* TextFieldForm.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = TextFieldForm.storyboard; sourceTree = "<group>"; };
+		63A181461F73701800021C90 /* ReferralRewards.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ReferralRewards.storyboard; sourceTree = "<group>"; };
+		63A849371F76BAFB007705C8 /* TableFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableFormViewController.swift; sourceTree = "<group>"; };
 		63AAF0BE1CF758AF00CA98BD /* TestBed-Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TestBed-Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		63AAF0C11CF758AF00CA98BD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		63AAF0C31CF758AF00CA98BD /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -277,9 +303,11 @@
 		63B5629E1F6F1C2C00F64D36 /* KeyValuePair.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = KeyValuePair.storyboard; sourceTree = "<group>"; };
 		63BCC3581D5AC8D600CE0EB1 /* cancel-28.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cancel-28.png"; sourceTree = "<group>"; };
 		63BCC35A1D5AC8DF00CE0EB1 /* cancel-56.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cancel-56.png"; sourceTree = "<group>"; };
-		63C3AD251F6F471B00C2C523 /* CommerceEventsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceEventsData.swift; sourceTree = "<group>"; };
+		63C3AD251F6F471B00C2C523 /* CommerceEventData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceEventData.swift; sourceTree = "<group>"; };
+		63C46F891F7331D500C9F37C /* StartupOptions.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = StartupOptions.storyboard; sourceTree = "<group>"; };
+		63C46F8B1F73326700C9F37C /* CustomEvent.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = CustomEvent.storyboard; sourceTree = "<group>"; };
 		63CB894B1F6B3DC5008E59A7 /* ArrayTableView.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ArrayTableView.storyboard; sourceTree = "<group>"; };
-		63CB894D1F6B6CCC008E59A7 /* CommerceEvents.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = CommerceEvents.storyboard; sourceTree = "<group>"; };
+		63CB894D1F6B6CCC008E59A7 /* CommerceEvent.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = CommerceEvent.storyboard; sourceTree = "<group>"; };
 		63CB894F1F6B72FF008E59A7 /* UniversalObject.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = UniversalObject.storyboard; sourceTree = "<group>"; };
 		63CB89511F6C4B3F008E59A7 /* LinkProperties.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LinkProperties.storyboard; sourceTree = "<group>"; };
 		63CB89531F6C8BF3008E59A7 /* TextViewForm.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = TextViewForm.storyboard; sourceTree = "<group>"; };
@@ -302,10 +330,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6339D5D21F7451B300C6C562 /* libsqlite3.0.tbd in Frameworks */,
+				6339D5D01F7451A200C6C562 /* SystemConfiguration.framework in Frameworks */,
 				4DF867F41E6DDC4E00BE4C5F /* AdSupport.framework in Frameworks */,
 				4D3A944B1E64C777007127B3 /* iAd.framework in Frameworks */,
 				63ECFAFC1D8F9624007F50AA /* SafariServices.framework in Frameworks */,
 				4302CC95F752F85AA8E5501A /* libPods-TestBed-Swift.a in Frameworks */,
+				6339D5D31F74528000C6C562 /* AdobeMobileLibrary.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,6 +398,8 @@
 		44A650CEF93FEF2A6077B064 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6339D5D11F7451B300C6C562 /* libsqlite3.0.tbd */,
+				6339D5CF1F7451A200C6C562 /* SystemConfiguration.framework */,
 				4DF867F31E6DDC4E00BE4C5F /* AdSupport.framework */,
 				4D3A944A1E64C777007127B3 /* iAd.framework */,
 				63ECFAFB1D8F9624007F50AA /* SafariServices.framework */,
@@ -479,10 +512,9 @@
 		6306FFF21D6BEFB20031D2E3 /* Custom Events */ = {
 			isa = PBXGroup;
 			children = (
-				637E569C1F6D98DC0026AB55 /* CustomEventTableViewController.swift */,
-				63865EB01D60E7B6006071CE /* DictionaryTableViewController.swift */,
-				63F65BF91D654EF30055A2F6 /* DictionaryTableViewCell.swift */,
 				6390780F1F6F37C5001AE168 /* CustomEventData.swift */,
+				63C46F8B1F73326700C9F37C /* CustomEvent.storyboard */,
+				637E569C1F6D98DC0026AB55 /* CustomEventTableViewController.swift */,
 			);
 			name = "Custom Events";
 			sourceTree = "<group>";
@@ -490,9 +522,9 @@
 		6306FFF31D6BEFD60031D2E3 /* Link Properties */ = {
 			isa = PBXGroup;
 			children = (
-				63F8BB1F1D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift */,
-				63CB89511F6C4B3F008E59A7 /* LinkProperties.storyboard */,
 				639078071F6F349C001AE168 /* LinkPropertiesData.swift */,
+				63CB89511F6C4B3F008E59A7 /* LinkProperties.storyboard */,
+				63F8BB1F1D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift */,
 			);
 			name = "Link Properties";
 			sourceTree = "<group>";
@@ -506,35 +538,111 @@
 			name = WaitingView;
 			sourceTree = "<group>";
 		};
-		6318D80E1F2954DD0050D256 /* Commerce Events */ = {
+		6318D80E1F2954DD0050D256 /* Commerce Event */ = {
 			isa = PBXGroup;
 			children = (
-				637E569E1F6D9A750026AB55 /* CommerceEventsTableViewController.swift */,
-				6318D8111F29550D0050D256 /* ProductArrayTableViewCell.swift */,
-				6318D8121F29550D0050D256 /* ProductArrayTableViewController.swift */,
-				6318D8131F29550D0050D256 /* ProductTableViewController.swift */,
+				63C3AD251F6F471B00C2C523 /* CommerceEventData.swift */,
+				63CB894D1F6B6CCC008E59A7 /* CommerceEvent.storyboard */,
+				637E569E1F6D9A750026AB55 /* CommerceEventTableViewController.swift */,
 				6318D80F1F2954ED0050D256 /* CommerceEventDetailsTableViewController.swift */,
-				63CB894D1F6B6CCC008E59A7 /* CommerceEvents.storyboard */,
-				63C3AD251F6F471B00C2C523 /* CommerceEventsData.swift */,
+				63A181491F73704100021C90 /* Products */,
 			);
-			name = "Commerce Events";
+			name = "Commerce Event";
+			sourceTree = "<group>";
+		};
+		6339D5C71F74506D00C6C562 /* AdobeMobileLibrary */ = {
+			isa = PBXGroup;
+			children = (
+				6339D5C81F74506D00C6C562 /* ADBMobile.h */,
+				6339D5C91F74506D00C6C562 /* ADBMobileConfig.json */,
+				6339D5CA1F74506D00C6C562 /* AdobeMobileLibrary.a */,
+				6339D5CB1F74506D00C6C562 /* AdobeMobileLibrary_Extension.a */,
+				6339D5CC1F74506D00C6C562 /* AdobeMobileLibrary_TV.a */,
+				6339D5CD1F74506D00C6C562 /* AdobeMobileLibrary_Watch.a */,
+			);
+			path = AdobeMobileLibrary;
+			sourceTree = "<group>";
+		};
+		636E28BB1F760E0F00DBC70E /* Table Form View */ = {
+			isa = PBXGroup;
+			children = (
+				63D3A03F1F795F7300D993BB /* New Group2 */,
+				6371D3081F795F3B00580E71 /* New Group1 */,
+				6371D3071F795F1E00580E71 /* New Group */,
+				636E28BC1F760E8000DBC70E /* TableFormView.storyboard */,
+				63A849371F76BAFB007705C8 /* TableFormViewController.swift */,
+				63D3A0411F795F9400D993BB /* Cells */,
+			);
+			name = "Table Form View";
+			sourceTree = "<group>";
+		};
+		6371D3071F795F1E00580E71 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "New Group";
+			sourceTree = "<group>";
+		};
+		6371D3081F795F3B00580E71 /* New Group1 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "New Group1";
 			sourceTree = "<group>";
 		};
 		637E56A81F6DB32C0026AB55 /* Referral Rewards */ = {
 			isa = PBXGroup;
 			children = (
-				63AAF0FC1CF7F4AD00CA98BD /* CreditHistoryViewController.swift */,
-				636A78C01F6CC86500CB7B37 /* CreditHistoryTableView.storyboard */,
-				637E56A01F6D9A8D0026AB55 /* ReferralRewardsTableViewController.swift */,
+				63A181481F73702C00021C90 /* Credit History */,
 				6390780D1F6F3736001AE168 /* ReferralRewardsData.swift */,
+				63A181461F73701800021C90 /* ReferralRewards.storyboard */,
+				637E56A01F6D9A8D0026AB55 /* ReferralRewardsTableViewController.swift */,
 			);
 			name = "Referral Rewards";
+			sourceTree = "<group>";
+		};
+		63A181481F73702C00021C90 /* Credit History */ = {
+			isa = PBXGroup;
+			children = (
+				636A78C01F6CC86500CB7B37 /* CreditHistoryTableView.storyboard */,
+				63AAF0FC1CF7F4AD00CA98BD /* CreditHistoryViewController.swift */,
+			);
+			name = "Credit History";
+			sourceTree = "<group>";
+		};
+		63A181491F73704100021C90 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6318D8121F29550D0050D256 /* ProductArrayTableViewController.swift */,
+				6318D8111F29550D0050D256 /* ProductArrayTableViewCell.swift */,
+				6318D8131F29550D0050D256 /* ProductTableViewController.swift */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		63A1814A1F73706400021C90 /* Key-Value Pair Form */ = {
+			isa = PBXGroup;
+			children = (
+				63B5629E1F6F1C2C00F64D36 /* KeyValuePair.storyboard */,
+				636DB7901D656D78000EBB5E /* KeyValuePairTableViewController.swift */,
+			);
+			name = "Key-Value Pair Form";
+			sourceTree = "<group>";
+		};
+		63A1814B1F7370AD00021C90 /* TextView Form */ = {
+			isa = PBXGroup;
+			children = (
+				63CB89531F6C8BF3008E59A7 /* TextViewForm.storyboard */,
+				63865EAE1D601123006071CE /* TextViewFormTableViewController.swift */,
+			);
+			name = "TextView Form";
 			sourceTree = "<group>";
 		};
 		63AAF0B51CF758AF00CA98BD = {
 			isa = PBXGroup;
 			children = (
 				4D4F27DC1E400F9800282A34 /* Branch-SDK */,
+				6339D5C71F74506D00C6C562 /* AdobeMobileLibrary */,
 				63AAF0C01CF758AF00CA98BD /* TestBed-Swift */,
 				63AAF0BF1CF758AF00CA98BD /* Products */,
 				44A650CEF93FEF2A6077B064 /* Frameworks */,
@@ -553,17 +661,22 @@
 		63AAF0C01CF758AF00CA98BD /* TestBed-Swift */ = {
 			isa = PBXGroup;
 			children = (
+				63D3A0401F795F7C00D993BB /* New Group */,
+				636E28BB1F760E0F00DBC70E /* Table Form View */,
 				63B5629D1F6F1B2400F64D36 /* Home */,
 				6306FFF31D6BEFD60031D2E3 /* Link Properties */,
 				63B562991F6F0C2500F64D36 /* Branch Universal Objects */,
 				6306FFF21D6BEFB20031D2E3 /* Custom Events */,
-				6318D80E1F2954DD0050D256 /* Commerce Events */,
+				6318D80E1F2954DD0050D256 /* Commerce Event */,
 				637E56A81F6DB32C0026AB55 /* Referral Rewards */,
 				63B5629C1F6F0DAD00F64D36 /* Content View */,
 				63B5629A1F6F0C9600F64D36 /* Startup Options */,
 				63B5629B1F6F0CB600F64D36 /* Integrated SDKs */,
-				63B562981F6F0B7600F64D36 /* Standard Form Views */,
-				63B562971F6F0AFF00F64D36 /* Standard Array TableView */,
+				63B562971F6F0AFF00F64D36 /* Array TableView */,
+				63C46F8D1F734F9100C9F37C /* Dictionary TableView */,
+				63A1814A1F73706400021C90 /* Key-Value Pair Form */,
+				63B562981F6F0B7600F64D36 /* TextField Form */,
+				63A1814B1F7370AD00021C90 /* TextView Form */,
 				6318D8071F2953EB0050D256 /* WaitingView */,
 				63BCC3571D5AC8C700CE0EB1 /* Images */,
 				63865EB61D617BED006071CE /* DataStore.swift */,
@@ -581,35 +694,31 @@
 			path = "TestBed-Swift";
 			sourceTree = "<group>";
 		};
-		63B562971F6F0AFF00F64D36 /* Standard Array TableView */ = {
+		63B562971F6F0AFF00F64D36 /* Array TableView */ = {
 			isa = PBXGroup;
 			children = (
-				6306FFF01D6BEFA30031D2E3 /* ArrayTableViewCell.swift */,
-				63F8BB231D57E7730013B6F7 /* ArrayTableViewController.swift */,
 				63CB894B1F6B3DC5008E59A7 /* ArrayTableView.storyboard */,
+				63F8BB231D57E7730013B6F7 /* ArrayTableViewController.swift */,
+				6306FFF01D6BEFA30031D2E3 /* ArrayTableViewCell.swift */,
 			);
-			name = "Standard Array TableView";
+			name = "Array TableView";
 			sourceTree = "<group>";
 		};
-		63B562981F6F0B7600F64D36 /* Standard Form Views */ = {
+		63B562981F6F0B7600F64D36 /* TextField Form */ = {
 			isa = PBXGroup;
 			children = (
-				639C0EFC1F70801600070C48 /* DictionaryTableView.storyboard */,
-				63B5629E1F6F1C2C00F64D36 /* KeyValuePair.storyboard */,
-				636DB7901D656D78000EBB5E /* KeyValuePairTableViewController.swift */,
+				63A181441F736F6600021C90 /* TextFieldForm.storyboard */,
 				6306FFEE1D6BE7E40031D2E3 /* TextFieldFormTableViewController.swift */,
-				63865EAE1D601123006071CE /* TextViewFormTableViewController.swift */,
-				63CB89531F6C8BF3008E59A7 /* TextViewForm.storyboard */,
 			);
-			name = "Standard Form Views";
+			name = "TextField Form";
 			sourceTree = "<group>";
 		};
 		63B562991F6F0C2500F64D36 /* Branch Universal Objects */ = {
 			isa = PBXGroup;
 			children = (
+				639078091F6F3561001AE168 /* BranchUniversalObjectsData.swift */,
 				63CB894F1F6B72FF008E59A7 /* UniversalObject.storyboard */,
 				6306D5BE1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift */,
-				639078091F6F3561001AE168 /* BranchUniversalObjectsData.swift */,
 			);
 			name = "Branch Universal Objects";
 			sourceTree = "<group>";
@@ -617,8 +726,9 @@
 		63B5629A1F6F0C9600F64D36 /* Startup Options */ = {
 			isa = PBXGroup;
 			children = (
-				637E56A21F6DA7350026AB55 /* StartupOptionsTableViewController.swift */,
 				639078111F6F3824001AE168 /* StartupOptionsData.swift */,
+				63C46F891F7331D500C9F37C /* StartupOptions.storyboard */,
+				637E56A21F6DA7350026AB55 /* StartupOptionsTableViewController.swift */,
 			);
 			name = "Startup Options";
 			sourceTree = "<group>";
@@ -626,9 +736,9 @@
 		63B5629B1F6F0CB600F64D36 /* Integrated SDKs */ = {
 			isa = PBXGroup;
 			children = (
+				639D53CA1F7014E700C90435 /* IntegratedSDKsData.swift */,
 				639C0EFE1F70AC4F00070C48 /* IntegratedSDKs.storyboard */,
 				637E56A41F6DA7790026AB55 /* IntegratedSDKsTableViewController.swift */,
-				639D53CA1F7014E700C90435 /* IntegratedSDKsData.swift */,
 			);
 			name = "Integrated SDKs";
 			sourceTree = "<group>";
@@ -646,9 +756,9 @@
 		63B5629D1F6F1B2400F64D36 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				6390780B1F6F36D6001AE168 /* HomeData.swift */,
 				636A78C21F6CC8D800CB7B37 /* Home.storyboard */,
 				63AAF0C31CF758AF00CA98BD /* HomeViewController.swift */,
-				6390780B1F6F36D6001AE168 /* HomeData.swift */,
 			);
 			name = Home;
 			sourceTree = "<group>";
@@ -660,6 +770,39 @@
 				63BCC35A1D5AC8DF00CE0EB1 /* cancel-56.png */,
 			);
 			name = Images;
+			sourceTree = "<group>";
+		};
+		63C46F8D1F734F9100C9F37C /* Dictionary TableView */ = {
+			isa = PBXGroup;
+			children = (
+				639C0EFC1F70801600070C48 /* DictionaryTableView.storyboard */,
+				63865EB01D60E7B6006071CE /* DictionaryTableViewController.swift */,
+				63F65BF91D654EF30055A2F6 /* DictionaryTableViewCell.swift */,
+			);
+			name = "Dictionary TableView";
+			sourceTree = "<group>";
+		};
+		63D3A03F1F795F7300D993BB /* New Group2 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "New Group2";
+			sourceTree = "<group>";
+		};
+		63D3A0401F795F7C00D993BB /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "New Group";
+			sourceTree = "<group>";
+		};
+		63D3A0411F795F9400D993BB /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				632A59A61F7813BB00E27ADD /* TextFieldCell.swift */,
+				632A59A81F781E3000E27ADD /* ToggleSwitchCell.swift */,
+			);
+			name = Cells;
 			sourceTree = "<group>";
 		};
 		D49B379BE7A8000AC84155C1 /* Pods */ = {
@@ -739,19 +882,25 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				636E28BD1F760E8000DBC70E /* TableFormView.storyboard in Resources */,
 				639C0EFD1F70801600070C48 /* DictionaryTableView.storyboard in Resources */,
+				6339D5CE1F7450A700C6C562 /* ADBMobileConfig.json in Resources */,
 				63B5629F1F6F1C2C00F64D36 /* KeyValuePair.storyboard in Resources */,
+				63A181471F73701800021C90 /* ReferralRewards.storyboard in Resources */,
 				639C0EFF1F70AC4F00070C48 /* IntegratedSDKs.storyboard in Resources */,
-				63CB894E1F6B6CCD008E59A7 /* CommerceEvents.storyboard in Resources */,
+				63CB894E1F6B6CCD008E59A7 /* CommerceEvent.storyboard in Resources */,
 				6318D80D1F2954720050D256 /* Main.storyboard in Resources */,
 				63CB89521F6C4B3F008E59A7 /* LinkProperties.storyboard in Resources */,
 				636A78C31F6CC8D800CB7B37 /* Home.storyboard in Resources */,
 				63AAF0CC1CF758AF00CA98BD /* LaunchScreen.storyboard in Resources */,
 				63CB894C1F6B3DC5008E59A7 /* ArrayTableView.storyboard in Resources */,
 				636A78BF1F6CC81300CB7B37 /* ContentView.storyboard in Resources */,
+				63C46F8A1F7331D500C9F37C /* StartupOptions.storyboard in Resources */,
 				6318D80B1F2954010050D256 /* WaitingViewController.xib in Resources */,
 				63CB89541F6C8BF3008E59A7 /* TextViewForm.storyboard in Resources */,
 				63AAF0C91CF758AF00CA98BD /* Assets.xcassets in Resources */,
+				63A181451F736F6600021C90 /* TextFieldForm.storyboard in Resources */,
+				63C46F8C1F73326700C9F37C /* CustomEvent.storyboard in Resources */,
 				63BCC3591D5AC8D600CE0EB1 /* cancel-28.png in Resources */,
 				63CB89501F6B72FF008E59A7 /* UniversalObject.storyboard in Resources */,
 				63BCC35B1D5AC8DF00CE0EB1 /* cancel-56.png in Resources */,
@@ -788,13 +937,11 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-TestBed-Swift/Pods-TestBed-Swift-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Adjust/Adjust.framework",
-				"${BUILT_PRODUCTS_DIR}/Mixpanel-swift/Mixpanel.framework",
+				"${PODS_ROOT}/YandexMobileMetrica/dynamic/YandexMobileMetrica.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Adjust.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mixpanel.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YandexMobileMetrica.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -812,6 +959,85 @@
 				"${PODS_ROOT}/Amplitude-iOS/Amplitude/ComodoCaLimitedRsaCertificationAuthority.der",
 				"${PODS_ROOT}/Amplitude-iOS/Amplitude/ComodoRsaCA.der",
 				"${PODS_ROOT}/Amplitude-iOS/Amplitude/ComodoRsaDomainValidationCA.der",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyKit/Appboy.bundle",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/ABKModalFeedbackViewController.xib",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/ABKNavigationFeedbackViewController.xib",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/ar.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/Base.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/da.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/de.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/en.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/es-419.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/es-MX.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/es.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/et.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/fi.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/fil.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/fr.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/he.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/hi.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/id.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/images/checkmark-bg.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/images/checkmark-bg@2x.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/images/checkmark.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/images/checkmark@2x.png",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/it.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/ja.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/km.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/ko.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/lo.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/ms.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/my.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/nb.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/nl.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/pl.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/pt-PT.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/pt.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/ru.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/sv.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/th.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/vi.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/zh-Hans.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/zh-Hant.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/zh-HK.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/zh-TW.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/zh.lproj/AppboyFeedbackLocalizable.strings",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/ar.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/Base.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/da.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/de.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/en.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/es-419.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/es-MX.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/es.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/et.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/fi.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/fil.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/fr.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/he.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/hi.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/id.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/it.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/ja.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/km.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/ko.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/lo.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/ms.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/my.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/nb.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/nl.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/pl.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/pt-PT.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/pt.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/ru.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/sv.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/th.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/vi.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/zh-Hans.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/zh-Hant.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/zh-HK.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/zh-TW.lproj",
+				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKFeedbackViewController/Feedback_Resources/zh.lproj",
 				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowLeft.png",
 				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowLeft@2x.png",
 				"${PODS_ROOT}/Mixpanel/Mixpanel/Images/MPArrowRight.png",
@@ -869,6 +1095,7 @@
 				4D351A101F0D6362004BD4AA /* BNCLog.m in Sources */,
 				4D4F284E1E400F9800282A34 /* Branch.m in Sources */,
 				63AAF0FD1CF7F4AD00CA98BD /* CreditHistoryViewController.swift in Sources */,
+				63A849381F76BAFC007705C8 /* TableFormViewController.swift in Sources */,
 				4D4F28471E400F9800282A34 /* BNCPreferenceHelper.m in Sources */,
 				4D4F28461E400F9800282A34 /* BNCLinkData.m in Sources */,
 				4D4F28561E400F9800282A34 /* BranchUniversalObject.m in Sources */,
@@ -876,7 +1103,7 @@
 				2BD7C44F1F27D65D003696AF /* BranchLoadRewardsRequest.m in Sources */,
 				4D4F28571E400F9800282A34 /* BranchView.m in Sources */,
 				4D4F28591E400F9800282A34 /* NSMutableDictionary+Branch.m in Sources */,
-				63C3AD261F6F471B00C2C523 /* CommerceEventsData.swift in Sources */,
+				63C3AD261F6F471B00C2C523 /* CommerceEventData.swift in Sources */,
 				F155BFF21EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.m in Sources */,
 				4D4F28401E400F9800282A34 /* BNCContentDiscoveryManager.m in Sources */,
 				4D2FAF791F4E5278004760FF /* BranchEvent.m in Sources */,
@@ -909,7 +1136,7 @@
 				4D4F28421E400F9800282A34 /* BNCEncodingUtils.m in Sources */,
 				6306D5BF1D6A33A7000306B3 /* BranchUniversalObjectPropertiesTableViewController.swift in Sources */,
 				6390780A1F6F3561001AE168 /* BranchUniversalObjectsData.swift in Sources */,
-				637E569F1F6D9A750026AB55 /* CommerceEventsTableViewController.swift in Sources */,
+				637E569F1F6D9A750026AB55 /* CommerceEventTableViewController.swift in Sources */,
 				639078121F6F3824001AE168 /* StartupOptionsData.swift in Sources */,
 				63AAF0C41CF758AF00CA98BD /* HomeViewController.swift in Sources */,
 				639078101F6F37C5001AE168 /* CustomEventData.swift in Sources */,
@@ -918,6 +1145,7 @@
 				2BD7C44A1F27D65D003696AF /* BNCServerRequestQueue.m in Sources */,
 				4D4F284C1E400F9800282A34 /* BNCSystemObserver.m in Sources */,
 				4D4F28551E400F9800282A34 /* BranchLinkProperties.m in Sources */,
+				632A59A91F781E3000E27ADD /* ToggleSwitchCell.swift in Sources */,
 				6340D2471D983B5C00B7F35C /* UIImageView+loadImageFromUrl.swift in Sources */,
 				4D4F28501E400F9800282A34 /* BranchConstants.m in Sources */,
 				633EEA6C1CF942C4000AE1BC /* NavigationController.swift in Sources */,
@@ -932,6 +1160,7 @@
 				2BD7C44E1F27D65D003696AF /* BranchInstallRequest.m in Sources */,
 				637E56A51F6DA7790026AB55 /* IntegratedSDKsTableViewController.swift in Sources */,
 				637E56A11F6D9A8D0026AB55 /* ReferralRewardsTableViewController.swift in Sources */,
+				632A59A71F7813BB00E27ADD /* TextFieldCell.swift in Sources */,
 				63AAF0C21CF758AF00CA98BD /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1064,6 +1293,10 @@
 				INFOPLIST_FILE = "TestBed-Swift/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/AdobeMobileLibrary",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.TestBed-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1086,6 +1319,10 @@
 				INFOPLIST_FILE = "TestBed-Swift/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/AdobeMobileLibrary",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.TestBed-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

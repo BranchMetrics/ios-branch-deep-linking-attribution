@@ -32,7 +32,6 @@ class ReferralRewardsTableViewController: UITableViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     // MARK: - Table view data source
@@ -40,15 +39,15 @@ class ReferralRewardsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch((indexPath as NSIndexPath).section, (indexPath as NSIndexPath).row) {
         case (0,0) :
-            self.performSegue(withIdentifier: "ReferralRewardsTableViewControllerToTextViewFormNavigationBar", sender: "RewardsBucket")
+            self.performSegue(withIdentifier: "TextViewForm", sender: "RewardsBucket")
         case (0,3) :
-            self.performSegue(withIdentifier: "ReferralRewardsTableViewControllerToTextViewFormNavigationBar", sender: "RewardPointsToRedeem")
+            self.performSegue(withIdentifier: "TextViewForm", sender: "RewardPointsToRedeem")
         case (0,5) :
             let branch = Branch.getInstance()
             branch?.getCreditHistory { (creditHistory, error) in
                 if (error == nil) {
                     self.creditHistory = creditHistory as Array?
-                    self.performSegue(withIdentifier: "ReferralRewardsTableViewControllerToCreditHistoryTableView", sender: "CreditHistory")
+                    self.performSegue(withIdentifier: "CreditHistory", sender: "CreditHistory")
                 } else {
                     print(String(format: "Branch TestBed: Error retrieving credit history: %@", error!.localizedDescription))
                     self.showAlert("Error retrieving credit history", withDescription:error!.localizedDescription)
@@ -68,7 +67,7 @@ class ReferralRewardsTableViewController: UITableViewController {
         case "RewardsBucket":
             let nc = segue.destination as! UINavigationController
             let vc = nc.topViewController as! TextViewFormTableViewController
-            vc.sender = sender as! String
+            vc.senderString = sender as! String
             vc.viewTitle = "Rewards Bucket"
             vc.header = "Rewards Bucket"
             vc.footer = "Rewards are granted via rules configured in the Rewards Rules section of the dashboard. Rewards are normally accumulated in a 'default' bucket, however any bucket name can be specified in rewards rules. Use this setting to specify the name of a non-default rewards bucket."
@@ -77,7 +76,7 @@ class ReferralRewardsTableViewController: UITableViewController {
         case "RewardPointsToRedeem":
             let nc = segue.destination as! UINavigationController
             let vc = nc.topViewController as! TextViewFormTableViewController
-            vc.sender = sender as! String
+            vc.senderString = sender as! String
             vc.viewTitle = "Reward Points"
             vc.header = "Number of Reward Points to Redeem"
             vc.footer = "This is the quantity of points to subtract from the selected bucket's balance."
@@ -88,7 +87,7 @@ class ReferralRewardsTableViewController: UITableViewController {
         }
     }
     
-    @IBAction func unwindTextViewFormTableViewController(_ segue:UIStoryboardSegue) {
+    @IBAction func unwindTextViewForm(_ segue:UIStoryboardSegue) {
         
         if let vc = segue.source as? TextViewFormTableViewController {
             

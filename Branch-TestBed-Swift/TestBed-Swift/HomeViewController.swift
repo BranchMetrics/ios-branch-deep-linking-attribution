@@ -41,7 +41,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
     @IBOutlet weak var linkPropertiesLabel: UILabel!
     @IBOutlet weak var branchUniversalObjectsLabel: UILabel!
     @IBOutlet weak var ApplicationEventsLabel: UILabel!
-    @IBOutlet weak var CommerceEventsLabel: UILabel!
+    @IBOutlet weak var CommerceEventLabel: UILabel!
     @IBOutlet weak var ReferralRewardsLabel: UILabel!
     @IBOutlet weak var LatestReferringParamsLabel: UILabel!
     @IBOutlet weak var FirstReferringParamsLabel: UILabel!
@@ -59,21 +59,8 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         
         UITableViewCell.appearance().backgroundColor = UIColor.white
         
-        let notificationCenter = NotificationCenter.default
-        
-        // Add observer:
-        notificationCenter.addObserver(self,
-                                       selector: #selector(self.applicationDidBecomeActive),
-                                       name:NSNotification.Name.UIApplicationDidBecomeActive,
-                                       object:nil)
-        notificationCenter.addObserver(self,
-                                       selector: #selector(self.refreshEnabledButtons),
-                                       name: Notification.Name("BranchCallbackCompleted"),
-                                       object: nil)
-        
         linkTextField.text = ""
         refreshControlValues()
-        refreshEnabledButtons()
         
         // Add version to footer
         let footerView = UILabel.init(frame: CGRect.zero);
@@ -93,18 +80,6 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         self.tableView.tableFooterView = footerView;
     }
     
-    @objc func applicationDidBecomeActive() {
-        refreshEnabledButtons()
-    }
-    
-    @objc func refreshEnabledButtons() {
-        var enableButtons = false
-        
-        if let clickedBranchLink = Branch.getInstance().getLatestReferringParams()["+clicked_branch_link"] as! Bool? {
-            enableButtons = clickedBranchLink
-        }
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -118,7 +93,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch((indexPath as NSIndexPath).section, (indexPath as NSIndexPath).row) {
         case (0,0) :
-            self.performSegue(withIdentifier: "HomeViewToTextViewFormTableView", sender: "userID")
+            self.performSegue(withIdentifier: "TextViewForm", sender: "userID")
         case (1,0) :
             guard linkTextField.text?.characters.count > 0 else {
                 break
@@ -126,15 +101,15 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
             UIPasteboard.general.string = linkTextField.text
             showAlert("Link copied to clipboard", withDescription: linkTextField.text!)
         case (1,3) :
-            self.performSegue(withIdentifier: "HomeTableViewToLinkPropertiesTableView", sender: "LinkProperties")
+            self.performSegue(withIdentifier: "LinkProperties", sender: "LinkProperties")
         case (1,4) :
-            self.performSegue(withIdentifier: "HomeTableViewToBranchUniversalObjectsTableView", sender: "BranchUniversalObjects")
+            self.performSegue(withIdentifier: "BranchUniversalObjects", sender: "BranchUniversalObjects")
         case (2,0) :
-            self.performSegue(withIdentifier: "HomeTableViewToCustomEventTableView", sender: "CustomEvents")
+            self.performSegue(withIdentifier: "CustomEvent", sender: "CustomEvents")
         case (2,1) :
-            self.performSegue(withIdentifier: "HomeTableViewToCommerceEventTableView", sender: "CommerceEvents")
+            self.performSegue(withIdentifier: "CommerceEvent", sender: "CommerceEvent")
         case (2,2) :
-            self.performSegue(withIdentifier: "HomeTableViewToReferralRewardsTableView", sender: "ReferralRewards")
+            self.performSegue(withIdentifier: "ReferralRewards", sender: "ReferralRewards")
         case (3,0) :
             if let params = Branch.getInstance().getLatestReferringParams() {
                 let content = String(format:"LatestReferringParams:\n\n%@", (params.JSONDescription()))
@@ -148,9 +123,9 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
                 print("Branch TestBed: FirstReferringParams:\n", content)
             }
         case (4,0) :
-            self.performSegue(withIdentifier: "HomeTableViewToStartupOptionsTableView", sender: "TestBedStartupOptions")
+            self.performSegue(withIdentifier: "StartupOptions", sender: "TestBedStartupOptions")
         case (4,1) :
-            self.performSegue(withIdentifier: "HomeTableViewToIntegratedSDKsTableView", sender: "IntegratedSDKs")
+            self.performSegue(withIdentifier: "IntegratedSDKs", sender: "IntegratedSDKs")
         default : break
         }
     }
@@ -318,7 +293,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         case "userID":
             let nc = segue.destination as! UINavigationController
             let vc = nc.topViewController as! TextViewFormTableViewController
-            vc.sender = sender as! String
+            vc.senderString = sender as! String
             vc.viewTitle = "User ID"
             vc.header = "User ID"
             vc.footer = "This User ID (or developer_id) is the application-assigned ID of the user. If not assigned, referrals from links created by the user will show up as 'Anonymous' in reporting."
@@ -352,11 +327,11 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         }
     }
     
-    @IBAction func unwindTextViewFormTableViewController(_ segue:UIStoryboardSegue) {
+    @IBAction func unwindTextViewForm(_ segue:UIStoryboardSegue) {
         
         if let vc = segue.source as? TextViewFormTableViewController {
             
-            switch vc.sender {
+            switch vc.senderString {
             case "userID":
                 
                 if let userID = vc.textView.text {
@@ -403,9 +378,6 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
                             self.userIDTextField.text = userID
                             HomeData.setUserID(userID)
                             
-//                            let defaultContainer = UserDefaults.standard
-//                            defaultContainer.setValue(userID, forKey: "userID")
-                            
                             // Amplitude
                             if IntegratedSDKsData.activeMixpanelEnabled()! {
                                 Amplitude.instance().setUserId(userID)
@@ -446,12 +418,10 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         }
     }
     
-    @IBAction func unwindCommerceEventsTableViewController(_ segue:UIStoryboardSegue) {
-        print("unwindCommerceEvents!")
+    @IBAction func unwindCommerceEventTableViewController(_ segue:UIStoryboardSegue) {
     }
     
-    @IBAction func unwindStartupOptionsTableViewController(_ segue:UIStoryboardSegue) {
-        print("unwindStartupOptions!")
+    @IBAction func unwindStartupOptions(_ segue:UIStoryboardSegue) {
     }
     
     @IBAction func unwindIntegratedSDKsTableViewController(_ segue:UIStoryboardSegue) {

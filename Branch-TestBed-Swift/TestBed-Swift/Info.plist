@@ -65,19 +65,21 @@
 	<key>branch_app_domain</key>
 	<string>app.link</string>
 	<key>branch_key</key>
-	<string>key_live_cnChxhZYcC9rBMAG82xLNjdcFBokyGD0</string>
-	<key>adjust_api_key</key>
+	<string>key_live_ppFRjAQkcmfeYtyXp3z6Xhjkxzj79OSw</string>
+	<key>adjust_app_token</key>
 	<string>x66ziay2jtvk</string>
-	<key>adobe_api_key</key>
-	<string>Not yet implemented</string>
 	<key>amplitude_api_key</key>
-	<string>01666fc84f9348861e85e751166be811</string>
+	<string>3dc11880800fe99b829ca66886abf9e5</string>
 	<key>appsflyer_api_key</key>
 	<string>84qHoE3ZXh7SetmHU6boi5</string>
 	<key>google_analytics_tracking_id</key>
-	<string>UA-106813462-1</string>
+	<string>UA-106754221-1</string>
 	<key>mixpanel_api_key</key>
-	<string>6c48747de004db9e2913d59658a935aa</string>
+	<string>bd2624c3a89cd19726ca75b8604eb488</string>
+	<key>appboy_api_key</key>
+	<string>d781dccf-9f96-46a8-878a-a1bef7bb6968</string>
+	<key>appmetrica_api_key</key>
+	<string>4805cb1a-2e2c-4a03-af63-4c712939817b</string>
 	<key>tune_advertising_id</key>
 	<string>197758</string>
 	<key>tune_conversion_key</key>

@@ -9,10 +9,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--TestBed-SwiftNavigationController-->
+        <!--MainNavigationController-->
         <scene sceneID="h0k-6e-SBq">
             <objects>
-                <navigationController storyboardIdentifier="NavigationController" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="d5D-s8-qUb" userLabel="TestBed-SwiftNavigationController" customClass="NavigationController" customModule="TestBed_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="MainNavigationController" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="d5D-s8-qUb" userLabel="MainNavigationController" customClass="NavigationController" customModule="TestBed_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Branch-TestBed" id="vxy-nF-3Wa"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="GMh-cm-snc">
@@ -28,95 +28,15 @@
             </objects>
             <point key="canvasLocation" x="1312" y="27"/>
         </scene>
-        <!--ArrayTableViewController-->
-        <scene sceneID="w3R-5M-dX3">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="ArrayTableViewController" storyboardName="ArrayTableView" referencedIdentifier="ArrayTableViewController" id="9cY-W1-idP" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="l3w-PA-uof" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1838" y="1993"/>
-        </scene>
-        <!--CommerceEventDetails-->
-        <scene sceneID="xLA-3T-Zy5">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="CommerceEventDetails" storyboardName="CommerceEvents" referencedIdentifier="CommerceEventDetails" id="l7T-5a-FG6" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ZOW-of-mh6" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1132" y="1042"/>
-        </scene>
-        <!--Product-->
-        <scene sceneID="IPK-CI-wty">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="Product" storyboardName="CommerceEvents" referencedIdentifier="Product" id="HHu-Di-hfx" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="TLP-3i-bBY" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1132" y="1993"/>
-        </scene>
-        <!--UITableViewController-f9P-iX-WYi-->
-        <scene sceneID="98s-V3-bSO">
-            <objects>
-                <viewControllerPlaceholder storyboardName="UniversalObject" referencedIdentifier="UITableViewController-f9P-iX-WYi" id="lNP-uJ-cup" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="tOH-Pa-cEO" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="4936" y="685"/>
-        </scene>
-        <!--BranchUniversalObjectProperties-->
-        <scene sceneID="Axl-xF-gPr">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="BranchUniversalObjectProperties" storyboardName="UniversalObject" referencedIdentifier="BranchUniversalObjectProperties" id="fpK-rx-X9D" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="sNm-1Q-EjD" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3471" y="1042"/>
-        </scene>
-        <!--LinkProperties-->
-        <scene sceneID="KD7-Fe-jaj">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="LinkProperties" storyboardName="LinkProperties" referencedIdentifier="LinkProperties" id="3tQ-m0-Fb6" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="BZL-7d-q6K" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1839" y="1042"/>
-        </scene>
-        <!--UINavigationController-WPU-Ft-SWB-->
-        <scene sceneID="xGX-88-Rzf">
-            <objects>
-                <viewControllerPlaceholder storyboardName="TextViewForm" referencedIdentifier="UINavigationController-WPU-Ft-SWB" id="Kk9-pt-FR9" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="l7h-7N-4ua" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="4565" y="-867"/>
-        </scene>
-        <!--UITableViewController-Aqu-O9-8Kl-->
-        <scene sceneID="bhV-Y9-OkH">
-            <objects>
-                <viewControllerPlaceholder storyboardName="TextViewForm" referencedIdentifier="UITableViewController-Aqu-O9-8Kl" id="ndB-RA-Xba" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="VAJ-dr-sF1" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="4565" y="52"/>
-        </scene>
-        <!--Content-->
-        <scene sceneID="pL4-iD-DTQ">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="Content" storyboardName="ContentView" referencedIdentifier="Content" id="cfV-81-rtg" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="8Th-Xr-Fc0" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3236" y="-1132"/>
-        </scene>
-        <!--CreditHistory-->
-        <scene sceneID="Pu4-iU-pDk">
-            <objects>
-                <viewControllerPlaceholder storyboardIdentifier="CreditHistory" storyboardName="CreditHistoryTableView" referencedIdentifier="CreditHistory" id="atO-Bb-kh7" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="xYV-w7-jSV" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2381" y="-1132"/>
-        </scene>
-        <!--HomeViewController-->
+        <!--Home-->
         <scene sceneID="TFT-aZ-iB9">
             <objects>
-                <viewControllerPlaceholder storyboardIdentifier="ViewController" storyboardName="Home" referencedIdentifier="HomeViewController" id="AU3-dt-wFP" sceneMemberID="viewController">
+                <viewControllerPlaceholder storyboardIdentifier="Home" storyboardName="Home" id="AU3-dt-wFP" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="Bno-gA-59C"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="h5p-1b-7dw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2295.1999999999998" y="26.53673163418291"/>
+            <point key="canvasLocation" x="2030" y="27"/>
         </scene>
     </scenes>
 </document>

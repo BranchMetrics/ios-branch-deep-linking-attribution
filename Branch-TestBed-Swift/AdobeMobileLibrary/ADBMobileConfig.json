@@ -1,0 +1,59 @@
+{
+  "lastModified": "2017-09-21T18:36:51.172Z",
+  "target": {
+    "clientCode": "",
+    "timeout": 5
+  },
+  "audienceManager": {
+    "server": "",
+    "analyticsForwardingEnabled": false,
+    "timeout": 5
+  },
+  "acquisition": {
+    "server": "c00.adobe.com",
+    "appid": "a2a5860764cbb7569561ca04ac251599c74a79e5724e01b65a6bd7853a588cfb"
+  },
+  "analytics": {
+    "rsids": "ebmthirdpartytestbed",
+    "server": "exchangepartnerbranchmetrics.sc.omtrdc.net",
+    "ssl": false,
+    "offlineEnabled": true,
+    "charset": "UTF-8",
+    "lifecycleTimeout": 300,
+    "privacyDefault": "optedin",
+    "batchLimit": 0,
+    "timezone": "PDT",
+    "timezoneOffset": -420,
+    "referrerTimeout": 0,
+    "backdateSessionInfo": false,
+    "poi": []
+  },
+  "messages": [
+    {
+      "messageId": "9dc879b5-bcee-4133-967f-f6d665002f42",
+      "payload": {
+        "templateurl": "https://requestb.in/zm53m1zm",
+        "templatebody": "",
+        "contenttype": "",
+        "timeout": 2
+      },
+      "showOffline": true,
+      "showRule": "always",
+      "endDate": 2524730400,
+      "startDate": 0,
+      "template": "callback",
+      "audiences": [],
+      "triggers": [
+        {
+          "key": "a.LaunchEvent",
+          "matches": "ex",
+          "values": null
+        }
+      ]
+    }
+  ],
+  "remotes": {
+    "analytics.poi": "https://assets.adobedtm.com/b213090c5204bf94318f4ef0539a38b487d10368/scripts/satellite-598242c564746d5eef004ee6.json",
+    "messages": "https://assets.adobedtm.com/b213090c5204bf94318f4ef0539a38b487d10368/scripts/satellite-598242c564746d0ba5015804.json"
+  }
+}

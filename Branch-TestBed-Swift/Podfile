@@ -7,4 +7,6 @@ target "TestBed-Swift" do
   pod 'AppsFlyerFramework'
   pod 'Tune'
   pod 'GoogleAnalytics'
+  pod 'Appboy-iOS-SDK'
+  pod 'YandexMobileMetrica/Dynamic', '2.9.1'
 end
