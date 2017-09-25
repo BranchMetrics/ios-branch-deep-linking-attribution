@@ -144,7 +144,7 @@
     [branch clearNetworkQueue];
     event.contentItems = (id) @[ buo ];
     [event logEvent];
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
     [serverInterfaceMock stopMocking];
 }
 
@@ -228,7 +228,7 @@
     // Set up and invoke --
     [branch clearNetworkQueue];
     [buo userCompletedAction:BranchStandardEventPurchase];
-    [self waitForExpectationsWithTimeout:2.0 handler:nil];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
     [serverInterfaceMock stopMocking];
 }
 
