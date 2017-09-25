@@ -319,8 +319,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             return;
         }
         if (![branchKey isKindOfClass:[NSString class]]) {
+            NSString *typeName = (branchKey) ? NSStringFromClass(branchKey.class) : @"<nil>";
             [NSException raise:NSInternalInconsistencyException
-                format:@"Invalid Branch key of type '%@'.", NSStringFromClass(branchKey.class)];
+                format:@"Invalid Branch key of type '%@'.", typeName];
             return;
         }
 
