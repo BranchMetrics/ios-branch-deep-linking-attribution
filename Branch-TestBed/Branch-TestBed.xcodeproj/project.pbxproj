@@ -708,7 +708,8 @@
 				F1D4F9AE1F323F01002D13FF /* TestBedUITests.m */,
 				F1D4F9B01F323F01002D13FF /* Info.plist */,
 			);
-			path = "Branch-TestBed-UITests";
+			name = "Branch-TestBed-UITests";
+			path = "Branch-TestBed-UITests/UITests";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1162,7 +1163,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = /headers;
 				SKIP_INSTALL = YES;
-				WARNING_CFLAGS = "";
 			};
 			name = Debug;
 		};
@@ -1182,7 +1182,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = /headers;
 				SKIP_INSTALL = YES;
-				WARNING_CFLAGS = "";
 			};
 			name = Release;
 		};
@@ -1362,7 +1361,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = R63EM248DP;
-				INFOPLIST_FILE = "Branch-TestBed-UITests/Info.plist";
+				INFOPLIST_FILE = "Branch-TestBed-UITests/UITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1381,7 +1380,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = R63EM248DP;
-				INFOPLIST_FILE = "Branch-TestBed-UITests/Info.plist";
+				INFOPLIST_FILE = "Branch-TestBed-UITests/UITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.$(PRODUCT_NAME:rfc1034identifier)";
