@@ -121,24 +121,6 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
     return preferenceHelper;
 }
 
-
-/*
-
-    This creates one global queue.  Not so desirable.
-
-- (NSOperationQueue *)persistPrefsQueue {
-    static NSOperationQueue *persistPrefsQueue;
-    static dispatch_once_t persistOnceToken;
-    
-    dispatch_once(&persistOnceToken, ^{
-        persistPrefsQueue = [[NSOperationQueue alloc] init];
-        persistPrefsQueue.maxConcurrentOperationCount = 1;
-    });
-
-    return persistPrefsQueue;
-}
-*/
-
 - (NSOperationQueue *)persistPrefsQueue {
     @synchronized (self) {
         if (_persistPrefsQueue)
@@ -419,6 +401,14 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
         _appleSearchAdDetails = (NSDictionary *) [self readObjectFromDefaults:BRANCH_PREFS_KEY_APPLE_SEARCH_ADS_INFO];
     }
     return [_appleSearchAdDetails isKindOfClass:[NSDictionary class]] ? _appleSearchAdDetails : nil;
+}
+
+- (void) setAppleSearchAdNeedsSend:(BOOL)appleSearchAdNeedsSend {
+    [self writeBoolToDefaults:@"_appleSearchAdNeedsSend" value:appleSearchAdNeedsSend];
+}
+
+- (BOOL) appleSearchAdNeedsSend {
+    return [self readBoolFromDefaults:@"_appleSearchAdNeedsSend"];
 }
 
 - (NSString*) lastSystemBuildVersion {

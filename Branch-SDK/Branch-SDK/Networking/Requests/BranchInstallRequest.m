@@ -38,7 +38,7 @@
 
     params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
 
-    if (preferenceHelper.appleSearchAdDetails) {
+    if (preferenceHelper.appleSearchAdNeedsSend) {
         NSString *encodedSearchData = nil;
         @try {
             NSData *jsonData = [BNCEncodingUtils encodeDictionaryToJsonData:preferenceHelper.appleSearchAdDetails];
