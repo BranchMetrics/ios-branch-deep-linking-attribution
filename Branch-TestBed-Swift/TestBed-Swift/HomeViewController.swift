@@ -448,7 +448,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         universalObject.keywords = [ "big", "bad", "dog" ]
         universalObject.contentMetadata.contentSchema = BranchContentSchema.commerceProduct
         universalObject.contentMetadata.price = 10.00
-        universalObject.contentMetadata.currency = BNCCurrencyUSD
+        universalObject.contentMetadata.currency = BNCCurrency.USD
         universalObject.contentMetadata.productCondition = BranchProductCondition.poor
 
         let event = BranchEvent.standardEvent(
@@ -457,7 +457,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         )
 
         event.revenue = 10.00;
-        event.currency = BNCCurrencyUSD
+        event.currency = BNCCurrency.USD
         event.contentItems = [ universalObject ]
         event.customData = [ "DiggityDog": "Hot" ]
         event.customData["snoop"] = "dog"

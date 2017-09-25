@@ -32,12 +32,12 @@ struct BranchUniversalObjectsData {
         universalObject.title = "Nike Woolen Sox"
         universalObject.canonicalIdentifier = "nike/5324"
         universalObject.contentDescription = "Fine combed woolen sox for those who love your foot"
-        universalObject.contentMetadata.currency = BNCCurrencyUSD
+        universalObject.contentMetadata.currency = BNCCurrency.USD
         universalObject.contentMetadata.price = 80.2
         universalObject.contentMetadata.quantity = 5
         universalObject.contentMetadata.sku = "110112467"
         universalObject.contentMetadata.productName = "Woolen Sox"
-        universalObject.contentMetadata.productCategory = "Apparel & Accessories"
+        universalObject.contentMetadata.productCategory = BNCProductCategory(rawValue: "Apparel & Accessories")
         universalObject.contentMetadata.productBrand = "Nike"
         universalObject.contentMetadata.productVariant = "Xl"
         universalObject.contentMetadata.ratingAverage = 3.3
@@ -130,7 +130,7 @@ struct BranchUniversalObjectsData {
                 }
             case "$currency":
                 if let currency = universalObject[key] as? String {
-                    branchUniversalObject.contentMetadata.currency = currency
+                    branchUniversalObject.contentMetadata.currency = BNCCurrency(rawValue: currency)
                 }
             case "customData":
                 if let data = universalObject[key] as? [String: String] {

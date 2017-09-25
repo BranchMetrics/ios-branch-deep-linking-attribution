@@ -49,7 +49,7 @@ struct CommerceEventData {
         branchEvent.transactionID = commerceEvent["transactionID"] != "" ? commerceEvent["transactionID"] : defaults["transactionID"]!
         branchEvent.affiliation = commerceEvent["affiliation"] != "" ? commerceEvent["affiliation"] :  defaults["affiliation"]!
         branchEvent.coupon = commerceEvent["coupon"] != "" ? commerceEvent["coupon"] : defaults["coupon"]!
-        branchEvent.currency = commerceEvent["currency"] != "" ? commerceEvent["currency"] : defaults["currency"]!
+        branchEvent.currency = (commerceEvent["currency"] != "" ? commerceEvent["currency"] : defaults["currency"]).map { BNCCurrency(rawValue: $0) }
         branchEvent.shipping = self.stringToNSDecimalNumber(with: commerceEvent["shipping"] != "" ? commerceEvent["shipping"]! : defaults["shipping"]!)
         branchEvent.tax = self.stringToNSDecimalNumber(with: commerceEvent["tax"] != "" ? commerceEvent["tax"]! : defaults["tax"]!)
         branchEvent.revenue = self.stringToNSDecimalNumber(with: commerceEvent["revenue"] != "" ? commerceEvent["revenue"]! : defaults["revenue"]!)
@@ -83,7 +83,7 @@ struct CommerceEventData {
         bncCommerceEvent.transactionID = commerceEvent["transactionID"] != "" ? commerceEvent["transactionID"] : defaults["transactionID"]!
         bncCommerceEvent.affiliation = commerceEvent["affiliation"] != "" ? commerceEvent["affiliation"] :  defaults["affiliation"]!
         bncCommerceEvent.coupon = commerceEvent["coupon"] != "" ? commerceEvent["coupon"] : defaults["coupon"]!
-        bncCommerceEvent.currency = commerceEvent["currency"] != "" ? commerceEvent["currency"] : defaults["currency"]!
+        bncCommerceEvent.currency = (commerceEvent["currency"] != "" ? commerceEvent["currency"] : defaults["currency"]).map { BNCCurrency(rawValue: $0) }
         bncCommerceEvent.shipping = self.stringToNSDecimalNumber(with: commerceEvent["shipping"] != "" ? commerceEvent["shipping"]! : defaults["shipping"]!)
         bncCommerceEvent.tax = self.stringToNSDecimalNumber(with: commerceEvent["tax"] != "" ? commerceEvent["tax"]! : defaults["tax"]!)
         bncCommerceEvent.revenue = self.stringToNSDecimalNumber(with: commerceEvent["revenue"] != "" ? commerceEvent["revenue"]! : defaults["revenue"]!)
@@ -151,7 +151,7 @@ struct CommerceEventData {
                 bncProduct.sku = product["sku"] ?? defaults["sku"]
                 bncProduct.price = self.stringToNSDecimalNumber(with: product["price"] ?? defaults["price"]!)
                 bncProduct.quantity = self.stringToNSDecimalNumber(with: product["quantity"] ?? defaults["quantity"]!)
-                bncProduct.category = product["category"] ?? defaults["category"]
+                bncProduct.category = (product["category"] ?? defaults["category"]).map { BNCProductCategory(rawValue: $0) }
                 bncProduct.variant = product["variant"] ?? defaults["variant"]
                 
                 return bncProduct
@@ -164,7 +164,7 @@ struct CommerceEventData {
             bncProduct.sku = defaults["sku"]
             bncProduct.price = self.stringToNSDecimalNumber(with: defaults["price"]!)
             bncProduct.quantity = self.stringToNSDecimalNumber(with: defaults["quantity"]!)
-            bncProduct.category = defaults["category"]
+            bncProduct.category = defaults["category"].map { BNCProductCategory(rawValue: $0) }
             bncProduct.variant = defaults["variant"]
             
             return [bncProduct]
@@ -172,18 +172,19 @@ struct CommerceEventData {
     }
     
     static func setBNCProducts(_ products: [BNCProduct]) {
-        self.setProducts(products.map({
-            (bncProduct: BNCProduct) in
-            return [
+        var productsArray = [[String:String]]()
+        for bncProduct in products {
+            productsArray.append([
                 "name": bncProduct.name ?? "",
                 "brand": bncProduct.brand ?? "",
                 "sku": bncProduct.sku ?? "",
                 "price": "\(String(describing: bncProduct.price))" ,
                 "quantity": "\(String(describing: bncProduct.quantity))" ,
-                "category": bncProduct.category ?? "",
+                "category": bncProduct.category?.rawValue ?? "",
                 "variant": bncProduct.variant ?? ""
-            ]
-        }))
+                ])
+        }
+        self.setProducts(productsArray)
     }
     
     static func getCommerceEventCustomMetadata() -> [String: AnyObject] {
