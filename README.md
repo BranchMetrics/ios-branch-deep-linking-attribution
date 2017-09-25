@@ -568,7 +568,7 @@ Some example events you might want to track:
 @"finished_level_ten"
 ```
 
-####Parameters
+#### Parameters
 
 
 **event** (NSString *) _required_
@@ -929,7 +929,7 @@ The optional `- (void) branchShareLink:didComplete:withError:` delegate method w
 
 ###### Objective-C
 ```objc
-@interface ViewController () <BranchShareLinkDelegate> 
+@interface ViewController () <BranchShareLinkDelegate>
 ```
 Override the branchShareLinkWillShare function to change your shareText
 
