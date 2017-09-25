@@ -37,10 +37,8 @@ class ArticleView: UIView, WKNavigationDelegate {
 
     // MARK: - Other stored properties
 
-    private var _planetData: PlanetData
     var planetData: PlanetData {
-        set { _planetData = newValue; setupWebview() }
-        get { return _planetData }
+        didSet { setupWebview() }
     }
     var hud: MBProgressHUD!
     var showShareButton = true
@@ -50,7 +48,7 @@ class ArticleView: UIView, WKNavigationDelegate {
     // MARK: - Object lifecycle
 
     init(planetData: PlanetData, frame: CGRect = .zero) {
-        _planetData = planetData
+        self.planetData = planetData
         super.init(frame: frame)
 
         addSubview(webView)
@@ -127,7 +125,8 @@ decidePolicyFor navigationAction: WKNavigationAction,
         /*
          * Put the button at the bottom with a fixed height.
          */
-        constrain(webView, button) {
+        let constraintGroup = ConstraintGroup()
+        constrain(webView, button, replace: constraintGroup) {
             web, share in
 
             let superview = web.superview!
