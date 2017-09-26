@@ -459,7 +459,6 @@
         [branch getShortURLWithCallback:^(NSString *url, NSError *error) {
             XCTAssertNotNil(error);
             XCTAssertEqual(error.code, BNCInitError);
-            
             [self safelyFulfillExpectation:expecation];
         }];
     }];
