@@ -102,7 +102,9 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 - (BNCServerRequest *)peek {
-    return [self peekAt:0];
+    @synchronized (self) {
+        return [self peekAt:0];
+    }
 }
 
 - (BNCServerRequest *)peekAt:(unsigned int)index {
