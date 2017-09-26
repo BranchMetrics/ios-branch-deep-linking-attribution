@@ -106,5 +106,4 @@ buildDirectoryProjectScheme \
     Branch-TestBed.xcworkspace \
     Branch-TestBed
 
-
 printf "${textBlue}>>> All builds complete.${textNormal}\n"
