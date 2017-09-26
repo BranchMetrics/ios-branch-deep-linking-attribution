@@ -42,6 +42,7 @@ class ArticleView: UIView, WKNavigationDelegate {
     }
     var hud: MBProgressHUD!
     var showShareButton = true
+    private var constraintGroup = ConstraintGroup()
 
     weak var delegate: ArticleViewDelegate?
 
@@ -125,8 +126,7 @@ decidePolicyFor navigationAction: WKNavigationAction,
         /*
          * Put the button at the bottom with a fixed height.
          */
-        let constraintGroup = ConstraintGroup()
-        constrain(webView, button, replace: constraintGroup) {
+        constraintGroup = constrain(webView, button, replace: constraintGroup) {
             web, share in
 
             let superview = web.superview!

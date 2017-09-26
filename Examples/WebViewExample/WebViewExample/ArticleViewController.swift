@@ -18,10 +18,8 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
 
     // MARK: - Stored properties
 
-    private var _planetData: PlanetData
     var planetData: PlanetData {
-        set { _planetData = newValue; updateViewWithPlanetData() }
-        get { return _planetData }
+        didSet { updateViewWithPlanetData() }
     }
     let forwardBackControl = UISegmentedControl()
     var buo: BranchUniversalObject!
@@ -36,7 +34,7 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
     // MARK: - Object lifecycle
 
     init(planetData: PlanetData) {
-        _planetData = planetData
+        self.planetData = planetData
         super.init(nibName: nil, bundle: nil)
         updateViewWithPlanetData()
     }
