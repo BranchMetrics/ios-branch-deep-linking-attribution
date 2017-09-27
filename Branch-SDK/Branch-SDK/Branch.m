@@ -808,7 +808,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
       ^ void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
         self.asyncRequestCount--;
 
-        if (attrDetails.count == 0 && self.searchAdsDebugMode) {
+        // If searchAdsDebugMode is on then force the result to a set value for testing:
+        if (self.searchAdsDebugMode) {
             // Round down to one day for testing.
             NSTimeInterval const kOneDay = (60.0*60.0*24.0);
             NSTimeInterval t = trunc([[NSDate date] timeIntervalSince1970] / kOneDay) * kOneDay;
