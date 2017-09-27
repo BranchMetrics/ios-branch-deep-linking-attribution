@@ -39,8 +39,8 @@ ___
   + [Retrieve the user's first deep linking params](#retrieve-install-install-only-parameters)
   + [Setting the user id for tracking influencers](#persistent-identities)
   + [Logging a user out](#logout)
-  + [Tracking custom events](#register-custom-events)
-  + [Tracking Apple Search Ad Attribution](#apple-search-ads)
+  + [Tracking User Actions and Events](#tracking-user-actions-and-events)
+  + [Apple Search Ad Attribution](#apple-search-ads)
 
 4. Branch Universal Objects
   + [Instantiate a Branch Universal Object](#branch-universal-object)
@@ -63,7 +63,7 @@ There's a full demo app embedded in this repository, but you can also check out 
 
 ## Installation
 
-**The compiled iOS SDK footprint is 180kb**
+_The compiled iOS SDK footprint is 9mb with combined arm\_v7 and arm64 support_
 
 ### Available in CocoaPods
 
@@ -455,7 +455,9 @@ None
 
 #### Returns
 
-**NSDictionary *** When initSession returns a parameter set in the deep link callback, we store it in NSUserDefaults for the duration of the session in case you want to retrieve it later. Careful, once the app is minimized and the session ends, this will be cleared.
+`NSDictionary*`
+
+When initSession returns a parameter set in the deep link callback, we store it in NSUserDefaults for the duration of the session in case you want to retrieve it later. Careful, once the app is minimized and the session ends, this will be cleared.
 
 ### Retrieve Install (Install Only) Parameters
 
@@ -530,17 +532,95 @@ Branch.getInstance().logout()   // previously clearUser
 
 None
 
-### Register Custom Events
+### Tracking User Actions and Events
+
+Special user actions beyond app installs, opens, and sharing can be tracked too.
+
+To track events such as when a user adds an item to an on-line shopping cart, or searches for a keyword, use BranchEvent logging.
+
+###### Objective-C
+
+```objc
+[BranchEvent.standardEvent(BranchStandardEventAddToCart) logEvent];
+```
+
+###### Swift
+
+```swift
+BranchEvent.standardEvent(BranchStandardEventAddToCart).logEvent()
+```
+
+For best results use the Branch standard event names defined in `BranchEvent.h`. But you can use your own custom event names too:
+
+###### Objective-C
+
+```objc
+[BranchEvent.customEventWithName(@"User_Scanned_Item") logEvent];
+```
+
+###### Swift
+
+```swift
+BranchEvent.customEventWithName("User_Scanned_Item").logEvent()
+```
+
+Extra event specific data can be tracked with the event as well:
+
+###### Objective-C
+
+```objc
+BranchEvent *event    = [BranchEvent standardEvent:BranchStandardEventPurchase];
+event.transactionID   = @"tx-12344555";
+event.currency        = BNCCurrencyUSD;
+event.revenue         = [NSDecimalNumber decimalNumberWithString:@"12.70"];
+event.shipping        = [NSDecimalNumber decimalNumberWithString:@"10.20"];
+event.tax             = [NSDecimalNumber decimalNumberWithString:@"2.50"];
+event.coupon          = @"coupon_code";
+event.affiliation     = @"store_affiliation";
+event.eventDescription= @"Shopper made a purchase.";
+event.searchQuery     = @"Fashion Scarf";
+event.customData      = (NSMutableDictionary*) @{
+    @"Item_Color": @"Red",
+    @"Item_Size":  @"Large"
+};
+[event logEvent];
+```
+
+###### Swift
+
+```
+let event = BranchEvent.standardEvent(.purchase)
+event.transactionID    = "tx-12344555"
+event.currency         = .USD
+event.revenue          = 12.70
+event.shipping         = 10.20
+event.tax              = 2.50
+event.coupon           = "coupon_code"
+event.affiliation      = "store_affiliation"
+event.eventDescription = "Shopper made a purchase."
+event.searchQuery      = "Fashion Scarf"
+event.customData       = [
+    "Item_Color": "Red",
+    "Item_Size":  "Large"
+]
+event.logEvent()
+```
+
+### Register Custom Events (Deprecated)
+
+The old `userCompletedAction:` methods of tracking user actions and events are deprecated and will go away. Use `BranchEvent` to track user actions instead, as described above.
+
+Here is the legacy documentation:
 
 #### Methods
 
-###### Objective-C
+###### Objective-C (Deprecated)
 
 ```objc
 [[Branch getInstance] userCompletedAction:@"your_custom_event"]; // your custom event name should not exceed 63 characters
 ```
 
-###### Swift
+###### Swift (Deprecated)
 
 ```swift
 Branch.getInstance().userCompletedAction("your_custom_event") // your custom event name should not exceed 63 characters
@@ -548,13 +628,13 @@ Branch.getInstance().userCompletedAction("your_custom_event") // your custom eve
 
 OR if you want to store some state with the event:
 
-###### Objective-C
+###### Objective-C (Deprecated)
 
 ```objc
 [[Branch getInstance] userCompletedAction:@"your_custom_event" withState:(NSDictionary *)appState]; // same 63 characters max limit
 ```
 
-###### Swift
+###### Swift (Deprecated)
 
 ```swift
 Branch.getInstance().userCompletedAction("your_custom_action", withState: [String: String]()) // same 63 characters max limit; replace [String: String]() with params dictionary
@@ -571,10 +651,10 @@ Some example events you might want to track:
 #### Parameters
 
 
-**event** (NSString *) _required_
+**event** `(NSString *)` _required_
 : This is the event string you'd like to send to Branch. You can view the attribution of which links drove events to occur in the analytics.
 
-**state** (NSDictionary *) _optional_
+**state** `(NSDictionary *)` _optional_
 : If you'd like to pass additional metadata along with the event, you should use this dictionary. For example, this is how you pass revenue into Branch using the BNCPurchaseAmount constant as a key.
 
 ### Apple Search Ads
