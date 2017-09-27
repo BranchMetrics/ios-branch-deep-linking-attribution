@@ -1,6 +1,7 @@
 Branch iOS SDK Change Log
 
 - v0.19.0
+  * Fixed duplicate URL being copied when a link is copied to the clipboard in iOS 11.
   * Changed the use of `typeof` to `__typeof`, for stricter compiler options.
   * The SDK now send the Apple Search Ad attribution only when it changes (DLA-969, #723).
   * Add local ip address to returned device info (AIS-341).
