@@ -42,6 +42,8 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 - (void) dealloc {
+    if (self.persistTimer)
+        dispatch_source_cancel(self.persistTimer);
     [self persistImmediately];
 }
 
@@ -237,7 +239,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         );
         __weak __typeof(self) weakSelf = self;
         dispatch_source_set_event_handler(self.persistTimer, ^ {
-            __strong __typeof(self) strongSelf = weakSelf;
+            __strong __typeof(weakSelf) strongSelf = weakSelf;
             if (strongSelf) {
                 [strongSelf persistImmediately];
                 dispatch_source_cancel(strongSelf.persistTimer);
@@ -250,8 +252,9 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 - (void)persistImmediately {
     @synchronized (self) {
-        NSArray *requestsToPersist = [self.queue copy];
         @try {
+            if (!self.queue) return;
+            NSArray *requestsToPersist = [self.queue copy];
             NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
             for (BNCServerRequest *req in requestsToPersist) {
                 // Don't persist these requests
