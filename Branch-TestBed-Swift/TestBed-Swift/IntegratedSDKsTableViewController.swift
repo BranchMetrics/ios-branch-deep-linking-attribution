@@ -632,9 +632,9 @@ class IntegratedSDKsTableViewController: UITableViewController {
                     "Footer":"These are the currently active Localytics SDK settings.",
                     "TableViewCells":[
                         [
-                            "Name":"ActiveLocalyticsAPIKey",
+                            "Name":"ActiveLocalyticsAppKey",
                             "CellReuseIdentifier":"TextFieldCell",
-                            "Text":IntegratedSDKsData.activeLocalyticsAPIKey() ?? "",
+                            "Text":IntegratedSDKsData.activeLocalyticsAppKey() ?? "",
                             "Placeholder":"Localytics API Key"
                         ],[
                             "Name":"ActiveLocalyticsEnabled",
@@ -649,9 +649,9 @@ class IntegratedSDKsTableViewController: UITableViewController {
                         "Footer":"These settings will be used the next time the application is closed (not merely backgrounded) and re-opened.",
                         "TableViewCells":[
                             [
-                                "Name":"PendingLocalyticsAPIKey",
+                                "Name":"PendingLocalyticsAppKey",
                                 "CellReuseIdentifier":"TextFieldCell",
-                                "Text":IntegratedSDKsData.pendingLocalyticsAPIKey() ?? "",
+                                "Text":IntegratedSDKsData.pendingLocalyticsAppKey() ?? "",
                                 "Placeholder":"Localytics API Key",
                                 "InputForm":"TextViewForm"
                             ],[
@@ -930,8 +930,8 @@ class IntegratedSDKsTableViewController: UITableViewController {
                 IntegratedSDKsData.setPendingKochavaEnabled(pendingKochavaEnabled == "true")
             }
             // Localytics
-            if let pendingLocalyticsAPIKey = vc.returnValues["PendingLocalyticsAPIKey"] {
-                IntegratedSDKsData.setPendingLocalyticsAPIKey(pendingLocalyticsAPIKey)
+            if let pendingLocalyticsAppKey = vc.returnValues["PendingLocalyticsAppKey"] {
+                IntegratedSDKsData.setPendingLocalyticsAppKey(pendingLocalyticsAppKey)
             }
             if let pendingLocalyticsEnabled = vc.returnValues["PendingLocalyticsEnabled"] {
                 IntegratedSDKsData.setPendingLocalyticsEnabled(pendingLocalyticsEnabled == "true")

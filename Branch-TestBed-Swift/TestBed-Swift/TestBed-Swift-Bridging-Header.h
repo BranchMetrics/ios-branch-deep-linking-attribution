@@ -20,3 +20,4 @@
 #import "ADBMobile.h"
 #import "Appboy-iOS-SDK/AppboyKit.h"
 #import "YandexMobileMetrica/YandexMobileMetrica.h"
+#import "Localytics/Localytics.h"

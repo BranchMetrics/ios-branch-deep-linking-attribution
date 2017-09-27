@@ -47,7 +47,7 @@ struct StartupOptionsData {
     static func setActiveSetDebugEnabled(_ value: Bool) {
         userDefaults.setValue(value, forKey: "activeSetDebug")
     }
-    
+
     static func getPendingSetDebugEnabled() -> Bool? {
         return userDefaults.bool(forKey: "pendingSetDebug")
     }

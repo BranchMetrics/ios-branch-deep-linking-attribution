@@ -674,38 +674,38 @@ struct IntegratedSDKsData {
     
     // Mark - Localytics
     
-    static func activeLocalyticsAPIKey() -> String? {
-        if let value = userDefaults.string(forKey: "activeLocalyticsAPIKey") {
+    static func activeLocalyticsAppKey() -> String? {
+        if let value = userDefaults.string(forKey: "activeLocalyticsAppKey") {
             if value.characters.count > 0 {
                 return value
             }
         }
-        if let value = Bundle.main.object(forInfoDictionaryKey: "localytics_api_key") as? String {
-            userDefaults.setValue(value, forKey: "activeLocalyticsAPIKey")
+        if let value = Bundle.main.object(forInfoDictionaryKey: "localytics_app_key") as? String {
+            userDefaults.setValue(value, forKey: "activeLocalyticsAppKey")
             return value
         }
         return nil
     }
     
-    static func setActiveLocalyticsAPIKey(_ value: String) {
-        userDefaults.setValue(value, forKey: "activeLocalyticsAPIKey")
+    static func setActiveLocalyticsAppKey(_ value: String) {
+        userDefaults.setValue(value, forKey: "activeLocalyticsAppKey")
     }
     
-    static func pendingLocalyticsAPIKey() -> String? {
-        if let value = userDefaults.string(forKey: "pendingLocalyticsAPIKey") {
+    static func pendingLocalyticsAppKey() -> String? {
+        if let value = userDefaults.string(forKey: "pendingLocalyticsAppKey") {
             if value.characters.count > 0 {
                 return value
             }
         }
-        if let value = Bundle.main.object(forInfoDictionaryKey: "localytics_api_key") as? String {
-            userDefaults.setValue(value, forKey: "pendingLocalyticsAPIKey")
+        if let value = Bundle.main.object(forInfoDictionaryKey: "localytics_app_key") as? String {
+            userDefaults.setValue(value, forKey: "pendingLocalyticsAppKey")
             return value
         }
         return nil
     }
     
-    static func setPendingLocalyticsAPIKey(_ value: String) {
-        userDefaults.setValue(value, forKey: "pendingLocalyticsAPIKey")
+    static func setPendingLocalyticsAppKey(_ value: String) {
+        userDefaults.setValue(value, forKey: "pendingLocalyticsAppKey")
     }
     
     static func activeLocalyticsEnabled() -> Bool? {

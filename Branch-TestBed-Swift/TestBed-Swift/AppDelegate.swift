@@ -46,7 +46,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         activateStitch()
         
         if let branch = Branch.getInstance(branchKey) {
-            
+            // TODO: Remove before release
+            StartupOptionsData.setActiveSetDebugEnabled(true)
+            StartupOptionsData.setPendingSetDebugEnabled(true)
+            IntegratedSDKsData.setActiveAdobeEnabled(true)
+            IntegratedSDKsData.setPendingAdobeEnabled(true)
             if StartupOptionsData.getPendingSetDebugEnabled()! {
                 branch.setDebug()
                 StartupOptionsData.setActiveSetDebugEnabled(true)
@@ -82,7 +86,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
                 if let clickedBranchLink = params?[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool? {
                     
                     if clickedBranchLink {
-                        
                         let nc = self.window!.rootViewController as! UINavigationController
                         let storyboard = UIStoryboard(name: "ContentView", bundle: nil)
                         let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
@@ -99,7 +102,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
                 
                 // Adobe
                 if IntegratedSDKsData.activeAdobeEnabled()! {
-                    branch.setRequestMetadataKey("$adobe_visitor_id", value:ADBMobile.trackingIdentifier() as NSObject!)
+                    let adobeVisitorID = ADBMobile.trackingIdentifier()
+                    
+                    branch.setRequestMetadataKey("$adobe_visitor_id", value:adobeVisitorID)
                 }
                 
                 
@@ -235,11 +240,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         IntegratedSDKsData.setActiveAdjustAppToken(key)
         IntegratedSDKsData.setActiveAdjustEnabled(true)
 
-        let adjustConfig = ADJConfig(appToken: key, environment: ADJEnvironmentProduction)
+        let adjustConfig = ADJConfig(appToken: key, environment: ADJEnvironmentSandbox)
 
         adjustConfig?.logLevel = ADJLogLevelVerbose
         adjustConfig?.delegate = self
-
         Adjust.appDidLaunch(adjustConfig!)
     }
     
@@ -469,7 +473,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setActiveLocalyticsEnabled(false)
             return
         }
-        guard let key = IntegratedSDKsData.pendingLocalyticsAPIKey() as String? else {
+        guard let key = IntegratedSDKsData.pendingLocalyticsAppKey() as String? else {
             IntegratedSDKsData.setPendingLocalyticsEnabled(false)
             return
         }
@@ -477,8 +481,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setPendingLocalyticsEnabled(false)
             return
         }
-        IntegratedSDKsData.setActiveLocalyticsAPIKey(key)
+        IntegratedSDKsData.setActiveLocalyticsAppKey(key)
         IntegratedSDKsData.setActiveLocalyticsEnabled(true)
+        
+        Localytics.setLoggingEnabled(true)
+        Localytics.autoIntegrate(key, launchOptions: nil)
     }
     
     func activatemParticle() {
