@@ -39,12 +39,12 @@ ___
   + [Retrieve the user's first deep linking params](#retrieve-install-install-only-parameters)
   + [Setting the user id for tracking influencers](#persistent-identities)
   + [Logging a user out](#logout)
-  + [Tracking User Actions and Events](#tracking-user-actions-and-events)
+  + [Tracking user actions and events](#tracking-user-actions-and-events)
   + [Apple Search Ad Attribution](#apple-search-ads)
 
 4. Branch Universal Objects
   + [Instantiate a Branch Universal Object](#branch-universal-object)
-  + [Register user actions on an object](#register-user-actions-on-an-object)
+  + [Tracking user interactions with an object](#tracking-user-interactions-with-an-object)
   + [List content on Spotlight](#list-content-on-spotlight)
   + [Configuring link properties](link-properties-parameters)
   + [Creating a short link referencing the object](#shortened-links)
@@ -534,9 +534,11 @@ None
 
 ### Tracking User Actions and Events
 
-Special user actions beyond app installs, opens, and sharing can be tracked too.
+Special user actions beyond app installs, opens, and sharing can be tracked with the `BranchEvent` class. You can track events such as when a user adds an item to an on-line shopping cart, or searches for a keyword. 
 
-To track events such as when a user adds an item to an on-line shopping cart, or searches for a keyword, use BranchEvent logging.
+Analytics about your app's BranchEvents can be found on the Branch dashboard, and BranchEvents also provide tight integration with many third party analytics providers.
+
+The `BranchEvent` class can be simple to use. For example:
 
 ###### Objective-C
 
@@ -547,7 +549,7 @@ To track events such as when a user adds an item to an on-line shopping cart, or
 ###### Swift
 
 ```swift
-BranchEvent.standardEvent(BranchStandardEventAddToCart).logEvent()
+BranchEvent.standardEvent(.addToCart).logEvent()
 ```
 
 For best results use the Branch standard event names defined in `BranchEvent.h`. But you can use your own custom event names too:
@@ -608,7 +610,7 @@ event.logEvent()
 
 ### Register Custom Events (Deprecated)
 
-The old `userCompletedAction:` methods of tracking user actions and events are deprecated and will go away. Use `BranchEvent` to track user actions instead, as described above.
+The old `userCompletedAction:` methods of tracking user actions and events are deprecated and will go away eventually. Use the new `BranchEvent` to track user actions instead, as described above.
 
 Here is the legacy documentation:
 
@@ -783,32 +785,31 @@ branchUniversalObject.addMetadataKey("property2", value: "red")
 
 None
 
-### Register User Actions On An Object
+### Tracking User Interactions With An Object
 
 We've added a series of custom events that you'll want to start tracking for rich analytics and targeting. Here's a list below with a sample snippet that calls the register view event.
 
 | Key | Value
 | --- | ---
-| BNCRegisterViewEvent | User viewed the object
-| BNCAddToWishlistEvent | User added the object to their wishlist
-| BNCAddToCartEvent | User added object to cart
-| BNCPurchaseInitiatedEvent | User started to check out
-| BNCPurchasedEvent | User purchased the item
-| BNCShareInitiatedEvent | User started to share the object
-| BNCShareCompletedEvent | User completed a share
+| BranchStandardEventViewItem | User viewed the object
+| BranchStandardEventAddToWishlist | User added the object to their wishlist
+| BranchStandardEventAddToCart | User added object to cart
+| BranchStandardEventInitiatePurchase | User started to check out
+| BranchStandardEventPurchase | User purchased the item
+| BranchStandardEventShare | User completed a share
 
 #### Methods
 
 ###### Objective-C
 
 ```objc
-[branchUniversalObject userCompletedAction:BNCRegisterViewEvent];
+[branchUniversalObject userCompletedAction:BranchStandardEventViewItem];
 ```
 
 ###### Swift
 
 ```swift
-branchUniversalObject.userCompletedAction(BNCRegisterViewEvent)
+branchUniversalObject.userCompletedAction(BranchStandardEventViewItem)
 ```
 
 #### Parameters
@@ -1055,14 +1056,14 @@ If you'd like to list your Branch Universal Object in Spotlight local and cloud 
 
 ```objc
 branchUniversalObject.automaticallyListOnSpotlight = YES;
-[branchUniversalObject userCompletedAction:BNCRegisterViewEvent];
+[branchUniversalObject userCompletedAction:BranchStandardEventViewItem];
 ```
 
 ###### Swift
 
 ```swift
 branchUniversalObject.automaticallyListOnSpotlight = true
-branchUniversalObject.userCompletedAction(BNCRegisterViewEvent)
+branchUniversalObject.userCompletedAction(BranchStandardEventViewItem)
 ```
 
 #### Parameters
