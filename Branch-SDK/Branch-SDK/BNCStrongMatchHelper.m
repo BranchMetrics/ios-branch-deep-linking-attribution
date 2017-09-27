@@ -192,9 +192,8 @@
     #pragma clang diagnostic pop
 }
 
-+ (BOOL)cookiesAvailableInOS
-{
-    return [UIDevice currentDevice].systemVersion.floatValue < 11.0;
++ (BOOL)cookiesAvailableInOS {
+    return [UIDevice currentDevice].systemVersion.doubleValue < 11.0;
 }
 
 - (void)createStrongMatchWithBranchKey:(NSString *)branchKey {
