@@ -543,7 +543,7 @@ NSInteger const  TEST_CREDITS = 30;
     [[NSNotificationCenter defaultCenter]
         addObserver:self
         selector:@selector(branchDidStartSessionNotification:)
-        name:BranchWillStartSessionNotification
+        name:BranchDidStartSessionNotification
         object:nil];
 
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
@@ -588,10 +588,11 @@ NSInteger const  TEST_CREDITS = 30;
         url:openOrInstallUrlCheckBlock
         key:[OCMArg any]
         callback:openOrInstallCallbackCheckBlock];
-    
+
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
     [branch initSessionWithLaunchOptions:@{}
         andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+            // Callback block. Order: 2.
             XCTAssertNil(error);
             XCTAssertEqualObjects(preferenceHelper.sessionID, TEST_SESSION_ID);
             XCTAssertTrue(self.notificationOrder == 2);
@@ -601,41 +602,20 @@ NSInteger const  TEST_CREDITS = 30;
         }
     ];
     
-    [self waitForExpectationsWithTimeout:2.0 handler:NULL];
+    [self waitForExpectationsWithTimeout:5.0 handler:NULL];
     XCTAssertTrue(self.notificationOrder == 5);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void) branch:(Branch*)branch willOpenURL:(NSURL*)url {
+// Delegate method. Order: 0.
+- (void) branch:(Branch*)branch willStartSessionWithURL:(NSURL*)url {
     XCTAssertTrue([NSThread isMainThread]);
     XCTAssertTrue(self.notificationOrder == 0);
     self.notificationOrder++;
     [self.branchWillOpenURLExpectation fulfill];
 }
 
-- (void) branch:(Branch*)branch
-     didOpenURL:(NSURL*)url
-withUniversalObject:(BranchUniversalObject*)univseralObject
- linkProperties:(BranchLinkProperties*)linkProperties {
-    XCTAssertTrue([NSThread isMainThread]);
-    XCTAssertTrue(self.notificationOrder == 3);
-    self.notificationOrder++;
-    XCTAssertNotNil(univseralObject);
-    XCTAssertNotNil(linkProperties);
-    [self.branchDidOpenURLExpectation fulfill];
-}
-
-- (void) branch:(Branch*)branch
-     didOpenURL:(NSURL*)url
-      withError:(NSError*)error {
-    XCTAssertTrue([NSThread isMainThread]);
-    XCTAssertTrue(self.notificationOrder == 3);
-    self.notificationOrder++;
-    XCTAssertNotNil(error);
-    [NSException raise:NSInternalInconsistencyException format:@"Shouldn't return an error here."];
-    [self.branchDidOpenURLExpectation fulfill];
-}
-
+// Notification method. Order: 1.
 - (void) branchWillStartSessionNotification:(NSNotification*)notification {
     XCTAssertTrue([NSThread isMainThread]);
     XCTAssertTrue(self.notificationOrder == 1);
@@ -656,6 +636,32 @@ withUniversalObject:(BranchUniversalObject*)univseralObject
     [self.branchWillOpenURLNotificationExpectation fulfill];
 }
 
+// Delegate method. Order: 3.
+- (void) branch:(Branch*)branch
+     didOpenURL:(NSURL*)url
+withUniversalObject:(BranchUniversalObject*)univseralObject
+ linkProperties:(BranchLinkProperties*)linkProperties {
+    XCTAssertTrue([NSThread isMainThread]);
+    XCTAssertTrue(self.notificationOrder == 3);
+    self.notificationOrder++;
+    XCTAssertNotNil(univseralObject);
+    XCTAssertNotNil(linkProperties);
+    [self.branchDidOpenURLExpectation fulfill];
+}
+
+// Delegate method. Order: Not called.
+- (void) branch:(Branch*)branch
+     didOpenURL:(NSURL*)url
+      withError:(NSError*)error {
+    XCTAssertTrue([NSThread isMainThread]);
+    XCTAssertTrue(self.notificationOrder == 3);
+    self.notificationOrder++;
+    XCTAssertNotNil(error);
+    [NSException raise:NSInternalInconsistencyException format:@"Shouldn't return an error here."];
+    [self.branchDidOpenURLExpectation fulfill];
+}
+
+// Notification method. Order: 4
 - (void) branchDidStartSessionNotification:(NSNotification*)notification {
     XCTAssertTrue([NSThread isMainThread]);
     XCTAssertTrue(self.notificationOrder == 4);
@@ -725,11 +731,6 @@ withUniversalObject:(BranchUniversalObject*)univseralObject
         url:openOrInstallUrlCheckBlock
         key:[OCMArg any]
         callback:openOrInstallCallbackCheckBlock];
-
-//TODO
-//    // Fake branch key
-//    id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
-//    [[[preferenceHelperMock stub] andReturn:@"key_live_foo"] getBranchKey:YES];
 }
 
 @end
