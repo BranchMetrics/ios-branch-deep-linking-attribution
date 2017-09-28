@@ -74,7 +74,14 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        // Log a BNCRegisterViewEvent each time the user views the page.
+        /* Log a BNCRegisterViewEvent each time the user views the page.
+         *
+         * This does several things behind the scenes:
+         *  - Since `automaticallyListOnSpotlight` is true for this Branch Universal Object, it is
+         *    listed on Spotlight.
+         *  - The 'view' ranking for searches is bumped with each organic view.
+         *  - The 'view' event is tracked in analytics on the Branch dashboard.
+         */
         buo.userCompletedAction(BNCRegisterViewEvent)
         BNCLog("Logged BNCRegisterViewEvent on BUO")
         addForwardBackControl()

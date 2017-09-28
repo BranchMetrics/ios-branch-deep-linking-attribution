@@ -14,4 +14,5 @@ a link is opened.
 
 ## Building
 
-Just run `pod install` to install all pod dependencies.
+* Just run `pod install` and `pod update` in terminal to install all pod dependencies.
+* Then build and run the WebViewExample.xcworkspace with Xcode.
