@@ -1,5 +1,5 @@
 //
-//  BNCServerInterface.m
+//  BNCServerInterface.Test.m
 //  Branch
 //
 //  Created by Graham Mueller on 3/31/15.
@@ -60,7 +60,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     }
   ];
   
-  [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
+  [serverInterface getRequest:nil url:@"http://foo" key:@"key_live_foo" callback:NULL];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
   [OHHTTPStubs removeAllStubs];
 }
@@ -122,7 +122,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     }
   }];
   
-  [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
+  [serverInterface getRequest:nil url:@"http://foo" key:@"key_live_foo" callback:NULL];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -160,7 +160,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     }
   }];
   
-  [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
+  [serverInterface getRequest:nil url:@"http://foo" key:@"key_live_foo" callback:NULL];
   [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
 
@@ -198,7 +198,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     }
   }];
   
-  [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
+  [serverInterface getRequest:nil url:@"http://foo" key:@"key_live_foo" callback:NULL];
   [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
 
@@ -254,7 +254,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     }
   }];
   
-  [serverInterface postRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
+  [serverInterface postRequest:nil url:@"http://foo" key:@"key_live_foo" callback:NULL];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -290,7 +290,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     
   }];
   
-  [serverInterface postRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
+  [serverInterface postRequest:nil url:@"http://foo" key:@"key_live_foo" callback:NULL];
   [self waitForExpectationsWithTimeout:1.0 handler:nil];
   
 }
@@ -327,7 +327,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     
   }];
   
-  [serverInterface getRequest:nil url:@"http://foo" key:@"key_foo" callback:NULL];
+  [serverInterface getRequest:nil url:@"http://foo" key:@"key_live_foo" callback:NULL];
   [self waitForExpectationsWithTimeout:1.0 handler:nil];
 }
 

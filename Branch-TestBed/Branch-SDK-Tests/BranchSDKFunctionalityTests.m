@@ -7,7 +7,7 @@
 //
 
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "Branch.h"
@@ -171,7 +171,7 @@ NSInteger const  TEST_CREDITS = 30;
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
             preferenceHelper:preferenceHelper
-            key:@"key_foo"];
+            key:@"key_live_foo"];
 
     BNCServerResponse *fbLinkResponse = [[BNCServerResponse alloc] init];
     fbLinkResponse.statusCode = @200;
@@ -247,7 +247,7 @@ NSInteger const  TEST_CREDITS = 30;
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
             preferenceHelper:preferenceHelper
-            key:@"key_foo"];
+            key:@"key_live_foo"];
 
     XCTestExpectation *getShortURLExpectation = [self expectationWithDescription:@"Test getShortURL Sync"];
     [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
@@ -301,7 +301,7 @@ NSInteger const  TEST_CREDITS = 30;
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
             preferenceHelper:preferenceHelper
-            key:@"key_foo"];
+            key:@"key_live_foo"];
 
     [preferenceHelper setCreditCount:NSIntegerMax forBucket:@"default"];
     
@@ -339,7 +339,7 @@ NSInteger const  TEST_CREDITS = 30;
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
             preferenceHelper:preferenceHelper
-            key:@"key_foo"];
+            key:@"key_live_foo"];
 
     [preferenceHelper setCreditCount:1 forBucket:@"default"];
     
@@ -383,7 +383,7 @@ NSInteger const  TEST_CREDITS = 30;
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
             preferenceHelper:preferenceHelper
-            key:@"key_foo"];
+            key:@"key_live_foo"];
 
     [preferenceHelper setCreditCount:1 forBucket:@"default"];
     
@@ -444,7 +444,7 @@ NSInteger const  TEST_CREDITS = 30;
 			queue:[[BNCServerRequestQueue alloc] init]
 			cache:[[BNCLinkCache alloc] init]
 			preferenceHelper:preferenceHelper
-			key:@"key_foo"];
+			key:@"key_live_foo"];
 
     // Init session
 

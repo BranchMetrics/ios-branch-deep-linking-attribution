@@ -28,7 +28,7 @@
 }
 
 - (id)initWithAction:(NSString *)action state:(NSDictionary *)state withBranchViewCallback:(id)callback {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _action = action;
         _state = state;
         _branchViewcallback = callback;
@@ -76,7 +76,7 @@
 #pragma mark - NSCoding methods
 
 - (id)initWithCoder:(NSCoder *)decoder {
-    if (self = [super initWithCoder:decoder]) {
+    if ((self = [super initWithCoder:decoder])) {
         _action = [decoder decodeObjectForKey:@"action"];
         _state = [decoder decodeObjectForKey:@"state"];
     }

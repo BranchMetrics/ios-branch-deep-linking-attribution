@@ -1,5 +1,51 @@
 Branch iOS SDK Change Log
 
+- v0.19.0
+  * Fixed duplicate URL being copied when a link is copied to the clipboard in iOS 11.
+  * Changed the use of `typeof` to `__typeof`, for stricter compiler options.
+  * The SDK now send the Apple Search Ad attribution only when it changes (DLA-969, #723).
+  * Add local ip address to returned device info (AIS-341).
+  * Added `UITestBed`, a test app more suited to automated UI tests.
+  * WebviewExample updates. The example now shows:
+    - How to deep link from a web page in a WKWebView back into the app.
+    - How to navigate forward and back with a Branch link in a WebView.
+    - How to use Fastlane with the Branch SDK.
+    - The code is updated for Swift 4.0 / Xcode 9.0.
+  * Fixed a number of warnings generated from strict compiler checking (GH-#719).
+  * Branch when generating a Branch link with an alias, identityID is included in the params (INTENG-3725).
+    - This makes Branch link referrals work.
+    - Generating an aliased Branch link may result in a long link being generated where a short link
+      was generated before.
+  * The SDK now uses modules instead of a module map for better Swift integration.
+
+- v0.18.8
+  * _*Master Release*_ - September 13, 2017
+
+- v0.18.6
+  * Fixed TestBed-Swift for Xcode 9 (but not upgraded to Swift 4 yet).
+  * Fixed some thread safety and iOS 11 bugs.
+
+- v0.18.3
+  * Fixed query string parsing for iOS 7 and added more tests.
+
+- v0.18.2
+  * Language and locale were reported wrong (GH-#707).
+  * Getting the user agent in iOS 7 would stall initialization sometimes.
+
+- v0.18.1
+  * Update Apple search ads mock-up for testing and backend (GH-#682,#706).
+    - Fixed and tested encoding JSON boolean true as 'true' vs. '1'.
+    - Updated Apple search ad dictionary for testing.
+
+- v0.18.0
+  * Branch links opened via Air Drop now open correctly (GH-#699,#701).
+  * Fixed remote push notification handling (GH-#703,#704).
+  * Fixed a race condition on startup while getting the browser string (GH-#700,#702).
+  * Removed vestigial CoreTelephony references (GH-#689).
+  * Updated project for Xcode 9 compatibility.
+  * Update the BranchShareLink.shareURL member field correctly after share event (#696).
+  * Added ability to turn logging on and off via links / Info.plist (GH-#697).
+
 - v0.17.10
   * _*Master Release*_ - August 23, 2017
   * Don't do cookie based matching in iOS 11 (AIS-307, GH-#681).
@@ -33,7 +79,7 @@ Branch iOS SDK Change Log
   * Added a guard to prevent a crash bug from when bad data was accidentally passed back from the
     Branch servers (GitHub #672).
   * Fixed a crash bug that sometimes occurred when logging to the Branch log file (GitHub #661).
-  * Added 'com.googleusercontent.apps' as an oauth scheme (GitHub #678).
+  * Added 'com.googleusercontent.apps' as an o-auth scheme (GitHub #678).
   * Used address sanitizer & thread sanitizer to find and fix several thread and memory errors.
   * Escape extra html tags in dynamic Branch links (INTENG-3466).
 

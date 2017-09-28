@@ -42,6 +42,8 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 - (void) dealloc {
+    if (self.persistTimer)
+        dispatch_source_cancel(self.persistTimer);
     [self persistImmediately];
 }
 
@@ -102,7 +104,9 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 - (BNCServerRequest *)peek {
-    return [self peekAt:0];
+    @synchronized (self) {
+        return [self peekAt:0];
+    }
 }
 
 - (BNCServerRequest *)peekAt:(unsigned int)index {
@@ -126,7 +130,9 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 - (NSString *)description {
-    return [self.queue description];
+    @synchronized(self) {
+        return [self.queue description];
+    }
 }
 
 - (void)clearQueue {
@@ -155,6 +161,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             BranchOpenRequest *req = [self.queue objectAtIndex:i];
             // Install extends open, so only need to check open.
             if ([req isKindOfClass:[BranchOpenRequest class]]) {
+                BNCLogDebugSDK(@"Removing open request.");
                 req.callback = nil;
                 [self remove:req];
                 return YES;
@@ -230,19 +237,24 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             BNCNanoSecondsFromTimeInterval(BATCH_WRITE_TIMEOUT),
             BNCNanoSecondsFromTimeInterval(BATCH_WRITE_TIMEOUT / 10.0)
         );
-        dispatch_source_set_event_handler(self.persistTimer, ^ { [self persistImmediately]; });
+        __weak __typeof(self) weakSelf = self;
+        dispatch_source_set_event_handler(self.persistTimer, ^ {
+            __strong __typeof(weakSelf) strongSelf = weakSelf;
+            if (strongSelf) {
+                [strongSelf persistImmediately];
+                dispatch_source_cancel(strongSelf.persistTimer);
+                strongSelf.persistTimer = nil;
+            }
+        });
         dispatch_resume(self.persistTimer);
     }
 }
 
 - (void)persistImmediately {
     @synchronized (self) {
-        if (self.persistTimer) {
-            dispatch_source_cancel(self.persistTimer);
-            self.persistTimer = nil;
-        }
-        NSArray *requestsToPersist = [self.queue copy];
         @try {
+            if (!self.queue) return;
+            NSArray *requestsToPersist = [self.queue copy];
             NSMutableArray *encodedRequests = [[NSMutableArray alloc] init];
             for (BNCServerRequest *req in requestsToPersist) {
                 // Don't persist these requests

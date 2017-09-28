@@ -1013,11 +1013,11 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
 }
 
 - (void) testLogLevelString {
-    XCTAssertEqual(BNCLogLevelAll,      BNBLogLevelFromString(@"BNCLogLevelAll"));
-    XCTAssertEqual(BNCLogLevelDebugSDK, BNBLogLevelFromString(@"BNCLogLevelDebugSDK"));
-    XCTAssertEqual(BNCLogLevelWarning,  BNBLogLevelFromString(@"BNCLogLevelWarning"));
-    XCTAssertEqual(BNCLogLevelNone,     BNBLogLevelFromString(@"BNCLogLevelNone"));
-    XCTAssertEqual(BNCLogLevelMax,      BNBLogLevelFromString(@"BNCLogLevelMax"));
+    XCTAssertEqual(BNCLogLevelAll,      BNCLogLevelFromString(@"BNCLogLevelAll"));
+    XCTAssertEqual(BNCLogLevelDebugSDK, BNCLogLevelFromString(@"BNCLogLevelDebugSDK"));
+    XCTAssertEqual(BNCLogLevelWarning,  BNCLogLevelFromString(@"BNCLogLevelWarning"));
+    XCTAssertEqual(BNCLogLevelNone,     BNCLogLevelFromString(@"BNCLogLevelNone"));
+    XCTAssertEqual(BNCLogLevelMax,      BNCLogLevelFromString(@"BNCLogLevelMax"));
 }
 
 - (void) testLogLevelEnum {

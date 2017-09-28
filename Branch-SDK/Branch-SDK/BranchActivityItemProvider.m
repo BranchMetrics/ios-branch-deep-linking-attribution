@@ -33,18 +33,30 @@
 
 - (id)initWithParams:(NSDictionary *)params tags:(NSArray *)tags feature:(NSString *)feature stage:(NSString *)stage campaign:(NSString *)campaign alias:(NSString *)alias delegate:(id <BranchActivityItemProviderDelegate>)delegate {
     NSString *url = [[Branch getInstance] getLongURLWithParams:params andChannel:nil andTags:tags andFeature:feature andStage:stage andAlias:alias];
-    
-    if (self = [super initWithPlaceholderItem:[NSURL URLWithString:url]]) {
-        _params = params;
-        _tags = tags;
-        _feature = feature;
-        _stage = stage;
-        _campaign = campaign;
-        _alias = alias;
-        _userAgentString = [BNCDeviceInfo userAgentString];
-        _delegate = delegate;
+
+    if ([UIDevice currentDevice].systemVersion.doubleValue < 11.0) {
+        if ((self = [super initWithPlaceholderItem:[NSURL URLWithString:url]])) {
+            _params = params;
+            _tags = tags;
+            _feature = feature;
+            _stage = stage;
+            _campaign = campaign;
+            _alias = alias;
+            _userAgentString = [BNCDeviceInfo userAgentString];
+            _delegate = delegate;
+        }
+    } else {
+        if ((self = [super initWithPlaceholderItem:url])) {
+            _params = params;
+            _tags = tags;
+            _feature = feature;
+            _stage = stage;
+            _campaign = campaign;
+            _alias = alias;
+            _userAgentString = [BNCDeviceInfo userAgentString];
+            _delegate = delegate;
+        }
     }
-    
     return self;
 }
 
@@ -68,8 +80,8 @@
     // existing list, telling the backend to ignore the first click
     NSArray *scrapers = @[@"Facebook", @"Twitter", @"Slack", @"Apple Notes"];
     for (NSString *scraper in scrapers) {
-        if ([channel isEqualToString:scraper])
-            return [NSURL URLWithString:[[Branch getInstance]
+        if ([channel isEqualToString:scraper]) {
+            NSURL *URL = [NSURL URLWithString:[[Branch getInstance]
                 getShortURLWithParams:params
                 andTags:tags
                 andChannel:channel
@@ -79,6 +91,8 @@
                 andAlias:alias
                 ignoreUAString:self.userAgentString
                 forceLinkCreation:YES]];
+            return ([UIDevice currentDevice].systemVersion.doubleValue < 11.0) ? URL : URL.absoluteString;
+        }
     }
 
     // Wrap the link in HTML content
@@ -109,17 +123,18 @@
             [params objectForKey:BRANCH_LINK_DATA_KEY_EMAIL_HTML_FOOTER]];
     }
 
-    return [NSURL URLWithString:[[Branch getInstance]
-        getShortURLWithParams:params
-        andTags:tags
-        andChannel:channel
-        andFeature:feature
-        andStage:stage
-        andCampaign:campaign
-        andAlias:alias
-        ignoreUAString:nil
-        forceLinkCreation:YES]];
-
+    NSURL *URL =
+        [NSURL URLWithString:[[Branch getInstance]
+            getShortURLWithParams:params
+            andTags:tags
+            andChannel:channel
+            andFeature:feature
+            andStage:stage
+            andCampaign:campaign
+            andAlias:alias
+            ignoreUAString:nil
+            forceLinkCreation:YES]];
+    return ([UIDevice currentDevice].systemVersion.doubleValue < 11.0) ? URL : URL.absoluteString;
 }
 
 #pragma mark - Internals

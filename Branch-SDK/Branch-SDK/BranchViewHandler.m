@@ -6,8 +6,8 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+@import Foundation;
+@import UIKit;
 #import "BranchViewHandler.h"
 #import "Branch.h"
 #import "BranchView.h"

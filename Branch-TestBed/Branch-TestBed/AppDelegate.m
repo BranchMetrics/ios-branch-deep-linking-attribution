@@ -5,13 +5,16 @@
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
+
 #import "Branch.h"
+#import "BNCEncodingUtils.h"
 #import "AppDelegate.h"
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
 #import "APWaitingView.h"
-#import <SafariServices/SafariServices.h>
+#import "BNCEncodingUtils.h"
+@import SafariServices;
 
 @interface AppDelegate() <SFSafariViewControllerDelegate, BranchDelegate>
 @property (nonatomic, strong) SFSafariViewController *onboardingVC;
@@ -50,17 +53,18 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
     [branch setDebug];
 
-    // Check for Apple Search Ad attribution:
-    // [branch delayInitToCheckForSearchAds];
+    // Check for Apple Search Ad attribution (trade-off: slows down app startup):
+    [branch delayInitToCheckForSearchAds];
     
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
     
-    /**
-     * // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
-     * [self onboardUserOnInstall];
-     */
+    // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
+    // [self onboardUserOnInstall];
 
+    /*
+     *    Required: Initialize Branch, passing a deep link handler block:
+     */
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
         if (!error) {
@@ -70,7 +74,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
             NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
             if (params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] && deeplinkText) {
                 
-                UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
+                UINavigationController *navigationController =
+                    (UINavigationController *)self.window.rootViewController;
                 UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                 LogOutputViewController *logOutputViewController =
                     [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
@@ -90,10 +95,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         
     }];
 
-    /**
-     * // Push notification support (Optional)
-     * [self registerForPushNotifications:application];
-     */
+    // Push notification support (Optional)
+    [self registerForPushNotifications:application];
 
     return YES;
 }
@@ -190,8 +193,9 @@ continueUserActivity:(NSUserActivity *)userActivity
 }
 
 - (void)application:(UIApplication *)application
-didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    NSLog(@"Registered for remote notifications with APN device token: %@", deviceToken);
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
+    NSString *tokenString = [BNCEncodingUtils hexStringFromData:deviceToken];
+    NSLog(@"Registered for remote notifications with APN device token: '%@'.", tokenString);
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {

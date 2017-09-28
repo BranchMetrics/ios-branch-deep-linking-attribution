@@ -70,4 +70,14 @@
     XCTAssertEqualObjects(string, test);
 }
 
+- (void) testContainsString {
+    NSString *testString = @"I'm a good girl I am.";
+    XCTAssertTrue([testString bnc_containsString:@"good girl"]);
+    XCTAssertFalse([testString bnc_containsString:@"I'm a bad girl."]);
+    XCTAssertFalse([testString bnc_containsString:nil]);
+    XCTAssertTrue([testString bnc_containsString:testString]);
+    XCTAssertFalse([testString bnc_containsString:@"I'm a good girl I am..."]);
+    XCTAssertFalse([testString bnc_containsString:@""]);
+}
+
 @end

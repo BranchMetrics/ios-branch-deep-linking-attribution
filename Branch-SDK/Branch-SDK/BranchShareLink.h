@@ -6,7 +6,7 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "BranchUniversalObject.h"
 @class BranchShareLink;
 
@@ -61,7 +61,7 @@ parameters can be changed depending on the activity that the user selects.
 /**
 Creates a BranchShareLink object.
 
-@oaram universalObject  The Branch Universal Object the will be shared.
+@param universalObject  The Branch Universal Object the will be shared.
 @param linkProperties   The link properties that the link will have.
 */
 - (instancetype _Nullable) initWithUniversalObject:(BranchUniversalObject*_Nonnull)universalObject
@@ -75,7 +75,7 @@ Creates a BranchShareLink object.
 /**
 Presents a UIActivityViewController that shares the Branch link.
 
-@oaram viewController   The parent view controller from which to present the the activity sheet.
+@param viewController   The parent view controller from which to present the the activity sheet.
 @param anchor           The anchor point for the activity sheet. Used for iPad form factors.
 */
 - (void) presentActivityViewControllerFromViewController:(UIViewController*_Nullable)viewController

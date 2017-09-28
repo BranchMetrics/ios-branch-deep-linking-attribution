@@ -397,7 +397,7 @@
         NSData *data = [BNCEncodingUtils dataFromHexString:hexKey];
         if (data) {
             SecKeyRef secKey = [self publicSecKeyFromPKCS12CertChainData:data];
-            if (secKey) [array addObject:(__bridge id)secKey];
+            if (secKey) [array addObject:(__bridge_transfer id)secKey];
         }
     }
     return array;
@@ -779,6 +779,7 @@ exit:
     [self safeSetValue:deviceInfo.browserUserAgent forKey:@"user_agent" onDict:dict];
     [self safeSetValue:deviceInfo.country forKey:@"country" onDict:dict];
     [self safeSetValue:deviceInfo.language forKey:@"language" onDict:dict];
+    dict[@"local_ip"] = deviceInfo.localIPAddress;
 
     dict[BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED] = @(deviceInfo.isAdTrackingEnabled);
 }

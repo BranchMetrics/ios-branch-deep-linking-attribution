@@ -13,7 +13,8 @@
 //--------------------------------------------------------------------------------------------------
 
 
-#import  "BNCLog.h"
+#import "BNCLog.h"
+#import <stdatomic.h> // @import not available in Xcode 7
 
 
 #define _countof(array)  (sizeof(array)/sizeof(array[0]))
@@ -45,6 +46,13 @@ void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...) {
 #define BNCLogInternalError(...) \
     BNCLogInternalErrorFunction(__LINE__, __VA_ARGS__)
 
+
+inline static void BNCLogInitializeClient_Internal() {
+    BNCLogClientInitializeFunctionPtr initFunction = BNCLogSetClientInitializeFunction(NULL);
+    if (initFunction) {
+        initFunction();
+    }
+}
 
 #pragma mark - Default Output Functions
 
@@ -477,12 +485,13 @@ BNCLogLevel BNCLogDisplayLevel() {
 }
 
 void BNCLogSetDisplayLevel(BNCLogLevel level) {
+    BNCLogInitializeClient_Internal();
     dispatch_async(bnc_LogQueue, ^{
         bnc_LogDisplayLevel = level;
     });
 }
 
-NSString*const bnc_logLevelStrings[] = {
+static NSString*const bnc_logLevelStrings[] = {
     @"BNCLogLevelAll",
     @"BNCLogLevelBreakPoint",
     @"BNCLogLevelDebug",
@@ -494,14 +503,14 @@ NSString*const bnc_logLevelStrings[] = {
     @"BNCLogLevelMax"
 };
 
-NSString*const BNCLogStringFromLogLevel(BNCLogLevel level) {
+NSString* BNCLogStringFromLogLevel(BNCLogLevel level) {
     level = MAX(MIN(level, BNCLogLevelMax), 0);
     return bnc_logLevelStrings[level];
 }
 
-BNCLogLevel BNBLogLevelFromString(NSString*string) {
+BNCLogLevel BNCLogLevelFromString(NSString*string) {
     if (!string) return BNCLogLevelNone;
-    for (NSInteger i = 0; i < _countof(bnc_logLevelStrings); ++i) {
+    for (NSUInteger i = 0; i < _countof(bnc_logLevelStrings); ++i) {
         if ([bnc_logLevelStrings[i] isEqualToString:string]) {
             return i;
         }
@@ -510,6 +519,18 @@ BNCLogLevel BNBLogLevelFromString(NSString*string) {
         return BNCLogLevelDebugSDK;
     }
     return BNCLogLevelNone;
+}
+
+#pragma mark - Client Initialization Function
+
+static _Atomic(BNCLogClientInitializeFunctionPtr) bnc_LogClientInitializeFunctionPtr = (BNCLogClientInitializeFunctionPtr) 0;
+
+extern BNCLogClientInitializeFunctionPtr _Null_unspecified BNCLogSetClientInitializeFunction(
+        BNCLogClientInitializeFunctionPtr _Nullable clientInitializationFunction
+    ) {
+    BNCLogClientInitializeFunctionPtr lastPtr =
+        atomic_exchange(&bnc_LogClientInitializeFunctionPtr, clientInitializationFunction);
+    return lastPtr;
 }
 
 #pragma mark - Break Points
@@ -582,6 +603,7 @@ void BNCLogWriteMessageFormat(
         NSString *_Nullable message,
         ...
     ) {
+    BNCLogInitializeClient_Internal();
     if (!file) file = "";
     if (!message) message = @"<nil>";
     if (![message isKindOfClass:[NSString class]]) {

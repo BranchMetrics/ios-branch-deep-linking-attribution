@@ -7,9 +7,9 @@
 //
 
 
-#import <UIKit/UIKit.h>
-#import "BNCTestCase.h"
+@import UIKit;
 #import <OCMock/OCMock.h>
+#import "BNCTestCase.h"
 #import "Branch.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCPreferenceHelper.h"
@@ -99,7 +99,7 @@
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
             preferenceHelper:[BNCPreferenceHelper preferenceHelper]
-            key:@"key_foo"];
+            key:@"key_live_foo"];
 
     XCTestExpectation *scenario2Expectation1 =
         [self expectationWithDescription:@"Scenario2 Expectation1"];
@@ -166,7 +166,7 @@
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
             preferenceHelper:[BNCPreferenceHelper preferenceHelper]
-            key:@"key_foo"];
+            key:@"key_live_foo"];
 
     XCTestExpectation *scenario3Expectation1 =
         [self expectationWithDescription:@"Scenario3 Expectation1"];
@@ -216,7 +216,7 @@
             queue:[[BNCServerRequestQueue alloc] init]
             cache:[[BNCLinkCache alloc] init]
             preferenceHelper:[BNCPreferenceHelper preferenceHelper]
-            key:@"key_foo"];
+            key:@"key_live_foo"];
     
     XCTestExpectation *scenario4Expectation1 =
         [self expectationWithDescription:@"Scenario4 Expectation1"];
@@ -459,7 +459,6 @@
         [branch getShortURLWithCallback:^(NSString *url, NSError *error) {
             XCTAssertNotNil(error);
             XCTAssertEqual(error.code, BNCInitError);
-            
             [self safelyFulfillExpectation:expecation];
         }];
     }];
