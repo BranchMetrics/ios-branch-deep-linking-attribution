@@ -12,9 +12,9 @@
 #import "BranchUniversalObject.h"
 #import "BranchLinkProperties.h"
 
-NSString *cononicalIdentifier = @"item/12345";
+NSString *cononicalIdentifier = @"item/12346";
 NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
-NSString *contentTitle = @"Content Title";
+NSString *contentTitle = @"Branch 0.19 TestBed Content Title";
 NSString *contentDescription = @"My Content Description";
 NSString *imageUrl = @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png";
 NSString *feature = @"Sharing Feature";
