@@ -66,7 +66,7 @@ struct PlanetData {
     static let all = [
         PlanetData(title: "About the App",
                      url: "file:///Web.bundle/AboutTheApp/index.html",
-                   image: "file://Branch.png"
+                   image: "https://github.com/BranchMetrics/ios-branch-deep-linking/blob/master/docs/images/Branch-88.png"
         ),
         PlanetData(title: "Mercury",
                      url: "https://en.wikipedia.org/wiki/Mercury_(planet)",
