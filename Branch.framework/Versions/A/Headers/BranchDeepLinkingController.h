@@ -5,8 +5,10 @@
 //  Created by Graham Mueller on 6/18/15.
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+
+@import Foundation;
+@import UIKit;
+
 @protocol BranchDeepLinkingControllerCompletionDelegate <NSObject>
 
 - (void)deepLinkingControllerCompleted __attribute__((deprecated(("This API is deprecated. Instead, use deepLinkingControllerCompletedFrom: viewController"))));;

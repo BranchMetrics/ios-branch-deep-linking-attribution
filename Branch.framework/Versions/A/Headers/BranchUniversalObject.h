@@ -6,7 +6,7 @@
 //  Copyright © 2015 Branch Metrics. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "Branch.h"
 
 @class BranchLinkProperties;
@@ -21,7 +21,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 
 @interface BranchUniversalObject : NSObject
 
-@property (nonatomic, strong, nonnull) NSString *canonicalIdentifier;
+@property (nonatomic, strong, nonnull)  NSString *canonicalIdentifier;
 @property (nonatomic, strong, nullable) NSString *canonicalUrl;
 @property (nonatomic, strong, nullable) NSString *title;
 @property (nonatomic, strong, nullable) NSString *contentDescription;
