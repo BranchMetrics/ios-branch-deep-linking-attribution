@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+- v0.19.5
+  * _*Master Release*_ - September 29, 2017
+
 - v0.19.0
   * Fixed duplicate URL being copied when a link is copied to the clipboard in iOS 11.
   * Changed the use of `typeof` to `__typeof`, for stricter compiler options.
