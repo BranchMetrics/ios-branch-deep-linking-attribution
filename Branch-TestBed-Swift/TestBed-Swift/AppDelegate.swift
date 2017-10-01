@@ -8,7 +8,7 @@
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyerTrackerDelegate {
     
     var window: UIWindow?
     
@@ -27,6 +27,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             StartupOptionsData.setActiveBranchKey(defaultBranchKey)
         }
         
+        // TODO: Remove before release
+        //        StartupOptionsData.setActiveSetDebugEnabled(true)
+        //        StartupOptionsData.setPendingSetDebugEnabled(true)
+        //        IntegratedSDKsData.setActivemParticleEnabled(true)
+        //        IntegratedSDKsData.setPendingmParticleEnabled(true)
+        
         activateAdjust()
         activateAdobe()
         activateAmplitude()
@@ -39,24 +45,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         activateClearTap()
         activateConvertro()
         activateKochava()
-        activateLocalytics()
+        activateLocalytics(withLaunchOptions: launchOptions)
         activatemParticle()
         activateSegment()
         activateSingular()
         activateStitch()
         
         if let branch = Branch.getInstance(branchKey) {
-            // TODO: Remove before release
-            StartupOptionsData.setActiveSetDebugEnabled(true)
-            StartupOptionsData.setPendingSetDebugEnabled(true)
-            IntegratedSDKsData.setActiveAdobeEnabled(true)
-            IntegratedSDKsData.setPendingAdobeEnabled(true)
+            
             if StartupOptionsData.getPendingSetDebugEnabled()! {
                 branch.setDebug()
                 StartupOptionsData.setActiveSetDebugEnabled(true)
             } else {
                 StartupOptionsData.setActiveSetDebugEnabled(false)
             }
+            
             // To use automaticallyDisplayDeepLinkController:
             // 1) Uncomment the following code block
             // 2) Comment out the code in the 'if (error == nil)' code block in initSession callback below
@@ -137,8 +140,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
                     branch.setRequestMetadataKey("$mixpanel_distinct_id",
                                                  value: userID)
                 }
-                
-
             })
         } else {
             print("Branch TestBed: Invalid Key\n")
@@ -176,6 +177,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         Branch.getInstance().handlePushNotification(launchOptions)
     }
     
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        // Tune
+        if IntegratedSDKsData.activeTuneEnabled()! {
+            Tune.measureSession()
+        }
+    }
+    
     func applicationWillResignActive(_ application: UIApplication) {
     }
     
@@ -183,15 +191,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
-    }
-    
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        
-        // Tune
-        if IntegratedSDKsData.activeTuneEnabled()! {
-            Tune.measureSession()
-        }
-        
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
@@ -371,8 +370,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         IntegratedSDKsData.setActiveTuneConversionKey(tuneConversionKey)
         IntegratedSDKsData.setActiveTuneEnabled(true)
 
+        Tune.setDelegate(self)
         Tune.initialize(withTuneAdvertiserId: tuneAdvertisingID, tuneConversionKey: tuneConversionKey)
-        Tune.setDebugMode(true)
+//        Tune.setDebugMode(true)
     }
     
     func activateAppboy(application: UIApplication, withLaunchOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
@@ -468,7 +468,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         IntegratedSDKsData.setActiveKochavaEnabled(true)
     }
     
-    func activateLocalytics() {
+    func activateLocalytics(withLaunchOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) {
         guard IntegratedSDKsData.pendingLocalyticsEnabled()! else {
             IntegratedSDKsData.setActiveLocalyticsEnabled(false)
             return
@@ -485,7 +485,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         IntegratedSDKsData.setActiveLocalyticsEnabled(true)
         
         Localytics.setLoggingEnabled(true)
-        Localytics.autoIntegrate(key, launchOptions: nil)
+        Localytics.autoIntegrate(key, launchOptions: launchOptions)
     }
     
     func activatemParticle() {
@@ -493,7 +493,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setActivemParticleEnabled(false)
             return
         }
-        guard let key = IntegratedSDKsData.pendingmParticleAPIKey() as String? else {
+        guard let key = IntegratedSDKsData.pendingmParticleAppKey() as String? else {
+            IntegratedSDKsData.setPendingmParticleEnabled(false)
+            return
+        }
+        guard let secret = IntegratedSDKsData.pendingmParticleAppSecret() as String? else {
             IntegratedSDKsData.setPendingmParticleEnabled(false)
             return
         }
@@ -501,8 +505,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
             IntegratedSDKsData.setPendingmParticleEnabled(false)
             return
         }
-        IntegratedSDKsData.setActivemParticleAPIKey(key)
+        guard secret.characters.count > 0 else {
+            IntegratedSDKsData.setPendingmParticleEnabled(false)
+            return
+        }
+        IntegratedSDKsData.setActivemParticleAppKey(key)
+        IntegratedSDKsData.setActivemParticleAppSecret(secret)
         IntegratedSDKsData.setActivemParticleEnabled(true)
+        
+        MParticle.sharedInstance().start(withKey: key, secret:secret)
     }
     
     func activateSegment() {
@@ -556,4 +567,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate {
         IntegratedSDKsData.setActiveStitchEnabled(true)
     }
     
+}
+
+extension AppDelegate:TuneDelegate {
+    func tuneDidSucceed(with data: Data!) {
+        let str = String(data: data, encoding: String.Encoding.utf8)
+        print("Tune success: \(String(describing: str))")
+    }
+    
+    func tuneDidFailWithError(_ error: Error!) {
+        print("Tune failed: \(error)")
+    }
+    
+    func tuneEnqueuedRequest(_ url: String!, postData post: String!) {
+        print("Tune request enqueued: \(url), post data = \(post)")
+    }
 }

@@ -12,7 +12,7 @@ struct CustomEventData {
     
     static let userDefaults = UserDefaults.standard
     
-    static func getCustomEventName() -> String? {
+    static func customEventName() -> String? {
         if let value = userDefaults.string(forKey: "customEventName") {
             return value
         } else {
@@ -30,7 +30,7 @@ struct CustomEventData {
         }
     }
     
-    static func getCustomEventMetadata() -> [String: AnyObject] {
+    static func customEventMetadata() -> [String: AnyObject] {
         if let value = userDefaults.dictionary(forKey: "customEventMetadata") {
             return value as [String : AnyObject]
         } else {

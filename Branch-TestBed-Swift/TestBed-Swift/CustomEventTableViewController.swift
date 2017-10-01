@@ -43,32 +43,35 @@ class CustomEventTableViewController: UITableViewController {
      // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        switch sender as! String {
-        case "CustomEventName":
-            let nc = segue.destination as! UINavigationController
-            let vc = nc.topViewController as! TextViewFormTableViewController
-            vc.senderString = sender as! String
-            vc.viewTitle = "Application Event"
-            vc.header = "Custom Event Name"
-            vc.footer = "This is the name of the event that is referenced when creating rewards rules and webhooks."
-            vc.keyboardType = UIKeyboardType.alphabet
-            vc.incumbantValue = customEventNameTextField.text!
-        case "CustomEventMetadata":
-            let nc = segue.destination as! UINavigationController
-            let vc = nc.topViewController as! DictionaryTableViewController
-            customEventMetadata = CustomEventData.getCustomEventMetadata()
-            vc.dictionary = customEventMetadata
-            vc.viewTitle = "Custom Event Metadata"
-            vc.keyHeader = "Key"
-            vc.keyPlaceholder = "key"
-            vc.keyFooter = ""
-            vc.valueHeader = "Value"
-            vc.valueFooter = ""
-            vc.keyKeyboardType = UIKeyboardType.default
-            vc.valueKeyboardType = UIKeyboardType.default
-            vc.sender = sender as! String
-        default:
-            break
+        
+        if let senderName = sender as? String {
+            switch senderName {
+            case "CustomEventName":
+                let nc = segue.destination as! UINavigationController
+                let vc = nc.topViewController as! TextViewFormTableViewController
+                vc.senderName = senderName
+                vc.viewTitle = "Application Event"
+                vc.header = "Custom Event Name"
+                vc.footer = "This is the name of the event that is referenced when creating rewards rules and webhooks."
+                vc.keyboardType = UIKeyboardType.alphabet
+                vc.incumbantValue = customEventNameTextField.text!
+            case "CustomEventMetadata":
+                let nc = segue.destination as! UINavigationController
+                let vc = nc.topViewController as! DictionaryTableViewController
+                customEventMetadata = CustomEventData.customEventMetadata()
+                vc.dictionary = customEventMetadata
+                vc.viewTitle = "Custom Event Metadata"
+                vc.keyHeader = "Key"
+                vc.keyPlaceholder = "key"
+                vc.keyFooter = ""
+                vc.valueHeader = "Value"
+                vc.valueFooter = ""
+                vc.keyKeyboardType = UIKeyboardType.default
+                vc.valueKeyboardType = UIKeyboardType.default
+                vc.sender = senderName
+            default:
+                break
+            }
         }
     }
     
@@ -83,7 +86,7 @@ class CustomEventTableViewController: UITableViewController {
     @IBAction func unwindByCancelling(_ segue:UIStoryboardSegue) { }
     
     
-    @IBAction func unwindDictionaryTableViewController(_ segue:UIStoryboardSegue) {
+    @IBAction func unwindDictionary(_ segue:UIStoryboardSegue) {
         if let vc = segue.source as? DictionaryTableViewController {
             customEventMetadata = vc.dictionary
             CustomEventData.setCustomEventMetadata(customEventMetadata)
@@ -112,8 +115,8 @@ class CustomEventTableViewController: UITableViewController {
     }
     
     func refreshControlValues() {
-        customEventNameTextField.text = CustomEventData.getCustomEventName()
-        customEventMetadata = CustomEventData.getCustomEventMetadata()
+        customEventNameTextField.text = CustomEventData.customEventName()
+        customEventMetadata = CustomEventData.customEventMetadata()
         if (customEventMetadata.count > 0) {
             customEventMetadataTextView.text = customEventMetadata.description
         } else {

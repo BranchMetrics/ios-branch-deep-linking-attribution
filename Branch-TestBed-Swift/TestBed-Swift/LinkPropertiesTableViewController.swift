@@ -104,7 +104,7 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch((indexPath as NSIndexPath).section) {
         case 5 :
-            self.performSegue(withIdentifier: "ShowTags", sender: "Tags")
+            self.performSegue(withIdentifier: "Array", sender: "Tags")
         default : break
         }
     }
@@ -113,22 +113,25 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
         
         refreshLinkProperties()
         
-        if segue.identifier! == "ShowTags" {
-            let vc = segue.destination as! ArrayTableViewController
-            if let tags = linkProperties["~tags"] as? [String] {
-                vc.array = tags
+        if let senderName = sender as? String {
+            if senderName == "Tags" {
+                let nc = segue.destination as! UINavigationController
+                let vc = nc.topViewController as! ArrayTableViewController
+                if let tags = linkProperties["~tags"] as? [String] {
+                    vc.array = tags
+                }
+                vc.viewTitle = "Link Tags"
+                vc.header = "Tag"
+                vc.placeholder = "tag"
+                vc.footer = "Enter a new tag to associate with the link."
+                vc.keyboardType = UIKeyboardType.default
             }
-            vc.viewTitle = "Link Tags"
-            vc.header = "Tag"
-            vc.placeholder = "tag"
-            vc.footer = "Enter a new tag to associate with the link."
-            vc.keyboardType = UIKeyboardType.default
         }
     }
     
     @IBAction func unwindByCancelling(_ segue:UIStoryboardSegue) { }
     
-    @IBAction func unwindArrayTableViewController(_ segue:UIStoryboardSegue) {
+    @IBAction func unwindArray(_ segue:UIStoryboardSegue) {
         if let vc = segue.source as? ArrayTableViewController {
             let tags = vc.array
             linkProperties["~tags"] = tags as AnyObject?

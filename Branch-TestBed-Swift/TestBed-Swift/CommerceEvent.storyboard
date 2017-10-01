@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13189.4" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="6mG-tU-MoZ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="6mG-tU-MoZ">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13165.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -243,7 +243,7 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="bCh-dD-zHf" userLabel="products">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="bCh-dD-zHf" userLabel="products">
                                         <rect key="frame" x="0.0" y="443" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bCh-dD-zHf" id="MDg-Eq-Vww">
@@ -276,7 +276,7 @@
                     <navigationItem key="navigationItem" title="Commerce Event" id="gqZ-kP-Kbp">
                         <barButtonItem key="leftBarButtonItem" style="done" systemItem="done" id="flc-3D-xtx">
                             <connections>
-                                <segue destination="0db-Qe-Qj9" kind="unwind" identifier="UnwindCommerceEventDetailsTableViewController" unwindAction="unwindCommerceEventDetailsTableViewController:" id="b6s-qS-IPq"/>
+                                <segue destination="0db-Qe-Qj9" kind="unwind" identifier="UnwindCommerceEventDetails" unwindAction="unwindCommerceEventDetails:" id="b6s-qS-IPq"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -626,7 +626,7 @@
                         <sections>
                             <tableViewSection headerTitle="Commerce Events" id="sdR-hX-LkO" userLabel="Commerce Events">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="rag-M0-20T" userLabel="commerceEventDetailsLabel">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="rag-M0-20T" userLabel="commerceEventDetailsLabel">
                                         <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="rag-M0-20T" id="A6Z-Kp-XME">
@@ -716,7 +716,7 @@
                     <navigationItem key="navigationItem" id="Ixg-1Y-RmF">
                         <barButtonItem key="leftBarButtonItem" style="done" systemItem="done" id="LYc-vj-iMv">
                             <connections>
-                                <segue destination="tbn-xd-uDz" kind="unwind" identifier="unwindCommerceEventTableViewController" unwindAction="unwindCommerceEventTableViewController:" id="ukr-Uf-Skd"/>
+                                <segue destination="tbn-xd-uDz" kind="unwind" identifier="UnwindByBeingDone" unwindAction="unwindByBeingDone:" id="ukr-Uf-Skd"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -724,7 +724,7 @@
                         <outlet property="commerceEventCustomMetadataTextView" destination="a3k-Q5-3Ep" id="Lx8-LA-ma0"/>
                         <outlet property="commerceEventDetailsLabel" destination="ldj-hk-ng0" id="6cE-3f-6h2"/>
                         <outlet property="sendCommerceEventButton" destination="pHI-wG-yId" id="209-CU-FgU"/>
-                        <segue destination="nIA-Rl-FBO" kind="show" identifier="CommerceEventDetailsNavigationController" id="eF3-hg-2th"/>
+                        <segue destination="nIA-Rl-FBO" kind="show" identifier="CommerceEventDetails" id="eF3-hg-2th"/>
                         <segue destination="XGQ-IX-G1M" kind="show" identifier="Dictionary" id="zf5-as-Cbb"/>
                     </connections>
                 </tableViewController>

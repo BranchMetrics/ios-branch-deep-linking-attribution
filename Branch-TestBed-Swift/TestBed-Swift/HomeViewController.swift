@@ -39,7 +39,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
     @IBOutlet weak var createBranchLinkButton: UIButton!
     @IBOutlet weak var shareBranchLinkButton: UIButton!
     @IBOutlet weak var linkPropertiesLabel: UILabel!
-    @IBOutlet weak var branchUniversalObjectsLabel: UILabel!
+    @IBOutlet weak var branchUniversalObjectLabel: UILabel!
     @IBOutlet weak var ApplicationEventsLabel: UILabel!
     @IBOutlet weak var CommerceEventLabel: UILabel!
     @IBOutlet weak var ReferralRewardsLabel: UILabel!
@@ -93,7 +93,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch((indexPath as NSIndexPath).section, (indexPath as NSIndexPath).row) {
         case (0,0) :
-            self.performSegue(withIdentifier: "TextViewForm", sender: "userID")
+            self.performSegue(withIdentifier: "TextViewForm", sender: "UserID")
         case (1,0) :
             guard linkTextField.text?.characters.count > 0 else {
                 break
@@ -103,7 +103,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         case (1,3) :
             self.performSegue(withIdentifier: "LinkProperties", sender: "LinkProperties")
         case (1,4) :
-            self.performSegue(withIdentifier: "BranchUniversalObjects", sender: "BranchUniversalObjects")
+            self.performSegue(withIdentifier: "BranchUniversalObject", sender: "BranchUniversalObject")
         case (2,0) :
             self.performSegue(withIdentifier: "CustomEvent", sender: "CustomEvents")
         case (2,1) :
@@ -113,17 +113,17 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         case (3,0) :
             if let params = Branch.getInstance().getLatestReferringParams() {
                 let content = String(format:"LatestReferringParams:\n\n%@", (params.JSONDescription()))
-                self.performSegue(withIdentifier: "HomeTableViewToContentView", sender: "LatestReferringParams")
+                self.performSegue(withIdentifier: "Content", sender: "LatestReferringParams")
                 print("Branch TestBed: LatestReferringParams:\n", content)
             }
         case (3,1) :
             if let params = Branch.getInstance().getFirstReferringParams() {
                 let content = String(format:"FirstReferringParams:\n\n%@", (params.JSONDescription()))
-                self.performSegue(withIdentifier: "HomeTableViewToContentView", sender: "FirstReferringParams")
+                self.performSegue(withIdentifier: "Content", sender: "FirstReferringParams")
                 print("Branch TestBed: FirstReferringParams:\n", content)
             }
         case (4,0) :
-            self.performSegue(withIdentifier: "StartupOptions", sender: "TestBedStartupOptions")
+            self.performSegue(withIdentifier: "TableFormView", sender: "StartupOptions")
         case (4,1) :
             self.performSegue(withIdentifier: "IntegratedSDKs", sender: "IntegratedSDKs")
         default : break
@@ -169,101 +169,12 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         }
     }
     
-    @IBAction func shareAliasBranchLinkAction(_ sender: AnyObject) {
-        //  Share an alias Branch link:
-        
-        let alias = "Share-Alias-Link-Example"
-        let canonicalIdentifier = alias
-        
-        let shareBranchObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
-        shareBranchObject.title = "Share Branch Link Example"
-        shareBranchObject.canonicalUrl = "https://developer.branch.io/"
-        shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
-        shareBranchObject.keywords = [ "example", "short", "share", "link" ]
-        shareBranchObject.contentDescription = "This is an example shared alias link."
-        shareBranchObject.contentMetadata.customMetadata["publicSlug"] = canonicalIdentifier
-        
-        let shareLinkProperties = BranchLinkProperties()
-        shareLinkProperties.alias = alias
-        shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
-        
-        if let branchShareLink = BranchShareLink.init(
-            universalObject: shareBranchObject,
-            linkProperties:  shareLinkProperties
-            ) {
-            branchShareLink.title = "Share your alias link!"
-            branchShareLink.delegate = self
-            branchShareLink.shareText =
-            "Shared from Branch's TestBed-Swift at \(self.dateFormatter().string(from: Date()))"
-            branchShareLink.presentActivityViewController(
-                from: self,
-                anchor: actionButton
-            )
-        }
-    }
-    
-    @IBAction func shareAliasActivityViewController(_ sender: AnyObject) {
-        //  Share an alias Branch link:
-        let alias = "Share-Alias-Link-Example"
-        let canonicalIdentifier = alias
-        
-        let shareBranchObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
-        shareBranchObject.title = "Share Branch Link Example"
-        shareBranchObject.canonicalIdentifier = "Share-Link-Example-ID"
-        shareBranchObject.canonicalUrl = "https://developer.branch.io/"
-        shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
-        shareBranchObject.keywords = [ "example", "short", "share", "link" ]
-        shareBranchObject.contentDescription = "This is an example shared alias link."
-
-        let shareLinkProperties = BranchLinkProperties()
-        shareLinkProperties.alias = alias
-        shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
-        
-        if let branchShareLink = BranchShareLink.init(
-            universalObject: shareBranchObject,
-            linkProperties:  shareLinkProperties
-            ) {
-            branchShareLink.shareText = "Shared with TestBed-Swift"
-            branchShareLink.delegate = self
-            let activityViewController = UIActivityViewController.init(
-                activityItems: branchShareLink.activityItems(),
-                applicationActivities: nil
-            )
-            self.present(activityViewController, animated: true, completion: nil)
-        }
-    }
-    
-    func branchShareLinkWillShare(_ shareLink: BranchShareLink) {
-        // Link properties, such as alias or channel can be overridden here based on the users'
-        // choice stored in shareSheet.activityType.
-        shareLink.shareText =
-            "Shared through '\(shareLink.linkProperties.channel!)'\nfrom Branch's TestBed-Swift" +
-        "\nat \(self.dateFormatter().string(from: Date()))."
-        
-        // In this example, we over-ride the channel so that the channel in the Branch short link
-        // is always 'ios-share'. This allows a short alias link to always be created.
-        shareLink.linkProperties.channel = "ios-share"
-    }
-    
-    func branchShareLink(_ shareLink: BranchShareLink, didComplete completed: Bool, withError error: Error?) {
-        if (error != nil) {
-            print("Branch: Error while sharing! Error: \(error!.localizedDescription).")
-        } else if (completed) {
-            if let channel = shareLink.activityType {
-                print("Branch: User completed sharing with activity '\(channel)'.")
-                Branch.getInstance().userCompletedAction("UserShared", withState: ["Channel": channel])
-            }
-        } else {
-            print("Branch: User cancelled sharing.")
-        }
-    }
-    
     //MARK: - Link Properties
     
     @IBAction func createBranchLinkButtonTouchUpInside(_ sender: AnyObject) {
         
-        let branchLinkProperties = LinkPropertiesData.getBranchLinkProperties()
-        let branchUniversalObject = BranchUniversalObjectsData.getBranchUniversalObject()
+        let branchLinkProperties = LinkPropertiesData.branchLinkProperties()
+        let branchUniversalObject = BranchUniversalObjectData.branchUniversalObject()
         
         branchUniversalObject.getShortUrl(with: branchLinkProperties) { (url, error) in
             if (url != nil) {
@@ -278,8 +189,6 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
             
         }
     }
-    @IBAction func shareBranchLinkButtonTouchUpInside(_ sender: Any) {
-    }
     
     func textFieldDidChange(_ sender:UITextField) {
         sender.resignFirstResponder()
@@ -289,41 +198,97 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         
         linkTextField.text = ""
         
-        switch sender as! String {
-        case "userID":
-            let nc = segue.destination as! UINavigationController
-            let vc = nc.topViewController as! TextViewFormTableViewController
-            vc.senderString = sender as! String
-            vc.viewTitle = "User ID"
-            vc.header = "User ID"
-            vc.footer = "This User ID (or developer_id) is the application-assigned ID of the user. If not assigned, referrals from links created by the user will show up as 'Anonymous' in reporting."
-            vc.keyboardType = UIKeyboardType.alphabet
-            vc.incumbantValue = userIDTextField.text!
-        case "LinkProperties":
-            let vc = (segue.destination as! LinkPropertiesTableViewController)
-            vc.linkProperties = LinkPropertiesData.getLinkProperties()
-        case "BranchUniversalObjects":
-            let vc = (segue.destination as! BranchUniversalObjectPropertiesTableViewController)
-            vc.universalObject = BranchUniversalObjectsData.getUniversalObject()
-        case "LatestReferringParams":
-            let vc = (segue.destination as! ContentViewController)
-            let dict: Dictionary = Branch.getInstance().getLatestReferringParams()
-            
-            if dict["~referring_link"] != nil {
-                vc.contentType = "LatestReferringParams"
-            } else {
-                vc.contentType = "\nNot a referred session"
+        if let senderName = sender as? String {
+            switch senderName {
+            case "UserID":
+                let nc = segue.destination as! UINavigationController
+                let vc = nc.topViewController as! TextViewFormTableViewController
+                vc.senderName = sender as! String
+                vc.viewTitle = "User ID"
+                vc.header = "User ID"
+                vc.footer = "This User ID (or developer_id) is the application-assigned ID of the user. If not assigned, referrals from links created by the user will show up as 'Anonymous' in reporting."
+                vc.keyboardType = UIKeyboardType.alphabet
+                vc.incumbantValue = userIDTextField.text!
+            case "LinkProperties":
+                let vc = (segue.destination as! LinkPropertiesTableViewController)
+                vc.linkProperties = LinkPropertiesData.linkProperties()
+            case "BranchUniversalObject":
+                let nc = segue.destination as! UINavigationController
+                let vc = nc.topViewController as! BranchUniversalObjectTableViewController
+                vc.universalObject = BranchUniversalObjectData.universalObject()
+            case "CustomEvent":
+                let nc = segue.destination as! UINavigationController
+                let _ = nc.topViewController as! CustomEventTableViewController
+            case "CommerceEvent":
+                let nc = segue.destination as! UINavigationController
+                let _ = nc.topViewController as! CommerceEventTableViewController
+            case "ReferralRewards":
+                let nc = segue.destination as! UINavigationController
+                let _ = nc.topViewController as! ReferralRewardsTableViewController
+            case "LatestReferringParams":
+                let vc = (segue.destination as! ContentViewController)
+                let dict: Dictionary = Branch.getInstance().getLatestReferringParams()
+                
+                if dict["~referring_link"] != nil {
+                    vc.contentType = "LatestReferringParams"
+                } else {
+                    vc.contentType = "\nNot a referred session"
+                }
+            case "FirstReferringParams":
+                let vc = (segue.destination as! ContentViewController)
+                let dict: Dictionary = Branch.getInstance().getFirstReferringParams()
+                if dict.count > 0 {
+                    vc.contentType = "FirstReferringParams"
+                } else {
+                    vc.contentType = "\nApp has not yet been opened via a Branch link"
+                }
+            case "StartupOptions":
+                let nc = segue.destination as! UINavigationController
+                let vc = nc.topViewController as! TableFormViewController
+                vc.senderName = sender as! String
+                vc.viewTitle = "Startup Options"
+                vc.keyboardType = UIKeyboardType.alphabet
+                let tableViewSections = [[
+                    "Header":"Active Startup Options",
+                    "Footer":"These are the startup options that the application is currently using.",
+                    "TableViewCells":[
+                        [
+                            "Name":"ActiveBranchKey",
+                            "CellReuseIdentifier":"TextFieldCell",
+                            "Text":StartupOptionsData.getActiveBranchKey() ?? "",
+                            "Placeholder":"Branch Key"
+                        ],[
+                            "Name":"ActiveSetDebugEnabled",
+                            "CellReuseIdentifier":"ToggleSwitchCell",
+                            "Label":"setDebug Enabled",
+                            "isEnabled":"false",
+                            "isOn": StartupOptionsData.getActiveSetDebugEnabled()!.description as String
+                        ]
+                    ]
+                    ],[
+                        "Header":"Pending Startup Options",
+                        "Footer":"These are the startup options that will be aplied when the app is next launched.",
+                        "TableViewCells":[
+                            [
+                                "Name":"PendingBranchKey",
+                                "CellReuseIdentifier":"TextFieldCell",
+                                "Text":StartupOptionsData.getPendingBranchKey() ?? "",
+                                "Placeholder":"Branch Key",
+                                "AccessibilityHint":"The Branch key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
+                                "InputForm":"TextViewForm"
+                            ],[
+                                "Name":"PendingSetDebugEnabled",
+                                "CellReuseIdentifier":"ToggleSwitchCell",
+                                "Label":"setDebug Enabled",
+                                "isEnabled":"true",
+                                "isOn":StartupOptionsData.getPendingSetDebugEnabled()!.description as String
+                            ]
+                        ]
+                    ]]
+                vc.tableViewSections = tableViewSections
+            default:
+                break
             }
-        case "FirstReferringParams":
-            let vc = (segue.destination as! ContentViewController)
-            let dict: Dictionary = Branch.getInstance().getFirstReferringParams()
-            if dict.count > 0 {
-                vc.contentType = "FirstReferringParams"
-            } else {
-                vc.contentType = "\nApp has not yet been opened via a Branch link"
-            }
-        default:
-            break
         }
     }
     
@@ -331,8 +296,8 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         
         if let vc = segue.source as? TextViewFormTableViewController {
             
-            switch vc.senderString {
-            case "userID":
+            switch vc.senderName {
+            case "UserID":
                 
                 if let userID = vc.textView.text {
                     
@@ -404,32 +369,47 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         }
     }
     
+    //MARK: - Unwinds
+    
+    @IBAction func unwindByBeingDone(_ segue:UIStoryboardSegue) {
+        // Unwind for closing without cancelling or saving
+    }
+    
     @IBAction func unwindByCancelling(_ segue:UIStoryboardSegue) { }
     
-    @IBAction func unwindLinkPropertiesTableViewController(_ segue:UIStoryboardSegue) {
+    
+    @IBAction func unwindLinkProperties(_ segue:UIStoryboardSegue) {
         if let vc = segue.source as? LinkPropertiesTableViewController {
             LinkPropertiesData.setLinkProperties(vc.linkProperties)
         }
     }
     
-    @IBAction func unwindBranchUniversalObjectTableViewController(_ segue:UIStoryboardSegue) {
-        if let vc = segue.source as? BranchUniversalObjectPropertiesTableViewController {
-            BranchUniversalObjectsData.setUniversalObject(vc.universalObject)
+    @IBAction func unwindBranchUniversalObject(_ segue:UIStoryboardSegue) {
+        if let vc = segue.source as? BranchUniversalObjectTableViewController {
+            BranchUniversalObjectData.setUniversalObject(vc.universalObject)
         }
-    }
-    
-    @IBAction func unwindCommerceEventTableViewController(_ segue:UIStoryboardSegue) {
     }
     
     @IBAction func unwindStartupOptions(_ segue:UIStoryboardSegue) {
     }
     
-    @IBAction func unwindIntegratedSDKsTableViewController(_ segue:UIStoryboardSegue) {
+    @IBAction func unwindIntegratedSDKs(_ segue:UIStoryboardSegue) {
         print("unwindIntegratedSDKs!")
     }
     
+    @IBAction func unwindTableFormView(_ segue:UIStoryboardSegue) {
+        if let vc = segue.source as? TableFormViewController {
+            if let pendingBranchKey = vc.returnValues["PendingBranchKey"] {
+                StartupOptionsData.setPendingBranchKey(pendingBranchKey)
+            }
+            if let pendingSetDebugEnabled = vc.returnValues["PendingSetDebugEnabled"] {
+                StartupOptionsData.setPendingSetDebugEnabled(pendingSetDebugEnabled == "true")
+            }
+        }
+    }
+    
     func refreshControlValues() {
-        userIDTextField.text = HomeData.getUserID()
+        userIDTextField.text = HomeData.userID()
     }
     
     func showAlert(_ alertTitle: String, withDescription message: String) {
@@ -463,5 +443,95 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         event.customData["snoop"] = "dog"
         BranchEvent.standardEvent(BranchStandardEvent.purchase,
             withContentItem: universalObject).logEvent()
+    }
+    
+    // Sharing examples
+    
+    @IBAction func shareAliasBranchLinkAction(_ sender: AnyObject) {
+        //  Share an alias Branch link:
+        
+        let alias = "Share-Alias-Link-Example"
+        let canonicalIdentifier = alias
+        
+        let shareBranchObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
+        shareBranchObject.title = "Share Branch Link Example"
+        shareBranchObject.canonicalUrl = "https://developer.branch.io/"
+        shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
+        shareBranchObject.keywords = [ "example", "short", "share", "link" ]
+        shareBranchObject.contentDescription = "This is an example shared alias link."
+        shareBranchObject.contentMetadata.customMetadata["publicSlug"] = canonicalIdentifier
+        
+        let shareLinkProperties = BranchLinkProperties()
+        shareLinkProperties.alias = alias
+        shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
+        
+        if let branchShareLink = BranchShareLink.init(
+            universalObject: shareBranchObject,
+            linkProperties:  shareLinkProperties
+            ) {
+            branchShareLink.title = "Share your alias link!"
+            branchShareLink.delegate = self
+            branchShareLink.shareText =
+            "Shared from Branch's TestBed-Swift at \(self.dateFormatter().string(from: Date()))"
+            branchShareLink.presentActivityViewController(
+                from: self,
+                anchor: actionButton
+            )
+        }
+    }
+    @IBAction func shareAliasActivityViewController(_ sender: AnyObject) {
+        //  Share an alias Branch link:
+        let alias = "Share-Alias-Link-Example"
+        let canonicalIdentifier = alias
+        
+        let shareBranchObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
+        shareBranchObject.title = "Share Branch Link Example"
+        shareBranchObject.canonicalIdentifier = "Share-Link-Example-ID"
+        shareBranchObject.canonicalUrl = "https://developer.branch.io/"
+        shareBranchObject.imageUrl = "https://branch.io/img/press/kit/badge-black.png"
+        shareBranchObject.keywords = [ "example", "short", "share", "link" ]
+        shareBranchObject.contentDescription = "This is an example shared alias link."
+        
+        let shareLinkProperties = BranchLinkProperties()
+        shareLinkProperties.alias = alias
+        shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
+        
+        if let branchShareLink = BranchShareLink.init(
+            universalObject: shareBranchObject,
+            linkProperties:  shareLinkProperties
+            ) {
+            branchShareLink.shareText = "Shared with TestBed-Swift"
+            branchShareLink.delegate = self
+            let activityViewController = UIActivityViewController.init(
+                activityItems: branchShareLink.activityItems(),
+                applicationActivities: nil
+            )
+            self.present(activityViewController, animated: true, completion: nil)
+        }
+    }
+    
+    func branchShareLinkWillShare(_ shareLink: BranchShareLink) {
+        // Link properties, such as alias or channel can be overridden here based on the users'
+        // choice stored in shareSheet.activityType.
+        shareLink.shareText =
+            "Shared through '\(shareLink.linkProperties.channel!)'\nfrom Branch's TestBed-Swift" +
+        "\nat \(self.dateFormatter().string(from: Date()))."
+        
+        // In this example, we over-ride the channel so that the channel in the Branch short link
+        // is always 'ios-share'. This allows a short alias link to always be created.
+        shareLink.linkProperties.channel = "ios-share"
+    }
+    
+    func branchShareLink(_ shareLink: BranchShareLink, didComplete completed: Bool, withError error: Error?) {
+        if (error != nil) {
+            print("Branch: Error while sharing! Error: \(error!.localizedDescription).")
+        } else if (completed) {
+            if let channel = shareLink.activityType {
+                print("Branch: User completed sharing with activity '\(channel)'.")
+                Branch.getInstance().userCompletedAction("UserShared", withState: ["Channel": channel])
+            }
+        } else {
+            print("Branch: User cancelled sharing.")
+        }
     }
 }

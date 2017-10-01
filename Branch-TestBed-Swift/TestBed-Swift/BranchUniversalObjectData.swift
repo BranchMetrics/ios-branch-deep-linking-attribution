@@ -1,5 +1,5 @@
 //
-//  BranchUniversalObjectsData.swift
+//  BranchUniversalObjectData.swift
 //  TestBed-Swift
 //
 //  Created by David Westgate on 9/17/17.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct BranchUniversalObjectsData {
+struct BranchUniversalObjectData {
     
     static let userDefaults = UserDefaults.standard
     
@@ -20,13 +20,13 @@ struct BranchUniversalObjectsData {
                                            "$twitter_card","$twitter_title", "$twitter_description",
                                            "$twitter_image_url","$twitter_site","$twitter_app_country",
                                            "$twitter_player","$twitter_player_width","$twitter_player_height",
-                                           "$custom_meta_tags"]
+                                           "$custom_meta_tags", "customData"]
     
     static let systemKeys: Set = ["+clicked_branch_link","+referrer","~referring_link","+is_first_session",
                                   "~id","~creation_source","+match_guaranteed","$identity_id",
                                   "$one_time_use_used","+click_timestamp"]
     
-    static func getDefaultUniversalObject() -> BranchUniversalObject {
+    static func defaultUniversalObject() -> BranchUniversalObject {
         let universalObject = BranchUniversalObject.init()
         universalObject.contentMetadata.contentSchema = BranchContentSchema.commerceProduct
         universalObject.title = "Nike Woolen Sox"
@@ -48,7 +48,7 @@ struct BranchUniversalObjectsData {
         return universalObject
     }
     
-    static func getUniversalObject() -> [String: AnyObject] {
+    static func universalObject() -> [String: AnyObject] {
         if let value = userDefaults.dictionary(forKey: "universalObject") {
             return value as [String : AnyObject]
         } else {
@@ -70,7 +70,9 @@ struct BranchUniversalObjectsData {
                 params.removeValue(forKey: key)
             }
         }
-        universalObject["customData"] = params as AnyObject?
+        for param in params {
+            universalObject["customData"]?.add(param)
+        }
         
         userDefaults.set(universalObject, forKey: "universalObject")
     }
@@ -79,11 +81,11 @@ struct BranchUniversalObjectsData {
         userDefaults.set([String: AnyObject](), forKey: "universalObject")
     }
     
-    static func getBranchUniversalObject() -> BranchUniversalObject {
-        let universalObject = getUniversalObject()
+    static func branchUniversalObject() -> BranchUniversalObject {
+        let uo = universalObject()
         let branchUniversalObject: BranchUniversalObject
         
-        if let canonicalIdentifier = universalObject["$canonical_identifier"] as? String {
+        if let canonicalIdentifier = uo["$canonical_identifier"] as? String {
             branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
         } else {
             var canonicalIdentifier = ""
@@ -93,13 +95,13 @@ struct BranchUniversalObjectsData {
             branchUniversalObject = BranchUniversalObject.init(canonicalIdentifier: canonicalIdentifier)
         }
         
-        for key in universalObject.keys {
+        for key in uo.keys {
             
-            guard universalObject[key] != nil else {
+            guard uo[key] != nil else {
                 continue
             }
             
-            let value = universalObject[key]!.description!()
+            let value = uo[key]!.description!()
             
             switch key {
             case "$canonical_identifier":
@@ -115,36 +117,32 @@ struct BranchUniversalObjectsData {
             case "$og_image_url":
                 branchUniversalObject.imageUrl = value
             case "$keywords":
-                branchUniversalObject.keywords = universalObject[key] as! [AnyObject] as? [String]
+                branchUniversalObject.keywords = uo[key] as! [AnyObject] as? [String]
             case "$og_title":
                 branchUniversalObject.title = value
             case "$content_type":
-                if let contentType = universalObject[key] {
+                if let contentType = uo[key] {
                     branchUniversalObject.contentMetadata.contentSchema = contentType as? BranchContentSchema
                 }
             case "$price":
-                if let price = universalObject[key] as? String {
+                if let price = uo[key] as? String {
                     let formatter = NumberFormatter()
                     formatter.generatesDecimalNumbers = true
                     branchUniversalObject.contentMetadata.price = formatter.number(from: price) as? NSDecimalNumber ?? 0
                 }
             case "$currency":
-                if let currency = universalObject[key] as? String {
+                if let currency = uo[key] as? String {
                     branchUniversalObject.contentMetadata.currency = BNCCurrency(rawValue: currency)
                 }
             case "customData":
-                if let data = universalObject[key] as? [String: String] {
+                if let data = uo[key] as? [String: String] {
                     branchUniversalObject.setValuesForKeys(data)
                 }
             default:
-                branchUniversalObject.setValue(universalObject[key], forKey: key)
+                branchUniversalObject.setValue(uo[key], forKey: key)
             }
         }
         return branchUniversalObject
-    }
-    
-    static func getBranchUniversalObjects() -> [BranchUniversalObject] {
-        return [getBranchUniversalObject()]
     }
     
 }

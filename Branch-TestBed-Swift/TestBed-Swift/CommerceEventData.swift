@@ -12,7 +12,7 @@ struct CommerceEventData {
     
     static let userDefaults = UserDefaults.standard
     
-    static func getCommerceEventDefaults() -> [String: String] {
+    static func commerceEventDefaults() -> [String: String] {
         return [
             "transactionID": "00000001",
             "affiliation": "Branch Default",
@@ -25,11 +25,11 @@ struct CommerceEventData {
         ]
     }
     
-    static func getCommerceEvent() -> [String: Any]? {
+    static func commerceEvent() -> [String: Any]? {
         if let value = userDefaults.dictionary(forKey: "CommerceEvent") {
             return value
         } else {
-            return getCommerceEventDefaults()
+            return commerceEventDefaults()
         }
     }
     
@@ -41,19 +41,19 @@ struct CommerceEventData {
         userDefaults.removeObject(forKey: "CommerceEvent")
     }
     // v2 commerce event function
-    static func getBranchEvent() -> BranchEvent {
+    static func branchEvent() -> BranchEvent {
         let branchEvent = BranchEvent.standardEvent(BranchStandardEvent.viewItem)
-        let commerceEvent = getCommerceEvent() as! [String: String]
-        let defaults = getCommerceEventDefaults()
+        let event = commerceEvent() as! [String: String]
+        let defaults = commerceEventDefaults()
         
-        branchEvent.transactionID = commerceEvent["transactionID"] != "" ? commerceEvent["transactionID"] : defaults["transactionID"]!
-        branchEvent.affiliation = commerceEvent["affiliation"] != "" ? commerceEvent["affiliation"] :  defaults["affiliation"]!
-        branchEvent.coupon = commerceEvent["coupon"] != "" ? commerceEvent["coupon"] : defaults["coupon"]!
-        branchEvent.currency = (commerceEvent["currency"] != "" ? commerceEvent["currency"] : defaults["currency"]).map { BNCCurrency(rawValue: $0) }
-        branchEvent.shipping = self.stringToNSDecimalNumber(with: commerceEvent["shipping"] != "" ? commerceEvent["shipping"]! : defaults["shipping"]!)
-        branchEvent.tax = self.stringToNSDecimalNumber(with: commerceEvent["tax"] != "" ? commerceEvent["tax"]! : defaults["tax"]!)
-        branchEvent.revenue = self.stringToNSDecimalNumber(with: commerceEvent["revenue"] != "" ? commerceEvent["revenue"]! : defaults["revenue"]!)
-        branchEvent.contentItems = [BranchUniversalObjectsData.getDefaultUniversalObject()]
+        branchEvent.transactionID = event["transactionID"] != "" ? event["transactionID"] : defaults["transactionID"]!
+        branchEvent.affiliation = event["affiliation"] != "" ? event["affiliation"] :  defaults["affiliation"]!
+        branchEvent.coupon = event["coupon"] != "" ? event["coupon"] : defaults["coupon"]!
+        branchEvent.currency = (event["currency"] != "" ? event["currency"] : defaults["currency"]).map { BNCCurrency(rawValue: $0) }
+        branchEvent.shipping = self.stringToNSDecimalNumber(with: event["shipping"] != "" ? event["shipping"]! : defaults["shipping"]!)
+        branchEvent.tax = self.stringToNSDecimalNumber(with: event["tax"] != "" ? event["tax"]! : defaults["tax"]!)
+        branchEvent.revenue = self.stringToNSDecimalNumber(with: event["revenue"] != "" ? event["revenue"]! : defaults["revenue"]!)
+        branchEvent.contentItems = [BranchUniversalObjectData.defaultUniversalObject()]
         
         return branchEvent
     }
@@ -75,19 +75,19 @@ struct CommerceEventData {
     }
     
     // v1 commerce event function
-    static func getBNCCommerceEvent() -> BNCCommerceEvent {
+    static func bNCCommerceEvent() -> BNCCommerceEvent {
         let bncCommerceEvent = BNCCommerceEvent.init()
-        let commerceEvent = getCommerceEvent() as! [String: String]
-        let defaults = getCommerceEventDefaults()
+        let event = commerceEvent() as! [String: String]
+        let defaults = commerceEventDefaults()
         
-        bncCommerceEvent.transactionID = commerceEvent["transactionID"] != "" ? commerceEvent["transactionID"] : defaults["transactionID"]!
-        bncCommerceEvent.affiliation = commerceEvent["affiliation"] != "" ? commerceEvent["affiliation"] :  defaults["affiliation"]!
-        bncCommerceEvent.coupon = commerceEvent["coupon"] != "" ? commerceEvent["coupon"] : defaults["coupon"]!
-        bncCommerceEvent.currency = (commerceEvent["currency"] != "" ? commerceEvent["currency"] : defaults["currency"]).map { BNCCurrency(rawValue: $0) }
-        bncCommerceEvent.shipping = self.stringToNSDecimalNumber(with: commerceEvent["shipping"] != "" ? commerceEvent["shipping"]! : defaults["shipping"]!)
-        bncCommerceEvent.tax = self.stringToNSDecimalNumber(with: commerceEvent["tax"] != "" ? commerceEvent["tax"]! : defaults["tax"]!)
-        bncCommerceEvent.revenue = self.stringToNSDecimalNumber(with: commerceEvent["revenue"] != "" ? commerceEvent["revenue"]! : defaults["revenue"]!)
-        bncCommerceEvent.products = self.getBNCProducts()
+        bncCommerceEvent.transactionID = event["transactionID"] != "" ? event["transactionID"] : defaults["transactionID"]!
+        bncCommerceEvent.affiliation = event["affiliation"] != "" ? event["affiliation"] :  defaults["affiliation"]!
+        bncCommerceEvent.coupon = event["coupon"] != "" ? event["coupon"] : defaults["coupon"]!
+        bncCommerceEvent.currency = (event["currency"] != "" ? event["currency"] : defaults["currency"]).map { BNCCurrency(rawValue: $0) }
+        bncCommerceEvent.shipping = self.stringToNSDecimalNumber(with: event["shipping"] != "" ? event["shipping"]! : defaults["shipping"]!)
+        bncCommerceEvent.tax = self.stringToNSDecimalNumber(with: event["tax"] != "" ? event["tax"]! : defaults["tax"]!)
+        bncCommerceEvent.revenue = self.stringToNSDecimalNumber(with: event["revenue"] != "" ? event["revenue"]! : defaults["revenue"]!)
+        bncCommerceEvent.products = self.bNCProducts()
         
         return bncCommerceEvent
     }
@@ -108,7 +108,7 @@ struct CommerceEventData {
         self.setCommerceEvent(commerceEvent)
     }
     
-    static func getProductDefaults() -> [String: String] {
+    static func productDefaults() -> [String: String] {
         return [
             "name": "Anvil",
             "brand": "ACME",
@@ -121,12 +121,12 @@ struct CommerceEventData {
         ]
     }
     
-    static func getProducts() -> [[String : String]] {
+    static func products() -> [[String : String]] {
         return userDefaults.array(forKey: "Products") as? [[String : String]] ?? [[String: String]]()
     }
     
-    static func getProductsWithAddedProduct(_ product: [String : String]) -> [[String : String]] {
-        var products = self.getProducts()
+    static func productsWithAddedProduct(_ product: [String : String]) -> [[String : String]] {
+        var products = self.products()
         products.append(product)
         self.setProducts(products)
         return products
@@ -136,15 +136,15 @@ struct CommerceEventData {
         userDefaults.set(products, forKey: "Products")
     }
     
-    static func getBNCProducts() -> [BNCProduct] {
+    static func bNCProducts() -> [BNCProduct] {
         let bncProduct = BNCProduct.init()
-        let products = self.getProducts()
+        let products = self.products()
         
         if products.count > 0 {
             return products.map({
                 (product: [String: String]) -> BNCProduct in
                 
-                let defaults = self.getProductDefaults()
+                let defaults = self.productDefaults()
                 
                 bncProduct.name = product["name"] ?? defaults["name"]
                 bncProduct.brand = product["brand"] ?? defaults["brand"]
@@ -157,7 +157,7 @@ struct CommerceEventData {
                 return bncProduct
             })
         } else {
-            let defaults = self.getProductDefaults()
+            let defaults = self.productDefaults()
             
             bncProduct.name = defaults["name"]
             bncProduct.brand = defaults["brand"]
@@ -187,7 +187,7 @@ struct CommerceEventData {
         self.setProducts(productsArray)
     }
     
-    static func getCommerceEventCustomMetadata() -> [String: AnyObject] {
+    static func commerceEventCustomMetadata() -> [String: AnyObject] {
         if let value = userDefaults.dictionary(forKey: "commerceEventCustomMetadata") {
             return value as [String : AnyObject]
         } else {
@@ -201,7 +201,7 @@ struct CommerceEventData {
         userDefaults.set(value, forKey: "commerceEventCustomMetadata")
     }
     
-    static func getProductCategories() -> [String] {
+    static func productCategories() -> [String] {
         return [
             "Animals & Pet Supplies",
             "Apparel & Accessories",
@@ -227,7 +227,7 @@ struct CommerceEventData {
         ]
     }
     
-    static func getCurrencies() -> [String] {
+    static func currencies() -> [String] {
         return [
             "AED United Arab Emirates Dirham",
             "AFN Afghanistan Afghani",

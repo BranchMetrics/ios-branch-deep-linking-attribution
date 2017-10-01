@@ -31,7 +31,7 @@ class CommerceEventTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch((indexPath as NSIndexPath).section, (indexPath as NSIndexPath).row) {
         case (0,0) :
-            self.performSegue(withIdentifier: "CommerceEventDetailsNavigationController", sender: "CommerceEventDetails")
+            self.performSegue(withIdentifier: "CommerceEventDetails", sender: "CommerceEventDetails")
         case (0,1) :
             self.performSegue(withIdentifier: "Dictionary", sender: "CommerceEventCustomMetadata")
         default : break
@@ -42,29 +42,31 @@ class CommerceEventTableViewController: UITableViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        switch segue.identifier! {
-        case "Dictionary":
-            let nc = segue.destination as! UINavigationController
-            let vc = nc.topViewController as! DictionaryTableViewController
-            commerceEventCustomMetadata = CommerceEventData.getCommerceEventCustomMetadata()
-            vc.dictionary = commerceEventCustomMetadata
-            vc.viewTitle = "Commerce Metadata"
-            vc.keyHeader = "Key"
-            vc.keyPlaceholder = "key"
-            vc.keyFooter = ""
-            vc.valueHeader = "Value"
-            vc.valueFooter = ""
-            vc.keyKeyboardType = UIKeyboardType.default
-            vc.valueKeyboardType = UIKeyboardType.default
-            vc.sender = sender as! String
-        default:
-            break
+        if let senderName = sender as? String {
+            switch senderName {
+            case "CommerceEventCustomMetadata":
+                let nc = segue.destination as! UINavigationController
+                let vc = nc.topViewController as! DictionaryTableViewController
+                commerceEventCustomMetadata = CommerceEventData.commerceEventCustomMetadata()
+                vc.dictionary = commerceEventCustomMetadata
+                vc.viewTitle = "Commerce Metadata"
+                vc.keyHeader = "Key"
+                vc.keyPlaceholder = "key"
+                vc.keyFooter = ""
+                vc.valueHeader = "Value"
+                vc.valueFooter = ""
+                vc.keyKeyboardType = UIKeyboardType.default
+                vc.valueKeyboardType = UIKeyboardType.default
+                vc.sender = sender as! String
+            default:
+                break
+            }
         }
     }
     
-    @IBAction func unwindCommerceEventDetailsTableViewController(_ segue:UIStoryboardSegue) { }
+    @IBAction func unwindCommerceEventDetails(_ segue:UIStoryboardSegue) { }
     
-    @IBAction func unwindDictionaryTableViewController(_ segue:UIStoryboardSegue) {
+    @IBAction func unwindDictionary(_ segue:UIStoryboardSegue) {
         if let vc = segue.source as? DictionaryTableViewController {
             commerceEventCustomMetadata = vc.dictionary
             CommerceEventData.setCommerceEventCustomMetadata(commerceEventCustomMetadata)
@@ -80,7 +82,7 @@ class CommerceEventTableViewController: UITableViewController {
     
     @IBAction func sendCommerceEventButtonTouchUpInside(_ sender: AnyObject) {
         
-        let commerceEvent = CommerceEventData.getBNCCommerceEvent()
+        let commerceEvent = CommerceEventData.bNCCommerceEvent()
         
         WaitingViewController.showWithMessage(
             message: "Getting parameters...",
@@ -109,7 +111,7 @@ class CommerceEventTableViewController: UITableViewController {
     }
     
     func refreshControlValues() {
-        commerceEventCustomMetadata = CommerceEventData.getCommerceEventCustomMetadata()
+        commerceEventCustomMetadata = CommerceEventData.commerceEventCustomMetadata()
         if (commerceEventCustomMetadata.count > 0) {
             commerceEventCustomMetadataTextView.text = commerceEventCustomMetadata.description
         } else {

@@ -12,7 +12,7 @@ struct ReferralRewardsData {
     
     static let userDefaults = UserDefaults.standard
     
-    static func getRewardsBucket() -> String {
+    static func rewardsBucket() -> String {
         if let value = userDefaults.string(forKey: "rewardsBucket") {
             return value
         } else {
@@ -30,7 +30,7 @@ struct ReferralRewardsData {
         }
     }
     
-    static func getRewardsBalanceOfBucket() -> String {
+    static func rewardsBalanceOfBucket() -> String {
         if let value = userDefaults.string(forKey: "rewardsBalanceOfBucket") {
             return value
         } else {
@@ -48,7 +48,7 @@ struct ReferralRewardsData {
         }
     }
     
-    static func getRewardPointsToRedeem() -> String {
+    static func rewardPointsToRedeem() -> String {
         if let value = userDefaults.string(forKey: "rewardPointsToRedeem") {
             return value
         } else {

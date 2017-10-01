@@ -9,7 +9,7 @@
 import UIKit
 
 class ReferralRewardsTableViewController: UITableViewController {
-
+    
     @IBOutlet weak var rewardsBucketTextField: UITextField!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var rewardsBalanceOfBucketTextField: UITextField!
@@ -22,20 +22,17 @@ class ReferralRewardsTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        refreshControlValues()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        
     }
-
+    
     // MARK: - Table view data source
-
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch((indexPath as NSIndexPath).section, (indexPath as NSIndexPath).row) {
         case (0,0) :
@@ -56,41 +53,66 @@ class ReferralRewardsTableViewController: UITableViewController {
         default : break
         }
     }
-
+    
     // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        switch sender as! String {
-        case "CreditHistory":
-            let vc = (segue.destination as! CreditHistoryViewController)
-            vc.creditTransactions = creditHistory
-        case "RewardsBucket":
-            let nc = segue.destination as! UINavigationController
-            let vc = nc.topViewController as! TextViewFormTableViewController
-            vc.senderString = sender as! String
-            vc.viewTitle = "Rewards Bucket"
-            vc.header = "Rewards Bucket"
-            vc.footer = "Rewards are granted via rules configured in the Rewards Rules section of the dashboard. Rewards are normally accumulated in a 'default' bucket, however any bucket name can be specified in rewards rules. Use this setting to specify the name of a non-default rewards bucket."
-            vc.keyboardType = UIKeyboardType.alphabet
-            vc.incumbantValue = rewardsBucketTextField.text!
-        case "RewardPointsToRedeem":
-            let nc = segue.destination as! UINavigationController
-            let vc = nc.topViewController as! TextViewFormTableViewController
-            vc.senderString = sender as! String
-            vc.viewTitle = "Reward Points"
-            vc.header = "Number of Reward Points to Redeem"
-            vc.footer = "This is the quantity of points to subtract from the selected bucket's balance."
-            vc.keyboardType = UIKeyboardType.numberPad
-            vc.incumbantValue = rewardPointsToRedeemTextField.text!
-        default:
-            break
+        
+        if let senderName = sender as? String {
+            switch senderName {
+            case "CreditHistory":
+                let vc = (segue.destination as! CreditHistoryViewController)
+                vc.creditTransactions = creditHistory
+            case "RewardsBucket":
+                let nc = segue.destination as! UINavigationController
+                let vc = nc.topViewController as! TextViewFormTableViewController
+                vc.senderName = senderName
+                vc.viewTitle = "Rewards Bucket"
+                vc.header = "Rewards Bucket"
+                vc.footer = "Rewards are granted via rules configured in the Rewards Rules section of the dashboard. Rewards are normally accumulated in a 'default' bucket, however any bucket name can be specified in rewards rules. Use this setting to specify the name of a non-default rewards bucket."
+                vc.keyboardType = UIKeyboardType.alphabet
+                vc.incumbantValue = rewardsBucketTextField.text!
+            case "RewardPointsToRedeem":
+                let nc = segue.destination as! UINavigationController
+                let vc = nc.topViewController as! TextViewFormTableViewController
+                vc.senderName = senderName
+                vc.viewTitle = "Reward Points"
+                vc.header = "Number of Reward Points to Redeem"
+                vc.footer = "This is the quantity of points to subtract from the selected bucket's balance."
+                vc.keyboardType = UIKeyboardType.numberPad
+                vc.incumbantValue = rewardPointsToRedeemTextField.text!
+            default:
+                break
+            }
         }
     }
     
     @IBAction func unwindTextViewForm(_ segue:UIStoryboardSegue) {
         
         if let vc = segue.source as? TextViewFormTableViewController {
-            
+            switch vc.senderName {
+            case "RewardsBucket":
+                if let rewardsBucket = vc.textView.text {
+                    
+                    guard self.rewardsBucketTextField.text != rewardsBucket else {
+                        return
+                    }
+                    ReferralRewardsData.setRewardsBucket(rewardsBucket)
+                    self.rewardsBucketTextField.text = rewardsBucket
+                    self.refreshRewardsBalanceOfBucket()
+                    
+                }
+            case "RewardPointsToRedeem":
+                if let rewardPointsToRedeem = vc.textView.text {
+                    
+                    guard self.rewardPointsToRedeemTextField.text != rewardPointsToRedeem else {
+                        return
+                    }
+                    ReferralRewardsData.setRewardPointsToRedeem(rewardPointsToRedeem)
+                    self.rewardPointsToRedeemTextField.text = rewardPointsToRedeem
+                }
+            default: break
+            }
         }
     }
     
@@ -142,14 +164,14 @@ class ReferralRewardsTableViewController: UITableViewController {
     }
     
     func refreshControlValues() {
-        rewardsBucketTextField.text = ReferralRewardsData.getRewardsBucket()
-        rewardsBalanceOfBucketTextField.text = ReferralRewardsData.getRewardsBalanceOfBucket()
+        rewardsBucketTextField.text = ReferralRewardsData.rewardsBucket()
+        rewardsBalanceOfBucketTextField.text = ReferralRewardsData.rewardsBalanceOfBucket()
         
         // Then initiate a refresh of the rewards balance
         refreshRewardsBalanceOfBucket()
         
         // Now get about populating the other controls
-        rewardPointsToRedeemTextField.text = ReferralRewardsData.getRewardPointsToRedeem()
+        rewardPointsToRedeemTextField.text = ReferralRewardsData.rewardPointsToRedeem()
     }
     
     func showAlert(_ alertTitle: String, withDescription message: String) {
@@ -161,5 +183,5 @@ class ReferralRewardsTableViewController: UITableViewController {
         alert.addAction(okAction)
         present(alert, animated: true, completion: nil)
     }
-
+    
 }

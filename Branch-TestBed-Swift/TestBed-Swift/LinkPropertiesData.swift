@@ -23,7 +23,7 @@ struct LinkPropertiesData {
                                           "$one_time_use","$custom_sms_text","$marketing_title",
                                           "$ios_deepview","$android_deepview","$desktop_deepview"]
     
-    static func getLinkProperties() -> [String: Any] {
+    static func linkProperties() -> [String: Any] {
         if let value = userDefaults.dictionary(forKey: "linkProperties") {
             print("value[$match_duration] = \(value["$match_duration"] ?? "empty")")
             return value as [String : Any]
@@ -50,38 +50,38 @@ struct LinkPropertiesData {
         userDefaults.set([String: Any](), forKey:"linkProperties")
     }
     
-    static func getBranchLinkProperties() -> BranchLinkProperties {
+    static func branchLinkProperties() -> BranchLinkProperties {
         let branchLinkProperties = BranchLinkProperties()
-        let linkProperties = getLinkProperties()
+        let properties = linkProperties()
         
-        for key in linkProperties.keys {
-            guard linkProperties[key] != nil else {
+        for key in properties.keys {
+            guard properties[key] != nil else {
                 continue
             }
             
             print("key = \(key)")
             switch key {
             case "~alias":
-                branchLinkProperties.alias = linkProperties[key] as! String
+                branchLinkProperties.alias = properties[key] as! String
             case "~campaign":
-                branchLinkProperties.campaign = linkProperties[key] as! String
+                branchLinkProperties.campaign = properties[key] as! String
             case "~channel":
-                branchLinkProperties.channel = linkProperties[key] as! String
+                branchLinkProperties.channel = properties[key] as! String
             case "~feature":
-                branchLinkProperties.feature = linkProperties[key] as! String
+                branchLinkProperties.feature = properties[key] as! String
             case "~stage":
-                branchLinkProperties.stage = linkProperties[key] as! String
+                branchLinkProperties.stage = properties[key] as! String
             case "~tags":
-                branchLinkProperties.tags = linkProperties[key] as! [String]
+                branchLinkProperties.tags = properties[key] as! [String]
             case "$match_duration":
-                if let value = linkProperties[key] {
+                if let value = properties[key] {
                     branchLinkProperties.matchDuration = UInt(value as? String ?? "") ?? 0
                 }
             default:
                 guard (key.characters.first != "+") && (key.characters.first != "~") else {
                     continue
                 }
-                guard let value = linkProperties[key] as? String else {
+                guard let value = properties[key] as? String else {
                     continue
                 }
                 branchLinkProperties.addControlParam(key, withValue: value)

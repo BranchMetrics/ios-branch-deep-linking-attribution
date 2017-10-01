@@ -13,7 +13,7 @@ class TableFormViewController: UITableViewController {
     // MARK: Control
     
     var tableViewSections = [[String:Any]]()
-    var sender = ""
+    var senderName = ""
     var viewTitle = "Default Title"
     var keyboardType = UIKeyboardType.default
     var uiSwitches = [String:UISwitch]()
@@ -66,6 +66,7 @@ class TableFormViewController: UITableViewController {
             let cell: TextFieldCell = tableView.dequeueReusableCell(withIdentifier: identifier!, for: indexPath) as! TextFieldCell
             cell.textField.text = cellParameters!["Text"]
             cell.textField.placeholder = cellParameters!["Placeholder"]
+            cell.textField.accessibilityHint = cellParameters!["AccessibilityHint"]
             cell.textField.isUserInteractionEnabled = false
             if let _ = cellParameters!["InputForm"] {
                 cell.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
@@ -74,7 +75,7 @@ class TableFormViewController: UITableViewController {
         case "ToggleSwitchCell":
             let cell: ToggleSwitchCell = tableView.dequeueReusableCell(withIdentifier: identifier!, for: indexPath) as! ToggleSwitchCell
             cell.toggleSwitch.isOn = cellParameters!["isOn"] == "true"
-            cell.toggleSwitchLabel.isEnabled = false
+            cell.toggleSwitchLabel.isEnabled = cellParameters!["isEnabled"] == "true"
             cell.toggleSwitch.isEnabled = cellParameters!["isEnabled"] == "true"
             cell.toggleSwitchLabel.text = cellParameters!["Label"]
             uiSwitches[cellParameters!["Name"]!] = cell.toggleSwitch
@@ -101,13 +102,15 @@ class TableFormViewController: UITableViewController {
             let nc = segue.destination as! UINavigationController
             let vc = nc.topViewController as! TextViewFormTableViewController
             vc.sender = sender
-            vc.viewTitle = "Key"
             vc.header = "Key"
             vc.footer = "This key will be used the next time the application is closed (not merely backgrounded) and re-opened."
             vc.keyboardType = UIKeyboardType.alphabet
             
             if let cell: TextFieldCell = tableView.cellForRow(at: sender as! IndexPath) as? TextFieldCell {
                 vc.incumbantValue = cell.textField.text ?? ""
+                vc.viewTitle = cell.textField.placeholder ?? ""
+                vc.header = cell.textField.placeholder ?? ""
+                vc.footer = cell.textField.accessibilityHint ?? ""
             }
         } else {
             for toggleSwitch in uiSwitches {
@@ -145,67 +148,3 @@ class TableFormViewController: UITableViewController {
     }
     
 }
-
-
-
-    /*
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
-        return cell
-    }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-//        formParameters.forEach { (dictionary) in
-//            switch dictionary["Type"] {
-//            case "LockedTextField":
-//
-//            default: {}
-//            }
-//        }

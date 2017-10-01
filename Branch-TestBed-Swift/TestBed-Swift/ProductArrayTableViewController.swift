@@ -9,7 +9,7 @@ import UIKit
 
 class ProductArrayTableViewController: UITableViewController {
     
-    var array = CommerceEventData.getProducts()
+    var array = CommerceEventData.products()
     var incumbantValue = ""
     var viewTitle = "Default Array Title"
     var header = "Default Array Header"
@@ -79,7 +79,7 @@ class ProductArrayTableViewController: UITableViewController {
                 "category": (vc.productCategoryTextField.text?.characters.count)! > 0 ? vc.productCategoryTextField.text : vc.productCategoryTextField.placeholder
             ]
             
-            array = CommerceEventData.getProductsWithAddedProduct(productProperties as! [String : String])
+            array = CommerceEventData.productsWithAddedProduct(productProperties as! [String : String])
             tableView.reloadData()
 
         }

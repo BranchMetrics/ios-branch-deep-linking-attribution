@@ -12,7 +12,7 @@ struct HomeData {
     
     static let userDefaults = UserDefaults.standard
     
-    static func getUserID() -> String? {
+    static func userID() -> String? {
         if let value = userDefaults.string(forKey: "userID") {
             return value
         } else {

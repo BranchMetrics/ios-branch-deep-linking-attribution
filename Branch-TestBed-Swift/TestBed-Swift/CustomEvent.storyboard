@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13189.4" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Pd1-my-Cnv">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13165.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -21,7 +21,7 @@
                         <sections>
                             <tableViewSection headerTitle="Application Events" id="jRg-gx-uNO" userLabel="Custom Events">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="eox-g7-ARO" userLabel="customEventNameLabel">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="eox-g7-ARO" userLabel="customEventNameLabel">
                                         <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eox-g7-ARO" id="AMj-Bu-hJv">
@@ -53,7 +53,7 @@
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" rowHeight="98" id="RTM-nn-wfx" userLabel="customEventMetadataLabel">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" rowHeight="98" id="RTM-nn-wfx" userLabel="customEventMetadataLabel">
                                         <rect key="frame" x="0.0" y="99.5" width="375" height="98"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RTM-nn-wfx" id="6jJ-S8-PIt">
@@ -117,7 +117,13 @@
                             <outlet property="delegate" destination="X78-AR-OSz" id="c1s-ic-aYg"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="3ro-fq-GWo"/>
+                    <navigationItem key="navigationItem" id="3ro-fq-GWo">
+                        <barButtonItem key="leftBarButtonItem" style="done" systemItem="done" id="KEJ-gS-ucw">
+                            <connections>
+                                <segue destination="15t-xs-0MS" kind="unwind" identifier="UnwindByBeingDone" unwindAction="unwindByBeingDone:" id="767-zK-anx"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="customEventMetadataTextView" destination="CW3-ju-ZuW" id="Tyl-k7-ePT"/>
                         <outlet property="customEventNameTextField" destination="EvX-fe-O3h" id="oBE-rl-0xM"/>
@@ -125,6 +131,7 @@
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4YZ-yf-rcr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="15t-xs-0MS" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="5415.1999999999998" y="320.68965517241384"/>
         </scene>

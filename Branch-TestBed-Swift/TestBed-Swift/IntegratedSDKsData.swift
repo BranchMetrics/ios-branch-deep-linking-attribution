@@ -726,38 +726,72 @@ struct IntegratedSDKsData {
     
     // Mark - mParticle
     
-    static func activemParticleAPIKey() -> String? {
-        if let value = userDefaults.string(forKey: "activemParticleAPIKey") {
+    static func activemParticleAppKey() -> String? {
+        if let value = userDefaults.string(forKey: "activemParticleAppKey") {
             if value.characters.count > 0 {
                 return value
             }
         }
-        if let value = Bundle.main.object(forInfoDictionaryKey: "mparticle_api_key") as? String {
-            userDefaults.setValue(value, forKey: "activemParticleAPIKey")
+        if let value = Bundle.main.object(forInfoDictionaryKey: "mparticle_app_key") as? String {
+            userDefaults.setValue(value, forKey: "activemParticleAppKey")
             return value
         }
         return nil
     }
     
-    static func setActivemParticleAPIKey(_ value: String) {
-        userDefaults.setValue(value, forKey: "activemParticleAPIKey")
+    static func setActivemParticleAppKey(_ value: String) {
+        userDefaults.setValue(value, forKey: "activemParticleAppKey")
     }
     
-    static func pendingmParticleAPIKey() -> String? {
-        if let value = userDefaults.string(forKey: "pendingmParticleAPIKey") {
+    static func pendingmParticleAppKey() -> String? {
+        if let value = userDefaults.string(forKey: "pendingmParticleAppKey") {
             if value.characters.count > 0 {
                 return value
             }
         }
-        if let value = Bundle.main.object(forInfoDictionaryKey: "mparticle_api_key") as? String {
-            userDefaults.setValue(value, forKey: "pendingmParticleAPIKey")
+        if let value = Bundle.main.object(forInfoDictionaryKey: "mparticle_app_key") as? String {
+            userDefaults.setValue(value, forKey: "pendingmParticleAppKey")
             return value
         }
         return nil
     }
     
-    static func setPendingmParticleAPIKey(_ value: String) {
-        userDefaults.setValue(value, forKey: "pendingmParticleAPIKey")
+    static func setPendingmParticleAppKey(_ value: String) {
+        userDefaults.setValue(value, forKey: "pendingmParticleAppKey")
+    }
+    
+    static func activemParticleAppSecret() -> String? {
+        if let value = userDefaults.string(forKey: "activemParticleAppSecret") {
+            if value.characters.count > 0 {
+                return value
+            }
+        }
+        if let value = Bundle.main.object(forInfoDictionaryKey: "mparticle_app_secret") as? String {
+            userDefaults.setValue(value, forKey: "activemParticleAppSecret")
+            return value
+        }
+        return nil
+    }
+    
+    static func setActivemParticleAppSecret(_ value: String) {
+        userDefaults.setValue(value, forKey: "activemParticleAppSecret")
+    }
+    
+    static func pendingmParticleAppSecret() -> String? {
+        if let value = userDefaults.string(forKey: "pendingmParticleAppSecret") {
+            if value.characters.count > 0 {
+                return value
+            }
+        }
+        if let value = Bundle.main.object(forInfoDictionaryKey: "mparticle_app_secret") as? String {
+            userDefaults.setValue(value, forKey: "pendingmParticleAppSecret")
+            return value
+        }
+        return nil
+    }
+    
+    static func setPendingmParticleAppSecret(_ value: String) {
+        userDefaults.setValue(value, forKey: "pendingmParticleAppSecret")
     }
     
     static func activemParticleEnabled() -> Bool? {

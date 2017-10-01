@@ -20,9 +20,9 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
     @IBOutlet weak var taxTextField: UITextField!
     @IBOutlet weak var revenueTextField: UITextField!
     
-    var defaults = CommerceEventData.getCommerceEventDefaults()
+    var defaults = CommerceEventData.commerceEventDefaults()
     let picker = UIPickerView()
-    let currencies = CommerceEventData.getCurrencies()
+    let currencies = CommerceEventData.currencies()
     
     // MARK: - Core View Functions
     
@@ -101,7 +101,7 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
     }
     
     func refreshControls() {
-        guard var commerceEvent = CommerceEventData.getCommerceEvent() else {
+        guard var commerceEvent = CommerceEventData.commerceEvent() else {
             return
         }
 

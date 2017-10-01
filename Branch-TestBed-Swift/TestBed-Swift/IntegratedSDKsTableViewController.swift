@@ -10,24 +10,23 @@ import UIKit
 
 class IntegratedSDKsTableViewController: UITableViewController {
     
-    
-    @IBOutlet weak var activeAdjustEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeAdobeEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeAmplitudeEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeAppsflyerEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeGoogleAnalyticsEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeMixpanelEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeTuneEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeAppboyEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeAppMetricaEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeClearTapEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeConvertroEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeKochavaEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeLocalyticsEnabledSwitch: UISwitch!
-    @IBOutlet weak var activemParticleEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeSegmentEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeSingularEnabledSwitch: UISwitch!
-    @IBOutlet weak var activeStitchEnabledSwitch: UISwitch!
+    @IBOutlet weak var adjustLabel: UILabel!
+    @IBOutlet weak var adobeLabel: UILabel!
+    @IBOutlet weak var amplitudeLabel: UILabel!
+    @IBOutlet weak var appsflyerLabel: UILabel!
+    @IBOutlet weak var googleAnalyticsLabel: UILabel!
+    @IBOutlet weak var mixpanelLabel: UILabel!
+    @IBOutlet weak var tuneLabel: UILabel!
+    @IBOutlet weak var appboyLabel: UILabel!
+    @IBOutlet weak var appMetricaLabel: UILabel!
+    @IBOutlet weak var clearTapLabel: UILabel!
+    @IBOutlet weak var convertroLabel: UILabel!
+    @IBOutlet weak var kochavaLabel: UILabel!
+    @IBOutlet weak var localyticsLabel: UILabel!
+    @IBOutlet weak var mParticleLabel: UILabel!
+    @IBOutlet weak var segmentLabel: UILabel!
+    @IBOutlet weak var singularLabel: UILabel!
+    @IBOutlet weak var stitchLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,7 +107,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeAdjustEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Adjust SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -137,6 +136,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingAdjustAppToken() ?? "",
                                 "Placeholder":"Adjust App Token",
+                                "AccessibilityHint":"The Adjust App Token that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingAdjustEnabled",
@@ -151,7 +151,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeAdobeEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Adobe SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -183,7 +183,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeAmplitudeEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Amplitude SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -212,6 +212,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingAmplitudeKey() ?? "",
                                 "Placeholder":"Amplitude Key",
+                                "AccessibilityHint":"The Amplitude key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingAmplitudeEnabled",
@@ -226,7 +227,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeAppsflyerEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Appsflyer SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -255,6 +256,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingAppsflyerKey() ?? "",
                                 "Placeholder":"Appsflyer Key",
+                                "AccessibilityHint":"The Appsflyer key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingAppsflyerEnabled",
@@ -269,7 +271,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeGoogleAnalyticsEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Google Analytics SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -298,6 +300,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingGoogleAnalyticsTrackingID() ?? "",
                                 "Placeholder":"Google Analytics Tracking ID",
+                                "AccessibilityHint":"The Google Analytics key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingGoogleAnalyticsEnabled",
@@ -312,7 +315,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeMixpanelEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Mixpanel SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -341,6 +344,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingMixpanelKey() ?? "",
                                 "Placeholder":"Mixpanel Key",
+                                "AccessibilityHint":"The Mixpanel key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingMixpanelEnabled",
@@ -355,7 +359,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeTuneEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Tune SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -389,12 +393,14 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingTuneAdvertisingID() ?? "",
                                 "Placeholder":"Tune Advertising ID",
+                                "AccessibilityHint":"The Tune Advertising ID that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingTuneConversionKey",
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingTuneConversionKey() ?? "",
                                 "Placeholder":"Tune Conversion Key",
+                                "AccessibilityHint":"The Tune Conversion Key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingTuneEnabled",
@@ -409,7 +415,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeAppboyEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Appboy SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -438,6 +444,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingAppboyAPIKey() ?? "",
                                 "Placeholder":"Appboy API Key",
+                                "AccessibilityHint":"The Appboy API key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingAppboyEnabled",
@@ -452,7 +459,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeAppMetricaEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "AppMetrica SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -481,6 +488,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingAppMetricaAPIKey() ?? "",
                                 "Placeholder":"AppMetrica API Key",
+                                "AccessibilityHint":"The AppMetrica API key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingAppMetricaEnabled",
@@ -495,7 +503,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeClearTapEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "ClearTap SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -524,6 +532,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingClearTapAPIKey() ?? "",
                                 "Placeholder":"ClearTap API Key",
+                                "AccessibilityHint":"The ClearTap API key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingClearTapEnabled",
@@ -538,7 +547,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeConvertroEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Convertro SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -567,6 +576,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingConvertroAPIKey() ?? "",
                                 "Placeholder":"Convertro API Key",
+                                "AccessibilityHint":"The Convertro API key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingConvertroEnabled",
@@ -581,7 +591,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeKochavaEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Kochava SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -610,6 +620,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingKochavaAPIKey() ?? "",
                                 "Placeholder":"Kochava API Key",
+                                "AccessibilityHint":"The Kochava API key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingKochavaEnabled",
@@ -624,7 +635,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeLocalyticsEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Localytics SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -653,6 +664,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingLocalyticsAppKey() ?? "",
                                 "Placeholder":"Localytics API Key",
+                                "AccessibilityHint":"The Localytics API key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingLocalyticsEnabled",
@@ -667,7 +679,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activemParticleEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "mParticle SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -675,10 +687,15 @@ class IntegratedSDKsTableViewController: UITableViewController {
                     "Footer":"These are the currently active mParticle SDK settings.",
                     "TableViewCells":[
                         [
-                            "Name":"ActivemParticleAPIKey",
+                            "Name":"ActivemParticleAppKey",
                             "CellReuseIdentifier":"TextFieldCell",
-                            "Text":IntegratedSDKsData.activemParticleAPIKey() ?? "",
-                            "Placeholder":"mParticle API Key"
+                            "Text":IntegratedSDKsData.activemParticleAppKey() ?? "",
+                            "Placeholder":"mParticle App Key"
+                        ],[
+                            "Name":"ActivemParticleAppSecret",
+                            "CellReuseIdentifier":"TextFieldCell",
+                            "Text":IntegratedSDKsData.activemParticleAppSecret() ?? "",
+                            "Placeholder":"mParticle App Secret"
                         ],[
                             "Name":"ActivemParticleEnabled",
                             "CellReuseIdentifier":"ToggleSwitchCell",
@@ -692,10 +709,18 @@ class IntegratedSDKsTableViewController: UITableViewController {
                         "Footer":"These settings will be used the next time the application is closed (not merely backgrounded) and re-opened.",
                         "TableViewCells":[
                             [
-                                "Name":"PendingmParticleAPIKey",
+                                "Name":"PendingmParticleAppKey",
                                 "CellReuseIdentifier":"TextFieldCell",
-                                "Text":IntegratedSDKsData.pendingmParticleAPIKey() ?? "",
-                                "Placeholder":"mParticle API Key",
+                                "Text":IntegratedSDKsData.pendingmParticleAppKey() ?? "",
+                                "Placeholder":"mParticle App Key",
+                                "AccessibilityHint":"The mParticle App Key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
+                                "InputForm":"TextViewForm"
+                            ],[
+                                "Name":"PendingmParticleAppSecret",
+                                "CellReuseIdentifier":"TextFieldCell",
+                                "Text":IntegratedSDKsData.pendingmParticleAppSecret() ?? "",
+                                "Placeholder":"mParticle App Secret",
+                                "AccessibilityHint":"The mParticle App Secret that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingmParticleEnabled",
@@ -710,7 +735,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeSegmentEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Segment SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -739,6 +764,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingSegmentAPIKey() ?? "",
                                 "Placeholder":"Segment API Key",
+                                "AccessibilityHint":"The Segment API key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingSegmentEnabled",
@@ -753,7 +779,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeSingularEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Singular SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -782,6 +808,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingSingularAPIKey() ?? "",
                                 "Placeholder":"Singular API Key",
+                                "AccessibilityHint":"The Singular API key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingSingularEnabled",
@@ -796,7 +823,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
             case "activeStitchEnabled":
                 let nc = segue.destination as! UINavigationController
                 let vc = nc.topViewController as! TableFormViewController
-                vc.sender = senderString
+                vc.senderName = senderString
                 vc.viewTitle = "Stitch SDK"
                 vc.keyboardType = UIKeyboardType.alphabet
                 let tableViewSections = [[
@@ -825,6 +852,7 @@ class IntegratedSDKsTableViewController: UITableViewController {
                                 "CellReuseIdentifier":"TextFieldCell",
                                 "Text":IntegratedSDKsData.pendingStitchAPIKey() ?? "",
                                 "Placeholder":"Stitch API Key",
+                                "AccessibilityHint":"The Stitch API key that will be used to initialize this app the next time it is closed (not merely backgrounded) and re-opened.",
                                 "InputForm":"TextViewForm"
                             ],[
                                 "Name":"PendingStitchEnabled",
@@ -937,8 +965,11 @@ class IntegratedSDKsTableViewController: UITableViewController {
                 IntegratedSDKsData.setPendingLocalyticsEnabled(pendingLocalyticsEnabled == "true")
             }
             // mParticle
-            if let pendingmParticleAPIKey = vc.returnValues["PendingmParticleAPIKey"] {
-                IntegratedSDKsData.setPendingmParticleAPIKey(pendingmParticleAPIKey)
+            if let pendingmParticleAppKey = vc.returnValues["PendingmParticleAppKey"] {
+                IntegratedSDKsData.setPendingmParticleAppKey(pendingmParticleAppKey)
+            }
+            if let pendingmParticleAppSecret = vc.returnValues["PendingmParticleAppSecret"] {
+                IntegratedSDKsData.setPendingmParticleAppSecret(pendingmParticleAppSecret)
             }
             if let pendingmParticleEnabled = vc.returnValues["PendingmParticleEnabled"] {
                 IntegratedSDKsData.setPendingmParticleEnabled(pendingmParticleEnabled == "true")
@@ -964,115 +995,57 @@ class IntegratedSDKsTableViewController: UITableViewController {
             if let pendingStitchEnabled = vc.returnValues["PendingStitchEnabled"] {
                 IntegratedSDKsData.setPendingStitchEnabled(pendingStitchEnabled == "true")
             }
+            refreshControlValues()
         }
     }
     
-//    @IBAction func unwindAppboySDKStatus(_ segue:UIStoryboardSegue) {}
-//    @IBAction func unwindAppMetricaSDKStatus(_ segue:UIStoryboardSegue) {}
-//    @IBAction func unwindClearTapSDKStatus(_ segue:UIStoryboardSegue) {}
-//    @IBAction func unwindConvertroSDKStatus(_ segue:UIStoryboardSegue) {}
-//    @IBAction func unwindKochavaSDKStatus(_ segue:UIStoryboardSegue) {}
-//    @IBAction func unwindLocalyticsSDKStatus(_ segue:UIStoryboardSegue) {}
-//    @IBAction func unwindmParticleSDKStatus(_ segue:UIStoryboardSegue) {}
-//    @IBAction func unwindSegmentSDKStatus(_ segue:UIStoryboardSegue) {}
-//    @IBAction func unwindSingularSDKStatus(_ segue:UIStoryboardSegue) {}
-//    @IBAction func unwindStitchSDKStatus(_ segue:UIStoryboardSegue) {}
-    
     @IBAction func unwindByCancelling(_ segue:UIStoryboardSegue) {}
     
-    @IBAction func unwindPendingIntegratedSDKsTableView(_ segue:UIStoryboardSegue) {
-        
-        //        if let vc = segue.source as? TextViewFormTableViewController {
-        //
-        //            switch vc.sender {
-        //            case "activeAdjustKey":
-        //                if let activeAdjustKey = vc.textView.text {
-        //                    guard self.activeAdjustKeyTextField.text != activeAdjustKey else {
-        //                        return
-        //                    }
-        //                    IntegratedSDKsData.setPendingAdjustAppToken(activeAdjustKey)
-        //                    self.activeAdjustKeyTextField.text = activeAdjustKey
-        //                }
-        //            case "activeAdobeKey":
-        //                if let activeAdobeKey = vc.textView.text {
-        //                    guard self.activeAdobeKeyTextField.text != activeAdobeKey else {
-        //                        return
-        //                    }
-        //                    IntegratedSDKsData.setPendingAdobeKey(activeAdobeKey)
-        //                    self.activeAdobeKeyTextField.text = activeAdobeKey
-        //                }
-        //            case "activeAmplitudeKey":
-        //                if let activeAmplitudeKey = vc.textView.text {
-        //                    guard self.activeAmplitudeKeyTextField.text != activeAmplitudeKey else {
-        //                        return
-        //                    }
-        //                    IntegratedSDKsData.setPendingAmplitudeKey(activeAmplitudeKey)
-        //                    self.activeAmplitudeKeyTextField.text = activeAmplitudeKey
-        //                }
-        //            case "activeAppsflyerKey":
-        //                if let activeAppsflyerKey = vc.textView.text {
-        //                    guard self.activeAppsflyerKeyTextField.text != activeAppsflyerKey else {
-        //                        return
-        //                    }
-        //                    IntegratedSDKsData.setPendingAppsflyerKey(activeAppsflyerKey)
-        //                    self.activeAppsflyerKeyTextField.text = activeAppsflyerKey
-        //                }
-        //            case "activeGoogleAnalyticsTrackingID":
-        //                if let activeGoogleAnalyticsTrackingID = vc.textView.text {
-        //                    guard self.activeGoogleAnalyticsTrackingIDTextField.text != activeGoogleAnalyticsTrackingID else {
-        //                        return
-        //                    }
-        //                    IntegratedSDKsData.setPendingGoogleAnalyticsTrackingID(activeGoogleAnalyticsTrackingID)
-        //                    self.activeGoogleAnalyticsTrackingIDTextField.text = activeGoogleAnalyticsTrackingID
-        //                }
-        //            case "activeMixpanelKey":
-        //                if let activeMixpanelKey = vc.textView.text {
-        //                    guard self.activeMixpanelKeyTextField.text != activeMixpanelKey else {
-        //                        return
-        //                    }
-        //                    IntegratedSDKsData.setPendingMixpanelKey(activeMixpanelKey)
-        //                    self.activeMixpanelKeyTextField.text = activeMixpanelKey
-        //                }
-        //            case "activeTuneAdvertisingID":
-        //                if let activeTuneAdvertisingID = vc.textView.text {
-        //                    guard self.activeTuneAdvertisingIDTextField.text != activeTuneAdvertisingID else {
-        //                        return
-        //                    }
-        //                    IntegratedSDKsData.setPendingTuneAdvertisingID(activeTuneAdvertisingID)
-        //                    self.activeTuneAdvertisingIDTextField.text = activeTuneAdvertisingID
-        //                }
-        //            case "activeTuneConversionKey":
-        //                if let activeTuneConversionKey = vc.textView.text {
-        //                    guard self.activeTuneConversionKeyTextField.text != activeTuneConversionKey else {
-        //                        return
-        //                    }
-        //                    IntegratedSDKsData.setPendingTuneConversionKey(activeTuneConversionKey)
-        //                    self.activeTuneConversionKeyTextField.text = activeTuneConversionKey
-        //                }
-        //            default: break
-        //            }
-        //        }
-    }
+    @IBAction func unwindPendingIntegratedSDKsTableView(_ segue:UIStoryboardSegue) {}
     
     func refreshControlValues() {
         
-        activeAdjustEnabledSwitch.isOn = IntegratedSDKsData.activeAdjustEnabled()!
-        activeAdobeEnabledSwitch.isOn = IntegratedSDKsData.activeAdobeEnabled()!
-        activeAmplitudeEnabledSwitch.isOn = IntegratedSDKsData.activeAmplitudeEnabled()!
-        activeAppsflyerEnabledSwitch.isOn = IntegratedSDKsData.activeAppsflyerEnabled()!
-        activeGoogleAnalyticsEnabledSwitch.isOn = IntegratedSDKsData.activeGoogleAnalyticsEnabled()!
-        activeMixpanelEnabledSwitch.isOn = IntegratedSDKsData.activeMixpanelEnabled()!
-        activeTuneEnabledSwitch.isOn = IntegratedSDKsData.activeTuneEnabled()!
-        activeAppboyEnabledSwitch.isOn = IntegratedSDKsData.activeAppboyEnabled()!
-        activeAppMetricaEnabledSwitch.isOn = IntegratedSDKsData.activeAppMetricaEnabled()!
-        activeClearTapEnabledSwitch.isOn = IntegratedSDKsData.activeClearTapEnabled()!
-        activeConvertroEnabledSwitch.isOn = IntegratedSDKsData.activeConvertroEnabled()!
-        activeKochavaEnabledSwitch.isOn = IntegratedSDKsData.activeKochavaEnabled()!
-        activeLocalyticsEnabledSwitch.isOn = IntegratedSDKsData.activeLocalyticsEnabled()!
-        activemParticleEnabledSwitch.isOn = IntegratedSDKsData.activemParticleEnabled()!
-        activeSegmentEnabledSwitch.isOn = IntegratedSDKsData.activeSegmentEnabled()!
-        activeSingularEnabledSwitch.isOn = IntegratedSDKsData.activeSingularEnabled()!
-        activeStitchEnabledSwitch.isOn = IntegratedSDKsData.activeStitchEnabled()!
+        refreshLabel(label: adjustLabel,
+                     text: "Adjust",
+                     active: IntegratedSDKsData.activeAdjustEnabled()!,
+                     pending: IntegratedSDKsData.pendingAdjustEnabled()!)
+        
+        refreshLabel(label: adjustLabel,
+                     text: "Adjust",
+                     active: IntegratedSDKsData.activeAdjustEnabled()!,
+                     pending: IntegratedSDKsData.pendingAdjustEnabled()!)
+        refreshLabel(label: adobeLabel, text: "Adobe Omniture", active: IntegratedSDKsData.activeAdobeEnabled()!, pending: IntegratedSDKsData.pendingAdobeEnabled()!)
+        refreshLabel(label: amplitudeLabel, text: "Amplitude", active: IntegratedSDKsData.activeAmplitudeEnabled()!, pending:  IntegratedSDKsData.pendingAmplitudeEnabled()!)
+        refreshLabel(label: appsflyerLabel, text: "Appsflyer", active: IntegratedSDKsData.activeAppsflyerEnabled()!, pending:  IntegratedSDKsData.pendingAppsflyerEnabled()!)
+        refreshLabel(label: googleAnalyticsLabel, text: "Google Analytics", active: IntegratedSDKsData.activeGoogleAnalyticsEnabled()!, pending: IntegratedSDKsData.pendingGoogleAnalyticsEnabled()!)
+        refreshLabel(label: mixpanelLabel, text: "Mixpanel", active: IntegratedSDKsData.activeMixpanelEnabled()!, pending:  IntegratedSDKsData.pendingMixpanelEnabled()!)
+        refreshLabel(label: tuneLabel, text: "Tune", active: IntegratedSDKsData.activeTuneEnabled()!, pending:  IntegratedSDKsData.pendingTuneEnabled()!)
+        refreshLabel(label: appboyLabel, text: "Appboy", active: IntegratedSDKsData.activeAppboyEnabled()!, pending:  IntegratedSDKsData.pendingAppboyEnabled()!)
+        refreshLabel(label: appMetricaLabel, text: "AppMetrica", active: IntegratedSDKsData.activeAppMetricaEnabled()!, pending: IntegratedSDKsData.pendingAppMetricaEnabled()!)
+        refreshLabel(label: clearTapLabel, text: "ClearTap", active: IntegratedSDKsData.activeClearTapEnabled()!, pending:  IntegratedSDKsData.pendingClearTapEnabled()!)
+        refreshLabel(label: convertroLabel, text: "Convertro", active: IntegratedSDKsData.activeConvertroEnabled()!, pending:  IntegratedSDKsData.pendingConvertroEnabled()!)
+        refreshLabel(label: kochavaLabel, text: "Kochava", active: IntegratedSDKsData.activeKochavaEnabled()!, pending:  IntegratedSDKsData.pendingKochavaEnabled()!)
+        refreshLabel(label: localyticsLabel, text: "Localytics", active: IntegratedSDKsData.activeLocalyticsEnabled()!, pending:  IntegratedSDKsData.pendingLocalyticsEnabled()!)
+        refreshLabel(label: mParticleLabel, text: "mParticle", active: IntegratedSDKsData.activemParticleEnabled()!, pending:  IntegratedSDKsData.pendingmParticleEnabled()!)
+        refreshLabel(label: segmentLabel, text: "Segment", active: IntegratedSDKsData.activeSegmentEnabled()!, pending:  IntegratedSDKsData.pendingSegmentEnabled()!)
+        refreshLabel(label: singularLabel, text: "Singular", active: IntegratedSDKsData.activeSingularEnabled()!, pending:  IntegratedSDKsData.pendingSingularEnabled()!)
+        refreshLabel(label: stitchLabel, text: "Stitch", active: IntegratedSDKsData.activeStitchEnabled()!, pending:  IntegratedSDKsData.pendingStitchEnabled()!)
+    }
+    
+    func refreshLabel(label: UILabel, text: String, active: Bool, pending: Bool) {
+        if (active && pending) {
+            label.textColor = UIColor.black
+            label.text = "\(text) (active)"
+        } else if (!active && pending) {
+            label.textColor = UIColor.darkGray
+            label.text = "\(text)  (re-launch app to enable)"
+        } else if (active && !pending) {
+            label.textColor = UIColor.darkGray
+            label.text = "\(text)  (re-launch app to disable)"
+        } else {
+            label.textColor = UIColor.lightGray
+            label.text = "\(text)  (disabled)"
+        }
     }
     
 }
