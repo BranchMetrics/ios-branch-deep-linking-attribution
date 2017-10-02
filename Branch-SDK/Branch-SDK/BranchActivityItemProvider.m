@@ -27,14 +27,32 @@
 
 @implementation BranchActivityItemProvider
 
-- (id)initWithParams:(NSDictionary *)params andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias {
+- (id)initWithParams:(NSDictionary *)params
+             andTags:(NSArray *)tags
+          andFeature:(NSString *)feature
+            andStage:(NSString *)stage
+            andAlias:(NSString *)alias {
     return [self initWithParams:params tags:tags feature:feature stage:stage campaign:nil alias:alias delegate:nil];
 }
 
-- (id)initWithParams:(NSDictionary *)params tags:(NSArray *)tags feature:(NSString *)feature stage:(NSString *)stage campaign:(NSString *)campaign alias:(NSString *)alias delegate:(id <BranchActivityItemProviderDelegate>)delegate {
-    NSString *url = [[Branch getInstance] getLongURLWithParams:params andChannel:nil andTags:tags andFeature:feature andStage:stage andAlias:alias];
+- (id)initWithParams:(NSDictionary *)params
+                tags:(NSArray *)tags
+             feature:(NSString *)feature
+               stage:(NSString *)stage
+            campaign:(NSString *)campaign
+               alias:(NSString *)alias
+            delegate:(id <BranchActivityItemProviderDelegate>)delegate {
 
-    if ([UIDevice currentDevice].systemVersion.doubleValue < 11.0) {
+    NSString *url =
+        [[Branch getInstance]
+         getLongURLWithParams:params
+         andChannel:nil
+         andTags:tags
+         andFeature:feature
+         andStage:stage
+         andAlias:alias];
+
+    if (self.returnURL) {
         if ((self = [super initWithPlaceholderItem:[NSURL URLWithString:url]])) {
             _params = params;
             _tags = tags;
@@ -60,9 +78,19 @@
     return self;
 }
 
+- (BOOL) returnURL {
+    BOOL returnURL = YES;
+    if ([UIDevice currentDevice].systemVersion.doubleValue >= 11.0 &&
+        [self.activityType isEqualToString:UIActivityTypeCopyToPasteboard]) {
+        returnURL = NO;
+    }
+    return returnURL;
+}
+
 - (id)item {
     NSString *channel = [BranchActivityItemProvider humanReadableChannelWithActivityType:self.activityType];
-    
+
+
     // Allow for overrides specific to channel
     NSDictionary *params = [self paramsForChannel:channel];
     NSArray *tags = [self tagsForChannel:channel];
@@ -91,7 +119,7 @@
                 andAlias:alias
                 ignoreUAString:self.userAgentString
                 forceLinkCreation:YES]];
-            return ([UIDevice currentDevice].systemVersion.doubleValue < 11.0) ? URL : URL.absoluteString;
+            return (self.returnURL) ? URL : URL.absoluteString;
         }
     }
 
@@ -134,7 +162,7 @@
             andAlias:alias
             ignoreUAString:nil
             forceLinkCreation:YES]];
-    return ([UIDevice currentDevice].systemVersion.doubleValue < 11.0) ? URL : URL.absoluteString;
+    return (self.returnURL) ? URL : URL.absoluteString;
 }
 
 #pragma mark - Internals
@@ -175,28 +203,39 @@
 }
 
 - (NSDictionary *)paramsForChannel:(NSString *)channel {
-    return ([self.delegate respondsToSelector:@selector(activityItemParamsForChannel:)]) ? [self.delegate activityItemParamsForChannel:channel] : self.params;
+    return ([self.delegate respondsToSelector:@selector(activityItemParamsForChannel:)])
+        ? [self.delegate activityItemParamsForChannel:channel]
+        : self.params;
 }
 
 - (NSArray *)tagsForChannel:(NSString *)channel {
-    return ([self.delegate respondsToSelector:@selector(activityItemTagsForChannel:)]) ? [self.delegate activityItemTagsForChannel:channel] : self.tags;
+    return ([self.delegate respondsToSelector:@selector(activityItemTagsForChannel:)])
+        ? [self.delegate activityItemTagsForChannel:channel]
+        : self.tags;
 }
 
 - (NSString *)featureForChannel:(NSString *)channel {
-    return ([self.delegate respondsToSelector:@selector(activityItemFeatureForChannel:)]) ? [self.delegate activityItemFeatureForChannel:channel] : self.feature;
+    return ([self.delegate respondsToSelector:@selector(activityItemFeatureForChannel:)])
+        ? [self.delegate activityItemFeatureForChannel:channel]
+        : self.feature;
 }
 
 - (NSString *)stageForChannel:(NSString *)channel {
-    return ([self.delegate respondsToSelector:@selector(activityItemStageForChannel:)]) ? [self.delegate activityItemStageForChannel:channel] : self.stage;
+    return ([self.delegate respondsToSelector:@selector(activityItemStageForChannel:)])
+        ? [self.delegate activityItemStageForChannel:channel]
+        : self.stage;
 }
 
 - (NSString *)campaignForChannel:(NSString *)channel {
-    return ([self.delegate respondsToSelector:@selector(activityItemCampaignForChannel:)]) ? [self.delegate activityItemCampaignForChannel:channel] : self.campaign;
+    return ([self.delegate respondsToSelector:@selector(activityItemCampaignForChannel:)])
+        ? [self.delegate activityItemCampaignForChannel:channel]
+        : self.campaign;
 }
 
-
 - (NSString *)aliasForChannel:(NSString *)channel {
-    return ([self.delegate respondsToSelector:@selector(activityItemAliasForChannel:)]) ? [self.delegate activityItemAliasForChannel:channel] : self.alias;
+    return ([self.delegate respondsToSelector:@selector(activityItemAliasForChannel:)])
+        ? [self.delegate activityItemAliasForChannel:channel]
+        : self.alias;
 }
 
 @end

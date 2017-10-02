@@ -19,7 +19,7 @@
 #import <arpa/inet.h>
 #import <netinet/in.h>
 
-#pragma mark - BRNNetworkInfo
+#pragma mark BRNNetworkInfo
 
 typedef NS_ENUM(NSInteger, BNCNetworkAddressType) {
     BNCNetworkAddressTypeUnknown = 0,
@@ -58,9 +58,15 @@ typedef NS_ENUM(NSInteger, BNCNetworkAddressType) {
         // BNCLogDebugSDK(@"Found %s: %x.", interface->ifa_name, interface->ifa_flags);
 
         // Check the state: IFF_RUNNING, IFF_UP, IFF_LOOPBACK, etc.
-		if (!(interface->ifa_flags & IFF_RUNNING) ||
-             (interface->ifa_flags & IFF_LOOPBACK))
-			continue;
+        if ((interface->ifa_flags & IFF_UP) &&
+            (interface->ifa_flags & IFF_RUNNING) &&
+            !(interface->ifa_flags & IFF_LOOPBACK)) {
+        } else {
+            continue;
+        }
+
+        // TODO: Check ifdata too.
+        // struct if_data *ifdata = interface->ifa_data;
 
 		const struct sockaddr_in *addr = (const struct sockaddr_in*)interface->ifa_addr;
 		if (!addr) continue;
@@ -187,6 +193,14 @@ exit:
         }
         return nil;
     }
+}
+
+- (NSArray<NSString*>*) allIPAddresses {
+    NSMutableArray *array = [NSMutableArray new];
+    for (BNCNetworkInterface *inf in [BNCNetworkInterface currentInterfaces]) {
+        [array addObject:inf.description];
+    }
+    return array;
 }
 
 + (NSString*) bnc_country {

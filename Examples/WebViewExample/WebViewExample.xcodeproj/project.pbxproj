@@ -36,6 +36,7 @@
 		3D562F8D7B0B6038B36B6404 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/AdSupport.framework; sourceTree = DEVELOPER_DIR; };
 		4D38B16F1F7458D800A377A0 /* Web.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Web.bundle; sourceTree = "<group>"; };
 		4D38B1711F75760800A377A0 /* String+Planets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Planets.swift"; sourceTree = "<group>"; };
+		4D54B3201F7D964400DC4FA6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		6D6117909230007A384D2046 /* Pods-WebViewExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebViewExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-WebViewExample/Pods-WebViewExample.release.xcconfig"; sourceTree = "<group>"; };
 		73F43B2C303E9BF5A6714F1B /* Pods-WebViewExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebViewExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WebViewExample/Pods-WebViewExample.debug.xcconfig"; sourceTree = "<group>"; };
 		7B016F1E1E97F29000C34EBA /* BNCLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BNCLog.swift; sourceTree = "<group>"; };
@@ -123,6 +124,7 @@
 		7B3B97771E8C1B640089C04B = {
 			isa = PBXGroup;
 			children = (
+				4D54B3201F7D964400DC4FA6 /* README.md */,
 				7B3B97821E8C1B650089C04B /* WebViewExample */,
 				7B3B97811E8C1B650089C04B /* Products */,
 				96D7BCBB1907B2D5CC1A09E2 /* Pods */,

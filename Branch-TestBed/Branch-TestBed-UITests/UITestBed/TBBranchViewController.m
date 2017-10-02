@@ -274,6 +274,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (IBAction)showLocalIPAddress:(id)sender {
+    BNCLogDebugSDK(@"All IP Addresses:\n%@\n.", [BNCDeviceInfo getInstance].allIPAddresses);
     NSString *lip = [BNCDeviceInfo getInstance].localIPAddress;
     if (!lip) lip = @"<nil>";
     if (lip.length == 0) lip = @"<empty string>";
