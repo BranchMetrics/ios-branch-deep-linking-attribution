@@ -164,9 +164,8 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         } \
     }
 
-    safePerformSelector(setIdentifier:, url);
     safePerformSelector(setTitle:, universalObject.title);
-    safePerformSelector(setContentDescription:, universalObject.description);
+    safePerformSelector(setContentDescription:, universalObject.contentDescription);
     NSURL* thumbnailUrl = [NSURL URLWithString:universalObject.imageUrl];
     BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
     if (!thumbnailIsRemote) {
@@ -405,6 +404,12 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
 
 - (void)removeSearchableItemsWithIdentifier:(NSString * _Nonnull)identifier
                                    callback:(void (^_Nullable)(NSError * _Nullable error))completion {
+    if (identifier == nil) {
+        NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError
+                                     localizedMessage:@"Indentifier not available"];
+        completion(error);
+        return;
+    }
     [self removeSearchableItemsWithIdentifiers:@[identifier] callback:^(NSError * _Nullable error) {
         if (completion)
             completion(error);

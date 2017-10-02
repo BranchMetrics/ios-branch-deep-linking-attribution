@@ -334,7 +334,12 @@
                                            publiclyIndexable:publiclyIndexable
                                                     keywords:[NSSet setWithArray:self.keywords]
                                               expirationDate:self.expirationDate
-                                                    callback:callback];
+                                                    callback:^(NSString * _Nullable url, NSError * _Nullable error) {
+                                                        if (url && error == nil) {
+                                                            self.spotlightIdentifier = url;
+                                                        }
+                                                        callback(url,error);
+                                                    }];
 }
 
 

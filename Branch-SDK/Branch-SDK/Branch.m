@@ -1415,7 +1415,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (void)removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject *)universalObject
                                              callback:(void (^_Nullable)(NSError * _Nullable error))completion {
     BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
-
+    
     [spotlight removeSearchableItemsWithIdentifier:universalObject.spotlightIdentifier
                                           callback:^(NSError * _Nullable error) {
                                               if (completion)
