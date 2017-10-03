@@ -233,7 +233,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                                                       url:dynamicUrl];
                     
                     id item = [CSSearchableItemClass alloc];
-                    item = [item initWithUniqueIdentifier:dynamicUrl
+                    item = [item initWithUniqueIdentifier:[NSString stringWithFormat:@"%@/%@",universalObject.title,dynamicUrl]
                                          domainIdentifier:kDomainIdentifier
                                              attributeSet:attributes];
                     
