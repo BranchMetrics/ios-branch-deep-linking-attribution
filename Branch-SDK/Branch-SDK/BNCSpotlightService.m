@@ -99,9 +99,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                                }
                                            }];
     }
-
-    
-    
 }
 
 - (void)indexContentWithUrl:(NSString *)url
@@ -132,7 +129,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
             }
         }
     }else {
-        
         [self indexUsingSearchableItem:indexingParams
                          thumbnailData:thumbnailData
                               callback:^(NSString * _Nullable url, NSError * _Nullable error) {
@@ -183,7 +179,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     return nil;
 }
 
-
 - (void)indexPrivatelyWithBranchUniversalObjects:(NSArray<BranchUniversalObject*>* _Nonnull)universalObjects
                                       completion:(void (^_Nullable) (NSArray<BranchUniversalObject *> * _Nullable universalObjects,
                                                                      NSError * _Nullable error))completion {
@@ -210,7 +205,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         IndexingNotAvalable();
     }
     dispatch_group_t workGroup = dispatch_group_create();
-    
     NSMutableArray<CSSearchableItem *> *searchableItems = [[NSMutableArray alloc] init];
     NSMutableDictionary<NSString*,BranchUniversalObject*> *mapSpotlightIdentifier =
     [[NSMutableDictionary alloc] init];
@@ -271,7 +265,8 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                 }
                 if (completion)
                 completion(universalObjects,nil);
-            }else {
+            }
+            else {
                 if (completion)
                 completion(nil,error);
             }
@@ -386,22 +381,21 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         IndexingNotAvalable();
     }
     
-    item = [item initWithUniqueIdentifier:indexingParam[@"url"] domainIdentifier:kDomainIdentifier attributeSet:indexingParam[@"attributeSet"]];
+    item = [item initWithUniqueIdentifier:indexingParam[@"url"]
+                         domainIdentifier:kDomainIdentifier
+                             attributeSet:indexingParam[@"attributeSet"]];
     
     if (CSSearchableIndexClass &&
         [CSSearchableIndexClass respondsToSelector:@selector(defaultSearchableIndex)]){
         id defaultSearchableIndex = [CSSearchableIndexClass defaultSearchableIndex];
         if ([defaultSearchableIndex respondsToSelector:@selector(indexSearchableItems:completionHandler:)]) {
             [defaultSearchableIndex indexSearchableItems:@[item]
-                                       completionHandler: ^(NSError * __nullable error)
-            {
-                
+                                       completionHandler: ^(NSError * __nullable error) {
                 NSString *url = error == nil?dynamicUrl:nil;
                 if (completion) {
                     completion(url, error);
                 }
             }];
-            
         }
         else {
             IndexingNotAvalable();
@@ -473,7 +467,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         IndexingNotAvalable();
     }
     else {
-        
         if (CSSearchableIndexClass &&
             [CSSearchableIndexClass respondsToSelector:@selector(defaultSearchableIndex)]){
             id defaultSearchableIndex = [CSSearchableIndexClass defaultSearchableIndex];
@@ -537,7 +530,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
             IndexingNotAvalable();
         }
     }
-    
     #undef IndexingNotAvalable
 }
 @end
