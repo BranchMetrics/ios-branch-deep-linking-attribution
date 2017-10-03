@@ -15,8 +15,8 @@
 + (NSDictionary<NSString*, NSDictionary*>*) languageDictionaries;
 - (NSString*) localizeString:(NSString*)string;
 
-@property (copy) NSString* currentLanguage;
-@property (strong, readonly) NSDictionary *currentLanguageDictionary;
+@property (copy, atomic) NSString* currentLanguage;
+@property (strong, atomic, readonly) NSDictionary *currentLanguageDictionary;
 @end
 
 #pragma mark Convenience Functions

@@ -8,7 +8,7 @@
 
 
 #import "BNCStrongMatchHelper.h"
-#import <objc/runtime.h>
+@import ObjectiveC.runtime;
 #import "BNCConfig.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
@@ -192,9 +192,8 @@
     #pragma clang diagnostic pop
 }
 
-+ (BOOL)cookiesAvailableInOS
-{
-    return [UIDevice currentDevice].systemVersion.floatValue < 11.0;
++ (BOOL)cookiesAvailableInOS {
+    return [UIDevice currentDevice].systemVersion.doubleValue < 11.0;
 }
 
 - (void)createStrongMatchWithBranchKey:(NSString *)branchKey {

@@ -23,7 +23,7 @@
 @implementation BranchCreditHistoryRequest
 
 - (id)initWithBucket:(NSString *)bucket creditTransactionId:(NSString *)creditTransactionId length:(NSInteger)length order:(BranchCreditHistoryOrder)order callback:(callbackWithList)callback {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _bucket = bucket;
         _creditTransactionId = creditTransactionId;
         _length = length;

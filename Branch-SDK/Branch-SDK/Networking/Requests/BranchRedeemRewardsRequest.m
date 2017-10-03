@@ -21,7 +21,7 @@
 @implementation BranchRedeemRewardsRequest
 
 - (id)initWithAmount:(NSInteger)amount bucket:(NSString *)bucket callback:(callbackWithStatus)callback {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _amount = amount;
         _bucket = bucket;
         _callback = callback;
@@ -65,7 +65,7 @@
 #pragma mark - NSCoding methods
 
 - (id)initWithCoder:(NSCoder *)decoder {
-    if (self = [super initWithCoder:decoder]) {
+    if ((self = [super initWithCoder:decoder])) {
         _amount = [decoder decodeIntegerForKey:@"amount"];
         _bucket = [decoder decodeObjectForKey:@"bucket"];
     }

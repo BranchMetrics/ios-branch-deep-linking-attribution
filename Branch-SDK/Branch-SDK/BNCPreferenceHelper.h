@@ -39,9 +39,10 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, nonatomic) NSMutableDictionary *savedAnalyticsData;
 @property (assign, nonatomic) NSInteger installRequestDelay;
 @property (strong, nonatomic) NSDictionary *appleSearchAdDetails;
+@property (assign, nonatomic) BOOL          appleSearchAdNeedsSend;
 @property (strong, nonatomic) NSString *lastSystemBuildVersion;
 @property (strong, nonatomic) NSString *browserUserAgentString;
-@property (strong) NSString *branchAPIURL;
+@property (strong, atomic) NSString *branchAPIURL;
 
 + (BNCPreferenceHelper *)preferenceHelper;
 

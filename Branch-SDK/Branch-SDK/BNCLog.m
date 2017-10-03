@@ -13,7 +13,8 @@
 //--------------------------------------------------------------------------------------------------
 
 
-#import  "BNCLog.h"
+#import "BNCLog.h"
+#import <stdatomic.h> // @import not available in Xcode 7
 
 
 #define _countof(array)  (sizeof(array)/sizeof(array[0]))
@@ -490,7 +491,7 @@ void BNCLogSetDisplayLevel(BNCLogLevel level) {
     });
 }
 
-NSString*const bnc_logLevelStrings[] = {
+static NSString*const bnc_logLevelStrings[] = {
     @"BNCLogLevelAll",
     @"BNCLogLevelBreakPoint",
     @"BNCLogLevelDebug",
@@ -502,14 +503,14 @@ NSString*const bnc_logLevelStrings[] = {
     @"BNCLogLevelMax"
 };
 
-NSString*const BNCLogStringFromLogLevel(BNCLogLevel level) {
+NSString* BNCLogStringFromLogLevel(BNCLogLevel level) {
     level = MAX(MIN(level, BNCLogLevelMax), 0);
     return bnc_logLevelStrings[level];
 }
 
 BNCLogLevel BNCLogLevelFromString(NSString*string) {
     if (!string) return BNCLogLevelNone;
-    for (NSInteger i = 0; i < _countof(bnc_logLevelStrings); ++i) {
+    for (NSUInteger i = 0; i < _countof(bnc_logLevelStrings); ++i) {
         if ([bnc_logLevelStrings[i] isEqualToString:string]) {
             return i;
         }
@@ -522,7 +523,6 @@ BNCLogLevel BNCLogLevelFromString(NSString*string) {
 
 #pragma mark - Client Initialization Function
 
-#include "stdatomic.h"
 static _Atomic(BNCLogClientInitializeFunctionPtr) bnc_LogClientInitializeFunctionPtr = (BNCLogClientInitializeFunctionPtr) 0;
 
 extern BNCLogClientInitializeFunctionPtr _Null_unspecified BNCLogSetClientInitializeFunction(

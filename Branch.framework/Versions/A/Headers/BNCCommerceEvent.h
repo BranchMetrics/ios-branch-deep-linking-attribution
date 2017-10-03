@@ -7,7 +7,7 @@
 //
 
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "BNCServerRequest.h"
 
 

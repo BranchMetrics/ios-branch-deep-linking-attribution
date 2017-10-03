@@ -1,5 +1,26 @@
 Branch iOS SDK Change Log
 
+- v0.19.5
+  * _*Master Release*_ - September 29, 2017
+
+- v0.19.0
+  * Fixed duplicate URL being copied when a link is copied to the clipboard in iOS 11.
+  * Changed the use of `typeof` to `__typeof`, for stricter compiler options.
+  * The SDK now send the Apple Search Ad attribution only when it changes (DLA-969, #723).
+  * Add local ip address to returned device info (AIS-341).
+  * Added `UITestBed`, a test app more suited to automated UI tests.
+  * WebviewExample updates. The example now shows:
+    - How to deep link from a web page in a WKWebView back into the app.
+    - How to navigate forward and back with a Branch link in a WebView.
+    - How to use Fastlane with the Branch SDK.
+    - The code is updated for Swift 4.0 / Xcode 9.0.
+  * Fixed a number of warnings generated from strict compiler checking (GH-#719).
+  * Branch when generating a Branch link with an alias, identityID is included in the params (INTENG-3725).
+    - This makes Branch link referrals work.
+    - Generating an aliased Branch link may result in a long link being generated where a short link
+      was generated before.
+  * The SDK now uses modules instead of a module map for better Swift integration.
+
 - v0.18.8
   * _*Master Release*_ - September 13, 2017
 

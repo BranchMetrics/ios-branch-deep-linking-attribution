@@ -22,7 +22,7 @@ typedef NS_ENUM(NSInteger, ContentIndexMode) {
 
 @interface BranchUniversalObject : NSObject
 
-@property (nonatomic, strong, nonnull) NSString *canonicalIdentifier;
+@property (nonatomic, strong, nonnull)  NSString *canonicalIdentifier;
 @property (nonatomic, strong, nullable) NSString *canonicalUrl;
 @property (nonatomic, strong, nullable) NSString *title;
 @property (nonatomic, strong, nullable) NSString *contentDescription;

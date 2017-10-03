@@ -1,0 +1,76 @@
+* {
+    font-size: 15px;
+    color: lightGray;
+    background-color: transparent;
+    font-family: "Avenir", "Futura", "Lucida Grande", Verdana, Tahoma, Arial, sans-serif;
+}
+html {
+    background: url("Gradient.png") no-repeat center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-color: black;
+}
+body {
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    text-align: justify;
+    min-height: 568px;
+}
+a {
+    font-size: 1.0em;
+    font-weight: bolder;
+}
+h1 {
+    text-align: center;
+    font-size: 1.1em;
+    margin-top: 1.2em;
+}
+ul {
+    padding-left: 1.1em;
+}
+li {
+    margin-bottom: 1.0em;
+}
+#logo {
+    width: 75px;
+    border-radius: 8px;
+    border: 2px solid rgb(200, 200, 200);
+    text-align: center;
+    margin: auto;
+    display: block;
+}
+#message-box {
+    color: white;
+    width: 300px;
+    position: relative;
+    padding: 1em 1em 1.5em 1em;
+    margin-left: auto;
+    margin-right: auto;
+}
+.permissions {
+    text-align: center;
+    line-height: 40px;
+}
+div.permissions img {
+    height: 400px;
+}
+b {
+    color: inherit;
+}
+input {
+    margin-bottom: 1em;
+    font-size: 1.2em;
+    border: 1px solid;
+    border-radius: 5px;
+    background-color: rgba(0,0,0,0.2);
+}
+#profile-image {
+    width: 290px
+}
+.error {
+    color: red;
+    margin-bottom: 0em;
+}

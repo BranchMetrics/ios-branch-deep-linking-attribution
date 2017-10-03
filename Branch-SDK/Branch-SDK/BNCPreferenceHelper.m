@@ -99,7 +99,7 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
 }
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _timeout = DEFAULT_TIMEOUT;
         _retryCount = DEFAULT_RETRY_COUNT;
         _retryInterval = DEFAULT_RETRY_INTERVAL;
@@ -121,24 +121,6 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
     return preferenceHelper;
 }
 
-
-/*
-
-    This creates one global queue.  Not so desirable.
-
-- (NSOperationQueue *)persistPrefsQueue {
-    static NSOperationQueue *persistPrefsQueue;
-    static dispatch_once_t persistOnceToken;
-    
-    dispatch_once(&persistOnceToken, ^{
-        persistPrefsQueue = [[NSOperationQueue alloc] init];
-        persistPrefsQueue.maxConcurrentOperationCount = 1;
-    });
-
-    return persistPrefsQueue;
-}
-*/
-
 - (NSOperationQueue *)persistPrefsQueue {
     @synchronized (self) {
         if (_persistPrefsQueue)
@@ -150,8 +132,10 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
 }
 
 - (void) synchronize {
-    //  Flushes preference queue to persistence.
-    [_persistPrefsQueue waitUntilAllOperationsAreFinished];
+    @synchronized(self) {
+        //  Flushes preference queue to persistence.
+        [_persistPrefsQueue waitUntilAllOperationsAreFinished];
+    }
 }
 
 - (void) dealloc {
@@ -419,6 +403,14 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
     return [_appleSearchAdDetails isKindOfClass:[NSDictionary class]] ? _appleSearchAdDetails : nil;
 }
 
+- (void) setAppleSearchAdNeedsSend:(BOOL)appleSearchAdNeedsSend {
+    [self writeBoolToDefaults:@"_appleSearchAdNeedsSend" value:appleSearchAdNeedsSend];
+}
+
+- (BOOL) appleSearchAdNeedsSend {
+    return [self readBoolFromDefaults:@"_appleSearchAdNeedsSend"];
+}
+
 - (NSString*) lastSystemBuildVersion {
     if (!_lastSystemBuildVersion) {
         _lastSystemBuildVersion = [self readStringFromDefaults:@"_lastSystemBuildVersion"];
@@ -530,7 +522,7 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
 - (void)clearInstrumentationDictionary {
     @synchronized (self) {
         NSArray *keys = [_instrumentationDictionary allKeys];
-        for (int i = 0 ; i < [keys count]; i++) {
+        for (NSUInteger i = 0 ; i < [keys count]; i++) {
             [_instrumentationDictionary removeObjectForKey:keys[i]];
         }
     }
@@ -707,7 +699,7 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
             if (!error && data)
                 persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
         }
-        @catch (NSException *exception) {
+        @catch (NSException*) {
             BNCLogWarning(@"Failed to load preferences from storage.");
         }
 

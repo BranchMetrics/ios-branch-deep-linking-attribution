@@ -6,7 +6,6 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
-import TextAttributes
 import UIKit
 
 /**
@@ -16,10 +15,12 @@ class NavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let attributes = TextAttributes()
-            .font(name: Style.boldFontName, size: Style.titleFontSize)
-        navigationBar.titleTextAttributes = attributes.dictionary
-
+        if let font = UIFont(name: Style.boldFontName, size: Style.titleFontSize) {
+            navigationBar.titleTextAttributes = [
+                NSAttributedStringKey.font: font
+            ]
+        }
+        
         setViewControllers([ArticleListViewController()], animated: false)
     }
 }
