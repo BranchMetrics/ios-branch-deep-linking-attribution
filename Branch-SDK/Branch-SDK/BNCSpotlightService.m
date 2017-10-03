@@ -217,7 +217,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     
     for (BranchUniversalObject* universalObject in universalObjects) {
         dispatch_group_enter(workGroup);
-        NSString* dynamicUrl = [[Branch getInstance] getLongURLWithParams:universalObject.metadata
+        NSString* dynamicUrl = [[Branch getInstance] getLongURLWithParams:[self getParamsFromBranchUniversalObject:universalObject]
                                                                andFeature:@"spotlight"];
         
         mapSpotlightIdentifier[dynamicUrl] = universalObject;
@@ -279,6 +279,41 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         }];
     });
     #undef IndexingNotAvalable
+}
+
+
+- (NSDictionary *)getParamsFromBranchUniversalObject:(BranchUniversalObject*) universalObject {
+    NSMutableDictionary *temp = [[NSMutableDictionary alloc] init];
+    
+    #define safeSetValue(value,key) { \
+        if (value) {\
+            temp[key] = value;\
+        }\
+    }
+    safeSetValue(universalObject.canonicalIdentifier, BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER);
+    safeSetValue(universalObject.canonicalUrl,BRANCH_LINK_DATA_KEY_CANONICAL_URL);
+    safeSetValue(universalObject.title,BRANCH_LINK_DATA_KEY_OG_TITLE);
+    safeSetValue(universalObject.contentDescription,BRANCH_LINK_DATA_KEY_OG_DESCRIPTION);
+    safeSetValue(universalObject.imageUrl,BRANCH_LINK_DATA_KEY_OG_IMAGE_URL);
+    if (universalObject.contentIndexMode == ContentIndexModePrivate) {
+        safeSetValue(@(0),BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE);
+    }
+    else {
+        safeSetValue(@(1),BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE);
+    }
+    safeSetValue(universalObject.keywords,BRANCH_LINK_DATA_KEY_KEYWORDS);
+    safeSetValue(@(1000 * [universalObject.expirationDate timeIntervalSince1970]),BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE);
+    safeSetValue(universalObject.type,BRANCH_LINK_DATA_KEY_CONTENT_TYPE);
+    safeSetValue(universalObject.currency,BNCPurchaseCurrency);
+    if (universalObject.price) {
+        // have to add if statement because safeSetValue only accepts objects so even if self.price is not set
+        // a valid NSNumber object will be created and the request will have amount:0 in all cases.
+        safeSetValue([NSNumber numberWithFloat:universalObject.price],BNCPurchaseAmount);
+    }
+    #undef safeSetValue
+    
+    [temp addEntriesFromDictionary:[universalObject.metadata copy]];
+    return [temp copy];
 }
 
 - (dispatch_queue_t) workQueue {
