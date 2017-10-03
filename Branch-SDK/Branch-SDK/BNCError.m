@@ -55,10 +55,13 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad() {
 
         // BNCSpotlightNotAvailableError
         @"The Core Spotlight indexing service is not available on this device.",
-
+        
         // BNCSpotlightTitleError
         @"Spotlight indexing requires a title.",
 
+        // BNCSpotlightIdentifierError
+        @"The Spotlight identifier is required to remove indexing from spotlight.",
+        
         // BNCRedeemZeroCreditsError
         @"Can't redeem zero credits.",
     };

@@ -396,8 +396,8 @@
                                                                        }
                                                                    }];
     } else {
-        NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError
-                                     localizedMessage:@"Public indexing cannot be removed from Spotlight"];
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightIdentifierError
+                                     localizedMessage:@"Publically indexed cannot be removed from Spotlight"];
         completion(error);
     }
 }

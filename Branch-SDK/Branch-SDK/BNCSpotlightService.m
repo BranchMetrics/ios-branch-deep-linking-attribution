@@ -440,8 +440,8 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
 - (void)removeSearchableItemsWithIdentifier:(NSString * _Nonnull)identifier
                                    callback:(void (^_Nullable)(NSError * _Nullable error))completion {
     if (identifier == nil) {
-        NSError *error = [NSError branchErrorWithCode:BNCContentIdentifierError
-                                     localizedMessage:@"Indentifier not available"];
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightIdentifierError
+                                     localizedMessage:@"Spotlight indentifier not available"];
         completion(error);
         return;
     }

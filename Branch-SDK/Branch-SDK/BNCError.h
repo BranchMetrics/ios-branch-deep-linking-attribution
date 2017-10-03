@@ -23,7 +23,8 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCContentIdentifierError       = 1009,
     BNCSpotlightNotAvailableError   = 1010,
     BNCSpotlightTitleError          = 1011,
-    BNCRedeemZeroCreditsError       = 1012,
+    BNCSpotlightIdentifierError     = 1012,
+    BNCRedeemZeroCreditsError       = 1013,
     BNCHighestError,
 };
 
