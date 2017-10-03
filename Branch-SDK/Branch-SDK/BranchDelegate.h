@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@class Branch, BranchUniversalObject, BranchLinkProperties;
+@class Branch, BranchUniversalObject, BranchLinkProperties, BranchLink;
 
 #pragma mark BranchDelegate Protocol
 
@@ -19,8 +19,7 @@
 @optional
 - (void) branch:(Branch*_Nonnull)branch
      didStartSessionWithURL:(NSURL*_Nullable)url
-            universalObject:(BranchUniversalObject*_Nonnull)universalObject
-             linkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
+                 branchLink:(BranchLink*_Nullable)branchLink;
 
 @optional
 - (void) branch:(Branch*_Nonnull)branch

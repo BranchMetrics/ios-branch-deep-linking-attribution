@@ -80,6 +80,19 @@ void ForceCategoriesToLoad(void) {
     BNCForceNSMutableDictionaryCategoryToLoad();
 }
 
+#pragma mark - BranchLink
+
+@implementation BranchLink
+
++ (BranchLink*) linkWithUniversalObject:(BranchUniversalObject*)universalObject
+                             properties:(BranchLinkProperties*)linkProperties {
+    BranchLink *link = [[BranchLink alloc] init];
+    link.universalObject = universalObject;
+    link.linkProperties = linkProperties;
+    return link;
+}
+
+@end
 
 #pragma mark - Branch
 
@@ -2040,11 +2053,13 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     } else {
 
-        if ([self.delegate respondsToSelector:@selector(branch:didStartSessionWithURL:universalObject:linkProperties:)])
-            [self.delegate branch:self
-           didStartSessionWithURL:originalURL
-                  universalObject:universalObject
-                   linkProperties:linkProperties];
+        BranchLink *branchLink = nil;
+        if (universalObject) {
+            branchLink = [BranchLink linkWithUniversalObject:universalObject properties:linkProperties];
+        }
+        if ([self.delegate respondsToSelector:@selector(branch:didStartSessionWithURL:branchLink:)])
+            [self.delegate branch:self didStartSessionWithURL:originalURL branchLink:branchLink];
+            
     }
 
     NSMutableDictionary *userInfo = [NSMutableDictionary new];

@@ -130,9 +130,20 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchLeastRecentFirst
 };
 
+#pragma mark - BranchLink
+
+@interface BranchLink : NSObject
+@property (nonatomic, strong) BranchUniversalObject *universalObject;
+@property (nonatomic, strong) BranchLinkProperties  *linkProperties;
++ (BranchLink*) linkWithUniversalObject:(BranchUniversalObject*)universalObject
+                             properties:(BranchLinkProperties*)linkProperties;
+@end
+
+#pragma mark - Branch
+
 @interface Branch : NSObject
 
-#pragma mark - Global Instance Accessors
+#pragma mark Global Instance Accessors
 
 ///--------------------------------
 /// @name Global Instance Accessors

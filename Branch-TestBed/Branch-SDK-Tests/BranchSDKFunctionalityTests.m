@@ -562,13 +562,13 @@ NSInteger const  TEST_CREDITS = 30;
 
     BNCServerResponse *openInstallResponse = [[BNCServerResponse alloc] init];
     openInstallResponse.data = @{
-        @"browser_fingerprint_id": TEST_BROWSER_FINGERPRINT_ID,
-        @"device_fingerprint_id": TEST_DEVICE_FINGERPRINT_ID,
-        @"identity_id": TEST_IDENTITY_ID,
-        @"link": TEST_IDENTITY_LINK,
-        @"session_id": TEST_SESSION_ID
+        @"data": @"{\"$og_title\":\"Content Title\",\"$identity_id\":\"423237095633725879\",\"~feature\":\"Sharing Feature\",\"$desktop_url\":\"http://branch.io\",\"$canonical_identifier\":\"item/12345\",\"~id\":423243086454504450,\"~campaign\":\"some campaign\",\"+is_first_session\":false,\"~channel\":\"Distribution Channel\",\"$ios_url\":\"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/\",\"$exp_date\":0,\"$currency\":\"$\",\"$publicly_indexable\":1,\"$content_type\":\"some type\",\"~creation_source\":3,\"$amount\":1000,\"$og_description\":\"My Content Description\",\"+click_timestamp\":1506983962,\"$og_image_url\":\"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png\",\"+match_guaranteed\":true,\"+clicked_branch_link\":true,\"deeplink_text\":\"This text was embedded as data in a Branch link with the following characteristics:\\n\\ncanonicalUrl: https://dev.branch.io/getting-started/deep-link-routing/guide/ios/\\n  title: Content Title\\n  contentDescription: My Content Description\\n  imageUrl: https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png\\n\",\"$one_time_use\":false,\"$canonical_url\":\"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/\",\"~referring_link\":\"https://bnctestbed.app.link/izPBY2xCqF\"}",
+        @"device_fingerprint_id": @"439892172783867901",
+        @"identity_id": @"439892172804841307",
+        @"link": @"https://bnctestbed.app.link?%24identity_id=439892172804841307",
+        @"session_id": @"443529761084512316",
     };
-    
+
     __block BNCServerCallback openOrInstallCallback;
     id openOrInstallCallbackCheckBlock = [OCMArg checkWithBlock:^BOOL(BNCServerCallback callback) {
         openOrInstallCallback = callback;
@@ -580,7 +580,8 @@ NSInteger const  TEST_CREDITS = 30;
     };
 
     id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
-        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+        return [url rangeOfString:@"open"].location != NSNotFound ||
+               [url rangeOfString:@"install"].location != NSNotFound;
     }];
     [[[serverInterfaceMock expect]
         andDo:openOrInstallInvocation]
@@ -594,7 +595,7 @@ NSInteger const  TEST_CREDITS = 30;
         andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
             // Callback block. Order: 2.
             XCTAssertNil(error);
-            XCTAssertEqualObjects(preferenceHelper.sessionID, TEST_SESSION_ID);
+            XCTAssertEqualObjects(preferenceHelper.sessionID, @"443529761084512316");
             XCTAssertTrue(self.notificationOrder == 2);
             self.notificationOrder++;
             self.deepLinkParams = params;
@@ -638,14 +639,13 @@ NSInteger const  TEST_CREDITS = 30;
 
 // Delegate method. Order: 3.
 - (void) branch:(Branch*)branch
-     didOpenURL:(NSURL*)url
-withUniversalObject:(BranchUniversalObject*)univseralObject
- linkProperties:(BranchLinkProperties*)linkProperties {
+didStartSessionWithURL:(NSURL*)url
+     branchLink:(BranchLink*)branchLink {
     XCTAssertTrue([NSThread isMainThread]);
     XCTAssertTrue(self.notificationOrder == 3);
     self.notificationOrder++;
-    XCTAssertNotNil(univseralObject);
-    XCTAssertNotNil(linkProperties);
+    XCTAssertNotNil(branchLink.universalObject);
+    XCTAssertNotNil(branchLink.linkProperties);
     [self.branchDidOpenURLExpectation fulfill];
 }
 
@@ -671,7 +671,7 @@ withUniversalObject:(BranchUniversalObject*)univseralObject
     XCTAssertNil(error);
 
     NSURL *URL = notification.userInfo[BranchOriginalURLKey];
-    XCTAssertNil(URL);
+    XCTAssertNotNil(URL);
 
     BranchUniversalObject *object = notification.userInfo[BranchUniversalObjectKey];
     XCTAssertNotNil(object);
@@ -680,8 +680,10 @@ withUniversalObject:(BranchUniversalObject*)univseralObject
     XCTAssertNotNil(object);
 
     NSDictionary *d = [object getDictionaryWithCompleteLinkProperties:properties];
-    XCTAssertTrue(d.count == self.deepLinkParams.count);
-    XCTAssertTrue(!d || [d isEqualToDictionary:self.deepLinkParams]);
+    NSMutableDictionary *truth = [NSMutableDictionary dictionaryWithDictionary:self.deepLinkParams];
+    truth[@"~duration"] = @(0); // ~duration not added because zero value?
+    XCTAssertTrue(d.count == truth.count);
+    XCTAssertTrue(!d || [d isEqualToDictionary:truth]);
 
     [self.branchDidOpenURLNotificationExpectation fulfill];
 }
@@ -723,7 +725,8 @@ withUniversalObject:(BranchUniversalObject*)univseralObject
     };
     
     id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
-        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+        return [url rangeOfString:@"open"].location != NSNotFound ||
+               [url rangeOfString:@"install"].location != NSNotFound;
     }];
     [[[serverInterfaceMock expect]
         andDo:openOrInstallInvocation]
