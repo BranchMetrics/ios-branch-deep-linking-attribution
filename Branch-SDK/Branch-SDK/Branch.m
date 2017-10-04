@@ -1444,7 +1444,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
     NSMutableArray<NSString *> *identifiers = [[NSMutableArray alloc] init];
     for (BranchUniversalObject* universalObject in universalObjects) {
-        [identifiers addObject:universalObject.spotlightIdentifier];
+        if (universalObject.spotlightIdentifier) {
+            [identifiers addObject:universalObject.spotlightIdentifier];
+        }
     }
     
     [spotlight removeSearchableItemsWithIdentifiers:identifiers
