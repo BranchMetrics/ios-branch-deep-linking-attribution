@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="KLl-cQ-dOF">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="OEa-UN-Om7">
+            <objects>
+                <navigationController id="KLl-cQ-dOF" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="FdV-eE-THM">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="TzJ-So-7h1"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="71f-aZ-e7W" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-927" y="197"/>
+        </scene>
+        <!--App Stats-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="AppStatsViewController" customModule="BareBones" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="k1x-WS-ARN">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V8k-Ot-s8v">
+                                <rect key="frame" x="152.5" y="134.5" width="70.5" height="64.5"/>
+                                <string key="text">Bare
+Bones
+Example</string>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="43V-yT-Jcf">
+                                <rect key="frame" x="119" y="306.5" width="98.5" height="54"/>
+                                <string key="text">App Opens:
+Links Opens:
+Links Created:</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZZ2-5S-c3n">
+                                <rect key="frame" x="225.5" y="307" width="156.5" height="54"/>
+                                <string key="text">0
+0
+0</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s23-Ir-aJM">
+                                <rect key="frame" x="135.5" y="485.5" width="104" height="30"/>
+                                <state key="normal" title="Make New Link"/>
+                                <connections>
+                                    <action selector="makeNewLinkAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7Lv-ZW-YK9"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="V8k-Ot-s8v" firstAttribute="centerX" secondItem="k1x-WS-ARN" secondAttribute="centerX" id="Dm0-uS-EdH"/>
+                            <constraint firstItem="ZZ2-5S-c3n" firstAttribute="trailing" secondItem="k1x-WS-ARN" secondAttribute="trailing" constant="7" id="Dnm-Ni-omB"/>
+                            <constraint firstItem="ZZ2-5S-c3n" firstAttribute="leading" secondItem="43V-yT-Jcf" secondAttribute="trailing" constant="8" symbolic="YES" id="Hhs-pS-epv"/>
+                            <constraint firstItem="43V-yT-Jcf" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="k1x-WS-ARN" secondAttribute="leading" constant="20" symbolic="YES" id="XIG-q3-vxE"/>
+                            <constraint firstItem="ZZ2-5S-c3n" firstAttribute="top" secondItem="43V-yT-Jcf" secondAttribute="top" id="ea7-P3-wuR"/>
+                            <constraint firstItem="s23-Ir-aJM" firstAttribute="centerX" secondItem="k1x-WS-ARN" secondAttribute="centerX" id="fwe-nD-W7J"/>
+                            <constraint firstItem="43V-yT-Jcf" firstAttribute="centerY" secondItem="k1x-WS-ARN" secondAttribute="centerY" id="huh-PV-2vV"/>
+                            <constraint firstItem="V8k-Ot-s8v" firstAttribute="centerY" secondItem="k1x-WS-ARN" secondAttribute="centerY" multiplier="0.5" id="iLX-Rc-h7z"/>
+                            <constraint firstItem="s23-Ir-aJM" firstAttribute="centerY" secondItem="k1x-WS-ARN" secondAttribute="centerY" multiplier="1.5" id="puB-D6-uKI"/>
+                            <constraint firstItem="43V-yT-Jcf" firstAttribute="trailing" secondItem="k1x-WS-ARN" secondAttribute="centerX" constant="30" id="s9V-FI-xQ9"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="PzE-rV-bOw"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="App Stats" id="RIR-yX-xxB"/>
+                    <connections>
+                        <outlet property="statsLabel" destination="ZZ2-5S-c3n" id="IGY-J8-4sw"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-233" y="197"/>
+        </scene>
+        <!--Link-->
+        <scene sceneID="gag-cv-oaG">
+            <objects>
+                <viewController storyboardIdentifier="LinkViewController" id="Qez-dc-uhf" customClass="LinkViewController" customModule="BareBones" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="oPp-wP-jMA">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="DAa-3h-287">
+                                <rect key="frame" x="8" y="69" width="359" height="128"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="128" id="iVp-kD-F0K"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add a Message for the Link:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZWO-Dh-pkJ">
+                                <rect key="frame" x="8" y="40" width="359" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="khV-s4-Ssv">
+                                <rect key="frame" x="148.5" y="206" width="78" height="30"/>
+                                <state key="normal" title="Create Link"/>
+                                <connections>
+                                    <action selector="linkButtonAction:" destination="Qez-dc-uhf" eventType="touchUpInside" id="qGh-j3-gbF"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://app.link/" textAlignment="center" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="KBB-xJ-iX6">
+                                <rect key="frame" x="30" y="243" width="315" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="aPf-RM-QOB"/>
+                                </constraints>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="be7-Ns-52E" firstAttribute="trailing" secondItem="KBB-xJ-iX6" secondAttribute="trailing" constant="30" id="2vc-Pc-hEi"/>
+                            <constraint firstItem="be7-Ns-52E" firstAttribute="trailing" secondItem="DAa-3h-287" secondAttribute="trailing" constant="8" id="3dO-1m-mZA"/>
+                            <constraint firstItem="ZWO-Dh-pkJ" firstAttribute="top" secondItem="be7-Ns-52E" secondAttribute="top" constant="20" id="6Kp-O4-06w"/>
+                            <constraint firstItem="DAa-3h-287" firstAttribute="top" secondItem="ZWO-Dh-pkJ" secondAttribute="bottom" constant="8" id="9ws-fe-hDd"/>
+                            <constraint firstItem="DAa-3h-287" firstAttribute="leading" secondItem="be7-Ns-52E" secondAttribute="leading" constant="8" id="Jsl-Uz-z7E"/>
+                            <constraint firstItem="khV-s4-Ssv" firstAttribute="top" secondItem="DAa-3h-287" secondAttribute="bottom" constant="9" id="Kny-P4-e3m"/>
+                            <constraint firstAttribute="trailing" secondItem="ZWO-Dh-pkJ" secondAttribute="trailing" constant="8" id="SkT-qc-kLW"/>
+                            <constraint firstItem="KBB-xJ-iX6" firstAttribute="top" secondItem="khV-s4-Ssv" secondAttribute="bottom" constant="7" id="baq-0i-AIN"/>
+                            <constraint firstItem="khV-s4-Ssv" firstAttribute="centerX" secondItem="oPp-wP-jMA" secondAttribute="centerX" id="hGy-fE-dA5"/>
+                            <constraint firstItem="KBB-xJ-iX6" firstAttribute="leading" secondItem="be7-Ns-52E" secondAttribute="leading" constant="30" id="i3E-9B-g3C"/>
+                            <constraint firstItem="ZWO-Dh-pkJ" firstAttribute="leading" secondItem="be7-Ns-52E" secondAttribute="leading" constant="8" id="oZ6-6j-N1d"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="be7-Ns-52E"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Link" id="qmp-YZ-5cL"/>
+                    <connections>
+                        <outlet property="linkButton" destination="khV-s4-Ssv" id="Rfv-cn-1UN"/>
+                        <outlet property="linkTextField" destination="KBB-xJ-iX6" id="SxH-rq-mSe"/>
+                        <outlet property="messageTextView" destination="DAa-3h-287" id="BOM-dj-wn1"/>
+                        <segue destination="BYZ-38-t0r" kind="show" identifier="MessageViewControllerSegue" action="showDetailViewController:sender:" id="EZu-Aq-mWL"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="olo-tX-RdD" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="590" y="158"/>
+        </scene>
+    </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="EZu-Aq-mWL"/>
+    </inferredMetricsTieBreakers>
+</document>

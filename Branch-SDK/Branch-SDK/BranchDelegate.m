@@ -12,6 +12,6 @@ NSString* const BranchWillStartSessionNotification = @"BranchWillStartSessionNot
 NSString* const BranchDidStartSessionNotification  = @"BranchDidStartSessionNotification";
 
 NSString* const BranchErrorKey             = @"BranchErrorKey";
-NSString* const BranchOriginalURLKey       = @"BranchOriginalURLKey";
+NSString* const BranchURLKey               = @"BranchURLKey";
 NSString* const BranchUniversalObjectKey   = @"BranchUniversalObjectKey";
 NSString* const BranchLinkPropertiesKey    = @"BranchLinkPropertiesKey";

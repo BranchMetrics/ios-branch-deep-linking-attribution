@@ -1877,7 +1877,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         [self.delegate branch:self willStartSessionWithURL:URL];
 
     NSMutableDictionary *userInfo = [NSMutableDictionary new];
-    userInfo[BranchOriginalURLKey] = URL;
+    userInfo[BranchURLKey] = URL;
     [[NSNotificationCenter defaultCenter]
         postNotificationName:BranchWillStartSessionNotification
         object:self
@@ -2039,7 +2039,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     BranchLinkProperties *linkProperties = nil;
     BranchUniversalObject *universalObject = nil;
 
-    if (linkParameters.count) {
+    NSNumber *isBranchLink = linkParameters[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK];
+    if ([isBranchLink boolValue]) {
         universalObject =
             [BranchUniversalObject getBranchUniversalObjectFromDictionary:linkParameters];
         linkProperties =
@@ -2064,7 +2065,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     NSMutableDictionary *userInfo = [NSMutableDictionary new];
     userInfo[BranchErrorKey] = error;
-    userInfo[BranchOriginalURLKey] = originalURL;
+    userInfo[BranchURLKey] = originalURL;
     userInfo[BranchUniversalObjectKey] = universalObject;
     userInfo[BranchLinkPropertiesKey] = linkProperties;
     [[NSNotificationCenter defaultCenter]

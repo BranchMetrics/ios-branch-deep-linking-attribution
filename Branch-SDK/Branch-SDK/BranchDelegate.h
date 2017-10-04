@@ -33,6 +33,6 @@ FOUNDATION_EXPORT NSString*_Nonnull const BranchWillStartSessionNotification;
 FOUNDATION_EXPORT NSString*_Nonnull const BranchDidStartSessionNotification;
 
 FOUNDATION_EXPORT NSString*_Nonnull const BranchErrorKey;
-FOUNDATION_EXPORT NSString*_Nonnull const BranchOriginalURLKey;
+FOUNDATION_EXPORT NSString*_Nonnull const BranchURLKey;
 FOUNDATION_EXPORT NSString*_Nonnull const BranchUniversalObjectKey;
 FOUNDATION_EXPORT NSString*_Nonnull const BranchLinkPropertiesKey;
