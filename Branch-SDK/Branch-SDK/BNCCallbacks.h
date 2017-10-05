@@ -17,6 +17,5 @@ typedef void (^callbackWithStatus) (BOOL changed, NSError * _Nullable error);
 typedef void (^callbackWithList) (NSArray * _Nullable list, NSError * _Nullable error);
 typedef void (^callbackWithUrlAndSpotlightIdentifier) (NSString * _Nullable url, NSString * _Nullable spotlightIdentifier, NSError * _Nullable error);
 typedef void (^callbackWithBranchUniversalObject) (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error);
-typedef void (^completion) (NSError * __nullable error);
 
 #endif /* BNCCallbacks_h */

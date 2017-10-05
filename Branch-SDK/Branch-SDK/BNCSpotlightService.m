@@ -190,7 +190,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     ((BOOL (*)(id, SEL))[CSSearchableIndexClass methodForSelector:isIndexingAvailableSelector])
     (CSSearchableIndexClass, isIndexingAvailableSelector);
     
-    #define IndexingNotAvalable() { \
+    #define IndexingNotAvailable() { \
         NSError *error = [NSError branchErrorWithCode:BNCSpotlightNotAvailableError];\
         if (completion) {\
             completion(nil,error);\
@@ -202,7 +202,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         !CSSearchableIndexClass ||
         ![CSSearchableIndexClass respondsToSelector:@selector(defaultSearchableIndex)] ||
         !CSSearchableItemClass) {
-        IndexingNotAvalable();
+        IndexingNotAvailable();
     }
     dispatch_group_t workGroup = dispatch_group_create();
     NSMutableArray<CSSearchableItem *> *searchableItems = [[NSMutableArray alloc] init];
@@ -254,7 +254,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         id index = [CSSearchableIndexClass defaultSearchableIndex];
         
         if (![index respondsToSelector:@selector(indexSearchableItems:completionHandler:)]) {
-            IndexingNotAvalable();
+            IndexingNotAvailable();
         }
         
         [index indexSearchableItems:searchableItems completionHandler:^(NSError * _Nullable error) {
@@ -273,7 +273,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
             
         }];
     });
-    #undef IndexingNotAvalable
+    #undef IndexingNotAvailable
 }
 
 
@@ -422,6 +422,16 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     }
     return activeController;
 }
+
+- (UIViewController *)currentViewController
+{
+    UIViewController *current = [UIApplication sharedApplication].keyWindow.rootViewController;
+    while (current.presentedViewController && ![current.presentedViewController isKindOfClass:UIAlertController.class]) {
+        current = current.presentedViewController;
+    }
+    return current;
+}
+
 
 #pragma mark userActivity Delegate Methods
 
