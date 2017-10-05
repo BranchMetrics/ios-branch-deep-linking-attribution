@@ -133,8 +133,6 @@
 		4DED5FB71F34F6CE00919C54 /* BranchNetworkScenario.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DED5FB31F34F6CE00919C54 /* BranchNetworkScenario.Test.m */; };
 		4DF79D101F4370D200165385 /* BranchDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DF79D0E1F4370D200165385 /* BranchDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DF79D111F4370D200165385 /* BranchDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF79D0F1F4370D200165385 /* BranchDelegate.m */; };
-		4DF79D151F43780500165385 /* APWaitingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF79D131F43780500165385 /* APWaitingView.m */; };
-		4DF79D161F43780500165385 /* APWaitingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DF79D141F43780500165385 /* APWaitingView.xib */; };
 		54391A161BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 54391A141BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m */; };
 		54FF1F8E1BD1D4AE0004CE2E /* BranchUniversalObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F8C1BD1D4AE0004CE2E /* BranchUniversalObject.m */; };
 		54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */; };
@@ -292,9 +290,6 @@
 		4DED5FB31F34F6CE00919C54 /* BranchNetworkScenario.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchNetworkScenario.Test.m; sourceTree = "<group>"; };
 		4DF79D0E1F4370D200165385 /* BranchDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchDelegate.h; sourceTree = "<group>"; };
 		4DF79D0F1F4370D200165385 /* BranchDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchDelegate.m; sourceTree = "<group>"; };
-		4DF79D121F43780500165385 /* APWaitingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APWaitingView.h; sourceTree = "<group>"; };
-		4DF79D131F43780500165385 /* APWaitingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APWaitingView.m; sourceTree = "<group>"; };
-		4DF79D141F43780500165385 /* APWaitingView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = APWaitingView.xib; sourceTree = "<group>"; };
 		54391A131BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchCSSearchableItemAttributeSet.h; sourceTree = "<group>"; };
 		54391A141BA249FA0061CB0F /* BranchCSSearchableItemAttributeSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchCSSearchableItemAttributeSet.m; sourceTree = "<group>"; };
 		54FF1F8B1BD1D4AE0004CE2E /* BranchUniversalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchUniversalObject.h; sourceTree = "<group>"; };
@@ -542,9 +537,6 @@
 			children = (
 				670016721940F51400A9E103 /* AppDelegate.h */,
 				670016731940F51400A9E103 /* AppDelegate.m */,
-				4DF79D121F43780500165385 /* APWaitingView.h */,
-				4DF79D131F43780500165385 /* APWaitingView.m */,
-				4DF79D141F43780500165385 /* APWaitingView.xib */,
 				63E4C4911D25E1CA00A45FD8 /* Assets.xcassets */,
 				677F4CB41C1FB0FA0029F2B3 /* Branch-TestBed.entitlements */,
 				7EAA790019E89F67008D4A83 /* CreditHistoryViewController.h */,
@@ -932,7 +924,6 @@
 				6700166E1940F51400A9E103 /* InfoPlist.strings in Resources */,
 				670016771940F51400A9E103 /* Main.storyboard in Resources */,
 				63E4C4901D25E1BC00A45FD8 /* LaunchScreen.storyboard in Resources */,
-				4DF79D161F43780500165385 /* APWaitingView.xib in Resources */,
 				63E4C4921D25E1CA00A45FD8 /* Assets.xcassets in Resources */,
 				677F4CB51C1FB1910029F2B3 /* Branch-TestBed.entitlements in Resources */,
 			);
@@ -1075,7 +1066,6 @@
 				4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,
 				63E4C48B1D25E17B00A45FD8 /* NavigationController.m in Sources */,
-				4DF79D151F43780500165385 /* APWaitingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

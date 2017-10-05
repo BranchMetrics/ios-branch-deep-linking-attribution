@@ -12,7 +12,6 @@
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
-#import "APWaitingView.h"
 #import "BNCEncodingUtils.h"
 @import SafariServices;
 
@@ -32,23 +31,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     //
     // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
     Branch *branch = [Branch getInstance];
-
-    // Set the delegate if you want delegate calls
-    branch.delegate = self;
-
-    // Or if it suits your architecture better, you can get NSNotificationCenter notifications too.
-    // Usually using delegate callbacks AND notifications is overkill, but this demonstrates both.
-    [[NSNotificationCenter defaultCenter]
-        addObserver:self
-        selector:@selector(branchWillStartSessionNotification:)
-        name:BranchWillStartSessionNotification
-        object:nil];
-
-    [[NSNotificationCenter defaultCenter]
-        addObserver:self
-        selector:@selector(branchDidStartSessionNotification:)
-        name:BranchDidStartSessionNotification
-        object:nil];
 
     // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
     [branch setDebug];
@@ -207,81 +189,6 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 -(void)application:(UIApplication *)application
 didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"Error registering for remote notifications: %@", error);
-}
-
-#pragma mark - Branch Delegate Handlers
-
-- (void) branch:(Branch*)branch willOpenURL:(NSURL*)url {
-    NSLog(@"branch:willOpenURL: called with URL '%@'.", url);
-}
-
-- (void) branch:(Branch*)branch
-     didOpenURL:(NSURL*)url
-withUniversalObject:(BranchUniversalObject*)univseralObject
- linkProperties:(BranchLinkProperties*)linkParameters {
-    NSLog(@"branch:didOpenURL:withUniversalObject:linkProperties: was called with URL '%@'.", url);
-}
-
-- (void) branch:(Branch*)branch
-     didOpenURL:(NSURL*)url
-      withError:(NSError*)error {
-   NSLog(@"branch:didOpenURL:withError: called with URL '%@'.", url);
-}
-
-#pragma mark - Branch Notification Handlers
-
-- (void) branchWillStartSessionNotification:(NSNotification*)notification {
-    NSLog(@"branchWillOpenURLNotification: was called.");
-
-    // Show a waiting view as the Branch servers check for a
-    // deferred deep link or decode the passed URL.
-
-    NSString *message = nil;
-    NSURL *originalURL = notification.userInfo[BranchURLKey];
-    if (originalURL) {
-        message = [NSString stringWithFormat:@"Checking URL\n%@", originalURL];
-    } else {
-        message = @"Checking for deferred deep link.";
-    }
-    [APWaitingView showWithMessage:message activityIndicator:YES disableTouches:YES];
-}
-
-- (void) branchDidStartSessionNotification:(NSNotification*)notification {
-    NSLog(@"branchDidOpenURLNotification: was called.");
-
-    NSError *error = notification.userInfo[BranchErrorKey];
-    NSURL *originalURL = notification.userInfo[BranchURLKey];
-    BranchUniversalObject *universalObject = notification.userInfo[BranchUniversalObjectKey];
-    BranchLinkProperties *linkProperties = notification.userInfo[BranchLinkPropertiesKey];
-
-    NSString *message = nil;
-    if (error) {
-
-        message =
-            [NSString stringWithFormat:@"An error occurred while opening the link:\n\n%@",
-                error.localizedDescription];
-
-    } else if (universalObject) {
-
-        if (originalURL) {
-            message = [NSString stringWithFormat:@"Deep link URL:\n%@\n\nBranch Object: %@.",
-                originalURL, universalObject];
-        } else {
-            message = [NSString stringWithFormat:@"Deferred Branch Object:\n\n%@.",
-                universalObject];
-        }
-
-        // You can check the parameters for a value that's significant to your application:
-
-        if ([linkProperties.channel isEqualToString:@"Twitter"])
-            message = [message stringByAppendingString:@"\nShared via Twitter."];
-
-    } else {
-
-        message = @"Not a Branch link.";
-
-    }
-    [APWaitingView hideWithMessage:message];
 }
 
 @end

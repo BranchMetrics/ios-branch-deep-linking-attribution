@@ -106,4 +106,9 @@ buildDirectoryProjectScheme \
     Branch-TestBed.xcworkspace \
     Branch-TestBed
 
+buildDirectoryProjectScheme \
+    Examples/BareBones \
+    BareBones.xcodeproj \
+    BareBones
+
 printf "${textBlue}>>> All builds complete.${textNormal}\n"

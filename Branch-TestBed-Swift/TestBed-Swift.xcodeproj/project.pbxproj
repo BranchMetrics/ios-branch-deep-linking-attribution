@@ -25,6 +25,7 @@
 		2BD7C4561F27D65D003696AF /* BranchShortUrlSyncRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD7C4421F27D65D003696AF /* BranchShortUrlSyncRequest.m */; };
 		2BD7C4571F27D65D003696AF /* BranchSpotlightUrlRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD7C4441F27D65D003696AF /* BranchSpotlightUrlRequest.m */; };
 		2BD7C4581F27D65D003696AF /* BranchUserCompletedActionRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD7C4461F27D65D003696AF /* BranchUserCompletedActionRequest.m */; };
+		4D17DE881F86E8A600280E78 /* BranchDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D17DE871F86E8A600280E78 /* BranchDelegate.m */; };
 		4D351A101F0D6362004BD4AA /* BNCLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D351A0F1F0D6362004BD4AA /* BNCLog.m */; };
 		4D3A944B1E64C777007127B3 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D3A944A1E64C777007127B3 /* iAd.framework */; };
 		4D4F283E1E400F9800282A34 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4F27E01E400F9800282A34 /* BNCCommerceEvent.m */; };
@@ -130,6 +131,8 @@
 		2BD7C4441F27D65D003696AF /* BranchSpotlightUrlRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchSpotlightUrlRequest.m; sourceTree = "<group>"; };
 		2BD7C4451F27D65D003696AF /* BranchUserCompletedActionRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchUserCompletedActionRequest.h; sourceTree = "<group>"; };
 		2BD7C4461F27D65D003696AF /* BranchUserCompletedActionRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUserCompletedActionRequest.m; sourceTree = "<group>"; };
+		4D17DE861F86E8A500280E78 /* BranchDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchDelegate.h; sourceTree = "<group>"; };
+		4D17DE871F86E8A600280E78 /* BranchDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchDelegate.m; sourceTree = "<group>"; };
 		4D351A0F1F0D6362004BD4AA /* BNCLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLog.m; sourceTree = "<group>"; };
 		4D3A944A1E64C777007127B3 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		4D4F27DE1E400F9800282A34 /* BNCCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCCallbacks.h; sourceTree = "<group>"; };
@@ -383,6 +386,8 @@
 				4D4F280C1E400F9800282A34 /* BranchCSSearchableItemAttributeSet.h */,
 				4D4F280D1E400F9800282A34 /* BranchCSSearchableItemAttributeSet.m */,
 				4D4F280E1E400F9800282A34 /* BranchDeepLinkingController.h */,
+				4D17DE861F86E8A500280E78 /* BranchDelegate.h */,
+				4D17DE871F86E8A600280E78 /* BranchDelegate.m */,
 				4D4F280F1E400F9800282A34 /* BranchLinkProperties.h */,
 				4D4F28101E400F9800282A34 /* BranchLinkProperties.m */,
 				4D9E765A1E774DB100BD0620 /* BranchShareLink.h */,
@@ -545,7 +550,7 @@
 					63AAF0BD1CF758AF00CA98BD = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = R63EM248DP;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 						SystemCapabilities = {
 							com.apple.SafariKeychain = {
 								enabled = 1;
@@ -634,6 +639,7 @@
 				63AAF1011CF7F58900CA98BD /* ContentViewController.swift in Sources */,
 				63F8BB201D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift in Sources */,
 				6306FFF11D6BEFA30031D2E3 /* ArrayTableViewCell.swift in Sources */,
+				4D17DE881F86E8A600280E78 /* BranchDelegate.m in Sources */,
 				4D9E765C1E774DB100BD0620 /* BranchShareLink.m in Sources */,
 				2BD7C4541F27D65D003696AF /* BranchSetIdentityRequest.m in Sources */,
 				2BD7C44C1F27D65D003696AF /* BranchCloseRequest.m in Sources */,
