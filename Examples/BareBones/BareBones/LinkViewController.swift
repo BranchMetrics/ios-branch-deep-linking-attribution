@@ -10,6 +10,7 @@ import UIKit
 import Branch
 
 class LinkViewController: UIViewController {
+    @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var messageTextView: UITextView!
     @IBOutlet weak var linkTextField: UITextField!
     @IBOutlet weak var linkButton: UIButton!
@@ -46,9 +47,11 @@ class LinkViewController: UIViewController {
         }
 
         if let url = branchURL {
+            messageLabel.text = "Message from the link:"
             linkTextField.text = url.absoluteString
             linkButton.setTitle("Share Link", for: UIControlState.normal)
         } else {
+            messageLabel.text = "Add a message for the link:"
             linkTextField.text = ""
             linkButton.setTitle("Create Link", for: UIControlState.normal)
         }

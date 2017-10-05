@@ -237,7 +237,7 @@ withUniversalObject:(BranchUniversalObject*)univseralObject
     // deferred deep link or decode the passed URL.
 
     NSString *message = nil;
-    NSURL *originalURL = notification.userInfo[BranchOriginalURLKey];
+    NSURL *originalURL = notification.userInfo[BranchURLKey];
     if (originalURL) {
         message = [NSString stringWithFormat:@"Checking URL\n%@", originalURL];
     } else {
@@ -250,7 +250,7 @@ withUniversalObject:(BranchUniversalObject*)univseralObject
     NSLog(@"branchDidOpenURLNotification: was called.");
 
     NSError *error = notification.userInfo[BranchErrorKey];
-    NSURL *originalURL = notification.userInfo[BranchOriginalURLKey];
+    NSURL *originalURL = notification.userInfo[BranchURLKey];
     BranchUniversalObject *universalObject = notification.userInfo[BranchUniversalObjectKey];
     BranchLinkProperties *linkProperties = notification.userInfo[BranchLinkPropertiesKey];
 

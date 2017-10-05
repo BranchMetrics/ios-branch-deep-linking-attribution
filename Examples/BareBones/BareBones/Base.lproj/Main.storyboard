@@ -48,7 +48,7 @@ Example</string>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="43V-yT-Jcf">
                                 <rect key="frame" x="119" y="306.5" width="98.5" height="54"/>
                                 <string key="text">App Opens:
-Links Opens:
+Links Opened:
 Links Created:</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <nil key="textColor"/>
@@ -70,9 +70,17 @@ Links Created:</string>
                                     <action selector="makeNewLinkAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7Lv-ZW-YK9"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vEV-jN-8JD">
+                                <rect key="frame" x="160.5" y="545" width="54" height="30"/>
+                                <state key="normal" title="About..."/>
+                                <connections>
+                                    <segue destination="2T5-xY-MDo" kind="show" id="4sq-Hz-Tvd"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="vEV-jN-8JD" firstAttribute="top" secondItem="s23-Ir-aJM" secondAttribute="bottom" constant="30" id="1W9-Cl-SkW"/>
                             <constraint firstItem="V8k-Ot-s8v" firstAttribute="centerX" secondItem="k1x-WS-ARN" secondAttribute="centerX" id="Dm0-uS-EdH"/>
                             <constraint firstItem="ZZ2-5S-c3n" firstAttribute="trailing" secondItem="k1x-WS-ARN" secondAttribute="trailing" constant="7" id="Dnm-Ni-omB"/>
                             <constraint firstItem="ZZ2-5S-c3n" firstAttribute="leading" secondItem="43V-yT-Jcf" secondAttribute="trailing" constant="8" symbolic="YES" id="Hhs-pS-epv"/>
@@ -81,6 +89,7 @@ Links Created:</string>
                             <constraint firstItem="s23-Ir-aJM" firstAttribute="centerX" secondItem="k1x-WS-ARN" secondAttribute="centerX" id="fwe-nD-W7J"/>
                             <constraint firstItem="43V-yT-Jcf" firstAttribute="centerY" secondItem="k1x-WS-ARN" secondAttribute="centerY" id="huh-PV-2vV"/>
                             <constraint firstItem="V8k-Ot-s8v" firstAttribute="centerY" secondItem="k1x-WS-ARN" secondAttribute="centerY" multiplier="0.5" id="iLX-Rc-h7z"/>
+                            <constraint firstItem="vEV-jN-8JD" firstAttribute="centerX" secondItem="k1x-WS-ARN" secondAttribute="centerX" id="pPQ-bW-AKx"/>
                             <constraint firstItem="s23-Ir-aJM" firstAttribute="centerY" secondItem="k1x-WS-ARN" secondAttribute="centerY" multiplier="1.5" id="puB-D6-uKI"/>
                             <constraint firstItem="43V-yT-Jcf" firstAttribute="trailing" secondItem="k1x-WS-ARN" secondAttribute="centerX" constant="30" id="s9V-FI-xQ9"/>
                         </constraints>
@@ -93,7 +102,42 @@ Links Created:</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-233" y="197"/>
+            <point key="canvasLocation" x="-234.40000000000001" y="196.55172413793105"/>
+        </scene>
+        <!--About-->
+        <scene sceneID="FdR-Pn-SOM">
+            <objects>
+                <viewController id="2T5-xY-MDo" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="bF8-Yl-Ysq">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LAQ-En-JeN">
+                                <rect key="frame" x="20" y="65" width="335" height="101.5"/>
+                                <string key="text">About
+
+this
+
+app.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="LAQ-En-JeN" firstAttribute="leading" secondItem="5lS-KE-TTd" secondAttribute="leading" constant="20" id="05C-Oz-p1T"/>
+                            <constraint firstItem="LAQ-En-JeN" firstAttribute="top" secondItem="5lS-KE-TTd" secondAttribute="top" constant="45" id="dqH-cB-x2I"/>
+                            <constraint firstItem="5lS-KE-TTd" firstAttribute="trailing" secondItem="LAQ-En-JeN" secondAttribute="trailing" constant="20" id="kSJ-CG-ZRH"/>
+                            <constraint firstItem="5lS-KE-TTd" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="LAQ-En-JeN" secondAttribute="bottom" constant="20" id="pjs-ta-Pb5"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="5lS-KE-TTd"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="About" id="asu-XO-kjz"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hXE-id-pK6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-234" y="1017"/>
         </scene>
         <!--Link-->
         <scene sceneID="gag-cv-oaG">
@@ -112,21 +156,21 @@ Links Created:</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add a Message for the Link:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZWO-Dh-pkJ">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add a message for the link:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZWO-Dh-pkJ">
                                 <rect key="frame" x="8" y="40" width="359" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="khV-s4-Ssv">
-                                <rect key="frame" x="148.5" y="206" width="78" height="30"/>
+                                <rect key="frame" x="148.5" y="209" width="78" height="30"/>
                                 <state key="normal" title="Create Link"/>
                                 <connections>
                                     <action selector="linkButtonAction:" destination="Qez-dc-uhf" eventType="touchUpInside" id="qGh-j3-gbF"/>
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://app.link/" textAlignment="center" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="KBB-xJ-iX6">
-                                <rect key="frame" x="30" y="243" width="315" height="30"/>
+                                <rect key="frame" x="30" y="239" width="315" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="aPf-RM-QOB"/>
                                 </constraints>
@@ -142,9 +186,9 @@ Links Created:</string>
                             <constraint firstItem="ZWO-Dh-pkJ" firstAttribute="top" secondItem="be7-Ns-52E" secondAttribute="top" constant="20" id="6Kp-O4-06w"/>
                             <constraint firstItem="DAa-3h-287" firstAttribute="top" secondItem="ZWO-Dh-pkJ" secondAttribute="bottom" constant="8" id="9ws-fe-hDd"/>
                             <constraint firstItem="DAa-3h-287" firstAttribute="leading" secondItem="be7-Ns-52E" secondAttribute="leading" constant="8" id="Jsl-Uz-z7E"/>
-                            <constraint firstItem="khV-s4-Ssv" firstAttribute="top" secondItem="DAa-3h-287" secondAttribute="bottom" constant="9" id="Kny-P4-e3m"/>
+                            <constraint firstItem="khV-s4-Ssv" firstAttribute="top" secondItem="DAa-3h-287" secondAttribute="bottom" constant="12" id="Kny-P4-e3m"/>
                             <constraint firstAttribute="trailing" secondItem="ZWO-Dh-pkJ" secondAttribute="trailing" constant="8" id="SkT-qc-kLW"/>
-                            <constraint firstItem="KBB-xJ-iX6" firstAttribute="top" secondItem="khV-s4-Ssv" secondAttribute="bottom" constant="7" id="baq-0i-AIN"/>
+                            <constraint firstItem="KBB-xJ-iX6" firstAttribute="top" secondItem="khV-s4-Ssv" secondAttribute="bottom" id="baq-0i-AIN"/>
                             <constraint firstItem="khV-s4-Ssv" firstAttribute="centerX" secondItem="oPp-wP-jMA" secondAttribute="centerX" id="hGy-fE-dA5"/>
                             <constraint firstItem="KBB-xJ-iX6" firstAttribute="leading" secondItem="be7-Ns-52E" secondAttribute="leading" constant="30" id="i3E-9B-g3C"/>
                             <constraint firstItem="ZWO-Dh-pkJ" firstAttribute="leading" secondItem="be7-Ns-52E" secondAttribute="leading" constant="8" id="oZ6-6j-N1d"/>
@@ -155,6 +199,7 @@ Links Created:</string>
                     <connections>
                         <outlet property="linkButton" destination="khV-s4-Ssv" id="Rfv-cn-1UN"/>
                         <outlet property="linkTextField" destination="KBB-xJ-iX6" id="SxH-rq-mSe"/>
+                        <outlet property="messageLabel" destination="ZWO-Dh-pkJ" id="vV6-Ly-YXI"/>
                         <outlet property="messageTextView" destination="DAa-3h-287" id="BOM-dj-wn1"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="MessageViewControllerSegue" action="showDetailViewController:sender:" id="EZu-Aq-mWL"/>
                     </connections>

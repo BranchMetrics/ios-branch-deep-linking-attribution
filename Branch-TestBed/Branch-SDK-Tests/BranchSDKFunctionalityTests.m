@@ -625,7 +625,7 @@ NSInteger const  TEST_CREDITS = 30;
     NSError *error = notification.userInfo[BranchErrorKey];
     XCTAssertNil(error);
 
-    NSURL *URL = notification.userInfo[BranchOriginalURLKey];
+    NSURL *URL = notification.userInfo[BranchURLKey];
     XCTAssertNil(URL);
 
     BranchUniversalObject *object = notification.userInfo[BranchUniversalObjectKey];
@@ -670,7 +670,7 @@ didStartSessionWithURL:(NSURL*)url
     NSError *error = notification.userInfo[BranchErrorKey];
     XCTAssertNil(error);
 
-    NSURL *URL = notification.userInfo[BranchOriginalURLKey];
+    NSURL *URL = notification.userInfo[BranchURLKey];
     XCTAssertNotNil(URL);
 
     BranchUniversalObject *object = notification.userInfo[BranchUniversalObjectKey];
