@@ -1892,7 +1892,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                 BNCLogWarning(@"The automatic deeplink view controller '%@' for key '%@' does not implement 'configureControlWithData:'.",
                     branchSharingController, key);
             }
-            branchSharingController.deepLinkingCompletionDelegate = self;
             self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
 
             if([self.deepLinkControllers[key] isKindOfClass:[BNCDeepLinkViewControllerInstance class]]) {
@@ -1906,7 +1905,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                     BNCLogWarning(@"View controller does not implement configureControlWithData:");
                 }
                 branchSharingController.deepLinkingCompletionDelegate = self;
-                self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
                 switch (deepLinkInstance.option) {
                     case BNCViewControllerOptionPresent:
                         [self presentSharingViewController:branchSharingController];
@@ -1964,8 +1962,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                     BNCLogWarning(@"View controller does not implement configureControlWithData:");
                 }
                 branchSharingController.deepLinkingCompletionDelegate = self;
-                self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
-
                 if ([self.deepLinkPresentingController presentedViewController]) {
                     [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
                         [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];
