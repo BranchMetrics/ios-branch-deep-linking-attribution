@@ -11,6 +11,7 @@
 #import "BNCLog.h"
 #import "BNCDebug.h"
 #import "BNCError.h"
+#import "BNCConfig.h"
 
 #pragma mark BNCNetworkOperation
 
@@ -273,6 +274,11 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
             trusted = YES;
             goto exit;
         }
+    }
+
+    if (!BNC_API_PINNED) {
+        trusted = YES;
+        goto exit;
     }
 
 exit:
