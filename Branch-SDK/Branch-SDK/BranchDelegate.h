@@ -6,7 +6,7 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 @class Branch, BranchUniversalObject, BranchLinkProperties, BranchLink;
 
 #pragma mark BranchDelegate Protocol

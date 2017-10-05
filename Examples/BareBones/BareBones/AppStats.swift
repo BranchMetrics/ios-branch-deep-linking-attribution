@@ -33,13 +33,13 @@ class AppStats {
         linksCreated = UserDefaults.standard.integer(forKey: "linksCreated")
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(applicationWillEnterForeground(notification:)),
+            selector: #selector(updateAppOpen(notification:)),
             name: NSNotification.Name.UIApplicationWillEnterForeground,
             object: nil
         )
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(applicationWillEnterForeground(notification:)),
+            selector: #selector(updateAppOpen(notification:)),
             name: NSNotification.Name.UIApplicationDidFinishLaunching,
             object: nil
         )
@@ -51,9 +51,10 @@ class AppStats {
 
     func initialize() {
         // Make sure we're loaded and initialized.
+        // Nothing to do here, but calling this method makes sure we're lazy loaded.
     }
 
-    @objc func applicationWillEnterForeground(notification: Notification) {
+    @objc func updateAppOpen(notification: Notification) {
         self.appOpens += 1
     }
 

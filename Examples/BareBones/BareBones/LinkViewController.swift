@@ -77,15 +77,19 @@ class LinkViewController: UIViewController {
         let linkProperties = BranchLinkProperties.init()
         linkProperties.channel = "Bare Bones Example"
 
-        // Generate the link
-        // TODO: Fix sync call here:
-        let urlString = buo.getShortUrl(with: linkProperties)
-        if let s = urlString {
-            branchURL = URL.init(string: s)
-            branchObject = buo
-            AppStats.shared.linksCreated += 1
-        } else {
-            showAlert(title: "Can't create link!", message: "")
+        // Generate the link asynchronously:
+        buo.getShortUrl(with: linkProperties) { (urlString: String?, error: Error?) in
+            if let s = urlString {
+                self.branchURL = URL.init(string: s)
+                self.branchObject = buo
+                AppStats.shared.linksCreated += 1
+            } else
+            if let error = error {
+                self.showAlert(title: "Can't create link!", message: error.localizedDescription)
+            }
+            else {
+                self.showAlert(title: "Can't creat link!", message: "")
+            }
         }
     }
 

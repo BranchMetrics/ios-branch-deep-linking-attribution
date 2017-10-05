@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="KLl-cQ-dOF">
-    <device id="retina4_7" orientation="portrait">
+    <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -17,7 +18,7 @@
             <objects>
                 <navigationController id="KLl-cQ-dOF" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="FdV-eE-THM">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -33,11 +34,11 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="AppStatsViewController" customModule="BareBones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="k1x-WS-ARN">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V8k-Ot-s8v">
-                                <rect key="frame" x="152.5" y="134.5" width="70.5" height="64.5"/>
+                                <rect key="frame" x="171.66666666666666" y="151.66666666666666" width="71" height="65"/>
                                 <string key="text">Bare
 Bones
 Example</string>
@@ -46,7 +47,7 @@ Example</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="43V-yT-Jcf">
-                                <rect key="frame" x="119" y="306.5" width="98.5" height="54"/>
+                                <rect key="frame" x="139" y="341" width="98" height="54"/>
                                 <string key="text">App Opens:
 Links Opened:
 Links Created:</string>
@@ -55,7 +56,7 @@ Links Created:</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZZ2-5S-c3n">
-                                <rect key="frame" x="225.5" y="307" width="156.5" height="54"/>
+                                <rect key="frame" x="245" y="341.66666666666669" width="176" height="54"/>
                                 <string key="text">0
 0
 0</string>
@@ -64,14 +65,14 @@ Links Created:</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s23-Ir-aJM">
-                                <rect key="frame" x="135.5" y="485.5" width="104" height="30"/>
+                                <rect key="frame" x="155" y="537" width="104" height="30"/>
                                 <state key="normal" title="Make New Link"/>
                                 <connections>
                                     <action selector="makeNewLinkAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7Lv-ZW-YK9"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vEV-jN-8JD">
-                                <rect key="frame" x="160.5" y="545" width="54" height="30"/>
+                                <rect key="frame" x="180" y="241.66666666666669" width="54" height="30.000000000000057"/>
                                 <state key="normal" title="About..."/>
                                 <connections>
                                     <segue destination="2T5-xY-MDo" kind="show" id="4sq-Hz-Tvd"/>
@@ -80,12 +81,12 @@ Links Created:</string>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="vEV-jN-8JD" firstAttribute="top" secondItem="s23-Ir-aJM" secondAttribute="bottom" constant="30" id="1W9-Cl-SkW"/>
                             <constraint firstItem="V8k-Ot-s8v" firstAttribute="centerX" secondItem="k1x-WS-ARN" secondAttribute="centerX" id="Dm0-uS-EdH"/>
                             <constraint firstItem="ZZ2-5S-c3n" firstAttribute="trailing" secondItem="k1x-WS-ARN" secondAttribute="trailing" constant="7" id="Dnm-Ni-omB"/>
                             <constraint firstItem="ZZ2-5S-c3n" firstAttribute="leading" secondItem="43V-yT-Jcf" secondAttribute="trailing" constant="8" symbolic="YES" id="Hhs-pS-epv"/>
                             <constraint firstItem="43V-yT-Jcf" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="k1x-WS-ARN" secondAttribute="leading" constant="20" symbolic="YES" id="XIG-q3-vxE"/>
                             <constraint firstItem="ZZ2-5S-c3n" firstAttribute="top" secondItem="43V-yT-Jcf" secondAttribute="top" id="ea7-P3-wuR"/>
+                            <constraint firstItem="vEV-jN-8JD" firstAttribute="top" secondItem="V8k-Ot-s8v" secondAttribute="bottom" constant="25" id="eyT-Xq-K8H"/>
                             <constraint firstItem="s23-Ir-aJM" firstAttribute="centerX" secondItem="k1x-WS-ARN" secondAttribute="centerX" id="fwe-nD-W7J"/>
                             <constraint firstItem="43V-yT-Jcf" firstAttribute="centerY" secondItem="k1x-WS-ARN" secondAttribute="centerY" id="huh-PV-2vV"/>
                             <constraint firstItem="V8k-Ot-s8v" firstAttribute="centerY" secondItem="k1x-WS-ARN" secondAttribute="centerY" multiplier="0.5" id="iLX-Rc-h7z"/>
@@ -109,27 +110,72 @@ Links Created:</string>
             <objects>
                 <viewController id="2T5-xY-MDo" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bF8-Yl-Ysq">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LAQ-En-JeN">
-                                <rect key="frame" x="20" y="65" width="335" height="101.5"/>
-                                <string key="text">About
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BHO-mH-BmI">
+                                <rect key="frame" x="0.0" y="20" width="414" height="716"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1" verticalCompressionResistancePriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="6NW-Gv-Tqv">
+                                        <rect key="frame" x="0.0" y="0.0" width="415" height="716"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kA1-nM-ZdG">
+                                                <rect key="frame" x="172" y="101.66666666666666" width="71" height="64.666666666666657"/>
+                                                <string key="text">Bare
+Bones
+Example</string>
+                                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="500" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LAQ-En-JeN">
+                                                <rect key="frame" x="20" y="212" width="375" height="304.33333333333337"/>
+                                                <mutableString key="text">This is a bare bones example of using Branch in a simple Swift project. 
 
-this
+With this app you can create Branch deep links that have a 'secret' message associated with them. You can send the link to your friend, and when your friend clicks the link, the app will open and reveal the message. The app also shows basic app usage stats.
 
-app.</string>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+The example code shows:
+
+• How to use the Branch SDK in a simple Swift 4 application.
+
+• How to create and share Branch links in your app.
+
+• How to respond to Branch NSNotification events.</mutableString>
+                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                                <mutableString key="userLabel">This is a bare bones example of using Branch in a simple Swift project.   With this app you can create Branch deep links that have a 'secret' message associated with them. You can send the link to your friend, and when your friend clicks the link, the app will open and reveal the message. The app also shows basic app usage stats.  The example code shows:  * How to use the Branch SDK in a simple Swift 4 application.  * How to create and share Branch links in your app.  * How to respond to Branch NSNotification events.</mutableString>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="trailingMargin" secondItem="LAQ-En-JeN" secondAttribute="trailing" constant="12" id="1sl-ey-oEN"/>
+                                            <constraint firstItem="LAQ-En-JeN" firstAttribute="leading" secondItem="6NW-Gv-Tqv" secondAttribute="leadingMargin" constant="12" id="5uK-ba-VJm"/>
+                                            <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="LAQ-En-JeN" secondAttribute="bottom" id="FYx-UG-bDF"/>
+                                            <constraint firstItem="LAQ-En-JeN" firstAttribute="top" secondItem="kA1-nM-ZdG" secondAttribute="bottom" constant="45" id="Q1Z-ye-IZH"/>
+                                            <constraint firstItem="kA1-nM-ZdG" firstAttribute="centerX" secondItem="6NW-Gv-Tqv" secondAttribute="centerX" id="gZ9-8I-P3e"/>
+                                            <constraint firstItem="kA1-nM-ZdG" firstAttribute="centerY" secondItem="6NW-Gv-Tqv" secondAttribute="centerY" multiplier="0.5" constant="-45" id="icM-8G-WNg"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="6NW-Gv-Tqv" firstAttribute="top" secondItem="BHO-mH-BmI" secondAttribute="top" id="4Wb-lI-Qj3"/>
+                                    <constraint firstAttribute="trailing" secondItem="6NW-Gv-Tqv" secondAttribute="trailing" id="6hc-G4-DLU"/>
+                                    <constraint firstAttribute="bottom" secondItem="6NW-Gv-Tqv" secondAttribute="bottom" id="DSa-UG-amT"/>
+                                    <constraint firstAttribute="trailing" secondItem="6NW-Gv-Tqv" secondAttribute="trailing" id="REg-oS-qhp"/>
+                                    <constraint firstItem="6NW-Gv-Tqv" firstAttribute="leading" secondItem="BHO-mH-BmI" secondAttribute="leading" id="WZm-9L-s9j"/>
+                                    <constraint firstAttribute="bottom" secondItem="6NW-Gv-Tqv" secondAttribute="bottom" id="dKU-Gr-9Wu"/>
+                                    <constraint firstItem="6NW-Gv-Tqv" firstAttribute="centerY" secondItem="BHO-mH-BmI" secondAttribute="centerY" id="qbB-4L-kmi"/>
+                                    <constraint firstItem="6NW-Gv-Tqv" firstAttribute="centerX" secondItem="BHO-mH-BmI" secondAttribute="centerX" id="yky-Mq-tIo"/>
+                                </constraints>
+                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="LAQ-En-JeN" firstAttribute="leading" secondItem="5lS-KE-TTd" secondAttribute="leading" constant="20" id="05C-Oz-p1T"/>
-                            <constraint firstItem="LAQ-En-JeN" firstAttribute="top" secondItem="5lS-KE-TTd" secondAttribute="top" constant="45" id="dqH-cB-x2I"/>
-                            <constraint firstItem="5lS-KE-TTd" firstAttribute="trailing" secondItem="LAQ-En-JeN" secondAttribute="trailing" constant="20" id="kSJ-CG-ZRH"/>
-                            <constraint firstItem="5lS-KE-TTd" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="LAQ-En-JeN" secondAttribute="bottom" constant="20" id="pjs-ta-Pb5"/>
+                            <constraint firstItem="BHO-mH-BmI" firstAttribute="leading" secondItem="5lS-KE-TTd" secondAttribute="leading" id="4hn-47-RE3"/>
+                            <constraint firstItem="5lS-KE-TTd" firstAttribute="bottom" secondItem="BHO-mH-BmI" secondAttribute="bottom" id="IJB-ta-zCj"/>
+                            <constraint firstItem="BHO-mH-BmI" firstAttribute="top" secondItem="5lS-KE-TTd" secondAttribute="top" id="Zx2-ff-Ehm"/>
+                            <constraint firstItem="5lS-KE-TTd" firstAttribute="trailing" secondItem="BHO-mH-BmI" secondAttribute="trailing" id="ibG-3S-sc5"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="5lS-KE-TTd"/>
                     </view>
@@ -144,11 +190,11 @@ app.</string>
             <objects>
                 <viewController storyboardIdentifier="LinkViewController" id="Qez-dc-uhf" customClass="LinkViewController" customModule="BareBones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="oPp-wP-jMA">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="DAa-3h-287">
-                                <rect key="frame" x="8" y="69" width="359" height="128"/>
+                                <rect key="frame" x="8" y="69" width="398" height="128"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="128" id="iVp-kD-F0K"/>
@@ -157,20 +203,20 @@ app.</string>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add a message for the link:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZWO-Dh-pkJ">
-                                <rect key="frame" x="8" y="40" width="359" height="21"/>
+                                <rect key="frame" x="8" y="40" width="398" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="khV-s4-Ssv">
-                                <rect key="frame" x="148.5" y="209" width="78" height="30"/>
+                                <rect key="frame" x="168" y="209" width="78" height="30"/>
                                 <state key="normal" title="Create Link"/>
                                 <connections>
                                     <action selector="linkButtonAction:" destination="Qez-dc-uhf" eventType="touchUpInside" id="qGh-j3-gbF"/>
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="http://app.link/" textAlignment="center" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="KBB-xJ-iX6">
-                                <rect key="frame" x="30" y="239" width="315" height="30"/>
+                                <rect key="frame" x="30" y="239" width="354" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="aPf-RM-QOB"/>
                                 </constraints>
