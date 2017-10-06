@@ -31,6 +31,8 @@
 
 - (TBTableSection*) addSectionWithTitle:(NSString*)title;
 - (TBTableRow*) addRowWithTitle:(NSString*)title selector:(SEL)selector;
+
+- (NSIndexPath*) indexPathForRow:(TBTableRow*)row;
 @end
 
 
