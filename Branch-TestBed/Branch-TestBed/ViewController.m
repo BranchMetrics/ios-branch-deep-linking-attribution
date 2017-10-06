@@ -264,7 +264,7 @@ NSString *type = @"some type";
         @"Shared from Branch's Branch-TestBed at %@.",
         [self.dateFormatter stringFromDate:[NSDate date]]];
 
-    [shareLink presentActivityViewControllerFromViewController:self anchor:nil];
+    [shareLink presentActivityViewControllerFromViewController:self anchor:sender];
 }
 
 - (IBAction)shareLinkAsActivityItem:(id)sender {
