@@ -8,9 +8,9 @@
 
 import Cartography
 import MBProgressHUD
-// import TextAttributes
 import UIKit
 import WebKit
+import Branch
 
 /**
  * Delegate protocol for ArticleView. Notified when user taps Share button.
@@ -21,6 +21,7 @@ protocol ArticleViewDelegate: class {
      * - Parameter articleView: The ArticleView that generated this event
      */
     func articleViewDidShare(_ articleView: ArticleView)
+    func articleViewDidNavigate(_ articleView: ArticleView)
 }
 
 /**
@@ -36,8 +37,12 @@ class ArticleView: UIView, WKNavigationDelegate {
 
     // MARK: - Other stored properties
 
-    let planetData: PlanetData
+    var planetData: PlanetData {
+        didSet { setupWebview() }
+    }
     var hud: MBProgressHUD!
+    var showShareButton = true
+    private var constraintGroup = ConstraintGroup()
 
     weak var delegate: ArticleViewDelegate?
 
@@ -58,8 +63,19 @@ class ArticleView: UIView, WKNavigationDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     // MARK: - WKNavigationDelegate
+
+    func webView(_ webView: WKWebView,
+decidePolicyFor navigationAction: WKNavigationAction,
+           decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        BNCLog("Navigating to URL \(String(describing: navigationAction.request.url?.description)).")
+        if Branch.getInstance().handleDeepLink(withNewSession:navigationAction.request.url) {
+            decisionHandler(.cancel)
+        } else {
+            decisionHandler(.allow)
+        }
+    }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         hud.hide(animated: true)
@@ -68,6 +84,7 @@ class ArticleView: UIView, WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         hud.hide(animated: true)
+        delegate?.articleViewDidNavigate(self)
     }
 
     // MARK: - Button action
@@ -86,7 +103,7 @@ class ArticleView: UIView, WKNavigationDelegate {
             .font(name: Style.boldFontName, size: Style.titleFontSize)
             .foregroundColor(red: 0.133, green: 0.4, blue: 0.627, alpha: 1.0)
             .kern(2.4)
-        // */
+        */
         guard let font = UIFont(name: Style.boldFontName, size: Style.titleFontSize) else { return }
 
         let attributes: [NSAttributedStringKey: Any] = [
@@ -109,7 +126,7 @@ class ArticleView: UIView, WKNavigationDelegate {
         /*
          * Put the button at the bottom with a fixed height.
          */
-        constrain(webView, button) {
+        constraintGroup = constrain(webView, button, replace: constraintGroup) {
             web, share in
 
             let superview = web.superview!
@@ -122,15 +139,32 @@ class ArticleView: UIView, WKNavigationDelegate {
             web.top == superview.top
             web.bottom == share.top
             share.bottom == superview.bottom
-            share.height == 88
+            if showShareButton {
+                share.height == 88
+                button.isHidden = false
+            } else {
+                share.height == 0
+                button.isHidden = true
+            }
         }
     }
 
     private func setupWebview() {
-        let request = URLRequest(url: planetData.url)
         webView.navigationDelegate = self
-        webView.load(request)
-
+        if planetData.url.scheme == "file" {
+            let baseURL = Bundle.main.bundleURL
+            let indexPath = baseURL.absoluteString + planetData.url.path
+            let indexURL = URL.init(string: indexPath)!
+            webView.loadFileURL(
+                indexURL,
+                allowingReadAccessTo: indexURL.deletingLastPathComponent()
+            )
+            showShareButton = false
+            setupConstraints()
+        } else {
+            let request = URLRequest(url: planetData.url)
+            webView.load(request)
+        }
         hud = MBProgressHUD.showAdded(to: webView, animated: true)
     }
 }

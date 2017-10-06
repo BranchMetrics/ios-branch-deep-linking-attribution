@@ -129,7 +129,10 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
             andStage:self.linkProperties.stage
             andAlias:self.linkProperties.alias];
     self.shareURL = [[NSURL alloc] initWithString:URLString];
-    item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareURL];
+    if (self.returnURL)
+        item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareURL];
+    else
+        item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareURL.absoluteString];
     item.itemType = BranchShareActivityItemTypeBranchURL;
     item.parent = self;
     [items addObject:item];
@@ -259,7 +262,16 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
             ignoreUAString:userAgentString
             forceLinkCreation:YES];
     self.shareURL = [NSURL URLWithString:URLString];
-    return self.shareURL;
+    return (self.returnURL) ? self.shareURL :self.shareURL.absoluteString;
+}
+
+- (BOOL) returnURL {
+    BOOL returnURL = YES;
+    if ([UIDevice currentDevice].systemVersion.doubleValue >= 11.0 &&
+        [self.activityType isEqualToString:UIActivityTypeCopyToPasteboard]) {
+        returnURL = NO;
+    }
+    return returnURL;
 }
 
 @end

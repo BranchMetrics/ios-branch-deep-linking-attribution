@@ -20,7 +20,8 @@
 
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
+    BNCLogSetDisplayLevel(BNCLogLevelAll);
+    
     [self initializeViewControllers];
 
     // Initialize Branch

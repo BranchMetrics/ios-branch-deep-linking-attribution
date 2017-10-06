@@ -35,7 +35,7 @@
 @property (atomic, copy, readonly) NSString* language;           //!< The iso2 language code (en, ml).
 @property (atomic, copy, readonly) NSString* browserUserAgent;   //!< Simple user agent string.
 @property (atomic, copy, readonly) NSString* localIPAddress;     //!< The current local IP address.
-
+@property (atomic, copy, readonly) NSArray<NSString*> *allIPAddresses; //!< All local IP addresses.
 //----------Methods----------------//
 + (BNCDeviceInfo *)getInstance;
 + (NSString*) userAgentString;          // Warning:  Has an implied lock on main thread on first call.

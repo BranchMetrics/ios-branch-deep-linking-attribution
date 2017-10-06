@@ -10,8 +10,9 @@
 #import "TBTableData.h"
 #import "TBDetailViewController.h"
 #import "TBWaitingView.h"
-#import "BNCLog.h"
 #import "Branch.h"
+#import "BNCLog.h"
+#import "BNCDeviceInfo.h"
 
 NSString *cononicalIdentifier = @"item/12345";
 NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
@@ -273,8 +274,12 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (IBAction)showLocalIPAddress:(id)sender {
+    BNCLogDebugSDK(@"All IP Addresses:\n%@\n.", [BNCDeviceInfo getInstance].allIPAddresses);
+    NSString *lip = [BNCDeviceInfo getInstance].localIPAddress;
+    if (!lip) lip = @"<nil>";
+    if (lip.length == 0) lip = @"<empty string>";
     [self showDataViewControllerWithObject:@{
-            @"Local IP Address": @"0.0.0.0",
+            @"Local IP Address": lip,
         }
         title:@"Local IP Address"
         message:nil

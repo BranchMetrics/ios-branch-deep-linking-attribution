@@ -13,7 +13,7 @@
 //--------------------------------------------------------------------------------------------------
 
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import "BNCDebug.h"
 
 
@@ -59,7 +59,7 @@ extern void BNCLogSetDisplayLevel(BNCLogLevel level);
 * @param level The log level to convert to a string.
 * @return Returns the string indicating the log level.
 */
-extern NSString *_Nonnull const BNCLogStringFromLogLevel(BNCLogLevel level);
+extern NSString *_Nonnull BNCLogStringFromLogLevel(BNCLogLevel level);
 
 /*!
 * @param string A string indicating the log level.
@@ -91,7 +91,7 @@ extern BNCLogClientInitializeFunctionPtr _Null_unspecified
 #pragma mark - Optional Log Output Handlers
 
 
-///@info Pre-defined log message handlers --
+///@brief Pre-defined log message handlers --
 
 typedef void (*BNCLogOutputFunctionPtr)(NSDate*_Nonnull timestamp, BNCLogLevel level, NSString*_Nullable message);
 

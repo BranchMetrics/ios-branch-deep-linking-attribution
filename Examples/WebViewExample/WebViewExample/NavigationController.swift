@@ -20,7 +20,7 @@ class NavigationController: UINavigationController {
                 NSAttributedStringKey.font: font
             ]
         }
-
+        
         setViewControllers([ArticleListViewController()], animated: false)
     }
 }
