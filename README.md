@@ -534,7 +534,9 @@ None
 
 ### Tracking User Actions and Events
 
-Special user actions beyond app installs, opens, and sharing can be tracked with the `BranchEvent` class. You can track events such as when a user adds an item to an on-line shopping cart, or searches for a keyword. 
+Use the `BranchEvent` interface to track special user actions or application specific events beyond app installs, opens, and sharing. You can track events such as when a user adds an item to an on-line shopping cart, or searches for a keyword, among others.
+
+The `BranchEvent` interface provides an interface to add contents represented by BranchUniversalObject in order to associate app contents with events.
 
 Analytics about your app's BranchEvents can be found on the Branch dashboard, and BranchEvents also provide tight integration with many third party analytics providers.
 
@@ -581,6 +583,7 @@ event.coupon          = @"coupon_code";
 event.affiliation     = @"store_affiliation";
 event.eventDescription= @"Shopper made a purchase.";
 event.searchQuery     = @"Fashion Scarf";
+event.contentItems    = @[ branchUniversalObject ];
 event.customData      = (NSMutableDictionary*) @{
     @"Item_Color": @"Red",
     @"Item_Size":  @"Large"
@@ -601,6 +604,7 @@ event.coupon           = "coupon_code"
 event.affiliation      = "store_affiliation"
 event.eventDescription = "Shopper made a purchase."
 event.searchQuery      = "Fashion Scarf"
+event.contentItems     = [ branchUniversalObject ]
 event.customData       = [
     "Item_Color": "Red",
     "Item_Size":  "Large"
