@@ -50,7 +50,7 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
     NSString         *_lastSystemBuildVersion;
     NSString         *_browserUserAgentString;
     NSString         *_branchAPIURL;
-    NSString         *_referredUrl;
+    NSString         *_referringURL;
 }
 
 @property (strong, nonatomic) NSMutableDictionary *persistenceDict;
@@ -330,17 +330,17 @@ NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analytics_ma
     }
 }
 
-- (NSString*) referredUrl {
+- (NSString*) referringURL {
     @synchronized (self) {
-        if (!_referredUrl) _referredUrl = [self readStringFromDefaults:@"referredUrl"];
-        return _referredUrl;
+        if (!_referringURL) _referringURL = [self readStringFromDefaults:@"referringURL"];
+        return _referringURL;
     }
 }
 
-- (void) setReferredUrl:(NSString *)referredUrl {
+- (void) setReferringURL:(NSString *)referringURL {
     @synchronized (self) {
-        _referredUrl = [referredUrl copy];
-        [self writeObjectToDefaults:@"referredUrl" value:_referredUrl];
+        _referringURL = [referringURL copy];
+        [self writeObjectToDefaults:@"referringURL" value:_referringURL];
     }
 }
 

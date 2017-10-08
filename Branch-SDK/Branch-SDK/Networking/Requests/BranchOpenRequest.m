@@ -163,17 +163,17 @@
         }
     }
 
-    NSString *referredUrl = nil;
+    NSString *referringURL = nil;
     if (preferenceHelper.universalLinkUrl) {
-        referredUrl = preferenceHelper.universalLinkUrl;
+        referringURL = preferenceHelper.universalLinkUrl;
     }
     else if (preferenceHelper.externalIntentURI) {
-        referredUrl = preferenceHelper.externalIntentURI;
+        referringURL = preferenceHelper.externalIntentURI;
     }
     else {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         if (sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK]) {
-            referredUrl = sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
+            referringURL = sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
         }
     }
 
@@ -184,7 +184,7 @@
     preferenceHelper.universalLinkUrl = nil;
     preferenceHelper.externalIntentURI = nil;
     preferenceHelper.appleSearchAdNeedsSend = NO;
-    preferenceHelper.referredUrl = referredUrl;
+    preferenceHelper.referringURL = referringURL;
 
     if (data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]) {
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
@@ -193,7 +193,7 @@
     [BranchOpenRequest releaseOpenResponseLock];
 
     BranchContentDiscoveryManifest *cdManifest = [BranchContentDiscoveryManifest getInstance];
-    [cdManifest onBranchInitialised:data withUrl:referredUrl];
+    [cdManifest onBranchInitialised:data withUrl:referringURL];
     if ([cdManifest isCDEnabled]) {
         [[BranchContentDiscoverer getInstance] startDiscoveryTaskWithManifest:cdManifest];
     }

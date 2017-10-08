@@ -42,7 +42,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) BOOL          appleSearchAdNeedsSend;
 @property (strong, nonatomic) NSString *lastSystemBuildVersion;
 @property (strong, nonatomic) NSString *browserUserAgentString;
-@property (strong, atomic) NSString *referredUrl;
+@property (strong, atomic) NSString *referringURL;
 @property (strong, atomic) NSString *branchAPIURL;
 
 + (BNCPreferenceHelper *)preferenceHelper;

@@ -549,7 +549,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
         if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
             self.preferenceHelper.universalLinkUrl = branchUrlFromPush;
-            self.preferenceHelper.referredUrl = branchUrlFromPush;
+            self.preferenceHelper.referringURL = branchUrlFromPush;
         }
     }
 
@@ -630,7 +630,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (BOOL)handleSchemeDeepLink:(NSURL*)url fromSelf:(BOOL)isFromSelf {
     BOOL handled = NO;
-    self.preferenceHelper.referredUrl = nil;
+    self.preferenceHelper.referringURL = nil;
     if (url && ![url isEqual:[NSNull null]]) {
 
         NSString *urlScheme = [url scheme];
@@ -640,13 +640,13 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             for (NSString *scheme in self.whiteListedSchemeList) {
                 if (urlScheme && [scheme isEqualToString:urlScheme]) {
                     self.preferenceHelper.externalIntentURI = [url absoluteString];
-                    self.preferenceHelper.referredUrl = [url absoluteString];
+                    self.preferenceHelper.referringURL = [url absoluteString];
                     break;
                 }
             }
         } else {
             self.preferenceHelper.externalIntentURI = [url absoluteString];
-            self.preferenceHelper.referredUrl = [url absoluteString];
+            self.preferenceHelper.referringURL = [url absoluteString];
         }
 
         NSString *query = [url fragment];
@@ -704,7 +704,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     NSString *urlString = [url absoluteString];
     self.preferenceHelper.universalLinkUrl = urlString;
-    self.preferenceHelper.referredUrl = urlString;
+    self.preferenceHelper.referringURL = urlString;
     self.preferenceHelper.shouldWaitForInit = NO;
     [self initUserSessionAndCallCallback:YES];
 
@@ -775,7 +775,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     if (urlStr) {
         // reusing this field, so as not to create yet another url slot on prefshelper
         self.preferenceHelper.universalLinkUrl = urlStr;
-        self.preferenceHelper.referredUrl = urlStr;
+        self.preferenceHelper.referringURL = urlStr;
     }
 
     // If app is active, then close out the session and start a new one.
@@ -1869,8 +1869,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // Notify everyone --
 
     NSURL *URL =
-        (self.preferenceHelper.referredUrl.length)
-        ? [NSURL URLWithString:self.preferenceHelper.referredUrl]
+        (self.preferenceHelper.referringURL.length)
+        ? [NSURL URLWithString:self.preferenceHelper.referringURL]
         : nil;
 
     if ([self.delegate respondsToSelector:@selector(branch:willStartSessionWithURL:)])
@@ -1921,8 +1921,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
     }
     NSURL *URL =
-        (self.preferenceHelper.referredUrl.length)
-        ? [NSURL URLWithString:self.preferenceHelper.referredUrl]
+        (self.preferenceHelper.referringURL.length)
+        ? [NSURL URLWithString:self.preferenceHelper.referringURL]
         : nil;
     [self sendOpenNotificationWithOriginalURL:URL linkParameters:latestReferringParams error:nil];
 
@@ -2114,8 +2114,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 
     NSURL *URL =
-        (self.preferenceHelper.referredUrl.length)
-        ? [NSURL URLWithString:self.preferenceHelper.referredUrl]
+        (self.preferenceHelper.referringURL.length)
+        ? [NSURL URLWithString:self.preferenceHelper.referringURL]
         : nil;
     [self sendOpenNotificationWithOriginalURL:URL linkParameters:@{} error:error];
 }
