@@ -81,4 +81,21 @@ class BranchEventTestSwift : BNCTestCase {
         event.contentItems = [ branchUniversalObject ]
         event.logEvent()
     }
+
+    func testExampleSyntaxSwift() {
+        let contentItem = BranchUniversalObject.init()
+        contentItem.canonicalIdentifier = "item/123"
+        contentItem.canonicalUrl = "https://branch.io/item/123"
+        contentItem.contentMetadata.ratingAverage = 5.0;
+
+        var event = BranchEvent.standardEvent(.spendCredits)
+        event.transactionID = "tx1234"
+        event.eventDescription = "Product Search"
+        event.searchQuery = "user search query terms for product xyz"
+        event.customData["Custom_Event_Property_Key1"] = "Custom_Event_Property_val1"
+        event.contentItems = [ contentItem ]
+        event.logEvent()
+
+        event = BranchEvent.standardEvent(.viewItem)
+    }
 }

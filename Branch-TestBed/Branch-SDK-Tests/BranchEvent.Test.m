@@ -232,4 +232,17 @@
     [serverInterfaceMock stopMocking];
 }
 
+- (void) testExampleSyntax {
+    BranchUniversalObject *contentItem = [BranchUniversalObject new];
+    contentItem.canonicalIdentifier = @"item/123";
+    contentItem.canonicalUrl = @"https://branch.io/item/123";
+    contentItem.contentMetadata.ratingAverage = 5.0;
+
+    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventCompleteRegistration];
+    event.eventDescription = @"Product Search";
+    event.searchQuery = @"product name";
+    event.customData[@"rating"] = @"5";
+    [event logEvent];
+}
+
 @end
