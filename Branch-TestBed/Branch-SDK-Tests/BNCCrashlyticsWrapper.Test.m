@@ -10,7 +10,7 @@
 #import "BNCTestCase.h"
 #import <OCMock/OCMock.h>
 
-#pragma mark Crashlytics SDK Stand-in
+#pragma mark Crashlytics SDK Stand-In
 
 @interface Crashlytics : NSObject
 + (Crashlytics *)sharedInstance;

@@ -142,7 +142,7 @@
     });
 
     [branch clearNetworkQueue];
-    event.contentItems = (id) @[ buo ];
+    event.contentItems = (NSMutableArray*) @[ buo ];
     [event logEvent];
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
     [serverInterfaceMock stopMocking];

@@ -162,7 +162,12 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
 }
 
 - (void) setContentItems:(NSMutableArray<BranchUniversalObject *> *)contentItems {
-    _contentItems = [contentItems mutableCopy];
+    if ([contentItems isKindOfClass:[BranchUniversalObject class]]) {
+        _contentItems = [NSMutableArray arrayWithObject:contentItems];
+    } else
+    if ([contentItems isKindOfClass:[NSArray class]]) {
+        _contentItems = [contentItems mutableCopy];
+    }
 }
 
 - (NSDictionary*) dictionary {
