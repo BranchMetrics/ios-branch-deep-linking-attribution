@@ -11,6 +11,7 @@ import Foundation
 class BranchEventTestSwift : BNCTestCase {
 
     func testBranchEvent() {
+
         // Set up the Branch Universal Object --
 
         let branchUniversalObject = BranchUniversalObject.init()
