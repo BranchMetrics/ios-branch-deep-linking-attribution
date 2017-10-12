@@ -1920,11 +1920,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             );
         }
     }
-    NSURL *URL =
-        (self.preferenceHelper.referringURL.length)
-        ? [NSURL URLWithString:self.preferenceHelper.referringURL]
-        : nil;
-    [self sendOpenNotificationWithOriginalURL:URL linkParameters:latestReferringParams error:nil];
+    [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (self.shouldAutomaticallyDeepLink) {
@@ -1969,12 +1965,15 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
                         if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
 
-                            if ([[(UINavigationController*)self.deepLinkPresentingController viewControllers] containsObject:branchSharingController]) {
+                            if ([[(UINavigationController*)self.deepLinkPresentingController viewControllers]
+                                  containsObject:branchSharingController]) {
                                 [self removeViewControllerFromRootNavigationController:branchSharingController];
-                                [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:false];
+                                [(UINavigationController*)self.deepLinkPresentingController
+                                     pushViewController:branchSharingController animated:false];
                             }
                             else {
-                                [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:true];
+                                [(UINavigationController*)self.deepLinkPresentingController
+                                     pushViewController:branchSharingController animated:true];
                             }
                         }
                         else {
@@ -1988,7 +1987,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                         if ([self.deepLinkPresentingController isKindOfClass:[UINavigationController class]]) {
                             if ([self.deepLinkPresentingController respondsToSelector:@selector(showViewController:sender:)]) {
 
-                                if ([[(UINavigationController*)self.deepLinkPresentingController viewControllers] containsObject:branchSharingController]) {
+                                if ([[(UINavigationController*)self.deepLinkPresentingController viewControllers]
+                                       containsObject:branchSharingController]) {
                                     [self removeViewControllerFromRootNavigationController:branchSharingController];
                                 }
 
@@ -1996,7 +1996,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                             }
                             else {
                                 deepLinkInstance.option = BNCViewControllerOptionPush;
-                                [(UINavigationController*)self.deepLinkPresentingController pushViewController:branchSharingController animated:true];
+                                [(UINavigationController*)self.deepLinkPresentingController
+                                     pushViewController:branchSharingController animated:true];
                             }
                         }
                         else {
@@ -2032,10 +2033,13 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-- (void) sendOpenNotificationWithOriginalURL:(NSURL*)originalURL
-                              linkParameters:(NSDictionary*)linkParameters
-                                       error:(NSError*)error {
+- (void) sendOpenNotificationWithLinkParameters:(NSDictionary*)linkParameters
+                                          error:(NSError*)error {
 
+    NSURL *originalURL =
+        (self.preferenceHelper.referringURL.length)
+        ? [NSURL URLWithString:self.preferenceHelper.referringURL]
+        : nil;
     BranchLinkProperties *linkProperties = nil;
     BranchUniversalObject *universalObject = nil;
 
@@ -2072,11 +2076,14 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         postNotificationName:BranchDidStartSessionNotification
         object:self
         userInfo:userInfo];
+
+    self.preferenceHelper.referringURL = nil;
 }
 
 -(void)removeViewControllerFromRootNavigationController:(UIViewController*)branchSharingController{
 
-    NSMutableArray* viewControllers = [NSMutableArray arrayWithArray: [(UINavigationController*)self.deepLinkPresentingController viewControllers]];
+    NSMutableArray* viewControllers =
+        [NSMutableArray arrayWithArray: [(UINavigationController*)self.deepLinkPresentingController viewControllers]];
 
     if ([viewControllers lastObject] == branchSharingController) {
 
@@ -2113,11 +2120,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
     }
 
-    NSURL *URL =
-        (self.preferenceHelper.referringURL.length)
-        ? [NSURL URLWithString:self.preferenceHelper.referringURL]
-        : nil;
-    [self sendOpenNotificationWithOriginalURL:URL linkParameters:@{} error:error];
+    [self sendOpenNotificationWithLinkParameters:@{} error:error];
 }
 
 - (void)dealloc {
