@@ -544,7 +544,11 @@
         // if no view controller, don't index. Current use case: iMessage extensions
         return;
     }
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wpartial-availability"
+
     NSString *uniqueIdentifier = [NSString stringWithFormat:@"io.branch.%@", [[NSBundle mainBundle] bundleIdentifier]];
+    
     // Can't create any weak references here to the userActivity, otherwise it will not index.
     activeViewController.userActivity = [[NSUserActivity alloc] initWithActivityType:uniqueIdentifier];
     activeViewController.userActivity.delegate = self;
@@ -552,13 +556,21 @@
     activeViewController.userActivity.webpageURL = [NSURL URLWithString:params[@"url"]];
     activeViewController.userActivity.eligibleForSearch = YES;
     activeViewController.userActivity.eligibleForPublicIndexing = [params[@"publiclyIndexable"] boolValue];
-    activeViewController.userActivity.userInfo = self.userInfo; // This alone doesn't pass userInfo through
-    activeViewController.userActivity.requiredUserInfoKeys = [NSSet setWithArray:self.userInfo.allKeys]; // This along with the delegate method userActivityWillSave, however, seem to force the userInfo to come through.
+
+    // This alone doesn't pass userInfo through
+    activeViewController.userActivity.userInfo = self.userInfo;
+
+    // This along with the delegate method userActivityWillSave, however, seem to force the userInfo to come through.
+    activeViewController.userActivity.requiredUserInfoKeys = [NSSet setWithArray:self.userInfo.allKeys];
+
     activeViewController.userActivity.keywords = params[@"keywords"];
     SEL setContentAttributeSetSelector = NSSelectorFromString(@"setContentAttributeSet:");
-    ((void (*)(id, SEL, id))[activeViewController.userActivity methodForSelector:setContentAttributeSetSelector])(activeViewController.userActivity, setContentAttributeSetSelector, params[@"attributeSet"]);
+    ((void (*)(id, SEL, id))[activeViewController.userActivity methodForSelector:setContentAttributeSetSelector])
+        (activeViewController.userActivity, setContentAttributeSetSelector, params[@"attributeSet"]);
     
     [activeViewController.userActivity becomeCurrent];
+
+    #pragma clang diagnostic pop
 }
 
 @end

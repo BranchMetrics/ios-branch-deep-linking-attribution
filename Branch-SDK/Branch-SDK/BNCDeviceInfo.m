@@ -215,9 +215,12 @@ exit:
 
     // Should work on iOS 10
     NSLocale *currentLocale = [NSLocale currentLocale];
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wpartial-availability"
     if ([currentLocale respondsToSelector:@selector(countryCode)]) {
         country = [currentLocale countryCode];
     }
+    #pragma clang diagnostic pop
     returnIfValidCountry();
 
     // Should work on iOS 9
@@ -252,10 +255,13 @@ exit:
         } \
 
     // Should work on iOS 10
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wpartial-availability"
     NSLocale *currentLocale = [NSLocale currentLocale];
     if ([currentLocale respondsToSelector:@selector(languageCode)]) {
         language = [currentLocale languageCode];
     }
+    #pragma clang diagnostic pop
     returnIfValidLanguage();
 
     // Should work on iOS 9

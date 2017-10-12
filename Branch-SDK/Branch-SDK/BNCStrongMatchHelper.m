@@ -44,6 +44,9 @@
 
 
 #else   // ------------------------------------------------------------------------------ iOS >= 9.0
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
+
 @import SafariServices;
 
 
@@ -367,4 +370,5 @@
 
 @end
 
+#pragma clang diagnostic pop
 #endif  // ------------------------------------------------------------------------------ iOS >= 9.0

@@ -363,13 +363,7 @@ NSString *type = @"some type";
 			NSString *message =
 				[NSString stringWithFormat:@"Commerce completion called.\nError: %@\n%@", error, response];
 			NSLog(@"%@", message);
-			[[[UIAlertView alloc]
-				initWithTitle:@"Commerce Event"
-				message:message
-				delegate:nil
-				cancelButtonTitle:@"OK"
-				otherButtonTitles:nil]
-					show];
+            [self showAlert:@"Commerce Event" withDescription:message];
         }];
 }
 
@@ -453,6 +447,8 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 
         if ([UIDevice currentDevice].systemVersion.floatValue < 8.0) {
 
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Wdeprecated-declarations"
             UIAlertView *alert = [[UIAlertView alloc]
                 initWithTitle:title
                 message:message
@@ -460,6 +456,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
                 cancelButtonTitle:@"OK"
                 otherButtonTitles:nil];
             [alert show];
+            #pragma clang diagnostic pop
 
         } else {
 
