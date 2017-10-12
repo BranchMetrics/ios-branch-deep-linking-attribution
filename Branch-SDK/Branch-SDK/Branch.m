@@ -672,11 +672,14 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     NSString *source = nil;
     NSString *annotation = nil;
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wpartial-availability"
     if (UIApplicationOpenURLOptionsSourceApplicationKey &&
         UIApplicationOpenURLOptionsAnnotationKey) {
         source = options[UIApplicationOpenURLOptionsSourceApplicationKey];
         annotation = options[UIApplicationOpenURLOptionsAnnotationKey];
     }
+    #pragma clang diagnostic pop
     return [self application:application openURL:url sourceApplication:source annotation:annotation];
 }
 
