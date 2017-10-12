@@ -423,7 +423,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 - (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
                             andShareText:(nullable NSString *)shareText
                       fromViewController:(nullable UIViewController *)viewController
-                                  anchor:(nullable UIBarButtonItem *)anchor
+                                  anchor:(nullable id)anchor
                               completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion {
     [self showShareSheetWithLinkProperties:linkProperties andShareText:shareText
         fromViewController:viewController anchor:anchor completion:completion orCompletionWithError:nil];
@@ -432,7 +432,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 - (void)showShareSheetWithLinkProperties:(nullable BranchLinkProperties *)linkProperties
                             andShareText:(nullable NSString *)shareText
                       fromViewController:(nullable UIViewController *)viewController
-                                  anchor:(nullable UIBarButtonItem *)anchor
+                                  anchor:(nullable id)anchor
                      completionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completion {
     [self showShareSheetWithLinkProperties:linkProperties andShareText:shareText
         fromViewController:viewController anchor:anchor completion:nil orCompletionWithError:completion];
@@ -441,7 +441,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 - (void)showShareSheetWithLinkProperties:(BranchLinkProperties *)linkProperties
                             andShareText:(NSString *)shareText
                       fromViewController:(UIViewController *)viewController
-                                  anchor:(UIBarButtonItem *)anchor
+                                  anchor:(nullable id)anchorViewOrButtonItem
                               completion:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed))completion
                    orCompletionWithError:(void (^ _Nullable)(NSString * _Nullable activityType, BOOL completed, NSError*_Nullable error))completionError {
 
@@ -452,16 +452,19 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     if (shareText) {
         [items insertObject:shareText atIndex:0];
     }
-    UIActivityViewController *shareViewController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
+    UIActivityViewController *shareViewController =
+        [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
     
     if ([shareViewController respondsToSelector:@selector(completionWithItemsHandler)]) {
-        shareViewController.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+        shareViewController.completionWithItemsHandler =
+          ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
             // Log share completed event
             [[BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self] logEvent];
             if (completion || completionError) {
                 if (completion) { completion(activityType, completed); }
                 else if (completionError) { completionError(activityType, completed, activityError); }
-                [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:[self getDictionaryWithCompleteLinkProperties:linkProperties]];
+                [BNCFabricAnswers sendEventWithName:@"Branch Share"
+                      andAttributes:[self getDictionaryWithCompleteLinkProperties:linkProperties]];
             }
         };
     } else {
@@ -478,7 +481,8 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     }
     else {
         Class UIApplicationClass = NSClassFromString(@"UIApplication");
-        if ([[[[UIApplicationClass sharedApplication].delegate window] rootViewController] respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+        if ([[[[UIApplicationClass sharedApplication].delegate window] rootViewController]
+               respondsToSelector:@selector(presentViewController:animated:completion:)]) {
             presentingViewController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
         }
     }
@@ -495,9 +499,17 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     if (presentingViewController) {
         // Required for iPad/Universal apps on iOS 8+
         if ([presentingViewController respondsToSelector:@selector(popoverPresentationController)]) {
-            shareViewController.popoverPresentationController.sourceView = presentingViewController.view;
-            if (anchor) {
+            if ([anchorViewOrButtonItem isKindOfClass:UIBarButtonItem.class]) {
+                UIBarButtonItem *anchor = (UIBarButtonItem*) anchorViewOrButtonItem;
                 shareViewController.popoverPresentationController.barButtonItem = anchor;
+            } else
+            if ([anchorViewOrButtonItem isKindOfClass:UIView.class]) {
+                UIView *anchor = (UIView*) anchorViewOrButtonItem;
+                shareViewController.popoverPresentationController.sourceView = anchor;
+                shareViewController.popoverPresentationController.sourceRect = anchor.bounds;
+            } else {
+                shareViewController.popoverPresentationController.sourceView = presentingViewController.view;
+                shareViewController.popoverPresentationController.sourceRect = CGRectMake(0.0, 0.0, 40.0, 40.0);
             }
         }
         [presentingViewController presentViewController:shareViewController animated:YES completion:nil];

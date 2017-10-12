@@ -77,4 +77,20 @@
     return r;
 }
 
+- (NSIndexPath*) indexPathForRow:(TBTableRow*)rowToFind {
+    NSInteger rowIndex = 0;
+    NSInteger sectionIndex = 0;
+    for (NSArray *sections in self.rows) {
+        for (TBTableRow *row in sections) {
+            if (row == rowToFind) {
+                return [NSIndexPath indexPathForRow:rowIndex inSection:sectionIndex];
+            }
+            rowIndex++;
+        }
+        rowIndex = 0;
+        sectionIndex++;
+    }
+    return nil;
+}
+
 @end
