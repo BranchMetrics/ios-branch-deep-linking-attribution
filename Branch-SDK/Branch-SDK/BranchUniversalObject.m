@@ -257,19 +257,21 @@
     if ([shareViewController respondsToSelector:@selector(completionWithItemsHandler)]) {
         shareViewController.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
             // Log share completed event
-            [self userCompletedAction:BNCShareCompletedEvent];
-            if (completion || completionError) {
-                if (completion) { completion(activityType, completed); }
-                else if (completionError) { completionError(activityType, completed, activityError); }
-                [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:[self getDictionaryWithCompleteLinkProperties:linkProperties]];
-            }
+            if (completed && !activityError)
+                [self userCompletedAction:BNCShareCompletedEvent];
+            if (completion)
+                completion(activityType, completed);
+            else
+            if (completionError)
+                completionError(activityType, completed, activityError);
+            [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:[self getDictionaryWithCompleteLinkProperties:linkProperties]];
         };
     } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         // Deprecated in iOS 8.  Safe to hide deprecation warnings as the new completion handler is checked for above
         shareViewController.completionHandler = completion;
-#pragma clang diagnostic pop
+        #pragma clang diagnostic pop
     }
     
     UIViewController *presentingViewController;
@@ -278,7 +280,8 @@
     }
     else {
         Class UIApplicationClass = NSClassFromString(@"UIApplication");
-        if ([[[[UIApplicationClass sharedApplication].delegate window] rootViewController] respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+        if ([[[[UIApplicationClass sharedApplication].delegate window] rootViewController]
+                 respondsToSelector:@selector(presentViewController:animated:completion:)]) {
             presentingViewController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
         }
     }
