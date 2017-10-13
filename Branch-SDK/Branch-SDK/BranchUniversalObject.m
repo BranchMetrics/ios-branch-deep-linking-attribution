@@ -261,6 +261,7 @@
                 [self userCompletedAction:BNCShareCompletedEvent];
             if (completion)
                 completion(activityType, completed);
+            else
             if (completionError)
                 completionError(activityType, completed, activityError);
             [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:[self getDictionaryWithCompleteLinkProperties:linkProperties]];
@@ -279,7 +280,8 @@
     }
     else {
         Class UIApplicationClass = NSClassFromString(@"UIApplication");
-        if ([[[[UIApplicationClass sharedApplication].delegate window] rootViewController] respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+        if ([[[[UIApplicationClass sharedApplication].delegate window] rootViewController]
+                 respondsToSelector:@selector(presentViewController:animated:completion:)]) {
             presentingViewController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
         }
     }
