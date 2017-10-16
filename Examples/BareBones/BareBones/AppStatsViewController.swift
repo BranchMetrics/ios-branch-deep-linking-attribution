@@ -9,12 +9,21 @@
 import UIKit
 import Branch
 
-class AppStatsViewController: UIViewController {
+class AppStatsViewController: UIViewController, UITextViewDelegate {
 
     @IBOutlet weak var statsLabel: UILabel!
+    @IBOutlet weak var messageTextView: UITextView!
+    @IBOutlet weak var createLinkButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.messageTextView.layer.borderColor = UIColor.darkGray.cgColor
+        self.messageTextView.layer.borderWidth = 0.5
+        self.messageTextView.layer.cornerRadius = 3.0
+        self.messageTextView.text = ""
+        self.messageTextView.inputAccessoryView = InputAccessoryView.instantiate()
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(branchWillStartSession(notification:)),
@@ -46,8 +55,15 @@ class AppStatsViewController: UIViewController {
             "\(AppStats.shared.appOpens)\n\(AppStats.shared.linksOpened)\n\(AppStats.shared.linksCreated)"
     }
 
+    func textViewDidChange(_ textView: UITextView) {
+        guard let textView = self.messageTextView else { return }
+        self.createLinkButton.isEnabled = textView.text.count > 0
+    }
+    
     @IBAction func makeNewLinkAction(_ sender: Any) {
+        self.messageTextView.resignFirstResponder()
         let linkViewController = LinkViewController.instantiate()
+        linkViewController.message = self.messageTextView.text
         navigationController?.pushViewController(linkViewController, animated: true)
     }
 
@@ -76,15 +92,18 @@ class AppStatsViewController: UIViewController {
                     message: "\(url.absoluteString)\n\n\(error.localizedDescription)"
                 )
             } else {
-                self.showAlert(title: "Error Starting Branch Session", message: error.localizedDescription)
+                self.showAlert(
+                    title: "Error Starting Branch Session",
+                    message: error.localizedDescription
+                )
             }
             return
         }
+
         if let buo = notification.userInfo?[BranchUniversalObjectKey] as? BranchUniversalObject {
-            let linkViewController = LinkViewController.instantiate()
-            linkViewController.branchObject = buo
-            linkViewController.branchURL = url
-            navigationController?.pushViewController(linkViewController, animated: true)
+            let messageViewController = MessageViewController.instantiate()
+            messageViewController.message = buo.metadata?["message"] as? String
+            navigationController?.pushViewController(messageViewController, animated: true)
             AppStats.shared.linksOpened += 1
             return
         }

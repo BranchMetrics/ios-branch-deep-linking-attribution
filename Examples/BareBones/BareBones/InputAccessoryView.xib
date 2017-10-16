@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="InputAccessoryView" customModule="BareBones" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="84"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="7Iw-PZ-8bB">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="84"/>
+                    <subviews>
+                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" insetsLayoutMarginsFromSafeArea="NO" contentInsetAdjustmentBehavior="never" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="vUn-VJ-w06">
+                            <rect key="frame" x="7" y="7" width="303" height="70"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <string key="text">Line 1
+Line 2</string>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            <connections>
+                                <outlet property="delegate" destination="iN0-l3-epB" id="eK6-yu-cMm"/>
+                            </connections>
+                        </textView>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Um-gP-5eh">
+                            <rect key="frame" x="317" y="45" width="51" height="32"/>
+                            <inset key="contentEdgeInsets" minX="7" minY="7" maxX="7" maxY="7"/>
+                            <state key="normal" title="Done"/>
+                            <connections>
+                                <action selector="doneButtonAction:" destination="iN0-l3-epB" eventType="touchUpInside" id="iO3-N4-aJm"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="bottom" secondItem="vUn-VJ-w06" secondAttribute="bottom" constant="7" id="EOY-o7-bAd"/>
+                        <constraint firstItem="5Um-gP-5eh" firstAttribute="bottom" secondItem="vUn-VJ-w06" secondAttribute="bottom" id="GmO-oh-7Zw"/>
+                        <constraint firstItem="5Um-gP-5eh" firstAttribute="leading" secondItem="vUn-VJ-w06" secondAttribute="trailing" constant="7" id="HjG-iG-DDH"/>
+                        <constraint firstAttribute="trailing" secondItem="5Um-gP-5eh" secondAttribute="trailing" constant="7" id="Q6i-Oj-UCJ"/>
+                        <constraint firstItem="vUn-VJ-w06" firstAttribute="top" secondItem="7Iw-PZ-8bB" secondAttribute="top" constant="7" id="mLm-8Z-IYj"/>
+                        <constraint firstItem="vUn-VJ-w06" firstAttribute="leading" secondItem="7Iw-PZ-8bB" secondAttribute="leading" constant="7" id="xks-ad-Dw5"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="7Iw-PZ-8bB" secondAttribute="trailing" id="1Xd-zA-An3"/>
+                <constraint firstAttribute="bottom" secondItem="7Iw-PZ-8bB" secondAttribute="bottom" id="gMh-w7-Ecf"/>
+                <constraint firstItem="7Iw-PZ-8bB" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="nXJ-He-mvs"/>
+                <constraint firstItem="7Iw-PZ-8bB" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="x5o-us-ggN"/>
+                <constraint firstItem="7Iw-PZ-8bB" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="zH2-4v-v7N"/>
+            </constraints>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="doneButton" destination="5Um-gP-5eh" id="BzI-6V-pIR"/>
+                <outlet property="textView" destination="vUn-VJ-w06" id="VV1-qP-i8E"/>
+            </connections>
+            <point key="canvasLocation" x="33.5" y="-238"/>
+        </view>
+    </objects>
+</document>

@@ -12,6 +12,9 @@
 		4D193B511F85975400228824 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D193B501F85975400228824 /* AdSupport.framework */; };
 		4D193B531F85977B00228824 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D193B521F85977B00228824 /* SafariServices.framework */; };
 		4D193B551F8597A600228824 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D193B541F8597A600228824 /* CoreSpotlight.framework */; };
+		4D3B13211F91592F00C0EAA2 /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3B13201F91592F00C0EAA2 /* MessageViewController.swift */; };
+		4D3B13231F95220B00C0EAA2 /* InputAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3B13221F95220B00C0EAA2 /* InputAccessoryView.swift */; };
+		4D3B13251F95222200C0EAA2 /* InputAccessoryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D3B13241F95222200C0EAA2 /* InputAccessoryView.xib */; };
 		4D8B775F1F8442D100EFD3FF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B775E1F8442D100EFD3FF /* AppDelegate.swift */; };
 		4D8B77611F8442D100EFD3FF /* AppStatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B77601F8442D100EFD3FF /* AppStatsViewController.swift */; };
 		4D8B77641F8442D100EFD3FF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D8B77621F8442D100EFD3FF /* Main.storyboard */; };
@@ -70,6 +73,9 @@
 		4D193B501F85975400228824 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		4D193B521F85977B00228824 /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 		4D193B541F8597A600228824 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
+		4D3B13201F91592F00C0EAA2 /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
+		4D3B13221F95220B00C0EAA2 /* InputAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputAccessoryView.swift; sourceTree = "<group>"; };
+		4D3B13241F95222200C0EAA2 /* InputAccessoryView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InputAccessoryView.xib; sourceTree = "<group>"; };
 		4D8B775B1F8442D100EFD3FF /* BareBones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BareBones.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D8B775E1F8442D100EFD3FF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4D8B77601F8442D100EFD3FF /* AppStatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStatsViewController.swift; sourceTree = "<group>"; };
@@ -122,18 +128,21 @@
 		4D8B775D1F8442D100EFD3FF /* BareBones */ = {
 			isa = PBXGroup;
 			children = (
-				4DA904981F85A0CC00892A23 /* BareBones.entitlements */,
 				4D8B775E1F8442D100EFD3FF /* AppDelegate.swift */,
 				4D193B4B1F85418200228824 /* AppStats.swift */,
 				4D8B77601F8442D100EFD3FF /* AppStatsViewController.swift */,
 				4D8B77651F8442D100EFD3FF /* Assets.xcassets */,
+				4DA904981F85A0CC00892A23 /* BareBones.entitlements */,
 				4D8B776A1F8442D100EFD3FF /* Info.plist */,
 				4D8B77671F8442D100EFD3FF /* LaunchScreen.storyboard */,
 				4D8B77701F844DD900EFD3FF /* LinkViewController.swift */,
 				4D8B77621F8442D100EFD3FF /* Main.storyboard */,
+				4D3B13201F91592F00C0EAA2 /* MessageViewController.swift */,
+				4D193B4E1F858D7B00228824 /* UIViewController+BareBones.swift */,
 				4D8B77731F8462C200EFD3FF /* WaitingViewController.swift */,
 				4D8B77721F8462C200EFD3FF /* WaitingViewController.xib */,
-				4D193B4E1F858D7B00228824 /* UIViewController+BareBones.swift */,
+				4D3B13221F95220B00C0EAA2 /* InputAccessoryView.swift */,
+				4D3B13241F95222200C0EAA2 /* InputAccessoryView.xib */,
 			);
 			path = BareBones;
 			sourceTree = "<group>";
@@ -240,6 +249,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D8B77741F8462C200EFD3FF /* WaitingViewController.xib in Resources */,
+				4D3B13251F95222200C0EAA2 /* InputAccessoryView.xib in Resources */,
 				4D8B77691F8442D100EFD3FF /* LaunchScreen.storyboard in Resources */,
 				4D8B77661F8442D100EFD3FF /* Assets.xcassets in Resources */,
 				4D8B77641F8442D100EFD3FF /* Main.storyboard in Resources */,
@@ -255,10 +265,12 @@
 			files = (
 				4D193B4F1F858D7B00228824 /* UIViewController+BareBones.swift in Sources */,
 				4D8B77751F8462C200EFD3FF /* WaitingViewController.swift in Sources */,
+				4D3B13231F95220B00C0EAA2 /* InputAccessoryView.swift in Sources */,
 				4D193B4C1F85418200228824 /* AppStats.swift in Sources */,
 				4D8B77611F8442D100EFD3FF /* AppStatsViewController.swift in Sources */,
 				4D8B77711F844DD900EFD3FF /* LinkViewController.swift in Sources */,
 				4D8B775F1F8442D100EFD3FF /* AppDelegate.swift in Sources */,
+				4D3B13211F91592F00C0EAA2 /* MessageViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

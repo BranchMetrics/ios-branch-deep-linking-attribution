@@ -10,16 +10,16 @@ import UIKit
 import Branch
 
 class LinkViewController: UIViewController {
-    @IBOutlet weak var messageLabel: UILabel!
-    @IBOutlet weak var messageTextView: UITextView!
-    @IBOutlet weak var linkTextField: UITextField!
-    @IBOutlet weak var linkButton: UIButton!
+    @IBOutlet weak var linkLabel: UILabel!
+    @IBOutlet weak var imageView: UIImageView!
 
-    var branchObject : BranchUniversalObject? {
+    var message: String?
+
+    var branchURL : URL? {
         didSet { updateUI() }
     }
 
-    var branchURL : URL? {
+    var branchImage : UIImage? {
         didSet { updateUI() }
     }
 
@@ -31,57 +31,51 @@ class LinkViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.messageTextView.layer.borderColor = UIColor.darkGray.cgColor
-        self.messageTextView.layer.borderWidth = 0.5
-        self.messageTextView.layer.cornerRadius = 3.0
+        self.imageView.layer.borderColor = UIColor.darkGray.cgColor
+        self.imageView.layer.borderWidth = 0.5
+        self.imageView.layer.cornerRadius = 3.0
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(_ : animated)
         updateUI()
+        createLink()
     }
 
     func updateUI() {
-        guard let messageTextView = messageTextView else { return }
-
-        if let message = branchObject?.metadata?["message"] as? String {
-            messageTextView.text = message
-        } else {
-            messageTextView.text = ""
-        }
-
-        if let url = branchURL {
-            messageLabel.text = "Message from the link:"
-            linkTextField.text = url.absoluteString
-            linkButton.setTitle("Share Link", for: UIControlState.normal)
-        } else {
-            messageLabel.text = "Add a message for the link:"
-            linkTextField.text = ""
-            linkButton.setTitle("Create Link", for: UIControlState.normal)
-        }
-
-    }
-
-    @IBAction func linkButtonAction(_ sender: Any) {
-        if linkTextField.text?.count == 0 {
-            createLink()
-        } else {
-            shareLink()
-        }
+        linkLabel.text = branchURL?.absoluteString ?? ""
+        imageView.image = branchImage
     }
 
     func createLink() {
+        if branchURL != nil {
+            return
+        }
+        if message?.count == 0 {
+            self.showAlert(title: "No message to send!", message: "")
+            return
+        }
+
         // Set some content for the Branch object:
         let buo = BranchUniversalObject.init()
         buo.title = "Bare Bones Branch Example"
         buo.contentDescription = "This is a bare bones example for using Branch links."
-        buo.metadata?["message"] = self.messageTextView.text
+        buo.metadata?["message"] = self.message ?? ""
 
         // Set some link properties:
         let linkProperties = BranchLinkProperties.init()
         linkProperties.channel = "Bare Bones Example"
 
         // Generate the link asynchronously:
+        WaitingViewController.showWithMessage(
+            message: "Getting link...",
+            activityIndicator: true,
+            disableTouches: true
+        )
         buo.getShortUrl(with: linkProperties) { (urlString: String?, error: Error?) in
+            WaitingViewController.hide()
             if let s = urlString {
                 self.branchURL = URL.init(string: s)
-                self.branchObject = buo
                 AppStats.shared.linksCreated += 1
             } else
             if let error = error {
@@ -94,12 +88,20 @@ class LinkViewController: UIViewController {
     }
 
     func shareLink() {
-        guard let buo = branchObject else { return }
+        /*
+        // guard let buo = branchObject else { return }
+
 
         let linkProperties = BranchLinkProperties.init()
         linkProperties.channel = "Bare Bones Example"
 
         let shareLink = BranchShareLink.init(universalObject: buo, linkProperties: linkProperties)
         shareLink?.presentActivityViewController(from: self, anchor: nil)
+        */
     }
+
+    @IBAction func shareLinkAction(_ sender: Any) {
+        self.shareLink()
+    }
+
 }
