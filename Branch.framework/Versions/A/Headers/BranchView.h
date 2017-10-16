@@ -6,8 +6,8 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import <Foundation/Foundation.h>
+@import Foundation;
+@import UIKit;
 
 @interface BranchView : NSObject
 //-------- properties-------------------//

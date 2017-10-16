@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 @interface CreditHistoryViewController : UITableViewController
 

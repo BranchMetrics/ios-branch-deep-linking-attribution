@@ -20,6 +20,17 @@ func BNCLogDebug(_ message: String, _ file: String=#file, _ line: UInt=#line) {
 }
 
 /**
+ * Logs a message at BNCLogLevel.warning
+ * - Parameters:
+ *   - message: the message to log
+ *   - file: (unused) provides the Swift source file path
+ *   - line: (unused) provides the Swift line number
+ */
+func BNCLogWarning(_ message: String, _ file: String=#file, _ line: UInt=#line) {
+    BNCLogWriteMessage(.warning, file, line, message)
+}
+
+/**
  * Logs a message at BNCLogLevel.error
  * - Parameters:
  *   - message: the message to log
@@ -39,15 +50,4 @@ func BNCLogError(_ message: String, _ file: String=#file, _ line: UInt=#line) {
  */
 func BNCLog(_ message: String, _ file: String=#file, _ line: UInt=#line) {
     BNCLogWriteMessage(.log, file, line, message)
-}
-
-/**
- * Logs a message at BNCLogLevel.warning
- * - Parameters:
- *   - message: the message to log
- *   - file: (unused) provides the Swift source file path
- *   - line: (unused) provides the Swift line number
- */
-func BNCLogWarning(_ message: String, _ file: String=#file, _ line: UInt=#line) {
-    BNCLogWriteMessage(.warning, file, line, message)
 }

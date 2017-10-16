@@ -6,7 +6,7 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 #pragma mark BNCNetworkOperationProtocol
 

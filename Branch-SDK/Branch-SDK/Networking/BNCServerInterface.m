@@ -591,7 +591,8 @@ exit:
 
     if (!operation) {
         NSString *message = BNCLocalizedString(
-            @"A network operation instance is expected to be returned by the networkOperationWithURLRequest:completion: method."
+            @"A network operation instance is expected to be returned by the"
+             " networkOperationWithURLRequest:completion: method."
         );
         NSError *error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError localizedMessage:message];
         return error;
@@ -641,7 +642,8 @@ exit:
             networkOperationWithURLRequest:request.copy
             completion:^void (id<BNCNetworkOperationProtocol>operation) {
                 serverResponse =
-                    [self processServerResponse:operation.response data:operation.responseData error:operation.error];
+                    [self processServerResponse:operation.response
+                        data:operation.responseData error:operation.error];
                 [self collectInstrumentationMetricsWithOperation:operation];                    
                 dispatch_semaphore_signal(semaphore);
             }];
@@ -779,6 +781,7 @@ exit:
     [self safeSetValue:deviceInfo.browserUserAgent forKey:@"user_agent" onDict:dict];
     [self safeSetValue:deviceInfo.country forKey:@"country" onDict:dict];
     [self safeSetValue:deviceInfo.language forKey:@"language" onDict:dict];
+    dict[@"local_ip"] = deviceInfo.localIPAddress;
 
     dict[BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED] = @(deviceInfo.isAdTrackingEnabled);
 }

@@ -8,7 +8,7 @@
 
 
 #import "BNCStrongMatchHelper.h"
-#import <objc/runtime.h>
+@import ObjectiveC.runtime;
 #import "BNCConfig.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
@@ -44,7 +44,10 @@
 
 
 #else   // ------------------------------------------------------------------------------ iOS >= 9.0
-#import <SafariServices/SafariServices.h>
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
+
+@import SafariServices;
 
 
 #pragma mark - BNCMatchView
@@ -192,9 +195,8 @@
     #pragma clang diagnostic pop
 }
 
-+ (BOOL)cookiesAvailableInOS
-{
-    return [UIDevice currentDevice].systemVersion.floatValue < 11.0;
++ (BOOL)cookiesAvailableInOS {
+    return [UIDevice currentDevice].systemVersion.doubleValue < 11.0;
 }
 
 - (void)createStrongMatchWithBranchKey:(NSString *)branchKey {
@@ -368,4 +370,5 @@
 
 @end
 
+#pragma clang diagnostic pop
 #endif  // ------------------------------------------------------------------------------ iOS >= 9.0

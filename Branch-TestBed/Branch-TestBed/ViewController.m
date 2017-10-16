@@ -12,9 +12,9 @@
 #import "BranchUniversalObject.h"
 #import "BranchLinkProperties.h"
 
-NSString *cononicalIdentifier = @"item/12345";
+NSString *cononicalIdentifier = @"item/12346";
 NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
-NSString *contentTitle = @"Content Title";
+NSString *contentTitle = @"Branch 0.19 TestBed Content Title";
 NSString *contentDescription = @"My Content Description";
 NSString *imageUrl = @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png";
 NSString *feature = @"Sharing Feature";
@@ -264,7 +264,7 @@ NSString *type = @"some type";
         @"Shared from Branch's Branch-TestBed at %@.",
         [self.dateFormatter stringFromDate:[NSDate date]]];
 
-    [shareLink presentActivityViewControllerFromViewController:self anchor:nil];
+    [shareLink presentActivityViewControllerFromViewController:self anchor:sender];
 }
 
 - (IBAction)shareLinkAsActivityItem:(id)sender {
@@ -363,13 +363,7 @@ NSString *type = @"some type";
 			NSString *message =
 				[NSString stringWithFormat:@"Commerce completion called.\nError: %@\n%@", error, response];
 			NSLog(@"%@", message);
-			[[[UIAlertView alloc]
-				initWithTitle:@"Commerce Event"
-				message:message
-				delegate:nil
-				cancelButtonTitle:@"OK"
-				otherButtonTitles:nil]
-					show];
+            [self showAlert:@"Commerce Event" withDescription:message];
         }];
 }
 
@@ -453,6 +447,8 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 
         if ([UIDevice currentDevice].systemVersion.floatValue < 8.0) {
 
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Wdeprecated-declarations"
             UIAlertView *alert = [[UIAlertView alloc]
                 initWithTitle:title
                 message:message
@@ -460,6 +456,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
                 cancelButtonTitle:@"OK"
                 otherButtonTitles:nil];
             [alert show];
+            #pragma clang diagnostic pop
 
         } else {
 

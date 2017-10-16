@@ -69,7 +69,7 @@ NSString * const BNCPurchasedEvent = @"Purchased";
 NSString * const BNCShareInitiatedEvent = @"Share Started";
 NSString * const BNCShareCompletedEvent = @"Share Completed";
 
-NSString * const BNCLogLevelKey = @"io.branch.sdk.BNCLogLevel";
+static NSString * const BNCLogLevelKey = @"io.branch.sdk.BNCLogLevel";
 
 #pragma mark - Load Categories
 
@@ -319,8 +319,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             return;
         }
         if (![branchKey isKindOfClass:[NSString class]]) {
+            NSString *typeName = (branchKey) ? NSStringFromClass(branchKey.class) : @"<nil>";
             [NSException raise:NSInternalInconsistencyException
-                format:@"Invalid Branch key of type '%@'.", NSStringFromClass(branchKey.class)];
+                format:@"Invalid Branch key of type '%@'.", typeName];
             return;
         }
 
@@ -664,10 +665,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     BOOL handled = NO;
     if (url && ![url isEqual:[NSNull null]]) {
 
+        NSString *urlScheme = [url scheme];
+
         // save the incoming url in the preferenceHelper in the externalIntentURI field
         if ([self.whiteListedSchemeList count]) {
             for (NSString *scheme in self.whiteListedSchemeList) {
-                if ([scheme isEqualToString:[url scheme]]) {
+                if (urlScheme && [scheme isEqualToString:urlScheme]) {
                     self.preferenceHelper.externalIntentURI = [url absoluteString];
                     break;
                 }
@@ -716,11 +719,14 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     NSString *source = nil;
     NSString *annotation = nil;
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wpartial-availability"
     if (UIApplicationOpenURLOptionsSourceApplicationKey &&
         UIApplicationOpenURLOptionsAnnotationKey) {
         source = options[UIApplicationOpenURLOptionsSourceApplicationKey];
         annotation = options[UIApplicationOpenURLOptionsAnnotationKey];
     }
+    #pragma clang diagnostic pop
     return [self application:application openURL:url sourceApplication:source annotation:annotation];
 }
 
@@ -852,20 +858,22 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
       ^ void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
         self.asyncRequestCount--;
 
-        if (attrDetails.count) {
-            self.preferenceHelper.appleSearchAdDetails = attrDetails;
-        }
-        else if (self.searchAdsDebugMode) {
+        // If searchAdsDebugMode is on then force the result to a set value for testing:
+        if (self.searchAdsDebugMode) {
+            // Round down to one day for testing.
+            NSTimeInterval const kOneHour = (60.0*60.0*1.0);
+            NSTimeInterval t = trunc([[NSDate date] timeIntervalSince1970] / kOneHour) * kOneHour;
+            NSDate *date = [NSDate dateWithTimeIntervalSince1970:t];
 
-            NSDictionary *debugSearchAd = @{
+            attrDetails = @{
                 @"Version3.1": @{
                     @"iad-adgroup-id":      @1234567890,
                     @"iad-adgroup-name":    @"AdGroupName",
                     @"iad-attribution":     (id)kCFBooleanTrue,
                     @"iad-campaign-id":     @1234567890,
                     @"iad-campaign-name":   @"CampaignName",
-                    @"iad-click-date":      [NSDate date],
-                    @"iad-conversion-date": [NSDate date],
+                    @"iad-click-date":      date,
+                    @"iad-conversion-date": date,
                     @"iad-creative-id":     @1234567890,
                     @"iad-creative-name":   @"CreativeName",
                     @"iad-keyword":         @"Keyword",
@@ -874,11 +882,17 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                     @"iad-org-name":        @"OrgName"
                 }
             };
-
-            self.preferenceHelper.appleSearchAdDetails = debugSearchAd;
         }
 
-        // if there's another async attribution check in flight, don't continue with init
+        if (attrDetails == nil) attrDetails = @{};
+        if (self.preferenceHelper.appleSearchAdDetails == nil)
+            self.preferenceHelper.appleSearchAdDetails = @{};
+        if (![self.preferenceHelper.appleSearchAdDetails isEqualToDictionary:attrDetails]) {
+            self.preferenceHelper.appleSearchAdDetails = attrDetails;
+            self.preferenceHelper.appleSearchAdNeedsSend = YES;
+        }
+
+        // If there's another async attribution check in flight, don't continue with init
         if (self.asyncRequestCount > 0) { return; }
 
         self.preferenceHelper.shouldWaitForInit = NO;
@@ -888,13 +902,14 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         });
     };
 
-    ((void (*)(id, SEL, void (^ __nullable)(NSDictionary *__nullable attrDetails, NSError * __nullable error)))[sharedClientInstance methodForSelector:requestAttribution])(sharedClientInstance, requestAttribution, completionBlock);
+    ((void (*)(id, SEL, void (^ __nullable)(NSDictionary *__nullable attrDetails, NSError * __nullable error)))
+        [sharedClientInstance methodForSelector:requestAttribution])
+            (sharedClientInstance, requestAttribution, completionBlock);
 
     return YES;
 }
 
-
-# pragma mark - Facebook App Link check
+#pragma mark - Facebook App Link Check
 
 - (void)registerFacebookDeepLinkingClass:(id)FBSDKAppLinkUtility {
     self.FBSDKAppLinkUtility = FBSDKAppLinkUtility;
@@ -2006,7 +2021,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                 BNCLogWarning(@"The automatic deeplink view controller '%@' for key '%@' does not implement 'configureControlWithData:'.",
                     branchSharingController, key);
             }
-            branchSharingController.deepLinkingCompletionDelegate = self;
             self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
 
             if([self.deepLinkControllers[key] isKindOfClass:[BNCDeepLinkViewControllerInstance class]]) {
@@ -2020,7 +2034,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                     BNCLogWarning(@"View controller does not implement configureControlWithData:");
                 }
                 branchSharingController.deepLinkingCompletionDelegate = self;
-                self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
                 switch (deepLinkInstance.option) {
                     case BNCViewControllerOptionPresent:
                         [self presentSharingViewController:branchSharingController];
@@ -2078,8 +2091,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                     BNCLogWarning(@"View controller does not implement configureControlWithData:");
                 }
                 branchSharingController.deepLinkingCompletionDelegate = self;
-                self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
-
                 if ([self.deepLinkPresentingController presentedViewController]) {
                     [self.deepLinkPresentingController dismissViewControllerAnimated:NO completion:^{
                         [self.deepLinkPresentingController presentViewController:branchSharingController animated:YES completion:NULL];

@@ -9,7 +9,6 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 
-
 static inline dispatch_time_t BNCDispatchTimeFromSeconds(NSTimeInterval seconds)	{
 	return dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC);
 }
@@ -22,11 +21,15 @@ static inline void BNCSleepForTimeInterval(NSTimeInterval seconds) {
     double secPart = trunc(seconds);
     double nanoPart = trunc((seconds - secPart) * ((double)NSEC_PER_SEC));
     struct timespec sleepTime;
-    sleepTime.tv_sec = (typeof(sleepTime.tv_sec)) secPart;
-    sleepTime.tv_nsec = (typeof(sleepTime.tv_nsec)) nanoPart;
+    sleepTime.tv_sec = (__typeof(sleepTime.tv_sec)) secPart;
+    sleepTime.tv_nsec = (__typeof(sleepTime.tv_nsec)) nanoPart;
     nanosleep(&sleepTime, NULL);
 }
 
+extern BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex);
+
+#define XCTAssertStringMatchesRegex(string, regex) \
+    XCTAssertTrue(BNCTestStringMatchesRegex(string, regex))
 
 @interface BNCTestCase : XCTestCase
 

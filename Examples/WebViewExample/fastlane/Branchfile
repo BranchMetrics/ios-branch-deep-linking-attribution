@@ -1,0 +1,9 @@
+# Branch configuration defaults
+
+live_key "key_live_dczvWn3zrK8575YRe07IgjblAAmfx51S"
+test_key "key_test_fbqC9k2BqS68Y1XQi7YVjakhCxomD6Z9"
+app_link_subdomain "branchwebview"
+frameworks %w{AdSupport CoreSpotlight SafariServices}
+xcodeproj "WebViewExample.xcodeproj"
+add_sdk false
+patch_source false
