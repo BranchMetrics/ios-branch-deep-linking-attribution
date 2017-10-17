@@ -89,8 +89,7 @@ class LinkViewController: UIViewController {
 
     func shareLink() {
         /*
-        // guard let buo = branchObject else { return }
-
+        guard let buo = branchObject else { return }
 
         let linkProperties = BranchLinkProperties.init()
         linkProperties.channel = "Bare Bones Example"

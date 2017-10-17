@@ -8,9 +8,21 @@
 
 import UIKit
 
+@objc protocol InputAccessoryViewDelegate {
+    @objc optional func inputAccessoryViewChanged(accessory: InputAccessoryView)
+    @objc optional func inputAccessoryViewDone(accessory: InputAccessoryView)
+}
+
 class InputAccessoryView: UIView, UITextViewDelegate {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var doneButton: UIButton!
+
+    weak var delegate: InputAccessoryViewDelegate?
+
+    var text: String {
+        get { return self.textView.text }
+        set(s) { self.textView.text = s }
+    }
 
     static func instantiate() -> InputAccessoryView? {
         guard let objects =
@@ -27,6 +39,20 @@ class InputAccessoryView: UIView, UITextViewDelegate {
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardDidShow(notification:)),
+            name: NSNotification.Name.UIKeyboardDidShow,
+            object: nil
+        )
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    @objc func keyboardDidShow(notification: NSNotification) {
+        self.textView.becomeFirstResponder()
     }
 
     func updateAppearance() {
@@ -46,30 +72,53 @@ class InputAccessoryView: UIView, UITextViewDelegate {
 
         self.textView.isScrollEnabled = false
         self.textView.text = ""
+        //self.updateViewSize()
     }
 
     @IBAction func doneButtonAction(_ sender: Any) {
+        if let _ = self.delegate?.inputAccessoryViewDone(accessory:) {
+            self.delegate?.inputAccessoryViewDone!(accessory: self)
+        }
     }
 
+    func dismiss() {
+        self.textView.resignFirstResponder()
+    }
+    
+    /*
     func textView(_ textView: UITextView,
-      shouldChangeTextIn range: NSRange,
-      replacementText text: String) -> Bool {
+            shouldChangeTextIn range: NSRange,
+            replacementText text: String) -> Bool {
+        if let textViewText = self.textView.text {
+            let newText = (textViewText as NSString).replacingCharacters(in: range, with: text)
+            NSLog("Text: %@ New: %@.", text, newText)
+            self.textView.text = newText
+            self.updateViewSize()
+            //self.textView.text = text
+        }
+        return false
+    }
+    */
+
+    func textViewDidChange(_ textView: UITextView) {
         self.updateViewSize()
-        return true
+        if let _ = self.delegate?.inputAccessoryViewChanged(accessory:) {
+            self.delegate?.inputAccessoryViewChanged!(accessory: self)
+        }
     }
 
     func updateViewSize() {
         var size = self.textView.bounds.size
         size.height = 1000
         size = self.textView.sizeThatFits(size)
-        var height = ceil(size.height + 14 + 1) // Add in margins plus slop
+        var height = ceil(size.height + 14 + 1) // Add margins plus slop
         if height > 5 * 32 {
             height = 5 * 32
             self.textView.isScrollEnabled = true
         } else {
             self.textView.isScrollEnabled = false
         }
-
+        //NSLog("%f", height)
         if let heightConstraints = self.superview?.constraints[0] {
             heightConstraints.constant = height
         }

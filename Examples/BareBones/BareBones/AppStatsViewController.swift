@@ -9,7 +9,7 @@
 import UIKit
 import Branch
 
-class AppStatsViewController: UIViewController, UITextViewDelegate {
+class AppStatsViewController: UIViewController, UITextViewDelegate, InputAccessoryViewDelegate {
 
     @IBOutlet weak var statsLabel: UILabel!
     @IBOutlet weak var messageTextView: UITextView!
@@ -22,7 +22,10 @@ class AppStatsViewController: UIViewController, UITextViewDelegate {
         self.messageTextView.layer.borderWidth = 0.5
         self.messageTextView.layer.cornerRadius = 3.0
         self.messageTextView.text = ""
-        self.messageTextView.inputAccessoryView = InputAccessoryView.instantiate()
+        if let accessory = InputAccessoryView.instantiate() {
+            accessory.delegate = self
+            self.messageTextView.inputAccessoryView = accessory
+        }
 
         NotificationCenter.default.addObserver(
             self,
@@ -55,16 +58,30 @@ class AppStatsViewController: UIViewController, UITextViewDelegate {
             "\(AppStats.shared.appOpens)\n\(AppStats.shared.linksOpened)\n\(AppStats.shared.linksCreated)"
     }
 
+    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+        if let accessory = self.messageTextView.inputAccessoryView as? InputAccessoryView {
+            accessory.text = self.messageTextView.text
+        }
+        return true
+    }
+
     func textViewDidChange(_ textView: UITextView) {
         guard let textView = self.messageTextView else { return }
         self.createLinkButton.isEnabled = textView.text.count > 0
     }
     
     @IBAction func makeNewLinkAction(_ sender: Any) {
-        self.messageTextView.resignFirstResponder()
-        let linkViewController = LinkViewController.instantiate()
-        linkViewController.message = self.messageTextView.text
-        navigationController?.pushViewController(linkViewController, animated: true)
+        self.messageTextView.inputAccessoryView = nil
+        self.messageTextView.reloadInputViews()
+
+        BNCAfterSecondsPerformBlock(0.001) as {
+            self.messageTextView.resignFirstResponder()
+            self.view.endEditing(true)
+        }
+
+//        let linkViewController = LinkViewController.instantiate()
+//        linkViewController.message = self.messageTextView.text
+//        navigationController?.pushViewController(linkViewController, animated: true)
     }
 
     @objc func appStatsDidUpdate(notification: Notification) {
@@ -106,6 +123,47 @@ class AppStatsViewController: UIViewController, UITextViewDelegate {
             navigationController?.pushViewController(messageViewController, animated: true)
             AppStats.shared.linksOpened += 1
             return
+        }
+    }
+
+    @objc func inputAccessoryViewDone(accessory: InputAccessoryView) {
+        self.messageTextView.text = accessory.textView.text
+        accessory.resignFirstResponder()
+        accessory.endEditing(true)
+        self.messageTextView.inputAccessoryView = nil
+        self.messageTextView.reloadInputViews()
+
+        self.messageTextView.resignFirstResponder()
+        self.view.endEditing(true)
+        self.resignFirstResponder()
+
+//        self.findAndResignFirstResponder(view: self.view)
+//        self.findAndResignFirstResponder(view: accessory)
+//        self.findAndResignFirstResponder(view: self.view.window as! UIView)
+//        accessory.textView.resignFirstResponder()
+//        self.messageTextView.resignFirstResponder()
+//        accessory.endEditing(true)
+//        self.view.endEditing(true)
+//        self.view.window?.becomeFirstResponder()
+////        self.view.becomeFirstResponder()
+////        self.becomeFirstResponder()
+    }
+
+//    func findAndResignFirstResponder(responder: UIResponder) {
+//        responder.resignFirstResponder()
+//        //responder.endEditing(true)
+//        while
+//        for next in responder.next {
+//            findAndResignFirstResponder(view: subview)
+//        }
+//    }
+
+    func findAndResignFirstResponder(view: UIView) {
+        view.resignFirstResponder()
+        var next = view.next
+        while let n = next {
+            n.resignFirstResponder()
+            next = n.next
         }
     }
 }
