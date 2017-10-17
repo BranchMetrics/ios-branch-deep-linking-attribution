@@ -1,5 +1,17 @@
 Branch iOS SDK Change Log
 
+- v0.20.x
+  * Added the `BNC_API_PINNED` flag to disable cert pinning. Not recommended.
+  * Added pragmas to silence availability warnings (GH #733, #735).
+  * Share sheet fixes:
+    - Allow UIBarButtonItem or UIView as share presentation anchor (AIS-360 AIS-376).
+    - When a share sheet is cancelled, it now correctly doesn't report as completed (AIS-395, GH-#736).
+  * Bug fix for automatic deeplinking controller:
+    - To support old and new API for automatic deeplinking Controller, there are two types of value
+      existed in deepLinkControllers dictionary: BNCDeepLinkViewControllerInstance and UIViewController.
+      The variable `branchSharingController.deepLinkingCompletionDelegate = self` was set before
+      checking type of the `deepLinkControllers`' value.
+
 - v0.19.5
   * _*Master Release*_ - September 29, 2017
 
