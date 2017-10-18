@@ -15,6 +15,9 @@
 #import "BNCEncodingUtils.h"
 @import SafariServices;
 
+// Ignore Safari availability for iOS 8 and lower in this example.
+#pragma clang diagnostic ignored "-Wpartial-availability"
+
 @interface AppDelegate() <SFSafariViewControllerDelegate>
 @property (nonatomic, strong) SFSafariViewController *onboardingVC;
 @end
