@@ -1,6 +1,7 @@
 Branch iOS SDK Change Log
 
 - v0.20.x
+  * Fixed Carthage build for the new version of Carthage.
   * Added the `BNC_API_PINNED` flag to disable cert pinning. Not recommended.
   * Added pragmas to silence availability warnings (GH #733, #735).
   * Share sheet fixes:
