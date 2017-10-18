@@ -19,6 +19,7 @@ function finish {
 }
 trap finish EXIT
 
-xcodebuild -scheme 'Branch iOS SDK Carthage' clean build
+echo ">>> Building 'Branch iOS SDK Carthage'."
+xcodebuild -scheme 'Branch iOS SDK Carthage' clean build -quiet
 carthage build --no-skip-current && carthage archive Branch
 scriptFailed=0
