@@ -35,7 +35,7 @@ xcodeVersion=`xcodebuild -version | head -n1 | cut -d' ' -f2 | cut -d'.' -f1`
 if [[ $xcodeVersion = '9' ]]
 then
     iOSDevice="iPhone 8 Plus"
-    iOSVersion="11.0"
+    iOSVersion="11.0.1"
 elif [[ $xcodeVersion = '8' ]]
 then
     iOSDevice="iPhone 7 Plus"

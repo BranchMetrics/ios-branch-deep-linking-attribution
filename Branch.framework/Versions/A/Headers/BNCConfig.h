@@ -9,6 +9,7 @@
 @import Foundation;
 
 extern NSString * const BNC_SDK_VERSION;
+extern NSString * const BNC_API_VERSION;
+extern BOOL       const BNC_API_PINNED;
 extern NSString * const BNC_API_BASE_URL;
 extern NSString * const BNC_LINK_URL;
-extern NSString * const BNC_API_VERSION;
