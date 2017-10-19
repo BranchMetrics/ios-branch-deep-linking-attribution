@@ -42,8 +42,10 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 - (void) dealloc {
-    if (self.persistTimer)
+    if (self.persistTimer) {
         dispatch_source_cancel(self.persistTimer);
+        self.persistTimer = nil;
+    }
     [self persistImmediately];
 }
 

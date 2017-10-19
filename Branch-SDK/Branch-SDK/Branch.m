@@ -80,19 +80,18 @@ void ForceCategoriesToLoad(void) {
     BNCForceNSMutableDictionaryCategoryToLoad();
 }
 
-
 #pragma mark - Branch
 
-
-@interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit>
-
+@interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit> {
+    NSInteger _networkCount;
+}
 
 @property (strong, nonatomic) BNCServerInterface *bServerInterface;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
 @property (copy,   nonatomic) callbackWithParams sessionInitWithParamsCallback;
 @property (copy,   nonatomic) callbackWithBranchUniversalObject sessionInitWithBranchUniversalObjectCallback;
-@property (assign, nonatomic) NSInteger networkCount;
+@property (assign, atomic)    NSInteger networkCount;
 @property (assign, nonatomic) NSInteger asyncRequestCount;
 @property (assign, nonatomic) BOOL isInitialized;
 @property (assign, nonatomic) BOOL shouldCallSessionInitCallback;
@@ -1657,6 +1656,18 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 
 #pragma mark - Queue management
+
+- (NSInteger) networkCount {
+    @synchronized (self) {
+        return _networkCount;
+    }
+}
+
+- (void) setNetworkCount:(NSInteger)networkCount {
+    @synchronized (self) {
+        _networkCount = networkCount;
+    }
+}
 
 - (void)insertRequestAtFront:(BNCServerRequest *)req {
     if (self.networkCount == 0) {
