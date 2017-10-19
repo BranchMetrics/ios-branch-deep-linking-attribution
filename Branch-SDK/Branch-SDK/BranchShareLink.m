@@ -79,7 +79,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     if ([self.delegate respondsToSelector:@selector(branchShareLink:didComplete:withError:)]) {
         [self.delegate branchShareLink:self didComplete:completed withError:error];
     }
-    [self.universalObject userCompletedAction:BNCShareCompletedEvent];
+    if (completed && !error)
+        [self.universalObject userCompletedAction:BNCShareCompletedEvent];
     NSDictionary *attributes = [self.universalObject getDictionaryWithCompleteLinkProperties:self.linkProperties];
     [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:attributes];
 }
@@ -153,7 +154,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 }
 
 - (void) presentActivityViewControllerFromViewController:(UIViewController*_Nullable)viewController
-                                                  anchor:(UIBarButtonItem*_Nullable)anchor {
+                                                  anchor:(id _Nullable)anchorViewOrButtonItem {
 
     UIActivityViewController *shareViewController =
         [[UIActivityViewController alloc]
@@ -209,9 +210,17 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
     // Required for iPad/Universal apps on iOS 8+
     if ([presentingViewController respondsToSelector:@selector(popoverPresentationController)]) {
-        shareViewController.popoverPresentationController.sourceView = presentingViewController.view;
-        if (anchor) {
+        if ([anchorViewOrButtonItem isKindOfClass:UIBarButtonItem.class]) {
+            UIBarButtonItem *anchor = (UIBarButtonItem*) anchorViewOrButtonItem;
             shareViewController.popoverPresentationController.barButtonItem = anchor;
+        } else
+        if ([anchorViewOrButtonItem isKindOfClass:UIView.class]) {
+            UIView *anchor = (UIView*) anchorViewOrButtonItem;
+            shareViewController.popoverPresentationController.sourceView = anchor;
+            shareViewController.popoverPresentationController.sourceRect = anchor.bounds;
+        } else {
+            shareViewController.popoverPresentationController.sourceView = presentingViewController.view;
+            shareViewController.popoverPresentationController.sourceRect = CGRectMake(0.0, 0.0, 40.0, 40.0);
         }
     }
     [presentingViewController presentViewController:shareViewController animated:YES completion:nil];

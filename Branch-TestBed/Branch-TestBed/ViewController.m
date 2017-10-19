@@ -264,7 +264,7 @@ NSString *type = @"some type";
         @"Shared from Branch's Branch-TestBed at %@.",
         [self.dateFormatter stringFromDate:[NSDate date]]];
 
-    [shareLink presentActivityViewControllerFromViewController:self anchor:nil];
+    [shareLink presentActivityViewControllerFromViewController:self anchor:sender];
 }
 
 - (IBAction)shareLinkAsActivityItem:(id)sender {
@@ -324,17 +324,6 @@ NSString *type = @"some type";
 
 #pragma mark - Commerce Events
 
-- (IBAction) openBranchLinkInApp:(id)sender {
-    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
-    // TODO: Remove
-    // NSURL *URL = [NSURL URLWithString:@"https://bnc.lt/ZPOc/Y6aKU0rzcy"]; // <= Your URL goes here.
-    NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"];
-    activity.webpageURL = URL;
-    Branch *branch = [Branch getInstance];
-    [branch resetUserSession];
-    [branch continueUserActivity:activity];
-}
-
 - (IBAction) sendCommerceEvent:(id)sender {
     BNCProduct *product = [BNCProduct new];
     product.price = [NSDecimalNumber decimalNumberWithString:@"1000.99"];
@@ -363,14 +352,13 @@ NSString *type = @"some type";
 			NSString *message =
 				[NSString stringWithFormat:@"Commerce completion called.\nError: %@\n%@", error, response];
 			NSLog(@"%@", message);
-			[[[UIAlertView alloc]
-				initWithTitle:@"Commerce Event"
-				message:message
-				delegate:nil
-				cancelButtonTitle:@"OK"
-				otherButtonTitles:nil]
-					show];
+            [self showAlert:@"Commerce Event" withDescription:message];
         }];
+}
+
+- (IBAction) openBranchLinkInApp:(id)sender {
+    NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"];
+    [[Branch getInstance] handleDeepLinkWithNewSession:URL];
 }
 
 #pragma mark - Spotlight
@@ -379,8 +367,8 @@ NSString *type = @"some type";
     //
     // Example using callbackWithURLandSpotlightIdentifier
     //
-    [self.branchUniversalObject addMetadataKey:@"deeplink_text" value:@"This link was generated for Spotlight registration"];
-    self.branchUniversalObject.contentIndexMode = ContentIndexModePrivate;
+    [self.branchUniversalObject addMetadataKey:@"deeplink_text"
+        value:@"This link was generated for Spotlight registration"];
     self.branchUniversalObject.automaticallyListOnSpotlight = YES;
     [self.branchUniversalObject userCompletedAction:BNCRegisterViewEvent];
 }
@@ -454,6 +442,8 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 
         if ([UIDevice currentDevice].systemVersion.floatValue < 8.0) {
 
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Wdeprecated-declarations"
             UIAlertView *alert = [[UIAlertView alloc]
                 initWithTitle:title
                 message:message
@@ -461,6 +451,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
                 cancelButtonTitle:@"OK"
                 otherButtonTitles:nil];
             [alert show];
+            #pragma clang diagnostic pop
 
         } else {
 

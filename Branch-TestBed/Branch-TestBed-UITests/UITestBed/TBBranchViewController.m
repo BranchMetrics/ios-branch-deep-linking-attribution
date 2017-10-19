@@ -28,7 +28,8 @@ NSString *type = @"some type";
 
 @interface TBBranchViewController () <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong)   TBTableData *tableData;
-@property (nonatomic, strong)   BranchUniversalObject *branchUniversalObject;
+@property (nonatomic, strong)   BranchUniversalObject *universalObject;
+@property (nonatomic, strong)   BranchLinkProperties  *linkProperties;
 @property (nonatomic, weak)     IBOutlet UITableView *tableView;
 @property (nonatomic, strong)   IBOutlet UINavigationItem *navigationItem;
 @end
@@ -58,6 +59,11 @@ NSString *type = @"some type";
     section(@"Events");
     row(@"Send Commerce Event", sendCommerceEvent:);
 
+    section(@"Sharing");
+    row(@"ShareLink from table row", sharelinkTableRow:);
+    row(@"ShareLink no anchor", sharelinkTableRowNilAnchor:);
+    row(@"BUO Share from table row", buoShareTableRow:);
+
     section(@"Miscellaneous");
     row(@"Show Local IP Addess", showLocalIPAddress:);
 
@@ -69,16 +75,16 @@ NSString *type = @"some type";
     [super viewDidLoad];
     [self initializeTableData];
 
-    _branchUniversalObject =
+    _universalObject =
         [[BranchUniversalObject alloc] initWithCanonicalIdentifier: cononicalIdentifier];
-    _branchUniversalObject.canonicalUrl = canonicalUrl;
-    _branchUniversalObject.title = contentTitle;
-    _branchUniversalObject.contentDescription = contentDescription;
-    _branchUniversalObject.imageUrl = imageUrl;
-    _branchUniversalObject.price = 1000;
-    _branchUniversalObject.currency = @"$";
-    _branchUniversalObject.type = type;
-    [_branchUniversalObject
+    _universalObject.canonicalUrl = canonicalUrl;
+    _universalObject.title = contentTitle;
+    _universalObject.contentDescription = contentDescription;
+    _universalObject.imageUrl = imageUrl;
+    _universalObject.price = 1000;
+    _universalObject.currency = @"$";
+    _universalObject.type = type;
+    [_universalObject
         addMetadataKey:@"deeplink_text"
         value:[NSString stringWithFormat:
             @"This text was embedded as data in a Branch link with the following characteristics:\n\n"
@@ -101,6 +107,14 @@ NSString *type = @"some type";
     r.size.height *= 1.75f;
     versionLabel.frame = r;
     self.tableView.tableHeaderView = versionLabel;
+
+    // Add a share button item:
+    UIBarButtonItem *barButtonItem =
+        [[UIBarButtonItem alloc]
+           initWithBarButtonSystemItem:UIBarButtonSystemItemAction
+           target:self
+           action:@selector(buoShareBarButton:)];
+   self.navigationItem.rightBarButtonItem = barButtonItem;
 }
 
 #pragma mark - Table View Delegate & Data Source
@@ -178,7 +192,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
     [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
     
-    [self.branchUniversalObject
+    [self.universalObject
         getShortUrlWithLinkProperties:linkProperties
         andCallback:^(NSString *url, NSError *error) {
             sender.value = url;
@@ -284,6 +298,48 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         title:@"Local IP Address"
         message:nil
     ];
+}
+
+#pragma mark - Sharing
+
+- (IBAction) sharelinkTableRow:(id)sender {
+    NSIndexPath *indexPath = [self.tableData indexPathForRow:sender];
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    BranchShareLink *shareLink =
+        [[BranchShareLink alloc]
+            initWithUniversalObject:self.universalObject
+            linkProperties:self.linkProperties];
+    [shareLink presentActivityViewControllerFromViewController:self anchor:cell];
+}
+
+- (IBAction) sharelinkTableRowNilAnchor:(id)sender {
+    BranchShareLink *shareLink =
+        [[BranchShareLink alloc]
+            initWithUniversalObject:self.universalObject
+            linkProperties:self.linkProperties];
+    [shareLink presentActivityViewControllerFromViewController:self anchor:nil];
+}
+
+- (IBAction) buoShareTableRow:(id)sender {
+    NSIndexPath *indexPath = [self.tableData indexPathForRow:sender];
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    [self.universalObject showShareSheetWithLinkProperties:self.linkProperties
+        andShareText:@"Ha ha"
+        fromViewController:self
+        anchor:cell
+        completionWithError: ^ (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError) {
+            BNCLogDebug(@"Done.");
+    }];
+}
+
+- (IBAction) buoShareBarButton:(id)sender {
+    [self.universalObject showShareSheetWithLinkProperties:self.linkProperties
+        andShareText:@"Ha ha"
+        fromViewController:self
+        anchor:sender
+        completionWithError: ^ (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError) {
+            BNCLogDebug(@"Done.");
+    }];
 }
 
 @end
