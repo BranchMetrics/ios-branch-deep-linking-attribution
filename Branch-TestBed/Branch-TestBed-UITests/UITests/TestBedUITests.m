@@ -9,6 +9,9 @@
 #import <XCTest/XCTest.h>
 #import "NSString+Branch.h"
 
+// Ignore UITests availability for iOS 8 and lower in this example.
+#pragma clang diagnostic ignored "-Wpartial-availability"
+
 static NSTimeInterval const kDeepLinkSleepTimeInterval = 10.0;
 static NSTimeInterval const kLoadWikiPageTimeInterval  = 3.0;
 static NSString* const kWikiPageURL =

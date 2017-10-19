@@ -324,17 +324,6 @@ NSString *type = @"some type";
 
 #pragma mark - Commerce Events
 
-- (IBAction) openBranchLinkInApp:(id)sender {
-    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
-    // TODO: Remove
-    // NSURL *URL = [NSURL URLWithString:@"https://bnc.lt/ZPOc/Y6aKU0rzcy"]; // <= Your URL goes here.
-    NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"];
-    activity.webpageURL = URL;
-    Branch *branch = [Branch getInstance];
-    [branch resetUserSession];
-    [branch continueUserActivity:activity];
-}
-
 - (IBAction) sendCommerceEvent:(id)sender {
     BNCProduct *product = [BNCProduct new];
     product.price = [NSDecimalNumber decimalNumberWithString:@"1000.99"];
@@ -367,13 +356,19 @@ NSString *type = @"some type";
         }];
 }
 
+- (IBAction) openBranchLinkInApp:(id)sender {
+    NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"];
+    [[Branch getInstance] handleDeepLinkWithNewSession:URL];
+}
+
 #pragma mark - Spotlight
 
 - (IBAction)registerWithSpotlightButtonTouchUpInside:(id)sender {
     //
     // Example using callbackWithURLandSpotlightIdentifier
     //
-    [self.branchUniversalObject addMetadataKey:@"deeplink_text" value:@"This link was generated for Spotlight registration"];
+    [self.branchUniversalObject addMetadataKey:@"deeplink_text"
+        value:@"This link was generated for Spotlight registration"];
     self.branchUniversalObject.automaticallyListOnSpotlight = YES;
     [self.branchUniversalObject userCompletedAction:BNCRegisterViewEvent];
 }

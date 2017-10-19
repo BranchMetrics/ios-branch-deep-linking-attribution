@@ -31,7 +31,7 @@ Options:
 USAGE
 }
 
-version=0.20.0
+version=0.20.1
 
 if (( $# == 0 )); then
     echo $version
