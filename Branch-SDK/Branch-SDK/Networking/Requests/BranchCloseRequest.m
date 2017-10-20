@@ -24,7 +24,7 @@
     if (branchAnalyticsObj && branchAnalyticsObj.count > 0) {
         NSData *data = [NSPropertyListSerialization dataWithPropertyList:branchAnalyticsObj
                                                                   format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
-        if ([data length] < [BranchContentDiscoveryManifest getInstance].maxPktSize) {
+        if ([data length] < (NSUInteger) [BranchContentDiscoveryManifest getInstance].maxPktSize) {
             [params setObject:branchAnalyticsObj forKey:BRANCH_CONTENT_DISCOVER_KEY];
         }
         [preferenceHelper clearBranchAnalyticsData];

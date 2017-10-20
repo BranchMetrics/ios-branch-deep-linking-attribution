@@ -80,19 +80,17 @@
 #pragma mark - NSCoding methods
 
 - (id)initWithCoder:(NSCoder *)decoder {
-    if (self = [super initWithCoder:decoder]) {
+    if ((self = [super initWithCoder:decoder])) {
         _bucket = [decoder decodeObjectForKey:@"bucket"];
         _creditTransactionId = [decoder decodeObjectForKey:@"creditTransactionId"];
         _length = [decoder decodeIntegerForKey:@"length"];
         _order = [decoder decodeIntegerForKey:@"order"];
     }
-    
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
-    [super encodeWithCoder:coder];
-    
+    [super encodeWithCoder:coder];  
     [coder encodeObject:self.bucket forKey:@"bucket"];
     [coder encodeObject:self.creditTransactionId forKey:@"creditTransactionId"];
     [coder encodeInteger:self.length forKey:@"length"];
