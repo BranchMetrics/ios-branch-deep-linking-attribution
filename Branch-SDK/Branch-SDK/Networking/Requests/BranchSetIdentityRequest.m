@@ -77,16 +77,14 @@
 // No need to do anything with callback, as the callback itself is gone after the end of a run
 
 - (id)initWithCoder:(NSCoder *)decoder {
-    if (self = [super initWithCoder:decoder]) {
+    if ((self = [super initWithCoder:decoder])) {
         _userId = [decoder decodeObjectForKey:@"userId"];
     }
-    
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     [super encodeWithCoder:coder];
-    
     [coder encodeObject:self.userId forKey:@"userId"];
 }
 
