@@ -19,7 +19,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _logOutputTextView.text = _logOutput;
+    self.logOutputTextView.text = _logOutput;
 }
 
 

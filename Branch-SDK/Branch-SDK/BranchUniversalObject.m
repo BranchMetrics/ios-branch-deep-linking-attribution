@@ -17,14 +17,14 @@
 @implementation BranchUniversalObject
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.canonicalIdentifier = canonicalIdentifier;
     }
     return self;
 }
 
 - (instancetype)initWithTitle:(NSString *)title {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.title = title;
     }
     return self;
@@ -290,7 +290,7 @@
         @try {
             [shareViewController setValue:linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT] forKey:@"subject"];
         }
-        @catch (NSException *exception) {
+        @catch (NSException*) {
             BNCLogWarning(@"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController.");
         }
     }
