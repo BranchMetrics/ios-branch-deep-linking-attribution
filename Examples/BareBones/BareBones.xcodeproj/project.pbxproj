@@ -7,23 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4D193B4C1F85418200228824 /* AppStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D193B4B1F85418200228824 /* AppStats.swift */; };
+		4D193B4C1F85418200228824 /* AppData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D193B4B1F85418200228824 /* AppData.swift */; };
 		4D193B4F1F858D7B00228824 /* UIViewController+BareBones.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D193B4E1F858D7B00228824 /* UIViewController+BareBones.swift */; };
 		4D193B511F85975400228824 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D193B501F85975400228824 /* AdSupport.framework */; };
 		4D193B531F85977B00228824 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D193B521F85977B00228824 /* SafariServices.framework */; };
 		4D193B551F8597A600228824 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D193B541F8597A600228824 /* CoreSpotlight.framework */; };
-		4D3B13211F91592F00C0EAA2 /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3B13201F91592F00C0EAA2 /* MessageViewController.swift */; };
 		4D8B775F1F8442D100EFD3FF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B775E1F8442D100EFD3FF /* AppDelegate.swift */; };
-		4D8B77611F8442D100EFD3FF /* AppStatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B77601F8442D100EFD3FF /* AppStatsViewController.swift */; };
+		4D8B77611F8442D100EFD3FF /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B77601F8442D100EFD3FF /* MainViewController.swift */; };
 		4D8B77641F8442D100EFD3FF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D8B77621F8442D100EFD3FF /* Main.storyboard */; };
 		4D8B77661F8442D100EFD3FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4D8B77651F8442D100EFD3FF /* Assets.xcassets */; };
 		4D8B77691F8442D100EFD3FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D8B77671F8442D100EFD3FF /* LaunchScreen.storyboard */; };
-		4D8B77711F844DD900EFD3FF /* LinkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B77701F844DD900EFD3FF /* LinkViewController.swift */; };
+		4D8B77711F844DD900EFD3FF /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B77701F844DD900EFD3FF /* MessageViewController.swift */; };
 		4D8B77741F8462C200EFD3FF /* WaitingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D8B77721F8462C200EFD3FF /* WaitingViewController.xib */; };
 		4D8B77751F8462C200EFD3FF /* WaitingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B77731F8462C200EFD3FF /* WaitingViewController.swift */; };
 		4D8B777F1F84689200EFD3FF /* Branch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D8B777B1F84684C00EFD3FF /* Branch.framework */; };
 		4DA904931F859FDE00892A23 /* Branch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D8B777B1F84684C00EFD3FF /* Branch.framework */; };
 		4DA904941F859FDE00892A23 /* Branch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4D8B777B1F84684C00EFD3FF /* Branch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4DBC12491F9980F500932CA5 /* Fortunes.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4DBC12481F9980F500932CA5 /* Fortunes.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,25 +65,25 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4D193B4B1F85418200228824 /* AppStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStats.swift; sourceTree = "<group>"; };
+		4D193B4B1F85418200228824 /* AppData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
 		4D193B4D1F85801E00228824 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4D193B4E1F858D7B00228824 /* UIViewController+BareBones.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+BareBones.swift"; sourceTree = "<group>"; };
 		4D193B501F85975400228824 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		4D193B521F85977B00228824 /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 		4D193B541F8597A600228824 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
-		4D3B13201F91592F00C0EAA2 /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
 		4D8B775B1F8442D100EFD3FF /* BareBones.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BareBones.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D8B775E1F8442D100EFD3FF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4D8B77601F8442D100EFD3FF /* AppStatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStatsViewController.swift; sourceTree = "<group>"; };
+		4D8B77601F8442D100EFD3FF /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		4D8B77631F8442D100EFD3FF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4D8B77651F8442D100EFD3FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4D8B77681F8442D100EFD3FF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4D8B776A1F8442D100EFD3FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4D8B77701F844DD900EFD3FF /* LinkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkViewController.swift; sourceTree = "<group>"; };
+		4D8B77701F844DD900EFD3FF /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
 		4D8B77721F8462C200EFD3FF /* WaitingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WaitingViewController.xib; sourceTree = "<group>"; };
 		4D8B77731F8462C200EFD3FF /* WaitingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitingViewController.swift; sourceTree = "<group>"; };
 		4D8B77761F84684C00EFD3FF /* BranchSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BranchSDK.xcodeproj; path = "../../carthage-files/BranchSDK.xcodeproj"; sourceTree = "<group>"; };
 		4DA904981F85A0CC00892A23 /* BareBones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BareBones.entitlements; sourceTree = "<group>"; };
+		4DBC12481F9980F500932CA5 /* Fortunes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Fortunes.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,16 +124,16 @@
 		4D8B775D1F8442D100EFD3FF /* BareBones */ = {
 			isa = PBXGroup;
 			children = (
+				4D193B4B1F85418200228824 /* AppData.swift */,
 				4D8B775E1F8442D100EFD3FF /* AppDelegate.swift */,
-				4D193B4B1F85418200228824 /* AppStats.swift */,
-				4D8B77601F8442D100EFD3FF /* AppStatsViewController.swift */,
 				4D8B77651F8442D100EFD3FF /* Assets.xcassets */,
 				4DA904981F85A0CC00892A23 /* BareBones.entitlements */,
+				4DBC12481F9980F500932CA5 /* Fortunes.txt */,
 				4D8B776A1F8442D100EFD3FF /* Info.plist */,
 				4D8B77671F8442D100EFD3FF /* LaunchScreen.storyboard */,
-				4D8B77701F844DD900EFD3FF /* LinkViewController.swift */,
 				4D8B77621F8442D100EFD3FF /* Main.storyboard */,
-				4D3B13201F91592F00C0EAA2 /* MessageViewController.swift */,
+				4D8B77601F8442D100EFD3FF /* MainViewController.swift */,
+				4D8B77701F844DD900EFD3FF /* MessageViewController.swift */,
 				4D193B4E1F858D7B00228824 /* UIViewController+BareBones.swift */,
 				4D8B77731F8462C200EFD3FF /* WaitingViewController.swift */,
 				4D8B77721F8462C200EFD3FF /* WaitingViewController.xib */,
@@ -244,6 +244,7 @@
 			files = (
 				4D8B77741F8462C200EFD3FF /* WaitingViewController.xib in Resources */,
 				4D8B77691F8442D100EFD3FF /* LaunchScreen.storyboard in Resources */,
+				4DBC12491F9980F500932CA5 /* Fortunes.txt in Resources */,
 				4D8B77661F8442D100EFD3FF /* Assets.xcassets in Resources */,
 				4D8B77641F8442D100EFD3FF /* Main.storyboard in Resources */,
 			);
@@ -258,11 +259,10 @@
 			files = (
 				4D193B4F1F858D7B00228824 /* UIViewController+BareBones.swift in Sources */,
 				4D8B77751F8462C200EFD3FF /* WaitingViewController.swift in Sources */,
-				4D193B4C1F85418200228824 /* AppStats.swift in Sources */,
-				4D8B77611F8442D100EFD3FF /* AppStatsViewController.swift in Sources */,
-				4D8B77711F844DD900EFD3FF /* LinkViewController.swift in Sources */,
+				4D193B4C1F85418200228824 /* AppData.swift in Sources */,
+				4D8B77611F8442D100EFD3FF /* MainViewController.swift in Sources */,
+				4D8B77711F844DD900EFD3FF /* MessageViewController.swift in Sources */,
 				4D8B775F1F8442D100EFD3FF /* AppDelegate.swift in Sources */,
-				4D3B13211F91592F00C0EAA2 /* MessageViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,5 @@
 //
-//  AppStats.swift
+//  AppData.swift
 //  BareBones
 //
 //  Created by Edward Smith on 10/4/17.
@@ -9,10 +9,10 @@
 import Foundation
 
 extension NSNotification.Name {
-    static let AppStatsDidUpdate = NSNotification.Name.init("AppStatsDidUpdateNotification")
+    static let AppDataDidUpdate = NSNotification.Name.init("AppDataDidUpdateNotification")
 }
 
-class AppStats {
+class AppData {
     var appOpens: Int {
         didSet { saveAndNotify() }
     }
@@ -25,7 +25,8 @@ class AppStats {
         didSet { saveAndNotify() }
     }
 
-    static let shared = AppStats()
+    static let shared = AppData()
+    var fortunes: [String.SubSequence] = [ ]
 
     private init() {
         appOpens = UserDefaults.standard.integer(forKey: "appOpens")
@@ -51,7 +52,10 @@ class AppStats {
 
     func initialize() {
         // Make sure we're loaded and initialized.
-        // Nothing to do here, but calling this method makes sure we're lazy loaded.
+        let fileURL = Bundle.main.bundleURL.appendingPathComponent("Fortunes.txt")
+        if let allFortunes = try? String.init(contentsOf: fileURL) {
+            self.fortunes = allFortunes.split(separator: "\n", omittingEmptySubsequences: true)
+        }
     }
 
     @objc func updateAppOpen(notification: Notification) {
@@ -62,6 +66,12 @@ class AppStats {
         UserDefaults.standard.set(appOpens, forKey: "appOpens")
         UserDefaults.standard.set(linksOpened, forKey: "linksOpened")
         UserDefaults.standard.set(linksCreated, forKey: "linksCreated")
-        NotificationCenter.default.post(name: Notification.Name.AppStatsDidUpdate, object: self)
+        NotificationCenter.default.post(name: Notification.Name.AppDataDidUpdate, object: self)
+    }
+
+    func randomFortune() -> String {
+        let index = Int(arc4random_uniform(UInt32(fortunes.count)))
+        let s = self.fortunes[index]
+        return String(s)
     }
 }
