@@ -47,8 +47,14 @@ class MainViewController: UIViewController {
         messageLabel.text =
             "Shake the phone to reveal your mystic Branch fortune..."
         updateStatsLabel()
+        self.navigationController?.isNavigationBarHidden = true
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.isNavigationBarHidden = false
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.enableShakes = true
@@ -65,7 +71,7 @@ class MainViewController: UIViewController {
     }
 
     override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
-        if motion == .motionShake {
+        if motion == .motionShake && enableShakes {
             self.startMysticConjuring()
         }
     }
@@ -107,6 +113,7 @@ class MainViewController: UIViewController {
 
         if let buo = notification.userInfo?[BranchUniversalObjectKey] as? BranchUniversalObject {
             let messageViewController = MessageViewController.instantiate()
+            messageViewController.name = buo.metadata?["name"] as? String
             messageViewController.message = buo.metadata?["message"] as? String
             navigationController?.pushViewController(messageViewController, animated: true)
             AppData.shared.linksOpened += 1
@@ -128,7 +135,8 @@ class MainViewController: UIViewController {
         // Start the animation:
         CATransaction.begin()
         CATransaction.setCompletionBlock { self.revealMysticConjuring() }
-        let animation = CABasicAnimation(keyPath: "opacity")
+
+        var animation = CABasicAnimation(keyPath: "opacity")
         animation.fromValue = 1.0
         animation.toValue = 0.20
         animation.repeatCount = 2.5
@@ -136,12 +144,22 @@ class MainViewController: UIViewController {
         animation.isRemovedOnCompletion = true
         animation.autoreverses = true
         self.messageLabel.layer.add(animation, forKey: "opacity")
+
+        animation = CABasicAnimation(keyPath: "transform.scale.x")
+        animation.fromValue = 1.0
+        animation.toValue = 1.35
+        animation.repeatCount = 3.0
+        animation.duration = 1.20
+        animation.isRemovedOnCompletion = true
+        animation.autoreverses = true
+        self.messageLabel.layer.add(animation, forKey: "transform.scale.x")
+
         CATransaction.commit()
     }
 
     func revealMysticConjuring() {
-        let messageViewController = MessageViewController.instantiate()
-        messageViewController.message = AppData.shared.randomFortune()
-        navigationController?.pushViewController(messageViewController, animated: true)
+        let fortuneViewController = FortuneViewController.instantiate()
+        fortuneViewController.message = AppData.shared.randomFortune()
+        navigationController?.pushViewController(fortuneViewController, animated: true)
     }
 }

@@ -17,13 +17,14 @@
 		4D8B77641F8442D100EFD3FF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D8B77621F8442D100EFD3FF /* Main.storyboard */; };
 		4D8B77661F8442D100EFD3FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4D8B77651F8442D100EFD3FF /* Assets.xcassets */; };
 		4D8B77691F8442D100EFD3FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D8B77671F8442D100EFD3FF /* LaunchScreen.storyboard */; };
-		4D8B77711F844DD900EFD3FF /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B77701F844DD900EFD3FF /* MessageViewController.swift */; };
+		4D8B77711F844DD900EFD3FF /* FortuneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B77701F844DD900EFD3FF /* FortuneViewController.swift */; };
 		4D8B77741F8462C200EFD3FF /* WaitingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D8B77721F8462C200EFD3FF /* WaitingViewController.xib */; };
 		4D8B77751F8462C200EFD3FF /* WaitingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B77731F8462C200EFD3FF /* WaitingViewController.swift */; };
 		4D8B777F1F84689200EFD3FF /* Branch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D8B777B1F84684C00EFD3FF /* Branch.framework */; };
 		4DA904931F859FDE00892A23 /* Branch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D8B777B1F84684C00EFD3FF /* Branch.framework */; };
 		4DA904941F859FDE00892A23 /* Branch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4D8B777B1F84684C00EFD3FF /* Branch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4DBC12491F9980F500932CA5 /* Fortunes.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4DBC12481F9980F500932CA5 /* Fortunes.txt */; };
+		4DFA9A571F9AC041003EDD47 /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DFA9A561F9AC041003EDD47 /* MessageViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,12 +79,13 @@
 		4D8B77651F8442D100EFD3FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4D8B77681F8442D100EFD3FF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4D8B776A1F8442D100EFD3FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4D8B77701F844DD900EFD3FF /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
+		4D8B77701F844DD900EFD3FF /* FortuneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FortuneViewController.swift; sourceTree = "<group>"; };
 		4D8B77721F8462C200EFD3FF /* WaitingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WaitingViewController.xib; sourceTree = "<group>"; };
 		4D8B77731F8462C200EFD3FF /* WaitingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitingViewController.swift; sourceTree = "<group>"; };
 		4D8B77761F84684C00EFD3FF /* BranchSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BranchSDK.xcodeproj; path = "../../carthage-files/BranchSDK.xcodeproj"; sourceTree = "<group>"; };
 		4DA904981F85A0CC00892A23 /* BareBones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BareBones.entitlements; sourceTree = "<group>"; };
 		4DBC12481F9980F500932CA5 /* Fortunes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Fortunes.txt; sourceTree = "<group>"; };
+		4DFA9A561F9AC041003EDD47 /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,10 +135,11 @@
 				4D8B77671F8442D100EFD3FF /* LaunchScreen.storyboard */,
 				4D8B77621F8442D100EFD3FF /* Main.storyboard */,
 				4D8B77601F8442D100EFD3FF /* MainViewController.swift */,
-				4D8B77701F844DD900EFD3FF /* MessageViewController.swift */,
+				4D8B77701F844DD900EFD3FF /* FortuneViewController.swift */,
 				4D193B4E1F858D7B00228824 /* UIViewController+BareBones.swift */,
 				4D8B77731F8462C200EFD3FF /* WaitingViewController.swift */,
 				4D8B77721F8462C200EFD3FF /* WaitingViewController.xib */,
+				4DFA9A561F9AC041003EDD47 /* MessageViewController.swift */,
 			);
 			path = BareBones;
 			sourceTree = "<group>";
@@ -259,9 +262,10 @@
 			files = (
 				4D193B4F1F858D7B00228824 /* UIViewController+BareBones.swift in Sources */,
 				4D8B77751F8462C200EFD3FF /* WaitingViewController.swift in Sources */,
+				4DFA9A571F9AC041003EDD47 /* MessageViewController.swift in Sources */,
 				4D193B4C1F85418200228824 /* AppData.swift in Sources */,
 				4D8B77611F8442D100EFD3FF /* MainViewController.swift in Sources */,
-				4D8B77711F844DD900EFD3FF /* MessageViewController.swift in Sources */,
+				4D8B77711F844DD900EFD3FF /* FortuneViewController.swift in Sources */,
 				4D8B775F1F8442D100EFD3FF /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
