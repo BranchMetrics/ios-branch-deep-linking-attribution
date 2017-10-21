@@ -163,7 +163,7 @@ continueUserActivity:(NSUserActivity *)userActivity
 
 // Helper method
 - (void)registerForPushNotifications:(UIApplication *)application {
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
+    if ([[[UIDevice currentDevice] systemVersion] doubleValue] >= 8.0) {
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:
             (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge)
                 categories:nil]];

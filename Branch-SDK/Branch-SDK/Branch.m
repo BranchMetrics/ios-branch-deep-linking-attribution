@@ -56,7 +56,7 @@ NSString * const BRANCH_INIT_KEY_REFERRER = @"+referrer";
 NSString * const BRANCH_INIT_KEY_PHONE_NUMBER = @"+phone_number";
 NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
 NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
-NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
+static NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
 NSString * const BNCCanonicalIdList = @"$canonical_identifier_list";
 NSString * const BNCPurchaseAmount = @"$amount";

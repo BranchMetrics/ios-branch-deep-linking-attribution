@@ -41,7 +41,8 @@ NSString* _Nonnull BNCLocalizedFormattedString(NSString* _Nonnull const format, 
 }
 
 + (NSString*_Nonnull) applicationLanguage {
-    return [[[NSBundle mainBundle] preferredLocalizations] firstObject];
+    NSString* lang = [[[NSBundle mainBundle] preferredLocalizations] firstObject];
+    return lang ? lang : @"";
 }
 
 - (instancetype) init {
