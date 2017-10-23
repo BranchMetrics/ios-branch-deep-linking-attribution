@@ -83,6 +83,7 @@ class MainViewController: UIViewController {
     }
 
     @objc func branchWillStartSession(notification: Notification) {
+        // Only show the waiting view if we've been opened by an URL tap:
         guard let url: URL = notification.userInfo?[BranchURLKey] as? URL else { return }
         WaitingViewController.showWithMessage(
             message: "Opening\n\(url.absoluteString)",
@@ -138,7 +139,7 @@ class MainViewController: UIViewController {
 
         var animation = CABasicAnimation(keyPath: "opacity")
         animation.fromValue = 1.0
-        animation.toValue = 0.20
+        animation.toValue = 0.25
         animation.repeatCount = 2.5
         animation.duration = 1.20
         animation.isRemovedOnCompletion = true
@@ -148,7 +149,7 @@ class MainViewController: UIViewController {
         animation = CABasicAnimation(keyPath: "transform.scale.x")
         animation.fromValue = 1.0
         animation.toValue = 1.35
-        animation.repeatCount = 3.0
+        animation.repeatCount = 2.5
         animation.duration = 1.20
         animation.isRemovedOnCompletion = true
         animation.autoreverses = true

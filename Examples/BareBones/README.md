@@ -8,6 +8,7 @@ The example code shows:
 
 * How to use the Branch SDK in a simple Swift 4 application.
 * How to create and share Branch links in your app.
+* How to create a QR code from a Branch link.
 * How to respond to Branch NSNotification events.
 
 ### Branch NSNotifications

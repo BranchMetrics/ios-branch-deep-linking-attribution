@@ -44,6 +44,10 @@ class AppData {
             name: NSNotification.Name.UIApplicationDidFinishLaunching,
             object: nil
         )
+        let fileURL = Bundle.main.bundleURL.appendingPathComponent("Fortunes.txt")
+        if let allFortunes = try? String.init(contentsOf: fileURL) {
+            self.fortunes = allFortunes.split(separator: "\n", omittingEmptySubsequences: true)
+        }
     }
 
     deinit {
@@ -51,11 +55,8 @@ class AppData {
     }
 
     func initialize() {
-        // Make sure we're loaded and initialized.
-        let fileURL = Bundle.main.bundleURL.appendingPathComponent("Fortunes.txt")
-        if let allFortunes = try? String.init(contentsOf: fileURL) {
-            self.fortunes = allFortunes.split(separator: "\n", omittingEmptySubsequences: true)
-        }
+        // Make sure we're lazy loaded and initialized. Not much to do.
+        // Nothing to do.
     }
 
     @objc func updateAppOpen(notification: Notification) {

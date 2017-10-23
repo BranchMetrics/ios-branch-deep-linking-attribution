@@ -131,15 +131,15 @@
 				4D8B77651F8442D100EFD3FF /* Assets.xcassets */,
 				4DA904981F85A0CC00892A23 /* BareBones.entitlements */,
 				4DBC12481F9980F500932CA5 /* Fortunes.txt */,
+				4D8B77701F844DD900EFD3FF /* FortuneViewController.swift */,
 				4D8B776A1F8442D100EFD3FF /* Info.plist */,
 				4D8B77671F8442D100EFD3FF /* LaunchScreen.storyboard */,
 				4D8B77621F8442D100EFD3FF /* Main.storyboard */,
 				4D8B77601F8442D100EFD3FF /* MainViewController.swift */,
-				4D8B77701F844DD900EFD3FF /* FortuneViewController.swift */,
+				4DFA9A561F9AC041003EDD47 /* MessageViewController.swift */,
 				4D193B4E1F858D7B00228824 /* UIViewController+BareBones.swift */,
 				4D8B77731F8462C200EFD3FF /* WaitingViewController.swift */,
 				4D8B77721F8462C200EFD3FF /* WaitingViewController.xib */,
-				4DFA9A561F9AC041003EDD47 /* MessageViewController.swift */,
 			);
 			path = BareBones;
 			sourceTree = "<group>";

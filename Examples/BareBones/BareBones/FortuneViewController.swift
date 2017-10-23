@@ -105,7 +105,7 @@ class FortuneViewController: UIViewController {
         filter?.setValue("H", forKey: "inputCorrectionLevel")
         guard var qrImage = filter?.outputImage else { return }
 
-        // We could stop here with the qrImage.  But I'll scale it up and add a logo.
+        // We could stop here with the qrImage. But let's scale it up and add a logo.
 
         // Scale:
         let scaleX = 210 * UIScreen.main.scale
