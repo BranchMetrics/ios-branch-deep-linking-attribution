@@ -2,7 +2,7 @@
 
 This is a bare bones example of using Branch in a simple Swift project.
 
-With this app you can create Branch deep links that have a 'secret' message associated with them. You can send the link to your friend, and when your friend clicks the link (or scans the QR code), the app will open and reveal the message. If your friend doesn't have the app they'll be directed to the app store to get the app, and because of Branch deferred deep linking, when they open the app, the message will still appear.
+With this app you can create Branch deep links that have a 'secret' message associated with them. You can send the link to your friend, and when your friend clicks the link (or scans the QR code), the app will open and reveal the message. If your friend doesn't have the app they'll be directed to the app store to get the app, and because the link is a Branch deferred deep link, when they open the app, the message will still appear.
 
 The example code shows:
 

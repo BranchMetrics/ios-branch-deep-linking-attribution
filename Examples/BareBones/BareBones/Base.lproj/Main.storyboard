@@ -125,7 +125,7 @@ Example</string>
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="6NW-Gv-Tqv" userLabel="ContentView">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="699"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="717"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kA1-nM-ZdG">
                                                 <rect key="frame" x="124.5" y="87.5" width="71" height="65"/>
@@ -137,10 +137,10 @@ Example</string>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="750" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="1000" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LAQ-En-JeN">
-                                                <rect key="frame" x="20" y="177.5" width="280" height="501.5"/>
+                                                <rect key="frame" x="20" y="177.5" width="280" height="519.5"/>
                                                 <mutableString key="text">This is a bare bones example of using Branch in a simple Swift project.
 
-With this app you can create Branch deep links that have a 'secret' message associated with them. You can send the link to your friend, and when your friend clicks the link (or scans the QR code), the app will open and reveal the message. If your friend doesn't have the app they'll be directed to the app store to get the app, and because of Branch deferred deep linking, when they open the app, the message will still appear.
+With this app you can create Branch deep links that have a 'secret' message associated with them. You can send the link to your friend, and when your friend clicks the link (or scans the QR code), the app will open and reveal the message. If your friend doesn't have the app they'll be directed to the app store to get the app, and because the link is a Branch deferred deep link, when they open the app, the message will still appear.
 
 The example code shows:
 
