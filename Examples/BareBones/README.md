@@ -1,4 +1,4 @@
-#  Bare Bones Example
+# Bare Bones Example
 
 This is a bare bones example of using Branch in a simple Swift project.
 
@@ -13,6 +13,7 @@ The example code shows:
 • How to create a QR code from a Branch link.
 
 • How to respond to Branch NSNotification events.
+
 
 ### Branch NSNotifications
 
