@@ -136,7 +136,7 @@
     NSMutableDictionary *truth = [self mutableDictionaryFromBundleJSONWithKey:@"BNCDeviceDictionaryV2"];
     truth[@"app_version"] = nil;
     truth[@"os_version"] = [UIDevice currentDevice].systemVersion;
-    truth[@"sdk"] = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
+    truth[@"sdk_version"] = BNC_SDK_VERSION;
     truth[@"developer_identity"] = preferences.userIdentity;
     truth[@"device_fingerprint_id"] = preferences.deviceFingerprintID;
     truth[@"idfa"] = [BNCSystemObserver getAdId];

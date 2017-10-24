@@ -425,7 +425,6 @@ exit:
     addString(country,              country);
     addString(language,             language);
     addString(brandName,            brand);
-    addString(branchSDKVersion,     sdk);
     addString(applicationVersion,   app_version);
     addString(modelName,            model);
     addDouble(screenScale,          screen_dpi);
@@ -447,6 +446,9 @@ exit:
 
     s = preferences.deviceFingerprintID;
     if (s.length) dictionary[@"device_fingerprint_id"] = s;
+
+    dictionary[@"sdk"] = @"ios";
+    dictionary[@"sdk_version"] = BNC_SDK_VERSION;
 
     return dictionary;
 }
