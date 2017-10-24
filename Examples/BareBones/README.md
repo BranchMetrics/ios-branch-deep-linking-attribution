@@ -1,15 +1,18 @@
 #  Bare Bones Example
 
-This is a bare bones example of using Branch in a simple Swift project. 
+This is a bare bones example of using Branch in a simple Swift project.
 
-With this app you can create Branch deep links that have a 'secret' message associated with them. You can send the link to your friend, and when your friend clicks the link, the app will open and reveal the message. The app also shows basic app usage stats.
+With this app you can create Branch deep links that have a 'secret' message associated with them. You can send the link to your friend, and when your friend clicks the link (or scans the QR code), the app will open and reveal the message. If your friend doesn't have the app they'll be directed to the app store to get the app, and because of Branch deferred deep linking, when they open the app, the message will still appear.
 
 The example code shows:
 
-* How to use the Branch SDK in a simple Swift 4 application.
-* How to create and share Branch links in your app.
-* How to create a QR code from a Branch link.
-* How to respond to Branch NSNotification events.
+• How to use the Branch SDK in a simple Swift 4 application.
+
+• How to create and share Branch links in your app.
+
+• How to create a QR code from a Branch link.
+
+• How to respond to Branch NSNotification events.
 
 ### Branch NSNotifications
 

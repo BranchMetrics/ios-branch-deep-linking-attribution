@@ -9,10 +9,13 @@
 import UIKit
 import Branch
 
-class FortuneViewController: UIViewController {
+class FortuneViewController: UIViewController, UITextViewDelegate {
+
+    // MARK: - Fields
+
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var linkLabel: UILabel!
+    @IBOutlet weak var linkTextView: UITextView!
 
     var message: String?
 
@@ -24,6 +27,8 @@ class FortuneViewController: UIViewController {
         didSet { updateUI() }
     }
 
+    // MARK: - View Controller Life Cycle
+
     static func instantiate() -> FortuneViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "FortuneViewController")
@@ -34,7 +39,8 @@ class FortuneViewController: UIViewController {
         super.viewDidLoad()
         self.imageView.layer.borderColor = UIColor.darkGray.cgColor
         self.imageView.layer.borderWidth = 0.5
-        self.imageView.layer.cornerRadius = 3.0
+        self.imageView.layer.cornerRadius = 2.0
+        self.linkTextView.textContainer.maximumNumberOfLines = 1
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -43,9 +49,17 @@ class FortuneViewController: UIViewController {
         createLink()
     }
 
+    func textViewDidChangeSelection(_ textView: UITextView) {
+        if self.linkTextView.text.count > 0 {
+            self.linkTextView.selectedRange = NSMakeRange(0, self.linkTextView.text.count)
+        }
+    }
+
+    // MARK: - UI Updates
+
     func updateUI() {
         guard let messageLabel = self.messageLabel else { return }
-        linkLabel.text = branchURL?.absoluteString ?? ""
+        linkTextView.text = branchURL?.absoluteString ?? ""
         imageView.image = branchImage
         message = message ?? ""
         if let message = message {

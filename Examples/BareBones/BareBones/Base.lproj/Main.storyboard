@@ -121,14 +121,14 @@ Example</string>
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BHO-mH-BmI">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BHO-mH-BmI">
                                 <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1" verticalCompressionResistancePriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="6NW-Gv-Tqv">
-                                        <rect key="frame" x="0.0" y="0.0" width="321" height="460"/>
+                                    <view contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="1000" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6NW-Gv-Tqv" userLabel="Content View">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kA1-nM-ZdG">
-                                                <rect key="frame" x="125" y="67.5" width="71" height="65"/>
+                                                <rect key="frame" x="124.5" y="67.5" width="71" height="65"/>
                                                 <string key="text">Bare
 Bones
 Example</string>
@@ -137,10 +137,10 @@ Example</string>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="1000" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LAQ-En-JeN">
-                                                <rect key="frame" x="20" y="157.5" width="281" height="274.5"/>
-                                                <string key="text">This is a bare bones example of using Branch in a simple Swift project. 
+                                                <rect key="frame" x="20" y="157.5" width="280" height="501.5"/>
+                                                <mutableString key="text">This is a bare bones example of using Branch in a simple Swift project.
 
-With this app you can create Branch deep links that have a 'secret' message associated with them. You can send the link to your friend, and when your friend clicks the link, the app will open and reveal the message. The app also shows basic app usage stats.
+With this app you can create Branch deep links that have a 'secret' message associated with them. You can send the link to your friend, and when your friend clicks the link (or scans the QR code), the app will open and reveal the message. If your friend doesn't have the app they'll be directed to the app store to get the app, and because of Branch deferred deep linking, when they open the app, the message will still appear.
 
 The example code shows:
 
@@ -150,7 +150,7 @@ The example code shows:
 
 • How to create and share Branch links in your app.
 
-• How to create a QR code from a Branch link.</string>
+• How to create a QR code from a Branch link.</mutableString>
                                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -164,24 +164,21 @@ The example code shows:
                                             <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="LAQ-En-JeN" secondAttribute="bottom" constant="20" id="FYx-UG-bDF"/>
                                             <constraint firstItem="LAQ-En-JeN" firstAttribute="top" secondItem="kA1-nM-ZdG" secondAttribute="bottom" constant="25" id="Q1Z-ye-IZH"/>
                                             <constraint firstItem="kA1-nM-ZdG" firstAttribute="centerX" secondItem="6NW-Gv-Tqv" secondAttribute="centerX" id="gZ9-8I-P3e"/>
+                                            <constraint firstItem="kA1-nM-ZdG" firstAttribute="top" secondItem="6NW-Gv-Tqv" secondAttribute="top" constant="67.5" id="sPw-GZ-gEj"/>
                                         </constraints>
                                     </view>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="6NW-Gv-Tqv" firstAttribute="top" secondItem="BHO-mH-BmI" secondAttribute="top" id="4Wb-lI-Qj3"/>
-                                    <constraint firstAttribute="trailing" secondItem="6NW-Gv-Tqv" secondAttribute="trailing" id="6hc-G4-DLU"/>
-                                    <constraint firstAttribute="bottom" secondItem="6NW-Gv-Tqv" secondAttribute="bottom" id="DSa-UG-amT"/>
+                                    <constraint firstItem="6NW-Gv-Tqv" firstAttribute="width" secondItem="BHO-mH-BmI" secondAttribute="width" id="7VI-hL-fKL"/>
                                     <constraint firstAttribute="trailing" secondItem="6NW-Gv-Tqv" secondAttribute="trailing" id="REg-oS-qhp"/>
                                     <constraint firstItem="6NW-Gv-Tqv" firstAttribute="leading" secondItem="BHO-mH-BmI" secondAttribute="leading" id="WZm-9L-s9j"/>
-                                    <constraint firstAttribute="bottom" secondItem="6NW-Gv-Tqv" secondAttribute="bottom" id="dKU-Gr-9Wu"/>
-                                    <constraint firstItem="6NW-Gv-Tqv" firstAttribute="centerY" secondItem="BHO-mH-BmI" secondAttribute="centerY" id="qbB-4L-kmi"/>
-                                    <constraint firstItem="6NW-Gv-Tqv" firstAttribute="centerX" secondItem="BHO-mH-BmI" secondAttribute="centerX" id="yky-Mq-tIo"/>
+                                    <constraint firstAttribute="bottom" secondItem="6NW-Gv-Tqv" secondAttribute="bottom" id="mE6-zs-2sU"/>
                                 </constraints>
                             </scrollView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="kA1-nM-ZdG" firstAttribute="centerY" secondItem="bF8-Yl-Ysq" secondAttribute="centerY" multiplier="0.5" id="0cc-FS-acb"/>
                             <constraint firstItem="BHO-mH-BmI" firstAttribute="leading" secondItem="5lS-KE-TTd" secondAttribute="leading" id="4hn-47-RE3"/>
                             <constraint firstItem="5lS-KE-TTd" firstAttribute="bottom" secondItem="BHO-mH-BmI" secondAttribute="bottom" id="IJB-ta-zCj"/>
                             <constraint firstItem="BHO-mH-BmI" firstAttribute="top" secondItem="5lS-KE-TTd" secondAttribute="top" id="Zx2-ff-Ehm"/>
@@ -204,7 +201,7 @@ The example code shows:
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Til-rx-B4d">
-                                <rect key="frame" x="54.5" y="188.5" width="211.5" height="104"/>
+                                <rect key="frame" x="54.5" y="188" width="211" height="104"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="“" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EHT-aD-P4K">
                                         <rect key="frame" x="5" y="25.5" width="17" height="43"/>
@@ -213,7 +210,7 @@ The example code shows:
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rPN-hp-jah">
-                                        <rect key="frame" x="22" y="35.5" width="184.5" height="68.5"/>
+                                        <rect key="frame" x="22" y="35.5" width="184" height="68.5"/>
                                         <string key="text">Here's your message!
 Line2
 Line3”</string>
@@ -222,7 +219,7 @@ Line3”</string>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" text="Buddy's fortune:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bjv-UD-g5A">
-                                        <rect key="frame" x="0.0" y="0.0" width="211.5" height="20.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="211" height="20.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -271,36 +268,15 @@ Line3”</string>
                         <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="vWr-Lg-hN2">
-                                <rect key="frame" x="55" y="183" width="210" height="210"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="vWr-Lg-hN2" secondAttribute="height" multiplier="1:1" id="VLe-gb-4hc"/>
-                                    <constraint firstAttribute="height" constant="210" id="gU3-At-ChV"/>
-                                </constraints>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tuz-gs-xBa">
-                                <rect key="frame" x="108" y="154.5" width="157" height="33"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <state key="normal" title="Share your fortune..."/>
-                                <connections>
-                                    <action selector="shareLinkAction:" destination="Qez-dc-uhf" eventType="touchUpInside" id="A8R-zV-MUj"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="https://branchqr.app.link/123456" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="9Wl-FK-1MP">
-                                <rect key="frame" x="47" y="398" width="226" height="18"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="N33-Tc-zli">
-                                <rect key="frame" x="10" y="0.0" width="300" height="154.5"/>
+                                <rect key="frame" x="10" y="0.0" width="300" height="153.5"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fxD-dC-4Gu">
-                                        <rect key="frame" x="0.0" y="0.0" width="300" height="38"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="300" height="37.5"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IUl-AH-euw">
-                                        <rect key="frame" x="0.0" y="38" width="300" height="78.5"/>
+                                        <rect key="frame" x="0.0" y="37.5" width="300" height="78.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="“" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5TM-zc-lm9">
                                                 <rect key="frame" x="5" y="0.0" width="17" height="43"/>
@@ -329,7 +305,7 @@ Line3”</string>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1aT-kA-GoJ">
-                                        <rect key="frame" x="0.0" y="116.5" width="300" height="38"/>
+                                        <rect key="frame" x="0.0" y="116" width="300" height="37.5"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
                                 </subviews>
@@ -346,20 +322,50 @@ Line3”</string>
                                     <constraint firstItem="1aT-kA-GoJ" firstAttribute="height" secondItem="fxD-dC-4Gu" secondAttribute="height" id="qcR-Uj-Fn7"/>
                                 </constraints>
                             </stackView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="vWr-Lg-hN2">
+                                <rect key="frame" x="55" y="182" width="210" height="210"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="vWr-Lg-hN2" secondAttribute="height" multiplier="1:1" id="VLe-gb-4hc"/>
+                                    <constraint firstAttribute="height" constant="210" id="gU3-At-ChV"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tuz-gs-xBa">
+                                <rect key="frame" x="55" y="153.5" width="210" height="33"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <state key="normal" title="Share your fortune..."/>
+                                <connections>
+                                    <action selector="shareLinkAction:" destination="Qez-dc-uhf" eventType="touchUpInside" id="A8R-zV-MUj"/>
+                                </connections>
+                            </button>
+                            <textView multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" canCancelContentTouches="NO" bouncesZoom="NO" editable="NO" text="https://branchbarebones.app.link/12345678" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="qIn-ak-A6K">
+                                <rect key="frame" x="10" y="392" width="300" height="24"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="24" id="77J-EC-QH4"/>
+                                    <constraint firstAttribute="width" constant="300" id="aq8-Jr-8JF"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <textInputTraits key="textInputTraits" textContentType="url"/>
+                                <connections>
+                                    <outlet property="delegate" destination="Qez-dc-uhf" id="b3l-gN-EKJ"/>
+                                </connections>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="qIn-ak-A6K" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="be7-Ns-52E" secondAttribute="leading" id="10F-uo-iBU"/>
+                            <constraint firstItem="be7-Ns-52E" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="qIn-ak-A6K" secondAttribute="bottom" priority="751" id="2DK-oU-C5N"/>
                             <constraint firstItem="N33-Tc-zli" firstAttribute="top" secondItem="be7-Ns-52E" secondAttribute="top" id="AiZ-bh-tXF"/>
-                            <constraint firstItem="9Wl-FK-1MP" firstAttribute="top" secondItem="vWr-Lg-hN2" secondAttribute="bottom" constant="5" id="Blm-Q3-p9I"/>
-                            <constraint firstItem="9Wl-FK-1MP" firstAttribute="centerX" secondItem="oPp-wP-jMA" secondAttribute="centerX" id="GZL-Xf-ZJy"/>
-                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="9Wl-FK-1MP" secondAttribute="bottom" priority="751" id="KS5-O4-I86"/>
+                            <constraint firstItem="qIn-ak-A6K" firstAttribute="top" secondItem="vWr-Lg-hN2" secondAttribute="bottom" id="KX1-AA-VuY"/>
+                            <constraint firstItem="be7-Ns-52E" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="qIn-ak-A6K" secondAttribute="trailing" id="Kcu-OU-j8i"/>
                             <constraint firstItem="vWr-Lg-hN2" firstAttribute="top" secondItem="tuz-gs-xBa" secondAttribute="centerY" constant="12" id="WCO-4O-M2x"/>
-                            <constraint firstItem="tuz-gs-xBa" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="oPp-wP-jMA" secondAttribute="leading" constant="20" symbolic="YES" id="cW1-vr-rPy"/>
+                            <constraint firstItem="tuz-gs-xBa" firstAttribute="leading" secondItem="vWr-Lg-hN2" secondAttribute="leading" id="cW1-vr-rPy"/>
                             <constraint firstItem="vWr-Lg-hN2" firstAttribute="centerY" secondItem="oPp-wP-jMA" secondAttribute="centerY" priority="750" id="cf7-If-qvZ"/>
                             <constraint firstItem="vWr-Lg-hN2" firstAttribute="centerX" secondItem="oPp-wP-jMA" secondAttribute="centerX" id="d7y-zI-9xk"/>
                             <constraint firstItem="be7-Ns-52E" firstAttribute="trailing" secondItem="N33-Tc-zli" secondAttribute="trailing" constant="10" id="dAp-bl-gpg"/>
                             <constraint firstItem="tuz-gs-xBa" firstAttribute="top" secondItem="N33-Tc-zli" secondAttribute="bottom" id="e4n-UV-zEl"/>
                             <constraint firstItem="N33-Tc-zli" firstAttribute="leading" secondItem="be7-Ns-52E" secondAttribute="leading" constant="10" id="eMV-fX-M94"/>
+                            <constraint firstItem="qIn-ak-A6K" firstAttribute="centerX" secondItem="oPp-wP-jMA" secondAttribute="centerX" id="hGL-Ox-sXj"/>
                             <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="vWr-Lg-hN2" secondAttribute="bottom" id="qal-hV-J1Q"/>
                             <constraint firstItem="tuz-gs-xBa" firstAttribute="trailing" secondItem="vWr-Lg-hN2" secondAttribute="trailing" id="wGQ-uV-Dsu"/>
                         </constraints>
@@ -369,13 +375,13 @@ Line3”</string>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <connections>
                         <outlet property="imageView" destination="vWr-Lg-hN2" id="EMV-ha-BnL"/>
-                        <outlet property="linkLabel" destination="9Wl-FK-1MP" id="QjG-e2-sfa"/>
+                        <outlet property="linkTextView" destination="qIn-ak-A6K" id="wX8-FR-es6"/>
                         <outlet property="messageLabel" destination="Fdy-xG-lkO" id="KVi-3y-x7A"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="olo-tX-RdD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="744" y="196"/>
+            <point key="canvasLocation" x="742.5" y="195"/>
         </scene>
     </scenes>
 </document>

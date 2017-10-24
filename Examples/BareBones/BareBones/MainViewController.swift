@@ -44,6 +44,8 @@ class MainViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        //messageLabel.layer.opacity = 1.0
+        messageLabel.layer.removeAllAnimations()
         messageLabel.text =
             "Shake the phone to reveal your mystic Branch fortune..."
         updateStatsLabel()
@@ -136,13 +138,15 @@ class MainViewController: UIViewController {
         // Start the animation:
         CATransaction.begin()
         CATransaction.setCompletionBlock { self.revealMysticConjuring() }
+        CATransaction.setAnimationDuration(0.90)
 
         var animation = CABasicAnimation(keyPath: "opacity")
         animation.fromValue = 1.0
         animation.toValue = 0.25
         animation.repeatCount = 2.5
-        animation.duration = 1.20
-        animation.isRemovedOnCompletion = true
+        animation.duration = 1.00
+        animation.isRemovedOnCompletion = false
+        animation.fillMode = kCAFillModeForwards;
         animation.autoreverses = true
         self.messageLabel.layer.add(animation, forKey: "opacity")
 
@@ -150,8 +154,9 @@ class MainViewController: UIViewController {
         animation.fromValue = 1.0
         animation.toValue = 1.35
         animation.repeatCount = 2.5
-        animation.duration = 1.20
-        animation.isRemovedOnCompletion = true
+        animation.duration = 1.00
+        animation.isRemovedOnCompletion = false
+        animation.fillMode = kCAFillModeForwards;
         animation.autoreverses = true
         self.messageLabel.layer.add(animation, forKey: "transform.scale.x")
 
@@ -159,6 +164,30 @@ class MainViewController: UIViewController {
     }
 
     func revealMysticConjuring() {
+        CATransaction.begin()
+        CATransaction.setCompletionBlock { self.showFortune() }
+        CATransaction.setAnimationDuration(0.40)
+
+        var animation = CABasicAnimation(keyPath: "opacity")
+        animation.fromValue = 1.0
+        animation.toValue = 0.00
+        animation.duration = 1.00
+        animation.isRemovedOnCompletion = false
+        animation.fillMode = kCAFillModeForwards;
+        self.messageLabel.layer.add(animation, forKey: "opacity")
+
+        animation = CABasicAnimation(keyPath: "transform.scale.x")
+        animation.fromValue = 1.0
+        animation.toValue = 0.0
+        animation.duration = 1.00
+        animation.isRemovedOnCompletion = false
+        animation.fillMode = kCAFillModeForwards;
+        self.messageLabel.layer.add(animation, forKey: "transform.scale.x")
+
+        CATransaction.commit()
+    }
+
+    func showFortune() {
         let fortuneViewController = FortuneViewController.instantiate()
         fortuneViewController.message = AppData.shared.randomFortune()
         navigationController?.pushViewController(fortuneViewController, animated: true)
