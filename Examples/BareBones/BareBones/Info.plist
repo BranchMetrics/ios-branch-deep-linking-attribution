@@ -55,6 +55,8 @@
 	</array>
 	<key>branch_key</key>
 	<string>key_live_eaxQeLMRmYHcekjK0km1VcfnuDnH6RCL</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2017 Branch, Inc. All rights reserved.</string>
 	<key>branch_universal_link_domains</key>
 	<string>branchbarebones.app.link</string>
 </dict>

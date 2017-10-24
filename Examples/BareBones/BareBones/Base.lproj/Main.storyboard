@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="KLl-cQ-dOF">
-    <device id="retina3_5" orientation="portrait">
+    <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -19,7 +19,7 @@
             <objects>
                 <navigationController id="KLl-cQ-dOF" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="FdV-eE-THM">
-                        <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -35,11 +35,11 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="BareBones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="k1x-WS-ARN">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Shake the phone to reveal your mystic Branch fortune..." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Use-GX-99x">
-                                <rect key="frame" x="8" y="210.5" width="304" height="100"/>
+                                <rect key="frame" x="8" y="274.66666666666669" width="398" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="eox-fU-4D3"/>
                                 </constraints>
@@ -48,7 +48,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mop-W1-sFL">
-                                <rect key="frame" x="87" y="400.5" width="93" height="50"/>
+                                <rect key="frame" x="134" y="464.66666666666669" width="93" height="50.000000000000057"/>
                                 <string key="text">App Opens:
 Links Opened:
 Links Created:</string>
@@ -57,7 +57,7 @@ Links Created:</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XMb-1N-4yO">
-                                <rect key="frame" x="188" y="400.5" width="9" height="51"/>
+                                <rect key="frame" x="235" y="464.66666666666669" width="9" height="51.000000000000057"/>
                                 <string key="text">0
 0
 0</string>
@@ -66,7 +66,7 @@ Links Created:</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vbf-4P-wni">
-                                <rect key="frame" x="124.5" y="87.5" width="71" height="65"/>
+                                <rect key="frame" x="171.66666666666666" y="151.66666666666666" width="71" height="65"/>
                                 <string key="text">Bare
 Bones
 Example</string>
@@ -75,7 +75,7 @@ Example</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vEV-jN-8JD">
-                                <rect key="frame" x="131.5" y="170.5" width="57" height="32"/>
+                                <rect key="frame" x="178.66666666666666" y="234.66666666666666" width="57" height="31.999999999999972"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <state key="normal" title="About..."/>
                                 <connections>
@@ -118,17 +118,17 @@ Example</string>
             <objects>
                 <viewController id="2T5-xY-MDo" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bF8-Yl-Ysq">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BHO-mH-BmI">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="6NW-Gv-Tqv" userLabel="ContentView">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="717"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="673.66666666666663"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kA1-nM-ZdG">
-                                                <rect key="frame" x="124.5" y="87.5" width="71" height="65"/>
+                                                <rect key="frame" x="171.66666666666666" y="151.66666666666666" width="71" height="65"/>
                                                 <string key="text">Bare
 Bones
 Example</string>
@@ -137,8 +137,8 @@ Example</string>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="750" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="1000" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LAQ-En-JeN">
-                                                <rect key="frame" x="20" y="177.5" width="280" height="519.5"/>
-                                                <mutableString key="text">This is a bare bones example of using Branch in a simple Swift project.
+                                                <rect key="frame" x="20" y="241.66666666666663" width="374" height="412"/>
+                                                <string key="text">This is a bare bones example of using Branch in a simple Swift project.
 
 With this app you can create Branch deep links that have a 'secret' message associated with them. You can send the link to your friend, and when your friend clicks the link (or scans the QR code), the app will open and reveal the message. If your friend doesn't have the app they'll be directed to the app store to get the app, and because the link is a Branch deferred deep link, when they open the app, the message will still appear.
 
@@ -150,7 +150,7 @@ The example code shows:
 
 • How to create and share Branch links in your app.
 
-• How to create a QR code from a Branch link.</mutableString>
+• How to create a QR code from a Branch link.</string>
                                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -197,20 +197,20 @@ The example code shows:
             <objects>
                 <viewController storyboardIdentifier="MessageViewController" id="kLS-00-dDG" customClass="MessageViewController" customModule="BareBones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="3gx-II-ui4">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Til-rx-B4d">
-                                <rect key="frame" x="54.5" y="188" width="211" height="104"/>
+                                <rect key="frame" x="101.66666666666669" y="316" width="211" height="104"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="“" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EHT-aD-P4K">
-                                        <rect key="frame" x="5" y="25.5" width="17" height="43"/>
+                                        <rect key="frame" x="5" y="25.666666666666686" width="17" height="43"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="36"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rPN-hp-jah">
-                                        <rect key="frame" x="22" y="35.5" width="184" height="68.5"/>
+                                        <rect key="frame" x="22" y="35.666666666666679" width="184" height="68.333333333333314"/>
                                         <string key="text">Here's your message!
 Line2
 Line3”</string>
@@ -219,7 +219,7 @@ Line3”</string>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" text="Buddy's fortune:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bjv-UD-g5A">
-                                        <rect key="frame" x="0.0" y="0.0" width="211" height="20.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="211" height="20.666666666666668"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -265,27 +265,27 @@ Line3”</string>
             <objects>
                 <viewController storyboardIdentifier="FortuneViewController" id="Qez-dc-uhf" customClass="FortuneViewController" customModule="BareBones" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="oPp-wP-jMA">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="672"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="N33-Tc-zli">
-                                <rect key="frame" x="10" y="0.0" width="300" height="154"/>
+                                <rect key="frame" x="10" y="0.0" width="394" height="203"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fxD-dC-4Gu">
-                                        <rect key="frame" x="0.0" y="0.0" width="300" height="37.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="394" height="62"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IUl-AH-euw">
-                                        <rect key="frame" x="0.0" y="37.5" width="300" height="78.5"/>
+                                        <rect key="frame" x="0.0" y="61.999999999999993" width="394" height="78.333333333333314"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="“" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5TM-zc-lm9">
-                                                <rect key="frame" x="5" y="0.0" width="17" height="43"/>
+                                                <rect key="frame" x="5" y="0.0" width="16.666666666666668" height="43"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="36"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fdy-xG-lkO">
-                                                <rect key="frame" x="22" y="10" width="273" height="68.5"/>
+                                                <rect key="frame" x="21.666666666666657" y="10" width="367.33333333333337" height="68.333333333333329"/>
                                                 <string key="text">Here's your message!
 Line2
 Line3”</string>
@@ -305,7 +305,7 @@ Line3”</string>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1aT-kA-GoJ">
-                                        <rect key="frame" x="0.0" y="116" width="300" height="38"/>
+                                        <rect key="frame" x="0.0" y="140.33333333333334" width="394" height="62.666666666666657"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
                                 </subviews>
@@ -323,14 +323,14 @@ Line3”</string>
                                 </constraints>
                             </stackView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="vWr-Lg-hN2">
-                                <rect key="frame" x="55" y="182" width="210" height="210"/>
+                                <rect key="frame" x="102" y="231" width="210" height="210"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="vWr-Lg-hN2" secondAttribute="height" multiplier="1:1" id="VLe-gb-4hc"/>
                                     <constraint firstAttribute="height" constant="210" id="gU3-At-ChV"/>
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tuz-gs-xBa">
-                                <rect key="frame" x="55" y="154" width="210" height="33"/>
+                                <rect key="frame" x="102" y="203" width="210" height="33"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="Share your fortune..."/>
                                 <connections>
@@ -338,7 +338,7 @@ Line3”</string>
                                 </connections>
                             </button>
                             <textView multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" canCancelContentTouches="NO" bouncesZoom="NO" editable="NO" text="https://branchbarebones.app.link/12345678" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="qIn-ak-A6K">
-                                <rect key="frame" x="10" y="392" width="300" height="24"/>
+                                <rect key="frame" x="57" y="441" width="300" height="24"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="24" id="77J-EC-QH4"/>
