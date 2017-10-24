@@ -8,6 +8,7 @@
 
 @import Foundation;
 #import "BNCServerRequest.h"
+#import "BNCXcode7Support.h"
 
 #pragma mark BNCProductCategory
 
