@@ -735,8 +735,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     NSString *spotlightIdentifier =
     [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     
-    if ([self isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
-        return [self handleDeepLinkWithNewSession:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]]];
+    if ([self isBranchLink:userActivity.userInfo[@"kCSSearchableItemActivityIdentifier"]]) {
+        self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
+        return [self handleDeepLinkWithNewSession:[NSURL URLWithString:userActivity.userInfo[@"kCSSearchableItemActivityIdentifier"]]];
     }
     else if (spotlightIdentifier) {
         self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
@@ -748,7 +749,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
         }
     }
-
     self.preferenceHelper.shouldWaitForInit = NO;
     [self initUserSessionAndCallCallback:YES];
 
