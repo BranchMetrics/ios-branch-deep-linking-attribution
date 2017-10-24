@@ -1,5 +1,5 @@
 //
-//  AppStatsViewController.swift
+//  MainViewController.swift
 //  BareBones
 //
 //  Created by Edward Smith on 10/3/17.
@@ -11,6 +11,8 @@ import Branch
 
 class MainViewController: UIViewController {
 
+    // MARK: - Member Variables
+    
     @IBOutlet weak var statsLabel: UILabel!
     @IBOutlet weak var messageLabel: UILabel!
 
@@ -44,12 +46,11 @@ class MainViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        //messageLabel.layer.opacity = 1.0
+        self.navigationController?.isNavigationBarHidden = true
         messageLabel.layer.removeAllAnimations()
         messageLabel.text =
             "Shake the phone to reveal your mystic Branch fortune..."
         updateStatsLabel()
-        self.navigationController?.isNavigationBarHidden = true
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -68,7 +69,7 @@ class MainViewController: UIViewController {
     }
 
     override func becomeFirstResponder() -> Bool {
-        // Over-ride so this view controller can get shake events:
+        // Over-ride so the view controller can get shake events:
         return enableShakes ? true : false
     }
 

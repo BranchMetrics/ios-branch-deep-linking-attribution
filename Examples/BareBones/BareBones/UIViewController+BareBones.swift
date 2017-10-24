@@ -2,7 +2,7 @@
 //  UIViewController+BareBones.swift
 //  BareBones
 //
-//  Created by edward on 10/4/17.
+//  Created by Edward Smith on 10/4/17.
 //  Copyright © 2017 Branch. All rights reserved.
 //
 

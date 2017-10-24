@@ -13,6 +13,7 @@ extension NSNotification.Name {
 }
 
 class AppData {
+
     var appOpens: Int {
         didSet { saveAndNotify() }
     }
@@ -56,7 +57,6 @@ class AppData {
 
     func initialize() {
         // Make sure we're lazy loaded and initialized. Not much to do.
-        // Nothing to do.
     }
 
     @objc func updateAppOpen(notification: Notification) {

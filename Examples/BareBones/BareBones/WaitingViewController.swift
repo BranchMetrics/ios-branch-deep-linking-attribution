@@ -19,7 +19,9 @@ class WaitingViewController: UIViewController {
     var backgroundView: UIView? = nil
     var parentView: UIView? = nil
     var parentTransform: CGAffineTransform = CGAffineTransform.identity
-    
+
+    // MARK: - View Controller Lifecycle
+
     class func instanceFromNib() -> WaitingViewController {
         let controller = UINib(nibName: "WaitingViewController", bundle: nil).instantiate(
             withOwner: nil,
@@ -31,9 +33,7 @@ class WaitingViewController: UIViewController {
         super.viewDidLoad()
         self.maxLabelRect = self.label.bounds
     }
-    
-    // MARK - View Lifecycle
-    
+
     override func didReceiveMemoryWarning() {
         self.backgroundView?.removeFromSuperview()
         self.backgroundView = nil
@@ -117,11 +117,21 @@ class WaitingViewController: UIViewController {
         self.parentTransform = (self.parentView?.transform)!
         self.view.transform = CGAffineTransform(scaleX: 0.90, y: 0.90)
         
-        UIView.animate(withDuration: 0.4, delay: 0.01, options: UIViewAnimationOptions.curveEaseInOut, animations: {
-            self.parentView?.transform = (self.parentView?.transform.scaledBy(x: WaitingViewController.kScale, y: WaitingViewController.kScale))!
-            self.view.transform = CGAffineTransform(scaleX: 1.0 / WaitingViewController.kScale, y: 1.0 / WaitingViewController.kScale)
-            self.backgroundView?.alpha = 1.0
-        }, completion: nil)
+        UIView.animate(
+            withDuration: 0.4,
+            delay: 0.01,
+            options: UIViewAnimationOptions.curveEaseInOut,
+            animations: {
+                self.parentView?.transform =
+                    (self.parentView?.transform.scaledBy(
+                        x: WaitingViewController.kScale, y: WaitingViewController.kScale
+                    ))!
+                self.view.transform = CGAffineTransform(
+                    scaleX: 1.0 / WaitingViewController.kScale, y: 1.0 / WaitingViewController.kScale
+                )
+                self.backgroundView?.alpha = 1.0
+            },
+            completion: nil)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -155,11 +165,17 @@ class WaitingViewController: UIViewController {
         if (self.isViewLoaded) {
             self.view.removeFromSuperview()
             self.backgroundView?.removeFromSuperview()
-            UIView.animate(withDuration: 0.6, delay: 0.010, options: UIViewAnimationOptions.curveEaseInOut, animations: {
-                self.parentView?.transform = self.parentTransform
-            }, completion: { (done) in
-                self.parentView = nil
-            })
+            UIView.animate(
+                withDuration: 0.6,
+                delay: 0.010,
+                options: UIViewAnimationOptions.curveEaseInOut,
+                animations: {
+                    self.parentView?.transform = self.parentTransform
+                },
+                completion: { (done) in
+                    self.parentView = nil
+                }
+            )
         }
     }
     
@@ -183,7 +199,7 @@ class WaitingViewController: UIViewController {
     }
     
     static func showWithMessage(message: String,
-                         forSeconds time: TimeInterval) {
+                        forSeconds time: TimeInterval) {
         
         showWithMessage(message: message, activityIndicator:false, disableTouches:false)
         if (time <= 0.0) {
@@ -201,9 +217,7 @@ class WaitingViewController: UIViewController {
                           height: rectToCenter.size.height)
     }
     
-    typealias CompletionBlock = () -> Void
-    
-    static func afterSecondsPerformBlock(seconds: TimeInterval, completion: @escaping CompletionBlock) {
+    static func afterSecondsPerformBlock(seconds: TimeInterval, completion: @escaping () -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
             completion()
         }

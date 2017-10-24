@@ -9,7 +9,7 @@
     {
       "size" : "20x20",
       "idiom" : "iphone",
-      "filename" : "AppIcon-60.png",
+      "filename" : "AppIcon-20@3x.png",
       "scale" : "3x"
     },
     {
@@ -69,7 +69,7 @@
     {
       "size" : "29x29",
       "idiom" : "ipad",
-      "filename" : "AppIcon-29@2x-1.png",
+      "filename" : "AppIcon-29@2x-2.png",
       "scale" : "2x"
     },
     {

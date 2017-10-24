@@ -121,14 +121,14 @@ Example</string>
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BHO-mH-BmI">
-                                <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BHO-mH-BmI">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="1000" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6NW-Gv-Tqv" userLabel="Content View">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
+                                    <view contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="6NW-Gv-Tqv" userLabel="ContentView">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="699"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kA1-nM-ZdG">
-                                                <rect key="frame" x="124.5" y="67.5" width="71" height="65"/>
+                                                <rect key="frame" x="124.5" y="87.5" width="71" height="65"/>
                                                 <string key="text">Bare
 Bones
 Example</string>
@@ -136,8 +136,8 @@ Example</string>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="1000" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LAQ-En-JeN">
-                                                <rect key="frame" x="20" y="157.5" width="280" height="501.5"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="750" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="1000" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LAQ-En-JeN">
+                                                <rect key="frame" x="20" y="177.5" width="280" height="501.5"/>
                                                 <mutableString key="text">This is a bare bones example of using Branch in a simple Swift project.
 
 With this app you can create Branch deep links that have a 'secret' message associated with them. You can send the link to your friend, and when your friend clicks the link (or scans the QR code), the app will open and reveal the message. If your friend doesn't have the app they'll be directed to the app store to get the app, and because of Branch deferred deep linking, when they open the app, the message will still appear.
@@ -161,10 +161,9 @@ The example code shows:
                                         <constraints>
                                             <constraint firstAttribute="trailingMargin" secondItem="LAQ-En-JeN" secondAttribute="trailing" constant="12" id="1sl-ey-oEN"/>
                                             <constraint firstItem="LAQ-En-JeN" firstAttribute="leading" secondItem="6NW-Gv-Tqv" secondAttribute="leadingMargin" constant="12" id="5uK-ba-VJm"/>
-                                            <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="LAQ-En-JeN" secondAttribute="bottom" constant="20" id="FYx-UG-bDF"/>
+                                            <constraint firstAttribute="bottom" secondItem="LAQ-En-JeN" secondAttribute="bottom" constant="20" id="Gw2-HX-T3F"/>
                                             <constraint firstItem="LAQ-En-JeN" firstAttribute="top" secondItem="kA1-nM-ZdG" secondAttribute="bottom" constant="25" id="Q1Z-ye-IZH"/>
                                             <constraint firstItem="kA1-nM-ZdG" firstAttribute="centerX" secondItem="6NW-Gv-Tqv" secondAttribute="centerX" id="gZ9-8I-P3e"/>
-                                            <constraint firstItem="kA1-nM-ZdG" firstAttribute="top" secondItem="6NW-Gv-Tqv" secondAttribute="top" constant="67.5" id="sPw-GZ-gEj"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -173,6 +172,7 @@ The example code shows:
                                     <constraint firstItem="6NW-Gv-Tqv" firstAttribute="width" secondItem="BHO-mH-BmI" secondAttribute="width" id="7VI-hL-fKL"/>
                                     <constraint firstAttribute="trailing" secondItem="6NW-Gv-Tqv" secondAttribute="trailing" id="REg-oS-qhp"/>
                                     <constraint firstItem="6NW-Gv-Tqv" firstAttribute="leading" secondItem="BHO-mH-BmI" secondAttribute="leading" id="WZm-9L-s9j"/>
+                                    <constraint firstItem="kA1-nM-ZdG" firstAttribute="centerY" secondItem="BHO-mH-BmI" secondAttribute="centerY" multiplier="0.5" id="ce0-Qv-CLj"/>
                                     <constraint firstAttribute="bottom" secondItem="6NW-Gv-Tqv" secondAttribute="bottom" id="mE6-zs-2sU"/>
                                 </constraints>
                             </scrollView>
@@ -181,7 +181,7 @@ The example code shows:
                         <constraints>
                             <constraint firstItem="BHO-mH-BmI" firstAttribute="leading" secondItem="5lS-KE-TTd" secondAttribute="leading" id="4hn-47-RE3"/>
                             <constraint firstItem="5lS-KE-TTd" firstAttribute="bottom" secondItem="BHO-mH-BmI" secondAttribute="bottom" id="IJB-ta-zCj"/>
-                            <constraint firstItem="BHO-mH-BmI" firstAttribute="top" secondItem="5lS-KE-TTd" secondAttribute="top" id="Zx2-ff-Ehm"/>
+                            <constraint firstItem="BHO-mH-BmI" firstAttribute="top" secondItem="bF8-Yl-Ysq" secondAttribute="top" id="Zx2-ff-Ehm"/>
                             <constraint firstItem="5lS-KE-TTd" firstAttribute="trailing" secondItem="BHO-mH-BmI" secondAttribute="trailing" id="ibG-3S-sc5"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="5lS-KE-TTd"/>
@@ -269,7 +269,7 @@ Line3”</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="N33-Tc-zli">
-                                <rect key="frame" x="10" y="0.0" width="300" height="153.5"/>
+                                <rect key="frame" x="10" y="0.0" width="300" height="154"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fxD-dC-4Gu">
                                         <rect key="frame" x="0.0" y="0.0" width="300" height="37.5"/>
@@ -305,7 +305,7 @@ Line3”</string>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1aT-kA-GoJ">
-                                        <rect key="frame" x="0.0" y="116" width="300" height="37.5"/>
+                                        <rect key="frame" x="0.0" y="116" width="300" height="38"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
                                 </subviews>
@@ -330,7 +330,7 @@ Line3”</string>
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tuz-gs-xBa">
-                                <rect key="frame" x="55" y="153.5" width="210" height="33"/>
+                                <rect key="frame" x="55" y="154" width="210" height="33"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="Share your fortune..."/>
                                 <connections>

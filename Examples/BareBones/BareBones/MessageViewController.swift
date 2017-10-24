@@ -2,18 +2,23 @@
 //  MessageViewController.swift
 //  BareBones
 //
-//  Created by edward on 10/20/17.
+//  Created by Edward Smith on 10/20/17.
 //  Copyright © 2017 Branch. All rights reserved.
 //
 
 import UIKit
 
 class MessageViewController: UIViewController {
+
+    // MARK: - Member Variables
+
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var messageLabel: UILabel!
 
     var name: String?
     var message: String?
+
+    // MARK: - View Controller Lifecycle
 
     static func instantiate() -> MessageViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -25,6 +30,8 @@ class MessageViewController: UIViewController {
         super.viewWillAppear(animated)
         self.updateUI()
     }
+
+    // MARK: - Update the UI
 
     func updateUI() {
         guard let messageLabel = self.messageLabel else { return }

@@ -11,7 +11,7 @@ import Branch
 
 class FortuneViewController: UIViewController, UITextViewDelegate {
 
-    // MARK: - Fields
+    // MARK: - Member Variables
 
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
@@ -27,7 +27,7 @@ class FortuneViewController: UIViewController, UITextViewDelegate {
         didSet { updateUI() }
     }
 
-    // MARK: - View Controller Life Cycle
+    // MARK: - View Controller Lifecycle
 
     static func instantiate() -> FortuneViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
