@@ -15,6 +15,9 @@
 #import "BNCEncodingUtils.h"
 @import SafariServices;
 
+// Ignore Safari availability for iOS 8 and lower in this example.
+#pragma clang diagnostic ignored "-Wpartial-availability"
+
 @interface AppDelegate() <SFSafariViewControllerDelegate>
 @property (nonatomic, strong) SFSafariViewController *onboardingVC;
 @end
@@ -111,7 +114,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         self.onboardingVC = [[SFSafariViewController alloc] initWithURL:urlForOnboarding];
         self.onboardingVC.delegate = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[[[UIApplication sharedApplication].delegate window] rootViewController] presentViewController:self.onboardingVC animated:YES completion:NULL];
+            [[[[UIApplication sharedApplication].delegate window] rootViewController]
+                 presentViewController:self.onboardingVC animated:YES completion:NULL];
         });
     }
 }
@@ -159,7 +163,7 @@ continueUserActivity:(NSUserActivity *)userActivity
 
 // Helper method
 - (void)registerForPushNotifications:(UIApplication *)application {
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
+    if ([[[UIDevice currentDevice] systemVersion] doubleValue] >= 8.0) {
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:
             (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge)
                 categories:nil]];

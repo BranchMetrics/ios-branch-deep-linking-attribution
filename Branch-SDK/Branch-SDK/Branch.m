@@ -56,7 +56,7 @@ NSString * const BRANCH_INIT_KEY_REFERRER = @"+referrer";
 NSString * const BRANCH_INIT_KEY_PHONE_NUMBER = @"+phone_number";
 NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION = @"+is_first_session";
 NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK = @"+clicked_branch_link";
-NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
+static NSString * const BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY = @"branch";
 
 NSString * const BNCCanonicalIdList = @"$canonical_identifier_list";
 NSString * const BNCPurchaseAmount = @"$amount";
@@ -80,19 +80,18 @@ void ForceCategoriesToLoad(void) {
     BNCForceNSMutableDictionaryCategoryToLoad();
 }
 
-
 #pragma mark - Branch
 
-
-@interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit>
-
+@interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit> {
+    NSInteger _networkCount;
+}
 
 @property (strong, nonatomic) BNCServerInterface *serverInterface;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
 @property (copy,   nonatomic) callbackWithParams sessionInitWithParamsCallback;
 @property (copy,   nonatomic) callbackWithBranchUniversalObject sessionInitWithBranchUniversalObjectCallback;
-@property (assign, nonatomic) NSInteger networkCount;
+@property (assign, atomic)    NSInteger networkCount;
 @property (assign, nonatomic) NSInteger asyncRequestCount;
 @property (assign, nonatomic) BOOL isInitialized;
 @property (assign, nonatomic) BOOL shouldCallSessionInitCallback;
@@ -672,11 +671,14 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     NSString *source = nil;
     NSString *annotation = nil;
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wpartial-availability"
     if (UIApplicationOpenURLOptionsSourceApplicationKey &&
         UIApplicationOpenURLOptionsAnnotationKey) {
         source = options[UIApplicationOpenURLOptionsSourceApplicationKey];
         annotation = options[UIApplicationOpenURLOptionsAnnotationKey];
     }
+    #pragma clang diagnostic pop
     return [self application:application openURL:url sourceApplication:source annotation:annotation];
 }
 
@@ -1665,6 +1667,18 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 
 #pragma mark - Queue management
+
+- (NSInteger) networkCount {
+    @synchronized (self) {
+        return _networkCount;
+    }
+}
+
+- (void) setNetworkCount:(NSInteger)networkCount {
+    @synchronized (self) {
+        _networkCount = networkCount;
+    }
+}
 
 - (void)insertRequestAtFront:(BNCServerRequest *)req {
     if (self.networkCount == 0) {

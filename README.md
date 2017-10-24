@@ -102,6 +102,33 @@ You can also install by downloading the raw files below.
 * The testbed project:
 [https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip](https://s3-us-west-1.amazonaws.com/branchhost/Branch-iOS-TestBed.zip)
 
+##### Adding the Raw Files Branch SDK to Your Project
+
+If you want to add the Branch SDK directly without using Cocoapods or Carthage, add Branch as a dynamic framework dependency to your project.
+
+I'll add Branch to the project 'BareBones' as an example:
+
+1. Download or git clone the Branch SDK files to your computer.
+
+2. If you've already added Branch to your project, remove it.
+
+3. In the Xcode project navigator view, select your project, right click, and select 'Add files to "\<your project name\>"...'
+
+    ![Add Files...](docs/images/AddBranchProject-1-AddFiles.png "Add Files...")
+
+4. The 'Add' file chooser will open.  Navigate to your 'ios-branch-deep-linking > carthage-files' directory and select the BranchSDK.xcodeproj project.
+
+    ![Add BranchSDK.xcodeproj](docs/images/AddBranchProject-2-Choose-BranchSDK.png "Add BranchSDK.xcodeproj")
+
+    Xcode will add BranchSDK.xcodeproj to your project.
+
+5. In your project, reveal the 'BranchSDK.xcodeproj > Products' hierarchy. Then drag the Branch.framework product to the 'Embedded Binaries' section of your build product.
+
+    ![Embed Binary](docs/images/AddBranchProject-3-Add-Framework.gif "Embed Binary")
+
+6. Done! You can click on Build Phases of your project to make sure that Branch was added as a Target Dependency and is copied as an Embedded Framework.
+
+    ![Check Build Phase](docs/images/AddBranchProject-4-BuildPhase.png "Check Build Phase")
 
 ### Register Your App
 

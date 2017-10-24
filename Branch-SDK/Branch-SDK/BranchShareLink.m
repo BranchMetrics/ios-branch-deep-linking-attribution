@@ -80,7 +80,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     if ([self.delegate respondsToSelector:@selector(branchShareLink:didComplete:withError:)]) {
         [self.delegate branchShareLink:self didComplete:completed withError:error];
     }
-    [BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self.universalObject];
+    if (completed && !error)
+        [BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self.universalObject];
     NSDictionary *attributes = [self.universalObject getDictionaryWithCompleteLinkProperties:self.linkProperties];
     [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:attributes];
 }

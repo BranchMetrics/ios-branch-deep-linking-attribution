@@ -12,20 +12,21 @@
 #import "BranchUniversalObject.h"
 #import "BranchLinkProperties.h"
 
-NSString *cononicalIdentifier = @"item/12346";
-NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
-NSString *contentTitle = @"Branch 0.19 TestBed Content Title";
-NSString *contentDescription = @"My Content Description";
-NSString *imageUrl = @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png";
-NSString *feature = @"Sharing Feature";
-NSString *channel = @"Distribution Channel";
-NSString *desktop_url = @"http://branch.io";
-NSString *ios_url = @"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/";
-NSString *shareText = @"Super amazing thing I want to share";
-NSString *user_id1 = @"abe@emailaddress.io";
-NSString *user_id2 = @"ben@emailaddress.io";
-NSString *live_key = @"live_key";
-NSString *test_key = @"test_key";
+static NSString *cononicalIdentifier = @"item/12346";
+static NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
+static NSString *contentTitle = @"Branch 0.19 TestBed Content Title";
+static NSString *contentDescription = @"My Content Description";
+static NSString *imageUrl = @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png";
+static NSString *feature = @"Sharing Feature";
+static NSString *channel = @"Distribution Channel";
+static NSString *desktop_url = @"http://branch.io";
+static NSString *ios_url = @"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/";
+static NSString *shareText = @"Super amazing thing I want to share";
+static NSString *user_id1 = @"abe@emailaddress.io";
+static NSString *user_id2 = @"ben@emailaddress.io";
+static NSString *live_key = @"live_key";
+static NSString *test_key = @"test_key";
+static NSString *type = @"some type";
 
 @interface ViewController () <BranchShareLinkDelegate> {
     NSDateFormatter *_dateFormatter;
@@ -95,8 +96,8 @@ NSString *test_key = @"test_key";
 
 
 - (IBAction)redeemFivePointsButtonTouchUpInside:(id)sender {
-    _pointsLabel.hidden = YES;
-    [_activityIndicator startAnimating];
+    self.pointsLabel.hidden = YES;
+    [self.activityIndicator startAnimating];
     
     Branch *branch = [Branch getInstance];
     [branch redeemRewards:5 callback:^(BOOL changed, NSError *error) {
@@ -105,10 +106,10 @@ NSString *test_key = @"test_key";
             [self showAlert:@"Redemption Unsuccessful" withDescription:error.localizedDescription];
         } else {
             NSLog(@"Branch TestBed: Five Points Redeemed!");
-            [_pointsLabel setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
+            [self.pointsLabel setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
         }
-        _pointsLabel.hidden = NO;
-        [_activityIndicator stopAnimating];
+        self.pointsLabel.hidden = NO;
+        [self.activityIndicator stopAnimating];
     }];
 }
 
@@ -321,13 +322,8 @@ NSString *test_key = @"test_key";
 }
 
 - (IBAction) openBranchLinkInApp:(id)sender {
-    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
-    // <= Your Branch link URL goes here:
     NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"];
-    activity.webpageURL = URL;
-    Branch *branch = [Branch getInstance];
-    [branch resetUserSession];
-    [branch continueUserActivity:activity];
+    [[Branch getInstance] handleDeepLinkWithNewSession:URL];
 }
 
 #pragma mark - Commerce Events
@@ -360,13 +356,7 @@ NSString *test_key = @"test_key";
 			NSString *message =
 				[NSString stringWithFormat:@"Commerce completion called.\nError: %@\n%@", error, response];
 			NSLog(@"%@", message);
-			[[[UIAlertView alloc]
-				initWithTitle:@"Commerce Event"
-				message:message
-				delegate:nil
-				cancelButtonTitle:@"OK"
-				otherButtonTitles:nil]
-					show];
+            [self showAlert:@"Commerce Event" withDescription:message];
         }];
 }
 
@@ -480,15 +470,17 @@ NSString *test_key = @"test_key";
 }
 
 - (void)refreshRewardPoints {
-    _pointsLabel.hidden = YES;
-    [_activityIndicator startAnimating];
+    self.pointsLabel.hidden = YES;
+    [self.activityIndicator startAnimating];
+    __weak __typeof(self) weakSelf = self;
     Branch *branch = [Branch getInstance];
     [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
+        __strong __typeof(self) strongSelf = weakSelf;
         if (!error) {
-            [_pointsLabel setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
+            [strongSelf.pointsLabel setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
         }
-        [_activityIndicator stopAnimating];
-        _pointsLabel.hidden = NO;
+        [strongSelf.activityIndicator stopAnimating];
+        strongSelf.pointsLabel.hidden = NO;
     }];
 }
 
@@ -504,8 +496,10 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 
     BNCPerformBlockOnMainThread(^ {
 
-        if ([UIDevice currentDevice].systemVersion.floatValue < 8.0) {
+        if ([UIDevice currentDevice].systemVersion.doubleValue < 8.0) {
 
+            #pragma clang diagnostic push
+            #pragma clang diagnostic ignored "-Wdeprecated-declarations"
             UIAlertView *alert = [[UIAlertView alloc]
                 initWithTitle:title
                 message:message
@@ -513,6 +507,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
                 cancelButtonTitle:@"OK"
                 otherButtonTitles:nil];
             [alert show];
+            #pragma clang diagnostic pop
 
         } else {
 

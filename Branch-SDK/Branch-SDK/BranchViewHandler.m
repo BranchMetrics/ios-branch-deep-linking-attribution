@@ -19,17 +19,17 @@
 
 @end
 
-NSString * const BRANCH_VIEW_REDIRECT_SCHEME = @"branch-cta";
-NSString * const BRANCH_VIEW_REDIRECT_ACTION_ACCEPT = @"accept";
-NSString * const BRANCH_VIEW_REDIRECT_ACTION_CANCEL = @"cancel";
-const NSInteger BRANCH_VIEW_ERR_TEMP_UNAVAILABLE = -202;
+static NSString * const BRANCH_VIEW_REDIRECT_SCHEME = @"branch-cta";
+static NSString * const BRANCH_VIEW_REDIRECT_ACTION_ACCEPT = @"accept";
+static NSString * const BRANCH_VIEW_REDIRECT_ACTION_CANCEL = @"cancel";
+static NSInteger  const BRANCH_VIEW_ERR_TEMP_UNAVAILABLE = -202;
 
 @implementation BranchViewHandler
 
 static BranchViewHandler *branchViewHandler;
-BOOL isBranchViewAccepted = NO;
-NSString *currentActionName;
-NSString *currentBranchViewID;
+static BOOL isBranchViewAccepted = NO;
+static NSString *currentActionName;
+static NSString *currentBranchViewID;
 
 + (BranchViewHandler *)getInstance {
     if (!branchViewHandler) {

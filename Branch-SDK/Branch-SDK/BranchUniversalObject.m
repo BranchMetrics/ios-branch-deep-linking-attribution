@@ -167,14 +167,14 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
 @implementation BranchUniversalObject
 
 - (instancetype)initWithCanonicalIdentifier:(NSString *)canonicalIdentifier {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.canonicalIdentifier = canonicalIdentifier;
     }
     return self;
 }
 
 - (instancetype)initWithTitle:(NSString *)title {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.title = title;
     }
     return self;
@@ -459,13 +459,15 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
         shareViewController.completionWithItemsHandler =
           ^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
             // Log share completed event
-            [[BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self] logEvent];
-            if (completion || completionError) {
-                if (completion) { completion(activityType, completed); }
-                else if (completionError) { completionError(activityType, completed, activityError); }
-                [BNCFabricAnswers sendEventWithName:@"Branch Share"
-                      andAttributes:[self getDictionaryWithCompleteLinkProperties:linkProperties]];
+            if (completed && !activityError) {
+                [[BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self] logEvent];
+                [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:[self getDictionaryWithCompleteLinkProperties:linkProperties]];
             }
+            if (completion)
+                completion(activityType, completed);
+            else
+            if (completionError)
+                completionError(activityType, completed, activityError);
         };
     } else {
         #pragma clang diagnostic push
@@ -491,7 +493,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
         @try {
             [shareViewController setValue:linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT] forKey:@"subject"];
         }
-        @catch (NSException *exception) {
+        @catch (NSException*) {
             BNCLogWarning(@"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController.");
         }
     }

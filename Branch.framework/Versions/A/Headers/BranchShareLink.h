@@ -75,11 +75,11 @@ Creates a BranchShareLink object.
 /**
 Presents a UIActivityViewController that shares the Branch link.
 
-@param viewController   The parent view controller from which to present the the activity sheet.
-@param anchor           The anchor point for the activity sheet. Used for iPad form factors.
+@param viewController           The parent view controller from which to present the the activity sheet.
+@param anchorViewOrButtonItem   The anchor point for the activity sheet. Used for iPad form factors.
 */
 - (void) presentActivityViewControllerFromViewController:(UIViewController*_Nullable)viewController
-                                                  anchor:(UIBarButtonItem*_Nullable)anchor;
+                                                  anchor:(id _Nullable)anchorViewOrButtonItem;
 
 ///The title for the share sheet.
 @property (nonatomic, strong) NSString*_Nullable title;

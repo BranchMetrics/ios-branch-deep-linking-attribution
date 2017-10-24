@@ -440,6 +440,7 @@
 // Somehow, betweeen initSession and the next call, all preference items are cleared.
 // Shouldn't crash in this case, but can't do much besides "you need to re-init"
 - (void)testScenario8 {
+    sleep(1);
     BNCPreferenceHelper *preferenceHelper = [[BNCPreferenceHelper alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     
