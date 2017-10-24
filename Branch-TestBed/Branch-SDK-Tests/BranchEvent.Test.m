@@ -63,7 +63,7 @@
     buo.contentMetadata.productBrand     = @"my_prod_Brand1";
     buo.contentMetadata.productCategory  = BNCProductCategoryBabyToddler;
     buo.contentMetadata.productVariant   = @"3T";
-    buo.contentMetadata.productCondition = BranchProductConditionFair;
+    buo.contentMetadata.condition        = BranchConditionFair;
 
     buo.contentMetadata.ratingAverage    = 5;
     buo.contentMetadata.ratingCount      = 5;
@@ -209,7 +209,7 @@
     buo.contentMetadata.productBrand     = @"my_prod_Brand1";
     buo.contentMetadata.productCategory  = BNCProductCategoryBabyToddler;
     buo.contentMetadata.productVariant   = @"3T";
-    buo.contentMetadata.productCondition = @"FAIR";
+    buo.contentMetadata.condition        = @"FAIR";
     buo.contentMetadata.ratingAverage    = 5;
     buo.contentMetadata.ratingCount      = 5;
     buo.contentMetadata.ratingMax        = 7;

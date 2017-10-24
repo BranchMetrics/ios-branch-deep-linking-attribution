@@ -425,7 +425,6 @@ exit:
     addString(country,              country);
     addString(language,             language);
     addString(brandName,            brand);
-    addString(hardwareId,           device_fingerprint_id);
     addString(branchSDKVersion,     sdk);
     addString(applicationVersion,   app_version);
     addString(modelName,            model);

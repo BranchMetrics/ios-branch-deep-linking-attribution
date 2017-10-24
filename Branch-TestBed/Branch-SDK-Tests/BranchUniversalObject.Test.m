@@ -41,7 +41,7 @@
     XCTAssertEqualObjects(buo.contentMetadata.productBrand,      @"my_prod_Brand1");
     XCTAssertEqualObjects(buo.contentMetadata.productCategory,   BNCProductCategoryBabyToddler);
     XCTAssertEqualObjects(buo.contentMetadata.productVariant,    @"3T");
-    XCTAssertEqualObjects(buo.contentMetadata.productCondition,  @"FAIR");
+    XCTAssertEqualObjects(buo.contentMetadata.condition,         @"FAIR");
     XCTAssertEqual(buo.contentMetadata.ratingAverage,            5);
     XCTAssertEqual(buo.contentMetadata.ratingCount,              5);
     XCTAssertEqual(buo.contentMetadata.ratingMax,                7);

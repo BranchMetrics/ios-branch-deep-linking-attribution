@@ -43,16 +43,16 @@ BranchContentSchema _Nonnull BranchContentSchemaTextSearchResults   = @"TEXT_SEA
 BranchContentSchema _Nonnull BranchContentSchemaTextStory           = @"TEXT_STORY";
 BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc    = @"TEXT_TECHNICAL_DOC";
 
-#pragma mark - BranchProductCondition
+#pragma mark - BranchCondition
 
-BranchProductCondition _Nonnull BranchProductConditionOther         = @"OTHER";
-BranchProductCondition _Nonnull BranchProductConditionExcellent     = @"EXCELLENT";
-BranchProductCondition _Nonnull BranchProductConditionNew           = @"NEW";
-BranchProductCondition _Nonnull BranchProductConditionGood          = @"GOOD";
-BranchProductCondition _Nonnull BranchProductConditionFair          = @"FAIR";
-BranchProductCondition _Nonnull BranchProductConditionPoor          = @"POOR";
-BranchProductCondition _Nonnull BranchProductConditionUsed          = @"USED";
-BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBISHED";
+BranchCondition _Nonnull BranchConditionOther         = @"OTHER";
+BranchCondition _Nonnull BranchConditionExcellent     = @"EXCELLENT";
+BranchCondition _Nonnull BranchConditionNew           = @"NEW";
+BranchCondition _Nonnull BranchConditionGood          = @"GOOD";
+BranchCondition _Nonnull BranchConditionFair          = @"FAIR";
+BranchCondition _Nonnull BranchConditionPoor          = @"POOR";
+BranchCondition _Nonnull BranchConditionUsed          = @"USED";
+BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
 #pragma mark - BranchContentMetadata
 
@@ -79,7 +79,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addString(productBrand,     $product_brand);
     addString(productCategory,  $product_category);
     addString(productVariant,   $product_variant);
-    addString(productCondition, $condition);
+    addString(condition,        $condition);
     addDouble(ratingAverage,    $rating_average);
     addInteger(ratingCount,     $rating_count);
     addDouble(ratingMax,        $rating_max);
@@ -114,7 +114,7 @@ BranchProductCondition _Nonnull BranchProductConditionRefurbished   = @"REFURBIS
     addString(productBrand,     $product_brand);
     addString(productCategory,  $product_category);
     addString(productVariant,   $product_variant);
-    addString(productCondition, $condition);
+    addString(condition,        $condition);
     addDouble(ratingAverage,    $rating_average);
     addInteger(ratingCount,     $rating_count);
     addDouble(ratingMax,        $rating_max);

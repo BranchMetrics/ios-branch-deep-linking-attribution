@@ -35,7 +35,7 @@ class BranchEventTestSwift : BNCTestCase {
         branchUniversalObject.contentMetadata.productBrand      = "my_prod_Brand1"
         branchUniversalObject.contentMetadata.productCategory   = .babyToddler
         branchUniversalObject.contentMetadata.productVariant    = "3T"
-        branchUniversalObject.contentMetadata.productCondition  = .fair
+        branchUniversalObject.contentMetadata.condition         = .fair
 
         branchUniversalObject.contentMetadata.ratingAverage     = 5;
         branchUniversalObject.contentMetadata.ratingCount       = 5;

@@ -48,18 +48,18 @@ FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextSearchResu
 FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextStory;
 FOUNDATION_EXPORT BranchContentSchema _Nonnull BranchContentSchemaTextTechnicalDoc;
 
-#pragma mark - BranchProductCondition
+#pragma mark - BranchCondition
 
-typedef NSString * const BranchProductCondition NS_STRING_ENUM;
+typedef NSString * const BranchCondition NS_STRING_ENUM;
 
-FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionOther;
-FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionNew;
-FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionExcellent;
-FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionGood;
-FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionFair;
-FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionPoor;
-FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionUsed;
-FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbished;
+FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionOther;
+FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionNew;
+FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionExcellent;
+FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionGood;
+FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionFair;
+FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionPoor;
+FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionUsed;
+FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 
 #pragma mark - BranchContentMetadata
 
@@ -74,7 +74,7 @@ FOUNDATION_EXPORT BranchProductCondition _Nonnull BranchProductConditionRefurbis
 @property (nonatomic, strong, nullable) NSString        *productBrand;
 @property (nonatomic, strong, nullable) BNCProductCategory productCategory;
 @property (nonatomic, strong, nullable) NSString        *productVariant;
-@property (nonatomic, strong, nullable) BranchProductCondition productCondition;
+@property (nonatomic, strong, nullable) BranchCondition condition;
 @property (nonatomic, assign)           double          ratingAverage;
 @property (nonatomic, assign)           NSInteger       ratingCount;
 @property (nonatomic, assign)           double          ratingMax;
