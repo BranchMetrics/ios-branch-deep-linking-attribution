@@ -20,6 +20,7 @@
 #import "BNCXcode7Support.h"
 #import "BranchActivityItemProvider.h"
 #import "BranchDeepLinkingController.h"
+#import "BranchEvent.h"
 #import "BranchLinkProperties.h"
 #import "BranchDelegate.h"
 #import "BranchShareLink.h"
@@ -612,7 +613,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param key String to be included in request metadata
  @param value Object to be included in request metadata
  */
-- (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
+- (void)setRequestMetadataKey:(NSString *)key value:(id)value;
 
 - (void)enableDelayedInit;
 
@@ -850,6 +851,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param commerceEvent 	The BNCCommerceEvent that describes the purchase.
  @param metadata        Optional metadata you may want add to the event.
  @param completion 		The optional completion callback.
+ 
+ @deprecated Please use BNCEvent to send commerce events instead.
  */
 - (void) sendCommerceEvent:(BNCCommerceEvent*)commerceEvent
 				  metadata:(NSDictionary<NSString*,id>*)metadata
@@ -1501,4 +1504,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
 
+- (void) sendServerRequest:(BNCServerRequest*)request;
+- (void) sendServerRequestWithoutSession:(BNCServerRequest*)request;
+
+// Read-only property exposed for unit testing.
+@property (strong, readonly) BNCServerInterface *serverInterface;
+- (void) clearNetworkQueue;
 @end

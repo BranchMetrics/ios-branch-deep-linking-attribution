@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="JXX-py-Ogh">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--TableFormView-->
+        <scene sceneID="ngZ-oO-Afu">
+            <objects>
+                <tableViewController storyboardIdentifier="TableFormView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="IH4-9u-mjB" userLabel="TableFormView" customClass="TableFormViewController" customModule="TestBed_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="w54-RR-jwG">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TextFieldCell" id="wzr-IM-oa8" userLabel="textFieldCell" customClass="TextFieldCell" customModule="TestBed_Swift" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wzr-IM-oa8" id="xzT-8o-rLB">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Key" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="whT-ec-pcu" userLabel="textField">
+                                            <rect key="frame" x="14" y="13.5" width="359" height="17"/>
+                                            <color key="textColor" red="0.5607843137254902" green="0.5607843137254902" blue="0.5607843137254902" alpha="1" colorSpace="calibratedRGB"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <textInputTraits key="textInputTraits"/>
+                                        </textField>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="whT-ec-pcu" firstAttribute="centerY" secondItem="xzT-8o-rLB" secondAttribute="centerY" id="SJ6-0k-VQe"/>
+                                        <constraint firstItem="whT-ec-pcu" firstAttribute="leading" secondItem="xzT-8o-rLB" secondAttribute="leadingMargin" constant="6" id="d0k-7x-xUc"/>
+                                        <constraint firstItem="whT-ec-pcu" firstAttribute="trailing" secondItem="xzT-8o-rLB" secondAttribute="trailingMargin" constant="6" id="vsN-7j-Rna"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <outlet property="textField" destination="whT-ec-pcu" id="Yzf-jR-JX4"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="ToggleSwitchCell" id="FIL-v7-cVU" userLabel="toggleSwitchCell" customClass="ToggleSwitchCell" customModule="TestBed_Swift" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="99.5" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="FIL-v7-cVU" id="CmU-8r-n1o">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="setDebug Enabled" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8ei-Rk-rvH" userLabel="toggleSwitchLabel">
+                                            <rect key="frame" x="14" y="11.5" width="140.5" height="20.5"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="lX1-Sr-mjk" userLabel="toggleSwitch">
+                                            <rect key="frame" x="312" y="6.5" width="51" height="31"/>
+                                        </switch>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailingMargin" secondItem="lX1-Sr-mjk" secondAttribute="trailing" constant="6" id="7iL-gT-NYU"/>
+                                        <constraint firstItem="8ei-Rk-rvH" firstAttribute="centerY" secondItem="CmU-8r-n1o" secondAttribute="centerY" id="NU5-ji-cpx"/>
+                                        <constraint firstItem="8ei-Rk-rvH" firstAttribute="leading" secondItem="CmU-8r-n1o" secondAttribute="leadingMargin" constant="6" id="Sns-fm-map"/>
+                                        <constraint firstItem="lX1-Sr-mjk" firstAttribute="centerY" secondItem="CmU-8r-n1o" secondAttribute="centerY" id="sec-lv-EWg"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="toggleSwitch" destination="lX1-Sr-mjk" id="DDZ-h6-x7x"/>
+                                    <outlet property="toggleSwitchLabel" destination="8ei-Rk-rvH" id="ghD-I9-cUV"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <sections/>
+                        <connections>
+                            <outlet property="dataSource" destination="IH4-9u-mjB" id="thf-LY-eQE"/>
+                            <outlet property="delegate" destination="IH4-9u-mjB" id="gbC-XQ-tvD"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="3G7-Nv-baL">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="BfS-Uh-xkp">
+                            <connections>
+                                <segue destination="mxV-5e-FIa" kind="unwind" identifier="unwindByCancelling" unwindAction="unwindByCancelling:" id="pFf-D8-Xuy"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="wfZ-SH-Jb4">
+                            <connections>
+                                <segue destination="mxV-5e-FIa" kind="unwind" identifier="unwindTableFormView" unwindAction="unwindTableFormView:" id="Qow-EZ-DEO"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <segue destination="nl6-AB-9eb" kind="show" identifier="TextViewForm" id="U57-vG-xiY"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eSb-Zt-HFY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="mxV-5e-FIa" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="4975" y="-414"/>
+        </scene>
+        <!--TextViewForm-->
+        <scene sceneID="CTF-Eb-nnt">
+            <objects>
+                <viewControllerPlaceholder storyboardName="TextViewForm" id="nl6-AB-9eb" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uJ1-bo-vZO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5747" y="-415"/>
+        </scene>
+        <!--TableFormViewNavigationController-->
+        <scene sceneID="Fk2-gU-ZMQ">
+            <objects>
+                <navigationController storyboardIdentifier="TableFormViewNavigationController" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="JXX-py-Ogh" userLabel="TableFormViewNavigationController" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="0m2-5w-xfd">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="IH4-9u-mjB" kind="relationship" relationship="rootViewController" id="iSV-A6-XDa"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="omc-eM-ISY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4208" y="-413.79310344827587"/>
+        </scene>
+    </scenes>
+</document>
