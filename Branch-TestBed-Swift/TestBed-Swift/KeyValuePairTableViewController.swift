@@ -88,7 +88,7 @@ class KeyValuePairTableViewController: UITableViewController, UITextFieldDelegat
         return footer
     }
     
-    func textFieldDidChange() {
+    @objc func textFieldDidChange() {
         saveButton.isEnabled = keyTextField.text == "" ? false : true
     }
     

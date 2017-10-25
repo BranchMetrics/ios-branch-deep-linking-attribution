@@ -11,6 +11,8 @@
 #import "BNCSystemObserver.h"
 #import "BNCXcode7Support.h"
 #import "BNCLog.h"
+#import "BNCConfig.h"
+#import "BNCPreferenceHelper.h"
 
 @import UIKit;
 #import <sys/sysctl.h> // @import not available in Xcode 7
@@ -162,7 +164,24 @@ exit:
     _country = [BNCDeviceInfo bnc_country].copy;
     _language = [BNCDeviceInfo bnc_language].copy;
     _browserUserAgent = [BNCDeviceInfo userAgentString].copy;
+    _extensionType = self.class.extensionType.copy;
+    _branchSDKVersion = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
+    _applicationVersion = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
+    if (!_applicationVersion.length)
+        _applicationVersion = [NSBundle mainBundle].infoDictionary[@"CFBundleVersionKey"];
+    _screenScale = [UIScreen mainScreen].scale;
+    _adId = [BNCSystemObserver getAdId];
+
     return self;
+}
+
++ (NSString*_Nonnull) extensionType {
+    NSString *result = @"FULL_APP";
+    NSString *extensionType = [NSBundle mainBundle].infoDictionary[@"NSExtension"][@"NSExtensionPointIdentifier"];
+    if ([extensionType isEqualToString:@"com.apple.identitylookup.message-filter"]) {
+        result = @"IMESSAGE_APP";
+    }
+    return result;
 }
 
 - (NSString *)vendorId {
@@ -182,6 +201,10 @@ exit:
         _vendorId = [BNCSystemObserver getVendorId].copy;
         return _vendorId;
     }
+}
+
+- (BOOL) unidentifiedDevice {
+    return (self.vendorId == nil && self.adId == nil);
 }
 
 - (NSString*) localIPAddress { // For 'local_ip' server field.
@@ -385,6 +408,49 @@ exit:
     BNCLogDebugSDK(@"Retries: %d", 10-retries);
 
     return browserUserAgent();
+}
+
+- (NSDictionary*) v2dictionary {
+    NSMutableDictionary *dictionary = [NSMutableDictionary new];
+
+    #define BNCFieldDefinesDictionaryFromSelf
+    #include "BNCFieldDefines.h"
+
+    addString(osName,               os);
+    addString(osVersion,            os_version);
+    addString(extensionType,        environment);
+    addString(vendorId,             idfv);
+    addString(adId,                 idfa);
+    addString(browserUserAgent,     user_agent);
+    addString(country,              country);
+    addString(language,             language);
+    addString(brandName,            brand);
+    addString(applicationVersion,   app_version);
+    addString(modelName,            model);
+    addDouble(screenScale,          screen_dpi);
+    addNumber(screenHeight,         screen_height);
+    addNumber(screenWidth,          screen_width);
+    addBoolean(unidentifiedDevice,  unidentified_device);
+    addString(localIPAddress,       local_ip);
+    
+    #include "BNCFieldDefines.h"
+
+    if (!self.isAdTrackingEnabled)
+        dictionary[@"limit_ad_tracking"] = CFBridgingRelease(kCFBooleanTrue);
+
+    NSString *s = nil;
+    BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+
+    s = preferences.userIdentity;
+    if (s.length) dictionary[@"developer_identity"] = s;
+
+    s = preferences.deviceFingerprintID;
+    if (s.length) dictionary[@"device_fingerprint_id"] = s;
+
+    dictionary[@"sdk"] = @"ios";
+    dictionary[@"sdk_version"] = BNC_SDK_VERSION;
+
+    return dictionary;
 }
 
 @end

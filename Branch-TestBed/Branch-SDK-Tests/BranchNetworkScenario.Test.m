@@ -18,7 +18,7 @@
 
 
 @interface Branch (Testing)
-@property (strong, nonatomic) BNCServerInterface *bServerInterface;
+@property (strong, nonatomic) BNCServerInterface *serverInterface;
 @property (assign, nonatomic) NSInteger networkCount;
 @end
 
@@ -128,7 +128,7 @@
 
     // Re-mock the serverInterface so it succeeds
     serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    branch.bServerInterface = serverInterfaceMock;
+    branch.serverInterface = serverInterfaceMock;
 
     XCTestExpectation *scenario2Expectation3 =
         [self expectationWithDescription:@"Scenario2 Expectation3"];
@@ -248,7 +248,7 @@
     // Simulate network return, shouldn't call init!
     //[serverInterfaceMock stopMocking];
     serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    branch.bServerInterface = serverInterfaceMock;
+    branch.serverInterface = serverInterfaceMock;
 
     // However, making another request when not initialized should make an init
     [self mockSuccesfulInit:serverInterfaceMock];

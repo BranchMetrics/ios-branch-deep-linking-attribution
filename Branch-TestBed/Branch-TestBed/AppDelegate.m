@@ -64,7 +64,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
                 UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                 LogOutputViewController *logOutputViewController =
                     [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
-                
                 [navigationController pushViewController:logOutputViewController animated:YES];
                 NSString *logOutput =
                     [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@",

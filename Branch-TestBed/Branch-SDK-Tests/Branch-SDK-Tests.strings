@@ -69,3 +69,173 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
 	Method name: 'intProp'.
 	Method name: 'stringProp'.
 ";
+"BranchUniversalObjectJSON" =
+"
+{
+    \"$content_schema\": \"COMMERCE_PRODUCT\",
+    \"$quantity\": 2,
+    \"$price\": 23.2,
+    \"$currency\": \"USD\",
+    \"$sku\": \"1994320302\",
+    \"$product_name\": \"my_product_name1\",
+    \"$product_brand\": \"my_prod_Brand1\",
+    \"$product_category\": \"Baby & Toddler\",
+    \"$product_variant\": \"3T\",
+    \"$rating_average\": 5,
+    \"$rating_count\": 5,
+    \"$rating_max\": 7,
+    \"$condition\": \"FAIR\",
+    \"$address_street\": \"Street_name1\",
+    \"$address_city\": \"city1\",
+    \"$address_region\": \"Region1\",
+    \"$address_country\": \"Country1\",
+    \"$address_postal_code\": \"postal_code\",
+    \"$latitude\": 12.07,
+    \"$longitude\": -97.5,
+    \"$image_captions\": [\"my_img_caption1\", \"my_img_caption_2\"],
+    \"$custom_fields\": \"{\\\"Custom_Content_metadata_key1\\\":\\\"Custom_Content_metadata_val1\\\"}\",
+    \"$og_title\": \"My Content Title\",
+    \"$canonical_identifier\": \"item\/12345\",
+    \"$canonical_url\": \"https:\/\/branch.io\/deepviews\",
+    \"$keywords\": [\"My_Keyword1\", \"My_Keyword2\"],
+    \"$og_description\": \"my_product_description1\",
+    \"$og_image_url\": \"https:\/\/test_img_url\",
+    \"$exp_date\": 212123232544,
+    \"$publicly_indexable\": false,
+    \"$locally_indexable\": true,
+    \"$creation_timestamp\": 1501869445321
+}
+";
+"V2EventProperties" =
+"
+{
+    \"affiliation\": \"test_affiliation\",
+    \"coupon\": \"test_coupon\",
+    \"currency\": \"USD\",
+    \"description\": \"Event _description\",
+    \"shipping\": 10.2,
+    \"tax\": 12.3,
+    \"revenue\": 1.5,
+    \"search_query\": \"Query\",
+    \"transaction_id\": \"12344555\",
+    \"custom_data\": {
+        \"Custom_Event_Property_Key1\": \"Custom_Event_Property_val1\",
+        \"Custom_Event_Property_Key2\": \"Custom_Event_Property_val2\"
+    }
+}
+";
+"V2EventJSON" =
+"
+{
+    \"name\": \"PURCHASE\",
+    \"custom_data\": {
+        \"Custom_Event_Property_Key1\": \"Custom_Event_Property_val1\",
+        \"Custom_Event_Property_Key2\": \"Custom_Event_Property_val2\"
+    },
+    \"event_data\": {
+        \"affiliation\": \"test_affiliation\",
+        \"coupon\": \"test_coupon\",
+        \"currency\": \"USD\",
+        \"description\": \"Event _description\",
+        \"shipping\": 10.2,
+        \"tax\": 12.3,
+        \"revenue\": 1.5,
+        \"transaction_id\": \"12344555\",
+        \"search_query\": \"Query\"
+    },
+    \"content_items\": [{
+        \"$content_schema\": \"COMMERCE_PRODUCT\",
+        \"$quantity\": 2,
+        \"$price\": 23.2,
+        \"$currency\": \"USD\",
+        \"$condition\": \"FAIR\",
+        \"$sku\": \"1994320302\",
+        \"$product_name\": \"my_product_name1\",
+        \"$product_brand\": \"my_prod_Brand1\",
+        \"$product_category\": \"Baby & Toddler\",
+        \"$product_variant\": \"3T\",
+        \"$rating_average\": 5,
+        \"$rating_count\": 5,
+        \"$rating_max\": 7,
+        \"$address_street\": \"Street_name1\",
+        \"$address_city\": \"city1\",
+        \"$address_region\": \"Region1\",
+        \"$address_country\": \"Country1\",
+        \"$address_postal_code\": \"postal_code\",
+        \"$latitude\": 12.07,
+        \"$longitude\": -97.5,
+        \"$image_captions\": [\"my_img_caption1\", \"my_img_caption_2\"],
+        \"$custom_fields\": \"{\\\"Custom_Content_metadata_key1\\\":\\\"Custom_Content_metadata_val1\\\"}\",
+        \"$og_title\": \"My Content Title\",
+        \"$canonical_identifier\": \"item\/12345\",
+        \"$canonical_url\": \"https:\/\/branch.io\/deepviews\",
+        \"$keywords\": [\"My_Keyword1\", \"My_Keyword2\"],
+        \"$og_description\": \"my_product_description1\",
+        \"$og_image_url\": \"https:\/\/test_img_url\",
+        \"$exp_date\": 212123232544,
+        \"$locally_indexable\": true,
+        \"$creation_timestamp\": 1501869445321
+    }],
+    \"user_data\": {
+        \"os\": \"iOS\",
+        \"os_version\": 25,
+        \"environment\": \"FULL_APP\",
+        \"idfa\": \"\",
+        \"idfv\": \"\",
+        \"user_agent\": \"\",
+        \"developer_identity\": \"edsojan\",
+        \"country\": \"US\",
+        \"language\": \"en\",
+        \"brand\": \"Apple\",
+        \"device_fingerprint_id\": \"\",
+        \"sdk\": \"ios0.17.10\",
+        \"app_version\": \"whatever\",
+        \"model\": \"x86_64\",
+        \"screen_dpi\": 3,
+        \"screen_height\": 2208,
+        \"screen_width\": 1242
+    },
+    \"branch_key\": \"key_live_foo\",
+    \"retryNumber\": 0
+}
+";
+"BUODescription" =
+"<BranchUniversalObject 0x****************
+ canonicalIdentifier: item/12345
+ title: My Content Title
+ contentDescription: my_product_description1
+ imageUrl: https://test_img_url
+ metadata: {
+    \"Custom_Content_metadata_key1\" = \"Custom_Content_metadata_val1\";
+}
+ type: COMMERCE_PRODUCT
+ locallyIndex: 1
+ publiclyIndex: 0
+ keywords: (
+    \"My_Keyword1\",
+    \"My_Keyword2\"
+)
+ expirationDate: 1976-09-21 03:07:12 +0000
+>";
+"BNCDeviceDictionaryV2" =
+"{
+    \"os\": \"iOS\",
+    \"os_version\": 25,
+    \"environment\": \"FULL_APP\",
+    \"idfa\": \"\",
+    \"idfv\": \"\",
+    \"user_agent\": \"\",
+    \"developer_identity\": \"edsojan\",
+    \"country\": \"US\",
+    \"language\": \"en\",
+    \"brand\": \"Apple\",
+    \"device_fingerprint_id\": \"\",
+    \"sdk\": \"ios\",
+    \"sdk_version\": \"0.17.10\",
+    \"app_version\": \"whatever\",
+    \"model\": \"x86_64\",
+    \"screen_dpi\": 3,
+    \"screen_height\": 2208,
+    \"screen_width\": 1242
+}";
+
