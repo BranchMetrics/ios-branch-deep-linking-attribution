@@ -22,7 +22,7 @@ extension BranchUniversalObject {
     convenience init(planetData: PlanetData) {
         self.init(canonicalIdentifier: "planets/\(planetData.title)")
 
-        automaticallyListOnSpotlight = true
+        locallyIndex = true
         canonicalUrl = planetData.url.absoluteString
         title = planetData.title
         imageUrl = planetData.image?.absoluteString

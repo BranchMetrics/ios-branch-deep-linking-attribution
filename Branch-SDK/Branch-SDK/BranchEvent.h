@@ -11,7 +11,7 @@
 #import "BNCCommerceEvent.h"
 #import "BranchUniversalObject.h"
 
-///@functiongroup Branch Event Logging
+///@group Branch Event Logging
 
 typedef NSString*const BranchStandardEvent NS_STRING_ENUM;
 

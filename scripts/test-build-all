@@ -90,8 +90,13 @@ buildDirectoryProjectScheme \
 
 buildDirectoryProjectScheme \
     Branch-TestBed-Swift \
-    TestBed-Swift.xcodeproj \
+    TestBed-Swift.xcworkspace \
     TestBed-Swift
+
+buildDirectoryProjectScheme \
+    Branch-TestBed-Xcode-7 \
+    Branch-TestBed.xcworkspace \
+    Branch-TestBed
 
 if [[ $xcodeVersion = '9' ]]
 then
@@ -101,14 +106,12 @@ then
         WebViewExample
 fi
 
-buildDirectoryProjectScheme \
-    Branch-TestBed-Xcode-7 \
-    Branch-TestBed.xcworkspace \
-    Branch-TestBed
-
-buildDirectoryProjectScheme \
-    Examples/BareBones \
-    BareBones.xcodeproj \
-    BareBones
+if [[ $xcodeVersion = '9' ]]
+then
+    buildDirectoryProjectScheme \
+        Examples/BareBones \
+        BareBones.xcodeproj \
+        BareBones
+fi
 
 printf "${textBlue}>>> All builds complete.${textNormal}\n"

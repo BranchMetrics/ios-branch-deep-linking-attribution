@@ -429,7 +429,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         universalObject.contentMetadata.contentSchema = BranchContentSchema.commerceProduct
         universalObject.contentMetadata.price = 10.00
         universalObject.contentMetadata.currency = BNCCurrency.USD
-        universalObject.contentMetadata.productCondition = BranchProductCondition.poor
+        universalObject.contentMetadata.condition = BranchCondition.poor
 
         let event = BranchEvent.standardEvent(
             BranchStandardEvent.viewItem,

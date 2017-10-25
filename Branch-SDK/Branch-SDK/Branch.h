@@ -19,6 +19,7 @@
 #import "BNCServerRequestQueue.h"
 #import "BNCXcode7Support.h"
 #import "BranchActivityItemProvider.h"
+#import "BranchConstants.h"
 #import "BranchDeepLinkingController.h"
 #import "BranchEvent.h"
 #import "BranchLinkProperties.h"
@@ -852,11 +853,12 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param metadata        Optional metadata you may want add to the event.
  @param completion 		The optional completion callback.
  
- @deprecated Please use BNCEvent to send commerce events instead.
+ deprecated Please use BNCEvent to send commerce events instead.
  */
 - (void) sendCommerceEvent:(BNCCommerceEvent*)commerceEvent
 				  metadata:(NSDictionary<NSString*,id>*)metadata
 			withCompletion:(void (^) (NSDictionary*response, NSError*error))completion;
+            //__attribute__((deprecated(("Please use BranchEvent to track commerce events."))));
 
 #pragma mark - Short Url Sync methods
 

@@ -117,8 +117,8 @@ class MainViewController: UIViewController {
 
         if let buo = notification.userInfo?[BranchUniversalObjectKey] as? BranchUniversalObject {
             let messageViewController = MessageViewController.instantiate()
-            messageViewController.name = buo.metadata?["name"] as? String
-            messageViewController.message = buo.metadata?["message"] as? String
+            messageViewController.name = buo.contentMetadata.customMetadata["name"] as? String
+            messageViewController.message = buo.contentMetadata.customMetadata["message"] as? String
             navigationController?.pushViewController(messageViewController, animated: true)
             AppData.shared.linksOpened += 1
             return
