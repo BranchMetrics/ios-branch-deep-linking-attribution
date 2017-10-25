@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Pd1-my-Cnv">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--CustomEvent-->
+        <scene sceneID="qIb-Xk-maD">
+            <objects>
+                <tableViewController storyboardIdentifier="CustomEvent" useStoryboardIdentifierAsRestorationIdentifier="YES" id="X78-AR-OSz" userLabel="CustomEvent" customClass="CustomEventTableViewController" customModule="TestBed_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="645-vT-WP4">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <sections>
+                            <tableViewSection headerTitle="Application Events" id="jRg-gx-uNO" userLabel="Custom Events">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="eox-g7-ARO" userLabel="customEventNameLabel">
+                                        <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eox-g7-ARO" id="AMj-Bu-hJv">
+                                            <rect key="frame" x="0.0" y="0.0" width="342" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Custom Event Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="caP-R4-vWo" userLabel="customEventNameLabel">
+                                                    <rect key="frame" x="14" y="11.5" width="156.5" height="20.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <textField opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="default_event" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="EvX-fe-O3h" userLabel="customEventNameTextField">
+                                                    <rect key="frame" x="170.5" y="13.5" width="163.5" height="17"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <segue destination="Kk9-pt-FR9" kind="show" identifier="TextViewForm" id="Y2I-Sr-JDP"/>
+                                                    </connections>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailingMargin" secondItem="EvX-fe-O3h" secondAttribute="trailing" id="9dA-Wk-5p8"/>
+                                                <constraint firstItem="EvX-fe-O3h" firstAttribute="leading" secondItem="caP-R4-vWo" secondAttribute="trailing" id="E9p-Na-JMM"/>
+                                                <constraint firstItem="EvX-fe-O3h" firstAttribute="centerY" secondItem="AMj-Bu-hJv" secondAttribute="centerY" id="KIV-ST-14m"/>
+                                                <constraint firstItem="caP-R4-vWo" firstAttribute="centerY" secondItem="AMj-Bu-hJv" secondAttribute="centerY" id="hxn-ia-UXN"/>
+                                                <constraint firstItem="caP-R4-vWo" firstAttribute="leading" secondItem="AMj-Bu-hJv" secondAttribute="leadingMargin" constant="6" id="xwj-WZ-kfG"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" rowHeight="98" id="RTM-nn-wfx" userLabel="customEventMetadataLabel">
+                                        <rect key="frame" x="0.0" y="99.5" width="375" height="98"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RTM-nn-wfx" id="6jJ-S8-PIt">
+                                            <rect key="frame" x="0.0" y="0.0" width="342" height="97.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Custom Event Metadata" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cRI-gf-A5r" userLabel="customEventMetadataLabel">
+                                                    <rect key="frame" x="14" y="8" width="320" height="20.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.070588235289999995" green="0.070588235289999995" blue="0.070588235289999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="CW3-ju-ZuW" userLabel="customEventMetadataTextView">
+                                                    <rect key="frame" x="14" y="28.5" width="320" height="61"/>
+                                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                </textView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="CW3-ju-ZuW" firstAttribute="leading" secondItem="6jJ-S8-PIt" secondAttribute="leadingMargin" constant="6" id="2q6-Kb-uxp"/>
+                                                <constraint firstItem="CW3-ju-ZuW" firstAttribute="top" secondItem="cRI-gf-A5r" secondAttribute="bottom" id="5eN-Rx-vRf"/>
+                                                <constraint firstItem="cRI-gf-A5r" firstAttribute="top" secondItem="6jJ-S8-PIt" secondAttribute="topMargin" id="69d-PF-XyH"/>
+                                                <constraint firstItem="cRI-gf-A5r" firstAttribute="leading" secondItem="6jJ-S8-PIt" secondAttribute="leadingMargin" constant="6" id="ZrZ-gD-h9T"/>
+                                                <constraint firstItem="CW3-ju-ZuW" firstAttribute="trailing" secondItem="6jJ-S8-PIt" secondAttribute="trailingMargin" id="lDC-mG-HhI"/>
+                                                <constraint firstItem="CW3-ju-ZuW" firstAttribute="bottom" secondItem="6jJ-S8-PIt" secondAttribute="bottomMargin" id="qjw-iD-3L3"/>
+                                                <constraint firstItem="cRI-gf-A5r" firstAttribute="trailing" secondItem="6jJ-S8-PIt" secondAttribute="trailingMargin" id="vwn-Qw-I4Q"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationWidth="10" reuseIdentifier="TableViewCell" id="BCd-Id-nhW" userLabel="sendCustomEventButton">
+                                        <rect key="frame" x="0.0" y="197.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="BCd-Id-nhW" id="gmF-YT-4iz">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S3N-83-fLs" userLabel="sendCustomEventButton">
+                                                    <rect key="frame" x="14" y="7" width="353" height="30"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <state key="normal" title="Send Custom Event"/>
+                                                    <connections>
+                                                        <action selector="sendEventButtonTouchUpInside:" destination="X78-AR-OSz" eventType="touchUpInside" id="vBW-yX-lrf"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="S3N-83-fLs" firstAttribute="trailing" secondItem="gmF-YT-4iz" secondAttribute="trailingMargin" id="ft8-Qv-N1B"/>
+                                                <constraint firstItem="S3N-83-fLs" firstAttribute="centerY" secondItem="gmF-YT-4iz" secondAttribute="centerY" id="iWC-K9-fLl"/>
+                                                <constraint firstItem="S3N-83-fLs" firstAttribute="leading" secondItem="gmF-YT-4iz" secondAttribute="leadingMargin" constant="6" id="nu5-t1-K1h"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="X78-AR-OSz" id="m7j-FT-sjB"/>
+                            <outlet property="delegate" destination="X78-AR-OSz" id="c1s-ic-aYg"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="3ro-fq-GWo">
+                        <barButtonItem key="leftBarButtonItem" style="done" systemItem="done" id="KEJ-gS-ucw">
+                            <connections>
+                                <segue destination="15t-xs-0MS" kind="unwind" identifier="UnwindByBeingDone" unwindAction="unwindByBeingDone:" id="767-zK-anx"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="customEventMetadataTextView" destination="CW3-ju-ZuW" id="Tyl-k7-ePT"/>
+                        <outlet property="customEventNameTextField" destination="EvX-fe-O3h" id="oBE-rl-0xM"/>
+                        <segue destination="lNP-uJ-cup" kind="show" identifier="Dictionary" id="eC3-ba-ZUO"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4YZ-yf-rcr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="15t-xs-0MS" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="5415.1999999999998" y="320.68965517241384"/>
+        </scene>
+        <!--Dictionary-->
+        <scene sceneID="98s-V3-bSO">
+            <objects>
+                <viewControllerPlaceholder storyboardName="DictionaryTableView" id="lNP-uJ-cup" userLabel="Dictionary" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tOH-Pa-cEO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="6075" y="343"/>
+        </scene>
+        <!--TextViewForm-->
+        <scene sceneID="xGX-88-Rzf">
+            <objects>
+                <viewControllerPlaceholder storyboardName="TextViewForm" id="Kk9-pt-FR9" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="l7h-7N-4ua" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="6093" y="273"/>
+        </scene>
+        <!--CustomEventNavigationController-->
+        <scene sceneID="OpI-AQ-hbn">
+            <objects>
+                <navigationController storyboardIdentifier="CustomEventNavigationController" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Pd1-my-Cnv" userLabel="CustomEventNavigationController" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="HEN-AL-G6g">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="X78-AR-OSz" kind="relationship" relationship="rootViewController" id="6zi-vy-RFg"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ndw-hh-Bdj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4585" y="321"/>
+        </scene>
+    </scenes>
+</document>

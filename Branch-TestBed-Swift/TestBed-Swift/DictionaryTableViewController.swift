@@ -47,7 +47,7 @@ class DictionaryTableViewController: UITableViewController {
         let cellIdentifier = "DictionaryTableViewCell"
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! DictionaryTableViewCell
         
-        let keys = Array(dictionary.keys).sorted()
+        let keys = Array(dictionary.keys)
         cell.keyLabel.text = keys[(indexPath as NSIndexPath).row]
         cell.valueLabel.text = self.dictionary[keys[(indexPath as NSIndexPath).row]] as? String
         

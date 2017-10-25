@@ -147,7 +147,6 @@ NSInteger const  TEST_CREDITS = 30;
     }];
     
     [self awaitExpectations];
-    
     [serverInterfaceMock verify];
 }
 

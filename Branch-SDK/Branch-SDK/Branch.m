@@ -86,7 +86,7 @@ void ForceCategoriesToLoad(void) {
     NSInteger _networkCount;
 }
 
-@property (strong, nonatomic) BNCServerInterface *bServerInterface;
+@property (strong, nonatomic) BNCServerInterface *serverInterface;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
 @property (copy,   nonatomic) callbackWithParams sessionInitWithParamsCallback;
@@ -191,8 +191,8 @@ void BranchClassInitializeLog(void) {
 
     // Initialize instance variables
 
-    _bServerInterface = interface;
-    _bServerInterface.preferenceHelper = preferenceHelper;
+    _serverInterface = interface;
+    _serverInterface.preferenceHelper = preferenceHelper;
     _requestQueue = queue;
     _linkCache = cache;
     _preferenceHelper = preferenceHelper;
@@ -993,6 +993,17 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 
+- (void) sendServerRequest:(BNCServerRequest*)request {
+    [self initSessionIfNeededAndNotInProgress];
+    [self.requestQueue enqueue:request];
+    [self processNextQueueItem];
+}
+
+- (void) sendServerRequestWithoutSession:(BNCServerRequest*)request {
+    [self.requestQueue enqueue:request];
+    [self processNextQueueItem];
+}
+
 - (void) sendCommerceEvent:(BNCCommerceEvent *)commerceEvent
 				  metadata:(NSDictionary*)metadata
 			withCompletion:(void (^)(NSDictionary *, NSError *))completion {
@@ -1499,7 +1510,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
         if (self.isInitialized) {
             BNCLogDebug(@"Created a custom URL synchronously.");
-            BNCServerResponse *serverResponse = [req makeRequest:self.bServerInterface key:self.class.branchKey];
+            BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
             shortURL = [req processResponse:serverResponse];
 
             // cache the link
@@ -1767,7 +1778,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
             dispatch_async(queue, ^ {
-                [req makeRequest:self.bServerInterface key:self.class.branchKey callback:
+                [req makeRequest:self.serverInterface key:self.class.branchKey callback:
                     ^(BNCServerResponse* response, NSError* error) {
                         [self processRequest:req response:response error:error];
                 }];
@@ -1777,6 +1788,13 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
     else {
         dispatch_semaphore_signal(self.processing_sema);
     }
+}
+
+- (void) clearNetworkQueue {
+    dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
+    self.networkCount = 0;
+    [[BNCServerRequestQueue getInstance] clearQueue];
+    dispatch_semaphore_signal(self.processing_sema);    
 }
 
 #pragma mark - Session Initialization

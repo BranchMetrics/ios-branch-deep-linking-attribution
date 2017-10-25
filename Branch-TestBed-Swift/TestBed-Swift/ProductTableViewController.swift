@@ -21,9 +21,9 @@ class ProductTableViewController: UITableViewController, UITextFieldDelegate, UI
     @IBOutlet weak var productCategoryTextField: UITextField!
     
 
-    var defaults = DataStore.getProductDefaults()
+    var defaults = CommerceEventData.productDefaults()
     let picker = UIPickerView()
-    let productCategories = DataStore.getProductCategories()
+    let productCategories = CommerceEventData.productCategories()
     
     // MARK: - Core View Functions
     
@@ -76,11 +76,11 @@ class ProductTableViewController: UITableViewController, UITextFieldDelegate, UI
         return toolbar
     }
     
-    func cancelPicking() {
+    @objc func cancelPicking() {
         productCategoryTextField.resignFirstResponder()
     }
     
-    func donePicking() {
+    @objc func donePicking() {
         self.productCategoryTextField.text = productCategories[picker.selectedRow(inComponent: 0)]
         self.productCategoryTextField.resignFirstResponder()
     }

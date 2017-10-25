@@ -7,6 +7,7 @@
 //
 
 @import Foundation;
+@import CoreGraphics;
 
 @interface BNCDeviceInfo : NSObject
 
@@ -23,6 +24,13 @@
 @property (atomic, copy, readonly) NSNumber *screenHeight;
 @property (atomic, readonly) BOOL isAdTrackingEnabled;
 
+@property (atomic, copy, readonly) NSString         *extensionType;
+@property (atomic, copy, readonly) NSString         *branchSDKVersion;
+@property (atomic, copy, readonly) NSString         *applicationVersion;
+@property (atomic, assign, readonly) CGFloat        screenScale;
+@property (atomic, copy,   readonly) NSString*      adId;
+@property (atomic, assign, readonly) BOOL           unidentifiedDevice;
+
 @property (atomic, copy, readonly) NSString* country;            //!< The iso2 Country name (us, in,etc).
 @property (atomic, copy, readonly) NSString* language;           //!< The iso2 language code (en, ml).
 @property (atomic, copy, readonly) NSString* browserUserAgent;   //!< Simple user agent string.
@@ -33,4 +41,5 @@
 + (NSString*) userAgentString;          // Warning:  Has an implied lock on main thread on first call.
 + (NSString*) systemBuildVersion;
 
+- (NSDictionary*) v2dictionary;
 @end

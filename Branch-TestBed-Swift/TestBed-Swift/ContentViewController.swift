@@ -35,7 +35,7 @@ class ContentViewController: UIViewController {
                 }
                 
                 if universalObject.canonicalIdentifier != "" {
-                    universalObject.automaticallyListOnSpotlight = true
+                    universalObject.publiclyIndex = true
                     universalObject.userCompletedAction(BNCRegisterViewEvent)
                 }
                 

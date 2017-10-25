@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="WPU-Ft-SWB">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--TextViewForm-->
+        <scene sceneID="4av-qW-gdO">
+            <objects>
+                <tableViewController storyboardIdentifier="TextViewFormTableViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Aqu-O9-8Kl" userLabel="TextViewForm" customClass="TextViewFormTableViewController" customModule="TestBed_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="bNk-SI-3yX">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <sections>
+                            <tableViewSection id="cD0-jb-3GD" userLabel="Section">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" placeholderIntrinsicWidth="600" placeholderIntrinsicHeight="88" selectionStyle="default" indentationWidth="10" rowHeight="98" id="fkP-XX-NcM" userLabel="TableViewCell">
+                                        <rect key="frame" x="0.0" y="35" width="375" height="98"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fkP-XX-NcM" id="5OY-9g-dIW">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="97.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="bBo-K7-Axw">
+                                                    <rect key="frame" x="8" y="8" width="359" height="81.5"/>
+                                                    <subviews>
+                                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="top" translatesAutoresizingMaskIntoConstraints="NO" id="rpg-0S-e9Y" userLabel="textView">
+                                                            <rect key="frame" x="0.0" y="0.0" width="339" height="81.5"/>
+                                                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            <accessibility key="accessibilityConfiguration" identifier="textView" label="textView"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                            <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
+                                                        </textView>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dxb-kZ-oCy" userLabel="clearButton">
+                                                            <rect key="frame" x="339" y="31" width="20" height="19.5"/>
+                                                            <accessibility key="accessibilityConfiguration" identifier="clearButton" label="clearButton"/>
+                                                            <state key="normal" image="cancel-28.png"/>
+                                                            <connections>
+                                                                <action selector="clearButtonTouchUpInside:" destination="Aqu-O9-8Kl" eventType="touchUpInside" id="1l2-wX-nL6"/>
+                                                            </connections>
+                                                        </button>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="rpg-0S-e9Y" firstAttribute="top" secondItem="bBo-K7-Axw" secondAttribute="top" id="PCH-NQ-cl1"/>
+                                                        <constraint firstAttribute="trailing" secondItem="rpg-0S-e9Y" secondAttribute="trailing" constant="20" symbolic="YES" id="oXg-fb-l24"/>
+                                                        <constraint firstItem="dxb-kZ-oCy" firstAttribute="top" secondItem="bBo-K7-Axw" secondAttribute="top" constant="31" id="qg4-yp-dDS"/>
+                                                    </constraints>
+                                                </stackView>
+                                            </subviews>
+                                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <constraints>
+                                                <constraint firstItem="bBo-K7-Axw" firstAttribute="trailing" secondItem="5OY-9g-dIW" secondAttribute="trailingMargin" id="DRk-wE-wHd"/>
+                                                <constraint firstItem="bBo-K7-Axw" firstAttribute="bottom" secondItem="5OY-9g-dIW" secondAttribute="bottomMargin" id="VNs-IF-rc1"/>
+                                                <constraint firstItem="bBo-K7-Axw" firstAttribute="leading" secondItem="5OY-9g-dIW" secondAttribute="leadingMargin" id="a1B-uD-QNu"/>
+                                                <constraint firstItem="bBo-K7-Axw" firstAttribute="top" secondItem="5OY-9g-dIW" secondAttribute="topMargin" id="vCL-gX-xwo"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="Aqu-O9-8Kl" id="gt1-rn-ezo"/>
+                            <outlet property="delegate" destination="Aqu-O9-8Kl" id="dtj-xG-ZDH"/>
+                        </connections>
+                    </tableView>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="n9M-oY-MLO" userLabel="TextView Form Navigation Item">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="gWe-Na-7BQ">
+                            <connections>
+                                <segue destination="ZFQ-QM-Boa" kind="unwind" identifier="Cancel" unwindAction="unwindByCancelling:" id="hQS-pm-K0f"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" systemItem="save" id="qUx-K8-QwN">
+                            <connections>
+                                <segue destination="ZFQ-QM-Boa" kind="unwind" identifier="Save" unwindAction="unwindTextViewForm:" id="do3-3e-hHK"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="clearButton" destination="dxb-kZ-oCy" id="Mpr-W2-kEX"/>
+                        <outlet property="saveButton" destination="qUx-K8-QwN" id="aOL-Bg-kFP"/>
+                        <outlet property="textView" destination="rpg-0S-e9Y" id="ieH-Ll-ACU"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Yn1-1u-XeI" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="ZFQ-QM-Boa" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="5385" y="-868"/>
+        </scene>
+        <!--TextViewFormNavigationController-->
+        <scene sceneID="DdE-pi-1cw">
+            <objects>
+                <navigationController storyboardIdentifier="TextViewFormNavigationController" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="WPU-Ft-SWB" userLabel="TextViewFormNavigationController" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="CEI-uw-UIX">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Aqu-O9-8Kl" kind="relationship" relationship="rootViewController" id="UT0-7m-xoG"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Og6-u7-Vxn" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4565" y="-867"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="cancel-28.png" width="28" height="28"/>
+    </resources>
+</document>

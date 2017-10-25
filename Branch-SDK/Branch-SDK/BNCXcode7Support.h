@@ -19,4 +19,8 @@
 typedef NSString * UIActivityType;
 typedef NSString * UIApplicationOpenURLOptionsKey;
 
+#if !defined(NS_STRING_ENUM)
+#define NS_STRING_ENUM
+#endif
+
 #endif
