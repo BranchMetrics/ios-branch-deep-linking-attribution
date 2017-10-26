@@ -680,7 +680,8 @@ didStartSessionWithURL:(NSURL*)url
 
     NSDictionary *d = [object getDictionaryWithCompleteLinkProperties:properties];
     NSMutableDictionary *truth = [NSMutableDictionary dictionaryWithDictionary:self.deepLinkParams];
-    truth[@"~duration"] = @(0); // ~duration not added because zero value?
+    truth[@"~duration"] = @(0);         // ~duration not added because zero value?
+    truth[@"$locally_indexable"] = @(0);
     XCTAssertTrue(d.count == truth.count);
     XCTAssertTrue(!d || [d isEqualToDictionary:truth]);
 
