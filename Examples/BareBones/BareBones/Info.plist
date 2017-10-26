@@ -28,9 +28,11 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2017 Branch, Inc. All rights reserved.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -55,8 +57,6 @@
 	</array>
 	<key>branch_key</key>
 	<string>key_live_eaxQeLMRmYHcekjK0km1VcfnuDnH6RCL</string>
-	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2017 Branch, Inc. All rights reserved.</string>
 	<key>branch_universal_link_domains</key>
 	<string>branchbarebones.app.link</string>
 </dict>
