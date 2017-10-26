@@ -76,7 +76,7 @@ class FortuneViewController: UIViewController, UITextViewDelegate {
             return
         }
 
-        // Set some content for the Branch object:
+        // Add some content to the Branch object:
         let buo = BranchUniversalObject.init()
         buo.title = "Bare Bones Branch Example"
         buo.contentDescription = "A mysterious fortune."
