@@ -20,6 +20,7 @@
 #import "BNCServerResponse.h"
 #import "BNCStrongMatchHelper.h"
 #import "BNCSystemObserver.h"
+#import "BNCViewControllerManager.h"
 #import "BranchCloseRequest.h"
 #import "BranchConstants.h"
 #import "BranchContentDiscoverer.h"
@@ -1924,7 +1925,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                 BNCLogWarning(@"The automatic deeplink view controller '%@' for key '%@' does not implement 'configureControlWithData:'.",
                     branchSharingController, key);
             }
-            self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
+            self.deepLinkPresentingController = [[BNCViewControllerManager alloc] init].currentViewController;
 
             if([self.deepLinkControllers[key] isKindOfClass:[BNCDeepLinkViewControllerInstance class]]) {
                 BNCDeepLinkViewControllerInstance* deepLinkInstance = self.deepLinkControllers[key];

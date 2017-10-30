@@ -13,6 +13,7 @@
 #import "BNCDeviceInfo.h"
 #import "BNCXcode7Support.h"
 #import "BNCLog.h"
+#import "BNCViewControllerManager.h"
 #import "Branch.h"
 @class BranchShareActivityItem;
 
@@ -197,11 +198,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     if ([viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
         presentingViewController = viewController;
     } else {
-        Class UIApplicationClass = NSClassFromString(@"UIApplication");
-        UIViewController *rootController = [UIApplicationClass sharedApplication].delegate.window.rootViewController;
-        if ([rootController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-            presentingViewController = rootController;
-        }
+        presentingViewController = [[BNCViewControllerManager alloc] init].currentViewController;
     }
 
     if (!presentingViewController) {

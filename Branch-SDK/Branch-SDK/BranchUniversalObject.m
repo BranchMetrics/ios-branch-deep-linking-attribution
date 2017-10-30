@@ -14,6 +14,7 @@
 #import "BNCLog.h"
 #import "BNCLocalization.h"
 #import "BNCEncodingUtils.h"
+#import "BNCViewControllerManager.h"
 #import "Branch.h"
 
 #pragma mark BranchContentSchema
@@ -482,11 +483,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         presentingViewController = viewController;
     }
     else {
-        Class UIApplicationClass = NSClassFromString(@"UIApplication");
-        if ([[[[UIApplicationClass sharedApplication].delegate window] rootViewController]
-               respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-            presentingViewController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
-        }
+        presentingViewController = [[BNCViewControllerManager alloc] init].currentViewController;
     }
     
     if (linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT]) {
