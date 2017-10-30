@@ -1487,7 +1487,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @warning This is meant for use internally only and should not be used by apps.
  */
-- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
+- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback
+    __attribute__((deprecated(("This API is deprecated. Please use BranchEvent:BranchStandardEventViewItem instead."))));
 
 - (void) sendServerRequest:(BNCServerRequest*)request;
 - (void) sendServerRequestWithoutSession:(BNCServerRequest*)request;
