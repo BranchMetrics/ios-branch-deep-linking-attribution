@@ -1906,7 +1906,6 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         }
     }
 
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (self.shouldAutomaticallyDeepLink) {
         // Find any matched keys, then launch any controllers that match
         // TODO which one to launch if more than one match?

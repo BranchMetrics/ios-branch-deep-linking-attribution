@@ -13,8 +13,9 @@
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     UIViewController *current = [[[UIApplicationClass sharedApplication] keyWindow] rootViewController];
 
-    if (@available(iOS 8.0, *)) {
-        while (current.presentedViewController && ![current.presentedViewController isKindOfClass:UIAlertController.class]) {
+    Class UIAlertControllerClass = NSClassFromString(@"UIAlertController");
+    if (UIAlertControllerClass) {
+        while (current.presentedViewController && ![current.presentedViewController isKindOfClass:UIAlertControllerClass]) {
             current = current.presentedViewController;
         }
     } else {
