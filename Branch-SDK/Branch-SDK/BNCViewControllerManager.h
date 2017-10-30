@@ -5,7 +5,7 @@
 //  Created by Jimmy Dee on 10/30/17.
 //
 
-#import <Foundation/Foundation.h>
+@import UIKit;
 
 /**
  * Utility class to find the current view controller for use with presentViewController:animated:completion:.
