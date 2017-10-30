@@ -151,6 +151,8 @@
 		67486B8E1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */; };
 		677F4CB51C1FB1910029F2B3 /* Branch-TestBed.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 677F4CB41C1FB0FA0029F2B3 /* Branch-TestBed.entitlements */; };
 		67F270891BA9FCFF002546A7 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		7B75D5CB1FA79C6100BD691C /* BNCViewControllerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B75D5C91FA79C6100BD691C /* BNCViewControllerManager.h */; };
+		7B75D5CC1FA79C6100BD691C /* BNCViewControllerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B75D5CA1FA79C6100BD691C /* BNCViewControllerManager.m */; };
 		7D0C97191D8753C9004E14B1 /* BranchContentDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D0C97181D8753C9004E14B1 /* BranchContentDiscoverer.m */; };
 		7D0C971D1D875465004E14B1 /* BranchContentDiscoveryManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D0C971C1D875465004E14B1 /* BranchContentDiscoveryManifest.m */; };
 		7D0C97201D87549B004E14B1 /* BranchContentPathProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D0C971F1D87549B004E14B1 /* BranchContentPathProperties.m */; };
@@ -332,6 +334,8 @@
 		67BBCF271A69E49A009C7DAE /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
 		69347EDA2E4ED874ED5DA0B3 /* Pods-Branch-SDK-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK-Tests/Pods-Branch-SDK-Tests.release.xcconfig"; sourceTree = "<group>"; };
+		7B75D5C91FA79C6100BD691C /* BNCViewControllerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCViewControllerManager.h; sourceTree = "<group>"; };
+		7B75D5CA1FA79C6100BD691C /* BNCViewControllerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCViewControllerManager.m; sourceTree = "<group>"; };
 		7D0C97181D8753C9004E14B1 /* BranchContentDiscoverer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchContentDiscoverer.m; sourceTree = "<group>"; };
 		7D0C971A1D8753EA004E14B1 /* BranchContentDiscoverer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchContentDiscoverer.h; sourceTree = "<group>"; };
 		7D0C971B1D875445004E14B1 /* BranchContentDiscoveryManifest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchContentDiscoveryManifest.h; sourceTree = "<group>"; };
@@ -591,6 +595,8 @@
 				67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */,
 				670016C71946309100A9E103 /* BNCSystemObserver.h */,
 				670016C81946309100A9E103 /* BNCSystemObserver.m */,
+				7B75D5C91FA79C6100BD691C /* BNCViewControllerManager.h */,
+				7B75D5CA1FA79C6100BD691C /* BNCViewControllerManager.m */,
 				4D8999EA1DC108FF00F7EE0A /* BNCXcode7Support.h */,
 				4D8999EB1DC108FF00F7EE0A /* BNCXcode7Support.m */,
 				670016BD1946309100A9E103 /* Branch.h */,
@@ -712,6 +718,7 @@
 				4D44E7C91E68F34E00793D79 /* BNCDebug.h in Headers */,
 				466B587A1B17780A00A69EDE /* BNCError.h in Headers */,
 				466B587D1B17780A00A69EDE /* BNCLinkCache.h in Headers */,
+				7B75D5CB1FA79C6100BD691C /* BNCViewControllerManager.h in Headers */,
 				466B587C1B17780A00A69EDE /* BNCLinkData.h in Headers */,
 				4D44E7CB1E68F34E00793D79 /* BNCLog.h in Headers */,
 				4D9921141EE208B400A4AB92 /* BNCNetworkServiceProtocol.h in Headers */,
@@ -961,6 +968,7 @@
 				4D8EE7A61E1F0A5D00B1F450 /* BNCCommerceEvent.m in Sources */,
 				2BD7C4601F27D7AB003696AF /* BNCDeepLinkViewControllerInstance.m in Sources */,
 				7D4DAC251C8FA908008E37DB /* BranchViewHandler.m in Sources */,
+				7B75D5CC1FA79C6100BD691C /* BNCViewControllerManager.m in Sources */,
 				4D9921321EE208B400A4AB92 /* BranchShortUrlSyncRequest.m in Sources */,
 				466B58591B17779C00A69EDE /* BNCPreferenceHelper.m in Sources */,
 				4D9921201EE208B400A4AB92 /* BranchCreditHistoryRequest.m in Sources */,
