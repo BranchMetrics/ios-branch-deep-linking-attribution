@@ -139,13 +139,12 @@ class MainViewController: UIViewController {
         // Start the animation:
         CATransaction.begin()
         CATransaction.setCompletionBlock { self.revealMysticConjuring() }
-        CATransaction.setAnimationDuration(0.90)
+        CATransaction.setAnimationDuration(0.75)
 
         var animation = CABasicAnimation(keyPath: "opacity")
         animation.fromValue = 1.0
         animation.toValue = 0.25
         animation.repeatCount = 2.5
-        animation.duration = 1.00
         animation.isRemovedOnCompletion = false
         animation.fillMode = kCAFillModeForwards;
         animation.autoreverses = true
@@ -155,7 +154,6 @@ class MainViewController: UIViewController {
         animation.fromValue = 1.0
         animation.toValue = 1.35
         animation.repeatCount = 2.5
-        animation.duration = 1.00
         animation.isRemovedOnCompletion = false
         animation.fillMode = kCAFillModeForwards;
         animation.autoreverses = true

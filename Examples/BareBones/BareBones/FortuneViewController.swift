@@ -16,6 +16,7 @@ class FortuneViewController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var linkTextView: UITextView!
+    @IBOutlet weak var shareButton: UIButton!
 
     var message: String?
 
@@ -156,6 +157,9 @@ class FortuneViewController: UIViewController, UITextViewDelegate {
             activityItems: [text, url, imagePNG],
             applicationActivities: []
         )
+        activityController.title = "Share Your Fortune"
+        activityController.popoverPresentationController?.sourceView = shareButton
+        activityController.popoverPresentationController?.sourceRect = shareButton.bounds
         activityController.setValue("My Fortune", forKey: "subject")
         present(activityController, animated: true, completion: nil)
     }

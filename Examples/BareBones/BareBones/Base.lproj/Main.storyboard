@@ -125,21 +125,21 @@ Example</string>
                                 <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gFa-nQ-XbO" userLabel="ContentView">
-                                        <rect key="frame" x="0.0" y="0.0" width="768" height="693.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="768" height="669.5"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" horizontalHuggingPriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="MTG-Yq-eti">
-                                                <rect key="frame" x="0.0" y="0.0" width="184" height="693.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="184" height="669.5"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             </view>
                                             <view contentMode="scaleToFill" horizontalHuggingPriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="y8y-gl-1ob">
-                                                <rect key="frame" x="584" y="0.0" width="184" height="693.5"/>
+                                                <rect key="frame" x="584" y="0.0" width="184" height="669.5"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             </view>
                                             <view contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="6NW-Gv-Tqv" userLabel="InnerView">
-                                                <rect key="frame" x="184" y="20" width="400" height="653.5"/>
+                                                <rect key="frame" x="184" y="20" width="400" height="629.5"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kA1-nM-ZdG">
-                                                        <rect key="frame" x="165" y="131.5" width="71" height="65"/>
+                                                        <rect key="frame" x="165" y="125.5" width="71" height="65"/>
                                                         <string key="text">Bare
 Bones
 Example</string>
@@ -148,20 +148,20 @@ Example</string>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="750" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="1000" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LAQ-En-JeN">
-                                                        <rect key="frame" x="20" y="221.5" width="360" height="412"/>
-                                                        <string key="text">This is a bare bones example of using Branch in a simple Swift project.
+                                                        <rect key="frame" x="20" y="215.5" width="360" height="394"/>
+                                                        <mutableString key="text">This is a bare bones example of using Branch in a simple Swift project.
 
-With this app you can create Branch deep links that have a 'secret' message associated with them. You can send the link to your friend, and when your friend clicks the link (or scans the QR code), the app will open and reveal the message. If your friend doesn't have the app they'll be directed to the app store to get the app, and because the link is a Branch deferred deep link, when they open the app, the message will still appear.
+With this app you can create Branch deep links that have a 'secret' messages associated with them. You can send a link to your friend, and when your friend clicks the link (or scans the QR code), the app will open and reveal the message. If your friend doesn't have the app they'll be directed to the app store to get the app, and because the link is a Branch deferred deep link, when they open the app, the message will correctly appear.
 
 The example code shows:
 
-• How to use the Branch SDK in a simple Swift 4 application.
+• How to use the Branch SDK in a simple Swift app.
 
 • How to respond to Branch NSNotification events.
 
 • How to create and share Branch links in your app.
 
-• How to create a QR code from a Branch link.</string>
+• How to create a QR code from a Branch link.</mutableString>
                                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
@@ -410,6 +410,7 @@ Line3”</string>
                         <outlet property="imageView" destination="vWr-Lg-hN2" id="EMV-ha-BnL"/>
                         <outlet property="linkTextView" destination="qIn-ak-A6K" id="wX8-FR-es6"/>
                         <outlet property="messageLabel" destination="Fdy-xG-lkO" id="KVi-3y-x7A"/>
+                        <outlet property="shareButton" destination="tuz-gs-xBa" id="5AI-Qb-ktG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="olo-tX-RdD" userLabel="First Responder" sceneMemberID="firstResponder"/>
