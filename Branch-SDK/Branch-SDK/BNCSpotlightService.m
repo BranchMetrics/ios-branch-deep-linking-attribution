@@ -290,7 +290,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     safeSetValue(universalObject.title,BRANCH_LINK_DATA_KEY_OG_TITLE);
     safeSetValue(universalObject.contentDescription,BRANCH_LINK_DATA_KEY_OG_DESCRIPTION);
     safeSetValue(universalObject.imageUrl,BRANCH_LINK_DATA_KEY_OG_IMAGE_URL);
-    if (universalObject.contentIndexMode == ContentIndexModePrivate) {
+    if (universalObject.contentIndexMode == ContentIndexModePublic) {
         safeSetValue(@(0),BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE);
     }
     else {

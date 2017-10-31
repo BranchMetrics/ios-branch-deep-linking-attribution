@@ -62,7 +62,9 @@
     [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedAppleSearchAdAttribution]
         forKey:BRANCH_REQUEST_KEY_CHECKED_APPLE_AD_ATTRIBUTION onDict:params];
     [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:params];
-    [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
+    if ([preferenceHelper.spotlightIdentifier hasPrefix:BRANCH_SPOTLIGHT_PREFIX]) {
+        [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
+    }
     [self safeSetValue:preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:params];
     [self safeSetValue:preferenceHelper.externalIntentURI forKey:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI onDict:params];
 
@@ -97,7 +99,7 @@
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary *data = response.data;
-
+    
     // Handle possibly mis-parsed identity.
     id userIdentity = data[BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY];
     if ([userIdentity isKindOfClass:[NSNumber class]]) {
@@ -120,7 +122,7 @@
     } else
     if ([sessionData isKindOfClass:[NSDictionary class]]) {
         BNCLogWarning(@"Received session data of type '%@' data is '%@'.",
-            NSStringFromClass(sessionData.class), sessionData);
+            NSStringFromClass(sessionData.class), sessionData);        
         sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:(NSDictionary*)sessionData];
     } else
     if ([sessionData isKindOfClass:[NSArray class]]) {
@@ -134,6 +136,16 @@
     }
 
     // Update session params
+    
+    
+    if (preferenceHelper.spotlightIdentifier) {
+        NSMutableDictionary *sessionDataDict =
+        [NSMutableDictionary dictionaryWithDictionary: [BNCEncodingUtils decodeJsonStringToDictionary:sessionData]];
+        NSDictionary *spotlightDic = @{BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER:preferenceHelper.spotlightIdentifier};
+        [sessionDataDict addEntriesFromDictionary:spotlightDic];
+        sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:sessionDataDict];
+    }
+    
     preferenceHelper.sessionParams = sessionData;
 
     // Scenarios:
@@ -175,6 +187,7 @@
             referredUrl = sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
         }
     }
+    
     BranchContentDiscoveryManifest *cdManifest = [BranchContentDiscoveryManifest getInstance];
     [cdManifest onBranchInitialised:data withUrl:referredUrl];
     if ([cdManifest isCDEnabled]) {

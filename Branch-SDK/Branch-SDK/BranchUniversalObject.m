@@ -109,10 +109,10 @@
     }
     if (dictionary[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE]) {
         if (dictionary[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] == 0) {
-            universalObject.contentIndexMode = ContentIndexModePrivate;
+            universalObject.contentIndexMode = ContentIndexModePublic;
         }
         else {
-            universalObject.contentIndexMode = ContentIndexModePublic;
+            universalObject.contentIndexMode = ContentIndexModePrivate;
         }
     }
     
@@ -132,6 +132,10 @@
     
     if (dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE]) {
         universalObject.type = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE];
+    }
+    
+    if (dictionary[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER]) {
+        universalObject.spotlightIdentifier = dictionary[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER];
     }
     return universalObject;
 }
@@ -412,7 +416,7 @@
                                                                        }
                                                                    }];
     } else {
-        NSError *error = [NSError branchErrorWithCode:BNCSpotlightIdentifierError
+        NSError *error = [NSError branchErrorWithCode:BNCSpotlightPublicIndexError
                                      localizedMessage:@"Publically indexed cannot be removed from Spotlight"];
         completion(error);
     }
