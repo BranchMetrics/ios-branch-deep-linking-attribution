@@ -13,6 +13,7 @@
 #import "BNCDeviceInfo.h"
 #import "BNCXcode7Support.h"
 #import "BNCLog.h"
+#import "Branch.h"
 @class BranchShareActivityItem;
 
 typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
@@ -80,7 +81,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         [self.delegate branchShareLink:self didComplete:completed withError:error];
     }
     if (completed && !error)
-        [self.universalObject userCompletedAction:BNCShareCompletedEvent];
+        [BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self.universalObject];
     NSDictionary *attributes = [self.universalObject getDictionaryWithCompleteLinkProperties:self.linkProperties];
     [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:attributes];
 }
@@ -109,7 +110,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     }
 
     // Log share initiated event
-    [self.universalObject userCompletedAction:BNCShareInitiatedEvent];
+    [BranchEvent customEventWithName:BNCShareInitiatedEvent contentItem:self.universalObject];
 
     NSMutableArray *items = [NSMutableArray new];
     BranchShareActivityItem *item = nil;

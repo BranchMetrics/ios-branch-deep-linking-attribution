@@ -114,12 +114,19 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     NSDictionary *indexingParams = @{@"title": universalObject.title,
                                      @"url": url,
                                      @"spotlightId": spotlightIdentifier,
-                                     @"userInfo": [universalObject.metadata mutableCopy],
+                                     @"userInfo": [universalObject.contentMetadata.customMetadata mutableCopy],
                                      @"keywords": [NSSet setWithArray:universalObject.keywords],
                                      @"attributeSet": attributes
                                      };
     
-    if (universalObject.contentIndexMode == ContentIndexModePublic) {
+    if (universalObject.locallyIndex) {
+        [self indexUsingSearchableItem:indexingParams
+                         thumbnailData:thumbnailData
+                              callback:^(NSString * _Nullable url, NSError * _Nullable error) {
+                                  if (completion)
+                                      completion(url,error);
+                              }];
+    }else {
         [self indexUsingNSUserActivity:indexingParams];
         
         // Not handling error scenarios because they are already handled upstream by the caller
@@ -128,13 +135,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                 completion(url, nil);
             }
         }
-    }else {
-        [self indexUsingSearchableItem:indexingParams
-                         thumbnailData:thumbnailData
-                              callback:^(NSString * _Nullable url, NSError * _Nullable error) {
-                                  if (completion)
-                                      completion(url,error);
-                              }];
     }
 }
 
@@ -143,7 +143,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                                              url:(NSString*)url {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     
-    NSString *type = universalObject.type ?: (NSString *)kUTTypeGeneric;
+    NSString *type = universalObject.contentMetadata.contentSchema ?: (NSString *)kUTTypeGeneric;
     
     id CSSearchableItemAttributeSetClass = NSClassFromString(@"CSSearchableItemAttributeSet");
     if (!CSSearchableItemAttributeSetClass)
@@ -290,24 +290,24 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     safeSetValue(universalObject.title,BRANCH_LINK_DATA_KEY_OG_TITLE);
     safeSetValue(universalObject.contentDescription,BRANCH_LINK_DATA_KEY_OG_DESCRIPTION);
     safeSetValue(universalObject.imageUrl,BRANCH_LINK_DATA_KEY_OG_IMAGE_URL);
-    if (universalObject.contentIndexMode == ContentIndexModePublic) {
-        safeSetValue(@(0),BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE);
+    if (universalObject.locallyIndex) {
+        safeSetValue(@(1),BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE);
     }
     else {
-        safeSetValue(@(1),BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE);
+        safeSetValue(@(0),BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE);
     }
     safeSetValue(universalObject.keywords,BRANCH_LINK_DATA_KEY_KEYWORDS);
     safeSetValue(@(1000 * [universalObject.expirationDate timeIntervalSince1970]),BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE);
-    safeSetValue(universalObject.type,BRANCH_LINK_DATA_KEY_CONTENT_TYPE);
-    safeSetValue(universalObject.currency,BNCPurchaseCurrency);
-    if (universalObject.price) {
+    safeSetValue(universalObject.contentMetadata.contentSchema,BRANCH_LINK_DATA_KEY_CONTENT_TYPE);
+    safeSetValue(universalObject.contentMetadata.currency,BNCPurchaseCurrency);
+    if (universalObject.contentMetadata.price) {
         // have to add if statement because safeSetValue only accepts objects so even if self.price is not set
         // a valid NSNumber object will be created and the request will have amount:0 in all cases.
-        safeSetValue([NSNumber numberWithFloat:universalObject.price],BNCPurchaseAmount);
+        safeSetValue(universalObject.contentMetadata.price,BNCPurchaseAmount);
     }
     #undef safeSetValue
     
-    [temp addEntriesFromDictionary:[universalObject.metadata copy]];
+    [temp addEntriesFromDictionary:[universalObject.contentMetadata.customMetadata copy]];
     return [temp copy];
 }
 

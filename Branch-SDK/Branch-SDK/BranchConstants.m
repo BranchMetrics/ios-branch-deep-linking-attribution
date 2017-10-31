@@ -95,6 +95,8 @@ NSString * const BRANCH_LINK_DATA_KEY_OG_IMAGE_URL = @"$og_image_url";
 NSString * const BRANCH_LINK_DATA_KEY_TITLE = @"+spotlight_title";
 NSString * const BRANCH_LINK_DATA_KEY_DESCRIPTION = @"+spotlight_description";
 NSString * const BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE = @"$publicly_indexable";
+NSString * const BRANCH_LINK_DATA_KEY_LOCALLY_INDEXABLE = @"$locally_indexable";
+
 NSString * const BRANCH_LINK_DATA_KEY_TYPE = @"+spotlight_type";
 NSString * const BRANCH_LINK_DATA_KEY_THUMBNAIL_URL = @"+spotlight_thumbnail_url";
 NSString * const BRANCH_LINK_DATA_KEY_KEYWORDS = @"$keywords";
@@ -136,3 +138,5 @@ NSString * const BRANCH_REQUEST_KEY_SEARCH_AD = @"search_ad_encoded";
 NSString * const BRANCH_CRASHLYTICS_SDK_VERSION_KEY = @"io.branch.sdk.version";
 NSString * const BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY = @"io.branch.device.fingerprintid";
 NSString * const BRANCH_CRASHLYTICS_LOW_MEMORY_KEY = @"io.branch.device.lowmemory";
+
+NSString * const BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI = @"external_intent_uri";

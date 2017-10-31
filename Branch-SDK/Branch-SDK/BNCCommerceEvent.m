@@ -1,16 +1,14 @@
 //
 //  BNCCommerceEvent.h
-//  BranchSDK-iOS
+//  Branch-SDK
 //
 //  Created by Edward Smith on 12/14/16.
 //  Copyright (c) 2016 Branch Metrics. All rights reserved.
 //
 
-
 #import "BNCCommerceEvent.h"
 #import "BranchConstants.h"
 #import "BNCLog.h"
-
 
 #pragma mark BNCProductCategory
 
@@ -315,16 +313,13 @@ BNCCurrency BNCCurrencyZMW = @"ZMW";
 
 @end
 
-
 #pragma mark - BranchCommerceEventRequest
-
 
 @interface BranchCommerceEventRequest ()
 @property (strong) NSDictionary *commerceDictionary;
 @property (strong) NSDictionary *metadata;
 @property (copy)   void (^completion)(NSDictionary* response, NSError* error);
 @end
-
 
 @implementation BranchCommerceEventRequest
 
@@ -379,9 +374,7 @@ BNCCurrency BNCCurrencyZMW = @"ZMW";
 		self.completion(dictionary, error);
 }
 
-
 #pragma mark BranchCommerceEventRequest NSCoding
-
 
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];

@@ -21,17 +21,8 @@
     NSString *uid = nil;
     *isReal = YES;
 
-    Class ASIdentifierManagerClass = NSClassFromString(@"ASIdentifierManager");
-    if (ASIdentifierManagerClass && !debug) {
-        SEL sharedManagerSelector = NSSelectorFromString(@"sharedManager");
-        id sharedManager = ((id (*)(id, SEL))[ASIdentifierManagerClass methodForSelector:sharedManagerSelector])(ASIdentifierManagerClass, sharedManagerSelector);
-        SEL advertisingIdentifierSelector = NSSelectorFromString(@"advertisingIdentifier");
-        NSUUID *uuid = ((NSUUID* (*)(id, SEL))[sharedManager methodForSelector:advertisingIdentifierSelector])(sharedManager, advertisingIdentifierSelector);
-        uid = [uuid UUIDString];
-        // limit ad tracking is enabled. iOS 10+
-        if ([uid isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
-            uid = nil;
-        }
+    if (!debug) {
+        uid = [self getAdId];
         *type = @"idfa";
     }
 
@@ -44,6 +35,29 @@
         uid = [[NSUUID UUID] UUIDString];
         *type = @"random";
         *isReal = NO;
+    }
+
+    return uid;
+}
+
++ (NSString*) getAdId {
+    NSString *uid = nil;
+
+    Class ASIdentifierManagerClass = NSClassFromString(@"ASIdentifierManager");
+    if (ASIdentifierManagerClass) {
+        SEL sharedManagerSelector = NSSelectorFromString(@"sharedManager");
+        id sharedManager =
+            ((id (*)(id, SEL))[ASIdentifierManagerClass methodForSelector:sharedManagerSelector])
+                (ASIdentifierManagerClass, sharedManagerSelector);
+        SEL advertisingIdentifierSelector = NSSelectorFromString(@"advertisingIdentifier");
+        NSUUID *uuid =
+            ((NSUUID* (*)(id, SEL))[sharedManager methodForSelector:advertisingIdentifierSelector])
+                (sharedManager, advertisingIdentifierSelector);
+        uid = [uuid UUIDString];
+        // limit ad tracking is enabled. iOS 10+
+        if ([uid isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
+            uid = nil;
+        }
     }
 
     return uid;

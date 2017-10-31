@@ -329,11 +329,11 @@ static NSString* const kUTTypeGeneric = @"public.content";
     [self indexContentWithTitle:universalObject.title
                     description:universalObject.description
                     canonicalId:universalObject.canonicalUrl
-              publiclyIndexable:universalObject.contentIndexMode
-                           type:universalObject.type
+              publiclyIndexable:universalObject.locallyIndex
+                           type:universalObject.contentMetadata.contentSchema
                    thumbnailUrl:[NSURL URLWithString: universalObject.imageUrl]
                        keywords:[NSSet setWithArray:universalObject.keywords]
-                       userInfo:universalObject.metadata expirationDate:nil
+                       userInfo:universalObject.contentMetadata.customMetadata expirationDate:nil
                        callback:nil
               spotlightCallback:^(NSString * _Nullable url, NSString * _Nullable spotlightIdentifier, NSError * _Nullable error) {
                   
@@ -365,11 +365,11 @@ static NSString* const kUTTypeGeneric = @"public.content";
     BranchUniversalObject *universalObject = [[BranchUniversalObject alloc] initWithTitle:title];
     [universalObject setContentDescription:description];
     [universalObject setCanonicalUrl:canonicalId];
-    [universalObject setContentIndexMode:publiclyIndexable? ContentIndexModePublic:ContentIndexModePrivate];
-    [universalObject setType:type];
+    [universalObject setLocallyIndex:publiclyIndexable];
+    [universalObject.contentMetadata setContentSchema:type];
     [universalObject setImageUrl:[thumbnailUrl absoluteString]];
     [universalObject setKeywords:[keywords allObjects]];
-    [universalObject setMetadata:userInfo];
+    [universalObject.contentMetadata setCustomMetadata:[NSMutableDictionary dictionaryWithDictionary:userInfo]];
     [universalObject setExpirationDate:expirationDate];
     
     if(publiclyIndexable) {

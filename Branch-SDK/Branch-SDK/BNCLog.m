@@ -230,7 +230,7 @@ BOOL BNCLogRecordWrapOpenURL_Internal(NSURL *url, long maxRecords, long recordSi
     off_t offset = 0;
     char buffer[bnc_LogRecordSize];
     ssize_t bytesRead = read(bnc_LogDescriptor, &buffer, sizeof(buffer));
-    while (bytesRead == sizeof(buffer)) {
+    while ((unsigned long) bytesRead == sizeof(buffer)) {
         NSString *dateString =
             [[NSString alloc] initWithBytes:buffer length:27 encoding:NSUTF8StringEncoding];
         NSDate *date = [bnc_LogDateFormatter dateFromString:dateString];

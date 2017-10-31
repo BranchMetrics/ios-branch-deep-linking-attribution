@@ -9,9 +9,7 @@
 #import "BranchSpotlightUrlRequest.h"
 
 @interface BranchSpotlightUrlRequest ()
-
 @property (strong, nonatomic) callbackWithParams spotlightCallback;
-
 @end
 
 @implementation BranchSpotlightUrlRequest
@@ -21,7 +19,7 @@
     [linkData setupParams:params];
     [linkData setupChannel:@"spotlight"];
     
-    if (self = [super initWithTags:nil alias:nil type:BranchLinkTypeUnlimitedUse matchDuration:0 channel:@"spotlight" feature:BRANCH_FEATURE_TAG_SHARE stage:nil campaign:nil params:params linkData:linkData linkCache:nil callback:nil]) {
+    if ((self = [super initWithTags:nil alias:nil type:BranchLinkTypeUnlimitedUse matchDuration:0 channel:@"spotlight" feature:BRANCH_FEATURE_TAG_SHARE stage:nil campaign:nil params:params linkData:linkData linkCache:nil callback:nil])) {
         self.isSpotlightRequest = YES;
         _spotlightCallback = callback;
     }
