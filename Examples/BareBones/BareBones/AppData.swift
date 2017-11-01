@@ -45,6 +45,7 @@ class AppData {
             name: NSNotification.Name.UIApplicationDidFinishLaunching,
             object: nil
         )
+        // http://www.fortunecookiemessage.com/archive.php
         let fileURL = Bundle.main.bundleURL.appendingPathComponent("Fortunes.txt")
         if let allFortunes = try? String.init(contentsOf: fileURL) {
             self.fortunes = allFortunes.split(separator: "\n", omittingEmptySubsequences: true)

@@ -87,7 +87,7 @@ class MainViewController: UIViewController {
 
     @objc func branchWillStartSession(notification: Notification) {
         // Only show the waiting view if we've been opened by an URL tap:
-        guard let url: URL = notification.userInfo?[BranchURLKey] as? URL else { return }
+        guard let url = notification.userInfo?[BranchURLKey] as? URL else { return }
         WaitingViewController.showWithMessage(
             message: "Opening\n\(url.absoluteString)",
             activityIndicator: true,
@@ -98,10 +98,8 @@ class MainViewController: UIViewController {
     @objc func branchDidStartSession(notification: Notification) {
         WaitingViewController.hide()
 
-        let url : URL? = notification.userInfo?[BranchURLKey] as? URL
-
         if let error = notification.userInfo?[BranchErrorKey] as? Error {
-            if let url = url {
+            if let url = notification.userInfo?[BranchURLKey] as? URL {
                 self.showAlert(
                     title: "Couldn't Open URL",
                     message: "\(url.absoluteString)\n\n\(error.localizedDescription)"
