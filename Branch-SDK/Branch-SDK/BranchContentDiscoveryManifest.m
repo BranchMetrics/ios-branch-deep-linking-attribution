@@ -7,8 +7,6 @@
 //
 
 
-@import Foundation;
-@import UIKit;
 #import "BranchContentDiscoveryManifest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchContentPathProperties.h"

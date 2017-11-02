@@ -6,8 +6,12 @@
 //  Copyright © 2015 Branch Metrics. All rights reserved.
 //
 
-@import Foundation;
+#if __has_feature(modules)
 @import UIKit;
+#else
+#import <UIKit/UIKit.h>
+#endif
+
 #import "BNCCallbacks.h"
 #import "BNCCommerceEvent.h"
 #import "BranchLinkProperties.h"

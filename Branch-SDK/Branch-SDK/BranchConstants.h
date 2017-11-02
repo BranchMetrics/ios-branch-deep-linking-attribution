@@ -6,7 +6,11 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
+#if __has_feature(modules)
 @import Foundation;
+#else
+#import <Foundation/Foundation.h>
+#endif
 
 extern NSString * const BRANCH_REQUEST_KEY_BRANCH_IDENTITY;
 extern NSString * const BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY;

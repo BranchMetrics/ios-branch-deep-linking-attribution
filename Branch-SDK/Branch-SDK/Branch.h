@@ -5,8 +5,15 @@
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
+
+#if __has_feature(modules)
 @import Foundation;
 @import UIKit;
+#else
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#endif
+
 #import "BNCCallbacks.h"
 #import "BNCCommerceEvent.h"
 #import "BNCConfig.h"
