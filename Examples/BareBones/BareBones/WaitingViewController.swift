@@ -69,7 +69,7 @@ class WaitingViewController: UIViewController {
         
         let kIndent: CGFloat = 40.0
         
-        if (message.characters.count > 0) {
+        if (message.count > 0) {
             self.label.text = message
             labelRect.size = self.label.sizeThatFits(self.maxLabelRect.size)
             labelRect.size.width += 2.0 * kIndent

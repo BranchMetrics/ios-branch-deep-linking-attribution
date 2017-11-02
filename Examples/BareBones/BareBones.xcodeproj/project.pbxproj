@@ -21,7 +21,6 @@
 		4D8B77741F8462C200EFD3FF /* WaitingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D8B77721F8462C200EFD3FF /* WaitingViewController.xib */; };
 		4D8B77751F8462C200EFD3FF /* WaitingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D8B77731F8462C200EFD3FF /* WaitingViewController.swift */; };
 		4D8B777F1F84689200EFD3FF /* Branch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D8B777B1F84684C00EFD3FF /* Branch.framework */; };
-		4DA904931F859FDE00892A23 /* Branch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D8B777B1F84684C00EFD3FF /* Branch.framework */; };
 		4DA904941F859FDE00892A23 /* Branch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4D8B777B1F84684C00EFD3FF /* Branch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4DBC12491F9980F500932CA5 /* Fortunes.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4DBC12481F9980F500932CA5 /* Fortunes.txt */; };
 		4DFA9A571F9AC041003EDD47 /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DFA9A561F9AC041003EDD47 /* MessageViewController.swift */; };
@@ -96,7 +95,6 @@
 				4D193B511F85975400228824 /* AdSupport.framework in Frameworks */,
 				4D8B777F1F84689200EFD3FF /* Branch.framework in Frameworks */,
 				4D193B551F8597A600228824 /* CoreSpotlight.framework in Frameworks */,
-				4DA904931F859FDE00892A23 /* Branch.framework in Frameworks */,
 				4D193B531F85977B00228824 /* SafariServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -192,7 +190,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0900;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0910;
 				ORGANIZATIONNAME = Branch;
 				TargetAttributes = {
 					4D8B775A1F8442D100EFD3FF = {
