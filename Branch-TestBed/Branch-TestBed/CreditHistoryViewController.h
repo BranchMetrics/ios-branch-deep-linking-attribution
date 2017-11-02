@@ -6,10 +6,6 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-@import UIKit;
-
 @interface CreditHistoryViewController : UITableViewController
-
 @property (nonatomic, strong) NSArray *creditTransactions;
-
 @end
