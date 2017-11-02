@@ -13,7 +13,11 @@
 #import "BranchConstants.h"
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-@import MobileCoreServices;
+    #if __has_feature(modules)
+    @import MobileCoreServices;
+    #else
+    #import <MobileCoreServices/MobileCoreServices.h>
+    #endif
 #endif
 
 #ifndef kUTTypeGeneric

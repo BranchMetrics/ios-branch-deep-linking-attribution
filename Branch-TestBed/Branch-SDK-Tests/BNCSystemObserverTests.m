@@ -7,7 +7,6 @@
 //
 
 
-@import UIKit;
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "BNCTestCase.h"

@@ -6,12 +6,18 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-@import UIKit;
-@import SystemConfiguration;
-@import Darwin.POSIX.sys.utsname;
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BNCLog.h"
+#if __has_feature(modules)
+@import UIKit;
+@import SystemConfiguration;
+@import Darwin.POSIX.sys.utsname;
+#else
+#import <UIKit/UIKit.h>
+#import <SystemConfiguration/SystemConfiguration.h>
+#import <sys/utsname.h>
+#endif
 
 @implementation BNCSystemObserver
 

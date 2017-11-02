@@ -7,7 +7,7 @@
 //
 
 #import "BNCServerRequest.h"
-#import "Branch.h"
+#import "BNCCallbacks.h"
 
 @interface BranchOpenRequest : BNCServerRequest
 

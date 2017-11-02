@@ -6,7 +6,11 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
+#if __has_feature(modules)
 @import Foundation;
+#else
+#import <Foundation/Foundation.h>
+#endif
 
 /**
  * Convenience class to dynamically wrap the Crashlytics SDK

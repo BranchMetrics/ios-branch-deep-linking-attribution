@@ -6,7 +6,6 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
-@import Foundation;
 #import "BranchContentPathProperties.h"
 #import "BranchConstants.h"
 

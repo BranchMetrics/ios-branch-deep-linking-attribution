@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-@import Foundation;
 #import "Branch.h"
 
 @interface BranchShortUrlSyncRequest : NSObject
