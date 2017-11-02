@@ -6,14 +6,10 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
-
-@import UIKit;
 #import "BranchContentDiscoveryManifest.h"
-
 
 @interface BranchContentDiscoverer : NSObject
 
-//----------- Methods ----------------//
 + (BranchContentDiscoverer *)getInstance;
 - (void) startDiscoveryTaskWithManifest:(BranchContentDiscoveryManifest*)manifest;
 - (void) startDiscoveryTask;

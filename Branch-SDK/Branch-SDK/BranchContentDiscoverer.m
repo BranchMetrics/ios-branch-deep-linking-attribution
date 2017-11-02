@@ -7,8 +7,6 @@
 //
 
 
-@import Foundation;
-@import UIKit;
 #import <CommonCrypto/CommonDigest.h>
 #import "BranchContentDiscoverer.h"
 #import "BranchContentDiscoveryManifest.h"
