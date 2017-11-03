@@ -14,9 +14,12 @@
 
 
 #import "BNCTestCase.h"
-#import "BNCLog.h"
 #import "BNCDeviceInfo.h"
-#import "NSString+Branch.h"
+#import "BNCLog.h"
+#import "BNCConfig.h"
+#import "BNCPreferenceHelper.h"
+#import "BNCSystemObserver.h"
+
 
 @interface BNCDeviceInfoTest : BNCTestCase
 @end
@@ -125,6 +128,34 @@
     BNCLogCloseLogFile();
     NSLog(@"%@: Synchronized time: %1.5f.",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
+}
+
+- (void) testV2Dictionary {
+    BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
+
+    NSMutableDictionary *truth = [self mutableDictionaryFromBundleJSONWithKey:@"BNCDeviceDictionaryV2"];
+    truth[@"app_version"] = nil;
+    truth[@"os_version"] = [UIDevice currentDevice].systemVersion;
+    truth[@"sdk_version"] = BNC_SDK_VERSION;
+    truth[@"developer_identity"] = preferences.userIdentity;
+    truth[@"device_fingerprint_id"] = preferences.deviceFingerprintID;
+    truth[@"idfa"] = [BNCSystemObserver getAdId];
+    truth[@"idfv"] = [UIDevice currentDevice].identifierForVendor.UUIDString;
+    truth[@"user_agent"] = [BNCDeviceInfo userAgentString];
+
+    // Fix up the screen:
+    CGRect bounds = [UIScreen mainScreen].bounds;
+    CGFloat scale = [UIScreen mainScreen].scale;
+    truth[@"screen_dpi"] = [NSNumber numberWithFloat:scale];
+    truth[@"screen_height"] = [NSNumber numberWithFloat:bounds.size.height * scale];
+    truth[@"screen_width"] = [NSNumber numberWithFloat:bounds.size.width * scale];
+    truth[@"local_ip"] = [BNCDeviceInfo getInstance].localIPAddress;
+
+    // Check that *something* is in user agent:
+    XCTAssertTrue(((NSString*)truth[@"user_agent"]).length > 0);
+
+    NSDictionary *d = [[BNCDeviceInfo getInstance] v2dictionary];
+    XCTAssertEqualObjects(truth, d);
 }
 
 - (void) testLocalIPAddress {

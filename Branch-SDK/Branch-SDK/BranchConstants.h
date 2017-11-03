@@ -6,7 +6,11 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
+#if __has_feature(modules)
 @import Foundation;
+#else
+#import <Foundation/Foundation.h>
+#endif
 
 extern NSString * const BRANCH_REQUEST_KEY_BRANCH_IDENTITY;
 extern NSString * const BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY;
@@ -96,6 +100,7 @@ extern NSString * const BRANCH_LINK_DATA_KEY_OG_IMAGE_URL;
 extern NSString * const BRANCH_LINK_DATA_KEY_TITLE;
 extern NSString * const BRANCH_LINK_DATA_KEY_DESCRIPTION;
 extern NSString * const BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE;
+extern NSString * const BRANCH_LINK_DATA_KEY_LOCALLY_INDEXABLE;
 extern NSString * const BRANCH_LINK_DATA_KEY_TYPE;
 extern NSString * const BRANCH_LINK_DATA_KEY_THUMBNAIL_URL;
 extern NSString * const BRANCH_LINK_DATA_KEY_KEYWORDS;

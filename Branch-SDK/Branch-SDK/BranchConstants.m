@@ -95,6 +95,8 @@ NSString * const BRANCH_LINK_DATA_KEY_OG_IMAGE_URL = @"$og_image_url";
 NSString * const BRANCH_LINK_DATA_KEY_TITLE = @"+spotlight_title";
 NSString * const BRANCH_LINK_DATA_KEY_DESCRIPTION = @"+spotlight_description";
 NSString * const BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE = @"$publicly_indexable";
+NSString * const BRANCH_LINK_DATA_KEY_LOCALLY_INDEXABLE = @"$locally_indexable";
+
 NSString * const BRANCH_LINK_DATA_KEY_TYPE = @"+spotlight_type";
 NSString * const BRANCH_LINK_DATA_KEY_THUMBNAIL_URL = @"+spotlight_thumbnail_url";
 NSString * const BRANCH_LINK_DATA_KEY_KEYWORDS = @"$keywords";

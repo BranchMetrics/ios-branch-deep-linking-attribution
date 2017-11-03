@@ -8,6 +8,7 @@
 
 #import "BNCTestCase.h"
 #import "BNCPreferenceHelper.h"
+#import "BNCLog.h"
 
 BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex) {
     NSError *error = nil;
@@ -31,7 +32,7 @@ BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex) {
 
 + (void)setUp {
     [super setUp];
-    
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     if (!preferenceHelper.deviceFingerprintID) {
         preferenceHelper.deviceFingerprintID = @"foo_fingerprint";
@@ -86,6 +87,29 @@ BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex) {
     }];
 }
 
+- (NSString*) stringFromBundleWithKey:(NSString*)key {
+    NSString *const kItemNotFound = @"<Item-Not-Found>";
+    NSString *resource =
+        [[NSBundle bundleForClass:self.class] localizedStringForKey:key value:kItemNotFound table:@"Branch-SDK-Tests"];
+    if ([resource isEqualToString:kItemNotFound]) resource = nil;
+    return resource;
+}
+
+- (NSMutableDictionary*) mutableDictionaryFromBundleJSONWithKey:(NSString*)key {
+
+    NSString *jsonString = [self stringFromBundleWithKey:key];
+    XCTAssertTrue(jsonString, @"Can't load '%@' resource from bundle JSON!", key);
+
+    NSError *error = nil;
+    NSDictionary *dictionary =
+        [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding]
+            options:0 error:&error];
+    XCTAssertNil(error);
+    XCTAssert(dictionary);
+    NSMutableDictionary *mutableDictionary = [NSMutableDictionary dictionaryWithDictionary:dictionary];
+    return mutableDictionary;
+}
+
 static BOOL _testBreakpoints = NO;
 
 + (BOOL) testBreakpoints {
@@ -94,6 +118,7 @@ static BOOL _testBreakpoints = NO;
 
 + (void) initialize {
     if (self != [BNCTestCase self]) return;
+    BNCLogSetDisplayLevel(BNCLogLevelAll);
 
     // Load test options from environment variables:
 

@@ -5,8 +5,15 @@
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
+
+#if __has_feature(modules)
 @import Foundation;
 @import UIKit;
+#else
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#endif
+
 #import "BNCCallbacks.h"
 #import "BNCCommerceEvent.h"
 #import "BNCConfig.h"
@@ -20,6 +27,7 @@
 #import "BNCXcode7Support.h"
 #import "BranchActivityItemProvider.h"
 #import "BranchDeepLinkingController.h"
+#import "BranchEvent.h"
 #import "BranchLinkProperties.h"
 #import "BranchShareLink.h"
 #import "BranchUniversalObject.h"
@@ -597,7 +605,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param key String to be included in request metadata
  @param value Object to be included in request metadata
  */
-- (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
+- (void)setRequestMetadataKey:(NSString *)key value:(id)value;
 
 - (void)enableDelayedInit;
 
@@ -835,6 +843,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param commerceEvent 	The BNCCommerceEvent that describes the purchase.
  @param metadata        Optional metadata you may want add to the event.
  @param completion 		The optional completion callback.
+ 
+ @deprecated Please use BNCEvent to send commerce events instead.
  */
 - (void) sendCommerceEvent:(BNCCommerceEvent*)commerceEvent
 				  metadata:(NSDictionary<NSString*,id>*)metadata
@@ -1484,6 +1494,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @warning This is meant for use internally only and should not be used by apps.
  */
-- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
+- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback
+    __attribute__((deprecated(("This API is deprecated. Please use BranchEvent:BranchStandardEventViewItem instead."))));
 
+- (void) sendServerRequest:(BNCServerRequest*)request;
+- (void) sendServerRequestWithoutSession:(BNCServerRequest*)request;
+
+// Read-only property exposed for unit testing.
+@property (strong, readonly) BNCServerInterface *serverInterface;
+- (void) clearNetworkQueue;
 @end

@@ -6,13 +6,7 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
-#ifndef BranchViewHandler_h
-#define BranchViewHandler_h
-
-
-#endif /* BranchViewHandler_h */
 #import "BranchView.h"
-
 
 @protocol BranchViewControllerDelegate <NSObject>
 

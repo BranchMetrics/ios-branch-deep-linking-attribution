@@ -7,9 +7,6 @@
 //
 
 
-@import UIKit;
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
 #import "Branch.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
@@ -17,6 +14,8 @@
 #import "BNCEncodingUtils.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCTestCase.h"
+#import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
 
 
 NSString * const TEST_BRANCH_KEY = @"key_live_78801a996de4287481fe73708cc95da2";  //temp
@@ -147,7 +146,6 @@ NSInteger const  TEST_CREDITS = 30;
     }];
     
     [self awaitExpectations];
-    
     [serverInterfaceMock verify];
 }
 
