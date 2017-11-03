@@ -7,6 +7,7 @@
 //
 
 #import "BNCTestCase.h"
+#import "Branch.h"
 #import "BranchInstallRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"

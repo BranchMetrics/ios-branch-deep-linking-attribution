@@ -2081,8 +2081,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     if (error) {
 
-        if ([self.delegate respondsToSelector:@selector(branch:didStartSessionWithURL:error:)])
-            [self.delegate branch:self didStartSessionWithURL:originalURL error:error];
+        if ([self.delegate respondsToSelector:@selector(branch:failedToStartSessionWithURL:error:)])
+            [self.delegate branch:self failedToStartSessionWithURL:originalURL error:error];
 
     } else {
 

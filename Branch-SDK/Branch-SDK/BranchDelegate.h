@@ -8,7 +8,12 @@
 
 // TODO: Add documentation
 
+#if __has_feature(modules)
 @import Foundation;
+#else
+#import <Foundation/Foundation.h>
+#endif
+
 @class Branch, BranchUniversalObject, BranchLinkProperties, BranchLink;
 
 #pragma mark BranchDelegate Protocol
@@ -25,8 +30,8 @@
 
 @optional
 - (void) branch:(Branch*_Nonnull)branch
-didStartSessionWithURL:(NSURL*_Nullable)url
-                 error:(NSError*_Nullable)error;
+ failedToStartSessionWithURL:(NSURL*_Nullable)url
+                       error:(NSError*_Nullable)error;
 @end
 
 #pragma mark - Branch Notifications
