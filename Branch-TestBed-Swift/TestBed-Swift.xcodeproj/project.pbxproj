@@ -125,6 +125,7 @@
 		63F8BB201D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F8BB1F1D57D2BE0013B6F7 /* LinkPropertiesTableViewController.swift */; };
 		63F8BB241D57E7730013B6F7 /* ArrayTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F8BB231D57E7730013B6F7 /* ArrayTableViewController.swift */; };
 		7B18DF4D1F1F016600C25C84 /* BNCCrashlyticsWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B18DF4C1F1F016600C25C84 /* BNCCrashlyticsWrapper.m */; };
+		7BC1582E1FA79B7500404895 /* BNCViewControllerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BC1582D1FA79B7500404895 /* BNCViewControllerManager.m */; };
 		F155BFF21EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = F155BFF11EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.m */; };
 /* End PBXBuildFile section */
 
@@ -313,6 +314,8 @@
 		63F8BB231D57E7730013B6F7 /* ArrayTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayTableViewController.swift; sourceTree = "<group>"; };
 		7B18DF4B1F1F016600C25C84 /* BNCCrashlyticsWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCCrashlyticsWrapper.h; sourceTree = "<group>"; };
 		7B18DF4C1F1F016600C25C84 /* BNCCrashlyticsWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCCrashlyticsWrapper.m; sourceTree = "<group>"; };
+		7BC1582C1FA79B7400404895 /* BNCViewControllerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCViewControllerManager.h; sourceTree = "<group>"; };
+		7BC1582D1FA79B7500404895 /* BNCViewControllerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCViewControllerManager.m; sourceTree = "<group>"; };
 		8225BB463EBCEBED0D965277 /* libPods-TestBed-Swift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TestBed-Swift.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE2BDDFD78122922968E1EC7 /* Pods-TestBed-Swift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestBed-Swift.release.xcconfig"; path = "Pods/Target Support Files/Pods-TestBed-Swift/Pods-TestBed-Swift.release.xcconfig"; sourceTree = "<group>"; };
 		F155BFED1EF37EDB00BF4566 /* BNCLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLog.h; sourceTree = "<group>"; };
@@ -453,6 +456,8 @@
 				4D4F27FA1E400F9800282A34 /* BNCStrongMatchHelper.m */,
 				4D4F27FB1E400F9800282A34 /* BNCSystemObserver.h */,
 				4D4F27FC1E400F9800282A34 /* BNCSystemObserver.m */,
+				7BC1582C1FA79B7400404895 /* BNCViewControllerManager.h */,
+				7BC1582D1FA79B7500404895 /* BNCViewControllerManager.m */,
 				4D4F27FD1E400F9800282A34 /* BNCXcode7Support.h */,
 				4D4F27FE1E400F9800282A34 /* BNCXcode7Support.m */,
 				4D4F27FF1E400F9800282A34 /* Branch-SDK-Prefix.pch */,
@@ -1065,6 +1070,7 @@
 				639D53CB1F7014E700C90435 /* IntegratedSDKsData.swift in Sources */,
 				4D351A101F0D6362004BD4AA /* BNCLog.m in Sources */,
 				4D4F284E1E400F9800282A34 /* Branch.m in Sources */,
+				7BC1582E1FA79B7500404895 /* BNCViewControllerManager.m in Sources */,
 				63AAF0FD1CF7F4AD00CA98BD /* CreditHistoryViewController.swift in Sources */,
 				63A849381F76BAFC007705C8 /* TableFormViewController.swift in Sources */,
 				4D4F28471E400F9800282A34 /* BNCPreferenceHelper.m in Sources */,
