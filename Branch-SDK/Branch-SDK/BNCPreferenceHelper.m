@@ -345,17 +345,20 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 }
 
 - (NSString *)universalLinkUrl {
-    if (!_universalLinkUrl) {
-        _universalLinkUrl = [self readStringFromDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL];
+    @synchronized(self) {
+        if (!_universalLinkUrl) {
+            _universalLinkUrl = [self readStringFromDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL];
+        }
+        return _universalLinkUrl;
     }
-    
-    return _universalLinkUrl;
 }
 
 - (void)setUniversalLinkUrl:(NSString *)universalLinkUrl {
-    if (![_universalLinkUrl isEqualToString:universalLinkUrl]) {
-        _universalLinkUrl = universalLinkUrl;
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL value:universalLinkUrl];
+    @synchronized(self) {
+        if (![_universalLinkUrl isEqualToString:universalLinkUrl]) {
+            _universalLinkUrl = universalLinkUrl;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL value:universalLinkUrl];
+        }
     }
 }
 

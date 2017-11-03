@@ -27,7 +27,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, nonatomic) NSString *identityID;
 @property (strong, nonatomic) NSString *linkClickIdentifier;
 @property (strong, nonatomic) NSString *spotlightIdentifier;
-@property (strong, nonatomic) NSString *universalLinkUrl;
+@property (strong, atomic)    NSString *universalLinkUrl;
 @property (strong, nonatomic) NSString *userUrl;
 @property (strong, nonatomic) NSString *userIdentity;
 @property (strong, nonatomic) NSString *sessionParams;
