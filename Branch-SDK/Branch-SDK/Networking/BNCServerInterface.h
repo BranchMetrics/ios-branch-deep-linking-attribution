@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-@import Foundation;
 #import "BNCServerResponse.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCNetworkServiceProtocol.h"

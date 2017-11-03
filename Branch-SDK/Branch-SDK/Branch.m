@@ -29,7 +29,6 @@
 #import "BranchLogoutRequest.h"
 #import "BranchOpenRequest.h"
 #import "BranchRedeemRewardsRequest.h"
-#import "BranchRegisterViewRequest.h"
 #import "BranchSetIdentityRequest.h"
 #import "BranchShortUrlRequest.h"
 #import "BranchShortUrlSyncRequest.h"
@@ -1653,10 +1652,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback {
     [self initSessionIfNeededAndNotInProgress];
-
-    BranchRegisterViewRequest *req = [[BranchRegisterViewRequest alloc] initWithParams:params andCallback:callback];
-    [self.requestQueue enqueue:req];
-    [self processNextQueueItem];
+    BranchUniversalObject *buo = [[BranchUniversalObject alloc] init];
+    buo.contentMetadata.customMetadata = (id) params;
+    [BranchEvent standardEvent:BranchStandardEventViewItem withContentItem:buo];
+    if (callback) callback(@{}, nil);
 }
 
 

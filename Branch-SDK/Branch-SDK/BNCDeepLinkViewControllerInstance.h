@@ -6,7 +6,6 @@
 //  Copyright © 2017 Parth Kalavadia. All rights reserved.
 //
 
-@import Foundation;
 #import "BranchDeepLinkingController.h"
 
 @interface BNCDeepLinkViewControllerInstance : NSObject

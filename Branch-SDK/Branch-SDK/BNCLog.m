@@ -14,7 +14,7 @@
 
 
 #import "BNCLog.h"
-#import <stdatomic.h> // @import not available in Xcode 7
+#import <stdatomic.h> // import not available in Xcode 7
 
 
 #define _countof(array)  (sizeof(array)/sizeof(array[0]))

@@ -6,7 +6,6 @@
 //  Copyright (c) 2016 Branch Metrics. All rights reserved.
 //
 
-@import Foundation;
 #import "BNCServerRequest.h"
 #import "BNCXcode7Support.h"
 

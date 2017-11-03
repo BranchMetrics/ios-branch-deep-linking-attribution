@@ -6,10 +6,8 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-
 #import "BNCServerRequest.h"
 @class BranchOpenRequest;
-
 
 @interface BNCServerRequestQueue : NSObject
 

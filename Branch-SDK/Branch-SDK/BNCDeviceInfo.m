@@ -14,7 +14,11 @@
 #import "BNCConfig.h"
 #import "BNCPreferenceHelper.h"
 
+#if __has_feature(modules)
 @import UIKit;
+#else
+#import <UIKit/UIKit.h>
+#endif
 #import <sys/sysctl.h> // @import not available in Xcode 7
 #import <net/if.h>
 #import <ifaddrs.h>

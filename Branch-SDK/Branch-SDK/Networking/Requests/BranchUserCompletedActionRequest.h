@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BNCServerRequest.h"
 #import "Branch.h"
+#import "BNCServerRequest.h"
 
 @interface BranchUserCompletedActionRequest : BNCServerRequest
 

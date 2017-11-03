@@ -5,8 +5,15 @@
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
+
+#if __has_feature(modules)
 @import Foundation;
 @import UIKit;
+#else
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#endif
+
 #import "BNCCallbacks.h"
 #import "BNCCommerceEvent.h"
 #import "BNCConfig.h"
@@ -1504,7 +1511,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @warning This is meant for use internally only and should not be used by apps.
  */
-- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
+- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback
+    __attribute__((deprecated(("This API is deprecated. Please use BranchEvent:BranchStandardEventViewItem instead."))));
 
 - (void) sendServerRequest:(BNCServerRequest*)request;
 - (void) sendServerRequestWithoutSession:(BNCServerRequest*)request;

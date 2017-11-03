@@ -6,20 +6,17 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-
 #import "BranchOpenRequest.h"
-#import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
-#import "BNCDeviceInfo.h"
-#import "BNCCrashlyticsWrapper.h"
 #import "BranchConstants.h"
-#import "BNCEncodingUtils.h"
-#import "BranchViewHandler.h"
-#import "BNCFabricAnswers.h"
 #import "BranchContentDiscoveryManifest.h"
 #import "BranchContentDiscoverer.h"
 #import "NSMutableDictionary+Branch.h"
-#import "BNCLog.h"
+#import "BNCEncodingUtils.h"
+#import "BNCCrashlyticsWrapper.h"
+#import "BNCFabricAnswers.h"
+#import "BNCDeviceInfo.h"
+#import "Branch.h"
 
 @interface BranchOpenRequest ()
 @property (assign, nonatomic) BOOL isInstall;
