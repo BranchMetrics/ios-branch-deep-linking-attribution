@@ -6,7 +6,6 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
-@import Foundation;
 #import "BNCNetworkServiceProtocol.h"
 
 /**

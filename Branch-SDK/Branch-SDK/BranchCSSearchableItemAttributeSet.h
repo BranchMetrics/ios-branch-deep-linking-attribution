@@ -10,21 +10,21 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
 
+#if __has_feature(modules)
 @import CoreSpotlight;
-#import "Branch.h"
+#else
+#import <CoreSpotlight/CoreSpotlight.h>
+#endif
 
 @interface BranchCSSearchableItemAttributeSet : CSSearchableItemAttributeSet
 
 - (id)init;
 - (id)initWithContentType:(NSString *)type;
+- (void)indexWithCallback:(callbackWithUrlAndSpotlightIdentifier)callback;
 
 @property (nonatomic, strong) NSDictionary *params;
 @property (nonatomic, strong) NSSet *keywords;
-
-// Defaults to YES
-@property (nonatomic) BOOL publiclyIndexable;
-
-- (void)indexWithCallback:(callbackWithUrlAndSpotlightIdentifier)callback;
+@property (nonatomic) BOOL publiclyIndexable;           //!< Defaults to YES
 
 @end
 

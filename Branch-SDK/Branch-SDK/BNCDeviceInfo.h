@@ -6,8 +6,13 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
+#if __has_feature(modules)
 @import Foundation;
 @import CoreGraphics;
+#else
+#import <Foundation/Foundation.h>
+#import <CoreGraphics/CoreGraphics.h>
+#endif
 
 @interface BNCDeviceInfo : NSObject
 

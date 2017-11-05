@@ -6,14 +6,12 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#import "Branch.h"
-#import "BNCEncodingUtils.h"
 #import "AppDelegate.h"
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
+#import "Branch.h"
 #import "BNCEncodingUtils.h"
-@import SafariServices;
 
 // Ignore Safari availability for iOS 8 and lower in this example.
 #pragma clang diagnostic ignored "-Wpartial-availability"

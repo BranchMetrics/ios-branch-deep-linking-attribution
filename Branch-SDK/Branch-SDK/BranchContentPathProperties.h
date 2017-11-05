@@ -6,11 +6,13 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
-#ifndef ContentPathProperties_h
-#define ContentPathProperties_h
-
-
-#endif /* ContentPathProperties_h */
+#if __has_feature(modules)
+@import Foundation;
+@import UIKit;
+#else
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#endif
 
 @interface BranchContentPathProperties : NSObject
 

@@ -9,7 +9,6 @@
 #import "CreditHistoryViewController.h"
 
 @interface CreditHistoryViewController ()
-
 @end
 
 @implementation CreditHistoryViewController

@@ -11,6 +11,13 @@
 #endif
 
 #ifdef __OBJC__
+    #if __has_feature(modules)
     @import Foundation;
     @import UIKit;
+    @import SafariServices;
+    #else
+    #import <Foundation/Foundation.h>
+    #import <UIKit/UIKit.h>
+    #import <SafariServices/SafariServices.h>
+    #endif
 #endif
