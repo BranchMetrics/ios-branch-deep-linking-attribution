@@ -344,7 +344,6 @@ static NSString* const kUTTypeGeneric = @"public.content";
                   if (error) {
                       completion(universalObject,url,error);
                   } else {
-                      universalObject.spotlightIdentifier = spotlightIdentifier;
                       completion(universalObject,url,error);
                   }
               }];
@@ -363,7 +362,7 @@ static NSString* const kUTTypeGeneric = @"public.content";
                expirationDate:(NSDate *)expirationDate
                      callback:(callbackWithUrl)callback
             spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
-
+    
     BNCSpotlightService* spotlightService = [[BNCSpotlightService alloc] init];
     
     BranchUniversalObject *universalObject = [[BranchUniversalObject alloc] initWithTitle:title];
@@ -389,7 +388,7 @@ static NSString* const kUTTypeGeneric = @"public.content";
                                                         spotlightCallback(url, url, error);
                                                     }
                                                 }];
-
+        
     } else {
         [spotlightService indexWithBranchUniversalObject:universalObject
                                           linkProperties:nil
@@ -403,7 +402,7 @@ static NSString* const kUTTypeGeneric = @"public.content";
                                                         spotlightCallback(url, url, error);
                                                     }
                                                 }];
-          }
+    }
 }
 
 @end

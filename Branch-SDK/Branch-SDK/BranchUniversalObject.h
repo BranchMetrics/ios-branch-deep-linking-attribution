@@ -183,6 +183,8 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 /// Returns a Branch short URL to the content item with the passed link properties with a callback.
 - (void)getShortUrlWithLinkProperties:(nonnull BranchLinkProperties *)linkProperties andCallback:(nonnull callbackWithUrl)callback;
 
+/// Returns a Branch long URL to the content item
+- (nullable NSString *)getLongUrlWithChannel:(nullable NSString *)channel andTags:(nullable NSArray *)tags andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andAlias:(nullable NSString *)alia;
 
 /// @name Share Sheet Handling
 

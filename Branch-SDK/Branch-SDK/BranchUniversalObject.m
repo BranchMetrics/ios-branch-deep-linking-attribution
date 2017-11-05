@@ -377,6 +377,10 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
                               forceLinkCreation:YES];
 }
 
+- (NSString *)getLongUrlWithChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alia{
+    return [[Branch getInstance] getLongURLWithParams:[self getParamsForServerRequest] andChannel:channel andTags:tags andFeature:feature andStage:stage andAlias:alia];
+}
+
 #pragma mark - Share Sheets
 
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties {
@@ -528,31 +532,13 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 }
 
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback {
-    NSMutableDictionary *metadataAndProperties = [self.contentMetadata.customMetadata mutableCopy];
-    if (self.canonicalIdentifier) {
-        metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER] = self.canonicalIdentifier;
-    }
-    if (self.canonicalUrl) {
-        metadataAndProperties[BRANCH_LINK_DATA_KEY_CANONICAL_URL] = self.canonicalUrl;
-    }
-
-    [[Branch getInstance] createDiscoverableContentWithTitle:self.title
-                                                 description:self.contentDescription
-                                                thumbnailUrl:[NSURL URLWithString:self.imageUrl]
-                                                 canonicalId:self.canonicalIdentifier
-                                                  linkParams:metadataAndProperties.copy
-                                                        type:self.contentMetadata.contentSchema
-                                           publiclyIndexable:self.publiclyIndex
-                                                    keywords:[NSSet setWithArray:self.keywords]
-                                              expirationDate:self.expirationDate
-                                                    callback:^(NSString * _Nullable url, NSError * _Nullable error) {
-                                                        if (url && error == nil) {
-                                                            self.spotlightIdentifier = url;
-                                                        }
-                                                        callback(url,error);
-                                                    }];
+    
+    [[Branch getInstance] indexOnSpotlightWithBranchUniversalObject:self
+                                                     linkProperties:nil
+                                                         completion:^(BranchUniversalObject *universalObject, NSString *url, NSError *error) {
+                                                             callback(url,error);
+                                                         }];
 }
-
 
 //This one uses a callback that returns the SpotlightIdentifier
 - (void)listOnSpotlightWithIdentifierCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
@@ -599,9 +585,6 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     if (self.locallyIndex) {
         [[Branch getInstance] removeSearchableItemWithBranchUniversalObject:self
                                                                    callback:^(NSError *error) {
-                                                                       if (!error) {
-                                                                           self.spotlightIdentifier = nil;
-                                                                       }
                                                                        if (completion) {
                                                                            completion(error);
                                                                        }
@@ -656,9 +639,6 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     
     if (dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE]) {
         universalObject.contentMetadata.contentSchema = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE];
-    }
-    if (dictionary[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER]) {
-        universalObject.spotlightIdentifier = dictionary[BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER];
     }
     return universalObject;
 }

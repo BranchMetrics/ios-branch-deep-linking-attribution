@@ -131,6 +131,9 @@ extern NSString * const BNCPurchasedEvent;
 extern NSString * const BNCShareInitiatedEvent;
 extern NSString * const BNCShareCompletedEvent;
 
+// Spotlight Constant
+extern NSString * const BNCSpotlightFeature;
+
 #pragma mark - Branch Enums
 typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchMostRecentFirst,

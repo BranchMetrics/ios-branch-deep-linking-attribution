@@ -70,6 +70,7 @@ NSString * const BNCShareInitiatedEvent = @"Share Started";
 NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 static NSString * const BNCLogLevelKey = @"io.branch.sdk.BNCLogLevel";
+NSString * const BNCSpotlightFeature = @"spotlight";
 
 #pragma mark - Load Categories
 
@@ -717,34 +718,32 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
     BNCLogDebugSDK(@"continueUserActivity:");
-
+    
     // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-
+        
         // If we're already in-progress cancel the last open and do this one.
         BOOL isNewSession = NO;
         if (![self removeInstallOrOpen]) {
             isNewSession = YES;
         }
-
+        
         return [self handleUniversalDeepLink:userActivity.webpageURL fromSelf:isNewSession];
     }
-
+    
     // Check to see if a spotlight activity needs to be handled
     NSString *spotlightIdentifier =
     [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     NSURL *webURL = userActivity.webpageURL;
     
-    if (spotlightIdentifier) {
-        self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
-    }else
-    if ([self isBranchLink:userActivity.userInfo[@"kCSSearchableItemActivityIdentifier"]]) {
-        self.preferenceHelper.spotlightIdentifier = userActivity.userInfo[@"kCSSearchableItemActivityIdentifier"];
-        return [self handleDeepLinkWithNewSession:[NSURL URLWithString:userActivity.userInfo[@"kCSSearchableItemActivityIdentifier"]]];
+    
+    if ([self isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
+        return [self handleDeepLinkWithNewSession:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]]];
     }
     else if (webURL != nil && [self isBranchLink:[webURL absoluteString]]) {
-        self.preferenceHelper.spotlightIdentifier = [webURL absoluteString];
         return [self handleDeepLinkWithNewSession:webURL];
+    }else if (spotlightIdentifier) {
+        self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
     }
     else {
         NSString *nonBranchSpotlightIdentifier =
@@ -755,7 +754,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
     self.preferenceHelper.shouldWaitForInit = NO;
     [self initUserSessionAndCallCallback:YES];
-
+    
     return spotlightIdentifier != nil;
 }
 
@@ -1441,12 +1440,18 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                                              callback:(void (^_Nullable)(NSError * _Nullable error))completion {
     BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
     
-    [spotlight removeSearchableItemsWithIdentifier:universalObject.spotlightIdentifier
+    NSString *dynamicUrl = [universalObject getLongUrlWithChannel:nil
+                                                          andTags:nil
+                                                       andFeature:BNCSpotlightFeature
+                                                         andStage:nil
+                                                         andAlias:nil];
+    [spotlight removeSearchableItemsWithIdentifier:dynamicUrl
                                           callback:^(NSError * _Nullable error) {
                                               if (completion)
                                                   completion(error);
                                           }];
 }
+
 
 /* Only removes the indexing of BUOs indexed through CSSearchable item
  */
@@ -1455,18 +1460,15 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
     NSMutableArray<NSString *> *identifiers = [[NSMutableArray alloc] init];
     for (BranchUniversalObject* universalObject in universalObjects) {
-        if (universalObject.spotlightIdentifier) {
-            [identifiers addObject:universalObject.spotlightIdentifier];
-        }
+        NSString *dynamicUrl = [universalObject getLongUrlWithChannel:nil
+                                                              andTags:nil
+                                                           andFeature:BNCSpotlightFeature
+                                                             andStage:nil andAlias:nil];
+        [identifiers addObject:dynamicUrl];
     }
     
     [spotlight removeSearchableItemsWithIdentifiers:identifiers
                                            callback:^(NSError * error) {
-                                               if (!error) {
-                                                   for (BranchUniversalObject* universalObject in universalObjects) {
-                                                       universalObject.spotlightIdentifier = nil;
-                                                   }
-                                               }
                                                if (completion)
                                                    completion(error);
                                            }];

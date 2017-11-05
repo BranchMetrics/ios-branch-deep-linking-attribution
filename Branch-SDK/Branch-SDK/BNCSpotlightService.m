@@ -48,8 +48,8 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     if (linkProperties == nil) {
         spotlightLinkProperties = [[BranchLinkProperties alloc] init];
     }
-    [spotlightLinkProperties setFeature:@"spotlight"];
-        
+    [spotlightLinkProperties setFeature:BNCSpotlightFeature];
+    
     NSURL* thumbnailUrl = [NSURL URLWithString:universalObject.imageUrl];
     BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
     
@@ -57,92 +57,98 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSData *thumbnailData = [NSData dataWithContentsOfURL:thumbnailUrl];
             dispatch_async(dispatch_get_main_queue(), ^{
-                [universalObject getShortUrlWithLinkProperties:spotlightLinkProperties
-                                                   andCallback:^(NSString * _Nullable url, NSError * _Nullable error) {
-                                                       if (error) {
-                                                           if (completion) {
-                                                               completion(universalObject,[BNCPreferenceHelper preferenceHelper].userUrl, error);
-                                                           }
-                                                           return;
-                                                       }else {
-                                                           [self indexContentWithUrl:url
-                                                                 spotlightIdentifier:url
-                                                               branchUniversalObject:universalObject thumbnailUrl:thumbnailUrl
-                                                                       thumbnailData:thumbnailData
-                                                                            callback:^(NSString * _Nullable url, NSError * _Nullable error) {
-                                                                                if (completion)
-                                                                                    completion(universalObject,url,error);
-                                                                            }];
-                                                       }
+                
+                [self indexContentWithBranchUniversalObject:universalObject
+                                               linkProperty:linkProperties
+                                               thumbnailUrl:thumbnailUrl
+                                              thumbnailData:thumbnailData
+                                                   callback:^(NSString * _Nullable url, NSError * _Nullable error) {
+                                                       if (completion)
+                                                           completion(universalObject,url,error);
                                                    }];
             });
         });
     }
     else {
-        [universalObject getShortUrlWithLinkProperties:spotlightLinkProperties
-                                           andCallback:^(NSString * _Nullable url, NSError * _Nullable error) {
-                                               if (error) {
-                                                   if (completion) {
-                                                       completion(universalObject,[BNCPreferenceHelper preferenceHelper].userUrl, error);
-                                                   }
-                                                   return;
-                                               }else {
-                                                   [self indexContentWithUrl:url
-                                                         spotlightIdentifier:url
-                                                       branchUniversalObject:universalObject
-                                                                thumbnailUrl:thumbnailUrl
-                                                               thumbnailData:nil
-                                                                    callback:^(NSString * _Nullable url, NSError * _Nullable error) {
-                                                                        if (completion)
-                                                                            completion(universalObject,url,error);
-                                                                    }];
-                                               }
+        [self indexContentWithBranchUniversalObject:universalObject
+                                       linkProperty:linkProperties
+                                       thumbnailUrl:thumbnailUrl
+                                      thumbnailData:nil
+                                           callback:^(NSString * _Nullable url, NSError * _Nullable error) {
+                                               if (completion)
+                                                   completion(universalObject,url,error);
                                            }];
     }
 }
 
-- (void)indexContentWithUrl:(NSString *)url
-        spotlightIdentifier:(NSString *)spotlightIdentifier
-      branchUniversalObject:(BranchUniversalObject*)universalObject
-               thumbnailUrl:(NSURL *)thumbnailUrl
-              thumbnailData:(NSData *)thumbnailData
-                   callback:(void (^_Nullable)(NSString* _Nullable url, NSError * _Nullable error))completion {
-    
-    id attributes = [self attributeSetWithUniversalObject:universalObject
-                                                thumbnail:thumbnailData
-                                                      url:url];
-    NSDictionary *indexingParams = @{@"title": universalObject.title,
-                                     @"url": url,
-                                     @"spotlightId": spotlightIdentifier,
-                                     @"userInfo": [universalObject.contentMetadata.customMetadata mutableCopy],
-                                     @"keywords": [NSSet setWithArray:universalObject.keywords],
-                                     @"attributeSet": attributes
-                                     };
+- (void)indexContentWithBranchUniversalObject:(BranchUniversalObject*)universalObject
+                                 linkProperty:(BranchLinkProperties *)linkProperty
+                                 thumbnailUrl:(NSURL *)thumbnailUrl
+                                thumbnailData:(NSData *)thumbnailData
+                                     callback:(void (^_Nullable)(NSString* _Nullable url, NSError * _Nullable error))completion {
     
     if (universalObject.locallyIndex) {
+        NSString *dynamicUrl = [universalObject getLongUrlWithChannel:nil
+                                                              andTags:nil
+                                                           andFeature:BNCSpotlightFeature
+                                                             andStage:nil
+                                                             andAlias:nil];
+        
+        id attributes = [self attributeSetWithUniversalObject:universalObject
+                                                    thumbnail:thumbnailData
+                                                          url:dynamicUrl];
+        NSDictionary *indexingParams = @{@"title": universalObject.title,
+                                         @"url": dynamicUrl,
+                                         @"spotlightId": dynamicUrl,
+                                         @"userInfo": [universalObject.contentMetadata.customMetadata mutableCopy],
+                                         @"keywords": [NSSet setWithArray:universalObject.keywords],
+                                         @"attributeSet": attributes
+                                         };
+        
         [self indexUsingSearchableItem:indexingParams
                          thumbnailData:thumbnailData
                               callback:^(NSString * _Nullable url, NSError * _Nullable error) {
                                   if (completion)
                                       completion(url,error);
                               }];
-    }else {
-        [self indexUsingNSUserActivity:indexingParams];
         
-        // Not handling error scenarios because they are already handled upstream by the caller
-        if (url) {
-            if (completion) {
-                completion(url, nil);
-            }
-        }
+    }else {
+        
+        [universalObject getShortUrlWithLinkProperties:linkProperty
+                                           andCallback:^(NSString * _Nullable url, NSError * _Nullable error) {
+                                               if (error) {
+                                                   if (completion) {
+                                                       completion([BNCPreferenceHelper preferenceHelper].userUrl, error);
+                                                   }
+                                               }else {
+                                                   id attributes = [self attributeSetWithUniversalObject:universalObject
+                                                                                               thumbnail:thumbnailData
+                                                                                                     url:url];
+                                                   NSDictionary *indexingParams = @{@"title": universalObject.title,
+                                                                                    @"url": url,
+                                                                                    @"spotlightId": url,
+                                                                                    @"userInfo": [universalObject.contentMetadata.customMetadata mutableCopy],
+                                                                                    @"keywords": [NSSet setWithArray:universalObject.keywords],
+                                                                                    @"attributeSet": attributes
+                                                                                    };
+                                                   [self indexUsingNSUserActivity:indexingParams];
+                                                   
+                                                   // Not handling error scenarios because they are already handled upstream by the caller
+                                                   if (url) {
+                                                       if (completion) {
+                                                           completion(url, nil);
+                                                       }
+                                                   }
+                                               }
+                                           }];
     }
+    
 }
 
-- (CSSearchableItemAttributeSet*)attributeSetWithUniversalObject:(BranchUniversalObject*)universalObject
-                                                       thumbnail:(NSData*)thumbnailData
-                                                             url:(NSString*)url {
+- (id)attributeSetWithUniversalObject:(BranchUniversalObject*)universalObject
+                            thumbnail:(NSData*)thumbnailData
+                                  url:(NSString*)url {
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-    
     NSString *type = universalObject.contentMetadata.contentSchema ?: (NSString *)kUTTypeGeneric;
     
     id CSSearchableItemAttributeSetClass = NSClassFromString(@"CSSearchableItemAttributeSet");
@@ -159,19 +165,19 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
             [attributes _selector parameter]; \
         } \
     }
-
+    
     safePerformSelector(setTitle:, universalObject.title);
     safePerformSelector(setContentDescription:, universalObject.contentDescription);
     NSURL* thumbnailUrl = [NSURL URLWithString:universalObject.imageUrl];
     BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];
     if (!thumbnailIsRemote) {
-       safePerformSelector(setThumbnailURL:, thumbnailUrl);
+        safePerformSelector(setThumbnailURL:, thumbnailUrl);
     }
     safePerformSelector(setThumbnailData:, thumbnailData);
     safePerformSelector(setContentURL:, [NSURL URLWithString:url]);
     safePerformSelector(setKeywords:, universalObject.keywords);
     safePerformSelector(setWeakRelatedUniqueIdentifier:, universalObject.canonicalIdentifier);
-
+    
     #undef safePerformSelector
     return attributes;
 #endif
@@ -211,8 +217,10 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     
     for (BranchUniversalObject* universalObject in universalObjects) {
         dispatch_group_enter(workGroup);
-        NSString* dynamicUrl = [[Branch getInstance] getLongURLWithParams:[self getParamsFromBranchUniversalObject:universalObject]
-                                                               andFeature:@"spotlight"];
+        NSString* dynamicUrl = [universalObject getLongUrlWithChannel:nil
+                                                              andTags:nil
+                                                           andFeature:BNCSpotlightFeature
+                                                             andStage:nil andAlias:nil];
         
         mapSpotlightIdentifier[dynamicUrl] = universalObject;
         NSURL* thumbnailUrl = [NSURL URLWithString:universalObject.imageUrl];
@@ -259,56 +267,17 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         
         [index indexSearchableItems:searchableItems completionHandler:^(NSError * _Nullable error) {
             if (!error) {
-                for (NSString* dynamicUrl in mapSpotlightIdentifier) {
-                    BranchUniversalObject *universalObject = mapSpotlightIdentifier[dynamicUrl];
-                    universalObject.spotlightIdentifier    = dynamicUrl;
-                }
                 if (completion)
-                completion(universalObjects,nil);
+                    completion(universalObjects,nil);
             }
             else {
                 if (completion)
-                completion(nil,error);
+                    completion(nil,error);
             }
             
         }];
     });
     #undef IndexingNotAvailable
-}
-
-
-- (NSDictionary *)getParamsFromBranchUniversalObject:(BranchUniversalObject*) universalObject {
-    NSMutableDictionary *temp = [[NSMutableDictionary alloc] init];
-    
-    #define safeSetValue(value,key) { \
-        if (value) {\
-            temp[key] = value;\
-        }\
-    }
-    safeSetValue(universalObject.canonicalIdentifier, BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER);
-    safeSetValue(universalObject.canonicalUrl,BRANCH_LINK_DATA_KEY_CANONICAL_URL);
-    safeSetValue(universalObject.title,BRANCH_LINK_DATA_KEY_OG_TITLE);
-    safeSetValue(universalObject.contentDescription,BRANCH_LINK_DATA_KEY_OG_DESCRIPTION);
-    safeSetValue(universalObject.imageUrl,BRANCH_LINK_DATA_KEY_OG_IMAGE_URL);
-    if (universalObject.locallyIndex) {
-        safeSetValue(@(1),BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE);
-    }
-    else {
-        safeSetValue(@(0),BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE);
-    }
-    safeSetValue(universalObject.keywords,BRANCH_LINK_DATA_KEY_KEYWORDS);
-    safeSetValue(@(1000 * [universalObject.expirationDate timeIntervalSince1970]),BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE);
-    safeSetValue(universalObject.contentMetadata.contentSchema,BRANCH_LINK_DATA_KEY_CONTENT_TYPE);
-    safeSetValue(universalObject.contentMetadata.currency,BNCPurchaseCurrency);
-    if (universalObject.contentMetadata.price) {
-        // have to add if statement because safeSetValue only accepts objects so even if self.price is not set
-        // a valid NSNumber object will be created and the request will have amount:0 in all cases.
-        safeSetValue(universalObject.contentMetadata.price,BNCPurchaseAmount);
-    }
-    #undef safeSetValue
-    
-    [temp addEntriesFromDictionary:[universalObject.contentMetadata.customMetadata copy]];
-    return [temp copy];
 }
 
 - (dispatch_queue_t) workQueue {
@@ -342,6 +311,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     ((void (*)(id, SEL, id))[activeViewController.userActivity methodForSelector:setContentAttributeSetSelector])(activeViewController.userActivity, setContentAttributeSetSelector, params[@"attributeSet"]);
     
     [activeViewController.userActivity becomeCurrent];
+    
 }
 
 - (void)indexUsingSearchableItem:(NSDictionary*)indexingParam
@@ -366,7 +336,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     if (!isIndexingAvailable) {
         IndexingNotAvalable();
     }
-
+    
     NSString *dynamicUrl = indexingParam[@"url"];
     Class CSSearchableItemClass = NSClassFromString(@"CSSearchableItem");
     
@@ -391,11 +361,11 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         if ([defaultSearchableIndex respondsToSelector:@selector(indexSearchableItems:completionHandler:)]) {
             [defaultSearchableIndex indexSearchableItems:@[item]
                                        completionHandler: ^(NSError * __nullable error) {
-                NSString *url = error == nil?dynamicUrl:nil;
-                if (completion) {
-                    completion(url, error);
-                }
-            }];
+                                           NSString *url = error == nil?dynamicUrl:nil;
+                                           if (completion) {
+                                               completion(url, error);
+                                           }
+                                       }];
         }
         else {
             IndexingNotAvalable();
@@ -496,7 +466,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         }
     }
     
-#undef IndexingNotAvalable
+    #undef IndexingNotAvalable
 }
 
 - (void)removeAllBranchSearchableItemsWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion {
@@ -515,7 +485,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         }\
         return;\
     }
-
+    
     if (!isIndexingAvailable) {
         IndexingNotAvalable();
     }
