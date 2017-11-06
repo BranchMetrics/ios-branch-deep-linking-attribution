@@ -95,7 +95,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         case (0,0) :
             self.performSegue(withIdentifier: "TextViewForm", sender: "UserID")
         case (1,0) :
-            guard linkTextField.text?.characters.count > 0 else {
+            guard linkTextField.text?.count > 0 else {
                 break
             }
             UIPasteboard.general.string = linkTextField.text
@@ -429,7 +429,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         universalObject.contentMetadata.contentSchema = BranchContentSchema.commerceProduct
         universalObject.contentMetadata.price = 10.00
         universalObject.contentMetadata.currency = BNCCurrency.USD
-        universalObject.contentMetadata.productCondition = BranchProductCondition.poor
+        universalObject.contentMetadata.condition = BranchCondition.poor
 
         let event = BranchEvent.standardEvent(
             BranchStandardEvent.viewItem,
