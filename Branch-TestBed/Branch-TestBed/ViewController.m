@@ -10,6 +10,7 @@
 #import "ViewController.h"
 #import "CreditHistoryViewController.h"
 #import "LogOutputViewController.h"
+#import "ArrayPickerView.h"
 #import "BranchUniversalObject.h"
 #import "BranchLinkProperties.h"
 
@@ -361,7 +362,42 @@ static NSString *type = @"some type";
         }];
 }
 
-- (IBAction) sendV2Event:(id)sender {
+- (IBAction) sendV2EventAction:(id)sender {
+    NSArray<NSString*> *eventNames = @[
+
+         BranchStandardEventAddToCart
+        ,BranchStandardEventAddToWishlist
+        ,BranchStandardEventViewCart
+        ,BranchStandardEventInitiatePurchase
+        ,BranchStandardEventAddPaymentInfo
+        ,BranchStandardEventPurchase
+        ,BranchStandardEventSpendCredits
+
+        ,BranchStandardEventSearch
+        ,BranchStandardEventViewItem
+        ,BranchStandardEventViewItems
+        ,BranchStandardEventRate
+        ,BranchStandardEventShare
+
+        ,BranchStandardEventCompleteRegistration
+        ,BranchStandardEventCompleteTutorial
+        ,BranchStandardEventAchieveLevel
+        ,BranchStandardEventUnlockAchievement
+        ,@"iOS-CustomEvent"
+
+    ];
+
+    __weak __typeof(self) weakSelf = self;
+    ArrayPickerView *picker = [[ArrayPickerView alloc] initWithArray:eventNames];
+    [picker presentFromViewController:self withCompletion:^ (NSString*pickedString) {
+        if (pickedString) {
+            __strong __typeof(self) strongSelf = weakSelf;
+            [strongSelf sendV2EventWithName:pickedString];
+        }
+    }];
+}
+
+- (void) sendV2EventWithName:(NSString*)eventName {
     BranchUniversalObject *buo = [BranchUniversalObject new];
 
     buo.contentMetadata.contentSchema    = BranchContentSchemaCommerceProduct;
@@ -398,8 +434,7 @@ static NSString *type = @"some type";
     buo.locallyIndex                = YES;
     buo.creationDate                = [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0];
 
-
-    BranchEvent *event    = [BranchEvent standardEvent:BranchStandardEventPurchase];
+    BranchEvent *event    = [BranchEvent customEventWithName:eventName];
     event.transactionID   = @"12344555";
     event.currency        = BNCCurrencyUSD;
     event.revenue         = [NSDecimalNumber decimalNumberWithString:@"1.5"];

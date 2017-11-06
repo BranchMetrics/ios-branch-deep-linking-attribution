@@ -79,6 +79,7 @@
 		4DA80E9F1EA1A74F00440F52 /* BNCDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA5771C1E67B22700A43BDD /* BNCDebug.m */; };
 		4DB567341E79F46000A8A324 /* BranchShareLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB567321E79F46000A8A324 /* BranchShareLink.m */; };
 		4DBC88651F3A55B700E119BF /* NSString+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA577211E67B28700A43BDD /* NSString+Branch.m */; };
+		4DBEFFF61FB114F900F7C41B /* ArrayPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DBEFFF51FB114F900F7C41B /* ArrayPickerView.m */; };
 		4DC32D6F1F323F0B00EAA896 /* BNCError.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC32D6E1F323F0B00EAA896 /* BNCError.Test.m */; };
 		4DCAC8011F426F7C00405D1D /* BNCCommerceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8EE7A31E1F0A5D00B1F450 /* BNCCommerceEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DCAC8021F426F7C00405D1D /* BNCConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6ACAF919E324120066913E /* BNCConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -133,6 +134,7 @@
 		4DCF4B021F438A8400AF9AAB /* BNCError.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E38829E1A37E22A004BDABE /* BNCError.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DCF4B031F438A8700AF9AAB /* BranchEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DCF4AF81F4388F600AF9AAB /* BranchEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DDC52621DCC08E700CFB737 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DDC52611DCC08E700CFB737 /* iAd.framework */; };
+		4DE235641FB12C2700D4E5A9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4DBEFFFB1FB12A1000F7C41B /* Main.storyboard */; };
 		4DED5FB41F34F6CE00919C54 /* BNCDeviceInfo.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DED5FB01F34F6CE00919C54 /* BNCDeviceInfo.Test.m */; };
 		4DED5FB51F34F6CE00919C54 /* BNCEncodingUtils.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DED5FB11F34F6CE00919C54 /* BNCEncodingUtils.Test.m */; };
 		4DED5FB71F34F6CE00919C54 /* BranchNetworkScenario.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DED5FB31F34F6CE00919C54 /* BranchNetworkScenario.Test.m */; };
@@ -148,7 +150,6 @@
 		670016681940F51400A9E103 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 670016671940F51400A9E103 /* UIKit.framework */; };
 		6700166E1940F51400A9E103 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6700166C1940F51400A9E103 /* InfoPlist.strings */; };
 		670016701940F51400A9E103 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6700166F1940F51400A9E103 /* main.m */; };
-		670016771940F51400A9E103 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 670016751940F51400A9E103 /* Main.storyboard */; };
 		6700167A1940F51400A9E103 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016791940F51400A9E103 /* ViewController.m */; };
 		67163AAE1B9A036F007A8AB1 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67163AAD1B9A036F007A8AB1 /* SafariServices.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		67486B8E1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */; };
@@ -289,6 +290,9 @@
 		4DA577251E688C6000A43BDD /* Branch-SDK-Tests.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = "Branch-SDK-Tests.strings"; sourceTree = "<group>"; };
 		4DB567311E79F46000A8A324 /* BranchShareLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchShareLink.h; sourceTree = "<group>"; };
 		4DB567321E79F46000A8A324 /* BranchShareLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShareLink.m; sourceTree = "<group>"; };
+		4DBEFFF41FB114F900F7C41B /* ArrayPickerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArrayPickerView.h; sourceTree = "<group>"; };
+		4DBEFFF51FB114F900F7C41B /* ArrayPickerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArrayPickerView.m; sourceTree = "<group>"; };
+		4DBEFFFB1FB12A1000F7C41B /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		4DC32D6E1F323F0B00EAA896 /* BNCError.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCError.Test.m; sourceTree = "<group>"; };
 		4DC351441DF0AFB300646A1D /* Simulate-FirstRun.xcappdata */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = "Simulate-FirstRun.xcappdata"; sourceTree = "<group>"; };
 		4DCD41641F43AC74005F4D33 /* BranchUniversalObject.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUniversalObject.Test.m; sourceTree = "<group>"; };
@@ -320,7 +324,6 @@
 		670016711940F51400A9E103 /* Branch-TestBed-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Branch-TestBed-Prefix.pch"; sourceTree = "<group>"; };
 		670016721940F51400A9E103 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		670016731940F51400A9E103 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		670016761940F51400A9E103 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		670016781940F51400A9E103 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		670016791940F51400A9E103 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		670016BD1946309100A9E103 /* Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Branch.h; sourceTree = "<group>"; };
@@ -545,6 +548,8 @@
 			children = (
 				670016721940F51400A9E103 /* AppDelegate.h */,
 				670016731940F51400A9E103 /* AppDelegate.m */,
+				4DBEFFF41FB114F900F7C41B /* ArrayPickerView.h */,
+				4DBEFFF51FB114F900F7C41B /* ArrayPickerView.m */,
 				63E4C4911D25E1CA00A45FD8 /* Assets.xcassets */,
 				677F4CB41C1FB0FA0029F2B3 /* Branch-TestBed.entitlements */,
 				7EAA790019E89F67008D4A83 /* CreditHistoryViewController.h */,
@@ -552,7 +557,7 @@
 				63E4C48F1D25E1BC00A45FD8 /* LaunchScreen.storyboard */,
 				63E4C4861D25E16A00A45FD8 /* LogOutputViewController.h */,
 				63E4C4871D25E16A00A45FD8 /* LogOutputViewController.m */,
-				670016751940F51400A9E103 /* Main.storyboard */,
+				4DBEFFFB1FB12A1000F7C41B /* Main.storyboard */,
 				63E4C4891D25E17B00A45FD8 /* NavigationController.h */,
 				63E4C48A1D25E17B00A45FD8 /* NavigationController.m */,
 				6700166A1940F51400A9E103 /* Supporting Files */,
@@ -936,7 +941,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6700166E1940F51400A9E103 /* InfoPlist.strings in Resources */,
-				670016771940F51400A9E103 /* Main.storyboard in Resources */,
+				4DE235641FB12C2700D4E5A9 /* Main.storyboard in Resources */,
 				63E4C4901D25E1BC00A45FD8 /* LaunchScreen.storyboard in Resources */,
 				63E4C4921D25E1CA00A45FD8 /* Assets.xcassets in Resources */,
 				677F4CB51C1FB1910029F2B3 /* Branch-TestBed.entitlements in Resources */,
@@ -1077,6 +1082,7 @@
 				63E4C4881D25E16A00A45FD8 /* LogOutputViewController.m in Sources */,
 				6700167A1940F51400A9E103 /* ViewController.m in Sources */,
 				4683F0751B20A73F00A432E7 /* CreditHistoryViewController.m in Sources */,
+				4DBEFFF61FB114F900F7C41B /* ArrayPickerView.m in Sources */,
 				4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */,
 				670016701940F51400A9E103 /* main.m in Sources */,
 				63E4C48B1D25E17B00A45FD8 /* NavigationController.m in Sources */,
@@ -1156,14 +1162,6 @@
 				6700166D1940F51400A9E103 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		670016751940F51400A9E103 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				670016761940F51400A9E103 /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
