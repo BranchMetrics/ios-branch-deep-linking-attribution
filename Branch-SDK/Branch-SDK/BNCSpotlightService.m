@@ -159,7 +159,9 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     if (!attributes || ![attributes respondsToSelector:@selector(initWithItemContentType:)])
         return nil;
     attributes = [attributes initWithItemContentType:type];
-    
+
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wpartial-availability"
     #define safePerformSelector(_selector, parameter) { \
         if (parameter != nil && [attributes respondsToSelector:@selector(_selector)]) { \
             [attributes _selector parameter]; \
@@ -179,6 +181,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     safePerformSelector(setWeakRelatedUniqueIdentifier:, universalObject.canonicalIdentifier);
     
     #undef safePerformSelector
+    #pragma clang diagnostic pop
     return attributes;
 #endif
     
