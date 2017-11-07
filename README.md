@@ -230,7 +230,7 @@ let branch: Branch = Branch.getInstance()
 
 ```swift
 //TODO: Remove for launch
-Branch.useTestBranchKey = YES;
+Branch.useTestBranchKey = true
 ```
 
 #### Parameters
