@@ -389,6 +389,7 @@ static NSString *type = @"some type";
 
     __weak __typeof(self) weakSelf = self;
     ArrayPickerView *picker = [[ArrayPickerView alloc] initWithArray:eventNames];
+    picker.doneButtonTitle = @"Send";
     [picker presentFromViewController:self withCompletion:^ (NSString*pickedString) {
         if (pickedString) {
             __strong __typeof(self) strongSelf = weakSelf;
