@@ -1,5 +1,14 @@
 Branch iOS SDK Change Log
 
+- v0.22.2
+  * Update README.md to use proper Swift syntax.
+  * Better debugging messages for requests.
+  * Added an event picker for v2-event testing in the TestBed.
+
+- 0v0.22.1
+  * Fixed some annoying compile warnings.
+  * Made module support optional.
+
 - v0.21.0
   * Added v2-event support.
   * Updated readme.md to include instructions for building a project withBranch as a sub-project.
