@@ -10,6 +10,8 @@
 
 @interface ArrayPickerView : UIPickerView
 
+@property (nonatomic, strong) NSString*_Nullable doneButtonTitle;
+
 - (instancetype _Nonnull) initWithArray:(NSArray<NSString*> *_Nonnull)array;
 
 - (void) presentFromViewController:(UIViewController*_Nonnull)viewController

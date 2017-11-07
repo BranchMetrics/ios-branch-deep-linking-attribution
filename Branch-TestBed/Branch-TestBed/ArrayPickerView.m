@@ -12,7 +12,6 @@
 @property (nonatomic, copy) NSArray<NSString*> *pickerArray;
 @property (nonatomic, strong) UITextField *dummyTextField;
 @property (nonatomic, copy) void (^completionBlock)(NSString*);
-//@property (nonatomic, strong) UIPickerView *pickerView;
 @end
 
 @implementation ArrayPickerView
@@ -22,6 +21,7 @@
     self.pickerArray = array;
     self.delegate = self;
     self.dataSource = self;
+    self.doneButtonTitle = @"Done";
     return self;
 }
 
@@ -35,7 +35,7 @@
     toolBar.items = @[
         [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelAction:)],
         [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
-        [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(doneAction:)]
+        [[UIBarButtonItem alloc] initWithTitle:self.doneButtonTitle style:UIBarButtonItemStyleDone target:self action:@selector(doneAction:)]
     ];
     self.dummyTextField.inputAccessoryView = toolBar;
     [self.dummyTextField becomeFirstResponder];
