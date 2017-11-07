@@ -709,7 +709,10 @@ exit:
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
 
     BNCLogDebug(@"URL: %@.", url);
-    BNCLogDebug(@"Body: %@.", preparedParams);
+    BNCLogDebug(@"Body: %@\nJSON: %@.",
+        preparedParams,
+        [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding]
+    );
     
     NSMutableURLRequest *request =
         [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]
