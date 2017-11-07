@@ -24,7 +24,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
-#import "BNCXcode7Support.h"
+#import "BNCAvailability.h"
 #import "BranchActivityItemProvider.h"
 #import "BranchDeepLinkingController.h"
 #import "BranchEvent.h"

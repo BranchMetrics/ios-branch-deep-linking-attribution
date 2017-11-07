@@ -6,7 +6,12 @@
 //  Copyright © 2015 Branch Metrics. All rights reserved.
 //
 
-#import "Branch.h"
+#if __has_feature(modules)
+@import Foundation;
+#else
+#import <Foundation/Foundation.h>
+#endif
+#import "BNCCallbacks.h"
 
 @interface BNCContentDiscoveryManager : NSObject<NSUserActivityDelegate>
 

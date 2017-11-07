@@ -6,13 +6,10 @@
 //  Copyright © 2015 Branch Metrics. All rights reserved.
 //
 
-#import "BNCPreferenceHelper.h"
 #import "BNCContentDiscoveryManager.h"
-#import "BNCSystemObserver.h"
-#import "BNCError.h"
+#import "Branch.h"
 #import "BranchConstants.h"
 #import "BNCSpotlightService.h"
-#import "BNCPreferenceHelper.h"
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     #if __has_feature(modules)
@@ -22,13 +19,6 @@
     #endif
 #endif
 
-#ifndef CSSearchableItemActionType
-#define CSSearchableItemActionType @"com.apple.corespotlightitem"
-#endif
-
-#ifndef CSSearchableItemActivityIdentifier
-#define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
-#endif
 static NSString* const kUTTypeGeneric = @"public.content";
 
 @interface BNCContentDiscoveryManager (){

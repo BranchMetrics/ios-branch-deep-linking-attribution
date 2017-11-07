@@ -11,7 +11,7 @@
 #import "BNCFabricAnswers.h"
 #import "BranchActivityItemProvider.h"
 #import "BNCDeviceInfo.h"
-#import "BNCXcode7Support.h"
+#import "BNCAvailability.h"
 #import "BNCLog.h"
 #import "Branch.h"
 @class BranchShareActivityItem;

@@ -733,7 +733,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     
     // Check to see if a spotlight activity needs to be handled
     NSString *spotlightIdentifier =
-    [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
+        [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     NSURL *webURL = userActivity.webpageURL;
     
     
@@ -742,7 +742,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
     else if (webURL != nil && [self isBranchLink:[webURL absoluteString]]) {
         return [self handleDeepLinkWithNewSession:webURL];
-    }else if (spotlightIdentifier) {
+    }
+    else if (spotlightIdentifier) {
         self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
     }
     else {

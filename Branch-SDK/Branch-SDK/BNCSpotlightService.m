@@ -7,10 +7,11 @@
 //
 
 #import "BNCSpotlightService.h"
-#import "BNCSystemObserver.h"
-#import "BNCError.h"
 #import "Branch.h"
-#import "BranchConstants.h"
+#import "BNCSystemObserver.h"
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
 
 static NSString* const kUTTypeGeneric = @"public.content";
 static NSString* const kDomainIdentifier = @"com.branch.io";
@@ -86,7 +87,12 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
                                  thumbnailUrl:(NSURL *)thumbnailUrl
                                 thumbnailData:(NSData *)thumbnailData
                                      callback:(void (^_Nullable)(NSString* _Nullable url, NSError * _Nullable error))completion {
-    
+
+    if (!linkProperty) {
+        linkProperty = [[BranchLinkProperties alloc] init];
+        linkProperty.channel = @"Spotlight Search";
+    }
+
     if (universalObject.locallyIndex) {
         NSString *dynamicUrl = [universalObject getLongUrlWithChannel:nil
                                                               andTags:nil
@@ -160,8 +166,6 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
         return nil;
     attributes = [attributes initWithItemContentType:type];
 
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wpartial-availability"
     #define safePerformSelector(_selector, parameter) { \
         if (parameter != nil && [attributes respondsToSelector:@selector(_selector)]) { \
             [attributes _selector parameter]; \
@@ -181,7 +185,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     safePerformSelector(setWeakRelatedUniqueIdentifier:, universalObject.canonicalIdentifier);
     
     #undef safePerformSelector
-    #pragma clang diagnostic pop
+
     return attributes;
 #endif
     
