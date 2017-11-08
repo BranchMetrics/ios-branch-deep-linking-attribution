@@ -9,7 +9,7 @@
 #import "TBAppDelegate.h"
 #import "TBBranchViewController.h"
 #import "TBDetailViewController.h"
-#import "Branch.h"
+@import Branch;
 
 @interface TBAppDelegate () <UISplitViewControllerDelegate>
 @property (nonatomic, strong) TBBranchViewController *branchViewController;

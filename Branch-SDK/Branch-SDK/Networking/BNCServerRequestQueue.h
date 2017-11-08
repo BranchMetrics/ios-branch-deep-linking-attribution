@@ -7,7 +7,7 @@
 //
 
 #import "BNCServerRequest.h"
-#import "BranchOpenRequest.h"
+@class BranchOpenRequest;
 
 @interface BNCServerRequestQueue : NSObject
 

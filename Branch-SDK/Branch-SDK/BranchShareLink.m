@@ -25,7 +25,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 #pragma mark BranchShareLink
 
 @interface BranchShareLink () {
-    NSPointerArray* _activityItems;
+    NSMutableArray* _activityItems;
 }
 
 - (id) shareObjectForItem:(BranchShareActivityItem*)activityItem
@@ -88,7 +88,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
 - (NSArray<UIActivityItemProvider*>*_Nonnull) activityItems {
     if (_activityItems) {
-        return [_activityItems allObjects];
+        return _activityItems;
     }
 
     // Make sure we can share
@@ -112,13 +112,13 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     // Log share initiated event
     [BranchEvent customEventWithName:BNCShareInitiatedEvent contentItem:self.universalObject];
 
-    NSMutableArray *items = [NSMutableArray new];
+    _activityItems = [NSMutableArray new];
     BranchShareActivityItem *item = nil;
     if (self.shareText.length) {
         item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareText];
         item.itemType = BranchShareActivityItemTypeShareText;
         item.parent = self;
-        [items addObject:item];
+        [_activityItems addObject:item];
     }
 
     NSString *URLString =
@@ -136,22 +136,16 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareURL.absoluteString];
     item.itemType = BranchShareActivityItemTypeBranchURL;
     item.parent = self;
-    [items addObject:item];
-
-    [_activityItems addPointer:(__bridge void * _Nullable)(item)];
+    [_activityItems addObject:item];
 
     if (self.shareObject) {
         item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareObject];
         item.itemType = BranchShareActivityItemTypeOther;
         item.parent = self;
-        [items addObject:item];
+        [_activityItems addObject:item];
     }
 
-    _activityItems = [NSPointerArray weakObjectsPointerArray];
-    for (item in items)
-        [_activityItems addPointer:(__bridge void * _Nullable)(item)];
-
-    return items;
+    return _activityItems;
 }
 
 - (void) presentActivityViewControllerFromViewController:(UIViewController*_Nullable)viewController

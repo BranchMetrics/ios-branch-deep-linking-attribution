@@ -847,11 +847,12 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param metadata        Optional metadata you may want add to the event.
  @param completion 		The optional completion callback.
  
- @deprecated Please use BNCEvent to send commerce events instead.
+ deprecated Please use BNCEvent to send commerce events instead.
  */
 - (void) sendCommerceEvent:(BNCCommerceEvent*)commerceEvent
 				  metadata:(NSDictionary<NSString*,id>*)metadata
 			withCompletion:(void (^) (NSDictionary*response, NSError*error))completion;
+//__attribute__((deprecated(("Please use the new `BranchEvent` to send commerce events instead."))));
 
 #pragma mark - Short Url Sync methods
 
