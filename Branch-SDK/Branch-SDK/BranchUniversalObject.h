@@ -8,15 +8,14 @@
 
 #if __has_feature(modules)
 @import UIKit;
+@import CoreSpotlight;
 #else
 #import <UIKit/UIKit.h>
+#import <CoreSpotlight/CoreSpotlight.h>
 #endif
 
-#import "Branch.h"
-#import <CoreSpotlight/CoreSpotlight.h>
-#import "BNCCallbacks.h"
 #import "BNCCommerceEvent.h"
-#import "BranchLinkProperties.h"
+@class BranchLinkProperties;
 
 #pragma mark BranchContentIndexMode
 
@@ -157,7 +156,7 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 
 
 - (void)registerView;
-- (void)registerViewWithCallback:(nullable callbackWithParams)callback;
+- (void)registerViewWithCallback:(void (^_Nullable)(NSDictionary * _Nullable params, NSError * _Nullable error))callback;
 
 
 /// @name User Event Tracking
@@ -181,7 +180,8 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 - (nullable NSString *)getShortUrlWithLinkPropertiesAndIgnoreFirstClick:(nonnull BranchLinkProperties *)linkProperties;
 
 /// Returns a Branch short URL to the content item with the passed link properties with a callback.
-- (void)getShortUrlWithLinkProperties:(nonnull BranchLinkProperties *)linkProperties andCallback:(nonnull callbackWithUrl)callback;
+- (void)getShortUrlWithLinkProperties:(nonnull BranchLinkProperties *)linkProperties
+                          andCallback:(void (^_Nullable)(NSString * _Nullable url, NSError * _Nullable error))callback;
 
 /// Returns a Branch long URL to the content item
 - (nullable NSString *)getLongUrlWithChannel:(nullable NSString *)channel andTags:(nullable NSArray *)tags andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andAlias:(nullable NSString *)alia;
@@ -224,11 +224,19 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 
 
 - (void)listOnSpotlight;
-- (void)listOnSpotlightWithCallback:(nullable callbackWithUrl)callback;
-- (void)listOnSpotlightWithIdentifierCallback:(nullable callbackWithUrlAndSpotlightIdentifier)spotlightCallback __attribute__((deprecated(("iOS 10 has changed how Spotlight indexing works and we’ve updated the SDK to reflect this. Please see https://dev.branch.io/features/spotlight-indexing/overview/ for instructions on migration"))));;
+- (void)listOnSpotlightWithCallback:(void (^_Nullable)(NSString * _Nullable url, NSError * _Nullable error))callback;
+
+- (void)listOnSpotlightWithIdentifierCallback:(void (^_Nullable)(NSString * _Nullable url,
+                                                                 NSString * _Nullable spotlightIdentifier,
+                                                                 NSError * _Nullable error))spotlightCallback
+    __attribute__((deprecated((
+    "iOS 10 has changed how Spotlight indexing works and we’ve updated the SDK to reflect this. "
+    "Please see https://dev.branch.io/features/spotlight-indexing/overview/ for instructions on migration."))));
+
 - (void)listOnSpotlightWithLinkProperties:(BranchLinkProperties*_Nullable)linkproperties
                                  callback:(void (^_Nullable)(NSString * _Nullable url,
                                                             NSError * _Nullable error))completion;
+
 - (void)removeFromSpotlightWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion;
 
 /// Convenience method for initSession methods that return BranchUniversalObject, but can be used safely by anyone.

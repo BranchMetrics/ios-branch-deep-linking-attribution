@@ -65,6 +65,7 @@
 		4D36000C1F466D33002BE771 /* BranchEvent.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D36000B1F466D33002BE771 /* BranchEvent.Test.m */; };
 		4D385D0B1EE1D53200A549EC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D385D0A1EE1D53200A549EC /* Security.framework */; };
 		4D3FA94B1DFF31EB00E2B6A9 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FA94A1DFF31EB00E2B6A9 /* BNCConfig.m */; };
+		4D698B7D1FB287A700AFF38C /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67163AAD1B9A036F007A8AB1 /* SafariServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		4D8999ED1DC108FF00F7EE0A /* BNCAvailability.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D8999EB1DC108FF00F7EE0A /* BNCAvailability.m */; };
 		4D8EE7A61E1F0A5D00B1F450 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D8EE7A41E1F0A5D00B1F450 /* BNCCommerceEvent.m */; };
 		4D9726BA1F27FF7400028BDE /* BNCLocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D9726B81F27FF7400028BDE /* BNCLocalization.h */; };
@@ -151,7 +152,7 @@
 		6700166E1940F51400A9E103 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6700166C1940F51400A9E103 /* InfoPlist.strings */; };
 		670016701940F51400A9E103 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6700166F1940F51400A9E103 /* main.m */; };
 		6700167A1940F51400A9E103 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016791940F51400A9E103 /* ViewController.m */; };
-		67163AAE1B9A036F007A8AB1 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67163AAD1B9A036F007A8AB1 /* SafariServices.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		67163AAE1B9A036F007A8AB1 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67163AAD1B9A036F007A8AB1 /* SafariServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		67486B8E1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */; };
 		677F4CB51C1FB1910029F2B3 /* Branch-TestBed.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 677F4CB41C1FB0FA0029F2B3 /* Branch-TestBed.entitlements */; };
 		67F270891BA9FCFF002546A7 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -170,8 +171,7 @@
 		E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B947491D15D73900F2270D /* BNCCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F185BAAA1F3D30D70056300C /* BNCSpotlightService.h in Headers */ = {isa = PBXBuildFile; fileRef = F185BAA81F3D30D70056300C /* BNCSpotlightService.h */; };
 		F185BAAB1F3D30D70056300C /* BNCSpotlightService.m in Sources */ = {isa = PBXBuildFile; fileRef = F185BAA91F3D30D70056300C /* BNCSpotlightService.m */; };
-		F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; };
-		F1CF14121F4CC7AC00BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; };
+		F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		F1D359201ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = F1D3591E1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h */; };
 		F1D359211ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */; };
 		F1D4F9AF1F323F01002D13FF /* TestBedUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F1D4F9AE1F323F01002D13FF /* TestBedUITests.m */; };
@@ -396,10 +396,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */,
-				466B58531B17776A00A69EDE /* UIKit.framework in Frameworks */,
-				466B58521B17776500A69EDE /* Foundation.framework in Frameworks */,
 				466B584F1B17775900A69EDE /* AdSupport.framework in Frameworks */,
+				F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */,
+				466B58521B17776500A69EDE /* Foundation.framework in Frameworks */,
+				4D698B7D1FB287A700AFF38C /* SafariServices.framework in Frameworks */,
+				466B58531B17776A00A69EDE /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -407,15 +408,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D385D0B1EE1D53200A549EC /* Security.framework in Frameworks */,
-				4DDC52621DCC08E700CFB737 /* iAd.framework in Frameworks */,
-				67F270891BA9FCFF002546A7 /* CoreSpotlight.framework in Frameworks */,
-				67163AAE1B9A036F007A8AB1 /* SafariServices.framework in Frameworks */,
 				46DC406E1B2A328900D2D203 /* AdSupport.framework in Frameworks */,
-				466B58811B1778DB00A69EDE /* libBranch.a in Frameworks */,
 				670016661940F51400A9E103 /* CoreGraphics.framework in Frameworks */,
-				670016681940F51400A9E103 /* UIKit.framework in Frameworks */,
+				67F270891BA9FCFF002546A7 /* CoreSpotlight.framework in Frameworks */,
 				670016641940F51400A9E103 /* Foundation.framework in Frameworks */,
+				4DDC52621DCC08E700CFB737 /* iAd.framework in Frameworks */,
+				67163AAE1B9A036F007A8AB1 /* SafariServices.framework in Frameworks */,
+				4D385D0B1EE1D53200A549EC /* Security.framework in Frameworks */,
+				466B58811B1778DB00A69EDE /* libBranch.a in Frameworks */,
+				670016681940F51400A9E103 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,7 +424,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1CF14121F4CC7AC00BB2694 /* CoreSpotlight.framework in Frameworks */,
 				4683F07A1B20AC5E00A432E7 /* libBranch.a in Frameworks */,
 				BC659371001A4A77B4CCE51C /* libPods-Branch-SDK-Tests.a in Frameworks */,
 			);

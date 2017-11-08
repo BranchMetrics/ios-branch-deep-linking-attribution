@@ -532,12 +532,12 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 }
 
 - (void)listOnSpotlightWithCallback:(callbackWithUrl)callback {
-    
-    [[Branch getInstance] indexOnSpotlightWithBranchUniversalObject:self
-                                                     linkProperties:nil
-                                                         completion:^(BranchUniversalObject *universalObject, NSString *url, NSError *error) {
-                                                             callback(url,error);
-                                                         }];
+    [[Branch getInstance]
+        indexOnSpotlightWithBranchUniversalObject:self
+        linkProperties:nil
+        completion:^(BranchUniversalObject *universalObject, NSString *url, NSError *error) {
+            if (callback) callback(url,error);
+        }];
 }
 
 //This one uses a callback that returns the SpotlightIdentifier
@@ -573,12 +573,12 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 - (void)listOnSpotlightWithLinkProperties:(BranchLinkProperties*_Nullable)linkproperties
                                 callback:(void (^_Nullable)(NSString * _Nullable url,
                                                             NSError * _Nullable error))completion {
-    
-    [[Branch getInstance] indexOnSpotlightWithBranchUniversalObject:self
-                                                     linkProperties:linkproperties
-                                                         completion:^(BranchUniversalObject *universalObject, NSString *url, NSError *error) {
-                                                             completion(url,error);
-                                                         }];
+    [[Branch getInstance]
+        indexOnSpotlightWithBranchUniversalObject:self
+        linkProperties:linkproperties
+        completion:^(BranchUniversalObject *universalObject, NSString *url, NSError *error) {
+            if (completion) completion(url,error);
+        }];
 }
 
 - (void) removeFromSpotlightWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion{
