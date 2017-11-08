@@ -13,12 +13,7 @@
 #endif
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_10_0
-#warning Warning: Compiling with iOS 9 / Xcode 7 support.
-
-@interface NSLocale (BranchAvailability)
-- (NSString*) countryCode;
-- (NSString*) languageCode;
-@end
+#warning Warning: Compiling with pre-iOS 10 / Xcode 7 support.
 
 typedef NSString * UIActivityType;
 typedef NSString * UIApplicationOpenURLOptionsKey;
@@ -36,3 +31,8 @@ typedef NSString * UIApplicationOpenURLOptionsKey;
 #ifndef CSSearchableItemActivityIdentifier
 #define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
 #endif
+
+@interface NSLocale (BranchAvailability)
+- (NSString*) countryCode;
+- (NSString*) languageCode;
+@end

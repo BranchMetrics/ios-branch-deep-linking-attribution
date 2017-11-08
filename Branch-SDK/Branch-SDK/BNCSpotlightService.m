@@ -13,8 +13,17 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
 
+#pragma mark Defensive Declarations
+
+@interface CSSearchableItemAttributeSetDummyClass : NSObject
+- (void) setKeywords:(NSArray<NSString*>*)keywords;
+- (void) setWeakRelatedUniqueIdentifier:(NSString*)uniqueIdentifier;
+@end
+
 static NSString* const kUTTypeGeneric = @"public.content";
-static NSString* const kDomainIdentifier = @"com.branch.io";
+static NSString* const kDomainIdentifier = @"io.branch.sdk.spotlight";
+
+#pragma mark - BNCSpotlightService
 
 @interface BNCSpotlightService()<NSUserActivityDelegate> {
     dispatch_queue_t    _workQueue;
@@ -22,6 +31,8 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
 @property (strong, nonatomic) NSMutableDictionary *userInfo;
 @property (strong, readonly) dispatch_queue_t workQueue;
 @end
+
+#pragma mark - BNCSpotlightService
 
 @implementation BNCSpotlightService
 
@@ -154,6 +165,7 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
 - (id)attributeSetWithUniversalObject:(BranchUniversalObject*)universalObject
                             thumbnail:(NSData*)thumbnailData
                                   url:(NSString*)url {
+
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
     NSString *type = universalObject.contentMetadata.contentSchema ?: (NSString *)kUTTypeGeneric;
     
@@ -181,15 +193,19 @@ static NSString* const kDomainIdentifier = @"com.branch.io";
     }
     safePerformSelector(setThumbnailData:, thumbnailData);
     safePerformSelector(setContentURL:, [NSURL URLWithString:url]);
-    safePerformSelector(setKeywords:, universalObject.keywords);
+    if (universalObject.keywords && [attributes respondsToSelector:@selector(setKeywords:)])
+        [((CSSearchableItemAttributeSetDummyClass*)attributes) setKeywords:universalObject.keywords];
     safePerformSelector(setWeakRelatedUniqueIdentifier:, universalObject.canonicalIdentifier);
     
     #undef safePerformSelector
 
     return attributes;
-#endif
-    
+
+#else
+
     return nil;
+
+#endif
 }
 
 - (void)indexPrivatelyWithBranchUniversalObjects:(NSArray<BranchUniversalObject*>* _Nonnull)universalObjects
