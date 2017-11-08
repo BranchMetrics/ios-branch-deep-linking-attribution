@@ -93,11 +93,6 @@ buildDirectoryProjectScheme \
     Branch-TestBed-iMessage.xcodeproj \
     MessagesExtension
 
-# buildDirectoryProjectScheme \
-#     Branch-TestBed-Swift \
-#     TestBed-Swift.xcworkspace \
-#     TestBed-Swift
-
 buildDirectoryProjectScheme \
     Branch-TestBed-Xcode-7 \
     Branch-TestBed.xcworkspace \
@@ -105,6 +100,14 @@ buildDirectoryProjectScheme \
 
 if [[ $xcodeVersion = '9' ]]
 then
+
+    # Swift 4 projects:
+
+    buildDirectoryProjectScheme \
+        Examples/BareBones \
+        BareBones.xcodeproj \
+        BareBones
+
     cd Examples/WebViewExample
     pod update
     cd $(dirname "$scriptfile")/..
@@ -112,14 +115,15 @@ then
         Examples/WebViewExample \
         WebViewExample.xcworkspace \
         WebViewExample
-fi
 
-if [[ $xcodeVersion = '9' ]]
-then
+    cd Branch-TestBed-Swift
+    pod update
+    cd $(dirname "$scriptfile")/..
     buildDirectoryProjectScheme \
-        Examples/BareBones \
-        BareBones.xcodeproj \
-        BareBones
+        Branch-TestBed-Swift \
+        TestBed-Swift.xcworkspace \
+        TestBed-Swift
+
 fi
 
 printf "${textBlue}>>> All builds complete.${textNormal}\n"

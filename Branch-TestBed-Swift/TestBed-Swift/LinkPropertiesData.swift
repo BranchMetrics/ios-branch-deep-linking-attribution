@@ -78,7 +78,7 @@ struct LinkPropertiesData {
                     branchLinkProperties.matchDuration = UInt(value as? String ?? "") ?? 0
                 }
             default:
-                guard (key.characters.first != "+") && (key.characters.first != "~") else {
+                guard (key.first != "+") && (key.first != "~") else {
                     continue
                 }
                 guard let value = properties[key] as? String else {
