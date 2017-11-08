@@ -416,15 +416,19 @@ static NSString* const kDomainIdentifier = @"io.branch.sdk.spotlight";
     return activeController;
 }
 
-- (UIViewController *)currentViewController
-{
-    UIViewController *current = [UIApplication sharedApplication].keyWindow.rootViewController;
-    while (current.presentedViewController && ![current.presentedViewController isKindOfClass:UIAlertController.class]) {
+- (UIViewController *)currentViewController {
+    // TODO: Create a general 'currentViewController' utility function.
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if (!UIApplicationClass) return nil;
+
+    UIViewController *current =
+        [UIApplicationClass sharedApplication].keyWindow.rootViewController;
+    while (current.presentedViewController &&
+        ![current.presentedViewController isKindOfClass:UIAlertController.class]) {
         current = current.presentedViewController;
     }
     return current;
 }
-
 
 #pragma mark userActivity Delegate Methods
 

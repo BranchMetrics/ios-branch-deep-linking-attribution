@@ -84,14 +84,19 @@ buildDirectoryProjectScheme \
     Branch-TestBed
 
 buildDirectoryProjectScheme \
+    Branch-TestBed/Branch-TestBed-UITests \
+    UITestBed.xcodeproj \
+    UITestBed
+
+buildDirectoryProjectScheme \
     Branch-TestBed-iMessage \
     Branch-TestBed-iMessage.xcodeproj \
     MessagesExtension
 
-buildDirectoryProjectScheme \
-    Branch-TestBed-Swift \
-    TestBed-Swift.xcworkspace \
-    TestBed-Swift
+# buildDirectoryProjectScheme \
+#     Branch-TestBed-Swift \
+#     TestBed-Swift.xcworkspace \
+#     TestBed-Swift
 
 buildDirectoryProjectScheme \
     Branch-TestBed-Xcode-7 \
@@ -100,6 +105,9 @@ buildDirectoryProjectScheme \
 
 if [[ $xcodeVersion = '9' ]]
 then
+    cd Examples/WebViewExample
+    pod update
+    cd $(dirname "$scriptfile")/..
     buildDirectoryProjectScheme \
         Examples/WebViewExample \
         WebViewExample.xcworkspace \

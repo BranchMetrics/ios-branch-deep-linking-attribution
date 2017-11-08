@@ -11,11 +11,8 @@
 #pragma clang diagnostic ignored "-Wpartial-availability"
 
 #import "BranchCSSearchableItemAttributeSet.h"
+#import "Branch.h"
 #import "BNCSystemObserver.h"
-#import "BNCError.h"
-#import "BranchConstants.h"
-#import "BNCLog.h"
-#import <MobileCoreServices/MobileCoreServices.h>
 
 #ifndef kUTTypeGeneric
 #define kUTTypeGeneric @"public.content"
