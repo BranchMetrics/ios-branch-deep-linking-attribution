@@ -95,7 +95,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         case (0,0) :
             self.performSegue(withIdentifier: "TextViewForm", sender: "UserID")
         case (1,0) :
-            guard linkTextField.text?.characters.count > 0 else {
+            guard linkTextField.text?.count > 0 else {
                 break
             }
             UIPasteboard.general.string = linkTextField.text

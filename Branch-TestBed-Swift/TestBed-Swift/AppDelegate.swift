@@ -68,6 +68,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
              branch.registerDeepLinkController(navigationController, forKey:"~referring_link")*/
             
             // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is false).
+            
             branch.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: false, deepLinkHandler: { params, error in
                 
                 defer {

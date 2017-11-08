@@ -9,8 +9,6 @@
 #import "BranchDeepLinkingController.h"
 
 @interface BNCDeepLinkViewControllerInstance : NSObject
-
 @property (strong, nonatomic)UIViewController<BranchDeepLinkingController>* viewController;
 @property (assign)BNCViewControllerPresentationOption option;
-
 @end

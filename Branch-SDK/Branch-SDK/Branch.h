@@ -24,7 +24,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
-#import "BNCXcode7Support.h"
+#import "BNCAvailability.h"
 #import "BranchActivityItemProvider.h"
 #import "BranchConstants.h"
 #import "BranchDeepLinkingController.h"
@@ -132,6 +132,9 @@ extern NSString * const BNCPurchaseInitiatedEvent;
 extern NSString * const BNCPurchasedEvent;
 extern NSString * const BNCShareInitiatedEvent;
 extern NSString * const BNCShareCompletedEvent;
+
+// Spotlight Constant
+extern NSString * const BNCSpotlightFeature;
 
 #pragma mark - Branch Enums
 typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
@@ -860,7 +863,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param metadata        Optional metadata you may want add to the event.
  @param completion 		The optional completion callback.
  
- deprecated Please use BNCEvent to send commerce events instead.
+ deprecated Please use BNCEvent to track commerce events instead.
  */
 - (void) sendCommerceEvent:(BNCCommerceEvent*)commerceEvent
 				  metadata:(NSDictionary<NSString*,id>*)metadata
@@ -1498,6 +1501,50 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl canonicalId:(NSString *)canonicalId linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
 
+/**
+ Index Branch Univeral Objects using SearchableItem of Apple's CoreSpotlight, where content indexed is private irrespective of Buo's ContentIndexMode value.
+ @param universalObject Branch Universal Object is indexed on spotlight using meta data of spotlight
+ @param linkProperties  Branch Link Properties is used in short url generation
+ @param completion Callback called when all Branch Universal Objects are indexed. Dynamic url generated and saved as spotlight identifier
+ @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
+ */
+- (void)indexOnSpotlightWithBranchUniversalObject:(BranchUniversalObject*)universalObject
+                                   linkProperties:(BranchLinkProperties*)linkProperties
+                                       completion:(void (^) (BranchUniversalObject *universalObject, NSString * url,NSError *error))completion;
+
+/**
+ Index multiple Branch Univeral Objects using SearchableItem of Apple's CoreSpotlight, where content indexed is private irrespective of Buo's ContentIndexMode value.
+ @param universalObjects Multiple Branch Universal Objects are indexed on spotlight using meta data of spotlight
+ @param completion Callback called when all Branch Universal Objects are indexed. Dynamic URL generated is returned as spotlightIdentifier of Branch Universal Object. Use this identifier to remove content from spotlight.
+ @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
+ */
+- (void)indexOnSpotlightUsingSearchableItems:(NSArray<BranchUniversalObject*>*)universalObjects
+                                  completion:(void (^) (NSArray<BranchUniversalObject*>* universalObjects,
+                                                        NSError* error))completion;
+
+/*
+ Remove Indexing of a Branch Universal Objects, which is indexed using SearchableItem of Apple's CoreSpotlight.
+ @param universalObject Branch Universal Object which is already indexed using SearchableItem is removed from spotlight
+ @param completion Called when the request has been journaled by the index (“journaled” means that the index makes a note that it has to perform this operation). Note that the request may not have completed.
+ @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
+ */
+- (void)removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject *)universalObject
+                                             callback:(void (^)(NSError * error))completion;
+/*
+ Remove Indexing of an array of Branch Universal Objects, which are indexed using SearchableItem of Apple's CoreSpotlight.
+ @param universalObjects Multiple Branch Universal Objects which are already indexed using SearchableItem are removed from spotlight. Note: The spotlight identifier of Branch Universal Object is used to remove indexing.
+ @param completion Called when the request has been journaled by the index (“journaled” means that the index makes a note that it has to perform this operation). Note that the request may not have completed.
+ @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
+ */
+- (void)removeSearchableItemsWithBranchUniversalObjects:(NSArray<BranchUniversalObject*> *)universalObjects
+                                               callback:(void (^)(NSError * error))completion;
+
+/*
+ Remove all content spotlight indexed through either Searchable Item or privately indexed Branch Universal Object.
+ @param completion Called when the request has been journaled by the index (“journaled” means that the index makes a note that it has to perform this operation). Note that the request may not have completed.
+ @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
+ */
+- (void)removeAllPrivateContentFromSpotLightWithCallback:(void (^)(NSError * error))completion;
 
 /**
  Method for creating a one of Branch instance and specifying its dependencies.

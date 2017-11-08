@@ -10,8 +10,7 @@
 #import "TBTableData.h"
 #import "TBDetailViewController.h"
 #import "TBWaitingView.h"
-#import "Branch.h"
-#import "BNCLog.h"
+@import Branch;
 #import "BNCDeviceInfo.h"
 
 NSString *cononicalIdentifier = @"item/12345";
@@ -81,15 +80,14 @@ NSString *type = @"some type";
     _universalObject.title = contentTitle;
     _universalObject.contentDescription = contentDescription;
     _universalObject.imageUrl = imageUrl;
-    _universalObject.price = 1000;
-    _universalObject.currency = @"$";
-    _universalObject.type = type;
-    [_universalObject
-        addMetadataKey:@"deeplink_text"
-        value:[NSString stringWithFormat:
+    _universalObject.contentMetadata.price = [NSDecimalNumber decimalNumberWithString:@"1000"];
+    _universalObject.contentMetadata.currency = @"$";
+    _universalObject.contentMetadata.contentSchema = type;
+    _universalObject.contentMetadata.customMetadata[@"deeplink_text"] =
+        [NSString stringWithFormat:
             @"This text was embedded as data in a Branch link with the following characteristics:\n\n"
              "canonicalUrl: %@\n  title: %@\n  contentDescription: %@\n  imageUrl: %@\n",
-                canonicalUrl, contentTitle, contentDescription, imageUrl]];
+                canonicalUrl, contentTitle, contentDescription, imageUrl];
 
     UILabel *versionLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     versionLabel.textAlignment = NSTextAlignmentCenter;
@@ -326,7 +324,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.universalObject showShareSheetWithLinkProperties:self.linkProperties
         andShareText:@"Ha ha"
         fromViewController:self
-        anchor:cell
+        anchor:(id)cell
         completionWithError: ^ (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError) {
             BNCLogDebug(@"Done.");
     }];
