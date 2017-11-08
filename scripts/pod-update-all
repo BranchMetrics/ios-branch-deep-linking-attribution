@@ -23,5 +23,6 @@ function updatePodsInDirectory() {
 
 gem install cocoapods
 updatePodsInDirectory Branch-TestBed
+updatePodsInDirectory Branch-TestBed-Swift
 updatePodsInDirectory Branch-TestBed-Xcode-7
 updatePodsInDirectory Examples/WebViewExample

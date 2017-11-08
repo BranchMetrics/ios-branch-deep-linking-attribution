@@ -27,7 +27,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, nonatomic) NSString *identityID;
 @property (strong, nonatomic) NSString *linkClickIdentifier;
 @property (strong, nonatomic) NSString *spotlightIdentifier;
-@property (strong, nonatomic) NSString *universalLinkUrl;
+@property (strong, atomic)    NSString *universalLinkUrl;
 @property (strong, nonatomic) NSString *userUrl;
 @property (strong, nonatomic) NSString *userIdentity;
 @property (strong, nonatomic) NSString *sessionParams;
@@ -46,6 +46,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) BOOL          appleSearchAdNeedsSend;
 @property (strong, nonatomic) NSString *lastSystemBuildVersion;
 @property (strong, nonatomic) NSString *browserUserAgentString;
+@property (strong, atomic) NSString *referringURL;
 @property (strong, atomic) NSString *branchAPIURL;
 
 + (BNCPreferenceHelper *)preferenceHelper;

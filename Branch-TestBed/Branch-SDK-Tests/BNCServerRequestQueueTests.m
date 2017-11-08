@@ -20,7 +20,6 @@
 #pragma mark - MoveOpenOrInstallToFront tests
 - (void)testMoveOpenOrInstallToFrontWhenEmpty {
     BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
-    
     XCTAssertNoThrow([requestQueue moveInstallOrOpenToFront:0]);
 }
 
@@ -28,7 +27,6 @@
     BNCServerRequestQueue *requestQueue = [[BNCServerRequestQueue alloc] init];
     [requestQueue insert:[[BNCServerRequest alloc] init] at:0];
     [requestQueue insert:[[BNCServerRequest alloc] init] at:0];
-    
     XCTAssertNoThrow([requestQueue moveInstallOrOpenToFront:0]);
 }
 

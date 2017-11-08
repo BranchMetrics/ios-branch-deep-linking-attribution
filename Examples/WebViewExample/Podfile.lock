@@ -1,8 +1,8 @@
 PODS:
-  - Branch (0.20.2):
-    - Branch/Core (= 0.20.2)
-  - Branch/Core (0.20.2)
-  - Cartography (2.1.0)
+  - Branch (0.21.2):
+    - Branch/Core (= 0.21.2)
+  - Branch/Core (0.21.2)
+  - Cartography (3.0.0)
   - MBProgressHUD (1.0.0)
 
 DEPENDENCIES:
@@ -15,8 +15,8 @@ EXTERNAL SOURCES:
     :path: ../..
 
 SPEC CHECKSUMS:
-  Branch: 307446a687231526f60eef0f12407ca4ed177c32
-  Cartography: 19c2223a8dfed35d82b098d365213b7ceb25ab2b
+  Branch: 61bb65f5908a34a88e2c833d5c624ec48d47e26d
+  Cartography: 105643267226a7ab58895b94b44727eb013e31ce
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
 
 PODFILE CHECKSUM: 11c87f21f32687c987839149b04678394af64cd8

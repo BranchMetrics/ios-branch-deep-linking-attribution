@@ -50,6 +50,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     NSString         *_lastSystemBuildVersion;
     NSString         *_browserUserAgentString;
     NSString         *_branchAPIURL;
+    NSString         *_referringURL;
 }
 
 @property (strong, nonatomic) NSMutableDictionary *persistenceDict;
@@ -329,18 +330,35 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
-- (NSString *)universalLinkUrl {
-    if (!_universalLinkUrl) {
-        _universalLinkUrl = [self readStringFromDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL];
+- (NSString*) referringURL {
+    @synchronized (self) {
+        if (!_referringURL) _referringURL = [self readStringFromDefaults:@"referringURL"];
+        return _referringURL;
     }
-    
-    return _universalLinkUrl;
+}
+
+- (void) setReferringURL:(NSString *)referringURL {
+    @synchronized (self) {
+        _referringURL = [referringURL copy];
+        [self writeObjectToDefaults:@"referringURL" value:_referringURL];
+    }
+}
+
+- (NSString *)universalLinkUrl {
+    @synchronized(self) {
+        if (!_universalLinkUrl) {
+            _universalLinkUrl = [self readStringFromDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL];
+        }
+        return _universalLinkUrl;
+    }
 }
 
 - (void)setUniversalLinkUrl:(NSString *)universalLinkUrl {
-    if (![_universalLinkUrl isEqualToString:universalLinkUrl]) {
-        _universalLinkUrl = universalLinkUrl;
-        [self writeObjectToDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL value:universalLinkUrl];
+    @synchronized(self) {
+        if (![_universalLinkUrl isEqualToString:universalLinkUrl]) {
+            _universalLinkUrl = universalLinkUrl;
+            [self writeObjectToDefaults:BRANCH_PREFS_KEY_UNIVERSAL_LINK_URL value:universalLinkUrl];
+        }
     }
 }
 
