@@ -121,11 +121,11 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 ///@name Deprecated Properties
 
 @property (nonatomic, strong, nullable)
-    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.userInfo` instead."))))
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.customMetadata` instead."))))
     NSDictionary *metadata;
 
 - (void)addMetadataKey:(nonnull NSString *)key value:(nonnull NSString *)value
-    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.userInfo` instead."))));
+    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.customMetadata` instead."))));
 
 @property (nonatomic, strong, nullable)
     __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.contentSchema` instead."))))
