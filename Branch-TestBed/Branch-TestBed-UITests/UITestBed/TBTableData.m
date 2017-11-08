@@ -7,7 +7,7 @@
 //
 
 #import "TBTableData.h"
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 @implementation TBTableItem
 @end
