@@ -63,6 +63,7 @@
 		E212CC5E1D9DE6A900603475 /* BranchContentDiscoveryManifest.m in Sources */ = {isa = PBXBuildFile; fileRef = E212CC5D1D9DE6A900603475 /* BranchContentDiscoveryManifest.m */; };
 		E212CC611D9DE6C400603475 /* BranchContentPathProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = E212CC601D9DE6C400603475 /* BranchContentPathProperties.m */; };
 		E212CC641D9DE6D800603475 /* BranchContentDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = E212CC631D9DE6D800603475 /* BranchContentDiscoverer.m */; };
+		F1CF140C1F4CBB2E00BB2694 /* BNCSpotlightService.m in Sources */ = {isa = PBXBuildFile; fileRef = F1CF140B1F4CBB2E00BB2694 /* BNCSpotlightService.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -210,6 +211,8 @@
 		E212CC601D9DE6C400603475 /* BranchContentPathProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchContentPathProperties.m; sourceTree = "<group>"; };
 		E212CC621D9DE6D800603475 /* BranchContentDiscoverer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchContentDiscoverer.h; sourceTree = "<group>"; };
 		E212CC631D9DE6D800603475 /* BranchContentDiscoverer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchContentDiscoverer.m; sourceTree = "<group>"; };
+		F1CF140A1F4CBB2E00BB2694 /* BNCSpotlightService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSpotlightService.h; sourceTree = "<group>"; };
+		F1CF140B1F4CBB2E00BB2694 /* BNCSpotlightService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSpotlightService.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -369,6 +372,8 @@
 				4DB47D4F1F042BB900C53C29 /* BNCLog.m */,
 				67E91F761D769FE30039F1C4 /* BNCPreferenceHelper.h */,
 				67E91F771D769FE30039F1C4 /* BNCPreferenceHelper.m */,
+				F1CF140A1F4CBB2E00BB2694 /* BNCSpotlightService.h */,
+				F1CF140B1F4CBB2E00BB2694 /* BNCSpotlightService.m */,
 				67E91F7E1D769FE30039F1C4 /* BNCStrongMatchHelper.h */,
 				67E91F7F1D769FE30039F1C4 /* BNCStrongMatchHelper.m */,
 				67E91F801D769FE30039F1C4 /* BNCSystemObserver.h */,
@@ -563,6 +568,7 @@
 				2BD7C4141F27D4E3003696AF /* BranchCreditHistoryRequest.m in Sources */,
 				67E91FC71D769FE30039F1C4 /* BranchActivityItemProvider.m in Sources */,
 				2BD7C4181F27D4E3003696AF /* BranchOpenRequest.m in Sources */,
+				F1CF140C1F4CBB2E00BB2694 /* BNCSpotlightService.m in Sources */,
 				2BD7C40F1F27D4E3003696AF /* BNCServerInterface.m in Sources */,
 				67E91FC91D769FE30039F1C4 /* BranchCSSearchableItemAttributeSet.m in Sources */,
 				4D510D761F0D6059003D720B /* BNCDeepLinkViewControllerInstance.m in Sources */,

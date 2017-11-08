@@ -94,7 +94,7 @@
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary *data = response.data;
-
+    
     // Handle possibly mis-parsed identity.
     id userIdentity = data[BRANCH_RESPONSE_KEY_DEVELOPER_IDENTITY];
     if ([userIdentity isKindOfClass:[NSNumber class]]) {
@@ -117,7 +117,7 @@
     } else
     if ([sessionData isKindOfClass:[NSDictionary class]]) {
         BNCLogWarning(@"Received session data of type '%@' data is '%@'.",
-            NSStringFromClass(sessionData.class), sessionData);
+            NSStringFromClass(sessionData.class), sessionData);        
         sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:(NSDictionary*)sessionData];
     } else
     if ([sessionData isKindOfClass:[NSArray class]]) {
@@ -131,6 +131,16 @@
     }
 
     // Update session params
+    
+    
+    if (preferenceHelper.spotlightIdentifier) {
+        NSMutableDictionary *sessionDataDict =
+        [NSMutableDictionary dictionaryWithDictionary: [BNCEncodingUtils decodeJsonStringToDictionary:sessionData]];
+        NSDictionary *spotlightDic = @{BRANCH_RESPONSE_KEY_SPOTLIGHT_IDENTIFIER:preferenceHelper.spotlightIdentifier};
+        [sessionDataDict addEntriesFromDictionary:spotlightDic];
+        sessionData = [BNCEncodingUtils encodeDictionaryToJsonString:sessionDataDict];
+    }
+    
     preferenceHelper.sessionParams = sessionData;
 
     // Scenarios:
@@ -172,6 +182,7 @@
             referredUrl = sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
         }
     }
+    
     BranchContentDiscoveryManifest *cdManifest = [BranchContentDiscoveryManifest getInstance];
     [cdManifest onBranchInitialised:data withUrl:referredUrl];
     if ([cdManifest isCDEnabled]) {

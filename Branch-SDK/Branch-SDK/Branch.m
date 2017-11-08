@@ -37,6 +37,7 @@
 #import "BranchUserCompletedActionRequest.h"
 #import "NSMutableDictionary+Branch.h"
 #import "NSString+Branch.h"
+#import "BNCSpotlightService.h"
 #import "../Fabric/FABKitProtocol.h" // Fabric
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -69,6 +70,7 @@ NSString * const BNCShareInitiatedEvent = @"Share Started";
 NSString * const BNCShareCompletedEvent = @"Share Completed";
 
 static NSString * const BNCLogLevelKey = @"io.branch.sdk.BNCLogLevel";
+NSString * const BNCSpotlightFeature = @"spotlight";
 
 #pragma mark - Load Categories
 
@@ -716,38 +718,68 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
     BNCLogDebugSDK(@"continueUserActivity:");
-
+    
     // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-
+        
         // If we're already in-progress cancel the last open and do this one.
         BOOL isNewSession = NO;
         if (![self removeInstallOrOpen]) {
             isNewSession = YES;
         }
-
+        
         return [self handleUniversalDeepLink:userActivity.webpageURL fromSelf:isNewSession];
     }
-
+    
     // Check to see if a spotlight activity needs to be handled
     NSString *spotlightIdentifier =
-	    [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
-
-    if (spotlightIdentifier) {
+        [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
+    NSURL *webURL = userActivity.webpageURL;
+    
+    
+    if ([self isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
+        return [self handleDeepLinkWithNewSession:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]]];
+    }
+    else if (webURL != nil && [self isBranchLink:[webURL absoluteString]]) {
+        return [self handleDeepLinkWithNewSession:webURL];
+    }
+    else if (spotlightIdentifier) {
         self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
     }
     else {
         NSString *nonBranchSpotlightIdentifier =
-        	[self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
+        [self.contentDiscoveryManager standardSpotlightIdentifierFromActivity:userActivity];
         if (nonBranchSpotlightIdentifier) {
             self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
         }
     }
-
     self.preferenceHelper.shouldWaitForInit = NO;
     [self initUserSessionAndCallCallback:YES];
-
+    
     return spotlightIdentifier != nil;
+}
+
+- (BOOL)isBranchLink: (NSString*)urlString {
+    id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
+    if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] &&
+        [urlString containsString:branchUniversalLinkDomains]) {
+        return YES;
+    }
+    else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
+        for (id oneDomain in branchUniversalLinkDomains) {
+            if ([oneDomain isKindOfClass:[NSString class]] && [urlString containsString:oneDomain]) {
+                return YES;
+            }
+        }
+    }
+    
+    NSString *userActivityURL = urlString;
+    NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
+    for (NSString* domain in branchDomains) {
+        if ([userActivityURL containsString:domain])
+            return YES;
+    }
+    return NO;
 }
 
 #pragma mark - Push Notification support
@@ -1365,6 +1397,92 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl canonicalId:(NSString *)canonicalId linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
     [self.contentDiscoveryManager indexContentWithTitle:title description:description canonicalId:canonicalId publiclyIndexable:publiclyIndexable type:type thumbnailUrl:thumbnailUrl keywords:keywords userInfo:linkParams expirationDate:expirationDate callback:nil spotlightCallback:spotlightCallback];
+}
+
+- (void)indexOnSpotlightWithBranchUniversalObject:(BranchUniversalObject*)universalObject
+                                   linkProperties:(BranchLinkProperties*)linkProperties
+                                       completion:(void (^) (BranchUniversalObject *universalObject, NSString * url,NSError *error))completion {
+    BNCSpotlightService *spotlightService = [[BNCSpotlightService alloc] init];
+    
+    if (!universalObject) {
+        NSError* error = [NSError branchErrorWithCode:BNCInitError localizedMessage:@"Branch Universal Object is nil"];
+        completion(universalObject,nil,error);
+        return;
+    } else {
+        [spotlightService indexWithBranchUniversalObject:universalObject
+                                          linkProperties:linkProperties
+                                                callback:^(BranchUniversalObject * _Nullable universalObject,
+                                                           NSString * _Nullable url,
+                                                           NSError * _Nullable error) {
+                                              completion(universalObject,url,error);
+                                          }];
+    }
+}
+
+/* Indexing of multiple BUOs
+ * Content privately indexed irrestive of the value of contentIndexMode
+ */
+
+
+- (void)indexOnSpotlightUsingSearchableItems:(NSArray<BranchUniversalObject*>* )universalObjects
+                                  completion:(void (^) (NSArray<BranchUniversalObject*>* universalObjects,
+                                                        NSError* error))completion {
+    
+    BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
+    [spotlight indexPrivatelyWithBranchUniversalObjects:universalObjects
+                                             completion:^(NSArray<BranchUniversalObject *> * _Nullable universalObjects,
+                                                          NSError * _Nullable error) {
+                                                 if (completion)
+                                                     completion(universalObjects,error);
+                                             }];
+}
+
+- (void)removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject *)universalObject
+                                             callback:(void (^_Nullable)(NSError * _Nullable error))completion {
+    BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
+    
+    NSString *dynamicUrl = [universalObject getLongUrlWithChannel:nil
+                                                          andTags:nil
+                                                       andFeature:BNCSpotlightFeature
+                                                         andStage:nil
+                                                         andAlias:nil];
+    [spotlight removeSearchableItemsWithIdentifier:dynamicUrl
+                                          callback:^(NSError * _Nullable error) {
+                                              if (completion)
+                                                  completion(error);
+                                          }];
+}
+
+
+/* Only removes the indexing of BUOs indexed through CSSearchable item
+ */
+- (void)removeSearchableItemsWithBranchUniversalObjects:(NSArray<BranchUniversalObject*> *)universalObjects
+                                               callback:(void (^)(NSError * error))completion {
+    BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
+    NSMutableArray<NSString *> *identifiers = [[NSMutableArray alloc] init];
+    for (BranchUniversalObject* universalObject in universalObjects) {
+        NSString *dynamicUrl = [universalObject getLongUrlWithChannel:nil
+                                                              andTags:nil
+                                                           andFeature:BNCSpotlightFeature
+                                                             andStage:nil andAlias:nil];
+        [identifiers addObject:dynamicUrl];
+    }
+    
+    [spotlight removeSearchableItemsWithIdentifiers:identifiers
+                                           callback:^(NSError * error) {
+                                               if (completion)
+                                                   completion(error);
+                                           }];
+}
+
+/* Removes all content from spotlight indexed through CSSearchable item and has set the Domain identifier = "com.branch.io"
+ */
+
+- (void)removeAllPrivateContentFromSpotLightWithCallback:(void (^)(NSError * error))completion {
+    BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
+    [spotlight removeAllBranchSearchableItemsWithCallback:^(NSError * _Nullable error) {
+        completion(error);
+    }];
 }
 
 #pragma mark - Private methods

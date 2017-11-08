@@ -6,7 +6,12 @@
 //  Copyright © 2015 Branch Metrics. All rights reserved.
 //
 
-#import "Branch.h"
+#if __has_feature(modules)
+@import Foundation;
+#else
+#import <Foundation/Foundation.h>
+#endif
+#import "BNCCallbacks.h"
 
 @interface BNCContentDiscoveryManager : NSObject<NSUserActivityDelegate>
 
@@ -42,7 +47,16 @@
 
 /* This one has a different callback, which includes the spotlightIdentifier, and requires a different signature
     It cannot be part of the stack of method signatures above, because of the different callback type.*/
-- (void)indexContentWithTitle:(NSString *)title description:(NSString *)description canonicalId:(NSString *)canonicalId publiclyIndexable:(BOOL)publiclyIndexable type:(NSString *)type thumbnailUrl:(NSURL *)thumbnailUrl keywords:(NSSet *)keywords userInfo:(NSDictionary *)userInfo expirationDate:(NSDate *)expirationDate callback:(callbackWithUrl)callback spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
-
+- (void)indexContentWithTitle:(NSString *)title
+                  description:(NSString *)description
+                  canonicalId:(NSString *)canonicalId
+            publiclyIndexable:(BOOL)publiclyIndexable
+                         type:(NSString *)type
+                 thumbnailUrl:(NSURL *)thumbnailUrl
+                     keywords:(NSSet *)keywords
+                     userInfo:(NSDictionary *)userInfo
+               expirationDate:(NSDate *)expirationDate
+                     callback:(callbackWithUrl)callback
+            spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
 
 @end

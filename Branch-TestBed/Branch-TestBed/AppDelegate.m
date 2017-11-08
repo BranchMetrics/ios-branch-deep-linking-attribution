@@ -77,7 +77,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         }
         
     }];
-
+    
     // Push notification support (Optional)
     [self registerForPushNotifications:application];
 
@@ -191,6 +191,5 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"Error registering for remote notifications: %@", error);
 }
-
 
 @end
