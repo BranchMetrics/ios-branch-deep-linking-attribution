@@ -70,13 +70,13 @@ class ProductArrayTableViewController: UITableViewController {
         if let vc = sender.source as? ProductTableViewController {
             
             let productProperties = [
-                "name": (vc.productNameTextField.text?.characters.count)! > 0 ? vc.productNameTextField.text : vc.productNameTextField.placeholder,
-                "brand": (vc.productBrandTextField.text?.characters.count)! > 0 ? vc.productBrandTextField.text : vc.productBrandTextField.placeholder,
-                "sku": (vc.productSKUTextField.text?.characters.count)! > 0 ? vc.productSKUTextField.text : vc.productSKUTextField.placeholder,
-                "quantity": (vc.productQuantityTextField.text?.characters.count)! > 0 ? vc.productQuantityTextField.text : vc.productQuantityTextField.placeholder,
-                "price": (vc.productPriceTextField.text?.characters.count)! > 0 ? vc.productPriceTextField.text : vc.productPriceTextField.placeholder,
-                "variant": (vc.productVariantTextField.text?.characters.count)! > 0 ? vc.productVariantTextField.text : vc.productVariantTextField.placeholder,
-                "category": (vc.productCategoryTextField.text?.characters.count)! > 0 ? vc.productCategoryTextField.text : vc.productCategoryTextField.placeholder
+                "name": (vc.productNameTextField.text?.count)! > 0 ? vc.productNameTextField.text : vc.productNameTextField.placeholder,
+                "brand": (vc.productBrandTextField.text?.count)! > 0 ? vc.productBrandTextField.text : vc.productBrandTextField.placeholder,
+                "sku": (vc.productSKUTextField.text?.count)! > 0 ? vc.productSKUTextField.text : vc.productSKUTextField.placeholder,
+                "quantity": (vc.productQuantityTextField.text?.count)! > 0 ? vc.productQuantityTextField.text : vc.productQuantityTextField.placeholder,
+                "price": (vc.productPriceTextField.text?.count)! > 0 ? vc.productPriceTextField.text : vc.productPriceTextField.placeholder,
+                "variant": (vc.productVariantTextField.text?.count)! > 0 ? vc.productVariantTextField.text : vc.productVariantTextField.placeholder,
+                "category": (vc.productCategoryTextField.text?.count)! > 0 ? vc.productCategoryTextField.text : vc.productCategoryTextField.placeholder
             ]
             
             array = CommerceEventData.productsWithAddedProduct(productProperties as! [String : String])

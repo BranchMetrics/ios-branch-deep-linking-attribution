@@ -95,7 +95,7 @@ class ArrayTableViewController: UITableViewController {
             
             if let receivedValue = vc.textField.text {
                 
-                guard receivedValue.characters.count > 0 else {
+                guard receivedValue.count > 0 else {
                     return
                 }
                 
