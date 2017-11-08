@@ -12,15 +12,19 @@
 
 #if __has_feature(modules)
 @import CoreSpotlight;
+@import MobileCoreServices;
 #else
 #import <CoreSpotlight/CoreSpotlight.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
 @interface BranchCSSearchableItemAttributeSet : CSSearchableItemAttributeSet
 
 - (id)init;
 - (id)initWithContentType:(NSString *)type;
-- (void)indexWithCallback:(callbackWithUrlAndSpotlightIdentifier)callback;
+- (void)indexWithCallback:(void (^) (NSString * url,
+                                     NSString * spotlightIdentifier,
+                                     NSError * error))callback;
 
 @property (nonatomic, strong) NSDictionary *params;
 @property (nonatomic, strong) NSSet *keywords;

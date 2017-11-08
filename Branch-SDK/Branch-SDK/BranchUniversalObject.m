@@ -630,8 +630,18 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     if (dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS]) {
         universalObject.keywords = dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS];
     }
-    if (dictionary[BNCPurchaseAmount]) {
-        universalObject.contentMetadata.price = [NSDecimalNumber decimalNumberWithString:dictionary[BNCPurchaseAmount]];
+    NSString *s = dictionary[BNCPurchaseAmount];
+    if (s) {
+        if ([s isKindOfClass:NSString.class])
+            universalObject.contentMetadata.price = [NSDecimalNumber decimalNumberWithString:s];
+        else
+        if ([s isKindOfClass:NSDecimalNumber.class])
+            universalObject.contentMetadata.price = (NSDecimalNumber*) s;
+        else
+        if ([s isKindOfClass:NSNumber.class]) {
+            s = [((NSNumber*)s) stringValue];
+            universalObject.contentMetadata.price = [NSDecimalNumber decimalNumberWithString:s];
+        }
     }
     if (dictionary[BNCPurchaseCurrency]) {
         universalObject.contentMetadata.currency = dictionary[BNCPurchaseCurrency];

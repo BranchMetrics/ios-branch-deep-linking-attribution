@@ -183,7 +183,9 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
                 forKey:@"subject"];
         }
         @catch (NSException*) {
-            BNCLogWarning(@"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController.");
+            BNCLogWarning(
+                @"Unable to setValue 'emailSubject' forKey 'subject' on UIActivityViewController."
+            );
         }
     }
 
@@ -192,7 +194,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         presentingViewController = viewController;
     } else {
         Class UIApplicationClass = NSClassFromString(@"UIApplication");
-        UIViewController *rootController = [UIApplicationClass sharedApplication].delegate.window.rootViewController;
+        UIViewController *rootController =
+            [UIApplicationClass sharedApplication].delegate.window.rootViewController;
         if ([rootController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
             presentingViewController = rootController;
         }

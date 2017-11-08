@@ -109,7 +109,8 @@
 
     if (Branch.enableFingerprintIDInCrashlyticsReports) {
         BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
-        [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
+        [crashlytics setObjectValue:preferenceHelper.deviceFingerprintID
+            forKey:BRANCH_CRASHLYTICS_FINGERPRINT_ID_KEY];
     }
 
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
@@ -169,24 +170,18 @@
         }
     }
 
-    NSString *referredUrl = nil;
+    NSString *referringURL = nil;
     if (preferenceHelper.universalLinkUrl) {
-        referredUrl = preferenceHelper.universalLinkUrl;
+        referringURL = preferenceHelper.universalLinkUrl;
     }
     else if (preferenceHelper.externalIntentURI) {
-        referredUrl = preferenceHelper.externalIntentURI;
+        referringURL = preferenceHelper.externalIntentURI;
     }
     else {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         if (sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK]) {
-            referredUrl = sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
+            referringURL = sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
         }
-    }
-    
-    BranchContentDiscoveryManifest *cdManifest = [BranchContentDiscoveryManifest getInstance];
-    [cdManifest onBranchInitialised:data withUrl:referredUrl];
-    if ([cdManifest isCDEnabled]) {
-        [[BranchContentDiscoverer getInstance] startDiscoveryTaskWithManifest:cdManifest];
     }
 
     // Clear link identifiers so they don't get reused on the next open
@@ -196,12 +191,19 @@
     preferenceHelper.universalLinkUrl = nil;
     preferenceHelper.externalIntentURI = nil;
     preferenceHelper.appleSearchAdNeedsSend = NO;
+    preferenceHelper.referringURL = referringURL;
 
     if (data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]) {
         preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
     }
 
     [BranchOpenRequest releaseOpenResponseLock];
+
+    BranchContentDiscoveryManifest *cdManifest = [BranchContentDiscoveryManifest getInstance];
+    [cdManifest onBranchInitialised:data withUrl:referringURL];
+    if ([cdManifest isCDEnabled]) {
+        [[BranchContentDiscoverer getInstance] startDiscoveryTaskWithManifest:cdManifest];
+    }
 
     // Check if there is any Branch View to show
     NSObject *branchViewDict = data[BRANCH_RESPONSE_KEY_BRANCH_VIEW_DATA];
@@ -215,7 +217,6 @@
     if (self.callback) {
         self.callback(YES, nil);
     }
-
 }
 
 - (NSString *)getActionName {

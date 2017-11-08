@@ -7,7 +7,7 @@
 //
 
 #import "MessagesViewController.h"
-#import "Branch.h"
+@import Branch;
 
 @interface MessagesViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *txtStatus;
@@ -21,10 +21,11 @@
     
     self.branchUniversalObject = [[BranchUniversalObject alloc] initWithCanonicalIdentifier:@"item/12345"];
     self.branchUniversalObject.title = @"Branch is awesome!";
-    self.branchUniversalObject.contentDescription = @"Branch is the best possible developer tool to help drive awareness and growth for my apps.";
+    self.branchUniversalObject.contentDescription =
+        @"Branch is the best possible developer tool to help drive awareness and growth for my apps.";
     self.branchUniversalObject.imageUrl = @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png";
-    [self.branchUniversalObject addMetadataKey:@"property1" value:@"blue"];
-    [self.branchUniversalObject addMetadataKey:@"property2" value:@"red"];
+    self.branchUniversalObject.contentMetadata.customMetadata[@"property1"] = @"blue";
+    self.branchUniversalObject.contentMetadata.customMetadata[@"property2"] = @"red";
 }
 
 - (IBAction)cmdCreateLink:(id)sender {

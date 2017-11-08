@@ -1,6 +1,6 @@
 //
 //  BNCConfig.c
-//  Branch-TestBed
+//  Branch-SDK
 //
 //  Created by Edward Smith on 12/12/16.
 //  Copyright © 2016 Branch Metrics. All rights reserved.

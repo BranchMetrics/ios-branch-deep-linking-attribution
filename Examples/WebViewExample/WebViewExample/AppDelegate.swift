@@ -66,7 +66,7 @@ didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any
 
     private func routeURLFromBranch(_ buo: BranchUniversalObject) {
         guard let planetData = PlanetData(branchUniversalObject: buo) else { return }
-        if buo.metadata!["useSameView"] as? String == "true" {
+        if buo.contentMetadata.customMetadata["useSameView"] as? String == "true" {
            if let articleViewController =
                   navigationController.topViewController as? ArticleViewController {
                articleViewController.planetData = planetData

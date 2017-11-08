@@ -21,5 +21,5 @@
 + (BranchContentDiscoveryManifest *)getInstance;
 - (NSString *)getManifestVersion;
 - (BranchContentPathProperties *)getContentPathProperties:(UIViewController *)viewController;
-- (void)onBranchInitialised:(NSDictionary *)branchInitDict withUrl:(NSString *)referredUrl;
+- (void)onBranchInitialised:(NSDictionary *)branchInitDict withUrl:(NSString *)referringURL;
 @end
