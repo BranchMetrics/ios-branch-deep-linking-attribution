@@ -176,7 +176,7 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
     }
     
     @objc func donePicking() {
-        self.currencyTextField.text = String(currencies[picker.selectedRow(inComponent: 0)].characters.prefix(3))
+        self.currencyTextField.text = String(currencies[picker.selectedRow(inComponent: 0)].prefix(3))
         self.currencyTextField.resignFirstResponder()
     }
     
