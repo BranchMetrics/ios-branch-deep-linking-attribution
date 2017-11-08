@@ -7,7 +7,7 @@
 //
 
 #import "BNCServerRequest.h"
-#import "BNCXcode7Support.h"
+#import "BNCAvailability.h"
 
 #pragma mark BNCProductCategory
 

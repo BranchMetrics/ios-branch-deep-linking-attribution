@@ -11,7 +11,7 @@
 #import "BNCFabricAnswers.h"
 #import "BranchActivityItemProvider.h"
 #import "BNCDeviceInfo.h"
-#import "BNCXcode7Support.h"
+#import "BNCAvailability.h"
 #import "BNCLog.h"
 #import "Branch.h"
 @class BranchShareActivityItem;
@@ -66,8 +66,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
 @implementation BranchShareLink
 
-- (instancetype _Nullable) initWithUniversalObject:(BranchUniversalObject*_Nonnull)universalObject
-                                    linkProperties:(BranchLinkProperties*_Nonnull)linkProperties {
+- (instancetype _Nonnull) initWithUniversalObject:(BranchUniversalObject*_Nonnull)universalObject
+                                   linkProperties:(BranchLinkProperties*_Nonnull)linkProperties {
     self = [super init];
     if (!self) return self;
 

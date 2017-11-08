@@ -126,6 +126,8 @@
 		63F8BB241D57E7730013B6F7 /* ArrayTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F8BB231D57E7730013B6F7 /* ArrayTableViewController.swift */; };
 		7B18DF4D1F1F016600C25C84 /* BNCCrashlyticsWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B18DF4C1F1F016600C25C84 /* BNCCrashlyticsWrapper.m */; };
 		F155BFF21EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = F155BFF11EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.m */; };
+		F1CF14031F4CB99A00BB2694 /* BNCSpotlightService.m in Sources */ = {isa = PBXBuildFile; fileRef = F1CF14021F4CB99A00BB2694 /* BNCSpotlightService.m */; };
+		F1CF14051F4CBA7400BB2694 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1CF14041F4CBA7400BB2694 /* CoreSpotlight.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -318,6 +320,9 @@
 		F155BFED1EF37EDB00BF4566 /* BNCLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLog.h; sourceTree = "<group>"; };
 		F155BFF01EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
 		F155BFF11EF37EEA00BF4566 /* BNCDeepLinkViewControllerInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDeepLinkViewControllerInstance.m; sourceTree = "<group>"; };
+		F1CF14011F4CB99A00BB2694 /* BNCSpotlightService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSpotlightService.h; sourceTree = "<group>"; };
+		F1CF14021F4CB99A00BB2694 /* BNCSpotlightService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSpotlightService.m; sourceTree = "<group>"; };
+		F1CF14041F4CBA7400BB2694 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
 		F9F0D08E5EA782369B603D61 /* Pods-TestBed-Swift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestBed-Swift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TestBed-Swift/Pods-TestBed-Swift.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -326,6 +331,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1CF14051F4CBA7400BB2694 /* CoreSpotlight.framework in Frameworks */,
 				6339D5D21F7451B300C6C562 /* libsqlite3.0.tbd in Frameworks */,
 				6339D5D01F7451A200C6C562 /* SystemConfiguration.framework in Frameworks */,
 				4DF867F41E6DDC4E00BE4C5F /* AdSupport.framework in Frameworks */,
@@ -394,6 +400,7 @@
 		44A650CEF93FEF2A6077B064 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F1CF14041F4CBA7400BB2694 /* CoreSpotlight.framework */,
 				6339D5D11F7451B300C6C562 /* libsqlite3.0.tbd */,
 				6339D5CF1F7451A200C6C562 /* SystemConfiguration.framework */,
 				4DF867F31E6DDC4E00BE4C5F /* AdSupport.framework */,
@@ -449,6 +456,8 @@
 				4D351A0F1F0D6362004BD4AA /* BNCLog.m */,
 				4D4F27F11E400F9800282A34 /* BNCPreferenceHelper.h */,
 				4D4F27F21E400F9800282A34 /* BNCPreferenceHelper.m */,
+				F1CF14011F4CB99A00BB2694 /* BNCSpotlightService.h */,
+				F1CF14021F4CB99A00BB2694 /* BNCSpotlightService.m */,
 				4D4F27F91E400F9800282A34 /* BNCStrongMatchHelper.h */,
 				4D4F27FA1E400F9800282A34 /* BNCStrongMatchHelper.m */,
 				4D4F27FB1E400F9800282A34 /* BNCSystemObserver.h */,
@@ -1124,6 +1133,7 @@
 				6390780E1F6F3736001AE168 /* ReferralRewardsData.swift in Sources */,
 				2BD7C44B1F27D65D003696AF /* BNCServerResponse.m in Sources */,
 				4DB47D601F042C5900C53C29 /* NSString+Branch.m in Sources */,
+				F1CF14031F4CB99A00BB2694 /* BNCSpotlightService.m in Sources */,
 				4D510D771F0D61BE003D720B /* Branch.m in Sources */,
 				6318D80A1F2954010050D256 /* WaitingViewController.swift in Sources */,
 				4D4F28581E400F9800282A34 /* BranchViewHandler.m in Sources */,

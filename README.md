@@ -755,6 +755,9 @@ Here are a set of best practices to ensure that your analytics are correct, and 
 3. Initialize the Branch Universal Object and call `userCompletedAction` with the `BNCRegisterViewEvent` **on page load**
 4. Call `showShareSheet` and `createShortLink` later in the life cycle, when the user takes an action that needs a link
 5. Call the additional object events (purchase, share completed, etc) when the corresponding user action is taken
+6. Set the `contentIndexMode` to `ContentIndexModePublic` or `ContentIndexModePrivate`. If BranchUniversalObject is set to `ContentIndexModePublic`, then content would indexed using `NSUserActivity`, or else content would be index using `CSSearchableIndex` on Spotlight.
+
+Note: Content indexed using `CSSearchableItem` could be removed from Spotlight but cannot be removed if indexed using `NSUserActivity`.
 
 Practices to _avoid_:
 1. Don't set the same `title`, `contentDescription` and `imageUrl` across all objects
@@ -808,7 +811,7 @@ branchUniversalObject.addMetadataKey("property2", value: "red")
 
 **currency**: The currency representing the price in [ISO 4217 currency code](http://en.wikipedia.org/wiki/ISO_4217). Default is USD.
 
-**contentIndexMode**: Can be set to the ENUM of either `ContentIndexModePublic` or `ContentIndexModePrivate`. Public indicates that you'd like this content to be discovered by other apps. Currently, this is only used for Spotlight indexing but will be used by Branch in the future.
+**contentIndexMode**: Can be set to the ENUM of either `ContentIndexModePublic` or `ContentIndexModePrivate`. Public indicates that you'd like this content to be discovered by other apps. Content would be indexed using `NSUserActivity` if set to pulic, else would be indexed using `CSSearchableIndex`. Currently, this is only used for Spotlight indexing but will be used by Branch in the future.
 
 **expirationDate**: The date when the content will not longer be available or valid. Currently, this is only used for Spotlight indexing but will be used by Branch in the future.
 
@@ -1100,6 +1103,183 @@ branchUniversalObject.userCompletedAction(BranchStandardEventViewItem)
 #### Parameters
 
 **callback**: Will return the URL that was used to list the content in Spotlight if you'd like to store it for your own records.
+
+#### Returns
+
+None
+
+### List Content On Spotlight with Link properties
+
+If you'd like to list your Branch Universal Object with link properties in Spotlight local and cloud index, this is the method you'll call. You'll want to register views every time the page loads as this contributes to your global ranking in search.
+
+#### Methods
+
+###### Objective-C
+
+```objc
+[universalObject listOnSpotlightWithLinkProperties:linkProperties callback:^(NSString * _Nullable url, NSError * _Nullable error) {
+    if (!error) {
+         NSLog(@"Successfully indexed on spotlight");
+    }
+}];
+```
+
+###### Swift
+
+```swift
+universalObject.listOnSpotlight(with: linkProperty) { (url, error) in
+    if (error == nil) {
+        print("Successfully indexed on spotlight")     
+    }
+}
+```
+
+#### Parameters
+
+**callback**: Will return the URL that was used to list the content in Spotlight if you'd like to store it for your own records.
+
+#### Returns
+
+None
+
+### List Multiple Branch Universal Objects On Spotlight using CSSearchableIndex
+
+If you'd like to list multiple Branch Universal Object in Spotlight local index, this is the method you'll call in Branch.h. 
+
+#### Methods
+
+###### Objective-C
+
+```objc
+[[Branch getInstance] indexOnSpotlightUsingSearchableItems:universalObjects
+                                                    completion:^(NSArray<BranchUniversalObject *> *universalObjects,
+                                                                 NSError *error) {
+        if (!error) {
+            // Successfully able to index all the BUO on spotloght
+        }
+    }];
+```
+
+###### Swift
+
+```swift
+Branch.getInstance().indexOnSpotlight(usingSearchableItems: universalObjects, 
+                                                completion: { (universalObjects, error) in
+      if (error) {
+           // Successfully able to index all the BUO on spotloght
+      }
+})
+```
+
+#### Parameters
+
+**universalObjects**: An array of all the Branch Universal Object that would indexed using `CSSearchableIdex`
+
+**completion**: Will return Branch Universal Object with dynamic urls as Spotlight identifier when indexing completes.
+
+#### Returns
+
+None
+
+### Remove Branch Universal Object from Spotlight if privately indexed
+
+Privately indexed Branch Universal Object can be removed from spotlight
+
+#### Methods
+
+###### Objective-C
+
+```objc
+[universalObject removeFromSpotlightWithCallback:^(NSError * _Nullable error) {
+        if (!error) {
+            NSLog(@"universal Object removed from spotlight");
+        }
+    }];
+```
+
+###### Swift
+
+```swift
+universalObject.removeFromSpotlight { (error) in
+            if(error == nil) {
+                print("BUO successfully removed")
+            }
+        }
+```
+
+#### Parameters
+
+**Callback**: Will return once Branch Universal Object is removed from spotlight. If spotlight is removed, the spotlightIdentifier variable of Branch Universal Object would be nil.
+
+#### Returns
+
+None
+
+### Remove multiple Branch Universal Objects from Spotlight if privately indexed
+
+Privately indexed multiple Branch Universal Objects can be removed from spotlight
+
+#### Methods
+
+###### Objective-C
+
+```objc
+[[Branch getInstance] removeSearchableItemsWithBranchUniversalObjects:@[BUO1,BUO2] callback:^(NSError *error) {
+    if (!error) {
+        NSLog(@"An array of BUOs removed from spotlight");
+    }
+}]
+
+```
+
+###### Swift
+
+```swift
+Branch.getInstance().removeSearchableItems(with: [BUO1,BUO2]) { (error) in
+    if (error == nil) {
+        print("An array of BUOs removed from spotlight")
+    }
+}
+```
+
+#### Parameters
+
+**Callback**: Will return once all Branch Universal Object is removed from spotlight. If spotlight is removed, the spotlightIdentifier variable of all Branch Universal Object would be nil.
+
+#### Returns
+
+None
+
+### Remove all Branch Universal Objects from Spotlight if privately indexed
+
+All Privately indexed Branch Universal Objects can be removed from spotlight
+
+#### Methods
+
+###### Objective-C
+
+```objc
+[[Branch getInstance] removeAllPrivateContentFromSpotLightWithCallback:^(NSError *error) {
+    if (!error) {
+      NSLog(@"All branch privately indexed content removed from spotlight");
+    }
+}];
+```
+
+###### Swift
+
+```swift
+Branch.getInstance().removeAllPrivateContentFromSpotLight { (error) in
+    if (error == nil) {
+        print("All branch privately indexed content removed from spotlight")
+    }
+}
+```
+
+#### Parameters
+
+**Callback**: Will return once all Branch Universal Object is removed from spotlight. 
+Note: SpotlightIdentifer would not be nil of all the Branch Universal Object been removed from spotlight as Branch SDK doesn't cache the Branch Universal Objects.
 
 #### Returns
 
