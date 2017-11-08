@@ -156,17 +156,16 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         let shareLinkProperties = BranchLinkProperties()
         shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
         
-        if let branchShareLink = BranchShareLink.init(
+        let branchShareLink = BranchShareLink.init(
             universalObject: shareBranchObject,
             linkProperties:  shareLinkProperties
-            ) {
-            branchShareLink.title = "Share your test link!"
-            branchShareLink.shareText = "Shared from Branch's TestBed-Swift at \(self.dateFormatter().string(from: Date()))"
-            branchShareLink.presentActivityViewController(
-                from: self,
-                anchor: actionButton
             )
-        }
+        branchShareLink.title = "Share your test link!"
+        branchShareLink.shareText = "Shared from Branch's TestBed-Swift at \(self.dateFormatter().string(from: Date()))"
+        branchShareLink.presentActivityViewController(
+            from: self,
+            anchor: actionButton
+        )
     }
     
     //MARK: - Link Properties
@@ -465,19 +464,18 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         shareLinkProperties.alias = alias
         shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
         
-        if let branchShareLink = BranchShareLink.init(
+        let branchShareLink = BranchShareLink.init(
             universalObject: shareBranchObject,
             linkProperties:  shareLinkProperties
-            ) {
-            branchShareLink.title = "Share your alias link!"
-            branchShareLink.delegate = self
-            branchShareLink.shareText =
-            "Shared from Branch's TestBed-Swift at \(self.dateFormatter().string(from: Date()))"
-            branchShareLink.presentActivityViewController(
-                from: self,
-                anchor: actionButton
             )
-        }
+        branchShareLink.title = "Share your alias link!"
+        branchShareLink.delegate = self
+        branchShareLink.shareText =
+        "Shared from Branch's TestBed-Swift at \(self.dateFormatter().string(from: Date()))"
+        branchShareLink.presentActivityViewController(
+            from: self,
+            anchor: actionButton
+        )
     }
     @IBAction func shareAliasActivityViewController(_ sender: AnyObject) {
         //  Share an alias Branch link:
@@ -496,18 +494,17 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
         shareLinkProperties.alias = alias
         shareLinkProperties.controlParams = ["$fallback_url": "https://support.branch.io/support/home"]
         
-        if let branchShareLink = BranchShareLink.init(
+        let branchShareLink = BranchShareLink.init(
             universalObject: shareBranchObject,
             linkProperties:  shareLinkProperties
-            ) {
-            branchShareLink.shareText = "Shared with TestBed-Swift"
-            branchShareLink.delegate = self
-            let activityViewController = UIActivityViewController.init(
-                activityItems: branchShareLink.activityItems(),
-                applicationActivities: nil
-            )
-            self.present(activityViewController, animated: true, completion: nil)
-        }
+        )
+        branchShareLink.shareText = "Shared with TestBed-Swift"
+        branchShareLink.delegate = self
+        let activityViewController = UIActivityViewController.init(
+            activityItems: branchShareLink.activityItems(),
+            applicationActivities: nil
+        )
+        self.present(activityViewController, animated: true, completion: nil)
     }
     
     func branchShareLinkWillShare(_ shareLink: BranchShareLink) {

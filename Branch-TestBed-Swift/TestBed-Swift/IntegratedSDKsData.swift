@@ -16,7 +16,7 @@ struct IntegratedSDKsData {
     
     static func activeAdjustAppToken() -> String? {
         if let value = userDefaults.string(forKey: "activeAppToken") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -33,7 +33,7 @@ struct IntegratedSDKsData {
     
     static func pendingAdjustAppToken() -> String? {
         if let value = userDefaults.string(forKey: "pendingAdjustAppToken") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -68,7 +68,7 @@ struct IntegratedSDKsData {
     
     static func activeAdobeKey() -> String? {
         if let value = userDefaults.string(forKey: "activeAdobeKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -85,7 +85,7 @@ struct IntegratedSDKsData {
     
     static func pendingAdobeKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingAdobeKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -120,7 +120,7 @@ struct IntegratedSDKsData {
     
     static func activeAmplitudeKey() -> String? {
         if let value = userDefaults.string(forKey: "activeAmplitudeKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -137,7 +137,7 @@ struct IntegratedSDKsData {
     
     static func pendingAmplitudeKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingAmplitudeKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -172,7 +172,7 @@ struct IntegratedSDKsData {
     
     static func activeAppsflyerKey() -> String? {
         if let value = userDefaults.string(forKey: "activeAppsflyerKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -189,7 +189,7 @@ struct IntegratedSDKsData {
     
     static func pendingAppsflyerKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingAppsflyerKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -224,7 +224,7 @@ struct IntegratedSDKsData {
     
     static func activeGoogleAnalyticsTrackingID() -> String? {
         if let value = userDefaults.string(forKey: "activeGoogleAnalyticsTrackingID") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -241,7 +241,7 @@ struct IntegratedSDKsData {
     
     static func pendingGoogleAnalyticsTrackingID() -> String? {
         if let value = userDefaults.string(forKey: "pendingGoogleAnalyticsTrackingID") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -276,7 +276,7 @@ struct IntegratedSDKsData {
     
     static func activeMixpanelKey() -> String? {
         if let value = userDefaults.string(forKey: "activeMixpanelKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -293,7 +293,7 @@ struct IntegratedSDKsData {
     
     static func pendingMixpanelKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingMixpanelKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -329,7 +329,7 @@ struct IntegratedSDKsData {
     // AdvertisingID
     static func activeTuneAdvertisingID() -> String? {
         if let value = userDefaults.string(forKey: "activeTuneAdvertisingID") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -346,7 +346,7 @@ struct IntegratedSDKsData {
     
     static func pendingTuneAdvertisingID() -> String? {
         if let value = userDefaults.string(forKey: "pendingTuneAdvertisingID") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -364,7 +364,7 @@ struct IntegratedSDKsData {
     // ConversionKey
     static func activeTuneConversionKey() -> String? {
         if let value = userDefaults.string(forKey: "activeTuneConversionKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -381,7 +381,7 @@ struct IntegratedSDKsData {
     
     static func pendingTuneConversionKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingTuneConversionKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -416,7 +416,7 @@ struct IntegratedSDKsData {
     
     static func activeAppboyAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "activeAppboyAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -433,7 +433,7 @@ struct IntegratedSDKsData {
     
     static func pendingAppboyAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingAppboyAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -468,7 +468,7 @@ struct IntegratedSDKsData {
     
     static func activeAppMetricaAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "activeAppMetricaAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -485,7 +485,7 @@ struct IntegratedSDKsData {
     
     static func pendingAppMetricaAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingAppMetricaAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -520,7 +520,7 @@ struct IntegratedSDKsData {
     
     static func activeClearTapAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "activeClearTapAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -537,7 +537,7 @@ struct IntegratedSDKsData {
     
     static func pendingClearTapAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingClearTapAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -572,7 +572,7 @@ struct IntegratedSDKsData {
     
     static func activeConvertroAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "activeConvertroAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -589,7 +589,7 @@ struct IntegratedSDKsData {
     
     static func pendingConvertroAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingConvertroAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -624,7 +624,7 @@ struct IntegratedSDKsData {
     
     static func activeKochavaAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "activeKochavaAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -641,7 +641,7 @@ struct IntegratedSDKsData {
     
     static func pendingKochavaAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingKochavaAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -676,7 +676,7 @@ struct IntegratedSDKsData {
     
     static func activeLocalyticsAppKey() -> String? {
         if let value = userDefaults.string(forKey: "activeLocalyticsAppKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -693,7 +693,7 @@ struct IntegratedSDKsData {
     
     static func pendingLocalyticsAppKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingLocalyticsAppKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -728,7 +728,7 @@ struct IntegratedSDKsData {
     
     static func activemParticleAppKey() -> String? {
         if let value = userDefaults.string(forKey: "activemParticleAppKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -745,7 +745,7 @@ struct IntegratedSDKsData {
     
     static func pendingmParticleAppKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingmParticleAppKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -762,7 +762,7 @@ struct IntegratedSDKsData {
     
     static func activemParticleAppSecret() -> String? {
         if let value = userDefaults.string(forKey: "activemParticleAppSecret") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -779,7 +779,7 @@ struct IntegratedSDKsData {
     
     static func pendingmParticleAppSecret() -> String? {
         if let value = userDefaults.string(forKey: "pendingmParticleAppSecret") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -814,7 +814,7 @@ struct IntegratedSDKsData {
     
     static func activeSegmentAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "activeSegmentAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -831,7 +831,7 @@ struct IntegratedSDKsData {
     
     static func pendingSegmentAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingSegmentAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -866,7 +866,7 @@ struct IntegratedSDKsData {
     
     static func activeSingularAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "activeSingularAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -883,7 +883,7 @@ struct IntegratedSDKsData {
     
     static func pendingSingularAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingSingularAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -918,7 +918,7 @@ struct IntegratedSDKsData {
     
     static func activeStitchAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "activeStitchAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
@@ -935,7 +935,7 @@ struct IntegratedSDKsData {
     
     static func pendingStitchAPIKey() -> String? {
         if let value = userDefaults.string(forKey: "pendingStitchAPIKey") {
-            if value.characters.count > 0 {
+            if value.count > 0 {
                 return value
             }
         }
