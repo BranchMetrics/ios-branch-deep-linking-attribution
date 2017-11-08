@@ -276,7 +276,7 @@ class LinkPropertiesTableViewController: UITableViewController, UITextFieldDeleg
     }
     
     func addProperty(_ key: String, value: String) {
-        guard value.characters.count > 0 else {
+        guard value.count > 0 else {
             linkProperties.removeValue(forKey: key)
             return
         }
