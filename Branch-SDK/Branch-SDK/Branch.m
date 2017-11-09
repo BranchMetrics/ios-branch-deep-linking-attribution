@@ -123,13 +123,22 @@ static NSURL* bnc_logURL = nil;
     // Initialize the log
     @synchronized (self) {
         if (bnc_logURL) {
-            BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
+            #if defined(BNCKeepLogfiles)
+                BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
+            #else
+                BNCLogSetOutputFunction(NULL);
+            #endif
         } else {
             BNCLogInitialize();
             BNCLogSetDisplayLevel(BNCLogLevelAll);
             bnc_logURL = BNCURLForBranchDirectory();
             bnc_logURL = [[NSURL alloc] initWithString:@"Branch.log" relativeToURL:bnc_logURL];
-            BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
+            #if defined(BNCKeepLogfiles)
+                BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
+            #else
+                BNCLogSetOutputFunction(NULL);
+                [[NSFileManager defaultManager] removeItemAtURL:bnc_logURL error:nil];
+            #endif
             BNCLogSetDisplayLevel(BNCLogLevelWarning);  // Default
 
             // Try loading from the Info.plist
