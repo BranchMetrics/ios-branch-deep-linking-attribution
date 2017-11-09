@@ -152,6 +152,8 @@ static NSURL* bnc_logURL = nil;
                 BNCLogSetOutputToURLByteWrap(bnc_logURL, 102400);
             #else
                 BNCLogSetOutputFunction(NULL);
+                if (bnc_logURL)
+                    [[NSFileManager defaultManager] removeItemAtURL:bnc_logURL error:nil];
             #endif
             BNCLogSetDisplayLevel(BNCLogLevelWarning);  // Default
 
