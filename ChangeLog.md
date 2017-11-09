@@ -2,7 +2,7 @@ Branch iOS SDK Change Log
 
 - v0.22.3
   * Fixed an occasional crash when sharing a Branch link to Slack. The crash only occurred on some versions of iOS.
-  * Updated TestBed-Swift to Swift 4.
+  * Updated TestBed-Swift to Swift 4 and added a bunch of third party integrations.
   * Added BranchWillStartSessionNotification / BranchDidStartSessionNotification Branch session notifications.
   * Added a Branch delegate with optional delegate methods.
   * Better Spotlight: Added a better interface to listing your application's content on Spotlight.
@@ -12,7 +12,7 @@ Branch iOS SDK Change Log
   * Better debugging messages for requests.
   * Added an event picker for v2-event testing in the TestBed.
 
-- 0v0.22.1
+- v0.22.1
   * Fixed some annoying compile warnings.
   * Made module support optional.
 
