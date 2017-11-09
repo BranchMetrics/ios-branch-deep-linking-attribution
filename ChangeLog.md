@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.20.3
+  * _*Master Release*_ - November 9, 2017
+  * Logging not persisted.
+
 - v0.20.2
   * _*Master Release*_ - October 18, 2017
   * Fixed Carthage build for the new version of Carthage.
