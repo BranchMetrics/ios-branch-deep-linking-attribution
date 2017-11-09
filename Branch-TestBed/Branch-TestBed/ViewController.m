@@ -253,6 +253,7 @@ static NSString *type = @"some type";
     linkProperties.campaign = @"sharing campaign";
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
     [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
+    [linkProperties addControlParam:@"$android_deeplink_path" withValue:@"custom/path/*"];
 
     BranchShareLink *shareLink =
         [[BranchShareLink alloc]
@@ -276,6 +277,7 @@ static NSString *type = @"some type";
     linkProperties.campaign = @"sharing campaign";
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
     [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
+    [linkProperties addControlParam:@"$android_deeplink_path" withValue:@"custom/path/*"];
 
     BranchShareLink *shareLink =
         [[BranchShareLink alloc]
