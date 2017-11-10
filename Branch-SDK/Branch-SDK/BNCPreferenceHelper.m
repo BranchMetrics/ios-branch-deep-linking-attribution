@@ -317,16 +317,20 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 }
 
 - (NSString *)externalIntentURI {
-    if (!_externalIntentURI) {
-        _externalIntentURI = [self readStringFromDefaults:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI];
+    @synchronized(self) {
+        if (!_externalIntentURI) {
+            _externalIntentURI = [self readStringFromDefaults:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI];
+        }
+        return _externalIntentURI;
     }
-    return _externalIntentURI;
 }
 
 - (void)setExternalIntentURI:(NSString *)externalIntentURI {
-    if (![_externalIntentURI isEqualToString:externalIntentURI]) {
-        _externalIntentURI = externalIntentURI;
-        [self writeObjectToDefaults:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI value:externalIntentURI];
+    @synchronized(self) {
+        if (![_externalIntentURI isEqualToString:externalIntentURI]) {
+            _externalIntentURI = externalIntentURI;
+            [self writeObjectToDefaults:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI value:externalIntentURI];
+        }
     }
 }
 
