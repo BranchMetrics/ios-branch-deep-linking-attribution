@@ -55,7 +55,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
             NSLog(@"initSession succeeded with params: %@", params);
             
             NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
-            if (params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] && deeplinkText) {
+            if ([params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] boolValue]) {
                 
                 UINavigationController *navigationController =
                     (UINavigationController *)self.window.rootViewController;
