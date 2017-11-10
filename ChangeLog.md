@@ -1,5 +1,13 @@
 Branch iOS SDK Change Log
 
+- v0.22.5
+  * Updated comments.
+  * Fixed race condition.
+  * Better deep linking test.
+
+- v0.22.4
+  * Added deep link key for Android.
+
 - v0.22.3
   * Fixed an occasional crash when sharing a Branch link to Slack. The crash only occurred on some versions of iOS.
   * Updated TestBed-Swift to Swift 4.
