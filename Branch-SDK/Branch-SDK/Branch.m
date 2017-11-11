@@ -1864,8 +1864,23 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 		});
     };
 
-    if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.useCookieBasedMatching) {
+    if ([BNCSystemObserver getOSVersion].integerValue >= 9 &&[BNCSystemObserver getOSVersion].integerValue < 11 && self.useCookieBasedMatching) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.class.branchKey];
+    }
+    
+    if ([BNCSystemObserver getOSVersion].integerValue >= 11) {
+        
+        NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
+        NSDate *thirtyDaysAgo = [NSDate dateWithTimeIntervalSinceNow:-ABOUT_30_DAYS_TIME_IN_SECONDS];
+        NSDate *lastCheck = [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate;
+        if ([lastCheck compare:thirtyDaysAgo] != NSOrderedDescending) {
+            [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
+            NSURL *url = [NSURL URLWithString:@"https://parthkalavadia.github.io/branch-web/"];
+            if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                [[UIApplication sharedApplication] openURL:url];
+            }
+        }
+       
     }
 
 	@synchronized (self) {
