@@ -436,7 +436,7 @@ exit:
     addNumber(screenWidth,          screen_width);
     addBoolean(unidentifiedDevice,  unidentified_device);
     addString(localIPAddress,       local_ip);
-    
+
     #include "BNCFieldDefines.h"
 
     if (!self.isAdTrackingEnabled)
@@ -450,6 +450,9 @@ exit:
 
     s = preferences.deviceFingerprintID;
     if (s.length) dictionary[@"device_fingerprint_id"] = s;
+
+    if (preferences.limitAppTracking)
+        dictionary[@"limit_app_tracking"] = CFBridgingRelease(kCFBooleanTrue);
 
     dictionary[@"sdk"] = @"ios";
     dictionary[@"sdk_version"] = BNC_SDK_VERSION;
