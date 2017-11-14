@@ -107,6 +107,8 @@ void ForceCategoriesToLoad(void) {
 @property (assign, nonatomic) BOOL delayForAppleAds;
 @property (assign, nonatomic) BOOL searchAdsDebugMode;
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
+@property (assign, nonatomic) BOOL useForceMatching;
+
 @end
 
 @implementation Branch
@@ -580,8 +582,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
 }
 
-
-
 //these params will be added
 - (void) setDeepLinkDebugMode:(NSDictionary *)debugParams {
     self.deepLinkDebugParams = debugParams;
@@ -725,7 +725,40 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         if (![self removeInstallOrOpen]) {
             isNewSession = YES;
         }
-
+        
+        NSArray<BNCKeyValue*> *queryItems = [BNCEncodingUtils queryItems:userActivity.webpageURL];
+        NSMutableDictionary *queryParams = [NSMutableDictionary new];
+        for (BNCKeyValue*item in queryItems) {
+            queryParams[item.key] = item;
+        }
+        
+        if (self.useForceMatching && queryParams[@"$force_strong_match"] && queryParams[@"+match_guaranteed"]) {
+            self.useForceMatching = NO;
+            
+            NSMutableDictionary *sessionDataDict =
+            [NSMutableDictionary dictionaryWithDictionary:[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams]];
+            
+            //This assignment needs to be tested:
+            sessionDataDict[@"+match_guaranteed"] = queryParams[@"+match_guaranteed"];
+            
+            self.preferenceHelper.sessionParams = [BNCEncodingUtils encodeDictionaryToJsonString:sessionDataDict];
+            
+            if (self.shouldCallSessionInitCallback) {
+                if (self.sessionInitWithParamsCallback) {
+                    self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
+                }
+                else if (self.sessionInitWithBranchUniversalObjectCallback) {
+                    self.sessionInitWithBranchUniversalObjectCallback(
+                                                                      [self getLatestReferringBranchUniversalObject],
+                                                                      [self getLatestReferringBranchLinkProperties],
+                                                                      nil
+                                                                      );
+                }
+            }
+            
+            return YES;
+        }
+       
         return [self handleUniversalDeepLink:userActivity.webpageURL fromSelf:isNewSession];
     }
 
@@ -1834,18 +1867,58 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         [self initializeSession];
     }
     // If the session was initialized, but callCallback was specified, do so.
-    else if (callCallback) {
-        if (self.sessionInitWithParamsCallback) {
-            self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
-        }
-        else if (self.sessionInitWithBranchUniversalObjectCallback) {
-            self.sessionInitWithBranchUniversalObjectCallback(
-                [self getLatestReferringBranchUniversalObject],
-                [self getLatestReferringBranchLinkProperties],
-                nil
-            );
+    else {
+        
+         if ([BNCSystemObserver getOSVersion].integerValue >= 11) {
+             if ([self handleForceStrongMatchWithLinkParams:[self getLatestReferringParams]]) {
+                 return;
+             }
+         }
+        
+        if (callCallback) {
+            if (self.sessionInitWithParamsCallback) {
+                self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
+            }
+            else if (self.sessionInitWithBranchUniversalObjectCallback) {
+                self.sessionInitWithBranchUniversalObjectCallback(
+                                                                  [self getLatestReferringBranchUniversalObject],
+                                                                  [self getLatestReferringBranchLinkProperties],
+                                                                  nil
+                                                                  );
+            }
         }
     }
+}
+
+-(BOOL)handleForceStrongMatchWithLinkParams: (NSDictionary*)linkParams {
+    
+    if (linkParams[@"$force_strong_match"] &&
+        [linkParams[@"$force_strong_match"] boolValue] &&
+        linkParams[@"+match_guaranteed"] &&
+        ![linkParams[@"+match_guaranteed"] boolValue] &&
+        linkParams[@"$branch_match_id"]) {
+        NSString *branchMatchId = linkParams[@"branch_match_id"];
+        NSString *domain = @"app.link";
+        
+        id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
+        if ([branchUniversalLinkDomains isKindOfClass:[NSString class]]) {
+            domain = (NSString*)branchUniversalLinkDomains;
+        }
+        else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
+            domain = (NSString*)[(NSArray*)branchUniversalLinkDomains firstObject];
+        }
+        else {
+            return NO;
+        }
+    
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@?branch_match_id=%@&$force_strong_match=true",domain,branchMatchId]];
+        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+            self.useForceMatching = YES;
+            [[UIApplication sharedApplication] openURL:url];
+            return YES;
+        }
+    }
+    return NO;
 }
 
 - (void)initializeSession {
@@ -1864,25 +1937,12 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 		});
     };
 
-    if ([BNCSystemObserver getOSVersion].integerValue >= 9 &&[BNCSystemObserver getOSVersion].integerValue < 11 && self.useCookieBasedMatching) {
+    if ([BNCSystemObserver getOSVersion].integerValue >= 9 &&
+        [BNCSystemObserver getOSVersion].integerValue < 11 &&
+        self.useCookieBasedMatching) {
         [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.class.branchKey];
     }
     
-    if ([BNCSystemObserver getOSVersion].integerValue >= 11) {
-        
-        NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
-        NSDate *thirtyDaysAgo = [NSDate dateWithTimeIntervalSinceNow:-ABOUT_30_DAYS_TIME_IN_SECONDS];
-        NSDate *lastCheck = [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate;
-        if ([lastCheck compare:thirtyDaysAgo] != NSOrderedDescending) {
-            [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
-            NSURL *url = [NSURL URLWithString:@"https://parthkalavadia.github.io/branch-web/"];
-            if ([[UIApplication sharedApplication] canOpenURL:url]) {
-                [[UIApplication sharedApplication] openURL:url];
-            }
-        }
-       
-    }
-
 	@synchronized (self) {
         [self removeInstallOrOpen];
 		[BranchOpenRequest setWaitNeededForOpenResponseLock];
