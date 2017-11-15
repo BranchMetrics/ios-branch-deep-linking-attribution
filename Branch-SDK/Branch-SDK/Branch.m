@@ -107,7 +107,7 @@ void ForceCategoriesToLoad(void) {
 @property (assign, nonatomic) BOOL delayForAppleAds;
 @property (assign, nonatomic) BOOL searchAdsDebugMode;
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
-@property (assign, nonatomic) BOOL useForceMatching;
+@property (assign, atomic) BOOL useForceMatching;
 
 @end
 
@@ -207,6 +207,7 @@ void BranchClassInitializeLog(void) {
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
     _whiteListedSchemeList = [[NSMutableArray alloc] init];
     _useCookieBasedMatching = YES;
+    _useForceMatching = NO;
     self.class.branchKey = key;
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
 
@@ -732,14 +733,13 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             queryParams[item.key] = item;
         }
         
-        if (self.useForceMatching && queryParams[@"$force_strong_match"] && queryParams[@"+match_guaranteed"]) {
-            self.useForceMatching = NO;
+        if (queryParams[@"$force_strong_match"] && queryParams[@"+match_guaranteed"]) {
             
             NSMutableDictionary *sessionDataDict =
             [NSMutableDictionary dictionaryWithDictionary:[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams]];
             
-            //This assignment needs to be tested:
-            sessionDataDict[@"+match_guaranteed"] = queryParams[@"+match_guaranteed"];
+            BNCKeyValue *matchGuarantee = queryParams[@"+match_guaranteed"];
+            sessionDataDict[@"+match_guaranteed"] = [NSNumber numberWithBool:[[matchGuarantee value] boolValue]];
             
             self.preferenceHelper.sessionParams = [BNCEncodingUtils encodeDictionaryToJsonString:sessionDataDict];
             
@@ -1665,9 +1665,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen]) {
+    if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen] && !self.useForceMatching) {
         [self initUserSessionAndCallCallback:YES];
     }
+    self.useForceMatching = NO;
 }
 
 - (void)applicationWillResignActive {
@@ -1867,15 +1868,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         [self initializeSession];
     }
     // If the session was initialized, but callCallback was specified, do so.
-    else {
-        
-         if ([BNCSystemObserver getOSVersion].integerValue >= 11) {
-             if ([self handleForceStrongMatchWithLinkParams:[self getLatestReferringParams]]) {
-                 return;
-             }
-         }
-        
-        if (callCallback) {
+    else if (callCallback) {
             if (self.sessionInitWithParamsCallback) {
                 self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
             }
@@ -1886,13 +1879,13 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
                                                                   nil
                                                                   );
             }
-        }
     }
 }
 
 -(BOOL)handleForceStrongMatchWithLinkParams: (NSDictionary*)linkParams {
-    
-    if (linkParams[@"$force_strong_match"] &&
+
+    if (!self.useForceMatching &&
+        linkParams[@"$force_strong_match"] &&
         [linkParams[@"$force_strong_match"] boolValue] &&
         linkParams[@"+match_guaranteed"] &&
         ![linkParams[@"+match_guaranteed"] boolValue] &&
@@ -1912,6 +1905,7 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         }
     
         NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@?branch_match_id=%@&$force_strong_match=true",domain,branchMatchId]];
+
         if ([[UIApplication sharedApplication] canOpenURL:url]) {
             self.useForceMatching = YES;
             [[UIApplication sharedApplication] openURL:url];
@@ -1966,6 +1960,12 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
     self.isInitialized = YES;
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
+    if ([BNCSystemObserver getOSVersion].integerValue >= 11) {
+        if ([self handleForceStrongMatchWithLinkParams:[self getLatestReferringParams]]) {
+            return;
+        }
+    }
+    
     if (self.shouldCallSessionInitCallback) {
         if (self.sessionInitWithParamsCallback) {
             self.sessionInitWithParamsCallback(latestReferringParams, nil);
