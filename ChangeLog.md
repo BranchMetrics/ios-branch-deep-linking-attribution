@@ -1,9 +1,12 @@
 Branch iOS SDK Change Log
 
 - v0.22.5
+  * NOTE: There is a known crash bug when sharing a Branch link via the Slack activity.
+    - Slack is aware of this crash and is working to fix it. It is an intermittent crash in iOS 11.
+    - The crash is in `-[NSExtension _completeRequestReturningItems:forExtensionContextWithUUID:completion:]_block_invoke ()`
   * Updated comments.
-  * Fixed race condition.
-  * Better deep linking test.
+  * Fixed a race condition.
+  * Updated Testbed example to be more compatible with the version.
 
 - v0.22.4
   * Added deep link key for Android.
