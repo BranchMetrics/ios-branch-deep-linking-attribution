@@ -162,7 +162,12 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     TBDetailViewController *dataViewController = [[TBDetailViewController alloc] initWithData:dictionaryOrArray];
     dataViewController.title = title;
     dataViewController.message = message;
-    [self.navigationController pushViewController:dataViewController animated:YES];
+
+    // Manage the display mode button
+    dataViewController.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+    dataViewController.navigationItem.leftItemsSupplementBackButton = YES;
+
+    [self.splitViewController showDetailViewController:dataViewController sender:self];
 }
 
 - (void) showAlertWithTitle:(NSString*)title message:(NSString*)message {
