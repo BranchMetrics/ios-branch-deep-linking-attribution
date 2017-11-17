@@ -481,15 +481,14 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         #pragma clang diagnostic pop
     }
     
-    UIViewController *presentingViewController;
+    UIViewController *presentingViewController = nil;
     if (viewController && [viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
         presentingViewController = viewController;
     }
     else {
-        Class UIApplicationClass = NSClassFromString(@"UIApplication");
-        if ([[[[UIApplicationClass sharedApplication].delegate window] rootViewController]
-               respondsToSelector:@selector(presentViewController:animated:completion:)]) {
-            presentingViewController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
+        UIViewController *rootViewController = [UIViewController bnc_currentViewController];
+        if ([rootViewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
+            presentingViewController = rootViewController;
         }
     }
     

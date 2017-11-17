@@ -85,8 +85,7 @@ static NSString *currentBranchViewID;
 }
 
 - (void)closeBranchView {
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    UIViewController *presentingViewController = [[[[UIApplicationClass sharedApplication] windows] firstObject] rootViewController];
+    UIViewController *presentingViewController = [UIViewController bnc_currentViewController];
     [presentingViewController dismissViewControllerAnimated:YES completion:nil];
     
     if (self.branchViewCallback) {
@@ -114,8 +113,8 @@ static NSString *currentBranchViewID;
         if (self.pendingBranchView != nil && self.pendingWebview != nil) {
             UIViewController *holderView = [[UIViewController alloc] init];
             [holderView.view insertSubview:self.pendingWebview atIndex:0];
-            Class UIApplicationClass = NSClassFromString(@"UIApplication");
-            UIViewController *presentingViewController = [[[[UIApplicationClass sharedApplication] windows] firstObject] rootViewController];
+
+            UIViewController *presentingViewController = [UIViewController bnc_currentViewController];
             [presentingViewController presentViewController:holderView animated:YES completion:nil];
             
             [self.pendingBranchView updateUsageCount];

@@ -10,17 +10,17 @@
 
 @implementation UIViewController (Branch)
 
-+ (UIViewController*) bnc_currentViewController {
++ (UIViewController*_Nullable) bnc_currentViewController {
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (UIApplicationClass) {
         UIViewController *rootViewController =
-            [UIApplicationClass sharedApplication].keyWindow.rootViewController;
+            [UIApplicationClass sharedApplication].delegate.window.rootViewController;
         return [rootViewController bnc_currentViewController];
     }
     return nil;
 }
 
-- (UIViewController *) bnc_currentViewController {
+- (UIViewController*_Nonnull) bnc_currentViewController {
     if ([self isKindOfClass:[UINavigationController class]]) {
         return [((UINavigationController *)self).visibleViewController bnc_currentViewController];
     }

@@ -13,8 +13,8 @@
 #endif
 
 @interface UIViewController (Branch)
-- (UIViewController*) bnc_currentViewController;
-+ (UIViewController*) bnc_currentViewController;
+- (UIViewController*_Nonnull)  bnc_currentViewController;
++ (UIViewController*_Nullable) bnc_currentViewController;
 @end
 
 void BNCForceUIViewControllerCategoryToLoad(void) __attribute__((constructor));
