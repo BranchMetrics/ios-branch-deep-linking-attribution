@@ -69,6 +69,8 @@
 		4D698B7D1FB287A700AFF38C /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67163AAD1B9A036F007A8AB1 /* SafariServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		4D8999ED1DC108FF00F7EE0A /* BNCAvailability.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D8999EB1DC108FF00F7EE0A /* BNCAvailability.m */; };
 		4D8EE7A61E1F0A5D00B1F450 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D8EE7A41E1F0A5D00B1F450 /* BNCCommerceEvent.m */; };
+		4D9607F41FBF9473008AB3C2 /* UIViewController+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D9607F21FBF9472008AB3C2 /* UIViewController+Branch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4D9607F51FBF9473008AB3C2 /* UIViewController+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D9607F31FBF9473008AB3C2 /* UIViewController+Branch.m */; };
 		4D9726BA1F27FF7400028BDE /* BNCLocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D9726B81F27FF7400028BDE /* BNCLocalization.h */; };
 		4D9726BB1F27FF7400028BDE /* BNCLocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D9726B91F27FF7400028BDE /* BNCLocalization.m */; };
 		4D9B45101F8BD00F008A9D2E /* BranchEvent.Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9B450F1F8BD00F008A9D2E /* BranchEvent.Test.swift */; };
@@ -280,6 +282,8 @@
 		4D8999EB1DC108FF00F7EE0A /* BNCAvailability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCAvailability.m; sourceTree = "<group>"; };
 		4D8EE7A31E1F0A5D00B1F450 /* BNCCommerceEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCCommerceEvent.h; sourceTree = "<group>"; };
 		4D8EE7A41E1F0A5D00B1F450 /* BNCCommerceEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCCommerceEvent.m; sourceTree = "<group>"; };
+		4D9607F21FBF9472008AB3C2 /* UIViewController+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Branch.h"; sourceTree = "<group>"; };
+		4D9607F31FBF9473008AB3C2 /* UIViewController+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Branch.m"; sourceTree = "<group>"; };
 		4D9726B81F27FF7400028BDE /* BNCLocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCLocalization.h; sourceTree = "<group>"; };
 		4D9726B91F27FF7400028BDE /* BNCLocalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLocalization.m; sourceTree = "<group>"; };
 		4D9B450E1F8BD00F008A9D2E /* Branch-SDK-Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Branch-SDK-Tests-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -662,6 +666,8 @@
 				4D35141A1E3201D80085EBA1 /* NSMutableDictionary+Branch.m */,
 				4DA577201E67B28700A43BDD /* NSString+Branch.h */,
 				4DA577211E67B28700A43BDD /* NSString+Branch.m */,
+				4D9607F21FBF9472008AB3C2 /* UIViewController+Branch.h */,
+				4D9607F31FBF9473008AB3C2 /* UIViewController+Branch.m */,
 			);
 			name = "Branch-SDK";
 			path = "../Branch-SDK/Branch-SDK";
@@ -784,8 +790,9 @@
 				4DCAC8181F426F7C00405D1D /* BranchLinkProperties.h in Headers */,
 				4DCAC8191F426F7C00405D1D /* BranchShareLink.h in Headers */,
 				4DCAC81A1F426F7C00405D1D /* BranchUniversalObject.h in Headers */,
-				4DCAC81B1F426F7C00405D1D /* BranchView.h in Headers */,
 				4DCAC81C1F426F7C00405D1D /* BranchViewHandler.h in Headers */,
+				4DCAC81B1F426F7C00405D1D /* BranchView.h in Headers */,
+				4D9607F41FBF9473008AB3C2 /* UIViewController+Branch.h in Headers */,
 				4DCAC8031F426F7C00405D1D /* BNCContentDiscoveryManager.h in Headers */,
 				4DCAC8051F426F7C00405D1D /* BNCDeviceInfo.h in Headers */,
 				4DCAC8061F426F7C00405D1D /* BNCEncodingUtils.h in Headers */,
@@ -1068,6 +1075,7 @@
 				466B58641B17779C00A69EDE /* BNCError.m in Sources */,
 				4D130E901EE0C7B100A69A0A /* BranchShortUrlRequest.m in Sources */,
 				4DCF4AFB1F4388F600AF9AAB /* BranchEvent.m in Sources */,
+				4D9607F51FBF9473008AB3C2 /* UIViewController+Branch.m in Sources */,
 				4D130E841EE0C7B100A69A0A /* BranchLoadRewardsRequest.m in Sources */,
 				4D35141C1E3201D80085EBA1 /* NSMutableDictionary+Branch.m in Sources */,
 				7D0C97191D8753C9004E14B1 /* BranchContentDiscoverer.m in Sources */,

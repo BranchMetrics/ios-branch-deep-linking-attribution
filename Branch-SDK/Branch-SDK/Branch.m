@@ -79,6 +79,7 @@ void ForceCategoriesToLoad(void) {
     BNCForceNSErrorCategoryToLoad();
     BNCForceNSStringCategoryToLoad();
     BNCForceNSMutableDictionaryCategoryToLoad();
+    BNCForceUIViewControllerCategoryToLoad();
 }
 
 #pragma mark - BranchLink
