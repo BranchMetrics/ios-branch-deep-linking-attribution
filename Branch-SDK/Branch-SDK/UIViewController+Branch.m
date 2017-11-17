@@ -15,6 +15,12 @@
     if (UIApplicationClass) {
         UIViewController *rootViewController =
             [UIApplicationClass sharedApplication].delegate.window.rootViewController;
+        if (!rootViewController) {
+            rootViewController = [UIApplicationClass sharedApplication].keyWindow.rootViewController;
+        }
+        if (!rootViewController) {
+            rootViewController = [[UIApplicationClass sharedApplication].windows firstObject].rootViewController;
+        }
         return [rootViewController bnc_currentViewController];
     }
     return nil;
