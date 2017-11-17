@@ -12,6 +12,7 @@
 #import "TBWaitingView.h"
 @import Branch;
 #import "BNCDeviceInfo.h"
+#import "UIViewController+Branch.h"
 
 NSString *cononicalIdentifier = @"item/12345";
 NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
@@ -65,6 +66,7 @@ NSString *type = @"some type";
 
     section(@"Miscellaneous");
     row(@"Show Local IP Addess", showLocalIPAddress:);
+    row(@"Show Current View Controller", showCurrentViewController:)
 
     #undef section
     #undef row
@@ -162,7 +164,12 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     TBDetailViewController *dataViewController = [[TBDetailViewController alloc] initWithData:dictionaryOrArray];
     dataViewController.title = title;
     dataViewController.message = message;
-    [self.navigationController pushViewController:dataViewController animated:YES];
+
+    // Manage the display mode button
+    dataViewController.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+    dataViewController.navigationItem.leftItemsSupplementBackButton = YES;
+
+    [self.splitViewController showDetailViewController:dataViewController sender:self];
 }
 
 - (void) showAlertWithTitle:(NSString*)title message:(NSString*)message {
@@ -294,6 +301,16 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
             @"Local IP Address": lip,
         }
         title:@"Local IP Address"
+        message:nil
+    ];
+}
+
+- (IBAction) showCurrentViewController:(id)send {
+    UIViewController *vc = [UIViewController bnc_currentViewController];
+    [self showDataViewControllerWithObject:@{
+            @"View Controller": [NSString stringWithFormat:@"%@", vc],
+        }
+        title:@"View Controller"
         message:nil
     ];
 }

@@ -38,7 +38,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 
 @interface BranchShareActivityItem : UIActivityItemProvider
 @property (nonatomic, assign) BranchShareActivityItemType itemType;
-@property (nonatomic, strong) BranchShareLink *parent;
+@property (nonatomic, weak) BranchShareLink *parent;    // Weak pointer to avoid retain cycle.
 @end
 
 @implementation BranchShareActivityItem
