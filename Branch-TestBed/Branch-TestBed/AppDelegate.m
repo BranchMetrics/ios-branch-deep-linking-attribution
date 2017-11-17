@@ -26,11 +26,15 @@
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     BNCLogSetDisplayLevel(BNCLogLevelAll);
 
-    // Set Branch.useTestBranchKey = YES; to have Branch use the test key that's in the app's
-    // Info.plist file. This makes Branch test against your test environment (As shown in the Branch
-    // Dashboard) instead of the live environment.
-    //
+    /*
+       Set Branch.useTestBranchKey = YES; to have Branch use the test key that's in the app's
+       Info.plist file. This makes Branch test against your test environment (As shown in the Branch
+       Dashboard) instead of the live environment.
+    */
+
     // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
+
+    //
     Branch *branch = [Branch getInstance];
 
     // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
@@ -55,7 +59,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
             NSLog(@"initSession succeeded with params: %@", params);
             
             NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
-            if (params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] && deeplinkText) {
+            if ([params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] boolValue]) {
                 
                 UINavigationController *navigationController =
                     (UINavigationController *)self.window.rootViewController;

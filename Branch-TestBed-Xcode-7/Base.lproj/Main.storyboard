@@ -525,7 +525,7 @@
                                                         <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                     </state>
                                                     <connections>
-                                                        <action selector="sendV2Event:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="zhp-gT-XP7"/>
+                                                        <action selector="sendV2EventAction:" destination="i3m-ex-Bu1" eventType="touchUpInside" id="Jro-Da-RTF"/>
                                                     </connections>
                                                 </button>
                                             </subviews>

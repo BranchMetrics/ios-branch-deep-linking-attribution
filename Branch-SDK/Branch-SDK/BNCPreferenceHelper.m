@@ -317,16 +317,20 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 }
 
 - (NSString *)externalIntentURI {
-    if (!_externalIntentURI) {
-        _externalIntentURI = [self readStringFromDefaults:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI];
+    @synchronized(self) {
+        if (!_externalIntentURI) {
+            _externalIntentURI = [self readStringFromDefaults:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI];
+        }
+        return _externalIntentURI;
     }
-    return _externalIntentURI;
 }
 
 - (void)setExternalIntentURI:(NSString *)externalIntentURI {
-    if (![_externalIntentURI isEqualToString:externalIntentURI]) {
-        _externalIntentURI = externalIntentURI;
-        [self writeObjectToDefaults:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI value:externalIntentURI];
+    @synchronized(self) {
+        if (![_externalIntentURI isEqualToString:externalIntentURI]) {
+            _externalIntentURI = externalIntentURI;
+            [self writeObjectToDefaults:BRANCH_REQUEST_KEY_EXTERNAL_INTENT_URI value:externalIntentURI];
+        }
     }
 }
 
@@ -654,9 +658,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     return (NSDictionary *)[self readObjectFromDefaults:BRANCH_PREFS_KEY_ANALYTICS_MANIFEST];
 }
 
-
 #pragma mark - Writing To Persistence
-
 
 - (void)writeIntegerToDefaults:(NSString *)key value:(NSInteger)value {
     [self writeObjectToDefaults:key value:@(value)];
@@ -708,56 +710,64 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 #pragma mark - Reading From Persistence
 
 - (NSMutableDictionary *)persistenceDict {
-    if (!_persistenceDict) {
-        NSDictionary *persistenceDict = nil;
-        @try {
-            NSError *error = nil;
-            NSData *data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile
-                options:0 error:&error];
-            if (!error && data)
-                persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-        }
-        @catch (NSException*) {
-            BNCLogWarning(@"Failed to load preferences from storage.");
-        }
+    @synchronized(self) {
+        if (!_persistenceDict) {
+            NSDictionary *persistenceDict = nil;
+            @try {
+                NSError *error = nil;
+                NSData *data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile
+                    options:0 error:&error];
+                if (!error && data)
+                    persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+            }
+            @catch (NSException*) {
+                BNCLogWarning(@"Failed to load preferences from storage.");
+            }
 
-        if ([persistenceDict isKindOfClass:[NSDictionary class]])
-            _persistenceDict = [persistenceDict mutableCopy];
-        else
-            _persistenceDict = [[NSMutableDictionary alloc] init];
+            if ([persistenceDict isKindOfClass:[NSDictionary class]])
+                _persistenceDict = [persistenceDict mutableCopy];
+            else
+                _persistenceDict = [[NSMutableDictionary alloc] init];
+        }
+        return _persistenceDict;
     }
-    return _persistenceDict;
 }
 
 - (NSObject *)readObjectFromDefaults:(NSString *)key {
-    NSObject *obj = self.persistenceDict[key];
-    return obj;
+    @synchronized(self) {
+        NSObject *obj = self.persistenceDict[key];
+        return obj;
+    }
 }
 
 - (NSString *)readStringFromDefaults:(NSString *)key {
-    id str = self.persistenceDict[key];
-    
-    if ([str isKindOfClass:[NSNumber class]]) {
-        str = [str stringValue];
+    @synchronized(self) {
+        id str = self.persistenceDict[key];
+        if ([str isKindOfClass:[NSNumber class]]) {
+            str = [str stringValue];
+        }
+        return str;
     }
-    
-    return str;
 }
 
 - (BOOL)readBoolFromDefaults:(NSString *)key {
-    BOOL boo = [self.persistenceDict[key] boolValue];
-    return boo;
+    @synchronized(self) {
+        BOOL boo = [self.persistenceDict[key] boolValue];
+        return boo;
+    }
 }
 
 - (NSInteger)readIntegerFromDefaults:(NSString *)key {
-    NSNumber *number = self.persistenceDict[key];
-    
-    if (number) {
-        return [number integerValue];
+    @synchronized(self) {
+        NSNumber *number = self.persistenceDict[key];
+        if (number) {
+            return [number integerValue];
+        }
+        return NSNotFound;
     }
-    
-    return NSNotFound;
 }
+
+#pragma mark - Preferences File URL
 
 + (NSString *)prefsFile_deprecated {
     NSString * path =
