@@ -10,20 +10,30 @@
 
 @implementation UIViewController (Branch)
 
-+ (UIViewController*_Nullable) bnc_currentViewController {
++ (UIWindow*_Nullable) bnc_currentWindow {
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (UIApplicationClass) {
-        UIViewController *rootViewController =
-            [UIApplicationClass sharedApplication].delegate.window.rootViewController;
-        if (!rootViewController) {
-            rootViewController = [UIApplicationClass sharedApplication].keyWindow.rootViewController;
+        UIWindow *keyWindow = nil;
+
+        keyWindow = [UIApplicationClass sharedApplication].delegate.window;
+        if (keyWindow && !keyWindow.isHidden && keyWindow.rootViewController) return keyWindow;
+
+        keyWindow = [UIApplicationClass sharedApplication].keyWindow;
+        if (keyWindow && !keyWindow.isHidden && keyWindow.rootViewController) return keyWindow;
+
+        for (keyWindow in [UIApplicationClass sharedApplication].windows.reverseObjectEnumerator) {
+            if (!keyWindow.isHidden && keyWindow.rootViewController) return keyWindow;
         }
-        if (!rootViewController) {
-            rootViewController = [[UIApplicationClass sharedApplication].windows firstObject].rootViewController;
-        }
-        return [rootViewController bnc_currentViewController];
     }
+
+    // ToDo: Put different code for extensions here.
+
     return nil;
+}
+
++ (UIViewController*_Nullable) bnc_currentViewController {
+    UIWindow *window = [UIViewController bnc_currentWindow];
+    return [window.rootViewController bnc_currentViewController];
 }
 
 - (UIViewController*_Nonnull) bnc_currentViewController {
