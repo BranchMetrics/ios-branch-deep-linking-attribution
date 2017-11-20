@@ -24,14 +24,6 @@ typedef NSString * UIApplicationOpenURLOptionsKey;
 #define NS_STRING_ENUM
 #endif
 
-#ifndef CSSearchableItemActionType
-#define CSSearchableItemActionType @"com.apple.corespotlightitem"
-#endif
-
-#ifndef CSSearchableItemActivityIdentifier
-#define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
-#endif
-
 @interface NSLocale (BranchAvailability)
 - (NSString*) countryCode;
 - (NSString*) languageCode;
