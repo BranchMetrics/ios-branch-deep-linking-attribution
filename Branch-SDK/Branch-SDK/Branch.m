@@ -72,6 +72,10 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 static NSString * const BNCLogLevelKey = @"io.branch.sdk.BNCLogLevel";
 NSString * const BNCSpotlightFeature = @"spotlight";
 
+#ifndef CSSearchableItemActivityIdentifier
+#define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
+#endif
+
 #pragma mark - Load Categories
 
 void ForceCategoriesToLoad(void);
