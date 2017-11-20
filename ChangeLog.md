@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.21.10
+  * _*Master Release*_ - November 20, 2017
+  * Fixed a public header for the static library.
+
 - v0.21.9
   * _*Master Release*_ - November 20, 2017
   * Fixed some merge conflicts.
