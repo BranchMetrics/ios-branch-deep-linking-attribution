@@ -101,7 +101,7 @@
 		4DCAC80F1F426F7C00405D1D /* BNCAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8999EA1DC108FF00F7EE0A /* BNCAvailability.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DCAC8101F426F7C00405D1D /* Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 670016BD1946309100A9E103 /* Branch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DCAC8111F426F7C00405D1D /* BranchActivityItemProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = D258D2C41A794D64004A1C90 /* BranchActivityItemProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4DCAC8121F426F7C00405D1D /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 4665AF221B28935700184037 /* BranchConstants.h */; };
+		4DCAC8121F426F7C00405D1D /* BranchConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 4665AF221B28935700184037 /* BranchConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DCAC8131F426F7C00405D1D /* BranchContentDiscoverer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D0C971A1D8753EA004E14B1 /* BranchContentDiscoverer.h */; };
 		4DCAC8141F426F7C00405D1D /* BranchContentDiscoveryManifest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D0C971B1D875445004E14B1 /* BranchContentDiscoveryManifest.h */; };
 		4DCAC8151F426F7C00405D1D /* BranchContentPathProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D0C971E1D875487004E14B1 /* BranchContentPathProperties.h */; };
@@ -774,10 +774,11 @@
 				4DCAC81E1F426F7C00405D1D /* BNCNetworkServiceProtocol.h in Headers */,
 				4DCAC81F1F426F7C00405D1D /* BNCServerInterface.h in Headers */,
 				4DCAC8221F426F7C00405D1D /* BNCServerResponse.h in Headers */,
-				4DCAC8201F426F7C00405D1D /* BNCServerRequest.h in Headers */,
 				4DCAC8211F426F7C00405D1D /* BNCServerRequestQueue.h in Headers */,
+				4DCAC8201F426F7C00405D1D /* BNCServerRequest.h in Headers */,
 				4DCAC8101F426F7C00405D1D /* Branch.h in Headers */,
 				4DCAC8111F426F7C00405D1D /* BranchActivityItemProvider.h in Headers */,
+				4DCAC8121F426F7C00405D1D /* BranchConstants.h in Headers */,
 				4DCAC8171F426F7C00405D1D /* BranchDeepLinkingController.h in Headers */,
 				4DB327FF1FA10B9000ACF9B0 /* BranchDelegate.h in Headers */,
 				4DCF4B031F438A8700AF9AAB /* BranchEvent.h in Headers */,
@@ -790,7 +791,6 @@
 				4DCAC8051F426F7C00405D1D /* BNCDeviceInfo.h in Headers */,
 				4DCAC8061F426F7C00405D1D /* BNCEncodingUtils.h in Headers */,
 				4DCAC8081F426F7C00405D1D /* BNCFabricAnswers.h in Headers */,
-				4DCAC8121F426F7C00405D1D /* BranchConstants.h in Headers */,
 				4DCAC80D1F426F7C00405D1D /* BNCStrongMatchHelper.h in Headers */,
 				4DCAC81D1F426F7C00405D1D /* BNCNetworkService.h in Headers */,
 				4DCAC80E1F426F7C00405D1D /* BNCSystemObserver.h in Headers */,
