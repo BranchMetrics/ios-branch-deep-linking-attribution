@@ -56,7 +56,7 @@ checkTool pod
 checkTool carthage
 
 # Check Fabric
-checkApp Fabric
+# checkApp Fabric
 checkVariable FABRIC_KEY
 
 # Check Github

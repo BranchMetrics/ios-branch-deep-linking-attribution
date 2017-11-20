@@ -6,7 +6,11 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
+#if __has_feature(modules)
 @import Foundation;
+#else
+#import <Foundation/Foundation.h>
+#endif
 
 FOUNDATION_EXPORT NSString *_Nonnull const BNCErrorDomain;
 
@@ -24,6 +28,8 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCSpotlightNotAvailableError   = 1010,
     BNCSpotlightTitleError          = 1011,
     BNCRedeemZeroCreditsError       = 1012,
+    BNCSpotlightIdentifierError     = 1013,
+    BNCSpotlightPublicIndexError    = 1014,
     BNCHighestError,
 };
 

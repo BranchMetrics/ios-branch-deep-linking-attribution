@@ -6,7 +6,6 @@
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
-@import Foundation;
 #import "BranchUniversalObject.h"
 @class BranchShareLink;
 
@@ -64,9 +63,12 @@ Creates a BranchShareLink object.
 @param universalObject  The Branch Universal Object the will be shared.
 @param linkProperties   The link properties that the link will have.
 */
-- (instancetype _Nullable) initWithUniversalObject:(BranchUniversalObject*_Nonnull)universalObject
-                                    linkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
+- (instancetype _Nonnull) initWithUniversalObject:(BranchUniversalObject*_Nonnull)universalObject
+                                    linkProperties:(BranchLinkProperties*_Nonnull)linkProperties
+                                    NS_DESIGNATED_INITIALIZER;
 
+- (instancetype _Nonnull) init NS_UNAVAILABLE;
++ (instancetype _Nonnull) new NS_UNAVAILABLE;
 
 ///Returns an array of activity item providers, one for the Branch Universal Object,
 ///one for the share text (if provided), and one for the shareObject (if provided).
