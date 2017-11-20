@@ -15,6 +15,10 @@
 
 #pragma mark Defensive Declarations
 
+#ifndef CSSearchableItemActivityIdentifier
+#define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
+#endif
+
 @interface CSSearchableItemAttributeSetDummyClass : NSObject
 - (void) setKeywords:(NSArray<NSString*>*)keywords;
 - (void) setWeakRelatedUniqueIdentifier:(NSString*)uniqueIdentifier;

@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+- v0.21.11
+  * Fix CoreSpotlight defines for old iOS version support.
+
 - v0.21.10
   * _*Master Release*_ - November 20, 2017
   * Fixed a public header for the static library.

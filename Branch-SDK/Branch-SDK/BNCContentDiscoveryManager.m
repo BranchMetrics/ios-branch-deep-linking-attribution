@@ -21,6 +21,10 @@
 
 static NSString* const kUTTypeGeneric = @"public.content";
 
+#ifndef CSSearchableItemActivityIdentifier
+#define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
+#endif
+
 @interface BNCContentDiscoveryManager (){
     dispatch_queue_t    _workQueue;
 }
