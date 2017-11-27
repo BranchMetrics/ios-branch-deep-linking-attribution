@@ -733,11 +733,20 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             queryParams[item.key] = item;
         }
         
-        if (queryParams[@"$force_strong_match"] && queryParams[@"+match_guaranteed"]) {
+        /*Following condition would check to see if the user deeplinked back after checking the
+         *match_guarantee from safari on iOS 11.
+         */
+        if (queryParams[@"$force_match"] &&
+            queryParams[@"+match_guaranteed"] &&
+            [BNCSystemObserver getOSVersion].integerValue >= 11 ) {
             
             NSMutableDictionary *sessionDataDict =
             [NSMutableDictionary dictionaryWithDictionary:[BNCEncodingUtils decodeJsonStringToDictionary:self.preferenceHelper.sessionParams]];
             
+            /* match guarantee compared in link services is funneled back in the app as a query params
+             * the value of +match_guaranteed is than updated in the sessionParams and given a callback
+             * to the initSession which was paused earlier.
+             */
             BNCKeyValue *matchGuarantee = queryParams[@"+match_guaranteed"];
             sessionDataDict[@"+match_guaranteed"] = [NSNumber numberWithBool:[[matchGuarantee value] boolValue]];
             
@@ -1903,9 +1912,12 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
         else {
             return NO;
         }
-    
+        
+        // The following URL would be openning the app which would initiate force match guarantee in link service.
+        // This will send the Branch match id as query params which would be then used by link service to do the strong match
         NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@?branch_match_id=%@&$force_strong_match=true",domain,branchMatchId]];
 
+        //Open the safari
         if ([[UIApplication sharedApplication] canOpenURL:url]) {
             self.useForceMatching = YES;
             [[UIApplication sharedApplication] openURL:url];
@@ -1960,10 +1972,14 @@ void BNCPerformBlockOnMainThread(dispatch_block_t block) {
 
     self.isInitialized = YES;
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
-    if ([BNCSystemObserver getOSVersion].integerValue >= 11) {
-        if ([self handleForceStrongMatchWithLinkParams:[self getLatestReferringParams]]) {
-            return;
-        }
+
+    /* The following if condition would pause the initSession if its iOS 11 and has following link params
+     * $force_strong_match
+     * +match_gaurantee == false
+     * $branch_match_id
+     */
+    if ([BNCSystemObserver getOSVersion].integerValue >= 11 && [self handleForceStrongMatchWithLinkParams:[self getLatestReferringParams]]) {
+        return;
     }
     
     if (self.shouldCallSessionInitCallback) {
