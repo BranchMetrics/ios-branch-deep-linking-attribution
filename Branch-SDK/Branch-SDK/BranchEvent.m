@@ -36,6 +36,11 @@ BranchStandardEvent BranchStandardEventCompleteTutorial       = @"COMPLETE_TUTOR
 BranchStandardEvent BranchStandardEventAchieveLevel           = @"ACHIEVE_LEVEL";
 BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
 
+#pragma mark - BranchPurchaseType
+
+BranchPurchaseType BranchPurchaseTypeStandard   = @"STANDARD";
+BranchPurchaseType BranchPurchaseTypeInApp      = @"IN_APP";
+
 #pragma mark - BranchEventRequest
 
 @interface BranchEventRequest : BNCServerRequest <NSCoding>
@@ -186,6 +191,7 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
     addString(eventDescription, description);
     addString(searchQuery,      search_query)
     addDictionary(customData,   custom_data);
+    addString(purchaseType,     purchase_type);
     
     #include "BNCFieldDefines.h"
 

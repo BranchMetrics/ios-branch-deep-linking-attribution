@@ -238,4 +238,33 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
     \"screen_height\": 2208,
     \"screen_width\": 1242
 }";
-
+"V2EventInAppPurchase" =
+"
+{
+    \"name\": \"PURCHASE\",
+    \"event_data\": {
+        \"purchase_type\": \"IN_APP\"
+    },
+    \"user_data\": {
+        \"os\": \"iOS\",
+        \"os_version\": 25,
+        \"environment\": \"FULL_APP\",
+        \"idfa\": \"\",
+        \"idfv\": \"\",
+        \"user_agent\": \"\",
+        \"developer_identity\": \"edsojan\",
+        \"country\": \"US\",
+        \"language\": \"en\",
+        \"brand\": \"Apple\",
+        \"device_fingerprint_id\": \"\",
+        \"sdk\": \"ios0.17.10\",
+        \"app_version\": \"whatever\",
+        \"model\": \"x86_64\",
+        \"screen_dpi\": 3,
+        \"screen_height\": 2208,
+        \"screen_width\": 1242
+    },
+    \"branch_key\": \"key_live_foo\",
+    \"retryNumber\": 0
+}
+";

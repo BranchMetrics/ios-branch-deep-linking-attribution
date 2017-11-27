@@ -39,6 +39,13 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventCompleteTutori
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventAchieveLevel;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievement;
 
+///@group Branch Purchase Type
+
+typedef NSString*const BranchPurchaseType NS_STRING_ENUM;
+
+FOUNDATION_EXPORT BranchPurchaseType _Nonnull BranchPurchaseTypeStandard;
+FOUNDATION_EXPORT BranchPurchaseType _Nonnull BranchPurchaseTypeInApp;
+
 #pragma mark - BranchEvent
 
 @interface BranchEvent : NSObject
@@ -65,6 +72,7 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievem
 @property (nonatomic, strong) NSString*_Nullable                affiliation;
 @property (nonatomic, strong) NSString*_Nullable                eventDescription;
 @property (nonatomic, strong) NSString*_Nullable                searchQuery;
+@property (nonatomic, strong) BranchPurchaseType _Nullable      purchaseType;
 @property (nonatomic, copy) NSMutableArray<BranchUniversalObject*>*_Nonnull       contentItems;
 @property (nonatomic, copy) NSMutableDictionary<NSString*, NSString*> *_Nonnull   customData;
 
