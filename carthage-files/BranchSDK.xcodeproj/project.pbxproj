@@ -96,7 +96,6 @@
 		E230A1821D03DB9E006181D8 /* BNCStrongMatchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A12B1D03DB9E006181D8 /* BNCStrongMatchHelper.m */; };
 		E230A1831D03DB9E006181D8 /* BNCSystemObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A12C1D03DB9E006181D8 /* BNCSystemObserver.h */; };
 		E230A1841D03DB9E006181D8 /* BNCSystemObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A12D1D03DB9E006181D8 /* BNCSystemObserver.m */; };
-		E230A1851D03DB9E006181D8 /* Branch-SDK-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = E230A12E1D03DB9E006181D8 /* Branch-SDK-Prefix.pch */; };
 		E230A1861D03DB9E006181D8 /* Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A12F1D03DB9E006181D8 /* Branch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E230A1871D03DB9E006181D8 /* Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A1301D03DB9E006181D8 /* Branch.m */; };
 		E230A1881D03DB9E006181D8 /* BranchActivityItemProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1311D03DB9E006181D8 /* BranchActivityItemProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -209,7 +208,6 @@
 		E230A12B1D03DB9E006181D8 /* BNCStrongMatchHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCStrongMatchHelper.m; sourceTree = "<group>"; };
 		E230A12C1D03DB9E006181D8 /* BNCSystemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSystemObserver.h; sourceTree = "<group>"; };
 		E230A12D1D03DB9E006181D8 /* BNCSystemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserver.m; sourceTree = "<group>"; };
-		E230A12E1D03DB9E006181D8 /* Branch-SDK-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Branch-SDK-Prefix.pch"; sourceTree = "<group>"; };
 		E230A12F1D03DB9E006181D8 /* Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Branch.h; sourceTree = "<group>"; };
 		E230A1301D03DB9E006181D8 /* Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Branch.m; sourceTree = "<group>"; };
 		E230A1311D03DB9E006181D8 /* BranchActivityItemProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchActivityItemProvider.h; sourceTree = "<group>"; };
@@ -346,7 +344,6 @@
 				E230A12B1D03DB9E006181D8 /* BNCStrongMatchHelper.m */,
 				E230A12C1D03DB9E006181D8 /* BNCSystemObserver.h */,
 				E230A12D1D03DB9E006181D8 /* BNCSystemObserver.m */,
-				E230A12E1D03DB9E006181D8 /* Branch-SDK-Prefix.pch */,
 				E230A12F1D03DB9E006181D8 /* Branch.h */,
 				E230A1301D03DB9E006181D8 /* Branch.m */,
 				E230A1311D03DB9E006181D8 /* BranchActivityItemProvider.h */,
@@ -460,7 +457,6 @@
 				4DAB17B41EE8A31B0079EEB4 /* BranchRedeemRewardsRequest.h in Headers */,
 				4DAB17AC1EE8A31B0079EEB4 /* BranchInstallRequest.h in Headers */,
 				7DA3BF1E1D889CE500CA8AE0 /* BranchContentDiscoverer.h in Headers */,
-				E230A1851D03DB9E006181D8 /* Branch-SDK-Prefix.pch in Headers */,
 				4DAB17AE1EE8A31B0079EEB4 /* BranchLoadRewardsRequest.h in Headers */,
 				4D78C9651F2679F000EEDD5F /* BNCCrashlyticsWrapper.h in Headers */,
 				4DAB17B21EE8A31B0079EEB4 /* BranchOpenRequest.h in Headers */,
