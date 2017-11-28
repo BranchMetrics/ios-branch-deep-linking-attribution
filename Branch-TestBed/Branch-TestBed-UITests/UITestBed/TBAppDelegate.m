@@ -48,8 +48,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Set the split view delegate
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
-    splitViewController.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
-    splitViewController.delegate = self;
 
     self.branchViewController = [TBBranchViewController new];
     UINavigationController *masterViewController =
@@ -66,6 +64,9 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Set up the navigation controller button
     detailNavigationViewController.topViewController.navigationItem.leftBarButtonItem =
         splitViewController.displayModeButtonItem;
+
+    splitViewController.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+    splitViewController.delegate = self;
 }
 
 - (void)handleBranchDeepLinkParameters:(NSDictionary*)params error:(NSError*)error {
