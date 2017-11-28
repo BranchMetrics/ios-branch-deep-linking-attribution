@@ -6,13 +6,11 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "BNCTestCase.h"
 #import "BNCSystemObserver.h"
 #import "BNCPreferenceHelper.h"
-
 
 @interface BNCSystemObserver (Testing)
 
@@ -22,13 +20,13 @@
                           currentAppVersion:(NSString*)currentAppVersion;
 + (NSDate*) appInstallDate;
 + (NSDate*) appBuildDate;
+
 @end
 
 #pragma mark - BNCSystemObserverTests
 
 @interface BNCSystemObserverTests : BNCTestCase
 @end
-
 
 @implementation BNCSystemObserverTests
 
