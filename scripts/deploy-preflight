@@ -43,6 +43,13 @@ function checkVariable() {
 }
 
 
+# Check Xcode version
+if [ $(xcode-switch) != "/Applications/Xcode-8.3.3.app/Contents/Developer" ]
+then
+    echo ">>> Error: Need to build with Xcode 8 so that Carthage framework doesn't include FileProvider a reference." 1>&2
+    wasError=1
+fi
+
 # Check vim
 checkTool vim
 
@@ -76,7 +83,7 @@ checkVariable AWS_DEFAULT_REGION
 
 
 if [[ $wasError != 0 ]]; then
-    echo ">>> Error: deploy-check failed." 1>&2
+    echo ">>> Error: deploy-preflight failed." 1>&2
     exit 1
 fi
 
