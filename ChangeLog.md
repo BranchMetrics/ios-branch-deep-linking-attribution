@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+- v0.21.13
+  * Fixed the Carthage library build.
+
 - v0.21.12
   * Fixed a crash bug in TestBed-Swift due to a renamed storyboard (AIS-430).
 
