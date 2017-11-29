@@ -98,8 +98,8 @@ class ArticleViewController: UIViewController, ArticleViewDelegate {
         linkProperties.addControlParam("$email_subject", withValue: "The Planet \(planetData.title)")
 
         let shareLink = BranchShareLink(universalObject: buo, linkProperties: linkProperties)
-        shareLink?.shareText = "Read about the planet \(planetData.title)."
-        shareLink?.presentActivityViewController(from: self, anchor: nil)
+        shareLink.shareText = "Read about the planet \(planetData.title)."
+        shareLink.presentActivityViewController(from: self, anchor: nil)
     }
 
     func articleViewDidNavigate(_ articleView: ArticleView) {

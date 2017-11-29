@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
+#import "Branch.h"
 #import "NSString+Branch.h"
 
 static inline dispatch_time_t BNCDispatchTimeFromSeconds(NSTimeInterval seconds)	{

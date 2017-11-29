@@ -6,8 +6,11 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
+#if __has_feature(modules)
 @import Foundation;
-@import UIKit;
+#else
+#import <Foundation/Foundation.h>
+#endif
 
 @interface BranchView : NSObject
 //-------- properties-------------------//

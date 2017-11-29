@@ -6,19 +6,9 @@
 //  Copyright (c) 2015 Branch Metrics. All rights reserved.
 //
 
-
-#import "Branch.h"
-#import "BNCPreferenceHelper.h"
-#import "BNCServerInterface.h"
-#import "BNCConfig.h"
-#import "BNCEncodingUtils.h"
-#import "BNCServerRequestQueue.h"
 #import "BNCTestCase.h"
-#import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
 
-
-NSString * const TEST_BRANCH_KEY = @"key_live_78801a996de4287481fe73708cc95da2";  //temp
+NSString * const TEST_BRANCH_KEY = @"key_live_78801a996de4287481fe73708cc95da2";
 NSString * const TEST_DEVICE_FINGERPRINT_ID = @"94938498586381084";
 NSString * const TEST_BROWSER_FINGERPRINT_ID = @"69198153995256641";
 NSString * const TEST_IDENTITY_ID = @"95765863201768032";
@@ -31,11 +21,9 @@ NSString * const TEST_NEW_SESSION_ID = @"98274447370224207";
 NSString * const TEST_NEW_USER_LINK = @"https://bnc.lt/i/2kkbX6k-As";
 NSInteger const  TEST_CREDITS = 30;
 
-
 @interface BranchSDKFunctionalityTests : BNCTestCase
 @property (assign, nonatomic) BOOL hasExceededExpectations;
 @end
-
 
 @implementation BranchSDKFunctionalityTests
 
@@ -139,7 +127,7 @@ NSInteger const  TEST_CREDITS = 30;
         XCTAssertEqualObjects(preferenceHelper.identityID, @"98687515069776101");
         NSDictionary *installParams = [nonRetainedBranch getFirstReferringParams];
         
-        XCTAssertEqualObjects(installParams[@"$og_title"], @"Kindred"); //TODO: equal to params?
+        XCTAssertEqualObjects(installParams[@"$og_title"], @"Kindred");
         XCTAssertEqualObjects(installParams[@"key1"], @"test_object");
         
         [self safelyFulfillExpectation:setIdentityExpectation];
@@ -546,7 +534,8 @@ NSInteger const  TEST_CREDITS = 30;
     };
     
     id openOrInstallUrlCheckBlock = [OCMArg checkWithBlock:^BOOL(NSString *url) {
-        return [url rangeOfString:@"open"].location != NSNotFound || [url rangeOfString:@"install"].location != NSNotFound;
+        return [url rangeOfString:@"open"].location != NSNotFound ||
+               [url rangeOfString:@"install"].location != NSNotFound;
     }];
     [[[serverInterfaceMock expect]
         andDo:openOrInstallInvocation]
@@ -554,12 +543,6 @@ NSInteger const  TEST_CREDITS = 30;
         url:openOrInstallUrlCheckBlock
         key:[OCMArg any]
         callback:openOrInstallCallbackCheckBlock];
-
-//TODO
-//    // Fake branch key
-//    id preferenceHelperMock = OCMClassMock([BNCPreferenceHelper class]);
-//    [[[preferenceHelperMock stub] andReturn:@"key_live_foo"] getBranchKey:YES];
 }
 
 @end
-

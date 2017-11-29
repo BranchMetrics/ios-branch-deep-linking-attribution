@@ -5,8 +5,15 @@
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
+
+#if __has_feature(modules)
 @import Foundation;
 @import UIKit;
+#else
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#endif
+
 #import "BNCCallbacks.h"
 #import "BNCCommerceEvent.h"
 #import "BNCConfig.h"
@@ -17,10 +24,13 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
-#import "BNCXcode7Support.h"
+#import "BNCAvailability.h"
 #import "BranchActivityItemProvider.h"
+#import "BranchConstants.h"
 #import "BranchDeepLinkingController.h"
+#import "BranchEvent.h"
 #import "BranchLinkProperties.h"
+#import "BranchDelegate.h"
 #import "BranchShareLink.h"
 #import "BranchUniversalObject.h"
 #import "BranchView.h"
@@ -123,15 +133,29 @@ extern NSString * const BNCPurchasedEvent;
 extern NSString * const BNCShareInitiatedEvent;
 extern NSString * const BNCShareCompletedEvent;
 
+// Spotlight Constant
+extern NSString * const BNCSpotlightFeature;
+
 #pragma mark - Branch Enums
 typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     BranchMostRecentFirst,
     BranchLeastRecentFirst
 };
 
+#pragma mark - BranchLink
+
+@interface BranchLink : NSObject
+@property (nonatomic, strong) BranchUniversalObject *universalObject;
+@property (nonatomic, strong) BranchLinkProperties  *linkProperties;
++ (BranchLink*) linkWithUniversalObject:(BranchUniversalObject*)universalObject
+                             properties:(BranchLinkProperties*)linkProperties;
+@end
+
+#pragma mark - Branch
+
 @interface Branch : NSObject
 
-#pragma mark - Global Instance Accessors
+#pragma mark Global Instance Accessors
 
 ///--------------------------------
 /// @name Global Instance Accessors
@@ -227,6 +251,9 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  * @return YES if device fingerprint ID reporting to Crashlytics is enabled. NO otherwise.
  */
 + (BOOL) enableFingerprintIDInCrashlyticsReports;
+
+/// TODO: Add documentation.
+@property (weak) NSObject<BranchDelegate>* delegate;
 
 #pragma mark - BranchActivityItemProvider methods
 
@@ -597,7 +624,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param key String to be included in request metadata
  @param value Object to be included in request metadata
  */
-- (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value;
+- (void)setRequestMetadataKey:(NSString *)key value:(id)value;
 
 - (void)enableDelayedInit;
 
@@ -835,10 +862,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param commerceEvent 	The BNCCommerceEvent that describes the purchase.
  @param metadata        Optional metadata you may want add to the event.
  @param completion 		The optional completion callback.
+ 
+ deprecated Please use BNCEvent to track commerce events instead.
  */
 - (void) sendCommerceEvent:(BNCCommerceEvent*)commerceEvent
 				  metadata:(NSDictionary<NSString*,id>*)metadata
 			withCompletion:(void (^) (NSDictionary*response, NSError*error))completion;
+            //__attribute__((deprecated(("Please use BranchEvent to track commerce events."))));
 
 #pragma mark - Short Url Sync methods
 
@@ -1471,6 +1501,50 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description thumbnailUrl:(NSURL *)thumbnailUrl canonicalId:(NSString *)canonicalId linkParams:(NSDictionary *)linkParams type:(NSString *)type publiclyIndexable:(BOOL)publiclyIndexable keywords:(NSSet *)keywords expirationDate:(NSDate *)expirationDate spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback;
 
+/**
+ Index Branch Univeral Objects using SearchableItem of Apple's CoreSpotlight, where content indexed is private irrespective of Buo's ContentIndexMode value.
+ @param universalObject Branch Universal Object is indexed on spotlight using meta data of spotlight
+ @param linkProperties  Branch Link Properties is used in short url generation
+ @param completion Callback called when all Branch Universal Objects are indexed. Dynamic url generated and saved as spotlight identifier
+ @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
+ */
+- (void)indexOnSpotlightWithBranchUniversalObject:(BranchUniversalObject*)universalObject
+                                   linkProperties:(BranchLinkProperties*)linkProperties
+                                       completion:(void (^) (BranchUniversalObject *universalObject, NSString * url,NSError *error))completion;
+
+/**
+ Index multiple Branch Univeral Objects using SearchableItem of Apple's CoreSpotlight, where content indexed is private irrespective of Buo's ContentIndexMode value.
+ @param universalObjects Multiple Branch Universal Objects are indexed on spotlight using meta data of spotlight
+ @param completion Callback called when all Branch Universal Objects are indexed. Dynamic URL generated is returned as spotlightIdentifier of Branch Universal Object. Use this identifier to remove content from spotlight.
+ @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
+ */
+- (void)indexOnSpotlightUsingSearchableItems:(NSArray<BranchUniversalObject*>*)universalObjects
+                                  completion:(void (^) (NSArray<BranchUniversalObject*>* universalObjects,
+                                                        NSError* error))completion;
+
+/*
+ Remove Indexing of a Branch Universal Objects, which is indexed using SearchableItem of Apple's CoreSpotlight.
+ @param universalObject Branch Universal Object which is already indexed using SearchableItem is removed from spotlight
+ @param completion Called when the request has been journaled by the index (“journaled” means that the index makes a note that it has to perform this operation). Note that the request may not have completed.
+ @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
+ */
+- (void)removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject *)universalObject
+                                             callback:(void (^)(NSError * error))completion;
+/*
+ Remove Indexing of an array of Branch Universal Objects, which are indexed using SearchableItem of Apple's CoreSpotlight.
+ @param universalObjects Multiple Branch Universal Objects which are already indexed using SearchableItem are removed from spotlight. Note: The spotlight identifier of Branch Universal Object is used to remove indexing.
+ @param completion Called when the request has been journaled by the index (“journaled” means that the index makes a note that it has to perform this operation). Note that the request may not have completed.
+ @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
+ */
+- (void)removeSearchableItemsWithBranchUniversalObjects:(NSArray<BranchUniversalObject*> *)universalObjects
+                                               callback:(void (^)(NSError * error))completion;
+
+/*
+ Remove all content spotlight indexed through either Searchable Item or privately indexed Branch Universal Object.
+ @param completion Called when the request has been journaled by the index (“journaled” means that the index makes a note that it has to perform this operation). Note that the request may not have completed.
+ @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
+ */
+- (void)removeAllPrivateContentFromSpotLightWithCallback:(void (^)(NSError * error))completion;
 
 /**
  Method for creating a one of Branch instance and specifying its dependencies.
@@ -1484,6 +1558,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @warning This is meant for use internally only and should not be used by apps.
  */
-- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback;
+- (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback
+    __attribute__((deprecated(("This API is deprecated. Please use BranchEvent:BranchStandardEventViewItem instead."))));
 
+- (void) sendServerRequest:(BNCServerRequest*)request;
+- (void) sendServerRequestWithoutSession:(BNCServerRequest*)request;
+
+// Read-only property exposed for unit testing.
+@property (strong, readonly) BNCServerInterface *serverInterface;
+- (void) clearNetworkQueue;
 @end

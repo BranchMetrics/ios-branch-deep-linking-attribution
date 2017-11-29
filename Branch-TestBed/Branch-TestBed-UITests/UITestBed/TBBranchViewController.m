@@ -10,9 +10,9 @@
 #import "TBTableData.h"
 #import "TBDetailViewController.h"
 #import "TBWaitingView.h"
-#import "Branch.h"
-#import "BNCLog.h"
+@import Branch;
 #import "BNCDeviceInfo.h"
+#import "UIViewController+Branch.h"
 
 NSString *cononicalIdentifier = @"item/12345";
 NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
@@ -66,6 +66,7 @@ NSString *type = @"some type";
 
     section(@"Miscellaneous");
     row(@"Show Local IP Addess", showLocalIPAddress:);
+    row(@"Show Current View Controller", showCurrentViewController:)
 
     #undef section
     #undef row
@@ -81,15 +82,14 @@ NSString *type = @"some type";
     _universalObject.title = contentTitle;
     _universalObject.contentDescription = contentDescription;
     _universalObject.imageUrl = imageUrl;
-    _universalObject.price = 1000;
-    _universalObject.currency = @"$";
-    _universalObject.type = type;
-    [_universalObject
-        addMetadataKey:@"deeplink_text"
-        value:[NSString stringWithFormat:
+    _universalObject.contentMetadata.price = [NSDecimalNumber decimalNumberWithString:@"1000"];
+    _universalObject.contentMetadata.currency = @"$";
+    _universalObject.contentMetadata.contentSchema = type;
+    _universalObject.contentMetadata.customMetadata[@"deeplink_text"] =
+        [NSString stringWithFormat:
             @"This text was embedded as data in a Branch link with the following characteristics:\n\n"
              "canonicalUrl: %@\n  title: %@\n  contentDescription: %@\n  imageUrl: %@\n",
-                canonicalUrl, contentTitle, contentDescription, imageUrl]];
+                canonicalUrl, contentTitle, contentDescription, imageUrl];
 
     UILabel *versionLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     versionLabel.textAlignment = NSTextAlignmentCenter;
@@ -164,7 +164,12 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     TBDetailViewController *dataViewController = [[TBDetailViewController alloc] initWithData:dictionaryOrArray];
     dataViewController.title = title;
     dataViewController.message = message;
-    [self.navigationController pushViewController:dataViewController animated:YES];
+
+    // Manage the display mode button
+    dataViewController.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+    dataViewController.navigationItem.leftItemsSupplementBackButton = YES;
+
+    [self.splitViewController showDetailViewController:dataViewController sender:self];
 }
 
 - (void) showAlertWithTitle:(NSString*)title message:(NSString*)message {
@@ -300,6 +305,16 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     ];
 }
 
+- (IBAction) showCurrentViewController:(id)send {
+    UIViewController *vc = [UIViewController bnc_currentViewController];
+    [self showDataViewControllerWithObject:@{
+            @"View Controller": [NSString stringWithFormat:@"%@", vc],
+        }
+        title:@"View Controller"
+        message:nil
+    ];
+}
+
 #pragma mark - Sharing
 
 - (IBAction) sharelinkTableRow:(id)sender {
@@ -326,7 +341,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.universalObject showShareSheetWithLinkProperties:self.linkProperties
         andShareText:@"Ha ha"
         fromViewController:self
-        anchor:cell
+        anchor:(id)cell
         completionWithError: ^ (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError) {
             BNCLogDebug(@"Done.");
     }];

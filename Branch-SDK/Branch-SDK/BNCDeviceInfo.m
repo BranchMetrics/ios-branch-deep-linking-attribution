@@ -9,7 +9,7 @@
 #import "BNCDeviceInfo.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
-#import "BNCXcode7Support.h"
+#import "BNCAvailability.h"
 #import "BNCLog.h"
 #import "BNCConfig.h"
 #import "BNCPreferenceHelper.h"

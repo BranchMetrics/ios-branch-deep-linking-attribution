@@ -179,6 +179,6 @@
 
 #else
 
-#error "Define either 'BNCFieldDefinesDictionaryFromObject' or 'BNCFieldDefinesObjectFromDictionary'.
+//#error "Define either 'BNCFieldDefinesDictionaryFromObject' or 'BNCFieldDefinesObjectFromDictionary'.
 
 #endif

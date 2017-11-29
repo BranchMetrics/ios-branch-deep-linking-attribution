@@ -42,11 +42,14 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 - (void) dealloc {
-    if (self.persistTimer) {
-        dispatch_source_cancel(self.persistTimer);
-        self.persistTimer = nil;
+    @synchronized (self) {
+        if (self.persistTimer) {
+            dispatch_source_cancel(self.persistTimer);
+            self.persistTimer = nil;
+        }
+        [self persistImmediately];
+        self.queue = nil;
     }
-    [self persistImmediately];
 }
 
 - (void)enqueue:(BNCServerRequest *)request {
@@ -79,7 +82,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             [self.queue removeObjectAtIndex:0];
             [self persistEventually];
         }
-    return request;
+        return request;
     }
 }
 
@@ -90,7 +93,6 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             BNCLogError(@"Invalid queue operation: index out of bound!");
             return nil;
         }
-        
         request = [self.queue objectAtIndex:index];
         [self.queue removeObjectAtIndex:index];
         [self persistEventually];
@@ -117,10 +119,8 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             BNCLogError(@"Invalid queue operation: index out of bound!");
             return nil;
         }
-        
         BNCServerRequest *request = nil;
         request = [self.queue objectAtIndex:index];
-        
         return request;
     }
 }
@@ -243,9 +243,9 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         dispatch_source_set_event_handler(self.persistTimer, ^ {
             __strong __typeof(weakSelf) strongSelf = weakSelf;
             if (strongSelf) {
-                [strongSelf persistImmediately];
                 dispatch_source_cancel(strongSelf.persistTimer);
                 strongSelf.persistTimer = nil;
+                [strongSelf persistImmediately];
             }
         });
         dispatch_resume(self.persistTimer);
@@ -405,7 +405,6 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 + (id)getInstance {
     static BNCServerRequestQueue *sharedQueue = nil;
     static dispatch_once_t onceToken;
-    
     dispatch_once(&onceToken, ^ {
         sharedQueue = [[BNCServerRequestQueue alloc] init];
         [sharedQueue retrieve];

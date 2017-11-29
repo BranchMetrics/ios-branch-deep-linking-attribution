@@ -1,10 +1,53 @@
 Branch iOS SDK Change Log
 
+- v0.21.11
+  * Fix CoreSpotlight defines for old iOS version support.
+
+- v0.21.10
+  * _*Master Release*_ - November 20, 2017
+  * Fixed a public header for the static library.
+
+- v0.21.9
+  * _*Master Release*_ - November 20, 2017
+  * Fixed some merge conflicts.
+
+- v0.21.8
+  * _*Master Release*_ - November 20, 2017
+
+- v0.21.5
+  * NOTE: There is a known crash bug when sharing a Branch link via the Slack activity.
+    - Slack is aware of this crash and is working to fix it. It is an intermittent crash in iOS 11.
+    - The crash is in `-[NSExtension _completeRequestReturningItems:forExtensionContextWithUUID:completion:]_block_invoke ()`
+  * Updated comments.
+  * Fixed a race condition in the preference helper.
+  * Added a deep link key to the Testbed example to be more compatible with the Android version.
+
+- v0.21.3
+  * Fixed an occasional crash when sharing a Branch link to Slack. The crash only occurred on some versions of iOS.
+  * Updated TestBed-Swift to Swift 4 and added a bunch of third party integrations.
+  * Added BranchWillStartSessionNotification / BranchDidStartSessionNotification Branch session notifications.
+  * Added a Branch delegate with optional delegate methods.
+  * Better Spotlight: Added a better interface to listing your application's content on Spotlight.
+    [See the updated Spotlight documentation.](https://github.com/BranchMetrics/ios-branch-deep-linking#list-content-on-spotlight)
+
+- v0.21.2
+  * Update README.md to use proper Swift syntax.
+  * Better debugging messages for requests.
+  * Added an event picker for v2-event testing in the TestBed.
+
+- v0.21.1
+  * Fixed some annoying compile warnings.
+  * Made module support optional.
+
 - v0.21.0
   * Added v2-event support.
   * Updated readme.md to include instructions for building a project withBranch as a sub-project.
   * Suppressed more unnecessary compatibility warnings.
   * Testbed-Swift now has many more third party integrations.
+
+- v0.20.3
+  * _*Master Release*_ - November 9, 2017
+  * Logging not persisted.
 
 - v0.20.2
   * _*Master Release*_ - October 18, 2017

@@ -314,7 +314,7 @@ class BranchUniversalObjectTableViewController: UITableViewController, UIPickerV
     }
     
     func addProperty(_ key: String, value: String) {
-        guard value.characters.count > 0 else {
+        guard value.count > 0 else {
             universalObject.removeValue(forKey: key)
             return
         }

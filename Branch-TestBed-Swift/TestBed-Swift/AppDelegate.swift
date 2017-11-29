@@ -68,6 +68,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
              branch.registerDeepLinkController(navigationController, forKey:"~referring_link")*/
             
             // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is false).
+            
             branch.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: false, deepLinkHandler: { params, error in
                 
                 defer {
@@ -231,7 +232,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingAdjustEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingAdjustEnabled(false)
             return
         }
@@ -266,7 +267,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingAmplitudeEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingAmplitudeEnabled(false)
             return
         }
@@ -286,7 +287,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingAppsflyerEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingAppsflyerEnabled(false)
             return
         }
@@ -306,7 +307,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingGoogleAnalyticsEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingGoogleAnalyticsEnabled(false)
             return
         }
@@ -335,7 +336,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingMixpanelEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingMixpanelEnabled(false)
             return
         }
@@ -358,11 +359,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingTuneEnabled(false)
             return
         }
-        guard tuneAdvertisingID.characters.count > 0 else {
+        guard tuneAdvertisingID.count > 0 else {
             IntegratedSDKsData.setPendingTuneEnabled(false)
             return
         }
-        guard tuneConversionKey.characters.count > 0 else {
+        guard tuneConversionKey.count > 0 else {
             IntegratedSDKsData.setPendingTuneEnabled(false)
             return
         }
@@ -384,7 +385,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingAppboyEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingAppboyEnabled(false)
             return
         }
@@ -406,7 +407,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingAppMetricaEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingAppMetricaEnabled(false)
             return
         }
@@ -426,7 +427,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingClearTapEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingClearTapEnabled(false)
             return
         }
@@ -443,7 +444,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingConvertroEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingConvertroEnabled(false)
             return
         }
@@ -460,7 +461,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingKochavaEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingKochavaEnabled(false)
             return
         }
@@ -477,7 +478,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingLocalyticsEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingLocalyticsEnabled(false)
             return
         }
@@ -501,11 +502,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingmParticleEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingmParticleEnabled(false)
             return
         }
-        guard secret.characters.count > 0 else {
+        guard secret.count > 0 else {
             IntegratedSDKsData.setPendingmParticleEnabled(false)
             return
         }
@@ -525,7 +526,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingSegmentEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingSegmentEnabled(false)
             return
         }
@@ -542,7 +543,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingSingularEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingSingularEnabled(false)
             return
         }
@@ -559,7 +560,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             IntegratedSDKsData.setPendingStitchEnabled(false)
             return
         }
-        guard key.characters.count > 0 else {
+        guard key.count > 0 else {
             IntegratedSDKsData.setPendingStitchEnabled(false)
             return
         }

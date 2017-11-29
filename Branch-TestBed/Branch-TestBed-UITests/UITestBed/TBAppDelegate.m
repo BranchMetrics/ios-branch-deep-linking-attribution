@@ -9,11 +9,10 @@
 #import "TBAppDelegate.h"
 #import "TBBranchViewController.h"
 #import "TBDetailViewController.h"
-#import "Branch.h"
+@import Branch;
 
 @interface TBAppDelegate () <UISplitViewControllerDelegate>
 @property (nonatomic, strong) TBBranchViewController *branchViewController;
-@property (nonatomic, strong) TBDetailViewController *detailViewController;
 @end
 
 @implementation TBAppDelegate
@@ -35,12 +34,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
-    [branch setWhiteListedSchemes:@[@"branchtest"]];
 
-    // Optional. Use if presenting SFSafariViewController as part of onboarding.
-    // Cannot use with setDebug.
-    // [self onboardUserOnInstall];
- 
+    [branch setWhiteListedSchemes:@[@"branchtest"]];
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
             [self handleBranchDeepLinkParameters:params error:error];
@@ -53,6 +48,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Set the split view delegate
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
+    splitViewController.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
     splitViewController.delegate = self;
 
     self.branchViewController = [TBBranchViewController new];
@@ -61,16 +57,14 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
             initWithRootViewController:self.branchViewController];
     masterViewController.title = @"Branch";
 
-    self.detailViewController = [TBDetailViewController new];
+    TBDetailViewController *detailViewController = [TBDetailViewController new];
     UINavigationController *detailNavigationViewController =
-        [[UINavigationController alloc]
-            initWithRootViewController:self.detailViewController];
+        [[UINavigationController alloc] initWithRootViewController:detailViewController];
 
     splitViewController.viewControllers = @[masterViewController, detailNavigationViewController];
 
-    // Set up the navigation controller
-    UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
-    navigationController.topViewController.navigationItem.leftBarButtonItem =
+    // Set up the navigation controller button
+    detailNavigationViewController.topViewController.navigationItem.leftBarButtonItem =
         splitViewController.displayModeButtonItem;
 }
 

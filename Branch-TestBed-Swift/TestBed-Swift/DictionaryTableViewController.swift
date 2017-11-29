@@ -109,7 +109,7 @@ class DictionaryTableViewController: UITableViewController {
     @IBAction func unwindKeyValuePairTableViewController(_ sender: UIStoryboardSegue) {
         if let sourceVC = sender.source as? KeyValuePairTableViewController {
             
-            guard sourceVC.keyTextField.text!.characters.count > 0 else {
+            guard sourceVC.keyTextField.text!.count > 0 else {
                 return
             }
             dictionary[sourceVC.keyTextField.text!] = sourceVC.valueTextView.text as AnyObject?
