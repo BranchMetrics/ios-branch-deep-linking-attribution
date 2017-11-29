@@ -91,7 +91,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
                     
                     if clickedBranchLink {
                         let nc = self.window!.rootViewController as! UINavigationController
-                        let storyboard = UIStoryboard(name: "ContentView", bundle: nil)
+                        let storyboard = UIStoryboard(name: "Content", bundle: nil)
                         let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
                         nc.pushViewController(contentViewController, animated: true)
                         
