@@ -1,5 +1,8 @@
 Branch iOS SDK Change Log
 
+- v0.21.12
+  * Fixed a crash bug in TestBed-Swift due to a renamed storyboard (AIS-430).
+
 - v0.21.11
   * Fix CoreSpotlight defines for old iOS version support.
 
