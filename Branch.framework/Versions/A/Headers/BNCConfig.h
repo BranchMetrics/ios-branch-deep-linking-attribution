@@ -6,10 +6,15 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
+#if __has_feature(modules)
 @import Foundation;
+#else
+#import <Foundation/Foundation.h>
+#endif
 
-extern NSString * const BNC_SDK_VERSION;
-extern NSString * const BNC_API_VERSION;
-extern BOOL       const BNC_API_PINNED;
-extern NSString * const BNC_API_BASE_URL;
-extern NSString * const BNC_LINK_URL;
+
+FOUNDATION_EXPORT NSString*_Nonnull const BNC_SDK_VERSION;
+FOUNDATION_EXPORT NSString*_Nonnull const BNC_API_BASE_URL;
+FOUNDATION_EXPORT BOOL              const BNC_API_PINNED;
+FOUNDATION_EXPORT NSString*_Nonnull const BNC_API_VERSION;
+FOUNDATION_EXPORT NSString*_Nonnull const BNC_LINK_URL;

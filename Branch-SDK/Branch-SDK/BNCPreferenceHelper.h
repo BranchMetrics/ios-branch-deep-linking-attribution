@@ -39,7 +39,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) NSInteger retryCount;
 @property (assign, nonatomic) NSTimeInterval retryInterval;
 @property (assign, nonatomic) NSTimeInterval timeout;
-@property (strong, nonatomic) NSString *externalIntentURI;
+@property (strong, atomic)    NSString *externalIntentURI;
 @property (strong, nonatomic) NSMutableDictionary *savedAnalyticsData;
 @property (assign, nonatomic) NSInteger installRequestDelay;
 @property (strong, nonatomic) NSDictionary *appleSearchAdDetails;

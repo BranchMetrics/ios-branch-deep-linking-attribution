@@ -102,11 +102,11 @@
 }
 
 + (NSString *)sanitizedStringFromString:(NSString *)dirtyString {
-    NSString *cleanString = [[[[dirtyString stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""]
-                                            stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"]
-                                            stringByReplacingOccurrencesOfString:@"’" withString:@"'"]
-                                            stringByReplacingOccurrencesOfString:@"\r" withString:@"\\r"];
-
+    NSString *dirtyCopy = [dirtyString copy]; // dirtyString seems to get dealloc'ed sometimes. Make a copy.
+    NSString *cleanString = [[[[dirtyCopy stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""]
+                                          stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"]
+                                          stringByReplacingOccurrencesOfString:@"’" withString:@"'"]
+                                          stringByReplacingOccurrencesOfString:@"\r" withString:@"\\r"];
     return cleanString;
 }
 
