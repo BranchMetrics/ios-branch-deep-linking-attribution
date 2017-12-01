@@ -550,15 +550,15 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
-- (BOOL) limitAppTracking {
+- (BOOL) limitFacebookTracking {
     @synchronized (self) {
-        return [self readBoolFromDefaults:@"_limitAppTracking"];
+        return [self readBoolFromDefaults:@"_limitFacebookTracking"];
     }
 }
 
-- (void) setLimitAppTracking:(BOOL)limitAppTracking {
+- (void) setLimitFacebookTracking:(BOOL)limitFacebookTracking {
     @synchronized (self) {
-        [self writeBoolToDefaults:@"_limitAppTracking" value:limitAppTracking];
+        [self writeBoolToDefaults:@"_limitFacebookTracking" value:limitFacebookTracking];
     }
 }
 

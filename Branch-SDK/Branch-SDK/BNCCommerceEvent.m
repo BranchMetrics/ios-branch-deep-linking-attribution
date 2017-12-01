@@ -354,8 +354,8 @@ BNCCurrency BNCCurrencyZMW = @"ZMW";
 		params[@"metadata"] = self.metadata;
 	if (self.commerceDictionary)
 		params[@"commerce_data"] = self.commerceDictionary;
-    if (preferenceHelper.limitAppTracking)
-        params[@"limit_app_tracking"] = CFBridgingRelease(kCFBooleanTrue);
+    if (preferenceHelper.limitFacebookTracking)
+        params[@"limit_facebook_tracking"] = CFBridgingRelease(kCFBooleanTrue);
 
 	NSString *URL = [preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION];
     [serverInterface postRequest:params

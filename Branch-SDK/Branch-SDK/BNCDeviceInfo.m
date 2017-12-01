@@ -451,8 +451,8 @@ exit:
     s = preferences.deviceFingerprintID;
     if (s.length) dictionary[@"device_fingerprint_id"] = s;
 
-    if (preferences.limitAppTracking)
-        dictionary[@"limit_app_tracking"] = CFBridgingRelease(kCFBooleanTrue);
+    if (preferences.limitFacebookTracking)
+        dictionary[@"limit_facebook_tracking"] = CFBridgingRelease(kCFBooleanTrue);
 
     dictionary[@"sdk"] = @"ios";
     dictionary[@"sdk_version"] = BNC_SDK_VERSION;
