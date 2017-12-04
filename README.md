@@ -760,14 +760,14 @@ Here are a set of best practices to ensure that your analytics are correct, and 
 Note: Content indexed using `CSSearchableItem` could be removed from Spotlight but cannot be removed if indexed using `NSUserActivity`.
 
 Practices to _avoid_:
-1. Don't set the same `title`, `contentDescription` and `imageUrl` across all objects
-2. Don't wait to initialize the object and register views until the user goes to share
-3. Don't wait to initialize the object until you conveniently need a link
+1. Don't set the same `title`, `contentDescription` and `imageUrl` across all objects.
+2. Don't wait to initialize the object and register views until the user goes to share.
+3. Don't wait to initialize the object until you conveniently need a link.
 4. Don't create many objects at once and register views in a `for` loop.
 
 ### Branch Universal Object
 
-#### Methods
+#### Methods and Properties
 
 ###### Objective-C
 
@@ -780,8 +780,9 @@ BranchUniversalObject *branchUniversalObject = [[BranchUniversalObject alloc] in
 branchUniversalObject.title = @"My Content Title";
 branchUniversalObject.contentDescription = @"My Content Description";
 branchUniversalObject.imageUrl = @"https://example.com/mycontent-12345.png";
-[branchUniversalObject addMetadataKey:@"property1" value:@"blue"];
-[branchUniversalObject addMetadataKey:@"property2" value:@"red"];
+branchUniversalObject.contentMetadata.contentSchema = BranchContentSchemaCommerceProduct;
+branchUniversalObject.contentMetadata.customMetadata[@"property1"] = @"blue";
+branchUniversalObject.contentMetadata.customMetadata[@"property2"] = @"red";
 ```
 
 ###### Swift
@@ -791,11 +792,12 @@ let branchUniversalObject: BranchUniversalObject = BranchUniversalObject(canonic
 branchUniversalObject.title = "My Content Title"
 branchUniversalObject.contentDescription = "My Content Description"
 branchUniversalObject.imageUrl = "https://example.com/mycontent-12345.png"
-branchUniversalObject.addMetadataKey("property1", value: "blue")
-branchUniversalObject.addMetadataKey("property2", value: "red")
+branchUniversalObject.contentMetadata.contentSchema = .product;
+branchUniversalObject.contentMetadata.customMetadata["property1"] = "blue"
+branchUniversalObject.contentMetadata.customMetadata["property2"] = "red"
 ```
 
-#### Parameters
+#### Properties
 
 **canonicalIdentifier**: This is the unique identifier for content that will help Branch de-dupe across many instances of the same thing. If you have a website with pathing, feel free to use that. Or if you have database identifiers for entities, use those.
 
@@ -805,19 +807,27 @@ branchUniversalObject.addMetadataKey("property2", value: "red")
 
 **imageUrl**: This is the image URL for the content and will automatically be used for the OG tags. It will insert $og_image_url into the data dictionary of any link created.
 
-**metadata**: These are any extra parameters you'd like to associate with the Branch Universal Object. These will be made available to you after the user clicks the link and opens up the app. To add more keys/values, just use the method `addMetadataKey`.
+**keywords**: Key words that describe the object. These are used for Spotlight search and web scraping so that users can find your content.
 
-**price**: The price of the item to be used in conjunction with the commerce related events below.
+**locallyIndex**: If set to true, Branch will index this content on Spotlight on the user's phone.
 
-**currency**: The currency representing the price in [ISO 4217 currency code](http://en.wikipedia.org/wiki/ISO_4217). Default is USD.
-
-**contentIndexMode**: Can be set to the ENUM of either `ContentIndexModePublic` or `ContentIndexModePrivate`. Public indicates that you'd like this content to be discovered by other apps. Content would be indexed using `NSUserActivity` if set to pulic, else would be indexed using `CSSearchableIndex`. Currently, this is only used for Spotlight indexing but will be used by Branch in the future.
+**publiclyIndex**: If set to true, Branch will index this content on Google, Branch, etc.
 
 **expirationDate**: The date when the content will not longer be available or valid. Currently, this is only used for Spotlight indexing but will be used by Branch in the future.
 
-#### Returns
+**contentMetadata**: Details that further describe your content. Set the properties of this sub-object depending on the type of content that is relevant to your content:
 
-None
+##### BranchUniversalObject.contentMetadata
+
+Details that further describe your content. Set the properties of this sub-object depending on the type of content that is relevant to your content.
+
+**contentMetadata.contentSchema**: Set this property to a `BranchContentSchema` enum that best describes the content type. It accepts values like `BranchContentSchemaCommerceProduct` and `BranchContentSchemaMediaImage`.
+
+**contentMetadata.customMetadata**: This dictionary contains any extra parameters you'd like to associate with the Branch Universal Object. These will be made available to you after the user clicks the link and opens up the app.
+
+**contentMetadata.price**: The price of the item to be used in conjunction with the commerce related events below.
+
+**contentMetadata.currency**: The currency representing the price in [ISO 4217 currency code](http://en.wikipedia.org/wiki/ISO_4217). The default is USD.
 
 ### Tracking User Interactions With An Object
 
@@ -1129,7 +1139,7 @@ If you'd like to list your Branch Universal Object with link properties in Spotl
 ```swift
 universalObject.listOnSpotlight(with: linkProperty) { (url, error) in
     if (error == nil) {
-        print("Successfully indexed on spotlight")     
+        print("Successfully indexed on spotlight")
     }
 }
 ```
@@ -1144,7 +1154,7 @@ None
 
 ### List Multiple Branch Universal Objects On Spotlight using CSSearchableIndex
 
-If you'd like to list multiple Branch Universal Object in Spotlight local index, this is the method you'll call in Branch.h. 
+If you'd like to list multiple Branch Universal Object in Spotlight local index, this is the method you'll call in Branch.h.
 
 #### Methods
 
@@ -1163,7 +1173,7 @@ If you'd like to list multiple Branch Universal Object in Spotlight local index,
 ###### Swift
 
 ```swift
-Branch.getInstance().indexOnSpotlight(usingSearchableItems: universalObjects, 
+Branch.getInstance().indexOnSpotlight(usingSearchableItems: universalObjects,
                                                 completion: { (universalObjects, error) in
       if (error) {
            // Successfully able to index all the BUO on spotloght
@@ -1278,7 +1288,7 @@ Branch.getInstance().removeAllPrivateContentFromSpotLight { (error) in
 
 #### Parameters
 
-**Callback**: Will return once all Branch Universal Object is removed from spotlight. 
+**Callback**: Will return once all Branch Universal Object is removed from spotlight.
 Note: SpotlightIdentifer would not be nil of all the Branch Universal Object been removed from spotlight as Branch SDK doesn't cache the Branch Universal Objects.
 
 #### Returns
