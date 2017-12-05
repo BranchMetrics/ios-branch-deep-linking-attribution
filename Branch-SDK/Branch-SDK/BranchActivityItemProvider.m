@@ -81,6 +81,7 @@
 - (BOOL) returnURL {
     BOOL returnURL = YES;
     if ([UIDevice currentDevice].systemVersion.doubleValue >= 11.0 &&
+        [UIDevice currentDevice].systemVersion.doubleValue  < 11.2 &&
         [self.activityType isEqualToString:UIActivityTypeCopyToPasteboard]) {
         returnURL = NO;
     }
