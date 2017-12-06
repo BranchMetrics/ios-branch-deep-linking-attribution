@@ -63,7 +63,7 @@ There's a full demo app embedded in this repository, but you can also check out 
 
 ## Installation
 
-_The compiled iOS SDK footprint is 9mb with combined arm\_v7 and arm64 support_
+_The compiled release version of the iOS SDK 180kb without symbols and unused architectures._
 
 ### Available in CocoaPods
 
