@@ -63,8 +63,6 @@ There's a full demo app embedded in this repository, but you can also check out 
 
 ## Installation
 
-_The compiled release version of the iOS SDK 180kb without symbols and unused architectures._
-
 ### Available in CocoaPods
 
 Branch is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your Podfile:
