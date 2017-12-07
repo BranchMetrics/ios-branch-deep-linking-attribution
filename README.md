@@ -63,6 +63,8 @@ There's a full demo app embedded in this repository, but you can also check out 
 
 ## Installation
 
+_The iOS SDK footprint is 220kb by itself._
+
 ### Available in CocoaPods
 
 Branch is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your Podfile:
