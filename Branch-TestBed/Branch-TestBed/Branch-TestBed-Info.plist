@@ -55,7 +55,9 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>BranchLogLevel</key>
-	<string>BNCLogLevelDebugSDK</string>
+	<string>BNCLogLevelAll</string>
+	<key>branch_universal_link_domains</key>
+	<string>bnctestbed.app.link</string>
 	<key>branch_key</key>
 	<dict>
 		<key>live</key>
@@ -63,7 +65,5 @@
 		<key>test</key>
 		<string>key_test_hdcBLUy1xZ1JD0tKg7qrLcgirFmPPVJc</string>
 	</dict>
-	<key>BranchLogLevel</key>
-	<string>BNCLogLevelAll</string>
 </dict>
 </plist>
