@@ -148,7 +148,7 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
     NSString *currency;
 
 @property (nonatomic, assign)
-    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.locallyIndex` instead."))))
+    __attribute__((deprecated(("Use `BranchUniversalObject.locallyIndex` instead."))))
     BOOL automaticallyListOnSpotlight;
 
 
