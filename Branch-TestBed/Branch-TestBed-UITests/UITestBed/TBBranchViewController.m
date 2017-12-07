@@ -12,6 +12,7 @@
 #import "TBWaitingView.h"
 @import Branch;
 #import "BNCDeviceInfo.h"
+#import "BNCSystemObserver.h"
 #import "UIViewController+Branch.h"
 
 NSString *cononicalIdentifier = @"item/12345";
@@ -67,6 +68,7 @@ NSString *type = @"some type";
     section(@"Miscellaneous");
     row(@"Show Local IP Addess", showLocalIPAddress:);
     row(@"Show Current View Controller", showCurrentViewController:)
+    row(@"Show App Dates", showDatesAction:)
 
     #undef section
     #undef row
@@ -309,6 +311,18 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UIViewController *vc = [UIViewController bnc_currentViewController];
     [self showDataViewControllerWithObject:@{
             @"View Controller": [NSString stringWithFormat:@"%@", vc],
+        }
+        title:@"View Controller"
+        message:nil
+    ];
+}
+
+- (IBAction) showDatesAction:(id)sender {
+    NSDate *buildDate = [BNCSystemObserver appBuildDate];
+    NSDate *installDate = [BNCSystemObserver appInstallDate];
+    [self showDataViewControllerWithObject:@{
+            @"Build Date": [NSString stringWithFormat:@"%@", buildDate],
+            @"Install Date": [NSString stringWithFormat:@"%@", installDate],
         }
         title:@"View Controller"
         message:nil

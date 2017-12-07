@@ -42,7 +42,7 @@
 		46DC40761B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC40751B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m */; };
 		46DC40781B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */; };
 		46DC40801B2B84CD00D2D203 /* BranchShortUrlRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */; };
-		46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */; };
+		46FD92BA1AE7E8F80012E78F /* BNCSystemObserver.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FD92B91AE7E8F80012E78F /* BNCSystemObserver.Test.m */; };
 		4D130E731EE0C7B100A69A0A /* BNCNetworkService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E4D1EE0C7B000A69A0A /* BNCNetworkService.m */; };
 		4D130E761EE0C7B100A69A0A /* BNCServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E501EE0C7B000A69A0A /* BNCServerInterface.m */; };
 		4D130E781EE0C7B100A69A0A /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E521EE0C7B000A69A0A /* BNCServerRequest.m */; };
@@ -232,7 +232,7 @@
 		46DC40751B2B386B00D2D203 /* BranchRedeemRewardsRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchRedeemRewardsRequestTests.m; sourceTree = "<group>"; };
 		46DC40771B2B549F00D2D203 /* BranchGetCreditHistoryRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchGetCreditHistoryRequestTests.m; sourceTree = "<group>"; };
 		46DC407F1B2B84CD00D2D203 /* BranchShortUrlRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShortUrlRequestTests.m; sourceTree = "<group>"; };
-		46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserverTests.m; sourceTree = "<group>"; };
+		46FD92B91AE7E8F80012E78F /* BNCSystemObserver.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserver.Test.m; sourceTree = "<group>"; };
 		4D130E4C1EE0C7B000A69A0A /* BNCNetworkService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCNetworkService.h; sourceTree = "<group>"; };
 		4D130E4D1EE0C7B000A69A0A /* BNCNetworkService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCNetworkService.m; sourceTree = "<group>"; };
 		4D130E4E1EE0C7B000A69A0A /* BNCNetworkServiceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCNetworkServiceProtocol.h; sourceTree = "<group>"; };
@@ -694,7 +694,7 @@
 				46D0B6F91ACD8EF000CDDE82 /* BNCPreferenceHelperTests.m */,
 				464EA3971ACB1797000E4094 /* BNCServerInterface.Test.m */,
 				46DBB42C1B330CF300642FC8 /* BNCServerRequestQueueTests.m */,
-				46FD92B91AE7E8F80012E78F /* BNCSystemObserverTests.m */,
+				46FD92B91AE7E8F80012E78F /* BNCSystemObserver.Test.m */,
 				467309471AF2C4FB005B8848 /* BNCTestCase.h */,
 				467309481AF2C4FB005B8848 /* BNCTestCase.m */,
 				4D25C0171FAD1293005FA214 /* BranchDelegate.Test.m */,
@@ -1123,7 +1123,7 @@
 				7E6B3B561AA42D0E005F45BF /* BranchSDKFunctionalityTests.m in Sources */,
 				4DCD41651F43AC74005F4D33 /* BranchUniversalObject.Test.m in Sources */,
 				4677EB511B3B384C00A13964 /* BranchInstallRequestTests.m in Sources */,
-				46FD92BA1AE7E8F80012E78F /* BNCSystemObserverTests.m in Sources */,
+				46FD92BA1AE7E8F80012E78F /* BNCSystemObserver.Test.m in Sources */,
 				4D36000C1F466D33002BE771 /* BranchEvent.Test.m in Sources */,
 				4DC32D6F1F323F0B00EAA896 /* BNCError.Test.m in Sources */,
 				4665AF281B28C1DE00184037 /* BranchLogoutRequestTests.m in Sources */,
