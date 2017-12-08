@@ -63,7 +63,7 @@ There's a full demo app embedded in this repository, but you can also check out 
 
 ## Installation
 
-_The compiled iOS SDK footprint is 9mb with combined arm\_v7 and arm64 support_
+_The iOS SDK footprint is 220kb by itself._
 
 ### Available in CocoaPods
 
@@ -173,7 +173,7 @@ Alternatively, you can add the URI scheme in your project's Info page.
 
 ![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlType.png)
 
-### Support Universal Linking (iOS 9)
+### Support Universal Linking (iOS 9 and Above)
 
 With iOS 9, Apple has added the ability to allow http links to directly open your app, rather than using the URI Schemes. This can be a pain to set up, as it involves a complicated process on your server. The good news is that Branch does this work for you with just two steps!
 
@@ -193,11 +193,19 @@ With iOS 9, Apple has added the ability to allow http links to directly open you
 
 ![Dashboard Enable UL](docs/images/dashboard-ul-enable.png)
 
+#### Custom Domain Name Configuration (Required if you don't use the Branch provided xxxx.app.link domain)
+
+Branch provides a xxxx.app.link domain for your app, but you can use your own custom domain for app links instead. If you _do_ use your own custom domain for your universal app links, you need to add it to your Info.plist.
+
+Add the `branch_universal_link_domains` key with your custom domain as a string value:
+
+![Custom Domain Info.plist](docs/images/custom-domain.png)
+
 #### URI Scheme Considerations
 
 The Branch SDK will pull the first URI Scheme from your list that is not one of `fb`, `db`, or `pin`. This value will be used one time to set the iOS URI Scheme under your Link Settings in the Branch Dashboard.
 
-For additional help configuring the SDK, including step-by-step instructions, please see the [iOS Quickstart Guide](https://github.com/BranchMetrics/Branch-Integration-Guides/blob/master/ios-quickstart.md).
+For additional help configuring the SDK, including step-by-step instructions, please see the [iOS Quickstart Guide](https://docs.branch.io/pages/apps/ios/).
 
 ### Get a Singleton Branch Instance
 
@@ -404,6 +412,8 @@ Nothing
 ###### continueUserActivity
 
 **BOOL** continueUserActivity will return a boolean indicating whether Branch has handled the Universal Link. If Universal Link is powered by Branch, then continueUserActivity will return YES because the Branch click object is present.
+
+If you use your own custom universal link domain, make sure you add it your Info.plist under the `branch_universal_link_domains` key as described [here](#custom-domain-name-configuration) or this method may erroneously return `NO` when in fact the universal link will be opened.
 
 ### Register a Deep Link Controller
 
@@ -760,14 +770,14 @@ Here are a set of best practices to ensure that your analytics are correct, and 
 Note: Content indexed using `CSSearchableItem` could be removed from Spotlight but cannot be removed if indexed using `NSUserActivity`.
 
 Practices to _avoid_:
-1. Don't set the same `title`, `contentDescription` and `imageUrl` across all objects
-2. Don't wait to initialize the object and register views until the user goes to share
-3. Don't wait to initialize the object until you conveniently need a link
+1. Don't set the same `title`, `contentDescription` and `imageUrl` across all objects.
+2. Don't wait to initialize the object and register views until the user goes to share.
+3. Don't wait to initialize the object until you conveniently need a link.
 4. Don't create many objects at once and register views in a `for` loop.
 
 ### Branch Universal Object
 
-#### Methods
+#### Methods and Properties
 
 ###### Objective-C
 
@@ -780,8 +790,9 @@ BranchUniversalObject *branchUniversalObject = [[BranchUniversalObject alloc] in
 branchUniversalObject.title = @"My Content Title";
 branchUniversalObject.contentDescription = @"My Content Description";
 branchUniversalObject.imageUrl = @"https://example.com/mycontent-12345.png";
-[branchUniversalObject addMetadataKey:@"property1" value:@"blue"];
-[branchUniversalObject addMetadataKey:@"property2" value:@"red"];
+branchUniversalObject.contentMetadata.contentSchema = BranchContentSchemaCommerceProduct;
+branchUniversalObject.contentMetadata.customMetadata[@"property1"] = @"blue";
+branchUniversalObject.contentMetadata.customMetadata[@"property2"] = @"red";
 ```
 
 ###### Swift
@@ -791,33 +802,66 @@ let branchUniversalObject: BranchUniversalObject = BranchUniversalObject(canonic
 branchUniversalObject.title = "My Content Title"
 branchUniversalObject.contentDescription = "My Content Description"
 branchUniversalObject.imageUrl = "https://example.com/mycontent-12345.png"
-branchUniversalObject.addMetadataKey("property1", value: "blue")
-branchUniversalObject.addMetadataKey("property2", value: "red")
+branchUniversalObject.contentMetadata.contentSchema = .product;
+branchUniversalObject.contentMetadata.customMetadata["property1"] = "blue"
+branchUniversalObject.contentMetadata.customMetadata["property2"] = "red"
 ```
 
-#### Parameters
+#### Properties
 
 **canonicalIdentifier**: This is the unique identifier for content that will help Branch de-dupe across many instances of the same thing. If you have a website with pathing, feel free to use that. Or if you have database identifiers for entities, use those.
 
-**title**: This is the name for the content and will automatically be used for the OG tags. It will insert $og_title into the data dictionary of any link created.
+**title**: This is the name for the content and will automatically be used for the OG tags. It will insert `$og_title` into the data dictionary of any link created.
 
-**contentDescription**: This is the description for the content and will automatically be used for the OG tags. It will insert $og_description into the data dictionary of any link created.
+**contentDescription**: This is the description for the content and will automatically be used for the OG tags. It will insert `$og_description` into the data dictionary of any link created.
 
-**imageUrl**: This is the image URL for the content and will automatically be used for the OG tags. It will insert $og_image_url into the data dictionary of any link created.
+**imageUrl**: This is the image URL for the content and will automatically be used for the OG tags. It will insert `$og_image_url` into the data dictionary of any link created.
 
-**metadata**: These are any extra parameters you'd like to associate with the Branch Universal Object. These will be made available to you after the user clicks the link and opens up the app. To add more keys/values, just use the method `addMetadataKey`.
+**keywords**: Key words that describe the object. These are used for Spotlight search and web scraping so that users can find your content.
 
-**price**: The price of the item to be used in conjunction with the commerce related events below.
+**locallyIndex**: If set to true, Branch will index this content on Spotlight on the user's phone.
 
-**currency**: The currency representing the price in [ISO 4217 currency code](http://en.wikipedia.org/wiki/ISO_4217). Default is USD.
-
-**contentIndexMode**: Can be set to the ENUM of either `ContentIndexModePublic` or `ContentIndexModePrivate`. Public indicates that you'd like this content to be discovered by other apps. Content would be indexed using `NSUserActivity` if set to pulic, else would be indexed using `CSSearchableIndex`. Currently, this is only used for Spotlight indexing but will be used by Branch in the future.
+**publiclyIndex**: If set to true, Branch will index this content on Google, Branch, etc.
 
 **expirationDate**: The date when the content will not longer be available or valid. Currently, this is only used for Spotlight indexing but will be used by Branch in the future.
 
-#### Returns
+**contentMetadata**: Details that further describe your content. Set the properties of this sub-object depending on the type of content that is relevant to your content:
 
-None
+#### BranchUniversalObject.contentMetadata
+
+The `BranchUniversalObject.contentMetadata` properties further describe  your content. These properties are trackable in the Branch dashboard and will be automatically exported to your connected third-party app intelligence partners like Adjust or Mixpanel.
+
+Set the properties of this sub-object depending on the type of content that is relevant to your content. The `BranchUniversalObject.contentMetadata.contentSchema` property describes the type of object content. Set other properties as is relevant to the type.
+
+**contentMetadata.contentSchema**: Set this property to a `BranchContentSchema` enum that best describes the content type. It accepts values like `BranchContentSchemaCommerceProduct` and `BranchContentSchemaMediaImage`.
+
+**contentMetadata.customMetadata**: This dictionary contains any extra parameters you'd like to associate with the Branch Universal Object. These will be made available to you after the user clicks the link and opens up the app.
+
+**contentMetadata.price**: The price of the item to be used in conjunction with the commerce related events below.
+
+**contentMetadata.currency**: The currency representing the price in [ISO 4217 currency code](http://en.wikipedia.org/wiki/ISO_4217). The default is USD.
+
+**contentMetadata.quantity**: The quantity.
+
+**contentMetadata.sku**: The vendor SKU.
+
+**contentMetadata.productName**: Product name.
+
+**contentMetadata.productBrand**: Product brand.
+
+**contentMetadata.productCategory**: The `BNCProductCategory` value, such as `BNCProductCategoryAnimalSupplies` or `BNCProductCategoryFurniture`.
+
+**contentMetadata.productVariant**: The product variant.
+
+**contentMetadata.condition**: The `BranchCondition` value, such as `BranchConditionNew` or `BranchConditionRefurbished`.
+
+**ratingAverage, ratingCount, ratingMax**: The rating for your content.
+
+**addressStreet, addressCity, addressRegion, addressCountry, addressPostalCode**: The address of your content.
+
+**latitude, longitude**: The longitude and latitude of your content.
+
+**imageCaptions**: Image captions for the content's images.
 
 ### Tracking User Interactions With An Object
 
@@ -1129,7 +1173,7 @@ If you'd like to list your Branch Universal Object with link properties in Spotl
 ```swift
 universalObject.listOnSpotlight(with: linkProperty) { (url, error) in
     if (error == nil) {
-        print("Successfully indexed on spotlight")     
+        print("Successfully indexed on spotlight")
     }
 }
 ```
@@ -1144,7 +1188,7 @@ None
 
 ### List Multiple Branch Universal Objects On Spotlight using CSSearchableIndex
 
-If you'd like to list multiple Branch Universal Object in Spotlight local index, this is the method you'll call in Branch.h. 
+Call this method on the Branch shared instance to list multiple Branch Universal Objects in Spotlight:
 
 #### Methods
 
@@ -1163,7 +1207,7 @@ If you'd like to list multiple Branch Universal Object in Spotlight local index,
 ###### Swift
 
 ```swift
-Branch.getInstance().indexOnSpotlight(usingSearchableItems: universalObjects, 
+Branch.getInstance().indexOnSpotlight(usingSearchableItems: universalObjects,
                                                 completion: { (universalObjects, error) in
       if (error) {
            // Successfully able to index all the BUO on spotloght
@@ -1278,7 +1322,7 @@ Branch.getInstance().removeAllPrivateContentFromSpotLight { (error) in
 
 #### Parameters
 
-**Callback**: Will return once all Branch Universal Object is removed from spotlight. 
+**Callback**: Will return once all Branch Universal Object is removed from spotlight.
 Note: SpotlightIdentifer would not be nil of all the Branch Universal Object been removed from spotlight as Branch SDK doesn't cache the Branch Universal Objects.
 
 #### Returns

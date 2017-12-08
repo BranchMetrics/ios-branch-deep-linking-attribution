@@ -18,7 +18,8 @@ static NSString *cononicalIdentifier = @"item/12346";
 static NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
 static NSString *contentTitle = @"Branch 0.19 TestBed Content Title";
 static NSString *contentDescription = @"My Content Description";
-static NSString *imageUrl = @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png";
+//static NSString *imageUrl = @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png";
+static NSString *imageUrl = @"http://www.theweddingplayers.com/wp-content/new_folder/Mr_Wompy_web2.jpg";
 static NSString *feature = @"Sharing Feature";
 static NSString *channel = @"Distribution Channel";
 static NSString *desktop_url = @"http://branch.io";
@@ -251,9 +252,6 @@ static NSString *type = @"some type";
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
     linkProperties.campaign = @"sharing campaign";
-    [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
-    [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
-    [linkProperties addControlParam:@"$android_deeplink_path" withValue:@"custom/path/*"];
 
     BranchShareLink *shareLink =
         [[BranchShareLink alloc]

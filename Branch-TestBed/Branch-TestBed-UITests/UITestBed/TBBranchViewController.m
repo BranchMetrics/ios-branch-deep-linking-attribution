@@ -12,6 +12,7 @@
 #import "TBWaitingView.h"
 @import Branch;
 #import "BNCDeviceInfo.h"
+#import "BNCSystemObserver.h"
 #import "UIViewController+Branch.h"
 
 NSString *cononicalIdentifier = @"item/12345";
@@ -67,6 +68,7 @@ NSString *type = @"some type";
     section(@"Miscellaneous");
     row(@"Show Local IP Addess", showLocalIPAddress:);
     row(@"Show Current View Controller", showCurrentViewController:)
+    row(@"Show App Dates", showDatesAction:)
     row(@"Toggle Facebook App Tracking", toggleFacebookAppTrackingAction:)
 
     #undef section
@@ -327,6 +329,16 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         message:nil
     ];
 
+- (IBAction) showDatesAction:(id)sender {
+    NSDate *buildDate = [BNCSystemObserver appBuildDate];
+    NSDate *installDate = [BNCSystemObserver appInstallDate];
+    [self showDataViewControllerWithObject:@{
+            @"Build Date": [NSString stringWithFormat:@"%@", buildDate],
+            @"Install Date": [NSString stringWithFormat:@"%@", installDate],
+        }
+        title:@"View Controller"
+        message:nil
+    ];
 }
 
 #pragma mark - Sharing
