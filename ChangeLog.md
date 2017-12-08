@@ -1,5 +1,12 @@
 Branch iOS SDK Change Log
 
+- v0.21.14
+  * _*Master Release*_ - December 8, 2017
+  * Added a unit test for correct app dates for update / install checking.
+  * Fixed an incorrect deprecation message for BranchUniversalObject indexing.
+  * Updated the documentation for BranchUniversalObjects and BranchEvents.
+  * Updated link sharing for iOS 11.2 notepad.
+
 - v0.21.13
   * Fixed the Carthage library build.
 
