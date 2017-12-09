@@ -328,6 +328,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         title:@"Limit Facebook App Tracking"
         message:nil
     ];
+}
 
 - (IBAction) showDatesAction:(id)sender {
     NSDate *buildDate = [BNCSystemObserver appBuildDate];
