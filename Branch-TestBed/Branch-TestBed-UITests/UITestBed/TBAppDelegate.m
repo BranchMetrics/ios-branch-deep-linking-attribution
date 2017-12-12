@@ -35,7 +35,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
 
-    [branch setWhiteListedSchemes:@[@"branchtest"]];
+    [branch setWhiteListedSchemes:@[@"branchuitest"]];
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
             [self handleBranchDeepLinkParameters:params error:error];
@@ -43,6 +43,63 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     return YES;
 }
+
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+
+    NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
+
+    // Required. Returns YES if Branch link, else returns NO
+    [[Branch getInstance]
+        application:application
+            openURL:url
+  sourceApplication:sourceApplication
+         annotation:annotation];
+
+    // Process non-Branch URIs here...
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application
+continueUserActivity:(NSUserActivity *)userActivity
+ restorationHandler:(void (^)(NSArray *))restorationHandler {
+
+    NSLog(@"application:continueUserActivity:restorationHandler: invoked.\n"
+           "ActivityType: %@ userActivity.webpageURL: %@",
+           userActivity.activityType,
+           userActivity.webpageURL.absoluteString);
+
+    // Required. Returns YES if Branch Universal Link, else returns NO.
+    // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
+    [[Branch getInstance] continueUserActivity:userActivity];
+
+    // Process non-Branch userActivities here...
+    return YES;
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application {
+    BNCLogMethodName();
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    BNCLogMethodName();
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application {
+    BNCLogMethodName();
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    BNCLogMethodName();
+}
+
+- (void)applicationWillTerminate:(UIApplication *)application {
+    BNCLogMethodName();
+}
+
+#pragma mark - View Controllers
 
 - (void)initializeViewControllers {
 
@@ -83,28 +140,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
              title:@"Deep Link Opened" message:nil];
      }
 }
-
-- (void)applicationWillResignActive:(UIApplication *)application {
-    BNCLogMethodName();
-}
-
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-    BNCLogMethodName();
-}
-
-- (void)applicationWillEnterForeground:(UIApplication *)application {
-    BNCLogMethodName();
-}
-
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    BNCLogMethodName();
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application {
-    BNCLogMethodName();
-}
-
-#pragma mark - Split view
 
 - (BOOL)splitViewController:(UISplitViewController *)splitViewController
 collapseSecondaryViewController:(UIViewController *)secondaryViewController

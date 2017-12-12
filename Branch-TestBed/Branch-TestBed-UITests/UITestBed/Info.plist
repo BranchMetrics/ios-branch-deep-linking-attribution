@@ -16,6 +16,15 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>branchuitest</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -43,6 +52,10 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>branch_key</key>
-	<string>key_live_jbgnjxvlhSb6PGH23BhO4hiflcp3y8kx</string>
+	<string>key_live_hiCNKmaPecgH3UenloTtopoevBb16rfY</string>
+	<key>branch_universal_link_domains</key>
+	<string>branch-uitestbed.app.link</string>
+	<key>BranchLogLevel</key>
+	<string>BNCLogLevelAll</string>
 </dict>
 </plist>
