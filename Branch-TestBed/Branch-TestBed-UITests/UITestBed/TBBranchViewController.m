@@ -65,7 +65,7 @@ NSString *type = @"some type";
 
     section(@"Sharing");
     row(@"ShareLink from table row", sharelinkTableRow:);
-    row(@"ShareLink no anchor", sharelinkTableRowNilAnchor:);
+    row(@"ShareLink no anchor (one day link)", sharelinkTableRowNilAnchor:);
     row(@"BUO Share from table row", buoShareTableRow:);
 
     section(@"Miscellaneous");
