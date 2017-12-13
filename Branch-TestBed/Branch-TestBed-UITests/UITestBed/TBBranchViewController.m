@@ -7,6 +7,7 @@
 //
 
 #import "TBBranchViewController.h"
+#import "TBAppDelegate.h"
 #import "TBTableData.h"
 #import "TBDetailViewController.h"
 #import "TBWaitingView.h"
@@ -59,6 +60,8 @@ NSString *type = @"some type";
 
     section(@"Events");
     row(@"Send Commerce Event", sendCommerceEvent:);
+    row(@"Send Standard Event", sendStandardEvent:);
+    row(@"Send Custom Event", sendCustomEvent:);
 
     section(@"Sharing");
     row(@"ShareLink from table row", sharelinkTableRow:);
@@ -208,7 +211,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (IBAction) openBranchLinkInApp:(id)sender {
-    NSURL *URL = [NSURL URLWithString:@"https://bnc.lt/ZPOc/Y6aKU0rzcy"]; // <= Your URL goes here.
+    NSURL *URL = [NSURL URLWithString:@"https://branch-uitestbed.app.link/TmAw9WrvPI"]; // <= Your URL goes here.
     [[Branch getInstance] handleDeepLinkWithNewSession:URL];
 }
 
@@ -294,6 +297,20 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         }];
 }
 
+- (IBAction) sendStandardEvent:(id)sender {
+    [[BranchEvent standardEvent:BranchStandardEventCompleteTutorial] logEvent];
+    [self showDataViewControllerWithObject:@{}
+        title:@"Standard Event"
+        message:[NSString stringWithFormat:@"%@ Sent", BranchStandardEventCompleteTutorial]];
+}
+
+- (IBAction) sendCustomEvent:(id)sender {
+    [[BranchEvent customEventWithName:@"Custom_Event"] logEvent];
+    [self showDataViewControllerWithObject:@{}
+        title:@"Custom Event"
+        message:@"Custom_Event Sent"];
+}
+
 - (IBAction)showLocalIPAddress:(id)sender {
     BNCLogDebugSDK(@"All IP Addresses:\n%@\n.", [BNCDeviceInfo getInstance].allIPAddresses);
     NSString *lip = [BNCDeviceInfo getInstance].localIPAddress;
@@ -373,7 +390,8 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     buo.keywords                    = @[@"My_Keyword1", @"My_Keyword2"];
     buo.contentDescription          = @"my_product_description1";
     buo.imageUrl                    = @"https://test_img_url";
-    buo.expirationDate              = [NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0];
+    buo.expirationDate              = [NSDate dateWithTimeIntervalSinceNow:24*60*60];
+        //[NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0];
     buo.publiclyIndex               = NO;
     buo.locallyIndex                = YES;
     buo.creationDate                = [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0];

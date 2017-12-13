@@ -54,7 +54,10 @@
 	<key>branch_key</key>
 	<string>key_live_hiCNKmaPecgH3UenloTtopoevBb16rfY</string>
 	<key>branch_universal_link_domains</key>
-	<string>branch-uitestbed.app.link</string>
+	<array>
+		<string>branch-uitestbed.app.link</string>
+		<string>branch-uitestbed-alternate.app.link</string>
+	</array>
 	<key>BranchLogLevel</key>
 	<string>BNCLogLevelAll</string>
 </dict>

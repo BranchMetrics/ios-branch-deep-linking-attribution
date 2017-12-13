@@ -600,6 +600,8 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 #pragma mark - Dictionary Methods
 
 + (BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(NSDictionary *)dictionary {
+#if 0 // EBS
+
     BranchUniversalObject *universalObject = [[BranchUniversalObject alloc] init];
     
     // Build BranchUniversalObject base properties
@@ -651,9 +653,17 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         universalObject.contentMetadata.contentSchema = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE];
     }
     return universalObject;
+
+#else
+
+    return [BranchUniversalObject objectWithDictionary:dictionary];
+
+#endif
 }
 
 - (NSDictionary*_Nonnull) getParamsForServerRequest {
+#if 0 // EBS
+
     NSMutableDictionary *temp = [[NSMutableDictionary alloc] init];
     [self safeSetValue:self.canonicalIdentifier forKey:BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER onDict:temp];
     [self safeSetValue:self.canonicalUrl forKey:BRANCH_LINK_DATA_KEY_CANONICAL_URL onDict:temp];
@@ -669,6 +679,12 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     temp[BNCPurchaseAmount] = self.contentMetadata.price;
     [temp addEntriesFromDictionary:[self.contentMetadata.customMetadata copy]];
     return [temp copy];
+
+#else
+
+    return self.dictionary;
+
+#endif
 }
 
 - (NSDictionary *)getParamsForServerRequestWithAddedLinkProperties:(BranchLinkProperties *)linkProperties {

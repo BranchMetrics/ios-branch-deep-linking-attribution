@@ -29,8 +29,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Comment / un-comment to toggle debugging
     [branch setDebug];
 
-    // For Apple Search Ads
-    [branch delayInitToCheckForSearchAds];
+    // Optionally check for Apple Search Ads attribution:
+    // [branch delayInitToCheckForSearchAds];
 
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
@@ -127,18 +127,38 @@ continueUserActivity:(NSUserActivity *)userActivity
 }
 
 - (void)handleBranchDeepLinkParameters:(NSDictionary*)params error:(NSError*)error {
+    NSString *title = nil;
+    NSString *message = nil;
+    NSDictionary *dictionary = nil;
+
     if (error) {
         NSLog(@"Error handling deep link! Error: %@.", error);
-        [self.branchViewController showDataViewControllerWithObject:@{
+        title = @"Error";
+        dictionary = @{
             @"Error": [NSString stringWithFormat:@"%@", error]
-            }
-            title:@"Deep Link Error"
-            message:nil];
+        };
     } else {
         NSLog(@"Received deeplink with params: %@", params);
-        [self.branchViewController showDataViewControllerWithObject:params
-             title:@"Deep Link Opened" message:nil];
+        title = @"Link Opened";
+        dictionary = params;
      }
+
+    TBDetailViewController *dataViewController = [[TBDetailViewController alloc] initWithData:dictionary];
+    dataViewController.title = title;
+    dataViewController.message = message;
+    UINavigationController *nav =
+        [[UINavigationController alloc] initWithRootViewController:dataViewController];
+    nav.navigationBar.topItem.title = title;
+    nav.navigationBar.topItem.rightBarButtonItem =
+        [[UIBarButtonItem alloc]
+            initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+            target:self
+            action:@selector(dismissLinkViewAction:)];
+    [self.window.rootViewController presentViewController:nav animated:YES completion:nil];
+}
+
+- (IBAction)dismissLinkViewAction:(id)sender {
+    [self.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (BOOL)splitViewController:(UISplitViewController *)splitViewController
@@ -152,6 +172,7 @@ collapseSecondaryViewController:(UIViewController *)secondaryViewController
             return YES;
         }
     }
+
     return NO;
 }
 

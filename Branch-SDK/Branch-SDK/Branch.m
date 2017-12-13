@@ -1670,7 +1670,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 linkCache:self.linkCache];
 
         if (self.isInitialized) {
-            BNCLogDebug(@"Created a custom URL synchronously.");
+            BNCLogDebug(@"Creating a custom URL synchronously.");
             BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
             shortURL = [req processResponse:serverResponse];
 
