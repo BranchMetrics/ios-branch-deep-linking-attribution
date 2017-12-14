@@ -22,10 +22,6 @@
 
 @implementation BranchDelegateTest
 
-+ (void) tearDown {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
 // Test that Branch notifications work.
 // Test that they 1) work and 2) are sent in the right order.
 - (void) testNotificationsSuccess {
@@ -276,14 +272,14 @@ failedToStartSessionWithURL:(NSURL*)url
         XCTAssertNotNil(error);
         XCTAssertNil(URL);
         XCTAssertNil(object);
-        XCTAssertNil(object);
+        XCTAssertNil(properties);
 
     } else {
 
         XCTAssertNil(error);
         XCTAssertNotNil(URL);
         XCTAssertNotNil(object);
-        XCTAssertNotNil(object);
+        XCTAssertNotNil(properties);
 
         NSDictionary *d = [object getDictionaryWithCompleteLinkProperties:properties];
         NSMutableDictionary *truth = [NSMutableDictionary dictionaryWithDictionary:self.deepLinkParams];
