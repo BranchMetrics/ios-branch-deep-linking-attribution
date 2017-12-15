@@ -550,6 +550,18 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
+- (BOOL) limitFacebookTracking {
+    @synchronized (self) {
+        return [self readBoolFromDefaults:@"_limitFacebookTracking"];
+    }
+}
+
+- (void) setLimitFacebookTracking:(BOOL)limitFacebookTracking {
+    @synchronized (self) {
+        [self writeBoolToDefaults:@"_limitFacebookTracking" value:limitFacebookTracking];
+    }
+}
+
 #pragma mark - Credit Storage
 
 - (NSMutableDictionary *)creditsDictionary {

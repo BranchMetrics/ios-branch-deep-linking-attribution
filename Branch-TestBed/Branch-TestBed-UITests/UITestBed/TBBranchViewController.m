@@ -69,6 +69,7 @@ NSString *type = @"some type";
     row(@"Show Local IP Addess", showLocalIPAddress:);
     row(@"Show Current View Controller", showCurrentViewController:)
     row(@"Show App Dates", showDatesAction:)
+    row(@"Toggle Facebook App Tracking", toggleFacebookAppTrackingAction:)
 
     #undef section
     #undef row
@@ -313,6 +314,18 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
             @"View Controller": [NSString stringWithFormat:@"%@", vc],
         }
         title:@"View Controller"
+        message:nil
+    ];
+}
+
+- (IBAction) toggleFacebookAppTrackingAction:(id)sender {
+    BNCPreferenceHelper *prefs = [BNCPreferenceHelper preferenceHelper];
+    BOOL nextState = !prefs.limitFacebookTracking;
+    prefs.limitFacebookTracking = nextState;
+    [self showDataViewControllerWithObject:@{
+            @"Limit Facebook App Tracking": (nextState) ? @"On" : @"Off"
+        }
+        title:@"Limit Facebook App Tracking"
         message:nil
     ];
 }
