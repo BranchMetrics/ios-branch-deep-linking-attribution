@@ -7,6 +7,7 @@
 //
 
 #import "BNCTestCase.h"
+#import "BNCEncodingUtils.h"
 
 @interface BranchDelegateTest : BNCTestCase <BranchDelegate>
 @property (assign, nonatomic) NSInteger notificationOrder;
@@ -281,8 +282,10 @@ failedToStartSessionWithURL:(NSURL*)url
         XCTAssertNotNil(object);
         XCTAssertNotNil(properties);
 
-        NSDictionary *d = [object getDictionaryWithCompleteLinkProperties:properties];
-        NSDictionary *truth = @{
+        NSMutableDictionary *d =
+            [NSMutableDictionary dictionaryWithDictionary:
+                [object getDictionaryWithCompleteLinkProperties:properties]];
+        NSMutableDictionary *truth = [NSMutableDictionary dictionaryWithDictionary:@{
             @"$amount": @1000,
             @"$canonical_identifier": @"item/12345",
             @"$canonical_url": @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/",
@@ -302,9 +305,17 @@ failedToStartSessionWithURL:(NSURL*)url
             @"~channel": @"Distribution Channel",
             @"~duration": @0,
             @"~feature": @"Sharing Feature",
-        };
+        }];
+
+        NSDictionary *dCustom = [BNCEncodingUtils decodeJsonStringToDictionary:d[@"$custom_fields"]];
+        d[@"$custom_fields"] = nil;
+        
+        NSDictionary *tCustom = [BNCEncodingUtils decodeJsonStringToDictionary:truth[@"$custom_fields"]];
+        truth[@"$custom_fields"] = nil;
+
         XCTAssertTrue(d.count == truth.count);
         XCTAssertTrue(!d || [d isEqualToDictionary:truth]);
+        XCTAssertTrue(!dCustom || [dCustom isEqualToDictionary:tCustom]);
     }
 
     [self.branchDidOpenURLNotificationExpectation fulfill];
