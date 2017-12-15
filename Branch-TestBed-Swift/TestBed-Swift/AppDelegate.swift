@@ -183,6 +183,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
         if IntegratedSDKsData.activeTuneEnabled()! {
             Tune.measureSession()
         }
+
+        // AppsFlyer
+        AppsFlyerTracker.shared().trackAppLaunch()
+        // Your code here...
     }
     
     func applicationWillResignActive(_ application: UIApplication) {
@@ -296,6 +300,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
         
         AppsFlyerTracker.shared().appsFlyerDevKey = key
         AppsFlyerTracker.shared().appleAppID = "1160975066"
+        AppsFlyerTracker.shared().delegate = self
+        AppsFlyerTracker.shared().isDebug = true
     }
     
     func activateGoogleAnalytics() {
