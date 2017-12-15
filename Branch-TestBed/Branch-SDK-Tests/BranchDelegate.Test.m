@@ -282,9 +282,27 @@ failedToStartSessionWithURL:(NSURL*)url
         XCTAssertNotNil(properties);
 
         NSDictionary *d = [object getDictionaryWithCompleteLinkProperties:properties];
-        NSMutableDictionary *truth = [NSMutableDictionary dictionaryWithDictionary:self.deepLinkParams];
-        truth[@"~duration"] = @(0);         // ~duration not added because zero value?
-        truth[@"$locally_indexable"] = @(0);
+        NSDictionary *truth = @{
+            @"$amount": @1000,
+            @"$canonical_identifier": @"item/12345",
+            @"$canonical_url": @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/",
+            @"$content_type": @"some type",
+            @"$currency": @"$",
+            @"$custom_fields": @"{\"+click_timestamp\":1506983962,\"+clicked_branch_link\":true,\"$identity_id\":\"423237095633725879\",\"$one_time_use\":false,\"$amount\":1000,\"~feature\":\"Sharing Feature\",\"$content_type\":\"some type\",\"~creation_source\":3,\"~channel\":\"Distribution Channel\",\"~id\":423243086454504450,\"deeplink_text\":\"This text was embedded as data in a Branch link with the following characteristics:\\n\\ncanonicalUrl: https://dev.branch.io/getting-started/deep-link-routing/guide/ios/\\n  title: Content Title\\n  contentDescription: My Content Description\\n  imageUrl: https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png\\n\",\"~referring_link\":\"https://bnctestbed.app.link/izPBY2xCqF\",\"+match_guaranteed\":true,\"$desktop_url\":\"http://branch.io\",\"+is_first_session\":false,\"$ios_url\":\"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/\",\"~campaign\":\"some campaign\"}",
+            @"$desktop_url": @"http://branch.io",
+            @"$exp_date": @0,
+            @"$identity_id": @"423237095633725879",
+            @"$ios_url": @"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/",
+            @"$og_description": @"My Content Description",
+            @"$og_image_url": @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png",
+            @"$og_title": @"Content Title",
+            @"$one_time_use": @0,
+            @"$publicly_indexable": @1,
+            @"~campaign": @"some campaign",
+            @"~channel": @"Distribution Channel",
+            @"~duration": @0,
+            @"~feature": @"Sharing Feature",
+        };
         XCTAssertTrue(d.count == truth.count);
         XCTAssertTrue(!d || [d isEqualToDictionary:truth]);
     }

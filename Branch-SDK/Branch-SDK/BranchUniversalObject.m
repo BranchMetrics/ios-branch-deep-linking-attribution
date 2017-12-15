@@ -708,6 +708,9 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 
+    NSDictionary *contentDictionary = [self.contentMetadata dictionary];
+    if (contentDictionary.count) [dictionary addEntriesFromDictionary:contentDictionary];
+
     #define BNCFieldDefinesDictionaryFromSelf
     #include "BNCFieldDefines.h"
 
@@ -723,9 +726,6 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     addBoolean(publiclyIndex,               $publicly_indexable);
 
     #include "BNCFieldDefines.h"
-
-    NSDictionary *contentDictionary = [self.contentMetadata dictionary];
-    if (contentDictionary.count) [dictionary addEntriesFromDictionary:contentDictionary];
 
     return dictionary;
 }
