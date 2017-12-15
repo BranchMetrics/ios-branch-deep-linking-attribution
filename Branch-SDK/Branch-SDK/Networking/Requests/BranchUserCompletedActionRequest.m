@@ -53,7 +53,9 @@
     params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
     params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
-    
+    if (preferenceHelper.limitFacebookTracking)
+        params[@"limit_facebook_tracking"] = CFBridgingRelease(kCFBooleanTrue);
+
     if (self.state) {
         params[BRANCH_REQUEST_KEY_STATE] = self.state;
     }
