@@ -214,6 +214,17 @@
                            storedAppVersion:(NSString*)storedAppVersion
                           currentAppVersion:(NSString*)currentAppVersion {
 
+    if ([UIDevice currentDevice].systemVersion.floatValue > 10.3 &&
+        storedAppVersion.length <= 0) {
+        // iOS version greater than 10.2 and 10.3 since there were update problems there.
+        //
+        // Doesn't count re-installs or some enterprise distribution schemes.
+        // This solves the case where a user installs the app, doesn't run it,
+        // updates the app, then runs the app. These were being counted as updates
+        // rather than installs.
+        return BNCUpdateStateInstall;
+    }
+
     if (storedAppVersion) {
         if (currentAppVersion && [storedAppVersion isEqualToString:currentAppVersion])
             return BNCUpdateStateNonUpdate;
