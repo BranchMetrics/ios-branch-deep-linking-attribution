@@ -305,7 +305,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     [[BranchEvent customEventWithName:action contentItem:self] logEvent];
 
     // Maybe list on spotlight --
-    NSDictionary *linkParams = [self getParamsForServerRequest];
+    NSDictionary *linkParams = self.dictionary;
     if (self.locallyIndex && self.canonicalIdentifier && linkParams) {
 
         NSMutableDictionary *actionPayload = [[NSMutableDictionary alloc] init];
@@ -377,8 +377,20 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
                               forceLinkCreation:YES];
 }
 
-- (NSString *)getLongUrlWithChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alia{
-    return [[Branch getInstance] getLongURLWithParams:[self getParamsForServerRequest] andChannel:channel andTags:tags andFeature:feature andStage:stage andAlias:alia];
+- (NSString *)getLongUrlWithChannel:(NSString *)channel
+                            andTags:(NSArray *)tags
+                         andFeature:(NSString *)feature
+                           andStage:(NSString *)stage
+                           andAlias:(NSString *)alias {
+    NSString *urlString =
+        [[Branch getInstance]
+            getLongURLWithParams:self.dictionary
+            andChannel:channel
+            andTags:tags
+            andFeature:feature
+            andStage:stage
+            andAlias:alias];
+    return urlString;
 }
 
 #pragma mark - Share Sheets
@@ -596,85 +608,13 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     }
 }
 
-#pragma mark - Private methods
 #pragma mark - Dictionary Methods
 
-+ (BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(NSDictionary *)dictionary {
-    BranchUniversalObject *universalObject = [[BranchUniversalObject alloc] init];
-    
-    // Build BranchUniversalObject base properties
-    universalObject.contentMetadata.customMetadata = [dictionary copy];
-    if (dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER]) {
-        universalObject.canonicalIdentifier = dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER];
-    }
-    if (dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_URL]) {
-        universalObject.canonicalUrl = dictionary[BRANCH_LINK_DATA_KEY_CANONICAL_URL];
-    }
-    if (dictionary[BRANCH_LINK_DATA_KEY_OG_TITLE]) {
-        universalObject.title = dictionary[BRANCH_LINK_DATA_KEY_OG_TITLE];
-    }
-    if (dictionary[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION]) {
-        universalObject.contentDescription = dictionary[BRANCH_LINK_DATA_KEY_OG_DESCRIPTION];
-    }
-    if (dictionary[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL]) {
-        universalObject.imageUrl = dictionary[BRANCH_LINK_DATA_KEY_OG_IMAGE_URL];
-    }
-    universalObject.publiclyIndex = [dictionary[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE] boolValue];
-    universalObject.locallyIndex  = [dictionary[BRANCH_LINK_DATA_KEY_LOCALLY_INDEXABLE] boolValue];
-
-    NSNumber *number = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE];
-    if ([number isKindOfClass:[NSNumber class]]) {
-        // Number is millisecondsSince1970
-        universalObject.expirationDate = [NSDate dateWithTimeIntervalSince1970:number.integerValue/1000];
-    }
-    if (dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS]) {
-        universalObject.keywords = dictionary[BRANCH_LINK_DATA_KEY_KEYWORDS];
-    }
-    NSString *s = dictionary[BNCPurchaseAmount];
-    if (s) {
-        if ([s isKindOfClass:NSString.class])
-            universalObject.contentMetadata.price = [NSDecimalNumber decimalNumberWithString:s];
-        else
-        if ([s isKindOfClass:NSDecimalNumber.class])
-            universalObject.contentMetadata.price = (NSDecimalNumber*) s;
-        else
-        if ([s isKindOfClass:NSNumber.class]) {
-            s = [((NSNumber*)s) stringValue];
-            universalObject.contentMetadata.price = [NSDecimalNumber decimalNumberWithString:s];
-        }
-    }
-    if (dictionary[BNCPurchaseCurrency]) {
-        universalObject.contentMetadata.currency = dictionary[BNCPurchaseCurrency];
-    }
-    
-    if (dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE]) {
-        universalObject.contentMetadata.contentSchema = dictionary[BRANCH_LINK_DATA_KEY_CONTENT_TYPE];
-    }
-    return universalObject;
-}
-
-- (NSDictionary*_Nonnull) getParamsForServerRequest {
-    NSMutableDictionary *temp = [[NSMutableDictionary alloc] init];
-    [self safeSetValue:self.canonicalIdentifier forKey:BRANCH_LINK_DATA_KEY_CANONICAL_IDENTIFIER onDict:temp];
-    [self safeSetValue:self.canonicalUrl forKey:BRANCH_LINK_DATA_KEY_CANONICAL_URL onDict:temp];
-    [self safeSetValue:self.title forKey:BRANCH_LINK_DATA_KEY_OG_TITLE onDict:temp];
-    [self safeSetValue:self.contentDescription forKey:BRANCH_LINK_DATA_KEY_OG_DESCRIPTION onDict:temp];
-    [self safeSetValue:self.imageUrl forKey:BRANCH_LINK_DATA_KEY_OG_IMAGE_URL onDict:temp];
-    temp[BRANCH_LINK_DATA_KEY_PUBLICLY_INDEXABLE]  = [NSNumber numberWithBool:self.publiclyIndex];
-    temp[BRANCH_LINK_DATA_KEY_LOCALLY_INDEXABLE]   = [NSNumber numberWithBool:self.locallyIndex];
-    [self safeSetValue:self.keywords forKey:BRANCH_LINK_DATA_KEY_KEYWORDS onDict:temp];
-    [self safeSetValue:@(1000 * [self.expirationDate timeIntervalSince1970]) forKey:BRANCH_LINK_DATA_KEY_CONTENT_EXPIRATION_DATE onDict:temp];
-    [self safeSetValue:self.contentMetadata.contentSchema forKey:BRANCH_LINK_DATA_KEY_CONTENT_TYPE onDict:temp];
-    [self safeSetValue:self.contentMetadata.currency forKey:BNCPurchaseCurrency onDict:temp];
-    temp[BNCPurchaseAmount] = self.contentMetadata.price;
-    [temp addEntriesFromDictionary:[self.contentMetadata.customMetadata copy]];
-    return [temp copy];
-}
-
 - (NSDictionary *)getParamsForServerRequestWithAddedLinkProperties:(BranchLinkProperties *)linkProperties {
-    NSMutableDictionary *temp = [[self getParamsForServerRequest] mutableCopy];
-    [temp addEntriesFromDictionary:[linkProperties.controlParams copy]]; // TODO: Add warnings if controlParams contains non-control params
-    return [temp copy];
+    // TODO: Add warnings if controlParams contains non-control params
+    NSMutableDictionary *temp = self.dictionary;
+    [temp addEntriesFromDictionary:[linkProperties.controlParams copy]];
+    return temp;
 }
 
 - (NSDictionary *)getDictionaryWithCompleteLinkProperties:(BranchLinkProperties *)linkProperties {
@@ -717,13 +657,59 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 
     BranchContentMetadata *data = [BranchContentMetadata contentMetadataWithDictionary:dictionary];
     object.contentMetadata = data;
-    
+
+    NSSet *fieldsAdded = [NSSet setWithArray:@[
+        @"$canonical_identifier",
+        @"$canonical_url",
+        @"$creation_timestamp",
+        @"$exp_date",
+        @"$keywords",
+        @"$locally_indexable",
+        @"$og_description",
+        @"$og_image_url",
+        @"$og_title",
+        @"$publicly_indexable",
+        @"$content_schema",
+        @"$quantity",
+        @"$price",
+        @"$currency",
+        @"$sku",
+        @"$product_name",
+        @"$product_brand",
+        @"$product_category",
+        @"$product_variant",
+        @"$condition",
+        @"$rating_average",
+        @"$rating_count",
+        @"$rating_max",
+        @"$address_street",
+        @"$address_city",
+        @"$address_region",
+        @"$address_country",
+        @"$address_postal_code",
+        @"$latitude",
+        @"$longitude",
+        @"$image_captions",
+        @"$custom_fields",
+    ]];
+
+    // Add any extra fields to the content object.contentMetadata.customMetadata
+
+    for (NSString* key in dictionary.keyEnumerator) {
+        if (![fieldsAdded containsObject:key]) {
+            object.contentMetadata.customMetadata[key] = dictionary[key];
+        }
+    }
+
     return object;
 }
 
 - (NSDictionary*_Nonnull) dictionary {
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+
+    NSDictionary *contentDictionary = [self.contentMetadata dictionary];
+    if (contentDictionary.count) [dictionary addEntriesFromDictionary:contentDictionary];
 
     #define BNCFieldDefinesDictionaryFromSelf
     #include "BNCFieldDefines.h"
@@ -740,9 +726,6 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     addBoolean(publiclyIndex,               $publicly_indexable);
 
     #include "BNCFieldDefines.h"
-
-    NSDictionary *contentDictionary = [self.contentMetadata dictionary];
-    if (contentDictionary.count) [dictionary addEntriesFromDictionary:contentDictionary];
 
     return dictionary;
 }

@@ -816,37 +816,6 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
     BNCLogCloseLogFile();
     NSLog(@"%@: Synchronized time: %1.5f.",
         BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
-
-/*  //  Non-sychronized --
-    //  EBS: Non-sychronized is no longer a thing. It was slower and less safe.
-    
-    BNCLogSetOutputToURLByteWrap(URL, kLogSize);
-    BNCLogSetSynchronizeMessages(NO);
-
-    startTime = [NSDate date];
-    waitGroup = dispatch_group_create();
-
-    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
-        for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 1x%ld", i);
-    });
-
-    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
-        for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 2x%ld", i);
-    });
-
-    dispatch_group_async(waitGroup,dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^ {
-        for (long i = 0; i < 2000; i++)
-            BNCLog(@"Message 3x%ld", i);
-    });
-
-    dispatch_group_wait(waitGroup, DISPATCH_TIME_FOREVER);
-    BNCLogCloseLogFile();
-    BNCLogFlushMessages();
-    NSLog(@"%@: Non-synchronized time: %1.5f",
-        BNCSStringForCurrentMethod(), - startTime.timeIntervalSinceNow);
-*/
 }
 
 - (void) testByteWrapTruncate {
