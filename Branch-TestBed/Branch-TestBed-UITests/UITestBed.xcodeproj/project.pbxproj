@@ -71,6 +71,7 @@
 		4D5A167D1FBE754F009BECE4 /* UIViewController+Branch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Branch.h"; sourceTree = "<group>"; };
 		4D5A167E1FBE754F009BECE4 /* UIViewController+Branch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Branch.m"; sourceTree = "<group>"; };
 		4D5ACEEC1FB382040099A56F /* BranchSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BranchSDK.xcodeproj; path = "../../carthage-files/BranchSDK.xcodeproj"; sourceTree = "<group>"; };
+		4D65DF2C1FDF6C25000E8EFC /* UITestBed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UITestBed.entitlements; sourceTree = "<group>"; };
 		4D9AF2D71F7589CC0065EF11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/Launch Screen.storyboard"; sourceTree = "<group>"; };
 		4DFF2B691EEF3B150043F840 /* UITestBed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UITestBed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DFF2B6D1EEF3B150043F840 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -159,6 +160,7 @@
 		4DFF2B6C1EEF3B150043F840 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4D65DF2C1FDF6C25000E8EFC /* UITestBed.entitlements */,
 				4D9AF2D61F7589CC0065EF11 /* Launch Screen.storyboard */,
 				4D2AF3441EF89FC800220F4A /* Main.storyboard */,
 				4DFF2B781EEF3B150043F840 /* Assets.xcassets */,
@@ -204,6 +206,11 @@
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = R63EM248DP;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.SafariKeychain = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -412,10 +419,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = UITestBed/UITestBed.entitlements;
 				DEVELOPMENT_TEAM = R63EM248DP;
 				INFOPLIST_FILE = "$(SRCROOT)/UITestBed/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.Testbed-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-UITestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -424,10 +432,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = UITestBed/UITestBed.entitlements;
 				DEVELOPMENT_TEAM = R63EM248DP;
 				INFOPLIST_FILE = "$(SRCROOT)/UITestBed/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.Testbed-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-UITestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

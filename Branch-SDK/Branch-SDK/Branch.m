@@ -1174,7 +1174,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (BranchUniversalObject *)getFirstReferringBranchUniversalObject {
     NSDictionary *params = [self getFirstReferringParams];
     if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {
-        return [BranchUniversalObject getBranchUniversalObjectFromDictionary:params];
+        return [BranchUniversalObject objectWithDictionary:params];
     }
     return nil;
 }
@@ -1221,7 +1221,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (BranchUniversalObject *)getLatestReferringBranchUniversalObject {
     NSDictionary *params = [self getLatestReferringParams];
     if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {
-        return [BranchUniversalObject getBranchUniversalObjectFromDictionary:params];
+        return [BranchUniversalObject objectWithDictionary:params];
     }
     return nil;
 }
@@ -1670,7 +1670,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 linkCache:self.linkCache];
 
         if (self.isInitialized) {
-            BNCLogDebug(@"Created a custom URL synchronously.");
+            BNCLogDebug(@"Creating a custom URL synchronously.");
             BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
             shortURL = [req processResponse:serverResponse];
 
@@ -2205,10 +2205,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     NSNumber *isBranchLink = linkParameters[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK];
     if ([isBranchLink boolValue]) {
-        universalObject =
-            [BranchUniversalObject getBranchUniversalObjectFromDictionary:linkParameters];
-        linkProperties =
-            [BranchLinkProperties getBranchLinkPropertiesFromDictionary:linkParameters];
+        universalObject = [BranchUniversalObject objectWithDictionary:linkParameters];
+        linkProperties = [BranchLinkProperties getBranchLinkPropertiesFromDictionary:linkParameters];
     }
 
     if (error) {

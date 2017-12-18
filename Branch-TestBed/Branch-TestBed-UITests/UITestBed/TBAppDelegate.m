@@ -29,13 +29,13 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Comment / un-comment to toggle debugging
     [branch setDebug];
 
-    // For Apple Search Ads
-    [branch delayInitToCheckForSearchAds];
+    // Optionally check for Apple Search Ads attribution:
+    // [branch delayInitToCheckForSearchAds];
 
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
 
-    [branch setWhiteListedSchemes:@[@"branchtest"]];
+    [branch setWhiteListedSchemes:@[@"branchuitest"]];
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
             [self handleBranchDeepLinkParameters:params error:error];
@@ -43,6 +43,63 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     return YES;
 }
+
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+
+    NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
+
+    // Required. Returns YES if Branch link, else returns NO
+    [[Branch getInstance]
+        application:application
+            openURL:url
+  sourceApplication:sourceApplication
+         annotation:annotation];
+
+    // Process non-Branch URIs here...
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application
+continueUserActivity:(NSUserActivity *)userActivity
+ restorationHandler:(void (^)(NSArray *))restorationHandler {
+
+    NSLog(@"application:continueUserActivity:restorationHandler: invoked.\n"
+           "ActivityType: %@ userActivity.webpageURL: %@",
+           userActivity.activityType,
+           userActivity.webpageURL.absoluteString);
+
+    // Required. Returns YES if Branch Universal Link, else returns NO.
+    // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
+    [[Branch getInstance] continueUserActivity:userActivity];
+
+    // Process non-Branch userActivities here...
+    return YES;
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application {
+    BNCLogMethodName();
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    BNCLogMethodName();
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application {
+    BNCLogMethodName();
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    BNCLogMethodName();
+}
+
+- (void)applicationWillTerminate:(UIApplication *)application {
+    BNCLogMethodName();
+}
+
+#pragma mark - View Controllers
 
 - (void)initializeViewControllers {
 
@@ -70,41 +127,39 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 }
 
 - (void)handleBranchDeepLinkParameters:(NSDictionary*)params error:(NSError*)error {
+    NSString *title = nil;
+    NSString *message = nil;
+    NSDictionary *dictionary = nil;
+
     if (error) {
         NSLog(@"Error handling deep link! Error: %@.", error);
-        [self.branchViewController showDataViewControllerWithObject:@{
+        title = @"Error";
+        dictionary = @{
             @"Error": [NSString stringWithFormat:@"%@", error]
-            }
-            title:@"Deep Link Error"
-            message:nil];
+        };
     } else {
         NSLog(@"Received deeplink with params: %@", params);
-        [self.branchViewController showDataViewControllerWithObject:params
-             title:@"Deep Link Opened" message:nil];
+        title = @"Link Opened";
+        dictionary = params;
      }
+
+    TBDetailViewController *dataViewController = [[TBDetailViewController alloc] initWithData:dictionary];
+    dataViewController.title = title;
+    dataViewController.message = message;
+    UINavigationController *nav =
+        [[UINavigationController alloc] initWithRootViewController:dataViewController];
+    nav.navigationBar.topItem.title = title;
+    nav.navigationBar.topItem.rightBarButtonItem =
+        [[UIBarButtonItem alloc]
+            initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+            target:self
+            action:@selector(dismissLinkViewAction:)];
+    [self.window.rootViewController presentViewController:nav animated:YES completion:nil];
 }
 
-- (void)applicationWillResignActive:(UIApplication *)application {
-    BNCLogMethodName();
+- (IBAction)dismissLinkViewAction:(id)sender {
+    [self.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
 }
-
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-    BNCLogMethodName();
-}
-
-- (void)applicationWillEnterForeground:(UIApplication *)application {
-    BNCLogMethodName();
-}
-
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    BNCLogMethodName();
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application {
-    BNCLogMethodName();
-}
-
-#pragma mark - Split view
 
 - (BOOL)splitViewController:(UISplitViewController *)splitViewController
 collapseSecondaryViewController:(UIViewController *)secondaryViewController
@@ -117,6 +172,7 @@ collapseSecondaryViewController:(UIViewController *)secondaryViewController
             return YES;
         }
     }
+
     return NO;
 }
 
