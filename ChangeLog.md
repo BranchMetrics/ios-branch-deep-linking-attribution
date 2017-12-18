@@ -1,5 +1,12 @@
 Branch iOS SDK Change Log
 
+- v0.21.15
+  * _*Master Release*_ - December 18, 2017
+  * Fixed the BranchUniversalObject for v2-events & Updated the UITestBed. (#768)
+  * Fix update / install tracking when app installed but not run for a while. (#763)
+  * Added some code for Will's AppsFlyer integration. (#767)
+  * Added `limit_facebook_tracking` to allow developers to opt-out of Facebook app tracking (AIS-417).
+
 - v0.21.14
   * _*Master Release*_ - December 8, 2017
   * Added a unit test for correct app dates for update / install checking.
