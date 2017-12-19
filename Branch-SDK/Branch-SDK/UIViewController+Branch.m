@@ -46,7 +46,7 @@
     }
 
     if ([self isKindOfClass:[UISplitViewController class]]) {
-        return [((UISplitViewController *)self).viewControllers.firstObject bnc_currentViewController];
+        return [((UISplitViewController *)self).viewControllers.lastObject bnc_currentViewController];
     }
 
     if ([self isKindOfClass:[UIPageViewController class]]) {
