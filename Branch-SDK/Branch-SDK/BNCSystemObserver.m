@@ -214,23 +214,15 @@
                            storedAppVersion:(NSString*)storedAppVersion
                           currentAppVersion:(NSString*)currentAppVersion {
 
-    if ([UIDevice currentDevice].systemVersion.floatValue > 10.3 &&
-        storedAppVersion.length <= 0) {
-        // iOS version greater than 10.2 and 10.3 since there were update problems there.
-        //
-        // Doesn't count re-installs or some enterprise distribution schemes.
-        // This solves the case where a user installs the app, doesn't run it,
-        // updates the app, then runs the app. These were being counted as updates
-        // rather than installs.
-        return BNCUpdateStateInstall;
-    }
-
     if (storedAppVersion) {
         if (currentAppVersion && [storedAppVersion isEqualToString:currentAppVersion])
             return BNCUpdateStateNonUpdate;
         else
             return BNCUpdateStateUpdate;
     }
+
+    // If there isn't a stored app version it might be because Branch is just starting to be used in
+    // this project.  So use the app dates to figure out if this is a new install or an update.
 
     if (buildDate && [buildDate timeIntervalSince1970] <= 0.0) {
         // Invalid buildDate.
@@ -241,7 +233,10 @@
         appInstallDate = nil;
     }
 
-    if (!(buildDate && appInstallDate)) {
+    // If app dates can't be found it may be because iOS isn't reporting them.
+    if (buildDate == nil || appInstallDate == nil) {
+        BNCLogError(@"Please report this to Branch: Build date is %@ and install date is %@. iOS version %@.",
+            buildDate, appInstallDate, [UIDevice currentDevice].systemVersion);
         return BNCUpdateStateInstall;
     }
 
@@ -249,7 +244,7 @@
         return BNCUpdateStateUpdate;
     }
 
-    if ([appInstallDate timeIntervalSinceNow] > (-60.0 * 60.0 * 24.0)) {
+    if ([appInstallDate timeIntervalSinceNow] > (-7.0 * 24.0 * 60.0 * 60.0)) {
         return BNCUpdateStateInstall;
     }
 
