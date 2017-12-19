@@ -7,11 +7,13 @@
 //
 
 #import "TBBranchViewController.h"
+#import "TBAppDelegate.h"
 #import "TBTableData.h"
 #import "TBDetailViewController.h"
 #import "TBWaitingView.h"
 @import Branch;
 #import "BNCDeviceInfo.h"
+#import "BNCSystemObserver.h"
 #import "UIViewController+Branch.h"
 
 NSString *cononicalIdentifier = @"item/12345";
@@ -58,15 +60,19 @@ NSString *type = @"some type";
 
     section(@"Events");
     row(@"Send Commerce Event", sendCommerceEvent:);
+    row(@"Send Standard Event", sendStandardEvent:);
+    row(@"Send Custom Event", sendCustomEvent:);
 
     section(@"Sharing");
     row(@"ShareLink from table row", sharelinkTableRow:);
-    row(@"ShareLink no anchor", sharelinkTableRowNilAnchor:);
+    row(@"ShareLink no anchor (one day link)", sharelinkTableRowNilAnchor:);
     row(@"BUO Share from table row", buoShareTableRow:);
 
     section(@"Miscellaneous");
     row(@"Show Local IP Addess", showLocalIPAddress:);
     row(@"Show Current View Controller", showCurrentViewController:)
+    row(@"Show App Dates", showDatesAction:)
+    row(@"Toggle Facebook App Tracking", toggleFacebookAppTrackingAction:)
 
     #undef section
     #undef row
@@ -206,7 +212,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (IBAction) openBranchLinkInApp:(id)sender {
-    NSURL *URL = [NSURL URLWithString:@"https://bnc.lt/ZPOc/Y6aKU0rzcy"]; // <= Your URL goes here.
+    NSURL *URL = [NSURL URLWithString:@"https://branch-uitestbed.app.link/TmAw9WrvPI"]; // <= Your URL goes here.
     [[Branch getInstance] handleDeepLinkWithNewSession:URL];
 }
 
@@ -292,6 +298,20 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         }];
 }
 
+- (IBAction) sendStandardEvent:(id)sender {
+    [[BranchEvent standardEvent:BranchStandardEventCompleteTutorial] logEvent];
+    [self showDataViewControllerWithObject:@{}
+        title:@"Standard Event"
+        message:[NSString stringWithFormat:@"%@ Sent", BranchStandardEventCompleteTutorial]];
+}
+
+- (IBAction) sendCustomEvent:(id)sender {
+    [[BranchEvent customEventWithName:@"Custom_Event"] logEvent];
+    [self showDataViewControllerWithObject:@{}
+        title:@"Custom Event"
+        message:@"Custom_Event Sent"];
+}
+
 - (IBAction)showLocalIPAddress:(id)sender {
     BNCLogDebugSDK(@"All IP Addresses:\n%@\n.", [BNCDeviceInfo getInstance].allIPAddresses);
     NSString *lip = [BNCDeviceInfo getInstance].localIPAddress;
@@ -315,6 +335,30 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     ];
 }
 
+- (IBAction) toggleFacebookAppTrackingAction:(id)sender {
+    BNCPreferenceHelper *prefs = [BNCPreferenceHelper preferenceHelper];
+    BOOL nextState = !prefs.limitFacebookTracking;
+    prefs.limitFacebookTracking = nextState;
+    [self showDataViewControllerWithObject:@{
+            @"Limit Facebook App Tracking": (nextState) ? @"On" : @"Off"
+        }
+        title:@"Limit Facebook App Tracking"
+        message:nil
+    ];
+}
+
+- (IBAction) showDatesAction:(id)sender {
+    NSDate *buildDate = [BNCSystemObserver appBuildDate];
+    NSDate *installDate = [BNCSystemObserver appInstallDate];
+    [self showDataViewControllerWithObject:@{
+            @"Build Date": [NSString stringWithFormat:@"%@", buildDate],
+            @"Install Date": [NSString stringWithFormat:@"%@", installDate],
+        }
+        title:@"View Controller"
+        message:nil
+    ];
+}
+
 #pragma mark - Sharing
 
 - (IBAction) sharelinkTableRow:(id)sender {
@@ -328,9 +372,46 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (IBAction) sharelinkTableRowNilAnchor:(id)sender {
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+
+    buo.contentMetadata.contentSchema    = BranchContentSchemaCommerceProduct;
+    buo.contentMetadata.quantity         = 2;
+    buo.contentMetadata.price            = [NSDecimalNumber decimalNumberWithString:@"23.20"];
+    buo.contentMetadata.currency         = BNCCurrencyUSD;
+    buo.contentMetadata.sku              = @"1994320302";
+    buo.contentMetadata.productName      = @"my_product_name1";
+    buo.contentMetadata.productBrand     = @"my_prod_Brand1";
+    buo.contentMetadata.productCategory  = BNCProductCategoryBabyToddler;
+    buo.contentMetadata.productVariant   = @"3T";
+    buo.contentMetadata.condition        = BranchConditionFair;
+
+    buo.contentMetadata.ratingAverage    = 5;
+    buo.contentMetadata.ratingCount      = 5;
+    buo.contentMetadata.ratingMax        = 7;
+    buo.contentMetadata.addressStreet    = @"Street_name1";
+    buo.contentMetadata.addressCity      = @"city1";
+    buo.contentMetadata.addressRegion    = @"Region1";
+    buo.contentMetadata.addressCountry   = @"Country1";
+    buo.contentMetadata.addressPostalCode= @"postal_code";
+    buo.contentMetadata.latitude         = 12.07;
+    buo.contentMetadata.longitude        = -97.5;
+    buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
+    buo.contentMetadata.customMetadata   = (id) @{@"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"};
+    buo.title                       = @"My Content Title";
+    buo.canonicalIdentifier         = @"item/12345";
+    buo.canonicalUrl                = @"https://branch.io/deepviews";
+    buo.keywords                    = @[@"My_Keyword1", @"My_Keyword2"];
+    buo.contentDescription          = @"my_product_description1";
+    buo.imageUrl                    = @"https://test_img_url";
+    buo.expirationDate              = [NSDate dateWithTimeIntervalSinceNow:24*60*60];
+        //[NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0];
+    buo.publiclyIndex               = NO;
+    buo.locallyIndex                = YES;
+    buo.creationDate                = [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0];
+
     BranchShareLink *shareLink =
         [[BranchShareLink alloc]
-            initWithUniversalObject:self.universalObject
+            initWithUniversalObject:buo
             linkProperties:self.linkProperties];
     [shareLink presentActivityViewControllerFromViewController:self anchor:nil];
 }

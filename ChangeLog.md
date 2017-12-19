@@ -1,29 +1,61 @@
 Branch iOS SDK Change Log
 
-- v0.22.5
+- v0.21.15
+  * _*Master Release*_ - December 18, 2017
+  * Fixed the BranchUniversalObject for v2-events & Updated the UITestBed. (#768)
+  * Fix update / install tracking when app installed but not run for a while. (#763)
+  * Added some code for Will's AppsFlyer integration. (#767)
+  * Added `limit_facebook_tracking` to allow developers to opt-out of Facebook app tracking (AIS-417).
+
+- v0.21.14
+  * _*Master Release*_ - December 8, 2017
+  * Added a unit test for correct app dates for update / install checking.
+  * Fixed an incorrect deprecation message for BranchUniversalObject indexing.
+  * Updated the documentation for BranchUniversalObjects and BranchEvents.
+  * Updated link sharing for iOS 11.2 notepad.
+
+- v0.21.13
+  * Fixed the Carthage library build.
+
+- v0.21.12
+  * Fixed a crash bug in TestBed-Swift due to a renamed storyboard (AIS-430).
+
+- v0.21.11
+  * Fix CoreSpotlight defines for old iOS version support.
+
+- v0.21.10
+  * _*Master Release*_ - November 20, 2017
+  * Fixed a public header for the static library.
+
+- v0.21.9
+  * _*Master Release*_ - November 20, 2017
+  * Fixed some merge conflicts.
+
+- v0.21.8
+  * _*Master Release*_ - November 20, 2017
+
+- v0.21.5
   * NOTE: There is a known crash bug when sharing a Branch link via the Slack activity.
     - Slack is aware of this crash and is working to fix it. It is an intermittent crash in iOS 11.
     - The crash is in `-[NSExtension _completeRequestReturningItems:forExtensionContextWithUUID:completion:]_block_invoke ()`
   * Updated comments.
-  * Fixed a race condition.
-  * Updated Testbed example to be more compatible with the version.
+  * Fixed a race condition in the preference helper.
+  * Added a deep link key to the Testbed example to be more compatible with the Android version.
 
-- v0.22.4
-  * Added deep link key for Android.
-
-- v0.22.3
+- v0.21.3
   * Fixed an occasional crash when sharing a Branch link to Slack. The crash only occurred on some versions of iOS.
   * Updated TestBed-Swift to Swift 4 and added a bunch of third party integrations.
   * Added BranchWillStartSessionNotification / BranchDidStartSessionNotification Branch session notifications.
   * Added a Branch delegate with optional delegate methods.
   * Better Spotlight: Added a better interface to listing your application's content on Spotlight.
+    [See the updated Spotlight documentation.](https://github.com/BranchMetrics/ios-branch-deep-linking#list-content-on-spotlight)
 
-- v0.22.2
+- v0.21.2
   * Update README.md to use proper Swift syntax.
   * Better debugging messages for requests.
   * Added an event picker for v2-event testing in the TestBed.
 
-- v0.22.1
+- v0.21.1
   * Fixed some annoying compile warnings.
   * Made module support optional.
 

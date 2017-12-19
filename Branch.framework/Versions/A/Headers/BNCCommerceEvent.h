@@ -1,269 +1,269 @@
 //
 //  BNCCommerceEvent.h
-//  BranchSDK-iOS
+//  Branch-SDK
 //
 //  Created by Edward Smith on 12/14/16.
 //  Copyright (c) 2016 Branch Metrics. All rights reserved.
 //
 
-
-@import Foundation;
 #import "BNCServerRequest.h"
-
+#import "BNCAvailability.h"
 
 #pragma mark BNCProductCategory
 
-typedef NSString*const BNCProductCategory;
+typedef NSString*const BNCProductCategory NS_STRING_ENUM;
 
-extern BNCProductCategory BNCProductCategoryAnimalSupplies;
-extern BNCProductCategory BNCProductCategoryApparel;
-extern BNCProductCategory BNCProductCategoryArtsEntertainment;
-extern BNCProductCategory BNCProductCategoryBabyToddler;
-extern BNCProductCategory BNCProductCategoryBusinessIndustrial;
-extern BNCProductCategory BNCProductCategoryCamerasOptics;
-extern BNCProductCategory BNCProductCategoryElectronics;
-extern BNCProductCategory BNCProductCategoryFoodBeverageTobacco;
-extern BNCProductCategory BNCProductCategoryFurniture;
-extern BNCProductCategory BNCProductCategoryHardware;
-extern BNCProductCategory BNCProductCategoryHealthBeauty;
-extern BNCProductCategory BNCProductCategoryHomeGarden;
-extern BNCProductCategory BNCProductCategoryLuggageBags;
-extern BNCProductCategory BNCProductCategoryMature;
-extern BNCProductCategory BNCProductCategoryMedia;
-extern BNCProductCategory BNCProductCategoryOfficeSupplies;
-extern BNCProductCategory BNCProductCategoryReligious;
-extern BNCProductCategory BNCProductCategorySoftware;
-extern BNCProductCategory BNCProductCategorySportingGoods;
-extern BNCProductCategory BNCProductCategoryToysGames;
-extern BNCProductCategory BNCProductCategoryVehiclesParts;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryAnimalSupplies;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryApparel;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryArtsEntertainment;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryBabyToddler;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryBusinessIndustrial;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryCamerasOptics;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryElectronics;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryFoodBeverageTobacco;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryFurniture;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryHardware;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryHealthBeauty;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryHomeGarden;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryLuggageBags;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryMature;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryMedia;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryOfficeSupplies;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryReligious;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategorySoftware;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategorySportingGoods;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryToysGames;
+FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryVehiclesParts;
 
 #pragma mark - BNCCurrency
 
-typedef NSString*const BNCCurrency;
+typedef NSString*const BNCCurrency NS_STRING_ENUM;
 
-extern BNCCurrency BNCCurrencyAED;
-extern BNCCurrency BNCCurrencyAFN;
-extern BNCCurrency BNCCurrencyALL;
-extern BNCCurrency BNCCurrencyAMD;
-extern BNCCurrency BNCCurrencyANG;
-extern BNCCurrency BNCCurrencyAOA;
-extern BNCCurrency BNCCurrencyARS;
-extern BNCCurrency BNCCurrencyAUD;
-extern BNCCurrency BNCCurrencyAWG;
-extern BNCCurrency BNCCurrencyAZN;
-extern BNCCurrency BNCCurrencyBAM;
-extern BNCCurrency BNCCurrencyBBD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyAED;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyAFN;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyALL;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyAMD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyANG;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyAOA;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyARS;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyAUD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyAWG;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyAZN;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBAM;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBBD;
 
-extern BNCCurrency BNCCurrencyBDT;
-extern BNCCurrency BNCCurrencyBGN;
-extern BNCCurrency BNCCurrencyBHD;
-extern BNCCurrency BNCCurrencyBIF;
-extern BNCCurrency BNCCurrencyBMD;
-extern BNCCurrency BNCCurrencyBND;
-extern BNCCurrency BNCCurrencyBOB;
-extern BNCCurrency BNCCurrencyBOV;
-extern BNCCurrency BNCCurrencyBRL;
-extern BNCCurrency BNCCurrencyBSD;
-extern BNCCurrency BNCCurrencyBTN;
-extern BNCCurrency BNCCurrencyBWP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBDT;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBGN;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBHD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBIF;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBMD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBND;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBOB;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBOV;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBRL;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBSD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBTN;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBWP;
 
-extern BNCCurrency BNCCurrencyBYN;
-extern BNCCurrency BNCCurrencyBYR;
-extern BNCCurrency BNCCurrencyBZD;
-extern BNCCurrency BNCCurrencyCAD;
-extern BNCCurrency BNCCurrencyCDF;
-extern BNCCurrency BNCCurrencyCHE;
-extern BNCCurrency BNCCurrencyCHF;
-extern BNCCurrency BNCCurrencyCHW;
-extern BNCCurrency BNCCurrencyCLF;
-extern BNCCurrency BNCCurrencyCLP;
-extern BNCCurrency BNCCurrencyCNY;
-extern BNCCurrency BNCCurrencyCOP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBYN;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBYR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyBZD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCAD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCDF;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCHE;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCHF;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCHW;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCLF;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCLP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCNY;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCOP;
 
-extern BNCCurrency BNCCurrencyCOU;
-extern BNCCurrency BNCCurrencyCRC;
-extern BNCCurrency BNCCurrencyCUC;
-extern BNCCurrency BNCCurrencyCUP;
-extern BNCCurrency BNCCurrencyCVE;
-extern BNCCurrency BNCCurrencyCZK;
-extern BNCCurrency BNCCurrencyDJF;
-extern BNCCurrency BNCCurrencyDKK;
-extern BNCCurrency BNCCurrencyDOP;
-extern BNCCurrency BNCCurrencyDZD;
-extern BNCCurrency BNCCurrencyEGP;
-extern BNCCurrency BNCCurrencyERN;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCOU;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCRC;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCUC;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCUP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCVE;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyCZK;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyDJF;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyDKK;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyDOP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyDZD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyEGP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyERN;
 
-extern BNCCurrency BNCCurrencyETB;
-extern BNCCurrency BNCCurrencyEUR;
-extern BNCCurrency BNCCurrencyFJD;
-extern BNCCurrency BNCCurrencyFKP;
-extern BNCCurrency BNCCurrencyGBP;
-extern BNCCurrency BNCCurrencyGEL;
-extern BNCCurrency BNCCurrencyGHS;
-extern BNCCurrency BNCCurrencyGIP;
-extern BNCCurrency BNCCurrencyGMD;
-extern BNCCurrency BNCCurrencyGNF;
-extern BNCCurrency BNCCurrencyGTQ;
-extern BNCCurrency BNCCurrencyGYD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyETB;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyEUR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyFJD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyFKP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyGBP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyGEL;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyGHS;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyGIP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyGMD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyGNF;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyGTQ;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyGYD;
 
-extern BNCCurrency BNCCurrencyHKD;
-extern BNCCurrency BNCCurrencyHNL;
-extern BNCCurrency BNCCurrencyHRK;
-extern BNCCurrency BNCCurrencyHTG;
-extern BNCCurrency BNCCurrencyHUF;
-extern BNCCurrency BNCCurrencyIDR;
-extern BNCCurrency BNCCurrencyILS;
-extern BNCCurrency BNCCurrencyINR;
-extern BNCCurrency BNCCurrencyIQD;
-extern BNCCurrency BNCCurrencyIRR;
-extern BNCCurrency BNCCurrencyISK;
-extern BNCCurrency BNCCurrencyJMD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyHKD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyHNL;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyHRK;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyHTG;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyHUF;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyIDR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyILS;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyINR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyIQD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyIRR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyISK;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyJMD;
 
-extern BNCCurrency BNCCurrencyJOD;
-extern BNCCurrency BNCCurrencyJPY;
-extern BNCCurrency BNCCurrencyKES;
-extern BNCCurrency BNCCurrencyKGS;
-extern BNCCurrency BNCCurrencyKHR;
-extern BNCCurrency BNCCurrencyKMF;
-extern BNCCurrency BNCCurrencyKPW;
-extern BNCCurrency BNCCurrencyKRW;
-extern BNCCurrency BNCCurrencyKWD;
-extern BNCCurrency BNCCurrencyKYD;
-extern BNCCurrency BNCCurrencyKZT;
-extern BNCCurrency BNCCurrencyLAK;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyJOD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyJPY;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyKES;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyKGS;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyKHR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyKMF;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyKPW;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyKRW;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyKWD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyKYD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyKZT;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyLAK;
 
-extern BNCCurrency BNCCurrencyLBP;
-extern BNCCurrency BNCCurrencyLKR;
-extern BNCCurrency BNCCurrencyLRD;
-extern BNCCurrency BNCCurrencyLSL;
-extern BNCCurrency BNCCurrencyLYD;
-extern BNCCurrency BNCCurrencyMAD;
-extern BNCCurrency BNCCurrencyMDL;
-extern BNCCurrency BNCCurrencyMGA;
-extern BNCCurrency BNCCurrencyMKD;
-extern BNCCurrency BNCCurrencyMMK;
-extern BNCCurrency BNCCurrencyMNT;
-extern BNCCurrency BNCCurrencyMOP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyLBP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyLKR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyLRD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyLSL;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyLYD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMAD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMDL;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMGA;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMKD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMMK;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMNT;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMOP;
 
-extern BNCCurrency BNCCurrencyMRO;
-extern BNCCurrency BNCCurrencyMUR;
-extern BNCCurrency BNCCurrencyMVR;
-extern BNCCurrency BNCCurrencyMWK;
-extern BNCCurrency BNCCurrencyMXN;
-extern BNCCurrency BNCCurrencyMXV;
-extern BNCCurrency BNCCurrencyMYR;
-extern BNCCurrency BNCCurrencyMZN;
-extern BNCCurrency BNCCurrencyNAD;
-extern BNCCurrency BNCCurrencyNGN;
-extern BNCCurrency BNCCurrencyNIO;
-extern BNCCurrency BNCCurrencyNOK;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMRO;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMUR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMVR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMWK;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMXN;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMXV;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMYR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyMZN;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyNAD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyNGN;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyNIO;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyNOK;
 
-extern BNCCurrency BNCCurrencyNPR;
-extern BNCCurrency BNCCurrencyNZD;
-extern BNCCurrency BNCCurrencyOMR;
-extern BNCCurrency BNCCurrencyPAB;
-extern BNCCurrency BNCCurrencyPEN;
-extern BNCCurrency BNCCurrencyPGK;
-extern BNCCurrency BNCCurrencyPHP;
-extern BNCCurrency BNCCurrencyPKR;
-extern BNCCurrency BNCCurrencyPLN;
-extern BNCCurrency BNCCurrencyPYG;
-extern BNCCurrency BNCCurrencyQAR;
-extern BNCCurrency BNCCurrencyRON;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyNPR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyNZD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyOMR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyPAB;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyPEN;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyPGK;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyPHP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyPKR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyPLN;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyPYG;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyQAR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyRON;
 
-extern BNCCurrency BNCCurrencyRSD;
-extern BNCCurrency BNCCurrencyRUB;
-extern BNCCurrency BNCCurrencyRWF;
-extern BNCCurrency BNCCurrencySAR;
-extern BNCCurrency BNCCurrencySBD;
-extern BNCCurrency BNCCurrencySCR;
-extern BNCCurrency BNCCurrencySDG;
-extern BNCCurrency BNCCurrencySEK;
-extern BNCCurrency BNCCurrencySGD;
-extern BNCCurrency BNCCurrencySHP;
-extern BNCCurrency BNCCurrencySLL;
-extern BNCCurrency BNCCurrencySOS;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyRSD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyRUB;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyRWF;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySAR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySBD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySCR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySDG;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySEK;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySGD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySHP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySLL;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySOS;
 
-extern BNCCurrency BNCCurrencySRD;
-extern BNCCurrency BNCCurrencySSP;
-extern BNCCurrency BNCCurrencySTD;
-extern BNCCurrency BNCCurrencySYP;
-extern BNCCurrency BNCCurrencySZL;
-extern BNCCurrency BNCCurrencyTHB;
-extern BNCCurrency BNCCurrencyTJS;
-extern BNCCurrency BNCCurrencyTMT;
-extern BNCCurrency BNCCurrencyTND;
-extern BNCCurrency BNCCurrencyTOP;
-extern BNCCurrency BNCCurrencyTRY;
-extern BNCCurrency BNCCurrencyTTD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySRD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySSP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySTD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySYP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencySZL;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyTHB;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyTJS;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyTMT;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyTND;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyTOP;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyTRY;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyTTD;
 
-extern BNCCurrency BNCCurrencyTWD;
-extern BNCCurrency BNCCurrencyTZS;
-extern BNCCurrency BNCCurrencyUAH;
-extern BNCCurrency BNCCurrencyUGX;
-extern BNCCurrency BNCCurrencyUSD;
-extern BNCCurrency BNCCurrencyUSN;
-extern BNCCurrency BNCCurrencyUYI;
-extern BNCCurrency BNCCurrencyUYU;
-extern BNCCurrency BNCCurrencyUZS;
-extern BNCCurrency BNCCurrencyVEF;
-extern BNCCurrency BNCCurrencyVND;
-extern BNCCurrency BNCCurrencyVUV;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyTWD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyTZS;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyUAH;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyUGX;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyUSD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyUSN;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyUYI;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyUYU;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyUZS;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyVEF;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyVND;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyVUV;
 
-extern BNCCurrency BNCCurrencyWST;
-extern BNCCurrency BNCCurrencyXAF;
-extern BNCCurrency BNCCurrencyXAG;
-extern BNCCurrency BNCCurrencyXAU;
-extern BNCCurrency BNCCurrencyXBA;
-extern BNCCurrency BNCCurrencyXBB;
-extern BNCCurrency BNCCurrencyXBC;
-extern BNCCurrency BNCCurrencyXBD;
-extern BNCCurrency BNCCurrencyXCD;
-extern BNCCurrency BNCCurrencyXDR;
-extern BNCCurrency BNCCurrencyXFU;
-extern BNCCurrency BNCCurrencyXOF;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyWST;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXAF;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXAG;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXAU;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXBA;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXBB;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXBC;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXBD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXCD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXDR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXFU;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXOF;
 
-extern BNCCurrency BNCCurrencyXPD;
-extern BNCCurrency BNCCurrencyXPF;
-extern BNCCurrency BNCCurrencyXPT;
-extern BNCCurrency BNCCurrencyXSU;
-extern BNCCurrency BNCCurrencyXTS;
-extern BNCCurrency BNCCurrencyXUA;
-extern BNCCurrency BNCCurrencyXXX;
-extern BNCCurrency BNCCurrencyYER;
-extern BNCCurrency BNCCurrencyZAR;
-extern BNCCurrency BNCCurrencyZMW;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXPD;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXPF;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXPT;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXSU;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXTS;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXUA;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXXX;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyYER;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyZAR;
+FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyZMW;
 
 #pragma mark - BNCProduct
 
 @interface BNCProduct : NSObject
-@property (nonatomic, strong) NSString *sku;
-@property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSDecimalNumber *price;
-@property (nonatomic, strong) NSNumber *quantity;
-@property (nonatomic, strong) NSString *brand;
-@property (nonatomic, strong) BNCProductCategory category;
-@property (nonatomic, strong) NSString *variant;
+@property (nonatomic, strong) NSString*_Nullable            sku;
+@property (nonatomic, strong) NSString*_Nullable            name;
+@property (nonatomic, strong) NSDecimalNumber*_Nullable     price;
+@property (nonatomic, strong) NSNumber*_Nullable            quantity;
+@property (nonatomic, strong) NSString*_Nullable            brand;
+@property (nonatomic, strong) BNCProductCategory _Nullable  category;
+@property (nonatomic, strong) NSString*_Nullable            variant;
 @end
 
 #pragma mark - BNCCommerceEvent
 
+//__attribute__((deprecated(("Please use BranchEvent to track commerce events."))))
 @interface BNCCommerceEvent : NSObject
-@property (nonatomic, strong) NSDecimalNumber *revenue;
-@property (nonatomic, strong) BNCCurrency currency;
-@property (nonatomic, strong) NSString *transactionID;
-@property (nonatomic, strong) NSDecimalNumber *shipping;
-@property (nonatomic, strong) NSDecimalNumber *tax;
-@property (nonatomic, strong) NSString *coupon;
-@property (nonatomic, strong) NSString *affiliation;
-@property (nonatomic, strong) NSArray<BNCProduct*> *products;
+@property (nonatomic, strong) NSDecimalNumber*_Nullable     revenue;
+@property (nonatomic, strong) BNCCurrency _Nullable         currency;
+@property (nonatomic, strong) NSString*_Nullable            transactionID;
+@property (nonatomic, strong) NSDecimalNumber*_Nullable     shipping;
+@property (nonatomic, strong) NSDecimalNumber*_Nullable     tax;
+@property (nonatomic, strong) NSString*_Nullable            coupon;
+@property (nonatomic, strong) NSString*_Nullable            affiliation;
+@property (nonatomic, strong) NSArray<BNCProduct*>*_Nullable products;
 @end
 
 
 @interface BranchCommerceEventRequest : BNCServerRequest <NSCoding>
 
-- (instancetype) initWithCommerceEvent:(BNCCommerceEvent*)commerceEvent
-							  metadata:(NSDictionary*)dictionary
-							completion:(void (^)(NSDictionary* response, NSError* error))callBack;
+- (instancetype _Nonnull) initWithCommerceEvent:(BNCCommerceEvent*_Nonnull)commerceEvent
+							           metadata:(NSDictionary*_Nullable)dictionary
+							         completion:
+            (void (^_Nullable)(NSDictionary*_Nullable response, NSError*_Nullable error))callBack;
 
 @end

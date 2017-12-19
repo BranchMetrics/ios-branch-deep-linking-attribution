@@ -82,8 +82,21 @@
     BranchInstallRequest *request = [[BranchInstallRequest alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect]
-		postRequest:expectedParams
-		url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_INSTALL]
+		postRequest:[OCMArg checkWithBlock:^BOOL(id value) {
+            if (![value isKindOfClass:[NSDictionary class]]) {
+                XCTFail(@"Expected NSDictionary. Got '%@'.", NSStringFromClass([value class]));
+                return NO;
+            }
+            NSDictionary *dictionary = (NSDictionary*)value;
+            XCTAssertEqualObjects(dictionary, expectedParams);
+            return YES;
+        }]
+		url:[OCMArg checkWithBlock:^BOOL(id value) {
+            if (![((NSString*)value) bnc_containsString:BRANCH_REQUEST_ENDPOINT_INSTALL]) {
+                XCTAssertEqualObjects(value, BRANCH_REQUEST_ENDPOINT_INSTALL);
+            }
+            return YES;
+        }]
 		key:[OCMArg any]
 		callback:[OCMArg any]];
 

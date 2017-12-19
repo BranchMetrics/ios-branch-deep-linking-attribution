@@ -72,6 +72,10 @@ NSString * const BNCShareCompletedEvent = @"Share Completed";
 static NSString * const BNCLogLevelKey = @"io.branch.sdk.BNCLogLevel";
 NSString * const BNCSpotlightFeature = @"spotlight";
 
+#ifndef CSSearchableItemActivityIdentifier
+#define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
+#endif
+
 #pragma mark - Load Categories
 
 void ForceCategoriesToLoad(void);
@@ -222,7 +226,7 @@ void BranchClassInitializeLog(void) {
     _requestQueue = queue;
     _linkCache = cache;
     _preferenceHelper = preferenceHelper;
-    
+
     _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
     _isInitialized = NO;
     _shouldCallSessionInitCallback = YES;
@@ -748,25 +752,25 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
     BNCLogDebugSDK(@"continueUserActivity:");
-    
+
     // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        
+
         // If we're already in-progress cancel the last open and do this one.
         BOOL isNewSession = NO;
         if (![self removeInstallOrOpen]) {
             isNewSession = YES;
         }
-        
+
         return [self handleUniversalDeepLink:userActivity.webpageURL fromSelf:isNewSession];
     }
-    
+
     // Check to see if a spotlight activity needs to be handled
     NSString *spotlightIdentifier =
         [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     NSURL *webURL = userActivity.webpageURL;
-    
-    
+
+
     if ([self isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
         return [self handleDeepLinkWithNewSession:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]]];
     }
@@ -785,7 +789,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
     self.preferenceHelper.shouldWaitForInit = NO;
     [self initUserSessionAndCallCallback:YES];
-    
+
     return spotlightIdentifier != nil;
 }
 
@@ -802,7 +806,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             }
         }
     }
-    
+
     NSString *userActivityURL = urlString;
     NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
     for (NSString* domain in branchDomains) {
@@ -825,7 +829,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     // If app is active, then close out the session and start a new one.
     // Else the URL will be handled by `applicationDidBecomeActive`.
-    
+
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if ([[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
         NSURL *url = [NSURL URLWithString:urlStr];
@@ -1171,7 +1175,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (BranchUniversalObject *)getFirstReferringBranchUniversalObject {
     NSDictionary *params = [self getFirstReferringParams];
     if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {
-        return [BranchUniversalObject getBranchUniversalObjectFromDictionary:params];
+        return [BranchUniversalObject objectWithDictionary:params];
     }
     return nil;
 }
@@ -1218,7 +1222,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (BranchUniversalObject *)getLatestReferringBranchUniversalObject {
     NSDictionary *params = [self getLatestReferringParams];
     if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {
-        return [BranchUniversalObject getBranchUniversalObjectFromDictionary:params];
+        return [BranchUniversalObject objectWithDictionary:params];
     }
     return nil;
 }
@@ -1443,7 +1447,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                                    linkProperties:(BranchLinkProperties*)linkProperties
                                        completion:(void (^) (BranchUniversalObject *universalObject, NSString * url,NSError *error))completion {
     BNCSpotlightService *spotlightService = [[BNCSpotlightService alloc] init];
-    
+
     if (!universalObject) {
         NSError* error = [NSError branchErrorWithCode:BNCInitError localizedMessage:@"Branch Universal Object is nil"];
         completion(universalObject,nil,error);
@@ -1467,7 +1471,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (void)indexOnSpotlightUsingSearchableItems:(NSArray<BranchUniversalObject*>* )universalObjects
                                   completion:(void (^) (NSArray<BranchUniversalObject*>* universalObjects,
                                                         NSError* error))completion {
-    
+
     BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
     [spotlight indexPrivatelyWithBranchUniversalObjects:universalObjects
                                              completion:^(NSArray<BranchUniversalObject *> * _Nullable universalObjects,
@@ -1480,7 +1484,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (void)removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject *)universalObject
                                              callback:(void (^_Nullable)(NSError * _Nullable error))completion {
     BNCSpotlightService *spotlight = [[BNCSpotlightService alloc] init];
-    
+
     NSString *dynamicUrl = [universalObject getLongUrlWithChannel:nil
                                                           andTags:nil
                                                        andFeature:BNCSpotlightFeature
@@ -1507,7 +1511,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                                                              andStage:nil andAlias:nil];
         [identifiers addObject:dynamicUrl];
     }
-    
+
     [spotlight removeSearchableItemsWithIdentifiers:identifiers
                                            callback:^(NSError * error) {
                                                if (completion)
@@ -1667,7 +1671,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 linkCache:self.linkCache];
 
         if (self.isInitialized) {
-            BNCLogDebug(@"Created a custom URL synchronously.");
+            BNCLogDebug(@"Creating a custom URL synchronously.");
             BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
             shortURL = [req processResponse:serverResponse];
 
@@ -1948,7 +1952,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
     self.networkCount = 0;
     [[BNCServerRequestQueue getInstance] clearQueue];
-    dispatch_semaphore_signal(self.processing_sema);    
+    dispatch_semaphore_signal(self.processing_sema);
 }
 
 #pragma mark - Session Initialization
@@ -2197,10 +2201,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     NSNumber *isBranchLink = linkParameters[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK];
     if ([isBranchLink boolValue]) {
-        universalObject =
-            [BranchUniversalObject getBranchUniversalObjectFromDictionary:linkParameters];
-        linkProperties =
-            [BranchLinkProperties getBranchLinkPropertiesFromDictionary:linkParameters];
+        universalObject = [BranchUniversalObject objectWithDictionary:linkParameters];
+        linkProperties = [BranchLinkProperties getBranchLinkPropertiesFromDictionary:linkParameters];
     }
 
     if (error) {
@@ -2216,7 +2218,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
         if ([self.delegate respondsToSelector:@selector(branch:didStartSessionWithURL:branchLink:)])
             [self.delegate branch:self didStartSessionWithURL:originalURL branchLink:branchLink];
-            
+
     }
 
     NSMutableDictionary *userInfo = [NSMutableDictionary new];

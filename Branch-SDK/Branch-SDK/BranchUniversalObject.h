@@ -148,7 +148,7 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
     NSString *currency;
 
 @property (nonatomic, assign)
-    __attribute__((deprecated(("Use `BranchUniversalObject.contentMetadata.locallyIndex` instead."))))
+    __attribute__((deprecated(("Use `BranchUniversalObject.locallyIndex` instead."))))
     BOOL automaticallyListOnSpotlight;
 
 
@@ -239,14 +239,11 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 
 - (void)removeFromSpotlightWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion;
 
-/// Convenience method for initSession methods that return BranchUniversalObject, but can be used safely by anyone.
-+ (nonnull BranchUniversalObject *)getBranchUniversalObjectFromDictionary:(nonnull NSDictionary *)dictionary;
-
-- (NSDictionary*_Nonnull)getParamsForServerRequest;
 - (NSDictionary*_Nonnull)getDictionaryWithCompleteLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
 - (NSDictionary*_Nonnull)getParamsForServerRequestWithAddedLinkProperties:(BranchLinkProperties*_Nonnull)linkProperties;
 
-- (NSDictionary*_Nonnull) dictionary;
+/// Convenience method for initSession methods that return BranchUniversalObject, but can be used safely by anyone.
+- (NSMutableDictionary*_Nonnull) dictionary;
 + (BranchUniversalObject*_Nonnull) objectWithDictionary:(NSDictionary*_Null_unspecified)dictionary;
 
 - (NSString*_Nonnull) description;
