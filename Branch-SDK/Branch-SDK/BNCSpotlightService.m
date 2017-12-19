@@ -318,7 +318,7 @@ static NSString* const kDomainIdentifier = @"io.branch.sdk.spotlight";
 - (void)indexUsingNSUserActivity:(NSDictionary *)params {
     self.userInfo = params[@"userInfo"];
     self.userInfo[CSSearchableItemActivityIdentifier] = params[@"spotlightId"];
-    UIViewController *activeViewController = [self getActiveViewController];
+    UIViewController *activeViewController = [UIViewController bnc_currentViewController];
     if (!activeViewController) {
         // if no view controller, don't index. Current use case: iMessage extensions
         return;
@@ -404,37 +404,7 @@ static NSString* const kDomainIdentifier = @"io.branch.sdk.spotlight";
     #undef IndexingNotAvalable
 }
 
-#pragma mark Helper Methods
-
-- (UIViewController *)getActiveViewController {
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    UIViewController *rootViewController = [UIApplicationClass sharedApplication].keyWindow.rootViewController;
-    UIViewController *activeController;
-    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
-        activeController = ((UINavigationController *)rootViewController).topViewController;
-    } else if ([rootViewController isKindOfClass:[UITabBarController class]]) {
-        activeController = ((UITabBarController *)rootViewController).selectedViewController;
-    } else {
-        activeController = rootViewController;
-    }
-    return activeController;
-}
-
-- (UIViewController *)currentViewController {
-    // TODO: Create a general 'currentViewController' utility function.
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    if (!UIApplicationClass) return nil;
-
-    UIViewController *current =
-        [UIApplicationClass sharedApplication].keyWindow.rootViewController;
-    while (current.presentedViewController &&
-        ![current.presentedViewController isKindOfClass:UIAlertController.class]) {
-        current = current.presentedViewController;
-    }
-    return current;
-}
-
-#pragma mark userActivity Delegate Methods
+#pragma mark - UserActivity Delegate Methods
 
 - (void)userActivityWillSave:(NSUserActivity *)userActivity {
     [userActivity addUserInfoEntriesFromDictionary:self.userInfo];

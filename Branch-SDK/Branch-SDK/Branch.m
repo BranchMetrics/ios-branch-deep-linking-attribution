@@ -83,6 +83,7 @@ void ForceCategoriesToLoad(void) {
     BNCForceNSErrorCategoryToLoad();
     BNCForceNSStringCategoryToLoad();
     BNCForceNSMutableDictionaryCategoryToLoad();
+    BNCForceUIViewControllerCategoryToLoad();
 }
 
 #pragma mark - BranchLink
@@ -1778,9 +1779,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     return post;
 }
 
-
 #pragma mark - BranchUniversalObject methods
-
 
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback {
     [self initSessionIfNeededAndNotInProgress];
@@ -1789,7 +1788,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [BranchEvent standardEvent:BranchStandardEventViewItem withContentItem:buo];
     if (callback) callback(@{}, nil);
 }
-
 
 #pragma mark - Application State Change methods
 
@@ -1825,7 +1823,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         [self processNextQueueItem];
     }
 }
-
 
 #pragma mark - Queue management
 
@@ -2086,7 +2083,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
 
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (self.shouldAutomaticallyDeepLink) {
         // Find any matched keys, then launch any controllers that match
         // TODO which one to launch if more than one match?
@@ -2105,8 +2101,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 BNCLogWarning(@"The automatic deeplink view controller '%@' for key '%@' does not implement 'configureControlWithData:'.",
                     branchSharingController, key);
             }
-            self.deepLinkPresentingController = [[[UIApplicationClass sharedApplication].delegate window] rootViewController];
-
+            
+            self.deepLinkPresentingController = [UIViewController bnc_currentViewController];
             if([self.deepLinkControllers[key] isKindOfClass:[BNCDeepLinkViewControllerInstance class]]) {
                 BNCDeepLinkViewControllerInstance* deepLinkInstance = self.deepLinkControllers[key];
                 UIViewController <BranchDeepLinkingController> *branchSharingController = deepLinkInstance.viewController;
