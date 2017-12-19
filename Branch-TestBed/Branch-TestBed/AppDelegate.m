@@ -6,14 +6,15 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-#import "Branch.h"
-#import "BNCEncodingUtils.h"
 #import "AppDelegate.h"
 #import "LogOutputViewController.h"
 #import "NavigationController.h"
 #import "ViewController.h"
+#import "Branch.h"
 #import "BNCEncodingUtils.h"
-@import SafariServices;
+
+// Ignore Safari availability for iOS 8 and lower in this example.
+#pragma clang diagnostic ignored "-Wpartial-availability"
 
 @interface AppDelegate() <SFSafariViewControllerDelegate>
 @property (nonatomic, strong) SFSafariViewController *onboardingVC;
@@ -25,11 +26,15 @@
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     BNCLogSetDisplayLevel(BNCLogLevelAll);
 
-    // Set Branch.useTestBranchKey = YES; to have Branch use the test key that's in the app's
-    // Info.plist file. This makes Branch test against your test environment (As shown in the Branch
-    // Dashboard) instead of the live environment.
-    //
+    /*
+       Set Branch.useTestBranchKey = YES; to have Branch use the test key that's in the app's
+       Info.plist file. This makes Branch test against your test environment (As shown in the Branch
+       Dashboard) instead of the live environment.
+    */
+
     // Branch.useTestBranchKey = YES;  // Make sure to comment this line out for production apps!!!
+
+    //
     Branch *branch = [Branch getInstance];
 
     // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
@@ -54,14 +59,13 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
             NSLog(@"initSession succeeded with params: %@", params);
             
             NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
-            if (params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] && deeplinkText) {
+            if ([params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] boolValue]) {
                 
                 UINavigationController *navigationController =
                     (UINavigationController *)self.window.rootViewController;
                 UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                 LogOutputViewController *logOutputViewController =
                     [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
-                
                 [navigationController pushViewController:logOutputViewController animated:YES];
                 NSString *logOutput =
                     [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@",
@@ -77,7 +81,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         }
         
     }];
-
+    
     // Push notification support (Optional)
     [self registerForPushNotifications:application];
 
@@ -112,7 +116,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         self.onboardingVC = [[SFSafariViewController alloc] initWithURL:urlForOnboarding];
         self.onboardingVC.delegate = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[[[UIApplication sharedApplication].delegate window] rootViewController] presentViewController:self.onboardingVC animated:YES completion:NULL];
+            [[[[UIApplication sharedApplication].delegate window] rootViewController]
+                 presentViewController:self.onboardingVC animated:YES completion:NULL];
         });
     }
 }
@@ -160,7 +165,7 @@ continueUserActivity:(NSUserActivity *)userActivity
 
 // Helper method
 - (void)registerForPushNotifications:(UIApplication *)application {
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0) {
+    if ([[[UIDevice currentDevice] systemVersion] doubleValue] >= 8.0) {
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:
             (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge)
                 categories:nil]];
@@ -190,6 +195,5 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
 didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"Error registering for remote notifications: %@", error);
 }
-
 
 @end

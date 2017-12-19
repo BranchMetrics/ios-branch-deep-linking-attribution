@@ -7,7 +7,6 @@
 //
 
 
-@import UIKit;
 #import <OCMock/OCMock.h>
 #import "BNCTestCase.h"
 #import "Branch.h"
@@ -18,7 +17,7 @@
 
 
 @interface Branch (Testing)
-@property (strong, nonatomic) BNCServerInterface *bServerInterface;
+@property (strong, nonatomic) BNCServerInterface *serverInterface;
 @property (assign, nonatomic) NSInteger networkCount;
 @end
 
@@ -128,7 +127,7 @@
 
     // Re-mock the serverInterface so it succeeds
     serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    branch.bServerInterface = serverInterfaceMock;
+    branch.serverInterface = serverInterfaceMock;
 
     XCTestExpectation *scenario2Expectation3 =
         [self expectationWithDescription:@"Scenario2 Expectation3"];
@@ -248,7 +247,7 @@
     // Simulate network return, shouldn't call init!
     //[serverInterfaceMock stopMocking];
     serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
-    branch.bServerInterface = serverInterfaceMock;
+    branch.serverInterface = serverInterfaceMock;
 
     // However, making another request when not initialized should make an init
     [self mockSuccesfulInit:serverInterfaceMock];
@@ -440,6 +439,7 @@
 // Somehow, betweeen initSession and the next call, all preference items are cleared.
 // Shouldn't crash in this case, but can't do much besides "you need to re-init"
 - (void)testScenario8 {
+    sleep(1);
     BNCPreferenceHelper *preferenceHelper = [[BNCPreferenceHelper alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     

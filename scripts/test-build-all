@@ -35,7 +35,7 @@ xcodeVersion=`xcodebuild -version | head -n1 | cut -d' ' -f2 | cut -d'.' -f1`
 if [[ $xcodeVersion = '9' ]]
 then
     iOSDevice="iPhone 8 Plus"
-    iOSVersion="11.0"
+    iOSVersion="11.1"
 elif [[ $xcodeVersion = '8' ]]
 then
     iOSDevice="iPhone 7 Plus"
@@ -84,26 +84,46 @@ buildDirectoryProjectScheme \
     Branch-TestBed
 
 buildDirectoryProjectScheme \
+    Branch-TestBed/Branch-TestBed-UITests \
+    UITestBed.xcodeproj \
+    UITestBed
+
+buildDirectoryProjectScheme \
     Branch-TestBed-iMessage \
     Branch-TestBed-iMessage.xcodeproj \
     MessagesExtension
 
 buildDirectoryProjectScheme \
-    Branch-TestBed-Swift \
-    TestBed-Swift.xcodeproj \
-    TestBed-Swift
+    Branch-TestBed-Xcode-7 \
+    Branch-TestBed.xcworkspace \
+    Branch-TestBed
 
 if [[ $xcodeVersion = '9' ]]
 then
+
+    # Swift 4 projects:
+
+    buildDirectoryProjectScheme \
+        Examples/BareBones \
+        BareBones.xcodeproj \
+        BareBones
+
+    cd Examples/WebViewExample
+    pod update
+    cd $(dirname "$scriptfile")/..
     buildDirectoryProjectScheme \
         Examples/WebViewExample \
         WebViewExample.xcworkspace \
         WebViewExample
-fi
 
-buildDirectoryProjectScheme \
-    Branch-TestBed-Xcode-7 \
-    Branch-TestBed.xcworkspace \
-    Branch-TestBed
+    cd Branch-TestBed-Swift
+    pod update
+    cd $(dirname "$scriptfile")/..
+    buildDirectoryProjectScheme \
+        Branch-TestBed-Swift \
+        TestBed-Swift.xcworkspace \
+        TestBed-Swift
+
+fi
 
 printf "${textBlue}>>> All builds complete.${textNormal}\n"

@@ -8,6 +8,8 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
+#import "Branch.h"
+#import "NSString+Branch.h"
 
 static inline dispatch_time_t BNCDispatchTimeFromSeconds(NSTimeInterval seconds)	{
 	return dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC);
@@ -26,6 +28,13 @@ static inline void BNCSleepForTimeInterval(NSTimeInterval seconds) {
     nanosleep(&sleepTime, NULL);
 }
 
+#define BNCTAssertEqualMaskedString(string, mask) { \
+    if ((id)string != nil && (id)mask != nil && [string bnc_isEqualToMaskedString:mask]) { \
+    } else { \
+        XCTAssertEqualObjects(string, mask); \
+    } \
+}
+
 extern BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex);
 
 #define XCTAssertStringMatchesRegex(string, regex) \
@@ -37,6 +46,11 @@ extern BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex);
 - (void)awaitExpectations;
 - (void)resetExpectations;
 - (id)stringMatchingPattern:(NSString *)pattern;
+
+// Load Resources from the test bundle:
+
+- (NSString*)stringFromBundleWithKey:(NSString*)key;
+- (NSMutableDictionary*) mutableDictionaryFromBundleJSONWithKey:(NSString*)key;
 
 + (BOOL) testBreakpoints;
 @end

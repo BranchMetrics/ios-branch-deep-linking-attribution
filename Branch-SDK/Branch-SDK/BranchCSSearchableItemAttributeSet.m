@@ -7,14 +7,12 @@
 //
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
 
 #import "BranchCSSearchableItemAttributeSet.h"
-@import MobileCoreServices;
+#import "Branch.h"
 #import "BNCSystemObserver.h"
-#import "BNCError.h"
-#import "BranchConstants.h"
-
-#import "BNCLog.h"
 
 #ifndef kUTTypeGeneric
 #define kUTTypeGeneric @"public.content"

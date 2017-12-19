@@ -6,9 +6,5 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-@import UIKit;
-#import "Branch.h"
-
 @interface ViewController : UITableViewController
-
 @end

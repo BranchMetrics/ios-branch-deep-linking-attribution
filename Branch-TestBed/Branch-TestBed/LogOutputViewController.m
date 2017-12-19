@@ -9,19 +9,15 @@
 #import "LogOutputViewController.h"
 
 @interface LogOutputViewController ()
-
 @property (weak, nonatomic) IBOutlet UITextView *logOutputTextView;
-
 @end
 
 @implementation LogOutputViewController
 
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _logOutputTextView.text = _logOutput;
+    self.logOutputTextView.text = _logOutput;
 }
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

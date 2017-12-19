@@ -7,6 +7,7 @@
 //
 
 #import "BNCTestCase.h"
+#import "Branch.h"
 #import "BranchInstallRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
@@ -81,8 +82,21 @@
     BranchInstallRequest *request = [[BranchInstallRequest alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect]
-		postRequest:expectedParams
-		url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_INSTALL]
+		postRequest:[OCMArg checkWithBlock:^BOOL(id value) {
+            if (![value isKindOfClass:[NSDictionary class]]) {
+                XCTFail(@"Expected NSDictionary. Got '%@'.", NSStringFromClass([value class]));
+                return NO;
+            }
+            NSDictionary *dictionary = (NSDictionary*)value;
+            XCTAssertEqualObjects(dictionary, expectedParams);
+            return YES;
+        }]
+		url:[OCMArg checkWithBlock:^BOOL(id value) {
+            if (![((NSString*)value) bnc_containsString:BRANCH_REQUEST_ENDPOINT_INSTALL]) {
+                XCTAssertEqualObjects(value, BRANCH_REQUEST_ENDPOINT_INSTALL);
+            }
+            return YES;
+        }]
 		key:[OCMArg any]
 		callback:[OCMArg any]];
 
@@ -107,8 +121,6 @@
         BRANCH_RESPONSE_KEY_SESSION_DATA: SESSION_PARAMS,
         BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: IDENTITY
     };
-    
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
     BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
@@ -116,11 +128,12 @@
         XCTAssertTrue(success);
         [self safelyFulfillExpectation:openExpectation];
     }];
-    
+
+    [Branch setBranchKey:@"key_live_foo"];
     [request processResponse:response error:nil];
-    
     [self awaitExpectations];
-    
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
     XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
@@ -159,7 +172,8 @@
         XCTAssertTrue(success);
         [self safelyFulfillExpectation:openExpectation];
     }];
-    
+
+    [Branch setBranchKey:@"key_live_foo"];    
     [request processResponse:response error:nil];
     
     [self awaitExpectations];
@@ -200,9 +214,9 @@
         XCTAssertTrue(success);
         [self safelyFulfillExpectation:openExpectation];
     }];
-    
+
+    [Branch setBranchKey:@"key_live_foo"];
     [request processResponse:response error:nil];
-    
     [self awaitExpectations];
     
     XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
@@ -241,9 +255,9 @@
         XCTAssertTrue(success);
         [self safelyFulfillExpectation:openExpectation];
     }];
-    
+
+    [Branch setBranchKey:@"key_live_foo"];
     [request processResponse:response error:nil];
-    
     [self awaitExpectations];
     
     XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
@@ -271,8 +285,6 @@
         BRANCH_RESPONSE_KEY_SESSION_ID: SESSION_ID,
         BRANCH_RESPONSE_KEY_BRANCH_IDENTITY: IDENTITY
     };
-    
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
 
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"OpenRequest Expectation"];
     BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
@@ -280,11 +292,12 @@
         XCTAssertTrue(success);
         [self safelyFulfillExpectation:openExpectation];
     } isInstall:YES];
-    
+
+    [Branch setBranchKey:@"key_live_foo"];
     [request processResponse:response error:nil];
-    
     [self awaitExpectations];
-    
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     XCTAssertEqualObjects(preferenceHelper.deviceFingerprintID, FINGERPRINT_ID);
     XCTAssertEqualObjects(preferenceHelper.userUrl, USER_URL);
     XCTAssertEqualObjects(preferenceHelper.userIdentity, DEVELOPER_ID);
@@ -302,14 +315,13 @@
     BranchInstallRequest *request = [[BranchInstallRequest alloc] initWithCallback:^(BOOL changed, NSError *error) {
         XCTAssertNil(error);
         XCTAssertNil(preferenceHelper.installParams);
-        
         [self safelyFulfillExpectation:expectation];
     }];
-    
+
+    [Branch setBranchKey:@"key_live_foo"];
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{};
     [request processResponse:response error:nil];
-    
     [self awaitExpectations];
 }
 
@@ -325,11 +337,11 @@
         
         [self safelyFulfillExpectation:expectation];
     }];
-    
+
+    [Branch setBranchKey:@"key_live_foo"];
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{ BRANCH_RESPONSE_KEY_SESSION_DATA: INSTALL_PARAMS };
     [request processResponse:response error:nil];
-    
     [self awaitExpectations];
 }
 
@@ -345,11 +357,11 @@
         
         [self safelyFulfillExpectation:expectation];
     }];
-    
+
+    [Branch setBranchKey:@"key_live_foo"];
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{ BRANCH_RESPONSE_KEY_SESSION_DATA: OPEN_PARAMS };
     [request processResponse:response error:nil];
-    
     [self awaitExpectations];
 }
 
@@ -358,7 +370,6 @@
     //  It is in the code but not used. -- Edward.
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-
     NSString * const INSTALL_PARAMS = @"{\"+clicked_branch_link\":1,\"foo\":\"bar\"}";
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Request Expectation"];
@@ -368,7 +379,8 @@
         	XCTAssert([preferenceHelper.installParams isEqualToString:INSTALL_PARAMS]);
         	[self safelyFulfillExpectation:expectation];
     		}];
-    
+
+    [Branch setBranchKey:@"key_live_foo"];
     BNCServerResponse *response = [[BNCServerResponse alloc] init];
     response.data = @{ BRANCH_RESPONSE_KEY_SESSION_DATA: INSTALL_PARAMS };
     [request processResponse:response error:nil];

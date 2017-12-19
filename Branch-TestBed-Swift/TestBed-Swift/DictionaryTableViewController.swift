@@ -47,7 +47,7 @@ class DictionaryTableViewController: UITableViewController {
         let cellIdentifier = "DictionaryTableViewCell"
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! DictionaryTableViewCell
         
-        let keys = Array(dictionary.keys).sorted()
+        let keys = Array(dictionary.keys)
         cell.keyLabel.text = keys[(indexPath as NSIndexPath).row]
         cell.valueLabel.text = self.dictionary[keys[(indexPath as NSIndexPath).row]] as? String
         
@@ -109,7 +109,7 @@ class DictionaryTableViewController: UITableViewController {
     @IBAction func unwindKeyValuePairTableViewController(_ sender: UIStoryboardSegue) {
         if let sourceVC = sender.source as? KeyValuePairTableViewController {
             
-            guard sourceVC.keyTextField.text!.characters.count > 0 else {
+            guard sourceVC.keyTextField.text!.count > 0 else {
                 return
             }
             dictionary[sourceVC.keyTextField.text!] = sourceVC.valueTextView.text as AnyObject?

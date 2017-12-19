@@ -90,12 +90,12 @@ class ArrayTableViewController: UITableViewController {
     
     @IBAction func unwindByCancelling(_ segue:UIStoryboardSegue) { }
     
-    @IBAction func unwindTextFieldFormTableViewController(_ sender: UIStoryboardSegue) {
+    @IBAction func unwindTextFieldForm(_ sender: UIStoryboardSegue) {
         if let vc = sender.source as? TextFieldFormTableViewController {
             
             if let receivedValue = vc.textField.text {
                 
-                guard receivedValue.characters.count > 0 else {
+                guard receivedValue.count > 0 else {
                     return
                 }
                 

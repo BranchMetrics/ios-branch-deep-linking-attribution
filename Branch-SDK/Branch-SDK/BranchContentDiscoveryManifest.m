@@ -7,8 +7,6 @@
 //
 
 
-@import Foundation;
-@import UIKit;
 #import "BranchContentDiscoveryManifest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchContentPathProperties.h"
@@ -45,8 +43,8 @@
     }
 }
 
-- (void)onBranchInitialised:(NSDictionary *)branchInitDict withUrl:(NSString *)referredUrl {
-    _referredLink = referredUrl;
+- (void)onBranchInitialised:(NSDictionary *)branchInitDict withUrl:(NSString *)referringURL {
+    _referredLink = referringURL;
     if ([branchInitDict objectForKey:BRANCH_CONTENT_DISCOVER_KEY]) {
         _isCDEnabled = YES;
         NSDictionary *cdManifestDict = [branchInitDict objectForKey:BRANCH_CONTENT_DISCOVER_KEY];

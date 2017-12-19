@@ -14,8 +14,8 @@
 #import "BNCLog.h"
 
 
-NSString * const BRANCH_QUEUE_FILE = @"BNCServerRequestQueue";
-NSTimeInterval const BATCH_WRITE_TIMEOUT = 3.0;
+static NSString * const BRANCH_QUEUE_FILE = @"BNCServerRequestQueue";
+static NSTimeInterval const BATCH_WRITE_TIMEOUT = 3.0;
 
 
 static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
@@ -42,9 +42,14 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 }
 
 - (void) dealloc {
-    if (self.persistTimer)
-        dispatch_source_cancel(self.persistTimer);
-    [self persistImmediately];
+    @synchronized (self) {
+        if (self.persistTimer) {
+            dispatch_source_cancel(self.persistTimer);
+            self.persistTimer = nil;
+        }
+        [self persistImmediately];
+        self.queue = nil;
+    }
 }
 
 - (void)enqueue:(BNCServerRequest *)request {
@@ -56,7 +61,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     }
 }
 
-- (void)insert:(BNCServerRequest *)request at:(unsigned int)index {
+- (void)insert:(BNCServerRequest *)request at:(NSUInteger)index {
     @synchronized (self) {
         if (index > self.queue.count) {
             BNCLogError(@"Invalid queue operation: index out of bound!");
@@ -77,18 +82,17 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             [self.queue removeObjectAtIndex:0];
             [self persistEventually];
         }
-    return request;
+        return request;
     }
 }
 
-- (BNCServerRequest *)removeAt:(unsigned int)index {
+- (BNCServerRequest *)removeAt:(NSUInteger)index {
     @synchronized (self) {
         BNCServerRequest *request = nil;
         if (index >= self.queue.count) {
             BNCLogError(@"Invalid queue operation: index out of bound!");
             return nil;
         }
-        
         request = [self.queue objectAtIndex:index];
         [self.queue removeObjectAtIndex:index];
         [self persistEventually];
@@ -109,16 +113,14 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
     }
 }
 
-- (BNCServerRequest *)peekAt:(unsigned int)index {
+- (BNCServerRequest *)peekAt:(NSUInteger)index {
     @synchronized (self) {
         if (index >= self.queue.count) {
             BNCLogError(@"Invalid queue operation: index out of bound!");
             return nil;
         }
-        
         BNCServerRequest *request = nil;
         request = [self.queue objectAtIndex:index];
-        
         return request;
     }
 }
@@ -144,7 +146,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 - (BOOL)containsInstallOrOpen {
     @synchronized (self) {
-        for (int i = 0; i < self.queue.count; i++) {
+        for (NSUInteger i = 0; i < self.queue.count; i++) {
             BNCServerRequest *req = [self.queue objectAtIndex:i];
             // Install extends open, so only need to check open.
             if ([req isKindOfClass:[BranchOpenRequest class]]) {
@@ -157,7 +159,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 - (BOOL)removeInstallOrOpen {
     @synchronized (self) {
-        for (int i = 0; i < self.queue.count; i++) {
+        for (NSUInteger i = 0; i < self.queue.count; i++) {
             BranchOpenRequest *req = [self.queue objectAtIndex:i];
             // Install extends open, so only need to check open.
             if ([req isKindOfClass:[BranchOpenRequest class]]) {
@@ -177,7 +179,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         BOOL requestAlreadyInProgress = networkCount > 0;
 
         BNCServerRequest *openOrInstallRequest;
-        for (int i = 0; i < self.queue.count; i++) {
+        for (NSUInteger i = 0; i < self.queue.count; i++) {
             BNCServerRequest *req = [self.queue objectAtIndex:i];
             if ([req isKindOfClass:[BranchOpenRequest class]]) {
                 
@@ -210,7 +212,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 
 - (BOOL)containsClose {
     @synchronized (self) {
-        for (int i = 0; i < self.queue.count; i++) {
+        for (NSUInteger i = 0; i < self.queue.count; i++) {
             BNCServerRequest *req = [self.queue objectAtIndex:i];
             if ([req isKindOfClass:[BranchCloseRequest class]]) {
                 return YES;
@@ -241,9 +243,9 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
         dispatch_source_set_event_handler(self.persistTimer, ^ {
             __strong __typeof(weakSelf) strongSelf = weakSelf;
             if (strongSelf) {
-                [strongSelf persistImmediately];
                 dispatch_source_cancel(strongSelf.persistTimer);
                 strongSelf.persistTimer = nil;
+                [strongSelf persistImmediately];
             }
         });
         dispatch_resume(self.persistTimer);
@@ -326,7 +328,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
             @try {
                 request = [NSKeyedUnarchiver unarchiveObjectWithData:encodedRequest];
             }
-            @catch (NSException *exception) {
+            @catch (NSException*) {
                 BNCLogWarning(@"An exception occurred while attempting to parse a queued request, discarding.");
                 continue;
             }
@@ -403,7 +405,6 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 + (id)getInstance {
     static BNCServerRequestQueue *sharedQueue = nil;
     static dispatch_once_t onceToken;
-    
     dispatch_once(&onceToken, ^ {
         sharedQueue = [[BNCServerRequestQueue alloc] init];
         [sharedQueue retrieve];

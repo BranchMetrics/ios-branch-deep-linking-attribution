@@ -9,11 +9,10 @@
 #import "TBAppDelegate.h"
 #import "TBBranchViewController.h"
 #import "TBDetailViewController.h"
-#import "Branch.h"
+@import Branch;
 
 @interface TBAppDelegate () <UISplitViewControllerDelegate>
 @property (nonatomic, strong) TBBranchViewController *branchViewController;
-@property (nonatomic, strong) TBDetailViewController *detailViewController;
 @end
 
 @implementation TBAppDelegate
@@ -30,17 +29,13 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Comment / un-comment to toggle debugging
     [branch setDebug];
 
-    // For Apple Search Ads
-    [branch delayInitToCheckForSearchAds];
+    // Optionally check for Apple Search Ads attribution:
+    // [branch delayInitToCheckForSearchAds];
 
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
-    [branch setWhiteListedSchemes:@[@"branchtest"]];
 
-    // Optional. Use if presenting SFSafariViewController as part of onboarding.
-    // Cannot use with setDebug.
-    // [self onboardUserOnInstall];
- 
+    [branch setWhiteListedSchemes:@[@"branchuitest"]];
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
             [self handleBranchDeepLinkParameters:params error:error];
@@ -49,44 +44,39 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     return YES;
 }
 
-- (void)initializeViewControllers {
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
 
-    // Set the split view delegate
-    UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
-    splitViewController.delegate = self;
+    NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
 
-    self.branchViewController = [TBBranchViewController new];
-    UINavigationController *masterViewController =
-        [[UINavigationController alloc]
-            initWithRootViewController:self.branchViewController];
-    masterViewController.title = @"Branch";
+    // Required. Returns YES if Branch link, else returns NO
+    [[Branch getInstance]
+        application:application
+            openURL:url
+  sourceApplication:sourceApplication
+         annotation:annotation];
 
-    self.detailViewController = [TBDetailViewController new];
-    UINavigationController *detailNavigationViewController =
-        [[UINavigationController alloc]
-            initWithRootViewController:self.detailViewController];
-
-    splitViewController.viewControllers = @[masterViewController, detailNavigationViewController];
-
-    // Set up the navigation controller
-    UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
-    navigationController.topViewController.navigationItem.leftBarButtonItem =
-        splitViewController.displayModeButtonItem;
+    // Process non-Branch URIs here...
+    return YES;
 }
 
-- (void)handleBranchDeepLinkParameters:(NSDictionary*)params error:(NSError*)error {
-    if (error) {
-        NSLog(@"Error handling deep link! Error: %@.", error);
-        [self.branchViewController showDataViewControllerWithObject:@{
-            @"Error": [NSString stringWithFormat:@"%@", error]
-            }
-            title:@"Deep Link Error"
-            message:nil];
-    } else {
-        NSLog(@"Received deeplink with params: %@", params);
-        [self.branchViewController showDataViewControllerWithObject:params
-             title:@"Deep Link Opened" message:nil];
-     }
+- (BOOL)application:(UIApplication *)application
+continueUserActivity:(NSUserActivity *)userActivity
+ restorationHandler:(void (^)(NSArray *))restorationHandler {
+
+    NSLog(@"application:continueUserActivity:restorationHandler: invoked.\n"
+           "ActivityType: %@ userActivity.webpageURL: %@",
+           userActivity.activityType,
+           userActivity.webpageURL.absoluteString);
+
+    // Required. Returns YES if Branch Universal Link, else returns NO.
+    // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
+    [[Branch getInstance] continueUserActivity:userActivity];
+
+    // Process non-Branch userActivities here...
+    return YES;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -109,7 +99,67 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     BNCLogMethodName();
 }
 
-#pragma mark - Split view
+#pragma mark - View Controllers
+
+- (void)initializeViewControllers {
+
+    // Set the split view delegate
+    UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
+
+    self.branchViewController = [TBBranchViewController new];
+    UINavigationController *masterViewController =
+        [[UINavigationController alloc]
+            initWithRootViewController:self.branchViewController];
+    masterViewController.title = @"Branch";
+
+    TBDetailViewController *detailViewController = [TBDetailViewController new];
+    UINavigationController *detailNavigationViewController =
+        [[UINavigationController alloc] initWithRootViewController:detailViewController];
+
+    splitViewController.viewControllers = @[masterViewController, detailNavigationViewController];
+
+    // Set up the navigation controller button
+    detailNavigationViewController.topViewController.navigationItem.leftBarButtonItem =
+        splitViewController.displayModeButtonItem;
+
+    splitViewController.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+    splitViewController.delegate = self;
+}
+
+- (void)handleBranchDeepLinkParameters:(NSDictionary*)params error:(NSError*)error {
+    NSString *title = nil;
+    NSString *message = nil;
+    NSDictionary *dictionary = nil;
+
+    if (error) {
+        NSLog(@"Error handling deep link! Error: %@.", error);
+        title = @"Error";
+        dictionary = @{
+            @"Error": [NSString stringWithFormat:@"%@", error]
+        };
+    } else {
+        NSLog(@"Received deeplink with params: %@", params);
+        title = @"Link Opened";
+        dictionary = params;
+     }
+
+    TBDetailViewController *dataViewController = [[TBDetailViewController alloc] initWithData:dictionary];
+    dataViewController.title = title;
+    dataViewController.message = message;
+    UINavigationController *nav =
+        [[UINavigationController alloc] initWithRootViewController:dataViewController];
+    nav.navigationBar.topItem.title = title;
+    nav.navigationBar.topItem.rightBarButtonItem =
+        [[UIBarButtonItem alloc]
+            initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+            target:self
+            action:@selector(dismissLinkViewAction:)];
+    [self.window.rootViewController presentViewController:nav animated:YES completion:nil];
+}
+
+- (IBAction)dismissLinkViewAction:(id)sender {
+    [self.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
+}
 
 - (BOOL)splitViewController:(UISplitViewController *)splitViewController
 collapseSecondaryViewController:(UIViewController *)secondaryViewController
@@ -122,6 +172,7 @@ collapseSecondaryViewController:(UIViewController *)secondaryViewController
             return YES;
         }
     }
+
     return NO;
 }
 

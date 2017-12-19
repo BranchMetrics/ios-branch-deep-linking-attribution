@@ -1,0 +1,774 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Xur-Vh-bZT">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Branch Universal Object-->
+        <scene sceneID="MTM-7f-tOE">
+            <objects>
+                <tableViewController storyboardIdentifier="BranchUniversalObjectProperties" useStoryboardIdentifierAsRestorationIdentifier="YES" id="dok-LR-mvX" userLabel="Branch Universal Object" customClass="BranchUniversalObjectTableViewController" customModule="TestBed_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="top" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="7fH-Jz-bRg">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <sections>
+                            <tableViewSection id="n3b-rk-boC" userLabel="clearAllValues">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="CEu-pI-Hl7">
+                                        <rect key="frame" x="0.0" y="35" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="CEu-pI-Hl7" id="U3F-2B-gF2">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aAv-Fr-9Io" userLabel="clearAllValuesButton">
+                                                    <rect key="frame" x="14" y="7" width="347" height="30"/>
+                                                    <state key="normal" title="Clear all values"/>
+                                                    <connections>
+                                                        <action selector="clearAllValuesButtonTouchUpInside:" destination="dok-LR-mvX" eventType="touchUpInside" id="dcV-3N-Mit"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="aAv-Fr-9Io" firstAttribute="leading" secondItem="U3F-2B-gF2" secondAttribute="leadingMargin" constant="6" id="BSi-l3-3BS"/>
+                                                <constraint firstItem="aAv-Fr-9Io" firstAttribute="centerY" secondItem="U3F-2B-gF2" secondAttribute="centerY" id="Nkt-lN-75C"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="aAv-Fr-9Io" secondAttribute="trailing" constant="6" id="cVN-Iy-jFb"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$publicly_indexable" id="uM0-8t-MFb">
+                                <string key="footerTitle">Can be set to either ContentIndexModePublic or ContentIndexModePrivate. Enabling sets to ContentModePublic and indicates that you’d like this content to be discovered by other apps.</string>
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="HdR-7Y-3aZ">
+                                        <rect key="frame" x="0.0" y="142.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="HdR-7Y-3aZ" id="28v-95-Wam">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$publicly_indexable" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9V2-Os-H9t" userLabel="publiclyIndexableLabel">
+                                                    <rect key="frame" x="14" y="12" width="149" height="20.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="B44-sQ-c2b" userLabel="publiclyIndexableSwitch">
+                                                    <rect key="frame" x="324" y="6.5" width="51" height="31"/>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="B44-sQ-c2b" firstAttribute="trailing" secondItem="28v-95-Wam" secondAttribute="trailingMargin" constant="6" id="N80-9r-l5J"/>
+                                                <constraint firstItem="9V2-Os-H9t" firstAttribute="leading" secondItem="28v-95-Wam" secondAttribute="leadingMargin" constant="6" id="ii7-dq-bGB"/>
+                                                <constraint firstItem="9V2-Os-H9t" firstAttribute="centerY" secondItem="28v-95-Wam" secondAttribute="centerY" id="kIj-yJ-vuS"/>
+                                                <constraint firstItem="B44-sQ-c2b" firstAttribute="centerY" secondItem="28v-95-Wam" secondAttribute="centerY" id="tMI-dI-9w8"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$keywords" id="XOs-W8-eBY">
+                                <string key="footerTitle">Keywords for which this content should be discovered by. Just assign an array of strings with the keywords you’d like to use. Currently, this parameter is only used for iOS Spotlight Indexing.</string>
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="Table View Cell" rowHeight="98" id="KEn-NU-dHo">
+                                        <rect key="frame" x="0.0" y="310" width="375" height="98"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KEn-NU-dHo" id="7Bx-7p-L7Y">
+                                            <rect key="frame" x="0.0" y="0.0" width="342" height="98"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="N38-Tn-tQO" userLabel="keywordsTextView">
+                                                    <rect key="frame" x="14" y="8" width="326" height="82"/>
+                                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
+                                                </textView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="N38-Tn-tQO" firstAttribute="top" secondItem="7Bx-7p-L7Y" secondAttribute="topMargin" id="FcP-B9-dZU"/>
+                                                <constraint firstItem="N38-Tn-tQO" firstAttribute="bottom" secondItem="7Bx-7p-L7Y" secondAttribute="bottomMargin" id="fk4-rO-vR6"/>
+                                                <constraint firstItem="N38-Tn-tQO" firstAttribute="trailing" secondItem="7Bx-7p-L7Y" secondAttribute="trailingMargin" constant="6" id="mOf-7J-VzN"/>
+                                                <constraint firstItem="N38-Tn-tQO" firstAttribute="leading" secondItem="7Bx-7p-L7Y" secondAttribute="leadingMargin" constant="6" id="rDp-gN-Mge"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$canonical_identifier" id="ykv-zh-V7P">
+                                <string key="footerTitle">This is the unique identifier for content that will help Branch dedupe across many instances of the same thing. Suitable options: a website with pathing, or a database with identifiers for entities.</string>
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="qtj-zB-wVH" userLabel="canonicalIdentifier">
+                                        <rect key="frame" x="0.0" y="531.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="qtj-zB-wVH" id="oIq-Zf-gmY">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Random ID will be generated if not set explicitly" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="zVx-l4-IxT" userLabel="canonicalIdentifierTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="zVx-l4-IxT" firstAttribute="leading" secondItem="oIq-Zf-gmY" secondAttribute="leadingMargin" constant="6" id="T41-lb-fKL"/>
+                                                <constraint firstItem="zVx-l4-IxT" firstAttribute="centerY" secondItem="oIq-Zf-gmY" secondAttribute="centerY" id="fAP-St-MHi"/>
+                                                <constraint firstItem="zVx-l4-IxT" firstAttribute="trailing" secondItem="oIq-Zf-gmY" secondAttribute="trailingMargin" constant="6" id="pwO-Dc-wDz"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$exp_date" id="NmM-u4-0i0">
+                                <string key="footerTitle">Expiration date - the date when the content will not longer be available or valid. Currently, this parameter is only used for iOS Spotlight Indexing.</string>
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="wk3-3v-8Nc">
+                                        <rect key="frame" x="0.0" y="699" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wk3-3v-8Nc" id="f7E-Vs-kCz">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="VIt-5x-L9G" userLabel="expDateTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="VIt-5x-L9G" firstAttribute="centerY" secondItem="f7E-Vs-kCz" secondAttribute="centerY" id="CeL-by-Z6P"/>
+                                                <constraint firstItem="VIt-5x-L9G" firstAttribute="leading" secondItem="f7E-Vs-kCz" secondAttribute="leadingMargin" constant="6" id="b06-H8-Pon"/>
+                                                <constraint firstItem="VIt-5x-L9G" firstAttribute="trailing" secondItem="f7E-Vs-kCz" secondAttribute="trailingMargin" constant="6" id="rFd-my-4Id"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$content_type" id="pNr-2P-CA2">
+                                <string key="footerTitle">This is a label for the type of content present. Apple recommends that you use uniform type identifier as described here: https://developer.apple.com/library/ios/documentation/MobileCoreServices/Reference/UTTypeRef/index.html</string>
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="Ihe-an-8fc">
+                                        <rect key="frame" x="0.0" y="850.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ihe-an-8fc" id="WC9-ar-LmE">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Jc3-gC-klu" userLabel="contentTypeTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Jc3-gC-klu" firstAttribute="leading" secondItem="WC9-ar-LmE" secondAttribute="leadingMargin" constant="6" id="7vG-77-nel"/>
+                                                <constraint firstItem="Jc3-gC-klu" firstAttribute="trailing" secondItem="WC9-ar-LmE" secondAttribute="trailingMargin" constant="6" id="tVQ-6g-ZJb"/>
+                                                <constraint firstItem="Jc3-gC-klu" firstAttribute="centerY" secondItem="WC9-ar-LmE" secondAttribute="centerY" id="veP-dl-UkL"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$og_title" footerTitle="The name for the piece of content.  This value is scraped by Branch for use in social media." id="sq3-zO-xqj">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="z4Z-2P-F2a">
+                                        <rect key="frame" x="0.0" y="1034" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="z4Z-2P-F2a" id="ohj-nf-Nh0">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="uGB-Cu-2fv" userLabel="ogTitleTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="uGB-Cu-2fv" firstAttribute="centerY" secondItem="ohj-nf-Nh0" secondAttribute="centerY" id="Jm9-ly-4pf"/>
+                                                <constraint firstItem="uGB-Cu-2fv" firstAttribute="leading" secondItem="ohj-nf-Nh0" secondAttribute="leadingMargin" constant="6" id="Uta-3U-Cyy"/>
+                                                <constraint firstItem="uGB-Cu-2fv" firstAttribute="trailing" secondItem="ohj-nf-Nh0" secondAttribute="trailingMargin" constant="6" id="r9c-LS-2fM"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$og_description" footerTitle="A description for the content. This value is scraped by Branch for use in social media." id="Oon-pY-bEL">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="hI5-Kl-34I">
+                                        <rect key="frame" x="0.0" y="1169.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hI5-Kl-34I" id="Hgk-Dn-vyF">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Zt4-sc-SPv" userLabel="ogDescriptionTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Zt4-sc-SPv" firstAttribute="trailing" secondItem="Hgk-Dn-vyF" secondAttribute="trailingMargin" constant="6" id="1IY-FQ-alC"/>
+                                                <constraint firstItem="Zt4-sc-SPv" firstAttribute="leading" secondItem="Hgk-Dn-vyF" secondAttribute="leadingMargin" constant="6" id="Zko-ul-YBz"/>
+                                                <constraint firstItem="Zt4-sc-SPv" firstAttribute="centerY" secondItem="Hgk-Dn-vyF" secondAttribute="centerY" id="r62-Tk-3jN"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$og_image_url" footerTitle="The image URL for the content.  This value is scraped by Branch for use in social media." id="NdN-hd-1z3">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="v3l-lh-Iqb">
+                                        <rect key="frame" x="0.0" y="1305" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="v3l-lh-Iqb" id="jNg-Ez-iwm">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="oR1-Ht-sjB" userLabel="ogImageURLTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="oR1-Ht-sjB" firstAttribute="trailing" secondItem="jNg-Ez-iwm" secondAttribute="trailingMargin" constant="6" id="Kx6-bT-KYc"/>
+                                                <constraint firstItem="oR1-Ht-sjB" firstAttribute="leading" secondItem="jNg-Ez-iwm" secondAttribute="leadingMargin" constant="6" id="RaB-Hf-0oW"/>
+                                                <constraint firstItem="oR1-Ht-sjB" firstAttribute="centerY" secondItem="jNg-Ez-iwm" secondAttribute="centerY" id="kMN-wj-8QI"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$og_image_width" id="O2e-Ce-8BH" userLabel="$og_image_width">
+                                <string key="footerTitle">The image’s width in pixels for social media displays. This value is scraped by Branch for use in social media. If this value is not populated Facebook will not display the image the first time it is shared.</string>
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="8Gq-eA-gwq">
+                                        <rect key="frame" x="0.0" y="1440.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="8Gq-eA-gwq" id="Z2t-eD-GCx">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="ThH-Uv-Wth" userLabel="ogImageWidthTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="347" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="ThH-Uv-Wth" firstAttribute="centerY" secondItem="Z2t-eD-GCx" secondAttribute="centerY" id="1eb-WM-zyE"/>
+                                                <constraint firstItem="ThH-Uv-Wth" firstAttribute="trailing" secondItem="Z2t-eD-GCx" secondAttribute="trailingMargin" constant="-6" id="Ejn-a2-cHp"/>
+                                                <constraint firstItem="ThH-Uv-Wth" firstAttribute="leading" secondItem="Z2t-eD-GCx" secondAttribute="leadingMargin" constant="6" id="leb-GC-SYV"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$og_image_height" id="BmW-5q-ZKb" userLabel="$og_image_height">
+                                <string key="footerTitle">The image’s height in pixels for social media displays. This value is scraped by Branch for use in social media. If this value is not populated Facebook will not display the image the first time it is shared.</string>
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="tm1-TU-0v1">
+                                        <rect key="frame" x="0.0" y="1608" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tm1-TU-0v1" id="gH6-Qv-vVI">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="spb-nB-qDk" userLabel="ogImageHeightTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="spb-nB-qDk" firstAttribute="leading" secondItem="gH6-Qv-vVI" secondAttribute="leadingMargin" constant="6" id="5lH-7L-gM2"/>
+                                                <constraint firstItem="spb-nB-qDk" firstAttribute="centerY" secondItem="gH6-Qv-vVI" secondAttribute="centerY" id="6aU-if-AD5"/>
+                                                <constraint firstItem="spb-nB-qDk" firstAttribute="trailing" secondItem="gH6-Qv-vVI" secondAttribute="trailingMargin" constant="6" id="AiS-Ch-4hJ"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$og_video" footerTitle="A link to a video to be shown in social media displays." id="ATV-3C-8W3" userLabel="$og_video">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="ZwW-P7-uAp">
+                                        <rect key="frame" x="0.0" y="1775.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ZwW-P7-uAp" id="yX6-jE-cmW">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="FYa-TF-vGk" userLabel="ogVideoTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="FYa-TF-vGk" firstAttribute="trailing" secondItem="yX6-jE-cmW" secondAttribute="trailingMargin" constant="6" id="2tb-hC-9Tt"/>
+                                                <constraint firstItem="FYa-TF-vGk" firstAttribute="leading" secondItem="yX6-jE-cmW" secondAttribute="leadingMargin" constant="6" id="O5Z-rd-Qrh"/>
+                                                <constraint firstItem="FYa-TF-vGk" firstAttribute="centerY" secondItem="yX6-jE-cmW" secondAttribute="centerY" id="lc8-w2-qlE"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$og_url" footerTitle="The base URL of the link as it will be seen in social media displays." id="LQa-4E-eKe">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="EGg-8Y-lBd">
+                                        <rect key="frame" x="0.0" y="1895" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="EGg-8Y-lBd" id="XxH-jj-pZJ">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="x3s-pr-4lV" userLabel="ogURLTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="x3s-pr-4lV" firstAttribute="leading" secondItem="XxH-jj-pZJ" secondAttribute="leadingMargin" constant="6" id="7WU-kj-86W"/>
+                                                <constraint firstItem="x3s-pr-4lV" firstAttribute="centerY" secondItem="XxH-jj-pZJ" secondAttribute="centerY" id="8Ig-to-rXx"/>
+                                                <constraint firstItem="x3s-pr-4lV" firstAttribute="trailing" secondItem="XxH-jj-pZJ" secondAttribute="trailingMargin" constant="6" id="HPl-Ov-z6k"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$og_type" footerTitle="The type of custom card format link as it will be seen in social media displays." id="6vH-tT-60h" userLabel="$og_type">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="o0O-hu-q7G">
+                                        <rect key="frame" x="0.0" y="2030.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="o0O-hu-q7G" id="0ei-DS-btn">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="BVv-G0-1wX" userLabel="ogTypeTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="BVv-G0-1wX" firstAttribute="leading" secondItem="0ei-DS-btn" secondAttribute="leadingMargin" constant="6" id="vJJ-rN-urB"/>
+                                                <constraint firstItem="BVv-G0-1wX" firstAttribute="trailing" secondItem="0ei-DS-btn" secondAttribute="trailingMargin" constant="6" id="x2w-tf-asU"/>
+                                                <constraint firstItem="BVv-G0-1wX" firstAttribute="centerY" secondItem="0ei-DS-btn" secondAttribute="centerY" id="xzG-g2-Hc8"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$og_redirect" id="oK1-6q-u7J" userLabel="$og_redirect">
+                                <string key="footerTitle">This is an advanced parameter and its use is not recommended. It sets a custom URL that Branch will redirect social media robots to in order to retrieve all the appropriate tags.</string>
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="22X-if-BDx">
+                                        <rect key="frame" x="0.0" y="2166" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="22X-if-BDx" id="kFB-l8-vTu">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="o21-FJ-6uo" userLabel="ogRedirectTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="o21-FJ-6uo" firstAttribute="leading" secondItem="kFB-l8-vTu" secondAttribute="leadingMargin" constant="6" id="C2Z-ud-Rj7"/>
+                                                <constraint firstItem="o21-FJ-6uo" firstAttribute="centerY" secondItem="kFB-l8-vTu" secondAttribute="centerY" id="QzT-uq-plF"/>
+                                                <constraint firstItem="o21-FJ-6uo" firstAttribute="trailing" secondItem="kFB-l8-vTu" secondAttribute="trailingMargin" constant="6" id="uVF-H9-d9C"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$og_app_id" footerTitle="This is rarely used. It sets the OG App ID tag." id="D9M-p9-CMC" userLabel="$og_app_id">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="YEH-oW-sE9">
+                                        <rect key="frame" x="0.0" y="2333.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="YEH-oW-sE9" id="Jdf-UG-d0D">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="bz5-mZ-QCs" userLabel="ogAppIDTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="bz5-mZ-QCs" firstAttribute="leading" secondItem="Jdf-UG-d0D" secondAttribute="leadingMargin" constant="6" id="HZk-EK-TxT"/>
+                                                <constraint firstItem="bz5-mZ-QCs" firstAttribute="centerY" secondItem="Jdf-UG-d0D" secondAttribute="centerY" id="JY0-LY-8Kg"/>
+                                                <constraint firstItem="bz5-mZ-QCs" firstAttribute="trailing" secondItem="Jdf-UG-d0D" secondAttribute="trailingMargin" constant="6" id="ZpH-QF-6hH"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$twitter_card" footerTitle="The Twitter card type of the link." id="dbi-W1-XAr" userLabel="$twitter_card">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="0hN-9R-gsx">
+                                        <rect key="frame" x="0.0" y="2453" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="0hN-9R-gsx" id="UpX-6L-q4i">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="$twitter_card" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="qmy-5W-Nn4" userLabel="twitterCardTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="qmy-5W-Nn4" firstAttribute="leading" secondItem="UpX-6L-q4i" secondAttribute="leadingMargin" constant="6" id="FVv-eW-PAd"/>
+                                                <constraint firstItem="qmy-5W-Nn4" firstAttribute="trailing" secondItem="UpX-6L-q4i" secondAttribute="trailingMargin" constant="6" id="LkS-PG-sTk"/>
+                                                <constraint firstItem="qmy-5W-Nn4" firstAttribute="centerY" secondItem="UpX-6L-q4i" secondAttribute="centerY" id="kK5-ja-R1P"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$twitter_title" footerTitle="The title of the Twitter card." id="5sy-5a-Exq" userLabel="$twitter_title">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="9NF-t1-DYv">
+                                        <rect key="frame" x="0.0" y="2572.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9NF-t1-DYv" id="Sk9-b5-Ei2" userLabel="Table View Cell">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="4Ub-p3-iKJ" userLabel="twitterTitleTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="4Ub-p3-iKJ" firstAttribute="leading" secondItem="Sk9-b5-Ei2" secondAttribute="leadingMargin" constant="6" id="QYe-Vj-Rgi"/>
+                                                <constraint firstItem="4Ub-p3-iKJ" firstAttribute="centerY" secondItem="Sk9-b5-Ei2" secondAttribute="centerY" id="XTh-Iv-HgC"/>
+                                                <constraint firstItem="4Ub-p3-iKJ" firstAttribute="trailing" secondItem="Sk9-b5-Ei2" secondAttribute="trailingMargin" constant="6" id="cgy-WF-fMe"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$twitter_description" footerTitle="The description of the Twitter card." id="V0g-pL-c4F" userLabel="$twitter_description">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="5JR-cN-Ogd">
+                                        <rect key="frame" x="0.0" y="2692" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5JR-cN-Ogd" id="wJB-E1-l5t">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="UWk-Gc-1zU" userLabel="twitterDescriptionTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="UWk-Gc-1zU" firstAttribute="trailing" secondItem="wJB-E1-l5t" secondAttribute="trailingMargin" constant="6" id="SuQ-Cy-tKT"/>
+                                                <constraint firstItem="UWk-Gc-1zU" firstAttribute="centerY" secondItem="wJB-E1-l5t" secondAttribute="centerY" id="axJ-l9-fRf"/>
+                                                <constraint firstItem="UWk-Gc-1zU" firstAttribute="leading" secondItem="wJB-E1-l5t" secondAttribute="leadingMargin" constant="6" id="iWQ-CX-dWw"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$twitter_site" footerTitle="The site for Twitter." id="fad-Ju-p1a" userLabel="$twitter_site">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="2jB-uZ-wkh">
+                                        <rect key="frame" x="0.0" y="2811.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2jB-uZ-wkh" id="EHd-Y5-90V">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="gZy-37-Vgn" userLabel="twitterSiteTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="gZy-37-Vgn" firstAttribute="trailing" secondItem="EHd-Y5-90V" secondAttribute="trailingMargin" constant="6" id="MBA-0t-gi8"/>
+                                                <constraint firstItem="gZy-37-Vgn" firstAttribute="centerY" secondItem="EHd-Y5-90V" secondAttribute="centerY" id="Pye-UK-oxp"/>
+                                                <constraint firstItem="gZy-37-Vgn" firstAttribute="leading" secondItem="EHd-Y5-90V" secondAttribute="leadingMargin" constant="6" id="eHT-te-xax"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$twitter_app_country" footerTitle="The app country for the app card." id="4B2-3q-tMX" userLabel="$twitter_app_country">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="r4K-K0-Rca">
+                                        <rect key="frame" x="0.0" y="2931" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="r4K-K0-Rca" id="m7H-wK-sDB">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="JGm-xr-Szq" userLabel="twitterAppCountryTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="JGm-xr-Szq" firstAttribute="centerY" secondItem="m7H-wK-sDB" secondAttribute="centerY" id="0xv-Zk-qen"/>
+                                                <constraint firstItem="JGm-xr-Szq" firstAttribute="leading" secondItem="m7H-wK-sDB" secondAttribute="leadingMargin" constant="6" id="O45-is-P69"/>
+                                                <constraint firstItem="JGm-xr-Szq" firstAttribute="trailing" secondItem="m7H-wK-sDB" secondAttribute="trailingMargin" constant="6" id="kJj-tB-1kJ"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$twitter_player" footerTitle="The video player’s URL. This defaults to the value of $og_video." id="sRP-Ii-Kex" userLabel="$twitter_player">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="yg7-hw-h36">
+                                        <rect key="frame" x="0.0" y="3050.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yg7-hw-h36" id="m5z-a5-RRR">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="uses value of $og_video if not set" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="uuu-CB-ScR" userLabel="twitterPlayerTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="uuu-CB-ScR" firstAttribute="leading" secondItem="m5z-a5-RRR" secondAttribute="leadingMargin" constant="6" id="NrM-5D-TLK"/>
+                                                <constraint firstItem="uuu-CB-ScR" firstAttribute="centerY" secondItem="m5z-a5-RRR" secondAttribute="centerY" id="XwN-bb-N07"/>
+                                                <constraint firstItem="uuu-CB-ScR" firstAttribute="trailing" secondItem="m5z-a5-RRR" secondAttribute="trailingMargin" constant="6" id="so7-eF-77N"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$twitter_player_width" footerTitle="This sets the player’s width in pixels." id="yBl-u2-lnS" userLabel="$twitter_player_width">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="qA7-qt-GgE">
+                                        <rect key="frame" x="0.0" y="3186" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="qA7-qt-GgE" id="3lz-tG-mHt">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="fMv-V0-cJ3" userLabel="twitterPlayerWidthTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="fMv-V0-cJ3" firstAttribute="leading" secondItem="3lz-tG-mHt" secondAttribute="leadingMargin" constant="6" id="4cf-tN-y8q"/>
+                                                <constraint firstItem="fMv-V0-cJ3" firstAttribute="centerY" secondItem="3lz-tG-mHt" secondAttribute="centerY" id="5Qx-DT-efu"/>
+                                                <constraint firstItem="fMv-V0-cJ3" firstAttribute="trailing" secondItem="3lz-tG-mHt" secondAttribute="trailingMargin" constant="6" id="lPq-eL-7pY"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$twitter_player_height" footerTitle="This sets the player’s height in pixels." id="Hlw-4K-k6N" userLabel="$twitter_player_height">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="u03-gq-u1u">
+                                        <rect key="frame" x="0.0" y="3305.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="u03-gq-u1u" id="cVY-h9-XlJ">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="ZEh-tp-bEB" userLabel="twitterPlayerHeightTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="numberPad" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="ZEh-tp-bEB" firstAttribute="centerY" secondItem="cVY-h9-XlJ" secondAttribute="centerY" id="1m1-ws-zMH"/>
+                                                <constraint firstItem="ZEh-tp-bEB" firstAttribute="leading" secondItem="cVY-h9-XlJ" secondAttribute="leadingMargin" constant="6" id="M4h-6u-FNM"/>
+                                                <constraint firstItem="ZEh-tp-bEB" firstAttribute="trailing" secondItem="cVY-h9-XlJ" secondAttribute="trailingMargin" constant="6" id="kag-cz-qAD"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$price" footerTitle="Set the price associated with this piece of content." id="shn-PB-wnB" userLabel="$price">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="Whe-Tx-4zb">
+                                        <rect key="frame" x="0.0" y="3425" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Whe-Tx-4zb" id="kWC-cE-kV9">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="XOr-cr-eoH" userLabel="priceTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="decimalPad" returnKeyType="done"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="XOr-cr-eoH" firstAttribute="trailing" secondItem="kWC-cE-kV9" secondAttribute="trailingMargin" constant="6" id="ZQT-zc-0U5"/>
+                                                <constraint firstItem="XOr-cr-eoH" firstAttribute="centerY" secondItem="kWC-cE-kV9" secondAttribute="centerY" id="fsh-FZ-MpE"/>
+                                                <constraint firstItem="XOr-cr-eoH" firstAttribute="leading" secondItem="kWC-cE-kV9" secondAttribute="leadingMargin" constant="6" id="wL2-3q-ThK"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="$currency" footerTitle="The currency in which the price is denominated." id="J2j-6R-1ZJ" userLabel="$currency">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="6YU-fE-c0Y">
+                                        <rect key="frame" x="0.0" y="3544.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="6YU-fE-c0Y" id="gRN-eK-5ts">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="no default value" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="uyY-su-MvZ" userLabel="currencyTextField">
+                                                    <rect key="frame" x="14" y="12.5" width="359" height="19"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="uyY-su-MvZ" firstAttribute="centerY" secondItem="gRN-eK-5ts" secondAttribute="centerY" id="MZk-hx-VdC"/>
+                                                <constraint firstItem="uyY-su-MvZ" firstAttribute="leading" secondItem="gRN-eK-5ts" secondAttribute="leadingMargin" constant="6" id="PdG-qe-YyH"/>
+                                                <constraint firstItem="uyY-su-MvZ" firstAttribute="trailing" secondItem="gRN-eK-5ts" secondAttribute="trailingMargin" constant="6" id="SHq-n6-sQg"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="Custom Data" footerTitle="Custom data elements, in the form of key-value pairs." id="rkH-kT-rLL" userLabel="customData">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" rowHeight="98" id="NZB-yg-vgt">
+                                        <rect key="frame" x="0.0" y="3664" width="375" height="98"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="NZB-yg-vgt" id="Ach-35-SUG">
+                                            <rect key="frame" x="0.0" y="0.0" width="342" height="98"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="GUc-WI-Ry8" userLabel="customDataTextView">
+                                                    <rect key="frame" x="14" y="8" width="326" height="82"/>
+                                                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
+                                                </textView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="GUc-WI-Ry8" firstAttribute="leading" secondItem="Ach-35-SUG" secondAttribute="leadingMargin" constant="6" id="c2C-IE-RFD"/>
+                                                <constraint firstItem="GUc-WI-Ry8" firstAttribute="top" secondItem="Ach-35-SUG" secondAttribute="topMargin" id="ept-Ho-8Ui"/>
+                                                <constraint firstItem="GUc-WI-Ry8" firstAttribute="bottom" secondItem="Ach-35-SUG" secondAttribute="bottomMargin" id="uTg-R2-GMT"/>
+                                                <constraint firstItem="GUc-WI-Ry8" firstAttribute="trailing" secondItem="Ach-35-SUG" secondAttribute="trailingMargin" constant="6" id="wKh-mM-mPx"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="dok-LR-mvX" id="HRt-7O-NUr"/>
+                            <outlet property="delegate" destination="dok-LR-mvX" id="qW3-Kx-VN2"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Universal Object Properties" id="cQu-by-3hd">
+                        <barButtonItem key="leftBarButtonItem" style="done" systemItem="done" id="eBp-NB-7fv">
+                            <connections>
+                                <segue destination="3ix-6a-5ra" kind="unwind" identifier="UnwindBranchUniversalObject" unwindAction="unwindBranchUniversalObject:" id="iPv-K7-FJ2"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="canonicalIdentifierTextField" destination="zVx-l4-IxT" id="B9t-2p-yf6"/>
+                        <outlet property="clearAllValuesButton" destination="aAv-Fr-9Io" id="cG9-Fn-5GK"/>
+                        <outlet property="contentTypeTextField" destination="Jc3-gC-klu" id="Ygx-Xk-aro"/>
+                        <outlet property="currencyTextField" destination="uyY-su-MvZ" id="vEN-aG-jwZ"/>
+                        <outlet property="customDataTextView" destination="GUc-WI-Ry8" id="a77-XP-1kH"/>
+                        <outlet property="expDateTextField" destination="VIt-5x-L9G" id="Xf1-gT-7qT"/>
+                        <outlet property="keywordsTextView" destination="N38-Tn-tQO" id="6vD-Vd-skT"/>
+                        <outlet property="ogAppIDTextField" destination="bz5-mZ-QCs" id="d71-Pv-45F"/>
+                        <outlet property="ogDescriptionTextField" destination="Zt4-sc-SPv" id="o8j-aM-hdq"/>
+                        <outlet property="ogImageHeightTextField" destination="spb-nB-qDk" id="xn8-iP-NhP"/>
+                        <outlet property="ogImageURLTextField" destination="oR1-Ht-sjB" id="EAV-qc-Twy"/>
+                        <outlet property="ogImageWidthTextField" destination="ThH-Uv-Wth" id="Zy8-8G-OC1"/>
+                        <outlet property="ogRedirectTextField" destination="o21-FJ-6uo" id="gef-pK-ASG"/>
+                        <outlet property="ogTitleTextField" destination="uGB-Cu-2fv" id="LKZ-wK-2XA"/>
+                        <outlet property="ogTypeTextField" destination="BVv-G0-1wX" id="1CX-FP-dTm"/>
+                        <outlet property="ogURLTextField" destination="x3s-pr-4lV" id="BOM-U9-EbM"/>
+                        <outlet property="ogVideoTextField" destination="FYa-TF-vGk" id="8tx-jN-tpD"/>
+                        <outlet property="priceTextField" destination="XOr-cr-eoH" id="5Yv-Tc-Xy9"/>
+                        <outlet property="publiclyIndexableSwitch" destination="B44-sQ-c2b" id="JSb-hL-fEC"/>
+                        <outlet property="twitterAppCountryTextField" destination="JGm-xr-Szq" id="V59-3M-taF"/>
+                        <outlet property="twitterCardTextField" destination="qmy-5W-Nn4" id="e0U-x5-VcG"/>
+                        <outlet property="twitterDescriptionTextField" destination="UWk-Gc-1zU" id="6Nh-qH-hRn"/>
+                        <outlet property="twitterPlayerHeightTextField" destination="ZEh-tp-bEB" id="Hqg-Vs-SvV"/>
+                        <outlet property="twitterPlayerTextField" destination="uuu-CB-ScR" id="xr1-xo-gxb"/>
+                        <outlet property="twitterPlayerWidthTextField" destination="fMv-V0-cJ3" id="X0o-M3-09W"/>
+                        <outlet property="twitterSiteTextField" destination="gZy-37-Vgn" id="lf6-tM-sAY"/>
+                        <outlet property="twitterTitleTextField" destination="4Ub-p3-iKJ" id="q7p-bP-lNs"/>
+                        <segue destination="bRv-aq-ddR" kind="show" identifier="Dictionary" id="wth-hd-3D7"/>
+                        <segue destination="9cY-W1-idP" kind="show" identifier="Array" id="X7W-cf-8rz"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mJ5-Ln-vMD" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="3ix-6a-5ra" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="3808.8000000000002" y="1041.2293853073463"/>
+        </scene>
+        <!--Array TableView-->
+        <scene sceneID="w3R-5M-dX3">
+            <objects>
+                <viewControllerPlaceholder storyboardIdentifier="Array" storyboardName="ArrayTableView" id="9cY-W1-idP" userLabel="Array TableView" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="l3w-PA-uof" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4442" y="940"/>
+        </scene>
+        <!--Dictionary TableView-->
+        <scene sceneID="Acf-VO-TPC">
+            <objects>
+                <viewControllerPlaceholder storyboardIdentifier="Dictionary" storyboardName="DictionaryTableView" id="bRv-aq-ddR" userLabel="Dictionary TableView" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4Gn-wf-JOz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4465" y="1149"/>
+        </scene>
+        <!--UniversalObjectNavigationController-->
+        <scene sceneID="fbT-4p-1NF">
+            <objects>
+                <navigationController storyboardIdentifier="UniversalObjectNavigationController" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Xur-Vh-bZT" userLabel="UniversalObjectNavigationController" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="m4J-es-kI9">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="dok-LR-mvX" kind="relationship" relationship="rootViewController" id="GQC-ij-iaa"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rIM-Jf-bhZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2998" y="1041"/>
+        </scene>
+    </scenes>
+</document>

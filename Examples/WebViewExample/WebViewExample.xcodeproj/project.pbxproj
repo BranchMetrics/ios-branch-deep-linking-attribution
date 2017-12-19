@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01A50551C4645DC82118362D /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A702BD72983C333D536EBD9 /* AdSupport.framework */; };
 		07D7344CAF30D91A006AF03E /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C15924DCAC544A524C8BA689 /* SafariServices.framework */; };
 		44B41F44A1783294F78E3DCC /* Pods_WebViewExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8529F4248FBBE54B064721F2 /* Pods_WebViewExample.framework */; };
 		4D38B1701F7458D800A377A0 /* Web.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4D38B16F1F7458D800A377A0 /* Web.bundle */; };
@@ -26,9 +25,7 @@
 		7B3B979C1E8C267E0089C04B /* PlanetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3B979B1E8C267E0089C04B /* PlanetCell.swift */; };
 		7B3B97AA1E8C31A60089C04B /* ArticleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3B97A91E8C31A60089C04B /* ArticleViewController.swift */; };
 		7B3B97AC1E8C32BD0089C04B /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3B97AB1E8C32BD0089C04B /* ArticleView.swift */; };
-		9E018D9C62DAE9EC338676BF /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B876CE060009DF56E6852B9 /* SafariServices.framework */; };
 		E81442D7E356074AC9B9BC88 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E850668728429987D8EAF783 /* CoreSpotlight.framework */; };
-		EE4DA569421B408AEA9CC95C /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE94709AB0FFD93D961C1260 /* CoreSpotlight.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,9 +69,6 @@
 				44B41F44A1783294F78E3DCC /* Pods_WebViewExample.framework in Frameworks */,
 				623C297F2E2BCAF70B830361 /* AdSupport.framework in Frameworks */,
 				E81442D7E356074AC9B9BC88 /* CoreSpotlight.framework in Frameworks */,
-				9E018D9C62DAE9EC338676BF /* SafariServices.framework in Frameworks */,
-				01A50551C4645DC82118362D /* AdSupport.framework in Frameworks */,
-				EE4DA569421B408AEA9CC95C /* CoreSpotlight.framework in Frameworks */,
 				07D7344CAF30D91A006AF03E /* SafariServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

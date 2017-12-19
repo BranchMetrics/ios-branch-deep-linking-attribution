@@ -5,28 +5,31 @@
 //  Created by Alex Austin on 6/5/14.
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
+
 #import "Branch.h"
 #import "ViewController.h"
 #import "CreditHistoryViewController.h"
 #import "LogOutputViewController.h"
+#import "ArrayPickerView.h"
 #import "BranchUniversalObject.h"
 #import "BranchLinkProperties.h"
 
-NSString *cononicalIdentifier = @"item/12346";
-NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
-NSString *contentTitle = @"Branch 0.19 TestBed Content Title";
-NSString *contentDescription = @"My Content Description";
-NSString *imageUrl = @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png";
-NSString *feature = @"Sharing Feature";
-NSString *channel = @"Distribution Channel";
-NSString *desktop_url = @"http://branch.io";
-NSString *ios_url = @"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/";
-NSString *shareText = @"Super amazing thing I want to share";
-NSString *user_id1 = @"abe@emailaddress.io";
-NSString *user_id2 = @"ben@emailaddress.io";
-NSString *live_key = @"live_key";
-NSString *test_key = @"test_key";
-NSString *type = @"some type";
+static NSString *cononicalIdentifier = @"item/12346";
+static NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
+static NSString *contentTitle = @"Branch 0.19 TestBed Content Title";
+static NSString *contentDescription = @"My Content Description";
+//static NSString *imageUrl = @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png";
+static NSString *imageUrl = @"http://www.theweddingplayers.com/wp-content/new_folder/Mr_Wompy_web2.jpg";
+static NSString *feature = @"Sharing Feature";
+static NSString *channel = @"Distribution Channel";
+static NSString *desktop_url = @"http://branch.io";
+static NSString *ios_url = @"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/";
+static NSString *shareText = @"Super amazing thing I want to share";
+static NSString *user_id1 = @"abe@emailaddress.io";
+static NSString *user_id2 = @"ben@emailaddress.io";
+static NSString *live_key = @"live_key";
+static NSString *test_key = @"test_key";
+static NSString *type = @"some type";
 
 @interface ViewController () <BranchShareLinkDelegate> {
     NSDateFormatter *_dateFormatter;
@@ -62,15 +65,14 @@ NSString *type = @"some type";
     _branchUniversalObject.title = contentTitle;
     _branchUniversalObject.contentDescription = contentDescription;
     _branchUniversalObject.imageUrl = imageUrl;
-    _branchUniversalObject.price = 1000;
-    _branchUniversalObject.currency = @"$";
-    _branchUniversalObject.type = type;
-    [_branchUniversalObject
-        addMetadataKey:@"deeplink_text"
-        value:[NSString stringWithFormat:
+    _branchUniversalObject.contentMetadata.price = [NSDecimalNumber decimalNumberWithString:@"1000.00"];
+    _branchUniversalObject.contentMetadata.currency = BNCCurrencyUSD;
+    _branchUniversalObject.contentMetadata.contentSchema = BranchContentSchemaCommerceProduct;
+    _branchUniversalObject.contentMetadata.customMetadata[@"deeplink_text"] =
+        [NSString stringWithFormat:
             @"This text was embedded as data in a Branch link with the following characteristics:\n\n"
              "canonicalUrl: %@\n  title: %@\n  contentDescription: %@\n  imageUrl: %@\n",
-                canonicalUrl, contentTitle, contentDescription, imageUrl]];
+                canonicalUrl, contentTitle, contentDescription, imageUrl];
 
     self.versionLabel.text =
         [NSString stringWithFormat:@"v %@ / %@ / %@",
@@ -97,8 +99,8 @@ NSString *type = @"some type";
 
 
 - (IBAction)redeemFivePointsButtonTouchUpInside:(id)sender {
-    _pointsLabel.hidden = YES;
-    [_activityIndicator startAnimating];
+    self.pointsLabel.hidden = YES;
+    [self.activityIndicator startAnimating];
     
     Branch *branch = [Branch getInstance];
     [branch redeemRewards:5 callback:^(BOOL changed, NSError *error) {
@@ -107,10 +109,10 @@ NSString *type = @"some type";
             [self showAlert:@"Redemption Unsuccessful" withDescription:error.localizedDescription];
         } else {
             NSLog(@"Branch TestBed: Five Points Redeemed!");
-            [_pointsLabel setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
+            [self.pointsLabel setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
         }
-        _pointsLabel.hidden = NO;
-        [_activityIndicator stopAnimating];
+        self.pointsLabel.hidden = NO;
+        [self.activityIndicator stopAnimating];
     }];
 }
 
@@ -250,8 +252,6 @@ NSString *type = @"some type";
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
     linkProperties.campaign = @"sharing campaign";
-    [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
-    [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
 
     BranchShareLink *shareLink =
         [[BranchShareLink alloc]
@@ -275,6 +275,7 @@ NSString *type = @"some type";
     linkProperties.campaign = @"sharing campaign";
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
     [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
+    [linkProperties addControlParam:@"$android_deeplink_path" withValue:@"custom/path/*"];
 
     BranchShareLink *shareLink =
         [[BranchShareLink alloc]
@@ -322,18 +323,12 @@ NSString *type = @"some type";
     }
 }
 
-#pragma mark - Commerce Events
-
 - (IBAction) openBranchLinkInApp:(id)sender {
-    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
-    // TODO: Remove
-    // NSURL *URL = [NSURL URLWithString:@"https://bnc.lt/ZPOc/Y6aKU0rzcy"]; // <= Your URL goes here.
     NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"];
-    activity.webpageURL = URL;
-    Branch *branch = [Branch getInstance];
-    [branch resetUserSession];
-    [branch continueUserActivity:activity];
+    [[Branch getInstance] handleDeepLinkWithNewSession:URL];
 }
+
+#pragma mark - Commerce Events
 
 - (IBAction) sendCommerceEvent:(id)sender {
     BNCProduct *product = [BNCProduct new];
@@ -367,14 +362,105 @@ NSString *type = @"some type";
         }];
 }
 
+- (IBAction) sendV2EventAction:(id)sender {
+    NSArray<NSString*> *eventNames = @[
+
+         BranchStandardEventAddToCart
+        ,BranchStandardEventAddToWishlist
+        ,BranchStandardEventViewCart
+        ,BranchStandardEventInitiatePurchase
+        ,BranchStandardEventAddPaymentInfo
+        ,BranchStandardEventPurchase
+        ,BranchStandardEventSpendCredits
+
+        ,BranchStandardEventSearch
+        ,BranchStandardEventViewItem
+        ,BranchStandardEventViewItems
+        ,BranchStandardEventRate
+        ,BranchStandardEventShare
+
+        ,BranchStandardEventCompleteRegistration
+        ,BranchStandardEventCompleteTutorial
+        ,BranchStandardEventAchieveLevel
+        ,BranchStandardEventUnlockAchievement
+        ,@"iOS-CustomEvent"
+
+    ];
+
+    __weak __typeof(self) weakSelf = self;
+    ArrayPickerView *picker = [[ArrayPickerView alloc] initWithArray:eventNames];
+    picker.doneButtonTitle = @"Send";
+    [picker presentFromViewController:self withCompletion:^ (NSString*pickedString) {
+        if (pickedString) {
+            __strong __typeof(self) strongSelf = weakSelf;
+            [strongSelf sendV2EventWithName:pickedString];
+        }
+    }];
+}
+
+- (void) sendV2EventWithName:(NSString*)eventName {
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+
+    buo.contentMetadata.contentSchema    = BranchContentSchemaCommerceProduct;
+    buo.contentMetadata.quantity         = 2;
+    buo.contentMetadata.price            = [NSDecimalNumber decimalNumberWithString:@"23.20"];
+    buo.contentMetadata.currency         = BNCCurrencyUSD;
+    buo.contentMetadata.sku              = @"1994320302";
+    buo.contentMetadata.productName      = @"my_product_name1";
+    buo.contentMetadata.productBrand     = @"my_prod_Brand1";
+    buo.contentMetadata.productCategory  = BNCProductCategoryBabyToddler;
+    buo.contentMetadata.productVariant   = @"3T";
+    buo.contentMetadata.condition        = BranchConditionFair;
+
+    buo.contentMetadata.ratingAverage    = 5;
+    buo.contentMetadata.ratingCount      = 5;
+    buo.contentMetadata.ratingMax        = 7;
+    buo.contentMetadata.addressStreet    = @"Street_name1";
+    buo.contentMetadata.addressCity      = @"city1";
+    buo.contentMetadata.addressRegion    = @"Region1";
+    buo.contentMetadata.addressCountry   = @"Country1";
+    buo.contentMetadata.addressPostalCode= @"postal_code";
+    buo.contentMetadata.latitude         = 12.07;
+    buo.contentMetadata.longitude        = -97.5;
+    buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
+    buo.contentMetadata.customMetadata   = (id) @{@"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"};
+    buo.title                       = @"My Content Title";
+    buo.canonicalIdentifier         = @"item/12345";
+    buo.canonicalUrl                = @"https://branch.io/deepviews";
+    buo.keywords                    = @[@"My_Keyword1", @"My_Keyword2"];
+    buo.contentDescription          = @"my_product_description1";
+    buo.imageUrl                    = @"https://test_img_url";
+    buo.expirationDate              = [NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0];
+    buo.publiclyIndex               = NO;
+    buo.locallyIndex                = YES;
+    buo.creationDate                = [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0];
+
+    BranchEvent *event    = [BranchEvent customEventWithName:eventName];
+    event.transactionID   = @"12344555";
+    event.currency        = BNCCurrencyUSD;
+    event.revenue         = [NSDecimalNumber decimalNumberWithString:@"1.5"];
+    event.shipping        = [NSDecimalNumber decimalNumberWithString:@"10.2"];
+    event.tax             = [NSDecimalNumber decimalNumberWithString:@"12.3"];
+    event.coupon          = @"test_coupon";
+    event.affiliation     = @"test_affiliation";
+    event.eventDescription= @"Event _description";
+    event.customData      = (NSMutableDictionary*) @{
+        @"Custom_Event_Property_Key1": @"Custom_Event_Property_val1",
+        @"Custom_Event_Property_Key2": @"Custom_Event_Property_val2"
+    };
+    event.contentItems = (id) @[ buo ];
+    [event logEvent];
+}
+
 #pragma mark - Spotlight
 
 - (IBAction)registerWithSpotlightButtonTouchUpInside:(id)sender {
     //
     // Example using callbackWithURLandSpotlightIdentifier
     //
-    [self.branchUniversalObject addMetadataKey:@"deeplink_text" value:@"This link was generated for Spotlight registration"];
-    self.branchUniversalObject.automaticallyListOnSpotlight = YES;
+    self.branchUniversalObject.contentMetadata.customMetadata[@"deeplink_text"] =
+        @"This link was generated for Spotlight registration";
+    self.branchUniversalObject.locallyIndex = YES;
     [self.branchUniversalObject userCompletedAction:BNCRegisterViewEvent];
 }
 
@@ -421,15 +507,17 @@ NSString *type = @"some type";
 }
 
 - (void)refreshRewardPoints {
-    _pointsLabel.hidden = YES;
-    [_activityIndicator startAnimating];
+    self.pointsLabel.hidden = YES;
+    [self.activityIndicator startAnimating];
+    __weak __typeof(self) weakSelf = self;
     Branch *branch = [Branch getInstance];
     [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
+        __strong __typeof(self) strongSelf = weakSelf;
         if (!error) {
-            [_pointsLabel setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
+            [strongSelf.pointsLabel setText:[NSString stringWithFormat:@"%ld", (long)[branch getCredits]]];
         }
-        [_activityIndicator stopAnimating];
-        _pointsLabel.hidden = NO;
+        [strongSelf.activityIndicator stopAnimating];
+        strongSelf.pointsLabel.hidden = NO;
     }];
 }
 
@@ -445,7 +533,7 @@ static inline void BNCPerformBlockOnMainThread(void (^ block)(void)) {
 
     BNCPerformBlockOnMainThread(^ {
 
-        if ([UIDevice currentDevice].systemVersion.floatValue < 8.0) {
+        if ([UIDevice currentDevice].systemVersion.doubleValue < 8.0) {
 
             #pragma clang diagnostic push
             #pragma clang diagnostic ignored "-Wdeprecated-declarations"

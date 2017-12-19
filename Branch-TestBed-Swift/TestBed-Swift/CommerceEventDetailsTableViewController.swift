@@ -20,9 +20,9 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
     @IBOutlet weak var taxTextField: UITextField!
     @IBOutlet weak var revenueTextField: UITextField!
     
-    var defaults = DataStore.getCommerceEventDefaults()
+    var defaults = CommerceEventData.commerceEventDefaults()
     let picker = UIPickerView()
-    let  currencies = DataStore.getCurrencies()
+    let currencies = CommerceEventData.currencies()
     
     // MARK: - Core View Functions
     
@@ -36,14 +36,6 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
         shippingTextField.delegate = self
         taxTextField.delegate = self
         revenueTextField.delegate = self
-        
-//        transactionIDTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-//        affiliationTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-//        couponTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-//        currencyTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-//        shippingTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-//        taxTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-//        revenueTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         
         transactionIDTextField.placeholder = defaults["transactionID"]
         affiliationTextField.placeholder = defaults["affiliation"]
@@ -74,11 +66,6 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
         self.view.endEditing(true)
         return true
     }
-    
-//    func textFieldDidChange(_ textField: UITextField) {
-//        refreshDataStore()
-//        refreshControls()
-//    }
     
     @IBAction func resetAllValuesButtonTouchUpInside(_ sender: AnyObject) {
         clearControls()
@@ -114,7 +101,7 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
     }
     
     func refreshControls() {
-        guard var commerceEvent = DataStore.getCommerceEvent() else {
+        guard var commerceEvent = CommerceEventData.commerceEvent() else {
             return
         }
 
@@ -156,7 +143,7 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
     }
     
     func refreshDataStore() {
-        DataStore.setCommerceEvent([
+        CommerceEventData.setCommerceEvent([
             "transactionID": transactionIDTextField.text!,
             "affiliation": affiliationTextField.text!,
             "coupon": couponTextField.text!,
@@ -184,12 +171,12 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
         return toolbar
     }
     
-    func cancelPicking() {
+    @objc func cancelPicking() {
         currencyTextField.resignFirstResponder()
     }
     
-    func donePicking() {
-        self.currencyTextField.text = String(currencies[picker.selectedRow(inComponent: 0)].characters.prefix(3))
+    @objc func donePicking() {
+        self.currencyTextField.text = String(currencies[picker.selectedRow(inComponent: 0)].prefix(3))
         self.currencyTextField.resignFirstResponder()
     }
     

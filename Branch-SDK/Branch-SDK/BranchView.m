@@ -6,16 +6,15 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
-@import Foundation;
 #import "BranchView.h"
 #import "BNCPreferenceHelper.h"
 
-NSInteger  const BRANCH_VIEW_USAGE_UNLIMITED = -1;
-NSString * const BRANCH_VIEW_ID = @"id";
-NSString * const BRANCH_VIEW_ACTION = @"action";
-NSString * const BRANCH_VIEW_NUM_USE = @"number_of_use";
-NSString * const BRANCH_VIEW_WEBURL = @"url";
-NSString * const BRANCH_VIEW_WEBHTML = @"html";
+static NSInteger  const BRANCH_VIEW_USAGE_UNLIMITED = -1;
+static NSString * const BRANCH_VIEW_ID = @"id";
+static NSString * const BRANCH_VIEW_ACTION = @"action";
+static NSString * const BRANCH_VIEW_NUM_USE = @"number_of_use";
+static NSString * const BRANCH_VIEW_WEBURL = @"url";
+static NSString * const BRANCH_VIEW_WEBHTML = @"html";
 
 @interface BranchView()
 @end
@@ -23,7 +22,7 @@ NSString * const BRANCH_VIEW_WEBHTML = @"html";
 @implementation BranchView
 
 - (id)initWithBranchView:(NSDictionary *)branchViewDict andActionName:(NSString *)actionName {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.branchViewAction = actionName;
         self.branchViewID = [branchViewDict objectForKey:BRANCH_VIEW_ID];
         self.numOfUse = [[branchViewDict objectForKey:BRANCH_VIEW_NUM_USE] integerValue];

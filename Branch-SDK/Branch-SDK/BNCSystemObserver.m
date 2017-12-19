@@ -6,12 +6,18 @@
 //  Copyright (c) 2014 Branch Metrics. All rights reserved.
 //
 
-@import UIKit;
-@import SystemConfiguration;
-@import Darwin.POSIX.sys.utsname;
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BNCLog.h"
+#if __has_feature(modules)
+@import UIKit;
+@import SystemConfiguration;
+@import Darwin.POSIX.sys.utsname;
+#else
+#import <UIKit/UIKit.h>
+#import <SystemConfiguration/SystemConfiguration.h>
+#import <sys/utsname.h>
+#endif
 
 @implementation BNCSystemObserver
 
@@ -21,17 +27,8 @@
     NSString *uid = nil;
     *isReal = YES;
 
-    Class ASIdentifierManagerClass = NSClassFromString(@"ASIdentifierManager");
-    if (ASIdentifierManagerClass && !debug) {
-        SEL sharedManagerSelector = NSSelectorFromString(@"sharedManager");
-        id sharedManager = ((id (*)(id, SEL))[ASIdentifierManagerClass methodForSelector:sharedManagerSelector])(ASIdentifierManagerClass, sharedManagerSelector);
-        SEL advertisingIdentifierSelector = NSSelectorFromString(@"advertisingIdentifier");
-        NSUUID *uuid = ((NSUUID* (*)(id, SEL))[sharedManager methodForSelector:advertisingIdentifierSelector])(sharedManager, advertisingIdentifierSelector);
-        uid = [uuid UUIDString];
-        // limit ad tracking is enabled. iOS 10+
-        if ([uid isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
-            uid = nil;
-        }
+    if (!debug) {
+        uid = [self getAdId];
         *type = @"idfa";
     }
 
@@ -44,6 +41,29 @@
         uid = [[NSUUID UUID] UUIDString];
         *type = @"random";
         *isReal = NO;
+    }
+
+    return uid;
+}
+
++ (NSString*) getAdId {
+    NSString *uid = nil;
+
+    Class ASIdentifierManagerClass = NSClassFromString(@"ASIdentifierManager");
+    if (ASIdentifierManagerClass) {
+        SEL sharedManagerSelector = NSSelectorFromString(@"sharedManager");
+        id sharedManager =
+            ((id (*)(id, SEL))[ASIdentifierManagerClass methodForSelector:sharedManagerSelector])
+                (ASIdentifierManagerClass, sharedManagerSelector);
+        SEL advertisingIdentifierSelector = NSSelectorFromString(@"advertisingIdentifier");
+        NSUUID *uuid =
+            ((NSUUID* (*)(id, SEL))[sharedManager methodForSelector:advertisingIdentifierSelector])
+                (sharedManager, advertisingIdentifierSelector);
+        uid = [uuid UUIDString];
+        // limit ad tracking is enabled. iOS 10+
+        if ([uid isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
+            uid = nil;
+        }
     }
 
     return uid;
@@ -201,6 +221,9 @@
             return BNCUpdateStateUpdate;
     }
 
+    // If there isn't a stored app version it might be because Branch is just starting to be used in
+    // this project.  So use the app dates to figure out if this is a new install or an update.
+
     if (buildDate && [buildDate timeIntervalSince1970] <= 0.0) {
         // Invalid buildDate.
         buildDate = nil;
@@ -210,7 +233,10 @@
         appInstallDate = nil;
     }
 
-    if (!(buildDate && appInstallDate)) {
+    // If app dates can't be found it may be because iOS isn't reporting them.
+    if (buildDate == nil || appInstallDate == nil) {
+        BNCLogError(@"Please report this to Branch: Build date is %@ and install date is %@. iOS version %@.",
+            buildDate, appInstallDate, [UIDevice currentDevice].systemVersion);
         return BNCUpdateStateInstall;
     }
 
@@ -218,7 +244,7 @@
         return BNCUpdateStateUpdate;
     }
 
-    if ([appInstallDate timeIntervalSinceNow] > (-60.0 * 60.0 * 24.0)) {
+    if ([appInstallDate timeIntervalSinceNow] > (-7.0 * 24.0 * 60.0 * 60.0)) {
         return BNCUpdateStateInstall;
     }
 
