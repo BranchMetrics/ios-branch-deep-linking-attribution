@@ -193,9 +193,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     if ([viewController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
         presentingViewController = viewController;
     } else {
-        Class UIApplicationClass = NSClassFromString(@"UIApplication");
-        UIViewController *rootController =
-            [UIApplicationClass sharedApplication].delegate.window.rootViewController;
+        UIViewController *rootController = [UIViewController bnc_currentViewController];
         if ([rootController respondsToSelector:@selector(presentViewController:animated:completion:)]) {
             presentingViewController = rootController;
         }

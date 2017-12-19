@@ -6,7 +6,6 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 
-
 #import <CommonCrypto/CommonDigest.h>
 #import "BranchContentDiscoverer.h"
 #import "BranchContentDiscoveryManifest.h"
@@ -15,7 +14,7 @@
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
 #import "BNCLog.h"
-
+#import "UIViewController+Branch.h"
 
 @interface BranchContentDiscoverer ()
 @property (nonatomic, strong) NSString *lastViewControllerName;
@@ -73,7 +72,7 @@
 
 - (void)readContentDataIfNeeded {
     if (_numOfViewsDiscovered < self.contentManifest.maxViewHistoryLength) {
-        UIViewController *presentingViewController = [self getActiveViewController];
+        UIViewController *presentingViewController = [UIViewController bnc_currentViewController];
         if (presentingViewController) {
             NSString *presentingViewControllerName = NSStringFromClass([presentingViewController class]);
             if (_lastViewControllerName == nil || ![_lastViewControllerName isEqualToString:presentingViewControllerName]) {
@@ -245,25 +244,6 @@
         }
     }
     return viewTxt;
-}
-
-- (UIViewController *)getActiveViewController {
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    UIViewController *rootViewController = [UIApplicationClass sharedApplication].keyWindow.rootViewController;
-    return [self getActiveViewController:rootViewController];
-    
-}
-
-- (UIViewController *)getActiveViewController:(UIViewController *)rootViewController {
-    UIViewController *activeController;
-    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
-        activeController = ((UINavigationController *)rootViewController).topViewController;
-    } else if ([rootViewController isKindOfClass:[UITabBarController class]]) {
-        activeController = ((UITabBarController *)rootViewController).selectedViewController;
-    } else {
-        activeController = rootViewController;
-    }
-    return activeController;
 }
 
 - (void)addFormattedContentData:(NSMutableArray *)contentDataArray
