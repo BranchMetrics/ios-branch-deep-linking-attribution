@@ -1,6 +1,6 @@
 Branch iOS SDK Change Log
 
-- v0.21.15
+- v0.21.16
   * _*Master Release*_ - December 18, 2017
   * Fixed the BranchUniversalObject for v2-events & Updated the UITestBed. (#768)
   * Fix update / install tracking when app installed but not run for a while. (#763)
