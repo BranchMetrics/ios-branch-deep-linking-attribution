@@ -9,10 +9,8 @@
 #import "Branch.h"
 
 @interface Branch (Validator)
-
 - (void) validateSDKIntegrationCore;
-- (void) validatorDeeplinkRouting:(NSDictionary *)params;
-
+- (void) validateDeeplinkRouting:(NSDictionary *)params;
 @end
 
 void BNCForceBranchValidatorCategoryToLoad(void);
