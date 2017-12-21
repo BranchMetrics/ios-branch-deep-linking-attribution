@@ -23,8 +23,3 @@ typedef NSString * UIApplicationOpenURLOptionsKey;
 #ifndef NS_STRING_ENUM
 #define NS_STRING_ENUM
 #endif
-
-@interface NSLocale (BranchAvailability)
-- (NSString*) countryCode;
-- (NSString*) languageCode;
-@end

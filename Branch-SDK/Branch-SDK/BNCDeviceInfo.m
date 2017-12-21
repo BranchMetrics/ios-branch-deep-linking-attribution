@@ -25,6 +25,12 @@
 #import <arpa/inet.h>
 #import <netinet/in.h>
 
+// Forward declare this for older versions of iOS
+@interface NSLocale (BranchAvailability)
+- (NSString*) countryCode;
+- (NSString*) languageCode;
+@end
+
 #pragma mark BRNNetworkInfo
 
 typedef NS_ENUM(NSInteger, BNCNetworkAddressType) {

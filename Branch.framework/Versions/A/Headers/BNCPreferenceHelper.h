@@ -48,6 +48,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, nonatomic) NSString *browserUserAgentString;
 @property (strong, atomic) NSString *referringURL;
 @property (strong, atomic) NSString *branchAPIURL;
+@property (assign, atomic) BOOL      limitFacebookTracking;
 
 + (BNCPreferenceHelper *)preferenceHelper;
 
