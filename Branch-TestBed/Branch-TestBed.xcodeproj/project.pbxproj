@@ -172,6 +172,8 @@
 		7D4DAC261C8FA908008E37DB /* BranchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D4DAC231C8FA908008E37DB /* BranchView.m */; };
 		7D58823A1CA1DF2700FF6358 /* BNCDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5882391CA1DF2700FF6358 /* BNCDeviceInfo.m */; };
 		7E6B3B561AA42D0E005F45BF /* BranchSDKFunctionalityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6B3B551AA42D0E005F45BF /* BranchSDKFunctionalityTests.m */; };
+		9A2B7DD51FEC3BAF00CD188B /* Branch+Validator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A2B7DD31FEC3BAE00CD188B /* Branch+Validator.h */; };
+		9A2B7DD61FEC3BAF00CD188B /* Branch+Validator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A2B7DD41FEC3BAE00CD188B /* Branch+Validator.m */; };
 		BC659371001A4A77B4CCE51C /* libPods-Branch-SDK-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 423ACD2DEBB9A2E4FAF64B08 /* libPods-Branch-SDK-Tests.a */; };
 		E2133B751D01477200763049 /* BNCFabricAnswers.m in Sources */ = {isa = PBXBuildFile; fileRef = E2133B741D01477200763049 /* BNCFabricAnswers.m */; };
 		E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = E2B947491D15D73900F2270D /* BNCCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -381,6 +383,8 @@
 		7E6B3B551AA42D0E005F45BF /* BranchSDKFunctionalityTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchSDKFunctionalityTests.m; sourceTree = "<group>"; };
 		7EAA790019E89F67008D4A83 /* CreditHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreditHistoryViewController.h; sourceTree = "<group>"; };
 		7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreditHistoryViewController.m; sourceTree = "<group>"; };
+		9A2B7DD31FEC3BAE00CD188B /* Branch+Validator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Branch+Validator.h"; sourceTree = "<group>"; };
+		9A2B7DD41FEC3BAE00CD188B /* Branch+Validator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Branch+Validator.m"; sourceTree = "<group>"; };
 		BD1915E2CE30909947ECEB14 /* Pods-Branch-SDK-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Branch-SDK-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Branch-SDK-Tests/Pods-Branch-SDK-Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		D258D2C41A794D64004A1C90 /* BranchActivityItemProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchActivityItemProvider.h; sourceTree = "<group>"; };
 		D258D2C51A794D64004A1C90 /* BranchActivityItemProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchActivityItemProvider.m; sourceTree = "<group>"; };
@@ -642,6 +646,8 @@
 				670016C81946309100A9E103 /* BNCSystemObserver.m */,
 				670016BD1946309100A9E103 /* Branch.h */,
 				670016BE1946309100A9E103 /* Branch.m */,
+				9A2B7DD31FEC3BAE00CD188B /* Branch+Validator.h */,
+				9A2B7DD41FEC3BAE00CD188B /* Branch+Validator.m */,
 				D258D2C41A794D64004A1C90 /* BranchActivityItemProvider.h */,
 				D258D2C51A794D64004A1C90 /* BranchActivityItemProvider.m */,
 				4665AF221B28935700184037 /* BranchConstants.h */,
@@ -769,6 +775,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A2B7DD51FEC3BAF00CD188B /* Branch+Validator.h in Headers */,
 				F185BAAA1F3D30D70056300C /* BNCSpotlightService.h in Headers */,
 				4DCAC80F1F426F7C00405D1D /* BNCAvailability.h in Headers */,
 				E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */,
@@ -1092,6 +1099,7 @@
 				54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */,
 				4D130E761EE0C7B100A69A0A /* BNCServerInterface.m in Sources */,
 				466B586A1B17779C00A69EDE /* BNCLinkCache.m in Sources */,
+				9A2B7DD61FEC3BAF00CD188B /* Branch+Validator.m in Sources */,
 				4D130E921EE0C7B100A69A0A /* BranchShortUrlSyncRequest.m in Sources */,
 				466B586C1B17779C00A69EDE /* BranchActivityItemProvider.m in Sources */,
 				466B586E1B17779C00A69EDE /* BNCEncodingUtils.m in Sources */,
