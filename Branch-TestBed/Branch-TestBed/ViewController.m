@@ -423,8 +423,11 @@ static NSString *type = @"some type";
     buo.contentMetadata.latitude         = 12.07;
     buo.contentMetadata.longitude        = -97.5;
     buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
-    buo.contentMetadata.customMetadata   = (id) @{@"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"};
-    buo.title                       = @"My Content Title";
+    buo.contentMetadata.customMetadata   = (id) @{
+        @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1",
+        @"~campaign": @"Parul's campaign"
+    };
+    buo.title                       = @"Parul Title";
     buo.canonicalIdentifier         = @"item/12345";
     buo.canonicalUrl                = @"https://branch.io/deepviews";
     buo.keywords                    = @[@"My_Keyword1", @"My_Keyword2"];

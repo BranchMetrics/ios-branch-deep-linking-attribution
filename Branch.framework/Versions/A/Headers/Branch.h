@@ -124,7 +124,6 @@ extern NSString * const BNCCanonicalIdList;
 extern NSString * const BNCPurchaseAmount;
 extern NSString * const BNCPurchaseCurrency;
 extern NSString * const BNCCanonicalIdList;
-extern NSString * const BNCPurchaseAmount;
 extern NSString * const BNCRegisterViewEvent;
 extern NSString * const BNCAddToWishlistEvent;
 extern NSString * const BNCAddToCartEvent;

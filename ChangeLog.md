@@ -2,10 +2,12 @@ Branch iOS SDK Change Log
 
 - v0.21.16
   * _*Master Release*_ - December 18, 2017
-  * Fixed the BranchUniversalObject for v2-events & Updated the UITestBed. (#768)
-  * Fix update / install tracking when app installed but not run for a while. (#763)
-  * Added some code for Will's AppsFlyer integration. (#767)
+  * Fixed the BranchUniversalObject for v2-events & updated the UITestBed. (#768)
+  * Fixed update / install tracking when app installed but not run for a while. (#763)
+  * Added some code for Will's AppsFlyer integration in the Swift test bed. (#767)
   * Added `limit_facebook_tracking` to allow developers to opt-out of Facebook app tracking (AIS-417).
+  * Moved the forward declaration of `[NSLocal countryCode]` so that it doesn't interfere with
+    newer Swift compilations.
 
 - v0.21.14
   * _*Master Release*_ - December 8, 2017
