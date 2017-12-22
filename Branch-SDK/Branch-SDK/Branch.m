@@ -890,10 +890,13 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     self.preferenceHelper.checkedAppleSearchAdAttribution = YES;
     self.asyncRequestCount++;
 
+    NSDate *startDate = [NSDate date];
     _Atomic __block BOOL hasBeenCalled = NO;
     void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) =
       ^ void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
+        BNCLogDebug(@"Elapsed Apple Search Ad callback time: %1.3fs.", - [startDate timeIntervalSinceNow]);
         BOOL localHasBeenCalled = atomic_exchange(&hasBeenCalled, YES);
+        if (error) BNCLogError(@"Error while getting Apple Search Ad attribution: %@.", error);
         if (localHasBeenCalled) return;
 
         self.asyncRequestCount--;
