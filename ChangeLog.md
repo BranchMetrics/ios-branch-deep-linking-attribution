@@ -1,5 +1,11 @@
 Branch iOS SDK Change Log
 
+- v0.22.00
+  * Apple search ads weren't timing out on iPad during initialization.
+    This could block Branch initialization when Search Ad attribution was turned on.
+  * Fixed a deadlock found in iOS 9.3 / iPhone 5s.
+  * Added the `[UIViewController bnc_currentViewController]` as a category.
+
 - v0.21.16
   * _*Master Release*_ - December 18, 2017
   * Fixed the BranchUniversalObject for v2-events & updated the UITestBed. (#768)
