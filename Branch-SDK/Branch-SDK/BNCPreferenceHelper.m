@@ -57,7 +57,6 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 @property (strong, nonatomic) NSMutableDictionary *creditsDictionary;
 @property (strong, nonatomic) NSMutableDictionary *requestMetadataDictionary;
 @property (strong, nonatomic) NSMutableDictionary *instrumentationDictionary;
-
 @end
 
 @implementation BNCPreferenceHelper
@@ -100,14 +99,16 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 }
 
 - (id)init {
-    if ((self = [super init])) {
-        _timeout = DEFAULT_TIMEOUT;
-        _retryCount = DEFAULT_RETRY_COUNT;
-        _retryInterval = DEFAULT_RETRY_INTERVAL;
-        
-        _isDebug = NO;
-    }
-    
+    self = [super init];
+    if (!self) return self;
+
+    _timeout = DEFAULT_TIMEOUT;
+    _retryCount = DEFAULT_RETRY_COUNT;
+    _retryInterval = DEFAULT_RETRY_INTERVAL;
+    _isDebug = NO;
+    _persistPrefsQueue = [[NSOperationQueue alloc] init];
+    _persistPrefsQueue.maxConcurrentOperationCount = 1;
+
     return self;
 }
 
@@ -122,21 +123,8 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     return preferenceHelper;
 }
 
-- (NSOperationQueue *)persistPrefsQueue {
-    @synchronized (self) {
-        if (_persistPrefsQueue)
-            return _persistPrefsQueue;
-        _persistPrefsQueue = [[NSOperationQueue alloc] init];
-        _persistPrefsQueue.maxConcurrentOperationCount = 1;
-        return _persistPrefsQueue;
-    }
-}
-
 - (void) synchronize {
-    @synchronized(self) {
-        //  Flushes preference queue to persistence.
-        [_persistPrefsQueue waitUntilAllOperationsAreFinished];
-    }
+    [_persistPrefsQueue waitUntilAllOperationsAreFinished];
 }
 
 - (void) dealloc {
@@ -715,7 +703,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
                 BNCLogWarning(@"Failed to persist preferences: %@.", error);
             }
         }];
-        [self.persistPrefsQueue addOperation:newPersistOp];
+        [_persistPrefsQueue addOperation:newPersistOp];
     }
 }
 
