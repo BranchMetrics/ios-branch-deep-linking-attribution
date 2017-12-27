@@ -946,6 +946,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     };
 
     // Set a expiration timer in case we don't get a call back (I'm looking at you, iPad):
+    // This may be a temporary quick fix until we figure out a better wat to do search ads.
     BNCAfterSecondsPerformBlock(10.0, ^ {
         completionBlock(nil, [NSError errorWithDomain:NSNetServicesErrorDomain code:NSNetServicesTimeoutError userInfo:nil]);
     });
