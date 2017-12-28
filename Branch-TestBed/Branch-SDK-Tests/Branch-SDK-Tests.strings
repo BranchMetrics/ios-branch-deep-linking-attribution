@@ -93,7 +93,6 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
     \"$latitude\": 12.07,
     \"$longitude\": -97.5,
     \"$image_captions\": [\"my_img_caption1\", \"my_img_caption_2\"],
-    \"$custom_fields\": \"{\\\"Custom_Content_metadata_key1\\\":\\\"Custom_Content_metadata_val1\\\"}\",
     \"$og_title\": \"My Content Title\",
     \"$canonical_identifier\": \"item\/12345\",
     \"$canonical_url\": \"https:\/\/branch.io\/deepviews\",
@@ -103,7 +102,9 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
     \"$exp_date\": 212123232544,
     \"$publicly_indexable\": false,
     \"$locally_indexable\": true,
-    \"$creation_timestamp\": 1501869445321
+    \"$creation_timestamp\": 1501869445321,
+    \"Custom_Content_metadata_key1\": \"Custom_Content_metadata_val1\",
+    \"Custom_Content_metadata_key2\": \"Custom_Content_metadata_val2\"
 }
 ";
 "V2EventProperties" =
@@ -165,7 +166,8 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
         \"$latitude\": 12.07,
         \"$longitude\": -97.5,
         \"$image_captions\": [\"my_img_caption1\", \"my_img_caption_2\"],
-        \"$custom_fields\": \"{\\\"Custom_Content_metadata_key1\\\":\\\"Custom_Content_metadata_val1\\\"}\",
+        \"Custom_Content_metadata_key1\": \"Custom_Content_metadata_val1\",
+        \"Custom_Content_metadata_key2\": \"Custom_Content_metadata_val2\",
         \"$og_title\": \"My Content Title\",
         \"$canonical_identifier\": \"item\/12345\",
         \"$canonical_url\": \"https:\/\/branch.io\/deepviews\",
@@ -207,6 +209,7 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
  imageUrl: https://test_img_url
  metadata: {
     \"Custom_Content_metadata_key1\" = \"Custom_Content_metadata_val1\";
+    \"Custom_Content_metadata_key2\" = \"Custom_Content_metadata_val2\";
 }
  type: COMMERCE_PRODUCT
  locallyIndex: 1
