@@ -25,9 +25,17 @@
     NSString *formattedDateString = [dateFormatter stringFromDate:date];
     
     NSURL *someUrl = [NSURL URLWithString:@"https://branch.io"];
-    NSDictionary *dataDict = @{ @"foo": @"bar", @"num": @1, @"array": @[ @"array", @"items" ], @"dict": @{ @"sub": @1 }, @"url": someUrl, @"date": date };
-    NSString *expectedEncodedString = [NSString stringWithFormat:@"{\"foo\":\"bar\",\"num\":1,\"array\":[\"array\",\"items\"],\"dict\":{\"sub\":1},\"url\":\"https://branch.io\",\"date\":\"%@\"}", formattedDateString];
-    
+    NSDictionary *dataDict = @{
+        @"foo": @"bar",
+        @"num": @1,
+        @"array": @[ @"array", @"items" ],
+        @"dict": @{ @"sub": @1 },
+        @"url": someUrl,
+        @"date": date
+    };
+    NSString *expectedEncodedString = [NSString stringWithFormat:
+        @"{\"foo\":\"bar\",\"num\":1,\"array\":[\"array\",\"items\"],\"dict\":{\"sub\":1},\"url\":\"https://branch.io\",\"date\":\"%@\"}",
+            formattedDateString];
     NSString *encodedValue = [BNCEncodingUtils encodeDictionaryToJsonString:dataDict];
     
     XCTAssertEqualObjects(expectedEncodedString, encodedValue);

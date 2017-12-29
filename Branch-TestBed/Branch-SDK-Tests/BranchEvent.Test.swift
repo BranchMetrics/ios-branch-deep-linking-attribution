@@ -10,6 +10,10 @@ import Foundation
 
 class BranchEventTestSwift : BNCTestCase {
 
+    override func setUp() {
+        Branch.getInstance("key_live_foo")
+    }
+
     func testBranchEvent() {
 
         // Set up the Branch Universal Object --
@@ -49,7 +53,8 @@ class BranchEventTestSwift : BNCTestCase {
         branchUniversalObject.contentMetadata.longitude         = -97.5
         branchUniversalObject.contentMetadata.imageCaptions     = [ "my_img_caption1",  "my_img_caption_2"]
         branchUniversalObject.contentMetadata.customMetadata    = [
-            "Custom_Content_metadata_key1": "Custom_Content_metadata_val1"
+            "Custom_Content_metadata_key1": "Custom_Content_metadata_val1",
+            "Custom_Content_metadata_key2": "Custom_Content_metadata_val2"
         ]
 
         // Set up the event properties --
@@ -97,5 +102,16 @@ class BranchEventTestSwift : BNCTestCase {
         event.logEvent()
 
         event = BranchEvent.standardEvent(.viewItem)
+        event.logEvent();
+
+        // Quickly log an event:
+        BranchEvent.standardEvent(.viewItem).logEvent()
+
+        // Quickly log an event with content:
+        let branchUniversalObject = BranchUniversalObject.init()
+        branchUniversalObject.canonicalIdentifier = "item/12345"
+        branchUniversalObject.canonicalUrl        = "https://branch.io/deepviews"
+        branchUniversalObject.title               = "My Content Title"
+        BranchEvent.standardEvent(.viewItem, withContentItem: branchUniversalObject).logEvent()
     }
 }

@@ -77,7 +77,8 @@
     buo.contentMetadata.longitude        = -97.5;
     buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
     buo.contentMetadata.customMetadata   = (NSMutableDictionary*) @{
-        @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"
+        @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1",
+        @"Custom_Content_metadata_key2": @"Custom_Content_metadata_val2"
     };
 
     // Set up the event properties --
@@ -131,7 +132,7 @@
         NSDictionary *parameters = [NSJSONSerialization JSONObjectWithData:bodyData options:0 error:&error];
         XCTAssertNil(error);
 
-        NSLog(@"1");
+        NSLog(@"testEvent 1");
         NSLog(@"URL: %@.", url);
         NSLog(@"Body: %@.", parameters);
 
@@ -222,7 +223,8 @@
     buo.contentMetadata.longitude        = -97.5;
     buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
     buo.contentMetadata.customMetadata   = (NSMutableDictionary*) @{
-        @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"
+        @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1",
+        @"Custom_Content_metadata_key2": @"Custom_Content_metadata_val2"
     };
 
     // Set up and invoke --

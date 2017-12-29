@@ -249,19 +249,59 @@ static NSString *type = @"some type";
 - (IBAction)shareLinkButtonTouchUpInside:(id)sender {
     // The new hotness.
 
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+
+    buo.contentMetadata.contentSchema    = BranchContentSchemaCommerceProduct;
+    buo.contentMetadata.quantity         = 2;
+    buo.contentMetadata.price            = [NSDecimalNumber decimalNumberWithString:@"23.20"];
+    buo.contentMetadata.currency         = BNCCurrencyUSD;
+    buo.contentMetadata.sku              = @"1994320302";
+    buo.contentMetadata.productName      = @"my_product_name1";
+    buo.contentMetadata.productBrand     = @"my_prod_Brand1";
+    buo.contentMetadata.productCategory  = BNCProductCategoryBabyToddler;
+    buo.contentMetadata.productVariant   = @"3T";
+    buo.contentMetadata.condition        = BranchConditionFair;
+
+    buo.contentMetadata.ratingAverage    = 5;
+    buo.contentMetadata.ratingCount      = 5;
+    buo.contentMetadata.ratingMax        = 7;
+    buo.contentMetadata.addressStreet    = @"Street_name1";
+    buo.contentMetadata.addressCity      = @"city1";
+    buo.contentMetadata.addressRegion    = @"Region1";
+    buo.contentMetadata.addressCountry   = @"Country1";
+    buo.contentMetadata.addressPostalCode= @"postal_code";
+    buo.contentMetadata.latitude         = 12.07;
+    buo.contentMetadata.longitude        = -97.5;
+    buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
+    buo.contentMetadata.customMetadata   = (id) @{
+        @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1",
+        @"Custom_Content_metadata_key2": @"Custom_Content_metadata_val2",
+        @"~campaign": @"Parul's campaign"
+    };
+    buo.title                       = @"Parul Title";
+    buo.canonicalIdentifier         = @"item/12345";
+    buo.canonicalUrl                = @"https://branch.io/deepviews";
+    buo.keywords                    = @[@"My_Keyword1", @"My_Keyword2"];
+    buo.contentDescription          = @"my_product_description1";
+    buo.imageUrl                    = @"https://test_img_url";
+    buo.expirationDate              = [NSDate dateWithTimeIntervalSinceNow:24*60*60];
+    buo.publiclyIndex               = NO;
+    buo.locallyIndex                = YES;
+    buo.creationDate                = [NSDate date];
+
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
     linkProperties.campaign = @"sharing campaign";
 
     BranchShareLink *shareLink =
         [[BranchShareLink alloc]
-            initWithUniversalObject:self.branchUniversalObject
+            initWithUniversalObject:buo
             linkProperties:linkProperties];
 
     shareLink.title = @"Share your test link!";
     shareLink.delegate = self;
     shareLink.shareText = [NSString stringWithFormat:
-        @"Shared from Branch's Branch-TestBed at %@.",
+        @"Shared from Branch-TestBed at %@.",
         [self.dateFormatter stringFromDate:[NSDate date]]];
 
     [shareLink presentActivityViewControllerFromViewController:self anchor:sender];
@@ -425,6 +465,7 @@ static NSString *type = @"some type";
     buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
     buo.contentMetadata.customMetadata   = (id) @{
         @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1",
+        @"Custom_Content_metadata_key2": @"Custom_Content_metadata_val2",
         @"~campaign": @"Parul's campaign"
     };
     buo.title                       = @"Parul Title";
@@ -433,10 +474,10 @@ static NSString *type = @"some type";
     buo.keywords                    = @[@"My_Keyword1", @"My_Keyword2"];
     buo.contentDescription          = @"my_product_description1";
     buo.imageUrl                    = @"https://test_img_url";
-    buo.expirationDate              = [NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0];
+    buo.expirationDate              = [NSDate dateWithTimeIntervalSinceNow:24*60*60];
     buo.publiclyIndex               = NO;
     buo.locallyIndex                = YES;
-    buo.creationDate                = [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0];
+    buo.creationDate                = [NSDate date];
 
     BranchEvent *event    = [BranchEvent customEventWithName:eventName];
     event.transactionID   = @"12344555";

@@ -291,7 +291,6 @@ failedToStartSessionWithURL:(NSURL*)url
             @"$canonical_url": @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/",
             @"$content_type": @"some type",
             @"$currency": @"$",
-            @"$custom_fields": @"{\"+click_timestamp\":1506983962,\"+clicked_branch_link\":true,\"$identity_id\":\"423237095633725879\",\"$one_time_use\":false,\"$amount\":1000,\"~feature\":\"Sharing Feature\",\"$content_type\":\"some type\",\"~creation_source\":3,\"~channel\":\"Distribution Channel\",\"~id\":423243086454504450,\"deeplink_text\":\"This text was embedded as data in a Branch link with the following characteristics:\\n\\ncanonicalUrl: https://dev.branch.io/getting-started/deep-link-routing/guide/ios/\\n  title: Content Title\\n  contentDescription: My Content Description\\n  imageUrl: https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png\\n\",\"~referring_link\":\"https://bnctestbed.app.link/izPBY2xCqF\",\"+match_guaranteed\":true,\"$desktop_url\":\"http://branch.io\",\"+is_first_session\":false,\"$ios_url\":\"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/\",\"~campaign\":\"some campaign\"}",
             @"$desktop_url": @"http://branch.io",
             @"$exp_date": @0,
             @"$identity_id": @"423237095633725879",
@@ -301,21 +300,25 @@ failedToStartSessionWithURL:(NSURL*)url
             @"$og_title": @"Content Title",
             @"$one_time_use": @0,
             @"$publicly_indexable": @1,
+
+            @"+click_timestamp": @1506983962,
+            @"+clicked_branch_link": @1,
+            @"+is_first_session": @0,
+            @"+match_guaranteed": @1,
+
+            @"deeplink_text": @"This text was embedded as data in a Branch link with the following characteristics:\n\ncanonicalUrl: https://dev.branch.io/getting-started/deep-link-routing/guide/ios/\n  title: Content Title\n  contentDescription: My Content Description\n  imageUrl: https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png\n",
+
             @"~campaign": @"some campaign",
             @"~channel": @"Distribution Channel",
+            @"~creation_source": @3,
             @"~duration": @0,
             @"~feature": @"Sharing Feature",
+            @"~id": @423243086454504450,
+            @"~referring_link": @"https://bnctestbed.app.link/izPBY2xCqF"
         }];
-
-        NSDictionary *dCustom = [BNCEncodingUtils decodeJsonStringToDictionary:d[@"$custom_fields"]];
-        d[@"$custom_fields"] = nil;
-        
-        NSDictionary *tCustom = [BNCEncodingUtils decodeJsonStringToDictionary:truth[@"$custom_fields"]];
-        truth[@"$custom_fields"] = nil;
 
         XCTAssertTrue(d.count == truth.count);
         XCTAssertTrue(!d || [d isEqualToDictionary:truth]);
-        XCTAssertTrue(!dCustom || [dCustom isEqualToDictionary:tCustom]);
     }
 
     [self.branchDidOpenURLNotificationExpectation fulfill];
