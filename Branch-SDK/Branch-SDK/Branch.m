@@ -2054,16 +2054,17 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 -(BOOL)handleForceStrongMatchWithLinkParams: (NSDictionary*)linkParams {
-
+    
     if (!self.useForceMatching &&
         linkParams[@"$force_strong_match"] &&
         [linkParams[@"$force_strong_match"] boolValue] &&
         linkParams[@"+match_guaranteed"] &&
         ![linkParams[@"+match_guaranteed"] boolValue] &&
         linkParams[@"$branch_match_id"]) {
+        
         NSString *branchMatchId = linkParams[@"branch_match_id"];
         NSString *domain = @"app.link";
-        
+            
         id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
         if ([branchUniversalLinkDomains isKindOfClass:[NSString class]]) {
             domain = (NSString*)branchUniversalLinkDomains;
@@ -2072,13 +2073,14 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             domain = (NSString*)[(NSArray*)branchUniversalLinkDomains firstObject];
         }
         else {
-            return NO;
+            NSURL *url = [NSURL URLWithString:linkParams[@"~referring_link"]];
+            domain = [url host];
         }
         
         // The following URL would be openning the app which would initiate force match guarantee in link service.
         // This will send the Branch match id as query params which would be then used by link service to do the strong match
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@?branch_match_id=%@&$force_strong_match=true",domain,branchMatchId]];
-
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@?$branch_match_id=%@&$force_strong_match=true",domain,branchMatchId]];
+        
         //Open the safari
         if ([[UIApplication sharedApplication] canOpenURL:url]) {
             self.useForceMatching = YES;
@@ -2087,6 +2089,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
     }
     return NO;
+
 }
 
 - (void)initializeSession {
