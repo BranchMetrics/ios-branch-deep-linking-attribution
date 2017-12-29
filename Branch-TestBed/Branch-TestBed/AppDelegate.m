@@ -52,42 +52,79 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     /*
      *    Required: Initialize Branch, passing a deep link handler block:
      */
+
+#if 0
+
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
-        if (!error) {
-            
-            NSLog(@"initSession succeeded with params: %@", params);
-            
-            NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
-            if ([params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] boolValue]) {
-                
-                UINavigationController *navigationController =
-                    (UINavigationController *)self.window.rootViewController;
-                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                LogOutputViewController *logOutputViewController =
-                    [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
-                [navigationController pushViewController:logOutputViewController animated:YES];
-                NSString *logOutput =
-                    [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@",
-                        deeplinkText, [[branch getLatestReferringParams] description]];
-                logOutputViewController.logOutput = logOutput;
-                
-            } else {
-                NSLog(@"Branch TestBed: Finished init with params\n%@", params.description);
-            }
-            
-        } else {
-            NSLog(@"Branch TestBed: Initialization failed\n%@", error.localizedDescription);
-        }
-        
+            [self handleDeepLinkParams:parms error:error];
     }];
-    
+
+#else
+
+    [branch initSessionWithLaunchOptions:launchOptions
+        andRegisterDeepLinkHandlerUsingBranchUniversalObject:
+        ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
+            [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
+    }];
+
+#endif
+
     // Push notification support (Optional)
     [self registerForPushNotifications:application];
 
     return YES;
 }
 
+- (void) handleDeepLinkParams:(NSDictionary*)params error:(NSError*)error {
+    if (error) {
+        NSLog(@"Branch TestBed: Error deep linking: %@.", error.localizedDescription);
+        return;
+    }
+
+    NSLog(@"Deep linked with params: %@", params);
+    NSString *deeplinkText = [params objectForKey:@"deeplink_text"];
+    if ([params[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] boolValue]) {
+
+        UINavigationController *navigationController =
+            (UINavigationController *)self.window.rootViewController;
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LogOutputViewController *logOutputViewController =
+            [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
+        [navigationController pushViewController:logOutputViewController animated:YES];
+        NSString *logOutput =
+            [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@",
+                deeplinkText, [[[Branch getInstance] getLatestReferringParams] description]];
+        logOutputViewController.logOutput = logOutput;
+
+    } else {
+        NSLog(@"Branch TestBed: Finished init with params\n%@", params.description);
+    }
+}
+
+- (void) handleDeepLinkObject:(BranchUniversalObject*)object
+               linkProperties:(BranchLinkProperties*)linkProperties
+                        error:(NSError*)error {
+    if (error) {
+        NSLog(@"Branch TestBed: Error deep linking: %@.", error.localizedDescription);
+        return;
+    }
+
+    NSLog(@"Deep linked with object: %@.", object);
+    NSString *deeplinkText = object.contentMetadata.customMetadata[@"deeplink_text"];
+    if (object.contentMetadata.customMetadata[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK].boolValue) {
+        UINavigationController *navigationController =
+            (UINavigationController *)self.window.rootViewController;
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        LogOutputViewController *logOutputViewController =
+            [storyboard instantiateViewControllerWithIdentifier:@"LogOutputViewController"];
+        [navigationController pushViewController:logOutputViewController animated:YES];
+        NSString *logOutput =
+            [NSString stringWithFormat:@"Successfully Deeplinked:\n\n%@\nSession Details:\n\n%@",
+                deeplinkText, [[[Branch getInstance] getLatestReferringParams] description]];
+        logOutputViewController.logOutput = logOutput;
+    }
+}
 
 - (void)onboardUserOnInstall {
     NSURL *urlForOnboarding = [NSURL URLWithString:@"http://example.com"]; // Put your onboarding link here

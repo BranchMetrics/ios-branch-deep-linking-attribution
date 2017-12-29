@@ -896,8 +896,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
       ^ void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
         BNCLogDebug(@"Elapsed Apple Search Ad callback time: %1.3fs.", - [startDate timeIntervalSinceNow]);
         BOOL localHasBeenCalled = atomic_exchange(&hasBeenCalled, YES);
-        if (error) BNCLogError(@"Error while getting Apple Search Ad attribution: %@.", error);
         if (localHasBeenCalled) return;
+        if (error) BNCLogError(@"Error while getting Apple Search Ad attribution: %@.", error);
 
         self.asyncRequestCount--;
 
@@ -1251,7 +1251,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (BranchLinkProperties *)getLatestReferringBranchLinkProperties {
     NSDictionary *params = [self getLatestReferringParams];
-    if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {
+    if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] boolValue]) {
         return [BranchLinkProperties getBranchLinkPropertiesFromDictionary:params];
     }
     return nil;
