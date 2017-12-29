@@ -1,7 +1,9 @@
 Branch iOS SDK Change Log
 
-- v0.22.1
+- v0.22.2
   * _*Master Release*_ - December 29, 2017
+
+- v0.22.1
   * Flattened the Branch Universal Object dictionary to be fully compatible with Android.
 
 - v0.22.0
