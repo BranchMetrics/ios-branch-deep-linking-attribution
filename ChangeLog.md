@@ -1,11 +1,12 @@
 Branch iOS SDK Change Log
 
 - v0.22.1
-  - Flattened the Branch Universal Object dictionary to be fully compatible with Android.
+  * _*Master Release*_ - December 29, 2017
+  * Flattened the Branch Universal Object dictionary to be fully compatible with Android.
 
 - v0.22.0
   * Apple search ads weren't timing out on iPad during initialization.
-    This could block Branch initialization when Search Ad attribution was turned on.
+    - This could block Branch initialization when Search Ad attribution was turned on.
   * Fixed a deadlock found in iOS 9.3 / iPhone 5s.
   * Added the `[UIViewController bnc_currentViewController]` as a category.
 
