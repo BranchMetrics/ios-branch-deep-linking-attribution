@@ -45,6 +45,7 @@
     XCTAssertEqual(buo.contentMetadata.ratingAverage,            5);
     XCTAssertEqual(buo.contentMetadata.ratingCount,              5);
     XCTAssertEqual(buo.contentMetadata.ratingMax,                7);
+    XCTAssertEqual(buo.contentMetadata.rating,                   6);
     XCTAssertEqualObjects(buo.contentMetadata.addressStreet,     @"Street_name1");
     XCTAssertEqualObjects(buo.contentMetadata.addressCity,       @"city1");
     XCTAssertEqualObjects(buo.contentMetadata.addressRegion,     @"Region1");
@@ -107,6 +108,7 @@
     buo.contentMetadata.ratingAverage =       5;
     buo.contentMetadata.ratingCount =         5;
     buo.contentMetadata.ratingMax =           7;
+    buo.contentMetadata.rating =              6;
     buo.contentMetadata.addressStreet =       @"Street_name1";
     buo.contentMetadata.addressCity =         @"city1";
     buo.contentMetadata.addressRegion =       @"Region1";
@@ -125,11 +127,12 @@
     buo.keywords =                       @[@"My_Keyword1", @"My_Keyword2"];
     buo.contentDescription =             @"my_product_description1";
     buo.imageUrl =                       @"https://test_img_url";
-    buo.expirationDate =                 [NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0];
+    buo.expirationDate =
+        [NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0];
     buo.publiclyIndex =                  NO;
     buo.locallyIndex =                   YES;
-    buo.creationDate =                   [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0];
-
+    buo.creationDate =
+        [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0];
     NSDictionary *buoDictionary = buo.dictionary;
 
     // Load the JSON:
