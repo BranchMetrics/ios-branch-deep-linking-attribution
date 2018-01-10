@@ -44,6 +44,7 @@ class BranchEventTestSwift : BNCTestCase {
         branchUniversalObject.contentMetadata.ratingAverage     = 5;
         branchUniversalObject.contentMetadata.ratingCount       = 5;
         branchUniversalObject.contentMetadata.ratingMax         = 7;
+        branchUniversalObject.contentMetadata.rating            = 6;
         branchUniversalObject.contentMetadata.addressStreet     = "Street_name1"
         branchUniversalObject.contentMetadata.addressCity       = "city1"
         branchUniversalObject.contentMetadata.addressRegion     = "Region1"
@@ -51,7 +52,10 @@ class BranchEventTestSwift : BNCTestCase {
         branchUniversalObject.contentMetadata.addressPostalCode = "postal_code"
         branchUniversalObject.contentMetadata.latitude          = 12.07
         branchUniversalObject.contentMetadata.longitude         = -97.5
-        branchUniversalObject.contentMetadata.imageCaptions     = [ "my_img_caption1",  "my_img_caption_2"]
+        branchUniversalObject.contentMetadata.imageCaptions     = [
+            "my_img_caption1",
+            "my_img_caption_2"
+        ]
         branchUniversalObject.contentMetadata.customMetadata    = [
             "Custom_Content_metadata_key1": "Custom_Content_metadata_val1",
             "Custom_Content_metadata_key2": "Custom_Content_metadata_val2"

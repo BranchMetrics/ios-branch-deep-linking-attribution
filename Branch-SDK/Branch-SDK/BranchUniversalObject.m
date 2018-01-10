@@ -88,6 +88,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     addDouble(ratingAverage,    $rating_average);
     addInteger(ratingCount,     $rating_count);
     addDouble(ratingMax,        $rating_max);
+    addDouble(rating,           $rating);
     addString(addressStreet,    $address_street);
     addString(addressCity,      $address_city);
     addString(addressRegion,    $address_region);
@@ -122,6 +123,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     addDouble(ratingAverage,    $rating_average);
     addInteger(ratingCount,     $rating_count);
     addDouble(ratingMax,        $rating_max);
+    addDouble(rating,           $rating);
     addString(addressStreet,    $address_street);
     addString(addressCity,      $address_city);
     addString(addressRegion,    $address_region);
@@ -684,6 +686,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         @"$rating_average",
         @"$rating_count",
         @"$rating_max",
+        @"$rating",
         @"$address_street",
         @"$address_city",
         @"$address_region",

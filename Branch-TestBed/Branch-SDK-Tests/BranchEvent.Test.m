@@ -68,6 +68,7 @@
     buo.contentMetadata.ratingAverage    = 5;
     buo.contentMetadata.ratingCount      = 5;
     buo.contentMetadata.ratingMax        = 7;
+    buo.contentMetadata.rating           = 6;
     buo.contentMetadata.addressStreet    = @"Street_name1";
     buo.contentMetadata.addressCity      = @"city1";
     buo.contentMetadata.addressRegion    = @"Region1";
@@ -214,6 +215,7 @@
     buo.contentMetadata.ratingAverage    = 5;
     buo.contentMetadata.ratingCount      = 5;
     buo.contentMetadata.ratingMax        = 7;
+    buo.contentMetadata.rating           = 6;
     buo.contentMetadata.addressStreet    = @"Street_name1";
     buo.contentMetadata.addressCity      = @"city1";
     buo.contentMetadata.addressRegion    = @"Region1";
