@@ -1,6 +1,10 @@
 Branch iOS SDK Change Log
 
 - v0.22.4
+  * _*Master Release*_ - January 12, 2018
+  * Added the `rating` field to the `BranchUniversalObject`.
+
+- v0.22.4
   * _*Master Release*_ - January 3, 2018
   * Fix for crash when the application delegate does not have a window variable.
 
