@@ -1,6 +1,6 @@
 Branch iOS SDK Change Log
 
-- v0.22.4
+- v0.22.5
   * _*Master Release*_ - January 12, 2018
   * Added the `rating` field to the `BranchUniversalObject`.
 
