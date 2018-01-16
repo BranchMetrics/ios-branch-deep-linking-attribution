@@ -84,7 +84,7 @@ void BNCForceBranchValidatorCategoryToLoad(void) {
 - (void)validateDeeplinkRouting:(NSDictionary *)params {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         dispatch_async(dispatch_get_main_queue(), ^{
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Rebar Support" message:nil preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Branch Deeplink Routing Support" message:nil preferredStyle:UIAlertControllerStyleAlert];
             
             if ([params[@"+clicked_branch_link"] isEqualToNumber:@YES]) {
                 alertController.message = @"Good news - we got link data. Now a question for you, astute developer: did the app deep link to the specific piece of content you expected to see?";
