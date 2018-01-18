@@ -204,6 +204,13 @@
 			remoteGlobalIDString = 466B58371B17773000A69EDE;
 			remoteInfo = Branch;
 		};
+		4D337DDC201019B8009A5774 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 670016581940F51400A9E103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6700165F1940F51400A9E103;
+			remoteInfo = "Branch-TestBed";
+		};
 		F1D4F9B11F323F01002D13FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 670016581940F51400A9E103 /* Project object */;
@@ -614,8 +621,6 @@
 			children = (
 				4D59B51B2006979B00F89FD5 /* BNCApplication.h */,
 				4D59B51C2006979B00F89FD5 /* BNCApplication.m */,
-				4D59B51D2006979C00F89FD5 /* BNCKeyChain.h */,
-				4D59B51E2006979C00F89FD5 /* BNCKeyChain.m */,
 				4D8999EA1DC108FF00F7EE0A /* BNCAvailability.h */,
 				4D8999EB1DC108FF00F7EE0A /* BNCAvailability.m */,
 				E2B947491D15D73900F2270D /* BNCCallbacks.h */,
@@ -640,6 +645,8 @@
 				E2133B711D0125EF00763049 /* BNCFabricAnswers.h */,
 				E2133B741D01477200763049 /* BNCFabricAnswers.m */,
 				4DE649191FE1D7F500226507 /* BNCFieldDefines.h */,
+				4D59B51D2006979C00F89FD5 /* BNCKeyChain.h */,
+				4D59B51E2006979C00F89FD5 /* BNCKeyChain.m */,
 				7E30BCF51A72FE7900AC7402 /* BNCLinkCache.h */,
 				7E30BCF61A72FE7900AC7402 /* BNCLinkCache.m */,
 				7E30BCF21A71EEEE00AC7402 /* BNCLinkData.h */,
@@ -708,11 +715,13 @@
 		7E6B3B521AA42D0E005F45BF /* Branch-SDK-Tests */ = {
 			isa = PBXGroup;
 			children = (
+				4D59B523200697E700F89FD5 /* BNCApplication.Test.m */,
 				7B18DF511F1F049F00C25C84 /* BNCCrashlyticsWrapper.Test.m */,
 				4DA5771E1E67B23D00A43BDD /* BNCDebug.Test.m */,
 				4DED5FB01F34F6CE00919C54 /* BNCDeviceInfo.Test.m */,
 				4DED5FB11F34F6CE00919C54 /* BNCEncodingUtils.Test.m */,
 				4DC32D6E1F323F0B00EAA896 /* BNCError.Test.m */,
+				4D59B5252006980300F89FD5 /* BNCKeyChain.Test.m */,
 				46DBB42B1B330CF300642FC8 /* BNCLinkDataTests.m */,
 				4DA1EA361F296471009BB698 /* BNCLocalization.Test.m */,
 				4DA577191E67B1EB00A43BDD /* BNCLog.Test.m */,
@@ -732,8 +741,6 @@
 				4DCD41641F43AC74005F4D33 /* BranchUniversalObject.Test.m */,
 				4DA577231E67B2A000A43BDD /* NSString+Branch.Test.m */,
 				7E6B3B531AA42D0E005F45BF /* Supporting Files */,
-				4D59B523200697E700F89FD5 /* BNCApplication.Test.m */,
-				4D59B5252006980300F89FD5 /* BNCKeyChain.Test.m */,
 			);
 			path = "Branch-SDK-Tests";
 			sourceTree = "<group>";
@@ -903,6 +910,7 @@
 			);
 			dependencies = (
 				4683F07C1B20AC6300A432E7 /* PBXTargetDependency */,
+				4D337DDD201019B8009A5774 /* PBXTargetDependency */,
 			);
 			name = "Branch-SDK-Tests";
 			productName = "Branch-SDK Functionality Tests";
@@ -1205,6 +1213,11 @@
 			isa = PBXTargetDependency;
 			target = 466B58371B17773000A69EDE /* Branch */;
 			targetProxy = 4683F07B1B20AC6300A432E7 /* PBXContainerItemProxy */;
+		};
+		4D337DDD201019B8009A5774 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
+			targetProxy = 4D337DDC201019B8009A5774 /* PBXContainerItemProxy */;
 		};
 		F1D4F9B21F323F01002D13FF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

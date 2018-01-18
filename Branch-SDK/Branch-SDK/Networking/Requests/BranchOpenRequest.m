@@ -17,6 +17,7 @@
 #import "BNCFabricAnswers.h"
 #import "BNCDeviceInfo.h"
 #import "Branch.h"
+#import "BNCApplication.h"
 
 @interface BranchOpenRequest ()
 @property (assign, nonatomic) BOOL isInstall;
@@ -81,6 +82,11 @@
                     forKey:BRANCH_REQUEST_KEY_SEARCH_AD
                     onDict:params];
     }
+
+    BNCApplication *application = [BNCApplication currentApplication];
+    params[@"build_date"] = BNCWireFormatFromDate(application.currentBuildDate);
+    params[@"install_date"] = BNCWireFormatFromDate(application.currentInstallDate);
+    params[@"first_install_date"] = BNCWireFormatFromDate(application.firstInstallDate);
 
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
 }
