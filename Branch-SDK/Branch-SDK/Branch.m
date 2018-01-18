@@ -374,7 +374,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             bnc_useTestBranchKey = NO;
         } else {
             [NSException raise:NSInternalInconsistencyException
-                format:@"Invalid Branch key format. Passed key is '%@'.", branchKey];
+                format:@"Invalid Branch key format. Did you add your Branch key to your Info.plist? Passed key is '%@'.", branchKey];
             return;
         }
 
