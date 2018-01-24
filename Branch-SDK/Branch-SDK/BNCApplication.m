@@ -194,6 +194,8 @@ extern SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef allocator)
 
 - (void) addDeviceID:(NSString*)deviceID identityID:(NSString*)identityID {
     @synchronized (self.class) {
+        if (deviceID == nil) return;
+        
         NSMutableDictionary *dictionary =
             [NSMutableDictionary dictionaryWithDictionary:[self deviceKeyIdentityValueDictionary]];
         dictionary[deviceID] = identityID;

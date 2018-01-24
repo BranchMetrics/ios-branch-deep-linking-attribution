@@ -39,6 +39,7 @@
 #import "NSString+Branch.h"
 #import "BNCSpotlightService.h"
 #import "../Fabric/FABKitProtocol.h" // Fabric
+#import "BNCApplication.h"
 #import <stdatomic.h>
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -865,7 +866,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         return NO;
 
     NSDate *installDatePlus30 =
-        [[BNCSystemObserver appInstallDate] dateByAddingTimeInterval:(30.0*24.0*60.0*60.0)];
+        [[BNCApplication currentApplication].currentInstallDate
+            dateByAddingTimeInterval:(30.0*24.0*60.0*60.0)];
     if ([installDatePlus30 compare:[NSDate date]] < 0) {
         return NO;
     }

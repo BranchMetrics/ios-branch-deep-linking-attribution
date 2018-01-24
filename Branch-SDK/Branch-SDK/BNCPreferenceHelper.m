@@ -550,6 +550,21 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
+- (NSDate*) previousAppBuildDate {
+    @synchronized (self) {
+        NSDate *date = (NSDate*) [self readObjectFromDefaults:@"_previousAppBuildDate"];
+        if ([date isKindOfClass:[NSDate class]]) return date;
+        return nil;
+    }
+}
+
+- (void) setPreviousAppBuildDate:(NSDate*)date {
+    @synchronized (self) {
+        if (date == nil || [date isKindOfClass:[NSDate class]])
+            [self writeObjectToDefaults:@"_previousAppBuildDate" value:date];
+    }
+}
+
 #pragma mark - Credit Storage
 
 - (NSMutableDictionary *)creditsDictionary {

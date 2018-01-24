@@ -12,6 +12,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
+#import "BNCEncodingUtils.h"
 #import <OCMock/OCMock.h>
 
 @interface BranchInstallRequestTests : BNCTestCase
@@ -37,7 +38,6 @@
     NSString * const OS = @"foo-os";
     NSString * const OS_VERSION = @"foo-os-version";
     NSString * const URI_SCHEME = @"foo-uri-scheme";
-    NSNumber * const UPDATE_STATE = @1;
     NSString * const LINK_IDENTIFIER = @"foo-link-id";
     NSString * const BRAND = @"foo-brand";
     NSString * const MODEL = @"foo-model";
@@ -62,20 +62,27 @@
     [[[systemObserverMock stub] andReturn:OS] getOS];
     [[[systemObserverMock stub] andReturn:OS_VERSION] getOSVersion];
     [[[systemObserverMock stub] andReturn:URI_SCHEME] getDefaultUriScheme];
-    [[[systemObserverMock stub] andReturn:UPDATE_STATE] getUpdateState];
     [[[systemObserverMock stub] andReturn:BRAND] getBrand];
     [[[systemObserverMock stub] andReturn:MODEL] getModel];
     [[[systemObserverMock stub] andReturn:SCREEN_WIDTH] getScreenWidth];
     [[[systemObserverMock stub] andReturn:SCREEN_HEIGHT] getScreenHeight];
+
+    NSDate *appDate = [NSDate date];
+    [BNCTestCase setAppOriginalInstallDate:appDate
+        firstInstallDate:appDate
+        lastUpdateDate:appDate
+        previousUpdateDate:nil];
 
     NSDictionary *expectedParams = @{
         @"app_version":                 @"foo-app-version",
         @"apple_ad_attribution_checked":@0,
         @"debug":                       @1,
         @"facebook_app_link_checked":   @0,
+        @"first_install_time":          BNCWireFormatFromDate(appDate),
         @"ios_bundle_id":               @"foo-bundle-id",
+        @"last_update_time":            BNCWireFormatFromDate(appDate),
         @"link_identifier":             @"foo-link-id",
-        @"update":                      @1,
+        @"original_install_time":       BNCWireFormatFromDate(appDate),
         @"uri_scheme":                  @"foo-uri-scheme"
     };
 

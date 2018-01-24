@@ -29,7 +29,6 @@
     [self safeSetValue:[BNCSystemObserver getTeamIdentifier] forKey:BRANCH_REQUEST_KEY_TEAM_ID onDict:params];
     [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];
     [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:params];
-    [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:BRANCH_REQUEST_KEY_UPDATE onDict:params];
     [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedFacebookAppLinks]
         forKey:BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS onDict:params];
     [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedAppleSearchAdAttribution]
@@ -52,9 +51,10 @@
     }
 
     BNCApplication *application = [BNCApplication currentApplication];
-    params[@"build_date"] = BNCWireFormatFromDate(application.currentBuildDate);
-    params[@"install_date"] = BNCWireFormatFromDate(application.currentInstallDate);
-    params[@"first_install_date"] = BNCWireFormatFromDate(application.firstInstallDate);
+    params[@"last_update_time"] = BNCWireFormatFromDate(application.currentBuildDate);
+    params[@"previous_update_time"] = BNCWireFormatFromDate(preferenceHelper.previousAppBuildDate);
+    params[@"first_install_time"] = BNCWireFormatFromDate(application.currentInstallDate);
+    params[@"original_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
 
     if ([[BNCStrongMatchHelper strongMatchHelper] shouldDelayInstallRequest]) {
         NSInteger delay = 750;

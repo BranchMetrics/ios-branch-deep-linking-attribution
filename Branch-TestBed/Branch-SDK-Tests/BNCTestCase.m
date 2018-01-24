@@ -7,8 +7,19 @@
 //
 
 #import "BNCTestCase.h"
-#import "BNCPreferenceHelper.h"
+#import "BNCApplication.h"
 #import "BNCLog.h"
+#import "BNCPreferenceHelper.h"
+
+@interface BNCApplication () {
+    @public
+        NSDate *_currentInstallDate;
+        NSDate *_firstInstallDate;
+        NSDate *_currentBuildDate;
+}
+@end
+
+#pragma mark - BNCTestStringMatchesRegex
 
 BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex) {
     NSError *error = nil;
@@ -127,6 +138,21 @@ static BOOL _testBreakpoints = NO;
     if ([BNCTestBreakpoints boolValue]) {
         _testBreakpoints = YES;
     }
+}
+
++ (void) setAppOriginalInstallDate:(NSDate*)originalInstallDate
+        firstInstallDate:(NSDate*)firstInstallDate
+        lastUpdateDate:(NSDate*)lastUpdateDate
+        previousUpdateDate:(NSDate*)previousUpdateDate {
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCApplication *application = [BNCApplication currentApplication];
+
+    application->_currentInstallDate = firstInstallDate;        // first_install_time
+    application->_firstInstallDate = originalInstallDate;       // original_install_time
+    application->_currentBuildDate = lastUpdateDate;            // last_update_time
+    preferenceHelper.previousAppBuildDate = previousUpdateDate; // previous_update_time
+    [preferenceHelper synchronize];
 }
 
 @end

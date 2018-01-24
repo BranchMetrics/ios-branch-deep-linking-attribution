@@ -54,7 +54,6 @@
     [self safeSetValue:[BNCSystemObserver getTeamIdentifier] forKey:BRANCH_REQUEST_KEY_TEAM_ID onDict:params];
     [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];
     [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:params];
-    [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:BRANCH_REQUEST_KEY_UPDATE onDict:params];
     [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedFacebookAppLinks]
         forKey:BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS onDict:params];
     [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedAppleSearchAdAttribution]
@@ -84,9 +83,10 @@
     }
 
     BNCApplication *application = [BNCApplication currentApplication];
-    params[@"build_date"] = BNCWireFormatFromDate(application.currentBuildDate);
-    params[@"install_date"] = BNCWireFormatFromDate(application.currentInstallDate);
-    params[@"first_install_date"] = BNCWireFormatFromDate(application.firstInstallDate);
+    params[@"last_update_time"] = BNCWireFormatFromDate(application.currentBuildDate);
+    params[@"previous_update_time"] = BNCWireFormatFromDate(preferenceHelper.previousAppBuildDate);
+    params[@"first_install_time"] = BNCWireFormatFromDate(application.currentInstallDate);
+    params[@"original_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
 
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
 }
@@ -113,7 +113,7 @@
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
-    [BNCSystemObserver setUpdateState];
+    preferenceHelper.previousAppBuildDate = [BNCApplication currentApplication].currentBuildDate;
 
     if (Branch.enableFingerprintIDInCrashlyticsReports) {
         BNCCrashlyticsWrapper *crashlytics = [BNCCrashlyticsWrapper wrapper];
@@ -140,8 +140,7 @@
     }
 
     // Update session params
-    
-    
+
     if (preferenceHelper.spotlightIdentifier) {
         NSMutableDictionary *sessionDataDict =
         [NSMutableDictionary dictionaryWithDictionary: [BNCEncodingUtils decodeJsonStringToDictionary:sessionData]];
