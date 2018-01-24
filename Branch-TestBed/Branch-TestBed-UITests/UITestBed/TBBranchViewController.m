@@ -14,6 +14,7 @@
 @import Branch;
 #import "BNCDeviceInfo.h"
 #import "BNCSystemObserver.h"
+#import "BNCApplication.h"
 
 NSString *cononicalIdentifier = @"item/12345";
 NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
@@ -347,8 +348,9 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (IBAction) showDatesAction:(id)sender {
-    NSDate *buildDate = [BNCSystemObserver appBuildDate];
-    NSDate *installDate = [BNCSystemObserver appInstallDate];
+    BNCApplication *application = [BNCApplication currentApplication];
+    NSDate *buildDate = application.currentBuildDate;
+    NSDate *installDate = application.currentInstallDate;
     [self showDataViewControllerWithObject:@{
             @"Build Date": [NSString stringWithFormat:@"%@", buildDate],
             @"Install Date": [NSString stringWithFormat:@"%@", installDate],

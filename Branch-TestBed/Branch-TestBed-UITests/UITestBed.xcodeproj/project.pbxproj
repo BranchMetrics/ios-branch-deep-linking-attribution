@@ -87,8 +87,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D5ACEF21FB382130099A56F /* Branch.framework in Frameworks */,
 				4D0E07D21FCDF7F40074E026 /* iAd.framework in Frameworks */,
+				4D5ACEF21FB382130099A56F /* Branch.framework in Frameworks */,
 				4D0E07D31FCDF7FC0074E026 /* SafariServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
