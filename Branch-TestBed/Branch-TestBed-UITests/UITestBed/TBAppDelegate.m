@@ -154,11 +154,12 @@ continueUserActivity:(NSUserActivity *)userActivity
             initWithBarButtonSystemItem:UIBarButtonSystemItemDone
             target:self
             action:@selector(dismissLinkViewAction:)];
-    [self.window.rootViewController presentViewController:nav animated:YES completion:nil];
+    [[UIViewController bnc_currentViewController] presentViewController:nav animated:YES completion:nil];
 }
 
 - (IBAction)dismissLinkViewAction:(id)sender {
-    [self.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
+    UIViewController *viewController = [UIViewController bnc_currentViewController];
+    [viewController.parentViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (BOOL)splitViewController:(UISplitViewController *)splitViewController
