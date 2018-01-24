@@ -49,13 +49,13 @@
         return;
     }
 
-    NSTimeInterval const kAYearAgo = -365.0 * 24.0 * 60.0 * 60.0;
+    NSTimeInterval const kOneYearAgo = -365.0 * 24.0 * 60.0 * 60.0;
 
     BNCApplication *application = [BNCApplication currentApplication];
-    XCTAssertTrue(application.firstInstallDate && [application.firstInstallDate timeIntervalSinceNow] > kAYearAgo);
-    XCTAssertTrue(application.firstInstallBuildDate && [application.firstInstallBuildDate timeIntervalSinceNow] > kAYearAgo);
-    XCTAssertTrue(application.currentInstallDate && [application.currentInstallDate timeIntervalSinceNow] > kAYearAgo);
-    XCTAssertTrue(application.currentBuildDate && [application.currentBuildDate timeIntervalSinceNow] > kAYearAgo);
+    XCTAssertTrue(application.firstInstallDate && [application.firstInstallDate timeIntervalSinceNow] > kOneYearAgo);
+    XCTAssertTrue(application.firstInstallBuildDate && [application.firstInstallBuildDate timeIntervalSinceNow] > kOneYearAgo);
+    XCTAssertTrue(application.currentInstallDate && [application.currentInstallDate timeIntervalSinceNow] > kOneYearAgo);
+    XCTAssertTrue(application.currentBuildDate && [application.currentBuildDate timeIntervalSinceNow] > kOneYearAgo);
 
     NSString*const kBranchKeychainService          = @"BranchKeychainService";
 //  NSString*const kBranchKeychainDevicesKey       = @"BranchKeychainDevices";

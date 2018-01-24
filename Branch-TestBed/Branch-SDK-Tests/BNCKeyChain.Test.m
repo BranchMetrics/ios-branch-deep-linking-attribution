@@ -44,7 +44,7 @@
     XCTAssertTrue(value == nil && error.code == errSecItemNotFound);
 
     if ([UIApplication sharedApplication] == nil) {
-        NSLog(@"No host Application for keychain testing!");
+        NSLog(@"No host application for keychain testing!");
         return;
     }
     
