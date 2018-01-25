@@ -14,6 +14,8 @@
 // Apple Keychain Reference:
 // https://developer.apple.com/library/content/documentation/Conceptual/
 //      keychainServConcepts/02concepts/concepts.html#//apple_ref/doc/uid/TP30000897-CH204-SW1
+//
+// To translate security errors to text from the command line use: `security error -34018`
 
 #pragma mark SecCopyErrorMessageString
 

@@ -23,11 +23,15 @@
     NSArray *array = nil;
     NSString*const kServiceName = @"Service";
     NSString* kAccessGroup = [BNCApplication currentApplication].applicationID;
+    double systemVersion = [UIDevice currentDevice].systemVersion.doubleValue;
 
     // Remove and validate gone:
 
     error = [BNCKeyChain removeValuesForService:nil key:nil];
-    XCTAssertTrue(error == nil);
+    if (systemVersion >= 10.0 && systemVersion < 11.0)
+        { XCTAssertTrue(error.code == -34018); }
+    else
+        { XCTAssertTrue(error == nil); }
 
     array = [BNCKeyChain retieveAllValuesWithError:&error];
     XCTAssertTrue(array == nil && error == errSecSuccess);
