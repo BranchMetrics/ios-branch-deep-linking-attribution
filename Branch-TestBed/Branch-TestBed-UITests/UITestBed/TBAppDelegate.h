@@ -11,3 +11,5 @@
 @interface TBAppDelegate : UIResponder <UIApplicationDelegate>
 @property (strong, nonatomic) UIWindow *window;
 @end
+
+extern NSDate *global_previous_update_time;

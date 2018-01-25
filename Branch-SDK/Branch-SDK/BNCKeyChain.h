@@ -32,7 +32,7 @@
 */
 + (id _Nullable) retrieveValueForService:(NSString*_Nonnull)service
                                      key:(NSString*_Nonnull)key
-                                   error:(NSError*_Nullable*_Nullable)error;
+                                   error:(NSError*_Nullable __autoreleasing *_Nullable)error;
 
 /**
  @brief Returns an array of all items found in the keychain.
@@ -40,7 +40,7 @@
  @param error       If an error occurs, the error is returned in `error` if it is not `NULL`.
  @return            Returns an array of the items stored in the keychain or `nil`.
 */
-+ (NSArray*_Nullable) retieveAllValuesWithError:(NSError*_Nullable*_Nullable)error;
++ (NSArray*_Nullable) retieveAllValuesWithError:(NSError*_Nullable __autoreleasing *_Nullable)error;
 
 /**
  @brief Stores an item in the keychain.

@@ -11,6 +11,9 @@
 #import "TBDetailViewController.h"
 @import Branch;
 
+NSDate *global_previous_update_time = nil;
+NSDate *next_previous_update_time = nil;
+
 @interface TBAppDelegate () <UISplitViewControllerDelegate>
 @property (nonatomic, strong) TBBranchViewController *branchViewController;
 @end
@@ -35,10 +38,14 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
 
+    next_previous_update_time = [BNCPreferenceHelper preferenceHelper].previousAppBuildDate;
+    
     [branch setWhiteListedSchemes:@[@"branchuitest"]];
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
             [self handleBranchDeepLinkParameters:params error:error];
+            global_previous_update_time = next_previous_update_time;
+            next_previous_update_time = [BNCPreferenceHelper preferenceHelper].previousAppBuildDate;
         }];
 
     return YES;
