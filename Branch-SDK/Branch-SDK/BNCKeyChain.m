@@ -132,7 +132,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
         }
         @catch (id) {
             value = nil;
-            NSError *localError = [self errorWithKey:key OSStatus:errSecInvalidValue];
+            NSError *localError = [self errorWithKey:key OSStatus:errSecDecode];
             if (error) *error = localError;
         }
         CFRelease(valueData);
