@@ -83,7 +83,8 @@
         @"lastest_update_time":         BNCWireFormatFromDate(appDate),
         @"link_identifier":             @"foo-link-id",
         @"first_install_time":          BNCWireFormatFromDate(appDate),
-        @"uri_scheme":                  @"foo-uri-scheme"
+        @"uri_scheme":                  @"foo-uri-scheme",
+        @"update":                      @0
     };
 
     BranchInstallRequest *request = [[BranchInstallRequest alloc] init];

@@ -88,7 +88,8 @@
         @"latest_install_time":         BNCWireFormatFromDate(installDate),
         @"lastest_update_time":         BNCWireFormatFromDate(installDate),
         @"first_install_time":          BNCWireFormatFromDate(installDate),
-        @"previous_update_time":        BNCWireFormatFromDate(updateDate)
+        @"previous_update_time":        BNCWireFormatFromDate(updateDate),
+        @"update":                      @1
 
     };
 
@@ -162,7 +163,8 @@
         @"latest_install_time":         BNCWireFormatFromDate(installDate),
         @"lastest_update_time":         BNCWireFormatFromDate(installDate),
         @"first_install_time":          BNCWireFormatFromDate(installDate),
-        @"previous_update_time":        BNCWireFormatFromDate(updateDate)
+        @"previous_update_time":        BNCWireFormatFromDate(updateDate),
+        @"update":                      @1
 
     };
 

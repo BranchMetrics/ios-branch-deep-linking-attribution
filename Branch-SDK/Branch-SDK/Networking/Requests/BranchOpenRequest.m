@@ -87,8 +87,50 @@
     params[@"previous_update_time"] = BNCWireFormatFromDate(preferenceHelper.previousAppBuildDate);
     params[@"latest_install_time"] = BNCWireFormatFromDate(application.currentInstallDate);
     params[@"first_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
+    params[@"update"] = [self.class appUpdateState];
 
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
+}
+
+typedef NS_ENUM(NSInteger, BNCUpdateState) {
+    BNCUpdateStateInstall       = 0,    // App was recently installed.
+    BNCUpdateStateNonUpdate     = 1,    // App was neither newly installed nor updated.
+    BNCUpdateStateUpdate        = 2,    // App was recently updated.
+
+//  BNCUpdateStateError         = 3,    // Error determining update state.
+//  BNCUpdateStateReinstall     = 4     // App was re-installed.
+};
+
++ (NSNumber*) appUpdateState {
+
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    BNCApplication *application = [BNCApplication currentApplication];
+    NSDate *first_install_time      = application.firstInstallDate;
+    NSDate *latest_install_time     = application.currentInstallDate;
+    NSDate *latest_update_time      = application.currentBuildDate;
+    NSDate *previous_update_time    = preferenceHelper.previousAppBuildDate;
+
+    BNCUpdateState update_state = 0;
+    if (first_install_time.timeIntervalSince1970 <= 0 ||
+        latest_install_time.timeIntervalSince1970 <= 0 ||
+        latest_update_time.timeIntervalSince1970 <= 0)
+        update_state = BNCUpdateStateNonUpdate; // BNCUpdateStateError not handled. Send Non-update.
+    else
+    if (latest_update_time.timeIntervalSince1970 <= first_install_time.timeIntervalSince1970 &&
+        previous_update_time == 0)
+        update_state = BNCUpdateStateInstall;
+    else
+    if (first_install_time.timeIntervalSince1970 < first_install_time.timeIntervalSince1970 &&
+        previous_update_time == 0)
+        update_state = BNCUpdateStateUpdate; // BNCUpdateStateReinstall not handled on server. Send Update.
+    else
+    if (latest_update_time.timeIntervalSince1970 > first_install_time.timeIntervalSince1970 &&
+        previous_update_time.timeIntervalSince1970 < latest_update_time.timeIntervalSince1970)
+        update_state = BNCUpdateStateUpdate;
+    else
+        update_state = BNCUpdateStateNonUpdate;
+
+    return @(update_state);
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

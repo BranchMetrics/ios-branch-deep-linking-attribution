@@ -55,6 +55,7 @@
     params[@"previous_update_time"] = BNCWireFormatFromDate(preferenceHelper.previousAppBuildDate);
     params[@"latest_install_time"] = BNCWireFormatFromDate(application.currentInstallDate);
     params[@"first_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
+    params[@"update"] = [self.class appUpdateState];
 
     if ([[BNCStrongMatchHelper strongMatchHelper] shouldDelayInstallRequest]) {
         NSInteger delay = 750;
