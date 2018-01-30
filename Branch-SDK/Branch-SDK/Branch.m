@@ -841,7 +841,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     // Else the URL will be handled by `applicationDidBecomeActive`.
 
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    if ([[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
+    if (urlStr && [[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
         NSURL *url = [NSURL URLWithString:urlStr];
         if (url) [self handleDeepLink:url fromSelf:YES];
     }
