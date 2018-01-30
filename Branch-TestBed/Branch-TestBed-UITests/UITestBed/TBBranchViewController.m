@@ -404,29 +404,27 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (IBAction) showDatesAction:(id)sender {
-    BNCApplication *application = [BNCApplication currentApplication];
-
-    NSDate *first_install_time      = application.firstInstallDate;
-    NSDate *latest_install_time     = application.currentInstallDate;
-    NSDate *latest_update_time      = application.currentBuildDate;
-    NSDate *previous_update_time    = global_previous_update_time;
+    BNCApplication *application         = [BNCApplication currentApplication];
+    NSTimeInterval first_install_time   = application.firstInstallDate.timeIntervalSince1970;
+    NSTimeInterval latest_install_time  = application.currentInstallDate.timeIntervalSince1970;
+    NSTimeInterval latest_update_time   = application.currentBuildDate.timeIntervalSince1970;
+    NSTimeInterval previous_update_time = global_previous_update_time.timeIntervalSince1970;
+    NSTimeInterval const kOneDay        = 1.0 * 24.0 * 60.0 * 60.0;
 
     NSString *update_state = nil;
-    if (first_install_time.timeIntervalSince1970 <= 0 ||
-        latest_install_time.timeIntervalSince1970 <= 0 ||
-        latest_update_time.timeIntervalSince1970 <= 0)
+    if (first_install_time <= 0 ||
+        latest_install_time <= 0 ||
+        latest_update_time <= 0 ||
+        previous_update_time > latest_update_time)
         update_state = @"update_state_error";
     else
-    if (latest_update_time.timeIntervalSince1970 <= first_install_time.timeIntervalSince1970 &&
-        previous_update_time == 0)
+    if ((latest_update_time - kOneDay) <= first_install_time && previous_update_time <= 0)
         update_state = @"update_state_install";
     else
-    if (first_install_time.timeIntervalSince1970 < first_install_time.timeIntervalSince1970 &&
-        previous_update_time == 0)
+    if (first_install_time < latest_install_time && previous_update_time <= 0)
         update_state = @"update_state_reinstall";
     else
-    if (latest_update_time.timeIntervalSince1970 > first_install_time.timeIntervalSince1970 &&
-        previous_update_time.timeIntervalSince1970 < latest_update_time.timeIntervalSince1970)
+    if (latest_update_time > first_install_time && previous_update_time < latest_update_time)
         update_state = @"update_state_update";
     else
         update_state = @"update_state_no_update";
@@ -434,10 +432,10 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self showDataViewControllerWithTitle:@"Dates"
         message:@"Current Application Dates"
         object:@{
-            @"first_install_time":      TBString(first_install_time),
-            @"latest_install_time":     TBString(latest_install_time),
-            @"latest_update_time":      TBString(latest_update_time),
-            @"previous_update_time":    TBString(previous_update_time),
+            @"first_install_time":      TBString(application.firstInstallDate),
+            @"latest_install_time":     TBString(application.currentInstallDate),
+            @"latest_update_time":      TBString(application.currentBuildDate),
+            @"previous_update_time":    TBString(global_previous_update_time),
             @"update_state":            TBString(update_state)
     }];
 }

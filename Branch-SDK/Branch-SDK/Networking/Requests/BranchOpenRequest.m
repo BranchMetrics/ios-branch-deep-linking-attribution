@@ -105,27 +105,26 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     BNCApplication *application = [BNCApplication currentApplication];
-    NSDate *first_install_time      = application.firstInstallDate;
-    NSDate *latest_install_time     = application.currentInstallDate;
-    NSDate *latest_update_time      = application.currentBuildDate;
-    NSDate *previous_update_time    = preferenceHelper.previousAppBuildDate;
+    NSTimeInterval first_install_time   = application.firstInstallDate.timeIntervalSince1970;
+    NSTimeInterval latest_install_time  = application.currentInstallDate.timeIntervalSince1970;
+    NSTimeInterval latest_update_time   = application.currentBuildDate.timeIntervalSince1970;
+    NSTimeInterval previous_update_time = preferenceHelper.previousAppBuildDate.timeIntervalSince1970;
+    NSTimeInterval const kOneDay        = 1.0 * 24.0 * 60.0 * 60.0;
 
     BNCUpdateState update_state = 0;
-    if (first_install_time.timeIntervalSince1970 <= 0 ||
-        latest_install_time.timeIntervalSince1970 <= 0 ||
-        latest_update_time.timeIntervalSince1970 <= 0)
-        update_state = BNCUpdateStateNonUpdate; // BNCUpdateStateError not handled. Send Non-update.
+    if (first_install_time <= 0.0 ||
+        latest_install_time <= 0.0 ||
+        latest_update_time <= 0.0 ||
+        previous_update_time > latest_update_time)
+        update_state = BNCUpdateStateNonUpdate; // Error: Send Non-update.
     else
-    if (latest_update_time.timeIntervalSince1970 <= first_install_time.timeIntervalSince1970 &&
-        previous_update_time == 0)
+    if ((latest_update_time - kOneDay) <= first_install_time && previous_update_time <= 0)
         update_state = BNCUpdateStateInstall;
     else
-    if (first_install_time.timeIntervalSince1970 < first_install_time.timeIntervalSince1970 &&
-        previous_update_time == 0)
-        update_state = BNCUpdateStateUpdate; // BNCUpdateStateReinstall not handled on server. Send Update.
+    if (first_install_time < latest_install_time && previous_update_time <= 0)
+        update_state = BNCUpdateStateUpdate; // Re-install: Send Update.
     else
-    if (latest_update_time.timeIntervalSince1970 > first_install_time.timeIntervalSince1970 &&
-        previous_update_time.timeIntervalSince1970 < latest_update_time.timeIntervalSince1970)
+    if (latest_update_time > first_install_time && previous_update_time < latest_update_time)
         update_state = BNCUpdateStateUpdate;
     else
         update_state = BNCUpdateStateNonUpdate;
