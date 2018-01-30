@@ -51,10 +51,10 @@
     }
 
     BNCApplication *application = [BNCApplication currentApplication];
-    params[@"last_update_time"] = BNCWireFormatFromDate(application.currentBuildDate);
+    params[@"lastest_update_time"] = BNCWireFormatFromDate(application.currentBuildDate);
     params[@"previous_update_time"] = BNCWireFormatFromDate(preferenceHelper.previousAppBuildDate);
-    params[@"first_install_time"] = BNCWireFormatFromDate(application.currentInstallDate);
-    params[@"original_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
+    params[@"latest_install_time"] = BNCWireFormatFromDate(application.currentInstallDate);
+    params[@"first_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
 
     if ([[BNCStrongMatchHelper strongMatchHelper] shouldDelayInstallRequest]) {
         NSInteger delay = 750;

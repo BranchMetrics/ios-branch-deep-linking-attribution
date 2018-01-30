@@ -85,9 +85,9 @@
         @"link_identifier":             LINK_IDENTIFIER,
         @"uri_scheme":                  URI_SCHEME,
 
+        @"latest_install_time":         BNCWireFormatFromDate(installDate),
+        @"lastest_update_time":         BNCWireFormatFromDate(installDate),
         @"first_install_time":          BNCWireFormatFromDate(installDate),
-        @"last_update_time":            BNCWireFormatFromDate(installDate),
-        @"original_install_time":       BNCWireFormatFromDate(installDate),
         @"previous_update_time":        BNCWireFormatFromDate(updateDate)
 
     };
@@ -159,9 +159,9 @@
         @"link_identifier":             LINK_IDENTIFIER,
         @"uri_scheme":                  URI_SCHEME,
 
+        @"latest_install_time":         BNCWireFormatFromDate(installDate),
+        @"lastest_update_time":         BNCWireFormatFromDate(installDate),
         @"first_install_time":          BNCWireFormatFromDate(installDate),
-        @"last_update_time":            BNCWireFormatFromDate(installDate),
-        @"original_install_time":       BNCWireFormatFromDate(installDate),
         @"previous_update_time":        BNCWireFormatFromDate(updateDate)
 
     };

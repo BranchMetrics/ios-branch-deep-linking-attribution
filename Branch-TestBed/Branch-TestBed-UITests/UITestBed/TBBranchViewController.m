@@ -406,22 +406,27 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 - (IBAction) showDatesAction:(id)sender {
     BNCApplication *application = [BNCApplication currentApplication];
 
-    NSDate *original_install_time   = application.firstInstallDate;
-    NSDate *first_install_time      = application.currentInstallDate;
-    NSDate *last_update_time        = application.currentBuildDate;
+    NSDate *first_install_time      = application.firstInstallDate;
+    NSDate *latest_install_time     = application.currentInstallDate;
+    NSDate *latest_update_time      = application.currentBuildDate;
     NSDate *previous_update_time    = global_previous_update_time;
 
     NSString *update_state = nil;
-    if (last_update_time.timeIntervalSince1970 <= original_install_time.timeIntervalSince1970 &&
+    if (first_install_time.timeIntervalSince1970 <= 0 ||
+        latest_install_time.timeIntervalSince1970 <= 0 ||
+        latest_update_time.timeIntervalSince1970 <= 0)
+        update_state = @"update_state_error";
+    else
+    if (latest_update_time.timeIntervalSince1970 <= first_install_time.timeIntervalSince1970 &&
         previous_update_time == 0)
         update_state = @"update_state_install";
     else
-    if (original_install_time.timeIntervalSince1970 < first_install_time.timeIntervalSince1970 &&
+    if (first_install_time.timeIntervalSince1970 < first_install_time.timeIntervalSince1970 &&
         previous_update_time == 0)
         update_state = @"update_state_reinstall";
     else
-    if (last_update_time.timeIntervalSince1970 > first_install_time.timeIntervalSince1970 &&
-        previous_update_time.timeIntervalSince1970 < last_update_time.timeIntervalSince1970)
+    if (latest_update_time.timeIntervalSince1970 > first_install_time.timeIntervalSince1970 &&
+        previous_update_time.timeIntervalSince1970 < latest_update_time.timeIntervalSince1970)
         update_state = @"update_state_update";
     else
         update_state = @"update_state_no_update";
@@ -429,9 +434,9 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self showDataViewControllerWithTitle:@"Dates"
         message:@"Current Application Dates"
         object:@{
-            @"original_install_time":   TBString(original_install_time),
             @"first_install_time":      TBString(first_install_time),
-            @"last_update_time":        TBString(last_update_time),
+            @"latest_install_time":     TBString(latest_install_time),
+            @"latest_update_time":      TBString(latest_update_time),
             @"previous_update_time":    TBString(previous_update_time),
             @"update_state":            TBString(update_state)
     }];

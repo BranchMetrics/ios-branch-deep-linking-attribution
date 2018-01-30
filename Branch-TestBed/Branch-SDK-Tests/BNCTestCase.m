@@ -148,9 +148,9 @@ static BOOL _testBreakpoints = NO;
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     BNCApplication *application = [BNCApplication currentApplication];
 
-    application->_currentInstallDate = firstInstallDate;        // first_install_time
-    application->_firstInstallDate = originalInstallDate;       // original_install_time
-    application->_currentBuildDate = lastUpdateDate;            // last_update_time
+    application->_currentInstallDate = firstInstallDate;        // latest_install_time
+    application->_firstInstallDate = originalInstallDate;       // first_install_time
+    application->_currentBuildDate = lastUpdateDate;            // lastest_update_time
     preferenceHelper.previousAppBuildDate = previousUpdateDate; // previous_update_time
     [preferenceHelper synchronize];
 }

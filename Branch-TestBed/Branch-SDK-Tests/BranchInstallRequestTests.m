@@ -78,11 +78,11 @@
         @"apple_ad_attribution_checked":@0,
         @"debug":                       @1,
         @"facebook_app_link_checked":   @0,
-        @"first_install_time":          BNCWireFormatFromDate(appDate),
+        @"latest_install_time":         BNCWireFormatFromDate(appDate),
         @"ios_bundle_id":               @"foo-bundle-id",
-        @"last_update_time":            BNCWireFormatFromDate(appDate),
+        @"lastest_update_time":         BNCWireFormatFromDate(appDate),
         @"link_identifier":             @"foo-link-id",
-        @"original_install_time":       BNCWireFormatFromDate(appDate),
+        @"first_install_time":          BNCWireFormatFromDate(appDate),
         @"uri_scheme":                  @"foo-uri-scheme"
     };
 
