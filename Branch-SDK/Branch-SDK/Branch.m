@@ -726,37 +726,35 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (BOOL)handleUniversalDeepLink:(NSURL*)url fromSelf:(BOOL)isFromSelf {
-    if (isFromSelf) {
-        [self resetUserSession];
-    }
 
+    NSArray *branchHandledDomains = nil;
     NSString *urlString = [url absoluteString];
-    self.preferenceHelper.universalLinkUrl = urlString;
-    self.preferenceHelper.referringURL = urlString;
-    self.preferenceHelper.shouldWaitForInit = NO;
-    [self initUserSessionAndCallCallback:YES];
 
     id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
-    if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] &&
-        [urlString bnc_containsString:branchUniversalLinkDomains]) {
-        return YES;
+    if ([branchUniversalLinkDomains isKindOfClass:[NSString class]]) {
+        branchHandledDomains = @[ branchUniversalLinkDomains ];
     }
     else if ([branchUniversalLinkDomains isKindOfClass:[NSArray class]]) {
-        for (id oneDomain in branchUniversalLinkDomains) {
-            if ([oneDomain isKindOfClass:[NSString class]] && [urlString bnc_containsString:oneDomain]) {
-                return YES;
-            }
+        branchHandledDomains = branchUniversalLinkDomains;
+    }
+    else {
+        branchHandledDomains = @[ @"bnc.lt", @"app.link", @"test-app.link" ];
+    }
+
+    NSString *deepLinkURL = nil;
+    for (NSString *domain in branchHandledDomains) {
+        if ([domain isKindOfClass:[NSString class]] && [urlString bnc_containsString:domain]) {
+            deepLinkURL = urlString;
+            break;
         }
     }
+    self.preferenceHelper.universalLinkUrl = deepLinkURL;
+    self.preferenceHelper.referringURL = deepLinkURL;
+    self.preferenceHelper.shouldWaitForInit = NO;
+    if (isFromSelf) [self resetUserSession];
+    [self initUserSessionAndCallCallback:YES];
 
-    NSString *userActivityURL = urlString;
-    NSArray *branchDomains = [NSArray arrayWithObjects:@"bnc.lt", @"app.link", @"test-app.link", nil];
-    for (NSString* domain in branchDomains) {
-        if ([userActivityURL bnc_containsString:domain])
-            return YES;
-    }
-
-    return NO;
+    return (deepLinkURL == nil) ? NO : YES;
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
