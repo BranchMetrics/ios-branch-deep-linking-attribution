@@ -40,6 +40,7 @@
 #import "Branch+Validator.h"
 #import "BNCSpotlightService.h"
 #import "../Fabric/FABKitProtocol.h" // Fabric
+#import <stdatomic.h>
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
@@ -76,6 +77,14 @@ NSString * const BNCSpotlightFeature = @"spotlight";
 #ifndef CSSearchableItemActivityIdentifier
 #define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
 #endif
+
+static inline dispatch_time_t BNCDispatchTimeFromSeconds(NSTimeInterval seconds) {
+    return dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC);
+}
+
+static inline void BNCAfterSecondsPerformBlock(NSTimeInterval seconds, dispatch_block_t block) {
+    dispatch_after(BNCDispatchTimeFromSeconds(seconds), dispatch_get_main_queue(), block);
+}
 
 #pragma mark - Load Categories
 
@@ -887,8 +896,15 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     self.preferenceHelper.checkedAppleSearchAdAttribution = YES;
     self.asyncRequestCount++;
 
+    NSDate *startDate = [NSDate date];
+    _Atomic __block BOOL hasBeenCalled = NO;
     void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) =
       ^ void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
+        BNCLogDebug(@"Elapsed Apple Search Ad callback time: %1.3fs.", - [startDate timeIntervalSinceNow]);
+        BOOL localHasBeenCalled = atomic_exchange(&hasBeenCalled, YES);
+        if (localHasBeenCalled) return;
+        if (error) BNCLogError(@"Error while getting Apple Search Ad attribution: %@.", error);
+
         self.asyncRequestCount--;
 
         // If searchAdsDebugMode is on then force the result to a set value for testing:
@@ -934,6 +950,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             [self initUserSessionAndCallCallback:!self.isInitialized];
         });
     };
+
+    // Set a expiration timer in case we don't get a call back (I'm looking at you, iPad):
+    // This may be a temporary quick fix until we figure out a better wat to do search ads.
+    BNCAfterSecondsPerformBlock(10.0, ^ {
+        completionBlock(nil, [NSError errorWithDomain:NSNetServicesErrorDomain code:NSNetServicesTimeoutError userInfo:nil]);
+    });
 
     ((void (*)(id, SEL, void (^ __nullable)(NSDictionary *__nullable attrDetails, NSError * __nullable error)))
         [sharedClientInstance methodForSelector:requestAttribution])
@@ -1235,7 +1257,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (BranchLinkProperties *)getLatestReferringBranchLinkProperties {
     NSDictionary *params = [self getLatestReferringParams];
-    if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] isEqual:@1]) {
+    if ([[params objectForKey:BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] boolValue]) {
         return [BranchLinkProperties getBranchLinkPropertiesFromDictionary:params];
     }
     return nil;

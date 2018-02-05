@@ -45,6 +45,7 @@
     XCTAssertEqual(buo.contentMetadata.ratingAverage,            5);
     XCTAssertEqual(buo.contentMetadata.ratingCount,              5);
     XCTAssertEqual(buo.contentMetadata.ratingMax,                7);
+    XCTAssertEqual(buo.contentMetadata.rating,                   6);
     XCTAssertEqualObjects(buo.contentMetadata.addressStreet,     @"Street_name1");
     XCTAssertEqualObjects(buo.contentMetadata.addressCity,       @"city1");
     XCTAssertEqualObjects(buo.contentMetadata.addressRegion,     @"Region1");
@@ -54,8 +55,11 @@
     XCTAssertEqual(buo.contentMetadata.longitude,                -97.5);
     NSArray *array = @[@"my_img_caption1", @"my_img_caption_2"];
     XCTAssertEqualObjects(buo.contentMetadata.imageCaptions,     array);
-    XCTAssertEqualObjects(buo.contentMetadata.customMetadata,
-                          @{@"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"});
+    NSDictionary *d = @{
+        @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1",
+        @"Custom_Content_metadata_key2": @"Custom_Content_metadata_val2"
+    };
+    XCTAssertEqualObjects(buo.contentMetadata.customMetadata,    d);
     XCTAssertEqualObjects(buo.title,                        @"My Content Title");
     XCTAssertEqualObjects(buo.canonicalIdentifier,          @"item/12345");
     XCTAssertEqualObjects(buo.canonicalUrl,                 @"https://branch.io/deepviews");
@@ -85,8 +89,70 @@
     XCTAssert(data);
 
     // NSString *newString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    // Can't compare strings since the item order may be different.
+    // Can't compare strings since the field item order may be different.
     // XCTAssertEqualObjects(jsonString, newString);
+}
+
+- (void) testSerialize {
+    BranchUniversalObject *buo = [BranchUniversalObject new];
+    buo.contentMetadata.contentSchema =       BranchContentSchemaCommerceProduct;
+    buo.contentMetadata.quantity =            2;
+    buo.contentMetadata.price =               [NSDecimalNumber decimalNumberWithString:@"23.20"];
+    buo.contentMetadata.currency =            BNCCurrencyUSD;
+    buo.contentMetadata.sku =                 @"1994320302";
+    buo.contentMetadata.productName =         @"my_product_name1";
+    buo.contentMetadata.productBrand =        @"my_prod_Brand1";
+    buo.contentMetadata.productCategory =     BNCProductCategoryBabyToddler;
+    buo.contentMetadata.productVariant =      @"3T";
+    buo.contentMetadata.condition =           @"FAIR";
+    buo.contentMetadata.ratingAverage =       5;
+    buo.contentMetadata.ratingCount =         5;
+    buo.contentMetadata.ratingMax =           7;
+    buo.contentMetadata.rating =              6;
+    buo.contentMetadata.addressStreet =       @"Street_name1";
+    buo.contentMetadata.addressCity =         @"city1";
+    buo.contentMetadata.addressRegion =       @"Region1";
+    buo.contentMetadata.addressCountry =      @"Country1";
+    buo.contentMetadata.addressPostalCode =   @"postal_code";
+    buo.contentMetadata.latitude =            12.07;
+    buo.contentMetadata.longitude =           -97.5;
+    buo.contentMetadata.imageCaptions =       (id) @[@"my_img_caption1", @"my_img_caption_2"];
+    buo.contentMetadata.customMetadata = (id) @{
+        @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1",
+        @"Custom_Content_metadata_key2": @"Custom_Content_metadata_val2"
+    };
+    buo.title =                          @"My Content Title";
+    buo.canonicalIdentifier =            @"item/12345";
+    buo.canonicalUrl =                   @"https://branch.io/deepviews";
+    buo.keywords =                       @[@"My_Keyword1", @"My_Keyword2"];
+    buo.contentDescription =             @"my_product_description1";
+    buo.imageUrl =                       @"https://test_img_url";
+    buo.expirationDate =
+        [NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0];
+    buo.publiclyIndex =                  NO;
+    buo.locallyIndex =                   YES;
+    buo.creationDate =
+        [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0];
+    NSDictionary *buoDictionary = buo.dictionary;
+
+    // Load the JSON:
+
+    NSString *jsonString = [self stringFromBundleWithKey:@"BranchUniversalObjectJSON"];
+    XCTAssertTrue(jsonString, @"Can't load BranchUniversalObjectJSON resource from plist!");
+
+    NSError *error = nil;
+    NSMutableDictionary *jsonDictionary =
+        [[NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding]
+            options:0 error:&error]
+                mutableCopy];
+    XCTAssertNil(error);
+    jsonDictionary[@"$publicly_indexable"] = nil;
+
+    // Compare:
+
+    XCTAssert(buoDictionary);
+    XCTAssert(jsonDictionary);
+    XCTAssertEqualObjects(buoDictionary, jsonDictionary);
 }
 
 - (void) testSchemaDescription {
@@ -94,7 +160,7 @@
     BranchUniversalObject *b = [BranchUniversalObject objectWithDictionary:d];
     NSString *s = b.contentMetadata.description;
     BNCTAssertEqualMaskedString(s,
-        @"<BranchContentMetadata 0x**************** schema: COMMERCE_PRODUCT userData: 1 items>");
+        @"<BranchContentMetadata 0x**************** schema: COMMERCE_PRODUCT userData: 2 items>");
 }
 
 - (void) testBUODescription {

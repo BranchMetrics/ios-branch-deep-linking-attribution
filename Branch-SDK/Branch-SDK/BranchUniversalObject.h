@@ -83,6 +83,7 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 @property (nonatomic, assign)           double          ratingAverage;
 @property (nonatomic, assign)           NSInteger       ratingCount;
 @property (nonatomic, assign)           double          ratingMax;
+@property (nonatomic, assign)           double          rating;
 @property (nonatomic, strong, nullable) NSString        *addressStreet;
 @property (nonatomic, strong, nullable) NSString        *addressCity;
 @property (nonatomic, strong, nullable) NSString        *addressRegion;
@@ -184,7 +185,11 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
                           andCallback:(void (^_Nullable)(NSString * _Nullable url, NSError * _Nullable error))callback;
 
 /// Returns a Branch long URL to the content item
-- (nullable NSString *)getLongUrlWithChannel:(nullable NSString *)channel andTags:(nullable NSArray *)tags andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andAlias:(nullable NSString *)alia;
+- (nullable NSString *)getLongUrlWithChannel:(nullable NSString *)channel
+                                     andTags:(nullable NSArray *)tags
+                                  andFeature:(nullable NSString *)feature
+                                    andStage:(nullable NSString *)stage
+                                    andAlias:(nullable NSString *)alias;
 
 /// @name Share Sheet Handling
 

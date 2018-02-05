@@ -67,6 +67,11 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 - (NSDictionary*_Nonnull) dictionary {
     NSMutableDictionary*dictionary = [NSMutableDictionary new];
 
+    for (NSString *key in self.customMetadata.keyEnumerator) {
+        NSString *value = self.customMetadata[key];
+        dictionary[key] = value;
+    }
+
     #define BNCFieldDefinesDictionaryFromSelf
     #include "BNCFieldDefines.h"
 
@@ -83,6 +88,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     addDouble(ratingAverage,    $rating_average);
     addInteger(ratingCount,     $rating_count);
     addDouble(ratingMax,        $rating_max);
+    addDouble(rating,           $rating);
     addString(addressStreet,    $address_street);
     addString(addressCity,      $address_city);
     addString(addressRegion,    $address_region);
@@ -91,7 +97,6 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     addDouble(latitude,         $latitude);
     addDouble(longitude,        $longitude);
     addStringArray(imageCaptions,$image_captions);
-    addStringifiedDictionary(customMetadata, $custom_fields);
 
     #include "BNCFieldDefines.h"
 
@@ -118,6 +123,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     addDouble(ratingAverage,    $rating_average);
     addInteger(ratingCount,     $rating_count);
     addDouble(ratingMax,        $rating_max);
+    addDouble(rating,           $rating);
     addString(addressStreet,    $address_street);
     addString(addressCity,      $address_city);
     addString(addressRegion,    $address_region);
@@ -126,7 +132,6 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     addDouble(latitude,         $latitude);
     addDouble(longitude,        $longitude);
     addStringArray(imageCaptions,$image_captions);
-    addStringifiedDictionary(customMetadata, $custom_fields);
 
     #include "BNCFieldDefines.h"
 
@@ -681,6 +686,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         @"$rating_average",
         @"$rating_count",
         @"$rating_max",
+        @"$rating",
         @"$address_street",
         @"$address_city",
         @"$address_region",

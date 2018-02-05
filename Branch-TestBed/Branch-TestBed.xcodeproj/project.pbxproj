@@ -66,7 +66,7 @@
 		4D36000C1F466D33002BE771 /* BranchEvent.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D36000B1F466D33002BE771 /* BranchEvent.Test.m */; };
 		4D385D0B1EE1D53200A549EC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D385D0A1EE1D53200A549EC /* Security.framework */; };
 		4D3FA94B1DFF31EB00E2B6A9 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FA94A1DFF31EB00E2B6A9 /* BNCConfig.m */; };
-		4D41123D1FE8976400C44FA5 /* BranchView.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D4DAC201C8FA8C0008E37DB /* BranchView.h */; };
+		4D41123D1FE8976400C44FA5 /* BranchView.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D4DAC201C8FA8C0008E37DB /* BranchView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4D698B7D1FB287A700AFF38C /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67163AAD1B9A036F007A8AB1 /* SafariServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		4D8999ED1DC108FF00F7EE0A /* BNCAvailability.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D8999EB1DC108FF00F7EE0A /* BNCAvailability.m */; };
 		4D8EE7A61E1F0A5D00B1F450 /* BNCCommerceEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D8EE7A41E1F0A5D00B1F450 /* BNCCommerceEvent.m */; };
@@ -799,10 +799,10 @@
 				4DB327FF1FA10B9000ACF9B0 /* BranchDelegate.h in Headers */,
 				4DCF4B031F438A8700AF9AAB /* BranchEvent.h in Headers */,
 				4DCAC8181F426F7C00405D1D /* BranchLinkProperties.h in Headers */,
-				4DCAC8191F426F7C00405D1D /* BranchShareLink.h in Headers */,
 				4DCAC81A1F426F7C00405D1D /* BranchUniversalObject.h in Headers */,
-				4DE6491A1FE1D7F500226507 /* BNCFieldDefines.h in Headers */,
+				4DCAC8191F426F7C00405D1D /* BranchShareLink.h in Headers */,
 				4D41123D1FE8976400C44FA5 /* BranchView.h in Headers */,
+				4DE6491A1FE1D7F500226507 /* BNCFieldDefines.h in Headers */,
 				4DCAC81C1F426F7C00405D1D /* BranchViewHandler.h in Headers */,
 				4D9607F41FBF9473008AB3C2 /* UIViewController+Branch.h in Headers */,
 				4DCAC8031F426F7C00405D1D /* BNCContentDiscoveryManager.h in Headers */,

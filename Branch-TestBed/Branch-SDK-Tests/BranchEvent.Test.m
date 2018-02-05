@@ -68,6 +68,7 @@
     buo.contentMetadata.ratingAverage    = 5;
     buo.contentMetadata.ratingCount      = 5;
     buo.contentMetadata.ratingMax        = 7;
+    buo.contentMetadata.rating           = 6;
     buo.contentMetadata.addressStreet    = @"Street_name1";
     buo.contentMetadata.addressCity      = @"city1";
     buo.contentMetadata.addressRegion    = @"Region1";
@@ -77,7 +78,8 @@
     buo.contentMetadata.longitude        = -97.5;
     buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
     buo.contentMetadata.customMetadata   = (NSMutableDictionary*) @{
-        @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"
+        @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1",
+        @"Custom_Content_metadata_key2": @"Custom_Content_metadata_val2"
     };
 
     // Set up the event properties --
@@ -131,7 +133,7 @@
         NSDictionary *parameters = [NSJSONSerialization JSONObjectWithData:bodyData options:0 error:&error];
         XCTAssertNil(error);
 
-        NSLog(@"1");
+        NSLog(@"testEvent 1");
         NSLog(@"URL: %@.", url);
         NSLog(@"Body: %@.", parameters);
 
@@ -213,6 +215,7 @@
     buo.contentMetadata.ratingAverage    = 5;
     buo.contentMetadata.ratingCount      = 5;
     buo.contentMetadata.ratingMax        = 7;
+    buo.contentMetadata.rating           = 6;
     buo.contentMetadata.addressStreet    = @"Street_name1";
     buo.contentMetadata.addressCity      = @"city1";
     buo.contentMetadata.addressRegion    = @"Region1";
@@ -222,7 +225,8 @@
     buo.contentMetadata.longitude        = -97.5;
     buo.contentMetadata.imageCaptions    = (id) @[@"my_img_caption1", @"my_img_caption_2"];
     buo.contentMetadata.customMetadata   = (NSMutableDictionary*) @{
-        @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1"
+        @"Custom_Content_metadata_key1": @"Custom_Content_metadata_val1",
+        @"Custom_Content_metadata_key2": @"Custom_Content_metadata_val2"
     };
 
     // Set up and invoke --
