@@ -1861,7 +1861,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-//static inline void BNCPerformBlockOnMainThread(dispatch_block_t block) {
+//static inline void BNCPerformBlockOnMainThreadAsync(dispatch_block_t block) {
 //    dispatch_async(dispatch_get_main_queue(), block);
 //}
 

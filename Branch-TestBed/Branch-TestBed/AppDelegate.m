@@ -41,7 +41,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [branch setDebug];
     
     // Comment out in production / or un-comment to test your Branch SDK Integration:
-    [branch validateSDKIntegration];
+    //[branch validateSDKIntegration];
 
     // Check for Apple Search Ad attribution (trade-off: slows down app startup):
     [branch delayInitToCheckForSearchAds];
