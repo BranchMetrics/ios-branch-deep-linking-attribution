@@ -39,6 +39,7 @@
 #import "NSString+Branch.h"
 #import "BNCSpotlightService.h"
 #import "../Fabric/FABKitProtocol.h" // Fabric
+#import "BNCApplication.h"
 #import <stdatomic.h>
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -374,7 +375,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             bnc_useTestBranchKey = NO;
         } else {
             [NSException raise:NSInternalInconsistencyException
-                format:@"Invalid Branch key format. Passed key is '%@'.", branchKey];
+                format:@"Invalid Branch key format. Did you add your Branch key to your Info.plist? Passed key is '%@'.", branchKey];
             return;
         }
 
@@ -840,7 +841,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     // Else the URL will be handled by `applicationDidBecomeActive`.
 
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    if ([[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
+    if (urlStr && [[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
         NSURL *url = [NSURL URLWithString:urlStr];
         if (url) [self handleDeepLink:url fromSelf:YES];
     }
@@ -865,7 +866,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         return NO;
 
     NSDate *installDatePlus30 =
-        [[BNCSystemObserver appInstallDate] dateByAddingTimeInterval:(30.0*24.0*60.0*60.0)];
+        [[BNCApplication currentApplication].currentInstallDate
+            dateByAddingTimeInterval:(30.0*24.0*60.0*60.0)];
     if ([installDatePlus30 compare:[NSDate date]] < 0) {
         return NO;
     }

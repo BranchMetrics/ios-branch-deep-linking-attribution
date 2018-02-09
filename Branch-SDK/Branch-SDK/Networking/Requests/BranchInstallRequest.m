@@ -12,7 +12,7 @@
 #import "BranchConstants.h"
 #import "BNCStrongMatchHelper.h"
 #import "BNCEncodingUtils.h"
-
+#import "BNCApplication.h"
 
 @implementation BranchInstallRequest
 
@@ -29,9 +29,10 @@
     [self safeSetValue:[BNCSystemObserver getTeamIdentifier] forKey:BRANCH_REQUEST_KEY_TEAM_ID onDict:params];
     [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];
     [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:params];
-    [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:BRANCH_REQUEST_KEY_UPDATE onDict:params];
-    [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedFacebookAppLinks] forKey:BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS onDict:params];
-    [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedAppleSearchAdAttribution] forKey:BRANCH_REQUEST_KEY_CHECKED_APPLE_AD_ATTRIBUTION onDict:params];
+    [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedFacebookAppLinks]
+        forKey:BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS onDict:params];
+    [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedAppleSearchAdAttribution]
+        forKey:BRANCH_REQUEST_KEY_CHECKED_APPLE_AD_ATTRIBUTION onDict:params];
     [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:params];
@@ -48,6 +49,13 @@
                     forKey:BRANCH_REQUEST_KEY_SEARCH_AD
                     onDict:params];
     }
+
+    BNCApplication *application = [BNCApplication currentApplication];
+    params[@"lastest_update_time"] = BNCWireFormatFromDate(application.currentBuildDate);
+    params[@"previous_update_time"] = BNCWireFormatFromDate(preferenceHelper.previousAppBuildDate);
+    params[@"latest_install_time"] = BNCWireFormatFromDate(application.currentInstallDate);
+    params[@"first_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
+    params[@"update"] = [self.class appUpdateState];
 
     if ([[BNCStrongMatchHelper strongMatchHelper] shouldDelayInstallRequest]) {
         NSInteger delay = 750;

@@ -39,11 +39,12 @@
     NSString * const OS = @"foo-os";
     NSString * const OS_VERSION = @"foo-os-version";
     NSString * const URI_SCHEME = @"foo-uri-scheme";
-    NSNumber * const UPDATE_STATE = @1;
     NSString * const LINK_IDENTIFIER = @"foo-link-id";
     NSString * const IDENTITY_ID = @"foo-identity";
     NSString * hardwareType = nil;
 
+    BNCLogSetDisplayLevel(BNCLogLevelAll);
+    
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     id systemObserverMock = OCMClassMock([BNCSystemObserver class]);
     [[[[systemObserverMock stub] ignoringNonObjectArgs] andReturn:HARDWARE_ID]
@@ -56,12 +57,19 @@
     [[[systemObserverMock stub] andReturn:OS] getOS];
     [[[systemObserverMock stub] andReturn:OS_VERSION] getOSVersion];
     [[[systemObserverMock stub] andReturn:URI_SCHEME] getDefaultUriScheme];
-    [[[systemObserverMock stub] andReturn:UPDATE_STATE] getUpdateState];
-    
+
     preferenceHelper.isDebug = [IS_DEBUG boolValue];
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
     preferenceHelper.deviceFingerprintID = nil;
     preferenceHelper.identityID = IDENTITY_ID;
+
+    NSTimeInterval kOneDayAgo = -1.0*24.0*60.0*60.0;
+    NSDate *installDate = [NSDate dateWithTimeIntervalSinceNow:2.0*kOneDayAgo];
+    NSDate *updateDate  = [NSDate dateWithTimeIntervalSinceNow:1.0*kOneDayAgo];
+    [BNCTestCase setAppOriginalInstallDate:installDate
+        firstInstallDate:installDate
+        lastUpdateDate:installDate
+        previousUpdateDate:updateDate];
 
     NSDictionary *expectedParams = @{
         @"app_version": APP_VERSION,
@@ -75,8 +83,14 @@
         @"identity_id":                 IDENTITY_ID,
         @"ios_bundle_id":               BUNDLE_ID,
         @"link_identifier":             LINK_IDENTIFIER,
-        @"update":                      @1,
-        @"uri_scheme":                  URI_SCHEME
+        @"uri_scheme":                  URI_SCHEME,
+
+        @"latest_install_time":         BNCWireFormatFromDate(installDate),
+        @"lastest_update_time":         BNCWireFormatFromDate(installDate),
+        @"first_install_time":          BNCWireFormatFromDate(installDate),
+        @"previous_update_time":        BNCWireFormatFromDate(updateDate),
+        @"update":                      @1
+
     };
 
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
@@ -100,7 +114,6 @@
     NSString * const OS = @"foo-os";
     NSString * const OS_VERSION = @"foo-os-version";
     NSString * const URI_SCHEME = @"foo-uri-scheme";
-    NSNumber * const UPDATE_STATE = @1;
     NSString * const LINK_IDENTIFIER = @"foo-link-id";
     NSString * const FINGERPRINT_ID = @"foo-fingerprint";
     NSString * const IDENTITY_ID = @"foo-identity";
@@ -118,13 +131,20 @@
     [[[systemObserverMock stub] andReturn:OS] getOS];
     [[[systemObserverMock stub] andReturn:OS_VERSION] getOSVersion];
     [[[systemObserverMock stub] andReturn:URI_SCHEME] getDefaultUriScheme];
-    [[[systemObserverMock stub] andReturn:UPDATE_STATE] getUpdateState];
-    
+
     preferenceHelper.isDebug = [IS_DEBUG boolValue];
     preferenceHelper.linkClickIdentifier = LINK_IDENTIFIER;
     preferenceHelper.deviceFingerprintID = FINGERPRINT_ID;
     preferenceHelper.identityID = IDENTITY_ID;
-    
+
+    NSTimeInterval kOneDayAgo = -1.0*24.0*60.0*60.0;
+    NSDate *installDate = [NSDate dateWithTimeIntervalSinceNow:2.0*kOneDayAgo];
+    NSDate *updateDate  = [NSDate dateWithTimeIntervalSinceNow:1.0*kOneDayAgo];
+    [BNCTestCase setAppOriginalInstallDate:installDate
+        firstInstallDate:installDate
+        lastUpdateDate:installDate
+        previousUpdateDate:updateDate];
+
     NSDictionary *expectedParams = @{
         @"app_version": APP_VERSION,
         @"apple_ad_attribution_checked":@0,        
@@ -138,8 +158,14 @@
         @"identity_id":                 IDENTITY_ID,
         @"ios_bundle_id":               BUNDLE_ID,
         @"link_identifier":             LINK_IDENTIFIER,
-        @"update":                      @1,
-        @"uri_scheme":                  URI_SCHEME
+        @"uri_scheme":                  URI_SCHEME,
+
+        @"latest_install_time":         BNCWireFormatFromDate(installDate),
+        @"lastest_update_time":         BNCWireFormatFromDate(installDate),
+        @"first_install_time":          BNCWireFormatFromDate(installDate),
+        @"previous_update_time":        BNCWireFormatFromDate(updateDate),
+        @"update":                      @1
+
     };
 
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
