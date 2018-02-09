@@ -12,7 +12,29 @@
 #import <Foundation/Foundation.h>
 #endif
 
-#pragma mark BNCKeyValue
+#pragma mark BNCWireFormat
+
+static inline NSDate* BNCDateFromWireFormat(id object) {
+    NSDate *date = nil;
+    NSNumber *number = object;
+    if ([number isKindOfClass:[NSNumber class]] ||
+        [number isKindOfClass:[NSString class]]) {
+        NSTimeInterval t = [number doubleValue];
+        date = [NSDate dateWithTimeIntervalSince1970:t/1000.0];
+    }
+    return date;
+}
+
+static inline NSNumber* BNCWireFormatFromDate(NSDate *date) {
+    NSNumber *number = nil;
+    NSTimeInterval t = [date timeIntervalSince1970];
+    if (date && t != 0.0 ) {
+        number = [NSNumber numberWithLongLong:(long long)(t*1000.0)];
+    }
+    return number;
+}
+
+#pragma mark - BNCKeyValue
 
 @interface BNCKeyValue : NSObject
 

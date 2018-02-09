@@ -12,12 +12,6 @@
 #import <Foundation/Foundation.h>
 #endif
 
-typedef NS_ENUM(NSInteger, BNCUpdateState) {
-    BNCUpdateStateInstall      = 0,    //  App was recently installed.
-    BNCUpdateStateNonUpdate    = 1,    //  App was neither newly installed nor updated.
-    BNCUpdateStateUpdate       = 2,    //  App was recently updated.
-};
-
 @interface BNCSystemObserver : NSObject
 
 + (NSString *)getUniqueHardwareId:(BOOL *)isReal
@@ -34,12 +28,8 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
 + (NSString *)getOSVersion;
 + (NSNumber *)getScreenWidth;
 + (NSNumber *)getScreenHeight;
-+ (NSNumber *)getUpdateState;
-+ (void)setUpdateState;
 + (BOOL)isSimulator;
 + (BOOL)adTrackingSafe;
-+ (NSDate*) appInstallDate;
-+ (NSDate*) appBuildDate;
 + (NSString*) getAdId;
 
 @end

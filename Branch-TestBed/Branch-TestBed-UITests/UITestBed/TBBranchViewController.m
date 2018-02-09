@@ -14,6 +14,8 @@
 @import Branch;
 #import "BNCDeviceInfo.h"
 #import "BNCSystemObserver.h"
+#import "BNCApplication.h"
+#import "BNCKeyChain.h"
 
 NSString *cononicalIdentifier = @"item/12345";
 NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
@@ -26,6 +28,19 @@ NSString *desktop_url = @"http://branch.io";
 NSString *ios_url = @"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/";
 NSString *shareText = @"Super amazing thing I want to share";
 NSString *type = @"some type";
+
+static NSString* TBString(id<NSObject> object) {
+    if (object == nil)
+        return @"<nil>";
+    else
+    if ([object isKindOfClass:[NSString class]])
+        return (NSString*) object;
+    else {
+        NSString *s = object.description;
+        if (s.length > 0) return s;
+        return NSStringFromClass(object.class);
+    }
+}
 
 @interface TBBranchViewController () <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong)   TBTableData *tableData;
@@ -67,10 +82,13 @@ NSString *type = @"some type";
     row(@"ShareLink no anchor (one day link)", sharelinkTableRowNilAnchor:);
     row(@"BUO Share from table row", buoShareTableRow:);
 
+    section(@"App Update State");
+    row(@"Erase All App Data", clearAllAppDataAction:)
+    row(@"Show Dates & Update State", showDatesAction:)
+
     section(@"Miscellaneous");
     row(@"Show Local IP Addess", showLocalIPAddress:);
     row(@"Show Current View Controller", showCurrentViewController:)
-    row(@"Show App Dates", showDatesAction:)
     row(@"Toggle Facebook App Tracking", toggleFacebookAppTrackingAction:)
 
     #undef section
@@ -163,9 +181,10 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 #pragma mark - Utility Methods
 
-- (void) showDataViewControllerWithObject:(id<NSObject>)dictionaryOrArray
-                                    title:(NSString*)title
-                                  message:(NSString*)message {
+- (void) showDataViewControllerWithTitle:(NSString*)title
+                                 message:(NSString*)message
+                                  object:(id<NSObject>)dictionaryOrArray {
+
     TBDetailViewController *dataViewController = [[TBDetailViewController alloc] initWithData:dictionaryOrArray];
     dataViewController.title = title;
     dataViewController.message = message;
@@ -216,15 +235,15 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 }
 
 - (IBAction)showFirstReferringParams:(TBTableRow*)sender {
-    [self showDataViewControllerWithObject:[[Branch getInstance] getFirstReferringParams]
-               title:@"First Referring Parameters"
-                 message:nil];
+    [self showDataViewControllerWithTitle:@"Params"
+        message:@"First Referring Parameters"
+        object:[[Branch getInstance] getFirstReferringParams]];
 }
 
 - (IBAction)showLatestReferringParams:(TBTableRow*)sender {
-    [self showDataViewControllerWithObject:[[Branch getInstance] getLatestReferringParamsSynchronous]
-               title:@"Latest Referring Parameters"
-                 message:nil];
+    [self showDataViewControllerWithTitle:@"Params"
+        message:@"Latest Referring Parameters"
+        object:[[Branch getInstance] getLatestReferringParamsSynchronous]];
 }
 
 - (IBAction)setUserIdentity:(TBTableRow*)sender {
@@ -240,7 +259,8 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
                 NSLog(@"Set identity error: %@.", error);
                 [self showAlertWithTitle:@"Can't set identity." message:error.localizedDescription];
             } else {
-                [self showDataViewControllerWithObject:params title:@"Set Identity" message:@"User Identity Set"];
+                [self showDataViewControllerWithTitle:@"Identity"
+                    message:@"Set Identity" object:params];
             }
         }];
 }
@@ -252,8 +272,9 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         if (error || !changed) {
             [self showAlertWithTitle:@"Logout Error" message:error.localizedDescription];
         } else {
-            [self showDataViewControllerWithObject:@{@"changed": @(YES)}
-                title:@"Log Out User" message:@"Logged User Identity Out"];
+            [self showDataViewControllerWithTitle:@"Log Out"
+                message:@"Logged User Identity Out"
+                object:@{@"changed": @(YES)}];
         }
     }];
 }
@@ -290,25 +311,25 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
             if (error) {
                 [self showAlertWithTitle:@"Commere Event Error" message:error.localizedDescription];
             } else {
-                [self showDataViewControllerWithObject:response
-                    title:@"Commerce Event"
-                    message:nil];
+                [self showDataViewControllerWithTitle:@"Commerce Event"
+                    message:@"Commerce Fields"
+                    object:response];
             }
         }];
 }
 
 - (IBAction) sendStandardEvent:(id)sender {
     [[BranchEvent standardEvent:BranchStandardEventCompleteTutorial] logEvent];
-    [self showDataViewControllerWithObject:@{}
-        title:@"Standard Event"
-        message:[NSString stringWithFormat:@"%@ Sent", BranchStandardEventCompleteTutorial]];
+    [self showDataViewControllerWithTitle:@"Standard Event"
+        message:[NSString stringWithFormat:@"%@ Sent", BranchStandardEventCompleteTutorial]
+        object:@{}];
 }
 
 - (IBAction) sendCustomEvent:(id)sender {
     [[BranchEvent customEventWithName:@"Custom_Event"] logEvent];
-    [self showDataViewControllerWithObject:@{}
-        title:@"Custom Event"
-        message:@"Custom_Event Sent"];
+    [self showDataViewControllerWithTitle:@"Custom Event"
+        message:@"Custom_Event Sent"
+        object:@{}];
 }
 
 - (IBAction)showLocalIPAddress:(id)sender {
@@ -316,21 +337,21 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *lip = [BNCDeviceInfo getInstance].localIPAddress;
     if (!lip) lip = @"<nil>";
     if (lip.length == 0) lip = @"<empty string>";
-    [self showDataViewControllerWithObject:@{
+    [self showDataViewControllerWithTitle:@"Local IP Address"
+        message:nil
+        object:@{
             @"Local IP Address": lip,
         }
-        title:@"Local IP Address"
-        message:nil
     ];
 }
 
 - (IBAction) showCurrentViewController:(id)send {
     UIViewController *vc = [UIViewController bnc_currentViewController];
-    [self showDataViewControllerWithObject:@{
+    [self showDataViewControllerWithTitle:@"View Controller"
+        message:nil
+        object:@{
             @"View Controller": [NSString stringWithFormat:@"%@", vc],
         }
-        title:@"View Controller"
-        message:nil
     ];
 }
 
@@ -338,24 +359,85 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper preferenceHelper];
     BOOL nextState = !prefs.limitFacebookTracking;
     prefs.limitFacebookTracking = nextState;
-    [self showDataViewControllerWithObject:@{
+    [self showDataViewControllerWithTitle:@"Limit Facebook App Tracking"
+        message:nil
+        object:@{
             @"Limit Facebook App Tracking": (nextState) ? @"On" : @"Off"
         }
-        title:@"Limit Facebook App Tracking"
-        message:nil
     ];
 }
 
+#pragma mark - App Dates / Update State
+
+- (IBAction) clearAllAppDataAction:(id)sender {
+    UIAlertController* alert =
+        [UIAlertController alertControllerWithTitle:@"Clear App Data?"
+            message:@"Clear all app data?"
+            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel"
+        style:UIAlertActionStyleCancel
+        handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Clear"
+        style:UIAlertActionStyleDestructive
+        handler:^(UIAlertAction*action) { [self clearAllAppData]; }]];
+    UIViewController *rootViewController =
+        [UIApplication sharedApplication].delegate.window.rootViewController;
+    [rootViewController presentViewController:alert
+        animated:YES
+        completion:nil];
+
+}
+
+- (void) clearAllAppData {
+    NSError *error = nil;
+    NSURL *url = BNCURLForBranchDirectory();
+    [[NSFileManager defaultManager] removeItemAtURL:url error:&error];
+    if (error) NSLog(@"Error removing defaults: %@.", error);
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *dictionary = [defaults dictionaryRepresentation];
+    for (NSString *key in dictionary.keyEnumerator)
+        [defaults removeObjectForKey:key];
+    [defaults synchronize];
+    [BNCKeyChain removeValuesForService:nil key:nil];
+    exit(0);
+}
+
 - (IBAction) showDatesAction:(id)sender {
-    NSDate *buildDate = [BNCSystemObserver appBuildDate];
-    NSDate *installDate = [BNCSystemObserver appInstallDate];
-    [self showDataViewControllerWithObject:@{
-            @"Build Date": [NSString stringWithFormat:@"%@", buildDate],
-            @"Install Date": [NSString stringWithFormat:@"%@", installDate],
-        }
-        title:@"View Controller"
-        message:nil
-    ];
+    BNCApplication *application         = [BNCApplication currentApplication];
+    NSTimeInterval first_install_time   = application.firstInstallDate.timeIntervalSince1970;
+    NSTimeInterval latest_install_time  = application.currentInstallDate.timeIntervalSince1970;
+    NSTimeInterval latest_update_time   = application.currentBuildDate.timeIntervalSince1970;
+    NSTimeInterval previous_update_time = global_previous_update_time.timeIntervalSince1970;
+    NSTimeInterval const kOneDay        = 1.0 * 24.0 * 60.0 * 60.0;
+
+    NSString *update_state = nil;
+    if (first_install_time <= 0 ||
+        latest_install_time <= 0 ||
+        latest_update_time <= 0 ||
+        previous_update_time > latest_update_time)
+        update_state = @"update_state_error";
+    else
+    if ((latest_update_time - kOneDay) <= first_install_time && previous_update_time <= 0)
+        update_state = @"update_state_install";
+    else
+    if (first_install_time < latest_install_time && previous_update_time <= 0)
+        update_state = @"update_state_reinstall";
+    else
+    if (latest_update_time > first_install_time && previous_update_time < latest_update_time)
+        update_state = @"update_state_update";
+    else
+        update_state = @"update_state_no_update";
+
+    [self showDataViewControllerWithTitle:@"Dates"
+        message:@"Current Application Dates"
+        object:@{
+            @"first_install_time":      TBString(application.firstInstallDate),
+            @"latest_install_time":     TBString(application.currentInstallDate),
+            @"latest_update_time":      TBString(application.currentBuildDate),
+            @"previous_update_time":    TBString(global_previous_update_time),
+            @"update_state":            TBString(update_state)
+    }];
 }
 
 #pragma mark - Sharing
