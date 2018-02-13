@@ -2102,7 +2102,19 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         [self validateDeeplinkRouting:latestReferringParams];
     }
     else if (([latestReferringParams[@"validate"] isEqualToString:@"true"])) {
-        NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:latestReferringParams[@"~referring_link"]]
+        // Appending /e/ to avoid launching the link as a Universal link
+        NSArray *lines = [latestReferringParams[@"~referring_link"] componentsSeparatedByString: @"/"];
+        NSString* referringLink = @"";
+        for (int i = 0 ; i < [lines count]; i++) {
+            if(i != 2) {
+                referringLink = [referringLink stringByAppendingString:lines[i]];
+                referringLink = [referringLink stringByAppendingString:@"/"];
+            } else {
+                referringLink = [referringLink stringByAppendingString:lines[i]];
+                referringLink = [referringLink stringByAppendingString:@"/e/"];
+            }
+        }
+        NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink]
                                            resolvingAgainstBaseURL:NO];
         [[UIApplication sharedApplication] openURL:comp.URL];
     }

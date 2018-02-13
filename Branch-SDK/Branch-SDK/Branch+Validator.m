@@ -203,6 +203,18 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     // TODO: handling for missing ~referring_link
     // TODO: test with short url where, say, t1=b is set in deep link data.
     // If this logic fails then we'll need to generate a new short URL, which is sucky.
+    // Appending /e/ to not treat this link as a Universal link
+    NSArray *lines = [referringLink componentsSeparatedByString: @"/"];
+    referringLink = @"";
+    for (int i = 0 ; i < [lines count]; i++) {
+        if(i != 2) {
+            referringLink = [referringLink stringByAppendingString:lines[i]];
+            referringLink = [referringLink stringByAppendingString:@"/"];
+        } else {
+            referringLink = [referringLink stringByAppendingString:lines[i]];
+            referringLink = [referringLink stringByAppendingString:@"/e/"];
+        }
+    }
     NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink]
                                        resolvingAgainstBaseURL:NO]; // TODO: Check iOS 8 support
     NSArray *queryParams = [comp queryItems];
