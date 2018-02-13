@@ -11,6 +11,7 @@
 @interface Branch (Validator)
 - (void) validateSDKIntegrationCore;
 - (void) validateDeeplinkRouting:(NSDictionary *)params;
++ (NSString *) returnNonUniversalLink:(NSString *) referringLink;
 @end
 
 void BNCForceBranchValidatorCategoryToLoad(void);

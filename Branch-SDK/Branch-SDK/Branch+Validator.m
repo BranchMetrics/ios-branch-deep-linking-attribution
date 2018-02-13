@@ -203,18 +203,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     // TODO: handling for missing ~referring_link
     // TODO: test with short url where, say, t1=b is set in deep link data.
     // If this logic fails then we'll need to generate a new short URL, which is sucky.
-    // Appending /e/ to not treat this link as a Universal link
-    NSArray *lines = [referringLink componentsSeparatedByString: @"/"];
-    referringLink = @"";
-    for (int i = 0 ; i < [lines count]; i++) {
-        if(i != 2) {
-            referringLink = [referringLink stringByAppendingString:lines[i]];
-            referringLink = [referringLink stringByAppendingString:@"/"];
-        } else {
-            referringLink = [referringLink stringByAppendingString:lines[i]];
-            referringLink = [referringLink stringByAppendingString:@"/e/"];
-        }
-    }
+    referringLink = [self.class returnNonUniversalLink:referringLink];
     NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink]
                                        resolvingAgainstBaseURL:NO]; // TODO: Check iOS 8 support
     NSArray *queryParams = [comp queryItems];
@@ -227,7 +216,15 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     [newQueryParams addObject:[NSURLQueryItem queryItemWithName:currentTest value:val]];
     [newQueryParams addObject:[NSURLQueryItem queryItemWithName:@"validate" value:@"true"]];
     comp.queryItems = newQueryParams;
-    [[UIApplication sharedApplication] openURL:comp.URL];
+    
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    Class applicationClass = NSClassFromString(@"UIApplication");
+    id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
+    SEL openURL = @selector(openURL:);
+    if ([sharedApplication respondsToSelector:openURL])
+        [sharedApplication performSelector:openURL withObject:comp.URL];
+    #pragma clang diagnostic pop
 }
 
 - (void)validateDeeplinkRouting:(NSDictionary *)params {
@@ -271,6 +268,22 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
         [[UIViewController bnc_currentViewController]
             presentViewController:alertController animated:YES completion:nil];
     });
+}
+
++ (NSString *) returnNonUniversalLink:(NSString *) referringLink {
+    // Appending /e/ to not treat this link as a Universal link
+    NSArray *lines = [referringLink componentsSeparatedByString: @"/"];
+    referringLink = @"";
+    for (int i = 0 ; i < [lines count]; i++) {
+        if(i != 2) {
+            referringLink = [referringLink stringByAppendingString:lines[i]];
+            referringLink = [referringLink stringByAppendingString:@"/"];
+        } else {
+            referringLink = [referringLink stringByAppendingString:lines[i]];
+            referringLink = [referringLink stringByAppendingString:@"/e/"];
+        }
+    }
+    return referringLink;
 }
 
 @end

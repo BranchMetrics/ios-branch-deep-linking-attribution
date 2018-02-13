@@ -2102,21 +2102,19 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         [self validateDeeplinkRouting:latestReferringParams];
     }
     else if (([latestReferringParams[@"validate"] isEqualToString:@"true"])) {
-        // Appending /e/ to avoid launching the link as a Universal link
-        NSArray *lines = [latestReferringParams[@"~referring_link"] componentsSeparatedByString: @"/"];
-        NSString* referringLink = @"";
-        for (int i = 0 ; i < [lines count]; i++) {
-            if(i != 2) {
-                referringLink = [referringLink stringByAppendingString:lines[i]];
-                referringLink = [referringLink stringByAppendingString:@"/"];
-            } else {
-                referringLink = [referringLink stringByAppendingString:lines[i]];
-                referringLink = [referringLink stringByAppendingString:@"/e/"];
-            }
-        }
+        NSString* referringLink = [self.class returnNonUniversalLink:latestReferringParams[@"~referring_link"] ];
         NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink]
                                            resolvingAgainstBaseURL:NO];
-        [[UIApplication sharedApplication] openURL:comp.URL];
+        
+        
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        Class applicationClass = NSClassFromString(@"UIApplication");
+        id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
+        SEL openURL = @selector(openURL:);
+        if ([sharedApplication respondsToSelector:openURL])
+            [sharedApplication performSelector:openURL withObject:comp.URL];
+        #pragma clang diagnostic pop
     }
 
     if (self.shouldCallSessionInitCallback) {
