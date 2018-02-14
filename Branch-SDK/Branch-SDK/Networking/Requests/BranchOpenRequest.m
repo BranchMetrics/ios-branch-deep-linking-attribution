@@ -241,9 +241,8 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     preferenceHelper.appleSearchAdNeedsSend = NO;
     preferenceHelper.referringURL = referringURL;
 
-    if (data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]) {
-        preferenceHelper.identityID = data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
-    }
+    NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]);
+    if (string) preferenceHelper.identityID = string;
 
     [BranchOpenRequest releaseOpenResponseLock];
 
