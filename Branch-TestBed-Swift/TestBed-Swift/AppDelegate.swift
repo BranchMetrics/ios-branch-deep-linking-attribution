@@ -6,14 +6,20 @@
 //  Copyright © 2016 Branch Metrics. All rights reserved.
 //
 import UIKit
+import Fabric
+import Crashlytics
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyerTrackerDelegate {
     
     var window: UIWindow?
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
+    func application(_
+        application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?
+    ) -> Bool {
+        Fabric.with([Crashlytics.self])
+
         let defaultBranchKey = Bundle.main.object(forInfoDictionaryKey: "branch_key") as! String
         var branchKey = defaultBranchKey
         
