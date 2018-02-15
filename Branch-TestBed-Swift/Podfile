@@ -11,4 +11,6 @@ target "TestBed-Swift" do
   pod 'YandexMobileMetrica/Dynamic', '2.9.1'
   pod 'Localytics', '~> 4.4'
   pod 'mParticle-Apple-SDK', '~> 6'
+  pod 'Fabric'
+  pod 'Crashlytics'
 end
