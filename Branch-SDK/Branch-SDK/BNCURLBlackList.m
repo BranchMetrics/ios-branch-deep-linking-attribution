@@ -32,8 +32,8 @@
         @"^pdk\\d+:",
         @"^twitterkit-.*:",
         @"^com\\.googleusercontent\\.apps\\.\\d+-.*:\\/oauth",
-        @"^(?i)(?!(http|https):).*:.*(oauth|password|auth|access)",
-        @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*(oauth|password|auth|access)",
+        @"^(?i)(?!(http|https):).*:.*(oauth|password|auth|auth.?token|access|access.?token)\\b",
+        @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*(oauth|password|auth|auth.?token|access|access.?token)\\b",
     ];
     self.blackListVersion = 0;
 
@@ -52,7 +52,10 @@
     NSMutableArray *array = [NSMutableArray new];
     for (NSString *string in self.blackList) {
         NSError *error = nil;
-        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:string options:0 error:&error];
+        NSRegularExpression *regex =
+            [NSRegularExpression regularExpressionWithPattern:string
+                options: NSRegularExpressionAnchorsMatchLines | NSRegularExpressionUseUnicodeWordBoundaries
+                error:&error];
         if (error) {
             BNCLogError(@"Regex error with pattern '%@': %@.", string, error);
             if (!self.error) self.error = error;
