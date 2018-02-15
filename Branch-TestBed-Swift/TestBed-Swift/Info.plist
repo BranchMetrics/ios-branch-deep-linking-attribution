@@ -2,11 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en_US</string>
 	<key>CFBundleDisplayName</key>
@@ -40,6 +35,11 @@
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -62,22 +62,28 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>branch_app_domain</key>
-	<string>app.link</string>
-	<key>branch_key</key>
-	<string>key_live_cnChxhZYcC9rBMAG82xLNjdcFBokyGD0</string>
 	<key>adjust_app_token</key>
 	<string>x66ziay2jtvk</string>
 	<key>amplitude_api_key</key>
 	<string>3dc11880800fe99b829ca66886abf9e5</string>
 	<key>appboy_api_key</key>
 	<string>d781dccf-9f96-46a8-878a-a1bef7bb6968</string>
-	<key>appsflyer_api_key</key>
-	<string>84qHoE3ZXh7SetmHU6boi5</string>
 	<key>appmetrica_api_key</key>
 	<string>4805cb1a-2e2c-4a03-af63-4c712939817b</string>
+	<key>appsflyer_api_key</key>
+	<string>84qHoE3ZXh7SetmHU6boi5</string>
+	<key>branch_app_domain</key>
+	<string>app.link</string>
+	<key>branch_key</key>
+	<string>key_live_cnChxhZYcC9rBMAG82xLNjdcFBokyGD0</string>
+	<key>cleartap_api_key</key>
+	<string>SDK not yet integrated</string>
+	<key>convertro_api_key</key>
+	<string>SDK not yet integrated</string>
 	<key>google_analytics_tracking_id</key>
 	<string>UA-106754221-1</string>
+	<key>kochava_api_key</key>
+	<string>SDK not yet integrated</string>
 	<key>localytics_app_key</key>
 	<string>c45388eb7b8c7be92841d6c-acb39e8e-a233-11e7-3959-007c928ca240</string>
 	<key>mixpanel_api_key</key>
@@ -86,21 +92,15 @@
 	<string>fe8104a87f1fdf4d928f69c7d5dcb9bd</string>
 	<key>mparticle_app_secret</key>
 	<string>x2JpLm6QXAxCMpjxRpiDHyb4-biuW7Ddl6cdwIKct1YYvNtjeSLyJRnXFDcxyPUN</string>
-	<key>tune_advertising_id</key>
-	<string>197758</string>
-	<key>tune_conversion_key</key>
-	<string>14cf0b0a985745713ce5366df887b0c1</string>
-	<key>cleartap_api_key</key>
-	<string>SDK not yet integrated</string>
-	<key>convertro_api_key</key>
-	<string>SDK not yet integrated</string>
-	<key>kochava_api_key</key>
-	<string>SDK not yet integrated</string>
 	<key>segment_api_key</key>
 	<string>SDK not yet integrated</string>
 	<key>singular_api_key</key>
 	<string>SDK not yet integrated</string>
 	<key>stitch_api_key</key>
 	<string>SDK not yet integrated</string>
+	<key>tune_advertising_id</key>
+	<string>197758</string>
+	<key>tune_conversion_key</key>
+	<string>14cf0b0a985745713ce5366df887b0c1</string>
 </dict>
 </plist>
