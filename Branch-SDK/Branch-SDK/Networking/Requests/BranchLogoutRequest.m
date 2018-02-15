@@ -10,7 +10,7 @@
 #import "BranchLogoutRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
-
+#import "BNCEncodingUtils.h"
 
 @interface BranchLogoutRequest ()
 @property (copy) callbackWithStatus callback;
@@ -49,7 +49,7 @@
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.sessionID = response.data[BRANCH_RESPONSE_KEY_SESSION_ID];
-    preferenceHelper.identityID = response.data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
+    preferenceHelper.identityID = BNCStringFromWireFormat(response.data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]);
     preferenceHelper.userUrl = response.data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = nil;
     preferenceHelper.installParams = nil;
