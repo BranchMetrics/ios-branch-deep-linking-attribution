@@ -1,0 +1,145 @@
+/**
+ @file          BNCURLBlackList.m
+ @package       Branch-SDK
+ @brief         Manages a list of URLs that we should ignore.
+
+ @author        Edward Smith
+ @date          February 14, 2018
+ @copyright     Copyright © 2018 Branch. All rights reserved.
+*/
+
+#import "BNCURLBlackList.h"
+#import "Branch.h"
+
+@interface BNCURLBlackList ()
+@property (strong) NSArray<NSString*> *blackList;
+@property (strong) NSArray<NSRegularExpression*> *blackListRegex;
+@property (assign) NSInteger blackListVersion;
+@property (strong) id<BNCNetworkServiceProtocol> networkService;
+@property (assign) BOOL hasRefreshedBlackListFromServer;
+@property (strong) NSError *error;
+@end
+
+@implementation BNCURLBlackList
+
+- (instancetype) init {
+    self = [super init];
+    if (!self) return self;
+
+    self.blackList = @[
+        @"^fb\\d+:",
+        @"^li\\d+:",
+        @"^pdk\\d+:",
+        @"^twitterkit-.*:",
+        @"^com\\.googleusercontent\\.apps\\.\\d+-.*:\\/oauth",
+        @"^(?i)(?!(http|https):).*:.*(oauth|password|auth|access)",
+        @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*(oauth|password|auth|access)",
+    ];
+    self.blackListVersion = 0;
+
+    NSArray *storedList = [BNCPreferenceHelper preferenceHelper].URLBlackList;
+    if (storedList.count > 0) {
+        self.blackList = storedList;
+        self.blackListVersion = [BNCPreferenceHelper preferenceHelper].URLBlackListVersion;
+    }
+    self.blackListVersion = -1; // eDebug
+
+    [self compileRegex];
+    return self;
+}
+
+- (void) compileRegex {
+    NSMutableArray *array = [NSMutableArray new];
+    for (NSString *string in self.blackList) {
+        NSError *error = nil;
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:string options:0 error:&error];
+        if (error) {
+            BNCLogError(@"Regex error with pattern '%@': %@.", string, error);
+            if (!self.error) self.error = error;
+        }
+        else if (regex)
+            [array addObject:regex];
+    }
+    self.blackListRegex = array;
+}
+
+- (BOOL) isBlackListedURL:(NSURL *)url {
+    NSString *urlString = url.absoluteString;
+    if (urlString == nil || urlString.length <= 0) return NO;
+    NSRange range = NSMakeRange(0, urlString.length);
+
+    for (NSRegularExpression* regex in self.blackListRegex) {
+        NSUInteger matches = [regex numberOfMatchesInString:urlString options:0 range:range];
+        if (matches > 0) return YES;
+    }
+
+    return NO;
+}
+
+- (void) refreshBlackListFromServer {
+    [self refreshBlackListFromServerWithCompletion:nil];
+}
+
+- (void) refreshBlackListFromServerWithCompletion:(void (^) (NSError*error, NSArray*list))completion {
+    @synchronized(self) {
+        if (self.hasRefreshedBlackListFromServer) {
+            if (completion) completion(self.error, self.blackList);
+            return;
+        }
+        self.hasRefreshedBlackListFromServer = YES;
+    }
+
+    self.error = nil;
+    NSString *urlString =
+        [NSString stringWithFormat:@"https://cdn.branch.io/sdk/uriskiplist_v%ld.json",
+            (long) self.blackListVersion+1];
+    NSMutableURLRequest *request =
+        [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]
+            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
+            timeoutInterval:30.0];
+
+    self.networkService = [[Branch networkServiceClass] new];
+    id<BNCNetworkOperationProtocol> operation =
+        [self.networkService networkOperationWithURLRequest:request completion:
+            ^(id<BNCNetworkOperationProtocol> operation) {
+                [self processServerOperation:operation];
+                if (completion) completion(self.error, self.blackList);
+                self.networkService = nil;
+            }
+        ];
+    [operation start];
+}
+
+- (void) processServerOperation:(id<BNCNetworkOperationProtocol>)operation {
+    NSError *error = nil;
+    NSString *responseString = nil;
+    if (operation.responseData)
+        responseString = [[NSString alloc] initWithData:operation.responseData encoding:NSUTF8StringEncoding];
+    BNCLogDebugSDK(@"BlackList refresh error: %@ status: %ld body:\n%@.",
+        operation.error, operation.response.statusCode, responseString);
+    if (operation.error || operation.responseData == nil || operation.response.statusCode != 200) {
+        self.error = operation.error;
+        return;
+    }
+
+    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:operation.responseData options:0 error:&error];
+    if (error) {
+        self.error = error;
+        BNCLogError(@"Can't parse JSON: %@.", error);
+        return;
+    }
+
+    NSArray *blackListURLs = dictionary[@"uri_skip_list"];
+    if (![blackListURLs isKindOfClass:NSArray.class]) return;
+
+    NSNumber *blackListVersion = dictionary[@"version"];
+    if (![blackListVersion isKindOfClass:NSNumber.class]) return;
+
+    self.blackList = blackListURLs;
+    self.blackListVersion = [blackListVersion longValue];
+    [BNCPreferenceHelper preferenceHelper].URLBlackList = self.blackList;
+    [BNCPreferenceHelper preferenceHelper].URLBlackListVersion = self.blackListVersion;
+    [self compileRegex];
+}
+
+@end
