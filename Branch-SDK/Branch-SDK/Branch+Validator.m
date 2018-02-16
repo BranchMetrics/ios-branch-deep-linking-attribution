@@ -174,7 +174,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
          "Next check your deep link routing.\n\n"
          "Append '?validate=true' to any of your app's Branch links and "
          "click it on your mobile device (not the Simulator!) to start the test.\n\n"
-         "For instance, to check a link like:\n"
+         "For instance, to validate a link like:\n"
          "https://<yourapp>.app.link/NdJ6nFzRbK\n\n"
          "click on:\n"
          "https://<yourapp>.app.link/NdJ6nFzRbK?validate=true";
