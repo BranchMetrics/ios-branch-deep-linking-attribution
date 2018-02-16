@@ -32,8 +32,8 @@
         @"^pdk\\d+:",
         @"^twitterkit-.*:",
         @"^com\\.googleusercontent\\.apps\\.\\d+-.*:\\/oauth",
-        @"^(?i)(?!(http|https):).*:.*(oauth|password|auth|auth.?token|access|access.?token)\\b",
-        @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*(oauth|password|auth|auth.?token|access|access.?token)\\b",
+        @"^(?i)(?!(http|https):).*(:|:.*\\b)(password|o?auth|o?auth.?token|access|access.?token)\\b",
+        @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b",
     ];
     self.blackListVersion = 0;
 
