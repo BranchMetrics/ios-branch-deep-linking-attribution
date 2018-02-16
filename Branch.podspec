@@ -18,6 +18,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.source           = { git: "https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK.git", tag: s.version.to_s }
   s.platform         = :ios, '7.0'
   s.requires_arc     = true
+  s.static_framework = true
 
   source_files =
     "Branch-SDK/Branch-SDK/*.{h,m}",
@@ -29,7 +30,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.subspec 'Core' do |core|
     core.source_files = source_files
     core.private_header_files = "Branch-SDK/Fabric/*.h"
-    core.frameworks = 'AdSupport', 'MobileCoreServices'
+    core.frameworks = 'AdSupport', 'MobileCoreServices', 'SafariServices'
   end
 
   s.subspec 'without-IDFA' do |idfa|
