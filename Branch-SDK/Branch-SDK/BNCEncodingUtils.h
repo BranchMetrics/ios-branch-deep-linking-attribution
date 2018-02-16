@@ -14,25 +14,11 @@
 
 #pragma mark BNCWireFormat
 
-static inline NSDate* BNCDateFromWireFormat(id object) {
-    NSDate *date = nil;
-    NSNumber *number = object;
-    if ([number isKindOfClass:[NSNumber class]] ||
-        [number isKindOfClass:[NSString class]]) {
-        NSTimeInterval t = [number doubleValue];
-        date = [NSDate dateWithTimeIntervalSince1970:t/1000.0];
-    }
-    return date;
-}
+extern NSDate*   BNCDateFromWireFormat(id object);
+extern NSNumber* BNCWireFormatFromDate(NSDate *date);
 
-static inline NSNumber* BNCWireFormatFromDate(NSDate *date) {
-    NSNumber *number = nil;
-    NSTimeInterval t = [date timeIntervalSince1970];
-    if (date && t != 0.0 ) {
-        number = [NSNumber numberWithLongLong:(long long)(t*1000.0)];
-    }
-    return number;
-}
+extern NSString* BNCStringFromWireFormat(id object);
+extern NSString* BNCWireFormatFromString(NSString *string);
 
 #pragma mark - BNCKeyValue
 

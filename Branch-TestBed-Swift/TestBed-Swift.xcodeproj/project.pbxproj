@@ -524,6 +524,7 @@
 				F733BC35B995303D0F6E036C /* [CP] Embed Pods Frameworks */,
 				FF008B87755B907329DD67BA /* [CP] Copy Pods Resources */,
 				4D1B99831FA135C3008AEFC8 /* Embed Frameworks */,
+				4D955CC92034DD5700FB8008 /* Run Crashlytics */,
 			);
 			buildRules = (
 			);
@@ -625,6 +626,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		4D955CC92034DD5700FB8008 /* Run Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Crashlytics";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\" a5689371c7d402061ef8dd47b44a89f0515ca4a7 e42146267f609d143ac39e0bde3b685cd9bfe77f7bb3d5c394aaa3df3f31eda5";
+		};
 		A9A085B9B1A0862410ED1191 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -651,11 +666,13 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-TestBed-Swift/Pods-TestBed-Swift-frameworks.sh",
 				"${PODS_ROOT}/Localytics/Localytics-iOS-4.4.1/Localytics.framework",
+				"${PODS_ROOT}/Tune/Tune.framework",
 				"${PODS_ROOT}/YandexMobileMetrica/dynamic/YandexMobileMetrica.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Localytics.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Tune.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YandexMobileMetrica.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
