@@ -356,7 +356,11 @@ static NSString* const kUTTypeGeneric = @"public.content";
                expirationDate:(NSDate *)expirationDate
                      callback:(callbackWithUrl)callback
             spotlightCallback:(callbackWithUrlAndSpotlightIdentifier)spotlightCallback {
-    
+
+    if (!userInfo) userInfo = @{};
+    NSMutableDictionary *customData = [NSMutableDictionary dictionaryWithDictionary:userInfo];
+    if (!customData) customData = [NSMutableDictionary dictionaryWithDictionary:@{}];
+
     BNCSpotlightService* spotlightService = [[BNCSpotlightService alloc] init];
     
     BranchUniversalObject *universalObject = [[BranchUniversalObject alloc] initWithTitle:title];
@@ -366,7 +370,7 @@ static NSString* const kUTTypeGeneric = @"public.content";
     [universalObject.contentMetadata setContentSchema:type];
     [universalObject setImageUrl:[thumbnailUrl absoluteString]];
     [universalObject setKeywords:[keywords allObjects]];
-    [universalObject.contentMetadata setCustomMetadata:[NSMutableDictionary dictionaryWithDictionary:userInfo]];
+    [universalObject.contentMetadata setCustomMetadata:customData];
     [universalObject setExpirationDate:expirationDate];
     
     if(publiclyIndexable) {

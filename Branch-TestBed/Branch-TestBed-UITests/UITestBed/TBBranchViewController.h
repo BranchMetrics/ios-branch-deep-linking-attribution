@@ -10,8 +10,8 @@
 
 @interface TBBranchViewController : UIViewController
 
-- (void) showDataViewControllerWithObject:(id<NSObject>)dictionaryOrArray
-                                    title:(NSString*)title
-                                  message:(NSString*)message;
+- (void) showDataViewControllerWithTitle:(NSString*)title
+                                 message:(NSString*)message
+                                  object:(id<NSObject>)dictionaryOrArray;
 
 @end

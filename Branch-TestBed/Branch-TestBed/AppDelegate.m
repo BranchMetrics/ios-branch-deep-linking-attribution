@@ -56,22 +56,11 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
      *    Required: Initialize Branch, passing a deep link handler block:
      */
 
-#if 0
-
-    [branch initSessionWithLaunchOptions:launchOptions
-        andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
-            [self handleDeepLinkParams:parms error:error];
-    }];
-
-#else
-
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandlerUsingBranchUniversalObject:
         ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
             [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
     }];
-
-#endif
 
     // Push notification support (Optional)
     [self registerForPushNotifications:application];

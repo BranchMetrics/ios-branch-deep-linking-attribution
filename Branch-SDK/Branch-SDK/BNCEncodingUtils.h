@@ -12,7 +12,15 @@
 #import <Foundation/Foundation.h>
 #endif
 
-#pragma mark BNCKeyValue
+#pragma mark BNCWireFormat
+
+extern NSDate*   BNCDateFromWireFormat(id object);
+extern NSNumber* BNCWireFormatFromDate(NSDate *date);
+
+extern NSString* BNCStringFromWireFormat(id object);
+extern NSString* BNCWireFormatFromString(NSString *string);
+
+#pragma mark - BNCKeyValue
 
 @interface BNCKeyValue : NSObject
 
