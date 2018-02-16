@@ -102,5 +102,19 @@
 	<string>SDK not yet integrated</string>
 	<key>stitch_api_key</key>
 	<string>SDK not yet integrated</string>
+  <key>Fabric</key>
+  <dict>
+    <key>APIKey</key>
+    <string>a5689371c7d402061ef8dd47b44a89f0515ca4a7</string>
+    <key>Kits</key>
+    <array>
+      <dict>
+        <key>KitInfo</key>
+        <dict/>
+        <key>KitName</key>
+        <string>Crashlytics</string>
+      </dict>
+    </array>
+  </dict>
 </dict>
 </plist>
