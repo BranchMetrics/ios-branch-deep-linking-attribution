@@ -533,6 +533,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)setDebug;
 
 /**
+ Have Branch test our your apps SDK integration and test your Universal links Configuration
+ 
+ @warning This should not be used in production.
+ */
+- (void)validateSDKIntegration;
+
+/**
  Specify additional constant parameters to be included in the response
 
  @param debugParams dictionary of keystrings/valuestrings that will be added to response
