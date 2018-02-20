@@ -29,5 +29,5 @@
 
 /// Is YES if the listed has already been updated from the server.
 @property (assign, readonly) BOOL hasRefreshedBlackListFromServer;
-
+@property (strong) NSArray<NSString*>*_Nullable blackList;
 @end

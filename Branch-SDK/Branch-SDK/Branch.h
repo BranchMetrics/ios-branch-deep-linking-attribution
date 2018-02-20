@@ -554,6 +554,24 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 -(void)setWhiteListedSchemes:(NSArray *)schemes;
 
 /**
+ @brief     Sets an array of regex expressions that match URLs for Branch to ignore.
+
+ @discusion The Branch SDK already ignores login URLs for Facebook, Twitter, Google, and most oauth
+            security URLs, so it's usually unnecessary to set this parameter yourself.
+
+            Set this parameter with any additional URLs that should be ignored by Branch. This option
+            is used to prevent URLs with sensitive material such as oauth tokens, passwords, login 
+            data, and other URLs from being transmitted to Branch by mistake.
+
+ @param     blackListURLs   An array of regex patterns of URLs to ignore. These are ICU standard regular expressions.
+*/
+- (void) setBlackListURLRegex:(NSArray<NSString*>*)blackListURLs;
+
+/// @return Returns the list of black listed URL regular expressions that were previously set.
+- (NSArray<NSString*>*) blackListURLRegex;
+
+
+/**
  Register your Facebook SDK's FBSDKAppLinkUtility class to be used by Branch for deferred deep linking from their platform
 
  @param FBSDKAppLinkUtility - call [FBSDKAppLinkUtility class] after importing #import <FBSDKCoreKit/FBSDKCoreKit.h>

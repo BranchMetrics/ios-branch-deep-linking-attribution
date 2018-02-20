@@ -115,6 +115,7 @@ void ForceCategoriesToLoad(void) {
 
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit> {
     NSInteger _networkCount;
+    BNCURLBlackList *_userBlackList;
 }
 
 @property (strong, nonatomic) BNCServerInterface *serverInterface;
@@ -639,6 +640,19 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self.whiteListedSchemeList addObject:scheme];
 }
 
+- (void) setBlackListURLRegex:(NSArray<NSString*>*)blackListURLs {
+    @synchronized (self) {
+        _userBlackList = [[BNCURLBlackList alloc] init];
+        _userBlackList.blackList = blackListURLs;
+    }
+}
+
+- (NSArray<NSString*>*) blackListURLRegex {
+    @synchronized (self) {
+        return _userBlackList.blackList;
+    }
+}
+
 - (BOOL)handleDeepLink:(NSURL *)url {
     return [self handleDeepLink:url fromSelf:NO];
 }
@@ -693,9 +707,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-
     [self initUserSessionAndCallCallback:!self.isInitialized];
-
     return handled;
 }
 

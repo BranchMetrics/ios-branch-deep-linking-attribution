@@ -11,8 +11,9 @@
 #import "BNCURLBlackList.h"
 #import "Branch.h"
 
-@interface BNCURLBlackList ()
-@property (strong) NSArray<NSString*> *blackList;
+@interface BNCURLBlackList () {
+    NSArray<NSString*>*_blackList;
+}
 @property (strong) NSArray<NSRegularExpression*> *blackListRegex;
 @property (assign) NSInteger blackListVersion;
 @property (strong) id<BNCNetworkServiceProtocol> networkService;
@@ -44,26 +45,43 @@
     }
     self.blackListVersion = -1; // eDebug
 
-    [self compileRegex];
+    NSError *error = nil;
+    _blackListRegex = [self.class compileRegexArray:self.blackList error:&error];
+    self.error = error;
+
     return self;
 }
 
-- (void) compileRegex {
+- (void) setBlackList:(NSArray<NSString *> *)blackList {
+    @synchronized (self) {
+        _blackListRegex = [self.class compileRegexArray:_blackList error:nil];
+    }
+}
+
+- (NSArray<NSString*>*) blackList {
+    @synchronized (self) {
+        return _blackList;
+    }
+}
+
++ (NSArray<NSRegularExpression*>*) compileRegexArray:(NSArray<NSString*>*)blacklist
+                                               error:(NSError*_Nullable __autoreleasing *_Nullable)error_ {
+    if (error_) *error_ = nil;
     NSMutableArray *array = [NSMutableArray new];
-    for (NSString *string in self.blackList) {
+    for (NSString *pattern in blacklist) {
         NSError *error = nil;
         NSRegularExpression *regex =
-            [NSRegularExpression regularExpressionWithPattern:string
+            [NSRegularExpression regularExpressionWithPattern:pattern
                 options: NSRegularExpressionAnchorsMatchLines | NSRegularExpressionUseUnicodeWordBoundaries
                 error:&error];
-        if (error) {
-            BNCLogError(@"Regex error with pattern '%@': %@.", string, error);
-            if (!self.error) self.error = error;
-        }
-        else if (regex)
+        if (error || !regex) {
+            BNCLogError(@"Invalid regular expression '%@': %@.", pattern, error);
+            if (error_ && !*error_) *error_ = error;
+        } else {
             [array addObject:regex];
+        }
     }
-    self.blackListRegex = array;
+    return array;
 }
 
 - (BOOL) isBlackListedURL:(NSURL *)url {
@@ -142,7 +160,6 @@
     self.blackListVersion = [blackListVersion longValue];
     [BNCPreferenceHelper preferenceHelper].URLBlackList = self.blackList;
     [BNCPreferenceHelper preferenceHelper].URLBlackListVersion = self.blackListVersion;
-    [self compileRegex];
 }
 
 @end
