@@ -54,6 +54,7 @@
 
 - (void) setBlackList:(NSArray<NSString *> *)blackList {
     @synchronized (self) {
+        _blackList = blackList;
         _blackListRegex = [self.class compileRegexArray:_blackList error:nil];
     }
 }
@@ -84,17 +85,21 @@
     return array;
 }
 
-- (BOOL) isBlackListedURL:(NSURL *)url {
+- (NSString*_Nullable) blackListPatternMatchingURL:(NSURL*_Nullable)url {
     NSString *urlString = url.absoluteString;
-    if (urlString == nil || urlString.length <= 0) return NO;
+    if (urlString == nil || urlString.length <= 0) return nil;
     NSRange range = NSMakeRange(0, urlString.length);
 
     for (NSRegularExpression* regex in self.blackListRegex) {
         NSUInteger matches = [regex numberOfMatchesInString:urlString options:0 range:range];
-        if (matches > 0) return YES;
+        if (matches > 0) return regex.pattern;
     }
 
-    return NO;
+    return nil;
+}
+
+- (BOOL) isBlackListedURL:(NSURL *)url {
+    return ([self blackListPatternMatchingURL:url]) ? YES : NO;
 }
 
 - (void) refreshBlackListFromServer {

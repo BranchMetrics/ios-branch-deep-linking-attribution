@@ -1,7 +1,7 @@
 /**
  @file          BNCURLBlackList.h
  @package       Branch-SDK
- @brief         Manages a list of URLs that we should ignore.
+ @brief         Manages a list of sensitive URLs such as login data that should not be handled by Branch.
 
  @author        Edward Smith
  @date          February 14, 2018
@@ -23,6 +23,14 @@
  @return        Returns true if the provided URL should be ignored.
 */
 - (BOOL) isBlackListedURL:(NSURL*_Nullable)url;
+
+/**
+ @brief         Returns the pattern that matches a URL, if any.
+
+ @param url     The URL to be checked.
+ @return        Returns the pattern matching the URL or `nil` if no patterns match.
+*/
+- (NSString*_Nullable) blackListPatternMatchingURL:(NSURL*_Nullable)url;
 
 /// Refreshes the list of ignored URLs from the server.
 - (void) refreshBlackListFromServerWithCompletion:(void (^_Nullable) (NSError*_Nullable error, NSArray*_Nullable list))completion;

@@ -115,7 +115,7 @@ void ForceCategoriesToLoad(void) {
 
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit> {
     NSInteger _networkCount;
-    BNCURLBlackList *_userBlackList;
+    BNCURLBlackList *_userURLBlackList;
 }
 
 @property (strong, nonatomic) BNCServerInterface *serverInterface;
@@ -642,14 +642,14 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (void) setBlackListURLRegex:(NSArray<NSString*>*)blackListURLs {
     @synchronized (self) {
-        _userBlackList = [[BNCURLBlackList alloc] init];
-        _userBlackList.blackList = blackListURLs;
+        _userURLBlackList = [[BNCURLBlackList alloc] init];
+        _userURLBlackList.blackList = blackListURLs;
     }
 }
 
 - (NSArray<NSString*>*) blackListURLRegex {
     @synchronized (self) {
-        return _userBlackList.blackList;
+        return _userURLBlackList.blackList;
     }
 }
 
@@ -662,11 +662,20 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url fromSelf:(BOOL)isFromSelf {
-    if ([self.URLBlackList isBlackListedURL:url]) return NO;
+    NSString *blackListPattern = nil;
+    blackListPattern = [self.URLBlackList blackListPatternMatchingURL:url];
+    if (!blackListPattern) {
+        blackListPattern = [_userURLBlackList blackListPatternMatchingURL:url];
+    }
+    if (blackListPattern) {
+        [self handleUniversalDeepLink_private:blackListPattern fromSelf:isFromSelf];
+        return NO;
+    }
+
 
     NSString *scheme = [url scheme];
     if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
-        return [self handleUniversalDeepLink_private:url fromSelf:isFromSelf];
+        return [self handleUniversalDeepLink_private:url.absoluteString fromSelf:isFromSelf];
     } else {
         return [self handleSchemeDeepLink_private:url fromSelf:isFromSelf];
     }
@@ -742,12 +751,11 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     return [self application:application openURL:url sourceApplication:source annotation:annotation];
 }
 
-- (BOOL)handleUniversalDeepLink_private:(NSURL*)url fromSelf:(BOOL)isFromSelf {
+- (BOOL)handleUniversalDeepLink_private:(NSString*)urlString fromSelf:(BOOL)isFromSelf {
     if (isFromSelf) {
         [self resetUserSession];
     }
 
-    NSString *urlString = [url absoluteString];
     self.preferenceHelper.universalLinkUrl = urlString;
     self.preferenceHelper.referringURL = urlString;
     self.preferenceHelper.shouldWaitForInit = NO;

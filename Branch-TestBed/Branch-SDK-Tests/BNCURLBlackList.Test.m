@@ -52,6 +52,7 @@
         @"myscheme://oauth=747474",
         @"myscheme://path/oauth=747474",
         @"myscheme://path/:oauth=747474",
+        @"https://google.com/userprofile/devonbanks=oauth?",
     ];
     for (NSString *string in badURLs) {
         NSURL *URL = [NSURL URLWithString:string];
@@ -68,7 +69,6 @@
         @"fb123x:/",
         @"https://myapp.app.link?authentic=true&tokemonsta=false",
         @"myscheme://path/brauth=747474",
-
     ];
     for (NSString *string in goodURLs) {
         NSURL *URL = [NSURL URLWithString:string];
