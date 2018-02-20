@@ -37,6 +37,7 @@
 #import "BranchUserCompletedActionRequest.h"
 #import "NSMutableDictionary+Branch.h"
 #import "NSString+Branch.h"
+#import "Branch+Validator.h"
 #import "BNCSpotlightService.h"
 #import "../Fabric/FABKitProtocol.h" // Fabric
 #import "BNCApplication.h"
@@ -94,6 +95,7 @@ void ForceCategoriesToLoad(void) {
     BNCForceNSErrorCategoryToLoad();
     BNCForceNSStringCategoryToLoad();
     BNCForceNSMutableDictionaryCategoryToLoad();
+    BNCForceBranchValidatorCategoryToLoad();
     BNCForceUIViewControllerCategoryToLoad();
 }
 
@@ -437,6 +439,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     self.preferenceHelper.isDebug = YES;
     if (BNCLogDisplayLevel() > BNCLogLevelDebug)
         BNCLogSetDisplayLevel(BNCLogLevelDebug);
+}
+
+- (void)validateSDKIntegration {
+    [self validateSDKIntegrationCore];
 }
 
 - (void)resetUserSession {
@@ -1900,7 +1906,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-//static inline void BNCPerformBlockOnMainThread(dispatch_block_t block) {
+//static inline void BNCPerformBlockOnMainThreadAsync(dispatch_block_t block) {
 //    dispatch_async(dispatch_get_main_queue(), block);
 //}
 
@@ -2114,6 +2120,26 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
     self.isInitialized = YES;
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
+
+    if ([latestReferringParams[@"_branch_validate"] isEqualToString:@"060514"]) {
+        [self validateDeeplinkRouting:latestReferringParams];
+    }
+    else if (([latestReferringParams[@"validate"] isEqualToString:@"true"])) {
+        NSString* referringLink = [self.class returnNonUniversalLink:latestReferringParams[@"~referring_link"] ];
+        NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink]
+                                           resolvingAgainstBaseURL:NO];
+        
+        
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        Class applicationClass = NSClassFromString(@"UIApplication");
+        id<NSObject> sharedApplication = [applicationClass performSelector:@selector(sharedApplication)];
+        SEL openURL = @selector(openURL:);
+        if ([sharedApplication respondsToSelector:openURL])
+            [sharedApplication performSelector:openURL withObject:comp.URL];
+        #pragma clang diagnostic pop
+    }
+
     if (self.shouldCallSessionInitCallback) {
         if (self.sessionInitWithParamsCallback) {
             self.sessionInitWithParamsCallback(latestReferringParams, nil);
