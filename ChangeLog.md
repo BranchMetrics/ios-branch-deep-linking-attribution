@@ -1,5 +1,42 @@
 Branch iOS SDK Change Log
 
+- v0.23.0
+  * Added URL Black List for sensitive URLs (DEVEX-164).
+
+    Set this property to prevent URLs with sensitive content such as oauth tokens,
+    passwords, login data, and other data from being transmitted to Branch.
+
+    The Branch SDK already ignores login URLs for Facebook, Twitter, Google, and most oauth
+    security URLs, so it's usually unnecessary to set this parameter yourself.
+
+    Set this parameter with any additional URLs that should be ignored by Branch.
+
+  * Added an SDK integration validator.
+
+    Use the SDK integration validator to check that you've added the Branch SDK and handle
+    deep links correctly when you first integrate Branch into your app.
+
+    To check your integration, add the line:
+
+    ```
+    [[Branch getInstance] validateSDKIntegration];
+    ```
+
+    in your `application:didFinishLaunchingWithOptions:` method in your app delegate. Then run your
+    app and follow the instructions.
+
+    This is for testing in development only! Make sure you remove or comment out this line of code in
+    your release versions.
+
+    See [SDK Integration Validator](http://branch.io/integrationValidator) for more information.
+
+  * Updated TestBed-Swift icons to differentiate it from the other test apps.
+  * Updated PodSpec for new CocoaPod static frameworks flag (GH-782).
+  * Added Crashlytics to TestBed-Swift (DEVEX-114).
+  * Robustly read `identity_id` as a string to prevent a crash (GH-783).
+  * Transmit app install/update dates to server for app install/open attribution (DEVEX-58).
+  * Create the Branch directory in a more thread safe way (INTENG-4097).
+
 - v0.22.5
   * _*Master Release*_ - January 12, 2018
   * Added the `rating` field to the `BranchUniversalObject`.
