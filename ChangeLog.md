@@ -28,8 +28,13 @@ Branch iOS SDK Change Log
     This is for testing in development only! Make sure you remove or comment out this line of code in
     your release versions.
 
-    See [SDK Integration Validator](http://branch.io/integrationValidator) for more information.
+    See [SDK Integration Validator](https://docs.branch.io/pages/resources/validation-tools/#overview_1) for more information.
+  * Added a Deeplink Routing Validator
+  
+    Append validate=true to your Branch links to test and verify if they route the user 
+    to the correct content.
 
+    See [Deepllink Validator](https://docs.branch.io/pages/resources/validation-tools/#overview_1) for more information.
   * Updated TestBed-Swift icons to differentiate it from the other test apps.
   * Updated PodSpec for new CocoaPod static frameworks flag (GH-782).
   * Added Crashlytics to TestBed-Swift (DEVEX-114).
