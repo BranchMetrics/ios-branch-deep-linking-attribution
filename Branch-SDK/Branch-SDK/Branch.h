@@ -563,10 +563,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  @brief     Sets an array of regex patterns that match URLs for Branch to ignore.
 
- @discusion Set this property to prevent URLs with sensitive material such as oauth tokens,
-            passwords, login data, and other URLs from being transmitted to Branch.
+ @discusion Set this property to prevent URLs containing sensitive data such as oauth tokens,
+            passwords, login credentials, and other URLs from being transmitted to Branch.
 
-            The Branch SDK already ignores login URLs for Facebook, Twitter, Google, and most oauth
+            The Branch SDK already ignores login URLs for Facebook, Twitter, Google, and many oauth
             security URLs, so it's usually unnecessary to set this parameter yourself.
 
             Set this parameter with any additional URLs that should be ignored by Branch.
