@@ -29,7 +29,7 @@ NSString *ios_url = @"https://dev.branch.io/getting-started/sdk-integration-guid
 NSString *shareText = @"Super amazing thing I want to share";
 NSString *type = @"some type";
 
-static NSString* TBString(id<NSObject> object) {
+static NSString* TBStringFromObject(id<NSObject> object) {
     if (object == nil)
         return @"<nil>";
     else
@@ -41,6 +41,8 @@ static NSString* TBString(id<NSObject> object) {
         return NSStringFromClass(object.class);
     }
 }
+
+#pragma mark - TBBranchViewController
 
 @interface TBBranchViewController () <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong)   TBTableData *tableData;
@@ -418,11 +420,11 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         previous_update_time > latest_update_time)
         update_state = @"update_state_error";
     else
-    if ((latest_update_time - kOneDay) <= first_install_time && previous_update_time <= 0)
-        update_state = @"update_state_install";
-    else
     if (first_install_time < latest_install_time && previous_update_time <= 0)
         update_state = @"update_state_reinstall";
+    else
+    if ((latest_update_time - kOneDay) <= first_install_time && previous_update_time <= 0)
+        update_state = @"update_state_install";
     else
     if (latest_update_time > first_install_time && previous_update_time < latest_update_time)
         update_state = @"update_state_update";
@@ -432,11 +434,11 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self showDataViewControllerWithTitle:@"Dates"
         message:@"Current Application Dates"
         object:@{
-            @"first_install_time":      TBString(application.firstInstallDate),
-            @"latest_install_time":     TBString(application.currentInstallDate),
-            @"latest_update_time":      TBString(application.currentBuildDate),
-            @"previous_update_time":    TBString(global_previous_update_time),
-            @"update_state":            TBString(update_state)
+            @"first_install_time":      TBStringFromObject(application.firstInstallDate),
+            @"latest_install_time":     TBStringFromObject(application.currentInstallDate),
+            @"latest_update_time":      TBStringFromObject(application.currentBuildDate),
+            @"previous_update_time":    TBStringFromObject(global_previous_update_time),
+            @"update_state":            TBStringFromObject(update_state)
     }];
 }
 
