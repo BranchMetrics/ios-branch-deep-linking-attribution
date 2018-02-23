@@ -41,6 +41,7 @@
 #import "BNCSpotlightService.h"
 #import "../Fabric/FABKitProtocol.h" // Fabric
 #import "BNCApplication.h"
+#import "BNCURLBlackList.h"
 #import <stdatomic.h>
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -116,6 +117,7 @@ void ForceCategoriesToLoad(void) {
 
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit> {
     NSInteger _networkCount;
+    BNCURLBlackList *_userURLBlackList;
 }
 
 @property (strong, nonatomic) BNCServerInterface *serverInterface;
@@ -140,12 +142,12 @@ void ForceCategoriesToLoad(void) {
 @property (assign, nonatomic) BOOL delayForAppleAds;
 @property (assign, nonatomic) BOOL searchAdsDebugMode;
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
+@property (strong, nonatomic) BNCURLBlackList *URLBlackList;
 @end
 
 @implementation Branch
 
 #pragma mark - Public methods
-
 
 #pragma mark - GetInstance methods
 
@@ -249,6 +251,7 @@ void BranchClassInitializeLog(void) {
     _whiteListedSchemeList = [[NSMutableArray alloc] init];
     _useCookieBasedMatching = YES;
     self.class.branchKey = key;
+    self.URLBlackList = [BNCURLBlackList new];
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
 
     // Register for notifications
@@ -561,7 +564,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController {
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options
+                        isReferrable:(BOOL)isReferrable
+       explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable
+      automaticallyDisplayController:(BOOL)automaticallyDisplayController {
     // Log this early. Not consistently showing up when logged from [Branch initialize].
     [self.class addBranchSDKVersionToCrashlyticsReport];
 
@@ -578,7 +584,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     // Handle push notification on app launch
     if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
-        id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
+        id branchUrlFromPush =
+            [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
         if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
             self.preferenceHelper.universalLinkUrl = branchUrlFromPush;
             self.preferenceHelper.referringURL = branchUrlFromPush;
@@ -643,6 +650,19 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self.whiteListedSchemeList addObject:scheme];
 }
 
+- (void) setBlackListURLRegex:(NSArray<NSString*>*)blackListURLs {
+    @synchronized (self) {
+        _userURLBlackList = [[BNCURLBlackList alloc] init];
+        _userURLBlackList.blackList = blackListURLs;
+    }
+}
+
+- (NSArray<NSString*>*) blackListURLRegex {
+    @synchronized (self) {
+        return _userURLBlackList.blackList;
+    }
+}
+
 - (BOOL)handleDeepLink:(NSURL *)url {
     return [self handleDeepLink:url fromSelf:NO];
 }
@@ -652,15 +672,25 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url fromSelf:(BOOL)isFromSelf {
+    NSString *blackListPattern = nil;
+    blackListPattern = [self.URLBlackList blackListPatternMatchingURL:url];
+    if (!blackListPattern) {
+        blackListPattern = [_userURLBlackList blackListPatternMatchingURL:url];
+    }
+    if (blackListPattern) {
+        [self handleUniversalDeepLink_private:blackListPattern fromSelf:isFromSelf];
+        return NO;
+    }
+
     NSString *scheme = [url scheme];
     if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
-        return [self handleUniversalDeepLink:url fromSelf:isFromSelf];
+        return [self handleUniversalDeepLink_private:url.absoluteString fromSelf:isFromSelf];
     } else {
-        return [self handleSchemeDeepLink:url fromSelf:isFromSelf];
+        return [self handleSchemeDeepLink_private:url fromSelf:isFromSelf];
     }
 }
 
-- (BOOL)handleSchemeDeepLink:(NSURL*)url fromSelf:(BOOL)isFromSelf {
+- (BOOL)handleSchemeDeepLink_private:(NSURL*)url fromSelf:(BOOL)isFromSelf {
     BOOL handled = NO;
     self.preferenceHelper.referringURL = nil;
     if (url && ![url isEqual:[NSNull null]]) {
@@ -695,9 +725,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-
     [self initUserSessionAndCallCallback:!self.isInitialized];
-
     return handled;
 }
 
@@ -732,12 +760,11 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     return [self application:application openURL:url sourceApplication:source annotation:annotation];
 }
 
-- (BOOL)handleUniversalDeepLink:(NSURL*)url fromSelf:(BOOL)isFromSelf {
+- (BOOL)handleUniversalDeepLink_private:(NSString*)urlString fromSelf:(BOOL)isFromSelf {
     if (isFromSelf) {
         [self resetUserSession];
     }
 
-    NSString *urlString = [url absoluteString];
     self.preferenceHelper.universalLinkUrl = urlString;
     self.preferenceHelper.referringURL = urlString;
     self.preferenceHelper.shouldWaitForInit = NO;
@@ -778,7 +805,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             isNewSession = YES;
         }
 
-        return [self handleUniversalDeepLink:userActivity.webpageURL fromSelf:isNewSession];
+        return [self handleDeepLink:userActivity.webpageURL fromSelf:isNewSession];
     }
 
     // Check to see if a spotlight activity needs to be handled
@@ -1841,16 +1868,13 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         self.isInitialized = NO;
 
         BranchContentDiscoverer *contentDiscoverer = [BranchContentDiscoverer getInstance];
-        if (contentDiscoverer) {
-            [contentDiscoverer stopDiscoveryTask];
-        }
+        if (contentDiscoverer) [contentDiscoverer stopDiscoveryTask];
 
         if (self.preferenceHelper.sessionID && ![self.requestQueue containsClose]) {
             BranchCloseRequest *req = [[BranchCloseRequest alloc] init];
             [self.requestQueue enqueue:req];
+            [self processNextQueueItem];
         }
-
-        [self processNextQueueItem];
     }
 }
 
@@ -2132,6 +2156,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
     }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
+
+    if (!self.URLBlackList.hasRefreshedBlackListFromServer)
+        [self.URLBlackList refreshBlackListFromServerWithCompletion:nil];
 
     if (self.shouldAutomaticallyDeepLink) {
         // Find any matched keys, then launch any controllers that match

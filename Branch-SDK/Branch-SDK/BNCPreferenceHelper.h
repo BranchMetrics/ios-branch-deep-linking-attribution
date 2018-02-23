@@ -51,6 +51,9 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, atomic) BOOL      limitFacebookTracking;
 @property (strong, atomic) NSDate   *previousAppBuildDate;
 
+@property (strong, atomic) NSArray<NSString*> *URLBlackList;
+@property (assign, atomic) NSInteger URLBlackListVersion;
+
 + (BNCPreferenceHelper *)preferenceHelper;
 
 - (NSString *)getAPIBaseURL;
