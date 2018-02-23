@@ -526,19 +526,19 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 ///--------------------
 
 /**
- Have Branch treat this device / session as a debug session, causing more information to be logged, and info to be available in the debug tab of the dashboard.
+ Have Branch treat this device / session as a debug session, causing more information to be logged,
+ and info to be available in the debug tab of the dashboard.
 
  @warning This should not be used in production.
  */
 - (void)setDebug;
 
 /**
-  @brief Use the `validateSDKIntegration` method as a debugging aid to assure that you've integrated the Branch SDK correctly.
+  @brief        Use the `validateSDKIntegration` method as a debugging aid to assure that you've
+                integrated the Branch SDK correctly.
 
-  @discussion
-
-  Use the SDK integration validator to check that you've added the Branch SDK and handle
-  deep links correctly when you first integrate Branch into your app.
+  @discussion   Use the SDK integration validator to check that you've added the Branch SDK and
+                handle deep links correctly when you first integrate Branch into your app.
 
   To check your integration, add the line:
 
@@ -552,7 +552,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
   This is for testing in development only! Make sure you remove or comment out this line of code in
   your release versions.
 
-  @see [SDK Integration Validator](https://docs.branch.io/pages/resources/validation-tools/#overview_1) for more information.
+  @see [SDK Integration Validator](https://docs.branch.io/pages/resources/validation-tools/#overview_1)
+  for more information.
 
   @warning This should not be used in production.
 */
@@ -590,7 +591,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
             Set this parameter with any additional URLs that should be ignored by Branch.
 
- @param     blackListURLs   An array of regex patterns of URLs to ignore. These are ICU standard regular expressions.
+            These are ICU standard regular expressions.
 */
 @property (copy) NSArray<NSString*>/*_Nullable*/* blackListURLRegex;
 

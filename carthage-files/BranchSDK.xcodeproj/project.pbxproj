@@ -23,6 +23,8 @@
 		4D291AAB1E322ECC007ED118 /* NSMutableDictionary+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D291AA91E322ECC007ED118 /* NSMutableDictionary+Branch.h */; };
 		4D291AAC1E322ECC007ED118 /* NSMutableDictionary+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D291AAA1E322ECC007ED118 /* NSMutableDictionary+Branch.m */; };
 		4D301CE31FA1452100642F4A /* BNCFieldDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB328021FA10C6200ACF9B0 /* BNCFieldDefines.h */; };
+		4D3636042040A504006A1FDE /* BNCURLBlackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3636022040A504006A1FDE /* BNCURLBlackList.h */; };
+		4D3636052040A504006A1FDE /* BNCURLBlackList.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3636032040A504006A1FDE /* BNCURLBlackList.m */; };
 		4D3922BD1E1F0C85004FB7C8 /* BNCCommerceEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3922BC1E1F0C85004FB7C8 /* BNCCommerceEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4D3FA94D1DFF3F6C00E2B6A9 /* BNCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FA94C1DFF3F6C00E2B6A9 /* BNCConfig.m */; };
 		4D510D721F0D6014003D720B /* BNCDeepLinkViewControllerInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D510D701F0D6014003D720B /* BNCDeepLinkViewControllerInstance.h */; };
@@ -142,6 +144,8 @@
 		4D1ED2801FB3A471007390A8 /* BNCSpotlightService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSpotlightService.m; sourceTree = "<group>"; };
 		4D291AA91E322ECC007ED118 /* NSMutableDictionary+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableDictionary+Branch.h"; sourceTree = "<group>"; };
 		4D291AAA1E322ECC007ED118 /* NSMutableDictionary+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableDictionary+Branch.m"; sourceTree = "<group>"; };
+		4D3636022040A504006A1FDE /* BNCURLBlackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCURLBlackList.h; sourceTree = "<group>"; };
+		4D3636032040A504006A1FDE /* BNCURLBlackList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCURLBlackList.m; sourceTree = "<group>"; };
 		4D3922BC1E1F0C85004FB7C8 /* BNCCommerceEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCCommerceEvent.h; sourceTree = "<group>"; };
 		4D3FA94C1DFF3F6C00E2B6A9 /* BNCConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCConfig.m; sourceTree = "<group>"; };
 		4D510D701F0D6014003D720B /* BNCDeepLinkViewControllerInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCDeepLinkViewControllerInstance.h; sourceTree = "<group>"; };
@@ -364,6 +368,8 @@
 				E230A12B1D03DB9E006181D8 /* BNCStrongMatchHelper.m */,
 				E230A12C1D03DB9E006181D8 /* BNCSystemObserver.h */,
 				E230A12D1D03DB9E006181D8 /* BNCSystemObserver.m */,
+				4D3636022040A504006A1FDE /* BNCURLBlackList.h */,
+				4D3636032040A504006A1FDE /* BNCURLBlackList.m */,
 				E230A12F1D03DB9E006181D8 /* Branch.h */,
 				E230A1301D03DB9E006181D8 /* Branch.m */,
 				9A149C6520336600002135DC /* Branch+Validator.h */,
@@ -456,6 +462,7 @@
 				4DCF4B011F438A2B00AF9AAB /* BNCLog.h in Headers */,
 				E230A1771D03DB9E006181D8 /* BNCLinkData.h in Headers */,
 				E230A1791D03DB9E006181D8 /* BNCPreferenceHelper.h in Headers */,
+				4D3636042040A504006A1FDE /* BNCURLBlackList.h in Headers */,
 				4DAB179F1EE8A31B0079EEB4 /* BNCNetworkServiceProtocol.h in Headers */,
 				4DAB17A01EE8A31B0079EEB4 /* BNCServerInterface.h in Headers */,
 				4DAB17A61EE8A31B0079EEB4 /* BNCServerResponse.h in Headers */,
@@ -611,6 +618,7 @@
 				4DAB17B51EE8A31B0079EEB4 /* BranchRedeemRewardsRequest.m in Sources */,
 				4DAB17B31EE8A31B0079EEB4 /* BranchOpenRequest.m in Sources */,
 				2BD7C3DE1F27CEDB003696AF /* BNCDebug.m in Sources */,
+				4D3636052040A504006A1FDE /* BNCURLBlackList.m in Sources */,
 				4DAB17BD1EE8A31B0079EEB4 /* BranchShortUrlSyncRequest.m in Sources */,
 				4D1ED2821FB3A472007390A8 /* BNCSpotlightService.m in Sources */,
 				E230A18B1D03DB9E006181D8 /* BranchConstants.m in Sources */,
