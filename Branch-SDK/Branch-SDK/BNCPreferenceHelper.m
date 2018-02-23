@@ -565,6 +565,32 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
+- (NSArray<NSString*>*) URLBlackList {
+    @synchronized(self) {
+        id a = [self readObjectFromDefaults:@"URLBlackList"];
+        if ([a isKindOfClass:NSArray.class]) return a;
+        return nil;
+    }
+}
+
+- (void) setURLBlackList:(NSArray<NSString *> *)URLBlackList {
+    @synchronized(self) {
+        [self writeObjectToDefaults:@"URLBlackList" value:URLBlackList];
+    }
+}
+
+- (NSInteger) URLBlackListVersion {
+    @synchronized(self) {
+        return [self readIntegerFromDefaults:@"URLBlackListVersion"];
+    }
+}
+
+- (void) setURLBlackListVersion:(NSInteger)URLBlackListVersion {
+    @synchronized(self) {
+        [self writeIntegerToDefaults:@"URLBlackListVersion" value:URLBlackListVersion];
+    }
+}
+
 #pragma mark - Credit Storage
 
 - (NSMutableDictionary *)creditsDictionary {
