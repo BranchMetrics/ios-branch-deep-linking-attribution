@@ -533,10 +533,29 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)setDebug;
 
 /**
- Have Branch test our your apps SDK integration and test your Universal links Configuration
- 
- @warning This should not be used in production.
- */
+  @brief Use the `validateSDKIntegration` method as a debugging aid to assure that you've integrated the Branch SDK correctly.
+
+  @discussion
+
+  Use the SDK integration validator to check that you've added the Branch SDK and handle
+  deep links correctly when you first integrate Branch into your app.
+
+  To check your integration, add the line:
+
+  ```
+  [[Branch getInstance] validateSDKIntegration];
+  ```
+
+  in your `application:didFinishLaunchingWithOptions:` method in your app delegate. Then run your
+  app and follow the instructions.
+
+  This is for testing in development only! Make sure you remove or comment out this line of code in
+  your release versions.
+
+  @see [SDK Integration Validator](https://docs.branch.io/pages/resources/validation-tools/#overview_1) for more information.
+
+  @warning This should not be used in production.
+*/
 - (void)validateSDKIntegration;
 
 /**
