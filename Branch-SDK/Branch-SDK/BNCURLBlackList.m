@@ -140,7 +140,7 @@
     NSString *responseString = nil;
     if (operation.responseData)
         responseString = [[NSString alloc] initWithData:operation.responseData encoding:NSUTF8StringEncoding];
-    BNCLogDebugSDK(@"BlackList refresh error: %@ status: %ld body:\n%@.",
+    BNCLogDebugSDK(@"No new BlackList refresh found. Error was: %@ status: %ld body:\n%@.",
         operation.error, operation.response.statusCode, responseString);
     if (operation.error || operation.responseData == nil || operation.response.statusCode != 200) {
         self.error = operation.error;
