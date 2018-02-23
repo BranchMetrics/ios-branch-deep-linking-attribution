@@ -36,14 +36,13 @@
         @"^(?i)(?!(http|https):).*(:|:.*\\b)(password|o?auth|o?auth.?token|access|access.?token)\\b",
         @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b",
     ];
-    self.blackListVersion = 0;
+    self.blackListVersion = -1; // First time always refresh the list version, version 0.
 
     NSArray *storedList = [BNCPreferenceHelper preferenceHelper].URLBlackList;
     if (storedList.count > 0) {
         self.blackList = storedList;
         self.blackListVersion = [BNCPreferenceHelper preferenceHelper].URLBlackListVersion;
     }
-    self.blackListVersion = -1; // eDebug
 
     NSError *error = nil;
     _blackListRegex = [self.class compileRegexArray:self.blackList error:&error];

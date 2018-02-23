@@ -564,7 +564,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController {
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options
+                        isReferrable:(BOOL)isReferrable
+       explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable
+      automaticallyDisplayController:(BOOL)automaticallyDisplayController {
     // Log this early. Not consistently showing up when logged from [Branch initialize].
     [self.class addBranchSDKVersionToCrashlyticsReport];
 
@@ -581,7 +584,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     // Handle push notification on app launch
     if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
-        id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
+        id branchUrlFromPush =
+            [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
         if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
             self.preferenceHelper.universalLinkUrl = branchUrlFromPush;
             self.preferenceHelper.referringURL = branchUrlFromPush;
@@ -677,7 +681,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         [self handleUniversalDeepLink_private:blackListPattern fromSelf:isFromSelf];
         return NO;
     }
-
 
     NSString *scheme = [url scheme];
     if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {

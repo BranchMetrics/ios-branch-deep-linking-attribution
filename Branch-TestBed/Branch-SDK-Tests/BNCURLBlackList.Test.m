@@ -76,4 +76,68 @@
     }
 }
 
+- (void) testStandardBlackList {
+    Branch *branch = [Branch getInstance:@"key_live_foo"];
+    id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
+    XCTestExpectation *expectation = [self expectationWithDescription:@"OpenRequest Expectation"];
+
+    OCMStub(
+        [serverInterfaceMock postRequest:[OCMArg any]
+            url:[OCMArg any]
+            key:[OCMArg any]
+            callback:[OCMArg any]]
+    ).andDo(^(NSInvocation *invocation) {
+        __unsafe_unretained NSDictionary *dictionary = nil;
+        [invocation getArgument:&dictionary atIndex:2];
+
+        NSString* link = dictionary[@"universal_link_url"];
+        NSString *pattern = @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
+        NSLog(@"\n   Link: '%@'\nPattern: '%@'\n.", link, pattern);
+        if ([link isEqualToString:pattern]) {
+            [expectation fulfill];
+        }
+    });
+
+    [branch clearNetworkQueue];
+    [branch handleDeepLinkWithNewSession:[NSURL URLWithString:@"https://myapp.app.link/bob/link?oauth=true"]];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+    [serverInterfaceMock stopMocking];
+    [BNCPreferenceHelper preferenceHelper].referringURL = nil;
+    [[BNCPreferenceHelper preferenceHelper] synchronize];
+}
+
+- (void) testUserBlackList {
+    Branch *branch = [Branch getInstance:@"key_live_foo"];
+    branch.blackListURLRegex = @[
+        @"\\/bob\\/"
+    ];
+    id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
+    XCTestExpectation *expectation = [self expectationWithDescription:@"OpenRequest Expectation"];
+
+    OCMStub(
+        [serverInterfaceMock postRequest:[OCMArg any]
+            url:[OCMArg any]
+            key:[OCMArg any]
+            callback:[OCMArg any]]
+    ).andDo(^(NSInvocation *invocation) {
+        __unsafe_unretained NSDictionary *dictionary = nil;
+        [invocation getArgument:&dictionary atIndex:2];
+
+        NSString* link = dictionary[@"universal_link_url"];
+        NSString *pattern = @"\\/bob\\/";
+        NSLog(@"\n   Link: '%@'\nPattern: '%@'\n.", link, pattern);
+
+        if ([link isEqualToString:pattern]) {
+            [expectation fulfill];
+        }
+    });
+
+    [branch clearNetworkQueue];
+    [branch handleDeepLinkWithNewSession:[NSURL URLWithString:@"https://myapp.app.link/bob/link"]];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+    [serverInterfaceMock stopMocking];
+    [BNCPreferenceHelper preferenceHelper].referringURL = nil;
+    [[BNCPreferenceHelper preferenceHelper] synchronize];
+}
+
 @end

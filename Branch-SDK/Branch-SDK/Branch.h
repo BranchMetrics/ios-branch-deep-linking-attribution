@@ -573,7 +573,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @param     blackListURLs   An array of regex patterns of URLs to ignore. These are ICU standard regular expressions.
 */
-@property (copy) NSArray<NSString*>/*_Nullable*/* blackListURLs;
+@property (copy) NSArray<NSString*>/*_Nullable*/* blackListURLRegex;
 
 /**
  Register your Facebook SDK's FBSDKAppLinkUtility class to be used by Branch for deferred deep linking from their platform
