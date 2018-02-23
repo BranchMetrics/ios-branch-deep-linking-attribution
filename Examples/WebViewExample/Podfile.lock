@@ -15,7 +15,7 @@ EXTERNAL SOURCES:
     :path: ../..
 
 SPEC CHECKSUMS:
-  Branch: d09c6c79f356790b58e75aeaba7d4bca4c6ef496
+  Branch: a78c6bede9735b622fe95b34e63e39b0d6165a69
   Cartography: f8c899bb0f5cf20758644a8eea59a75e98a03a5d
   MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
 
