@@ -2361,9 +2361,13 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 #pragma mark - BranchDeepLinkingControllerCompletionDelegate methods
 
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (void)deepLinkingControllerCompleted {
     [self.deepLinkPresentingController dismissViewControllerAnimated:YES completion:NULL];
 }
+#pragma clang diagnostic pop
 
 - (void)deepLinkingControllerCompletedFrom:(UIViewController *)viewController {
     [self.deepLinkControllers enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
