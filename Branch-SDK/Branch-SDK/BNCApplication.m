@@ -17,13 +17,6 @@ static NSString*const kBranchKeychainDevicesKey       = @"BranchKeychainDevices"
 static NSString*const kBranchKeychainFirstBuildKey    = @"BranchKeychainFirstBuild";
 static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstInstall";
 
-typedef CFTypeRef SecTaskRef;
-extern CFDictionaryRef SecTaskCopyValuesForEntitlements(SecTaskRef task, CFArrayRef entitlements, CFErrorRef  _Nullable *error)
-    __attribute__((weak_import));
-
-extern SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef allocator)
-    __attribute__((weak_import));
-
 #pragma mark - BNCApplication
 
 @implementation BNCApplication
@@ -39,6 +32,7 @@ extern SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef allocator)
 
 + (BNCApplication*) createCurrentApplication {
     BNCApplication *application = [[BNCApplication alloc] init];
+    if (!application) return application;
     NSDictionary *info = [NSBundle mainBundle].infoDictionary;
 
     application->_bundleID = [NSBundle mainBundle].bundleIdentifier;
@@ -54,48 +48,7 @@ extern SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef allocator)
     application->_firstInstallDate = [BNCApplication firstInstallDate];
     application->_currentInstallDate = [BNCApplication currentInstallDate];
 
-    NSDictionary *entitlements = [self entitlementsDictionary];
-    application->_applicationID = entitlements[@"application-identifier"];
-    application->_pushNotificationEnvironment = entitlements[@"aps-environment"];
-    application->_keychainAccessGroups = entitlements[@"keychain-access-groups"];
-    application->_associatedDomains = entitlements[@"com.apple.developer.associated-domains"];
-    application->_teamID = entitlements[@"com.apple.developer.team-identifier"];
-    if (application->_teamID.length == 0 && application->_applicationID) {
-        // Some simulator apps aren't signed the same way?
-        NSRange range = [application->_applicationID rangeOfString:@"."];
-        if (range.location != NSNotFound) {
-            application->_teamID = [application->_applicationID substringWithRange:NSMakeRange(0, range.location)];
-        }
-    }
-
     return application;
-}
-
-+ (NSDictionary*) entitlementsDictionary {
-    if (SecTaskCreateFromSelf == NULL || SecTaskCopyValuesForEntitlements == NULL)
-        return nil;
-
-    NSArray *entitlementKeys = @[
-        @"application-identifier",
-        @"com.apple.developer.team-identifier",
-        @"com.apple.developer.associated-domains",
-        @"keychain-access-groups",
-        @"aps-environment"
-    ];
-
-    SecTaskRef myself = SecTaskCreateFromSelf(NULL);
-    if (!myself) return nil;
-
-    CFErrorRef errorRef = NULL;
-    NSDictionary *entitlements = (__bridge_transfer NSDictionary *)
-        (SecTaskCopyValuesForEntitlements(myself, (__bridge CFArrayRef)entitlementKeys, &errorRef));
-    if (errorRef) {
-        BNCLogError(@"Can't retrieve entitlements: %@.", errorRef);
-        CFRelease(errorRef);
-    }
-    CFRelease(myself);
-
-    return entitlements;
 }
 
 + (NSDate*) currentBuildDate {
@@ -189,27 +142,6 @@ extern SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef allocator)
         if (error) BNCLogWarning(@"While retrieving deviceKeyIdentityValueDictionary: %@.", error);
         if (!deviceDictionary) deviceDictionary = @{};
         return deviceDictionary;
-    }
-}
-
-- (void) addDeviceID:(NSString*)deviceID identityID:(NSString*)identityID {
-    @synchronized (self.class) {
-        if (deviceID == nil) return;
-        
-        NSMutableDictionary *dictionary =
-            [NSMutableDictionary dictionaryWithDictionary:[self deviceKeyIdentityValueDictionary]];
-        dictionary[deviceID] = identityID;
-
-        NSString*const kCloudAccessGroup = [self.class currentApplication].applicationID;
-
-        NSError *error =
-            [BNCKeyChain storeValue:dictionary
-                forService:kBranchKeychainService
-                key:kBranchKeychainDevicesKey
-                cloudAccessGroup:kCloudAccessGroup];
-        if (error) {
-            BNCLogError(@"Can't add device/identity pair: %@.", error);
-        }
     }
 }
 

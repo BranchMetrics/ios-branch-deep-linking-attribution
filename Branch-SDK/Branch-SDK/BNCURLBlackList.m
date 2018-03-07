@@ -19,6 +19,7 @@
 @property (strong) id<BNCNetworkServiceProtocol> networkService;
 @property (assign) BOOL hasRefreshedBlackListFromServer;
 @property (strong) NSError *error;
+@property (strong) NSURL *blackListJSONURL;
 @end
 
 @implementation BNCURLBlackList
@@ -115,9 +116,11 @@
     }
 
     self.error = nil;
-    NSString *urlString =
-        [NSString stringWithFormat:@"https://cdn.branch.io/sdk/uriskiplist_v%ld.json",
+    NSString *urlString = [self.blackListJSONURL absoluteString];
+    if (!urlString) {
+        urlString = [NSString stringWithFormat:@"https://cdn.branch.io/sdk/uriskiplist_v%ld.json",
             (long) self.blackListVersion+1];
+    }
     NSMutableURLRequest *request =
         [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]
             cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
