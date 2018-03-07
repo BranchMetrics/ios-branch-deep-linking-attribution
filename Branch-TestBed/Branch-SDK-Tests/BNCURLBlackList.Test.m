@@ -11,6 +11,10 @@
 #import "BNCTestCase.h"
 #import "BNCURLBlackList.h"
 
+@interface BNCURLBlackList ()
+@property (readwrite) NSURL *blackListJSONURL;
+@end
+
 @interface BNCURLBlackListTest : BNCTestCase
 @end
 
@@ -26,15 +30,14 @@
     BNCURLBlackList *blackList = [BNCURLBlackList new];
     [blackList refreshBlackListFromServerWithCompletion:^ (NSError*error, NSArray*list) {
         XCTAssertNil(error);
-        XCTAssertTrue(list.count == 8);
+        XCTAssertTrue(list.count == 7);
         [expectation fulfill];
     }];
     [self awaitExpectations];
 }
 
-- (void)testBadURLs {
-    BNCURLBlackList *blackList = [BNCURLBlackList new];
-    NSArray *badURLs = @[
+- (NSArray*) badURLs {
+    NSArray *kBadURLs = @[
         @"fb123456:login/464646",
         @"twitterkit-.4545:",
         @"shsh:oauth/login",
@@ -54,15 +57,11 @@
         @"myscheme://path/:oauth=747474",
         @"https://google.com/userprofile/devonbanks=oauth?",
     ];
-    for (NSString *string in badURLs) {
-        NSURL *URL = [NSURL URLWithString:string];
-        XCTAssertTrue([blackList isBlackListedURL:URL], @"Checking '%@'.", URL);
-    }
+    return kBadURLs;
 }
 
-- (void)testGoodURLs {
-    BNCURLBlackList *blackList = [BNCURLBlackList new];
-    NSArray *goodURLs = @[
+- (NSArray*) goodURLs {
+    NSArray *kGoodURLs = @[
         @"shshs:/content/path",
         @"shshs:content/path",
         @"https://myapp.app.link/12345/link",
@@ -70,9 +69,58 @@
         @"https://myapp.app.link?authentic=true&tokemonsta=false",
         @"myscheme://path/brauth=747474",
     ];
-    for (NSString *string in goodURLs) {
+    return kGoodURLs;
+}
+
+- (void)testBadURLs {
+    // Test default list.
+    BNCURLBlackList *blackList = [BNCURLBlackList new];
+    for (NSString *string in self.badURLs) {
+        NSURL *URL = [NSURL URLWithString:string];
+        XCTAssertTrue([blackList isBlackListedURL:URL], @"Checking '%@'.", URL);
+    }
+}
+
+- (void) testDownloadBadURLs {
+    // Test download list.
+    XCTestExpectation *expectation = [self expectationWithDescription:@"BlackList Download"];
+    BNCURLBlackList *blackList = [BNCURLBlackList new];
+    blackList.blackListJSONURL = [NSURL URLWithString:@"https://cdn.branch.io/sdk/uriskiplist_tv1.json"];
+    [blackList refreshBlackListFromServerWithCompletion:^ (NSError*error, NSArray*list) {
+        XCTAssertNil(error);
+        XCTAssertTrue(list.count == 7);
+        [expectation fulfill];
+    }];
+    [self awaitExpectations];
+    for (NSString *string in self.badURLs) {
+        NSURL *URL = [NSURL URLWithString:string];
+        XCTAssertTrue([blackList isBlackListedURL:URL], @"Checking '%@'.", URL);
+    }
+}
+
+- (void)testGoodURLs {
+    // Test default list.
+    BNCURLBlackList *blackList = [BNCURLBlackList new];
+    for (NSString *string in self.goodURLs) {
         NSURL *URL = [NSURL URLWithString:string];
         XCTAssertFalse([blackList isBlackListedURL:URL], @"Checking '%@'", URL);
+    }
+}
+
+- (void) testDownloadGoodURLs {
+    // Test download list.
+    XCTestExpectation *expectation = [self expectationWithDescription:@"BlackList Download"];
+    BNCURLBlackList *blackList = [BNCURLBlackList new];
+    blackList.blackListJSONURL = [NSURL URLWithString:@"https://cdn.branch.io/sdk/uriskiplist_tv1.json"];
+    [blackList refreshBlackListFromServerWithCompletion:^ (NSError*error, NSArray*list) {
+        XCTAssertNil(error);
+        XCTAssertTrue(list.count == 7);
+        [expectation fulfill];
+    }];
+    [self awaitExpectations];
+    for (NSString *string in self.goodURLs) {
+        NSURL *URL = [NSURL URLWithString:string];
+        XCTAssertFalse([blackList isBlackListedURL:URL], @"Checking '%@'.", URL);
     }
 }
 

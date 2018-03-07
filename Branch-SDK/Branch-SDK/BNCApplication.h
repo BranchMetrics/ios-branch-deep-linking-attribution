@@ -22,12 +22,6 @@
 /// The bundle identifier of the current
 @property (atomic, readonly) NSString*_Nullable bundleID;
 
-/// The development team ID of the application.
-@property (atomic, readonly) NSString*_Nullable teamID;
-
-/// The unique application identifier. Typically this is `teamID.bundleID`: XYZ123.com.company.app.
-@property (atomic, readonly) NSString*_Nullable applicationID;
-
 /// The bundle display name from the info plist.
 @property (atomic, readonly) NSString*_Nullable displayName;
 
@@ -52,19 +46,7 @@
 /// The date this app was first installed on this device.
 @property (atomic, readonly) NSDate*_Nullable firstInstallDate;
 
-/// The push notification environment. Usually `development` or `production` or `nil`.
-@property (atomic, readonly) NSString*_Nullable pushNotificationEnvironment;
-
-/// The keychain access groups from the entitlements.
-@property (atomic, readonly) NSArray<NSString*>*_Nullable keychainAccessGroups;
-
-/// The associated domains from the entitlements.
-@property (atomic, readonly) NSArray<NSString*>*_Nullable associatedDomains;
-
 /// Returns a dictionary of device / identity pairs.
 @property (atomic, readonly) NSDictionary<NSString*, NSString*>*_Nonnull deviceKeyIdentityValueDictionary;
-
-/// Adds a deviceID and identityID pair to the dictionary.
-- (void) addDeviceID:(NSString*_Nullable)deviceID identityID:(NSString*_Nullable)identityID;
 
 @end
