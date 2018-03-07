@@ -1,5 +1,15 @@
 Branch iOS SDK Change Log
 
+- v0.23.2
+  * _*Master Release*_ - March 7, 2018
+  * Added a CocoaPod subspec so that Branch can be added as a static framework instead of a dynamic
+    framework. Using a static framework can shorten an apps startup time but may complicate your
+    build dependencies. Static frameworks are now allowed for binding with Swift.
+
+    To use Branch as a static dependency in your app, use this line in your Podfile:
+
+        `pod 'Branch/Static'`
+
 - v0.23.1
   * _*Master Release*_ - March 6, 2018
   * Removed test features.
