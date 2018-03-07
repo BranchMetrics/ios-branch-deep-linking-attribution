@@ -1,5 +1,11 @@
 Branch iOS SDK Change Log
 
+- v0.23.1
+  * _*Master Release*_ - March 6, 2018
+  * Removed test features.
+  * Added more URL black list tests.
+  * Added more analyzer checks.
+
 - v0.23.0
   * Added URL Black List for sensitive URLs (DEVEX-164).
 
