@@ -89,11 +89,16 @@
     }];
     [[[serverInterfaceMock expect]
         andDo:openOrInstallInvocation]
-        postRequest:[OCMArg any]
-        url:openOrInstallUrlCheckBlock
-        key:[OCMArg any]
-        callback:openOrInstallCallbackCheckBlock];
+            postRequest:[OCMArg any]
+            url:openOrInstallUrlCheckBlock
+            key:[OCMArg any]
+            callback:openOrInstallCallbackCheckBlock];
 
+    preferenceHelper.universalLinkUrl = nil;
+    preferenceHelper.externalIntentURI = nil;
+    preferenceHelper.referringURL = nil;
+
+    [branch clearNetworkQueue];
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
     [branch initSessionWithLaunchOptions:@{}
         andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
@@ -180,6 +185,7 @@
         key:[OCMArg any]
         callback:openOrInstallCallbackCheckBlock];
 
+    [branch clearNetworkQueue];
     XCTestExpectation *openExpectation = [self expectationWithDescription:@"Test open"];
     [branch initSessionWithLaunchOptions:@{}
         andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {

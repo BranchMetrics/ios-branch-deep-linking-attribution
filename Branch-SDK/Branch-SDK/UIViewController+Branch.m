@@ -15,7 +15,9 @@
     if (UIApplicationClass) {
         UIWindow *keyWindow = nil;
 
-        keyWindow = [UIApplicationClass sharedApplication].delegate.window;
+        if ([[UIApplicationClass sharedApplication].delegate respondsToSelector:@selector(window)]) {
+            keyWindow = [UIApplicationClass sharedApplication].delegate.window;
+        }
         if (keyWindow && !keyWindow.isHidden && keyWindow.rootViewController) return keyWindow;
 
         keyWindow = [UIApplicationClass sharedApplication].keyWindow;

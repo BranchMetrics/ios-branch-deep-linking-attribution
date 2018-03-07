@@ -87,8 +87,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D5ACEF21FB382130099A56F /* Branch.framework in Frameworks */,
 				4D0E07D21FCDF7F40074E026 /* iAd.framework in Frameworks */,
+				4D5ACEF21FB382130099A56F /* Branch.framework in Frameworks */,
 				4D0E07D31FCDF7FC0074E026 /* SafariServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -137,14 +137,14 @@
 				4DFF2B6C1EEF3B150043F840 /* Supporting Files */,
 				4DFF2B6F1EEF3B150043F840 /* TBAppDelegate.h */,
 				4DFF2B701EEF3B150043F840 /* TBAppDelegate.m */,
+				4DFF2B721EEF3B150043F840 /* TBBranchViewController.h */,
+				4DFF2B731EEF3B150043F840 /* TBBranchViewController.m */,
+				4D2AF34D1EF8FF6200220F4A /* TBBranchViewController.xib */,
 				4D2AF33C1EF882DF00220F4A /* TBDetailViewController.h */,
 				4D2AF33D1EF882DF00220F4A /* TBDetailViewController.m */,
 				4D2AF33E1EF882DF00220F4A /* TBDetailViewController.xib */,
 				4DFF2BBA1EEF44CF0043F840 /* TBTableData.h */,
 				4DFF2BBB1EEF44CF0043F840 /* TBTableData.m */,
-				4DFF2B721EEF3B150043F840 /* TBBranchViewController.h */,
-				4DFF2B731EEF3B150043F840 /* TBBranchViewController.m */,
-				4D2AF34D1EF8FF6200220F4A /* TBBranchViewController.xib */,
 				4D2AF34F1EF9B3BF00220F4A /* TBWaitingView.h */,
 				4D2AF3501EF9B3BF00220F4A /* TBWaitingView.m */,
 				4D2AF3511EF9B3BF00220F4A /* TBWaitingView.xib */,

@@ -48,7 +48,6 @@ NSString * const BRANCH_REQUEST_KEY_APP_VERSION = @"app_version";
 NSString * const BRANCH_REQUEST_KEY_OS = @"os";
 NSString * const BRANCH_REQUEST_KEY_OS_VERSION = @"os_version";
 NSString * const BRANCH_REQUEST_KEY_URI_SCHEME = @"uri_scheme";
-NSString * const BRANCH_REQUEST_KEY_UPDATE = @"update";
 NSString * const BRANCH_REQUEST_KEY_LINK_IDENTIFIER = @"link_identifier";
 NSString * const BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS = @"facebook_app_link_checked";
 NSString * const BRANCH_REQUEST_KEY_CHECKED_APPLE_AD_ATTRIBUTION = @"apple_ad_attribution_checked";
@@ -63,6 +62,7 @@ NSString * const BRANCH_REQUEST_KEY_LOG = @"log";
 NSString * const BRANCH_REQUEST_KEY_INSTRUMENTATION = @"instrumentation";
 
 NSString * const BRANCH_REQUEST_ENDPOINT_SET_IDENTITY = @"profile";
+NSString * const BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS = @"app-link-settings";
 NSString * const BRANCH_REQUEST_ENDPOINT_LOGOUT = @"logout";
 NSString * const BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION = @"event";
 NSString * const BRANCH_REQUEST_ENDPOINT_LOAD_REWARDS = @"credits";

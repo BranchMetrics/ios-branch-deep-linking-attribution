@@ -53,4 +53,10 @@ extern BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex);
 - (NSMutableDictionary*) mutableDictionaryFromBundleJSONWithKey:(NSString*)key;
 
 + (BOOL) testBreakpoints;
+
++ (void) setAppOriginalInstallDate:(NSDate*)originalInstallDate
+        firstInstallDate:(NSDate*)firstInstallDate
+        lastUpdateDate:(NSDate*)lastUpdateDate
+        previousUpdateDate:(NSDate*)previousUpdateDate;
+
 @end

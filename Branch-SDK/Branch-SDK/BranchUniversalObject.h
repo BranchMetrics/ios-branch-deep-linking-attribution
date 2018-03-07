@@ -83,6 +83,7 @@ FOUNDATION_EXPORT BranchCondition _Nonnull BranchConditionRefurbished;
 @property (nonatomic, assign)           double          ratingAverage;
 @property (nonatomic, assign)           NSInteger       ratingCount;
 @property (nonatomic, assign)           double          ratingMax;
+@property (nonatomic, assign)           double          rating;
 @property (nonatomic, strong, nullable) NSString        *addressStreet;
 @property (nonatomic, strong, nullable) NSString        *addressCity;
 @property (nonatomic, strong, nullable) NSString        *addressRegion;

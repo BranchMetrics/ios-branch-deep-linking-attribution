@@ -550,6 +550,47 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
+- (NSDate*) previousAppBuildDate {
+    @synchronized (self) {
+        NSDate *date = (NSDate*) [self readObjectFromDefaults:@"_previousAppBuildDate"];
+        if ([date isKindOfClass:[NSDate class]]) return date;
+        return nil;
+    }
+}
+
+- (void) setPreviousAppBuildDate:(NSDate*)date {
+    @synchronized (self) {
+        if (date == nil || [date isKindOfClass:[NSDate class]])
+            [self writeObjectToDefaults:@"_previousAppBuildDate" value:date];
+    }
+}
+
+- (NSArray<NSString*>*) URLBlackList {
+    @synchronized(self) {
+        id a = [self readObjectFromDefaults:@"URLBlackList"];
+        if ([a isKindOfClass:NSArray.class]) return a;
+        return nil;
+    }
+}
+
+- (void) setURLBlackList:(NSArray<NSString *> *)URLBlackList {
+    @synchronized(self) {
+        [self writeObjectToDefaults:@"URLBlackList" value:URLBlackList];
+    }
+}
+
+- (NSInteger) URLBlackListVersion {
+    @synchronized(self) {
+        return [self readIntegerFromDefaults:@"URLBlackListVersion"];
+    }
+}
+
+- (void) setURLBlackListVersion:(NSInteger)URLBlackListVersion {
+    @synchronized(self) {
+        [self writeIntegerToDefaults:@"URLBlackListVersion" value:URLBlackListVersion];
+    }
+}
+
 #pragma mark - Credit Storage
 
 - (NSMutableDictionary *)creditsDictionary {
@@ -815,11 +856,9 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 
 @end
 
+#pragma mark - BNCURLForBranchDirectory
 
-#pragma mark - URLForBranchDirectory
-
-
-NSURL* _Null_unspecified BNCCreateDirectoryForBranchURLWithPath(NSSearchPathDirectory directory) {
+NSURL* _Null_unspecified BNCCreateDirectoryForBranchURLWithSearchPath_Unthreaded(NSSearchPathDirectory directory) {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSArray *URLs = [fileManager URLsForDirectory:directory inDomains:NSUserDomainMask | NSLocalDomainMask];
 
@@ -841,21 +880,18 @@ NSURL* _Null_unspecified BNCCreateDirectoryForBranchURLWithPath(NSSearchPathDire
     return nil;
 }
 
-NSURL* _Nonnull BNCURLForBranchDirectory() {
-    NSSearchPathDirectory kSearchDirectories[] = {
-        NSApplicationSupportDirectory,
-        NSCachesDirectory,
-        NSDocumentDirectory,
-    };
+NSURL* _Nonnull BNCURLForBranchDirectory_Unthreaded() {
+    NSArray *kSearchDirectories = @[
+        @(NSApplicationSupportDirectory),
+        @(NSCachesDirectory),
+        @(NSDocumentDirectory),
+    ];
 
-    #define _countof(array)     (sizeof(array)/sizeof(array[0]))
-
-    for (NSSearchPathDirectory directory = 0; directory < _countof(kSearchDirectories); directory++) {
-        NSURL *URL = BNCCreateDirectoryForBranchURLWithPath(kSearchDirectories[directory]);
+    for (NSNumber *directory in kSearchDirectories) {
+        NSSearchPathDirectory directoryValue = [directory unsignedLongValue];
+        NSURL *URL = BNCCreateDirectoryForBranchURLWithSearchPath_Unthreaded(directoryValue);
         if (URL) return URL;
     }
-
-    #undef _countof
 
     //  Worst case backup plan:
     NSString *path = [@"~/Library/io.branch" stringByExpandingTildeInPath];
@@ -872,4 +908,13 @@ NSURL* _Nonnull BNCURLForBranchDirectory() {
         BNCLogError(@"Worst case CreateBranchURL error: %@ URL: %@.", error, branchURL);
     }
     return branchURL;
+}
+
+NSURL* _Nonnull BNCURLForBranchDirectory() {
+    static NSURL *urlForBranchDirectory = nil;
+    static dispatch_once_t onceToken = 0;
+    dispatch_once(&onceToken, ^ {
+        urlForBranchDirectory = BNCURLForBranchDirectory_Unthreaded();
+    });
+    return urlForBranchDirectory;
 }

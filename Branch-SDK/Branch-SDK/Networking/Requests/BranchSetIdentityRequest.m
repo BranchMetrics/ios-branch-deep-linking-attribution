@@ -54,7 +54,7 @@
     }
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    preferenceHelper.identityID = response.data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY];
+    preferenceHelper.identityID = BNCStringFromWireFormat(response.data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]);
     preferenceHelper.userUrl = response.data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = self.userId;
     if (response.data[BRANCH_RESPONSE_KEY_SESSION_ID]) {

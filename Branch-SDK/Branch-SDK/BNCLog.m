@@ -1,21 +1,15 @@
+/**
+ @file          BNCLog.m
+ @package       Branch-SDK
+ @brief         Simple logging functions.
 
-
-//--------------------------------------------------------------------------------------------------
-//
-//                                                                                          BNCLog.m
-//                                                                                  Branch.framework
-//
-//                                                                          Simple logging functions
-//                                                                        Edward Smith, October 2016
-//
-//                                             -©- Copyright © 2016 Branch, all rights reserved. -©-
-//
-//--------------------------------------------------------------------------------------------------
-
+ @author        Edward Smith
+ @date          October 2016
+ @copyright     Copyright © 2016 Branch. All rights reserved.
+*/
 
 #import "BNCLog.h"
 #import <stdatomic.h> // import not available in Xcode 7
-
 
 #define _countof(array)  (sizeof(array)/sizeof(array[0]))
 static NSNumber *bnc_LogIsInitialized = nil;

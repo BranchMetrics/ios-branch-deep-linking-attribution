@@ -1,12 +1,11 @@
 //
 //  BranchEvent.Test.m
-//  Branch-TestBed
+//  Branch-SDK-Tests
 //
 //  Created by Edward Smith on 8/15/17.
 //  Copyright © 2017 Branch Metrics. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "BNCTestCase.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
@@ -68,6 +67,7 @@
     buo.contentMetadata.ratingAverage    = 5;
     buo.contentMetadata.ratingCount      = 5;
     buo.contentMetadata.ratingMax        = 7;
+    buo.contentMetadata.rating           = 6;
     buo.contentMetadata.addressStreet    = @"Street_name1";
     buo.contentMetadata.addressCity      = @"city1";
     buo.contentMetadata.addressRegion    = @"Region1";
@@ -99,7 +99,8 @@
     };
 
     NSDictionary *testDictionary = [event dictionary];
-    NSMutableDictionary *dictionary = [self mutableDictionaryFromBundleJSONWithKey:@"V2EventProperties"];
+    NSMutableDictionary *dictionary =
+        [self mutableDictionaryFromBundleJSONWithKey:@"V2EventProperties"];
     XCTAssertEqualObjects(testDictionary, dictionary);
 
     testDictionary = [buo dictionary];
@@ -109,7 +110,8 @@
 
     // Mock the result. Fix up the expectedParameters for simulator hardware --
 
-    NSMutableDictionary *expectedRequest = [self mutableDictionaryFromBundleJSONWithKey:@"V2EventJSON"];
+    NSMutableDictionary *expectedRequest =
+        [self mutableDictionaryFromBundleJSONWithKey:@"V2EventJSON"];
     expectedRequest[@"user_data"] = [[BNCDeviceInfo getInstance] v2dictionary];
 
     Branch *branch = [Branch getInstance:@"key_live_foo"];
@@ -129,7 +131,8 @@
         NSError *error = nil;
         NSString *url = request.URL.absoluteString;
         NSData *bodyData = request.HTTPBody;
-        NSDictionary *parameters = [NSJSONSerialization JSONObjectWithData:bodyData options:0 error:&error];
+        NSDictionary *parameters =
+            [NSJSONSerialization JSONObjectWithData:bodyData options:0 error:&error];
         XCTAssertNil(error);
 
         NSLog(@"testEvent 1");
@@ -152,7 +155,8 @@
 - (void) testUserCompletedAction {
     // Mock the result. Fix up the expectedParameters for simulator hardware --
 
-    NSMutableDictionary *expectedRequest = [self mutableDictionaryFromBundleJSONWithKey:@"V2EventJSON"];
+    NSMutableDictionary *expectedRequest =
+        [self mutableDictionaryFromBundleJSONWithKey:@"V2EventJSON"];
     expectedRequest[@"user_data"] = [[BNCDeviceInfo getInstance] v2dictionary];
     expectedRequest[@"event_data"] = nil;
     expectedRequest[@"custom_data"] = nil;
@@ -174,7 +178,8 @@
         NSError *error = nil;
         NSString *url = request.URL.absoluteString;
         NSData *bodyData = request.HTTPBody;
-        NSDictionary *parameters = [NSJSONSerialization JSONObjectWithData:bodyData options:0 error:&error];
+        NSDictionary *parameters =
+            [NSJSONSerialization JSONObjectWithData:bodyData options:0 error:&error];
         XCTAssertNil(error);
 
         NSLog(@"2");
@@ -214,6 +219,7 @@
     buo.contentMetadata.ratingAverage    = 5;
     buo.contentMetadata.ratingCount      = 5;
     buo.contentMetadata.ratingMax        = 7;
+    buo.contentMetadata.rating           = 6;
     buo.contentMetadata.addressStreet    = @"Street_name1";
     buo.contentMetadata.addressCity      = @"city1";
     buo.contentMetadata.addressRegion    = @"Region1";

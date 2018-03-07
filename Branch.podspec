@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Branch"
-  s.version          = "0.22.2"
+  s.version          = "0.23.1"
   s.summary          = "Create an HTTP URL for any piece of content in your app"
   s.description      = <<-DESC
 - Want the highest possible conversions on your sharing feature?
@@ -18,6 +18,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.source           = { git: "https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK.git", tag: s.version.to_s }
   s.platform         = :ios, '7.0'
   s.requires_arc     = true
+  s.static_framework = true
 
   source_files =
     "Branch-SDK/Branch-SDK/*.{h,m}",
@@ -29,7 +30,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.subspec 'Core' do |core|
     core.source_files = source_files
     core.private_header_files = "Branch-SDK/Fabric/*.h"
-    core.frameworks = 'AdSupport', 'MobileCoreServices'
+    core.frameworks = 'AdSupport', 'MobileCoreServices', 'SafariServices'
   end
 
   s.subspec 'without-IDFA' do |idfa|

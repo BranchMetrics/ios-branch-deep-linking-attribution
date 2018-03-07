@@ -12,10 +12,18 @@ cd $(dirname "$scriptfile")/..
 function updatePodsInDirectory() {
     local prevDir=$(pwd)
     local projDir="$1"
+    shift
+    local options="$@"
+    #echo $options
 
     cd "$projDir"
     echo ""
     echo ">>> Updating `pwd`."
+    if [[ $options = *bundler* ]]
+    then
+        echo ">>> Executing 'bundle install'..."
+        bundle install
+    fi
     pod install
     pod update
     cd "$prevDir"
@@ -25,4 +33,4 @@ gem install cocoapods
 updatePodsInDirectory Branch-TestBed
 updatePodsInDirectory Branch-TestBed-Swift
 updatePodsInDirectory Branch-TestBed-Xcode-7
-updatePodsInDirectory Examples/WebViewExample
+updatePodsInDirectory Examples/WebViewExample  bundler
