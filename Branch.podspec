@@ -32,13 +32,6 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
     core.frameworks = 'AdSupport', 'MobileCoreServices', 'SafariServices'
   end
 
-  s.subspec 'Static' do |static|
-    static.source_files = source_files
-    static.private_header_files = "Branch-SDK/Fabric/*.h"
-    static.frameworks = 'AdSupport', 'MobileCoreServices', 'SafariServices'
-    static.static_framework = true
-  end
-
   s.subspec 'without-IDFA' do |idfa|
     idfa.source_files = source_files
     idfa.private_header_files = "Branch-SDK/Fabric/*.h"
