@@ -237,7 +237,7 @@ BNCCurrency BNCCurrencyZMW = @"ZMW";
 	NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 
 	#define assign(x) \
-		do { if (self.x) { dictionary[@#x] = self.x; } } while (0)
+		do { if (self.x != nil) { dictionary[@#x] = self.x; } } while (0)
 
 	assign(sku);
 	assign(name);
