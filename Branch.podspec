@@ -18,7 +18,6 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.source           = { git: "https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK.git", tag: s.version.to_s }
   s.platform         = :ios, '7.0'
   s.requires_arc     = true
-  s.static_framework = true
 
   source_files =
     "Branch-SDK/Branch-SDK/*.{h,m}",
