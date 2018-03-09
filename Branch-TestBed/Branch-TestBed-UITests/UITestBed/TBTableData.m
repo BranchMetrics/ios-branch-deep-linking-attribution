@@ -69,10 +69,11 @@
     return s;
 }
 
-- (TBTableRow*) addRowWithTitle:(NSString*)title selector:(SEL)selector {
+- (TBTableRow*) addRowWithTitle:(NSString*)title selector:(SEL)selector style:(TBRowStyle)style {
     TBTableRow *r = [[TBTableRow alloc] init];
     r.title = title;
     r.selector = selector;
+    r.rowStyle = style;
     [self addTableItem:r];
     return r;
 }

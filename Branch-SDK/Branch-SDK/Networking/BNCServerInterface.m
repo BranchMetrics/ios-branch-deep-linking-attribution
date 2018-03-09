@@ -446,7 +446,10 @@ exit:
 
 #pragma mark - GET methods
 
-- (void)getRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key callback:(BNCServerCallback)callback {
+- (void)getRequest:(NSDictionary *)params
+               url:(NSString *)url
+               key:(NSString *)key
+          callback:(BNCServerCallback)callback {
     [self getRequest:params url:url key:key retryNumber:0 callback:callback];
 }
 
@@ -546,12 +549,15 @@ exit:
             
             // Retry the request if appropriate
             if (retryNumber < self.preferenceHelper.retryCount && isRetryableStatusCode) {
-                dispatch_time_t dispatchTime = dispatch_time(DISPATCH_TIME_NOW, self.preferenceHelper.retryInterval * NSEC_PER_SEC);
+                dispatch_time_t dispatchTime =
+                    dispatch_time(DISPATCH_TIME_NOW, self.preferenceHelper.retryInterval * NSEC_PER_SEC);
                 dispatch_after(dispatchTime, dispatch_get_main_queue(), ^{
                     BNCLogDebug(@"Retrying request with url %@", request.URL.relativePath);
                     // Create the next request
                     NSURLRequest *retryRequest = retryHandler(retryNumber);
-                    [self genericHTTPRequest:retryRequest retryNumber:(retryNumber + 1) callback:callback retryHandler:retryHandler];
+                    [self genericHTTPRequest:retryRequest
+                                 retryNumber:(retryNumber + 1)
+                                    callback:callback retryHandler:retryHandler];
                 });
                 
                 // Do not continue on if retrying, else the callback will be called incorrectly
@@ -591,6 +597,15 @@ exit:
                 callback(serverResponse, branchError);
         };
 
+    if (Branch.trackingDisabled) {
+        [[BNCPreferenceHelper preferenceHelper] clearTrackingInformation];
+        NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
+        BNCLogError(@"Network service error: %@.", error);
+        if (callback) {
+            callback(nil, error);
+        }
+        return;
+    }
     id<BNCNetworkOperationProtocol> operation =
         [self.networkService networkOperationWithURLRequest:request.copy completion:completionHandler];
     [operation start];

@@ -10,6 +10,7 @@
 #import "TBAppDelegate.h"
 #import "TBTableData.h"
 #import "TBDetailViewController.h"
+#import "TBTextViewController.h"
 #import "TBWaitingView.h"
 @import Branch;
 #import "BNCDeviceInfo.h"
@@ -50,21 +51,35 @@ static NSString* TBStringFromObject(id<NSObject> object) {
 @property (nonatomic, strong)   BranchLinkProperties  *linkProperties;
 @property (nonatomic, weak)     IBOutlet UITableView *tableView;
 @property (nonatomic, strong)   IBOutlet UINavigationItem *navigationItem;
+@property (nonatomic, strong)   NSIndexPath *trackingDisabledPath;
+@property (nonatomic, strong)   NSIndexPath *facebookIndexPath;
 @end
 
 @implementation TBBranchViewController
 
 - (void)initializeTableData {
 
+    TBTableRow *tableRow = nil;
     self.tableData = [TBTableData new];
 
     #define section(title) \
         [self.tableData addSectionWithTitle:title];
 
     #define row(title, selector_) \
-        [self.tableData addRowWithTitle:title selector:@selector(selector_)];
+        [self.tableData addRowWithTitle:title selector:@selector(selector_) style:TBRowStyleDisclosure];
+
+    #define switchRow(title, selector_) \
+        [self.tableData addRowWithTitle:title selector:@selector(selector_) style:TBRowStyleSwitch];
 
     section(@"Session");
+    tableRow = switchRow(@"Tracking Disabled", trackingDisabled:);
+    tableRow.integerValue = Branch.trackingDisabled;
+    self.trackingDisabledPath = [self.tableData indexPathForRow:tableRow];
+
+    tableRow = switchRow(@"Limit Facebook Tracking", toggleFacebookAppTrackingAction:)
+    tableRow.integerValue = [BNCPreferenceHelper preferenceHelper].limitFacebookTracking;
+    self.facebookIndexPath = [self.tableData indexPathForRow:tableRow];
+
     row(@"First Referring Parameters", showFirstReferringParams:);
     row(@"Latest Referring Parameters", showLatestReferringParams:);
     row(@"Set User Identity", setUserIdentity:);
@@ -91,7 +106,6 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     section(@"Miscellaneous");
     row(@"Show Local IP Addess", showLocalIPAddress:);
     row(@"Show Current View Controller", showCurrentViewController:)
-    row(@"Toggle Facebook App Tracking", toggleFacebookAppTrackingAction:)
 
     #undef section
     #undef row
@@ -164,15 +178,30 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     }
     TBTableRow *row = [self.tableData rowForIndexPath:indexPath];
     cell.textLabel.text = row.title;
-    cell.detailTextLabel.text = row.value;
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.detailTextLabel.text = nil;
+    cell.accessoryView = nil;
+    cell.accessoryType = UITableViewCellAccessoryNone;
+    cell.selectionStyle = UITableViewCellSelectionStyleDefault;
+    if (row.rowStyle == TBRowStyleDisclosure) {
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.detailTextLabel.text = row.value;
+    } else
+    if (row.rowStyle == TBRowStyleSwitch) {
+        UISwitch *sw = [[UISwitch alloc] init];
+        sw.on = row.integerValue;
+        sw.onTintColor = [UIColor redColor];
+        [sw addTarget:self action:row.selector forControlEvents:UIControlEventValueChanged];
+        cell.accessoryView = sw;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
     return cell;
 }
 
 - (void) tableView:(UITableView *)tableView
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     TBTableRow *row = [self.tableData rowForIndexPath:indexPath];
-    if (row.selector) {
+    BNCLogDebug(@"Selected index %ld:%ld: %@.", indexPath.section, indexPath.row, row.title);
+    if (row.rowStyle != TBRowStyleSwitch && row.selector) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         [self performSelector:row.selector withObject:row];
@@ -187,12 +216,14 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
                                  message:(NSString*)message
                                   object:(id<NSObject>)dictionaryOrArray {
 
-    TBDetailViewController *dataViewController = [[TBDetailViewController alloc] initWithData:dictionaryOrArray];
+    TBDetailViewController *dataViewController =
+        [[TBDetailViewController alloc] initWithData:dictionaryOrArray];
     dataViewController.title = title;
     dataViewController.message = message;
 
     // Manage the display mode button
-    dataViewController.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+    dataViewController.navigationItem.leftBarButtonItem =
+        self.splitViewController.displayModeButtonItem;
     dataViewController.navigationItem.leftItemsSupplementBackButton = YES;
 
     [self.splitViewController showDetailViewController:dataViewController sender:self];
@@ -228,11 +259,18 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         andCallback:^(NSString *url, NSError *error) {
             sender.value = url;
             [self.tableView reloadData];
+
+            TBTextViewController *tvc = [TBTextViewController new];
+            tvc.text = url;
+            tvc.message = @"Branch Link";
+            tvc.navigationItem.title = @"Branch Link";
+            [self.navigationController pushViewController:tvc animated:YES];
     }];
 }
 
 - (IBAction) openBranchLinkInApp:(id)sender {
-    NSURL *URL = [NSURL URLWithString:@"https://branch-uitestbed.app.link/TmAw9WrvPI"]; // <= Your URL goes here.
+    // Your URL goes here:
+    NSURL *URL = [NSURL URLWithString:@"https://branch-uitestbed.app.link/TmAw9WrvPI"];
     [[Branch getInstance] handleDeepLinkWithNewSession:URL];
 }
 
@@ -359,14 +397,18 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (IBAction) toggleFacebookAppTrackingAction:(id)sender {
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper preferenceHelper];
-    BOOL nextState = !prefs.limitFacebookTracking;
-    prefs.limitFacebookTracking = nextState;
-    [self showDataViewControllerWithTitle:@"Limit Facebook App Tracking"
-        message:nil
-        object:@{
-            @"Limit Facebook App Tracking": (nextState) ? @"On" : @"Off"
-        }
-    ];
+    prefs.limitFacebookTracking = !prefs.limitFacebookTracking;
+    TBTableRow *row = [self.tableData rowForIndexPath:self.facebookIndexPath];
+    row.integerValue = prefs.limitFacebookTracking;
+}
+
+- (void) trackingDisabled:(id)sender {
+    [Branch setTrackingDisabled:!Branch.trackingDisabled];
+    NSString *message = @"User tracking enabled.";
+    if (Branch.trackingDisabled) message = @"User tracking disabled.";
+    [self showAlertWithTitle:nil message:message];
+    TBTableRow *row = [self.tableData rowForIndexPath:self.trackingDisabledPath];
+    row.integerValue = Branch.trackingDisabled;
 }
 
 #pragma mark - App Dates / Update State
@@ -503,7 +545,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSIndexPath *indexPath = [self.tableData indexPathForRow:sender];
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     [self.universalObject showShareSheetWithLinkProperties:self.linkProperties
-        andShareText:@"Ha ha"
+        andShareText:@"Show BUO share sheet from table row."
         fromViewController:self
         anchor:(id)cell
         completionWithError: ^ (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError) {
@@ -513,7 +555,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (IBAction) buoShareBarButton:(id)sender {
     [self.universalObject showShareSheetWithLinkProperties:self.linkProperties
-        andShareText:@"Ha ha"
+        andShareText:@"Show BUO share sheet from nav bar."
         fromViewController:self
         anchor:sender
         completionWithError: ^ (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError) {

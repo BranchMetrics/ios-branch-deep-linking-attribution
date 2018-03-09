@@ -591,6 +591,45 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
+- (BOOL) trackingDisabled {
+    @synchronized(self) {
+        NSNumber *b = (id) [self readObjectFromDefaults:@"trackingDisabled"];
+        if ([b isKindOfClass:NSNumber.class]) return [b boolValue];
+        return false;
+    }
+}
+
+- (void) setTrackingDisabled:(BOOL)disabled {
+    @synchronized(self) {
+        NSNumber *b = [NSNumber numberWithBool:disabled];
+        [self writeObjectToDefaults:@"trackingDisabled" value:b];
+        if (disabled) [self clearTrackingInformation];
+    }
+}
+
+- (void) clearTrackingInformation {
+    @synchronized(self) {
+        self.deviceFingerprintID = nil;
+        self.sessionID = nil;
+        self.userIdentity = nil;
+        self.identityID = nil;
+        self.linkClickIdentifier = nil;
+        self.spotlightIdentifier = nil;
+        self.referringURL = nil;
+        self.universalLinkUrl = nil;
+        self.installParams = nil;
+        self.appleSearchAdDetails = nil;
+        self.appleSearchAdNeedsSend = NO;
+        self.sessionParams = nil;
+        self.installParams = nil;
+        self.externalIntentURI = nil;
+        self.savedAnalyticsData = nil;
+        self.previousAppBuildDate = nil;
+        self.requestMetadataDictionary = nil;
+        self.lastStrongMatchDate = nil;
+    }
+}
+
 #pragma mark - Credit Storage
 
 - (NSMutableDictionary *)creditsDictionary {

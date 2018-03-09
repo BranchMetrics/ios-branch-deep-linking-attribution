@@ -678,6 +678,25 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 - (void)setInstallRequestDelay:(NSInteger)installRequestDelay;
 
+/**
+ Disables the Branch SDK from tracking the user. This is useful for GDPR compliance.
+
+ When tracking is disabled, the Branch SDK will clear the Branch defaults of user identifying
+ information and prevent Branch from making any network calls to the Branch servers to resolve
+ deep links since that can be user identiying.
+
+ Note that:
+
+ * Opening deep links with Branch will stop working
+ * Generating short links will not work and will return long links instead.
+ * Sending user tracking events such as `userCompletedAction`, `BranchCommerceEvents`, and
+   `BranchEvents` will fail.
+ * User rewards and credits will not work.
+
+ @warning This will prevent most of the Branch SDK functionality.
+*/
++ (void) setTrackingDisabled:(BOOL)disabled;
++ (BOOL) trackingDisabled;
 
 #pragma mark - Session Item methods
 
