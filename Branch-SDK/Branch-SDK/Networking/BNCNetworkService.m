@@ -219,6 +219,7 @@
                     operation.stringFromResponseData);
                 if (operation.completionBlock)
                     operation.completionBlock(operation);
+                _session = nil;
             }];
     BNCLogDebug(@"Network start operation %@.", operation.request.URL);
     [operation.sessionTask resume];
