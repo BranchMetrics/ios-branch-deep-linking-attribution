@@ -883,6 +883,7 @@ NSURL* _Null_unspecified BNCCreateDirectoryForBranchURLWithSearchPath_Unthreaded
 NSURL* _Nonnull BNCURLForBranchDirectory_Unthreaded() {
     NSArray *kSearchDirectories = @[
         @(NSApplicationSupportDirectory),
+        @(NSLibraryDirectory),
         @(NSCachesDirectory),
         @(NSDocumentDirectory),
     ];
