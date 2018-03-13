@@ -1,5 +1,13 @@
 Branch iOS SDK Change Log
 
+- v0.23.3
+  * _*Master Release*_ - March 13, 2018
+  * Prevent a recursive call when locating the Branch preferences directory.
+
+- v0.23.2
+  * _*Master Release*_ - March 7, 2018
+  * Updated the Cocoapod podspec for compatibility with frameworks when Branch is used as a dependency.
+
 - v0.23.1
   * _*Master Release*_ - March 6, 2018
   * Removed test features.
