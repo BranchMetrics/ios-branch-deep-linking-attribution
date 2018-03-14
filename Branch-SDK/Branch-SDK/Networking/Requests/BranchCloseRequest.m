@@ -21,8 +21,6 @@
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
     params[BRANCH_REQUEST_KEY_SESSION_ID] =  preferenceHelper.sessionID;
     params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
-    if (preferenceHelper.trackingDisabled)
-        params[@"tracking_disabled"] = (__bridge NSNumber*) kCFBooleanTrue;
     NSDictionary *branchAnalyticsObj = [preferenceHelper getBranchAnalyticsData];
     if (branchAnalyticsObj && branchAnalyticsObj.count > 0) {
         NSData *data =

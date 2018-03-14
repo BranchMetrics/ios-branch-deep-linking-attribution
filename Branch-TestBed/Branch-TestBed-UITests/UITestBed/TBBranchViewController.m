@@ -270,7 +270,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (IBAction) openBranchLinkInApp:(id)sender {
     // Your URL goes here:
-    NSURL *URL = [NSURL URLWithString:@"https://branch-uitestbed.app.link/TmAw9WrvPI"];
+    NSURL *URL = [NSURL URLWithString:@"https://branch-uitestbed.app.link/ty3IO3bBgL"];
     [[Branch getInstance] handleDeepLinkWithNewSession:URL];
 }
 
@@ -387,12 +387,11 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (IBAction) showCurrentViewController:(id)send {
     UIViewController *vc = [UIViewController bnc_currentViewController];
-    [self showDataViewControllerWithTitle:@"View Controller"
-        message:nil
-        object:@{
-            @"View Controller": [NSString stringWithFormat:@"%@", vc],
-        }
-    ];
+    TBTextViewController *tvc =
+        [[TBTextViewController alloc] initWithText:[NSString stringWithFormat:@"%@", vc]];
+    tvc.navigationItem.title = @"View Controller";
+    tvc.message = @"Current View Controller";
+    [self.navigationController pushViewController:tvc animated:YES];
 }
 
 - (IBAction) toggleFacebookAppTrackingAction:(id)sender {
@@ -529,7 +528,6 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     buo.contentDescription          = @"my_product_description1";
     buo.imageUrl                    = @"https://test_img_url";
     buo.expirationDate              = [NSDate dateWithTimeIntervalSinceNow:24*60*60];
-        //[NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0];
     buo.publiclyIndex               = NO;
     buo.locallyIndex                = YES;
     buo.creationDate                = [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0];
