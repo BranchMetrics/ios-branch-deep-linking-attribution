@@ -50,6 +50,8 @@ static NSString* TBStringFromObject(id<NSObject> object) {
 @property (nonatomic, strong)   BranchLinkProperties  *linkProperties;
 @property (nonatomic, weak)     IBOutlet UITableView *tableView;
 @property (nonatomic, strong)   IBOutlet UINavigationItem *navigationItem;
+
+@property (nonatomic, strong)   TBTableRow *rewardsRow;
 @end
 
 @implementation TBBranchViewController
@@ -85,7 +87,7 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     row(@"BUO Share from table row", buoShareTableRow:);
 
     section(@"Rewards");
-    row(@"Refresh Rewards", refreshRewards:);
+    self.rewardsRow = row(@"Refresh Rewards", refreshRewards:);
     row(@"Show Rewards History", showRewardsHistory:);
     row(@"Redeem 5 Points", redeemRewards:);
 
@@ -545,6 +547,17 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     }];
 }
 
+- (void) refreshRewardsQuietly {
+    [[Branch getInstance] loadRewardsWithCallback: ^ (BOOL changed, NSError *error) {
+        if (!error) {
+            long credits = [[Branch getInstance] getCredits];
+            self.rewardsRow.value = [NSString stringWithFormat:@"%ld", credits];
+            NSIndexPath *indexPath = [self.tableData indexPathForRow:self.rewardsRow];
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        }
+    }];
+}
+
 - (IBAction) showRewardsHistory:(TBTableRow*)sender {
     [TBWaitingView showWithMessage:@"Getting Rewards" activityIndicator:YES disableTouches:YES];
     [[Branch getInstance] getCreditHistoryWithCallback:^(NSArray *creditHistory, NSError *error) {
@@ -565,9 +578,9 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
             [self showAlertWithTitle:@"Redemption Unsuccessful" message:error.localizedDescription];
         } else {
             [TBWaitingView hideWithMessage:@"Five points redeemed!"];
+            [self refreshRewardsQuietly];
         }
     }];
-
 }
 
 @end
