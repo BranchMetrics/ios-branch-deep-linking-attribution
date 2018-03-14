@@ -75,7 +75,7 @@
 
 @implementation BNCNetworkService
 
-+ (id<BNCNetworkServiceProtocol>) new {
++ (instancetype) new {
     return [[self alloc] init];
 }
 
@@ -173,7 +173,7 @@
 #pragma mark - Operations
 
 - (BNCNetworkOperation*) networkOperationWithURLRequest:(NSMutableURLRequest*)request
-                completion:(void (^)(BNCNetworkOperation*operation))completion {
+                completion:(void (^)(id<BNCNetworkOperationProtocol>operation))completion {
 
     BNCNetworkOperation *operation = [BNCNetworkOperation new];
     if (![request isKindOfClass:[NSMutableURLRequest class]]) {
