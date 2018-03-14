@@ -1,5 +1,11 @@
 Branch iOS SDK Change Log
 
+- v0.23.4
+  * Made sure v2 events for sharing and content view were being sent.
+  * Added rewards testing to the UITestBed app.
+  * Made sure that `BNCNetworkService` network sessions are deallocated.
+  * Silenced some code analyzer warnings GH-#795, #796.
+
 - v0.23.3
   * _*Master Release*_ - March 13, 2018
   * Prevent a recursive call when locating the Branch preferences directory.
