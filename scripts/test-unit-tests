@@ -97,7 +97,7 @@ for i in {1..5}
 do
     testSimulatorStress
 done
-testSimulatorVersion "iPhone 7 Plus" latest
+testSimulatorVersion "iPhone X"  latest
 testSimulatorVersion "iPhone SE" latest
 testSimulatorVersion "iPhone 6s" 10.0
 testSimulatorVersion "iPhone 5"  9.3

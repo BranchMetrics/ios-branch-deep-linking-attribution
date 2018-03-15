@@ -29,7 +29,7 @@ NSString *ios_url = @"https://dev.branch.io/getting-started/sdk-integration-guid
 NSString *shareText = @"Super amazing thing I want to share";
 NSString *type = @"some type";
 
-static NSString* TBString(id<NSObject> object) {
+static NSString* TBStringFromObject(id<NSObject> object) {
     if (object == nil)
         return @"<nil>";
     else
@@ -42,12 +42,16 @@ static NSString* TBString(id<NSObject> object) {
     }
 }
 
+#pragma mark - TBBranchViewController
+
 @interface TBBranchViewController () <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong)   TBTableData *tableData;
 @property (nonatomic, strong)   BranchUniversalObject *universalObject;
 @property (nonatomic, strong)   BranchLinkProperties  *linkProperties;
 @property (nonatomic, weak)     IBOutlet UITableView *tableView;
 @property (nonatomic, strong)   IBOutlet UINavigationItem *navigationItem;
+
+@property (nonatomic, strong)   TBTableRow *rewardsRow;
 @end
 
 @implementation TBBranchViewController
@@ -81,6 +85,11 @@ static NSString* TBString(id<NSObject> object) {
     row(@"ShareLink from table row", sharelinkTableRow:);
     row(@"ShareLink no anchor (one day link)", sharelinkTableRowNilAnchor:);
     row(@"BUO Share from table row", buoShareTableRow:);
+
+    section(@"Rewards");
+    self.rewardsRow = row(@"Refresh Rewards", refreshRewards:);
+    row(@"Show Rewards History", showRewardsHistory:);
+    row(@"Redeem 5 Points", redeemRewards:);
 
     section(@"App Update State");
     row(@"Erase All App Data", clearAllAppDataAction:)
@@ -418,11 +427,11 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         previous_update_time > latest_update_time)
         update_state = @"update_state_error";
     else
-    if ((latest_update_time - kOneDay) <= first_install_time && previous_update_time <= 0)
-        update_state = @"update_state_install";
-    else
     if (first_install_time < latest_install_time && previous_update_time <= 0)
         update_state = @"update_state_reinstall";
+    else
+    if ((latest_update_time - kOneDay) <= first_install_time && previous_update_time <= 0)
+        update_state = @"update_state_install";
     else
     if (latest_update_time > first_install_time && previous_update_time < latest_update_time)
         update_state = @"update_state_update";
@@ -432,11 +441,11 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self showDataViewControllerWithTitle:@"Dates"
         message:@"Current Application Dates"
         object:@{
-            @"first_install_time":      TBString(application.firstInstallDate),
-            @"latest_install_time":     TBString(application.currentInstallDate),
-            @"latest_update_time":      TBString(application.currentBuildDate),
-            @"previous_update_time":    TBString(global_previous_update_time),
-            @"update_state":            TBString(update_state)
+            @"first_install_time":      TBStringFromObject(application.firstInstallDate),
+            @"latest_install_time":     TBStringFromObject(application.currentInstallDate),
+            @"latest_update_time":      TBStringFromObject(application.currentBuildDate),
+            @"previous_update_time":    TBStringFromObject(global_previous_update_time),
+            @"update_state":            TBStringFromObject(update_state)
     }];
 }
 
@@ -519,4 +528,60 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     }];
 }
 
+#pragma mark - Rewards
+
+- (IBAction) refreshRewards:(TBTableRow*)sender {
+    [TBWaitingView showWithMessage:@"Refreshing" activityIndicator:YES disableTouches:YES];
+    [[Branch getInstance] loadRewardsWithCallback: ^ (BOOL changed, NSError *error) {
+        if (error) {
+            [TBWaitingView hide];
+            [self showAlertWithTitle:@"Error" message:error.localizedDescription];
+        } else {
+            long credits = [[Branch getInstance] getCredits];
+            sender.value = [NSString stringWithFormat:@"%ld", credits];
+            NSIndexPath *indexPath = [self.tableData indexPathForRow:sender];
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+            NSString *message = [NSString stringWithFormat:@"Credits: %ld", credits];
+            [TBWaitingView hideWithMessage:message];
+        }
+    }];
+}
+
+- (void) refreshRewardsQuietly {
+    [[Branch getInstance] loadRewardsWithCallback: ^ (BOOL changed, NSError *error) {
+        if (!error) {
+            long credits = [[Branch getInstance] getCredits];
+            self.rewardsRow.value = [NSString stringWithFormat:@"%ld", credits];
+            NSIndexPath *indexPath = [self.tableData indexPathForRow:self.rewardsRow];
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        }
+    }];
+}
+
+- (IBAction) showRewardsHistory:(TBTableRow*)sender {
+    [TBWaitingView showWithMessage:@"Getting Rewards" activityIndicator:YES disableTouches:YES];
+    [[Branch getInstance] getCreditHistoryWithCallback:^(NSArray *creditHistory, NSError *error) {
+        [TBWaitingView hide];
+        if (error) {
+            [self showAlertWithTitle:@"Error" message:error.localizedDescription];
+        } else {
+            [self showDataViewControllerWithTitle:@"Rewards" message:@"Rewards History" object:creditHistory];
+        }
+    }];
+}
+
+- (IBAction) redeemRewards:(TBTableRow*)sender {
+    [TBWaitingView showWithMessage:@"Redeeming" activityIndicator:YES disableTouches:YES];
+    [[Branch getInstance] redeemRewards:5 callback:^(BOOL changed, NSError *error) {
+        if (error || !changed) {
+            [TBWaitingView hide];
+            [self showAlertWithTitle:@"Redemption Unsuccessful" message:error.localizedDescription];
+        } else {
+            [TBWaitingView hideWithMessage:@"Five points redeemed!"];
+            [self refreshRewardsQuietly];
+        }
+    }];
+}
+
 @end
+

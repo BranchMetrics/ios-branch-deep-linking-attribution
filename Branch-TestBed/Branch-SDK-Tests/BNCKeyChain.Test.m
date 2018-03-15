@@ -22,7 +22,6 @@
     NSString *value = nil;
     NSArray *array = nil;
     NSString*const kServiceName = @"Service";
-    NSString* kAccessGroup = [BNCApplication currentApplication].applicationID;
     double systemVersion = [UIDevice currentDevice].systemVersion.doubleValue;
 
     // Remove and validate gone:
@@ -63,14 +62,6 @@
     XCTAssertTrue(error == nil);
     value = [BNCKeyChain retrieveValueForService:kServiceName key:@"key2" error:&error];
     XCTAssertTrue(error == nil && [value isEqualToString:@"2xyz123"]);
-
-    error = [BNCKeyChain storeValue:@"2xyz123" forService:kServiceName key:@"key2" cloudAccessGroup:kAccessGroup];
-    value = [BNCKeyChain retrieveValueForService:kServiceName key:@"key2" error:&error];
-    XCTAssertTrue(error == nil && [value isEqualToString:@"2xyz123"]);
-
-    error = [BNCKeyChain storeValue:@"3xyz123" forService:@"Service2" key:@"skey2" cloudAccessGroup:kAccessGroup];
-    value = [BNCKeyChain retrieveValueForService:@"Service2" key:@"skey2" error:&error];
-    XCTAssertTrue(error == nil && [value isEqualToString:@"3xyz123"]);
 
     // Remove by service:
 

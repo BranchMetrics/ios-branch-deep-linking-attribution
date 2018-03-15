@@ -6,7 +6,7 @@
 [Bb]uild
 *.xcuserstate
 *.xcuserdatad
-*.xcscmblueprint
+# *.xcscmblueprint # We should probably check this in.
 *.o
 
 # Pods
