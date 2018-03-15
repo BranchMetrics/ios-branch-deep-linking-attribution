@@ -65,47 +65,45 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     #define section(title) \
         [self.tableData addSectionWithTitle:title];
 
-    #define row(title, selector_) \
-        [self.tableData addRowWithTitle:title selector:@selector(selector_) style:TBRowStyleDisclosure];
-
-    #define switchRow(title, selector_) \
-        [self.tableData addRowWithTitle:title selector:@selector(selector_) style:TBRowStyleSwitch];
+    #define row(title, rowStyle, selector_) \
+        [self.tableData addRowWithTitle:title selector:@selector(selector_) style:rowStyle];
 
     section(@"Session");
-    tableRow = switchRow(@"Tracking Disabled", trackingDisabled:);
+    tableRow = row(@"Tracking Disabled", TBRowStyleSwitch, trackingDisabled:);
     tableRow.integerValue = Branch.trackingDisabled;
     self.trackingDisabledPath = [self.tableData indexPathForRow:tableRow];
 
-    tableRow = switchRow(@"Limit Facebook Tracking", toggleFacebookAppTrackingAction:)
+    tableRow = row(@"Limit Facebook Tracking", TBRowStyleSwitch, toggleFacebookAppTrackingAction:)
     tableRow.integerValue = [BNCPreferenceHelper preferenceHelper].limitFacebookTracking;
     self.facebookIndexPath = [self.tableData indexPathForRow:tableRow];
 
-    row(@"First Referring Parameters", showFirstReferringParams:);
-    row(@"Latest Referring Parameters", showLatestReferringParams:);
-    row(@"Set User Identity", setUserIdentity:);
-    row(@"Log User Identity Out", logOutUserIdentity:);
+    row(@"First Referring Parameters",  TBRowStyleDisclosure, showFirstReferringParams:);
+    row(@"Latest Referring Parameters", TBRowStyleDisclosure, showLatestReferringParams:);
+    row(@"Set User Identity",           TBRowStyleDisclosure, setUserIdentity:);
+    row(@"Log User Identity Out",       TBRowStyleDisclosure, logOutUserIdentity:);
 
     section(@"Branch Links");
-    row(@"Create a Branch Link", createBranchLink:);
-    row(@"Open a Branch link in a new session", openBranchLinkInApp:);
+    row(@"Create a Branch Link",        TBRowStyleDisclosure, createBranchLink:);
+    row(@"Open a Branch link in a new session", TBRowStylePlain, openBranchLinkInApp:);
 
     section(@"Events");
-    row(@"Send Commerce Event", sendCommerceEvent:);
-    row(@"Send Standard Event", sendStandardEvent:);
-    row(@"Send Custom Event", sendCustomEvent:);
+    row(@"Send Commerce Event",         TBRowStyleDisclosure, sendCommerceEvent:);
+    row(@"Send Standard Event",         TBRowStyleDisclosure, sendStandardEvent:);
+    row(@"Send Custom Event",           TBRowStyleDisclosure, sendCustomEvent:);
 
     section(@"Sharing");
-    row(@"ShareLink from table row", sharelinkTableRow:);
-    row(@"ShareLink no anchor (one day link)", sharelinkTableRowNilAnchor:);
-    row(@"BUO Share from table row", buoShareTableRow:);
+    row(@"ShareLink from table row",    TBRowStylePlain, sharelinkTableRow:);
+    row(@"ShareLink no anchor (one day link)", TBRowStylePlain, sharelinkTableRowNilAnchor:);
+    row(@"BUO Share from table row",    TBRowStylePlain, buoShareTableRow:);
 
     section(@"App Update State");
-    row(@"Erase All App Data", clearAllAppDataAction:)
-    row(@"Show Dates & Update State", showDatesAction:)
+    row(@"Erase All App Data",          TBRowStylePlain, clearAllAppDataAction:)
+    row(@"Show Dates & Update State",   TBRowStyleDisclosure, showDatesAction:)
 
     section(@"Miscellaneous");
-    row(@"Show Local IP Addess", showLocalIPAddress:);
-    row(@"Show Current View Controller", showCurrentViewController:)
+    row(@"Show Local IP Addess",        TBRowStyleDisclosure, showLocalIPAddress:);
+    row(@"Show Current View Controller", TBRowStyleDisclosure, showCurrentViewController:)
+    row(@"Stress Test Open",            TBRowStylePlain, stressTestOpen:)
 
     #undef section
     #undef row
@@ -372,6 +370,8 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         object:@{}];
 }
 
+#pragma mark - Miscellaneous
+
 - (IBAction)showLocalIPAddress:(id)sender {
     BNCLogDebugSDK(@"All IP Addresses:\n%@\n.", [BNCDeviceInfo getInstance].allIPAddresses);
     NSString *lip = [BNCDeviceInfo getInstance].localIPAddress;
@@ -393,6 +393,34 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     tvc.message = @"Current View Controller";
     [self.navigationController pushViewController:tvc animated:YES];
 }
+
+- (IBAction) stressTestOpen:(id)sender {
+    int const kIterations = 10;
+    NSURL*const kBranchOpenURL = [NSURL URLWithString:@"https://branch-uitestbed.app.link/ty3IO3bBgL"];
+
+    // First toggle tracking enabled:
+    [Branch setTrackingDisabled:NO];
+    TBTableRow *trackingRow = [self.tableData rowForIndexPath:self.trackingDisabledPath];
+    trackingRow.integerValue = Branch.trackingDisabled;
+
+    // Send opens:
+    for (long i = 0; i < kIterations; ++i) {
+        BNCLogDebug(@"-------------------------------- Iteration %ld.", i);
+        [[Branch getInstance] handleDeepLinkWithNewSession:kBranchOpenURL];
+    }
+
+    // Toggle tracking disabled:
+    [Branch setTrackingDisabled:YES];
+    trackingRow.integerValue = Branch.trackingDisabled;
+
+    // Send opens:
+    for (long i = 0; i < kIterations; ++i) {
+        BNCLogDebug(@"-------------------------------- Iteration %ld.", i);
+        [[Branch getInstance] handleDeepLinkWithNewSession:kBranchOpenURL];
+    }
+}
+
+#pragma mark - Toggle State
 
 - (IBAction) toggleFacebookAppTrackingAction:(id)sender {
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper preferenceHelper];
