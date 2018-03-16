@@ -1842,7 +1842,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self initSessionIfNeededAndNotInProgress];
     BranchUniversalObject *buo = [[BranchUniversalObject alloc] init];
     buo.contentMetadata.customMetadata = (id) params;
-    [BranchEvent standardEvent:BranchStandardEventViewItem withContentItem:buo];
+    [[BranchEvent standardEvent:BranchStandardEventViewItem withContentItem:buo] logEvent];
     if (callback) callback(@{}, nil);
 }
 

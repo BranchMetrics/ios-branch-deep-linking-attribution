@@ -801,7 +801,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 - (NSInteger)readIntegerFromDefaults:(NSString *)key {
     @synchronized(self) {
         NSNumber *number = self.persistenceDict[key];
-        if (number) {
+        if (number != nil) {
             return [number integerValue];
         }
         return NSNotFound;
