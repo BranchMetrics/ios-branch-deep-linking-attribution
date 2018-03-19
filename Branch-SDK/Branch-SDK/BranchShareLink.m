@@ -60,6 +60,10 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     return [self.parent shareObjectForItem:self activityType:self.activityType];
 }
 
+- (NSString*) subject {
+    return self.parent.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
+}
+
 @end
 
 #pragma mark - BranchShareLink
@@ -176,11 +180,10 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         
     }
 
-    if (self.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT]) {
+    NSString *emailSubject = self.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
+    if (emailSubject.length) {
         @try {
-            [shareViewController
-                setValue:self.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT]
-                forKey:@"subject"];
+            [shareViewController setValue:emailSubject forKey:@"subject"];
         }
         @catch (NSException*) {
             BNCLogWarning(
