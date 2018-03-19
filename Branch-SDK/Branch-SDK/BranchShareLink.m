@@ -64,6 +64,15 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     return self.parent.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
 }
 
+- (NSString*) subjectForActivityType:(UIActivityType)activityType {
+    return self.parent.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
+}
+
+- (NSString*) activityViewController:(UIActivityViewController*)activityViewController
+              subjectForActivityType:(UIActivityType)activityType {
+    return self.parent.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
+}
+
 @end
 
 #pragma mark - BranchShareLink
