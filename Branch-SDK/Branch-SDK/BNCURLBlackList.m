@@ -52,6 +52,11 @@
     return self;
 }
 
+- (void) dealloc {
+    [self.networkService cancelAllOperations];
+    self.networkService = nil;
+}
+
 - (void) setBlackList:(NSArray<NSString *> *)blackList {
     @synchronized (self) {
         _blackList = blackList;
@@ -132,6 +137,7 @@
             ^(id<BNCNetworkOperationProtocol> operation) {
                 [self processServerOperation:operation];
                 if (completion) completion(self.error, self.blackList);
+                [self.networkService cancelAllOperations];
                 self.networkService = nil;
             }
         ];

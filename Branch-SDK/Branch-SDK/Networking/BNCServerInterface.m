@@ -40,6 +40,11 @@
     return self;
 }
 
+- (void) dealloc {
+    [self.networkService cancelAllOperations];
+    self.networkService = nil;
+}
+
 + (NSArray/**<SecKeyRef>*/*) publicSecKeyRefs {
 
     #pragma clang diagnostic push

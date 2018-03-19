@@ -53,6 +53,7 @@ static NSString* TBStringFromObject(id<NSObject> object) {
 @property (nonatomic, strong)   IBOutlet UINavigationItem *navigationItem;
 @property (nonatomic, strong)   NSIndexPath *trackingDisabledPath;
 @property (nonatomic, strong)   NSIndexPath *facebookIndexPath;
+@property (nonatomic, strong)   TBTableRow *rewardsRow;
 @end
 
 @implementation TBBranchViewController
@@ -95,6 +96,11 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     row(@"ShareLink from table row",    TBRowStylePlain, sharelinkTableRow:);
     row(@"ShareLink no anchor (one day link)", TBRowStylePlain, sharelinkTableRowNilAnchor:);
     row(@"BUO Share from table row",    TBRowStylePlain, buoShareTableRow:);
+
+    section(@"Rewards");
+    self.rewardsRow = row(@"Refresh Rewards", TBRowStylePlain, refreshRewards:);
+    row(@"Redeem 5 Points",             TBRowStylePlain, redeemRewards:);
+    row(@"Show Rewards History",        TBRowStyleDisclosure, showRewardsHistory:);
 
     section(@"App Update State");
     row(@"Erase All App Data",          TBRowStylePlain, clearAllAppDataAction:)
@@ -182,6 +188,10 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     cell.selectionStyle = UITableViewCellSelectionStyleDefault;
     if (row.rowStyle == TBRowStyleDisclosure) {
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.detailTextLabel.text = row.value;
+    } else
+    if (row.rowStyle == TBRowStylePlain) {
+        cell.accessoryType = UITableViewCellAccessoryNone;
         cell.detailTextLabel.text = row.value;
     } else
     if (row.rowStyle == TBRowStyleSwitch) {
@@ -589,4 +599,60 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     }];
 }
 
+#pragma mark - Rewards
+
+- (IBAction) refreshRewards:(TBTableRow*)sender {
+    [TBWaitingView showWithMessage:@"Refreshing" activityIndicator:YES disableTouches:YES];
+    [[Branch getInstance] loadRewardsWithCallback: ^ (BOOL changed, NSError *error) {
+        if (error) {
+            [TBWaitingView hide];
+            [self showAlertWithTitle:@"Error" message:error.localizedDescription];
+        } else {
+            long credits = [[Branch getInstance] getCredits];
+            sender.value = [NSString stringWithFormat:@"%ld", credits];
+            NSIndexPath *indexPath = [self.tableData indexPathForRow:sender];
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+            NSString *message = [NSString stringWithFormat:@"Credits: %ld", credits];
+            [TBWaitingView hideWithMessage:message];
+        }
+    }];
+}
+
+- (void) refreshRewardsQuietly {
+    [[Branch getInstance] loadRewardsWithCallback: ^ (BOOL changed, NSError *error) {
+        if (!error) {
+            long credits = [[Branch getInstance] getCredits];
+            self.rewardsRow.value = [NSString stringWithFormat:@"%ld", credits];
+            NSIndexPath *indexPath = [self.tableData indexPathForRow:self.rewardsRow];
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        }
+    }];
+}
+
+- (IBAction) showRewardsHistory:(TBTableRow*)sender {
+    [TBWaitingView showWithMessage:@"Getting Rewards" activityIndicator:YES disableTouches:YES];
+    [[Branch getInstance] getCreditHistoryWithCallback:^(NSArray *creditHistory, NSError *error) {
+        [TBWaitingView hide];
+        if (error) {
+            [self showAlertWithTitle:@"Error" message:error.localizedDescription];
+        } else {
+            [self showDataViewControllerWithTitle:@"Rewards" message:@"Rewards History" object:creditHistory];
+        }
+    }];
+}
+
+- (IBAction) redeemRewards:(TBTableRow*)sender {
+    [TBWaitingView showWithMessage:@"Redeeming" activityIndicator:YES disableTouches:YES];
+    [[Branch getInstance] redeemRewards:5 callback:^(BOOL changed, NSError *error) {
+        if (error || !changed) {
+            [TBWaitingView hide];
+            [self showAlertWithTitle:@"Redemption Unsuccessful" message:error.localizedDescription];
+        } else {
+            [TBWaitingView hideWithMessage:@"Five points redeemed!"];
+            [self refreshRewardsQuietly];
+        }
+    }];
+}
+
 @end
+

@@ -149,7 +149,7 @@
     }
 
     #define addNumber(field, name) { \
-        if (self.field) { \
+        if (self.field != nil) { \
             dictionary[@#name] = self.field; \
         } \
     }
