@@ -283,6 +283,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
             referringLink = [referringLink stringByAppendingString:@"/e/"];
         }
     }
+    referringLink = [referringLink stringByReplacingOccurrencesOfString:@"-alternate" withString:@""];
     return referringLink;
 }
 
