@@ -18,6 +18,8 @@ NSDate *next_previous_update_time = nil;
 @property (nonatomic, strong) TBBranchViewController *branchViewController;
 @end
 
+#pragma mark - TBAppDelegate
+
 @implementation TBAppDelegate
 
 - (BOOL)application:(UIApplication *)application
@@ -38,6 +40,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
 
+    // For testing app updates:
     next_previous_update_time = [BNCPreferenceHelper preferenceHelper].previousAppBuildDate;
     
     [branch setWhiteListedSchemes:@[@"branchuitest"]];

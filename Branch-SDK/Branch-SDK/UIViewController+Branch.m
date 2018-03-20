@@ -10,6 +10,8 @@
 
 @implementation UIViewController (Branch)
 
+#if 1 // eDebug - Debug top window.
+
 + (UIWindow*_Nullable) bnc_currentWindow {
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (UIApplicationClass) {
@@ -32,6 +34,33 @@
 
     return nil;
 }
+
+#else
+
++ (UIWindow*_Nullable) bnc_currentWindow {
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if (UIApplicationClass) {
+        UIWindow *keyWindow = nil;
+
+        for (keyWindow in [UIApplicationClass sharedApplication].windows.reverseObjectEnumerator) {
+            if (!keyWindow.isHidden && keyWindow.rootViewController) return keyWindow;
+        }
+
+        keyWindow = [UIApplicationClass sharedApplication].keyWindow;
+        if (keyWindow && !keyWindow.isHidden && keyWindow.rootViewController) return keyWindow;
+
+        if ([[UIApplicationClass sharedApplication].delegate respondsToSelector:@selector(window)]) {
+            keyWindow = [UIApplicationClass sharedApplication].delegate.window;
+        }
+        if (keyWindow && !keyWindow.isHidden && keyWindow.rootViewController) return keyWindow;
+    }
+
+    // ToDo: Put different code for extensions here.
+
+    return nil;
+}
+
+#endif
 
 + (UIViewController*_Nullable) bnc_currentViewController {
     UIWindow *window = [UIViewController bnc_currentWindow];
