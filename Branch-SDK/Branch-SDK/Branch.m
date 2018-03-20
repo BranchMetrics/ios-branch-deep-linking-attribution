@@ -1777,23 +1777,23 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     NSMutableString *longUrl = [[NSMutableString alloc] initWithFormat:@"%@?", baseUrl];
 
     for (NSString *tag in tags) {
-        [longUrl appendFormat:@"tags=%@&", tag];
+        [longUrl appendFormat:@"tags=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:tag]];
     }
 
     if ([alias length]) {
-        [longUrl appendFormat:@"alias=%@&", alias];
+        [longUrl appendFormat:@"alias=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:alias]];
     }
 
     if ([channel length]) {
-        [longUrl appendFormat:@"channel=%@&", channel];
+        [longUrl appendFormat:@"channel=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:channel]];
     }
 
     if ([feature length]) {
-        [longUrl appendFormat:@"feature=%@&", feature];
+        [longUrl appendFormat:@"feature=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:feature]];
     }
 
     if ([stage length]) {
-        [longUrl appendFormat:@"stage=%@&", stage];
+        [longUrl appendFormat:@"stage=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:stage]];
     }
     if (type) {
         [longUrl appendFormat:@"type=%ld&", (long)type];
