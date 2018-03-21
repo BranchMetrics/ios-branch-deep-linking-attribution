@@ -772,6 +772,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     if (bundleID && sourceApplication) {
         fromSelf = [bundleID isEqualToString:sourceApplication];
     }
+    if (!fromSelf) [self resetUserSession];
     return [self handleDeepLink:url fromSelf:fromSelf];
 }
 
