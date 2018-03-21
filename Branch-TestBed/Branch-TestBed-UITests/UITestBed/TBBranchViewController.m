@@ -17,11 +17,14 @@
 #import "BNCApplication.h"
 #import "BNCKeyChain.h"
 
-NSString *cononicalIdentifier = @"item/12345";
+NSString *canonicalIdentifier = @"item/12345";
 NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
 NSString *contentTitle = @"Content Title";
 NSString *contentDescription = @"My Content Description";
-NSString *imageUrl = @"https://pbs.twimg.com/profile_images/658759610220703744/IO1HUADP.png";
+NSString *imageUrl =
+    @"http://a57.foxnews.com/images.foxnews.com/content/fox-news/science/2018/03/20/"
+     "first-day-spring-arrives-5-things-to-know-about-vernal-equinox/_jcr_content/"
+     "par/featured_image/media-0.img.jpg/1862/1048/1521552912093.jpg?ve=1&tl=1";
 NSString *feature = @"Sharing Feature";
 NSString *channel = @"Distribution Channel";
 NSString *desktop_url = @"http://branch.io";
@@ -111,7 +114,7 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     [self initializeTableData];
 
     _universalObject =
-        [[BranchUniversalObject alloc] initWithCanonicalIdentifier: cononicalIdentifier];
+        [[BranchUniversalObject alloc] initWithCanonicalIdentifier:canonicalIdentifier];
     _universalObject.canonicalUrl = canonicalUrl;
     _universalObject.title = contentTitle;
     _universalObject.contentDescription = contentDescription;
@@ -124,7 +127,6 @@ static NSString* TBStringFromObject(id<NSObject> object) {
             @"This text was embedded as data in a Branch link with the following characteristics:\n\n"
              "canonicalUrl: %@\n  title: %@\n  contentDescription: %@\n  imageUrl: %@\n",
                 canonicalUrl, contentTitle, contentDescription, imageUrl];
-
     _linkProperties = [[BranchLinkProperties alloc] init];
     _linkProperties.feature = feature;
     _linkProperties.channel = channel;
@@ -474,7 +476,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         [[BranchShareLink alloc]
             initWithUniversalObject:self.universalObject
             linkProperties:lp/*self.linkProperties*/];
-    shareLink.shareText = @"ShareLink from table row:";
+    shareLink.shareText = @"ShareLink from table row:\n";
     [shareLink presentActivityViewControllerFromViewController:self anchor:cell];
 }
 
@@ -520,15 +522,26 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         [[BranchShareLink alloc]
             initWithUniversalObject:buo
             linkProperties:self.linkProperties];
-    shareLink.shareText = @"Share link with no anchor:";
+    shareLink.shareText = @"Share link with no anchor:\n";
     [shareLink presentActivityViewControllerFromViewController:self anchor:nil];
 }
 
-- (IBAction) buoShareTableRow:(id)sender {
-    NSIndexPath *indexPath = [self.tableData indexPathForRow:sender];
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-    [self.universalObject showShareSheetWithLinkProperties:self.linkProperties
-        andShareText:@"Share from Branch universal object:"
+- (IBAction) buoShareTableRow:(TBTableRow*)sender {
+    BranchUniversalObject *buo =
+        [[BranchUniversalObject alloc] initWithCanonicalIdentifier:canonicalIdentifier];
+    buo.canonicalUrl = @"https://branch.io/deepviews";
+    buo.imageUrl = imageUrl;
+    buo.title = @"Share Title";
+    buo.contentMetadata.customMetadata = (id) @{@"Key": @"Value"};
+
+    BranchLinkProperties *link = [BranchLinkProperties new];
+    [link addControlParam:@"$desktop_url" withValue:@"https://google.com/"];
+    [link addControlParam:@"$email_subject" withValue:@"Email-Subject"];
+    [link addControlParam:@"timestamp" withValue:[NSDate date].description];
+
+    UITableViewCell *cell = [self.tableData cellForTableView:self.tableView tableRow:sender];
+    [buo showShareSheetWithLinkProperties:link
+        andShareText:@"Share Table Row Universal Object:\n"
         fromViewController:self
         anchor:(id)cell
         completionWithError: ^ (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError) {
@@ -538,7 +551,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (IBAction) buoShareBarButton:(id)sender {
     [self.universalObject showShareSheetWithLinkProperties:self.linkProperties
-        andShareText:@"ShareLink from bar button:"
+        andShareText:@"ShareLink from bar button:\n"
         fromViewController:self
         anchor:sender
         completionWithError: ^ (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError) {
