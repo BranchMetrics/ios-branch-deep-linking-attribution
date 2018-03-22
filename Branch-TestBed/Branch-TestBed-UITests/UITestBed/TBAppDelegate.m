@@ -26,6 +26,9 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     [self initializeViewControllers];
 
+    // Set to YES for testing GDPR compliance.
+    // [Branch setTrackingDisabled:YES];
+
     // Initialize Branch
     Branch *branch = [Branch getInstance];
     
