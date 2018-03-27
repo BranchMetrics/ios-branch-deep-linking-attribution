@@ -95,10 +95,11 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     if ([self.delegate respondsToSelector:@selector(branchShareLink:didComplete:withError:)]) {
         [self.delegate branchShareLink:self didComplete:completed withError:error];
     }
-    if (completed && !error)
+    if (completed && !error) {
         [[BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self.universalObject] logEvent];
-    NSDictionary *attributes = [self.universalObject getDictionaryWithCompleteLinkProperties:self.linkProperties];
-    [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:attributes];
+        NSDictionary *attributes = [self.universalObject getDictionaryWithCompleteLinkProperties:self.linkProperties];
+        [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:attributes];
+    }
 }
 
 - (NSArray<UIActivityItemProvider*>*_Nonnull) activityItems {
@@ -263,7 +264,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         @"Facebook":    @1,
         @"Twitter":     @1,
         @"Slack":       @1,
-        @"Apple Notes": @1
+        @"Apple Notes": @1,
+        @"Skype":       @1
     };
     NSString *userAgentString = nil;
     if (self.linkProperties.channel && scrapers[self.linkProperties.channel]) {
