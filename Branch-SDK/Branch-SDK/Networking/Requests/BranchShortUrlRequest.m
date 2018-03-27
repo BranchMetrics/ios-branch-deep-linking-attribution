@@ -92,23 +92,23 @@
     NSMutableString *longUrl = [[NSMutableString alloc] initWithFormat:@"%@?", userUrl];
     
     for (NSString *tag in self.tags) {
-        [longUrl appendFormat:@"tags=%@&", tag];
+        [longUrl appendFormat:@"tags=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:tag]];
     }
     
     if ([self.alias length]) {
-        [longUrl appendFormat:@"alias=%@&", self.alias];
+        [longUrl appendFormat:@"alias=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.alias]];
     }
     
     if ([self.channel length]) {
-        [longUrl appendFormat:@"channel=%@&", self.channel];
+        [longUrl appendFormat:@"channel=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.channel]];
     }
     
     if ([self.feature length]) {
-        [longUrl appendFormat:@"feature=%@&", self.feature];
+        [longUrl appendFormat:@"feature=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.feature]];
     }
     
     if ([self.stage length]) {
-        [longUrl appendFormat:@"stage=%@&", self.stage];
+        [longUrl appendFormat:@"stage=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.stage]];
     }
     if (self.type) {
         [longUrl appendFormat:@"type=%ld&", (long)self.type];

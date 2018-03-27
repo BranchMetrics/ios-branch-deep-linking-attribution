@@ -94,6 +94,10 @@ Presents a UIActivityViewController that shares the Branch link.
 ///This object can be changed later when the `branchShareSheetWillShare:` delegate method is called.
 @property (nonatomic, strong) id _Nullable shareObject;
 
+///Sets an email subject line for the share activity. If the Branch link property already has an
+///email subject, that attribute takes precedence over this field.
+@property (nonatomic, strong) NSString*_Nullable emailSubject;
+
 ///The resulting Branch URL that was shared.
 @property (nonatomic, strong, readonly) NSURL*_Nullable shareURL;
 
