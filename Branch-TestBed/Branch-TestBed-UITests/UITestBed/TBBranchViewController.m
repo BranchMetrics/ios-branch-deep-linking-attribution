@@ -518,10 +518,18 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     buo.locallyIndex                = YES;
     buo.creationDate                = [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0];
 
+    BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.feature = feature;
+    linkProperties.channel = channel;
+    linkProperties.campaign = @"some campaign";
+    [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
+    [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
+
     BranchShareLink *shareLink =
         [[BranchShareLink alloc]
             initWithUniversalObject:buo
             linkProperties:self.linkProperties];
+    shareLink.emailSubject = @"Email Subject";
     shareLink.shareText = @"Share link with no anchor:\n";
     [shareLink presentActivityViewControllerFromViewController:self anchor:nil];
 }
