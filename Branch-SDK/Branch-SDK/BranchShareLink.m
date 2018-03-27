@@ -61,16 +61,18 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
 }
 
 - (NSString*) subject {
-    return self.parent.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
+    NSString *subject = self.parent.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
+    if (subject.length == 0) subject = self.parent.emailSubject;
+    return subject;
 }
 
 - (NSString*) subjectForActivityType:(UIActivityType)activityType {
-    return self.parent.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
+    return self.subject;
 }
 
 - (NSString*) activityViewController:(UIActivityViewController*)activityViewController
               subjectForActivityType:(UIActivityType)activityType {
-    return self.parent.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
+    return self.subject;
 }
 
 @end
@@ -190,6 +192,7 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     }
 
     NSString *emailSubject = self.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
+    if (emailSubject.length <= 0) emailSubject = self.emailSubject;
     if (emailSubject.length) {
         @try {
             [shareViewController setValue:emailSubject forKey:@"subject"];
