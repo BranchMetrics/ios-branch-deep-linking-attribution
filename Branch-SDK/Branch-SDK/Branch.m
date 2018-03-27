@@ -664,7 +664,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url {
-    return [self handleDeepLink:url fromSelf:NO];
+    return [self handleDeepLink:url fromSelf:YES];
 }
 
 -(BOOL)handleDeepLinkWithNewSession:(NSURL *)url{
