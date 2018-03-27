@@ -1,6 +1,7 @@
 Branch iOS SDK Change Log
 
 - v0.23.5
+  * _*Master Release*_ - March 27, 2018
   * Added a field to set an email subject without adding it as a link parameter.
     - The field is BranchShareLink.emailSubject.
     - This is analogous to the similar Android option.
