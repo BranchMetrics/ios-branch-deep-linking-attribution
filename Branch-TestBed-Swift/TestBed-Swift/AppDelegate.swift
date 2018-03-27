@@ -168,6 +168,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
                                                              sourceApplication: sourceApplication,
                                                              annotation: annotation
         )
+        Adjust.appWillOpen(url)
         if (!branchHandled) {
             // If not handled by Branch, do other deep link routing for the Facebook SDK, Pinterest SDK, etc
         }
@@ -176,7 +177,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
     
     // Respond to Universal Links
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
-        Branch.getInstance().continue(userActivity);
+        Branch.getInstance().continue(userActivity)
+        if (userActivity.activityType == NSUserActivityTypeBrowsingWeb) {
+            let url = userActivity.webpageURL
+        
+            Adjust.appWillOpen(url!)
+        }
+        
+        // Apply your logic to determine the return value of this method
         return true
     }
     
@@ -250,11 +258,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
         IntegratedSDKsData.setActiveAdjustAppToken(key)
         IntegratedSDKsData.setActiveAdjustEnabled(true)
 
-        let adjustConfig = ADJConfig(appToken: key, environment: ADJEnvironmentSandbox)
+        let adjustConfig = ADJConfig(appToken: key, environment: ADJEnvironmentProduction)
 
         adjustConfig?.logLevel = ADJLogLevelVerbose
         adjustConfig?.delegate = self
         Adjust.appDidLaunch(adjustConfig!)
+        
     }
     
     func activateAdobe() {
