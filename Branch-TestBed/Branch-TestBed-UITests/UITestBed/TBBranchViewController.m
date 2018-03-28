@@ -159,7 +159,7 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     versionLabel.font = [UIFont systemFontOfSize:12.0];
     [versionLabel sizeToFit];
     CGRect r = versionLabel.bounds;
-    r.size.height *= 1.75f;
+    r.size.height += 10.0;
     versionLabel.frame = r;
     self.tableView.tableHeaderView = versionLabel;
 
@@ -264,24 +264,47 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         completion:nil];
 }
 
-#pragma mark - Actions
+- (BranchUniversalObject*) createUniversalObject {
+    BranchUniversalObject *buo =
+        [[BranchUniversalObject alloc] initWithCanonicalIdentifier:canonicalIdentifier];
+    buo.canonicalUrl = canonicalUrl;
+    buo.title = contentTitle;
+    buo.contentDescription = contentDescription;
+    buo.imageUrl = imageUrl;
+    buo.contentMetadata.price = [NSDecimalNumber decimalNumberWithString:@"1000.00"];
+    buo.contentMetadata.currency = @"$";
+    buo.contentMetadata.contentSchema = type;
+    buo.contentMetadata.customMetadata[@"deeplink_text"] =
+        [NSString stringWithFormat:
+            @"This text was embedded as data in a Branch link with the following characteristics:\n\n"
+             "canonicalUrl: %@\n  title: %@\n  contentDescription: %@\n  imageUrl: %@\n",
+                canonicalUrl, contentTitle, contentDescription, imageUrl];
+    return buo;
+}
 
-static NSString* global_createdBranchURLString = nil;
-
-- (IBAction)createBranchLink:(TBTableRow*)sender {
+- (BranchLinkProperties*) createLinkProperties {
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
     linkProperties.channel = channel;
     linkProperties.campaign = @"some campaign";
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
     [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
-    [self.universalObject
-        getShortUrlWithLinkProperties:linkProperties
+    return linkProperties;
+}
+
+#pragma mark - Actions
+
+static NSString* global_createdBranchURLString = nil;
+
+- (IBAction)createBranchLink:(TBTableRow*)sender {
+    BranchLinkProperties *linkProperties = [self createLinkProperties];
+    BranchUniversalObject *buo = [self createUniversalObject];
+    buo.creationDate = [NSDate date];
+    [buo getShortUrlWithLinkProperties:linkProperties
         andCallback:^(NSString *url, NSError *error) {
             sender.value = url;
             global_createdBranchURLString = url;
             [self.tableView reloadData];
-
             TBTextViewController *tvc = [TBTextViewController new];
             tvc.text = url;
             tvc.message = @"Branch Link";
