@@ -293,6 +293,7 @@ static NSString *type = @"some type";
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
     linkProperties.campaign = @"sharing campaign";
+    [linkProperties addControlParam:BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT withValue:@"Email Subject"];
 
     BranchShareLink *shareLink =
         [[BranchShareLink alloc]

@@ -104,25 +104,33 @@
     return [BranchShortUrlSyncRequest createLongUrlWithBaseUrl:baseUrl tags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params];
 }
 
-+ (NSString *)createLongUrlWithBaseUrl:(NSMutableString *)baseUrl tags:(NSArray *)tags alias:(NSString *)alias type:(BranchLinkType)type matchDuration:(NSInteger)duration channel:(NSString *)channel feature:(NSString *)feature stage:(NSString *)stage params:(NSDictionary *)params {
++ (NSString *)createLongUrlWithBaseUrl:(NSMutableString *)baseUrl
+                                  tags:(NSArray *)tags
+                                 alias:(NSString *)alias
+                                  type:(BranchLinkType)type
+                         matchDuration:(NSInteger)duration
+                               channel:(NSString *)channel
+                               feature:(NSString *)feature
+                                 stage:(NSString *)stage
+                                params:(NSDictionary *)params {
     for (NSString *tag in tags) {
-        [baseUrl appendFormat:@"tags=%@&", tag];
+        [baseUrl appendFormat:@"tags=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:tag]];
     }
     
     if ([alias length]) {
-        [baseUrl appendFormat:@"alias=%@&", alias];
+        [baseUrl appendFormat:@"alias=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:alias]];
     }
     
     if ([channel length]) {
-        [baseUrl appendFormat:@"channel=%@&", channel];
+        [baseUrl appendFormat:@"channel=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:channel]];
     }
     
     if ([feature length]) {
-        [baseUrl appendFormat:@"feature=%@&", feature];
+        [baseUrl appendFormat:@"feature=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:feature]];
     }
     
     if ([stage length]) {
-        [baseUrl appendFormat:@"stage=%@&", stage];
+        [baseUrl appendFormat:@"stage=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:stage]];
     }
     
     [baseUrl appendFormat:@"type=%ld&", (long)type];
@@ -132,7 +140,7 @@
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
     NSString *urlEncodedBase64EncodedParams = [BNCEncodingUtils urlEncodedString:base64EncodedParams];
     [baseUrl appendFormat:@"source=ios&data=%@", urlEncodedBase64EncodedParams];
-    
+
     return baseUrl;
 }
 

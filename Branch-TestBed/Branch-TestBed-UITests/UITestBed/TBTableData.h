@@ -6,7 +6,7 @@
 //  Copyright © 2017 Branch. All rights reserved.
 //
 
-@import Foundation;
+@import UIKit;
 
 typedef NS_ENUM(NSInteger, TBRowStyle) {
     TBRowStylePlain,
@@ -41,6 +41,5 @@ typedef NS_ENUM(NSInteger, TBRowStyle) {
 - (TBTableRow*) addRowWithTitle:(NSString*)title selector:(SEL)selector style:(TBRowStyle)style;
 
 - (NSIndexPath*) indexPathForRow:(TBTableRow*)row;
+- (UITableViewCell*) cellForTableView:(UITableView*)tableView tableRow:(TBTableRow*)tableRow;
 @end
-
-

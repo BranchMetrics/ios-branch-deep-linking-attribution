@@ -7,7 +7,6 @@
 //
 
 #import "TBTableData.h"
-@import UIKit;
 
 @implementation TBTableItem
 @end
@@ -91,6 +90,12 @@
         rowIndex = 0;
         sectionIndex++;
     }
+    return nil;
+}
+
+- (UITableViewCell*) cellForTableView:(UITableView*)tableView tableRow:(TBTableRow*)tableRow {
+    NSIndexPath *indexPath = [self indexPathForRow:tableRow];
+    if (indexPath) return [tableView cellForRowAtIndexPath:indexPath];
     return nil;
 }
 
