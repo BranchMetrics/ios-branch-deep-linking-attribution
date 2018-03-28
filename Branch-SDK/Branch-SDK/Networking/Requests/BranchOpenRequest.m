@@ -88,8 +88,13 @@
     params[@"latest_install_time"] = BNCWireFormatFromDate(application.currentInstallDate);
     params[@"first_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
     params[@"update"] = [self.class appUpdateState];
+    params[@"tracking_disabled"] = BNCWireFormatFromBool(preferenceHelper.trackingDisabled);
 
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN] key:key callback:callback];
+    [serverInterface postRequest:params
+        url:[preferenceHelper
+        getAPIURL:BRANCH_REQUEST_ENDPOINT_OPEN]
+        key:key
+        callback:callback];
 }
 
 typedef NS_ENUM(NSInteger, BNCUpdateState) {

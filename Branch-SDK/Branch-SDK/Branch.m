@@ -1114,22 +1114,23 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         return;
     }
 
-    BranchLogoutRequest *req = [[BranchLogoutRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
-        if (success) {
-            // Clear cached links
-            self.linkCache = [[BNCLinkCache alloc] init];
+    BranchLogoutRequest *req =
+        [[BranchLogoutRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
+            if (success) {
+                // Clear cached links
+                self.linkCache = [[BNCLinkCache alloc] init];
 
-            if (callback) {
-                callback(YES, nil);
+                if (callback) {
+                    callback(YES, nil);
+                }
+                BNCLogDebug(@"Logout success.");
+            } else /*failure*/ {
+                if (callback) {
+                    callback(NO, error);
+                }
+                BNCLogDebug(@"Logout failure.");
             }
-            BNCLogDebug(@"Logout success.");
-        } else /*failure*/ {
-            if (callback) {
-                callback(NO, error);
-            }
-            BNCLogDebug(@"Logout failure.");
-        }
-    }];
+        }];
 
     [self.requestQueue enqueue:req];
     [self processNextQueueItem];
