@@ -137,10 +137,11 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     UILabel *versionLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     versionLabel.textAlignment = NSTextAlignmentCenter;
     versionLabel.text =
-        [NSString stringWithFormat:@"iOS %@\nTestBed %@ SDK %@",
+        [NSString stringWithFormat:@"iOS %@\nTestBed %@ SDK %@\n%@",
             [UIDevice currentDevice].systemVersion,
             [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"],
-            BNC_SDK_VERSION];
+            BNC_SDK_VERSION,
+            BNC_API_BASE_URL];
     versionLabel.numberOfLines = 0;
     versionLabel.backgroundColor = self.tableView.backgroundColor;
     versionLabel.textColor = [UIColor darkGrayColor];
@@ -233,6 +234,8 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 #pragma mark - Actions
 
+static NSString* global_createdBranchURLString = nil;
+
 - (IBAction)createBranchLink:(TBTableRow*)sender {
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
@@ -240,18 +243,22 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     linkProperties.campaign = @"some campaign";
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
     [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
-    
     [self.universalObject
         getShortUrlWithLinkProperties:linkProperties
         andCallback:^(NSString *url, NSError *error) {
             sender.value = url;
+            global_createdBranchURLString = url;
             [self.tableView reloadData];
     }];
 }
 
 - (IBAction) openBranchLinkInApp:(id)sender {
-    NSURL *URL = [NSURL URLWithString:@"https://branch-uitestbed.app.link/TmAw9WrvPI"]; // <= Your URL goes here.
-    [[Branch getInstance] handleDeepLinkWithNewSession:URL];
+    if (global_createdBranchURLString.length) {
+        NSURL *URL = [NSURL URLWithString:global_createdBranchURLString];
+        [[Branch getInstance] handleDeepLinkWithNewSession:URL];
+    } else {
+        [self showAlertWithTitle:@"Can't Open URL" message:@"No URL to open!\nCreate a link first."];
+    }
 }
 
 - (IBAction)showFirstReferringParams:(TBTableRow*)sender {
