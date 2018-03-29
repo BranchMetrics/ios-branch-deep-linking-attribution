@@ -9,6 +9,7 @@
 #import "TBAppDelegate.h"
 #import "TBBranchViewController.h"
 #import "TBDetailViewController.h"
+#import "TBTextViewController.h"
 @import Branch;
 
 NSDate *global_previous_update_time = nil;
@@ -140,31 +141,27 @@ continueUserActivity:(NSUserActivity *)userActivity
 }
 
 - (void)handleBranchDeepLinkParameters:(NSDictionary*)params error:(NSError*)error {
-    NSString *title = nil;
-    NSString *message = nil;
-    NSDictionary *dictionary = nil;
-
+    UIViewController *viewController = nil;
     if (error) {
         NSLog(@"Error handling deep link! Error: %@.", error);
-        title = @"Error";
-        dictionary = @{
-            @"Error": [NSString stringWithFormat:@"%@", error]
-        };
+        TBTextViewController *tvc = [[TBTextViewController alloc] initWithText:error.description];
+        tvc.title = @"Error";
+        tvc.message = @"Link Open Error";
+        viewController = tvc;
     } else {
         NSLog(@"Received deeplink with params: %@", params);
-        title = @"Link Opened";
-        message = params[@"~referring_link"];
-        if (!message) message = params[@"+non_branch_link"];
-        dictionary = params;
+        TBDetailViewController *dataViewController =
+            [[TBDetailViewController alloc] initWithData:params];
+        dataViewController.title = @"Link Opened";
+        dataViewController.message = params[@"~referring_link"];
+        if (!dataViewController.message)
+            dataViewController.message = params[@"+non_branch_link"];
+        viewController = dataViewController;
      }
 
-    TBDetailViewController *dataViewController =
-        [[TBDetailViewController alloc] initWithData:dictionary];
-    dataViewController.title = title;
-    dataViewController.message = message;
     UINavigationController *nav =
-        [[UINavigationController alloc] initWithRootViewController:dataViewController];
-    nav.navigationBar.topItem.title = title;
+        [[UINavigationController alloc] initWithRootViewController:viewController];
+    nav.navigationBar.topItem.title = viewController.title;
     nav.navigationBar.topItem.rightBarButtonItem =
         [[UIBarButtonItem alloc]
             initWithBarButtonSystemItem:UIBarButtonSystemItemDone

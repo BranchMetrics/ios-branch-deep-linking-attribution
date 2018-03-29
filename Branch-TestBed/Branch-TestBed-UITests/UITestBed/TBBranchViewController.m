@@ -568,6 +568,7 @@ static NSString* global_createdBranchURLString = nil;
     lp.feature = @"Sharing Feature";
     lp.channel = @"Distribution Channel";
     lp.campaign = @"some campaign";
+    lp.tags = @[ @"tag1", @"tag2" ];
     [lp addControlParam:@"$desktop_url" withValue:@"http://branch.io"];
     [lp addControlParam:@"$email_subject" withValue:@"Email Subject"];
     BranchShareLink *shareLink =
