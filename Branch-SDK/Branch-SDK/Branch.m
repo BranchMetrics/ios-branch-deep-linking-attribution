@@ -529,6 +529,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             Branch *branch = Branch.getInstance;
             [branch clearNetworkQueue];
             branch.isInitialized = NO;
+            [branch.linkCache clear];
             // Release the lock in case it's locked:
             [BranchOpenRequest releaseOpenResponseLock];
         } else {

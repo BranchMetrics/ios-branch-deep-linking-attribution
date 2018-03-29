@@ -564,20 +564,18 @@ static NSString* global_createdBranchURLString = nil;
 #pragma mark - Sharing
 
 - (IBAction) sharelinkTableRow:(TBTableRow*)sender {
-    UITableViewCell *cell = [self.tableData cellForTableView:self.tableView tableRow:sender];
-    //[self.linkProperties addControlParam:@"$email_subject" withValue:@"Email Subject"];
-    BranchLinkProperties *lp = //NO ? [[BranchLinkProperties alloc] init] : self.linkProperties;
-        [[BranchLinkProperties alloc] init];
+    BranchLinkProperties *lp = [[BranchLinkProperties alloc] init];
     lp.feature = @"Sharing Feature";
     lp.channel = @"Distribution Channel";
     lp.campaign = @"some campaign";
     [lp addControlParam:@"$desktop_url" withValue:@"http://branch.io"];
-    //[lp addControlParam:@"$ios_url" withValue:@"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/"];
+    [lp addControlParam:@"$email_subject" withValue:@"Email Subject"];
     BranchShareLink *shareLink =
         [[BranchShareLink alloc]
             initWithUniversalObject:self.universalObject
             linkProperties:lp/*self.linkProperties*/];
     shareLink.shareText = @"ShareLink from table row:\n";
+    UITableViewCell *cell = [self.tableData cellForTableView:self.tableView tableRow:sender];
     [shareLink presentActivityViewControllerFromViewController:self anchor:cell];
 }
 
