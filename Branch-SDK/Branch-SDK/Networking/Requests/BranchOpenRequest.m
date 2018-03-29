@@ -88,7 +88,6 @@
     params[@"latest_install_time"] = BNCWireFormatFromDate(application.currentInstallDate);
     params[@"first_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
     params[@"update"] = [self.class appUpdateState];
-    params[@"tracking_disabled"] = BNCWireFormatFromBool(preferenceHelper.trackingDisabled);
 
     [serverInterface postRequest:params
         url:[preferenceHelper

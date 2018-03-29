@@ -570,10 +570,13 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 
 - (void) clearTrackingInformation {
     @synchronized(self) {
+        /* Don't clear these:
         self.deviceFingerprintID = nil;
-        self.sessionID = nil;
         self.userIdentity = nil;
         self.identityID = nil;
+        self.installParams = nil;
+        */
+        self.sessionID = nil;
         self.linkClickIdentifier = nil;
         self.spotlightIdentifier = nil;
         self.referringURL = nil;
@@ -582,7 +585,6 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
         self.appleSearchAdDetails = nil;
         self.appleSearchAdNeedsSend = NO;
         self.sessionParams = nil;
-        self.installParams = nil;
         self.externalIntentURI = nil;
         self.savedAnalyticsData = nil;
         self.previousAppBuildDate = nil;

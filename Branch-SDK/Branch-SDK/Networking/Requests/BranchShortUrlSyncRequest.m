@@ -53,9 +53,11 @@
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:self.linkData.data];
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
-    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
-    params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
+    if (!preferenceHelper.trackingDisabled) {
+        params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+        params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+        params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
+    }
 
     return [serverInterface postRequestSynchronous:params
 		url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]
@@ -96,7 +98,13 @@
     
     if (preferenceHelper.userUrl) {
         baseUrl = [preferenceHelper.userUrl mutableCopy];
-        [baseUrl appendString:@"&"];
+        if (preferenceHelper.trackingDisabled) {
+            NSString *id_string = [NSString stringWithFormat:@"%%24identity_id=%@", preferenceHelper.identityID];
+            NSRange range = [baseUrl rangeOfString:id_string];
+            if (range.location != NSNotFound) [baseUrl replaceCharactersInRange:range withString:@""];
+        } else {
+            [baseUrl appendString:@"&"];
+        }
     } else {
         baseUrl = [[NSMutableString alloc] initWithFormat:@"%@/a/%@?", BNC_LINK_URL, branchKey];
     }

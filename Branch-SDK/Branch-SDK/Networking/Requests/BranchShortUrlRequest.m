@@ -50,18 +50,23 @@
     return self;
 }
 
-- (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+- (void)makeRequest:(BNCServerInterface *)serverInterface
+                key:(NSString *)key
+           callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:self.linkData.data];
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
-    
-    if (!_isSpotlightRequest) {
-        params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    if (!preferenceHelper.trackingDisabled) {
+        params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+        if (!_isSpotlightRequest)
+            params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+        params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     }
-    params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
-    
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL] key:key callback:callback];
+
+    [serverInterface postRequest:params
+        url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]
+        key:key
+        callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {

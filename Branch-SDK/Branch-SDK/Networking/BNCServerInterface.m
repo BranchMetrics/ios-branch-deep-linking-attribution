@@ -738,7 +738,7 @@ exit:
         preparedParams[@"sdk"] = nil;
     }
     if ([Branch trackingDisabled]) {
-        preparedParams[@"disable_tracking"] = (__bridge NSObject*) kCFBooleanTrue;
+        preparedParams[@"tracking_disabled"] = (__bridge NSNumber*) kCFBooleanTrue;
         preparedParams[@"local_ip"] = nil;
         preparedParams[@"lastest_update_time"] = nil;
         preparedParams[@"previous_update_time"] = nil;
@@ -750,6 +750,7 @@ exit:
         preparedParams[@"is_hardware_id_real"] = nil;
         preparedParams[@"device_fingerprint_id"] = nil;
         preparedParams[@"identity_id"] = nil;
+        preparedParams[@"identity"] = nil;
         preparedParams[@"update"] = nil;
     }
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];

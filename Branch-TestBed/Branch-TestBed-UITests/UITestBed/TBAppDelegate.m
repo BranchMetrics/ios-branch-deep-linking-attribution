@@ -174,24 +174,34 @@ continueUserActivity:(NSUserActivity *)userActivity
     [self presentModalViewController:nav];
 }
 
+static inline dispatch_time_t BNCDispatchTimeFromSeconds(NSTimeInterval seconds) {
+    return dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC);
+}
+
+static inline void BNCAfterSecondsPerformBlock(NSTimeInterval seconds, dispatch_block_t block) {
+    dispatch_after(BNCDispatchTimeFromSeconds(seconds), dispatch_get_main_queue(), block);
+}
+
 - (void) presentModalViewController:(UIViewController*)viewController {
     UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    window.rootViewController = [[UIViewController alloc] init];
+    window.rootViewController = [[UIViewController alloc] initWithNibName:nil bundle:nil];
     window.backgroundColor = [UIColor clearColor];
 
     id<UIApplicationDelegate> delegate = [UIApplication sharedApplication].delegate;
     // Applications that does not load with UIMainStoryboardFile might not have a window property:
     if ([delegate respondsToSelector:@selector(window)]) {
-        // we inherit the main window's tintColor
+        // Inherit the main window's tintColor
         window.tintColor = delegate.window.tintColor;
     }
 
-    // window level is above the top window (this makes the alert, if it's a sheet, show over the keyboard)
+    // Window level is above the top window (this makes the alert, if it's a sheet, show over the keyboard)
     UIWindow *topWindow = [UIApplication sharedApplication].windows.lastObject;
     window.windowLevel = topWindow.windowLevel + 1;
 
     [window makeKeyAndVisible];
-    [window.rootViewController presentViewController:viewController animated:YES completion:nil];
+    BNCAfterSecondsPerformBlock(0.10, ^{
+        [window.rootViewController presentViewController:viewController animated:YES completion:nil];
+    });
 }
 
 - (void) dismissLastModalViewController {
