@@ -72,12 +72,17 @@
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     if (error) {
         if (self.callback) {
-            NSString *failedUrl = nil;
-            NSString *userUrl = [BNCPreferenceHelper preferenceHelper].userUrl;
-            if (userUrl) {
-                failedUrl = [self createLongUrlForUserUrl:userUrl];
+            BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+            NSString *baseUrl = preferenceHelper.userUrl;
+            if (baseUrl.length)
+                baseUrl = [preferenceHelper sanitizedMutableBaseURL:baseUrl];
+            else {
+                baseUrl = [[NSMutableString alloc] initWithFormat:@"%@/a/%@?",
+                    BNC_LINK_URL,
+                    Branch.branchKey];
             }
-            self.callback(failedUrl, error);
+            baseUrl = [self createLongUrlForUserUrl:baseUrl];
+            self.callback(baseUrl, error);
         }
         return;
     }

@@ -26,11 +26,15 @@ NSDate *next_previous_update_time = nil;
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     BNCLogSetDisplayLevel(BNCLogLevelAll);
-    
-    [self initializeViewControllers];
 
     // Set to YES for testing GDPR compliance.
     // [Branch setTrackingDisabled:YES];
+
+    // This simulates opt-in tracking.
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasRunBefore"]) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasRunBefore"];
+        [Branch setTrackingDisabled:YES];
+    }
 
     // Initialize Branch
     Branch *branch = [Branch getInstance];
@@ -54,6 +58,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
             global_previous_update_time = next_previous_update_time;
             next_previous_update_time = [BNCPreferenceHelper preferenceHelper].previousAppBuildDate;
         }];
+
+    [self initializeViewControllers];
 
     return YES;
 }

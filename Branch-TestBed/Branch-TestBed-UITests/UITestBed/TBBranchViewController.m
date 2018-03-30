@@ -302,7 +302,7 @@ static NSString* global_createdBranchURLString = nil;
     buo.creationDate = [NSDate date];
     [buo getShortUrlWithLinkProperties:linkProperties
         andCallback:^(NSString *url, NSError *error) {
-            sender.value = url;
+            sender.value = (url.length) ? url : error.description;
             global_createdBranchURLString = url;
             [self.tableView reloadData];
             TBTextViewController *tvc = [TBTextViewController new];
