@@ -94,8 +94,7 @@
 }
 
 - (NSString *)createLongUrlForUserUrl:(NSString *)userUrl {
-    NSMutableString *longUrl = [[NSMutableString alloc] initWithFormat:@"%@?", userUrl];
-    
+    NSMutableString *longUrl = [[BNCPreferenceHelper preferenceHelper] sanitizedMutableBaseURL:userUrl];
     for (NSString *tag in self.tags) {
         [longUrl appendFormat:@"tags=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:tag]];
     }

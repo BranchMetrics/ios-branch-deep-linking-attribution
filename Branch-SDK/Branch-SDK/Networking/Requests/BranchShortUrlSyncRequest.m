@@ -96,19 +96,11 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSMutableString *baseUrl;
     
-    if (preferenceHelper.userUrl) {
-        baseUrl = [preferenceHelper.userUrl mutableCopy];
-        if (preferenceHelper.trackingDisabled) {
-            NSString *id_string = [NSString stringWithFormat:@"%%24identity_id=%@", preferenceHelper.identityID];
-            NSRange range = [baseUrl rangeOfString:id_string];
-            if (range.location != NSNotFound) [baseUrl replaceCharactersInRange:range withString:@""];
-        } else {
-            [baseUrl appendString:@"&"];
-        }
-    } else {
+    if (preferenceHelper.userUrl)
+        baseUrl = [preferenceHelper sanitizedMutableBaseURL:preferenceHelper.userUrl];
+    else
         baseUrl = [[NSMutableString alloc] initWithFormat:@"%@/a/%@?", BNC_LINK_URL, branchKey];
-    }
-    
+
     return [BranchShortUrlSyncRequest createLongUrlWithBaseUrl:baseUrl tags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params];
 }
 
@@ -121,6 +113,8 @@
                                feature:(NSString *)feature
                                  stage:(NSString *)stage
                                 params:(NSDictionary *)params {
+
+    baseUrl = [[BNCPreferenceHelper preferenceHelper] sanitizedMutableBaseURL:baseUrl];
     for (NSString *tag in tags) {
         [baseUrl appendFormat:@"tags=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:tag]];
     }

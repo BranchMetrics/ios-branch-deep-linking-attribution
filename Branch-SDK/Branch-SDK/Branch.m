@@ -1812,8 +1812,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                         duration:(NSUInteger)duration
                             type:(BranchLinkType)type {
 
-    NSMutableString *longUrl = [[NSMutableString alloc] initWithFormat:@"%@?", baseUrl];
-
+    NSMutableString *longUrl = [self.preferenceHelper sanitizedMutableBaseURL:baseUrl];
     for (NSString *tag in tags) {
         [longUrl appendFormat:@"tags=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:tag]];
     }

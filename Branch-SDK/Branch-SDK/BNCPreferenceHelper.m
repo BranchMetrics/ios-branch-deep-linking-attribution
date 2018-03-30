@@ -425,6 +425,21 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
+- (NSMutableString*) sanitizedMutableBaseURL:(NSString*)baseUrl_ {
+    NSMutableString *baseUrl = [baseUrl_ mutableCopy];
+    if (self.trackingDisabled) {
+        NSString *id_string = [NSString stringWithFormat:@"%%24identity_id=%@", self.identityID];
+        NSRange range = [baseUrl rangeOfString:id_string];
+        if (range.location != NSNotFound) [baseUrl replaceCharactersInRange:range withString:@""];
+    } else
+    if ([baseUrl hasSuffix:@"&"] || [baseUrl hasSuffix:@"?"]) {
+    }
+    else {
+        [baseUrl appendString:@"&"];
+    }
+    return baseUrl;
+}
+
 - (BOOL)checkedAppleSearchAdAttribution {
     _checkedAppleSearchAdAttribution = [self readBoolFromDefaults:BRANCH_PREFS_KEY_CHECKED_APPLE_SEARCH_ADS];
     return _checkedAppleSearchAdAttribution;
