@@ -6,7 +6,7 @@
 //  Copyright © 2017 Branch. All rights reserved.
 //
 
-@import Foundation;
+@import UIKit;
 
 @interface TBTableItem : NSObject
 @property (nonatomic, strong) NSString *title;
@@ -33,6 +33,5 @@
 - (TBTableRow*) addRowWithTitle:(NSString*)title selector:(SEL)selector;
 
 - (NSIndexPath*) indexPathForRow:(TBTableRow*)row;
+- (UITableViewCell*) cellForTableView:(UITableView*)tableView tableRow:(TBTableRow*)tableRow;
 @end
-
-

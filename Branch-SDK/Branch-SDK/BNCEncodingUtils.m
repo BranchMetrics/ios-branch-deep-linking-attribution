@@ -325,6 +325,11 @@ NSString* BNCWireFormatFromString(NSString *string) {
     return [string stringByRemovingPercentEncoding];
 }
 
++ (NSString*) stringByPercentEncodingStringForQuery:(NSString *)string {
+    return [string stringByAddingPercentEncodingWithAllowedCharacters:
+                [NSCharacterSet URLQueryAllowedCharacterSet]];
+}
+
 #pragma mark - Param Decoding Methods
 
 + (NSDictionary *)decodeJsonDataToDictionary:(NSData *)jsonData {

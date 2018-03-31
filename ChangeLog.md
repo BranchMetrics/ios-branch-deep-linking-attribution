@@ -1,6 +1,23 @@
 Branch iOS SDK Change Log
 
+- v0.23.5
+  * _*Master Release*_ - March 27, 2018
+  * Added a field to set an email subject without adding it as a link parameter.
+    - The field is BranchShareLink.emailSubject.
+    - This is analogous to the similar Android option.
+    - Updated the Branch code to use the newer `activityViewController:subjectForActivityType:`
+      delegate as well as support the old style set-undocumented-option-on-view-controller way.
+    - Setting an email subject for Gmail is still broken. This is a Gmail problem and I've
+      filed an issue with Gmail (GitHub #789).
+  * After sharing a link in Skype, the link would open in the app as if a deferred deep linking had
+    happened (DEVEX-278, GitHub #793).
+    - Fixed this so that Skype content scraping doesn't trigger a deferred deep link.
+  * Don't print expected HTTP status 404 error pages because it looks like an error (GitHub #800).
+  * Fixed Airdrop of a URL scheme link open (INTENG-4106).
+  * Fixed a Fabric share content event bug.
+
 - v0.23.4
+  * _*Master Release*_ - March 16, 2018
   * Made sure v2 events for sharing and content view were being sent.
   * Added rewards testing to the UITestBed app.
   * Made sure that `BNCNetworkService` network sessions are deallocated.

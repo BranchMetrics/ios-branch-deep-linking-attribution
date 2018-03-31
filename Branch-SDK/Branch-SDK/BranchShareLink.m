@@ -60,6 +60,21 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     return [self.parent shareObjectForItem:self activityType:self.activityType];
 }
 
+- (NSString*) subject {
+    NSString *subject = self.parent.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
+    if (subject.length == 0) subject = self.parent.emailSubject;
+    return subject;
+}
+
+- (NSString*) subjectForActivityType:(UIActivityType)activityType {
+    return self.subject;
+}
+
+- (NSString*) activityViewController:(UIActivityViewController*)activityViewController
+              subjectForActivityType:(UIActivityType)activityType {
+    return self.subject;
+}
+
 @end
 
 #pragma mark - BranchShareLink
@@ -80,10 +95,11 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
     if ([self.delegate respondsToSelector:@selector(branchShareLink:didComplete:withError:)]) {
         [self.delegate branchShareLink:self didComplete:completed withError:error];
     }
-    if (completed && !error)
+    if (completed && !error) {
         [[BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self.universalObject] logEvent];
-    NSDictionary *attributes = [self.universalObject getDictionaryWithCompleteLinkProperties:self.linkProperties];
-    [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:attributes];
+        NSDictionary *attributes = [self.universalObject getDictionaryWithCompleteLinkProperties:self.linkProperties];
+        [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:attributes];
+    }
 }
 
 - (NSArray<UIActivityItemProvider*>*_Nonnull) activityItems {
@@ -176,11 +192,11 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         
     }
 
-    if (self.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT]) {
+    NSString *emailSubject = self.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT];
+    if (emailSubject.length <= 0) emailSubject = self.emailSubject;
+    if (emailSubject.length) {
         @try {
-            [shareViewController
-                setValue:self.linkProperties.controlParams[BRANCH_LINK_DATA_KEY_EMAIL_SUBJECT]
-                forKey:@"subject"];
+            [shareViewController setValue:emailSubject forKey:@"subject"];
         }
         @catch (NSException*) {
             BNCLogWarning(
@@ -248,7 +264,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         @"Facebook":    @1,
         @"Twitter":     @1,
         @"Slack":       @1,
-        @"Apple Notes": @1
+        @"Apple Notes": @1,
+        @"Skype":       @1
     };
     NSString *userAgentString = nil;
     if (self.linkProperties.channel && scrapers[self.linkProperties.channel]) {
