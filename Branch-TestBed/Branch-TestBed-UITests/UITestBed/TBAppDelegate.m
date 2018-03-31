@@ -18,6 +18,8 @@ NSDate *next_previous_update_time = nil;
 @property (nonatomic, strong) TBBranchViewController *branchViewController;
 @end
 
+#pragma mark - TBAppDelegate
+
 @implementation TBAppDelegate
 
 - (BOOL)application:(UIApplication *)application
@@ -38,6 +40,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
 
+    // For testing app updates:
     next_previous_update_time = [BNCPreferenceHelper preferenceHelper].previousAppBuildDate;
     
     [branch setWhiteListedSchemes:@[@"branchuitest"]];
@@ -147,10 +150,13 @@ continueUserActivity:(NSUserActivity *)userActivity
     } else {
         NSLog(@"Received deeplink with params: %@", params);
         title = @"Link Opened";
+        message = params[@"~referring_link"];
+        if (!message) message = params[@"+non_branch_link"];
         dictionary = params;
      }
 
-    TBDetailViewController *dataViewController = [[TBDetailViewController alloc] initWithData:dictionary];
+    TBDetailViewController *dataViewController =
+        [[TBDetailViewController alloc] initWithData:dictionary];
     dataViewController.title = title;
     dataViewController.message = message;
     UINavigationController *nav =
@@ -161,25 +167,57 @@ continueUserActivity:(NSUserActivity *)userActivity
             initWithBarButtonSystemItem:UIBarButtonSystemItemDone
             target:self
             action:@selector(dismissLinkViewAction:)];
-    [[UIViewController bnc_currentViewController] presentViewController:nav animated:YES completion:nil];
+
+    [self presentModalViewController:nav];
+}
+
+- (void) presentModalViewController:(UIViewController*)viewController {
+    UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    window.rootViewController = [[UIViewController alloc] init];
+    window.backgroundColor = [UIColor clearColor];
+
+    id<UIApplicationDelegate> delegate = [UIApplication sharedApplication].delegate;
+    // Applications that does not load with UIMainStoryboardFile might not have a window property:
+    if ([delegate respondsToSelector:@selector(window)]) {
+        // we inherit the main window's tintColor
+        window.tintColor = delegate.window.tintColor;
+    }
+
+    // window level is above the top window (this makes the alert, if it's a sheet, show over the keyboard)
+    UIWindow *topWindow = [UIApplication sharedApplication].windows.lastObject;
+    window.windowLevel = topWindow.windowLevel + 1;
+
+    [window makeKeyAndVisible];
+    [window.rootViewController presentViewController:viewController animated:YES completion:nil];
+}
+
+- (void) dismissLastModalViewController {
+    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+    [window.rootViewController dismissViewControllerAnimated:YES completion:^ {
+        window.rootViewController = nil;
+        window.hidden = YES;
+    }];
 }
 
 - (IBAction)dismissLinkViewAction:(id)sender {
-    UIViewController *viewController = [UIViewController bnc_currentViewController];
-    [viewController.parentViewController dismissViewControllerAnimated:YES completion:nil];
+    [self dismissLastModalViewController];
 }
 
 - (BOOL)splitViewController:(UISplitViewController *)splitViewController
 collapseSecondaryViewController:(UIViewController *)secondaryViewController
       ontoPrimaryViewController:(UIViewController *)primaryViewController {
 
-    if ([secondaryViewController isKindOfClass:[UINavigationController class]]) {
-        UINavigationController *navigationController = (id) secondaryViewController;
-        if ([[navigationController topViewController] isKindOfClass:[TBDetailViewController class]] &&
-            ([(TBDetailViewController *)[navigationController topViewController] dictionaryOrArray] == nil)) {
-            return YES;
-        }
-    }
+    UINavigationController *navigationController = nil;
+    TBDetailViewController *detailViewController = nil;
+
+    if ([secondaryViewController isKindOfClass:[UINavigationController class]])
+        navigationController = (id) secondaryViewController;
+
+    if ([[navigationController topViewController] isKindOfClass:[TBDetailViewController class]])
+        detailViewController = (id) [navigationController topViewController];
+
+    if (detailViewController && detailViewController.dictionaryOrArray == nil)
+        return YES;
 
     return NO;
 }
