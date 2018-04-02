@@ -698,6 +698,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning This will prevent most of the Branch SDK functionality.
 */
 + (void) setTrackingDisabled:(BOOL)disabled;
+
+///Returns the current tracking state.
 + (BOOL) trackingDisabled;
 
 #pragma mark - Session Item methods
