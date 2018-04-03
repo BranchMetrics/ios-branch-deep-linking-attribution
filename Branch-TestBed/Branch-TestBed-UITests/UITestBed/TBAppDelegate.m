@@ -9,6 +9,7 @@
 #import "TBAppDelegate.h"
 #import "TBBranchViewController.h"
 #import "TBDetailViewController.h"
+#import "TBTextViewController.h"
 @import Branch;
 
 NSDate *global_previous_update_time = nil;
@@ -25,8 +26,15 @@ NSDate *next_previous_update_time = nil;
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     BNCLogSetDisplayLevel(BNCLogLevelAll);
-    
-    [self initializeViewControllers];
+
+    // Set to YES for testing GDPR compliance.
+    // [Branch setTrackingDisabled:YES];
+
+    // This simulates opt-in tracking.
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasRunBefore"]) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasRunBefore"];
+        [Branch setTrackingDisabled:YES];
+    }
 
     // Initialize Branch
     Branch *branch = [Branch getInstance];
@@ -50,6 +58,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
             global_previous_update_time = next_previous_update_time;
             next_previous_update_time = [BNCPreferenceHelper preferenceHelper].previousAppBuildDate;
         }];
+
+    [self initializeViewControllers];
 
     return YES;
 }
@@ -137,31 +147,27 @@ continueUserActivity:(NSUserActivity *)userActivity
 }
 
 - (void)handleBranchDeepLinkParameters:(NSDictionary*)params error:(NSError*)error {
-    NSString *title = nil;
-    NSString *message = nil;
-    NSDictionary *dictionary = nil;
-
+    UIViewController *viewController = nil;
     if (error) {
         NSLog(@"Error handling deep link! Error: %@.", error);
-        title = @"Error";
-        dictionary = @{
-            @"Error": [NSString stringWithFormat:@"%@", error]
-        };
+        TBTextViewController *tvc = [[TBTextViewController alloc] initWithText:error.description];
+        tvc.title = @"Error";
+        tvc.message = @"Link Open Error";
+        viewController = tvc;
     } else {
         NSLog(@"Received deeplink with params: %@", params);
-        title = @"Link Opened";
-        message = params[@"~referring_link"];
-        if (!message) message = params[@"+non_branch_link"];
-        dictionary = params;
+        TBDetailViewController *dataViewController =
+            [[TBDetailViewController alloc] initWithData:params];
+        dataViewController.title = @"Link Opened";
+        dataViewController.message = params[@"~referring_link"];
+        if (!dataViewController.message)
+            dataViewController.message = params[@"+non_branch_link"];
+        viewController = dataViewController;
      }
 
-    TBDetailViewController *dataViewController =
-        [[TBDetailViewController alloc] initWithData:dictionary];
-    dataViewController.title = title;
-    dataViewController.message = message;
     UINavigationController *nav =
-        [[UINavigationController alloc] initWithRootViewController:dataViewController];
-    nav.navigationBar.topItem.title = title;
+        [[UINavigationController alloc] initWithRootViewController:viewController];
+    nav.navigationBar.topItem.title = viewController.title;
     nav.navigationBar.topItem.rightBarButtonItem =
         [[UIBarButtonItem alloc]
             initWithBarButtonSystemItem:UIBarButtonSystemItemDone
@@ -171,24 +177,34 @@ continueUserActivity:(NSUserActivity *)userActivity
     [self presentModalViewController:nav];
 }
 
+static inline dispatch_time_t BNCDispatchTimeFromSeconds(NSTimeInterval seconds) {
+    return dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC);
+}
+
+static inline void BNCAfterSecondsPerformBlock(NSTimeInterval seconds, dispatch_block_t block) {
+    dispatch_after(BNCDispatchTimeFromSeconds(seconds), dispatch_get_main_queue(), block);
+}
+
 - (void) presentModalViewController:(UIViewController*)viewController {
     UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    window.rootViewController = [[UIViewController alloc] init];
+    window.rootViewController = [[UIViewController alloc] initWithNibName:nil bundle:nil];
     window.backgroundColor = [UIColor clearColor];
 
     id<UIApplicationDelegate> delegate = [UIApplication sharedApplication].delegate;
     // Applications that does not load with UIMainStoryboardFile might not have a window property:
     if ([delegate respondsToSelector:@selector(window)]) {
-        // we inherit the main window's tintColor
+        // Inherit the main window's tintColor
         window.tintColor = delegate.window.tintColor;
     }
 
-    // window level is above the top window (this makes the alert, if it's a sheet, show over the keyboard)
+    // Window level is above the top window (this makes the alert, if it's a sheet, show over the keyboard)
     UIWindow *topWindow = [UIApplication sharedApplication].windows.lastObject;
     window.windowLevel = topWindow.windowLevel + 1;
 
     [window makeKeyAndVisible];
-    [window.rootViewController presentViewController:viewController animated:YES completion:nil];
+    BNCAfterSecondsPerformBlock(0.10, ^{
+        [window.rootViewController presentViewController:viewController animated:YES completion:nil];
+    });
 }
 
 - (void) dismissLastModalViewController {

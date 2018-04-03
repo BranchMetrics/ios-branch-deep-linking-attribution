@@ -36,19 +36,6 @@ BranchStandardEvent BranchStandardEventCompleteTutorial       = @"COMPLETE_TUTOR
 BranchStandardEvent BranchStandardEventAchieveLevel           = @"ACHIEVE_LEVEL";
 BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
 
-#pragma mark - BranchEventRequest
-
-@interface BranchEventRequest : BNCServerRequest <NSCoding>
-
-- (instancetype) initWithServerURL:(NSURL*)serverURL
-                   eventDictionary:(NSDictionary*)eventDictionary
-                        completion:(void (^)(NSDictionary* response, NSError* error))completion;
-
-@property (strong) NSDictionary *eventDictionary;
-@property (strong) NSURL *serverURL;
-@property (copy)   void (^completion)(NSDictionary* response, NSError* error);
-@end
-
 @implementation BranchEventRequest
 
 - (instancetype) initWithServerURL:(NSURL*)serverURL

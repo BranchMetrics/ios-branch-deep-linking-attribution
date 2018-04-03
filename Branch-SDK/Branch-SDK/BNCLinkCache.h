@@ -11,4 +11,5 @@
 @interface BNCLinkCache : NSObject
 - (void)setObject:(NSString *)anObject forKey:(BNCLinkData *)aKey;
 - (NSString *)objectForKey:(BNCLinkData *)aKey;
+- (void) clear;
 @end

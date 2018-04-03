@@ -66,8 +66,10 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad() {
         @"The Spotlight identifier is required to remove indexing from spotlight.",
         
         //BNCSpotlightPublicIndexError
-        @"Spotlight cannot remove publicly indexed content",
-        
+        @"Spotlight cannot remove publicly indexed content.",
+
+        //BNCTrackingDisabledError
+        @"User tracking is disabled."
     };
 
     #define _countof(array) (sizeof(array)/sizeof(array[0]))

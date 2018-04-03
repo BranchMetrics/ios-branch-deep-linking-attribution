@@ -265,7 +265,8 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         @"Twitter":     @1,
         @"Slack":       @1,
         @"Apple Notes": @1,
-        @"Skype":       @1
+        @"Skype":       @1,
+        @"SMS":         @1
     };
     NSString *userAgentString = nil;
     if (self.linkProperties.channel && scrapers[self.linkProperties.channel]) {

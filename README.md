@@ -28,8 +28,8 @@ ___
   + [Library installation](#installation)
   + [Register for Branch key](#register-your-app)
   + [Add your Branch key](#add-your-branch-key-to-your-project)
-  + [Register a URI scheme](#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)
-  + [Support Universal Links](#support-universal-linking-ios-9)
+  + [Register a URI scheme](#register-a-uri-scheme-direct-deep-linking)
+  + [Support Universal Links](#support-universal-linking)
 
 3. Branch general methods
   + [Get a Branch singleton](#get-a-singleton-branch-instance)
@@ -41,6 +41,7 @@ ___
   + [Logging a user out](#logout)
   + [Tracking user actions and events](#tracking-user-actions-and-events)
   + [Apple Search Ad Attribution](#apple-search-ads)
+  + [Enable or Disable User Tracking](#enable-or-disable-user-tracking)
 
 4. Branch Universal Objects
   + [Instantiate a Branch Universal Object](#branch-universal-object)
@@ -751,6 +752,20 @@ Warning: This should not be used in production.
 Branch.getInstance().setAppleSearchAdsDebugMode
 ```
 
+### Enable or Disable User Tracking
+In order to comply with tracking requirements, you can disable tracking at the SDK level. Simply call:
+
+```objc
+[Branch setTrackingDisabled:YES];
+```
+
+```swift
+Branch.setTrackingDisabled(true)
+```
+
+This will prevent any Branch network requests from being sent, except when deep linking. If someone clicks a Branch link, but does not want to be tracked, we will return the deep linking data back to the app but without capturing any tracking information.
+
+In do-not-track mode, you will still be able to create & share links. The links will not have identifiable information and will be long format links. Event tracking won’t pass data back to the server if a user has expressed to not be tracked. You can change this behavior at any time by calling the above function. The trackingDisabled state is saved and persisted across app runs.
 
 ## Branch Universal Object (for deep links, content analytics and indexing)
 
