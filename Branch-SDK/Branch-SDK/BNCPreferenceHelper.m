@@ -13,6 +13,7 @@
 #import "BNCLog.h"
 #import "BNCFabricAnswers.h"
 #import "BranchConstants.h"
+#import "NSString+Branch.h"
 
 static const NSTimeInterval DEFAULT_TIMEOUT = 5.5;
 static const NSTimeInterval DEFAULT_RETRY_INTERVAL = 0;
@@ -433,9 +434,12 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
         if (range.location != NSNotFound) [baseUrl replaceCharactersInRange:range withString:@""];
     } else
     if ([baseUrl hasSuffix:@"&"] || [baseUrl hasSuffix:@"?"]) {
+    } else
+    if ([baseUrl bnc_containsString:@"?"]) {
+        [baseUrl appendString:@"&"];
     }
     else {
-        [baseUrl appendString:@"&"];
+        [baseUrl appendString:@"?"];
     }
     return baseUrl;
 }

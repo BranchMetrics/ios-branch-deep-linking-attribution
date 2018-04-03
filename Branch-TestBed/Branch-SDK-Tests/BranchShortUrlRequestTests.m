@@ -168,7 +168,9 @@
     NSData * const PARAMS_DATA = [BNCEncodingUtils encodeDictionaryToJsonData:PARAMS];
     NSString * const ENCODED_PARAMS = [BNCEncodingUtils base64EncodeData:PARAMS_DATA];
     
-    NSString * EXPECTED_URL = [NSString stringWithFormat:@"%@?tags=%@&tags=%@&alias=%@&channel=%@&feature=%@&stage=%@&type=%ld&duration=%ld&source=ios&data=%@", USER_URL, TAG1, TAG2, ALIAS, CHANNEL, FEATURE, STAGE, (long)LINK_TYPE, (long)DURATION, ENCODED_PARAMS];
+    NSString * EXPECTED_URL = [NSString stringWithFormat:
+        @"%@?tags=%@&tags=%@&alias=%@&channel=%@&feature=%@&stage=%@&type=%ld&duration=%ld&source=ios&data=%@",
+        USER_URL, TAG1, TAG2, ALIAS, CHANNEL, FEATURE, STAGE, (long)LINK_TYPE, (long)DURATION, ENCODED_PARAMS];
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.userUrl = USER_URL;
@@ -216,7 +218,8 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     preferenceHelper.userUrl = nil;
     
-    XCTestExpectation *requestExpecation = [self expectationWithDescription:@"Get Referral Code Request Expectation"];
+    XCTestExpectation *requestExpecation =
+        [self expectationWithDescription:@"testFailureWithoutUserUrlAvailable Expectation"];
     BranchShortUrlRequest *request =
         [[BranchShortUrlRequest alloc]
             initWithTags:TAGS
@@ -231,7 +234,7 @@
             linkData:nil
             linkCache:nil
             callback:^(NSString *url, NSError *error) {
-        XCTAssertNil(url);
+        XCTAssertTrue((Branch.branchKeyIsSet && url != nil) || (!Branch.branchKeyIsSet && url == nil));
         XCTAssertNotNil(error);
         [self safelyFulfillExpectation:requestExpecation];
     }];

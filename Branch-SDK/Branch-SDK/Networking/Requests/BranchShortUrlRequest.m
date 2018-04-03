@@ -76,12 +76,14 @@
             NSString *baseUrl = preferenceHelper.userUrl;
             if (baseUrl.length)
                 baseUrl = [preferenceHelper sanitizedMutableBaseURL:baseUrl];
-            else {
+            else
+            if (Branch.branchKeyIsSet) {
                 baseUrl = [[NSMutableString alloc] initWithFormat:@"%@/a/%@?",
                     BNC_LINK_URL,
                     Branch.branchKey];
             }
-            baseUrl = [self createLongUrlForUserUrl:baseUrl];
+            if (baseUrl)
+                baseUrl = [self createLongUrlForUserUrl:baseUrl];
             self.callback(baseUrl, error);
         }
         return;

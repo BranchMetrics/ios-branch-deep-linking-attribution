@@ -230,6 +230,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /// @return Returns the current Branch key.
 + (NSString*) branchKey;
 
++ (BOOL) branchKeyIsSet;
+
 /**
  * By default, the Branch SDK will include the device fingerprint ID as metadata in Crashlytics
  * reports. This can help locate problems by correlating API traffic with a crash. To

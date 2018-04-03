@@ -421,6 +421,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
 }
 
++ (BOOL) branchKeyIsSet {
+    @synchronized (self) {
+        return (bnc_branchKey.length) ? YES : NO;
+    }
+}
+
 + (void)setEnableFingerprintIDInCrashlyticsReports:(BOOL)enabled
 {
     @synchronized(self) {
