@@ -64,17 +64,19 @@ static NSTimeInterval TBWaitingViewDefaultHangTime = 2.3f;
 #pragma mark - View Lifecycle
 
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     self.maxLabelRect = self.label.bounds;
 }
 
-- (void)viewDidUnload {
+- (void)viewDidDisappear:(BOOL)animated {
+    self.parentView.transform = self.parentTransform;
+    self.view.transform = CGAffineTransformIdentity;
     [self.backgroundView removeFromSuperview];
     self.backgroundView = nil;
     self.activityView = nil;
     self.label = nil;
-    [super viewDidUnload];
+    [super viewDidDisappear:animated];
 }
 
 static const CGFloat kScale = 0.9950;
@@ -168,12 +170,6 @@ static const CGFloat kScale = 0.9950;
                          self.backgroundView.alpha = 1.0;
                      }
                      completion:nil];
-}
-
-- (void)viewDidDisappear:(BOOL)animated {
-    self.parentView.transform = self.parentTransform;
-    self.view.transform = CGAffineTransformIdentity;
-    [super viewDidDisappear:animated];
 }
 
 - (void)tapGoAway:(UIGestureRecognizer *)gesture {
