@@ -1,5 +1,17 @@
 Branch iOS SDK Change Log
 
+- v0.24.0
+  * _*Master Release*_ - April 3, 2018
+  * Added the ability to disable user tracking (#794, DEVEX-242). This is useful for GDPR compliance.
+    - Added `setTrackingDisabled` and `trackingDisabled` methods to the Branch class to set and query the tracking state.
+    - Added the `BNCTrackingDisabledError` error code that's returned to callbacks when tracking is disabled.
+    - Added a 'Do not track' option to UITestBed.
+    - Updated the SDK so that deep links can be opened even when 'no tracking' is set.
+    - Updated documentation.
+  * Fixed some code analyzer warnings.
+  * Added SMS as a link scraper when sharing.
+  * Fixed some unit tests and updated pods.
+
 - v0.23.5
   * _*Master Release*_ - March 27, 2018
   * Added a field to set an email subject without adding it as a link parameter.
