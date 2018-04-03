@@ -107,7 +107,14 @@
     
     // Because Facebook et al immediately scrape URLs, we add an additional parameter to the
     // existing list, telling the backend to ignore the first click
-    NSArray *scrapers = @[@"Facebook", @"Twitter", @"Slack", @"Apple Notes", @"Skype"];
+    NSArray *scrapers = @[
+        @"Facebook",
+        @"Twitter",
+        @"Slack",
+        @"Apple Notes",
+        @"Skype",
+        @"SMS"
+    ];
     for (NSString *scraper in scrapers) {
         if ([channel isEqualToString:scraper]) {
             NSURL *URL = [NSURL URLWithString:[[Branch getInstance]

@@ -31,6 +31,10 @@ NSNumber* BNCWireFormatFromDate(NSDate *date) {
     return number;
 }
 
+NSNumber* BNCWireFormatFromBool(BOOL b) {
+    return (b) ? (__bridge NSNumber*) kCFBooleanTrue : nil;
+}
+
 NSString* BNCStringFromWireFormat(id object) {
     if ([object isKindOfClass:NSString.class])
         return object;

@@ -5,6 +5,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:branch-uitestbed.app.link</string>
+		<string>applinks:branch-uitestbed.test-app.link</string>
 		<string>applinks:branch-uitestbed-alternate.app.link</string>
 	</array>
 </dict>

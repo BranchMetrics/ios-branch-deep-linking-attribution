@@ -191,6 +191,8 @@ NSString* _Nonnull BNCLocalizedFormattedString(NSString* _Nonnull const format, 
     @"Could not generate a URL.":
     @"Could not generate a URL.",
 
+    @"User tracking is disabled.":
+    @"User tracking is disabled."
     };
     return en_dict;
 }
@@ -280,6 +282,9 @@ NSString* _Nonnull BNCLocalizedFormattedString(NSString* _Nonnull const format, 
 
     @"Could not generate a URL.":
     @"Не получилось сгенерировать URL.",
+
+    @"User tracking is disbabled.":
+    @"Трекинг пользователя отключен.",
     };
 
     return ru_dict;

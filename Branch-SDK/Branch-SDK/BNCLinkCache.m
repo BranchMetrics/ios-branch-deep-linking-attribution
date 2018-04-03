@@ -36,4 +36,10 @@
     }
 }
 
+- (void) clear {
+    @synchronized (self) {
+        [self.cache removeAllObjects];
+    }
+}
+
 @end

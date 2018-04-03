@@ -16,6 +16,7 @@
 
 extern NSDate*   BNCDateFromWireFormat(id object);
 extern NSNumber* BNCWireFormatFromDate(NSDate *date);
+extern NSNumber* BNCWireFormatFromBool(BOOL b);
 
 extern NSString* BNCStringFromWireFormat(id object);
 extern NSString* BNCWireFormatFromString(NSString *string);
