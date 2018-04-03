@@ -10,6 +10,7 @@
 #import "TBAppDelegate.h"
 #import "TBTableData.h"
 #import "TBDetailViewController.h"
+#import "TBTextViewController.h"
 #import "TBWaitingView.h"
 @import Branch;
 #import "BNCDeviceInfo.h"
@@ -53,7 +54,8 @@ static NSString* TBStringFromObject(id<NSObject> object) {
 @property (nonatomic, strong)   BranchLinkProperties  *linkProperties;
 @property (nonatomic, weak)     IBOutlet UITableView *tableView;
 @property (nonatomic, strong)   IBOutlet UINavigationItem *navigationItem;
-
+@property (nonatomic, strong)   NSIndexPath *trackingDisabledPath;
+@property (nonatomic, strong)   NSIndexPath *facebookIndexPath;
 @property (nonatomic, strong)   TBTableRow *rewardsRow;
 @end
 
@@ -63,47 +65,56 @@ static NSString* TBStringFromObject(id<NSObject> object) {
 
 - (void)initializeTableData {
 
+    TBTableRow *tableRow = nil;
     self.tableData = [TBTableData new];
 
     #define section(title) \
         [self.tableData addSectionWithTitle:title];
 
-    #define row(title, selector_) \
-        [self.tableData addRowWithTitle:title selector:@selector(selector_)];
+    #define row(title, rowStyle, selector_) \
+        [self.tableData addRowWithTitle:title selector:@selector(selector_) style:rowStyle];
 
     section(@"Session");
-    row(@"First Referring Parameters", showFirstReferringParams:);
-    row(@"Latest Referring Parameters", showLatestReferringParams:);
-    row(@"Set User Identity", setUserIdentity:);
-    row(@"Log User Identity Out", logOutUserIdentity:);
+    tableRow = row(@"Tracking Disabled", TBRowStyleSwitch, trackingDisabled:);
+    tableRow.integerValue = Branch.trackingDisabled;
+    self.trackingDisabledPath = [self.tableData indexPathForRow:tableRow];
+
+    tableRow = row(@"Limit Facebook Tracking", TBRowStyleSwitch, toggleFacebookAppTrackingAction:)
+    tableRow.integerValue = [BNCPreferenceHelper preferenceHelper].limitFacebookTracking;
+    self.facebookIndexPath = [self.tableData indexPathForRow:tableRow];
+
+    row(@"First Referring Parameters",  TBRowStyleDisclosure, showFirstReferringParams:);
+    row(@"Latest Referring Parameters", TBRowStyleDisclosure, showLatestReferringParams:);
+    row(@"Set User Identity",           TBRowStyleDisclosure, setUserIdentity:);
+    row(@"Log User Identity Out",       TBRowStyleDisclosure, logOutUserIdentity:);
 
     section(@"Branch Links");
-    row(@"Create a Branch Link", createBranchLink:);
-    row(@"Open a Branch link in a new session", openBranchLinkInApp:);
+    row(@"Create a Branch Link",        TBRowStyleDisclosure, createBranchLink:);
+    row(@"Open a Branch link in a New Session", TBRowStylePlain, openBranchLinkInApp:);
 
     section(@"Events");
-    row(@"Send Commerce Event", sendCommerceEvent:);
-    row(@"Send Standard Event", sendStandardEvent:);
-    row(@"Send Custom Event", sendCustomEvent:);
+    row(@"Send Commerce Event",         TBRowStyleDisclosure, sendCommerceEvent:);
+    row(@"Send Standard Event",         TBRowStyleDisclosure, sendStandardEvent:);
+    row(@"Send Custom Event",           TBRowStyleDisclosure, sendCustomEvent:);
 
     section(@"Sharing");
-    row(@"ShareLink From Table Row", sharelinkTableRow:);
-    row(@"ShareLink (No Anchor, One Day Link)", sharelinkTableRowNilAnchor:);
-    row(@"BUO Share From Table Row", buoShareTableRow:);
+    row(@"ShareLink from Table Row",    TBRowStylePlain,        sharelinkTableRow:);
+    row(@"ShareLink (No Anchor, One Day Link)", TBRowStylePlain, sharelinkTableRowNilAnchor:);
+    row(@"BUO Share from Table Row",    TBRowStylePlain,        buoShareTableRow:);
 
     section(@"Rewards");
-    self.rewardsRow = row(@"Refresh Rewards", refreshRewards:);
-    row(@"Show Rewards History", showRewardsHistory:);
-    row(@"Redeem 5 Points", redeemRewards:);
+    self.rewardsRow = row(@"Refresh Rewards", TBRowStylePlain, refreshRewards:);
+    row(@"Redeem 5 Points",             TBRowStylePlain, redeemRewards:);
+    row(@"Show Rewards History",        TBRowStyleDisclosure, showRewardsHistory:);
 
     section(@"App Update State");
-    row(@"Erase All App Data", clearAllAppDataAction:)
-    row(@"Show Dates & Update State", showDatesAction:)
+    row(@"Erase All App Data",          TBRowStylePlain, clearAllAppDataAction:)
+    row(@"Show Dates & Update State",   TBRowStyleDisclosure, showDatesAction:)
 
     section(@"Miscellaneous");
-    row(@"Show Local IP Addess", showLocalIPAddress:);
-    row(@"Show Current View Controller", showCurrentViewController:)
-    row(@"Toggle Facebook App Tracking", toggleFacebookAppTrackingAction:)
+    row(@"Show Local IP Addess",        TBRowStyleDisclosure, showLocalIPAddress:);
+    row(@"Show Current View Controller", TBRowStyleDisclosure, showCurrentViewController:)
+    row(@"Stress Test Open",            TBRowStylePlain, stressTestOpen:)
 
     #undef section
     #undef row
@@ -137,17 +148,18 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     UILabel *versionLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     versionLabel.textAlignment = NSTextAlignmentCenter;
     versionLabel.text =
-        [NSString stringWithFormat:@"iOS %@\nTestBed %@ SDK %@",
+        [NSString stringWithFormat:@"iOS %@\nTestBed %@ SDK %@\n%@",
             [UIDevice currentDevice].systemVersion,
             [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"],
-            BNC_SDK_VERSION];
+            BNC_SDK_VERSION,
+            BNC_API_BASE_URL];
     versionLabel.numberOfLines = 0;
     versionLabel.backgroundColor = self.tableView.backgroundColor;
     versionLabel.textColor = [UIColor darkGrayColor];
     versionLabel.font = [UIFont systemFontOfSize:12.0];
     [versionLabel sizeToFit];
     CGRect r = versionLabel.bounds;
-    r.size.height *= 1.75f;
+    r.size.height += 10.0;
     versionLabel.frame = r;
     self.tableView.tableHeaderView = versionLabel;
 
@@ -182,15 +194,34 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     }
     TBTableRow *row = [self.tableData rowForIndexPath:indexPath];
     cell.textLabel.text = row.title;
-    cell.detailTextLabel.text = row.value;
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.detailTextLabel.text = nil;
+    cell.accessoryView = nil;
+    cell.accessoryType = UITableViewCellAccessoryNone;
+    cell.selectionStyle = UITableViewCellSelectionStyleDefault;
+    if (row.rowStyle == TBRowStyleDisclosure) {
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.detailTextLabel.text = row.value;
+    } else
+    if (row.rowStyle == TBRowStylePlain) {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.detailTextLabel.text = row.value;
+    } else
+    if (row.rowStyle == TBRowStyleSwitch) {
+        UISwitch *sw = [[UISwitch alloc] init];
+        sw.on = row.integerValue;
+        sw.onTintColor = [UIColor redColor];
+        [sw addTarget:self action:row.selector forControlEvents:UIControlEventValueChanged];
+        cell.accessoryView = sw;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
     return cell;
 }
 
 - (void) tableView:(UITableView *)tableView
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     TBTableRow *row = [self.tableData rowForIndexPath:indexPath];
-    if (row.selector) {
+    BNCLogDebug(@"Selected index %ld:%ld: %@.", indexPath.section, indexPath.row, row.title);
+    if (row.rowStyle != TBRowStyleSwitch && row.selector) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         [self performSelector:row.selector withObject:row];
@@ -205,12 +236,14 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
                                  message:(NSString*)message
                                   object:(id<NSObject>)dictionaryOrArray {
 
-    TBDetailViewController *dataViewController = [[TBDetailViewController alloc] initWithData:dictionaryOrArray];
+    TBDetailViewController *dataViewController =
+        [[TBDetailViewController alloc] initWithData:dictionaryOrArray];
     dataViewController.title = title;
     dataViewController.message = message;
 
     // Manage the display mode button
-    dataViewController.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+    dataViewController.navigationItem.leftBarButtonItem =
+        self.splitViewController.displayModeButtonItem;
     dataViewController.navigationItem.leftItemsSupplementBackButton = YES;
 
     [self.splitViewController showDetailViewController:dataViewController sender:self];
@@ -231,27 +264,62 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         completion:nil];
 }
 
-#pragma mark - Actions
+- (BranchUniversalObject*) createUniversalObject {
+    BranchUniversalObject *buo =
+        [[BranchUniversalObject alloc] initWithCanonicalIdentifier:canonicalIdentifier];
+    buo.canonicalUrl = canonicalUrl;
+    buo.title = contentTitle;
+    buo.contentDescription = contentDescription;
+    buo.imageUrl = imageUrl;
+    buo.contentMetadata.price = [NSDecimalNumber decimalNumberWithString:@"1000.00"];
+    buo.contentMetadata.currency = @"$";
+    buo.contentMetadata.contentSchema = type;
+    buo.contentMetadata.customMetadata[@"deeplink_text"] =
+        [NSString stringWithFormat:
+            @"This text was embedded as data in a Branch link with the following characteristics:\n\n"
+             "canonicalUrl: %@\n  title: %@\n  contentDescription: %@\n  imageUrl: %@\n",
+                canonicalUrl, contentTitle, contentDescription, imageUrl];
+    return buo;
+}
 
-- (IBAction)createBranchLink:(TBTableRow*)sender {
+- (BranchLinkProperties*) createLinkProperties {
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
     linkProperties.feature = feature;
     linkProperties.channel = channel;
     linkProperties.campaign = @"some campaign";
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
     [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
-    
-    [self.universalObject
-        getShortUrlWithLinkProperties:linkProperties
+    return linkProperties;
+}
+
+#pragma mark - Actions
+
+static NSString* global_createdBranchURLString = nil;
+
+- (IBAction)createBranchLink:(TBTableRow*)sender {
+    BranchLinkProperties *linkProperties = [self createLinkProperties];
+    BranchUniversalObject *buo = [self createUniversalObject];
+    buo.creationDate = [NSDate date];
+    [buo getShortUrlWithLinkProperties:linkProperties
         andCallback:^(NSString *url, NSError *error) {
-            sender.value = url;
+            sender.value = (url.length) ? url : error.description;
+            global_createdBranchURLString = url;
             [self.tableView reloadData];
+            TBTextViewController *tvc = [TBTextViewController new];
+            tvc.text = url;
+            tvc.message = @"Branch Link";
+            tvc.navigationItem.title = @"Branch Link";
+            [self.navigationController pushViewController:tvc animated:YES];
     }];
 }
 
 - (IBAction) openBranchLinkInApp:(id)sender {
-    NSURL *URL = [NSURL URLWithString:@"https://branch-uitestbed.app.link/TmAw9WrvPI"]; // <= Your URL goes here.
-    [[Branch getInstance] handleDeepLinkWithNewSession:URL];
+    if (global_createdBranchURLString.length) {
+        NSURL *URL = [NSURL URLWithString:global_createdBranchURLString];
+        [[Branch getInstance] handleDeepLinkWithNewSession:URL];
+    } else {
+        [self showAlertWithTitle:@"Can't Open URL" message:@"No URL to open!\nCreate a link first."];
+    }
 }
 
 - (IBAction)showFirstReferringParams:(TBTableRow*)sender {
@@ -352,6 +420,8 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         object:@{}];
 }
 
+#pragma mark - Miscellaneous
+
 - (IBAction)showLocalIPAddress:(id)sender {
     BNCLogDebugSDK(@"All IP Addresses:\n%@\n.", [BNCDeviceInfo getInstance].allIPAddresses);
     NSString *lip = [BNCDeviceInfo getInstance].localIPAddress;
@@ -367,24 +437,55 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (IBAction) showCurrentViewController:(id)send {
     UIViewController *vc = [UIViewController bnc_currentViewController];
-    [self showDataViewControllerWithTitle:@"View Controller"
-        message:nil
-        object:@{
-            @"View Controller": [NSString stringWithFormat:@"%@", vc],
-        }
-    ];
+    TBTextViewController *tvc =
+        [[TBTextViewController alloc] initWithText:[NSString stringWithFormat:@"%@", vc]];
+    tvc.navigationItem.title = @"View Controller";
+    tvc.message = @"Current View Controller";
+    [self.navigationController pushViewController:tvc animated:YES];
 }
+
+- (IBAction) stressTestOpen:(id)sender {
+    int const kIterations = 10;
+    NSURL*const kBranchOpenURL = [NSURL URLWithString:@"https://branch-uitestbed.app.link/ty3IO3bBgL"];
+
+    // First toggle tracking enabled:
+    [Branch setTrackingDisabled:NO];
+    TBTableRow *trackingRow = [self.tableData rowForIndexPath:self.trackingDisabledPath];
+    trackingRow.integerValue = Branch.trackingDisabled;
+
+    // Send opens:
+    for (long i = 0; i < kIterations; ++i) {
+        BNCLogDebug(@"-------------------------------- Iteration %ld.", i);
+        [[Branch getInstance] handleDeepLinkWithNewSession:kBranchOpenURL];
+    }
+
+    // Toggle tracking disabled:
+    [Branch setTrackingDisabled:YES];
+    trackingRow.integerValue = Branch.trackingDisabled;
+
+    // Send opens:
+    for (long i = 0; i < kIterations; ++i) {
+        BNCLogDebug(@"-------------------------------- Iteration %ld.", i);
+        [[Branch getInstance] handleDeepLinkWithNewSession:kBranchOpenURL];
+    }
+}
+
+#pragma mark - Toggle State
 
 - (IBAction) toggleFacebookAppTrackingAction:(id)sender {
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper preferenceHelper];
-    BOOL nextState = !prefs.limitFacebookTracking;
-    prefs.limitFacebookTracking = nextState;
-    [self showDataViewControllerWithTitle:@"Limit Facebook App Tracking"
-        message:nil
-        object:@{
-            @"Limit Facebook App Tracking": (nextState) ? @"On" : @"Off"
-        }
-    ];
+    prefs.limitFacebookTracking = !prefs.limitFacebookTracking;
+    TBTableRow *row = [self.tableData rowForIndexPath:self.facebookIndexPath];
+    row.integerValue = prefs.limitFacebookTracking;
+}
+
+- (void) trackingDisabled:(id)sender {
+    [Branch setTrackingDisabled:!Branch.trackingDisabled];
+    NSString *message = @"User tracking enabled.";
+    if (Branch.trackingDisabled) message = @"User tracking disabled.";
+    [self showAlertWithTitle:nil message:message];
+    TBTableRow *row = [self.tableData rowForIndexPath:self.trackingDisabledPath];
+    row.integerValue = Branch.trackingDisabled;
 }
 
 #pragma mark - App Dates / Update State
@@ -463,20 +564,19 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 #pragma mark - Sharing
 
 - (IBAction) sharelinkTableRow:(TBTableRow*)sender {
-    UITableViewCell *cell = [self.tableData cellForTableView:self.tableView tableRow:sender];
-    //[self.linkProperties addControlParam:@"$email_subject" withValue:@"Email Subject"];
-    BranchLinkProperties *lp = //NO ? [[BranchLinkProperties alloc] init] : self.linkProperties;
-        [[BranchLinkProperties alloc] init];
+    BranchLinkProperties *lp = [[BranchLinkProperties alloc] init];
     lp.feature = @"Sharing Feature";
     lp.channel = @"Distribution Channel";
     lp.campaign = @"some campaign";
+    lp.tags = @[ @"tag1", @"tag2" ];
     [lp addControlParam:@"$desktop_url" withValue:@"http://branch.io"];
-    //[lp addControlParam:@"$ios_url" withValue:@"https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/"];
+    [lp addControlParam:@"$email_subject" withValue:@"Email Subject"];
     BranchShareLink *shareLink =
         [[BranchShareLink alloc]
             initWithUniversalObject:self.universalObject
             linkProperties:lp/*self.linkProperties*/];
     shareLink.shareText = @"ShareLink from table row:\n";
+    UITableViewCell *cell = [self.tableData cellForTableView:self.tableView tableRow:sender];
     [shareLink presentActivityViewControllerFromViewController:self anchor:cell];
 }
 
@@ -513,7 +613,6 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     buo.contentDescription          = @"my_product_description1";
     buo.imageUrl                    = @"https://test_img_url";
     buo.expirationDate              = [NSDate dateWithTimeIntervalSinceNow:24*60*60];
-        //[NSDate dateWithTimeIntervalSince1970:(double)212123232544.0/1000.0];
     buo.publiclyIndex               = NO;
     buo.locallyIndex                = YES;
     buo.creationDate                = [NSDate dateWithTimeIntervalSince1970:(double)1501869445321.0/1000.0];
@@ -552,17 +651,19 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
         andShareText:@"Share Table Row Universal Object:\n"
         fromViewController:self
         anchor:(id)cell
-        completionWithError: ^ (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError) {
+        completionWithError:
+        ^ (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError) {
             BNCLogDebug(@"Done.");
     }];
 }
 
 - (IBAction) buoShareBarButton:(id)sender {
     [self.universalObject showShareSheetWithLinkProperties:self.linkProperties
-        andShareText:@"ShareLink from bar button:\n"
+        andShareText:@"Show BUO share sheet from nav bar.\n"
         fromViewController:self
         anchor:sender
-        completionWithError: ^ (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError) {
+        completionWithError:
+        ^ (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError) {
             BNCLogDebug(@"Done.");
     }];
 }

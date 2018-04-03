@@ -72,3 +72,16 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievem
 - (NSDictionary*_Nonnull) dictionary;   //!< Returns a dictionary representation of the event.
 - (NSString* _Nonnull) description;     //!< Returns a string description of the event.
 @end
+
+#pragma mark - BranchEventRequest
+
+@interface BranchEventRequest : BNCServerRequest <NSCoding>
+
+- (instancetype _Nonnull) initWithServerURL:(NSURL*_Nonnull)serverURL
+                   eventDictionary:(NSDictionary*_Nullable)eventDictionary
+                        completion:(void (^_Nullable)(NSDictionary*_Nullable response, NSError*_Nullable error))completion;
+
+@property (strong) NSDictionary*_Nullable eventDictionary;
+@property (strong) NSURL*_Nullable serverURL;
+@property (copy)   void (^_Nullable completion)(NSDictionary*_Nullable response, NSError*_Nullable error);
+@end

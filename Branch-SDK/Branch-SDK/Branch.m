@@ -421,6 +421,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
 }
 
++ (BOOL) branchKeyIsSet {
+    @synchronized (self) {
+        return (bnc_branchKey.length) ? YES : NO;
+    }
+}
+
 + (void)setEnableFingerprintIDInCrashlyticsReports:(BOOL)enabled
 {
     @synchronized(self) {
@@ -512,10 +518,43 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     self.preferenceHelper.installRequestDelay = installRequestDelay;
 }
 
++ (BOOL) trackingDisabled {
+    @synchronized(self) {
+        return [BNCPreferenceHelper preferenceHelper].trackingDisabled;
+    }
+}
+
++ (void) setTrackingDisabled:(BOOL)disabled {
+    @synchronized(self) {
+        BOOL currentSetting = self.trackingDisabled;
+        if (!!currentSetting == !!disabled)
+            return;
+        if (disabled) {
+            // Set the flag (which also clears the settings):
+            [BNCPreferenceHelper preferenceHelper].trackingDisabled = YES;
+            Branch *branch = Branch.getInstance;
+            [branch clearNetworkQueue];
+            branch.isInitialized = NO;
+            [branch.linkCache clear];
+            // Release the lock in case it's locked:
+            [BranchOpenRequest releaseOpenResponseLock];
+        } else {
+            // Set the flag:
+            [BNCPreferenceHelper preferenceHelper].trackingDisabled = NO;
+            // Initialize a Branch session:
+            [Branch.getInstance initUserSessionAndCallCallback:NO];
+        }
+    }
+}
+
 #pragma mark - InitSession Permutation methods
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options {
-    [self initSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:nil];
+    [self initSessionWithLaunchOptions:options
+                          isReferrable:YES
+         explicitlyRequestedReferrable:NO
+        automaticallyDisplayController:NO
+               registerDeepLinkHandler:nil];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback {
@@ -740,6 +779,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     if (bundleID && sourceApplication) {
         fromSelf = [bundleID isEqualToString:sourceApplication];
     }
+    if (!fromSelf) [self resetUserSession];
     return [self handleDeepLink:url fromSelf:fromSelf];
 }
 
@@ -1059,9 +1099,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         }
         return;
     }
-
     [self initSessionIfNeededAndNotInProgress];
-
     BranchSetIdentityRequest *req = [[BranchSetIdentityRequest alloc] initWithUserId:userId callback:callback];
     [self.requestQueue enqueue:req];
     [self processNextQueueItem];
@@ -1074,26 +1112,32 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (void)logoutWithCallback:(callbackWithStatus)callback {
     if (!self.isInitialized) {
+        NSError *error =
+            (Branch.trackingDisabled)
+            ? [NSError branchErrorWithCode:BNCTrackingDisabledError]
+            : [NSError branchErrorWithCode:BNCInitError];
         BNCLogError(@"Branch is not initialized, cannot logout.");
-        if (callback) {callback(NO, nil);}
+        if (callback) {callback(NO, error);}
+        return;
     }
 
-    BranchLogoutRequest *req = [[BranchLogoutRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
-        if (success) {
-            // Clear cached links
-            self.linkCache = [[BNCLinkCache alloc] init];
+    BranchLogoutRequest *req =
+        [[BranchLogoutRequest alloc] initWithCallback:^(BOOL success, NSError *error) {
+            if (success) {
+                // Clear cached links
+                self.linkCache = [[BNCLinkCache alloc] init];
 
-            if (callback) {
-                callback(YES, nil);
+                if (callback) {
+                    callback(YES, nil);
+                }
+                BNCLogDebug(@"Logout success.");
+            } else /*failure*/ {
+                if (callback) {
+                    callback(NO, error);
+                }
+                BNCLogDebug(@"Logout failure.");
             }
-            BNCLogDebug(@"Logout success.");
-        } else /*failure*/ {
-            if (callback) {
-                callback(NO, error);
-            }
-            BNCLogDebug(@"Logout failure.");
-        }
-    }];
+        }];
 
     [self.requestQueue enqueue:req];
     [self processNextQueueItem];
@@ -1727,7 +1771,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 linkData:linkData
                 linkCache:self.linkCache];
 
-        if (self.isInitialized) {
+        if (self.isInitialized && !self.preferenceHelper.trackingDisabled) {
             BNCLogDebug(@"Creating a custom URL synchronously.");
             BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
             shortURL = [req processResponse:serverResponse];
@@ -1774,8 +1818,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                         duration:(NSUInteger)duration
                             type:(BranchLinkType)type {
 
-    NSMutableString *longUrl = [[NSMutableString alloc] initWithFormat:@"%@?", baseUrl];
-
+    NSMutableString *longUrl = [self.preferenceHelper sanitizedMutableBaseURL:baseUrl];
     for (NSString *tag in tags) {
         [longUrl appendFormat:@"tags=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:tag]];
     }
@@ -1849,18 +1892,24 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    if (!self.isInitialized && !self.preferenceHelper.shouldWaitForInit && ![self.requestQueue containsInstallOrOpen]) {
-        [self initUserSessionAndCallCallback:YES];
+    if (!Branch.trackingDisabled) {
+        if (!self.isInitialized &&
+            !self.preferenceHelper.shouldWaitForInit &&
+            ![self.requestQueue containsInstallOrOpen]) {
+            [self initUserSessionAndCallCallback:YES];
+        }
     }
 }
 
 - (void)applicationWillResignActive {
-    [self callClose];
-    [self.requestQueue persistImmediately];
-    [BranchOpenRequest setWaitNeededForOpenResponseLock];
-    BNCLogDebugSDK(@"Application resigned active.");
-    [self.class closeLog];
-    [self.class openLog];
+    if (!Branch.trackingDisabled) {
+        [self callClose];
+        [self.requestQueue persistImmediately];
+        [BranchOpenRequest setWaitNeededForOpenResponseLock];
+        BNCLogDebugSDK(@"Application resigned active.");
+        [self.class closeLog];
+        [self.class openLog];
+    }
 }
 
 - (void)callClose {
@@ -1918,7 +1967,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                   error:(NSError*)error {
 
     // If the request was successful, or was a bad user request, continue processing.
-    if (!error || error.code == BNCBadRequestError || error.code == BNCDuplicateResourceError) {
+    if (!error ||
+        error.code == BNCTrackingDisabledError ||
+        error.code == BNCBadRequestError ||
+        error.code == BNCDuplicateResourceError) {
 
         BNCPerformBlockOnMainThreadSync(^{ [req processResponse:response error:error]; });
 
@@ -1942,9 +1994,16 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         // Next, remove all the requests that should not be replayed. Note, we do this before
         // calling callbacks, in case any of the callbacks try to kick off another request, which
         // could potentially start another request (and call these callbacks again)
+
+        NSSet<Class> *replayableRequests = [[NSSet alloc] initWithArray:@[
+            BranchEventRequest.class,
+            BranchUserCompletedActionRequest.class,
+            BranchSetIdentityRequest.class,
+            BranchCommerceEventRequest.class,
+        ]];
+
         for (BNCServerRequest *request in requestsToFail) {
-            if (![request isKindOfClass:[BranchUserCompletedActionRequest class]] &&
-                ![request isKindOfClass:[BranchSetIdentityRequest class]]) {
+            if (Branch.trackingDisabled || ![replayableRequests containsObject:request.class]) {
                 [self.requestQueue remove:request];
             }
         }
@@ -1972,7 +2031,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
         if (req) {
 
-            if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.identityID) {
+            if (Branch.trackingDisabled) {
+                // If tracking is disabled keep failing everything in the queue.
+            }
+            else if (![req isKindOfClass:[BranchInstallRequest class]] && !self.preferenceHelper.identityID) {
                 BNCLogError(@"User session has not been initialized!");
                 BNCPerformBlockOnMainThreadSync(^{
                     [req processResponse:nil error:[NSError branchErrorWithCode:BNCInitError]];

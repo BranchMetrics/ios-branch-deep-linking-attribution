@@ -33,13 +33,11 @@
 
 - (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSDictionary *params = @{
-        BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY: self.userId,
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
-        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID
-    };
-
+    NSMutableDictionary *params = [NSMutableDictionary new];
+    params[BRANCH_REQUEST_KEY_DEVELOPER_IDENTITY] = self.userId;
+    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
+    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
     [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_SET_IDENTITY] key:key callback:callback];
 }
 
