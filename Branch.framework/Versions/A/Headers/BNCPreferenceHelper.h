@@ -54,6 +54,9 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, atomic) NSArray<NSString*> *URLBlackList;
 @property (assign, atomic) NSInteger URLBlackListVersion;
 
+@property (assign, atomic) BOOL trackingDisabled;
+- (void) clearTrackingInformation;
+
 + (BNCPreferenceHelper *)preferenceHelper;
 
 - (NSString *)getAPIBaseURL;
@@ -88,6 +91,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 - (NSDictionary *)getContentAnalyticsManifest;
 - (void)saveContentAnalyticsManifest:(NSDictionary *)cdManifest;
 
+- (NSMutableString*) sanitizedMutableBaseURL:(NSString*)baseUrl;
 - (void) synchronize;  //  Flushes preference queue to persistence.
 
 @end
