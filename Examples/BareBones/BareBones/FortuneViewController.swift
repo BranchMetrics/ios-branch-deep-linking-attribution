@@ -114,7 +114,10 @@ class FortuneViewController: UIViewController, UITextViewDelegate {
         guard let url = self.branchURL else { return }
 
         // Make the QR code:
-        let data = url.absoluteString.data(using: String.Encoding.isoLatin1, allowLossyConversion: false)
+        let data = url.absoluteString.data(
+            using: String.Encoding.isoLatin1,
+            allowLossyConversion: false
+        )
         let filter = CIFilter(name: "CIQRCodeGenerator")
         filter?.setValue(data, forKey: "inputMessage")
         filter?.setValue("H", forKey: "inputCorrectionLevel")
@@ -129,7 +132,7 @@ class FortuneViewController: UIViewController, UITextViewDelegate {
         let scaleFilter = CIFilter(name: "CIAffineTransform")
         scaleFilter?.setValue(qrImage, forKey: "inputImage")
         scaleFilter?.setValue(transform, forKey: "inputTransform")
-        qrImage = scaleFilter?.outputImage as CIImage!
+        qrImage = (scaleFilter?.outputImage)!
 
         // Add a logo:
         UIGraphicsBeginImageContext(CGSize(width: scaleX, height: scaleX))
