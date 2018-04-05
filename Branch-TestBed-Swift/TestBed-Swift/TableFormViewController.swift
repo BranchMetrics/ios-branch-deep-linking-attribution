@@ -47,7 +47,7 @@ class TableFormViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let section = tableViewSections[indexPath.section]
         let cells = section["TableViewCells"] as! [[String:String]]
-        let cell = cells[indexPath.row] as [String:String]!
+        let cell = cells[indexPath.row] as [String:String]?
 
         if let segueIdentifier = cell!["InputForm"] {
             self.performSegue(withIdentifier: segueIdentifier, sender: indexPath)
@@ -58,7 +58,7 @@ class TableFormViewController: UITableViewController {
         
         let section = tableViewSections[indexPath.section]
         let cells = section["TableViewCells"] as! [[String:String]]
-        let cellParameters = cells[indexPath.row] as [String:String]!
+        let cellParameters = cells[indexPath.row] as [String:String]?
         let identifier = cellParameters!["CellReuseIdentifier"]
 
         switch(identifier!) {
@@ -128,7 +128,7 @@ class TableFormViewController: UITableViewController {
                 if let tableViewCell: TextFieldCell = tableView.cellForRow(at: indexPath) as? TextFieldCell {
                     let section = tableViewSections[indexPath.section]
                     let cells = section["TableViewCells"] as! [[String:String]]
-                    let cell = cells[indexPath.row] as [String:String]!
+                    let cell = cells[indexPath.row] as [String:String]?
                     let text = vc.textView.text
                     
                     tableViewCell.textField.text = text
