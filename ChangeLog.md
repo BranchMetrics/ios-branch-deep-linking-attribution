@@ -2,8 +2,8 @@ Branch iOS SDK Change Log
 
 - v0.24.1
   * _*Master Release*_ - April 5, 2018
-  * Updated SDK for Xcode 9.3 / Swift 4.1.
-  * Fixed new warnings.
+  * Updated the SDK for Xcode 9.3 and Swift 4.1.
+  * Fixed the new warnings.
 
 - v0.24.0
   * _*Master Release*_ - April 3, 2018
