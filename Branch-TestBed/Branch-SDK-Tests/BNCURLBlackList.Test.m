@@ -23,6 +23,11 @@
 - (void) setUp {
     [BNCPreferenceHelper preferenceHelper].URLBlackList = nil;
     [BNCPreferenceHelper preferenceHelper].URLBlackListVersion = 0;
+    [BNCPreferenceHelper preferenceHelper].blacklistURLOpen = NO;
+}
+
+- (void) tearDown {
+    [BNCPreferenceHelper preferenceHelper].blacklistURLOpen = NO;
 }
 
 - (void)testListDownLoad {
@@ -30,7 +35,7 @@
     BNCURLBlackList *blackList = [BNCURLBlackList new];
     [blackList refreshBlackListFromServerWithCompletion:^ (NSError*error, NSArray*list) {
         XCTAssertNil(error);
-        XCTAssertTrue(list.count == 7);
+        XCTAssertTrue(list.count == 6);
         [expectation fulfill];
     }];
     [self awaitExpectations];
