@@ -75,7 +75,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             
             // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is false).
             
-            branch.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: false, deepLinkHandler: { params, error in
+            branch.initSession(
+                launchOptions: launchOptions,
+                automaticallyDisplayDeepLinkController: false,
+                deepLinkHandler: { params, error in
                 
                 defer {
                     let notificationName = Notification.Name("BranchCallbackCompleted")
@@ -98,14 +101,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
                     if clickedBranchLink {
                         let nc = self.window!.rootViewController as! UINavigationController
                         let storyboard = UIStoryboard(name: "Content", bundle: nil)
-                        let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
+                        let contentViewController = storyboard.instantiateViewController(
+                            withIdentifier: "Content"
+                        ) as! ContentViewController
                         nc.pushViewController(contentViewController, animated: true)
                         
-                        let referringLink = paramsDictionary["~referring_link"] as! String
-                        let content = String(format:"\nReferring link: \(referringLink)\n\nSession Details:\n\(paramsDictionary.JSONDescription())")
+                        let referringLink = paramsDictionary["~referring_link"] as? String
+                        let content = String(
+                            format:"\nReferring link: \(referringLink ?? "<nil>")" +
+                                "\n\nSession Details:\n\(paramsDictionary.JSONDescription())"
+                        )
                         contentViewController.content = content
                         contentViewController.contentType = "Content"
                     }
+
                 } else {
                     print(String(format: "Branch TestBed: Finished init with params\n%@", paramsDictionary.description))
                 }
