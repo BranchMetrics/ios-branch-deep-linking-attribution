@@ -28,7 +28,7 @@ ___
   + [Library installation](#installation)
   + [Register for Branch key](#register-your-app)
   + [Add your Branch key](#add-your-branch-key-to-your-project)
-  + [Register a URI scheme](#register-a-uri-scheme-direct-deep-linking)
+  + [Register a URI scheme](#register-a-uri-scheme)
   + [Support Universal Links](#support-universal-linking)
 
 3. Branch general methods
@@ -155,15 +155,20 @@ Note: If you used Fabric to install Branch as a kit, your Branch keys will be in
 
 ![Branch Fabric Keys](docs/images/branch-fabric-key-plist.png)
 
-### Register a URI Scheme Direct Deep Linking (Optional but Recommended)
+### Register a URI Scheme
 
-You can register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to change **yourapp** to a unique string that represents your app name.
+Register your app to respond to direct deep links (yourapp:// in a mobile browser) by adding a URI scheme in the YourProject-Info.plist file. Make sure to change **yourapp** to a unique string that represents your app name.
 
 1. In Xcode, click on YourProject-Info.plist on the left.
 1. Find URL Types and click the right arrow. (If it doesn't exist, right click anywhere and choose Add Row. Scroll down and choose URL Types).
-1. Add "yourapp," where yourapp is a unique string for your app, as an item in URL Schemes as below:
+1. Add "yourapp," where yourapp is a unique string for your app, as an item in URL Schemes as below.
+
+   _Caution: Your apps URI scheme must be the first scheme defined (item 0) in the list._
+
+   If you have multiple schemes defined, such as a Facebook login URI, make your app's URI scheme the first one in the list so the Branch SDK knows the URI specific to your app.
 
 ![URL Scheme Demo](https://s3-us-west-1.amazonaws.com/branchhost/urlScheme.png)
+
 
 Alternatively, you can add the URI scheme in your project's Info page.
 

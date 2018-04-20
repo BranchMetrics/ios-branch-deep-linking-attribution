@@ -99,6 +99,8 @@
         for (NSString *uriScheme in urlSchemes) {
             if ([uriScheme hasPrefix:@"fb"]) continue;  // Facebook
             if ([uriScheme hasPrefix:@"db"]) continue;  // DB?
+            if ([uriScheme hasPrefix:@"twitterkit-"]) continue; // Twitter
+            if ([uriScheme hasPrefix:@"pdk"]) continue; // Pinterest
             if ([uriScheme hasPrefix:@"pin"]) continue; // Pinterest
             if ([uriScheme hasPrefix:@"com.googleusercontent.apps"]) continue; // Google
 
