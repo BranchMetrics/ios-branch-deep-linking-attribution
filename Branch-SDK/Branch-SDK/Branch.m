@@ -718,7 +718,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
     if (blackListPattern) {
         self.preferenceHelper.blacklistURLOpen = YES;
-        [self handleUniversalDeepLink_private:blackListPattern fromSelf:isFromSelf];
+        self.preferenceHelper.externalIntentURI = blackListPattern;
+        self.preferenceHelper.referringURL = blackListPattern;
+        [self initUserSessionAndCallCallback:!self.isInitialized];
         return NO;
     }
 
