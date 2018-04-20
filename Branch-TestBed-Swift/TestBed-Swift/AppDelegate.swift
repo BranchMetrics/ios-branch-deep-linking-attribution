@@ -92,41 +92,44 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
                     return
                 }
                 
+
+                let clickedBranchLink = params?[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool?
+                
+                if  let referringLink = paramsDictionary["~referring_link"] as! String?,
+                    let trackerId = paramsDictionary["ios_tracker_id"] as! String?,
+                    let clickedBranchLink = clickedBranchLink,
+                    clickedBranchLink {
+                    var adjustUrl = URLComponents(string: referringLink)
+                    var adjust_tracker:URLQueryItem
+                    //
+                    // Here's how to add Adjust attribution:
+                    //
+                    // Check if the deeplink is a Universal link.
+                    if referringLink.starts(with: "https://") || referringLink.starts(with: "http://") {
+                        adjust_tracker = URLQueryItem(name: "adjust_t", value: trackerId)
+                    } else {
+                        adjust_tracker = URLQueryItem(name: "adjust_tracker", value: trackerId)
+                    }
+                    let adjust_campaign = URLQueryItem(name: "adjust_campaign", value: paramsDictionary[BRANCH_INIT_KEY_CAMPAIGN] as? String)
+                    let adjust_adgroup = URLQueryItem(name: "adjust_adgroup", value: paramsDictionary[BRANCH_INIT_KEY_CHANNEL] as? String)
+                    let adjust_creative = URLQueryItem(name: "adjust_creative", value: paramsDictionary[BRANCH_INIT_KEY_FEATURE] as? String)
+                    let queryItems = [adjust_tracker,adjust_campaign,adjust_adgroup,adjust_creative]
+                    adjustUrl?.queryItems = queryItems
+                    Adjust.appWillOpen(adjustUrl?.url as URL!)
+                }
+                
                 // Deeplinking logic for use when automaticallyDisplayDeepLinkController = false
-                if let clickedBranchLink = params?[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool? {
+                if let clickedBranchLink = clickedBranchLink,
+                   clickedBranchLink {
+                    let nc = self.window!.rootViewController as! UINavigationController
+                    let storyboard = UIStoryboard(name: "Content", bundle: nil)
+                    let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
+                    nc.pushViewController(contentViewController, animated: true)
                     
-                    if clickedBranchLink {
-                        let referringLink = paramsDictionary["~referring_link"] as! String
-                        if paramsDictionary["ios_tracker_id"] != nil {
-                            var adjustUrl = URLComponents(string: referringLink)
-                            var adjust_tracker:URLQueryItem
-                            //Check if the deeplink is a Universal link.
-                            if referringLink.starts(with: "https://") || referringLink.starts(with: "http://") {
-                                adjust_tracker = URLQueryItem(name: "adjust_t", value: paramsDictionary["ios_tracker_id"] as? String)
-                            } else {
-                                adjust_tracker = URLQueryItem(name: "adjust_tracker", value: paramsDictionary["ios_tracker_id"] as? String)
-                            }
-                            let adjust_campaign = URLQueryItem(name: "adjust_campaign", value: paramsDictionary[BRANCH_INIT_KEY_CAMPAIGN] as? String)
-                            let adjust_adgroup = URLQueryItem(name: "adjust_adgroup", value: paramsDictionary[BRANCH_INIT_KEY_CHANNEL] as? String)
-                            let adjust_creative = URLQueryItem(name: "adjust_creative", value: paramsDictionary[BRANCH_INIT_KEY_FEATURE] as? String)
-                            let queryItems = [adjust_tracker,adjust_campaign,adjust_adgroup,adjust_creative]
-                            adjustUrl?.queryItems = queryItems
-                            print(adjustUrl?.url?.absoluteString ?? "")
-                            Adjust.appWillOpen(adjustUrl?.url as URL!)
-                        }
-                    }
-                    
-                    if clickedBranchLink {
-                        let nc = self.window!.rootViewController as! UINavigationController
-                        let storyboard = UIStoryboard(name: "Content", bundle: nil)
-                        let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
-                        nc.pushViewController(contentViewController, animated: true)
-                        
-                        let referringLink = paramsDictionary["~referring_link"] as! String
-                        let content = String(format:"\nReferring link: \(referringLink)\n\nSession Details:\n\(paramsDictionary.JSONDescription())")
-                        contentViewController.content = content
-                        contentViewController.contentType = "Content"
-                    }
+                    let referringLink = paramsDictionary["~referring_link"] as! String
+                    let content = String(format:"\nReferring link: \(referringLink)\n\nSession Details:\n\(paramsDictionary.JSONDescription())")
+                    contentViewController.content = content
+                    contentViewController.contentType = "Content"
                 } else {
                     print(String(format: "Branch TestBed: Finished init with params\n%@", paramsDictionary.description))
                 }
