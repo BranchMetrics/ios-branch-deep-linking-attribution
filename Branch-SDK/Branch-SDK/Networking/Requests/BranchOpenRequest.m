@@ -142,6 +142,9 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         if (self.callback) {
             self.callback(NO, error);
         }
+        // EBS
+//        if ([response.statusCode integerValue] == 400)
+//            [BNCPreferenceHelper preferenceHelper].universalLinkUrl = nil;
         return;
     }
 

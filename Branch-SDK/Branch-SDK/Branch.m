@@ -721,6 +721,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         return NO;
     }
 
+    self.preferenceHelper.referringURL = nil;
+    self.preferenceHelper.externalIntentURI = nil;
+    self.preferenceHelper.universalLinkUrl = nil;
+
     NSString *scheme = [url scheme];
     if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
         return [self handleUniversalDeepLink_private:url.absoluteString fromSelf:isFromSelf];
