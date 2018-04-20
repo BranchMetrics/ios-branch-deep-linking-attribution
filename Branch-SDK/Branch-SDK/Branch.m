@@ -717,10 +717,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         blackListPattern = [_userURLBlackList blackListPatternMatchingURL:url];
     }
     if (blackListPattern) {
+        self.preferenceHelper.blacklistURLOpen = YES;
         [self handleUniversalDeepLink_private:blackListPattern fromSelf:isFromSelf];
         return NO;
     }
 
+    self.preferenceHelper.blacklistURLOpen = NO;
     self.preferenceHelper.referringURL = nil;
     self.preferenceHelper.externalIntentURI = nil;
     self.preferenceHelper.universalLinkUrl = nil;

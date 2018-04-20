@@ -1,5 +1,10 @@
 Branch iOS SDK Change Log
 
+- v0.24.2
+  * _*Master Release*_ - April 19, 2018
+  * Fixed a bug where a opening a blacklisted URI scheme would cause an HTTP status 400 for each
+    Branch open until the app was opened with a universal link.
+
 - v0.24.1
   * _*Master Release*_ - April 5, 2018
   * Updated the SDK for Xcode 9.3 and Swift 4.1.

@@ -612,7 +612,6 @@ exit:
               (prefs.spotlightIdentifier.length > 0 ) ||
               (prefs.universalLinkUrl.length > 0))) {
             // Allow this network operation since it's an open/install to resolve a link.
-            NSLog(@"Yope!"); // EBS eDebug
         } else {
             [[BNCPreferenceHelper preferenceHelper] clearTrackingInformation];
             NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
