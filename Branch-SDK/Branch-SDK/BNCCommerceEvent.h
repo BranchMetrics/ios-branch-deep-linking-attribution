@@ -35,7 +35,7 @@ FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategorySportingGoods;
 FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryToysGames;
 FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryVehiclesParts;
 
-NSArray<BNCProductCategory>* BNCProductCategoryAllCategories(void);
+NSArray<BNCProductCategory>*_Nonnull BNCProductCategoryAllCategories(void);
 
 #pragma mark - BNCCurrency
 
@@ -234,7 +234,7 @@ FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyYER;
 FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyZAR;
 FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyZMW;
 
-NSArray<BNCCurrency>* BNCCurrencyAllCurrencies(void);
+NSArray<BNCCurrency>*_Nonnull BNCCurrencyAllCurrencies(void);
 
 #pragma mark - BNCProduct
 
