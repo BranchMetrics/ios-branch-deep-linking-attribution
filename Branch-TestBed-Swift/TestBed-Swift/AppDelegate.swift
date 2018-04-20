@@ -96,6 +96,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
                 if let clickedBranchLink = params?[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool? {
                     
                     if clickedBranchLink {
+                        let referringLink = paramsDictionary["~referring_link"] as! String
+                        if paramsDictionary["ios_tracker_id"] != nil {
+                            var adjustUrl = URLComponents(string: referringLink)
+                            var adjust_tracker:URLQueryItem
+                            //Check if the deeplink is a Universal link.
+                            if referringLink.starts(with: "https://") || referringLink.starts(with: "http://") {
+                                adjust_tracker = URLQueryItem(name: "adjust_t", value: paramsDictionary["ios_tracker_id"] as? String)
+                            } else {
+                                adjust_tracker = URLQueryItem(name: "adjust_tracker", value: paramsDictionary["ios_tracker_id"] as? String)
+                            }
+                            let adjust_campaign = URLQueryItem(name: "adjust_campaign", value: paramsDictionary[BRANCH_INIT_KEY_CAMPAIGN] as? String)
+                            let adjust_adgroup = URLQueryItem(name: "adjust_adgroup", value: paramsDictionary[BRANCH_INIT_KEY_CHANNEL] as? String)
+                            let adjust_creative = URLQueryItem(name: "adjust_creative", value: paramsDictionary[BRANCH_INIT_KEY_FEATURE] as? String)
+                            let queryItems = [adjust_tracker,adjust_campaign,adjust_adgroup,adjust_creative]
+                            adjustUrl?.queryItems = queryItems
+                            print(adjustUrl?.url?.absoluteString ?? "")
+                            Adjust.appWillOpen(adjustUrl?.url as URL!)
+                        }
+                    }
+                    
+                    if clickedBranchLink {
                         let nc = self.window!.rootViewController as! UINavigationController
                         let storyboard = UIStoryboard(name: "Content", bundle: nil)
                         let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
@@ -168,20 +189,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
                                                              sourceApplication: sourceApplication,
                                                              annotation: annotation
         )
-        Adjust.appWillOpen(url)
-        if (!branchHandled) {
+        if(!branchHandled) {
             // If not handled by Branch, do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+            Adjust.appWillOpen(url)
         }
         return true
     }
     
     // Respond to Universal Links
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
-        Branch.getInstance().continue(userActivity)
+        let branchHandled = Branch.getInstance().continue(userActivity)
         if (userActivity.activityType == NSUserActivityTypeBrowsingWeb) {
             let url = userActivity.webpageURL
-        
-            Adjust.appWillOpen(url!)
+            if(!branchHandled) {
+                Adjust.appWillOpen(url as URL!)
+            }
         }
         
         // Apply your logic to determine the return value of this method
