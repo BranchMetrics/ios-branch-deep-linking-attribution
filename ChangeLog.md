@@ -1,5 +1,14 @@
 Branch iOS SDK Change Log
 
+- v0.24.2
+  * Added `BNCProductCategoryAllCategories(void)` and `BNCCurrencyAllCurrencies(void)` convenience functions.
+  * Updated Info.plist URI Filter and clarified documentation (DEVEX-343).
+    - Updated our URI scheme filter that finds the URI scheme for the app.
+    - Updated the documentation to clarify that the partner's app URI should be the first URI.
+    - This clarifies GitHub issue #825.
+  * Added code snippets that demonstrate Adjust reattribution in the Swift-TestBed demo app (ATAN-523).
+  * Made sure that Foundation/Foundation.h is always imported first (DEVEX-333).
+
 - v0.24.1
   * _*Master Release*_ - April 5, 2018
   * Updated the SDK for Xcode 9.3 and Swift 4.1.
