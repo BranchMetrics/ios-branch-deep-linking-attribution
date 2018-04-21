@@ -9,6 +9,10 @@ Branch iOS SDK Change Log
   * Added code snippets that demonstrate Adjust reattribution in the Swift-TestBed demo app (ATAN-523).
   * Made sure that Foundation/Foundation.h is always imported first (DEVEX-333).
   * Fixed a crash bug in the Swift-TestBed example app (DEVEX-327).
+  * Fix blacklist open with URI scheme (DEVEX-341).
+    - After opening a blacklisted scheme, the app would not open other schemes until a https URL was opened.
+    - Added code that clears the blacklisted URL after sending the regex pattern to the server.
+    - Removed an old NSLog from debugging.
 
 - v0.24.1
   * _*Master Release*_ - April 5, 2018
