@@ -8,6 +8,7 @@ Branch iOS SDK Change Log
     - This clarifies GitHub issue #825.
   * Added code snippets that demonstrate Adjust reattribution in the Swift-TestBed demo app (ATAN-523).
   * Made sure that Foundation/Foundation.h is always imported first (DEVEX-333).
+  * Fixed a crash bug in the Swift-TestBed example app (DEVEX-327).
 
 - v0.24.1
   * _*Master Release*_ - April 5, 2018
