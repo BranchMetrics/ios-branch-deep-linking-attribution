@@ -43,7 +43,12 @@ stressTest=0
 # stressPhone="iPhone 4s"
 # stressOS="8.3"
 stressPhone="iPhone 7 Plus"
-stressOS="latest"
+if [ "$(xcodebuild -version | head -n1)" = "Xcode 9.3" ]
+then
+    stressOS="latest"
+else
+    stressOS="10.3.1"
+fi
 
 function testSimulatorStress() {
     if (( $stressTest == 0 )); then
@@ -93,15 +98,23 @@ fi
 
 cleanAll
 analyzeBuild
+printf "${textBlue}Running stress test with $stressPhone $stressOS.${textNormal}\n"
 for i in {1..5}
 do
     testSimulatorStress
 done
-testSimulatorVersion "iPhone X"  latest
-testSimulatorVersion "iPhone SE" latest
+if [ "$(xcodebuild -version | head -n1)" = "Xcode 9.3" ]
+then
+    testSimulatorVersion "iPhone X"  latest
+fi
+testSimulatorVersion "iPhone SE" "$stressOS"
 testSimulatorVersion "iPhone 6s" 10.0
 testSimulatorVersion "iPhone 5"  9.3
-testSimulatorVersion "iPhone 4s" 8.4
+# xctest doesn't work for iOS 8.4 in Xcode 9.3.  Bummer.
+if [ "$(xcodebuild -version | head -n1)" != "Xcode 9.3" ]
+then
+    testSimulatorVersion "iPhone 4s" 8.4
+fi
 
 elapsed=$(date -jur$SECONDS +%H:%M:%S)
 printf "${textBlue}All tests completed successfully. Elapsed: %s.${textNormal}\n" "$elapsed"
