@@ -717,9 +717,17 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         blackListPattern = [_userURLBlackList blackListPatternMatchingURL:url];
     }
     if (blackListPattern) {
-        [self handleUniversalDeepLink_private:blackListPattern fromSelf:isFromSelf];
+        self.preferenceHelper.blacklistURLOpen = YES;
+        self.preferenceHelper.externalIntentURI = blackListPattern;
+        self.preferenceHelper.referringURL = blackListPattern;
+        [self initUserSessionAndCallCallback:!self.isInitialized];
         return NO;
     }
+
+    self.preferenceHelper.blacklistURLOpen = NO;
+    self.preferenceHelper.referringURL = nil;
+    self.preferenceHelper.externalIntentURI = nil;
+    self.preferenceHelper.universalLinkUrl = nil;
 
     NSString *scheme = [url scheme];
     if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {

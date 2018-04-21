@@ -75,7 +75,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             
             // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is false).
             
-            branch.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: false, deepLinkHandler: { params, error in
+            branch.initSession(
+                launchOptions: launchOptions,
+                automaticallyDisplayDeepLinkController: false,
+                deepLinkHandler: { params, error in
                 
                 defer {
                     let notificationName = Notification.Name("BranchCallbackCompleted")
@@ -115,7 +118,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
                     let adjust_creative = URLQueryItem(name: "adjust_creative", value: paramsDictionary[BRANCH_INIT_KEY_FEATURE] as? String)
                     let queryItems = [adjust_tracker,adjust_campaign,adjust_adgroup,adjust_creative]
                     adjustUrl?.queryItems = queryItems
-                    Adjust.appWillOpen(adjustUrl?.url as URL!)
+                    if let url = adjustUrl?.url {
+                        Adjust.appWillOpen(url)
+                    }
                 }
                 
                 // Deeplinking logic for use when automaticallyDisplayDeepLinkController = false
@@ -200,12 +205,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
     }
     
     // Respond to Universal Links
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+    func application(_
+        application: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler: @escaping ([Any]?) -> Void
+    ) -> Bool {
         let branchHandled = Branch.getInstance().continue(userActivity)
         if (userActivity.activityType == NSUserActivityTypeBrowsingWeb) {
-            let url = userActivity.webpageURL
-            if(!branchHandled) {
-                Adjust.appWillOpen(url as URL!)
+            if let url = userActivity.webpageURL,
+               !branchHandled {
+                Adjust.appWillOpen(url)
             }
         }
         
