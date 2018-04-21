@@ -28,7 +28,7 @@
 
     error = [BNCKeyChain removeValuesForService:nil key:nil];
     if (systemVersion >= 10.0 && systemVersion < 11.0)
-        { XCTAssertTrue(error.code == -34018); }
+        { XCTAssertTrue(error == nil || error.code == -34018); }
     else
         { XCTAssertTrue(error == nil); }
 

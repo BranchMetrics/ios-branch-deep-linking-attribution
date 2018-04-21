@@ -23,6 +23,11 @@
 - (void) setUp {
     [BNCPreferenceHelper preferenceHelper].URLBlackList = nil;
     [BNCPreferenceHelper preferenceHelper].URLBlackListVersion = 0;
+    [BNCPreferenceHelper preferenceHelper].blacklistURLOpen = NO;
+}
+
+- (void) tearDown {
+    [BNCPreferenceHelper preferenceHelper].blacklistURLOpen = NO;
 }
 
 - (void)testListDownLoad {
@@ -30,7 +35,7 @@
     BNCURLBlackList *blackList = [BNCURLBlackList new];
     [blackList refreshBlackListFromServerWithCompletion:^ (NSError*error, NSArray*list) {
         XCTAssertNil(error);
-        XCTAssertTrue(list.count == 7);
+        XCTAssertTrue(list.count == 6);
         [expectation fulfill];
     }];
     [self awaitExpectations];
@@ -138,7 +143,8 @@
         __unsafe_unretained NSDictionary *dictionary = nil;
         [invocation getArgument:&dictionary atIndex:2];
 
-        NSString* link = dictionary[@"universal_link_url"];
+        NSLog(@"d: %@", dictionary);
+        NSString* link = dictionary[@"external_intent_uri"];
         NSString *pattern = @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
         NSLog(@"\n   Link: '%@'\nPattern: '%@'\n.", link, pattern);
         if ([link isEqualToString:pattern]) {
@@ -171,7 +177,7 @@
         __unsafe_unretained NSDictionary *dictionary = nil;
         [invocation getArgument:&dictionary atIndex:2];
 
-        NSString* link = dictionary[@"universal_link_url"];
+        NSString* link = dictionary[@"external_intent_uri"];
         NSString *pattern = @"\\/bob\\/";
         NSLog(@"\n   Link: '%@'\nPattern: '%@'\n.", link, pattern);
 

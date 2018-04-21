@@ -1,7 +1,7 @@
 PODS:
-  - Branch (0.24.0):
-    - Branch/Core (= 0.24.0)
-  - Branch/Core (0.24.0)
+  - Branch (0.24.1):
+    - Branch/Core (= 0.24.1)
+  - Branch/Core (0.24.1)
   - Cartography (3.0.1)
   - MBProgressHUD (1.1.0)
 
@@ -10,15 +10,20 @@ DEPENDENCIES:
   - Cartography
   - MBProgressHUD
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Cartography
+    - MBProgressHUD
+
 EXTERNAL SOURCES:
   Branch:
-    :path: ../..
+    :path: "../.."
 
 SPEC CHECKSUMS:
-  Branch: b4e9cfd1d75e230df3d4fb8d738b290c94e7a576
+  Branch: 1bc7254a71cc47d2a9edccfb6a308c11e6a8e7af
   Cartography: f8c899bb0f5cf20758644a8eea59a75e98a03a5d
   MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
 
 PODFILE CHECKSUM: 11c87f21f32687c987839149b04678394af64cd8
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0

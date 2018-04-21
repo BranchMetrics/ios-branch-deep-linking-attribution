@@ -35,6 +35,8 @@ FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategorySportingGoods;
 FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryToysGames;
 FOUNDATION_EXPORT  BNCProductCategory _Nonnull BNCProductCategoryVehiclesParts;
 
+NSArray<BNCProductCategory>*_Nonnull BNCProductCategoryAllCategories(void);
+
 #pragma mark - BNCCurrency
 
 typedef NSString*const BNCCurrency NS_STRING_ENUM;
@@ -231,6 +233,8 @@ FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyXXX;
 FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyYER;
 FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyZAR;
 FOUNDATION_EXPORT  BNCCurrency _Nonnull BNCCurrencyZMW;
+
+NSArray<BNCCurrency>*_Nonnull BNCCurrencyAllCurrencies(void);
 
 #pragma mark - BNCProduct
 
