@@ -571,6 +571,19 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
+- (BOOL) blacklistURLOpen {
+    @synchronized(self) {
+        return [self readBoolFromDefaults:@"blacklistURLOpen"];
+    }
+}
+
+- (void) setBlacklistURLOpen:(BOOL)value {
+    @synchronized(self) {
+        [self writeBoolToDefaults:@"blacklistURLOpen" value:value];
+    }
+}
+
+
 - (BOOL) trackingDisabled {
     @synchronized(self) {
         NSNumber *b = (id) [self readObjectFromDefaults:@"trackingDisabled"];
