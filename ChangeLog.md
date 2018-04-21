@@ -9,7 +9,7 @@ Branch iOS SDK Change Log
     - The matching regex is now sent in `external_intent_uri` rather than `universal_link_url`.
     - Removed an old NSLog from debugging.
   * Added `BNCProductCategoryAllCategories(void)` and `BNCCurrencyAllCurrencies(void)` convenience functions.
-  * Updated Info.plist URI Filter and clarified documentation (DEVEX-343).
+  * Updated the Info.plist URI scheme filter and clarified documentation (DEVEX-343).
     - Updated our URI scheme filter that finds the URI scheme for the app.
     - Updated the documentation to clarify that the partner's app URI should be the first URI.
     - This clarifies GitHub issue #825.
