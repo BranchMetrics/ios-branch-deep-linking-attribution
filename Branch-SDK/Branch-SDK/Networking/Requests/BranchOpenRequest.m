@@ -137,6 +137,16 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    if (error && preferenceHelper.blacklistURLOpen) {
+        // Ignore this response from the server. Dummy up a response:
+        error = nil;
+        response.data = @{
+            BRANCH_RESPONSE_KEY_SESSION_DATA: @{
+                BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK: @0
+            }
+        };
+    } else
     if (error) {
         [BranchOpenRequest releaseOpenResponseLock];
         if (self.callback) {
@@ -145,7 +155,6 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
         return;
     }
 
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSDictionary *data = response.data;
     
     // Handle possibly mis-parsed identity.
@@ -243,6 +252,7 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     preferenceHelper.externalIntentURI = nil;
     preferenceHelper.appleSearchAdNeedsSend = NO;
     preferenceHelper.referringURL = referringURL;
+    preferenceHelper.blacklistURLOpen = NO;
 
     NSString *string = BNCStringFromWireFormat(data[BRANCH_RESPONSE_KEY_BRANCH_IDENTITY]);
     if (string) preferenceHelper.identityID = string;

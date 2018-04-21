@@ -24,6 +24,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>branchuitest</string>
+				<string>fb123</string>
 			</array>
 		</dict>
 	</array>
