@@ -1,11 +1,12 @@
 Branch iOS SDK Change Log
 
 - v0.24.2
-  * _*Master Release*_ - April 19, 2018
+  * _*Master Release*_ - April 20, 2018
   * Fixed a bug where a opening a blacklisted URI scheme would cause an HTTP status 400 for each
     Branch open until the app was opened with a universal link (DEVEX-341).
     - After opening a blacklisted scheme, the app would not open other schemes until a https URL was opened.
     - Added code that clears the blacklisted URL after sending the regex pattern to the server.
+    - The matching regex is now sent in `external_intent_uri` rather than `universal_link_url`.
     - Removed an old NSLog from debugging.
   * Added `BNCProductCategoryAllCategories(void)` and `BNCCurrencyAllCurrencies(void)` convenience functions.
   * Updated Info.plist URI Filter and clarified documentation (DEVEX-343).
