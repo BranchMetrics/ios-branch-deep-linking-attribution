@@ -108,6 +108,15 @@ class CommerceEventTableViewController: UITableViewController {
                 self.showAlert("Commerce Event", withDescription: message)
         }
         )
+        
+        guard IntegratedSDKsData.pendingAdjustEnabled()! else {
+            IntegratedSDKsData.setActiveAdjustEnabled(false)
+            return
+        }
+        
+        let adjustEvent = ADJEvent.init(eventToken:"n7alst")
+        adjustEvent?.setRevenue(3.23, currency: "EUR")
+        Adjust.trackEvent(adjustEvent)
     }
     
     func refreshControlValues() {
