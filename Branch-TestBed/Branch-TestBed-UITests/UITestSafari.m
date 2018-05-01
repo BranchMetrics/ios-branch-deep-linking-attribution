@@ -62,7 +62,7 @@ static NSString* const kUniversalLinkTag = @"Universal Link TestBed Obj-c";
     XCTAssertTrue([element.value containsString:@"Successfully Deeplinked"]);
 }
 
--(XCUIApplication *) openSafariWithUrl: (NSString*) url {
+-(XCUIApplication *) openSafariWithUrl:(NSString*) url {
     XCUIApplication *app =
         [[XCUIApplication alloc] initPrivateWithPath:nil bundleID:@"com.apple.mobilesafari"];
     [app launch];
