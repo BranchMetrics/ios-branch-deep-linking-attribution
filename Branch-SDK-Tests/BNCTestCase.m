@@ -11,12 +11,10 @@
 #import "BNCLog.h"
 #import "BNCPreferenceHelper.h"
 
-@interface BNCApplication () {
-    @public
-        NSDate *_currentInstallDate;
-        NSDate *_firstInstallDate;
-        NSDate *_currentBuildDate;
-}
+@interface BNCApplication (BNCTestCase)
+- (void) setAppOriginalInstallDate:(NSDate*)originalInstallDate
+        firstInstallDate:(NSDate*)firstInstallDate
+        lastUpdateDate:(NSDate*)lastUpdateDate;
 @end
 
 #pragma mark - BNCTestStringMatchesRegex
@@ -147,10 +145,9 @@ static BOOL _testBreakpoints = NO;
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     BNCApplication *application = [BNCApplication currentApplication];
-
-    application->_currentInstallDate = firstInstallDate;        // latest_install_time
-    application->_firstInstallDate = originalInstallDate;       // first_install_time
-    application->_currentBuildDate = lastUpdateDate;            // lastest_update_time
+    [application setAppOriginalInstallDate:originalInstallDate
+        firstInstallDate:firstInstallDate
+        lastUpdateDate:lastUpdateDate];
     preferenceHelper.previousAppBuildDate = previousUpdateDate; // previous_update_time
     [preferenceHelper synchronize];
 }

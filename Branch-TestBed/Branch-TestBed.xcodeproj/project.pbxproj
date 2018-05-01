@@ -751,7 +751,8 @@
 				4DA577231E67B2A000A43BDD /* NSString+Branch.Test.m */,
 				7E6B3B531AA42D0E005F45BF /* Supporting Files */,
 			);
-			path = "Branch-SDK-Tests";
+			name = "Branch-SDK-Tests";
+			path = "../Branch-SDK-Tests";
 			sourceTree = "<group>";
 		};
 		7E6B3B531AA42D0E005F45BF /* Supporting Files */ = {

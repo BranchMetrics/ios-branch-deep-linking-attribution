@@ -12,7 +12,7 @@
 #import "BNCPreferenceHelper.h"
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
-#import "OHHTTPStubsResponse+JSON.h"
+#import <OHHTTPStubs/OHHTTPStubsResponse+JSON.h>
 
 typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
