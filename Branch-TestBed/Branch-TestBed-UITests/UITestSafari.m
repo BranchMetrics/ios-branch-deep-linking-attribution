@@ -66,6 +66,7 @@ static NSString* const kUniversalLinkTag = @"Universal Link TestBed Obj-c";
     XCUIApplication *app =
         [[XCUIApplication alloc] initPrivateWithPath:nil bundleID:@"com.apple.mobilesafari"];
     [app launch];
+    sleep(1.0);
     [app.otherElements[@"URL"] tap];
     [app.textFields[@"Search or enter website name"] tap];
     [app typeText:url];
