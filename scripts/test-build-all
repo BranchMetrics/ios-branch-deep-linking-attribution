@@ -80,11 +80,11 @@ buildDirectoryProjectScheme \
 
 buildDirectoryProjectScheme \
     Branch-TestBed \
-    Branch-TestBed.xcworkspace \
+    Branch-TestBed.xcodeproj \
     Branch-TestBed
 
 buildDirectoryProjectScheme \
-    Branch-TestBed/Branch-TestBed-UITests \
+    Examples/UITestBed \
     UITestBed.xcodeproj \
     UITestBed
 

@@ -1,5 +1,10 @@
 Branch iOS SDK Change Log
 
+- v0.25.0
+  * _*Master Release*_ - May 3, 2018
+  * Reorganized project as minimally as possible to make building unit and functional test apps much easier.
+  * Added an example of Adjust revenue event tracking in TestBed-Swift.
+
 - v0.24.2
   * _*Master Release*_ - April 21, 2018
   * Fixed a bug where a opening a blacklisted URI scheme would cause an HTTP status 400 for each
