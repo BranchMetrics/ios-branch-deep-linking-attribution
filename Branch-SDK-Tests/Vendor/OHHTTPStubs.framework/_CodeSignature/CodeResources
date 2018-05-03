@@ -18,7 +18,7 @@
 		</data>
 		<key>Headers/OHHTTPStubs-Swift.h</key>
 		<data>
-		YjOFRc0CuVQCBOwKMIfA02UQ3n4=
+		VefjKXqrMy1vlIZDB1zCw0iM/S8=
 		</data>
 		<key>Headers/OHHTTPStubs.h</key>
 		<data>
@@ -46,27 +46,27 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		aua5cBpccQPSxokDzEAOniLCR6w=
+		bNaC1ko4PbxHQ+eCP+wIpHD8ZAE=
 		</data>
 		<key>Modules/OHHTTPStubs.swiftmodule/i386.swiftdoc</key>
 		<data>
-		ZHR07NV14NVSFkHOwnc9uTf1NXY=
+		CC+t6iwSMqRrbhmddLRYHmCIpvE=
 		</data>
 		<key>Modules/OHHTTPStubs.swiftmodule/i386.swiftmodule</key>
 		<data>
-		x1j2S7EJXss1D+cbcbuRm6zW6Cw=
+		5eWP4sTqSY7D69S3aC54NCPEoSc=
 		</data>
 		<key>Modules/OHHTTPStubs.swiftmodule/x86_64.swiftdoc</key>
 		<data>
-		q6yEI87aZ8V16SednB9mMzK888g=
+		JHaP1TWa3h820bBpuN1EtqYLSLc=
 		</data>
 		<key>Modules/OHHTTPStubs.swiftmodule/x86_64.swiftmodule</key>
 		<data>
-		k2maocd4n0oEln0QgYzXBHoxWzw=
+		YkOu1cCKx1Pa/yIE2fXdTKI4rYk=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
-		k8VNvarfrqeHppQF+R0Z46r6bqE=
+		Qf6JiIASJNyHs4CmPt0Q0sdMOqA=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -108,11 +108,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			YjOFRc0CuVQCBOwKMIfA02UQ3n4=
+			VefjKXqrMy1vlIZDB1zCw0iM/S8=
 			</data>
 			<key>hash2</key>
 			<data>
-			um2DblenFuzq69SSzT/tG1yzjMpBU+qr32AXFsvSyDU=
+			lSK2tOQgwlmN0UGUWYDb7woVBjSSZ5UNRf34Sp67yGQ=
 			</data>
 		</dict>
 		<key>Headers/OHHTTPStubs.h</key>
@@ -185,55 +185,55 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			ZHR07NV14NVSFkHOwnc9uTf1NXY=
+			CC+t6iwSMqRrbhmddLRYHmCIpvE=
 			</data>
 			<key>hash2</key>
 			<data>
-			i38LoeAqHE4yuqOccuIkbu+1+JY5YDKgICgN5Fjf8Q8=
+			yYwKoWn9xGTt8njlDG8ljeIC2DLcFfCHm5LtGqFg5QA=
 			</data>
 		</dict>
 		<key>Modules/OHHTTPStubs.swiftmodule/i386.swiftmodule</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			x1j2S7EJXss1D+cbcbuRm6zW6Cw=
+			5eWP4sTqSY7D69S3aC54NCPEoSc=
 			</data>
 			<key>hash2</key>
 			<data>
-			3v7oRf04jBHHtjRZeQl2gPLond+pDc3s28JqxA7ouPA=
+			apA3HVYKysSpZJYI+dhVPOFU4oonhtFzxI/DO/BVELw=
 			</data>
 		</dict>
 		<key>Modules/OHHTTPStubs.swiftmodule/x86_64.swiftdoc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			q6yEI87aZ8V16SednB9mMzK888g=
+			JHaP1TWa3h820bBpuN1EtqYLSLc=
 			</data>
 			<key>hash2</key>
 			<data>
-			u+903TR9ddu2dtvIwWHlJwBdNpu0uHzkrj0Ieg8hfYk=
+			eDHhvR1lAm+BFyEoUtutRNBJG61iYEq5hjP+p8bjuGE=
 			</data>
 		</dict>
 		<key>Modules/OHHTTPStubs.swiftmodule/x86_64.swiftmodule</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			k2maocd4n0oEln0QgYzXBHoxWzw=
+			YkOu1cCKx1Pa/yIE2fXdTKI4rYk=
 			</data>
 			<key>hash2</key>
 			<data>
-			Y9KnHQ6JBd8TNqaUqe2N3yPny5rXJOO7MErMy09kkaY=
+			eQtBO8m5VQLoFVyn8jFW9hImtFaB1t9nzaDhvIpr//s=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			k8VNvarfrqeHppQF+R0Z46r6bqE=
+			Qf6JiIASJNyHs4CmPt0Q0sdMOqA=
 			</data>
 			<key>hash2</key>
 			<data>
-			27duDWEuoTqjEdHtxBmBQfJs8A9IaAg8veiYQdDs6AY=
+			kQzDPXwoVsgHIhj+oJ7S/qnHqhmhRLQ/mFNoyny1cy0=
 			</data>
 		</dict>
 	</dict>
