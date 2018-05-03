@@ -33,7 +33,7 @@ function testSimulatorVersion() {
     local version=$2
     printf "${textBlue}Testing %s %s...${textNormal}\n" "${name}" "${version}"
     xcodebuild \
-        -workspace Branch-TestBed.xcworkspace \
+        -project Branch-TestBed.xcodeproj \
         -scheme Branch-TestBed \
         -destination name="${name}",OS="${version}" \
             clean test -quiet
@@ -57,7 +57,7 @@ function testSimulatorStress() {
     let stressTest=stressTest+1
     printf "${textBlue}   Stress test %d.${textNormal}\n" $stressTest
     xcodebuild \
-        -workspace Branch-TestBed.xcworkspace \
+        -project Branch-TestBed.xcodeproj \
         -scheme Branch-TestBed \
         -destination name="$stressPhone",OS="$stressOS" \
             test -quiet
@@ -66,7 +66,7 @@ function testSimulatorStress() {
 function analyzeBuild() {
     printf "${textBlue}Running static analysis...${textNormal}\n"
     xcodebuild \
-        -workspace Branch-TestBed.xcworkspace \
+        -project Branch-TestBed.xcodeproj \
         -scheme Branch-TestBed \
         -destination name="iPhone 7",OS=latest \
             analyze -quiet
@@ -75,12 +75,12 @@ function analyzeBuild() {
 function cleanAll() {
     printf "${textBlue}Cleaning all projects...${textNormal}\n"
     xcodebuild \
-        -workspace Branch-TestBed.xcworkspace \
+        -project Branch-TestBed.xcodeproj \
         -scheme Branch-TestBed \
         -destination name="iPhone 7",OS=latest \
             clean -quiet
     xcodebuild \
-        -workspace Branch-TestBed.xcworkspace \
+        -project Branch-TestBed.xcodeproj \
         -scheme Branch-SDK-Tests \
         -destination name="iPhone 7",OS=latest \
             clean -quiet

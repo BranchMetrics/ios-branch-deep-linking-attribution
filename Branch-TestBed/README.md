@@ -1,4 +1,4 @@
-## Create a personal copy of Branch's Objective-C TestBed app for testing!
+# Create a personal copy of Branch's Objective-C TestBed app for testing!
 
 1. From the command line:
      - Clone the repo: `git clone git@github.com:BranchMetrics/ios-branch-deep-linking.git`
