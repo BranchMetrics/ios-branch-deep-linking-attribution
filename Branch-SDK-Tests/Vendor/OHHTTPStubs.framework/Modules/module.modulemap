@@ -7,5 +7,4 @@ framework module OHHTTPStubs {
 
 module OHHTTPStubs.Swift {
     header "OHHTTPStubs-Swift.h"
-    requires objc
 }
