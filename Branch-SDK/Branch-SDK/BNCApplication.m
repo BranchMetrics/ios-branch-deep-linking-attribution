@@ -145,4 +145,12 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
     }
 }
 
+- (void) setAppOriginalInstallDate:(NSDate*)originalInstallDate
+        firstInstallDate:(NSDate*)firstInstallDate
+        lastUpdateDate:(NSDate*)lastUpdateDate {
+    self->_currentInstallDate = firstInstallDate;        // latest_install_time
+    self->_firstInstallDate = originalInstallDate;       // first_install_time
+    self->_currentBuildDate = lastUpdateDate;            // lastest_update_time
+}
+
 @end
