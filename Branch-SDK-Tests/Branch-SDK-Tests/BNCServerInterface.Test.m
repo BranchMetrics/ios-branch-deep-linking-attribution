@@ -49,7 +49,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
         if (callCount == 1) {
             BOOL foundIt = ([request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound);
             XCTAssertTrue(foundIt, @"Branch Key not added");
-            BNCAfterSecondsPerformBlock(0.01, ^{ [expectation fulfill]; });
+            BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{ [expectation fulfill]; });
             return YES;
         }
         return NO;
@@ -108,7 +108,10 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
           // Return actual data afterwards
           ++successfulConnections;
           XCTAssertEqual(connectionAttempts, failedConnections + successfulConnections);
-          BNCAfterSecondsPerformBlock(0.01, ^{ NSLog(@"==> Fullfill."); [successExpectation fulfill]; });
+          BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{
+            NSLog(@"==> Fullfill.");
+            [successExpectation fulfill];
+          });
 
           NSDictionary* dummyJSONResponse = @{@"key": @"value"};
           return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
@@ -153,7 +156,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
         NSDictionary* dummyJSONResponse = @{@"key": @"value"};
         connectionAttempts++;
         XCTAssertEqual(connectionAttempts, 1);
-        BNCAfterSecondsPerformBlock(0.01, ^ {
+        BNCAfterSecondsPerformBlockOnMainThread(0.01, ^ {
             [successExpectation fulfill];
         });
         return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
@@ -191,7 +194,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
         NSDictionary* dummyJSONResponse = @{@"key": @"value"};
         connectionAttempts++;
         XCTAssertEqual(connectionAttempts, 1);
-        BNCAfterSecondsPerformBlock(0.01, ^{
+        BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{
             [successExpectation fulfill];
         });
         return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
@@ -243,7 +246,10 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
       ++successfulConnections;
       NSDictionary* dummyJSONResponse = @{@"key": @"value"};
       XCTAssertEqual(connectionAttempts, failedConnections + successfulConnections);
-      BNCAfterSecondsPerformBlock(0.01, ^ { NSLog(@"==>> Fullfill <<=="); [successExpectation fulfill]; });
+      BNCAfterSecondsPerformBlockOnMainThread(0.01, ^ {
+        NSLog(@"==>> Fullfill <<==");
+        [successExpectation fulfill];
+      });
       return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
 
     } else {
@@ -284,8 +290,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     NSDictionary* dummyJSONResponse = @{@"key": @"value"};
     connectionAttempts++;
     XCTAssertEqual(connectionAttempts, 1);
-    BNCAfterSecondsPerformBlock(0.01, ^{ [successExpectation fulfill]; });
-    
+    BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{ [successExpectation fulfill]; });
     return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
     
   }];
@@ -321,10 +326,8 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
     NSDictionary* dummyJSONResponse = @{@"key": @"value"};
     connectionAttempts++;
     XCTAssertEqual(connectionAttempts, 1);
-    BNCAfterSecondsPerformBlock(0.01, ^{ [successExpectation fulfill]; });
-    
+    BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{ [successExpectation fulfill]; });
     return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
-    
   }];
   
   [serverInterface getRequest:nil url:@"http://foo" key:@"key_live_foo" callback:NULL];

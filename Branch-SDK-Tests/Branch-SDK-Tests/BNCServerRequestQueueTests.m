@@ -154,7 +154,9 @@
                 archivedDataWithRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) {
                     if ([reqs isKindOfClass:[NSArray class]]) {
                         XCTAssert(reqs.count == 0);
-                        BNCAfterSecondsPerformBlock(0.01, ^{ [self safelyFulfillExpectation:expectation]; });
+                        BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{
+                            [self safelyFulfillExpectation:expectation];
+                        });
                         return YES;
                     }
                     return NO;
@@ -182,7 +184,9 @@
                 archivedDataWithRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) {
                     if ([reqs isKindOfClass:[NSArray class]]) {
                         XCTAssert(reqs.count == 0);
-                        BNCAfterSecondsPerformBlock(0.01, ^{ [self safelyFulfillExpectation:expectation]; });
+                        BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{
+                            [self safelyFulfillExpectation:expectation];
+                        });
                         return YES;
                     }
                     return NO;
