@@ -61,6 +61,8 @@
 		4D9AF2D81F7589CC0065EF11 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D9AF2D61F7589CC0065EF11 /* Launch Screen.storyboard */; };
 		4DACC26B2052165A00EA3A74 /* TBTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DACC2692052165A00EA3A74 /* TBTextViewController.m */; };
 		4DACC26C2052165A00EA3A74 /* TBTextViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DACC26A2052165A00EA3A74 /* TBTextViewController.xib */; };
+		4DED488D209BDEB9008DE877 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4DED488B209BDEB9008DE877 /* OCMock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4DED488E209BDEB9008DE877 /* OHHTTPStubs.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4DED488C209BDEB9008DE877 /* OHHTTPStubs.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		4DFF2B6E1EEF3B150043F840 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2B6D1EEF3B150043F840 /* main.m */; };
 		4DFF2B711EEF3B150043F840 /* TBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2B701EEF3B150043F840 /* TBAppDelegate.m */; };
 		4DFF2B741EEF3B150043F840 /* TBBranchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2B731EEF3B150043F840 /* TBBranchViewController.m */; };
@@ -117,6 +119,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
+				4DED488D209BDEB9008DE877 /* OCMock.framework in CopyFiles */,
+				4DED488E209BDEB9008DE877 /* OHHTTPStubs.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,6 +186,8 @@
 		4DACC2682052165A00EA3A74 /* TBTextViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBTextViewController.h; sourceTree = "<group>"; };
 		4DACC2692052165A00EA3A74 /* TBTextViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TBTextViewController.m; sourceTree = "<group>"; };
 		4DACC26A2052165A00EA3A74 /* TBTextViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TBTextViewController.xib; sourceTree = "<group>"; };
+		4DED488B209BDEB9008DE877 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = "../../Branch-SDK-Tests/Vendor/OCMock.framework"; sourceTree = "<group>"; };
+		4DED488C209BDEB9008DE877 /* OHHTTPStubs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OHHTTPStubs.framework; path = "../../Branch-SDK-Tests/Vendor/OHHTTPStubs.framework"; sourceTree = "<group>"; };
 		4DFF2B691EEF3B150043F840 /* UITestBed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UITestBed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DFF2B6D1EEF3B150043F840 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4DFF2B6F1EEF3B150043F840 /* TBAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBAppDelegate.h; sourceTree = "<group>"; };
@@ -304,6 +310,8 @@
 		4DFF2B601EEF3B150043F840 = {
 			isa = PBXGroup;
 			children = (
+				4DED488B209BDEB9008DE877 /* OCMock.framework */,
+				4DED488C209BDEB9008DE877 /* OHHTTPStubs.framework */,
 				4D5ACEEC1FB382040099A56F /* BranchSDK.xcodeproj */,
 				4D1683242098BD3E008819E3 /* Branch-SDK-Tests */,
 				4DFF2B6B1EEF3B150043F840 /* UITestBed */,
