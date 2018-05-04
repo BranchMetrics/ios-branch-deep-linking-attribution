@@ -7,6 +7,8 @@
 //
 
 #import "BNCTestCase.h"
+#import "Branch.h"
+#import "BNCApplication+BNCTest.h"
 #import "BranchOpenRequest.h"
 #import "BranchConstants.h"
 #import "BNCPreferenceHelper.h"
@@ -66,10 +68,11 @@
     NSTimeInterval kOneDayAgo = -1.0*24.0*60.0*60.0;
     NSDate *installDate = [NSDate dateWithTimeIntervalSinceNow:2.0*kOneDayAgo];
     NSDate *updateDate  = [NSDate dateWithTimeIntervalSinceNow:1.0*kOneDayAgo];
-    [BNCTestCase setAppOriginalInstallDate:installDate
+    [[BNCApplication currentApplication]
+        setAppOriginalInstallDate:installDate
         firstInstallDate:installDate
-        lastUpdateDate:installDate
-        previousUpdateDate:updateDate];
+        lastUpdateDate:installDate];
+    [preferenceHelper setPreviousAppBuildDate:updateDate];
 
     NSDictionary *expectedParams = @{
         @"app_version": APP_VERSION,
@@ -140,10 +143,11 @@
     NSTimeInterval kOneDayAgo = -1.0*24.0*60.0*60.0;
     NSDate *installDate = [NSDate dateWithTimeIntervalSinceNow:2.0*kOneDayAgo];
     NSDate *updateDate  = [NSDate dateWithTimeIntervalSinceNow:1.0*kOneDayAgo];
-    [BNCTestCase setAppOriginalInstallDate:installDate
+    [[BNCApplication currentApplication]
+        setAppOriginalInstallDate:installDate
         firstInstallDate:installDate
-        lastUpdateDate:installDate
-        previousUpdateDate:updateDate];
+        lastUpdateDate:installDate];
+    [preferenceHelper setPreviousAppBuildDate:updateDate];
 
     NSDictionary *expectedParams = @{
         @"app_version": APP_VERSION,

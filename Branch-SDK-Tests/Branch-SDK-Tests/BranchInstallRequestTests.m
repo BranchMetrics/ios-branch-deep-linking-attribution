@@ -8,6 +8,8 @@
 
 #import "BNCTestCase.h"
 #import "Branch.h"
+#import "BNCApplication.h"
+#import "BNCApplication+BNCTest.h"
 #import "BranchInstallRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
@@ -68,10 +70,11 @@
     [[[systemObserverMock stub] andReturn:SCREEN_HEIGHT] getScreenHeight];
 
     NSDate *appDate = [NSDate date];
-    [BNCTestCase setAppOriginalInstallDate:appDate
+    [[BNCApplication currentApplication]
+        setAppOriginalInstallDate:appDate
         firstInstallDate:appDate
-        lastUpdateDate:appDate
-        previousUpdateDate:nil];
+        lastUpdateDate:appDate];
+    [preferenceHelper setPreviousAppBuildDate:nil];
 
     NSDictionary *expectedParams = @{
         @"app_version":                 @"foo-app-version",
