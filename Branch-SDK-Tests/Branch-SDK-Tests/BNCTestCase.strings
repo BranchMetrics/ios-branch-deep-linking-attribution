@@ -6,6 +6,8 @@
   Copyright © 2016 Branch. All rights reserved.
 */
 
+"BNCTestCaseString" = "Test success!";
+
 "DumpClassTest" =
 "
 Class 0x11a380018 is class 'DumpClass' of class 'NSObject':
@@ -69,6 +71,7 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
 	Method name: 'intProp'.
 	Method name: 'stringProp'.
 ";
+
 "BranchUniversalObjectJSON" =
 "
 {
