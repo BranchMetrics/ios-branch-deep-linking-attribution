@@ -1,10 +1,12 @@
-//
-//  BNCTestCase.h
-//  Branch-TestBed
-//
-//  Created by Edward Smith on 4/27/17.
-//  Copyright (c) 2017 Branch Metrics. All rights reserved.
-//
+/**
+ @file          BNCTestCase.h
+ @package       Branch-SDK-Tests
+ @brief         The Branch testing framework super class.
+
+ @author        Edward Smith
+ @date          April 2017
+ @copyright     Copyright © 2017 Branch. All rights reserved.
+*/
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>

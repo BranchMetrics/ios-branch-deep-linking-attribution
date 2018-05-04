@@ -233,6 +233,8 @@
 			isa = PBXGroup;
 			children = (
 				4D0E07D11FCDF7920074E026 /* iAd.framework */,
+				4DED488B209BDEB9008DE877 /* OCMock.framework */,
+				4DED488C209BDEB9008DE877 /* OHHTTPStubs.framework */,
 				4D0E07D01FCDF7810074E026 /* SafariServices.framework */,
 			);
 			name = Frameworks;
@@ -318,8 +320,6 @@
 		4DFF2B601EEF3B150043F840 = {
 			isa = PBXGroup;
 			children = (
-				4DED488B209BDEB9008DE877 /* OCMock.framework */,
-				4DED488C209BDEB9008DE877 /* OHHTTPStubs.framework */,
 				4D5ACEEC1FB382040099A56F /* BranchSDK.xcodeproj */,
 				4D1683242098BD3E008819E3 /* Branch-SDK-Tests */,
 				4DFF2B6B1EEF3B150043F840 /* UITestBed */,
