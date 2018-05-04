@@ -9,6 +9,9 @@
 # *.xcscmblueprint # We should probably check this in.
 *.o
 
+# merge-repo commit/discard file
+merge-repo-commit
+
 # Pods
 Pods/
 Podfile.lock

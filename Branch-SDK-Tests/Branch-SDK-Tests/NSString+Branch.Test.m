@@ -13,7 +13,6 @@
 //--------------------------------------------------------------------------------------------------
 
 
-#import <XCTest/XCTest.h>
 #import "NSString+Branch.h"
 #import "BNCTestCase.h"
 

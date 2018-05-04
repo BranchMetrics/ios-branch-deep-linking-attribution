@@ -95,7 +95,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 
     //  Test breakpoints --
 
-    if (self.class.testBreakpoints) {  // Test break points too:
+    if (self.class.breakpointsAreEnabledInTests) {  // Test break points too:
         BNCLogSetBreakPointsEnabled(YES);
         BNCLogBreakPoint();
         XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
@@ -298,7 +298,10 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 - (void) testLogObject {
     BNCLogSetOutputFunction(TestLogProcedure);
     NSData *data = [@"Test string." dataUsingEncoding:NSUTF8StringEncoding];
-    BNCLog(data);
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wformat-security"
+    BNCLog((id)data);
+    #pragma clang diagnostic pop
     BNCLogFlushMessages();
     XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
         @"[branch.io] BNCLog.Test.m(***) Log: "
