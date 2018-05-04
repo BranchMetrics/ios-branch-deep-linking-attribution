@@ -13,7 +13,6 @@
 //--------------------------------------------------------------------------------------------------
 
 
-#import <XCTest/XCTest.h>
 #import "BNCDebug.h"
 #import "BNCTestCase.h"
 
@@ -190,7 +189,7 @@
 
 - (void) testBreakpoint {
     // if (BNCDebuggerIsAttached()) {
-    if (self.class.testBreakpoints) {
+    if (self.class.breakpointsAreEnabledInTests) {
         BNCDebugBreakpoint();
     }
 }
