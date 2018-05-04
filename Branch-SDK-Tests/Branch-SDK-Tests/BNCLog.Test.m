@@ -1,35 +1,26 @@
+/**
+ @file          BNCLog.Test.m
+ @package       BranchTests
+ @brief         Tests for BNCLog.
 
-
-//--------------------------------------------------------------------------------------------------
-//
-//                                                                                     BNCLog.Test.m
-//                                                                                       BranchTests
-//
-//                                                                          Simple logging functions
-//                                                                        Edward Smith, October 2016
-//
-//                                             -©- Copyright © 2016 Branch, all rights reserved. -©-
-//
-//--------------------------------------------------------------------------------------------------
-
+ @author        Edward Smith
+ @date          October 2016
+ @copyright     Copyright © 2016 Branch. All rights reserved.
+*/
 
 #import <XCTest/XCTest.h>
 #import "BNCLog.h"
 #import "NSString+Branch.h"
 #import "BNCTestCase.h"
 
-
 static NSString* globalTestLogString = nil;
-
 
 void TestLogProcedure(NSDate*timestamp, BNCLogLevel level, NSString* message) {
     globalTestLogString = [message copy];
 }
 
-
 @interface BNCLogTest : BNCTestCase
 @end
-
 
 @implementation BNCLogTest
 
@@ -63,7 +54,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     BNCLog(@"Debug message with no parameters.");
     BNCLogFlushMessages();
     XCTAssertEqualObjects(globalTestLogString,
-        @"[branch.io] BNCLog.Test.m(63) Log: Debug message with no parameters.");
+        @"[branch.io] BNCLog.Test.m(54) Log: Debug message with no parameters.");
 }
 
 - (void) testLog {
