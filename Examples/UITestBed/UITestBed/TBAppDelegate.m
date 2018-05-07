@@ -23,6 +23,8 @@ NSDate *next_previous_update_time = nil;
 
 @implementation TBAppDelegate
 
+#pragma mark - Life Cycle Methods
+
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     BNCLogSetDisplayLevel(BNCLogLevelAll);
@@ -30,11 +32,13 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Set to YES for testing GDPR compliance.
     // [Branch setTrackingDisabled:YES];
 
+#if 0
     // This simulates opt-in tracking.
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasRunBefore"]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasRunBefore"];
         [Branch setTrackingDisabled:YES];
     }
+#endif
 
     // Initialize Branch
     Branch *branch = [Branch getInstance];
@@ -162,6 +166,8 @@ continueUserActivity:(NSUserActivity *)userActivity
         dataViewController.message = params[@"~referring_link"];
         if (!dataViewController.message)
             dataViewController.message = params[@"+non_branch_link"];
+        if (dataViewController.message.length == 0)
+            dataViewController.message = @"< No URL >";
         viewController = dataViewController;
      }
 

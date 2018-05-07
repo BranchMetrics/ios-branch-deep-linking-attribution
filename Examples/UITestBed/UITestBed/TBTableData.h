@@ -26,6 +26,7 @@ typedef NS_ENUM(NSInteger, TBRowStyle) {
 @property (nonatomic, assign) NSInteger     integerValue;
 @property (nonatomic, assign) SEL           selector;
 @property (nonatomic, assign) TBRowStyle    rowStyle;
+@property (nonatomic, assign) NSInteger     userInfo;
 @end
 
 @interface TBTableData : NSObject
@@ -42,4 +43,7 @@ typedef NS_ENUM(NSInteger, TBRowStyle) {
 
 - (NSIndexPath*) indexPathForRow:(TBTableRow*)row;
 - (UITableViewCell*) cellForTableView:(UITableView*)tableView tableRow:(TBTableRow*)tableRow;
+
+- (void) updateTableView:(UITableView*)tableView row:(TBTableRow*)row;
+- (TBTableRow*) rowForTableView:(UITableView*)tableView subView:(UIView*)view;
 @end

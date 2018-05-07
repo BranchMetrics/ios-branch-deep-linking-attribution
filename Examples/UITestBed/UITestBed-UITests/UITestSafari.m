@@ -17,8 +17,7 @@ static NSTimeInterval const kLoadWikiPageTimeInterval  = 3.0;
 static NSString* const kWikiPageURL =
     @"https://github.com/BranchMetrics/ios-branch-deep-linking/wiki/"
      "UITest-for-Testbed-App-for-Universal-links";
-static NSString* const kUniversalLinkTag = @"Universal Link TestBed Obj-c";
-
+static NSString* const kUniversalLinkTag = @"UITestBed: Universal Link";
 
 @interface TestBedUITests : XCTestCase
 @end
@@ -49,16 +48,36 @@ static NSString* const kUniversalLinkTag = @"Universal Link TestBed Obj-c";
     [super tearDown];
 }
 
+- (NSString*) stringFromBundleWithKey:(NSString*)key {
+    NSString *const kItemNotFound = @"<Item-Not-Found>";
+    NSString *resource =
+        [[NSBundle bundleForClass:self.class] localizedStringForKey:key value:kItemNotFound table:@"UITestBed"];
+    if ([resource isEqualToString:kItemNotFound]) resource = nil;
+    return resource;
+}
+
 -(void)testDeepLinking {
     [XCUIDevice sharedDevice].orientation = UIDeviceOrientationFaceUp;
-    
+
+    // Close the any open data views:
+    XCUIApplication*currentApp = [[XCUIApplication alloc] init];
+    XCUIElement*element = currentApp.buttons[@"Done"].firstMatch;
+    [element tap];
+
+    // Click Safari:
     XCUIApplication *safariApp = [self openSafariWithUrl:kWikiPageURL];
     [safariApp.links[kUniversalLinkTag] tap];
-    sleep(kDeepLinkSleepTimeInterval);
-    
-    XCUIApplication *currentApp = [[XCUIApplication alloc] init];
-    XCUIElement* element = currentApp.textViews[@"DeepLinkData"];
-    XCTAssertTrue([element.value bnc_containsString:@"Successfully Deeplinked"]);
+    //sleep(kDeepLinkSleepTimeInterval);
+    XCTAssertTrue(
+        [currentApp waitForState:XCUIApplicationStateRunningForeground timeout:kDeepLinkSleepTimeInterval]
+    );
+    sleep(1);
+
+    element = currentApp.textViews[@"Data"].firstMatch;
+    NSString*value = element.value;
+    NSString*string = [[self stringFromBundleWithKey:@"UITestSafari"]
+        stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    XCTAssertTrue(string && value && [value bnc_isEqualToMaskedString:string]);
 }
 
 -(XCUIApplication *) openSafariWithUrl: (NSString*) url {
