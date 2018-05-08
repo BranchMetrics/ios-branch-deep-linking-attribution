@@ -1,25 +1,18 @@
+/**
+ @file          BNCLocalization.Test.m
+ @package       Branch-SDK
+ @brief         Branch string localization tests.
 
-
-//--------------------------------------------------------------------------------------------------
-//
-//                                                                            BNCLocalization.Test.m
-//                                                                                       BranchTests
-//
-//                                                                                Localization Tests
-//                                                                           Edward Smith, July 2017
-//
-//                                             -©- Copyright © 2017 Branch, all rights reserved. -©-
-//
-//--------------------------------------------------------------------------------------------------
-
+ @author        Edward Smith
+ @date          July 2017
+ @copyright     Copyright © 2017 Branch. All rights reserved.
+*/
 
 #import "BNCTestCase.h"
 #import "BNCLocalization.h"
 
-
 @interface BNCLocalizationTest : BNCTestCase
 @end
-
 
 @implementation BNCLocalizationTest
 
@@ -37,10 +30,13 @@
     string = BNCLocalizedString(truth);
     XCTAssertEqualObjects(string, truth);
 
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wall"
     // Nil input should return empty string output.
     truth = @"";
     string = BNCLocalizedString(nil);
     XCTAssertEqualObjects(string, truth);
+    #pragma clang diagnostic pop
 
     // Test formatted language strings.
     truth = @"Test formatted language strings.";
@@ -52,9 +48,12 @@
     string = BNCLocalizedFormattedString(@"Test formatted %@ strings float %1.2f.", @"language", 1.0);
     XCTAssertEqualObjects(string, truth);
 
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wall"
     truth = @"";
     string = BNCLocalizedFormattedString(nil, 1.0);
     XCTAssertEqualObjects(string, truth);
+    #pragma clang diagnostic pop
 }
 
 - (void) testLocalizationRussian {
