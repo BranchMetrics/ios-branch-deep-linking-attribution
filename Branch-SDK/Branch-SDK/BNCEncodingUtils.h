@@ -16,6 +16,7 @@
 
 extern NSDate*   BNCDateFromWireFormat(id object);
 extern NSNumber* BNCWireFormatFromDate(NSDate *date);
+extern NSNumber* BNCWireFormatFromBool(BOOL b);
 
 extern NSString* BNCStringFromWireFormat(id object);
 extern NSString* BNCWireFormatFromString(NSString *string);
@@ -49,6 +50,7 @@ extern NSString* BNCWireFormatFromString(NSString *string);
 + (NSData *)encodeDictionaryToJsonData:(NSDictionary *)dictionary;
 
 + (NSString*) stringByPercentDecodingString:(NSString*)string;
++ (NSString*) stringByPercentEncodingStringForQuery:(NSString *)string;
 
 + (NSDictionary *)decodeJsonDataToDictionary:(NSData *)jsonData;
 + (NSDictionary *)decodeJsonStringToDictionary:(NSString *)jsonString;

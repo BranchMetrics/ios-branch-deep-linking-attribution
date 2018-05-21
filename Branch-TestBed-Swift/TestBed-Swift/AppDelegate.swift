@@ -75,7 +75,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
             
             // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is false).
             
-            branch.initSession(launchOptions: launchOptions, automaticallyDisplayDeepLinkController: false, deepLinkHandler: { params, error in
+            branch.initSession(
+                launchOptions: launchOptions,
+                automaticallyDisplayDeepLinkController: false,
+                deepLinkHandler: { params, error in
                 
                 defer {
                     let notificationName = Notification.Name("BranchCallbackCompleted")
@@ -92,20 +95,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
                     return
                 }
                 
-                // Deeplinking logic for use when automaticallyDisplayDeepLinkController = false
-                if let clickedBranchLink = params?[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool? {
-                    
-                    if clickedBranchLink {
-                        let nc = self.window!.rootViewController as! UINavigationController
-                        let storyboard = UIStoryboard(name: "Content", bundle: nil)
-                        let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
-                        nc.pushViewController(contentViewController, animated: true)
-                        
-                        let referringLink = paramsDictionary["~referring_link"] as! String
-                        let content = String(format:"\nReferring link: \(referringLink)\n\nSession Details:\n\(paramsDictionary.JSONDescription())")
-                        contentViewController.content = content
-                        contentViewController.contentType = "Content"
+
+                let clickedBranchLink = params?[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool?
+                
+                if  let referringLink = paramsDictionary["~referring_link"] as! String?,
+                    let trackerId = paramsDictionary["ios_tracker_id"] as! String?,
+                    let clickedBranchLink = clickedBranchLink,
+                    clickedBranchLink {
+                    var adjustUrl = URLComponents(string: referringLink)
+                    var adjust_tracker:URLQueryItem
+                    //
+                    // Here's how to add Adjust attribution:
+                    //
+                    // Check if the deeplink is a Universal link.
+                    if referringLink.starts(with: "https://") || referringLink.starts(with: "http://") {
+                        adjust_tracker = URLQueryItem(name: "adjust_t", value: trackerId)
+                    } else {
+                        adjust_tracker = URLQueryItem(name: "adjust_tracker", value: trackerId)
                     }
+                    let adjust_campaign = URLQueryItem(name: "adjust_campaign", value: paramsDictionary[BRANCH_INIT_KEY_CAMPAIGN] as? String)
+                    let adjust_adgroup = URLQueryItem(name: "adjust_adgroup", value: paramsDictionary[BRANCH_INIT_KEY_CHANNEL] as? String)
+                    let adjust_creative = URLQueryItem(name: "adjust_creative", value: paramsDictionary[BRANCH_INIT_KEY_FEATURE] as? String)
+                    let queryItems = [adjust_tracker,adjust_campaign,adjust_adgroup,adjust_creative]
+                    adjustUrl?.queryItems = queryItems
+                    if let url = adjustUrl?.url {
+                        Adjust.appWillOpen(url)
+                    }
+                }
+                
+                // Deeplinking logic for use when automaticallyDisplayDeepLinkController = false
+                if let clickedBranchLink = clickedBranchLink,
+                   clickedBranchLink {
+                    let nc = self.window!.rootViewController as! UINavigationController
+                    let storyboard = UIStoryboard(name: "Content", bundle: nil)
+                    let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
+                    nc.pushViewController(contentViewController, animated: true)
+                    
+                    let referringLink = paramsDictionary["~referring_link"] as! String
+                    let content = String(format:"\nReferring link: \(referringLink)\n\nSession Details:\n\(paramsDictionary.JSONDescription())")
+                    contentViewController.content = content
+                    contentViewController.contentType = "Content"
                 } else {
                     print(String(format: "Branch TestBed: Finished init with params\n%@", paramsDictionary.description))
                 }
@@ -168,15 +197,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
                                                              sourceApplication: sourceApplication,
                                                              annotation: annotation
         )
-        if (!branchHandled) {
+        if(!branchHandled) {
             // If not handled by Branch, do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+            Adjust.appWillOpen(url)
         }
         return true
     }
     
     // Respond to Universal Links
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
-        Branch.getInstance().continue(userActivity);
+    func application(_
+        application: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler: @escaping ([Any]?) -> Void
+    ) -> Bool {
+        let branchHandled = Branch.getInstance().continue(userActivity)
+        if (userActivity.activityType == NSUserActivityTypeBrowsingWeb) {
+            if let url = userActivity.webpageURL,
+               !branchHandled {
+                Adjust.appWillOpen(url)
+            }
+        }
+        
+        // Apply your logic to determine the return value of this method
         return true
     }
     
@@ -250,11 +292,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
         IntegratedSDKsData.setActiveAdjustAppToken(key)
         IntegratedSDKsData.setActiveAdjustEnabled(true)
 
-        let adjustConfig = ADJConfig(appToken: key, environment: ADJEnvironmentSandbox)
+        let adjustConfig = ADJConfig(appToken: key, environment: ADJEnvironmentProduction)
 
         adjustConfig?.logLevel = ADJLogLevelVerbose
         adjustConfig?.delegate = self
         Adjust.appDidLaunch(adjustConfig!)
+        
     }
     
     func activateAdobe() {

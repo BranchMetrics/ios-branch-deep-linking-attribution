@@ -16,6 +16,7 @@
 #import "BNCLog.h"
 #import "Branch.h"
 #import "BNCLocalization.h"
+#import "NSString+Branch.h"
 
 @interface BNCServerInterface ()
 @property (strong) NSString *requestEndpoint;
@@ -451,7 +452,10 @@ exit:
 
 #pragma mark - GET methods
 
-- (void)getRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key callback:(BNCServerCallback)callback {
+- (void)getRequest:(NSDictionary *)params
+               url:(NSString *)url
+               key:(NSString *)key
+          callback:(BNCServerCallback)callback {
     [self getRequest:params url:url key:key retryNumber:0 callback:callback];
 }
 
@@ -551,12 +555,15 @@ exit:
             
             // Retry the request if appropriate
             if (retryNumber < self.preferenceHelper.retryCount && isRetryableStatusCode) {
-                dispatch_time_t dispatchTime = dispatch_time(DISPATCH_TIME_NOW, self.preferenceHelper.retryInterval * NSEC_PER_SEC);
+                dispatch_time_t dispatchTime =
+                    dispatch_time(DISPATCH_TIME_NOW, self.preferenceHelper.retryInterval * NSEC_PER_SEC);
                 dispatch_after(dispatchTime, dispatch_get_main_queue(), ^{
                     BNCLogDebug(@"Retrying request with url %@", request.URL.relativePath);
                     // Create the next request
                     NSURLRequest *retryRequest = retryHandler(retryNumber);
-                    [self genericHTTPRequest:retryRequest retryNumber:(retryNumber + 1) callback:callback retryHandler:retryHandler];
+                    [self genericHTTPRequest:retryRequest
+                                 retryNumber:(retryNumber + 1)
+                                    callback:callback retryHandler:retryHandler];
                 });
                 
                 // Do not continue on if retrying, else the callback will be called incorrectly
@@ -596,6 +603,25 @@ exit:
                 callback(serverResponse, branchError);
         };
 
+    if (Branch.trackingDisabled) {
+        NSString *endpoint = request.URL.absoluteString;
+        BNCPreferenceHelper *prefs = [BNCPreferenceHelper preferenceHelper];
+        if (([endpoint bnc_containsString:@"/v1/install"] ||
+             [endpoint bnc_containsString:@"/v1/open"]) &&
+             ((prefs.linkClickIdentifier.length > 0 ) ||
+              (prefs.spotlightIdentifier.length > 0 ) ||
+              (prefs.universalLinkUrl.length > 0))) {
+            // Allow this network operation since it's an open/install to resolve a link.
+        } else {
+            [[BNCPreferenceHelper preferenceHelper] clearTrackingInformation];
+            NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
+            BNCLogError(@"Network service error: %@.", error);
+            if (callback) {
+                callback(nil, error);
+            }
+            return;
+        }
+    }
     id<BNCNetworkOperationProtocol> operation =
         [self.networkService networkOperationWithURLRequest:request.copy completion:completionHandler];
     [operation start];
@@ -709,6 +735,22 @@ exit:
         [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"POST"];
     if ([self isV2APIURL:url]) {
         preparedParams[@"sdk"] = nil;
+    }
+    if ([Branch trackingDisabled]) {
+        preparedParams[@"tracking_disabled"] = (__bridge NSNumber*) kCFBooleanTrue;
+        preparedParams[@"local_ip"] = nil;
+        preparedParams[@"lastest_update_time"] = nil;
+        preparedParams[@"previous_update_time"] = nil;
+        preparedParams[@"latest_install_time"] = nil;
+        preparedParams[@"first_install_time"] = nil;
+        preparedParams[@"ios_vendor_id"] = nil;
+        preparedParams[@"hardware_id"] = nil;
+        preparedParams[@"hardware_id_type"] = nil;
+        preparedParams[@"is_hardware_id_real"] = nil;
+        preparedParams[@"device_fingerprint_id"] = nil;
+        preparedParams[@"identity_id"] = nil;
+        preparedParams[@"identity"] = nil;
+        preparedParams[@"update"] = nil;
     }
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];

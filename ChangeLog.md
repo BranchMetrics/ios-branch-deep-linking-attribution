@@ -1,6 +1,67 @@
 Branch iOS SDK Change Log
 
+- v0.25.0
+  * _*Master Release*_ - May 3, 2018
+  * Reorganized project as minimally as possible to make using unit and functional test apps much easier.
+    - Simplified the Branch-TestBed project by removing CocoaPods dependencies needed for unit tests.
+      * The Branch-TestBed now has just a .xcodeproj file now, the .xcworkspace has been deleted.
+    - Moved the unit tests to ./Branch-SDK-Tests so they can be easily included in other projects.
+      * The testing framework dependencies are now included as regular frameworks located in
+        Branch-SDK-Tests/Vendor.
+  * Added an example of Adjust revenue event tracking in TestBed-Swift.
+
+- v0.24.2
+  * _*Master Release*_ - April 21, 2018
+  * Fixed a bug where a opening a blacklisted URI scheme would cause an HTTP status 400 for each
+    Branch open until the app was opened with a universal link (DEVEX-341).
+    - After opening a blacklisted scheme, the app would not open other schemes until a https URL was opened.
+    - Added code that clears the blacklisted URL after sending the regex pattern to the server.
+    - The matching regex is now sent in `external_intent_uri` rather than `universal_link_url`.
+    - Removed an old NSLog from debugging.
+  * Added `BNCProductCategoryAllCategories(void)` and `BNCCurrencyAllCurrencies(void)` convenience functions.
+  * Updated the Info.plist URI scheme filter and clarified documentation (DEVEX-343).
+    - Updated our URI scheme filter that finds the URI scheme for the app.
+    - Updated the documentation to clarify that the partner's app URI should be the first URI.
+    - This clarifies GitHub issue #825.
+  * Added code snippets that demonstrate Adjust reattribution in the Swift-TestBed demo app (ATAN-523).
+  * Made sure that Foundation/Foundation.h is always imported first (DEVEX-333).
+  * Fixed a crash bug in the Swift-TestBed example app (DEVEX-327).
+
+- v0.24.1
+  * _*Master Release*_ - April 5, 2018
+  * Updated the SDK for Xcode 9.3 and Swift 4.1.
+  * Fixed the new warnings.
+
+- v0.24.0
+  * _*Master Release*_ - April 3, 2018
+  * Added the ability to disable user tracking (#794, DEVEX-242). This is useful for GDPR compliance.
+    - Added `setTrackingDisabled` and `trackingDisabled` methods to the Branch class to set and query the tracking state.
+    - Added the `BNCTrackingDisabledError` error code that's returned to callbacks when tracking is disabled.
+    - Added a 'Do not track' option to UITestBed.
+    - Updated the SDK so that deep links can be opened even when 'no tracking' is set.
+    - Updated documentation.
+  * Fixed some code analyzer warnings.
+  * Added SMS as a link scraper when sharing.
+  * Fixed some unit tests and updated pods.
+
+- v0.23.5
+  * _*Master Release*_ - March 27, 2018
+  * Added a field to set an email subject without adding it as a link parameter.
+    - The field is BranchShareLink.emailSubject.
+    - This is analogous to the similar Android option.
+    - Updated the Branch code to use the newer `activityViewController:subjectForActivityType:`
+      delegate as well as support the old style set-undocumented-option-on-view-controller way.
+    - Setting an email subject for Gmail is still broken. This is a Gmail problem and I've
+      filed an issue with Gmail (GitHub #789).
+  * After sharing a link in Skype, the link would open in the app as if a deferred deep linking had
+    happened (DEVEX-278, GitHub #793).
+    - Fixed this so that Skype content scraping doesn't trigger a deferred deep link.
+  * Don't print expected HTTP status 404 error pages because it looks like an error (GitHub #800).
+  * Fixed Airdrop of a URL scheme link open (INTENG-4106).
+  * Fixed a Fabric share content event bug.
+
 - v0.23.4
+  * _*Master Release*_ - March 16, 2018
   * Made sure v2 events for sharing and content view were being sent.
   * Added rewards testing to the UITestBed app.
   * Made sure that `BNCNetworkService` network sessions are deallocated.
@@ -12,7 +73,7 @@ Branch iOS SDK Change Log
 
 - v0.23.2
   * _*Master Release*_ - March 7, 2018
-  * Updated the Cocoapod podspec for compatibility with frameworks when Branch is used as a dependency.
+  * Updated the CocoaPod podspec for compatibility with frameworks when Branch is used as a dependency.
 
 - v0.23.1
   * _*Master Release*_ - March 6, 2018

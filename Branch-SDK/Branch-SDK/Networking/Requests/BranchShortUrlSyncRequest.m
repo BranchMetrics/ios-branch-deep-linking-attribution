@@ -53,9 +53,11 @@
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:self.linkData.data];
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
-    params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
-    params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
+    if (!preferenceHelper.trackingDisabled) {
+        params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+        params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+        params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
+    }
 
     return [serverInterface postRequestSynchronous:params
 		url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]
@@ -94,35 +96,43 @@
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSMutableString *baseUrl;
     
-    if (preferenceHelper.userUrl) {
-        baseUrl = [preferenceHelper.userUrl mutableCopy];
-        [baseUrl appendString:@"&"];
-    } else {
+    if (preferenceHelper.userUrl)
+        baseUrl = [preferenceHelper sanitizedMutableBaseURL:preferenceHelper.userUrl];
+    else
         baseUrl = [[NSMutableString alloc] initWithFormat:@"%@/a/%@?", BNC_LINK_URL, branchKey];
-    }
-    
+
     return [BranchShortUrlSyncRequest createLongUrlWithBaseUrl:baseUrl tags:tags alias:alias type:type matchDuration:duration channel:channel feature:feature stage:stage params:params];
 }
 
-+ (NSString *)createLongUrlWithBaseUrl:(NSMutableString *)baseUrl tags:(NSArray *)tags alias:(NSString *)alias type:(BranchLinkType)type matchDuration:(NSInteger)duration channel:(NSString *)channel feature:(NSString *)feature stage:(NSString *)stage params:(NSDictionary *)params {
++ (NSString *)createLongUrlWithBaseUrl:(NSMutableString *)baseUrl
+                                  tags:(NSArray *)tags
+                                 alias:(NSString *)alias
+                                  type:(BranchLinkType)type
+                         matchDuration:(NSInteger)duration
+                               channel:(NSString *)channel
+                               feature:(NSString *)feature
+                                 stage:(NSString *)stage
+                                params:(NSDictionary *)params {
+
+    baseUrl = [[BNCPreferenceHelper preferenceHelper] sanitizedMutableBaseURL:baseUrl];
     for (NSString *tag in tags) {
-        [baseUrl appendFormat:@"tags=%@&", tag];
+        [baseUrl appendFormat:@"tags=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:tag]];
     }
     
     if ([alias length]) {
-        [baseUrl appendFormat:@"alias=%@&", alias];
+        [baseUrl appendFormat:@"alias=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:alias]];
     }
     
     if ([channel length]) {
-        [baseUrl appendFormat:@"channel=%@&", channel];
+        [baseUrl appendFormat:@"channel=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:channel]];
     }
     
     if ([feature length]) {
-        [baseUrl appendFormat:@"feature=%@&", feature];
+        [baseUrl appendFormat:@"feature=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:feature]];
     }
     
     if ([stage length]) {
-        [baseUrl appendFormat:@"stage=%@&", stage];
+        [baseUrl appendFormat:@"stage=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:stage]];
     }
     
     [baseUrl appendFormat:@"type=%ld&", (long)type];
@@ -132,7 +142,7 @@
     NSString *base64EncodedParams = [BNCEncodingUtils base64EncodeData:jsonData];
     NSString *urlEncodedBase64EncodedParams = [BNCEncodingUtils urlEncodedString:base64EncodedParams];
     [baseUrl appendFormat:@"source=ios&data=%@", urlEncodedBase64EncodedParams];
-    
+
     return baseUrl;
 }
 

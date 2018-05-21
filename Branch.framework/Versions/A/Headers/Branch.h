@@ -230,6 +230,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /// @return Returns the current Branch key.
 + (NSString*) branchKey;
 
++ (BOOL) branchKeyIsSet;
+
 /**
  * By default, the Branch SDK will include the device fingerprint ID as metadata in Crashlytics
  * reports. This can help locate problems by correlating API traffic with a crash. To
@@ -678,6 +680,29 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 - (void)setInstallRequestDelay:(NSInteger)installRequestDelay;
 
+/**
+ Disables the Branch SDK from tracking the user. This is useful for GDPR privacy compliance.
+
+ When tracking is disabled, the Branch SDK will clear the Branch defaults of user identifying
+ information and prevent Branch from making any Branch network calls that will track the user.
+
+ Note that:
+
+ * Opening Branch deep links with an explicit URL will work.
+ * Deferred deep linking will not work.
+ * Generating short links will not work and will return long links instead.
+ * Sending user tracking events such as `userCompletedAction`, `BranchCommerceEvents`, and
+   `BranchEvents` will fail.
+ * User rewards and credits will not work.
+ * Setting a user identity and logging a user identity out will not work.
+
+ @param disabled    If set to `true` then tracking will be disabled.
+ @warning This will prevent most of the Branch SDK functionality.
+*/
++ (void) setTrackingDisabled:(BOOL)disabled;
+
+///Returns the current tracking state.
++ (BOOL) trackingDisabled;
 
 #pragma mark - Session Item methods
 

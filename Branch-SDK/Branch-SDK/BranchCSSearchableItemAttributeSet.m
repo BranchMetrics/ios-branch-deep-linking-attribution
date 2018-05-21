@@ -6,11 +6,12 @@
 //  Copyright © 2015 Branch Metrics. All rights reserved.
 //
 
+#import "BranchCSSearchableItemAttributeSet.h"
+
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
 
-#import "BranchCSSearchableItemAttributeSet.h"
 #import "Branch.h"
 #import "BNCSystemObserver.h"
 

@@ -31,6 +31,10 @@ NSNumber* BNCWireFormatFromDate(NSDate *date) {
     return number;
 }
 
+NSNumber* BNCWireFormatFromBool(BOOL b) {
+    return (b) ? (__bridge NSNumber*) kCFBooleanTrue : nil;
+}
+
 NSString* BNCStringFromWireFormat(id object) {
     if ([object isKindOfClass:NSString.class])
         return object;
@@ -323,6 +327,11 @@ NSString* BNCWireFormatFromString(NSString *string) {
 
 + (NSString*) stringByPercentDecodingString:(NSString *)string {
     return [string stringByRemovingPercentEncoding];
+}
+
++ (NSString*) stringByPercentEncodingStringForQuery:(NSString *)string {
+    return [string stringByAddingPercentEncodingWithAllowedCharacters:
+                [NSCharacterSet URLQueryAllowedCharacterSet]];
 }
 
 #pragma mark - Param Decoding Methods

@@ -50,29 +50,41 @@
     return self;
 }
 
-- (void)makeRequest:(BNCServerInterface *)serverInterface key:(NSString *)key callback:(BNCServerCallback)callback {
+- (void)makeRequest:(BNCServerInterface *)serverInterface
+                key:(NSString *)key
+           callback:(BNCServerCallback)callback {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] initWithDictionary:self.linkData.data];
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
-    
-    if (!_isSpotlightRequest) {
-        params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    if (!preferenceHelper.trackingDisabled) {
+        params[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+        if (!_isSpotlightRequest)
+            params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+        params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     }
-    params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
-    
-    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL] key:key callback:callback];
+
+    [serverInterface postRequest:params
+        url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_GET_SHORT_URL]
+        key:key
+        callback:callback];
 }
 
 - (void)processResponse:(BNCServerResponse *)response error:(NSError *)error {
     if (error) {
         if (self.callback) {
-            NSString *failedUrl = nil;
-            NSString *userUrl = [BNCPreferenceHelper preferenceHelper].userUrl;
-            if (userUrl) {
-                failedUrl = [self createLongUrlForUserUrl:userUrl];
+            BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+            NSString *baseUrl = preferenceHelper.userUrl;
+            if (baseUrl.length)
+                baseUrl = [preferenceHelper sanitizedMutableBaseURL:baseUrl];
+            else
+            if (Branch.branchKeyIsSet) {
+                baseUrl = [[NSMutableString alloc] initWithFormat:@"%@/a/%@?",
+                    BNC_LINK_URL,
+                    Branch.branchKey];
             }
-            self.callback(failedUrl, error);
+            if (baseUrl)
+                baseUrl = [self createLongUrlForUserUrl:baseUrl];
+            self.callback(baseUrl, error);
         }
         return;
     }
@@ -89,26 +101,25 @@
 }
 
 - (NSString *)createLongUrlForUserUrl:(NSString *)userUrl {
-    NSMutableString *longUrl = [[NSMutableString alloc] initWithFormat:@"%@?", userUrl];
-    
+    NSMutableString *longUrl = [[BNCPreferenceHelper preferenceHelper] sanitizedMutableBaseURL:userUrl];
     for (NSString *tag in self.tags) {
-        [longUrl appendFormat:@"tags=%@&", tag];
+        [longUrl appendFormat:@"tags=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:tag]];
     }
     
     if ([self.alias length]) {
-        [longUrl appendFormat:@"alias=%@&", self.alias];
+        [longUrl appendFormat:@"alias=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.alias]];
     }
     
     if ([self.channel length]) {
-        [longUrl appendFormat:@"channel=%@&", self.channel];
+        [longUrl appendFormat:@"channel=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.channel]];
     }
     
     if ([self.feature length]) {
-        [longUrl appendFormat:@"feature=%@&", self.feature];
+        [longUrl appendFormat:@"feature=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.feature]];
     }
     
     if ([self.stage length]) {
-        [longUrl appendFormat:@"stage=%@&", self.stage];
+        [longUrl appendFormat:@"stage=%@&", [BNCEncodingUtils stringByPercentEncodingStringForQuery:self.stage]];
     }
     if (self.type) {
         [longUrl appendFormat:@"type=%ld&", (long)self.type];

@@ -33,7 +33,7 @@ function testSimulatorVersion() {
     local version=$2
     printf "${textBlue}Testing %s %s...${textNormal}\n" "${name}" "${version}"
     xcodebuild \
-        -workspace Branch-TestBed.xcworkspace \
+        -project Branch-TestBed.xcodeproj \
         -scheme Branch-TestBed \
         -destination name="${name}",OS="${version}" \
             clean test -quiet
@@ -43,7 +43,12 @@ stressTest=0
 # stressPhone="iPhone 4s"
 # stressOS="8.3"
 stressPhone="iPhone 7 Plus"
-stressOS="latest"
+if [ "$(xcodebuild -version | head -n1)" = "Xcode 9.3" ]
+then
+    stressOS="latest"
+else
+    stressOS="10.3.1"
+fi
 
 function testSimulatorStress() {
     if (( $stressTest == 0 )); then
@@ -52,7 +57,7 @@ function testSimulatorStress() {
     let stressTest=stressTest+1
     printf "${textBlue}   Stress test %d.${textNormal}\n" $stressTest
     xcodebuild \
-        -workspace Branch-TestBed.xcworkspace \
+        -project Branch-TestBed.xcodeproj \
         -scheme Branch-TestBed \
         -destination name="$stressPhone",OS="$stressOS" \
             test -quiet
@@ -61,7 +66,7 @@ function testSimulatorStress() {
 function analyzeBuild() {
     printf "${textBlue}Running static analysis...${textNormal}\n"
     xcodebuild \
-        -workspace Branch-TestBed.xcworkspace \
+        -project Branch-TestBed.xcodeproj \
         -scheme Branch-TestBed \
         -destination name="iPhone 7",OS=latest \
             analyze -quiet
@@ -70,12 +75,12 @@ function analyzeBuild() {
 function cleanAll() {
     printf "${textBlue}Cleaning all projects...${textNormal}\n"
     xcodebuild \
-        -workspace Branch-TestBed.xcworkspace \
+        -project Branch-TestBed.xcodeproj \
         -scheme Branch-TestBed \
         -destination name="iPhone 7",OS=latest \
             clean -quiet
     xcodebuild \
-        -workspace Branch-TestBed.xcworkspace \
+        -project Branch-TestBed.xcodeproj \
         -scheme Branch-SDK-Tests \
         -destination name="iPhone 7",OS=latest \
             clean -quiet
@@ -93,15 +98,23 @@ fi
 
 cleanAll
 analyzeBuild
+printf "${textBlue}Running stress test with $stressPhone $stressOS.${textNormal}\n"
 for i in {1..5}
 do
     testSimulatorStress
 done
-testSimulatorVersion "iPhone X"  latest
-testSimulatorVersion "iPhone SE" latest
+if [ "$(xcodebuild -version | head -n1)" = "Xcode 9.3" ]
+then
+    testSimulatorVersion "iPhone X"  latest
+fi
+testSimulatorVersion "iPhone SE" "$stressOS"
 testSimulatorVersion "iPhone 6s" 10.0
 testSimulatorVersion "iPhone 5"  9.3
-testSimulatorVersion "iPhone 4s" 8.4
+# xctest doesn't work for iOS 8.4 in Xcode 9.3.  Bummer.
+if [ "$(xcodebuild -version | head -n1)" != "Xcode 9.3" ]
+then
+    testSimulatorVersion "iPhone 4s" 8.4
+fi
 
 elapsed=$(date -jur$SECONDS +%H:%M:%S)
 printf "${textBlue}All tests completed successfully. Elapsed: %s.${textNormal}\n" "$elapsed"

@@ -27,9 +27,12 @@ extern CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved)
 
 #else
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
 CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
     return CFSTR("Sec OSStatus error.");
 }
+#pragma clang diagnostic pop
 
 #endif
 
@@ -46,6 +49,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
 
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Wtautological-compare"
+    #pragma clang diagnostic ignored "-Wpartial-availability"
     if (SecCopyErrorMessageString != NULL)
         reason = (__bridge_transfer NSString*) SecCopyErrorMessageString(status, NULL);
     #pragma clang diagnostic pop
