@@ -81,4 +81,9 @@
     XCTAssertTrue([array isEqualToArray:@[ @"3xyz123" ]] && error == errSecSuccess);
 }
 
+- (void) testSecurityAccessGroup {
+    NSString *group = [BNCKeyChain securityAccessGroup];
+    XCTAssert(group.length > 0);
+}
+
 @end

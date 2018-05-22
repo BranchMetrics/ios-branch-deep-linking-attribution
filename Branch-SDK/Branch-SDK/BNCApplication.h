@@ -48,4 +48,7 @@
 
 /// Returns a dictionary of device / identity pairs.
 @property (atomic, readonly) NSDictionary<NSString*, NSString*>*_Nonnull deviceKeyIdentityValueDictionary;
+
+/// The team identifier for the app.
+@property (atomic, readonly) NSString* teamID;
 @end

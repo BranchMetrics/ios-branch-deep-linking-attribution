@@ -42,7 +42,9 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Initialize Branch
     Branch *branch = [Branch getInstance];
-    [branch validateSDKIntegration];
+
+    // This starts the Branch integration validation.  Remove for normal use.
+    // [branch validateSDKIntegration];
     
     // Comment / un-comment to toggle debugging
     [branch setDebug];
