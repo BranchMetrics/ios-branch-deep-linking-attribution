@@ -48,5 +48,4 @@
 
 /// Returns a dictionary of device / identity pairs.
 @property (atomic, readonly) NSDictionary<NSString*, NSString*>*_Nonnull deviceKeyIdentityValueDictionary;
-
 @end

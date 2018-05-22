@@ -38,14 +38,15 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
 
 - (void) startValidation {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSString *endpoint = [BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS stringByAppendingPathComponent:preferenceHelper.lastRunBranchKey];
+    NSString *endpoint =
+        [BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS stringByAppendingPathComponent:preferenceHelper.lastRunBranchKey];
     [[[BNCServerInterface alloc] init]
         getRequest:nil
         url:[preferenceHelper getAPIURL:endpoint]
         key:nil
-        callback:^(BNCServerResponse *response, NSError *error) {
+        callback:^ (BNCServerResponse *response, NSError *error) {
             if (error) {
-                [self showAlertWithTitle:@"" message:@""];
+                [self showAlertWithTitle:@"Error" message:error.localizedDescription];
             } else {
                 [self validateIntegrationWithServerResponse:response];
             }
@@ -93,7 +94,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     }
 
     NSLog(@"-------------------------------------------------------------------------------------------------------------------");
-    NSLog(@"-----To test your deeplink routing append ?validate=true to any branch link and click it on your mobile device-----");
+    NSLog(@"-----To test your deeplink routing append ?bnc_validate=true to any branch link and click it on your mobile device-----");
     NSLog(@"-------------------------------------------------------------------------------------------------------------------");
 
     BOOL testsFailed = NO;
@@ -172,7 +173,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     NSString *message =
         @"\nGreat! Comment out the 'validateSDKIntegration' line in your app.\n\n"
          "Next check your deep link routing.\n\n"
-         "Append '?validate=true' to any of your app's Branch links and "
+         "Append '?bnc_validate=true' to any of your app's Branch links and "
          "click it on your mobile device (not the Simulator!) to start the test.\n\n"
          "For instance, to validate a link like:\n"
          "https://<yourapp>.app.link/NdJ6nFzRbK\n\n"

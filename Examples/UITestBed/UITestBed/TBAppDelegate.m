@@ -30,14 +30,15 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Set to YES for testing GDPR compliance.
     // [Branch setTrackingDisabled:YES];
 
-    // This simulates opt-in tracking.
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasRunBefore"]) {
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasRunBefore"];
-        [Branch setTrackingDisabled:YES];
-    }
+    //    // This simulates opt-in tracking.
+    //    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasRunBefore"]) {
+    //        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasRunBefore"];
+    //        [Branch setTrackingDisabled:YES];
+    //    }
 
     // Initialize Branch
     Branch *branch = [Branch getInstance];
+    [branch validateSDKIntegration];
     
     // Comment / un-comment to toggle debugging
     [branch setDebug];
