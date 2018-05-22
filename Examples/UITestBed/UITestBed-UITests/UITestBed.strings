@@ -1,0 +1,38 @@
+/* 
+  UITest.strings
+  UITestBed
+
+  Created by Edward on 5/7/18.
+  Copyright © 2018 Branch. All rights reserved.
+*/
+
+"UITestSafari" =
+"
+{
+  \"~referring_link\" : \"https:\\/\\/branch-uitestbed.app.link\\/YZIfk1NgJM\",
+  \"~creation_source\" : 3,
+  \"$one_time_use\" : false,
+  \"+is_first_session\" : false,
+  \"$creation_timestamp\" : 1525710507469,
+  \"$og_title\" : \"Content Title\",
+  \"$desktop_url\" : \"http:\\/\\/branch.io\",
+  \"$currency\" : \"$\",
+  \"deeplink_text\" : \"This text was embedded as data in a Branch link with the following characteristics:\\n\\ncanonicalUrl: https:\\/\\/dev.branch.io\\/getting-started\\/deep-link-routing\\/guide\\/ios\\/\\n  title: Content Title\\n  contentDescription: My Content Description\\n  imageUrl: http:\\/\\/a57.foxnews.com\\/images.foxnews.com\\/content\\/fox-news\\/science\\/2018\\/03\\/20\\/first-day-spring-arrives-5-things-to-know-about-vernal-equinox\\/_jcr_content\\/par\\/featured_image\\/media-0.img.jpg\\/1862\\/1048\\/1521552912093.jpg?ve=1&tl=1\\n\",
+  \"~campaign\" : \"some campaign\",
+  \"~channel\" : \"Distribution Channel\",
+  \"$og_description\" : \"My Content Description\",
+  \"$og_type\" : \"website\",
+  \"$identity_id\" : 522069179592022788,
+  \"$content_schema\" : \"some type\",
+  \"$canonical_identifier\" : \"item\\/12345\",
+  \"$og_image_url\" : \"http:\\/\\/a57.foxnews.com\\/images.foxnews.com\\/content\\/fox-news\\/science\\/2018\\/03\\/20\\/first-day-spring-arrives-5-things-to-know-about-vernal-equinox\\/_jcr_content\\/par\\/featured_image\\/media-0.img.jpg\\/1862\\/1048\\/1521552912093.jpg?ve=1&tl=1\",
+  \"+click_timestamp\" : **********,
+  \"~id\" : 522074586054440364,
+  \"$ios_url\" : \"https:\\/\\/dev.branch.io\\/getting-started\\/sdk-integration-guide\\/guide\\/ios\\/\",
+  \"+clicked_branch_link\" : true,
+  \"$price\" : 1000,
+  \"~feature\" : \"Sharing Feature\",
+  \"+match_guaranteed\" : true,
+  \"$canonical_url\" : \"https:\\/\\/dev.branch.io\\/getting-started\\/deep-link-routing\\/guide\\/ios\\/\"
+}
+";

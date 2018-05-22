@@ -17,6 +17,7 @@
 #import "BNCSystemObserver.h"
 #import "BNCApplication.h"
 #import "BNCKeyChain.h"
+#import "TBSettings.h"
 
 NSString *canonicalIdentifier = @"item/12345";
 NSString *canonicalUrl = @"https://dev.branch.io/getting-started/deep-link-routing/guide/ios/";
@@ -75,6 +76,10 @@ static NSString* TBStringFromObject(id<NSObject> object) {
         [self.tableData addRowWithTitle:title selector:@selector(selector_) style:rowStyle];
 
     section(@"Session");
+//    tableRow = row(@"Pretty Display", TBRowStyleSwitch, togglePrettyDisplay:);
+//    tableRow.integerValue = [TBSettings shared].usePrettyDisplay;
+//    tableRow.userInfo = 1; // green tint
+
     tableRow = row(@"Tracking Disabled", TBRowStyleSwitch, trackingDisabled:);
     tableRow.integerValue = Branch.trackingDisabled;
     self.trackingDisabledPath = [self.tableData indexPathForRow:tableRow];
@@ -119,6 +124,7 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     #undef section
     #undef row
 }
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -209,7 +215,10 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     if (row.rowStyle == TBRowStyleSwitch) {
         UISwitch *sw = [[UISwitch alloc] init];
         sw.on = row.integerValue;
-        sw.onTintColor = [UIColor redColor];
+        if (row.userInfo & 1)
+            sw.onTintColor = [UIColor greenColor];
+        else
+            sw.onTintColor = [UIColor redColor];
         [sw addTarget:self action:row.selector forControlEvents:UIControlEventValueChanged];
         cell.accessoryView = sw;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -220,7 +229,7 @@ static NSString* TBStringFromObject(id<NSObject> object) {
 - (void) tableView:(UITableView *)tableView
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     TBTableRow *row = [self.tableData rowForIndexPath:indexPath];
-    BNCLogDebug(@"Selected index %ld:%ld: %@.", indexPath.section, indexPath.row, row.title);
+    BNCLogDebug(@"Selected index %ld:%ld: %@.", (long)indexPath.section, (long)indexPath.row, row.title);
     if (row.rowStyle != TBRowStyleSwitch && row.selector) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
@@ -471,6 +480,13 @@ static NSString* global_createdBranchURLString = nil;
 }
 
 #pragma mark - Toggle State
+
+- (IBAction) togglePrettyDisplay:(UISwitch*)sender {
+    TBTableRow *row = [self.tableData rowForTableView:self.tableView subView:sender]; 
+    row.integerValue = !row.integerValue;
+    [TBSettings shared].usePrettyDisplay = row.integerValue;
+    [self.tableData updateTableView:self.tableView row:row];
+}
 
 - (IBAction) toggleFacebookAppTrackingAction:(id)sender {
     BNCPreferenceHelper *prefs = [BNCPreferenceHelper preferenceHelper];

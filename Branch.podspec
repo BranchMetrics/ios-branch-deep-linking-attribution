@@ -35,7 +35,7 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.subspec 'without-IDFA' do |idfa|
     idfa.source_files = source_files
     idfa.private_header_files = "Branch-SDK/Fabric/*.h"
-    idfa.frameworks = 'MobileCoreServices'
+    idfa.frameworks = 'MobileCoreServices', 'SafariServices'
   end
 
   s.subspec 'without-Safari' do |safari|
