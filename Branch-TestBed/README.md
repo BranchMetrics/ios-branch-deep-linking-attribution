@@ -2,7 +2,7 @@
 
 1. From the command line:
      - Clone the repo: `git clone git@github.com:BranchMetrics/ios-branch-deep-linking.git`
-2. In Finder open: **Branch-TestBed.xcworkspace**
+2. In Finder open: **Branch-TestBed.xcodeproj**
 3. In Xcode click on the root node of the project: Branch-TestBed
 4. Under Targets select Branch-TestBed, then the General tab
 5. Change the Bundle Identifier to something **unique** (for this demo we'll use `io.branch.Objective-C.TestBed`)
