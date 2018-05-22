@@ -7,6 +7,7 @@
 //
 
 #import "TBDetailViewController.h"
+#import "TBSettings.h"
 
 @interface TBRowData : NSObject
 @property NSString *key;
@@ -120,8 +121,14 @@
 
 @interface TBDetailViewController () <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong) NSArray<TBRowData*> *dataRows;
-@property (nonatomic, weak) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet UITextView *textView;
+@property (weak, nonatomic) IBOutlet UILabel *messageLabel;
+@property (weak, nonatomic) IBOutlet UIView *contentView;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *viewTypeSegment;
 @end
+
+#pragma mark - TBDetailViewController
 
 @implementation TBDetailViewController
 
@@ -133,16 +140,18 @@
 }
 
 - (void) setDictionaryOrArray:(id<NSObject>)dictionaryOrArray {
-    if (dictionaryOrArray != _dictionaryOrArray) {
-        _dictionaryOrArray = dictionaryOrArray;
-        _dataRows = nil;
-        [self.tableView reloadData];
-    }
+    if (dictionaryOrArray == _dictionaryOrArray) return;
+
+    // Add table data:
+    _dictionaryOrArray = dictionaryOrArray;
+    _dataRows = nil;
+    [self reloadData];
 }
 
 - (void) setMessage:(NSString *)message {
     _message = message;
     [self.tableView reloadData];
+    self.messageLabel.text = message;
 }
 
 - (NSArray<TBRowData*>*) dataRows {
@@ -152,9 +161,63 @@
     return _dataRows;
 }
 
-- (void)viewDidLoad {
+- (void) viewDidLoad {
     [super viewDidLoad];
+    self.viewTypeSegment.selectedSegmentIndex = ([TBSettings shared].usePrettyDisplay) ? 0 : 1;
+    self.navigationController.navigationBar.translucent = NO;
+    self.contentView.layer.borderColor = [UIColor lightGrayColor].CGColor;
+    self.contentView.layer.borderWidth = 1.0;
+    [self reloadData];
+}
+
+- (void) viewDidLayoutSubviews {
+    CGRect r = self.contentView.bounds;
+    self.textView.frame = r;
+    self.tableView.frame = r;
+}
+
+- (void) reloadData {
     [self.tableView reloadData];
+    self.messageLabel.text = self.message;
+
+    // Add the testView data:
+    NSString *textViewString = nil;
+    if (self.dictionaryOrArray == nil) {
+        textViewString = @"<nil>";
+    } else
+    if ([self.dictionaryOrArray isKindOfClass:[NSString class]])
+        textViewString = (id) self.dictionaryOrArray;
+    else {
+        NSError*error = nil;
+        NSData* data = [NSJSONSerialization dataWithJSONObject:self.dictionaryOrArray
+            options:NSJSONWritingPrettyPrinted error:&error];
+        if (error) {
+            textViewString = error.localizedDescription;
+        } else {
+            textViewString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        }
+    }
+    self.textView.text = textViewString;
+
+    // Segment control:
+    self.viewTypeSegment.selectedSegmentIndex =
+        ([TBSettings shared].usePrettyDisplay) ? 0 : 1;
+    [self segmentViewChangedAction:nil];
+}
+
+#pragma mark - Controls
+
+- (IBAction)segmentViewChangedAction:(id)sender {
+    UIView*view = self.textView;
+    if (self.viewTypeSegment.selectedSegmentIndex == 0) {
+        view = self.tableView;
+        [TBSettings shared].usePrettyDisplay = YES;
+    } else {
+        [TBSettings shared].usePrettyDisplay = NO;
+    }
+    view.frame = self.contentView.bounds;
+    [self.contentView addSubview:view];
+    [self.contentView bringSubviewToFront:view];
 }
 
 #pragma mark - Table View Delegates
@@ -168,9 +231,6 @@
 }
 
 - (NSString*) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if (self.message.length)
-        return self.message;
-    else
     if (self.dataRows.count == 0)
         return @"No results to show";
     else

@@ -99,4 +99,21 @@
     return nil;
 }
 
+- (void) updateTableView:(UITableView*)tableView row:(TBTableRow*)row {
+    NSIndexPath*path = [self indexPathForRow:row];
+    if (!path) return;
+    [tableView reloadRowsAtIndexPaths:@[ path ] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (TBTableRow*) rowForTableView:(UITableView*)tableView subView:(UIView*)view {
+    UITableViewCell *cell = (id) view;
+    while (cell && ![cell isKindOfClass:[UITableViewCell class]]) {
+        cell = (id) [cell superview];
+    }
+    if (!cell) return nil;
+    NSIndexPath*path = [tableView indexPathForCell:cell];
+    if (!path) return nil;
+    return [self rowForIndexPath:path];
+}
+
 @end
