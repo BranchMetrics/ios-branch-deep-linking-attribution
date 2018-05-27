@@ -293,9 +293,12 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
 - (BranchLinkProperties*) createLinkProperties {
     BranchLinkProperties *linkProperties = [[BranchLinkProperties alloc] init];
+    linkProperties.tags = @[ @"tag1", @"tag2" ];
     linkProperties.feature = feature;
     linkProperties.channel = channel;
+    linkProperties.stage = @"stage four";
     linkProperties.campaign = @"some campaign";
+    linkProperties.matchDuration = 12.2;
     [linkProperties addControlParam:@"$desktop_url" withValue: desktop_url];
     [linkProperties addControlParam:@"$ios_url" withValue: ios_url];
     return linkProperties;
