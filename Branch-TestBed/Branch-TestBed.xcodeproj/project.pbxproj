@@ -77,7 +77,6 @@
 		4D1683C62098C902008819E3 /* BranchEvent.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16839C2098C901008819E3 /* BranchEvent.Test.m */; };
 		4D1683C72098C902008819E3 /* BNCCrashlyticsWrapper.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16839D2098C901008819E3 /* BNCCrashlyticsWrapper.Test.m */; };
 		4D1683C82098C902008819E3 /* NSString+Branch.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16839E2098C901008819E3 /* NSString+Branch.Test.m */; };
-		4D1683C92098C902008819E3 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4D16839F2098C901008819E3 /* Info.plist */; };
 		4D1683CA2098C902008819E3 /* BNCPreferenceHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683A02098C901008819E3 /* BNCPreferenceHelperTests.m */; };
 		4D1683CB2098C902008819E3 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1683A32098C901008819E3 /* OCMock.framework */; };
 		4D1683CC2098C902008819E3 /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1683A42098C901008819E3 /* OHHTTPStubs.framework */; };
@@ -971,7 +970,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = BNC;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Branch, Inc.";
 				TargetAttributes = {
 					466B58371B17773000A69EDE = {
@@ -1039,7 +1038,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D1683C92098C902008819E3 /* Info.plist in Resources */,
 				4D1683CD2098C902008819E3 /* OHHTTPStubs.framework.dSYM in Resources */,
 				4D1683AB2098C902008819E3 /* Branch-SDK-Tests.strings in Resources */,
 			);

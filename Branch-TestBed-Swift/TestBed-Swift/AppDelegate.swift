@@ -626,16 +626,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
 }
 
 extension AppDelegate:TuneDelegate {
-    func tuneDidSucceed(with data: Data!) {
-        let str = String(data: data, encoding: String.Encoding.utf8)
+    func tuneDidSucceed(with data: Data?) {
+        let str = String(data: data!, encoding: String.Encoding.utf8)
         print("Tune success: \(String(describing: str))")
     }
     
-    func tuneDidFailWithError(_ error: Error!) {
-        print("Tune failed: \(error)")
+    func tuneDidFailWithError(_ error: Error?) {
+        print("Tune failed: \(String(describing: error))")
     }
     
-    func tuneEnqueuedRequest(_ url: String!, postData post: String!) {
-        print("Tune request enqueued: \(url), post data = \(post)")
+    func tuneEnqueuedRequest(_ url: String?, postData post: String?) {
+        print("Tune request enqueued: \(String(describing: url)), post data = \(String(describing: post))")
     }
 }

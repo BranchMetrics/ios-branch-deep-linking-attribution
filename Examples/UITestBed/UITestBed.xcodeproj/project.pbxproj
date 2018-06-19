@@ -59,6 +59,9 @@
 		4D5ACEF21FB382130099A56F /* Branch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D5ACEF11FB382050099A56F /* Branch.framework */; };
 		4D5ACEF31FB382130099A56F /* Branch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4D5ACEF11FB382050099A56F /* Branch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4D73361E2097DB6900A0D416 /* Branch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D5ACEF11FB382050099A56F /* Branch.framework */; };
+		4D7F264820D9867000DABB71 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4D16834E2098BD3F008819E3 /* OCMock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4D7F264920D9867000DABB71 /* OHHTTPStubs.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4D16834F2098BD3F008819E3 /* OHHTTPStubs.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4D7F264A20D9867000DABB71 /* OHHTTPStubs.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4D1683502098BD3F008819E3 /* OHHTTPStubs.framework.dSYM */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		4D9AF2D81F7589CC0065EF11 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D9AF2D61F7589CC0065EF11 /* Launch Screen.storyboard */; };
 		4DACC26B2052165A00EA3A74 /* TBTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DACC2692052165A00EA3A74 /* TBTextViewController.m */; };
 		4DACC26C2052165A00EA3A74 /* TBTextViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DACC26A2052165A00EA3A74 /* TBTextViewController.xib */; };
@@ -120,6 +123,18 @@
 				4D5ACEF31FB382130099A56F /* Branch.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4D7F264720D9865700DABB71 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				4D7F264820D9867000DABB71 /* OCMock.framework in CopyFiles */,
+				4D7F264920D9867000DABB71 /* OHHTTPStubs.framework in CopyFiles */,
+				4D7F264A20D9867000DABB71 /* OHHTTPStubs.framework.dSYM in CopyFiles */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -400,6 +415,7 @@
 				4D73354A2097D57600A0D416 /* Sources */,
 				4D73354B2097D57600A0D416 /* Frameworks */,
 				4D73354C2097D57600A0D416 /* Resources */,
+				4D7F264720D9865700DABB71 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -677,12 +693,9 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3ZNSRC9M83;
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = "../../Branch-SDK-Tests/Vendor";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				HEADER_SEARCH_PATHS = (
-					"../../Branch-SDK/Branch-SDK/**",
-					"../../Branch-SDK-Tests/**",
-				);
+				HEADER_SEARCH_PATHS = "../../Branch-SDK/Branch-SDK/**";
 				INFOPLIST_FILE = "../../Branch-SDK-Tests/Branch-SDK-Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -706,12 +719,9 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3ZNSRC9M83;
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = "../../Branch-SDK-Tests/Vendor";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				HEADER_SEARCH_PATHS = (
-					"../../Branch-SDK/Branch-SDK/**",
-					"../../Branch-SDK-Tests/**",
-				);
+				HEADER_SEARCH_PATHS = "../../Branch-SDK/Branch-SDK/**";
 				INFOPLIST_FILE = "../../Branch-SDK-Tests/Branch-SDK-Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
