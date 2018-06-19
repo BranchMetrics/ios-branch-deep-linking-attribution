@@ -46,7 +46,6 @@
 		4D1683712098BD3F008819E3 /* BranchEvent.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683472098BD3F008819E3 /* BranchEvent.Test.m */; };
 		4D1683722098BD3F008819E3 /* BNCCrashlyticsWrapper.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683482098BD3F008819E3 /* BNCCrashlyticsWrapper.Test.m */; };
 		4D1683732098BD3F008819E3 /* NSString+Branch.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683492098BD3F008819E3 /* NSString+Branch.Test.m */; };
-		4D1683742098BD3F008819E3 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4D16834A2098BD3F008819E3 /* Info.plist */; };
 		4D1683752098BD3F008819E3 /* BNCPreferenceHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16834B2098BD3F008819E3 /* BNCPreferenceHelperTests.m */; };
 		4D1683762098BD3F008819E3 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D16834E2098BD3F008819E3 /* OCMock.framework */; };
 		4D1683772098BD3F008819E3 /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D16834F2098BD3F008819E3 /* OHHTTPStubs.framework */; };
@@ -95,6 +94,13 @@
 			remoteGlobalIDString = 4DFF2B681EEF3B150043F840;
 			remoteInfo = UITestBed;
 		};
+		4D7F264520D982FB00DABB71 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D5ACEEC1FB382040099A56F /* BranchSDK.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E298D0511C73D1B800589D22;
+			remoteInfo = Branch;
+		};
 		4DC00B3A20A0A1C2002E68CD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4DFF2B611EEF3B150043F840 /* Project object */;
@@ -114,15 +120,6 @@
 				4D5ACEF31FB382130099A56F /* Branch.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4D7336162097D9FB00A0D416 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 16;
-			files = (
-			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -403,11 +400,11 @@
 				4D73354A2097D57600A0D416 /* Sources */,
 				4D73354B2097D57600A0D416 /* Frameworks */,
 				4D73354C2097D57600A0D416 /* Resources */,
-				4D7336162097D9FB00A0D416 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				4D7F264620D982FB00DABB71 /* PBXTargetDependency */,
 				4D7335542097D57700A0D416 /* PBXTargetDependency */,
 			);
 			name = "Branch-SDK-Tests";
@@ -459,7 +456,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = TB;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = Branch;
 				TargetAttributes = {
 					4D73354D2097D57600A0D416 = {
@@ -467,6 +464,7 @@
 						DevelopmentTeam = 3ZNSRC9M83;
 						LastSwiftMigration = 0930;
 						ProvisioningStyle = Automatic;
+						TestTargetID = 4DFF2B681EEF3B150043F840;
 					};
 					4DC00B3420A0A1C1002E68CD = {
 						CreatedOnToolsVersion = 9.3;
@@ -528,7 +526,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D1683742098BD3F008819E3 /* Info.plist in Resources */,
 				4D1683782098BD3F008819E3 /* OHHTTPStubs.framework.dSYM in Resources */,
 				4D1683562098BD3F008819E3 /* Branch-SDK-Tests.strings in Resources */,
 			);
@@ -638,6 +635,11 @@
 			target = 4DFF2B681EEF3B150043F840 /* UITestBed */;
 			targetProxy = 4D7335532097D57700A0D416 /* PBXContainerItemProxy */;
 		};
+		4D7F264620D982FB00DABB71 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Branch;
+			targetProxy = 4D7F264520D982FB00DABB71 /* PBXContainerItemProxy */;
+		};
 		4DC00B3B20A0A1C2002E68CD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4DFF2B681EEF3B150043F840 /* UITestBed */;
@@ -677,6 +679,10 @@
 				DEVELOPMENT_TEAM = 3ZNSRC9M83;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = (
+					"../../Branch-SDK/Branch-SDK/**",
+					"../../Branch-SDK-Tests/**",
+				);
 				INFOPLIST_FILE = "../../Branch-SDK-Tests/Branch-SDK-Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -686,6 +692,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UITestBed.app/UITestBed";
 			};
 			name = Debug;
 		};
@@ -701,6 +708,10 @@
 				DEVELOPMENT_TEAM = 3ZNSRC9M83;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = (
+					"../../Branch-SDK/Branch-SDK/**",
+					"../../Branch-SDK-Tests/**",
+				);
 				INFOPLIST_FILE = "../../Branch-SDK-Tests/Branch-SDK-Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -710,6 +721,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UITestBed.app/UITestBed";
 			};
 			name = Release;
 		};
@@ -802,7 +814,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = " ../../Branch-SDK/Branch-SDK/**";
+				HEADER_SEARCH_PATHS = "../../Branch-SDK/Branch-SDK/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -855,10 +867,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = " ../../Branch-SDK/Branch-SDK/**";
+				HEADER_SEARCH_PATHS = "../../Branch-SDK/Branch-SDK/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
