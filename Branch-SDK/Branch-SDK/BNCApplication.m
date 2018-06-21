@@ -145,6 +145,10 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
     }
 }
 
+@end
+
+@implementation BNCApplication (BNCTest)
+
 - (void) setAppOriginalInstallDate:(NSDate*)originalInstallDate
         firstInstallDate:(NSDate*)firstInstallDate
         lastUpdateDate:(NSDate*)lastUpdateDate {
@@ -154,3 +158,4 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
 }
 
 @end
+

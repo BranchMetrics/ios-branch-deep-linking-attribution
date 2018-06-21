@@ -16,7 +16,6 @@
 		4D1683532098BD3F008819E3 /* BNCServerRequestQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683282098BD3E008819E3 /* BNCServerRequestQueueTests.m */; };
 		4D1683542098BD3F008819E3 /* BNCServerInterface.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683292098BD3E008819E3 /* BNCServerInterface.Test.m */; };
 		4D1683552098BD3F008819E3 /* BranchOpenRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16832A2098BD3E008819E3 /* BranchOpenRequestTests.m */; };
-		4D1683562098BD3F008819E3 /* Branch-SDK-Tests.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4D16832B2098BD3E008819E3 /* Branch-SDK-Tests.strings */; };
 		4D1683572098BD3F008819E3 /* BranchInstallRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16832D2098BD3E008819E3 /* BranchInstallRequestTests.m */; };
 		4D1683582098BD3F008819E3 /* BNCDebug.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16832E2098BD3E008819E3 /* BNCDebug.Test.m */; };
 		4D1683592098BD3F008819E3 /* BNCLinkDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16832F2098BD3F008819E3 /* BNCLinkDataTests.m */; };
@@ -58,6 +57,9 @@
 		4D2AF3531EF9B3BF00220F4A /* TBWaitingView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2AF3511EF9B3BF00220F4A /* TBWaitingView.xib */; };
 		4D5ACEF21FB382130099A56F /* Branch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D5ACEF11FB382050099A56F /* Branch.framework */; };
 		4D5ACEF31FB382130099A56F /* Branch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4D5ACEF11FB382050099A56F /* Branch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4D6F312B209CCE5600D94469 /* BNCApplication+BNCTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6F312A209CCE5600D94469 /* BNCApplication+BNCTest.m */; };
+		4D6F312F209CD41A00D94469 /* BNCTestCase.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4D6F312D209CD41900D94469 /* BNCTestCase.strings */; };
+		4D6F3130209CD41A00D94469 /* BNCTestCase.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6F312E209CD41900D94469 /* BNCTestCase.Test.m */; };
 		4D73361E2097DB6900A0D416 /* Branch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D5ACEF11FB382050099A56F /* Branch.framework */; };
 		4D7F264820D9867000DABB71 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4D16834E2098BD3F008819E3 /* OCMock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		4D7F264920D9867000DABB71 /* OHHTTPStubs.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4D16834F2098BD3F008819E3 /* OHHTTPStubs.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -148,8 +150,6 @@
 		4D1683282098BD3E008819E3 /* BNCServerRequestQueueTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerRequestQueueTests.m; sourceTree = "<group>"; };
 		4D1683292098BD3E008819E3 /* BNCServerInterface.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCServerInterface.Test.m; sourceTree = "<group>"; };
 		4D16832A2098BD3E008819E3 /* BranchOpenRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchOpenRequestTests.m; sourceTree = "<group>"; };
-		4D16832B2098BD3E008819E3 /* Branch-SDK-Tests.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = "Branch-SDK-Tests.strings"; sourceTree = "<group>"; };
-		4D16832C2098BD3E008819E3 /* Branch-SDK-Tests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Branch-SDK-Tests-Bridging-Header.h"; sourceTree = "<group>"; };
 		4D16832D2098BD3E008819E3 /* BranchInstallRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchInstallRequestTests.m; sourceTree = "<group>"; };
 		4D16832E2098BD3E008819E3 /* BNCDebug.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCDebug.Test.m; sourceTree = "<group>"; };
 		4D16832F2098BD3F008819E3 /* BNCLinkDataTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCLinkDataTests.m; sourceTree = "<group>"; };
@@ -195,6 +195,10 @@
 		4D2AF3511EF9B3BF00220F4A /* TBWaitingView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TBWaitingView.xib; sourceTree = "<group>"; };
 		4D5ACEEC1FB382040099A56F /* BranchSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BranchSDK.xcodeproj; path = "../../carthage-files/BranchSDK.xcodeproj"; sourceTree = "<group>"; };
 		4D65DF2C1FDF6C25000E8EFC /* UITestBed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UITestBed.entitlements; sourceTree = "<group>"; };
+		4D6F3129209CCE4E00D94469 /* BNCApplication+BNCTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BNCApplication+BNCTest.h"; sourceTree = "<group>"; };
+		4D6F312A209CCE5600D94469 /* BNCApplication+BNCTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "BNCApplication+BNCTest.m"; sourceTree = "<group>"; };
+		4D6F312D209CD41900D94469 /* BNCTestCase.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = BNCTestCase.strings; sourceTree = "<group>"; };
+		4D6F312E209CD41900D94469 /* BNCTestCase.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCTestCase.Test.m; sourceTree = "<group>"; };
 		4D73354E2097D57600A0D416 /* Branch-SDK-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D9AF2D71F7589CC0065EF11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/Launch Screen.storyboard"; sourceTree = "<group>"; };
 		4DACC2682052165A00EA3A74 /* TBTextViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBTextViewController.h; sourceTree = "<group>"; };
@@ -206,6 +210,8 @@
 		4DC00B3F20A0A214002E68CD /* UITestSafari.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UITestSafari.m; sourceTree = "<group>"; };
 		4DC00B4120A0C5F4002E68CD /* TBSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBSettings.h; sourceTree = "<group>"; };
 		4DC00B4220A0C5F4002E68CD /* TBSettings.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TBSettings.m; sourceTree = "<group>"; };
+		4DED488B209BDEB9008DE877 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = "../../Branch-SDK-Tests/Vendor/OCMock.framework"; sourceTree = "<group>"; };
+		4DED488C209BDEB9008DE877 /* OHHTTPStubs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OHHTTPStubs.framework; path = "../../Branch-SDK-Tests/Vendor/OHHTTPStubs.framework"; sourceTree = "<group>"; };
 		4DFF2B691EEF3B150043F840 /* UITestBed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UITestBed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DFF2B6D1EEF3B150043F840 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4DFF2B6F1EEF3B150043F840 /* TBAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBAppDelegate.h; sourceTree = "<group>"; };
@@ -254,6 +260,8 @@
 			isa = PBXGroup;
 			children = (
 				4D0E07D11FCDF7920074E026 /* iAd.framework */,
+				4DED488B209BDEB9008DE877 /* OCMock.framework */,
+				4DED488C209BDEB9008DE877 /* OHHTTPStubs.framework */,
 				4D0E07D01FCDF7810074E026 /* SafariServices.framework */,
 			);
 			name = Frameworks;
@@ -273,6 +281,8 @@
 			isa = PBXGroup;
 			children = (
 				4D1683422098BD3F008819E3 /* BNCApplication.Test.m */,
+				4D6F3129209CCE4E00D94469 /* BNCApplication+BNCTest.h */,
+				4D6F312A209CCE5600D94469 /* BNCApplication+BNCTest.m */,
 				4D1683482098BD3F008819E3 /* BNCCrashlyticsWrapper.Test.m */,
 				4D16832E2098BD3E008819E3 /* BNCDebug.Test.m */,
 				4D1683302098BD3F008819E3 /* BNCDeviceInfo.Test.m */,
@@ -288,9 +298,9 @@
 				4D16833A2098BD3F008819E3 /* BNCSystemObserver.Test.m */,
 				4D16834C2098BD3F008819E3 /* BNCTestCase.h */,
 				4D1683382098BD3F008819E3 /* BNCTestCase.m */,
+				4D6F312D209CD41900D94469 /* BNCTestCase.strings */,
+				4D6F312E209CD41900D94469 /* BNCTestCase.Test.m */,
 				4D1683372098BD3F008819E3 /* BNCURLBlackList.Test.m */,
-				4D16832C2098BD3E008819E3 /* Branch-SDK-Tests-Bridging-Header.h */,
-				4D16832B2098BD3E008819E3 /* Branch-SDK-Tests.strings */,
 				4D1683272098BD3E008819E3 /* BranchCloseRequestTests.m */,
 				4D16833D2098BD3F008819E3 /* BranchDelegate.Test.m */,
 				4D1683472098BD3F008819E3 /* BranchEvent.Test.m */,
@@ -543,7 +553,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D1683782098BD3F008819E3 /* OHHTTPStubs.framework.dSYM in Resources */,
-				4D1683562098BD3F008819E3 /* Branch-SDK-Tests.strings in Resources */,
+				4D6F312F209CD41A00D94469 /* BNCTestCase.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -599,7 +609,9 @@
 				4D1683652098BD3F008819E3 /* BNCLog.Test.m in Sources */,
 				4D1683592098BD3F008819E3 /* BNCLinkDataTests.m in Sources */,
 				4D1683682098BD3F008819E3 /* BranchNetworkScenario.Test.m in Sources */,
+				4D6F3130209CD41A00D94469 /* BNCTestCase.Test.m in Sources */,
 				4D16836B2098BD3F008819E3 /* BranchUniversalObject.Test.m in Sources */,
+				4D6F312B209CCE5600D94469 /* BNCApplication+BNCTest.m in Sources */,
 				4D1683602098BD3F008819E3 /* BNCLocalization.Test.m in Sources */,
 				4D1683732098BD3F008819E3 /* NSString+Branch.Test.m in Sources */,
 				4D16836D2098BD3F008819E3 /* BranchUserCompletedActionTests.m in Sources */,
@@ -808,6 +820,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -829,6 +842,8 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRIP_BITCODE_FROM_COPIED_FILES = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -866,6 +881,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -881,6 +897,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				STRIP_BITCODE_FROM_COPIED_FILES = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;

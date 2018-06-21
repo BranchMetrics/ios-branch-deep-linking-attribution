@@ -229,7 +229,7 @@ static NSString* TBStringFromObject(id<NSObject> object) {
 - (void) tableView:(UITableView *)tableView
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     TBTableRow *row = [self.tableData rowForIndexPath:indexPath];
-    BNCLogDebug(@"Selected index %ld:%ld: %@.", indexPath.section, indexPath.row, row.title);
+    BNCLogDebug(@"Selected index %ld:%ld: %@.", (long)indexPath.section, (long)indexPath.row, row.title);
     if (row.rowStyle != TBRowStyleSwitch && row.selector) {
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Warc-performSelector-leaks"

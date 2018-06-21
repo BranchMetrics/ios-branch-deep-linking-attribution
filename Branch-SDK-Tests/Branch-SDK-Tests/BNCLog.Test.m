@@ -1,35 +1,26 @@
+/**
+ @file          BNCLog.Test.m
+ @package       BranchTests
+ @brief         Tests for BNCLog.
 
-
-//--------------------------------------------------------------------------------------------------
-//
-//                                                                                     BNCLog.Test.m
-//                                                                                       BranchTests
-//
-//                                                                          Simple logging functions
-//                                                                        Edward Smith, October 2016
-//
-//                                             -©- Copyright © 2016 Branch, all rights reserved. -©-
-//
-//--------------------------------------------------------------------------------------------------
-
+ @author        Edward Smith
+ @date          October 2016
+ @copyright     Copyright © 2016 Branch. All rights reserved.
+*/
 
 #import <XCTest/XCTest.h>
 #import "BNCLog.h"
 #import "NSString+Branch.h"
 #import "BNCTestCase.h"
 
-
 static NSString* globalTestLogString = nil;
-
 
 void TestLogProcedure(NSDate*timestamp, BNCLogLevel level, NSString* message) {
     globalTestLogString = [message copy];
 }
 
-
 @interface BNCLogTest : BNCTestCase
 @end
-
 
 @implementation BNCLogTest
 
@@ -63,7 +54,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     BNCLog(@"Debug message with no parameters.");
     BNCLogFlushMessages();
     XCTAssertEqualObjects(globalTestLogString,
-        @"[branch.io] BNCLog.Test.m(63) Log: Debug message with no parameters.");
+        @"[branch.io] BNCLog.Test.m(54) Log: Debug message with no parameters.");
 }
 
 - (void) testLog {
@@ -95,7 +86,7 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 
     //  Test breakpoints --
 
-    if (self.class.testBreakpoints) {  // Test break points too:
+    if (self.class.breakpointsAreEnabledInTests) {  // Test break points too:
         BNCLogSetBreakPointsEnabled(YES);
         BNCLogBreakPoint();
         XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
@@ -298,7 +289,10 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
 - (void) testLogObject {
     BNCLogSetOutputFunction(TestLogProcedure);
     NSData *data = [@"Test string." dataUsingEncoding:NSUTF8StringEncoding];
-    BNCLog(data);
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wformat-security"
+    BNCLog((id)data);
+    #pragma clang diagnostic pop
     BNCLogFlushMessages();
     XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
         @"[branch.io] BNCLog.Test.m(***) Log: "

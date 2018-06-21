@@ -10,6 +10,7 @@
 
 #import "BNCTestCase.h"
 #import "BNCURLBlackList.h"
+#import "Branch.h"
 
 @interface BNCURLBlackList ()
 @property (readwrite) NSURL *blackListJSONURL;
