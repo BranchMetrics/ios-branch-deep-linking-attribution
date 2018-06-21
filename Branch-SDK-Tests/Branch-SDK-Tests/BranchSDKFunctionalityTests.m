@@ -7,6 +7,7 @@
 //
 
 #import "BNCTestCase.h"
+#import "Branch.h"
 
 NSString * const TEST_BRANCH_KEY = @"key_live_78801a996de4287481fe73708cc95da2";
 NSString * const TEST_DEVICE_FINGERPRINT_ID = @"94938498586381084";

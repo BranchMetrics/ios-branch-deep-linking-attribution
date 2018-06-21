@@ -1,26 +1,19 @@
+/**
+ @file          BNCError.Test.m
+ @package       Branch-SDK
+ @brief         Branch error tests.
 
-
-//--------------------------------------------------------------------------------------------------
-//
-//                                                                                   BNCError.Test.m
-//                                                                                       BranchTests
-//
-//                                                                                       Error Tests
-//                                                                         Edward Smith, August 2017
-//
-//                                             -©- Copyright © 2017 Branch, all rights reserved. -©-
-//
-//--------------------------------------------------------------------------------------------------
-
+ @author        Edward Smith
+ @date          August 2017
+ @copyright     Copyright © 2017 Branch. All rights reserved.
+*/
 
 #import "BNCTestCase.h"
 #import "BNCError.h"
 #import "BNCLocalization.h"
 
-
 @interface BNCErrorTest : BNCTestCase
 @end
-
 
 @implementation BNCErrorTest
 

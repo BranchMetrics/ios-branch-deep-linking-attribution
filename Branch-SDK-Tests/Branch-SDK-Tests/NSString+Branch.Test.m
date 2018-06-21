@@ -1,29 +1,20 @@
+/**
+ @file          NSString+Branch.Test.m
+ @package       Branch-SDK
+ @brief         Tests for NSString+Branch.
 
+ @author        Edward Smith
+ @date          February 2017
+ @copyright     Copyright © 2017 Branch. All rights reserved.
+*/
 
-//--------------------------------------------------------------------------------------------------
-//
-//                                                                                 NSString+Branch.h
-//                                                                                  Branch.framework
-//
-//                                                                                NSString Additions
-//                                                                       Edward Smith, February 2017
-//
-//                                             -©- Copyright © 2017 Branch, all rights reserved. -©-
-//
-//--------------------------------------------------------------------------------------------------
-
-
-#import <XCTest/XCTest.h>
 #import "NSString+Branch.h"
 #import "BNCTestCase.h"
 
-
 #define _countof(array)  (sizeof(array)/sizeof(array[0]))
-
 
 @interface NSStringBranchTest : BNCTestCase
 @end
-
 
 @implementation NSStringBranchTest
 

@@ -7,6 +7,7 @@
 //
 
 #import "BNCTestCase.h"
+#import "Branch.h"
 #import "BNCEncodingUtils.h"
 
 @interface BranchDelegateTest : BNCTestCase <BranchDelegate>
