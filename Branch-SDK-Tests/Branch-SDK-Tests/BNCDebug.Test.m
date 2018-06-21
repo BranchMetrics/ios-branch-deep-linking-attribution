@@ -1,22 +1,15 @@
+/**
+ @file          BNCDebug.Test.m
+ @package       Branch-SDK
+ @brief         Tests for BNCDebug.
 
+ @author        Edward Smith
+ @date          October 2016
+ @copyright     Copyright © 2016 Branch. All rights reserved.
+*/
 
-//--------------------------------------------------------------------------------------------------
-//
-//                                                                                   BNCDebug.Test.m
-//                                                                                  Branch.framework
-//
-//                                                                                 Debugging Support
-//                                                                        Edward Smith, October 2016
-//
-//                                             -©- Copyright © 2016 Branch, all rights reserved. -©-
-//
-//--------------------------------------------------------------------------------------------------
-
-
-#import <XCTest/XCTest.h>
 #import "BNCDebug.h"
 #import "BNCTestCase.h"
-
 
 #pragma mark Test DumpClass
 
@@ -190,7 +183,7 @@
 
 - (void) testBreakpoint {
     // if (BNCDebuggerIsAttached()) {
-    if (self.class.testBreakpoints) {
+    if (self.class.breakpointsAreEnabledInTests) {
         BNCDebugBreakpoint();
     }
 }
