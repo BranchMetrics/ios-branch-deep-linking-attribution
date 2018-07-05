@@ -54,7 +54,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // For testing app updates:
     next_previous_update_time = [BNCPreferenceHelper preferenceHelper].previousAppBuildDate;
-    
+
+    BNCLogSetDisplayLevel(BNCLogLevelAll);
     [branch setWhiteListedSchemes:@[@"branchuitest"]];
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
