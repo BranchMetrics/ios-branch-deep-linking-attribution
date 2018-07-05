@@ -215,4 +215,32 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
     return nil;
 }
 
++ (NSString*_Nullable) securityAccessGroup {
+    // https://stackoverflow.com/questions/11726672/access-app-identifier-prefix-programmatically
+    @synchronized(self) {
+        static NSString*_securityAccessGroup = nil;
+        if (_securityAccessGroup) return _securityAccessGroup;
+
+        NSDictionary* dictionary = @{
+            (__bridge id)kSecClass:                 (__bridge id)kSecClassGenericPassword,
+            (__bridge id)kSecReturnAttributes:      (__bridge id)kCFBooleanTrue,
+            (__bridge id)kSecAttrSynchronizable:    (__bridge id)kSecAttrSynchronizableAny,
+            (__bridge id)kSecMatchLimit:            (__bridge id)kSecMatchLimitOne
+        };
+        CFDictionaryRef resultDictionary = NULL;
+        OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)dictionary, (CFTypeRef*)&resultDictionary);
+        if (status == errSecItemNotFound) return nil;
+        if (status != errSecSuccess) {
+            BNCLogDebugSDK(@"Get securityAccessGroup returned(%ld): %@.",
+                status, [self errorWithKey:nil OSStatus:status]);
+            return nil;
+        }
+        NSString*group =
+            [(__bridge NSDictionary *)resultDictionary objectForKey:(__bridge NSString *)kSecAttrAccessGroup];
+        if (group.length > 0) _securityAccessGroup = [group copy];
+        CFRelease(resultDictionary);
+        return _securityAccessGroup;
+    }
+}
+
 @end

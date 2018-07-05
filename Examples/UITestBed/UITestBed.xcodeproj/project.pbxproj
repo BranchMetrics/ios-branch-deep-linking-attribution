@@ -136,6 +136,7 @@
 /* Begin PBXFileReference section */
 		4D0E07D01FCDF7810074E026 /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 		4D0E07D11FCDF7920074E026 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		4D0F56B720B38394003D6607 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4D12B9F720A100EB00E5B1DB /* UITestBed.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = UITestBed.strings; sourceTree = "<group>"; };
 		4D1683262098BD3E008819E3 /* BranchSetIdentityRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchSetIdentityRequestTests.m; sourceTree = "<group>"; };
 		4D1683272098BD3E008819E3 /* BranchCloseRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchCloseRequestTests.m; sourceTree = "<group>"; };
@@ -350,6 +351,7 @@
 		4DFF2B601EEF3B150043F840 = {
 			isa = PBXGroup;
 			children = (
+				4D0F56B720B38394003D6607 /* README.md */,
 				4D5ACEEC1FB382040099A56F /* BranchSDK.xcodeproj */,
 				4D1683242098BD3E008819E3 /* Branch-SDK-Tests */,
 				4DFF2B6B1EEF3B150043F840 /* UITestBed */,
