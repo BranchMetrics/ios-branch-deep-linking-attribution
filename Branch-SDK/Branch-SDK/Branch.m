@@ -928,7 +928,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
 }
 
-# pragma mark - Apple Search Ad check
+#pragma mark - Apple Search Ad Check
 
 - (void)delayInitToCheckForSearchAds {
     self.delayForAppleAds = YES;
@@ -977,55 +977,64 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     _Atomic __block BOOL hasBeenCalled = NO;
     void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) =
       ^ void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
-        BNCLogDebug(@"Elapsed Apple Search Ad callback time: %1.3fs.", - [startDate timeIntervalSinceNow]);
-        BOOL localHasBeenCalled = atomic_exchange(&hasBeenCalled, YES);
-        if (localHasBeenCalled) return;
-        if (error) BNCLogError(@"Error while getting Apple Search Ad attribution: %@.", error);
+        @synchronized(self) {
+            NSTimeInterval elapsedSeconds = - [startDate timeIntervalSinceNow];
+            BNCLogDebugSDK(@"Elapsed Apple Search Ad callback time: %1.3fs.", elapsedSeconds);
 
-        self.asyncRequestCount--;
-
-        // If searchAdsDebugMode is on then force the result to a set value for testing:
-        if (self.searchAdsDebugMode) {
-            // Round down to one day for testing.
-            NSTimeInterval const kOneHour = (60.0*60.0*1.0);
-            NSTimeInterval t = trunc([[NSDate date] timeIntervalSince1970] / kOneHour) * kOneHour;
-            NSDate *date = [NSDate dateWithTimeIntervalSince1970:t];
-
-            attrDetails = @{
-                @"Version3.1": @{
-                    @"iad-adgroup-id":      @1234567890,
-                    @"iad-adgroup-name":    @"AdGroupName",
-                    @"iad-attribution":     (id)kCFBooleanTrue,
-                    @"iad-campaign-id":     @1234567890,
-                    @"iad-campaign-name":   @"CampaignName",
-                    @"iad-click-date":      date,
-                    @"iad-conversion-date": date,
-                    @"iad-creative-id":     @1234567890,
-                    @"iad-creative-name":   @"CreativeName",
-                    @"iad-keyword":         @"Keyword",
-                    @"iad-lineitem-id":     @1234567890,
-                    @"iad-lineitem-name":   @"LineName",
-                    @"iad-org-name":        @"OrgName"
+            if (attrDetails.count > 0 && !error) {
+                [self.preferenceHelper addInstrumentationDictionaryKey:@"apple_search_ad"
+                    value:[[NSNumber numberWithInteger:elapsedSeconds*1000] stringValue]];
+            }
+            if (self.searchAdsDebugMode) {
+                // If searchAdsDebugMode is on then force the result to a set value for testing.
+                NSTimeInterval const kOneHour = (60.0*60.0*1.0); // Round down to one day for testing.
+                NSTimeInterval t = trunc([[NSDate date] timeIntervalSince1970] / kOneHour) * kOneHour;
+                NSDate *date = [NSDate dateWithTimeIntervalSince1970:t];
+                attrDetails = @{
+                    @"Version3.1": @{
+                        @"iad-adgroup-id":      @1234567890,
+                        @"iad-adgroup-name":    @"AdGroupName",
+                        @"iad-attribution":     (id)kCFBooleanTrue,
+                        @"iad-campaign-id":     @1234567890,
+                        @"iad-campaign-name":   @"CampaignName",
+                        @"iad-click-date":      date,
+                        @"iad-conversion-date": date,
+                        @"iad-creative-id":     @1234567890,
+                        @"iad-creative-name":   @"CreativeName",
+                        @"iad-keyword":         @"Keyword",
+                        @"iad-lineitem-id":     @1234567890,
+                        @"iad-lineitem-name":   @"LineName",
+                        @"iad-org-name":        @"OrgName"
+                    }
+                };
+            }
+            if (!error) {
+                if (attrDetails == nil)
+                    attrDetails = @{};
+                if (self.preferenceHelper.appleSearchAdDetails == nil)
+                    self.preferenceHelper.appleSearchAdDetails = @{};
+                if (![self.preferenceHelper.appleSearchAdDetails isEqualToDictionary:attrDetails]) {
+                    self.preferenceHelper.appleSearchAdDetails = attrDetails;
+                    self.preferenceHelper.appleSearchAdNeedsSend = YES;
                 }
-            };
+            }
+            // Only continue with initialization once:
+            BOOL localHasBeenCalled = atomic_exchange(&hasBeenCalled, YES);
+            if (localHasBeenCalled) return;
+
+            if (error) {
+                BNCLogError(@"Error while getting Apple Search Ad attribution: %@.", error);
+            }
+
+            self.asyncRequestCount--;
+            // If there's another async attribution check in flight, don't continue with init:
+            if (self.asyncRequestCount > 0) return;
+
+            self.preferenceHelper.shouldWaitForInit = NO;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self initUserSessionAndCallCallback:!self.isInitialized];
+            });
         }
-
-        if (attrDetails == nil) attrDetails = @{};
-        if (self.preferenceHelper.appleSearchAdDetails == nil)
-            self.preferenceHelper.appleSearchAdDetails = @{};
-        if (![self.preferenceHelper.appleSearchAdDetails isEqualToDictionary:attrDetails]) {
-            self.preferenceHelper.appleSearchAdDetails = attrDetails;
-            self.preferenceHelper.appleSearchAdNeedsSend = YES;
-        }
-
-        // If there's another async attribution check in flight, don't continue with init
-        if (self.asyncRequestCount > 0) { return; }
-
-        self.preferenceHelper.shouldWaitForInit = NO;
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self initUserSessionAndCallCallback:!self.isInitialized];
-        });
     };
 
     // Set a expiration timer in case we don't get a call back (I'm looking at you, iPad):
