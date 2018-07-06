@@ -47,7 +47,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // [branch validateSDKIntegration];
     
     // Comment / un-comment to toggle debugging
-    [branch setDebug];
+    //[branch setDebug];
 
     // Optionally check for Apple Search Ads attribution:
     // [branch delayInitToCheckForSearchAds];
