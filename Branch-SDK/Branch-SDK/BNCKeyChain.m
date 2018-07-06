@@ -232,7 +232,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
         if (status == errSecItemNotFound) return nil;
         if (status != errSecSuccess) {
             BNCLogDebugSDK(@"Get securityAccessGroup returned(%ld): %@.",
-                status, [self errorWithKey:nil OSStatus:status]);
+                (long) status, [self errorWithKey:nil OSStatus:status]);
             return nil;
         }
         NSString*group =
