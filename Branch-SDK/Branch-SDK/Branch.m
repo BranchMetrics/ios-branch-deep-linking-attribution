@@ -2206,7 +2206,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     if ([latestReferringParams[@"_branch_validate"] isEqualToString:@"060514"]) {
         [self validateDeeplinkRouting:latestReferringParams];
     }
-    else if (([latestReferringParams[@"validate"] isEqualToString:@"true"])) {
+    else if (([latestReferringParams[@"bnc_validate"] isEqualToString:@"true"])) {
         NSString* referringLink = [self.class returnNonUniversalLink:latestReferringParams[@"~referring_link"] ];
         NSURLComponents *comp = [NSURLComponents componentsWithURL:[NSURL URLWithString:referringLink]
                                            resolvingAgainstBaseURL:NO];

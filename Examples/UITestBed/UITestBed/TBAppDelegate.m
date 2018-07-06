@@ -32,19 +32,22 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Set to YES for testing GDPR compliance.
     // [Branch setTrackingDisabled:YES];
 
-#if 0
-    // This simulates opt-in tracking.
+    #if 0
+    // This simulates tracking opt-in, rather than tracking opt-out.
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasRunBefore"]) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasRunBefore"];
         [Branch setTrackingDisabled:YES];
     }
-#endif
+    #endif
 
     // Initialize Branch
     Branch *branch = [Branch getInstance];
+
+    // This starts the Branch integration validation.  Remove for normal use.
+    // [branch validateSDKIntegration];
     
     // Comment / un-comment to toggle debugging
-    [branch setDebug];
+    //[branch setDebug];
 
     // Optionally check for Apple Search Ads attribution:
     [branch delayInitToCheckForSearchAds];
