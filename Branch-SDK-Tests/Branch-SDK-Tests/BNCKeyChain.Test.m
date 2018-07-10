@@ -83,6 +83,10 @@
 }
 
 - (void) testSecurityAccessGroup {
+    if ([UIApplication sharedApplication] == nil) {
+        NSLog(@"No host application for keychain testing!");
+        return;
+    }
     NSString *group = [BNCKeyChain securityAccessGroup];
     XCTAssert(group.length > 0);
 }
