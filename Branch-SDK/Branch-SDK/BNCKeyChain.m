@@ -221,6 +221,10 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
         static NSString*_securityAccessGroup = nil;
         if (_securityAccessGroup) return _securityAccessGroup;
 
+        // First store a value:
+        NSError*error = [self storeValue:@"Value" forService:@"BranchKeychainService" key:@"Temp" cloudAccessGroup:nil];
+        if (error) BNCLogDebugSDK(@"Error storing temp value: %@.", error);
+        
         NSDictionary* dictionary = @{
             (__bridge id)kSecClass:                 (__bridge id)kSecClassGenericPassword,
             (__bridge id)kSecReturnAttributes:      (__bridge id)kCFBooleanTrue,
