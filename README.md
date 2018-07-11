@@ -325,9 +325,9 @@ func application(_ application: UIApplication, open url: URL, sourceApplication:
 }
 
 func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
-    Branch.getInstance().continue(userActivity)
+    let handledByBranch = Branch.getInstance().continue(userActivity)
 
-    return true
+    return handledByBranch
 }
 
 func application(_ application: UIApplication, didReceiveRemoteNotification launchOptions: [AnyHashable: Any]) -> Void {
