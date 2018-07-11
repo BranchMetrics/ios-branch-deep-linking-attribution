@@ -50,14 +50,15 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     //[branch setDebug];
 
     // Optionally check for Apple Search Ads attribution:
-    // [branch delayInitToCheckForSearchAds];
+    [branch delayInitToCheckForSearchAds];
 
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
 
     // For testing app updates:
     next_previous_update_time = [BNCPreferenceHelper preferenceHelper].previousAppBuildDate;
-    
+
+    BNCLogSetDisplayLevel(BNCLogLevelAll);
     [branch setWhiteListedSchemes:@[@"branchuitest"]];
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
