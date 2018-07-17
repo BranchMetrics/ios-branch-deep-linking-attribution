@@ -231,9 +231,9 @@ Branch *branch = [Branch getInstance];
 let branch: Branch = Branch.getInstance()
 ```
 
-##### Testing
+### Testing
 
-##### Test your Branch Integration
+#### Test your Branch Integration
 
 Test your Branch Integration by calling `validateSDKIntegration` in your AppDelegate. Check your Xcode logs to make sure all the SDK Integration tests pass. Make sure to comment out or remove `validateSDKIntegration` in your production build.
 
