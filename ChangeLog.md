@@ -1,5 +1,16 @@
 Branch iOS SDK Change Log
 
+- v0.25.1
+  * _*Master Release*_ - July 12, 2018
+  * Fixed some documentation inconsistencies, some compile warnings, and unit tests.
+  * Send instrumentation times for Apple Search Ads (DEVEX-594).
+  * Prevent strong match controller crash on iOS 10 (DEVEX-515).
+  * Added a Branch SDK integration validator.
+    - See usage instructions in the README file: [Integration Validator](https://github.com/BranchMetrics/ios-branch-deep-linking/blob/master/README.md#test-your-branch-integration).
+  * Clean up source for sharing between projects (DEVEX-332).
+  * Updated the podspec to add SafariServices for `without-IDFA` subspec.
+  * Updated unit and UITests to simplify testing.
+
 - v0.25.0
   * _*Master Release*_ - May 3, 2018
   * Reorganized project as minimally as possible to make using unit and functional test apps much easier.
