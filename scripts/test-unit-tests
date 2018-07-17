@@ -110,8 +110,9 @@ fi
 testSimulatorVersion "iPhone SE" "$stressOS"
 testSimulatorVersion "iPhone 6s" 10.0
 testSimulatorVersion "iPhone 5"  9.3
-# xctest doesn't work for iOS 8.4 in Xcode 9.3.  Bummer.
-if [ "$(xcodebuild -version | head -n1)" != "Xcode 9.3" ]
+# xctest doesn't work for iOS 8.4 in Xcode 9.3 and above.  Bummer.
+xv=$(xcodebuild -version | head -n1)
+if [[ "$xv" == "Xcode 9.3" ]] || [[ "$xv" == "Xcode 9.4" ]]
 then
     testSimulatorVersion "iPhone 4s" 8.4
 fi
