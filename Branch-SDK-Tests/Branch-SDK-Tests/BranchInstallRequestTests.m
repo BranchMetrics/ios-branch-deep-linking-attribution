@@ -96,7 +96,7 @@
 		postRequest:[OCMArg checkWithBlock:^BOOL(id value) {
             if (![value isKindOfClass:[NSDictionary class]]) {
                 XCTFail(@"Expected NSDictionary. Got '%@'.", NSStringFromClass([value class]));
-                return NO;
+                return YES;
             }
             NSDictionary *dictionary = (NSDictionary*)value;
             XCTAssertEqualObjects(dictionary, expectedParams);
