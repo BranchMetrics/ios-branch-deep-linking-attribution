@@ -2,7 +2,7 @@ Branch iOS SDK Change Log
 
 - v0.25.1
   * _*Master Release*_ - July 12, 2018
-  * Fixed some documentation inconsistencies, some compile warnings, and unit tests.
+  * Fixed some documentation inconsistencies, fixed some compile warnings, and updated the unit tests.
   * Send instrumentation times for Apple Search Ads (DEVEX-594).
   * Prevent strong match controller crash on iOS 10 (DEVEX-515).
   * Added a Branch SDK integration validator.
