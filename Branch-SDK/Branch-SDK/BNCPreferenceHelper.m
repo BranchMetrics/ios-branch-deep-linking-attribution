@@ -606,7 +606,6 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
         self.deviceFingerprintID = nil;
         self.userIdentity = nil;
         self.identityID = nil;
-        self.installParams = nil;
         */
         self.sessionID = nil;
         self.linkClickIdentifier = nil;

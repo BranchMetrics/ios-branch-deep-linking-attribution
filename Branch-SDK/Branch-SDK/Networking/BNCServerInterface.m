@@ -736,7 +736,7 @@ exit:
     if ([self isV2APIURL:url]) {
         preparedParams[@"sdk"] = nil;
     }
-    if ([Branch trackingDisabled]) {
+    if (Branch.trackingDisabled) {
         preparedParams[@"tracking_disabled"] = (__bridge NSNumber*) kCFBooleanTrue;
         preparedParams[@"local_ip"] = nil;
         preparedParams[@"lastest_update_time"] = nil;
