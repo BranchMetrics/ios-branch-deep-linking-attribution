@@ -107,14 +107,17 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     row(@"ShareLink (No Anchor, One Day Link)", TBRowStylePlain, sharelinkTableRowNilAnchor:);
     row(@"BUO Share from Table Row",    TBRowStylePlain,        buoShareTableRow:);
 
+    section(@"Spotlight");
+    row(@"Register BUO on Spotlight",   TBRowStylePlain,        registerBUOOnSpotlight:);
+
     section(@"Rewards");
-    self.rewardsRow = row(@"Refresh Rewards", TBRowStylePlain, refreshRewards:);
+    self.rewardsRow = row(@"Refresh Rewards", TBRowStylePlain,  refreshRewards:);
     row(@"Redeem 5 Points",             TBRowStylePlain, redeemRewards:);
-    row(@"Show Rewards History",        TBRowStyleDisclosure, showRewardsHistory:);
+    row(@"Show Rewards History",        TBRowStyleDisclosure,   showRewardsHistory:);
 
     section(@"App Update State");
-    row(@"Erase All App Data",          TBRowStylePlain, clearAllAppDataAction:)
-    row(@"Show Dates & Update State",   TBRowStyleDisclosure, showDatesAction:)
+    row(@"Erase All App Data",          TBRowStylePlain,        clearAllAppDataAction:)
+    row(@"Show Dates & Update State",   TBRowStyleDisclosure,   showDatesAction:)
 
     section(@"Miscellaneous");
     row(@"Show Local IP Addess",        TBRowStyleDisclosure, showLocalIPAddress:);
@@ -480,6 +483,15 @@ static NSString* global_createdBranchURLString = nil;
         BNCLogDebug(@"-------------------------------- Iteration %ld.", i);
         [[Branch getInstance] handleDeepLinkWithNewSession:kBranchOpenURL];
     }
+}
+
+- (IBAction) registerBUOOnSpotlight:(id)sender {
+    BranchUniversalObject*buo = [self createUniversalObject];
+    buo.contentMetadata.customMetadata[@"deeplink_text"] =
+        [NSString stringWithFormat:@"This link was generated for Spotlight registration at %@",
+            [NSDate date]];
+    buo.locallyIndex = YES;
+    [buo userCompletedAction:BNCRegisterViewEvent];
 }
 
 #pragma mark - Toggle State
