@@ -430,7 +430,9 @@ exit:
     addString(osVersion,            os_version);
     addString(extensionType,        environment);
     addString(vendorId,             idfv);
-    addString(adId,                 idfa);
+    if (![BNCPreferenceHelper preferenceHelper].isDebug) {
+        addString(adId,             idfa);
+    }
     addString(browserUserAgent,     user_agent);
     addString(country,              country);
     addString(language,             language);

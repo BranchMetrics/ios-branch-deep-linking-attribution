@@ -148,9 +148,8 @@
         NSString* link = dictionary[@"external_intent_uri"];
         NSString *pattern = @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
         NSLog(@"\n   Link: '%@'\nPattern: '%@'\n.", link, pattern);
-        if ([link isEqualToString:pattern]) {
-            [expectation fulfill];
-        }
+        XCTAssertEqualObjects(link, pattern);
+        [expectation fulfill];
     });
 
     [branch clearNetworkQueue];
@@ -181,10 +180,8 @@
         NSString* link = dictionary[@"external_intent_uri"];
         NSString *pattern = @"\\/bob\\/";
         NSLog(@"\n   Link: '%@'\nPattern: '%@'\n.", link, pattern);
-
-        if ([link isEqualToString:pattern]) {
-            [expectation fulfill];
-        }
+        XCTAssertEqualObjects(link, pattern);
+        [expectation fulfill];
     });
 
     [branch clearNetworkQueue];
