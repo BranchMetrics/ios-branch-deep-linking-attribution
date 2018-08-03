@@ -15,6 +15,7 @@
 
 // Ignore Safari availability for iOS 8 and lower in this example.
 #pragma clang diagnostic ignored "-Wpartial-availability"
+#pragma clang diagnostic ignored "-Wunguarded-availability"
 
 @interface AppDelegate() <SFSafariViewControllerDelegate>
 @property (nonatomic, strong) SFSafariViewController *onboardingVC;
