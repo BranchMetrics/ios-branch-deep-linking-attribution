@@ -54,7 +54,7 @@
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
     params[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     if (preferenceHelper.limitFacebookTracking)
-        params[@"limit_facebook_tracking"] = CFBridgingRelease(kCFBooleanTrue);
+        params[@"limit_facebook_tracking"] = (__bridge NSNumber*) kCFBooleanTrue;
 
     if (self.state) {
         params[BRANCH_REQUEST_KEY_STATE] = self.state;
