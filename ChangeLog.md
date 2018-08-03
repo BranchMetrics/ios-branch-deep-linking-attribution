@@ -2,8 +2,8 @@ Branch iOS SDK Change Log
 
 - v0.25.2
   * _*Master Release*_ - August 3, 2018
-  * Don't send IDFA when in debug mode for v2/events. DEVEX-685
-  * Updated some tests for spotlight and v2/events.
+  * IDFA is no longer sent when in debug mode for v2/events. DEVEX-685
+  * Some tests were updated for spotlight and v2/events.
 
 - v0.25.1
   * _*Master Release*_ - July 12, 2018
