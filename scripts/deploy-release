@@ -61,8 +61,13 @@ if ! ./scripts/askYN "Commit and deploy Branch release version ${version}?"; the
     exit 1
 fi
 
-echo '>>> Deploying Fabric build...' 1>&2
-./scripts/deploy-fabric
+#  Archive the framework files into a zip file:
+rm Branch.framework.zip || true
+ditto -c -k -v -V --sequesterRsrc --keepParent Branch.framework  Branch.framework.zip
+
+# Fabric no longer accepts third party SDKs.
+# echo '>>> Deploying Fabric build...' 1>&2
+# ./scripts/deploy-fabric
 
 echo '>>> Commit and tag...' 1>&2
 ./scripts/deploy-git-tag
