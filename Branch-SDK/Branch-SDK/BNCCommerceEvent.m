@@ -578,7 +578,7 @@ NSArray<BNCCurrency>* BNCCurrencyAllCurrencies(void) {
 	if (self.commerceDictionary)
 		params[@"commerce_data"] = self.commerceDictionary;
     if (preferenceHelper.limitFacebookTracking)
-        params[@"limit_facebook_tracking"] = CFBridgingRelease(kCFBooleanTrue);
+        params[@"limit_facebook_tracking"] = (__bridge NSNumber*) kCFBooleanTrue;
 
 	NSString *URL = [preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_USER_COMPLETED_ACTION];
     [serverInterface postRequest:params
