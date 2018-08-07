@@ -2097,7 +2097,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 #pragma mark - Session Initialization
 
 - (void)initSessionIfNeededAndNotInProgress {
-    if (self.Initialization != BNCInitStatusInitialized &&
+    if (self.initializationStatus != BNCInitStatusInitialized &&
         !self.preferenceHelper.shouldWaitForInit &&
         ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:NO];
