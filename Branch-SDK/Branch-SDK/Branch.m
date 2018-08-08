@@ -116,7 +116,7 @@ void ForceCategoriesToLoad(void) {
 #pragma mark - Branch
 
 typedef NS_ENUM(NSInteger, BNCInitStatus) {
-    BNCInitStatusUninitialized,
+    BNCInitStatusUninitialized = 0,
     BNCInitStatusInitializing,
     BNCInitStatusInitialized
 };
@@ -1134,7 +1134,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 
 - (void)logoutWithCallback:(callbackWithStatus)callback {
-    if (self.initializationStatus != BNCInitStatusInitialized) {
+    if (self.initializationStatus == BNCInitStatusUninitialized) {
         NSError *error =
             (Branch.trackingDisabled)
             ? [NSError branchErrorWithCode:BNCTrackingDisabledError]
@@ -1936,7 +1936,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)callClose {
-    if (self.initializationStatus == BNCInitStatusInitialized) {
+    if (self.initializationStatus != BNCInitStatusUninitialized) {
         self.initializationStatus = BNCInitStatusUninitialized;
         
         BranchContentDiscoverer *contentDiscoverer = [BranchContentDiscoverer getInstance];
@@ -2097,7 +2097,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 #pragma mark - Session Initialization
 
 - (void)initSessionIfNeededAndNotInProgress {
-    if (self.initializationStatus != BNCInitStatusInitialized &&
+    if (self.initializationStatus == BNCInitStatusUninitialized &&
         !self.preferenceHelper.shouldWaitForInit &&
         ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:NO];
