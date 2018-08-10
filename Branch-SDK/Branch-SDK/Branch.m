@@ -730,13 +730,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         return NO;
     }
 
-    /* TODO - remove.
-    self.preferenceHelper.blacklistURLOpen = NO;
-    self.preferenceHelper.referringURL = nil;
-    self.preferenceHelper.externalIntentURI = nil;
-    self.preferenceHelper.universalLinkUrl = nil;
-    */
-
     NSString *scheme = [url scheme];
     if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
         return [self handleUniversalDeepLink_private:url.absoluteString fromSelf:isFromSelf];
@@ -2132,11 +2125,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
     }
     // If the session is not yet initialized
-    if (self.initializationStatus == BNCInitStatusUninitialized) {
+    if (self.initializationStatus != BNCInitStatusInitialized) {
         [self initializeSession];
-    }
-    // Waiting for init?
-    else if (self.initializationStatus == BNCInitStatusInitializing) {
     }
     // If the session was initialized, but callCallback was specified, do so.
     else if (callCallback) {
@@ -2154,8 +2144,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 - (void)initializeSession {
-    self.initializationStatus = BNCInitStatusInitializing;
-
 	Class clazz = [BranchInstallRequest class];
 	if (self.preferenceHelper.identityID) {
 		clazz = [BranchOpenRequest class];
@@ -2199,6 +2187,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 		[BranchOpenRequest setWaitNeededForOpenResponseLock];
 		BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
 		[self insertRequestAtFront:req];
+        self.initializationStatus = BNCInitStatusInitializing;
 		[self processNextQueueItem];
 	}
 }
