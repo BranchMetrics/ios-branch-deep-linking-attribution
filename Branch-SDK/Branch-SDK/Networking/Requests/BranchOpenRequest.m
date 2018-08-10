@@ -232,10 +232,10 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     }
 
     NSString *referringURL = nil;
-    if (preferenceHelper.universalLinkUrl) {
+    if (preferenceHelper.universalLinkUrl.length) {
         referringURL = preferenceHelper.universalLinkUrl;
     }
-    else if (preferenceHelper.externalIntentURI) {
+    else if (preferenceHelper.externalIntentURI.length) {
         referringURL = preferenceHelper.externalIntentURI;
     }
     else {

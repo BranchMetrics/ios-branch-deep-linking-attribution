@@ -922,7 +922,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (void)handlePushNotification:(NSDictionary *)userInfo {
     // look for a branch shortlink in the payload (shortlink because iOS7 only supports 256 bytes)
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
-    if (urlStr) {
+    if (urlStr.length) {
         // reusing this field, so as not to create yet another url slot on prefshelper
         self.preferenceHelper.universalLinkUrl = urlStr;
         self.preferenceHelper.referringURL = urlStr;
@@ -2134,6 +2134,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     // If the session is not yet initialized
     if (self.initializationStatus == BNCInitStatusUninitialized) {
         [self initializeSession];
+    }
+    // Waiting for init?
+    else if (self.initializationStatus == BNCInitStatusInitializing) {
     }
     // If the session was initialized, but callCallback was specified, do so.
     else if (callCallback) {
