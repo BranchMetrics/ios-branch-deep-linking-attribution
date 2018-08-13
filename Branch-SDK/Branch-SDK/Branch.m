@@ -116,7 +116,7 @@ void ForceCategoriesToLoad(void) {
 #pragma mark - Branch
 
 typedef NS_ENUM(NSInteger, BNCInitStatus) {
-    BNCInitStatusUninitialized,
+    BNCInitStatusUninitialized = 0,
     BNCInitStatusInitializing,
     BNCInitStatusInitialized
 };
@@ -730,11 +730,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         return NO;
     }
 
-    self.preferenceHelper.blacklistURLOpen = NO;
-    self.preferenceHelper.referringURL = nil;
-    self.preferenceHelper.externalIntentURI = nil;
-    self.preferenceHelper.universalLinkUrl = nil;
-
     NSString *scheme = [url scheme];
     if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
         return [self handleUniversalDeepLink_private:url.absoluteString fromSelf:isFromSelf];
@@ -819,8 +814,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         [self resetUserSession];
     }
 
-    self.preferenceHelper.universalLinkUrl = urlString;
-    self.preferenceHelper.referringURL = urlString;
+    if (urlString.length) {
+        self.preferenceHelper.universalLinkUrl = urlString;
+        self.preferenceHelper.referringURL = urlString;
+    }
     self.preferenceHelper.shouldWaitForInit = NO;
     [self initUserSessionAndCallCallback:YES];
 
@@ -918,7 +915,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (void)handlePushNotification:(NSDictionary *)userInfo {
     // look for a branch shortlink in the payload (shortlink because iOS7 only supports 256 bytes)
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
-    if (urlStr) {
+    if (urlStr.length) {
         // reusing this field, so as not to create yet another url slot on prefshelper
         self.preferenceHelper.universalLinkUrl = urlStr;
         self.preferenceHelper.referringURL = urlStr;
@@ -1134,7 +1131,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 
 - (void)logoutWithCallback:(callbackWithStatus)callback {
-    if (self.initializationStatus != BNCInitStatusInitialized) {
+    if (self.initializationStatus == BNCInitStatusUninitialized) {
         NSError *error =
             (Branch.trackingDisabled)
             ? [NSError branchErrorWithCode:BNCTrackingDisabledError]
@@ -1936,7 +1933,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)callClose {
-    if (self.initializationStatus == BNCInitStatusInitialized) {
+    if (self.initializationStatus != BNCInitStatusUninitialized) {
         self.initializationStatus = BNCInitStatusUninitialized;
         
         BranchContentDiscoverer *contentDiscoverer = [BranchContentDiscoverer getInstance];
@@ -2097,7 +2094,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 #pragma mark - Session Initialization
 
 - (void)initSessionIfNeededAndNotInProgress {
-    if (self.initializationStatus != BNCInitStatusInitialized &&
+    if (self.initializationStatus == BNCInitStatusUninitialized &&
         !self.preferenceHelper.shouldWaitForInit &&
         ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:NO];
@@ -2128,7 +2125,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
     }
     // If the session is not yet initialized
-    if (self.initializationStatus == BNCInitStatusUninitialized) {
+    if (self.initializationStatus != BNCInitStatusInitialized) {
         [self initializeSession];
     }
     // If the session was initialized, but callCallback was specified, do so.
@@ -2147,8 +2144,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 - (void)initializeSession {
-    self.initializationStatus = BNCInitStatusInitializing;
-
 	Class clazz = [BranchInstallRequest class];
 	if (self.preferenceHelper.identityID) {
 		clazz = [BranchOpenRequest class];
@@ -2192,6 +2187,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 		[BranchOpenRequest setWaitNeededForOpenResponseLock];
 		BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
 		[self insertRequestAtFront:req];
+        self.initializationStatus = BNCInitStatusInitializing;
 		[self processNextQueueItem];
 	}
 }

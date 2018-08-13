@@ -29,6 +29,8 @@ NSDate *next_previous_update_time = nil;
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     BNCLogSetDisplayLevel(BNCLogLevelAll);
 
+    [Branch getInstance];
+
     // Set to YES for testing GDPR compliance.
     // [Branch setTrackingDisabled:YES];
 
