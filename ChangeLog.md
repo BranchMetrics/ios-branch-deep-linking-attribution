@@ -1,5 +1,12 @@
 Branch iOS SDK Change Log
 
+- v0.25.3
+  * _*Master Release*_ - August 13, 2018
+  * Fixed an occasional double app open from being sent to Branch.
+  * Warning: Fabric no longer distributes third party kits like Branch. If you used Fabric to
+    integrate and update the Branch SDK, use one of the other methods for integrating Branch
+    as described [here, in our online documentation.](https://docs.branch.io/pages/apps/ios/#install-branch)
+
 - v0.25.2
   * _*Master Release*_ - August 3, 2018
   * IDFA is no longer sent when in debug mode for v2/events. DEVEX-685

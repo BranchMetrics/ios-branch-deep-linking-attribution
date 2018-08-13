@@ -115,6 +115,12 @@ void ForceCategoriesToLoad(void) {
 
 #pragma mark - Branch
 
+typedef NS_ENUM(NSInteger, BNCInitStatus) {
+    BNCInitStatusUninitialized = 0,
+    BNCInitStatusInitializing,
+    BNCInitStatusInitialized
+};
+
 @interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit> {
     NSInteger _networkCount;
     BNCURLBlackList *_userURLBlackList;
@@ -127,7 +133,7 @@ void ForceCategoriesToLoad(void) {
 @property (copy,   nonatomic) callbackWithBranchUniversalObject sessionInitWithBranchUniversalObjectCallback;
 @property (assign, atomic)    NSInteger networkCount;
 @property (assign, nonatomic) NSInteger asyncRequestCount;
-@property (assign, nonatomic) BOOL isInitialized;
+@property (assign, nonatomic) BNCInitStatus initializationStatus;
 @property (assign, nonatomic) BOOL shouldCallSessionInitCallback;
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
@@ -242,7 +248,7 @@ void BranchClassInitializeLog(void) {
     _preferenceHelper = preferenceHelper;
 
     _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
-    _isInitialized = NO;
+    _initializationStatus = BNCInitStatusUninitialized;
     _shouldCallSessionInitCallback = YES;
     _processing_sema = dispatch_semaphore_create(1);
     _networkCount = 0;
@@ -452,7 +458,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)resetUserSession {
-    self.isInitialized = NO;
+    self.initializationStatus = BNCInitStatusUninitialized;
 }
 
 - (BOOL)isUserIdentified {
@@ -503,7 +509,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (void)resumeInit {
     self.preferenceHelper.shouldWaitForInit = NO;
-    if (self.isInitialized) {
+    if (self.initializationStatus == BNCInitStatusInitialized) {
         BNCLogError(@"User session has already been initialized, so resumeInit is aborting.");
     }
     else if (![self.requestQueue containsInstallOrOpen]) {
@@ -534,7 +540,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             [BNCPreferenceHelper preferenceHelper].trackingDisabled = YES;
             Branch *branch = Branch.getInstance;
             [branch clearNetworkQueue];
-            branch.isInitialized = NO;
+            branch.initializationStatus = BNCInitStatusUninitialized;
             [branch.linkCache clear];
             // Release the lock in case it's locked:
             [BranchOpenRequest releaseOpenResponseLock];
@@ -614,7 +620,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     // If the SDK is already initialized, this means that initSession is being called later in the app lifecycle
     // and that the developer is expecting to receive deep link parameters via the callback block immediately
-    if (self.isInitialized) {
+    if (self.initializationStatus == BNCInitStatusInitialized) {
         [self initUserSessionAndCallCallback:YES];
     }
 
@@ -720,14 +726,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         self.preferenceHelper.blacklistURLOpen = YES;
         self.preferenceHelper.externalIntentURI = blackListPattern;
         self.preferenceHelper.referringURL = blackListPattern;
-        [self initUserSessionAndCallCallback:!self.isInitialized];
+        [self initUserSessionAndCallCallback:(self.initializationStatus != BNCInitStatusInitialized)];
         return NO;
     }
-
-    self.preferenceHelper.blacklistURLOpen = NO;
-    self.preferenceHelper.referringURL = nil;
-    self.preferenceHelper.externalIntentURI = nil;
-    self.preferenceHelper.universalLinkUrl = nil;
 
     NSString *scheme = [url scheme];
     if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
@@ -772,7 +773,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-    [self initUserSessionAndCallCallback:!self.isInitialized];
+    [self initUserSessionAndCallCallback:(self.initializationStatus != BNCInitStatusInitialized)];
     return handled;
 }
 
@@ -813,8 +814,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         [self resetUserSession];
     }
 
-    self.preferenceHelper.universalLinkUrl = urlString;
-    self.preferenceHelper.referringURL = urlString;
+    if (urlString.length) {
+        self.preferenceHelper.universalLinkUrl = urlString;
+        self.preferenceHelper.referringURL = urlString;
+    }
     self.preferenceHelper.shouldWaitForInit = NO;
     [self initUserSessionAndCallCallback:YES];
 
@@ -912,7 +915,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (void)handlePushNotification:(NSDictionary *)userInfo {
     // look for a branch shortlink in the payload (shortlink because iOS7 only supports 256 bytes)
     NSString *urlStr = [userInfo objectForKey:BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
-    if (urlStr) {
+    if (urlStr.length) {
         // reusing this field, so as not to create yet another url slot on prefshelper
         self.preferenceHelper.universalLinkUrl = urlStr;
         self.preferenceHelper.referringURL = urlStr;
@@ -1032,7 +1035,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
             self.preferenceHelper.shouldWaitForInit = NO;
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self initUserSessionAndCallCallback:!self.isInitialized];
+                [self initUserSessionAndCallCallback:(self.initializationStatus != BNCInitStatusInitialized)];
             });
         }
     };
@@ -1128,7 +1131,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 
 - (void)logoutWithCallback:(callbackWithStatus)callback {
-    if (!self.isInitialized) {
+    if (self.initializationStatus == BNCInitStatusUninitialized) {
         NSError *error =
             (Branch.trackingDisabled)
             ? [NSError branchErrorWithCode:BNCTrackingDisabledError]
@@ -1788,7 +1791,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 linkData:linkData
                 linkCache:self.linkCache];
 
-        if (self.isInitialized && !self.preferenceHelper.trackingDisabled) {
+        if ((self.initializationStatus == BNCInitStatusInitialized) && !self.preferenceHelper.trackingDisabled) {
             BNCLogDebug(@"Creating a custom URL synchronously.");
             BNCServerResponse *serverResponse = [req makeRequest:self.serverInterface key:self.class.branchKey];
             shortURL = [req processResponse:serverResponse];
@@ -1910,7 +1913,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 - (void)applicationDidBecomeActive {
     if (!Branch.trackingDisabled) {
-        if (!self.isInitialized &&
+        if ((self.initializationStatus != BNCInitStatusInitialized) &&
             !self.preferenceHelper.shouldWaitForInit &&
             ![self.requestQueue containsInstallOrOpen]) {
             [self initUserSessionAndCallCallback:YES];
@@ -1930,9 +1933,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)callClose {
-    if (self.isInitialized) {
-        self.isInitialized = NO;
-
+    if (self.initializationStatus != BNCInitStatusUninitialized) {
+        self.initializationStatus = BNCInitStatusUninitialized;
+        
         BranchContentDiscoverer *contentDiscoverer = [BranchContentDiscoverer getInstance];
         if (contentDiscoverer) [contentDiscoverer stopDiscoveryTask];
 
@@ -2091,7 +2094,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 #pragma mark - Session Initialization
 
 - (void)initSessionIfNeededAndNotInProgress {
-    if (!self.isInitialized &&
+    if (self.initializationStatus == BNCInitStatusUninitialized &&
         !self.preferenceHelper.shouldWaitForInit &&
         ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:NO];
@@ -2122,7 +2125,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
     }
     // If the session is not yet initialized
-    if (!self.isInitialized) {
+    if (self.initializationStatus != BNCInitStatusInitialized) {
         [self initializeSession];
     }
     // If the session was initialized, but callCallback was specified, do so.
@@ -2184,6 +2187,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 		[BranchOpenRequest setWaitNeededForOpenResponseLock];
 		BranchOpenRequest *req = [[clazz alloc] initWithCallback:initSessionCallback];
 		[self insertRequestAtFront:req];
+        self.initializationStatus = BNCInitStatusInitializing;
 		[self processNextQueueItem];
 	}
 }
@@ -2200,7 +2204,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 - (void)handleInitSuccess {
 
-    self.isInitialized = YES;
+    self.initializationStatus = BNCInitStatusInitialized;
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
 
     if ([latestReferringParams[@"_branch_validate"] isEqualToString:@"060514"]) {
@@ -2416,7 +2420,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 - (void)handleInitFailure:(NSError *)error {
-    self.isInitialized = NO;
+    self.initializationStatus = BNCInitStatusUninitialized;
+    
     if (self.shouldCallSessionInitCallback) {
         if (self.sessionInitWithParamsCallback) {
             self.sessionInitWithParamsCallback([[NSDictionary alloc] init], error);
