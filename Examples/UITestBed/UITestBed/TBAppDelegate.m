@@ -29,11 +29,6 @@ NSDate *next_previous_update_time = nil;
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     BNCLogSetDisplayLevel(BNCLogLevelAll);
 
-    [Branch getInstance];
-
-    // Set to YES for testing GDPR compliance.
-    // [Branch setTrackingDisabled:YES];
-
     #if 0
     // This simulates tracking opt-in, rather than tracking opt-out.
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasRunBefore"]) {
