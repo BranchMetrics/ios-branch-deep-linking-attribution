@@ -1632,11 +1632,18 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void) sendServerRequestWithoutSession:(BNCServerRequest*)request;
 
 /**
- This is the block that is called each time a new Branch session is started.
- typedef
+ This is the block that is called each time a new Branch session is started. It is automatically set
+ when Branch is initialized with `initSessionWithLaunchOptions:andRegisterDeepLinkHandler`.
  */
 @property (copy,   nonatomic) void(^ sessionInitWithParamsCallback) (NSDictionary * params, NSError * error);
 
+/**
+ This is the block that is called each time a new Branch session is started. It is automatically set
+ when Branch is initialized with `initSessionWithLaunchOptions:andRegisterDeepLinkHandlerUsingBranchUniversalObject`.
+
+ The difference with this callback from `sessionInitWithParamsCallback` is that it is called with a
+ BranchUniversalObject.
+ */
 @property (copy,   nonatomic) void (^ sessionInitWithBranchUniversalObjectCallback)
         (BranchUniversalObject * universalObject, BranchLinkProperties * linkProperties, NSError * error);
 
