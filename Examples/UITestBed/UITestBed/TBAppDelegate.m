@@ -57,12 +57,22 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     BNCLogSetDisplayLevel(BNCLogLevelAll);
     [branch setWhiteListedSchemes:@[@"branchuitest"]];
+
+#if 0
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
             [self handleBranchDeepLinkParameters:params error:error];
             global_previous_update_time = next_previous_update_time;
             next_previous_update_time = [BNCPreferenceHelper preferenceHelper].previousAppBuildDate;
         }];
+#else
+    [branch initSessionWithLaunchOptions:launchOptions];
+    branch.sessionInitWithParamsCallback = ^(NSDictionary *params, NSError *error) {
+        [self handleBranchDeepLinkParameters:params error:error];
+        global_previous_update_time = next_previous_update_time;
+        next_previous_update_time = [BNCPreferenceHelper preferenceHelper].previousAppBuildDate;
+    };
+#endif
 
     [self initializeViewControllers];
 
@@ -74,7 +84,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation {
 
-    NSLog(@"application:openURL:sourceApplication:annotation: invoked with URL: %@", [url description]);
+    NSLog(@"[branch.io] application:openURL:sourceApplication:annotation: invoked with URL: %@",
+        [url description]);
 
     // Required. Returns YES if Branch link, else returns NO
     [[Branch getInstance]
@@ -91,7 +102,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 continueUserActivity:(NSUserActivity *)userActivity
  restorationHandler:(void (^)(NSArray *))restorationHandler {
 
-    NSLog(@"application:continueUserActivity:restorationHandler: invoked.\n"
+    NSLog(@"[branch.io] application:continueUserActivity:restorationHandler: invoked.\n"
            "ActivityType: %@ userActivity.webpageURL: %@",
            userActivity.activityType,
            userActivity.webpageURL.absoluteString);

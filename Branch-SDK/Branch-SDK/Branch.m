@@ -129,8 +129,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) BNCServerInterface *serverInterface;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
-@property (copy,   nonatomic) callbackWithParams sessionInitWithParamsCallback;
-@property (copy,   nonatomic) callbackWithBranchUniversalObject sessionInitWithBranchUniversalObjectCallback;
 @property (assign, atomic)    NSInteger networkCount;
 @property (assign, nonatomic) NSInteger asyncRequestCount;
 @property (assign, nonatomic) BNCInitStatus initializationStatus;
