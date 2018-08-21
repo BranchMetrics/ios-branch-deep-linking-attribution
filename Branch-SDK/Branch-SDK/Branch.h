@@ -66,7 +66,7 @@
  Indicates this link is being used to trigger a deal, like a discounted rate.
 
  `BRANCH_FEATURE_TAG_GIFT`
- Indicates this link is being used to sned a gift to another user.
+ Indicates this link is being used to send a gift to another user.
  */
 extern NSString * const BRANCH_FEATURE_TAG_SHARE;
 extern NSString * const BRANCH_FEATURE_TAG_REFERRAL;
@@ -1631,7 +1631,23 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void) sendServerRequest:(BNCServerRequest*)request;
 - (void) sendServerRequestWithoutSession:(BNCServerRequest*)request;
 
+/**
+ This is the block that is called each time a new Branch session is started. It is automatically set
+ when Branch is initialized with `initSessionWithLaunchOptions:andRegisterDeepLinkHandler`.
+ */
+@property (copy,   nonatomic) void(^ sessionInitWithParamsCallback) (NSDictionary * params, NSError * error);
+
+/**
+ This is the block that is called each time a new Branch session is started. It is automatically set
+ when Branch is initialized with `initSessionWithLaunchOptions:andRegisterDeepLinkHandlerUsingBranchUniversalObject`.
+
+ The difference with this callback from `sessionInitWithParamsCallback` is that it is called with a
+ BranchUniversalObject.
+ */
+@property (copy,   nonatomic) void (^ sessionInitWithBranchUniversalObjectCallback)
+        (BranchUniversalObject * universalObject, BranchLinkProperties * linkProperties, NSError * error);
+
 // Read-only property exposed for unit testing.
-@property (strong, readonly) BNCServerInterface *serverInterface;
+@property (strong, readonly) BNCServerInterface* serverInterface;
 - (void) clearNetworkQueue;
 @end
