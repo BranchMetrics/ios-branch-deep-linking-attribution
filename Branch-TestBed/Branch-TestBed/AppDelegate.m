@@ -176,8 +176,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
 - (BOOL)application:(UIApplication *)application
 continueUserActivity:(NSUserActivity *)userActivity
- restorationHandler:(void (^)(NSArray *))restorationHandler {
-
+ restorationHandler:(void(^)(NSArray<id<UIUserActivityRestoring>>*restorableObjects))restorationHandler {
+ 
     NSLog(@"application:continueUserActivity:restorationHandler: invoked.\n"
            "ActivityType: %@ userActivity.webpageURL: %@",
            userActivity.activityType,

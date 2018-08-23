@@ -1029,8 +1029,8 @@
 			projectRoot = "";
 			targets = (
 				466B58371B17773000A69EDE /* Branch */,
-				7E6B3B501AA42D0E005F45BF /* Branch-SDK-Tests */,
 				6700165F1940F51400A9E103 /* Branch-TestBed */,
+				7E6B3B501AA42D0E005F45BF /* Branch-SDK-Tests */,
 				F1D4F9AB1F323F01002D13FF /* Branch-TestBed-UITests */,
 			);
 		};
