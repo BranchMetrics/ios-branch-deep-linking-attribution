@@ -29,7 +29,7 @@ ___
   + [Register for Branch key](#register-your-app)
   + [Add your Branch key](#add-your-branch-key-to-your-project)
   + [Register a URI scheme](#register-a-uri-scheme)
-  + [Support Universal Links](#support-universal-linking)
+  + [Support Universal Links](#support-universal-linking-ios-9-and-above)
 
 3. Branch general methods
   + [Get a Branch singleton](#get-a-singleton-branch-instance)
