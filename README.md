@@ -604,7 +604,7 @@ The `BranchEvent` class can be simple to use. For example:
 ###### Objective-C
 
 ```objc
-[BranchEvent.standardEvent(BranchStandardEventAddToCart) logEvent];
+[[BranchEvent standardEvent:BranchStandardEventAddToCart] logEvent];
 ```
 
 ###### Swift
