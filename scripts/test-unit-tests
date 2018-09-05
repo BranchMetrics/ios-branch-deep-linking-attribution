@@ -33,7 +33,7 @@ function testSimulatorVersion() {
     local version=$2
     printf "${textBlue}Testing %s %s...${textNormal}\n" "${name}" "${version}"
     xcodebuild \
-        -project Branch-TestBed.xcodeproj \
+        -workspace Branch-TestBed.xcworkspace \
         -scheme Branch-TestBed \
         -destination name="${name}",OS="${version}" \
             clean test -quiet
@@ -43,7 +43,10 @@ stressTest=0
 # stressPhone="iPhone 4s"
 # stressOS="8.3"
 stressPhone="iPhone 7 Plus"
-if [ "$(xcodebuild -version | head -n1)" = "Xcode 9.3" ]
+xcodeversion="$(xcodebuild -version | head -n1)"
+xcodeversion="${xcodeversion#Xcode }"
+xcodeversion="${xcodeversion%%.*}"
+if (( $xcodeversion >= 9 ))
 then
     stressOS="latest"
 else
@@ -57,7 +60,7 @@ function testSimulatorStress() {
     let stressTest=stressTest+1
     printf "${textBlue}   Stress test %d.${textNormal}\n" $stressTest
     xcodebuild \
-        -project Branch-TestBed.xcodeproj \
+        -workspace Branch-TestBed.xcworkspace \
         -scheme Branch-TestBed \
         -destination name="$stressPhone",OS="$stressOS" \
             test -quiet
@@ -66,7 +69,7 @@ function testSimulatorStress() {
 function analyzeBuild() {
     printf "${textBlue}Running static analysis...${textNormal}\n"
     xcodebuild \
-        -project Branch-TestBed.xcodeproj \
+        -workspace Branch-TestBed.xcworkspace \
         -scheme Branch-TestBed \
         -destination name="iPhone 7",OS=latest \
             analyze -quiet
@@ -75,19 +78,18 @@ function analyzeBuild() {
 function cleanAll() {
     printf "${textBlue}Cleaning all projects...${textNormal}\n"
     xcodebuild \
-        -project Branch-TestBed.xcodeproj \
+        -workspace Branch-TestBed.xcworkspace \
         -scheme Branch-TestBed \
         -destination name="iPhone 7",OS=latest \
             clean -quiet
     xcodebuild \
-        -project Branch-TestBed.xcodeproj \
+        -workspace Branch-TestBed.xcworkspace \
         -scheme Branch-SDK-Tests \
         -destination name="iPhone 7",OS=latest \
             clean -quiet
 }
 
-xcodeversion=$(xcodebuild -version)
-if [[ "$xcodeversion" =~ "Xcode 8" ]] || [[ "$xcodeversion" =~ "Xcode 9" ]]
+if (( $xcodeversion >= 8 ))
 then
     : # All good.  Keep going.
 else
@@ -103,7 +105,7 @@ for i in {1..5}
 do
     testSimulatorStress
 done
-if [ "$(xcodebuild -version | head -n1)" = "Xcode 9.3" ]
+if (( $xcodeversion >= 9 ))
 then
     testSimulatorVersion "iPhone X"  latest
 fi
@@ -111,8 +113,7 @@ testSimulatorVersion "iPhone SE" "$stressOS"
 testSimulatorVersion "iPhone 6s" 10.0
 testSimulatorVersion "iPhone 5"  9.3
 # xctest doesn't work for iOS 8.4 in Xcode 9.3 and above.  Bummer.
-xv=$(xcodebuild -version | head -n1)
-if [[ "$xv" == "Xcode 9.3" ]] || [[ "$xv" == "Xcode 9.4" ]]
+if (( $xcodeversion < 9 ))
 then
     testSimulatorVersion "iPhone 4s" 8.4
 fi
