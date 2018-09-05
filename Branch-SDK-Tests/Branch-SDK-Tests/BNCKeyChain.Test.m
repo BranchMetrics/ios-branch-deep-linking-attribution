@@ -22,15 +22,13 @@
     NSString *value = nil;
     NSArray *array = nil;
     NSString*const kServiceName = @"Service";
-    double systemVersion = [UIDevice currentDevice].systemVersion.doubleValue;
 
     // Remove and validate gone:
 
     error = [BNCKeyChain removeValuesForService:nil key:nil];
-    if (systemVersion >= 10.0 && systemVersion < 11.0)
-        { XCTAssertTrue(error == nil || error.code == -34018); }
-    else
-        { XCTAssertTrue(error == nil); }
+    // Error: 0xFFFF7B1E -34018 A required entitlement isn't present.
+    // This happens when the unit test bundle isn't code signed.
+    XCTAssertTrue(error == nil || error.code == -34018);
 
     array = [BNCKeyChain retieveAllValuesWithError:&error];
     XCTAssertTrue(array == nil && error == errSecSuccess);
