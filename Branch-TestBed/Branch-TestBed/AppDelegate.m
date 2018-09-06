@@ -174,6 +174,27 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     return YES;
 }
 
+#if !defined(__IPHONE_12_0) || __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_12_0
+
+- (BOOL)application:(UIApplication *)application
+continueUserActivity:(NSUserActivity *)userActivity
+ restorationHandler:(void(^)(NSArray*restorableObjects))restorationHandler {
+
+    NSLog(@"application:continueUserActivity:restorationHandler: invoked.\n"
+           "ActivityType: %@ userActivity.webpageURL: %@",
+           userActivity.activityType,
+           userActivity.webpageURL.absoluteString);
+
+    // Required. Returns YES if Branch Universal Link, else returns NO.
+    // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
+    [[Branch getInstance] continueUserActivity:userActivity];
+
+    // Process non-Branch userActivities here...
+    return YES;
+}
+
+#else
+
 - (BOOL)application:(UIApplication *)application
 continueUserActivity:(NSUserActivity *)userActivity
  restorationHandler:(void(^)(NSArray<id<UIUserActivityRestoring>>*restorableObjects))restorationHandler {
@@ -190,6 +211,8 @@ continueUserActivity:(NSUserActivity *)userActivity
     // Process non-Branch userActivities here...
     return YES;
 }
+
+#endif
 
 #pragma mark - Push Notifications (Optional)
 
