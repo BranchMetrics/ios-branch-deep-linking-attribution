@@ -428,9 +428,8 @@ BOOL BNCLogByteWrapOpenURL_Internal(NSURL *url, long maxBytes) {
     NSString *record = BNCLogByteWrapReadNextRecord();
     while (record) {
         NSDate *date = nil;
-        NSString *dateString = @"";
         if (record.length >= 27) {
-            dateString = [record substringWithRange:NSMakeRange(0, 27)];
+            NSString *dateString = [record substringWithRange:NSMakeRange(0, 27)];
             date = [bnc_LogDateFormatter dateFromString:dateString];
         }
         if (!date || [date compare:lastDate] < 0) {

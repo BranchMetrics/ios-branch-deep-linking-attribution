@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#  xcode-nuke-clean  -  Nuclear clean for an xcode project.
+#
+#  EB Smith, July 2015
+
+rm -Rf build
+rm -Rf Build
+rm -Rf ~/Library/Developer/Xcode/DerivedData
+
