@@ -482,7 +482,8 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
             // Log share completed event
             if (completed && !activityError) {
                 [[BranchEvent customEventWithName:BNCShareCompletedEvent contentItem:self] logEvent];
-                [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:[self getDictionaryWithCompleteLinkProperties:linkProperties]];
+                [BNCFabricAnswers sendEventWithName:@"Branch Share" andAttributes:
+                    [self getDictionaryWithCompleteLinkProperties:linkProperties]];
             }
             if (completion)
                 completion(activityType, completed);
