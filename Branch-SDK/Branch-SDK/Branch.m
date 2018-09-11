@@ -1626,7 +1626,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                                                               andTags:nil
                                                            andFeature:BNCSpotlightFeature
                                                              andStage:nil andAlias:nil];
-        [identifiers addObject:dynamicUrl];
+        if (dynamicUrl) [identifiers addObject:dynamicUrl];
     }
 
     [spotlight removeSearchableItemsWithIdentifiers:identifiers
