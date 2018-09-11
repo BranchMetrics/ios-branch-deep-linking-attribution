@@ -195,6 +195,7 @@
         @"LINE",        @"jp.naver.line.Share",
 		@"Pinterest",   @"pinterest.ShareExtension",
         @"Skype",       @"com.skype.skype.sharingextension",
+        @"Apple Reminders", @"com.apple.reminders.RemindersEditorExtension",
 
         //  Keys for older app versions --
 
