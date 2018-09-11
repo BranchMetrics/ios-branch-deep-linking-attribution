@@ -608,7 +608,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     } else {
         NSError *error = [NSError branchErrorWithCode:BNCSpotlightPublicIndexError
                                      localizedMessage:@"Publically indexed cannot be removed from Spotlight"];
-        completion(error);
+        if (completion) completion(error);
     }
 }
 

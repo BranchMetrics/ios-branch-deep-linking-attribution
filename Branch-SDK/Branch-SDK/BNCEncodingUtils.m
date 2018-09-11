@@ -439,7 +439,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
     int highValue = -1;
     const uint8_t *p = (const uint8_t*) [inputData bytes];
     for (NSUInteger i = 0; i < inputData.length; ++i) {
-        int value = -1;
+        int value;
         if (*p >= '0' && *p <= '9')
             value = *p - '0';
         else

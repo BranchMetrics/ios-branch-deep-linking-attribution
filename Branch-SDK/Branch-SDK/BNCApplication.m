@@ -101,7 +101,7 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
         forService:kBranchKeychainService
         key:kBranchKeychainFirstBuildKey
         cloudAccessGroup:nil];
-
+    if (error) BNCLogError(@"Keychain store: %@.", error);
     return firstBuildDate;
 }
 
@@ -136,7 +136,7 @@ static NSString*const kBranchKeychainFirstInstalldKey = @"BranchKeychainFirstIns
         forService:kBranchKeychainService
         key:kBranchKeychainFirstInstalldKey
         cloudAccessGroup:nil];
-
+    if (error) BNCLogError(@"Keychain store: %@.", error);
     return firstInstallDate;
 }
 
