@@ -468,7 +468,7 @@ exit:
 
     [self genericHTTPRequest:request retryNumber:retryNumber callback:callback
         retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
-            return [self prepareGetRequest:params url:url key:key retryNumber:++lastRetryNumber];
+            return [self prepareGetRequest:params url:url key:key retryNumber:lastRetryNumber+1];
     }];
 }
 
@@ -510,7 +510,7 @@ exit:
                  retryNumber:retryNumber
                     callback:callback
                 retryHandler:^ NSURLRequest *(NSInteger lastRetryNumber) {
-        return [self preparePostRequest:extendedParams url:url key:key retryNumber:++lastRetryNumber];
+        return [self preparePostRequest:extendedParams url:url key:key retryNumber:lastRetryNumber+1];
     }];
 }
 
@@ -834,8 +834,7 @@ exit:
     NSString *hardwareId = [deviceInfo.hardwareId copy];
     NSString *hardwareIdType = [deviceInfo.hardwareIdType copy];
     NSNumber *isRealHardwareId = @(deviceInfo.isRealHardwareId);
-
-    if (hardwareId && hardwareIdType && isRealHardwareId) {
+    if (hardwareId != nil && hardwareIdType != nil && isRealHardwareId != nil) {
         dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
         dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = hardwareIdType;
         dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = isRealHardwareId;
