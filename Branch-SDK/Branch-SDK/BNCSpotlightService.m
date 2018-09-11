@@ -242,7 +242,7 @@ static NSString* const kDomainIdentifier = @"io.branch.sdk.spotlight";
                                                               andTags:nil
                                                            andFeature:BNCSpotlightFeature
                                                              andStage:nil andAlias:nil];
-        
+        if (!dynamicUrl) continue;
         mapSpotlightIdentifier[dynamicUrl] = universalObject;
         NSURL* thumbnailUrl = [NSURL URLWithString:universalObject.imageUrl];
         BOOL thumbnailIsRemote = thumbnailUrl && ![thumbnailUrl isFileURL];

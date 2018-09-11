@@ -12,15 +12,23 @@ set -euo pipefail
 
 function clean_up() {
     set +e
-    rm compile_commands.json
-    rm -Rf infer-out/
-    rm xcodebuild.log
+    (
+        rm compile_commands.json
+        rm -Rf infer-out/
+        rm xcodebuild.log
+    ) &> /dev/null
 }
 trap clean_up EXIT
 
-xcodebuild | tee xcodebuild.log
+xcode_options=""
+if (( $# == 1))
+then
+    xcode_options="-project "$1""
+fi
+
+xcodebuild $xcode_options | tee xcodebuild.log
 xcpretty -r json-compilation-database -o compile_commands.json < xcodebuild.log > /dev/null
 infer run --skip-analysis-in-path Pods --clang-compilation-db-files-escaped compile_commands.json
 temp_file=$(mktemp)
 cat infer-out/bugs.txt > $temp_file
-$EDITOR $temp_file
+$EDITOR $temp_file &

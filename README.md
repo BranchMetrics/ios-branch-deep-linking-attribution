@@ -744,7 +744,7 @@ statistics, such as total installs, referrals, and app link statistics.
 Call this method to enable checking for Apple Search Ads before Branch initialization.  This method
 must be called before you initialize your Branch session.
 
-Note that this will add about 1 second from call to initSession to callback due to Apple's latency.
+Note that this can add up to 10 seconds from call to initSession to callback due to Apple's latency.
 
 ###### Objective-C
 ```objc

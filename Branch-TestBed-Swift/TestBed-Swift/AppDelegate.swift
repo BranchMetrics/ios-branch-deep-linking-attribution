@@ -426,7 +426,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
         IntegratedSDKsData.setActiveTuneConversionKey(tuneConversionKey)
         IntegratedSDKsData.setActiveTuneEnabled(true)
 
-        Tune.setDelegate(self)
+        Tune.registerDeeplinkListener(self)
         Tune.initialize(withTuneAdvertiserId: tuneAdvertisingID, tuneConversionKey: tuneConversionKey)
 //        Tune.setDebugMode(true)
     }

@@ -1,5 +1,17 @@
 Branch iOS SDK Change Log
 
+- v0.25.4
+  * QA Release - September 11, 2018
+  * Added Apple Reminders as a scraper to prevent deferred linking (DEVEX-775).
+  * Fixed some Infer code analyzer warnings (DEVEX-774).
+  * iOS 12 Preparation (DEVEX-739).
+    - Updated project for iOS 12 / Xcode 10.
+    - Updated the keychain test.
+    - Use pods for OCMock instead of frameworks for compatibility.
+  * Fix potential crash bug with activity string.
+  * Made the session callback block publicly settable for more flexible app integrations.
+  * Updated the documentation as needed.
+
 - v0.25.3
   * _*Master Release*_ - August 13, 2018
   * Fixed an occasional double app open from being sent to Branch.
