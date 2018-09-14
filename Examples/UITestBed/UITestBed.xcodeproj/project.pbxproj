@@ -70,8 +70,6 @@
 		4DC00B3820A0A1C2002E68CD /* UITestEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC00B3720A0A1C2002E68CD /* UITestEvents.m */; };
 		4DC00B4020A0A214002E68CD /* UITestSafari.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC00B3F20A0A214002E68CD /* UITestSafari.m */; };
 		4DC00B4320A0C5F4002E68CD /* TBSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC00B4220A0C5F4002E68CD /* TBSettings.m */; };
-		4DED488D209BDEB9008DE877 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4DED488B209BDEB9008DE877 /* OCMock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		4DED488E209BDEB9008DE877 /* OHHTTPStubs.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4DED488C209BDEB9008DE877 /* OHHTTPStubs.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		4DFF2B6E1EEF3B150043F840 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2B6D1EEF3B150043F840 /* main.m */; };
 		4DFF2B711EEF3B150043F840 /* TBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2B701EEF3B150043F840 /* TBAppDelegate.m */; };
 		4DFF2B741EEF3B150043F840 /* TBBranchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DFF2B731EEF3B150043F840 /* TBBranchViewController.m */; };
@@ -713,7 +711,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				HEADER_SEARCH_PATHS = "../../Branch-SDK/Branch-SDK/**";
 				INFOPLIST_FILE = "../../Branch-SDK-Tests/Branch-SDK-Tests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.Branch-SDK-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -739,7 +736,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				HEADER_SEARCH_PATHS = "../../Branch-SDK/Branch-SDK/**";
 				INFOPLIST_FILE = "../../Branch-SDK-Tests/Branch-SDK-Tests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.Branch-SDK-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -762,7 +758,6 @@
 				DEVELOPMENT_TEAM = 3ZNSRC9M83;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "UITestBed-UITests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.UITestBed-UITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -782,7 +777,6 @@
 				DEVELOPMENT_TEAM = 3ZNSRC9M83;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "UITestBed-UITests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.UITestBed-UITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";

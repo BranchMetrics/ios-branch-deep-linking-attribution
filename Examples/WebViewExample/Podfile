@@ -11,13 +11,11 @@ platform :ios, '9.0'
 
 # ----- Application target
 
-target "WebViewExample" do
+target 'WebViewExample' do
   project 'WebViewExample'
   pod 'Branch', path: "../.."
-  # ----- Other app dependencies
-  pod "Cartography"
-  pod "MBProgressHUD"
-  # pod "TextAttributes"
+  pod 'Cartography', '3.0.1'
+  pod 'MBProgressHUD'
 end
 
 # Add custom configurations. This informs CocoaPods that Test-Debug should be treated like

@@ -1,7 +1,7 @@
 Branch iOS SDK Change Log
 
-- v0.25.4
-  * QA Release - September 11, 2018
+- v0.25.5
+  * _*Master Release*_ - September 14, 2018
   * Added Apple Reminders as a scraper to prevent deferred linking (DEVEX-775).
   * Fixed some Infer code analyzer warnings (DEVEX-774).
   * iOS 12 Preparation (DEVEX-739).
@@ -11,6 +11,9 @@ Branch iOS SDK Change Log
   * Fix potential crash bug with activity string.
   * Made the session callback block publicly settable for more flexible app integrations.
   * Updated the documentation as needed.
+
+- v0.25.4
+  * Release preparation - September 11, 2018
 
 - v0.25.3
   * _*Master Release*_ - August 13, 2018
