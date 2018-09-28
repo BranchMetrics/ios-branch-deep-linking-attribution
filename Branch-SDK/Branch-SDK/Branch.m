@@ -724,6 +724,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         self.preferenceHelper.blacklistURLOpen = YES;
         self.preferenceHelper.externalIntentURI = blackListPattern;
         self.preferenceHelper.referringURL = blackListPattern;
+        if (isFromSelf) [self resetUserSession];
         [self initUserSessionAndCallCallback:(self.initializationStatus != BNCInitStatusInitialized)];
         return NO;
     }

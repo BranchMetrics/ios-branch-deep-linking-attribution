@@ -585,4 +585,11 @@
     XCTAssertEqualObjects(items, expected);
 }
 
+- (void) testSanitzeString {
+    NSString*test  = @"\b\f\n\r\t\"`\\";
+    NSString*truth = @"\\b\\f\\n\\r\\t\\\"'\\\\";
+    NSString*result = [BNCEncodingUtils sanitizedStringFromString:test];
+    XCTAssertEqualObjects(result, truth);
+}
+
 @end
