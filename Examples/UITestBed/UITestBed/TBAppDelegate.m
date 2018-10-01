@@ -44,10 +44,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // [branch validateSDKIntegration];
     
     // Comment / un-comment to toggle debugging
-    //[branch setDebug];
+    [branch setDebug];
 
     // Optionally check for Apple Search Ads attribution:
-    [branch delayInitToCheckForSearchAds];
+    //[branch delayInitToCheckForSearchAds];
 
     // Turn this on to debug Apple Search Ads.  Should not be included for production.
     // [branch setAppleSearchAdsDebugMode];
@@ -58,7 +58,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     BNCLogSetDisplayLevel(BNCLogLevelAll);
     [branch setWhiteListedSchemes:@[@"branchuitest"]];
 
-#if 0
+#if 1
+    // [branch setIdentity:@"Bobby Branch"];
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
             [self handleBranchDeepLinkParameters:params error:error];
@@ -195,7 +196,7 @@ continueUserActivity:(NSUserActivity *)userActivity
             [[TBDetailViewController alloc] initWithData:params];
         dataViewController.title = @"Link Opened";
         dataViewController.message = params[@"~referring_link"];
-        if (!dataViewController.message)
+        if (!dataViewController.message.length)
             dataViewController.message = params[@"+non_branch_link"];
         if (dataViewController.message.length == 0)
             dataViewController.message = @"< No URL >";
