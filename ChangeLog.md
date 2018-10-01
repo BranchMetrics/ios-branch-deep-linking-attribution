@@ -1,5 +1,11 @@
 Branch iOS SDK Change Log
 
+- v0.25.6
+  * _*Master Release*_ - October 1, 2018
+  * Fixed a case when a session call back could happen with empty data.
+  * DEVEX-816: Fixed JSON encoding of special characters. This could prevent sessions that were
+    associated with a Facebook login from working correctly.
+
 - v0.25.5
   * _*Master Release*_ - September 14, 2018
   * Added Apple Reminders as a scraper to prevent deferred linking (DEVEX-775).
