@@ -120,10 +120,10 @@ static NSString* TBStringFromObject(id<NSObject> object) {
     row(@"Show Dates & Update State",   TBRowStyleDisclosure,   showDatesAction:)
 
     section(@"Miscellaneous");
-    row(@"Show Local IP Addess",        TBRowStyleDisclosure, showLocalIPAddress:);
-    row(@"Show Current View Controller", TBRowStyleDisclosure, showCurrentViewController:)
-    row(@"Stress Test Open",            TBRowStylePlain, stressTestOpen:)
-
+    row(@"Show Local IP Addess",        TBRowStyleDisclosure,   showLocalIPAddress:);
+    row(@"Show Current View Controller", TBRowStyleDisclosure,  showCurrentViewController:)
+    row(@"Stress Test Open",            TBRowStylePlain,        stressTestOpen:)
+    row(@"Test fb auth. Open fb123://", TBRowStylePlain,        openFacebookAuth:)
     #undef section
     #undef row
 }
@@ -686,6 +686,11 @@ static NSString* global_createdBranchURLString = nil;
         ^ (NSString * _Nullable activityType, BOOL completed, NSError * _Nullable activityError) {
             BNCLogDebug(@"Done.");
     }];
+}
+
+- (IBAction)openFacebookAuth:(TBTableRow*)row {
+    NSURL*URL = [NSURL URLWithString:@"fb123://open?myself"];
+    [Branch.getInstance handleDeepLinkWithNewSession:URL];
 }
 
 - (IBAction) buoShareBarButton:(id)sender {
