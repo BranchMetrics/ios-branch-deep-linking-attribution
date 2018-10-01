@@ -2124,11 +2124,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
     }
     // If the session is not yet initialized
-    if (self.initializationStatus != BNCInitStatusInitialized) {
+    if (self.initializationStatus == BNCInitStatusUninitialized) {
         [self initializeSession];
     }
     // If the session was initialized, but callCallback was specified, do so.
-    else if (callCallback) {
+    else if (callCallback && self.initializationStatus == BNCInitStatusInitialized) {
         if (self.sessionInitWithParamsCallback) {
             self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
         }
