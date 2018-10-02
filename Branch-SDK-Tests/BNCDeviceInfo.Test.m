@@ -134,7 +134,7 @@
     BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
 
     NSMutableDictionary *truth = [self mutableDictionaryFromBundleJSONWithKey:@"BNCDeviceDictionaryV2"];
-    truth[@"app_version"] = nil;//@"1.1";
+    truth[@"app_version"] = @"1.1";
     truth[@"os_version"] = [UIDevice currentDevice].systemVersion;
     truth[@"sdk_version"] = BNC_SDK_VERSION;
     truth[@"developer_identity"] = preferences.userIdentity;

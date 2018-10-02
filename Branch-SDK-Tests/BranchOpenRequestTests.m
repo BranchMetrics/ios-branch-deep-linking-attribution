@@ -81,10 +81,11 @@
             @"mv": @"-1",
             @"pn": BUNDLE_ID
         },
-        @"debug":                       @1,
+        @"debug":                       IS_DEBUG,
         @"facebook_app_link_checked":   @0,
         @"identity_id":                 IDENTITY_ID,
         @"ios_bundle_id":               BUNDLE_ID,
+        @"ios_team_id":                 @"R63EM248DP",
         @"link_identifier":             LINK_IDENTIFIER,
         @"uri_scheme":                  URI_SCHEME,
 
@@ -156,11 +157,12 @@
             @"mv": @"-1",
             @"pn": BUNDLE_ID
         },
-        @"debug":                       @1,
+        @"debug":                       IS_DEBUG,
         @"device_fingerprint_id":       FINGERPRINT_ID,
         @"facebook_app_link_checked":   @0,
         @"identity_id":                 IDENTITY_ID,
         @"ios_bundle_id":               BUNDLE_ID,
+        @"ios_team_id":                 @"R63EM248DP",
         @"link_identifier":             LINK_IDENTIFIER,
         @"uri_scheme":                  URI_SCHEME,
 

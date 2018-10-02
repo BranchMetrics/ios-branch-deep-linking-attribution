@@ -131,6 +131,7 @@
 }
 
 - (void) testStandardBlackList {
+    BNCLogSetDisplayLevel(BNCLogLevelAll);
     Branch *branch = [Branch getInstance:@"key_live_foo"];
     id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
     XCTestExpectation *expectation = [self expectationWithDescription:@"OpenRequest Expectation"];
@@ -146,9 +147,10 @@
 
         NSLog(@"d: %@", dictionary);
         NSString* link = dictionary[@"external_intent_uri"];
-        NSString *pattern = @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
-        NSLog(@"\n   Link: '%@'\nPattern: '%@'\n.", link, pattern);
-        XCTAssertEqualObjects(link, pattern);
+        NSString *pattern1 = @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
+        NSString *pattern2 = @"^(?i).+:.*[?].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
+        NSLog(@"\n   Link: '%@'\nPattern1: '%@'\nPattern2: '%@'.", link, pattern1, pattern2);
+        XCTAssertTrue([link isEqualToString:pattern1] || [link isEqualToString:pattern2]);
         [expectation fulfill];
     });
 

@@ -10,6 +10,11 @@
 
 #import "BNCTestCase.h"
 #import "BNCLog.h"
+#import "Branch.h"
+
+@interface Branch (BNCTest)
++ (void) clearAll;
+@end
 
 NSString* kTestStringResourceName = @"BNCTestCase"; // File is 'BNCTestCase.strings'. Omit the '.string'.
 
@@ -99,17 +104,25 @@ static BOOL _breakpointsAreEnabledInTests = NO;
     return _breakpointsAreEnabledInTests;
 }
 
+static NSString* savedIdentityID = nil;
+
 + (void) initialize {
     if (self != [BNCTestCase self]) return;
     BNCLogSetDisplayLevel(BNCLogLevelAll);
 
     // Load test options from environment variables:
-
     NSDictionary<NSString*, NSString*> *environment = [NSProcessInfo processInfo].environment;
     NSString *BNCTestBreakpoints = environment[@"BNCTestBreakpointsEnabled"];
     if ([BNCTestBreakpoints boolValue]) {
         _breakpointsAreEnabledInTests = YES;
     }
+
+    savedIdentityID = [BNCPreferenceHelper preferenceHelper].identityID;
+    [Branch clearAll];
+}
+
++ (void)tearDown {
+    [BNCPreferenceHelper preferenceHelper].identityID = savedIdentityID;
 }
 
 @end

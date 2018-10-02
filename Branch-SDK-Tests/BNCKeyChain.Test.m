@@ -62,6 +62,11 @@
     value = [BNCKeyChain retrieveValueForService:kServiceName key:@"key2" error:&error];
     XCTAssertTrue(error == nil && [value isEqualToString:@"2xyz123"]);
 
+    error = [BNCKeyChain storeValue:@"3xyz123" forService:@"Service2" key:@"skey2" cloudAccessGroup:nil];
+    XCTAssertTrue(error == nil);
+    value = [BNCKeyChain retrieveValueForService:@"Service2" key:@"skey2" error:&error];
+    XCTAssertTrue(error == nil && [value isEqualToString:@"3xyz123"]);
+
     // Remove by service:
 
     error = [BNCKeyChain removeValuesForService:kServiceName key:nil];

@@ -140,7 +140,7 @@ static inline uint64_t BNCNanoSecondsFromTimeInterval(NSTimeInterval interval) {
 - (void)clearQueue {
     @synchronized (self) {
         [self.queue removeAllObjects];
-        [self persistEventually];
+        [self persistImmediately];
     }
 }
 
