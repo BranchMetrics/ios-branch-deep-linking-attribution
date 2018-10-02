@@ -42,6 +42,7 @@ void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...) {
 
 
 inline static void BNCLogInitializeClient_Internal() {
+    BNCLogInitialize();
     BNCLogClientInitializeFunctionPtr initFunction = BNCLogSetClientInitializeFunction(NULL);
     if (initFunction) {
         initFunction();
@@ -470,6 +471,7 @@ void BNCLogSetOutputToURLByteWrap(NSURL *_Nullable URL, long maxBytes) {
 static BNCLogLevel bnc_LogDisplayLevel = BNCLogLevelWarning;
 
 BNCLogLevel BNCLogDisplayLevel() {
+    BNCLogInitializeClient_Internal();
     __block BNCLogLevel level = BNCLogLevelAll;
     dispatch_sync(bnc_LogQueue, ^{
         level = bnc_LogDisplayLevel;

@@ -2509,4 +2509,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [crashlytics setObjectValue:BNC_SDK_VERSION forKey:BRANCH_CRASHLYTICS_SDK_VERSION_KEY];
 }
 
++ (void) clearAll {
+    [[BNCServerRequestQueue getInstance] clearQueue];
+    [BranchOpenRequest releaseOpenResponseLock];
+    [BNCPreferenceHelper clearAll];
+}
+
 @end

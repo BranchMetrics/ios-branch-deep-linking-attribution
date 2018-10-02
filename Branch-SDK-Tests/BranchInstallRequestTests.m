@@ -83,6 +83,7 @@
         @"facebook_app_link_checked":   @0,
         @"latest_install_time":         BNCWireFormatFromDate(appDate),
         @"ios_bundle_id":               @"foo-bundle-id",
+        @"ios_team_id":                 @"R63EM248DP",
         @"lastest_update_time":         BNCWireFormatFromDate(appDate),
         @"link_identifier":             @"foo-link-id",
         @"first_install_time":          BNCWireFormatFromDate(appDate),

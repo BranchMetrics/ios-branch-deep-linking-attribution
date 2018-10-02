@@ -781,6 +781,11 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     }
 }
 
++ (void) clearAll {
+    NSURL *prefsURL = [self.URLForPrefsFile copy];
+    if (prefsURL) [[NSFileManager defaultManager] removeItemAtURL:prefsURL error:nil];
+}
+
 #pragma mark - Reading From Persistence
 
 - (NSMutableDictionary *)persistenceDict {

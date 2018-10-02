@@ -21,6 +21,11 @@
 
 @implementation BranchEventTest
 
+- (void) setUp {
+    [BNCPreferenceHelper preferenceHelper].identityID = @"575759106028389737";
+    [[BNCPreferenceHelper preferenceHelper] clearInstrumentationDictionary];
+}
+
 - (void) testDescription {
     BranchEvent *event    = [BranchEvent standardEvent:BranchStandardEventPurchase];
     event.transactionID   = @"1234";
@@ -112,6 +117,7 @@
 
     NSMutableDictionary *expectedRequest =
         [self mutableDictionaryFromBundleJSONWithKey:@"V2EventJSON"];
+    expectedRequest[@"branch_key"] = Branch.branchKey;
     expectedRequest[@"user_data"] = [[BNCDeviceInfo getInstance] v2dictionary];
 
     Branch *branch = [Branch getInstance:@"key_live_foo"];
@@ -131,8 +137,9 @@
         NSError *error = nil;
         NSString *url = request.URL.absoluteString;
         NSData *bodyData = request.HTTPBody;
-        NSDictionary *parameters =
-            [NSJSONSerialization JSONObjectWithData:bodyData options:0 error:&error];
+        NSMutableDictionary *parameters =
+            [NSJSONSerialization JSONObjectWithData:bodyData
+                options:NSJSONReadingMutableContainers error:&error];
         XCTAssertNil(error);
 
         NSLog(@"testEvent 1");
@@ -157,6 +164,7 @@
 
     NSMutableDictionary *expectedRequest =
         [self mutableDictionaryFromBundleJSONWithKey:@"V2EventJSON"];
+    expectedRequest[@"branch_key"] = Branch.branchKey;
     expectedRequest[@"user_data"] = [[BNCDeviceInfo getInstance] v2dictionary];
     expectedRequest[@"event_data"] = nil;
     expectedRequest[@"custom_data"] = nil;

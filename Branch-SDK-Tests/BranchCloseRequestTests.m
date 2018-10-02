@@ -20,6 +20,7 @@
 
 - (void)testRequestBody {
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    preferenceHelper.identityID = @"foo_identity";
     NSDictionary * const expectedParams = @{
         BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
         BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,

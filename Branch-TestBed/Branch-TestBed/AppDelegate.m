@@ -39,7 +39,8 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     Branch *branch = [Branch getInstance];
 
     // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
-    [branch setDebug];
+    // Note: Unit tests will fail if 'setDebug' is set.
+    // [branch setDebug];
     
     // Comment out in production. Un-comment to test your Branch SDK Integration:
     // [branch validateSDKIntegration];
@@ -57,7 +58,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
      *    Required: Initialize Branch, passing a deep link handler block:
      */
 
-    [branch setIdentity:@"Bobby Branch"];
+    // [branch setIdentity:@"Bobby Branch"];
     [branch initSessionWithLaunchOptions:launchOptions
         andRegisterDeepLinkHandlerUsingBranchUniversalObject:
         ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
