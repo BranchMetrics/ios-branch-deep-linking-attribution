@@ -5,6 +5,7 @@ Branch iOS SDK Change Log
   * Fixed a case when a session call back could happen with empty data.
   * DEVEX-816: Fixed JSON encoding of special characters. This could prevent sessions that were
     associated with a Facebook login from working correctly.
+  * Fixed some unit test failures largely due to iOS 12 threading.
 
 - v0.25.5
   * _*Master Release*_ - September 14, 2018
