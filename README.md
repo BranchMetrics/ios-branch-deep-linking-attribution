@@ -292,8 +292,7 @@ To deep link, Branch must initialize a session to check if the user originated f
     return YES;
 }
 
-- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity
- restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler {
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler {
     BOOL handledByBranch = [[Branch getInstance] continueUserActivity:userActivity];
 
     return handledByBranch;
