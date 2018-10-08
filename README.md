@@ -292,7 +292,7 @@ To deep link, Branch must initialize a session to check if the user originated f
     return YES;
 }
 
-- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler {
     BOOL handledByBranch = [[Branch getInstance] continueUserActivity:userActivity];
 
     return handledByBranch;
@@ -332,7 +332,7 @@ func application(_ application: UIApplication, open url: URL, sourceApplication:
     return true
 }
 
-func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
     let handledByBranch = Branch.getInstance().continue(userActivity)
 
     return handledByBranch
@@ -1492,4 +1492,3 @@ The response will return an array that has been parsed from the following JSON:
 1. _1_ - A reward that was added manually.
 2. _2_ - A redemption of credits that occurred through our API or SDKs.
 3. _3_ - This is a very unique case where we will subtract credits automatically when we detect fraud.
-
