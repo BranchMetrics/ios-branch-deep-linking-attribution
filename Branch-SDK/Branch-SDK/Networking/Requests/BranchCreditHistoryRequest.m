@@ -77,7 +77,7 @@
     }
 }
 
-#pragma mark - NSCoding methods
+#pragma mark - NSSecureCoding methods
 
 - (id)initWithCoder:(NSCoder *)decoder {
     if ((self = [super initWithCoder:decoder])) {
@@ -95,6 +95,10 @@
     [coder encodeObject:self.creditTransactionId forKey:@"creditTransactionId"];
     [coder encodeInteger:self.length forKey:@"length"];
     [coder encodeInteger:self.order forKey:@"order"];
+}
+
++ (BOOL) supportsSecureCoding {
+    return YES;
 }
 
 @end

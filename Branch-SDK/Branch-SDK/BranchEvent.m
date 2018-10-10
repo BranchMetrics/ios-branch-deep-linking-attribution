@@ -71,7 +71,7 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
 		self.completion(dictionary, error);
 }
 
-#pragma mark BranchEventRequest NSCoding
+#pragma mark BranchEventRequest NSSecureCoding
 
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];
@@ -86,6 +86,10 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
     [super encodeWithCoder:coder];
     [coder encodeObject:self.serverURL forKey:@"serverURL"];
     [coder encodeObject:self.eventDictionary forKey:@"eventDictionary"];
+}
+
++ (BOOL) supportsSecureCoding {
+    return YES;
 }
 
 @end

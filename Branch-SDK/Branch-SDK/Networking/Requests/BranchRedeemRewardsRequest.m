@@ -60,7 +60,7 @@
     }
 }
 
-#pragma mark - NSCoding methods
+#pragma mark - NSSecureCoding methods
 
 - (id)initWithCoder:(NSCoder *)decoder {
     if ((self = [super initWithCoder:decoder])) {
