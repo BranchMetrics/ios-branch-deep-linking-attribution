@@ -70,9 +70,9 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     NSLog(@"-------------------------------------------------");
 
     NSLog(@"-- Checking for bundle identifier correctness ---");
-    NSString *serverBundleIdentifier = response.data[@"ios_bundle_id"];
+    NSString *serverBundleIdentifier = [response.data[@"ios_bundle_id"] isKindOfClass:NSString.class] ? response.data[@"ios_bundle_id"] : @"";
     NSString *clientBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-    NSString *bundleIdentifier = [[serverBundleIdentifier isKindOfClass:NSString.class] ? serverBundleIdentifier : @"" isEqualToString:clientBundleIdentifier] ? passString : errorString;
+    NSString *bundleIdentifier = [serverBundleIdentifier isEqualToString:clientBundleIdentifier] ? passString : errorString;
     NSString *bundleIdentifierMessage = [NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'", bundleIdentifier, serverBundleIdentifier, clientBundleIdentifier];
     NSLog(@"%@",bundleIdentifierMessage);
     NSLog(@"-------------------------------------------------");
@@ -113,7 +113,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
             kFailMark,  serverUriScheme];
     }
 
-    if ([[serverBundleIdentifier isKindOfClass:NSString.class] ? serverBundleIdentifier : @"" isEqualToString:clientBundleIdentifier]) {
+    if ([serverBundleIdentifier isEqualToString:clientBundleIdentifier]) {
         alertString = [alertString stringByAppendingFormat:@"%@App Bundle ID matches:\n\t'%@'\n",
             kPassMark,  serverBundleIdentifier];
     } else {
