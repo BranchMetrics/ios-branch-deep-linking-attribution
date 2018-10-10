@@ -70,7 +70,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     NSLog(@"-------------------------------------------------");
 
     NSLog(@"-- Checking for bundle identifier correctness ---");
-    NSString *serverBundleIdentifier = response.data[@"ios_bundle_id"];
+    NSString *serverBundleIdentifier = [response.data[@"ios_bundle_id"] isKindOfClass:NSString.class] ? response.data[@"ios_bundle_id"] : @"";
     NSString *clientBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
     NSString *bundleIdentifier = [serverBundleIdentifier isEqualToString:clientBundleIdentifier] ? passString : errorString;
     NSString *bundleIdentifierMessage = [NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'", bundleIdentifier, serverBundleIdentifier, clientBundleIdentifier];
