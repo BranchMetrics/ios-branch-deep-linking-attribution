@@ -36,6 +36,7 @@
 #import "BranchView.h"
 #import "BranchViewHandler.h"
 #import "UIViewController+Branch.h"
+#import "BranchCSSearchableItemAttributeSet.h"
 
 /**
  `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.
