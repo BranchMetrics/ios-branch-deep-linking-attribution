@@ -604,9 +604,8 @@ NSArray<BNCCurrency>* BNCCurrencyAllCurrencies(void) {
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     self = [super initWithCoder:decoder];
 	if (!self) return self;
-
-	self.commerceDictionary = [decoder decodeObjectForKey:@"commerceDictionary"];
-	self.metadata = [decoder decodeObjectForKey:@"metaData"];
+	self.commerceDictionary = [decoder decodeObjectOfClass:NSDictionary.class forKey:@"commerceDictionary"];
+	self.metadata = [decoder decodeObjectOfClass:NSDictionary.class forKey:@"metaData"];
     return self;
 }
 

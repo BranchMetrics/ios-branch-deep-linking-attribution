@@ -79,8 +79,8 @@
 
 - (id)initWithCoder:(NSCoder *)decoder {
     if ((self = [super initWithCoder:decoder])) {
-        _action = [decoder decodeObjectForKey:@"action"];
-        _state = [decoder decodeObjectForKey:@"state"];
+        _action = [decoder decodeObjectOfClass:NSString.class forKey:@"action"];
+        _state = [decoder decodeObjectOfClass:NSDictionary.class forKey:@"state"];
     }
     
     return self;
@@ -88,7 +88,6 @@
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     [super encodeWithCoder:coder];
-    
     [coder encodeObject:self.action forKey:@"action"];
     [coder encodeObject:self.state forKey:@"state"];
 }

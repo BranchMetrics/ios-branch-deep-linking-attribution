@@ -81,8 +81,8 @@
 
 - (id)initWithCoder:(NSCoder *)decoder {
     if ((self = [super initWithCoder:decoder])) {
-        _bucket = [decoder decodeObjectForKey:@"bucket"];
-        _creditTransactionId = [decoder decodeObjectForKey:@"creditTransactionId"];
+        _bucket = [decoder decodeObjectOfClass:NSString.class forKey:@"bucket"];
+        _creditTransactionId = [decoder decodeObjectOfClass:NSString.class forKey:@"creditTransactionId"];
         _length = [decoder decodeIntegerForKey:@"length"];
         _order = [decoder decodeIntegerForKey:@"order"];
     }

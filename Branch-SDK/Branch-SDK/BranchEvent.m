@@ -77,8 +77,8 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
     self = [super initWithCoder:decoder];
 	if (!self) return self;
 
-	self.serverURL = [decoder decodeObjectForKey:@"serverURL"];
-	self.eventDictionary = [decoder decodeObjectForKey:@"eventDictionary"];
+	self.serverURL = [decoder decodeObjectOfClass:NSString.class forKey:@"serverURL"];
+	self.eventDictionary = [decoder decodeObjectOfClass:NSDictionary.class forKey:@"eventDictionary"];
     return self;
 }
 
