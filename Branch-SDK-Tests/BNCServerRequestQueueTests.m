@@ -154,7 +154,7 @@
                 archivedDataWithRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) {
                     if ([reqs isKindOfClass:[NSArray class]]) {
                         XCTAssert(reqs.count == 0);
-                        BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{
+                        BNCAfterSecondsPerformBlockOnMainThread(0.100, ^{
                             [self safelyFulfillExpectation:expectation];
                         });
                         return YES;
@@ -170,7 +170,7 @@
         // Wait for operation to occur    
         [self awaitExpectations];
         [archiverMock verify];
-        BNCSleepForTimeInterval(0.001); // Allow for mock class to be un-mocked.
+        BNCSleepForTimeInterval(0.500); // Allow for mock class to be un-mocked.
     }
 }
 
@@ -184,7 +184,7 @@
                 archivedDataWithRootObject:[OCMArg checkWithBlock:^BOOL(NSArray *reqs) {
                     if ([reqs isKindOfClass:[NSArray class]]) {
                         XCTAssert(reqs.count == 0);
-                        BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{
+                        BNCAfterSecondsPerformBlockOnMainThread(0.100, ^{
                             [self safelyFulfillExpectation:expectation];
                         });
                         return YES;
@@ -198,7 +198,7 @@
         // Wait for operation to occur    
         [self awaitExpectations];
         [archiverMock verify];
-        BNCSleepForTimeInterval(0.001); // Allow for mock class to be un-mocked.
+        BNCSleepForTimeInterval(0.500); // Allow for mock class to be un-mocked.
     }
 }
 
