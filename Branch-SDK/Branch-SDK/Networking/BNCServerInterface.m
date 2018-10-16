@@ -551,7 +551,11 @@ exit:
             // indicating various parts of the HTTP post failed.
             // We should retry in those conditions in addition to the case where the server returns a 500
 
-            BOOL isRetryableStatusCode = status >= 500 || status < 0;
+            // Status 53 means the request was killed by the OS because we're still in the background.
+            // This started happening in iOS 12 / Xcode 10 production when we're called from continueUserActivity:
+            // but we're not fully out of the background yet.
+
+            BOOL isRetryableStatusCode = status >= 500 || status < 0 || status == 53;
             
             // Retry the request if appropriate
             if (retryNumber < self.preferenceHelper.retryCount && isRetryableStatusCode) {

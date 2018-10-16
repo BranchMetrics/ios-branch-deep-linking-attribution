@@ -848,14 +848,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-
         // If we're already in-progress cancel the last open and do this one.
-        BOOL isNewSession = NO;
-        if (![self removeInstallOrOpen]) {
-            isNewSession = YES;
-        }
-
-        return [self handleDeepLink:userActivity.webpageURL fromSelf:isNewSession];
+        [self removeInstallOrOpen];
+        return [self handleDeepLink:userActivity.webpageURL fromSelf:YES];
     }
 
     // Check to see if a spotlight activity needs to be handled
