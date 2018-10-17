@@ -150,8 +150,9 @@
         NSString *pattern1 = @"^(?i)((http|https):\\/\\/).*[\\/|?|#].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
         NSString *pattern2 = @"^(?i).+:.*[?].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
         NSLog(@"\n   Link: '%@'\nPattern1: '%@'\nPattern2: '%@'.", link, pattern1, pattern2);
-        XCTAssertTrue([link isEqualToString:pattern1] || [link isEqualToString:pattern2]);
-        [expectation fulfill];
+        if ([link isEqualToString:pattern1] || [link isEqualToString:pattern2]) {
+            [expectation fulfill];
+        }
     });
 
     [branch clearNetworkQueue];
@@ -164,6 +165,7 @@
 
 - (void) testUserBlackList {
     Branch *branch = [Branch getInstance:@"key_live_foo"];
+    [branch clearNetworkQueue];
     branch.blackListURLRegex = @[
         @"\\/bob\\/"
     ];
@@ -177,16 +179,20 @@
             callback:[OCMArg any]]
     ).andDo(^(NSInvocation *invocation) {
         __unsafe_unretained NSDictionary *dictionary = nil;
+        __unsafe_unretained NSString *URL = nil;
         [invocation getArgument:&dictionary atIndex:2];
+        [invocation getArgument:&URL atIndex:3];
 
-        NSString* link = dictionary[@"external_intent_uri"];
-        NSString *pattern = @"\\/bob\\/";
-        NSLog(@"\n   Link: '%@'\nPattern: '%@'\n.", link, pattern);
-        XCTAssertEqualObjects(link, pattern);
-        [expectation fulfill];
+        if ([URL bnc_containsString:@"open"] || [URL bnc_containsString:@"install"]) {
+            NSString* link = dictionary[@"external_intent_uri"];
+            NSString *pattern = @"\\/bob\\/";
+            NSLog(@"\n    URL: '%@'\n   Link: '%@'\nPattern: '%@'\n.", URL, link, pattern);
+            if ([link isEqualToString:pattern]) {
+                [expectation fulfill];
+            }
+        }
     });
 
-    [branch clearNetworkQueue];
     [branch handleDeepLinkWithNewSession:[NSURL URLWithString:@"https://myapp.app.link/bob/link"]];
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
     [serverInterfaceMock stopMocking];

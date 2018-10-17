@@ -76,7 +76,7 @@
         lastUpdateDate:appDate];
     [preferenceHelper setPreviousAppBuildDate:nil];
 
-    NSDictionary *expectedParams = @{
+    NSMutableDictionary *expectedParams = [NSMutableDictionary dictionaryWithDictionary:@{
         @"app_version":                 @"foo-app-version",
         @"apple_ad_attribution_checked":@0,
         @"debug":                       @1,
@@ -89,7 +89,8 @@
         @"first_install_time":          BNCWireFormatFromDate(appDate),
         @"uri_scheme":                  @"foo-uri-scheme",
         @"update":                      @0
-    };
+    }];
+    if (!self.class.isApplication) expectedParams[@"ios_team_id"] = nil;
 
     BranchInstallRequest *request = [[BranchInstallRequest alloc] init];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);

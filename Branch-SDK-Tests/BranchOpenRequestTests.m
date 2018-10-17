@@ -74,7 +74,7 @@
         lastUpdateDate:installDate];
     [preferenceHelper setPreviousAppBuildDate:updateDate];
 
-    NSDictionary *expectedParams = @{
+    NSMutableDictionary *expectedParams = [NSMutableDictionary dictionaryWithDictionary:@{
         @"app_version": APP_VERSION,
         @"apple_ad_attribution_checked":@0,
         @"cd": @{
@@ -94,12 +94,15 @@
         @"first_install_time":          BNCWireFormatFromDate(installDate),
         @"previous_update_time":        BNCWireFormatFromDate(updateDate),
         @"update":                      @1
-
-    };
+    }];
+    if (!self.class.isApplication) expectedParams[@"ios_team_id"] = nil;
 
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect]
-        postRequest:expectedParams
+        postRequest:[OCMArg checkWithBlock:^BOOL(id obj) {
+            XCTAssertEqualObjects(obj, expectedParams);
+            return YES;
+        }]
         url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_OPEN]
         key:[OCMArg any]
         callback:[OCMArg any]];
@@ -150,7 +153,7 @@
         lastUpdateDate:installDate];
     [preferenceHelper setPreviousAppBuildDate:updateDate];
 
-    NSDictionary *expectedParams = @{
+    NSMutableDictionary *expectedParams = [NSMutableDictionary dictionaryWithDictionary:@{
         @"app_version": APP_VERSION,
         @"apple_ad_attribution_checked":@0,        
         @"cd": @{
@@ -171,8 +174,8 @@
         @"first_install_time":          BNCWireFormatFromDate(installDate),
         @"previous_update_time":        BNCWireFormatFromDate(updateDate),
         @"update":                      @1
-
-    };
+    }];
+    if (!self.class.isApplication) expectedParams[@"ios_team_id"] = nil;
 
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect]

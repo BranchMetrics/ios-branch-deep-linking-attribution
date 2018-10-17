@@ -11,6 +11,7 @@
 #import "BNCTestCase.h"
 #import "BNCLog.h"
 #import "Branch.h"
+#import "BNCApplication+BNCTest.h"
 
 @interface Branch (BNCTest)
 + (void) clearAll;
@@ -98,6 +99,10 @@ BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex) {
     return mutableDictionary;
 }
 
+- (double) systemVersion {
+    return [UIDevice currentDevice].systemVersion.floatValue;
+}
+
 static BOOL _breakpointsAreEnabledInTests = NO;
 
 + (BOOL) breakpointsAreEnabledInTests {
@@ -123,6 +128,14 @@ static NSString* savedIdentityID = nil;
 
 + (void)tearDown {
     [BNCPreferenceHelper preferenceHelper].identityID = savedIdentityID;
+}
+
++ (void) clearAllBranchSettings {
+    [Branch clearAll];
+}
+
++ (BOOL) isApplication {
+    return [BNCApplication currentApplication].bundleID.length > 0;
 }
 
 @end
