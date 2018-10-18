@@ -1,5 +1,18 @@
 Branch iOS SDK Change Log
 
+- v0.25.7
+  * _*Master Release*_ - October 18, 2018
+  * DEVEX-861 Fix inconsistent unit tests. (#882)
+    - Fixed tests that were intermittently failing due to presumed app state.
+  * DEVEX-850 iOS 12 Background Networking Change (#881)
+    - Handle new iOS network error that can happen when the app is activited but not fully in foreground yet.
+  * DEVEX-837 Updated the SDK to use secure coding.
+    - The SDK now conforms to NSSecureCoding everywhere.
+  * Add include BranchCSSearchableItemAttributeSet to Branch.h closing GitHub issue #873 (#877).
+  * INTENG-4289 Fixed crash on validateSDKIntegration() (#874).
+    - This crash could occur only when using the `validateSDKIntegration` method.
+    - A null server response could cause a crash.
+
 - v0.25.6
   * _*Master Release*_ - October 1, 2018
   * Fixed a case when a session call back could happen with empty data.
