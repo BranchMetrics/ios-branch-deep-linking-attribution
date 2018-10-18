@@ -5,7 +5,7 @@ Branch iOS SDK Change Log
   * DEVEX-861 Fix inconsistent unit tests. (#882)
     - Fixed tests that were intermittently failing due to presumed app state.
   * DEVEX-850 iOS 12 Background Networking Change (#881)
-    - Handle new iOS network error that can happen when the app is activited but not fully in foreground yet.
+    - Handle new iOS network error that can happen when the app is activated but not fully in foreground yet.
   * DEVEX-837 Updated the SDK to use secure coding.
     - The SDK now conforms to NSSecureCoding everywhere.
   * Add include BranchCSSearchableItemAttributeSet to Branch.h closing GitHub issue #873 (#877).
