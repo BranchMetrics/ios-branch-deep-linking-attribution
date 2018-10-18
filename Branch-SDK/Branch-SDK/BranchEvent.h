@@ -75,7 +75,7 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievem
 
 #pragma mark - BranchEventRequest
 
-@interface BranchEventRequest : BNCServerRequest <NSCoding>
+@interface BranchEventRequest : BNCServerRequest <NSSecureCoding>
 
 - (instancetype _Nonnull) initWithServerURL:(NSURL*_Nonnull)serverURL
                    eventDictionary:(NSDictionary*_Nullable)eventDictionary
