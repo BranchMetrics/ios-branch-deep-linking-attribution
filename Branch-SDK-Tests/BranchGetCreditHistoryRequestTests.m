@@ -22,16 +22,15 @@
     NSInteger const LENGTH = 5;
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
-        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
-        BRANCH_REQUEST_KEY_STARTING_TRANSACTION_ID: CREDIT_TRANSACTION_ID,
-        BRANCH_REQUEST_KEY_BUCKET: BUCKET,
-        BRANCH_REQUEST_KEY_LENGTH: @(LENGTH),
-        BRANCH_REQUEST_KEY_DIRECTION: @"desc"
-    };
-    
+    NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
+    expectedParams[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    expectedParams[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
+    expectedParams[BRANCH_REQUEST_KEY_STARTING_TRANSACTION_ID] = CREDIT_TRANSACTION_ID;
+    expectedParams[BRANCH_REQUEST_KEY_BUCKET] = BUCKET;
+    expectedParams[BRANCH_REQUEST_KEY_LENGTH] = @(LENGTH);
+    expectedParams[BRANCH_REQUEST_KEY_DIRECTION] = @"desc";
+
     BranchCreditHistoryRequest *request = [[BranchCreditHistoryRequest alloc] initWithBucket:BUCKET creditTransactionId:CREDIT_TRANSACTION_ID length:LENGTH order:BranchMostRecentFirst callback:NULL];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect] postRequest:expectedParams url:[self stringMatchingPattern:BRANCH_REQUEST_ENDPOINT_CREDIT_HISTORY] key:[OCMArg any] callback:[OCMArg any]];
@@ -45,14 +44,13 @@
     NSInteger const LENGTH = 5;
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
-        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
-        BRANCH_REQUEST_KEY_LENGTH: @(LENGTH),
-        BRANCH_REQUEST_KEY_DIRECTION: @"asc"
-    };
-    
+    NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
+    expectedParams[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    expectedParams[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
+    expectedParams[BRANCH_REQUEST_KEY_LENGTH] = @(LENGTH);
+    expectedParams[BRANCH_REQUEST_KEY_DIRECTION] = @"asc";
+
     BranchCreditHistoryRequest *request = [[BranchCreditHistoryRequest alloc] initWithBucket:nil creditTransactionId:nil length:LENGTH order:BranchLeastRecentFirst callback:NULL];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
     [[serverInterfaceMock expect] postRequest:expectedParams url:[OCMArg any] key:[OCMArg any] callback:[OCMArg any]];

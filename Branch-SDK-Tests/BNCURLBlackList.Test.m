@@ -132,7 +132,7 @@
 
 - (void) testStandardBlackList {
     BNCLogSetDisplayLevel(BNCLogLevelAll);
-    Branch *branch = [Branch getInstance:@"key_live_foo"];
+    Branch *branch = (Branch.branchKey.length) ? Branch.getInstance : [Branch getInstance:@"key_live_foo"];
     id serverInterfaceMock = OCMPartialMock(branch.serverInterface);
     XCTestExpectation *expectation = [self expectationWithDescription:@"OpenRequest Expectation"];
 
@@ -154,7 +154,6 @@
             [expectation fulfill];
         }
     });
-
     [branch clearNetworkQueue];
     [branch handleDeepLinkWithNewSession:[NSURL URLWithString:@"https://myapp.app.link/bob/link?oauth=true"]];
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
@@ -164,7 +163,8 @@
 }
 
 - (void) testUserBlackList {
-    Branch *branch = [Branch getInstance:@"key_live_foo"];
+    BNCLogSetDisplayLevel(BNCLogLevelAll);
+    Branch *branch = (Branch.branchKey.length) ? Branch.getInstance : [Branch getInstance:@"key_live_foo"];
     [branch clearNetworkQueue];
     branch.blackListURLRegex = @[
         @"\\/bob\\/"
@@ -192,7 +192,6 @@
             }
         }
     });
-
     [branch handleDeepLinkWithNewSession:[NSURL URLWithString:@"https://myapp.app.link/bob/link"]];
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
     [serverInterfaceMock stopMocking];

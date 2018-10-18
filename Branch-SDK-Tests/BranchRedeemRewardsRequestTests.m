@@ -23,13 +23,12 @@
     NSInteger const AMOUNT = 5;
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_BUCKET: BUCKET,
-        BRANCH_REQUEST_KEY_AMOUNT: @(AMOUNT),
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
-        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID
-    };
+    NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
+    expectedParams[BRANCH_REQUEST_KEY_BUCKET] = BUCKET;
+    expectedParams[BRANCH_REQUEST_KEY_AMOUNT] = @(AMOUNT);
+    expectedParams[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    expectedParams[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
     
     BranchRedeemRewardsRequest *request = [[BranchRedeemRewardsRequest alloc] initWithAmount:AMOUNT bucket:BUCKET callback:NULL];
     id serverInterfaceMock = OCMClassMock([BNCServerInterface class]);
