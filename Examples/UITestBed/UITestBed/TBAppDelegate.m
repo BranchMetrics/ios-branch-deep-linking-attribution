@@ -127,6 +127,7 @@ continueUserActivity:(NSUserActivity *)userActivity
            userActivity.webpageURL.absoluteString);
     // Required. Returns YES if Branch Universal Link, else returns NO.
     // Add `branch_universal_link_domains` to .plist (String or Array) for custom domain(s).
+    [[Branch getInstance] userCompletedAction:@"Open Universal Link"];
     [[Branch getInstance] continueUserActivity:userActivity];
 
     // Process non-Branch userActivities here...
