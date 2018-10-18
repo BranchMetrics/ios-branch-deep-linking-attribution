@@ -953,7 +953,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
          "T**:**:**.******Z 6 [branch.io] BNCLog.Test.m(***) Log: Log 123. \n"
          "****-**-**T**:**:**.******Z 6 [branch.io] BNCLog.Test.m(***) Log: Log 1234.\n"
          "****-**-**T**:**:**.******Z 6 [branch.io] BNCLog.Test.m(***) Log: Log 12345. \n";
-    XCTAssert([string bnc_isEqualToMaskedString:truth]);
+    XCTAssert([string bnc_isEqualToMaskedString:truth], @"String was\n%@", string);
 
     // Re-open the file, write 2 records.
 
@@ -971,7 +971,7 @@ extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRec
          "****-**-**T**:**:**.******Z 6 [branch.io] BNCLog.Test.m(***) Log: Log 12345678.\n"
          "****-**-**T**:**:**.******Z 6 [branch.io] BNCLog.Test.m(***) Log: Log 123456789. \n"
          "******Z 6 [branch.io] BNCLog.Test.m(***) Log: Log 12345. \n";
-    XCTAssert([string bnc_isEqualToMaskedString:truth]);
+    XCTAssert([string bnc_isEqualToMaskedString:truth], @"String was\n%@", string);
     //NSLog(@"string:\n%@\n%@.", string, truth);
 }
 

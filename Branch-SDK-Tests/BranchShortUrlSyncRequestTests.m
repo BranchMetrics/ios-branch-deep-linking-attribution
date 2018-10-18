@@ -42,21 +42,20 @@
     [LINK_DATA setupParams:PARAMS];
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
-        BRANCH_REQUEST_KEY_URL_ALIAS: ALIAS,
-        BRANCH_REQUEST_KEY_URL_CHANNEL: CHANNEL,
-        BRANCH_REQUEST_KEY_URL_DATA: PARAMS,
-        BRANCH_REQUEST_KEY_URL_DURATION: @(DURATION),
-        BRANCH_REQUEST_KEY_URL_FEATURE: FEATURE,
-        BRANCH_REQUEST_KEY_URL_LINK_TYPE: @(LINK_TYPE),
-        BRANCH_REQUEST_KEY_URL_SOURCE: @"ios",
-        BRANCH_REQUEST_KEY_URL_STAGE: STAGE,
-        BRANCH_REQUEST_KEY_URL_TAGS: TAGS
-    };
-    
+    NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
+    expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
+    expectedParams[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    expectedParams[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    expectedParams[BRANCH_REQUEST_KEY_URL_ALIAS] = ALIAS;
+    expectedParams[BRANCH_REQUEST_KEY_URL_CHANNEL] = CHANNEL;
+    expectedParams[BRANCH_REQUEST_KEY_URL_DATA] = PARAMS;
+    expectedParams[BRANCH_REQUEST_KEY_URL_DURATION] = @(DURATION);
+    expectedParams[BRANCH_REQUEST_KEY_URL_FEATURE] = FEATURE;
+    expectedParams[BRANCH_REQUEST_KEY_URL_LINK_TYPE] = @(LINK_TYPE);
+    expectedParams[BRANCH_REQUEST_KEY_URL_SOURCE] = @"ios";
+    expectedParams[BRANCH_REQUEST_KEY_URL_STAGE] = STAGE;
+    expectedParams[BRANCH_REQUEST_KEY_URL_TAGS] = TAGS;
+
     BranchShortUrlSyncRequest *request =
         [[BranchShortUrlSyncRequest alloc]
             initWithTags:TAGS
@@ -90,14 +89,13 @@
     [LINK_DATA setupType:LINK_TYPE];
     
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSDictionary * const expectedParams = @{
-        BRANCH_REQUEST_KEY_SESSION_ID: preferenceHelper.sessionID,
-        BRANCH_REQUEST_KEY_BRANCH_IDENTITY: preferenceHelper.identityID,
-        BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID: preferenceHelper.deviceFingerprintID,
-        BRANCH_REQUEST_KEY_URL_SOURCE: @"ios",
-        BRANCH_REQUEST_KEY_URL_LINK_TYPE: @(LINK_TYPE)
-    };
-    
+    NSMutableDictionary * const expectedParams = NSMutableDictionary.new;
+    expectedParams[BRANCH_REQUEST_KEY_SESSION_ID] = preferenceHelper.sessionID;
+    expectedParams[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
+    expectedParams[BRANCH_REQUEST_KEY_DEVICE_FINGERPRINT_ID] = preferenceHelper.deviceFingerprintID;
+    expectedParams[BRANCH_REQUEST_KEY_URL_SOURCE] = @"ios";
+    expectedParams[BRANCH_REQUEST_KEY_URL_LINK_TYPE] = @(LINK_TYPE);
+
     BranchShortUrlSyncRequest *request =
         [[BranchShortUrlSyncRequest alloc]
             initWithTags:nil

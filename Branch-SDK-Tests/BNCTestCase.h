@@ -31,6 +31,7 @@ extern BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex);
 - (void)awaitExpectations;
 - (void)resetExpectations;
 - (id)stringMatchingPattern:(NSString *)pattern;
+- (double) systemVersion;
 
 // Load Resources from the test bundle:
 
@@ -38,5 +39,6 @@ extern BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex);
 - (NSMutableDictionary*) mutableDictionaryFromBundleJSONWithKey:(NSString*)key;
 
 + (BOOL) breakpointsAreEnabledInTests;
-
++ (void) clearAllBranchSettings;
++ (BOOL) isApplication;
 @end
