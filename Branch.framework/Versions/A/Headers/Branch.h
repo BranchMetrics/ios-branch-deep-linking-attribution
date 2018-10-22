@@ -27,6 +27,7 @@
 #import "BNCAvailability.h"
 #import "BranchActivityItemProvider.h"
 #import "BranchConstants.h"
+#import "BranchCSSearchableItemAttributeSet.h"
 #import "BranchDeepLinkingController.h"
 #import "BranchEvent.h"
 #import "BranchLinkProperties.h"
