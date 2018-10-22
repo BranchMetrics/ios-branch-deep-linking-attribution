@@ -1,7 +1,7 @@
 Branch iOS SDK Change Log
 
 - v0.25.7
-  * _*Master Release*_ - October 18, 2018
+  * _*Master Release*_ - October 22, 2018
   * DEVEX-861 Fix inconsistent unit tests. (#882)
     - Fixed tests that were intermittently failing due to presumed app state.
   * DEVEX-850 iOS 12 Background Networking Change (#881)
