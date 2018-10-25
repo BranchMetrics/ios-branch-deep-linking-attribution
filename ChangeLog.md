@@ -1,5 +1,11 @@
 Branch iOS SDK Change Log
 
+- v0.25.8
+  * _*Master Release*_ - October 25, 2018
+  * GH-873-Make-BranchCSSearchableItemAttributeSet-Public (#888)
+    - Made the BranchCSSearchableItemAttributeSet header public.
+  * DEVEX-808 Change the api.branch.io endpoint to api2.branch.io (#884)
+
 - v0.25.7
   * _*Master Release*_ - October 22, 2018
   * DEVEX-861 Fix inconsistent unit tests. (#882)
