@@ -31,6 +31,7 @@
 		4D510D731F0D6014003D720B /* BNCDeepLinkViewControllerInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D510D711F0D6014003D720B /* BNCDeepLinkViewControllerInstance.m */; };
 		4D6A27571F2954DE00027264 /* BNCLocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D6A27551F2954DE00027264 /* BNCLocalization.h */; };
 		4D6A27581F2954DE00027264 /* BNCLocalization.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6A27561F2954DE00027264 /* BNCLocalization.m */; };
+		4D778E1E218253F200308B51 /* BranchCSSearchableItemAttributeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1351D03DB9E006181D8 /* BranchCSSearchableItemAttributeSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4D78C9651F2679F000EEDD5F /* BNCCrashlyticsWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D78C9631F2679F000EEDD5F /* BNCCrashlyticsWrapper.h */; };
 		4D78C9661F2679F000EEDD5F /* BNCCrashlyticsWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D78C9641F2679F000EEDD5F /* BNCCrashlyticsWrapper.m */; };
 		4D9607F91FBF9634008AB3C2 /* UIViewController+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D9607F71FBF9633008AB3C2 /* UIViewController+Branch.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -474,6 +475,7 @@
 				E230A1881D03DB9E006181D8 /* BranchActivityItemProvider.h in Headers */,
 				E230A18A1D03DB9E006181D8 /* BranchConstants.h in Headers */,
 				E230A18E1D03DB9E006181D8 /* BranchDeepLinkingController.h in Headers */,
+				4D778E1E218253F200308B51 /* BranchCSSearchableItemAttributeSet.h in Headers */,
 				4DAF63BA1F86C26A006316E9 /* BranchDelegate.h in Headers */,
 				4DAB179D1EE8A31B0079EEB4 /* BNCNetworkService.h in Headers */,
 				4DB328061FA10C6300ACF9B0 /* BranchEvent.h in Headers */,
