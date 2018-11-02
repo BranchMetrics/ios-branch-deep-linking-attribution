@@ -277,15 +277,14 @@ To deep link, Branch must initialize a session to check if the user originated f
     return YES;
 }
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
     BOOL branchHandled =
         [[Branch getInstance]
             application:application
                 openURL:url
-      sourceApplication:sourceApplication
-             annotation:annotation];
-
+                options:options];
     if (!branchHandled) {
         // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
     }
@@ -316,13 +315,12 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
   return true
 }
 
-func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-
+func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
     // Pass the url to the handle deep link call
-    let branchHandled = Branch.getInstance().application(application,
+    let branchHandled = Branch.getInstance().application(
+        application,
         open: url,
-        sourceApplication: sourceApplication,
-        annotation: annotation
+        options: options
     )
     if (!branchHandled) {
         // If not handled by Branch, do other deep link routing for the
