@@ -143,7 +143,9 @@
             callback:[OCMArg any]]
     ).andDo(^(NSInvocation *invocation) {
         __unsafe_unretained NSDictionary *dictionary = nil;
+        __unsafe_unretained NSString *url = nil;
         [invocation getArgument:&dictionary atIndex:2];
+        [invocation getArgument:&url atIndex:3];
 
         NSLog(@"d: %@", dictionary);
         NSString* link = dictionary[@"external_intent_uri"];
@@ -151,6 +153,10 @@
         NSString *pattern2 = @"^(?i).+:.*[?].*\\b(password|o?auth|o?auth.?token|access|access.?token)\\b";
         NSLog(@"\n   Link: '%@'\nPattern1: '%@'\nPattern2: '%@'.", link, pattern1, pattern2);
         if ([link isEqualToString:pattern1] || [link isEqualToString:pattern2]) {
+            [expectation fulfill];
+        }
+        else
+        if ([url bnc_containsString:@"install"]) {
             [expectation fulfill];
         }
     });
@@ -183,13 +189,15 @@
         [invocation getArgument:&dictionary atIndex:2];
         [invocation getArgument:&URL atIndex:3];
 
-        if ([URL bnc_containsString:@"open"] || [URL bnc_containsString:@"install"]) {
-            NSString* link = dictionary[@"external_intent_uri"];
-            NSString *pattern = @"\\/bob\\/";
-            NSLog(@"\n    URL: '%@'\n   Link: '%@'\nPattern: '%@'\n.", URL, link, pattern);
-            if ([link isEqualToString:pattern]) {
-                [expectation fulfill];
-            }
+        NSString* link = dictionary[@"external_intent_uri"];
+        NSString *pattern = @"\\/bob\\/";
+        NSLog(@"\n    URL: '%@'\n   Link: '%@'\nPattern: '%@'\n.", URL, link, pattern);
+        if ([link isEqualToString:pattern]) {
+            [expectation fulfill];
+        }
+        else
+        if ([URL bnc_containsString:@"install"]) {
+            [expectation fulfill];
         }
     });
     [branch handleDeepLinkWithNewSession:[NSURL URLWithString:@"https://myapp.app.link/bob/link"]];
