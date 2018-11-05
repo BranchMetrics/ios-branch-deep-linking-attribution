@@ -938,6 +938,8 @@
 				7E6B3B4E1AA42D0E005F45BF /* Frameworks */,
 				7E6B3B4F1AA42D0E005F45BF /* Resources */,
 				4DF79403209B90B6003597E8 /* CopyFiles */,
+				3A7988C2912C03F642C32C3B /* [CP] Embed Pods Frameworks */,
+				AAD7E49B6EF1F7EE856C31D2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1058,6 +1060,36 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		3A7988C2912C03F642C32C3B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Branch-SDK-Tests/Pods-Branch-SDK-Tests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AAD7E49B6EF1F7EE856C31D2 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Branch-SDK-Tests/Pods-Branch-SDK-Tests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		B58A8EEAA66A7460C0BD3488 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1417,7 +1449,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1438,7 +1470,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.sdk.Branch-TestBed";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR;
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
