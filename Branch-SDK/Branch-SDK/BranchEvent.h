@@ -39,6 +39,23 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventCompleteTutori
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventAchieveLevel;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievement;
 
+///@name TODO sort these events
+
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventInvite;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventLogin;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventReserve;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventSubscribe;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventStartTrial;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventClickAd;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventViewAd;
+
+typedef NS_ENUM(NSInteger, BranchEventAdType) {
+    BranchEventAdTypeBanner,
+    BranchEventAdTypeInterstitial,
+    BranchEventAdTypeRewardedVideo,
+    BranchEventAdTypeNative
+};
+
 #pragma mark - BranchEvent
 
 @interface BranchEvent : NSObject
@@ -65,6 +82,22 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievem
 @property (nonatomic, strong) NSString*_Nullable                affiliation;
 @property (nonatomic, strong) NSString*_Nullable                eventDescription;
 @property (nonatomic, strong) NSString*_Nullable                searchQuery;
+
+@property (nonatomic, strong) NSString*_Nullable                userID;
+@property (nonatomic, strong) NSString*_Nullable                facebookUserID;
+@property (nonatomic, strong) NSString*_Nullable                googleUserID;
+@property (nonatomic, strong) NSString*_Nullable                twitterUserID;
+
+@property (nonatomic, strong) NSString*_Nullable                userEmail;
+@property (nonatomic, strong) NSString*_Nullable                userName;
+
+@property (nonatomic, strong) NSDecimalNumber*_Nullable         latitude;
+@property (nonatomic, strong) NSDecimalNumber*_Nullable         longitude;
+@property (nonatomic, strong) NSDecimalNumber*_Nullable         altitude;
+
+@property (nonatomic, assign) NSNumber*_Nullable                adType;
+
+
 @property (nonatomic, copy) NSMutableArray<BranchUniversalObject*>*_Nonnull       contentItems;
 @property (nonatomic, copy) NSMutableDictionary<NSString*, NSString*> *_Nonnull   customData;
 
