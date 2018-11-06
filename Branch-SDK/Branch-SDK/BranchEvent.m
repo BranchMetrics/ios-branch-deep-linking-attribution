@@ -36,6 +36,16 @@ BranchStandardEvent BranchStandardEventCompleteTutorial       = @"COMPLETE_TUTOR
 BranchStandardEvent BranchStandardEventAchieveLevel           = @"ACHIEVE_LEVEL";
 BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
 
+// TODO: move these new events to appropriate sections
+
+BranchStandardEvent BranchStandardEventInvite = @"INVITE";
+BranchStandardEvent BranchStandardEventLogin = @"LOGIN";
+BranchStandardEvent BranchStandardEventReserve = @"RESERVE";
+BranchStandardEvent BranchStandardEventSubscribe = @"SUBSCRIBE";
+BranchStandardEvent BranchStandardEventStartTrial = @"START_TRIAL";
+BranchStandardEvent BranchStandardEventClickAd = @"CLICK_AD";
+BranchStandardEvent BranchStandardEventViewAd = @"VIEW_AD";
+
 @implementation BranchEventRequest
 
 - (instancetype) initWithServerURL:(NSURL*)serverURL
@@ -153,6 +163,8 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
 }
 
 - (void) setContentItems:(NSMutableArray<BranchUniversalObject *> *)contentItems {
+    
+    
     if ([contentItems isKindOfClass:[BranchUniversalObject class]]) {
         _contentItems = [NSMutableArray arrayWithObject:contentItems];
     } else
@@ -178,6 +190,19 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
     addString(searchQuery,      search_query)
     addDictionary(customData,   custom_data);
     
+    addString(userID, userID);
+    addString(facebookUserID, facebookUserID);
+    addString(googleUserID, googleUserID);
+    addString(twitterUserID, twitterUserID);
+    
+    addString(userEmail, userEmail);
+    addString(userName, userName);
+    addDecimal(latitude, latitude);
+    addDecimal(longitude, longitude);
+    addDecimal(altitude, altitude);
+    
+    addNumber(adType, adType);
+    
     #include "BNCFieldDefines.h"
 
     return dictionary;
@@ -201,7 +226,26 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
         BranchStandardEventCompleteTutorial,
         BranchStandardEventAchieveLevel,
         BranchStandardEventUnlockAchievement,
+        BranchStandardEventInvite,
+        BranchStandardEventLogin,
+        BranchStandardEventReserve,
+        BranchStandardEventSubscribe,
+        BranchStandardEventStartTrial,
+        BranchStandardEventClickAd,
+        BranchStandardEventViewAd,
     ];
+}
+
+// Do we want to do validation?  I think the server should drop invalid data instead of validating here.
+// Otherwise, it makes sense to validate all the standard events here.
++ (NSArray<BranchStandardEvent> *)standardEventsWithoutBUO {
+    return @[BranchStandardEventInvite,
+             BranchStandardEventLogin,
+             BranchStandardEventSubscribe,
+             BranchStandardEventStartTrial,
+             BranchStandardEventClickAd,
+             BranchStandardEventViewAd,
+             ];
 }
 
 - (void) logEvent {

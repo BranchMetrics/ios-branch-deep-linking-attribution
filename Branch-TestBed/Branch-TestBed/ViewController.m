@@ -425,6 +425,13 @@ static NSString *type = @"some type";
         ,BranchStandardEventCompleteTutorial
         ,BranchStandardEventAchieveLevel
         ,BranchStandardEventUnlockAchievement
+        ,BranchStandardEventInvite
+        ,BranchStandardEventLogin
+        ,BranchStandardEventReserve
+        ,BranchStandardEventSubscribe
+        ,BranchStandardEventStartTrial
+        ,BranchStandardEventClickAd
+        ,BranchStandardEventViewAd
         ,@"iOS-CustomEvent"
 
     ];
@@ -496,6 +503,20 @@ static NSString *type = @"some type";
         @"Custom_Event_Property_Key2": @"Custom_Event_Property_val2"
     };
     event.contentItems = (id) @[ buo ];
+    
+    event.userID = @"echo@branch.io";
+    event.facebookUserID = @"echo@branch.io";
+    event.googleUserID = @"echo@branch.io";
+    event.twitterUserID = @"echo@branch.io";
+    
+    event.userEmail = @"echo@branch.io";
+    event.userName = @"echo@branch.io";
+    event.latitude = [NSDecimalNumber decimalNumberWithString:@"47.6062"];
+    event.longitude = [NSDecimalNumber decimalNumberWithString:@"-122.3321"];
+    event.altitude = [NSDecimalNumber decimalNumberWithString:@"10.0"];
+    
+    event.adType = @(BranchEventAdTypeBanner);
+    
     [event logEvent];
 }
 
