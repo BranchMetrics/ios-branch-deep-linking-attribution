@@ -194,9 +194,11 @@
         NSLog(@"URL: %@.", url);
         NSLog(@"Body: %@.", parameters);
 
-        if ([url containsString:@"branch.io/v2/event/standard"]) {
+        if ([url containsString:@"branch.io/v2/event/custom"]) {
             XCTAssertEqualObjects(expectedRequest, parameters);
             [expectation fulfill];
+        } else {
+            XCTFail(@"URL is unexpected. %@", url);
         }
     });
 
@@ -243,7 +245,8 @@
 
     // Set up and invoke --
     [branch clearNetworkQueue];
-    [buo userCompletedAction:BranchStandardEventPurchase];
+    [buo userCompletedAction:@"PURCHASE"];
+    
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
     [serverInterfaceMock stopMocking];
 }
@@ -258,6 +261,16 @@
     event.eventDescription = @"Product Search";
     event.searchQuery = @"product name";
     event.customData[@"rating"] = @"5";
+    [event logEvent];
+}
+
+- (void)testStandardInviteEvent {
+    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventInvite];
+    [event logEvent];
+}
+
+- (void)testCustomInviteEvent {
+    BranchEvent *event = [BranchEvent customEventWithName:@"INVITE"];
     [event logEvent];
 }
 
