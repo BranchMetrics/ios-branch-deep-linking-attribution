@@ -38,13 +38,13 @@ BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVE
 
 // TODO: move these new events to appropriate sections
 
-BranchStandardEvent BranchStandardEventInvite = @"INVITE";
-BranchStandardEvent BranchStandardEventLogin = @"LOGIN";
-BranchStandardEvent BranchStandardEventReserve = @"RESERVE";
-BranchStandardEvent BranchStandardEventSubscribe = @"SUBSCRIBE";
-BranchStandardEvent BranchStandardEventStartTrial = @"START_TRIAL";
-BranchStandardEvent BranchStandardEventClickAd = @"CLICK_AD";
-BranchStandardEvent BranchStandardEventViewAd = @"VIEW_AD";
+BranchStandardEvent BranchStandardEventInvite       = @"INVITE";
+BranchStandardEvent BranchStandardEventLogin        = @"LOGIN";
+BranchStandardEvent BranchStandardEventReserve      = @"RESERVE";
+BranchStandardEvent BranchStandardEventSubscribe    = @"SUBSCRIBE";
+BranchStandardEvent BranchStandardEventStartTrial   = @"START_TRIAL";
+BranchStandardEvent BranchStandardEventClickAd      = @"CLICK_AD";
+BranchStandardEvent BranchStandardEventViewAd       = @"VIEW_AD";
 
 @implementation BranchEventRequest
 
@@ -111,6 +111,9 @@ BranchStandardEvent BranchStandardEventViewAd = @"VIEW_AD";
     NSMutableArray      *_contentItems;
 }
 @property (nonatomic, strong) NSString*  eventName;
+
+// standard events can have data enforcement rules and go to a different endpoint
+@property (nonatomic, assign) BOOL isStandardEvent;
 @end
 
 @implementation BranchEvent : NSObject
@@ -119,11 +122,16 @@ BranchStandardEvent BranchStandardEventViewAd = @"VIEW_AD";
     self = [super init];
     if (!self) return self;
     _eventName = name;
+    _isStandardEvent = NO;
     return self;
 }
 
 + (instancetype) standardEvent:(BranchStandardEvent)standardEvent {
-    return [[BranchEvent alloc] initWithName:standardEvent];
+    BranchEvent *event = [[BranchEvent alloc] initWithName:standardEvent];
+    if ([[BranchEvent standardEvents] containsObject:standardEvent]) {
+        event.isStandardEvent = YES;
+    }
+    return event;
 }
 
 + (instancetype) standardEvent:(BranchStandardEvent)standardEvent
@@ -141,7 +149,7 @@ BranchStandardEvent BranchStandardEventViewAd = @"VIEW_AD";
 
 + (instancetype) customEventWithName:(NSString*)name
                          contentItem:(BranchUniversalObject*)contentItem {
-    BranchEvent *e = [[BranchEvent alloc] initWithName:name];
+    BranchEvent *e = [BranchEvent customEventWithName:name];
     if (contentItem) {
         e.contentItems = (NSMutableArray*) @[ contentItem ];
     }
@@ -190,18 +198,18 @@ BranchStandardEvent BranchStandardEventViewAd = @"VIEW_AD";
     addString(searchQuery,      search_query)
     addDictionary(customData,   custom_data);
     
-    addString(userID, userID);
-    addString(facebookUserID, facebookUserID);
-    addString(googleUserID, googleUserID);
-    addString(twitterUserID, twitterUserID);
+    addString(userID,           userID);
+    addString(facebookUserID,   facebookUserID);
+    addString(googleUserID,     googleUserID);
+    addString(twitterUserID,    twitterUserID);
     
-    addString(userEmail, userEmail);
-    addString(userName, userName);
-    addDecimal(latitude, latitude);
-    addDecimal(longitude, longitude);
-    addDecimal(altitude, altitude);
+    addString(userEmail,        userEmail);
+    addString(userName,         userName);
+    addDecimal(latitude,        latitude);
+    addDecimal(longitude,       longitude);
+    addDecimal(altitude,        altitude);
     
-    addNumber(adType, adType);
+    addNumber(adType,           adType);
     
     #include "BNCFieldDefines.h"
 
@@ -236,16 +244,21 @@ BranchStandardEvent BranchStandardEventViewAd = @"VIEW_AD";
     ];
 }
 
-// Do we want to do validation?  I think the server should drop invalid data instead of validating here.
-// Otherwise, it makes sense to validate all the standard events here.
 + (NSArray<BranchStandardEvent> *)standardEventsWithoutBUO {
     return @[BranchStandardEventInvite,
              BranchStandardEventLogin,
              BranchStandardEventSubscribe,
              BranchStandardEventStartTrial,
              BranchStandardEventClickAd,
-             BranchStandardEventViewAd,
-             ];
+             BranchStandardEventViewAd];
+}
+
+// some standard events do not support the BUO
+- (BOOL)supportsBUO {
+    if (self.isStandardEvent && [[BranchEvent standardEventsWithoutBUO] containsObject:self.eventName]) {
+        return NO;
+    }
+    return YES;
 }
 
 - (void) logEvent {
@@ -265,21 +278,23 @@ BranchStandardEvent BranchStandardEventViewAd = @"VIEW_AD";
     eventDictionary[@"custom_data"] = eventDictionary[@"event_data"][@"custom_data"];
     eventDictionary[@"event_data"][@"custom_data"] = nil;
 
-    NSMutableArray *contentItemDictionaries = [NSMutableArray new];
-    for (BranchUniversalObject *contentItem in self.contentItems) {
-        NSDictionary *dictionary = [contentItem dictionary];
-        if (dictionary.count) {
-            [contentItemDictionaries addObject:dictionary];
+    if ([self supportsBUO]) {
+        NSMutableArray *contentItemDictionaries = [NSMutableArray new];
+        for (BranchUniversalObject *contentItem in self.contentItems) {
+            NSDictionary *dictionary = [contentItem dictionary];
+            if (dictionary.count) {
+                [contentItemDictionaries addObject:dictionary];
+            }
         }
-    }
 
-    if (contentItemDictionaries.count) {
-        eventDictionary[@"content_items"] = contentItemDictionaries;
+        if (contentItemDictionaries.count) {
+            eventDictionary[@"content_items"] = contentItemDictionaries;
+        }
     }
 
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     NSString *serverURL =
-        ([self.class.standardEvents containsObject:self.eventName])
+        (self.isStandardEvent)
         ? [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/standard"]
         : [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/custom"];
 

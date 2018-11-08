@@ -504,18 +504,18 @@ static NSString *type = @"some type";
     };
     event.contentItems = (id) @[ buo ];
     
-    event.userID = @"echo@branch.io";
-    event.facebookUserID = @"echo@branch.io";
-    event.googleUserID = @"echo@branch.io";
-    event.twitterUserID = @"echo@branch.io";
-    
-    event.userEmail = @"echo@branch.io";
-    event.userName = @"echo@branch.io";
-    event.latitude = [NSDecimalNumber decimalNumberWithString:@"47.6062"];
-    event.longitude = [NSDecimalNumber decimalNumberWithString:@"-122.3321"];
-    event.altitude = [NSDecimalNumber decimalNumberWithString:@"10.0"];
-    
-    event.adType = @(BranchEventAdTypeBanner);
+//    event.userID = @"echo@branch.io";
+//    event.facebookUserID = @"echo@branch.io";
+//    event.googleUserID = @"echo@branch.io";
+//    event.twitterUserID = @"echo@branch.io";
+//
+//    event.userEmail = @"echo@branch.io";
+//    event.userName = @"echo@branch.io";
+//    event.latitude = [NSDecimalNumber decimalNumberWithString:@"47.6062"];
+//    event.longitude = [NSDecimalNumber decimalNumberWithString:@"-122.3321"];
+//    event.altitude = [NSDecimalNumber decimalNumberWithString:@"10.0"];
+//
+//    event.adType = @(BranchEventAdTypeBanner);
     
     [event logEvent];
 }
