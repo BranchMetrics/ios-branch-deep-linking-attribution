@@ -89,7 +89,6 @@
 		7DA3BF221D889CE500CA8AE0 /* BranchContentPathProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3BF1C1D889CE500CA8AE0 /* BranchContentPathProperties.m */; };
 		9A149C6720336601002135DC /* Branch+Validator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A149C6520336600002135DC /* Branch+Validator.h */; };
 		9A149C6820336601002135DC /* Branch+Validator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A149C6620336600002135DC /* Branch+Validator.m */; };
-		C59FB22F216F7F16005CCCC3 /* BranchCSSearchableItemAttributeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1351D03DB9E006181D8 /* BranchCSSearchableItemAttributeSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E230A16C1D03DB9E006181D8 /* BNCConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1151D03DB9E006181D8 /* BNCConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E230A16D1D03DB9E006181D8 /* BNCContentDiscoveryManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E230A1161D03DB9E006181D8 /* BNCContentDiscoveryManager.h */; };
 		E230A16E1D03DB9E006181D8 /* BNCContentDiscoveryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E230A1171D03DB9E006181D8 /* BNCContentDiscoveryManager.m */; };
@@ -481,7 +480,6 @@
 				4DB328061FA10C6300ACF9B0 /* BranchEvent.h in Headers */,
 				E230A1921D03DB9E006181D8 /* BranchUniversalObject.h in Headers */,
 				E230A1941D03DB9E006181D8 /* BranchView.h in Headers */,
-				C59FB22F216F7F16005CCCC3 /* BranchCSSearchableItemAttributeSet.h in Headers */,
 				E230A1961D03DB9E006181D8 /* BranchViewHandler.h in Headers */,
 				E230A18F1D03DB9E006181D8 /* BranchLinkProperties.h in Headers */,
 				4DB5673A1E79FDAF00A8A324 /* BranchShareLink.h in Headers */,
@@ -547,7 +545,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = BNC;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Branch, Inc.";
 				TargetAttributes = {
 					E298D0511C73D1B800589D22 = {
