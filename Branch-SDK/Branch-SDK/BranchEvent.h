@@ -23,6 +23,10 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventInitiatePurcha
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventAddPaymentInfo;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventPurchase;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventSpendCredits;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventSubscribe;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventStartTrial;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventClickAd;
+FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventViewAd;
 
 ///@name Content Events
 
@@ -38,16 +42,9 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventCompleteRegist
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventCompleteTutorial;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventAchieveLevel;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventUnlockAchievement;
-
-///@name TODO sort these events
-
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventInvite;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventLogin;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventReserve;
-FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventSubscribe;
-FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventStartTrial;
-FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventClickAd;
-FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventViewAd;
 
 typedef NS_ENUM(NSInteger, BranchEventAdType) {
     BranchEventAdTypeBanner,
