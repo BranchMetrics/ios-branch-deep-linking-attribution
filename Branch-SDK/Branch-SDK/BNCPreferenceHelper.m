@@ -511,10 +511,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 
 - (void)clearInstrumentationDictionary {
     @synchronized (self) {
-        NSArray *keys = [_instrumentationDictionary allKeys];
-        for (NSUInteger i = 0 ; i < [keys count]; i++) {
-            [_instrumentationDictionary removeObjectForKey:keys[i]];
-        }
+        [_instrumentationDictionary removeAllObjects];
     }
 }
 

@@ -20,6 +20,10 @@ BranchStandardEvent BranchStandardEventInitiatePurchase   = @"INITIATE_PURCHASE"
 BranchStandardEvent BranchStandardEventAddPaymentInfo     = @"ADD_PAYMENT_INFO";
 BranchStandardEvent BranchStandardEventPurchase           = @"PURCHASE";
 BranchStandardEvent BranchStandardEventSpendCredits       = @"SPEND_CREDITS";
+BranchStandardEvent BranchStandardEventSubscribe          = @"SUBSCRIBE";
+BranchStandardEvent BranchStandardEventStartTrial         = @"START_TRIAL";
+BranchStandardEvent BranchStandardEventClickAd            = @"CLICK_AD";
+BranchStandardEvent BranchStandardEventViewAd             = @"VIEW_AD";
 
 // Content Events
 
@@ -35,16 +39,9 @@ BranchStandardEvent BranchStandardEventCompleteRegistration   = @"COMPLETE_REGIS
 BranchStandardEvent BranchStandardEventCompleteTutorial       = @"COMPLETE_TUTORIAL";
 BranchStandardEvent BranchStandardEventAchieveLevel           = @"ACHIEVE_LEVEL";
 BranchStandardEvent BranchStandardEventUnlockAchievement      = @"UNLOCK_ACHIEVEMENT";
-
-// TODO: move these new events to appropriate sections
-
-BranchStandardEvent BranchStandardEventInvite       = @"INVITE";
-BranchStandardEvent BranchStandardEventLogin        = @"LOGIN";
-BranchStandardEvent BranchStandardEventReserve      = @"RESERVE";
-BranchStandardEvent BranchStandardEventSubscribe    = @"SUBSCRIBE";
-BranchStandardEvent BranchStandardEventStartTrial   = @"START_TRIAL";
-BranchStandardEvent BranchStandardEventClickAd      = @"CLICK_AD";
-BranchStandardEvent BranchStandardEventViewAd       = @"VIEW_AD";
+BranchStandardEvent BranchStandardEventInvite                 = @"INVITE";
+BranchStandardEvent BranchStandardEventLogin                  = @"LOGIN";
+BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
 
 @implementation BranchEventRequest
 
@@ -197,18 +194,15 @@ BranchStandardEvent BranchStandardEventViewAd       = @"VIEW_AD";
     addString(eventDescription, description);
     addString(searchQuery,      search_query)
     addDictionary(customData,   custom_data);
-    
     addString(userID,           userID);
     addString(facebookUserID,   facebookUserID);
     addString(googleUserID,     googleUserID);
     addString(twitterUserID,    twitterUserID);
-    
     addString(userEmail,        userEmail);
     addString(userName,         userName);
     addDecimal(latitude,        latitude);
     addDecimal(longitude,       longitude);
     addDecimal(altitude,        altitude);
-    
     addNumber(adType,           adType);
     
     #include "BNCFieldDefines.h"
@@ -268,16 +262,39 @@ BranchStandardEvent BranchStandardEventViewAd       = @"VIEW_AD";
         return;
     }
 
+    NSDictionary *eventDictionary = [self buildEventDictionary];
+    BranchEventRequest *request = [self buildRequestWithEventDictionary:eventDictionary];
+    [[Branch getInstance] sendServerRequestWithoutSession:request];
+}
+
+- (BranchEventRequest *)buildRequestWithEventDictionary:(NSDictionary *)eventDictionary {
+    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+    
+    NSString *serverURL =
+    (self.isStandardEvent)
+    ? [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/standard"]
+    : [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/custom"];
+    
+    BranchEventRequest *request =
+    [[BranchEventRequest alloc]
+     initWithServerURL:[NSURL URLWithString:serverURL]
+     eventDictionary:eventDictionary
+     completion:nil];
+    
+    return request;
+}
+
+- (NSDictionary *)buildEventDictionary {
     NSMutableDictionary *eventDictionary = [NSMutableDictionary new];
     eventDictionary[@"name"] = _eventName;
-
+    
     NSDictionary *propertyDictionary = [self dictionary];
     if (propertyDictionary.count) {
         eventDictionary[@"event_data"] = propertyDictionary;
     }
     eventDictionary[@"custom_data"] = eventDictionary[@"event_data"][@"custom_data"];
     eventDictionary[@"event_data"][@"custom_data"] = nil;
-
+    
     if ([self supportsBUO]) {
         NSMutableArray *contentItemDictionaries = [NSMutableArray new];
         for (BranchUniversalObject *contentItem in self.contentItems) {
@@ -286,25 +303,12 @@ BranchStandardEvent BranchStandardEventViewAd       = @"VIEW_AD";
                 [contentItemDictionaries addObject:dictionary];
             }
         }
-
+        
         if (contentItemDictionaries.count) {
             eventDictionary[@"content_items"] = contentItemDictionaries;
         }
     }
-
-    BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
-    NSString *serverURL =
-        (self.isStandardEvent)
-        ? [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/standard"]
-        : [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/custom"];
-
-    BranchEventRequest *request =
-		[[BranchEventRequest alloc]
-			initWithServerURL:[NSURL URLWithString:serverURL]
-			eventDictionary:eventDictionary
-			completion:nil];
-
-    [[Branch getInstance] sendServerRequestWithoutSession:request];
+    return eventDictionary;
 }
 
 - (NSString*_Nonnull) description {
