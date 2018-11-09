@@ -87,14 +87,11 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 @property (nonatomic, strong) NSString*_Nullable                facebookUserID;
 @property (nonatomic, strong) NSString*_Nullable                googleUserID;
 @property (nonatomic, strong) NSString*_Nullable                twitterUserID;
-
 @property (nonatomic, strong) NSString*_Nullable                userEmail;
 @property (nonatomic, strong) NSString*_Nullable                userName;
-
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         latitude;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         longitude;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         altitude;
-
 @property (nonatomic, assign) NSNumber*_Nullable                adType;
 
 
