@@ -119,6 +119,8 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     self = [super init];
     if (!self) return self;
     _eventName = name;
+    
+    _adType = BranchEventAdTypeNone;
     _isStandardEvent = NO;
     return self;
 }
@@ -178,9 +180,30 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     }
 }
 
+// Objective-C does not have string enums, convert for the server
+- (NSString *)jsonStringForAdType:(BranchEventAdType)adType {
+    switch (adType) {
+        case BranchEventAdTypeBanner:
+            return @"banner";
+            
+        case BranchEventAdTypeInterstitial:
+            return @"interstitial";
+            
+        case BranchEventAdTypeRewardedVideo:
+            return @"rewarded_video";
+            
+        case BranchEventAdTypeNative:
+            return @"native";
+            
+        case BranchEventAdTypeNone:
+        default:
+            return nil;
+    }
+}
+
 - (NSDictionary*) dictionary {
     NSMutableDictionary *dictionary = [NSMutableDictionary new];
-
+    
     #define BNCFieldDefinesDictionaryFromSelf
     #include "BNCFieldDefines.h"
 
@@ -194,19 +217,23 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     addString(eventDescription, description);
     addString(searchQuery,      search_query)
     addDictionary(customData,   custom_data);
-    addString(userID,           userID);
-    addString(facebookUserID,   facebookUserID);
-    addString(googleUserID,     googleUserID);
-    addString(twitterUserID,    twitterUserID);
-    addString(userEmail,        userEmail);
-    addString(userName,         userName);
+    addString(userID,           user_id);
+    addString(facebookUserID,   facebook_user_id);
+    addString(googleUserID,     google_user_id);
+    addString(twitterUserID,    twitter_user_id);
+    addString(userEmail,        user_email);
+    addString(userName,         username);
     addDecimal(latitude,        latitude);
     addDecimal(longitude,       longitude);
     addDecimal(altitude,        altitude);
-    addNumber(adType,           adType);
     
     #include "BNCFieldDefines.h"
 
+    NSString *adTypeString = [self jsonStringForAdType:self.adType];
+    if (adTypeString.length > 0) {
+        [dictionary setObject:adTypeString forKey:@"ad_type"];
+    }
+    
     return dictionary;
 }
 

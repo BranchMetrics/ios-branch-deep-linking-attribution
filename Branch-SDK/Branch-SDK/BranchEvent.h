@@ -47,6 +47,7 @@ FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventLogin;
 FOUNDATION_EXPORT BranchStandardEvent _Nonnull BranchStandardEventReserve;
 
 typedef NS_ENUM(NSInteger, BranchEventAdType) {
+    BranchEventAdTypeNone,
     BranchEventAdTypeBanner,
     BranchEventAdTypeInterstitial,
     BranchEventAdTypeRewardedVideo,
@@ -89,7 +90,7 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         latitude;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         longitude;
 @property (nonatomic, strong) NSDecimalNumber*_Nullable         altitude;
-@property (nonatomic, assign) NSNumber*_Nullable                adType;
+@property (nonatomic, assign) BranchEventAdType                 adType;
 
 
 @property (nonatomic, copy) NSMutableArray<BranchUniversalObject*>*_Nonnull       contentItems;
