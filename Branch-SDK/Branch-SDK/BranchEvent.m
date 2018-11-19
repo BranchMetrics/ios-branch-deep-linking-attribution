@@ -180,7 +180,6 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     }
 }
 
-// Objective-C does not have string enums, convert for the server
 - (NSString *)jsonStringForAdType:(BranchEventAdType)adType {
     switch (adType) {
         case BranchEventAdTypeBanner:
