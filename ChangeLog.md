@@ -1,7 +1,8 @@
 Branch iOS SDK Change Log
 
 - v0.25.9
-  * _*Master Release*_ - November 29, 2018
+  
+* _*Master Release*_ - November 29, 2018
   * DEVEX-826 Fix Unit Tests
     - Fix blacklist unit test.
     - Removed Swift 3 reference.
