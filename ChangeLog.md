@@ -1,5 +1,13 @@
 Branch iOS SDK Change Log
 
+- v0.25.9
+  * _*Master Release*_ - November 29, 2018
+  * DEVEX-826 Fix Unit Tests
+    - Fix blacklist unit test.
+    - Removed Swift 3 reference.
+  * Update project for Xcode 10.1
+  * Updated header doc and README for openURL:options: use. (#889)
+
 - v0.25.8
   * _*Master Release*_ - October 25, 2018
   * GH-873-Make-BranchCSSearchableItemAttributeSet-Public (#888)
