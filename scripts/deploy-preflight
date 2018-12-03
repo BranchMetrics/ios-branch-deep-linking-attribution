@@ -63,8 +63,8 @@ checkTool pod
 checkTool carthage
 
 # Check Fabric
-checkApp Fabric
-checkVariable FABRIC_KEY
+#checkApp Fabric
+#checkVariable FABRIC_KEY
 
 # Check Github
 if ! git push --dry-run &> /dev/null; then
