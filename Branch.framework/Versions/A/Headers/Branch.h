@@ -462,7 +462,11 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Call this method from inside your app delegate's `application:openURL:sourceApplication:annotation:`
- method with the so that Branch can open the passed URL.
+ method so that Branch can open the passed URL. This method is for pre-iOS 9 compatibility: If you don't need
+ pre-iOS 9 compatibility, override your app delegate's `application:openURL:options:` method instead and use
+ the Branch `application:openURL:options:` to open the URL.
+
+ @warning Pre-iOS 9 compatibility only.
 
  @param application         The application that was passed to your app delegate.
  @param url                 The URL that was passed to your app delegate.
@@ -476,12 +480,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
          annotation:(id)annotation;
 
 /**
- Call this method from inside your app delegate's `application:openURL:options:`
- method with the so that Branch can open the passed URL.
+ Call this method from inside your app delegate's `application:openURL:options:` method so that Branch can
+ open the passed URL.
 
- This method is functionally the same as calling the Branch method
- `application:openURL:sourceApplication:annotation:`. This method matches the new Apple appDelegate
- method for convenience.
+ This is the preferred Branch method to call inside your `application:openURL:options:` method.
 
  @param application         The application that was passed to your app delegate.
  @param url                 The URL that was passed to your app delegate.
