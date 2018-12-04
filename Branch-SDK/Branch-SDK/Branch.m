@@ -392,7 +392,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
         if ([branchKey hasPrefix:@"key_test"]) {
             bnc_useTestBranchKey = YES;
-            // Consider making this an NSError?  It's not really an error but users need to be aware they're using a test key.
             BNCLogWarning(
                 @"You are using your test app's Branch Key. "
                  "Remember to change it to live Branch Key for production deployment."
