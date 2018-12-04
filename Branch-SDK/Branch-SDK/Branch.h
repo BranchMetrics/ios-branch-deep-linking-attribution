@@ -225,8 +225,23 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  You can only set the Branch key once per app run.
 
  @param branchKey The Branch key to use.
+ @param error NSError will be set if Branch encounters a key error.
 */
++ (void) setBranchKey:(NSString*)branchKey error:(NSError **)error;
+
+/**
+ Directly sets the Branch key to be used.  Branch usually reads the Branch key from your app's
+ Info.plist file which is recommended and more convenient.  But the Branch key can also be set
+ with this method. See the documentation at
+ https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/#configure-xcode-project
+ for information about configuring your app with Branch keys.
+ 
+ You can only set the Branch key once per app run.  Any errors are logged.
+ 
+ @param branchKey The Branch key to use.
+ */
 + (void) setBranchKey:(NSString*)branchKey;
+
 
 /// @return Returns the current Branch key.
 + (NSString*) branchKey;
