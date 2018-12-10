@@ -339,6 +339,10 @@ static BOOL bnc_useTestBranchKey = NO;
 static NSString *bnc_branchKey = nil;
 static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
++ (void) resetBranchKey {
+    bnc_branchKey = nil;
+}
+
 + (void) setUseTestBranchKey:(BOOL)useTestKey {
     @synchronized (self) {
         if (bnc_branchKey && !!useTestKey != !!bnc_useTestBranchKey) {
@@ -355,7 +359,16 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
 }
 
-+ (void) setBranchKey:(NSString*)branchKey {
++ (void)setBranchKey:(NSString *)branchKey {
+    NSError *error;
+    [self setBranchKey:branchKey error:&error];
+    
+    if (error) {
+        BNCLogError(@"Branch init error: %@", error.localizedDescription);
+    }
+}
+
++ (void)setBranchKey:(NSString*)branchKey error:(NSError **)error {
     @synchronized (self) {
         if (bnc_branchKey) {
             if (branchKey &&
@@ -363,13 +376,17 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 [branchKey isEqualToString:bnc_branchKey]) {
                 return;
             }
-            BNCLogError(@"Branch key can only be set once.");
+            
+            NSString *errorMessage = [NSString stringWithFormat:@"Branch key can only be set once."];
+            *error = [NSError branchErrorWithCode:BNCInitError localizedMessage:errorMessage];
             return;
         }
+        
         if (![branchKey isKindOfClass:[NSString class]]) {
             NSString *typeName = (branchKey) ? NSStringFromClass(branchKey.class) : @"<nil>";
-            [NSException raise:NSInternalInconsistencyException
-                format:@"Invalid Branch key of type '%@'.", typeName];
+            
+            NSString *errorMessage = [NSString stringWithFormat:@"Invalid Branch key of type '%@'.", typeName];
+            *error = [NSError branchErrorWithCode:BNCInitError localizedMessage:errorMessage];
             return;
         }
 
@@ -379,12 +396,13 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 @"You are using your test app's Branch Key. "
                  "Remember to change it to live Branch Key for production deployment."
             );
-        } else
-        if ([branchKey hasPrefix:@"key_live"]) {
+        
+        } else if ([branchKey hasPrefix:@"key_live"]) {
             bnc_useTestBranchKey = NO;
+        
         } else {
-            [NSException raise:NSInternalInconsistencyException
-                format:@"Invalid Branch key format. Did you add your Branch key to your Info.plist? Passed key is '%@'.", branchKey];
+            NSString *errorMessage = [NSString stringWithFormat:@"Invalid Branch key format. Did you add your Branch key to your Info.plist? Passed key is '%@'.", branchKey];
+            *error = [NSError branchErrorWithCode:BNCInitError localizedMessage:errorMessage];
             return;
         }
 
