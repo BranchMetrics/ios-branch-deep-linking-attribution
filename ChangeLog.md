@@ -1,7 +1,11 @@
 Branch iOS SDK Change Log
 
-- v0.25.9
-  
+- v0.25.10
+* _*Master Release*_ - December 12, 2018
+  * SDK-76 Fix exception on SDK misconfiguration.
+  * Fix Validator Error (#892)
+
+- v0.25.9  
 * _*Master Release*_ - November 29, 2018
   * DEVEX-826 Fix Unit Tests
     - Fix blacklist unit test.
