@@ -663,9 +663,9 @@ event.logEvent()
 
 ### Register Custom Events (Deprecated)
 
-The old `userCompletedAction:` methods of tracking user actions and events are deprecated and will go away eventually. Use the new `BranchEvent` to track user actions instead, as described above.
+**For Clients Using Referrals**
 
-Here is the legacy documentation:
+If you are using Branch's Referral feature, please use the legacy documentation provided below using the `userCompletedAction` methods. Do not upgrade to the new `BranchEvent` methods for tracking user actions mentioned above.
 
 #### Methods
 
