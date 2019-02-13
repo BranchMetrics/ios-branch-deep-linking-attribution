@@ -10,6 +10,7 @@
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
 #import "BNCApplication.h"
+#import "BNCEncodingUtils.h"
 
 void BNCForceBranchValidatorCategoryToLoad(void) {
     // Empty body but forces loader to load the category.
@@ -55,40 +56,49 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
 }
 
 - (void) validateIntegrationWithServerResponse:(BNCServerResponse*)response {
-    NSString *passString = @"PASS";
-    NSString *errorString = @"ERROR";
+    NSString*passString = @"PASS";
+    NSString*errorString = @"ERROR";
 
+    // Decode the server message:
+    NSString*serverUriScheme    = BNCStringFromWireFormat(response.data[@"ios_uri_scheme"]) ?: @"";
+    NSString*serverBundleID     = BNCStringFromWireFormat(response.data[@"ios_bundle_id"]) ?: @"";
+    NSString*serverTeamID       = BNCStringFromWireFormat(response.data[@"ios_team_id"]) ?: @"";
+
+    // Verify:
     NSLog(@"** Initiating Branch integration verification **");
     NSLog(@"-------------------------------------------------");
 
     NSLog(@"------ Checking for URI scheme correctness ------");
-    NSString *serverUriScheme = response.data[@"ios_uri_scheme"];
     NSString *clientUriScheme = [NSString stringWithFormat:@"%@%@", [BNCSystemObserver getDefaultUriScheme], @"://"];
     NSString *uriScheme = [serverUriScheme isEqualToString:clientUriScheme] ? passString : errorString;
-    NSString *uriSchemeMessage = [NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'", uriScheme, serverUriScheme, clientUriScheme];
+    NSString *uriSchemeMessage =
+        [NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'",
+            uriScheme, serverUriScheme, clientUriScheme];
     NSLog(@"%@",uriSchemeMessage);
     NSLog(@"-------------------------------------------------");
 
     NSLog(@"-- Checking for bundle identifier correctness ---");
-    NSString *serverBundleIdentifier = [response.data[@"ios_bundle_id"] isKindOfClass:NSString.class] ? response.data[@"ios_bundle_id"] : @"";
-    NSString *clientBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-    NSString *bundleIdentifier = [serverBundleIdentifier isEqualToString:clientBundleIdentifier] ? passString : errorString;
-    NSString *bundleIdentifierMessage = [NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'", bundleIdentifier, serverBundleIdentifier, clientBundleIdentifier];
+    NSString *clientBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier] ?: @"";
+    NSString *bundleIdentifier = [serverBundleID isEqualToString:clientBundleIdentifier] ? passString : errorString;
+    NSString *bundleIdentifierMessage =
+        [NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'",
+            bundleIdentifier, serverBundleID, clientBundleIdentifier];
     NSLog(@"%@",bundleIdentifierMessage);
     NSLog(@"-------------------------------------------------");
 
     NSLog(@"----- Checking for iOS Team ID correctness ------");
-    NSString *serverTeamId = response.data[@"ios_team_id"];
-    NSString *clientTeamId = [BNCApplication currentApplication].teamID;
-    NSString *teamID = [serverTeamId isEqualToString:clientTeamId] ? passString : errorString;
-    NSString *teamIDMessage = [NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'", teamID, serverTeamId, clientTeamId];
+    NSString *clientTeamId = [BNCApplication currentApplication].teamID ?: @"";
+    NSString *teamID = [serverTeamID isEqualToString:clientTeamId] ? passString : errorString;
+    NSString *teamIDMessage =
+        [NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'",
+            teamID, serverTeamID, clientTeamId];
     NSLog(@"%@",teamIDMessage);
     NSLog(@"-------------------------------------------------");
 
     if ([teamID isEqualToString:errorString] ||
         [bundleIdentifier isEqualToString:errorString] ||
         [uriScheme isEqualToString:errorString]) {
-        NSLog(@"%@: server side '%@' compared to client side '%@'.", errorString, serverTeamId, clientTeamId);
+        NSLog(@"%@: server side '%@' compared to client side '%@'.", errorString, serverTeamID, clientTeamId);
         NSLog(@"To fix your Dashboard settings head over to https://branch.app.link/link-settings-page");
         NSLog(@"If you see a null value on the client side, please temporarily add the following key-value pair to your plist: \n\t<key>AppIdentifierPrefix</key><string>$(AppIdentifierPrefix)</string>\n-> then re-run this test.");
         NSLog(@"-------------------------------------------------");
@@ -113,22 +123,22 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
             kFailMark,  serverUriScheme];
     }
 
-    if ([serverBundleIdentifier isEqualToString:clientBundleIdentifier]) {
+    if ([serverBundleID isEqualToString:clientBundleIdentifier]) {
         alertString = [alertString stringByAppendingFormat:@"%@App Bundle ID matches:\n\t'%@'\n",
-            kPassMark,  serverBundleIdentifier];
+            kPassMark,  serverBundleID];
     } else {
         testsFailed = YES;
         alertString = [alertString stringByAppendingFormat:@"%@App Bundle ID mismatch:\n\t'%@'\n",
-            kFailMark,  serverBundleIdentifier];
+            kFailMark,  serverBundleID];
     }
 
-    if ([serverTeamId isEqualToString:clientTeamId]) {
+    if ([serverTeamID isEqualToString:clientTeamId]) {
         alertString = [alertString stringByAppendingFormat:@"%@Team ID matches:\n\t'%@'\n",
-            kPassMark,  serverTeamId];
+            kPassMark,  serverTeamID];
     } else {
         testsFailed = YES;
         alertString = [alertString stringByAppendingFormat:@"%@Team ID mismatch:\n\t'%@'\n",
-            kFailMark,  serverTeamId];
+            kFailMark,  serverTeamID];
     }
 
     if (testsFailed) {
