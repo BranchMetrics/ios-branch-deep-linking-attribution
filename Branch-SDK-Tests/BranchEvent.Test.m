@@ -277,10 +277,6 @@
 - (void)testStandardInviteEvent {
     
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventInvite];
-    event.userID = @"test_userID@branch.io";
-    event.facebookUserID = @"test_facebook@branch.io";
-    event.googleUserID = @"test_google@branch.io";
-    event.twitterUserID = @"test_twitter@branch.io";
 
     BranchUniversalObject *buo = [BranchUniversalObject new];
     buo.canonicalIdentifier = @"item/12345";
@@ -298,12 +294,6 @@
     XCTAssert([eventDictionary[@"name"] isEqualToString:@"INVITE"]);
     XCTAssertNil(eventDictionary[@"content_items"]);
 
-    NSDictionary *eventData = eventDictionary[@"event_data"];
-    XCTAssert([eventData[@"user_id"] isEqualToString:@"test_userID@branch.io"]);
-    XCTAssert([eventData[@"facebook_user_id"] isEqualToString:@"test_facebook@branch.io"]);
-    XCTAssert([eventData[@"google_user_id"] isEqualToString:@"test_google@branch.io"]);
-    XCTAssert([eventData[@"twitter_user_id"] isEqualToString:@"test_twitter@branch.io"]);
-    
     BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
     XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
 }
@@ -311,10 +301,6 @@
 - (void)testCustomInviteEvent {
     
     BranchEvent *event = [BranchEvent customEventWithName:@"INVITE"];
-    event.userID = @"test_userID@branch.io";
-    event.facebookUserID = @"test_facebook@branch.io";
-    event.googleUserID = @"test_google@branch.io";
-    event.twitterUserID = @"test_twitter@branch.io";
     
     BranchUniversalObject *buo = [BranchUniversalObject new];
     buo.canonicalIdentifier = @"item/12345";
@@ -331,12 +317,6 @@
     XCTAssert([eventDictionary[@"name"] isEqualToString:@"INVITE"]);
     XCTAssertNotNil(eventDictionary[@"content_items"]);
     
-    NSDictionary *eventData = eventDictionary[@"event_data"];
-    XCTAssert([eventData[@"user_id"] isEqualToString:@"test_userID@branch.io"]);
-    XCTAssert([eventData[@"facebook_user_id"] isEqualToString:@"test_facebook@branch.io"]);
-    XCTAssert([eventData[@"google_user_id"] isEqualToString:@"test_google@branch.io"]);
-    XCTAssert([eventData[@"twitter_user_id"] isEqualToString:@"test_twitter@branch.io"]);
- 
     BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
     XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/custom"]);
 }
@@ -344,16 +324,7 @@
 - (void)testStandardLoginEvent {
     
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventLogin];
-    event.userID = @"test_userID@branch.io";
-    event.facebookUserID = @"test_facebook@branch.io";
-    event.googleUserID = @"test_google@branch.io";
-    event.twitterUserID = @"test_twitter@branch.io";
-    event.userName = @"test_userName";
-    event.userEmail = @"test@branch.io";
-    event.latitude = [NSDecimalNumber decimalNumberWithString:@"1.0"];
-    event.longitude = [NSDecimalNumber decimalNumberWithString:@"1.0"];
-    event.altitude = [NSDecimalNumber decimalNumberWithString:@"1.0"];
-
+    
     BranchUniversalObject *buo = [BranchUniversalObject new];
     buo.canonicalIdentifier = @"item/12345";
     buo.canonicalUrl        = @"https://branch.io/deepviews";
@@ -370,15 +341,6 @@
     XCTAssert([eventDictionary[@"name"] isEqualToString:@"LOGIN"]);
     XCTAssertNil(eventDictionary[@"content_items"]);
     
-    NSDictionary *eventData = eventDictionary[@"event_data"];
-    XCTAssert([eventData[@"user_id"] isEqualToString:@"test_userID@branch.io"]);
-    XCTAssert([eventData[@"facebook_user_id"] isEqualToString:@"test_facebook@branch.io"]);
-    XCTAssert([eventData[@"google_user_id"] isEqualToString:@"test_google@branch.io"]);
-    XCTAssert([eventData[@"twitter_user_id"] isEqualToString:@"test_twitter@branch.io"]);
-    XCTAssert([eventData[@"latitude"] isEqual:[NSDecimalNumber decimalNumberWithString:@"1.0"]]);
-    XCTAssert([eventData[@"longitude"] isEqual:[NSDecimalNumber decimalNumberWithString:@"1.0"]]);
-    XCTAssert([eventData[@"altitude"] isEqual:[NSDecimalNumber decimalNumberWithString:@"1.0"]]);
-
     BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
     XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
 }
@@ -386,15 +348,6 @@
 - (void)testCustomLoginEvent {
     
     BranchEvent *event = [BranchEvent customEventWithName:@"LOGIN"];
-    event.userID = @"test_userID@branch.io";
-    event.facebookUserID = @"test_facebook@branch.io";
-    event.googleUserID = @"test_google@branch.io";
-    event.twitterUserID = @"test_twitter@branch.io";
-    event.userName = @"test_userName";
-    event.userEmail = @"test@branch.io";
-    event.latitude = [NSDecimalNumber decimalNumberWithString:@"1.0"];
-    event.longitude = [NSDecimalNumber decimalNumberWithString:@"1.0"];
-    event.altitude = [NSDecimalNumber decimalNumberWithString:@"1.0"];
 
     BranchUniversalObject *buo = [BranchUniversalObject new];
     buo.canonicalIdentifier = @"item/12345";
@@ -410,15 +363,6 @@
     XCTAssertNotNil(eventDictionary);
     XCTAssert([eventDictionary[@"name"] isEqualToString:@"LOGIN"]);
     XCTAssertNotNil(eventDictionary[@"content_items"]);
-    
-    NSDictionary *eventData = eventDictionary[@"event_data"];
-    XCTAssert([eventData[@"user_id"] isEqualToString:@"test_userID@branch.io"]);
-    XCTAssert([eventData[@"facebook_user_id"] isEqualToString:@"test_facebook@branch.io"]);
-    XCTAssert([eventData[@"google_user_id"] isEqualToString:@"test_google@branch.io"]);
-    XCTAssert([eventData[@"twitter_user_id"] isEqualToString:@"test_twitter@branch.io"]);
-    XCTAssert([eventData[@"latitude"] isEqual:[NSDecimalNumber decimalNumberWithString:@"1.0"]]);
-    XCTAssert([eventData[@"longitude"] isEqual:[NSDecimalNumber decimalNumberWithString:@"1.0"]]);
-    XCTAssert([eventData[@"altitude"] isEqual:[NSDecimalNumber decimalNumberWithString:@"1.0"]]);
     
     BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
     XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/custom"]);
@@ -707,22 +651,22 @@
     
 - (void)testJsonStringForAdTypeBanner {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventViewAd];
-    XCTAssertTrue([[event jsonStringForAdType:BranchEventAdTypeBanner] isEqualToString:@"banner"]);
+    XCTAssertTrue([[event jsonStringForAdType:BranchEventAdTypeBanner] isEqualToString:@"BANNER"]);
 }
 
 - (void)testJsonStringForAdTypeInterstitial {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventViewAd];
-    XCTAssertTrue([[event jsonStringForAdType:BranchEventAdTypeInterstitial] isEqualToString:@"interstitial"]);
+    XCTAssertTrue([[event jsonStringForAdType:BranchEventAdTypeInterstitial] isEqualToString:@"INTERSTITIAL"]);
 }
 
 - (void)testJsonStringForAdTypeRewardedVideo {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventViewAd];
-    XCTAssertTrue([[event jsonStringForAdType:BranchEventAdTypeRewardedVideo] isEqualToString:@"rewarded_video"]);
+    XCTAssertTrue([[event jsonStringForAdType:BranchEventAdTypeRewardedVideo] isEqualToString:@"REWARDED_VIDEO"]);
 }
 
 - (void)testJsonStringForAdTypeNative {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventViewAd];
-    XCTAssertTrue([[event jsonStringForAdType:BranchEventAdTypeNative] isEqualToString:@"native"]);
+    XCTAssertTrue([[event jsonStringForAdType:BranchEventAdTypeNative] isEqualToString:@"NATIVE"]);
 }
 
 @end

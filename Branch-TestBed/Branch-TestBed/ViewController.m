@@ -479,24 +479,11 @@ static NSString *type = @"some type";
 
 - (void)sendInviteEvent {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventInvite];
-    event.userID = @"test_userID@branch.io";
-    event.facebookUserID = @"test_facebook@branch.io";
-    event.googleUserID = @"test_google@branch.io";
-    event.twitterUserID = @"test_twitter@branch.io";
     [event logEvent];
 }
 
 - (void)sendLoginEvent {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventLogin];
-    event.userID = @"test_userID@branch.io";
-    event.facebookUserID = @"test_facebook@branch.io";
-    event.googleUserID = @"test_google@branch.io";
-    event.twitterUserID = @"test_twitter@branch.io";
-    event.userName = @"test_userName";
-    event.userEmail = @"test@branch.io";
-    event.latitude = [NSDecimalNumber decimalNumberWithString:@"47.6062"];
-    event.longitude = [NSDecimalNumber decimalNumberWithString:@"-122.3321"];
-    event.altitude = [NSDecimalNumber decimalNumberWithString:@"148.0"];
     [event logEvent];
 }
 
@@ -516,13 +503,13 @@ static NSString *type = @"some type";
 
 - (void)sendClickAdEvent {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventClickAd];
-    event.adType = @(BranchEventAdTypeBanner);
+    event.adType = BranchEventAdTypeBanner;
     [event logEvent];
 }
 
 - (void)sendViewAdEvent {
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventClickAd];
-    event.adType = @(BranchEventAdTypeBanner);
+    event.adType = BranchEventAdTypeBanner;
     [event logEvent];
 }
 

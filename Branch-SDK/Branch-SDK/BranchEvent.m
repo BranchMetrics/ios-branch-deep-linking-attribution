@@ -183,16 +183,16 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
 - (NSString *)jsonStringForAdType:(BranchEventAdType)adType {
     switch (adType) {
         case BranchEventAdTypeBanner:
-            return @"banner";
+            return @"BANNER";
             
         case BranchEventAdTypeInterstitial:
-            return @"interstitial";
+            return @"INTERSTITIAL";
             
         case BranchEventAdTypeRewardedVideo:
-            return @"rewarded_video";
+            return @"REWARDED_VIDEO";
             
         case BranchEventAdTypeNative:
-            return @"native";
+            return @"NATIVE";
             
         case BranchEventAdTypeNone:
         default:
@@ -216,15 +216,6 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     addString(eventDescription, description);
     addString(searchQuery,      search_query)
     addDictionary(customData,   custom_data);
-    addString(userID,           user_id);
-    addString(facebookUserID,   facebook_user_id);
-    addString(googleUserID,     google_user_id);
-    addString(twitterUserID,    twitter_user_id);
-    addString(userEmail,        user_email);
-    addString(userName,         username);
-    addDecimal(latitude,        latitude);
-    addDecimal(longitude,       longitude);
-    addDecimal(altitude,        altitude);
     
     #include "BNCFieldDefines.h"
 
