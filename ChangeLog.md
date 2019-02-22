@@ -1,7 +1,7 @@
 Branch iOS SDK Change Log
 
 - v0.25.11
-* _*Master Release*_ - December 12, 2018
+* _*Master Release*_ - January 18, 2019
   * DOCS-420 improve referral documentation
   * SDK-92 disable certificate pinning by default
 
