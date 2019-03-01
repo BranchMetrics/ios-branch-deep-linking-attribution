@@ -204,7 +204,7 @@
         NSLog(@"URL: %@.", url);
         NSLog(@"Body: %@.", parameters);
 
-        if ([url containsString:@"branch.io/v2/event/custom"]) {
+        if ([url containsString:@"branch.io/v2/event/standard"]) {
             XCTAssertEqualObjects(expectedRequest, parameters);
             [expectation fulfill];
         } else {
@@ -317,7 +317,7 @@
     XCTAssertNotNil(eventDictionary[@"content_items"]);
     
     BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
-    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/custom"]);
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
 }
 
 - (void)testStandardLoginEvent {
@@ -363,7 +363,7 @@
     XCTAssertNotNil(eventDictionary[@"content_items"]);
     
     BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
-    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/custom"]);
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
 }
 
 - (void)testStandardReserveEvent {
@@ -411,7 +411,7 @@
     XCTAssertNotNil(eventDictionary[@"content_items"]);
     
     BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
-    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/custom"]);
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
 }
 
 - (void)testStandardSubscribeEvent {
@@ -469,7 +469,7 @@
     XCTAssert([eventData[@"revenue"] isEqual:[NSDecimalNumber decimalNumberWithString:@"1.0"]]);
     
     BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
-    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/custom"]);
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
 }
 
 - (void)testStandardStartTrialEvent {
@@ -527,7 +527,7 @@
     XCTAssert([eventData[@"revenue"] isEqual:[NSDecimalNumber decimalNumberWithString:@"1.0"]]);
     
     BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
-    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/custom"]);
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
 }
 
 - (void)testStandardClickAdEvent {
@@ -581,7 +581,7 @@
     XCTAssert([eventData[@"ad_type"] isEqual:[event jsonStringForAdType:event.adType]]);
 
     BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
-    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/custom"]);
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
 }
 
 - (void)testStandardViewAdEvent {
@@ -635,7 +635,7 @@
     XCTAssert([eventData[@"ad_type"] isEqual:[event jsonStringForAdType:event.adType]]);
     
     BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
-    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/custom"]);
+    XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
 }
 
 - (void)testJsonStringForAdTypeNone {
