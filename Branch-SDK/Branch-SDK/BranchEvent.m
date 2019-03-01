@@ -255,23 +255,6 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     ];
 }
 
-+ (NSArray<BranchStandardEvent> *)standardEventsWithoutBUO {
-    return @[BranchStandardEventInvite,
-             BranchStandardEventLogin,
-             BranchStandardEventSubscribe,
-             BranchStandardEventStartTrial,
-             BranchStandardEventClickAd,
-             BranchStandardEventViewAd];
-}
-
-// some standard events do not support the BUO
-- (BOOL)supportsBUO {
-    if (self.isStandardEvent && [[BranchEvent standardEventsWithoutBUO] containsObject:self.eventName]) {
-        return NO;
-    }
-    return YES;
-}
-
 - (void) logEvent {
 
     if (![_eventName isKindOfClass:[NSString class]] || _eventName.length == 0) {
@@ -312,18 +295,16 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     eventDictionary[@"custom_data"] = eventDictionary[@"event_data"][@"custom_data"];
     eventDictionary[@"event_data"][@"custom_data"] = nil;
     
-    if ([self supportsBUO]) {
-        NSMutableArray *contentItemDictionaries = [NSMutableArray new];
-        for (BranchUniversalObject *contentItem in self.contentItems) {
-            NSDictionary *dictionary = [contentItem dictionary];
-            if (dictionary.count) {
-                [contentItemDictionaries addObject:dictionary];
-            }
+    NSMutableArray *contentItemDictionaries = [NSMutableArray new];
+    for (BranchUniversalObject *contentItem in self.contentItems) {
+        NSDictionary *dictionary = [contentItem dictionary];
+        if (dictionary.count) {
+            [contentItemDictionaries addObject:dictionary];
         }
-        
-        if (contentItemDictionaries.count) {
-            eventDictionary[@"content_items"] = contentItemDictionaries;
-        }
+    }
+    
+    if (contentItemDictionaries.count) {
+        eventDictionary[@"content_items"] = contentItemDictionaries;
     }
     return eventDictionary;
 }

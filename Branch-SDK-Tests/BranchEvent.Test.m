@@ -292,7 +292,6 @@
     
     XCTAssertNotNil(eventDictionary);
     XCTAssert([eventDictionary[@"name"] isEqualToString:@"INVITE"]);
-    XCTAssertNil(eventDictionary[@"content_items"]);
 
     BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
     XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
@@ -339,7 +338,6 @@
     
     XCTAssertNotNil(eventDictionary);
     XCTAssert([eventDictionary[@"name"] isEqualToString:@"LOGIN"]);
-    XCTAssertNil(eventDictionary[@"content_items"]);
     
     BranchEventRequest *request = [event buildRequestWithEventDictionary:eventDictionary];
     XCTAssert([request.serverURL.absoluteString containsString:@"branch.io/v2/event/standard"]);
@@ -435,7 +433,6 @@
     
     XCTAssertNotNil(eventDictionary);
     XCTAssert([eventDictionary[@"name"] isEqualToString:@"SUBSCRIBE"]);
-    XCTAssertNil(eventDictionary[@"content_items"]);
     
     NSDictionary *eventData = eventDictionary[@"event_data"];
     XCTAssert([eventData[@"currency"] isEqualToString:BNCCurrencyUSD]);
@@ -494,7 +491,6 @@
     
     XCTAssertNotNil(eventDictionary);
     XCTAssert([eventDictionary[@"name"] isEqualToString:@"START_TRIAL"]);
-    XCTAssertNil(eventDictionary[@"content_items"]);
     
     NSDictionary *eventData = eventDictionary[@"event_data"];
     XCTAssert([eventData[@"currency"] isEqualToString:BNCCurrencyUSD]);
@@ -552,7 +548,6 @@
     
     XCTAssertNotNil(eventDictionary);
     XCTAssert([eventDictionary[@"name"] isEqualToString:@"CLICK_AD"]);
-    XCTAssertNil(eventDictionary[@"content_items"]);
     
     NSDictionary *eventData = eventDictionary[@"event_data"];
     XCTAssert([eventData[@"ad_type"] isEqual:[event jsonStringForAdType:event.adType]]);
@@ -607,7 +602,6 @@
     
     XCTAssertNotNil(eventDictionary);
     XCTAssert([eventDictionary[@"name"] isEqualToString:@"VIEW_AD"]);
-    XCTAssertNil(eventDictionary[@"content_items"]);
     
     NSDictionary *eventData = eventDictionary[@"event_data"];
     XCTAssert([eventData[@"ad_type"] isEqual:[event jsonStringForAdType:event.adType]]);
