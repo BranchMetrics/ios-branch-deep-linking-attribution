@@ -109,8 +109,6 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
 }
 @property (nonatomic, strong) NSString*  eventName;
 
-// standard events can have data enforcement rules and go to a different endpoint
-@property (nonatomic, assign) BOOL isStandardEvent;
 @end
 
 @implementation BranchEvent : NSObject
@@ -121,16 +119,11 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     _eventName = name;
     
     _adType = BranchEventAdTypeNone;
-    _isStandardEvent = NO;
     return self;
 }
 
 + (instancetype) standardEvent:(BranchStandardEvent)standardEvent {
-    BranchEvent *event = [[BranchEvent alloc] initWithName:standardEvent];
-    if ([[BranchEvent standardEvents] containsObject:standardEvent]) {
-        event.isStandardEvent = YES;
-    }
-    return event;
+    return [[BranchEvent alloc] initWithName:standardEvent];
 }
 
 + (instancetype) standardEvent:(BranchStandardEvent)standardEvent
@@ -271,7 +264,7 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     
     NSString *serverURL =
-    (self.isStandardEvent)
+    ([self.class.standardEvents containsObject:self.eventName])
     ? [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/standard"]
     : [NSString stringWithFormat:@"%@/%@", preferenceHelper.branchAPIURL, @"v2/event/custom"];
     
