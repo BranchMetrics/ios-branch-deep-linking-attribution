@@ -31,6 +31,10 @@ static NSString *live_key = @"live_key";
 static NSString *test_key = @"test_key";
 static NSString *type = @"some type";
 
+@interface BranchEvent()
++ (NSArray<BranchStandardEvent>*) standardEvents;
+@end
+
 @interface ViewController () <BranchShareLinkDelegate> {
     NSDateFormatter *_dateFormatter;
 }
@@ -425,6 +429,13 @@ static NSString *type = @"some type";
         ,BranchStandardEventCompleteTutorial
         ,BranchStandardEventAchieveLevel
         ,BranchStandardEventUnlockAchievement
+        ,BranchStandardEventInvite
+        ,BranchStandardEventLogin
+        ,BranchStandardEventReserve
+        ,BranchStandardEventSubscribe
+        ,BranchStandardEventStartTrial
+        ,BranchStandardEventClickAd
+        ,BranchStandardEventViewAd
         ,@"iOS-CustomEvent"
 
     ];
@@ -440,7 +451,77 @@ static NSString *type = @"some type";
     }];
 }
 
-- (void) sendV2EventWithName:(NSString*)eventName {
+- (void)sendV2EventWithName:(NSString *)eventName {
+
+    // standard events with data requirements
+    if ([eventName isEqualToString:BranchStandardEventInvite]) {
+        [self sendInviteEvent];
+    } else if ([eventName isEqualToString:BranchStandardEventLogin]) {
+        [self sendLoginEvent];
+    } else if ([eventName isEqualToString:BranchStandardEventSubscribe]) {
+        [self sendSubscribeEvent];
+    } else if ([eventName isEqualToString:BranchStandardEventStartTrial]) {
+        [self sendStartTrialEvent];
+    } else if ([eventName isEqualToString:BranchStandardEventClickAd]) {
+        [self sendClickAdEvent];
+    } else if ([eventName isEqualToString:BranchStandardEventViewAd]) {
+        [self sendViewAdEvent];
+        
+    // other standard events
+    } else if ([[BranchEvent standardEvents] containsObject:eventName]) {
+        [self sendStandardV2Event:eventName];
+        
+    // custom events
+    } else {
+        [self sendCustomV2Event:eventName];
+    }
+}
+
+- (void)sendInviteEvent {
+    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventInvite];
+    [event logEvent];
+}
+
+- (void)sendLoginEvent {
+    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventLogin];
+    [event logEvent];
+}
+
+- (void)sendSubscribeEvent {
+    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventSubscribe];
+    event.currency = BNCCurrencyUSD;
+    event.revenue = [NSDecimalNumber decimalNumberWithString:@"1.0"];
+    [event logEvent];
+}
+
+- (void)sendStartTrialEvent {
+    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventStartTrial];
+    event.currency = BNCCurrencyUSD;
+    event.revenue = [NSDecimalNumber decimalNumberWithString:@"1.0"];
+    [event logEvent];
+}
+
+- (void)sendClickAdEvent {
+    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventClickAd];
+    event.adType = BranchEventAdTypeBanner;
+    [event logEvent];
+}
+
+- (void)sendViewAdEvent {
+    BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventClickAd];
+    event.adType = BranchEventAdTypeBanner;
+    [event logEvent];
+}
+
+- (void)sendStandardV2Event:(BranchStandardEvent)event {
+    [self sendGenericV2EventWithName:event isStandardEvent:YES];
+}
+
+- (void)sendCustomV2Event:(NSString *)eventName {
+    [self sendGenericV2EventWithName:eventName isStandardEvent:NO];
+}
+
+- (void) sendGenericV2EventWithName:(NSString*)eventName isStandardEvent:(BOOL)isStandardEvent {
     BranchUniversalObject *buo = [BranchUniversalObject new];
 
     buo.contentMetadata.contentSchema    = BranchContentSchemaCommerceProduct;
@@ -482,7 +563,12 @@ static NSString *type = @"some type";
     buo.locallyIndex                = YES;
     buo.creationDate                = [NSDate date];
 
-    BranchEvent *event    = [BranchEvent customEventWithName:eventName];
+    BranchEvent *event;
+    if (isStandardEvent) {
+        event = [BranchEvent standardEvent:eventName];
+    } else {
+        event = [BranchEvent customEventWithName:eventName];
+    }
     event.transactionID   = @"12344555";
     event.currency        = BNCCurrencyUSD;
     event.revenue         = [NSDecimalNumber decimalNumberWithString:@"1.5"];
@@ -496,6 +582,7 @@ static NSString *type = @"some type";
         @"Custom_Event_Property_Key2": @"Custom_Event_Property_val2"
     };
     event.contentItems = (id) @[ buo ];
+    
     [event logEvent];
 }
 
