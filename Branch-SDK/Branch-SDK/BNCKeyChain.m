@@ -180,7 +180,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
 
     dictionary[(__bridge id)kSecValueData] = valueData;
     dictionary[(__bridge id)kSecAttrIsInvisible] = (__bridge id)kCFBooleanTrue;
-    dictionary[(__bridge id)kSecAttrAccessible] = (__bridge id)kSecAttrAccessibleAfterFirstUnlock;
+    dictionary[(__bridge id)kSecAttrAccessible] = (__bridge id)kSecAttrAccessibleWhenUnlockedThisDeviceOnly;
 
     if (accessGroup.length) {
         dictionary[(__bridge id)kSecAttrAccessGroup] = accessGroup;
