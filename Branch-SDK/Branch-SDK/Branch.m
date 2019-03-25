@@ -756,6 +756,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (BOOL)handleSchemeDeepLink_private:(NSURL*)url fromSelf:(BOOL)isFromSelf {
+    if (isFromSelf) {
+        [self resetUserSession];
+    }
+    
     BOOL handled = NO;
     self.preferenceHelper.referringURL = nil;
     if (url && ![url isEqual:[NSNull null]]) {
@@ -784,13 +788,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         NSDictionary *params = [BNCEncodingUtils decodeQueryStringToDictionary:query];
         if (params[@"link_click_id"]) {
             handled = YES;
-            if (isFromSelf) {
-                [self resetUserSession];
-            }
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-    [self initUserSessionAndCallCallback:(self.initializationStatus != BNCInitStatusInitialized)];
+    [self initUserSessionAndCallCallback:YES];
     return handled;
 }
 
