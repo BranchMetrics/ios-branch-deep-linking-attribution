@@ -19,7 +19,6 @@ function xcodeBuildTarget() {
         -sdk $platform \
         -configuration Release \
         -quiet \
-        clean build \
         OTHER_CFLAGS="-fembed-bitcode"
 }
 
