@@ -1,5 +1,11 @@
 Branch iOS SDK Change Log
 
+- v0.26.0
+* _*Master Release*_ - March 26, 2019
+  * SDK-175, SDK-176 new standard events for FB and TUNE
+  * SDK-234 Improve handling of non-branch links while app is in foreground
+  * SDK-150 circleCI support
+
 - v0.25.11
 * _*Master Release*_ - January 18, 2019
   * DOCS-420 improve referral documentation
