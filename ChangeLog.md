@@ -5,6 +5,7 @@ Branch iOS SDK Change Log
   * SDK-175, SDK-176 new standard events for FB and TUNE
   * SDK-234 Improve handling of non-branch links while app is in foreground
   * SDK-150 circleCI support
+  * Carthage prebuilt binary is now built with Xcode 10 and is no longer compatible with old Xcodes.
 
 - v0.25.11
 * _*Master Release*_ - January 18, 2019
