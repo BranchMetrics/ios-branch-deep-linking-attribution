@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# deploy-build-framework  --  Use the Carthage project to make a framework build of the SDK.
+# deploy-build-framework
 #
 # Edward Smith, August 2017
 
