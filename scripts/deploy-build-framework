@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# deploy-build-framework-dynamic  --  Use the Carthage project to make a framework build of the SDK.
+# deploy-build-framework  --  Use the Carthage project to make a framework build of the SDK.
 #
 # Edward Smith, August 2017
 
