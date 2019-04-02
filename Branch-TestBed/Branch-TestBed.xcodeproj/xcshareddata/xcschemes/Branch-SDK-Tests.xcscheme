@@ -39,6 +39,26 @@
                BlueprintName = "Branch-SDK-Tests"
                ReferencedContainer = "container:Branch-TestBed.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "BNCServerInterfaceTests/testGetRequestAsyncRetriesWhenAppropriate">
+               </Test>
+               <Test
+                  Identifier = "BNCServerInterfaceTests/testGetRequestAsyncRetriesWhenInappropriateResponse">
+               </Test>
+               <Test
+                  Identifier = "BNCServerInterfaceTests/testGetRequestAsyncRetriesWhenInappropriateRetryCount">
+               </Test>
+               <Test
+                  Identifier = "BNCServerInterfaceTests/testPostRequestAsyncRetriesWhenAppropriate">
+               </Test>
+               <Test
+                  Identifier = "BNCServerInterfaceTests/testPostRequestAsyncRetriesWhenInappropriateResponse">
+               </Test>
+               <Test
+                  Identifier = "BNCServerInterfaceTests/testPostRequestAsyncRetriesWhenInappropriateRetryCount">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>
