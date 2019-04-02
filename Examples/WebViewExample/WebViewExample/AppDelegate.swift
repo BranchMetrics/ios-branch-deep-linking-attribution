@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - UIApplicationDelegate methods
 
     func application(_ application: UIApplication,
-didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         /*
          * Use the test instance if USE_BRANCH_TEST_INSTANCE is defined. This is defined in the
          * Test-Debug and Test-Release configurations, which are used by the WebViewExample-Test
@@ -50,14 +50,14 @@ didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any
 
     func application(_ app: UIApplication,
                   open url: URL,
-                   options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+                   options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         BNCLog("application:open:options: called.")
         return Branch.getInstance().application(app, open: url, options: options)
     }
     
     func application(_ application: UIApplication,
              continue userActivity: NSUserActivity,
-                restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+                restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         BNCLog("application:continueUserActivity:restorationHandler: called.");
         return Branch.getInstance().continue(userActivity)
     }

@@ -17,7 +17,7 @@ class NavigationController: UINavigationController {
 
         if let font = UIFont(name: Style.boldFontName, size: Style.titleFontSize) {
             navigationBar.titleTextAttributes = [
-                NSAttributedStringKey.font: font
+                NSAttributedString.Key.font: font
             ]
         }
         
