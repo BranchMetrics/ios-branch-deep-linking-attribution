@@ -120,7 +120,7 @@ class WaitingViewController: UIViewController {
         UIView.animate(
             withDuration: 0.4,
             delay: 0.01,
-            options: UIViewAnimationOptions.curveEaseInOut,
+            options: UIView.AnimationOptions.curveEaseInOut,
             animations: {
                 self.parentView?.transform =
                     (self.parentView?.transform.scaledBy(
@@ -168,7 +168,7 @@ class WaitingViewController: UIViewController {
             UIView.animate(
                 withDuration: 0.6,
                 delay: 0.010,
-                options: UIViewAnimationOptions.curveEaseInOut,
+                options: UIView.AnimationOptions.curveEaseInOut,
                 animations: {
                     self.parentView?.transform = self.parentTransform
                 },

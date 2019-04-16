@@ -152,7 +152,7 @@ class FortuneViewController: UIViewController, UITextViewDelegate {
         guard
             let url = self.branchURL,
             let cgImage = self.branchImage?.cgImage,
-            let imagePNG = UIImagePNGRepresentation(UIImage.init(cgImage: cgImage))
+            let imagePNG = UIImage.init(cgImage: cgImage).pngData()
         else { return }
 
         let text = "Follow this link to reveal the mystic fortune enclosed..."
