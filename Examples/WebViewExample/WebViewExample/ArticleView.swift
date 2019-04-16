@@ -106,10 +106,10 @@ decidePolicyFor navigationAction: WKNavigationAction,
         */
         guard let font = UIFont(name: Style.boldFontName, size: Style.titleFontSize) else { return }
 
-        let attributes: [NSAttributedStringKey: Any] = [
-            NSAttributedStringKey.font: font,
-            NSAttributedStringKey.kern: 2.6,
-            NSAttributedStringKey.foregroundColor: UIColor(red: 0.133, green: 0.4, blue: 0.627, alpha: 1.0)
+        let attributes: [NSAttributedString.Key: Any] = [
+            NSAttributedString.Key.font: font,
+            NSAttributedString.Key.kern: 2.6,
+            NSAttributedString.Key.foregroundColor: UIColor(red: 0.133, green: 0.4, blue: 0.627, alpha: 1.0)
         ]
 
         let attributedTitle = NSAttributedString(string: "Share", attributes: attributes)

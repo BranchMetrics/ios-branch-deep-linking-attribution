@@ -65,10 +65,6 @@ fi
 rm Branch.framework.zip || true
 ditto -c -k -v -V --sequesterRsrc --keepParent Branch.framework  Branch.framework.zip
 
-# Fabric no longer accepts third party SDKs.
-# echo '>>> Deploying Fabric build...' 1>&2
-# ./scripts/deploy-fabric
-
 echo '>>> Commit and tag...' 1>&2
 ./scripts/deploy-git-tag
 

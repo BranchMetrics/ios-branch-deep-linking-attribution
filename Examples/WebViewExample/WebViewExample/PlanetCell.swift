@@ -31,7 +31,7 @@ class PlanetCell: UITableViewCell {
 
     // MARK: - Object lifecycle
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         contentView.addSubview(thumbnailImageView)
@@ -111,9 +111,9 @@ class PlanetCell: UITableViewCell {
             return
         }
 
-        let attributes: [NSAttributedStringKey: Any] = [
-            NSAttributedStringKey.font: font,
-            NSAttributedStringKey.kern: 1.2
+        let attributes: [NSAttributedString.Key: Any] = [
+            NSAttributedString.Key.font: font,
+            NSAttributedString.Key.kern: 1.2
         ]
 
         label.attributedText = NSAttributedString(string: planetData.title, attributes: attributes)

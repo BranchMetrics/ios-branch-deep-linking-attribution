@@ -42,14 +42,6 @@ function checkVariable() {
     fi
 }
 
-
-# Check Xcode version
-#if [ $(xcode-switch) != "/Applications/Xcode-8.3.3.app/Contents/Developer" ]
-#then
-#    echo ">>> Error: Need to build with Xcode 8 so that Carthage framework doesn't include FileProvider a reference." 1>&2
-#    wasError=1
-#fi
-
 # Check vim
 checkTool vim
 
@@ -61,10 +53,6 @@ checkTool pod
 
 # Check Carthage
 checkTool carthage
-
-# Check Fabric
-#checkApp Fabric
-#checkVariable FABRIC_KEY
 
 # Check Github
 if ! git push --dry-run &> /dev/null; then

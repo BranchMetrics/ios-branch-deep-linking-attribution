@@ -15,7 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication,
-            didFinishLaunchingWithOptions launchOptions:[UIApplicationLaunchOptionsKey: Any]?
+            didFinishLaunchingWithOptions launchOptions:[UIApplication.LaunchOptionsKey: Any]?
         ) -> Bool {
         AppData.shared.initialize()
         Branch.getInstance().initSession(launchOptions: launchOptions)
@@ -24,14 +24,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
              continue userActivity: NSUserActivity,
-                restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+                restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         Branch.getInstance().continue(userActivity)
         return true
     }
 
     func application(_ application: UIApplication,
                           open url: URL,
-                           options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+                           options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         Branch.getInstance().application(application, open: url, options: options)
         return true
     }

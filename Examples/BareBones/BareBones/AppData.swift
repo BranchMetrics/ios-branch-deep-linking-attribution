@@ -36,13 +36,13 @@ class AppData {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(updateAppOpen(notification:)),
-            name: NSNotification.Name.UIApplicationWillEnterForeground,
+            name: UIApplication.willEnterForegroundNotification,
             object: nil
         )
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(updateAppOpen(notification:)),
-            name: NSNotification.Name.UIApplicationDidFinishLaunching,
+            name: UIApplication.didFinishLaunchingNotification,
             object: nil
         )
         // http://www.fortunecookiemessage.com/archive.php
