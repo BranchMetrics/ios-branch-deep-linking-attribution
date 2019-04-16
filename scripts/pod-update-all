@@ -32,5 +32,4 @@ function updatePodsInDirectory() {
 gem install cocoapods
 gem install bundler
 updatePodsInDirectory Branch-TestBed-Swift
-updatePodsInDirectory Branch-TestBed-Xcode-7
 updatePodsInDirectory Examples/WebViewExample  bundler

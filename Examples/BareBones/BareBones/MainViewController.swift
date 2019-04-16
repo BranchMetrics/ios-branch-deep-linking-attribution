@@ -73,7 +73,7 @@ class MainViewController: UIViewController {
         return enableShakes ? true : false
     }
 
-    override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if motion == .motionShake && enableShakes {
             self.startMysticConjuring()
         }
@@ -144,7 +144,7 @@ class MainViewController: UIViewController {
         animation.toValue = 0.25
         animation.repeatCount = 2.5
         animation.isRemovedOnCompletion = false
-        animation.fillMode = kCAFillModeForwards;
+        animation.fillMode = CAMediaTimingFillMode.forwards;
         animation.autoreverses = true
         self.messageLabel.layer.add(animation, forKey: "opacity")
 
@@ -153,7 +153,7 @@ class MainViewController: UIViewController {
         animation.toValue = 1.35
         animation.repeatCount = 2.5
         animation.isRemovedOnCompletion = false
-        animation.fillMode = kCAFillModeForwards;
+        animation.fillMode = CAMediaTimingFillMode.forwards;
         animation.autoreverses = true
         self.messageLabel.layer.add(animation, forKey: "transform.scale.x")
 
@@ -170,7 +170,7 @@ class MainViewController: UIViewController {
         animation.toValue = 0.00
         animation.duration = 1.00
         animation.isRemovedOnCompletion = false
-        animation.fillMode = kCAFillModeForwards;
+        animation.fillMode = CAMediaTimingFillMode.forwards;
         self.messageLabel.layer.add(animation, forKey: "opacity")
 
         animation = CABasicAnimation(keyPath: "transform.scale.x")
@@ -178,7 +178,7 @@ class MainViewController: UIViewController {
         animation.toValue = 0.0
         animation.duration = 1.00
         animation.isRemovedOnCompletion = false
-        animation.fillMode = kCAFillModeForwards;
+        animation.fillMode = CAMediaTimingFillMode.forwards;
         self.messageLabel.layer.add(animation, forKey: "transform.scale.x")
 
         CATransaction.commit()
