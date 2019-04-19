@@ -609,14 +609,9 @@ exit:
 
     if (Branch.trackingDisabled) {
         NSString *endpoint = request.URL.absoluteString;
-        BNCPreferenceHelper *prefs = [BNCPreferenceHelper preferenceHelper];
-        if (([endpoint bnc_containsString:@"/v1/install"] ||
-             [endpoint bnc_containsString:@"/v1/open"]) &&
-             ((prefs.linkClickIdentifier.length > 0 ) ||
-              (prefs.spotlightIdentifier.length > 0 ) ||
-              (prefs.universalLinkUrl.length > 0))) {
-            // Allow this network operation since it's an open/install to resolve a link.
-        } else {
+        
+        // if endpoint is not on the whitelist, fail it.
+        if (![self whiteListContainsEndpoint:endpoint]) {
             [[BNCPreferenceHelper preferenceHelper] clearTrackingInformation];
             NSError *error = [NSError branchErrorWithCode:BNCTrackingDisabledError];
             BNCLogError(@"Network service error: %@.", error);
@@ -626,6 +621,7 @@ exit:
             return;
         }
     }
+    
     id<BNCNetworkOperationProtocol> operation =
         [self.networkService networkOperationWithURLRequest:request.copy completion:completionHandler];
     [operation start];
@@ -637,6 +633,28 @@ exit:
         }
         return;
     }
+}
+
+- (BOOL)whiteListContainsEndpoint:(NSString *)endpoint {
+    BNCPreferenceHelper *prefs = [BNCPreferenceHelper preferenceHelper];
+    BOOL hasIdentifier = (prefs.linkClickIdentifier.length > 0 ) || (prefs.spotlightIdentifier.length > 0 ) || (prefs.universalLinkUrl.length > 0);
+    
+    // Allow install to resolve a link.
+    if ([endpoint bnc_containsString:@"/v1/install"] && hasIdentifier) {
+        return YES;
+    }
+    
+    // Allow open to resolve a link.
+    if ([endpoint bnc_containsString:@"/v1/open"] && hasIdentifier) {
+        return YES;
+    }
+    
+    // Allow short url creation requests
+    if ([endpoint bnc_containsString:@"/v1/url"]) {
+        return YES;
+    }
+    
+    return NO;
 }
 
 - (NSError*) verifyNetworkOperation:(id<BNCNetworkOperationProtocol>)operation {
