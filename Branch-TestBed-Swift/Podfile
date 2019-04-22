@@ -1,16 +1,16 @@
-platform :ios, '9.0'
+platform :ios, '10.0'
 
 target "TestBed-Swift" do
-  pod 'Adjust', '~> 4.11.4'
+  pod 'Adjust'
   pod 'Mixpanel'
-  pod 'Amplitude-iOS', '~> 3.14.1'
+  pod 'Amplitude-iOS'
   pod 'AppsFlyerFramework'
   pod 'Tune'
   pod 'GoogleAnalytics'
   pod 'Appboy-iOS-SDK'
-  pod 'YandexMobileMetrica/Dynamic', '2.9.1'
-  pod 'Localytics', '~> 4.4'
-  pod 'mParticle-Apple-SDK', '~> 6'
+  pod 'YandexMobileMetrica/Dynamic'
+  pod 'Localytics'
+  pod 'mParticle-Apple-SDK'
   pod 'Fabric'
   pod 'Crashlytics'
 end
