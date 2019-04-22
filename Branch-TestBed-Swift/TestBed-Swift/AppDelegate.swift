@@ -469,8 +469,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
         IntegratedSDKsData.setActiveAppMetricaAPIKey(key)
         IntegratedSDKsData.setActiveAppMetricaEnabled(true)
         
-        YMMYandexMetrica.activate(withApiKey: key)
-        YMMYandexMetrica.setLoggingEnabled(true)
+        if let config = YMMYandexMetricaConfiguration.init(apiKey: key) {
+            config.logs = true
+            YMMYandexMetrica.activate(with: config)
+        }
     }
     
     func activateClearTap() {
@@ -569,7 +571,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
         IntegratedSDKsData.setActivemParticleAppSecret(secret)
         IntegratedSDKsData.setActivemParticleEnabled(true)
         
-        MParticle.sharedInstance().start(withKey: key, secret:secret)
+        MParticle.sharedInstance().start(with: MParticleOptions.init(key: key, secret: secret))
     }
     
     func activateSegment() {
