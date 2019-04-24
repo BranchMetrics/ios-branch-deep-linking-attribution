@@ -1,5 +1,10 @@
 Branch iOS SDK Change Log
 
+- v0.27.0
+* _*Master Relesae*_ - April 24, 2019
+  * SDK-270 Allow short link creation while privacy is eanbled
+  * Fix swift example and cleanup release scripts
+
 - v0.26.0
 * _*Master Release*_ - March 26, 2019
   * SDK-175, SDK-176 new standard events for FB and TUNE
