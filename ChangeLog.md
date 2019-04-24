@@ -1,8 +1,8 @@
 Branch iOS SDK Change Log
 
 - v0.27.0
-* _*Master Relesae*_ - April 24, 2019
-  * SDK-270 Allow short link creation while privacy is eanbled
+* _*Master Release*_ - April 24, 2019
+  * SDK-270 Allow short link creation while privacy is enabled
   * Fix swift example and cleanup release scripts
 
 - v0.26.0
