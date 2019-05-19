@@ -167,6 +167,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
         
         // protect against non-string keys
         if (![key isKindOfClass:[NSString class]]) {
+            BNCLogError(@"Unexpected key type %@. Skipping key.", [key class]);
             continue;
         }
         
