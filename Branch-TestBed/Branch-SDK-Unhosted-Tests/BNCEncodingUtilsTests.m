@@ -35,8 +35,9 @@
     XCTAssertNil(result);
 }
 
-// INTENG-6187 rare bad access crash
+// INTENG-6187 bad access crash
 - (void)testEncodeDictionaryToJsonStringCrashTest {
+    NSString *expectedString = @"{\"World\":\"Hello\"}";
     
     // untyped collection
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
@@ -45,7 +46,7 @@
     
     // encodeDictionaryToJsonString should ignore non-string keys
     NSString *result = [BNCEncodingUtils encodeDictionaryToJsonString:params];
-    XCTAssertNotNil(result);
+    XCTAssertTrue([expectedString isEqualToString:result]);
 }
 
 @end
