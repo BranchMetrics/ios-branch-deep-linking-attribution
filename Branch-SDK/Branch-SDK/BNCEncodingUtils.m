@@ -164,6 +164,13 @@ NSString* BNCWireFormatFromString(NSString *string) {
 + (NSString *)encodeDictionaryToJsonString:(NSDictionary *)dictionary {
     NSMutableString *encodedDictionary = [[NSMutableString alloc] initWithString:@"{"];
     for (NSString *key in dictionary) {
+        
+        // protect against non-string keys
+        if (![key isKindOfClass:[NSString class]]) {
+            BNCLogError(@"Unexpected key type %@. Skipping key.", [key class]);
+            continue;
+        }
+        
         NSString *value = nil;
         BOOL string = YES;
         
