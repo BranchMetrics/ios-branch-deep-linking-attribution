@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.27.1
+* _*Master Release*_ - June 04, 2019
+  * INTENG-6187 Fix potential crash due to unexpected key type
+
 - v0.27.0
 * _*Master Release*_ - April 24, 2019
   * SDK-270 Allow short link creation while privacy is enabled
