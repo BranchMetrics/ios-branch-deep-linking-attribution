@@ -1,7 +1,7 @@
 Branch iOS SDK Change Log
 
 - v0.27.1
-* _*Master Release*_ - June 04, 2019
+* _*Master Release*_ - June 03, 2019
   * INTENG-6187 Fix potential crash due to unexpected key type
 
 - v0.27.0
