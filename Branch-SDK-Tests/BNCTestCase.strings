@@ -139,6 +139,7 @@ Instance 0x132585f70 is of class 'DumpClass' of class 'NSObject':
         \"Custom_Event_Property_Key1\": \"Custom_Event_Property_val1\",
         \"Custom_Event_Property_Key2\": \"Custom_Event_Property_val2\"
     },
+    \"customer_event_alias\": \"event alias\",
     \"event_data\": {
         \"affiliation\": \"test_affiliation\",
         \"coupon\": \"test_coupon\",

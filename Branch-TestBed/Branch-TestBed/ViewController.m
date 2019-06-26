@@ -582,6 +582,7 @@ static NSString *type = @"some type";
         @"Custom_Event_Property_Key2": @"Custom_Event_Property_val2"
     };
     event.contentItems = (id) @[ buo ];
+    event.alias = @"event alias";
     
     [event logEvent];
 }

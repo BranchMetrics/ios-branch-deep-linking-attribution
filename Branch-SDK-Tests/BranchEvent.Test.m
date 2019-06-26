@@ -99,6 +99,7 @@
     // Set up the event properties --
 
     BranchEvent *event    = [BranchEvent standardEvent:BranchStandardEventPurchase];
+    event.alias           = @"event alias";
     event.transactionID   = @"12344555";
     event.currency        = BNCCurrencyUSD;
     event.revenue         = [NSDecimalNumber decimalNumberWithString:@"1.5"];
@@ -178,6 +179,7 @@
     expectedRequest[@"user_data"] = [[BNCDeviceInfo getInstance] v2dictionary];
     expectedRequest[@"event_data"] = nil;
     expectedRequest[@"custom_data"] = nil;
+    expectedRequest[@"customer_event_alias"] = nil;
 
     Branch *branch = [Branch getInstance:@"key_live_foo"];
     XCTestExpectation *expectation = [self expectationWithDescription:@"v2-event-user-action"];
