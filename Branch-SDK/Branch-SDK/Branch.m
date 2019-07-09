@@ -11,7 +11,6 @@
 #import "BNCCrashlyticsWrapper.h"
 #import "BNCDeepLinkViewControllerInstance.h"
 #import "BNCEncodingUtils.h"
-#import "BNCFabricAnswers.h"
 #import "BNCLinkData.h"
 #import "BNCNetworkService.h"
 #import "BNCPreferenceHelper.h"
@@ -39,7 +38,6 @@
 #import "NSString+Branch.h"
 #import "Branch+Validator.h"
 #import "BNCSpotlightService.h"
-#import "../Fabric/FABKitProtocol.h" // Fabric
 #import "BNCApplication.h"
 #import "BNCURLBlackList.h"
 #import <stdatomic.h>
@@ -121,7 +119,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
     BNCInitStatusInitialized
 };
 
-@interface Branch() <BranchDeepLinkingControllerCompletionDelegate, FABKit> {
+@interface Branch() <BranchDeepLinkingControllerCompletionDelegate> {
     NSInteger _networkCount;
     BNCURLBlackList *_userURLBlackList;
 }
@@ -413,17 +411,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 + (NSString*) branchKey {
     @synchronized (self) {
         if (bnc_branchKey) return bnc_branchKey;
-
-        // The name of this key was specified in the Fabric account-creation API integration
-        NSString * const BNC_BRANCH_FABRIC_APP_KEY_KEY = @"branch_key";
-
-        NSDictionary *branchDictionary =
-            [[[NSBundle mainBundle] infoDictionary] objectForKey:BNC_BRANCH_FABRIC_APP_KEY_KEY];
-
-        if (!branchDictionary) {
-            branchDictionary = [BNCFabricAnswers branchConfigurationDictionary];
-        }
-
+        
+        NSDictionary *branchDictionary = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"branch_key"];
         NSString *branchKey = nil;
         if ([branchDictionary isKindOfClass:[NSString class]]) {
             branchKey = (NSString*) branchDictionary;
@@ -2490,16 +2479,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
 
     }];
-}
-
-#pragma mark - FABKit methods
-
-+ (NSString *)bundleIdentifier {
-    return @"io.branch.sdk.ios";
-}
-
-+ (NSString *)kitDisplayVersion {
-	return BNC_SDK_VERSION;
 }
 
 #pragma mark - Crashlytics reporting enhancements
