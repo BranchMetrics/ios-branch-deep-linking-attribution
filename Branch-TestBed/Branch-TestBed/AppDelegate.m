@@ -48,9 +48,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Check for Apple Search Ad attribution (trade-off: slows down app startup):
     // [branch delayInitToCheckForSearchAds];
     
-    // Turn this on to debug Apple Search Ads.  Should not be included for production.
-    // [branch setAppleSearchAdsDebugMode];
-    
     // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
     // [self onboardUserOnInstall];
 

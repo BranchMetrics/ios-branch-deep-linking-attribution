@@ -142,7 +142,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (assign, nonatomic) BOOL accountForFacebookSDK;
 @property (strong, nonatomic) id FBSDKAppLinkUtility;
 @property (assign, nonatomic) BOOL delayForAppleAds;
-@property (assign, nonatomic) BOOL searchAdsDebugMode;
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
 @property (strong, nonatomic) BNCURLBlackList *URLBlackList;
 @end
@@ -939,10 +938,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     self.delayForAppleAds = YES;
 }
 
-- (void)setAppleSearchAdsDebugMode {
-    self.searchAdsDebugMode = YES;
-}
-
 - (BOOL)checkAppleSearchAdsAttribution {
     if (!self.delayForAppleAds)
         return NO;
@@ -989,29 +984,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             if (attrDetails.count > 0 && !error) {
                 [self.preferenceHelper addInstrumentationDictionaryKey:@"apple_search_ad"
                     value:[[NSNumber numberWithInteger:elapsedSeconds*1000] stringValue]];
-            }
-            if (self.searchAdsDebugMode) {
-                // If searchAdsDebugMode is on then force the result to a set value for testing.
-                NSTimeInterval const kOneHour = (60.0*60.0*1.0); // Round down to one day for testing.
-                NSTimeInterval t = trunc([[NSDate date] timeIntervalSince1970] / kOneHour) * kOneHour;
-                NSDate *date = [NSDate dateWithTimeIntervalSince1970:t];
-                attrDetails = @{
-                    @"Version3.1": @{
-                        @"iad-adgroup-id":      @1234567890,
-                        @"iad-adgroup-name":    @"AdGroupName",
-                        @"iad-attribution":     (id)kCFBooleanTrue,
-                        @"iad-campaign-id":     @1234567890,
-                        @"iad-campaign-name":   @"CampaignName",
-                        @"iad-click-date":      date,
-                        @"iad-conversion-date": date,
-                        @"iad-creative-id":     @1234567890,
-                        @"iad-creative-name":   @"CreativeName",
-                        @"iad-keyword":         @"Keyword",
-                        @"iad-lineitem-id":     @1234567890,
-                        @"iad-lineitem-name":   @"LineName",
-                        @"iad-org-name":        @"OrgName"
-                    }
-                };
             }
             if (!error) {
                 if (attrDetails == nil)
