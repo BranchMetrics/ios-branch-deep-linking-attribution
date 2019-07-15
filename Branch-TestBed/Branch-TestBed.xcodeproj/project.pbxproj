@@ -169,6 +169,9 @@
 		5F67F48E228F535500067429 /* BNCEncodingUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */; };
 		5F8B7B4021B5F5CD009CE0A6 /* libBranch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 466B58381B17773000A69EDE /* libBranch.a */; };
 		5F8B7B4721B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */; };
+		5FC7326822D81002006E6FBC /* BNCAppleReceipt.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FC7326622D81002006E6FBC /* BNCAppleReceipt.h */; };
+		5FC7326922D81002006E6FBC /* BNCAppleReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC7326722D81002006E6FBC /* BNCAppleReceipt.m */; };
+		5FC7327022DD1F93006E6FBC /* BNCAppleReceiptTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */; };
 		63E4C4881D25E16A00A45FD8 /* LogOutputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4C4871D25E16A00A45FD8 /* LogOutputViewController.m */; };
 		63E4C48B1D25E17B00A45FD8 /* NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63E4C48A1D25E17B00A45FD8 /* NavigationController.m */; };
 		63E4C4901D25E1BC00A45FD8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63E4C48F1D25E1BC00A45FD8 /* LaunchScreen.storyboard */; };
@@ -393,6 +396,9 @@
 		5F8B7B3B21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK-Unhosted-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F8B7B3F21B5F5CD009CE0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_setBranchKeyTests.m; sourceTree = "<group>"; };
+		5FC7326622D81002006E6FBC /* BNCAppleReceipt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCAppleReceipt.h; sourceTree = "<group>"; };
+		5FC7326722D81002006E6FBC /* BNCAppleReceipt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCAppleReceipt.m; sourceTree = "<group>"; };
+		5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCAppleReceiptTests.m; sourceTree = "<group>"; };
 		63E4C4861D25E16A00A45FD8 /* LogOutputViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogOutputViewController.h; sourceTree = "<group>"; };
 		63E4C4871D25E16A00A45FD8 /* LogOutputViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LogOutputViewController.m; sourceTree = "<group>"; };
 		63E4C4891D25E17B00A45FD8 /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationController.h; sourceTree = "<group>"; };
@@ -590,6 +596,7 @@
 		4D16837A2098C901008819E3 /* Branch-SDK-Tests */ = {
 			isa = PBXGroup;
 			children = (
+				5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */,
 				4D1683972098C901008819E3 /* BNCApplication.Test.m */,
 				4D7881FB209CF2D4002B750F /* BNCApplication+BNCTest.h */,
 				4D7881FC209CF2D4002B750F /* BNCApplication+BNCTest.m */,
@@ -740,6 +747,8 @@
 		670016BB1946309100A9E103 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
+				5FC7326622D81002006E6FBC /* BNCAppleReceipt.h */,
+				5FC7326722D81002006E6FBC /* BNCAppleReceipt.m */,
 				4D59B51B2006979B00F89FD5 /* BNCApplication.h */,
 				4D59B51C2006979B00F89FD5 /* BNCApplication.m */,
 				4D8999EA1DC108FF00F7EE0A /* BNCAvailability.h */,
@@ -887,6 +896,7 @@
 				4DCAC8181F426F7C00405D1D /* BranchLinkProperties.h in Headers */,
 				4DCAC81A1F426F7C00405D1D /* BranchUniversalObject.h in Headers */,
 				4DCAC8191F426F7C00405D1D /* BranchShareLink.h in Headers */,
+				5FC7326822D81002006E6FBC /* BNCAppleReceipt.h in Headers */,
 				4D41123D1FE8976400C44FA5 /* BranchView.h in Headers */,
 				4DE6491A1FE1D7F500226507 /* BNCFieldDefines.h in Headers */,
 				4DCAC81C1F426F7C00405D1D /* BranchViewHandler.h in Headers */,
@@ -1150,6 +1160,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FC7326922D81002006E6FBC /* BNCAppleReceipt.m in Sources */,
 				7D58823A1CA1DF2700FF6358 /* BNCDeviceInfo.m in Sources */,
 				7B18DF4A1F1F00E200C25C84 /* BNCCrashlyticsWrapper.m in Sources */,
 				7D0C971D1D875465004E14B1 /* BranchContentDiscoveryManifest.m in Sources */,
@@ -1266,6 +1277,7 @@
 				4D7881FF209CF2D4002B750F /* BNCApplication+BNCTest.m in Sources */,
 				4D1683C02098C902008819E3 /* BranchUniversalObject.Test.m in Sources */,
 				4D1683B52098C902008819E3 /* BNCLocalization.Test.m in Sources */,
+				5FC7327022DD1F93006E6FBC /* BNCAppleReceiptTests.m in Sources */,
 				4D1683C82098C902008819E3 /* NSString+Branch.Test.m in Sources */,
 				4D1683C22098C902008819E3 /* BranchUserCompletedActionTests.m in Sources */,
 				4D1683AA2098C902008819E3 /* BranchOpenRequestTests.m in Sources */,

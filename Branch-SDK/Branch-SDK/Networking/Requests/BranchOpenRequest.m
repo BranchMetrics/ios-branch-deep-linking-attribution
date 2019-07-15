@@ -18,6 +18,7 @@
 #import "BNCDeviceInfo.h"
 #import "Branch.h"
 #import "BNCApplication.h"
+#import "BNCAppleReceipt.h"
 
 @interface BranchOpenRequest ()
 @property (assign, nonatomic) BOOL isInstall;
@@ -65,6 +66,8 @@
     if (preferenceHelper.limitFacebookTracking)
         params[@"limit_facebook_tracking"] = (__bridge NSNumber*) kCFBooleanTrue;
 
+    [self safeSetValue:[[BNCAppleReceipt instance] installReceipt] forKey:BRANCH_REQUEST_KEY_APPLE_RECEIPT onDict:params];
+    
     NSMutableDictionary *cdDict = [[NSMutableDictionary alloc] init];
     BranchContentDiscoveryManifest *contentDiscoveryManifest = [BranchContentDiscoveryManifest getInstance];
     [cdDict bnc_safeSetObject:[contentDiscoveryManifest getManifestVersion] forKey:BRANCH_MANIFEST_VERSION_KEY];
