@@ -10,6 +10,7 @@
 
 @interface BNCAppleReceipt()
 @property (nonatomic, strong, readwrite) NSString *receipt;
+@property (nonatomic, assign, readwrite) BOOL isSandboxReceipt;
 @end
 
 @implementation BNCAppleReceipt
@@ -23,17 +24,32 @@
     return singleton;
 }
 
-- (nullable NSString *)installReceipt {
-    if (!self.receipt) {
-        self.receipt = [self readReceipt];
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        [self readReceipt];
     }
+    return self;
+}
+
+- (void)readReceipt {
+    NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
+    
+    if (receiptURL) {
+        self.isSandboxReceipt = [receiptURL.lastPathComponent isEqualToString:@"sandboxReceipt"];
+    }
+    
+    NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
+    self.receipt = [receiptData base64EncodedStringWithOptions:NSUTF8StringEncoding];
+}
+
+- (nullable NSString *)installReceipt {
     return self.receipt;
 }
 
-- (nullable NSString *)readReceipt {
-    NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
-    NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
-    return [receiptData base64EncodedStringWithOptions:NSUTF8StringEncoding];
+- (BOOL)isTestFlight {
+    // sandbox receipts are from testflight
+    return self.isSandboxReceipt;
 }
 
 @end

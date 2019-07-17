@@ -61,6 +61,7 @@ NSString * const BRANCH_REQUEST_KEY_IS_SIMULATOR = @"is_simulator";
 NSString * const BRANCH_REQUEST_KEY_LOG = @"log";
 NSString * const BRANCH_REQUEST_KEY_INSTRUMENTATION = @"instrumentation";
 NSString * const BRANCH_REQUEST_KEY_APPLE_RECEIPT = @"apple_receipt";
+NSString * const BRANCH_REQUEST_KEY_APPLE_TESTFLIGHT = @"testflight";
 
 NSString * const BRANCH_REQUEST_ENDPOINT_SET_IDENTITY = @"profile";
 NSString * const BRANCH_REQUEST_ENDPOINT_APP_LINK_SETTINGS = @"app-link-settings";
