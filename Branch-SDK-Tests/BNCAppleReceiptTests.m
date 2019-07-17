@@ -26,6 +26,7 @@
 - (void)testReceiptIsNil {
     BNCAppleReceipt *receipt = [BNCAppleReceipt new];
     XCTAssertNil([receipt installReceipt]);
+    XCTAssertFalse([receipt isTestFlight]);
 }
 
 @end
