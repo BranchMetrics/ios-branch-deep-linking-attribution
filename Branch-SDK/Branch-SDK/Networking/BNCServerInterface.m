@@ -481,9 +481,18 @@ exit:
     [self postRequest:post url:url retryNumber:0 key:key callback:callback];
 }
 
-- (BOOL) isV2APIURL:(NSString*)urlstring {
-    NSRange range = [urlstring rangeOfString:@"branch.io/v2/"];
-    return (range.location != NSNotFound);
+- (BOOL)isV2APIURL:(NSString *)urlstring {
+    return [self isV2APIURL:urlstring baseURL:[self.preferenceHelper branchAPIURL]];
+}
+
+- (BOOL)isV2APIURL:(NSString *)urlstring baseURL:(NSString *)baseURL {
+    BOOL found = NO;
+    if (urlstring && baseURL) {
+        NSString *matchString = [NSString stringWithFormat:@"%@/v2/", baseURL];
+        NSRange range = [urlstring rangeOfString:matchString];
+        found = (range.location != NSNotFound);
+    }
+    return found;
 }
 
 - (void)postRequest:(NSDictionary *)post
