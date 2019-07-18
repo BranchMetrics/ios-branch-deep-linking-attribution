@@ -9,7 +9,7 @@
 #import "BNCAppleReceipt.h"
 
 @interface BNCAppleReceipt()
-@property (nonatomic, strong, readwrite) NSString *receipt;
+@property (nonatomic, copy, readwrite) NSString *receipt;
 @property (nonatomic, assign, readwrite) BOOL isSandboxReceipt;
 @end
 
@@ -24,26 +24,23 @@
     return singleton;
 }
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        [self readReceipt];
-    }
-    return self;
-}
-
 - (void)readReceipt {
     NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
-    
     if (receiptURL) {
         self.isSandboxReceipt = [receiptURL.lastPathComponent isEqualToString:@"sandboxReceipt"];
     }
     
     NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
-    self.receipt = [receiptData base64EncodedStringWithOptions:NSUTF8StringEncoding];
+    if (receiptData) {
+        self.receipt = [receiptData base64EncodedStringWithOptions:0];
+    }
 }
 
 - (nullable NSString *)installReceipt {
+    if (!self.receipt) {
+        [self readReceipt];
+    }
+    
     return self.receipt;
 }
 
