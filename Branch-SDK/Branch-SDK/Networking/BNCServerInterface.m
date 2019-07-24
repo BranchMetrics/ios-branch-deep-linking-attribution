@@ -562,12 +562,14 @@ exit:
                 dispatch_time_t dispatchTime =
                     dispatch_time(DISPATCH_TIME_NOW, self.preferenceHelper.retryInterval * NSEC_PER_SEC);
                 dispatch_after(dispatchTime, dispatch_get_main_queue(), ^{
-                    BNCLogDebug(@"Retrying request with url %@", request.URL.relativePath);
-                    // Create the next request
-                    NSURLRequest *retryRequest = retryHandler(retryNumber);
-                    [self genericHTTPRequest:retryRequest
-                                 retryNumber:(retryNumber + 1)
-                                    callback:callback retryHandler:retryHandler];
+                    if (retryHandler) {
+                        BNCLogDebug(@"Retrying request with url %@", request.URL.relativePath);
+                        // Create the next request
+                        NSURLRequest *retryRequest = retryHandler(retryNumber);
+                        [self genericHTTPRequest:retryRequest
+                                     retryNumber:(retryNumber + 1)
+                                        callback:callback retryHandler:retryHandler];
+                    }
                 });
                 
                 // Do not continue on if retrying, else the callback will be called incorrectly
