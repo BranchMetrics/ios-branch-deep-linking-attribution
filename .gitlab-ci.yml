@@ -7,12 +7,14 @@ buildUnit:
   tags:
   - mac_mini
   script:
+  - cd Branch-TestBed && pod update
   - cd Branch-TestBed && pod install --verbose
-  - xcodebuild test -workspace Branch-TestBed/Branch-TestBed.xcworkspace -scheme Branch-SDK-Unhosted-Tests -destination 'platform=iOS Simulator,name=iPhone X,OS=12.2'
+  - xcodebuild test -workspace ./Branch-TestBed/Branch-TestBed.xcworkspace -scheme Branch-SDK-Unhosted-Tests -destination 'platform=iOS Simulator,name=iPhone X,OS=12.2'
 buildUnit2:
   stage: integration
   tags:
   - mac_mini
   script:
+  - cd Branch-TestBed && pod update
   - cd Branch-TestBed && pod install --verbose
-  - xcodebuild test -workspace Branch-TestBed/Branch-TestBed.xcworkspace -scheme Branch-SDK-Tests -destination 'platform=iOS Simulator,name=iPhone X,OS=12.2'
+  - xcodebuild test -workspace ./Branch-TestBed/Branch-TestBed.xcworkspace -scheme Branch-SDK-Tests -destination 'platform=iOS Simulator,name=iPhone X,OS=12.2'
