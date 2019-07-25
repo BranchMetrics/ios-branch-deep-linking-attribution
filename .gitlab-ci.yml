@@ -1,0 +1,16 @@
+stages:
+- unit
+- integration
+
+buildUnit:
+  stage: unit
+  tags:
+  - mac_mini
+  script:
+  - xcodebuild test -workspace Branch-TestBed/Branch-TestBed.xcworkspace -scheme Branch-SDK-Unhosted-Tests -destination 'platform=iOS Simulator,name=iPhone X,OS=12.2'
+buildUnit2:
+  stage: integration
+  tags:
+  - mac_mini
+  script:
+  - xcodebuild test -workspace Branch-TestBed/Branch-TestBed.xcworkspace -scheme Branch-SDK-Tests -destination 'platform=iOS Simulator,name=iPhone X,OS=12.2'
