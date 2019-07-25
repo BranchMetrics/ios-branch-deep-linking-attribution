@@ -8,7 +8,10 @@ buildUnit:
   - mac_mini
   script:
   - cd Branch-TestBed && pod update
+  - ls
   - cd Branch-TestBed && pod install --verbose
+  - ls
+  - pwd
   - xcodebuild test -workspace ./Branch-TestBed/Branch-TestBed.xcworkspace -scheme Branch-SDK-Unhosted-Tests -destination 'platform=iOS Simulator,name=iPhone X,OS=12.2'
 buildUnit2:
   stage: integration
