@@ -23,7 +23,7 @@
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
-- (void) testSanitzeString {
+- (void) testSanitizeString {
     NSString*test  = @"\b\f\n\r\t\"`\\";
     NSString*truth = @"\\b\\f\\n\\r\\t\\\"'\\\\";
     NSString*result = [BNCEncodingUtils sanitizedStringFromString:test];
