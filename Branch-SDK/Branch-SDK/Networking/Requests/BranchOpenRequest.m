@@ -14,7 +14,6 @@
 #import "NSMutableDictionary+Branch.h"
 #import "BNCEncodingUtils.h"
 #import "BNCCrashlyticsWrapper.h"
-#import "BNCFabricAnswers.h"
 #import "BNCDeviceInfo.h"
 #import "Branch.h"
 #import "BNCApplication.h"
@@ -222,12 +221,6 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
 
         if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {
             preferenceHelper.installParams = sessionData;
-        }
-
-        if (dataIsFromALinkClick) {
-            NSString * eventName =
-                [@"Branch " stringByAppendingString:[[self getActionName] capitalizedString]];
-            [BNCFabricAnswers sendEventWithName:eventName andAttributes:sessionDataDict];
         }
     }
 

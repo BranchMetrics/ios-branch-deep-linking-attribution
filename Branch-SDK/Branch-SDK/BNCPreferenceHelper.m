@@ -11,7 +11,6 @@
 #import "BNCConfig.h"
 #import "Branch.h"
 #import "BNCLog.h"
-#import "BNCFabricAnswers.h"
 #import "BranchConstants.h"
 #import "NSString+Branch.h"
 
