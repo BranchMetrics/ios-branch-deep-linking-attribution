@@ -628,14 +628,6 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)delayInitToCheckForSearchAds;
 
 /**
- Set the SDK into Apple Search Ad debug mode where it passes fake campaign params back 100%
-
- @warning This should not be used in production.
- */
-- (void)setAppleSearchAdsDebugMode;
-
-
-/**
  Specify the time to wait in seconds between retries in the case of a Branch server error
 
  @param retryInterval Number of seconds to wait between retries.
