@@ -19,9 +19,17 @@
     static BNCAppleReceipt *singleton;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        singleton = [BNCAppleReceipt new];
+        singleton = [[BNCAppleReceipt alloc] init];
     });
     return singleton;
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        [self readReceipt];
+    }
+    return self;
 }
 
 - (void)readReceipt {
@@ -37,10 +45,6 @@
 }
 
 - (nullable NSString *)installReceipt {
-    if (!self.receipt) {
-        [self readReceipt];
-    }
-    
     return self.receipt;
 }
 
