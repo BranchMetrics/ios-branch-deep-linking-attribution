@@ -65,7 +65,6 @@
     if (preferenceHelper.limitFacebookTracking)
         params[@"limit_facebook_tracking"] = (__bridge NSNumber*) kCFBooleanTrue;
 
-    [self safeSetValue:[[BNCAppleReceipt instance] installReceipt] forKey:BRANCH_REQUEST_KEY_APPLE_RECEIPT onDict:params];
     [self safeSetValue:[NSNumber numberWithBool:[[BNCAppleReceipt instance] isTestFlight]] forKey:BRANCH_REQUEST_KEY_APPLE_TESTFLIGHT onDict:params];
     
     NSMutableDictionary *cdDict = [[NSMutableDictionary alloc] init];
