@@ -88,7 +88,8 @@
         @"link_identifier":             @"foo-link-id",
         @"first_install_time":          BNCWireFormatFromDate(appDate),
         @"uri_scheme":                  @"foo-uri-scheme",
-        @"update":                      @0
+        @"update":                      @0,
+        @"apple_testflight":            @0
     }];
     if (!self.class.isApplication) expectedParams[@"ios_team_id"] = nil;
 
