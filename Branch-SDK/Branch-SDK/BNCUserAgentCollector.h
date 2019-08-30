@@ -12,8 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BNCUserAgentCollector : NSObject
 
-+ (BNCUserAgentCollector *)instance;
-
 - (void)collectUserAgentWithCompletion:(void (^)(NSString * _Nullable useragent))completion;
 
 @end
