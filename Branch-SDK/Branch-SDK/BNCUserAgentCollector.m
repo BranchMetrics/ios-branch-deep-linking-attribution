@@ -16,17 +16,27 @@
 @implementation BNCUserAgentCollector
 
 - (void)collectUserAgentWithCompletion:(void (^)(NSString *useragent))completion {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!self.webview) {
-            self.webview = [[WKWebView alloc] initWithFrame:CGRectZero];
+    
+    // Avoid a deadlock if this method was called on main and callee going to wait
+    if ([NSThread isMainThread]) {
+        [self internalCollectUserAgentWithCompletion:completion];
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self internalCollectUserAgentWithCompletion:completion];
+        });
+    }
+}
+
+- (void)internalCollectUserAgentWithCompletion:(void (^)(NSString * _Nullable))completion {
+    if (!self.webview) {
+        self.webview = [[WKWebView alloc] initWithFrame:CGRectZero];
+    }
+    
+    [self.webview evaluateJavaScript:@"navigator.userAgent;" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
+        if (completion) {
+            completion(response);
         }
-        
-        [self.webview evaluateJavaScript:@"navigator.userAgent;" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
-            if (completion) {
-                completion(response);
-            }
-        }];
-    });
+    }];
 }
 
 @end
