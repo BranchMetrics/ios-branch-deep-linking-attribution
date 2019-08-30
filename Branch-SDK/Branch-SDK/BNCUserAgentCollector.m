@@ -15,15 +15,6 @@
 
 @implementation BNCUserAgentCollector
 
-+ (instancetype)instance {
-    static BNCUserAgentCollector *userAgentCollector;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        userAgentCollector = [[BNCUserAgentCollector alloc] init];
-    });
-    return userAgentCollector;
-}
-
 - (void)collectUserAgentWithCompletion:(void (^)(NSString *useragent))completion {
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!self.webview) {
