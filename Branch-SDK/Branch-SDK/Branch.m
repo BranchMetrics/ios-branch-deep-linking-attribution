@@ -1141,27 +1141,25 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 #pragma mark - User Action methods
 
-
 - (void)userCompletedAction:(NSString *)action {
-    [self userCompletedAction:action withState:nil withDelegate:nil];
+    [self userCompletedAction:action withState:nil];
 }
 
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
-    [self userCompletedAction:action withState:state withDelegate:nil];
-}
-
-- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withDelegate:(id)branchViewCallback {
     if (!action) {
         return;
     }
 
     [self initSessionIfNeededAndNotInProgress];
 
-    BranchUserCompletedActionRequest *req = [[BranchUserCompletedActionRequest alloc] initWithAction:action state:state withBranchViewCallback:branchViewCallback];
+    BranchUserCompletedActionRequest *req = [[BranchUserCompletedActionRequest alloc] initWithAction:action state:state];
     [self.requestQueue enqueue:req];
     [self processNextQueueItem];
 }
 
+- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withDelegate:(id)branchViewCallback {
+    [self userCompletedAction:action withState:state];
+}
 
 - (void) sendServerRequest:(BNCServerRequest*)request {
     [self initSessionIfNeededAndNotInProgress];
