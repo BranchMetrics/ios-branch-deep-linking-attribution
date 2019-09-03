@@ -337,35 +337,7 @@ exit:
 }
 
 + (NSString *)userAgentString {
-    static NSString *webkitUserAgent;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        
-        // check preferences for user agent if we're on the same OS version
-        BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
-        if (preferences.browserUserAgentString && preferences.lastSystemBuildVersion && [preferences.lastSystemBuildVersion isEqualToString:self.systemBuildVersion]) {
-            webkitUserAgent = [preferences.browserUserAgentString copy];
-        
-        } else {
-            // request user agent from webkit
-            dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-            BNCUserAgentCollector *collector = [BNCUserAgentCollector new];
-            [collector collectUserAgentWithCompletion:^(NSString * _Nullable useragent) {
-                webkitUserAgent = useragent;
-                dispatch_semaphore_signal(semaphore);
-            }];
-            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-            
-            // save user agent to preferences
-            if (webkitUserAgent) {
-                BNCPreferenceHelper *preferences = [BNCPreferenceHelper preferenceHelper];
-                preferences.browserUserAgentString = webkitUserAgent;
-                preferences.lastSystemBuildVersion = self.systemBuildVersion;
-                BNCLogDebugSDK(@"userAgentString: '%@'.", webkitUserAgent);
-            }
-        }
-    });
-    return webkitUserAgent;
+    return [BNCUserAgentCollector instance].userAgent;
 }
 
 - (NSDictionary*) v2dictionary {
