@@ -19,6 +19,7 @@
 #import "BNCConfig.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
+#import "BNCUserAgentCollector.h"
 
 
 @interface BNCDeviceInfoTest : BNCTestCase
