@@ -162,9 +162,7 @@ static NSString *type = @"some type";
 
 - (IBAction)sendButtonEventButtonTouchUpInside:(id)sender {
     Branch *branch = [Branch getInstance];
-    [branch userCompletedAction:@"button_press"
-        withState:@{ @"name": @"button1", @"action": @"alert" }
-        withDelegate:self];
+    [branch userCompletedAction:@"button_press" withState:@{ @"name": @"button1", @"action": @"alert" }];
     [self refreshRewardPoints];
     [self showAlert:@"'button_press' event dispatched" withDescription:@""];
 }
@@ -627,18 +625,6 @@ static NSString *type = @"some type";
         [self.branchLinkTextField resignFirstResponder];
     }
     [super touchesBegan:touches withEvent:event];
-}
-
-- (void)branchViewVisible: (NSString *)actionName withID:(NSString *)branchViewID {
-    NSLog(@"Branch TestBed: branchViewVisible for action : %@ %@", actionName, branchViewID);
-}
-
-- (void)branchViewAccepted: (NSString *)actionName withID:(NSString *)branchViewID {
-    NSLog(@"Branch TestBed: branchViewAccepted for action : %@ %@", actionName, branchViewID);
-}
-
-- (void)branchViewCancelled: (NSString *)actionName withID:(NSString *)branchViewID {
-    NSLog(@"Branch TestBed: branchViewCancelled for action : %@ %@", actionName, branchViewID);
 }
 
 - (void)refreshRewardPoints {
