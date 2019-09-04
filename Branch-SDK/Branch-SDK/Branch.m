@@ -40,6 +40,8 @@
 #import "BNCSpotlightService.h"
 #import "BNCApplication.h"
 #import "BNCURLBlackList.h"
+#import "BNCUserAgentCollector.h"
+#import "BNCDeviceInfo.h"
 #import <stdatomic.h>
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -650,7 +652,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             self.asyncRequestCount = 0;
 
             // These methods will increment self.asyncRequestCount if they make an async call:
-
+            
+            // load user agent
+            [self loadUserAgent];
             // If Facebook SDK is present, call deferred app link check here which will later on call initUserSession
             [self checkFacebookAppLinks];
             // If developer opted in, call deferred apple search attribution API here which will later on call initUserSession
@@ -932,6 +936,20 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
 }
 
+- (void)loadUserAgent {
+    self.asyncRequestCount++;
+    [[BNCUserAgentCollector instance] loadUserAgentForSystemBuildVersion:[BNCDeviceInfo systemBuildVersion] withCompletion:^(NSString * _Nullable userAgent) {
+        self.asyncRequestCount--;
+        // If there's another async attribution check in flight, don't continue with init:
+        if (self.asyncRequestCount > 0) return;
+        
+        self.preferenceHelper.shouldWaitForInit = NO;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self initUserSessionAndCallCallback:(self.initializationStatus != BNCInitStatusInitialized)];
+        });
+    }];
+}
+
 #pragma mark - Apple Search Ad Check
 
 - (void)delayInitToCheckForSearchAds {
@@ -1141,27 +1159,25 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 #pragma mark - User Action methods
 
-
 - (void)userCompletedAction:(NSString *)action {
-    [self userCompletedAction:action withState:nil withDelegate:nil];
+    [self userCompletedAction:action withState:nil];
 }
 
 - (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state {
-    [self userCompletedAction:action withState:state withDelegate:nil];
-}
-
-- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withDelegate:(id)branchViewCallback {
     if (!action) {
         return;
     }
 
     [self initSessionIfNeededAndNotInProgress];
 
-    BranchUserCompletedActionRequest *req = [[BranchUserCompletedActionRequest alloc] initWithAction:action state:state withBranchViewCallback:branchViewCallback];
+    BranchUserCompletedActionRequest *req = [[BranchUserCompletedActionRequest alloc] initWithAction:action state:state];
     [self.requestQueue enqueue:req];
     [self processNextQueueItem];
 }
 
+- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withDelegate:(id)branchViewCallback {
+    [self userCompletedAction:action withState:state];
+}
 
 - (void) sendServerRequest:(BNCServerRequest*)request {
     [self initSessionIfNeededAndNotInProgress];
