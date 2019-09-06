@@ -23,24 +23,15 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
     "Branch-SDK/Branch-SDK/*.{h,m}",
     "Branch-SDK/Branch-SDK/Networking/*.{h,m}",
     "Branch-SDK/Branch-SDK/Networking/Requests/*.{h,m}",
-    "Branch-SDK/Fabric/*.h"
   s.default_subspec = 'Core'
 
   s.subspec 'Core' do |core|
     core.source_files = source_files
-    core.private_header_files = "Branch-SDK/Fabric/*.h"
-    core.frameworks = 'AdSupport', 'MobileCoreServices', 'SafariServices'
-  end
-
-  s.subspec 'without-IDFA' do |idfa|
-    idfa.source_files = source_files
-    idfa.private_header_files = "Branch-SDK/Fabric/*.h"
-    idfa.frameworks = 'MobileCoreServices', 'SafariServices'
+    core.frameworks = 'AdSupport', 'MobileCoreServices', 'SafariServices', 'WebKit', 'iAd'
   end
 
   s.subspec 'without-Safari' do |safari|
     safari.source_files = source_files
-    safari.private_header_files = "Branch-SDK/Fabric/*.h"
-    safari.frameworks = 'AdSupport', 'MobileCoreServices'
+    safari.frameworks = 'AdSupport', 'MobileCoreServices', 'WebKit', 'iAd'
   end
 end
