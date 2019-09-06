@@ -1,5 +1,16 @@
 Branch iOS SDK Change Log
 
+- v0.28.0
+* _*Master Release*_ - Sept 06, 2019
+  * SDK-238 Add Standard Event alias
+  * INTENG-7505 Remove UIWebView and replace with WebKit
+  * SDK-495 Cocoapods includes iAd by default
+  * SDK-261 Remove optional Fabric integration
+  * SDK-301 Remove redundant Apple Search Ads Debug
+  * SDK-208 Collect install receipt
+  * SDK-399 Fix for proxies
+  * SDK-415 Fix for network retries
+
 - v0.27.1
 * _*Master Release*_ - June 04, 2019
   * INTENG-6187 Fix potential crash due to unexpected key type
