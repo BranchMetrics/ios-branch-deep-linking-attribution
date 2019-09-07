@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.28.1
+* _*Master Release*_ - Sept 06, 2019
+  * Fix release script merge failure.
+
 - v0.28.0
 * _*Master Release*_ - Sept 06, 2019
   * SDK-238 Add Standard Event alias
