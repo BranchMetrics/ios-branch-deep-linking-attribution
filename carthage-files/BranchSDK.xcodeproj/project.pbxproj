@@ -85,7 +85,7 @@
 		5FB6D3D723219B48006C5094 /* BNCUserAgentCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB6D3D323219B48006C5094 /* BNCUserAgentCollector.h */; };
 		5FB6D3D823219B48006C5094 /* BNCAppleReceipt.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB6D3D423219B48006C5094 /* BNCAppleReceipt.h */; };
 		5FB6D3D923219B48006C5094 /* BNCAppleReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB6D3D523219B48006C5094 /* BNCAppleReceipt.m */; };
-		5FB6D3DD23219C46006C5094 /* BNCThreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB6D3DB23219C46006C5094 /* BNCThreads.h */; };
+		5FB6D3DD23219C46006C5094 /* BNCThreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB6D3DB23219C46006C5094 /* BNCThreads.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FB6D3DE23219C46006C5094 /* BNCThreads.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB6D3DC23219C46006C5094 /* BNCThreads.m */; };
 		7DA3BF1D1D889CE500CA8AE0 /* BranchContentDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3BF171D889CE500CA8AE0 /* BranchContentDiscoverer.m */; };
 		7DA3BF1E1D889CE500CA8AE0 /* BranchContentDiscoverer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7DA3BF181D889CE500CA8AE0 /* BranchContentDiscoverer.h */; };
@@ -436,7 +436,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5FB6D3DD23219C46006C5094 /* BNCThreads.h in Headers */,
 				4D1ED27E1FB3A43A007390A8 /* BNCAvailability.h in Headers */,
 				E2B9477B1D15E31700F2270D /* BNCCallbacks.h in Headers */,
 				4D3922BD1E1F0C85004FB7C8 /* BNCCommerceEvent.h in Headers */,
@@ -462,6 +461,7 @@
 				4D778E1E218253F200308B51 /* BranchCSSearchableItemAttributeSet.h in Headers */,
 				4DAF63BA1F86C26A006316E9 /* BranchDelegate.h in Headers */,
 				4DAB179D1EE8A31B0079EEB4 /* BNCNetworkService.h in Headers */,
+				5FB6D3DD23219C46006C5094 /* BNCThreads.h in Headers */,
 				4DB328061FA10C6300ACF9B0 /* BranchEvent.h in Headers */,
 				E230A1921D03DB9E006181D8 /* BranchUniversalObject.h in Headers */,
 				E230A18F1D03DB9E006181D8 /* BranchLinkProperties.h in Headers */,
