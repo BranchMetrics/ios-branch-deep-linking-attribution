@@ -1353,7 +1353,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)requestLastTouchAttributedDataWithCompletion:(void(^) (NSDictionary *ltad, NSNumber *attributionWindow))completion {
-    
+    [BranchLastAttributedTouchData requestLastTouchAttributedData:self.serverInterface key:self.class.branchKey completion:^(BranchLastAttributedTouchData * _Nonnull latd) {
+        
+    }];
 }
 
 #pragma mark - ShortUrl methods

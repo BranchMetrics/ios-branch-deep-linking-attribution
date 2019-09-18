@@ -1,19 +1,19 @@
 //
-//  BranchCPIDRequest.m
+//  BranchLATDRequest.m
 //  Branch
 //
-//  Created by Ernest Cho on 9/9/19.
+//  Created by Ernest Cho on 9/18/19.
 //  Copyright © 2019 Branch, Inc. All rights reserved.
 //
 
-#import "BranchCPIDRequest.h"
+#import "BranchLATDRequest.h"
 #import "BNCPreferenceHelper.h"
 #import "BranchConstants.h"
 
-@implementation BranchCPIDRequest
+@implementation BranchLATDRequest
 
-- (NSString *)serverURL {    
-    return [[BNCPreferenceHelper preferenceHelper] getAPIURL:BRANCH_REQUEST_ENDPOINT_CPID];
+- (NSString *)serverURL {
+    return [[BNCPreferenceHelper preferenceHelper] getAPIURL:BRANCH_REQUEST_ENDPOINT_LATD];
 }
 
 // all required fields for this request is added by BNCServerInterface

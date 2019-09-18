@@ -35,7 +35,7 @@
 #import "BranchShareLink.h"
 #import "BranchUniversalObject.h"
 #import "BranchCrossPlatformID.h"
-#import "BranchLastTouchAttributionData.h"
+#import "BranchLastAttributedTouchData.h"
 #import "UIViewController+Branch.h"
 
 /**
