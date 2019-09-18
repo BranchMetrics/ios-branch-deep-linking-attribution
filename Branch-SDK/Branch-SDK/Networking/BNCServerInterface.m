@@ -894,7 +894,7 @@ exit:
     [self safeSetValue:deviceInfo.screenWidth forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
     [self safeSetValue:deviceInfo.screenHeight forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
 
-    [self safeSetValue:deviceInfo.browserUserAgent forKey:@"user_agent" onDict:dict];
+    [self safeSetValue:[BNCDeviceInfo userAgentString] forKey:@"user_agent" onDict:dict];
     [self safeSetValue:deviceInfo.country forKey:@"country" onDict:dict];
     [self safeSetValue:deviceInfo.language forKey:@"language" onDict:dict];
     dict[@"local_ip"] = deviceInfo.localIPAddress;
