@@ -34,6 +34,8 @@
 #import "BranchDelegate.h"
 #import "BranchShareLink.h"
 #import "BranchUniversalObject.h"
+#import "BranchCrossPlatformID.h"
+#import "BranchLastTouchAttributionData.h"
 #import "UIViewController+Branch.h"
 
 /**
@@ -945,6 +947,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void) sendCommerceEvent:(BNCCommerceEvent*)commerceEvent
 				  metadata:(NSDictionary<NSString*,id>*)metadata
 			withCompletion:(void (^) (NSDictionary*response, NSError*error))completion __attribute__((deprecated(("Please use BranchEvent to track commerce events."))));
+
+
+#pragma mark - Query methods
+
+- (void)requestCrossPlatformIdDataWithCompletion:(void(^) (BranchCrossPlatformID *cpid))completion;
+
+- (void)requestLastTouchAttributedDataWithCompletion:(void(^) (NSDictionary *ltad, NSNumber *attributionWindow))completion;
 
 #pragma mark - Short Url Sync methods
 
