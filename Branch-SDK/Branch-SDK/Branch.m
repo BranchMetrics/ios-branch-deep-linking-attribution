@@ -1348,14 +1348,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 #pragma mark - Query methods
 
-- (void)requestCrossPlatformIdDataWithCompletion:(void(^) (BranchCrossPlatformID *cpid))completion {
+- (void)requestCrossPlatformIdDataWithCompletion:(void(^) (BranchCrossPlatformID * _Nullable cpid))completion {
     [BranchCrossPlatformID requestCrossPlatformIdData:self.serverInterface key:self.class.branchKey completion:completion];
 }
 
-- (void)requestLastTouchAttributedDataWithCompletion:(void(^) (NSDictionary *ltad, NSNumber *attributionWindow))completion {
-    [BranchLastAttributedTouchData requestLastTouchAttributedData:self.serverInterface key:self.class.branchKey completion:^(BranchLastAttributedTouchData * _Nonnull latd) {
-        
-    }];
+- (void)requestLastTouchAttributedDataWithCompletion:(void(^) (BranchLastAttributedTouchData * _Nullable ltad))completion {
+    [BranchLastAttributedTouchData requestLastTouchAttributedData:self.serverInterface key:self.class.branchKey completion:completion];
 }
 
 #pragma mark - ShortUrl methods

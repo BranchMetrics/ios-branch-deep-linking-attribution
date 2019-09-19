@@ -951,9 +951,9 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 #pragma mark - Query methods
 
-- (void)requestCrossPlatformIdDataWithCompletion:(void(^) (BranchCrossPlatformID *cpid))completion;
+- (void)requestCrossPlatformIdDataWithCompletion:(void(^) (BranchCrossPlatformID * _Nullable cpid))completion;
 
-- (void)requestLastTouchAttributedDataWithCompletion:(void(^) (NSDictionary *ltad, NSNumber *attributionWindow))completion;
+- (void)requestLastTouchAttributedDataWithCompletion:(void(^) (BranchLastAttributedTouchData * _Nullable ltad))completion;
 
 #pragma mark - Short Url Sync methods
 
