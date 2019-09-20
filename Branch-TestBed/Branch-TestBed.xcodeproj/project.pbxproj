@@ -194,7 +194,6 @@
 		5F909B782332C0B800A774D2 /* latd_missing_window.json in Resources */ = {isa = PBXBuildFile; fileRef = 5F909B742332C0B700A774D2 /* latd_missing_window.json */; };
 		5F909B792332C0B800A774D2 /* latd_empty_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 5F909B752332C0B800A774D2 /* latd_empty_data.json */; };
 		5F909B7A2332C0B800A774D2 /* latd.json in Resources */ = {isa = PBXBuildFile; fileRef = 5F909B762332C0B800A774D2 /* latd.json */; };
-		5F909B7D2332F04400A774D2 /* NSURLSession+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F909B7C2332F04400A774D2 /* NSURLSession+Branch.m */; };
 		5FA179022326F6D90012B500 /* BranchCPIDRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FA179002326F6D90012B500 /* BranchCPIDRequest.h */; };
 		5FA179032326F6D90012B500 /* BranchCPIDRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA179012326F6D90012B500 /* BranchCPIDRequest.m */; };
 		5FB0AA6B231875B500A0F9EA /* BNCUserAgentCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB0AA69231875B400A0F9EA /* BNCUserAgentCollector.h */; };
@@ -451,8 +450,6 @@
 		5F909B742332C0B700A774D2 /* latd_missing_window.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = latd_missing_window.json; sourceTree = "<group>"; };
 		5F909B752332C0B800A774D2 /* latd_empty_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = latd_empty_data.json; sourceTree = "<group>"; };
 		5F909B762332C0B800A774D2 /* latd.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = latd.json; sourceTree = "<group>"; };
-		5F909B7B2332F04400A774D2 /* NSURLSession+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLSession+Branch.h"; sourceTree = "<group>"; };
-		5F909B7C2332F04400A774D2 /* NSURLSession+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLSession+Branch.m"; sourceTree = "<group>"; };
 		5FA179002326F6D90012B500 /* BranchCPIDRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchCPIDRequest.h; sourceTree = "<group>"; };
 		5FA179012326F6D90012B500 /* BranchCPIDRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchCPIDRequest.m; sourceTree = "<group>"; };
 		5FB0AA69231875B400A0F9EA /* BNCUserAgentCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCUserAgentCollector.h; sourceTree = "<group>"; };
@@ -810,8 +807,6 @@
 				4DBEFFFB1FB12A1000F7C41B /* Main.storyboard */,
 				63E4C4891D25E17B00A45FD8 /* NavigationController.h */,
 				63E4C48A1D25E17B00A45FD8 /* NavigationController.m */,
-				5F909B7B2332F04400A774D2 /* NSURLSession+Branch.h */,
-				5F909B7C2332F04400A774D2 /* NSURLSession+Branch.m */,
 				6700166A1940F51400A9E103 /* Supporting Files */,
 				670016781940F51400A9E103 /* ViewController.h */,
 				670016791940F51400A9E103 /* ViewController.m */,
@@ -1331,7 +1326,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				63E4C4881D25E16A00A45FD8 /* LogOutputViewController.m in Sources */,
-				5F909B7D2332F04400A774D2 /* NSURLSession+Branch.m in Sources */,
 				6700167A1940F51400A9E103 /* ViewController.m in Sources */,
 				4683F0751B20A73F00A432E7 /* CreditHistoryViewController.m in Sources */,
 				4DBEFFF61FB114F900F7C41B /* ArrayPickerView.m in Sources */,
