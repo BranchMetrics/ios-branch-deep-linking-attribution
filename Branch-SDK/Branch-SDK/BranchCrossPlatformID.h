@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BranchCrossPlatformID : NSObject
 
 @property (nonatomic, copy, readonly) NSString *crossPlatformID;
+@property (nonatomic, copy, readonly) NSString *developerID;
 @property (nonatomic, strong, readonly) NSArray<NSString *> *pastCrossPlatformIDs;
 @property (nonatomic, strong, readonly) NSArray<BranchProbabilisticCrossPlatformID *> *probabiliticCrossPlatformIDs;
 
