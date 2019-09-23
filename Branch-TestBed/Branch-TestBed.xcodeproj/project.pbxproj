@@ -172,6 +172,8 @@
 		5F3D671B233062FD00454FF1 /* BNCJsonLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */; };
 		5F3D671C233062FD00454FF1 /* BNCJsonLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */; };
 		5F3D671F2330638D00454FF1 /* cpid.json in Resources */ = {isa = PBXBuildFile; fileRef = 5F3D671E2330638D00454FF1 /* cpid.json */; };
+		5F44AC3E2339474B007A9A7C /* cpid_empty_dev_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 5F44AC3A23394742007A9A7C /* cpid_empty_dev_id.json */; };
+		5F44AC3F2339474B007A9A7C /* cpid_missing_dev_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 5F44AC3B23394742007A9A7C /* cpid_missing_dev_id.json */; };
 		5F67F48E228F535500067429 /* BNCEncodingUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */; };
 		5F73FC7E23313F7A000EBD32 /* BNCJSONUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F73FC7C23313F7A000EBD32 /* BNCJSONUtility.h */; };
 		5F73FC7F23313F7A000EBD32 /* BNCJSONUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F73FC7D23313F7A000EBD32 /* BNCJSONUtility.m */; };
@@ -427,6 +429,8 @@
 		5F3D6719233062FD00454FF1 /* BNCJsonLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCJsonLoader.h; sourceTree = "<group>"; };
 		5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCJsonLoader.m; sourceTree = "<group>"; };
 		5F3D671E2330638D00454FF1 /* cpid.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cpid.json; sourceTree = "<group>"; };
+		5F44AC3A23394742007A9A7C /* cpid_empty_dev_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cpid_empty_dev_id.json; sourceTree = "<group>"; };
+		5F44AC3B23394742007A9A7C /* cpid_missing_dev_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cpid_missing_dev_id.json; sourceTree = "<group>"; };
 		5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
 		5F73FC7C23313F7A000EBD32 /* BNCJSONUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCJSONUtility.h; sourceTree = "<group>"; };
 		5F73FC7D23313F7A000EBD32 /* BNCJSONUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCJSONUtility.m; sourceTree = "<group>"; };
@@ -721,9 +725,11 @@
 				5F909B612332A56700A774D2 /* cpid_empty_id.json */,
 				5F909B662332A56700A774D2 /* cpid_empty_past.json */,
 				5F909B652332A56700A774D2 /* cpid_empty_prob.json */,
+				5F44AC3A23394742007A9A7C /* cpid_empty_dev_id.json */,
 				5F909B632332A56700A774D2 /* cpid_missing_id.json */,
 				5F909B622332A56700A774D2 /* cpid_missing_past.json */,
 				5F909B642332A56700A774D2 /* cpid_missing_prob.json */,
+				5F44AC3B23394742007A9A7C /* cpid_missing_dev_id.json */,
 				5F909B762332C0B800A774D2 /* latd.json */,
 				5F909B752332C0B800A774D2 /* latd_empty_data.json */,
 				5F909B732332C0B700A774D2 /* latd_missing_data.json */,
@@ -1110,7 +1116,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = BNC;
-				LastUpgradeCheck = 1030;
+				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = "Branch, Inc.";
 				TargetAttributes = {
 					466B58371B17773000A69EDE = {
@@ -1193,11 +1199,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F44AC3E2339474B007A9A7C /* cpid_empty_dev_id.json in Resources */,
 				5F909B792332C0B800A774D2 /* latd_empty_data.json in Resources */,
 				5F909B692332A56C00A774D2 /* cpid_empty_prob.json in Resources */,
 				5F909B682332A56C00A774D2 /* cpid_empty_past.json in Resources */,
 				5F909B672332A56C00A774D2 /* cpid_empty_id.json in Resources */,
 				4D7881FD209CF2D4002B750F /* BNCTestCase.strings in Resources */,
+				5F44AC3F2339474B007A9A7C /* cpid_missing_dev_id.json in Resources */,
 				5F3D671F2330638D00454FF1 /* cpid.json in Resources */,
 				5F909B772332C0B800A774D2 /* latd_missing_data.json in Resources */,
 				5F909B6A2332A56C00A774D2 /* cpid_missing_id.json in Resources */,
