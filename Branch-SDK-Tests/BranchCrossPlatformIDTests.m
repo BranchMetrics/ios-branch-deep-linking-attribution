@@ -30,6 +30,10 @@
     
     BranchCrossPlatformID *cpid = [BranchCrossPlatformID buildFromJSON:json];
     XCTAssertNotNil(cpid);
+    XCTAssertNotNil(cpid.developerID);
+    XCTAssertNotNil(cpid.crossPlatformID);
+    XCTAssertNotNil(cpid.pastCrossPlatformIDs);
+    XCTAssertNotNil(cpid.probabiliticCrossPlatformIDs);
 }
 
 - (void)testBuildFromJSON_EmptyId {
@@ -59,6 +63,15 @@
     XCTAssertTrue(cpid.probabiliticCrossPlatformIDs.count == 0);
 }
 
+- (void)testBuildFromJSON_EmptyDevId {
+    NSDictionary *json = [BNCJsonLoader dictionaryFromJSONFileNamed:@"cpid_empty_dev_id"];
+    XCTAssertNotNil(json);
+    
+    BranchCrossPlatformID *cpid = [BranchCrossPlatformID buildFromJSON:json];
+    XCTAssertNotNil(cpid);
+    XCTAssertTrue([@"" isEqualToString:cpid.developerID]);
+}
+
 - (void)testBuildFromJSON_MissingId {
     NSDictionary *json = [BNCJsonLoader dictionaryFromJSONFileNamed:@"cpid_missing_id"];
     XCTAssertNotNil(json);
@@ -83,5 +96,13 @@
     XCTAssertNil(cpid);
 }
 
+- (void)testBuildFromJSON_MissingDevId {
+    NSDictionary *json = [BNCJsonLoader dictionaryFromJSONFileNamed:@"cpid_missing_dev_id"];
+    XCTAssertNotNil(json);
+    
+    BranchCrossPlatformID *cpid = [BranchCrossPlatformID buildFromJSON:json];
+    XCTAssertNotNil(cpid);
+    XCTAssertNil(cpid.developerID);
+}
 
 @end

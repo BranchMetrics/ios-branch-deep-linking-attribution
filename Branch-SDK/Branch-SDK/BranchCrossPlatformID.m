@@ -37,6 +37,7 @@
         
     BranchCrossPlatformID *cpid = [BranchCrossPlatformID new];
     cpid->_crossPlatformID = [BNCJSONUtility stringForKey:@"cross_platform_id" json:userData];
+    cpid->_developerID = [BNCJSONUtility stringForKey:@"developer_identity" json:userData];
     cpid->_pastCrossPlatformIDs = [BNCJSONUtility stringArrayForKey:@"past_cross_platform_ids" json:userData];
     
     // parse probability pairs
