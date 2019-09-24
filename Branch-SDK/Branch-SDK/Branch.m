@@ -147,7 +147,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
 @property (strong, nonatomic) BNCURLBlackList *URLBlackList;
 
-// private object for locking asyncRequestCount
+// dedicated object for locking asyncRequestCount
 @property (strong, nonatomic, readwrite) NSObject *asyncRequestCountLock;
 
 @end
@@ -663,6 +663,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
             // These methods will increment self.asyncRequestCount if they make an async call:
             
+            // load application data
+            [self loadApplicationData];
             // load user agent
             [self loadUserAgent];
             // If Facebook SDK is present, call deferred app link check here which will later on call initUserSession
@@ -958,7 +960,24 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [[BNCUserAgentCollector instance] loadUserAgentForSystemBuildVersion:[BNCDeviceInfo systemBuildVersion] withCompletion:^(NSString * _Nullable userAgent) {
         @synchronized (self.asyncRequestCountLock) {
             self.asyncRequestCount--;
-            // If there's another async attribution check in flight, don't continue with init:
+            if (self.asyncRequestCount > 0) return;
+        
+            self.preferenceHelper.shouldWaitForInit = NO;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self initUserSessionAndCallCallback:(self.initializationStatus != BNCInitStatusInitialized)];
+            });
+        }
+    }];
+}
+
+- (void)loadApplicationData {
+    @synchronized (self.asyncRequestCountLock) {
+        self.asyncRequestCount++;
+    }
+    
+    [BNCApplication loadCurrentApplicationWithCompletion:^(BNCApplication *application) {
+        @synchronized (self.asyncRequestCountLock) {
+            self.asyncRequestCount--;
             if (self.asyncRequestCount > 0) return;
         
             self.preferenceHelper.shouldWaitForInit = NO;
@@ -1044,7 +1063,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
             @synchronized (self.asyncRequestCountLock) {
                 self.asyncRequestCount--;
-                // If there's another async attribution check in flight, don't continue with init:
                 if (self.asyncRequestCount > 0) return;
 
                 self.preferenceHelper.shouldWaitForInit = NO;
@@ -1084,7 +1102,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 @synchronized (self.asyncRequestCountLock) {
                     self.asyncRequestCount--;
 
-                    // if there's another async attribution check in flight, don't continue with init
                     if (self.asyncRequestCount > 0) { return; }
                     self.preferenceHelper.shouldWaitForInit = NO;
 
