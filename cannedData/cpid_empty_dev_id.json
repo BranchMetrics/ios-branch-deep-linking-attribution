@@ -1,0 +1,20 @@
+{
+    "user_data": {
+        "cross_platform_id": "273e4c5da13b978ee2f78f8997abd972959c184aaffb8cad716721a00a08d32b",
+        "developer_identity": "",
+        "past_cross_platform_ids": [
+            "a0bd175fd2c45b1cad81df45d5f1ddb117eadc98e61b85bb49f8f13e88ceff20",
+            "z0bd175fd2c45b1cad81df45d5f1ddb117eadc98e61b85bb49f8f13e88ceff20"
+        ],
+        "prob_cross_platform_ids": [
+            {
+                "id": "88ce973fead4b23bca482725a7ac8d6e5198f0d2c70ec3c511472633c645de42",
+                "probability": 0.95
+            },
+            {
+                "id": "08ce973fead4b23bca482725a7ac8d6e5198f0d2c70ec3c511472633c645de42",
+                "probability": 0.91
+            }
+        ]
+    }
+}

@@ -1346,6 +1346,16 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     return nil;
 }
 
+#pragma mark - Query methods
+
+- (void)crossPlatformIdDataWithCompletion:(void(^) (BranchCrossPlatformID * _Nullable cpid))completion {
+    [BranchCrossPlatformID requestCrossPlatformIdData:self.serverInterface key:self.class.branchKey completion:completion];
+}
+
+- (void)lastTouchAttributedDataWithCompletion:(void(^) (BranchLastAttributedTouchData * _Nullable ltad))completion {
+    [BranchLastAttributedTouchData requestLastTouchAttributedData:self.serverInterface key:self.class.branchKey completion:completion];
+}
+
 #pragma mark - ShortUrl methods
 
 - (NSString *)getShortURL {
