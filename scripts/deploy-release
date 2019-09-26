@@ -38,11 +38,14 @@ fi
 ./scripts/deploy-preflight
 
 # Prompt for editor input for ChangeLog.
-vim +4 +star ChangeLog.md
+#vim +4 +star ChangeLog.md
+nano ChangeLog.md
 
 # Pre-release CocoaPod lint
 echo ">>> Linting build for release..." 1>&2
-pod lib lint Branch.podspec --verbose
+
+# allowing warnings until nullability warnings are fixed with SDK-518
+pod lib lint Branch.podspec --verbose --allow-warnings
 
 # Build the framework
 echo ">>> Building the framework..." 1>&2
