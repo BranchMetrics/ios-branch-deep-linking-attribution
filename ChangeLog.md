@@ -1,5 +1,11 @@
 Branch iOS SDK Change Log
 
+- v0.29.0
+* _*Master Release*_ - Sept 26, 2019
+  * SDK-479 CPID and LATD support
+  * INTENG-7291 fix potential keychain deadlock
+  * INTENG-7729 fix race condition on slow startup
+
 - v0.28.1
 * _*Master Release*_ - Sept 06, 2019
   * Fix release script merge failure.
