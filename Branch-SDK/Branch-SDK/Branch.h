@@ -38,6 +38,8 @@
 #import "BranchLastAttributedTouchData.h"
 #import "UIViewController+Branch.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  `Branch` is the primary interface of the Branch iOS SDK. Currently, all interactions you will make are funneled through this class. It is not meant to be instantiated or subclassed, usage should be limited to the global instance.
 
@@ -69,11 +71,11 @@
  `BRANCH_FEATURE_TAG_GIFT`
  Indicates this link is being used to send a gift to another user.
  */
-extern NSString * const BRANCH_FEATURE_TAG_SHARE;
-extern NSString * const BRANCH_FEATURE_TAG_REFERRAL;
-extern NSString * const BRANCH_FEATURE_TAG_INVITE;
-extern NSString * const BRANCH_FEATURE_TAG_DEAL;
-extern NSString * const BRANCH_FEATURE_TAG_GIFT;
+extern NSString * __nonnull const BRANCH_FEATURE_TAG_SHARE;
+extern NSString * __nonnull const BRANCH_FEATURE_TAG_REFERRAL;
+extern NSString * __nonnull const BRANCH_FEATURE_TAG_INVITE;
+extern NSString * __nonnull const BRANCH_FEATURE_TAG_DEAL;
+extern NSString * __nonnull const BRANCH_FEATURE_TAG_GIFT;
 
 #pragma mark - Branch InitSession Dictionary Constants
 
@@ -110,32 +112,32 @@ extern NSString * const BRANCH_FEATURE_TAG_GIFT;
  `BRANCH_INIT_KEY_CLICKED_BRANCH_LINK`
  Denotes whether or not the user clicked a Branch link that triggered this session.
  */
-extern NSString * const BRANCH_INIT_KEY_CHANNEL;
-extern NSString * const BRANCH_INIT_KEY_FEATURE;
-extern NSString * const BRANCH_INIT_KEY_TAGS;
-extern NSString * const BRANCH_INIT_KEY_CAMPAIGN;
-extern NSString * const BRANCH_INIT_KEY_STAGE;
-extern NSString * const BRANCH_INIT_KEY_CREATION_SOURCE;
-extern NSString * const BRANCH_INIT_KEY_REFERRER;
-extern NSString * const BRANCH_INIT_KEY_PHONE_NUMBER;
-extern NSString * const BRANCH_INIT_KEY_IS_FIRST_SESSION;
-extern NSString * const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK;
+extern NSString * __nonnull const BRANCH_INIT_KEY_CHANNEL;
+extern NSString * __nonnull const BRANCH_INIT_KEY_FEATURE;
+extern NSString * __nonnull const BRANCH_INIT_KEY_TAGS;
+extern NSString * __nonnull const BRANCH_INIT_KEY_CAMPAIGN;
+extern NSString * __nonnull const BRANCH_INIT_KEY_STAGE;
+extern NSString * __nonnull const BRANCH_INIT_KEY_CREATION_SOURCE;
+extern NSString * __nonnull const BRANCH_INIT_KEY_REFERRER;
+extern NSString * __nonnull const BRANCH_INIT_KEY_PHONE_NUMBER;
+extern NSString * __nonnull const BRANCH_INIT_KEY_IS_FIRST_SESSION;
+extern NSString * __nonnull const BRANCH_INIT_KEY_CLICKED_BRANCH_LINK;
 
 // BUO Constants
-extern NSString * const BNCCanonicalIdList;
-extern NSString * const BNCPurchaseAmount;
-extern NSString * const BNCPurchaseCurrency;
-extern NSString * const BNCCanonicalIdList;
-extern NSString * const BNCRegisterViewEvent;
-extern NSString * const BNCAddToWishlistEvent;
-extern NSString * const BNCAddToCartEvent;
-extern NSString * const BNCPurchaseInitiatedEvent;
-extern NSString * const BNCPurchasedEvent;
-extern NSString * const BNCShareInitiatedEvent;
-extern NSString * const BNCShareCompletedEvent;
+extern NSString * __nonnull const BNCCanonicalIdList;
+extern NSString * __nonnull const BNCPurchaseAmount;
+extern NSString * __nonnull const BNCPurchaseCurrency;
+extern NSString * __nonnull const BNCCanonicalIdList;
+extern NSString * __nonnull const BNCRegisterViewEvent;
+extern NSString * __nonnull const BNCAddToWishlistEvent;
+extern NSString * __nonnull const BNCAddToCartEvent;
+extern NSString * __nonnull const BNCPurchaseInitiatedEvent;
+extern NSString * __nonnull const BNCPurchasedEvent;
+extern NSString * __nonnull const BNCShareInitiatedEvent;
+extern NSString * __nonnull const BNCShareCompletedEvent;
 
 // Spotlight Constant
-extern NSString * const BNCSpotlightFeature;
+extern NSString * __nonnull const BNCSpotlightFeature;
 
 #pragma mark - Branch Enums
 typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
@@ -146,10 +148,9 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 #pragma mark - BranchLink
 
 @interface BranchLink : NSObject
-@property (nonatomic, strong) BranchUniversalObject *universalObject;
-@property (nonatomic, strong) BranchLinkProperties  *linkProperties;
-+ (BranchLink*) linkWithUniversalObject:(BranchUniversalObject*)universalObject
-                             properties:(BranchLinkProperties*)linkProperties;
+@property (nonatomic, strong, nullable) BranchUniversalObject *universalObject;
+@property (nonatomic, strong, nullable) BranchLinkProperties  *linkProperties;
++ (nullable BranchLink *) linkWithUniversalObject:(nullable BranchUniversalObject *)universalObject properties:(nullable BranchLinkProperties *)linkProperties;
 @end
 
 #pragma mark - Branch
@@ -167,13 +168,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @warning This method is not meant to be used in production!
 */
-+ (Branch *) getTestInstance __attribute__((deprecated(("Use `Branch.useTestBranchKey = YES;` instead."))));
++ (nullable Branch *) getTestInstance __attribute__((deprecated(("Use `Branch.useTestBranchKey = YES;` instead."))));
 
 
 /**
  Gets the global, live Branch instance.
  */
-+ (Branch *)getInstance;
++ (nullable Branch *)getInstance;
 
 /**
  Gets the global Branch instance, configures using the specified key
@@ -181,7 +182,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param branchKey The Branch key to be used by the Branch instance. This can be any live or test key.
  @warning This method is not the recommended way of using Branch. Try using your project's `Info.plist` if possible.
  */
-+ (Branch *)getInstance:(NSString *)branchKey;
++ (nullable Branch *)getInstance:(NSString *)branchKey;
 
 /**
  Set the network service class.
@@ -195,14 +196,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @param networkServiceClass     The class to use as the network service class.
 */
-+ (void)  setNetworkServiceClass:(Class)networkServiceClass;
++ (void)setNetworkServiceClass:(Class)networkServiceClass;
 
 /**
  Return the Branch SDK network service class.
 
  @return Returns the network service class.
  */
-+ (Class) networkServiceClass;
++ (Class)networkServiceClass;
 
 /**
     Sets Branch to use the test `key_test_...` Branch key found in the Info.plist.
@@ -210,10 +211,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @param useTestKey If YES then Branch to use the Branch test found in your app's Info.plist.
 */
-+ (void) setUseTestBranchKey:(BOOL)useTestKey;
++ (void)setUseTestBranchKey:(BOOL)useTestKey;
 
 /// @return Returns true if the Branch test key should be used.
-+ (BOOL) useTestBranchKey;
++ (BOOL)useTestBranchKey;
 
 /**
  Directly sets the Branch key to be used.  Branch usually reads the Branch key from your app's
@@ -227,7 +228,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param branchKey The Branch key to use.
  @param error NSError will be set if Branch encounters a key error.
 */
-+ (void) setBranchKey:(NSString*)branchKey error:(NSError **)error;
++ (void)setBranchKey:(NSString *)branchKey error:(NSError * _Nullable * _Nullable)error;
 
 /**
  Directly sets the Branch key to be used.  Branch usually reads the Branch key from your app's
@@ -240,13 +241,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  
  @param branchKey The Branch key to use.
  */
-+ (void) setBranchKey:(NSString*)branchKey;
++ (void)setBranchKey:(NSString *)branchKey;
 
 
 /// @return Returns the current Branch key.
-+ (NSString*) branchKey;
++ (nullable NSString *) branchKey;
 
-+ (BOOL) branchKeyIsSet;
++ (BOOL)branchKeyIsSet;
 
 /**
  * By default, the Branch SDK will include the device fingerprint ID as metadata in Crashlytics
@@ -259,7 +260,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  *
  * @param enabled Set to NO to disable reporting of the device fingerprint ID to Crashlytics.
  */
-+ (void) setEnableFingerprintIDInCrashlyticsReports:(BOOL)enabled;
++ (void)setEnableFingerprintIDInCrashlyticsReports:(BOOL)enabled;
 
 /**
  * Determine whether device fingerprint ID reporting to Crashlytics is enabled.
@@ -268,10 +269,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  *
  * @return YES if device fingerprint ID reporting to Crashlytics is enabled. NO otherwise.
  */
-+ (BOOL) enableFingerprintIDInCrashlyticsReports;
++ (BOOL)enableFingerprintIDInCrashlyticsReports;
 
 /// TODO: Add documentation.
-@property (weak) NSObject<BranchDelegate>* delegate;
+@property (weak, nullable) NSObject<BranchDelegate>* delegate;
 
 #pragma mark - BranchActivityItemProvider methods
 
@@ -296,7 +297,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param params A dictionary to use while building up the Branch link.
  @param feature The feature the generated link will be associated with.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(nullable NSString *)feature;
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -307,7 +308,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param feature The feature the generated link will be associated with.
  @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(nullable NSString *)feature stage:(nullable NSString *)stage;
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -319,7 +320,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param stage The stage used for the generated link, typically used to indicate what part of a funnel the user is in.
  @param tags An array of tag strings to be associated with the link.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(nullable NSString *)feature stage:(nullable NSString *)stage tags:(nullable NSArray *)tags;
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -332,7 +333,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param alias The alias for a link.
  @warning This can fail if the alias is already taken.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags alias:(NSString *)alias;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(nullable NSString *)feature stage:(nullable NSString *)stage tags:(nullable NSArray *)tags alias:(nullable NSString *)alias;
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -346,7 +347,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param alias The alias for a link.
  @warning This can fail if the alias is already taken.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage campaign:(NSString *)campaign tags:(NSArray *)tags alias:(NSString *)alias;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(nullable NSString *)feature stage:(nullable NSString *)stage campaign:(nullable NSString *)campaign tags:(nullable NSArray *)tags alias:(nullable NSString *)alias;
 
 /**
  Create a BranchActivityItemProvider which subclasses the `UIActivityItemProvider` This can be used for simple sharing via a `UIActivityViewController`.
@@ -361,7 +362,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param delegate A delegate allowing you to override any of the parameters provided here based on the user-selected channel
  @warning This can fail if the alias is already taken.
  */
-+ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(NSString *)feature stage:(NSString *)stage tags:(NSArray *)tags alias:(NSString *)alias delegate:(id <BranchActivityItemProviderDelegate>)delegate;
++ (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(nullable NSString *)feature stage:(nullable NSString *)stage tags:(nullable NSArray *)tags alias:(nullable NSString *)alias delegate:(nullable id <BranchActivityItemProviderDelegate>)delegate;
 
 
 
@@ -377,7 +378,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
  @warning This is not the recommended method of initializing Branch. While Branch is able to properly attribute deep linking info with the launch options, you lose the ability to do anything with a callback.
  */
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options;
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options;
 
 /**
  Just initialize the Branch session with the app launch options, specifying whether to allow it to be treated as a referral.
@@ -386,7 +387,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
  @warning This is not the recommended method of initializing Branch. While Branch is able to properly attribute deep linking info with the launch options, you lose the ability to do anything with a callback.
  */
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable;
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options isReferrable:(BOOL)isReferrable;
 
 /**
  Initialize the Branch session with the app launch options and handle the completion with a callback
@@ -394,7 +395,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
  @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
  */
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandler:(callbackWithParams)callback;
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options andRegisterDeepLinkHandler:(nullable callbackWithParams)callback;
 
 /**
  Initialize the Branch session with the app launch options and handle the completion with a callback
@@ -402,7 +403,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
  @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
  */
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options andRegisterDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback;
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options andRegisterDeepLinkHandlerUsingBranchUniversalObject:(nullable callbackWithBranchUniversalObject)callback;
 
 /**
  Initialize the Branch session with the app launch options and handle the completion with a callback
@@ -410,7 +411,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param options The launch options provided by the AppDelegate's `didFinishLaunchingWithOptions:` method.
  @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
  */
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController;
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController;
 
 /**
  Initialize the Branch session with the app launch options and handle the completion with a callback
@@ -419,7 +420,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
  @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
  */
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(callbackWithParams)callback;
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options isReferrable:(BOOL)isReferrable andRegisterDeepLinkHandler:(nullable callbackWithParams)callback;
 
 /**
  Initialize the Branch session with the app launch options and handle the completion with a callback
@@ -428,7 +429,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
  @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
  */
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController;
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options isReferrable:(BOOL)isReferrable automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController;
 
 /**
  Initialize the Branch session with the app launch options and handle the completion with a callback
@@ -437,7 +438,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param automaticallyDisplayController Boolean indicating whether we will automatically launch into deep linked controller matched in the init session dictionary.
  @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
  */
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController deepLinkHandler:(callbackWithParams)callback;
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController deepLinkHandler:(nullable callbackWithParams)callback;
 
 /**
  Initialize the Branch session with the app launch options and handle the completion with a callback
@@ -447,14 +448,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param isReferrable Boolean representing whether to allow the session to be marked as referred, overriding the default behavior.
  @param callback A callback that is called when the session is opened. This will be called multiple times during the apps life, including any time the app goes through a background / foreground cycle.
  */
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(callbackWithParams)callback;
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(nullable callbackWithParams)callback;
 
 /**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
 
  @param url The url that caused the app to be opened.
  */
-- (BOOL)handleDeepLink:(NSURL *)url;
+- (BOOL)handleDeepLink:(nullable NSURL *)url;
 
 
 /**
@@ -464,7 +465,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @return        Returns true if the passed URL can be handled by Branch.
  */
 
--(BOOL)handleDeepLinkWithNewSession:(NSURL *)url;
+-(BOOL)handleDeepLinkWithNewSession:(nullable NSURL *)url;
 
 /**
  Allow Branch to handle restoration from an NSUserActivity, returning whether or not it was
@@ -473,7 +474,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param userActivity The NSUserActivity that caused the app to be opened.
  */
 
-- (BOOL)continueUserActivity:(NSUserActivity *)userActivity;
+- (BOOL)continueUserActivity:(nullable NSUserActivity *)userActivity;
 
 /**
  Call this method from inside your app delegate's `application:openURL:sourceApplication:annotation:`
@@ -489,10 +490,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param annotation          The annotation that was passed to your app delegate.
  @return                    Returns `YES` if Branch handled the passed URL.
  */
-- (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation;
+- (BOOL)application:(nullable UIApplication *)application
+            openURL:(nullable NSURL *)url
+  sourceApplication:(nullable NSString *)sourceApplication
+         annotation:(nullable id)annotation;
 
 /**
  Call this method from inside your app delegate's `application:openURL:options:` method so that Branch can
@@ -505,9 +506,9 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param options             The options dictionary that was passed to your app delegate.
  @return                    Returns `YES` if Branch handled the passed URL.
  */
-- (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options;
+- (BOOL)application:(nullable UIApplication *)application
+            openURL:(nullable NSURL *)url
+            options:(nullable NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options;
 
 ///--------------------------------
 /// @name Push Notification Support
@@ -522,7 +523,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  NSDictionary userInfo = @{@"branch": @"https://bnc.lt/...", ... };
  */
-- (void)handlePushNotification:(NSDictionary *)userInfo;
+- (void)handlePushNotification:(nullable NSDictionary *)userInfo;
 
 #pragma mark - Deep Link Controller methods
 
@@ -530,14 +531,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /// @name Deep Link Controller
 ///---------------------------
 
-- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key __attribute__((deprecated(("This API is deprecated. Please use registerDeepLinkController: forKey: withOption:"))));
+- (void)registerDeepLinkController:(nullable UIViewController <BranchDeepLinkingController> *)controller forKey:(nullable NSString *)key __attribute__((deprecated(("This API is deprecated. Please use registerDeepLinkController: forKey: withOption:"))));
 
 /**
  Allow Branch to handle a view controller with options to push, present or show.
  Note:
  * If push option is used and the rootviewcontroller of window is not of type UINavigationViewController, than the sharing View controller would be presented automatically
  */
-- (void)registerDeepLinkController:(UIViewController <BranchDeepLinkingController> *)controller forKey:(NSString *)key withPresentation:(BNCViewControllerPresentationOption)option;
+- (void)registerDeepLinkController:(nullable UIViewController <BranchDeepLinkingController> *)controller forKey:(nullable NSString *)key withPresentation:(BNCViewControllerPresentationOption)option;
 
 #pragma mark - Configuration methods
 
@@ -584,21 +585,21 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @param debugParams dictionary of keystrings/valuestrings that will be added to response
  */
--(void)setDeepLinkDebugMode:(NSDictionary *)debugParams;
+-(void)setDeepLinkDebugMode:(nullable NSDictionary *)debugParams;
 
 /**
  Add a scheme to a whitelist of URI schemes that will be tracked by Branch. Default to all schemes.
 
  @param scheme to add to the whitelist, i.e. @"http", @"https" or @"myapp"
  */
--(void)addWhiteListedScheme:(NSString *)scheme;
+-(void)addWhiteListedScheme:(nullable NSString *)scheme;
 
 /**
  Add an array of schemes to a whitelist of URI schemes that will be tracked by Branch. Default to all schemes.
 
  @param schemes array to add to the whitelist, i.e. @[@"http", @"https", @"myapp"]
  */
--(void)setWhiteListedSchemes:(NSArray *)schemes;
+-(void)setWhiteListedSchemes:(nullable NSArray *)schemes;
 
 /**
  @brief     Sets an array of regex patterns that match URLs for Branch to ignore.
@@ -613,7 +614,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
             These are ICU standard regular expressions.
 */
-@property (copy) NSArray<NSString*>/*_Nullable*/* blackListURLRegex;
+@property (copy, nullable) NSArray<NSString*>/*_Nullable*/* blackListURLRegex;
 
 /**
  Register your Facebook SDK's FBSDKAppLinkUtility class to be used by Branch for deferred deep linking from their platform
@@ -678,13 +679,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param key String to be included in request metadata
  @param value Object to be included in request metadata
  */
-- (void)setRequestMetadataKey:(NSString *)key value:(id)value;
+- (void)setRequestMetadataKey:(NSString *)key value:(nullable id)value;
 
 - (void)enableDelayedInit;
 
 - (void)disableDelayedInit;
 
-- (NSURL *)getUrlForOnboardingWithRedirectUrl:(NSString *)redirectUrl;
+- (nullable NSURL *)getUrlForOnboardingWithRedirectUrl:(nullable NSString *)redirectUrl;
 
 - (void)resumeInit;
 
@@ -723,39 +724,39 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get the BranchUniversalObject from the first time this user was referred (can be empty).
  */
-- (BranchUniversalObject *)getFirstReferringBranchUniversalObject;
+- (nullable BranchUniversalObject *)getFirstReferringBranchUniversalObject;
 
 /**
  Get the BranchLinkProperties from the first time this user was referred (can be empty).
  */
-- (BranchLinkProperties *)getFirstReferringBranchLinkProperties;
+- (nullable BranchLinkProperties *)getFirstReferringBranchLinkProperties;
 
 /**
  Get the parameters used the first time this user was referred (can be empty).
  */
-- (NSDictionary *)getFirstReferringParams;
+- (nullable NSDictionary *)getFirstReferringParams;
 
 /**
  Get the BranchUniversalObject from the most recent time this user was referred (can be empty).
  */
-- (BranchUniversalObject *)getLatestReferringBranchUniversalObject;
+- (nullable BranchUniversalObject *)getLatestReferringBranchUniversalObject;
 
 /**
  Get the BranchLinkProperties from the most recent time this user was referred (can be empty).
  */
-- (BranchLinkProperties *)getLatestReferringBranchLinkProperties;
+- (nullable BranchLinkProperties *)getLatestReferringBranchLinkProperties;
 
 /**
  Get the parameters used the most recent time this user was referred (can be empty).
  */
-- (NSDictionary *)getLatestReferringParams;
+- (nullable NSDictionary *)getLatestReferringParams;
 
 /**
  Returns the most recent referral parameters for this user. An empty object can be returned.
  This call blocks the calling thread until the latest results are available.
  @warning This call blocks the calling thread.
  */
-- (NSDictionary*) getLatestReferringParamsSynchronous;
+- (nullable NSDictionary*) getLatestReferringParamsSynchronous;
 
 /**
  Tells Branch to act as though initSession hadn't been called. Will require another open call (this is done automatically, internally).
@@ -776,7 +777,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning This request is not removed from the queue upon failure -- it will be retried until it succeeds.
  @warning You should call `logout` before calling `setIdentity:` a second time.
  */
-- (void)setIdentity:(NSString *)userId;
+- (void)setIdentity:(nullable NSString *)userId;
 
 /**
  Set the user's identity to an ID used by your system, so that it is identifiable by you elsewhere. Receive a completion callback, notifying you whether it succeeded or failed.
@@ -787,7 +788,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning This request is not removed from the queue upon failure -- it will be retried until it succeeds. The callback will only ever be called once, though.
  @warning You should call `logout` before calling `setIdentity:` a second time.
  */
-- (void)setIdentity:(NSString *)userId withCallback:(callbackWithParams)callback;
+- (void)setIdentity:(nullable NSString *)userId withCallback:(nullable callbackWithParams)callback;
 
 /**
  Clear all of the current user's session items.
@@ -796,7 +797,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)logout;
 
-- (void)logoutWithCallback:(callbackWithStatus)callback;
+- (void)logoutWithCallback:(nullable callbackWithStatus)callback;
 
 #pragma mark - Credit methods
 
@@ -809,7 +810,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @param callback The callback that is called once the request has completed.
  */
-- (void)loadRewardsWithCallback:(callbackWithStatus)callback;
+- (void)loadRewardsWithCallback:(nullable callbackWithStatus)callback;
 
 /**
  Redeem credits from the default bucket.
@@ -826,7 +827,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param callback The callback that is called once the request has completed.
  @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
  */
-- (void)redeemRewards:(NSInteger)count callback:(callbackWithStatus)callback;
+- (void)redeemRewards:(NSInteger)count callback:(nullable callbackWithStatus)callback;
 
 /**
  Redeem credits from the specified bucket.
@@ -835,7 +836,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param bucket The bucket to redeem credits from.
  @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
  */
-- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket;
+- (void)redeemRewards:(NSInteger)count forBucket:(nullable NSString *)bucket;
 
 /**
  Redeem credits from the specified bucket.
@@ -845,7 +846,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param callback The callback that is called once the request has completed.
  @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
  */
-- (void)redeemRewards:(NSInteger)count forBucket:(NSString *)bucket callback:(callbackWithStatus)callback;
+- (void)redeemRewards:(NSInteger)count forBucket:(nullable NSString *)bucket callback:(nullable callbackWithStatus)callback;
 
 /**
  Get the local credit balance for the default bucket.
@@ -867,7 +868,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @param callback The callback to call with the list of transactions.
  */
-- (void)getCreditHistoryWithCallback:(callbackWithList)callback;
+- (void)getCreditHistoryWithCallback:(nullable callbackWithList)callback;
 
 /**
  Loads the last 100 credit transaction history items for the specified bucket.
@@ -875,7 +876,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param bucket The bucket to get transaction history for.
  @param callback The callback to call with the list of transactions.
  */
-- (void)getCreditHistoryForBucket:(NSString *)bucket andCallback:(callbackWithList)callback;
+- (void)getCreditHistoryForBucket:(nullable NSString *)bucket andCallback:(nullable callbackWithList)callback;
 
 /**
  Loads the last n credit transaction history items after the specified transaction ID for the default.
@@ -885,7 +886,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param order The direction to order transactions in the callback list. Least recent first means oldest items will be in the front of the response array, most recent means newest items will be front.
  @param callback The callback to call with the list of transactions.
  */
-- (void)getCreditHistoryAfter:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback;
+- (void)getCreditHistoryAfter:(nullable NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(nullable callbackWithList)callback;
 
 /**
  Loads the last n credit transaction history items after the specified transaction ID for the specified bucket.
@@ -896,7 +897,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param order The direction to order transactions in the callback list. Least recent first means oldest items will be in the front of the response array, most recent means newest items will be front.
  @param callback The callback to call with the list of transactions.
  */
-- (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback;
+- (void)getCreditHistoryForBucket:(nullable NSString *)bucket after:(nullable NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(nullable callbackWithList)callback;
 
 #pragma mark - Action methods
 
@@ -909,7 +910,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @param action The action string.
  */
-- (void)userCompletedAction:(NSString *)action;
+- (void)userCompletedAction:(nullable NSString *)action;
 
 /**
  Send a user action to the server with additional state items. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
@@ -917,7 +918,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param action The action string.
  @param state The additional state items associated with the action.
  */
-- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state;
+- (void)userCompletedAction:(nullable NSString *)action withState:(nullable NSDictionary *)state;
 
 /**
  Send a user action to the server with additional state items. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
@@ -928,7 +929,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  
  @deprecated Please use userCompletedAction:action:state instead
  */
-- (void)userCompletedAction:(NSString *)action withState:(NSDictionary *)state withDelegate:(id)branchViewCallback __attribute__((deprecated(("This API is deprecated. Please use userCompletedAction:action:state instead."))));
+- (void)userCompletedAction:(nullable NSString *)action withState:(nullable NSDictionary *)state withDelegate:(nullable id)branchViewCallback __attribute__((deprecated(("This API is deprecated. Please use userCompletedAction:action:state instead."))));
 
 /**
  Sends a user commerce event to the server.
@@ -972,7 +973,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param params Dictionary of parameters to include in the link.
  @warning This method makes a synchronous url request.
  */
-- (NSString *)getShortURLWithParams:(NSDictionary *)params;
+- (NSString *)getShortURLWithParams:(nullable NSDictionary *)params;
 
 /**
  Get a short url with specified params, channel, and feature. The usage type will default to unlimited.
@@ -982,7 +983,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
  @warning This method makes a synchronous url request.
  */
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature;
+- (NSString *)getShortURLWithParams:(nullable NSDictionary *)params andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature;
 
 /**
  Get a short url with specified params, channel, feature, and stage. The usage type will default to unlimited.
@@ -993,7 +994,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  @warning This method makes a synchronous url request.
  */
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage;
+- (NSString *)getShortURLWithParams:(nullable NSDictionary *)params andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage;
 
 /**
  Get a short url with specified params, channel, feature, stage, and alias. The usage type will default to unlimited.
@@ -1006,7 +1007,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning This method makes a synchronous url request.
  @warning This can fail if the alias is already taken.
  */
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
+- (NSString *)getShortURLWithParams:(nullable NSDictionary *)params andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andAlias:(nullable NSString *)alias;
 
 /**
  Get a short url with specified params, channel, feature, stage, and type.
@@ -1018,7 +1019,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param type The type of link this is, one of Single Use or Unlimited Use. Single use means once *per user*, not once period.
  @warning This method makes a synchronous url request.
  */
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type;
+- (NSString *)getShortURLWithParams:(nullable NSDictionary *)params andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andType:(BranchLinkType)type;
 
 /**
  Get a short url with specified params, channel, feature, stage, and match duration. The usage type will default to unlimited.
@@ -1030,7 +1031,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param duration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
  @warning This method makes a synchronous url request.
  */
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
+- (NSString *)getShortURLWithParams:(nullable NSDictionary *)params andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andMatchDuration:(NSUInteger)duration;
 
 /**
  Get a short url with specified tags, params, channel, feature, and stage. The usage type will default to unlimited.
@@ -1042,7 +1043,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  @warning This method makes a synchronous url request.
  */
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage;
+- (NSString *)getShortURLWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage;
 
 /**
  Get a short url with specified tags, params, channel, feature, stage, and alias. The usage type will default to unlimited.
@@ -1056,7 +1057,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning This method makes a synchronous url request.
  @warning This can fail if the alias is already taken.
  */
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
+- (NSString *)getShortURLWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andAlias:(nullable NSString *)alias;
 
 /**
  Get a short url with specified tags, params, channel, feature, and stage. The usage type will default to unlimited.
@@ -1072,7 +1073,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning This method is primarily intended to be an internal Branch method, used to work around a bug with SLComposeViewController
  @warning This can fail if the alias is already taken.
  */
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias ignoreUAString:(NSString *)ignoreUAString;
+- (NSString *)getShortURLWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andAlias:(nullable NSString *)alias ignoreUAString:(nullable NSString *)ignoreUAString;
 
 /**
  Get a short url with specified tags, params, channel, feature, stage and campaign. The usage type will default to unlimited.
@@ -1090,7 +1091,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning This method is primarily intended to be an internal Branch method, used to work around a bug with SLComposeViewController
  @warning This can fail if the alias is already taken.
  */
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCampaign:(NSString *)campaign andAlias:(NSString *)alias ignoreUAString:(NSString *)ignoreUAString forceLinkCreation:(BOOL)forceLinkCreation;
+- (NSString *)getShortURLWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andCampaign:(nullable NSString *)campaign andAlias:(nullable NSString *)alias ignoreUAString:(nullable NSString *)ignoreUAString forceLinkCreation:(BOOL)forceLinkCreation;
 
 /**
  Get a short url with specified tags, params, channel, feature, stage, and type.
@@ -1103,7 +1104,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param type The type of link this is, one of Single Use or Unlimited Use. Single use means once *per user*, not once period.
  @warning This method makes a synchronous url request.
  */
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type;
+- (NSString *)getShortURLWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andType:(BranchLinkType)type;
 
 /**
  Get a short url with specified tags, params, channel, feature, stage, and match duration. The usage type will default to unlimited.
@@ -1116,7 +1117,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param duration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
  @warning This method makes a synchronous url request.
  */
-- (NSString *)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
+- (NSString *)getShortURLWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andMatchDuration:(NSUInteger)duration;
 
 /**
  Get a short url with specified tags, params, channel, feature, stage, and match duration. The usage type will default to unlimited.
@@ -1131,7 +1132,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning This method makes a synchronous url request.
  @warning This can fail if the alias is already taken.
  */
-- (NSString *)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration;
+- (NSString *)getShortUrlWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andAlias:(nullable NSString *)alias andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andMatchDuration:(NSUInteger)duration;
 
 
 /**
@@ -1147,7 +1148,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param duration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
  @warning This method makes a synchronous url request.
  */
-- (NSString *)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCampaign:campaign andMatchDuration:(NSUInteger)duration;
+- (NSString *)getShortUrlWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andAlias:(nullable NSString *)alias andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andCampaign:campaign andMatchDuration:(NSUInteger)duration;
 
 #pragma mark - Long Url generation
 
@@ -1160,7 +1161,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @param params Dictionary of parameters to include in the link.
  */
-- (NSString *)getLongURLWithParams:(NSDictionary *)params;
+- (NSString *)getLongURLWithParams:(nullable NSDictionary *)params;
 
 /**
  Get a long url with specified params and feature. The usage type will default to unlimited.
@@ -1168,7 +1169,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param params Dictionary of parameters to include in the link.
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
  */
-- (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature;
+- (NSString *)getLongURLWithParams:(nullable NSDictionary *)params andFeature:(nullable NSString *)feature;
 
 /**
  Get a long url with specified params, feature, and stage. The usage type will default to unlimited.
@@ -1177,7 +1178,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  */
-- (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage;
+- (NSString *)getLongURLWithParams:(nullable NSDictionary *)params andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage;
 
 /**
  Get a long url with specified params, feature, stage, and tags. The usage type will default to unlimited.
@@ -1187,7 +1188,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  @param tags An array of tags to associate with this link, useful for tracking.
  */
-- (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andTags:(NSArray *)tags;
+- (NSString *)getLongURLWithParams:(nullable NSDictionary *)params andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andTags:(nullable NSArray *)tags;
 
 /**
  Get a long url with specified params, feature, stage, and alias. The usage type will default to unlimited.
@@ -1198,7 +1199,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param alias The alias for a link.
  @warning This can fail if the alias is already taken.
  */
-- (NSString *)getLongURLWithParams:(NSDictionary *)params andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
+- (NSString *)getLongURLWithParams:(nullable NSDictionary *)params andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andAlias:(nullable NSString *)alias;
 
 /**
  Get a long url with specified params, channel, tags, feature, stage, and alias. The usage type will default to unlimited.
@@ -1211,7 +1212,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param alias The alias for a link.
  @warning This can fail if the alias is already taken.
  */
-- (NSString *)getLongURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andTags:(NSArray *)tags andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias;
+- (NSString *)getLongURLWithParams:(nullable NSDictionary *)params andChannel:(nullable NSString *)channel andTags:(nullable NSArray *)tags andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andAlias:(nullable NSString *)alias;
 
 #pragma mark - Short Url Async methods
 
@@ -1224,7 +1225,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @param callback Callback called with the url.
  */
-- (void)getShortURLWithCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithCallback:(nullable callbackWithUrl)callback;
 
 /**
  Get a short url with the specified params. The usage type will default to unlimited.
@@ -1232,7 +1233,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param params Dictionary of parameters to include in the link.
  @param callback Callback called with the url.
  */
-- (void)getShortURLWithParams:(NSDictionary *)params andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(nullable NSDictionary *)params andCallback:(nullable callbackWithUrl)callback;
 
 /**
  Get a short url with the specified params, channel, and feature. The usage type will default to unlimited.
@@ -1242,7 +1243,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param feature The feature this is utilizing. Examples could be Sharing, Referring, Inviting, etc.
  @param callback Callback called with the url.
  */
-- (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(nullable NSDictionary *)params andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andCallback:(nullable callbackWithUrl)callback;
 
 /**
  Get a short url with the specified params, channel, feature, and stage. The usage type will default to unlimited.
@@ -1253,7 +1254,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  @param callback Callback called with the url.
  */
-- (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(nullable NSDictionary *)params andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andCallback:(nullable callbackWithUrl)callback;
 
 /**
  Get a short url with the specified params, channel, feature, stage, and alias. The usage type will default to unlimited.
@@ -1266,7 +1267,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param callback Callback called with the url.
  @warning This can fail if the alias is already taken.
  */
-- (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(nullable NSDictionary *)params andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andAlias:(nullable NSString *)alias andCallback:(nullable callbackWithUrl)callback;
 
 /**
  Get a short url with the specified params, channel, feature, stage, and link type.
@@ -1278,7 +1279,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param type The type of link this is, one of Single Use or Unlimited Use. Single use means once *per user*, not once period.
  @param callback Callback called with the url.
  */
-- (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(nullable NSDictionary *)params andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andType:(BranchLinkType)type andCallback:(nullable callbackWithUrl)callback;
 
 /**
  Get a short url with the specified params, channel, feature, stage, and match duration. The usage type will default to unlimited.
@@ -1290,7 +1291,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param duration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
  @param callback Callback called with the url.
  */
-- (void)getShortURLWithParams:(NSDictionary *)params andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(nullable NSDictionary *)params andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andMatchDuration:(NSUInteger)duration andCallback:(nullable callbackWithUrl)callback;
 
 /**
  Get a short url with the specified params, tags, channel, feature, and stage. The usage type will default to unlimited.
@@ -1302,7 +1303,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param stage The stage used for the generated link, indicating what part of a funnel the user is in.
  @param callback Callback called with the url.
  */
-- (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andCallback:(nullable callbackWithUrl)callback;
 
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and alias. The usage type will default to unlimited.
@@ -1316,7 +1317,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param callback Callback called with the url.
  @warning This can fail if the alias is already taken.
  */
-- (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andAlias:(NSString *)alias andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andAlias:(nullable NSString *)alias andCallback:(nullable callbackWithUrl)callback;
 
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and link type.
@@ -1329,7 +1330,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param type The type of link this is, one of Single Use or Unlimited Use. Single use means once *per user*, not once period.
  @param callback Callback called with the url.
  */
-- (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andType:(BranchLinkType)type andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andType:(BranchLinkType)type andCallback:(nullable callbackWithUrl)callback;
 
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and match duration. The usage type will default to unlimited.
@@ -1342,7 +1343,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param duration How long to keep an unmatched link click in the Branch backend server's queue before discarding.
  @param callback Callback called with the url.
  */
-- (void)getShortURLWithParams:(NSDictionary *)params andTags:(NSArray *)tags andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andMatchDuration:(NSUInteger)duration andCallback:(callbackWithUrl)callback;
+- (void)getShortURLWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andMatchDuration:(NSUInteger)duration andCallback:(nullable callbackWithUrl)callback;
 
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and match duration. The usage type will default to unlimited.
@@ -1357,7 +1358,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param alias The alias for a link.
  @warning This can fail if the alias is already taken.
  */
-- (void)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCallback:(callbackWithUrl)callback;
+- (void)getShortUrlWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andAlias:(nullable NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andCallback:(nullable callbackWithUrl)callback;
 
 /**
  Get a short url with the specified params, tags, channel, feature, stage, campaign and match duration. The usage type will default to unlimited.
@@ -1373,7 +1374,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param alias The alias for a link.
  @warning This can fail if the alias is already taken.
  */
-- (void)getShortUrlWithParams:(NSDictionary *)params andTags:(NSArray *)tags andAlias:(NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(NSString *)channel andFeature:(NSString *)feature andStage:(NSString *)stage andCampaign:(NSString *)campaign andCallback:(callbackWithUrl)callback;
+- (void)getShortUrlWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andAlias:(nullable NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andCampaign:(nullable NSString *)campaign andCallback:(nullable callbackWithUrl)callback;
 
 - (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback;
 
@@ -1593,8 +1594,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param completion Callback called when all Branch Universal Objects are indexed. Dynamic url generated and saved as spotlight identifier
  @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
-- (void)indexOnSpotlightWithBranchUniversalObject:(BranchUniversalObject*)universalObject
-                                   linkProperties:(BranchLinkProperties*)linkProperties
+- (void)indexOnSpotlightWithBranchUniversalObject:(BranchUniversalObject *)universalObject
+                                   linkProperties:(nullable BranchLinkProperties *)linkProperties
                                        completion:(void (^) (BranchUniversalObject *universalObject, NSString * url,NSError *error))completion;
 
 /**
@@ -1614,7 +1615,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)removeSearchableItemWithBranchUniversalObject:(BranchUniversalObject *)universalObject
-                                             callback:(void (^)(NSError * error))completion;
+                                             callback:(void (^_Nullable)(NSError * _Nullable error))completion;
 /*
  Remove Indexing of an array of Branch Universal Objects, which are indexed using SearchableItem of Apple's CoreSpotlight.
  @param universalObjects Multiple Branch Universal Objects which are already indexed using SearchableItem are removed from spotlight. Note: The spotlight identifier of Branch Universal Object is used to remove indexing.
@@ -1622,14 +1623,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)removeSearchableItemsWithBranchUniversalObjects:(NSArray<BranchUniversalObject*> *)universalObjects
-                                               callback:(void (^)(NSError * error))completion;
+                                               callback:(void (^_Nullable)(NSError * _Nullable error))completion;
 
 /*
  Remove all content spotlight indexed through either Searchable Item or privately indexed Branch Universal Object.
  @param completion Called when the request has been journaled by the index (“journaled” means that the index makes a note that it has to perform this operation). Note that the request may not have completed.
  @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
-- (void)removeAllPrivateContentFromSpotLightWithCallback:(void (^)(NSError * error))completion;
+- (void)removeAllPrivateContentFromSpotLightWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion;
 
 /**
  Method for creating a one of Branch instance and specifying its dependencies.
@@ -1653,7 +1654,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  This is the block that is called each time a new Branch session is started. It is automatically set
  when Branch is initialized with `initSessionWithLaunchOptions:andRegisterDeepLinkHandler`.
  */
-@property (copy,   nonatomic) void(^ sessionInitWithParamsCallback) (NSDictionary * params, NSError * error);
+@property (copy,   nonatomic) void(^ sessionInitWithParamsCallback) (NSDictionary * _Nullable params, NSError * _Nullable error);
 
 /**
  This is the block that is called each time a new Branch session is started. It is automatically set
@@ -1662,10 +1663,11 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  The difference with this callback from `sessionInitWithParamsCallback` is that it is called with a
  BranchUniversalObject.
  */
-@property (copy,   nonatomic) void (^ sessionInitWithBranchUniversalObjectCallback)
-        (BranchUniversalObject * universalObject, BranchLinkProperties * linkProperties, NSError * error);
+@property (copy,   nonatomic) void (^ sessionInitWithBranchUniversalObjectCallback) (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error);
 
 // Read-only property exposed for unit testing.
 @property (strong, readonly) BNCServerInterface* serverInterface;
 - (void) clearNetworkQueue;
 @end
+
+NS_ASSUME_NONNULL_END
