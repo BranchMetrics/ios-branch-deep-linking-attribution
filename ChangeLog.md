@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.29.1
+* _*Master Release*_ - Oct 4, 2019
+  * SDK-517 fix nullability warnings
+
 - v0.29.0
 * _*Master Release*_ - Sept 26, 2019
   * SDK-479 CPID and LATD support
