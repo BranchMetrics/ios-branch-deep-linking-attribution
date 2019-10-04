@@ -42,6 +42,7 @@
 #import "BNCURLBlackList.h"
 #import "BNCUserAgentCollector.h"
 #import "BNCDeviceInfo.h"
+#import "BNCTuneUtility.h"
 #import <stdatomic.h>
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -2250,7 +2251,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
 - (void)initializeSession {
 	Class clazz = [BranchInstallRequest class];
-	if (self.preferenceHelper.identityID) {
+	if (self.preferenceHelper.identityID || [BNCTuneUtility isTuneDataPresent]) {
 		clazz = [BranchOpenRequest class];
 	}
 
