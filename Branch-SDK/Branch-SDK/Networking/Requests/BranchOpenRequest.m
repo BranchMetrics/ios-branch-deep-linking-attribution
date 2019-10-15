@@ -107,12 +107,12 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
 //    BNCUpdateStateError         = 3,    // Error determining update state.
 //    BNCUpdateStateReinstall     = 4,    // App was re-installed.
     
-    BNCUpdateStateUnknown = 0,       // App update status is unknown
+    BNCUpdateStateIgnored = 0,       // Values 0-4 are ignored by the server
     BNCUpdateStateTuneMigration = 5  // App was migrated from Tune SDK to Branch SDK
 };
 
 + (NSNumber *)appUpdateState {
-    BNCUpdateState update_state = BNCUpdateStateUnknown;
+    BNCUpdateState update_state = BNCUpdateStateIgnored;
     if ([BNCTuneUtility isTuneDataPresent]) {
         update_state = BNCUpdateStateTuneMigration;
     }
