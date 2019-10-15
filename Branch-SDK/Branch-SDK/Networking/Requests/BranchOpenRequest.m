@@ -100,19 +100,19 @@
 }
 
 typedef NS_ENUM(NSInteger, BNCUpdateState) {
-// Deprecated states, however older SDKs still send them.  The server will ignores these values.
-//    BNCUpdateStateInstall       = 0,    // App was recently installed.
-//    BNCUpdateStateNonUpdate     = 1,    // App was neither newly installed nor updated.
-//    BNCUpdateStateUpdate        = 2,    // App was recently updated.
-//    BNCUpdateStateError         = 3,    // Error determining update state.
-//    BNCUpdateStateReinstall     = 4,    // App was re-installed.
+    // Values 0-4 are deprecated and ignored by the server
+    BNCUpdateStateIgnored0 = 0,
+    BNCUpdateStateIgnored1 = 1,
+    BNCUpdateStateIgnored2 = 2,
+    BNCUpdateStateIgnored3 = 3,
+    BNCUpdateStateIgnored4 = 4,
     
-    BNCUpdateStateIgnored = 0,       // Values 0-4 are ignored by the server
-    BNCUpdateStateTuneMigration = 5  // App was migrated from Tune SDK to Branch SDK
+    // App was migrated from Tune SDK to Branch SDK
+    BNCUpdateStateTuneMigration = 5
 };
 
 + (NSNumber *)appUpdateState {
-    BNCUpdateState update_state = BNCUpdateStateIgnored;
+    BNCUpdateState update_state = BNCUpdateStateIgnored0;
     if ([BNCTuneUtility isTuneDataPresent]) {
         update_state = BNCUpdateStateTuneMigration;
     }
