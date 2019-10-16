@@ -12,7 +12,7 @@
 
 // INTENG-7695 Tune data indicates an app upgrading from Tune SDK to Branch SDK
 + (BOOL)isTuneDataPresent {
-    __block BOOL isPresent = NO;
+    static BOOL isPresent = NO;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSString *tuneMatIdKey = @"_TUNE_mat_id";
