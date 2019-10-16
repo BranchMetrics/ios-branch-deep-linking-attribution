@@ -97,6 +97,8 @@
 		5FB6D3D923219B48006C5094 /* BNCAppleReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB6D3D523219B48006C5094 /* BNCAppleReceipt.m */; platformFilter = ios; };
 		5FB6D3DD23219C46006C5094 /* BNCThreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB6D3DB23219C46006C5094 /* BNCThreads.h */; platformFilter = ios; };
 		5FB6D3DE23219C46006C5094 /* BNCThreads.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB6D3DC23219C46006C5094 /* BNCThreads.m */; platformFilter = ios; };
+		5FC09DCE235790B8009D4098 /* BNCTuneUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC09DCC235790B8009D4098 /* BNCTuneUtility.m */; };
+		5FC09DCF235790B8009D4098 /* BNCTuneUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FC09DCD235790B8009D4098 /* BNCTuneUtility.h */; };
 		7DA3BF1D1D889CE500CA8AE0 /* BranchContentDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3BF171D889CE500CA8AE0 /* BranchContentDiscoverer.m */; platformFilter = ios; };
 		7DA3BF1E1D889CE500CA8AE0 /* BranchContentDiscoverer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7DA3BF181D889CE500CA8AE0 /* BranchContentDiscoverer.h */; platformFilter = ios; };
 		7DA3BF1F1D889CE500CA8AE0 /* BranchContentDiscoveryManifest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7DA3BF191D889CE500CA8AE0 /* BranchContentDiscoveryManifest.h */; platformFilter = ios; };
@@ -228,6 +230,8 @@
 		5FB6D3D523219B48006C5094 /* BNCAppleReceipt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCAppleReceipt.m; sourceTree = "<group>"; };
 		5FB6D3DB23219C46006C5094 /* BNCThreads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCThreads.h; sourceTree = "<group>"; };
 		5FB6D3DC23219C46006C5094 /* BNCThreads.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCThreads.m; sourceTree = "<group>"; };
+		5FC09DCC235790B8009D4098 /* BNCTuneUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCTuneUtility.m; sourceTree = "<group>"; };
+		5FC09DCD235790B8009D4098 /* BNCTuneUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCTuneUtility.h; sourceTree = "<group>"; };
 		7DA3BF171D889CE500CA8AE0 /* BranchContentDiscoverer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchContentDiscoverer.m; sourceTree = "<group>"; };
 		7DA3BF181D889CE500CA8AE0 /* BranchContentDiscoverer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchContentDiscoverer.h; sourceTree = "<group>"; };
 		7DA3BF191D889CE500CA8AE0 /* BranchContentDiscoveryManifest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchContentDiscoveryManifest.h; sourceTree = "<group>"; };
@@ -345,6 +349,8 @@
 		E230A1141D03DB9E006181D8 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
+				5FC09DCD235790B8009D4098 /* BNCTuneUtility.h */,
+				5FC09DCC235790B8009D4098 /* BNCTuneUtility.m */,
 				5F9071CF233D6033003AACAD /* BNCJSONUtility.h */,
 				5F9071D0233D6034003AACAD /* BNCJSONUtility.m */,
 				5F9071C2233D5FD5003AACAD /* BranchCrossPlatformID.h */,
@@ -477,6 +483,7 @@
 				4DCF4B001F438A2B00AF9AAB /* BNCError.h in Headers */,
 				5F9071C6233D5FD5003AACAD /* BranchCrossPlatformID.h in Headers */,
 				E230A1751D03DB9E006181D8 /* BNCLinkCache.h in Headers */,
+				5FC09DCF235790B8009D4098 /* BNCTuneUtility.h in Headers */,
 				5FB6D3D723219B48006C5094 /* BNCUserAgentCollector.h in Headers */,
 				4DCF4B011F438A2B00AF9AAB /* BNCLog.h in Headers */,
 				E230A1771D03DB9E006181D8 /* BNCLinkData.h in Headers */,
@@ -618,6 +625,7 @@
 				4DAB17AD1EE8A31B0079EEB4 /* BranchInstallRequest.m in Sources */,
 				4DAB17A11EE8A31B0079EEB4 /* BNCServerInterface.m in Sources */,
 				5FB6D3D923219B48006C5094 /* BNCAppleReceipt.m in Sources */,
+				5FC09DCE235790B8009D4098 /* BNCTuneUtility.m in Sources */,
 				4DAB179E1EE8A31B0079EEB4 /* BNCNetworkService.m in Sources */,
 				5F9071CD233D5FE4003AACAD /* BranchCPIDRequest.m in Sources */,
 				5F9071CB233D5FE4003AACAD /* BranchLATDRequest.m in Sources */,
