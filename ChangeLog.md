@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.29.3
+* _*Master Release*_ - Oct 16, 2019
+  * SDK-594 fix Tune data check
+
 - v0.29.2
 * _*Master Release*_ - Oct 16, 2019
   * SDK-550 add Tune data check
