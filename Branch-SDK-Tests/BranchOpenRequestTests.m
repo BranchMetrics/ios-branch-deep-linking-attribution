@@ -93,7 +93,7 @@
         @"lastest_update_time":         BNCWireFormatFromDate(installDate),
         @"first_install_time":          BNCWireFormatFromDate(installDate),
         @"previous_update_time":        BNCWireFormatFromDate(updateDate),
-        @"update":                      @1,
+        @"update":                      @0,
         @"apple_testflight":            @0
     }];
     if (!self.class.isApplication) expectedParams[@"ios_team_id"] = nil;
@@ -174,7 +174,7 @@
         @"lastest_update_time":         BNCWireFormatFromDate(installDate),
         @"first_install_time":          BNCWireFormatFromDate(installDate),
         @"previous_update_time":        BNCWireFormatFromDate(updateDate),
-        @"update":                      @1,
+        @"update":                      @0,
         @"apple_testflight":            @0
     }];
     if (!self.class.isApplication) expectedParams[@"ios_team_id"] = nil;
