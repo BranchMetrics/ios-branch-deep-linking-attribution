@@ -131,7 +131,6 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
 @property (assign, atomic)    NSInteger networkCount;
 @property (assign, nonatomic) BNCInitStatus initializationStatus;
-@property (assign, nonatomic) BOOL shouldCallSessionInitCallback;
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
@@ -260,7 +259,6 @@ void BranchClassInitializeLog(void) {
 
     _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
     _initializationStatus = BNCInitStatusUninitialized;
-    _shouldCallSessionInitCallback = YES;
     _processing_sema = dispatch_semaphore_create(1);
     _networkCount = 0;
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
@@ -2207,8 +2205,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 - (void)initUserSessionAndCallCallback:(BOOL)callCallback {
-    self.shouldCallSessionInitCallback = callCallback;
-
     NSString *urlstring = nil;
     if (self.preferenceHelper.universalLinkUrl.length)
         urlstring = self.preferenceHelper.universalLinkUrl;
@@ -2231,7 +2227,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
     // If the session is not yet initialized
     if (self.initializationStatus == BNCInitStatusUninitialized) {
-        [self initializeSession];
+        [self initializeSessionAndCallCallback:callCallback];
     }
     // If the session was initialized, but callCallback was specified, do so.
     else if (callCallback && self.initializationStatus == BNCInitStatusInitialized) {
@@ -2248,7 +2244,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-- (void)initializeSession {
+- (void)initializeSessionAndCallCallback:(BOOL)callCallback {
 	Class clazz = [BranchInstallRequest class];
 	if (self.preferenceHelper.identityID) {
 		clazz = [BranchOpenRequest class];
@@ -2257,9 +2253,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
 		dispatch_async(dispatch_get_main_queue(), ^ {
 			if (error) {
-				[self handleInitFailure:error];
+				[self handleInitFailure:error callCallback:callCallback];
 			} else {
-				[self handleInitSuccess];
+				[self handleInitSuccessAndCallCallback:callCallback];
 			}
 		});
     };
@@ -2307,7 +2303,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-- (void)handleInitSuccess {
+- (void)handleInitSuccessAndCallCallback:(BOOL)callCallback {
 
     self.initializationStatus = BNCInitStatusInitialized;
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
@@ -2331,7 +2327,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         #pragma clang diagnostic pop
     }
 
-    if (self.shouldCallSessionInitCallback) {
+    if (callCallback) {
         if (self.sessionInitWithParamsCallback) {
             self.sessionInitWithParamsCallback(latestReferringParams, nil);
         }
@@ -2524,10 +2520,10 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-- (void)handleInitFailure:(NSError *)error {
+- (void)handleInitFailure:(NSError *)error callCallback:(BOOL)callCallback {
     self.initializationStatus = BNCInitStatusUninitialized;
     
-    if (self.shouldCallSessionInitCallback) {
+    if (callCallback) {
         if (self.sessionInitWithParamsCallback) {
             self.sessionInitWithParamsCallback([[NSDictionary alloc] init], error);
         }
