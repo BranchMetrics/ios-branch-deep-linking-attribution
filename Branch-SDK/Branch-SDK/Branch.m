@@ -668,20 +668,19 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         }
     }
 
+    @synchronized (self.asyncRequestCountLock) {
+        self.asyncRequestCount = 0;
+    }
+    // These methods will increment self.asyncRequestCount if they make an async call:
+    // load application data
+    [self loadApplicationData];
+    // load user agent
+    [self loadUserAgent];
+    
     // Handle case where there's no URI scheme or Universal Link
-    if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] &&
-        ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
-
-        @synchronized (self.asyncRequestCountLock) {
-            self.asyncRequestCount = 0;
-        }
+    if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
 
         // These methods will increment self.asyncRequestCount if they make an async call:
-        
-        // load application data
-        [self loadApplicationData];
-        // load user agent
-        [self loadUserAgent];
         // If Facebook SDK is present, call deferred app link check here which will later on call initUserSession
         [self checkFacebookAppLinks];
         // If developer opted in, call deferred apple search attribution API here which will later on call initUserSession
@@ -698,23 +697,32 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
     // Handle case where there is Universal Link present
     else if ([options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
+        
         // Optional flag for the developer if they're letting Facebook return the boolean on didFinishLaunchingWithOptions
         // Note that this is no longer a recommended path, and that we tell developers to just return YES
         if (self.accountForFacebookSDK) {
             // does not work in Swift, because Objective-C to Swift interop is bad
-            id activity =
-                [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey]
-                    objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
+            id activity = [[options objectForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey] objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
             if (activity && [activity isKindOfClass:[NSUserActivity class]]) {
                 [self continueUserActivity:activity];
                 return;
             }
         }
+        
         // Wait for continueUserActivity Branch AppDelegate call to come through.  This may have already happened...
         @synchronized (self.continueUserActivityCalledLock) {
             if (self.continueUserActivityCalled) {
                 @synchronized (self.shouldWaitForInitLock) {
                     self.preferenceHelper.shouldWaitForInit = NO;
+                    
+                    @synchronized (self.asyncRequestCountLock) {
+                        if (self.asyncRequestCount == 0) {
+                            // If we're not looking for App Links or Apple Search Ads, initialize
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                [self initUserSessionAndCallCallback:YES];
+                            });
+                        }
+                    }
                 }
             } else {
                 @synchronized (self.shouldWaitForInitLock) {
