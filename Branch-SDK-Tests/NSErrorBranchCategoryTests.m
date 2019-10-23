@@ -1,5 +1,5 @@
 /**
- @file          BNCError.Test.m
+ @file          NSErrorBranchCategoryTests.m
  @package       Branch-SDK
  @brief         Branch error tests.
 
@@ -9,19 +9,19 @@
 */
 
 #import "BNCTestCase.h"
-#import "BNCError.h"
+#import "NSError+Branch.h"
 #import "BNCLocalization.h"
 
-@interface BNCErrorTest : BNCTestCase
+@interface NSErrorBranchCategoryTests : BNCTestCase
 @end
 
-@implementation BNCErrorTest
+@implementation NSErrorBranchCategoryTests
 
 - (void) testErrorBasic {
 
     NSError *error = nil;
     error = [NSError branchErrorWithCode:BNCInitError];
-    XCTAssert(error.domain == BNCErrorDomain);
+    XCTAssert(error.domain == [NSError bncErrorDomain]);
     XCTAssert(error.code == BNCInitError);
     XCTAssert([error.localizedDescription isEqualToString:
         @"The Branch user session has not been initialized."]
@@ -31,7 +31,7 @@
         [NSError errorWithDomain:NSCocoaErrorDomain
             code:NSFileNoSuchFileError userInfo:nil];
     error = [NSError branchErrorWithCode:BNCServerProblemError error:underlyingError];
-    XCTAssert(error.domain == BNCErrorDomain);
+    XCTAssert(error.domain == [NSError bncErrorDomain]);
     XCTAssert(error.code == BNCServerProblemError);
     XCTAssert(
         [error.localizedDescription isEqualToString:
@@ -50,12 +50,12 @@
             @"Network operation of class '%@' does not conform to the BNCNetworkOperationProtocol.",
                 NSStringFromClass([self class]));
     error = [NSError branchErrorWithCode:BNCNetworkServiceInterfaceError localizedMessage:message];
-    XCTAssert(error.domain == BNCErrorDomain);
+    XCTAssert(error.domain == [NSError bncErrorDomain]);
     XCTAssert(error.code == BNCNetworkServiceInterfaceError);
     XCTAssert([error.localizedDescription isEqualToString:
         @"The underlying network service does not conform to the BNCNetworkOperationProtocol."]);
     XCTAssert([error.localizedFailureReason isEqualToString:
-        @"Network operation of class 'BNCErrorTest' does not conform to the BNCNetworkOperationProtocol."]);
+        @"Network operation of class 'NSErrorBranchCategoryTests' does not conform to the BNCNetworkOperationProtocol."]);
 }
 
 @end
