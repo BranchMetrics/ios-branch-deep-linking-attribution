@@ -15,7 +15,7 @@
 
 @implementation BNCAppleReceipt
 
-+ (BNCAppleReceipt *)instance {
++ (BNCAppleReceipt *)sharedInstance {
     static BNCAppleReceipt *singleton;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
