@@ -38,8 +38,8 @@
     [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:params];
 
-    [self safeSetValue:[[BNCAppleReceipt instance] installReceipt] forKey:BRANCH_REQUEST_KEY_APPLE_RECEIPT onDict:params];
-    [self safeSetValue:[NSNumber numberWithBool:[[BNCAppleReceipt instance] isTestFlight]] forKey:BRANCH_REQUEST_KEY_APPLE_TESTFLIGHT onDict:params];
+    [self safeSetValue:[[BNCAppleReceipt sharedInstance] installReceipt] forKey:BRANCH_REQUEST_KEY_APPLE_RECEIPT onDict:params];
+    [self safeSetValue:[NSNumber numberWithBool:[[BNCAppleReceipt sharedInstance] isTestFlight]] forKey:BRANCH_REQUEST_KEY_APPLE_TESTFLIGHT onDict:params];
     
     params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
 
