@@ -10,7 +10,7 @@
 #import "BNCEncodingUtils.h"
 #import "BNCLog.h"
 #import "BNCDebug.h"
-#import "BNCError.h"
+#import "NSError+Branch.h"
 #import "BNCConfig.h"
 
 #pragma mark BNCNetworkOperation

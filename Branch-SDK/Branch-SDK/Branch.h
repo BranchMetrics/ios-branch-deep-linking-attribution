@@ -18,7 +18,7 @@
 #import "BNCCommerceEvent.h"
 #import "BNCConfig.h"
 #import "BNCDebug.h"
-#import "BNCError.h"
+#import "NSError+Branch.h"
 #import "BNCLinkCache.h"
 #import "BNCLog.h"
 #import "BNCPreferenceHelper.h"
