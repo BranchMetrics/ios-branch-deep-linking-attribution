@@ -33,27 +33,6 @@
     return self;
 }
 
-- (void)checkFacebookAppLinkSaveTo:(BNCPreferenceHelper *)preferenceHelper completion:(void (^_Nullable)(NSURL *__nullable appLink))completion {
-    if (![self isDeepLinkingClassAvailable]) {
-        if (completion) {
-            completion(nil);
-        }
-    }
-    
-    @synchronized (preferenceHelper) {
-        preferenceHelper.checkedFacebookAppLinks = YES;
-    }
-    
-    [self fetchFacebookAppLinksWithCompletion:^(NSURL * _Nullable appLink, NSError * _Nullable error) {
-        if (!error && appLink) {
-            completion(appLink);
-        } else {
-            completion(nil);
-        }
-    }];
-}
-    
-// should probably be part of init
 - (void)registerFacebookDeepLinkingClass:(id)appLinkUtility {
     self.appLinkUtility = appLinkUtility;
 }
@@ -65,9 +44,8 @@
     return NO;
 }
  
-- (void)fetchFacebookAppLinksWithCompletion:(void (^_Nullable)(NSURL *__nullable appLink, NSError *__nullable error))completion {
+- (void)fetchFacebookAppLinkWithCompletion:(void (^_Nullable)(NSURL *__nullable appLink, NSError *__nullable error))completion {
     
-    // if FB deeplinking class is not available, this is a noop.
     if (![self isDeepLinkingClassAvailable]) {
         if (completion) {
             completion(nil, [NSError branchErrorWithCode:BNCGeneralError localizedMessage:@"FB Deeplinking class is not available."]);

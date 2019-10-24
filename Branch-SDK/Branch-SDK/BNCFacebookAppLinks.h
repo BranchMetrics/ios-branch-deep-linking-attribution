@@ -16,8 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (BNCFacebookAppLinks *)sharedInstance;
 
 - (void)registerFacebookDeepLinkingClass:(id)appLinkUtility;
-
-- (void)checkFacebookAppLinkSaveTo:(BNCPreferenceHelper *)preferenceHelper completion:(void (^_Nullable)(NSURL *__nullable appLink))completion;
+- (void)fetchFacebookAppLinkWithCompletion:(void (^_Nullable)(NSURL *__nullable appLink, NSError *__nullable error))completion;
 
 @end
 

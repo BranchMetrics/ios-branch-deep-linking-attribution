@@ -17,7 +17,6 @@
 #import "BNCServerRequest.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCServerResponse.h"
-#import "BNCStrongMatchHelper.h"
 #import "BNCSystemObserver.h"
 #import "BranchCloseRequest.h"
 #import "BranchConstants.h"
@@ -44,7 +43,6 @@
 #import "BNCDeviceInfo.h"
 #import "BNCAppleSearchAds.h"
 #import "BNCFacebookAppLinks.h"
-#import <stdatomic.h>
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
@@ -139,23 +137,10 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
 @property (weak,   nonatomic) UIViewController *deepLinkPresentingController;
-@property (assign, nonatomic) BOOL useCookieBasedMatching;
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (assign, nonatomic) BOOL accountForFacebookSDK;
-@property (strong, nonatomic) id FBSDKAppLinkUtility;
-@property (assign, nonatomic) BOOL delayForAppleAds;
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
 @property (strong, nonatomic) BNCURLBlackList *URLBlackList;
-
-// tracks async setup calls required before Branch init
-@property (assign, nonatomic) NSInteger asyncRequestCount;
-@property (strong, nonatomic, readwrite) NSObject *asyncRequestCountLock;
-
-// tracks if continueUserActivity was called
-@property (assign, nonatomic, readwrite) BOOL continueUserActivityCalled;
-@property (strong, nonatomic, readwrite) NSObject *continueUserActivityCalledLock;
-
-@property (strong, nonatomic, readwrite) NSObject *shouldWaitForInitLock;
 
 @end
 
@@ -246,15 +231,7 @@ void BranchClassInitializeLog(void) {
 
     self = [super init];
     if (!self) return self;
-
-    // TODO: remove this
-    [BNCAppleSearchAds sharedInstance];
-    [BNCFacebookAppLinks sharedInstance];
-    
-    self.asyncRequestCountLock = [NSObject new];
-    self.continueUserActivityCalledLock = [NSObject new];
-    self.shouldWaitForInitLock = [NSObject new];
-    
+        
     // Initialize instance variables
 
     _serverInterface = interface;
@@ -269,16 +246,8 @@ void BranchClassInitializeLog(void) {
     _networkCount = 0;
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
     _whiteListedSchemeList = [[NSMutableArray alloc] init];
-    _useCookieBasedMatching = YES;
     self.class.branchKey = key;
     self.URLBlackList = [BNCURLBlackList new];
-    
-    @synchronized (self.asyncRequestCountLock) {
-        _asyncRequestCount = 0;
-    }
-    @synchronized (self.continueUserActivityCalledLock) {
-        _continueUserActivityCalled = NO;
-    }
     
     [BranchOpenRequest setWaitNeededForOpenResponseLock];
 
@@ -509,7 +478,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)disableCookieBasedMatching {
-    self.useCookieBasedMatching = NO;
+    // deprecate this
 }
 
 - (void)accountForFacebookSDKPreventingAppLaunch {
@@ -525,27 +494,19 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)enableDelayedInit {
-    @synchronized (self.shouldWaitForInitLock) {
-        self.preferenceHelper.shouldWaitForInit = YES;
-    }
-
-    self.useCookieBasedMatching = NO; // Developers delaying init should implement their own SFSafariViewController
+    // deprecate this
 }
 
 - (void)disableDelayedInit {
-    @synchronized (self.shouldWaitForInitLock) {
-        self.preferenceHelper.shouldWaitForInit = NO;
-    }
+    // deprecate this
 }
 
 - (NSURL *)getUrlForOnboardingWithRedirectUrl:(NSString *)redirectUrl {
-    return [BNCStrongMatchHelper getUrlForCookieBasedMatchingWithBranchKey:self.class.branchKey redirectUrl:redirectUrl];
+    // deprecate this
+    return nil;
 }
 
 - (void)resumeInit {
-    @synchronized (self.shouldWaitForInitLock) {
-        self.preferenceHelper.shouldWaitForInit = NO;
-    }
     if (self.initializationStatus == BNCInitStatusInitialized) {
         BNCLogError(@"User session has already been initialized, so resumeInit is aborting.");
     }
@@ -674,32 +635,13 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         }
     }
 
-    @synchronized (self.asyncRequestCountLock) {
-        self.asyncRequestCount = 0;
-    }
-    // These methods will increment self.asyncRequestCount if they make an async call:
-    // load application data
     [self loadApplicationData];
-    // load user agent
     [self loadUserAgent];
     
     // Handle case where there's no URI scheme or Universal Link
     if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
-
-        // These methods will increment self.asyncRequestCount if they make an async call:
-        // If Facebook SDK is present, call deferred app link check here which will later on call initUserSession
         [self checkFacebookAppLinks];
-        // If developer opted in, call deferred apple search attribution API here which will later on call initUserSession
         [self checkAppleSearchAdsAttribution];
-
-        @synchronized (self.asyncRequestCountLock) {
-            if (self.asyncRequestCount == 0) {
-                // If we're not looking for App Links or Apple Search Ads, initialize
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self initUserSessionAndCallCallback:YES];
-                });
-            }
-        }
     }
     // Handle case where there is Universal Link present
     else if ([options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
@@ -714,28 +656,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 return;
             }
         }
-        
-        // Wait for continueUserActivity Branch AppDelegate call to come through.  This may have already happened...
-        @synchronized (self.continueUserActivityCalledLock) {
-            if (self.continueUserActivityCalled) {
-                @synchronized (self.shouldWaitForInitLock) {
-                    self.preferenceHelper.shouldWaitForInit = NO;
-                    
-                    @synchronized (self.asyncRequestCountLock) {
-                        if (self.asyncRequestCount == 0) {
-                            // If we're not looking for App Links or Apple Search Ads, initialize
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                [self initUserSessionAndCallCallback:YES];
-                            });
-                        }
-                    }
-                }
-            } else {
-                @synchronized (self.shouldWaitForInitLock) {
-                    self.preferenceHelper.shouldWaitForInit = YES;
-                }
-            }
-        }
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        [self initUserSessionAndCallCallback:YES];
+//                    });
     }
 }
 
@@ -879,9 +802,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         self.preferenceHelper.universalLinkUrl = urlString;
         self.preferenceHelper.referringURL = urlString;
     }
-    @synchronized (self.shouldWaitForInitLock) {
-        self.preferenceHelper.shouldWaitForInit = NO;
-    }
+
     [self initUserSessionAndCallCallback:YES];
 
     id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
@@ -939,16 +860,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
         }
     }
-    @synchronized (self.shouldWaitForInitLock) {
-        self.preferenceHelper.shouldWaitForInit = NO;
-    }
+
     [self initUserSessionAndCallCallback:YES];
 
-    // update that continueUserActivity was called
-    @synchronized (self.continueUserActivityCalledLock) {
-        _continueUserActivityCalled = YES;
-    }
-    
     return spotlightIdentifier != nil;
 }
 
@@ -999,189 +913,51 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 #pragma mark - async data collection
 
 - (void)loadUserAgent {
-    @synchronized (self.asyncRequestCountLock) {
-        self.asyncRequestCount++;
-    }
-    
     [[BNCUserAgentCollector instance] loadUserAgentForSystemBuildVersion:[BNCDeviceInfo systemBuildVersion] withCompletion:^(NSString * _Nullable userAgent) {
-        @synchronized (self.asyncRequestCountLock) {
-            self.asyncRequestCount--;
-            if (self.asyncRequestCount > 0) return;
-        
-            @synchronized (self.shouldWaitForInitLock) {
-                self.preferenceHelper.shouldWaitForInit = NO;
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self initUserSessionAndCallCallback:(self.initializationStatus != BNCInitStatusInitialized)];
-            });
-        }
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [self initUserSessionAndCallCallback:(self.initializationStatus != BNCInitStatusInitialized)];
+//            });
     }];
 }
 
 - (void)loadApplicationData {
-    @synchronized (self.asyncRequestCountLock) {
-        self.asyncRequestCount++;
-    }
-    
     [BNCApplication loadCurrentApplicationWithCompletion:^(BNCApplication *application) {
-        @synchronized (self.asyncRequestCountLock) {
-            self.asyncRequestCount--;
-            if (self.asyncRequestCount > 0) return;
-            
-            @synchronized (self.shouldWaitForInitLock) {
-                self.preferenceHelper.shouldWaitForInit = NO;
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self initUserSessionAndCallCallback:(self.initializationStatus != BNCInitStatusInitialized)];
-            });
-        }
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [self initUserSessionAndCallCallback:(self.initializationStatus != BNCInitStatusInitialized)];
+//            });
     }];
 }
 
 #pragma mark - Apple Search Ad Check
 
 - (void)delayInitToCheckForSearchAds {
-    self.delayForAppleAds = YES;
+    [BNCAppleSearchAds sharedInstance].enableAppleSearchAdsCheck = YES;
 }
 
-- (BOOL)checkAppleSearchAdsAttribution {
-    if (!self.delayForAppleAds)
-        return NO;
-
-    NSNumber *hasAppleSearchAdAttribution = self.preferenceHelper.appleSearchAdDetails[@"iad-attribution"];
-    if ([hasAppleSearchAdAttribution boolValue])
-        return NO;
-
-    NSDate *installDatePlus30 =
-        [[BNCApplication currentApplication].currentInstallDate
-            dateByAddingTimeInterval:(30.0*24.0*60.0*60.0)];
-    if ([installDatePlus30 compare:[NSDate date]] < 0) {
-        return NO;
+- (void)checkAppleSearchAdsAttribution {
+    if (![BNCAppleSearchAds sharedInstance].enableAppleSearchAdsCheck) {
+        return;
     }
-
-    Class ADClientClass = NSClassFromString(@"ADClient");
-    SEL sharedClient = NSSelectorFromString(@"sharedClient");
-    SEL requestAttribution = NSSelectorFromString(@"requestAttributionDetailsWithBlock:");
-
-    BOOL ADClientIsAvailable =
-        ADClientClass &&
-        [ADClientClass instancesRespondToSelector:requestAttribution] &&
-        [ADClientClass methodForSelector:sharedClient];
-
-    if (!ADClientIsAvailable) {
-        BNCLogWarning(@"`delayForAppleAds` is true but ADClient is not available. Is the iAD.framework included and iOS 10?");
-        return NO;
-    }
-
-    id sharedClientInstance = ((id (*)(id, SEL))[ADClientClass methodForSelector:sharedClient])(ADClientClass, sharedClient);
-
-    @synchronized (self.shouldWaitForInitLock) {
-        self.preferenceHelper.shouldWaitForInit = YES;
-    }
-    self.preferenceHelper.checkedAppleSearchAdAttribution = YES;
-    @synchronized (self.asyncRequestCountLock) {
-        self.asyncRequestCount++;
-    }
-        
-    NSDate *startDate = [NSDate date];
-    _Atomic __block BOOL hasBeenCalled = NO;
-    void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) =
-      ^ void(NSDictionary *__nullable attrDetails, NSError *__nullable error) {
-        @synchronized(self) {
-            NSTimeInterval elapsedSeconds = - [startDate timeIntervalSinceNow];
-            BNCLogDebugSDK(@"Elapsed Apple Search Ad callback time: %1.3fs.", elapsedSeconds);
-
-            if (attrDetails.count > 0 && !error) {
-                [self.preferenceHelper addInstrumentationDictionaryKey:@"apple_search_ad"
-                    value:[[NSNumber numberWithInteger:elapsedSeconds*1000] stringValue]];
-            }
-            if (!error) {
-                if (attrDetails == nil)
-                    attrDetails = @{};
-                if (self.preferenceHelper.appleSearchAdDetails == nil)
-                    self.preferenceHelper.appleSearchAdDetails = @{};
-                if (![self.preferenceHelper.appleSearchAdDetails isEqualToDictionary:attrDetails]) {
-                    self.preferenceHelper.appleSearchAdDetails = attrDetails;
-                    self.preferenceHelper.appleSearchAdNeedsSend = YES;
-                }
-            }
-            // Only continue with initialization once:
-            BOOL localHasBeenCalled = atomic_exchange(&hasBeenCalled, YES);
-            if (localHasBeenCalled) return;
-
-            if (error) {
-                BNCLogError(@"Error while getting Apple Search Ad attribution: %@.", error);
-            }
-
-            @synchronized (self.asyncRequestCountLock) {
-                self.asyncRequestCount--;
-                if (self.asyncRequestCount > 0) return;
-
-                @synchronized (self.shouldWaitForInitLock) {
-                    self.preferenceHelper.shouldWaitForInit = NO;
-                }
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self initUserSessionAndCallCallback:(self.initializationStatus != BNCInitStatusInitialized)];
-                });
-            }
-        }
-    };
-
-    // Set a expiration timer in case we don't get a call back (I'm looking at you, iPad):
-    // This may be a temporary quick fix until we figure out a better wat to do search ads.
-    BNCAfterSecondsPerformBlock(10.0, ^ {
-        completionBlock(nil, [NSError errorWithDomain:NSNetServicesErrorDomain code:NSNetServicesTimeoutError userInfo:nil]);
-    });
-
-    ((void (*)(id, SEL, void (^ __nullable)(NSDictionary *__nullable attrDetails, NSError * __nullable error)))
-        [sharedClientInstance methodForSelector:requestAttribution])
-            (sharedClientInstance, requestAttribution, completionBlock);
-
-    return YES;
+    
+    [[BNCAppleSearchAds sharedInstance] checkAppleSearchAdsSaveTo:[BNCPreferenceHelper preferenceHelper] installDate:[BNCApplication currentApplication].currentInstallDate completion:^{
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [self initUserSessionAndCallCallback:(self.initializationStatus != BNCInitStatusInitialized)];
+//            });
+    }];
 }
 
 #pragma mark - Facebook App Link Check
 
 - (void)registerFacebookDeepLinkingClass:(id)FBSDKAppLinkUtility {
-    self.FBSDKAppLinkUtility = FBSDKAppLinkUtility;
+    [[BNCFacebookAppLinks sharedInstance] registerFacebookDeepLinkingClass:FBSDKAppLinkUtility];
 }
 
-- (BOOL)checkFacebookAppLinks {
-    if (self.FBSDKAppLinkUtility) {
-
-        SEL fetchDeferredAppLink = NSSelectorFromString(@"fetchDeferredAppLink:");
-
-        if ([self.FBSDKAppLinkUtility methodForSelector:fetchDeferredAppLink]) {
-            void (^__nullable completionBlock)(NSURL *appLink, NSError *error) = ^void(NSURL *__nullable appLink, NSError *__nullable error) {
-                @synchronized (self.asyncRequestCountLock) {
-                    self.asyncRequestCount--;
-
-                    if (self.asyncRequestCount > 0) { return; }
-                    
-                    @synchronized (self.shouldWaitForInitLock) {
-                        self.preferenceHelper.shouldWaitForInit = NO;
-                    }
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self handleDeepLink:appLink];
-                    });
-                }
-            };
-
-            @synchronized (self.asyncRequestCountLock) {
-                self.asyncRequestCount++;
-            }
-            self.preferenceHelper.checkedFacebookAppLinks = YES;
-            @synchronized (self.shouldWaitForInitLock) {
-                self.preferenceHelper.shouldWaitForInit = YES;
-            }
-
-            ((void (*)(id, SEL, void (^ __nullable)(NSURL *__nullable appLink, NSError * __nullable error)))[self.FBSDKAppLinkUtility methodForSelector:fetchDeferredAppLink])(self.FBSDKAppLinkUtility, fetchDeferredAppLink, completionBlock);
-
-            return YES;
-        }
-    }
-
-    return NO;
+- (void)checkFacebookAppLinks {
+    [[BNCFacebookAppLinks sharedInstance] fetchFacebookAppLinkWithCompletion:^(NSURL * _Nullable appLink, NSError * _Nullable error) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self handleDeepLink:appLink];
+//        });
+    }];
 }
 
 #pragma mark - Deep Link Controller methods
@@ -2013,14 +1789,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    BOOL shouldWaitForInitCopy = NO;
-    @synchronized (self.shouldWaitForInitLock) {
-        shouldWaitForInitCopy = self.preferenceHelper.shouldWaitForInit;
-    }
-    
     if (!Branch.trackingDisabled) {
         if ((self.initializationStatus != BNCInitStatusInitialized) &&
-            !shouldWaitForInitCopy &&
             ![self.requestQueue containsInstallOrOpen]) {
             [self initUserSessionAndCallCallback:YES];
         }
@@ -2150,8 +1920,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     dispatch_semaphore_wait(self.processing_sema, DISPATCH_TIME_FOREVER);
 
     if (self.networkCount == 0 &&
-        self.requestQueue.queueDepth > 0 &&
-        !self.preferenceHelper.shouldWaitForInit) {
+        self.requestQueue.queueDepth > 0) {
 
         self.networkCount = 1;
         dispatch_semaphore_signal(self.processing_sema);
@@ -2200,13 +1969,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 #pragma mark - Session Initialization
 
 - (void)initSessionIfNeededAndNotInProgress {
-    BOOL shouldWaitForInitCopy = NO;
-    @synchronized (self.shouldWaitForInitLock) {
-        shouldWaitForInitCopy = self.preferenceHelper.shouldWaitForInit;
-    }
-    
     if (self.initializationStatus == BNCInitStatusUninitialized &&
-        !shouldWaitForInitCopy &&
         ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:NO];
     }
@@ -2267,10 +2030,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 			}
 		});
     };
-
-    if ([BNCSystemObserver getOSVersion].integerValue >= 9 && self.useCookieBasedMatching) {
-        [[BNCStrongMatchHelper strongMatchHelper] createStrongMatchWithBranchKey:self.class.branchKey];
-    }
 
     // Notify everyone --
 

@@ -115,7 +115,6 @@
 		4DCAC80A1F426F7C00405D1D /* BNCLinkData.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E30BCF21A71EEEE00AC7402 /* BNCLinkData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DCAC80B1F426F7C00405D1D /* BNCLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA577151E67B1D600A43BDD /* BNCLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DCAC80C1F426F7C00405D1D /* BNCPreferenceHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 670016C11946309100A9E103 /* BNCPreferenceHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4DCAC80D1F426F7C00405D1D /* BNCStrongMatchHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 67486B8B1B93B48A0044D872 /* BNCStrongMatchHelper.h */; };
 		4DCAC80E1F426F7C00405D1D /* BNCSystemObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 670016C71946309100A9E103 /* BNCSystemObserver.h */; };
 		4DCAC80F1F426F7C00405D1D /* BNCAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8999EA1DC108FF00F7EE0A /* BNCAvailability.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DCAC8101F426F7C00405D1D /* Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 670016BD1946309100A9E103 /* Branch.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -224,7 +223,6 @@
 		670016701940F51400A9E103 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6700166F1940F51400A9E103 /* main.m */; };
 		6700167A1940F51400A9E103 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016791940F51400A9E103 /* ViewController.m */; };
 		67163AAE1B9A036F007A8AB1 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67163AAD1B9A036F007A8AB1 /* SafariServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		67486B8E1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */; };
 		677F4CB51C1FB1910029F2B3 /* Branch-TestBed.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 677F4CB41C1FB0FA0029F2B3 /* Branch-TestBed.entitlements */; };
 		67F270891BA9FCFF002546A7 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		7B18DF491F1F00E200C25C84 /* BNCCrashlyticsWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B18DF471F1F00E200C25C84 /* BNCCrashlyticsWrapper.h */; };
@@ -508,8 +506,6 @@
 		670016C71946309100A9E103 /* BNCSystemObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCSystemObserver.h; sourceTree = "<group>"; };
 		670016C81946309100A9E103 /* BNCSystemObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCSystemObserver.m; sourceTree = "<group>"; };
 		67163AAD1B9A036F007A8AB1 /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
-		67486B8B1B93B48A0044D872 /* BNCStrongMatchHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCStrongMatchHelper.h; sourceTree = "<group>"; };
-		67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCStrongMatchHelper.m; sourceTree = "<group>"; };
 		677F4CB41C1FB0FA0029F2B3 /* Branch-TestBed.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Branch-TestBed.entitlements"; sourceTree = "<group>"; };
 		67BBCF271A69E49A009C7DAE /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		67F270881BA9FCFF002546A7 /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
@@ -901,8 +897,6 @@
 				670016C21946309100A9E103 /* BNCPreferenceHelper.m */,
 				F185BAA81F3D30D70056300C /* BNCSpotlightService.h */,
 				F185BAA91F3D30D70056300C /* BNCSpotlightService.m */,
-				67486B8B1B93B48A0044D872 /* BNCStrongMatchHelper.h */,
-				67486B8C1B93B48A0044D872 /* BNCStrongMatchHelper.m */,
 				670016C71946309100A9E103 /* BNCSystemObserver.h */,
 				670016C81946309100A9E103 /* BNCSystemObserver.m */,
 				4D7881F6209CF28E002B750F /* BNCThreads.h */,
@@ -1011,7 +1005,6 @@
 				5FA179022326F6D90012B500 /* BranchCPIDRequest.h in Headers */,
 				4DCAC8051F426F7C00405D1D /* BNCDeviceInfo.h in Headers */,
 				4DCAC8061F426F7C00405D1D /* BNCEncodingUtils.h in Headers */,
-				4DCAC80D1F426F7C00405D1D /* BNCStrongMatchHelper.h in Headers */,
 				4DCAC81D1F426F7C00405D1D /* BNCNetworkService.h in Headers */,
 				5F909B6F2332B82200A774D2 /* BranchLATDRequest.h in Headers */,
 				4DCAC80E1F426F7C00405D1D /* BNCSystemObserver.h in Headers */,
@@ -1346,7 +1339,6 @@
 				4D130E7C1EE0C7B100A69A0A /* BNCServerResponse.m in Sources */,
 				5F73FC7F23313F7A000EBD32 /* BNCJSONUtility.m in Sources */,
 				4D130E731EE0C7B100A69A0A /* BNCNetworkService.m in Sources */,
-				67486B8E1B93B48A0044D872 /* BNCStrongMatchHelper.m in Sources */,
 				4D59B5202006979C00F89FD5 /* BNCApplication.m in Sources */,
 				7D0C97201D87549B004E14B1 /* BranchContentPathProperties.m in Sources */,
 				4D130E861EE0C7B100A69A0A /* BranchLogoutRequest.m in Sources */,

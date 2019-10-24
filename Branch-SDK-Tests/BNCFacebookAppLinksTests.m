@@ -12,7 +12,6 @@
 
 @interface BNCFacebookAppLinks()
 - (BOOL)isDeepLinkingClassAvailable;
-- (void)fetchFacebookAppLinksWithCompletion:(void (^_Nullable)(NSURL *__nullable appLink, NSError *__nullable error))completion;
 @end
 
 @interface BNCFacebookAppLinksTests : XCTestCase
@@ -47,7 +46,7 @@
     __block XCTestExpectation *expectation = [self expectationWithDescription:@""];
     
     [self.applinks registerFacebookDeepLinkingClass:[BNCFacebookMock new]];
-    [self.applinks fetchFacebookAppLinksWithCompletion:^(NSURL * _Nullable appLink, NSError * _Nullable error) {
+    [self.applinks fetchFacebookAppLinkWithCompletion:^(NSURL * _Nullable appLink, NSError * _Nullable error) {
         XCTAssertTrue([[appLink absoluteString] isEqualToString:@"https://branch.io"]);
         [expectation fulfill];
     }];
