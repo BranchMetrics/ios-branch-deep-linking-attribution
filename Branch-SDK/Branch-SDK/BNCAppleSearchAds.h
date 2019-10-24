@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BNCAppleSearchAds : NSObject
 
+@property (nonatomic, assign, readwrite) BOOL enableAppleSearchAdsCheck;
+
 + (BNCAppleSearchAds *)sharedInstance;
 
 // checks Apple Search Ads and updates preferences.  This acquires a lock on BNCPreferenceHelper.

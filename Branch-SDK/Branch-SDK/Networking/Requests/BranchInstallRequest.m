@@ -10,7 +10,6 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCSystemObserver.h"
 #import "BranchConstants.h"
-#import "BNCStrongMatchHelper.h"
 #import "BNCEncodingUtils.h"
 #import "BNCApplication.h"
 #import "BNCAppleReceipt.h"
@@ -61,17 +60,7 @@
     params[@"first_install_time"] = BNCWireFormatFromDate(application.firstInstallDate);
     params[@"update"] = [self.class appUpdateState];
 
-    if ([[BNCStrongMatchHelper strongMatchHelper] shouldDelayInstallRequest]) {
-        NSInteger delay = 750;
-        if (preferenceHelper.installRequestDelay > 0) {
-            delay = preferenceHelper.installRequestDelay;
-        }
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
-            [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_INSTALL] key:key callback:callback];
-        });
-    } else {
-        [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_INSTALL] key:key callback:callback];
-    }
+    [serverInterface postRequest:params url:[preferenceHelper getAPIURL:BRANCH_REQUEST_ENDPOINT_INSTALL] key:key callback:callback];
 }
 
 - (NSString *)getActionName {

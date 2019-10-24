@@ -29,6 +29,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        self.enableAppleSearchAdsCheck = NO;
         self.adClientClass = NSClassFromString(@"ADClient");
         self.adClientSharedClient = NSSelectorFromString(@"sharedClient");
         self.adClientRequestAttribution = NSSelectorFromString(@"requestAttributionDetailsWithBlock:");
@@ -38,6 +39,13 @@
 
 // business logic around checking and storing Apple Search Ads attribution
 - (void)checkAppleSearchAdsSaveTo:(BNCPreferenceHelper *)preferenceHelper installDate:(NSDate *)installDate completion:(void (^_Nullable)(void))completion {
+    if (!self.enableAppleSearchAdsCheck) {
+        if (completion) {
+            completion();
+        }
+        return;
+    }
+    
     if ([self isAppleSearchAdSavedToDictionary:preferenceHelper.appleSearchAdDetails]) {
         if (completion) {
             completion();

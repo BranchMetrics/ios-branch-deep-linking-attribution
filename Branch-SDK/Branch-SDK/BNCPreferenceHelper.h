@@ -33,7 +33,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, nonatomic) NSString *sessionParams;
 @property (strong, nonatomic) NSString *installParams;
 @property (assign, nonatomic) BOOL isDebug;
-@property (assign, nonatomic) BOOL shouldWaitForInit;
 @property (assign, nonatomic) BOOL checkedFacebookAppLinks;
 @property (assign, nonatomic) BOOL checkedAppleSearchAdAttribution;
 @property (assign, nonatomic) NSInteger retryCount;
