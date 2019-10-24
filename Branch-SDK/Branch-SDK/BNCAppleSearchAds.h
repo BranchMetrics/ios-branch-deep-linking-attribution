@@ -6,7 +6,7 @@
 //  Copyright © 2019 Branch, Inc. All rights reserved.
 //
 
-@import Foundation;
+#import <Foundation/Foundation.h>
 #import "BNCPreferenceHelper.h"
 
 NS_ASSUME_NONNULL_BEGIN
