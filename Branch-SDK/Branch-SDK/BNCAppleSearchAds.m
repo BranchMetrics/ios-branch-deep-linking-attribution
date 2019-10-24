@@ -52,10 +52,16 @@
         return;
     }
     
+    if (![self isAdClientAvailable]) {
+        if (completion) {
+            completion();
+        }
+        return;
+    }
+    
     [self requestAttributionWithCompletion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
         // BNCPreferenceHelper should be responsible for correctly storing and resetting this
-        @synchronized ([BNCPreferenceHelper preferenceHelper]) {
-            BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
+        @synchronized (preferenceHelper) {
             if (attributionDetails.count > 0 && !error) {
                 [preferenceHelper addInstrumentationDictionaryKey:@"apple_search_ad" value:[[NSNumber numberWithInteger:elapsedSeconds*1000] stringValue]];
             }
@@ -161,7 +167,6 @@ Printing description of attributionDetails:
 
 - (void)requestAttributionWithCompletion:(void (^_Nullable)(NSDictionary *__nullable attributionDetails, NSError *__nullable error, NSTimeInterval elapsedSeconds))completion {
     
-    // if AdClient is not available, this is a noop.
     if (![self isAdClientAvailable]) {
         if (completion) {
             completion(nil, [NSError branchErrorWithCode:BNCGeneralError localizedMessage:@"ADClient is not available. Requires iAD.framework and iOS 10+"], 0);

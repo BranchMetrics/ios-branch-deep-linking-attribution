@@ -182,6 +182,10 @@
 		5F892EBE2361157E0023AEC1 /* NSError+Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892EBC2361157D0023AEC1 /* NSError+Branch.m */; };
 		5F892EBF2361157E0023AEC1 /* NSError+Branch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F892EBD2361157D0023AEC1 /* NSError+Branch.h */; };
 		5F892EC5236116CD0023AEC1 /* NSErrorBranchCategoryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892EC4236116CC0023AEC1 /* NSErrorBranchCategoryTests.m */; };
+		5F892ECE23624E0A0023AEC1 /* BNCFacebookAppLinksTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892ECD23624E0A0023AEC1 /* BNCFacebookAppLinksTests.m */; };
+		5F892ED1236257AF0023AEC1 /* BNCFacebookMock.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892ED0236257AF0023AEC1 /* BNCFacebookMock.m */; };
+		5F892ED8236258390023AEC1 /* BNCFacebookAppLinks.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892ED6236258390023AEC1 /* BNCFacebookAppLinks.m */; };
+		5F892ED9236258390023AEC1 /* BNCFacebookAppLinks.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F892ED7236258390023AEC1 /* BNCFacebookAppLinks.h */; };
 		5F8B7B4021B5F5CD009CE0A6 /* libBranch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 466B58381B17773000A69EDE /* libBranch.a */; };
 		5F8B7B4721B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */; };
 		5F8F3E62232AD7F3002D0418 /* BranchCrossPlatformID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F8F3E60232AD7F3002D0418 /* BranchCrossPlatformID.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -447,6 +451,11 @@
 		5F892EBC2361157D0023AEC1 /* NSError+Branch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+Branch.m"; sourceTree = "<group>"; };
 		5F892EBD2361157D0023AEC1 /* NSError+Branch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+Branch.h"; sourceTree = "<group>"; };
 		5F892EC4236116CC0023AEC1 /* NSErrorBranchCategoryTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSErrorBranchCategoryTests.m; sourceTree = "<group>"; };
+		5F892ECD23624E0A0023AEC1 /* BNCFacebookAppLinksTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCFacebookAppLinksTests.m; sourceTree = "<group>"; };
+		5F892ECF236257AF0023AEC1 /* BNCFacebookMock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCFacebookMock.h; sourceTree = "<group>"; };
+		5F892ED0236257AF0023AEC1 /* BNCFacebookMock.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCFacebookMock.m; sourceTree = "<group>"; };
+		5F892ED6236258390023AEC1 /* BNCFacebookAppLinks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCFacebookAppLinks.m; sourceTree = "<group>"; };
+		5F892ED7236258390023AEC1 /* BNCFacebookAppLinks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCFacebookAppLinks.h; sourceTree = "<group>"; };
 		5F8B7B3B21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Branch-SDK-Unhosted-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F8B7B3F21B5F5CD009CE0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Branch_setBranchKeyTests.m; sourceTree = "<group>"; };
@@ -666,6 +675,7 @@
 				5F3D671D2330638D00454FF1 /* cannedData */,
 				5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */,
 				5F892EBA2360F0290023AEC1 /* BNCAppleSearchAdsTests.m */,
+				5F892ECD23624E0A0023AEC1 /* BNCFacebookAppLinksTests.m */,
 				5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */,
 				4D1683972098C901008819E3 /* BNCApplication.Test.m */,
 				4D7881FB209CF2D4002B750F /* BNCApplication+BNCTest.h */,
@@ -706,14 +716,16 @@
 				4D1683942098C901008819E3 /* BranchShortUrlSyncRequestTests.m */,
 				4D1683962098C901008819E3 /* BranchUniversalObject.Test.m */,
 				4D1683982098C901008819E3 /* BranchUserCompletedActionTests.m */,
-				4D16839F2098C901008819E3 /* Info.plist */,
 				4D16839E2098C901008819E3 /* NSString+Branch.Test.m */,
 				5F892EC4236116CC0023AEC1 /* NSErrorBranchCategoryTests.m */,
 				5F3D6717233061CB00454FF1 /* BranchCrossPlatformIDTests.m */,
 				5F909B712332BEF600A774D2 /* BranchLastAttributedTouchDataTests.m */,
+				5F892ECF236257AF0023AEC1 /* BNCFacebookMock.h */,
+				5F892ED0236257AF0023AEC1 /* BNCFacebookMock.m */,
 				5F73FC8023314697000EBD32 /* BNCJSONUtilityTests.m */,
 				5F3D6719233062FD00454FF1 /* BNCJsonLoader.h */,
 				5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */,
+				4D16839F2098C901008819E3 /* Info.plist */,
 			);
 			name = "Branch-SDK-Tests";
 			path = "../Branch-SDK-Tests";
@@ -845,6 +857,8 @@
 		670016BB1946309100A9E103 /* Branch-SDK */ = {
 			isa = PBXGroup;
 			children = (
+				5F892ED7236258390023AEC1 /* BNCFacebookAppLinks.h */,
+				5F892ED6236258390023AEC1 /* BNCFacebookAppLinks.m */,
 				5F892EB72360EFE90023AEC1 /* BNCAppleSearchAds.h */,
 				5F892EB62360EFE90023AEC1 /* BNCAppleSearchAds.m */,
 				5FC7326622D81002006E6FBC /* BNCAppleReceipt.h */,
@@ -1025,6 +1039,7 @@
 				5F3D6715232C589100454FF1 /* BranchLastAttributedTouchData.h in Headers */,
 				4DCAC8301F426F7C00405D1D /* NSMutableDictionary+Branch.h in Headers */,
 				4DCAC8311F426F7C00405D1D /* NSString+Branch.h in Headers */,
+				5F892ED9236258390023AEC1 /* BNCFacebookAppLinks.h in Headers */,
 				F1D359201ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h in Headers */,
 				7B18DF491F1F00E200C25C84 /* BNCCrashlyticsWrapper.h in Headers */,
 				4D9726BA1F27FF7400028BDE /* BNCLocalization.h in Headers */,
@@ -1314,6 +1329,7 @@
 				4D130E961EE0C7B100A69A0A /* BranchUserCompletedActionRequest.m in Sources */,
 				4D130E821EE0C7B100A69A0A /* BranchInstallRequest.m in Sources */,
 				4D130E801EE0C7B100A69A0A /* BranchCreditHistoryRequest.m in Sources */,
+				5F892ED8236258390023AEC1 /* BNCFacebookAppLinks.m in Sources */,
 				54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */,
 				4D130E761EE0C7B100A69A0A /* BNCServerInterface.m in Sources */,
 				466B586A1B17779C00A69EDE /* BNCLinkCache.m in Sources */,
@@ -1388,6 +1404,7 @@
 				4D1683BE2098C902008819E3 /* BranchShortUrlSyncRequestTests.m in Sources */,
 				4D1683CA2098C902008819E3 /* BNCPreferenceHelperTests.m in Sources */,
 				4D1683B32098C902008819E3 /* BranchGetCreditHistoryRequestTests.m in Sources */,
+				5F892ECE23624E0A0023AEC1 /* BNCFacebookAppLinksTests.m in Sources */,
 				4D1683BB2098C902008819E3 /* BranchShortUrlRequestTests.m in Sources */,
 				4D1683C32098C902008819E3 /* BranchLoadRewardsRequestTests.m in Sources */,
 				4D1683BA2098C902008819E3 /* BNCLog.Test.m in Sources */,
@@ -1410,6 +1427,7 @@
 				5F892EBB2360F0290023AEC1 /* BNCAppleSearchAdsTests.m in Sources */,
 				4D1683AC2098C902008819E3 /* BranchInstallRequestTests.m in Sources */,
 				4D1683C72098C902008819E3 /* BNCCrashlyticsWrapper.Test.m in Sources */,
+				5F892ED1236257AF0023AEC1 /* BNCFacebookMock.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

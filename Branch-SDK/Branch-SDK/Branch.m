@@ -43,6 +43,7 @@
 #import "BNCUserAgentCollector.h"
 #import "BNCDeviceInfo.h"
 #import "BNCAppleSearchAds.h"
+#import "BNCFacebookAppLinks.h"
 #import <stdatomic.h>
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -246,7 +247,9 @@ void BranchClassInitializeLog(void) {
     self = [super init];
     if (!self) return self;
 
+    // TODO: remove this
     [BNCAppleSearchAds sharedInstance];
+    [BNCFacebookAppLinks sharedInstance];
     
     self.asyncRequestCountLock = [NSObject new];
     self.continueUserActivityCalledLock = [NSObject new];
