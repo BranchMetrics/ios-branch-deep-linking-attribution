@@ -80,18 +80,27 @@
 }
 
 - (BOOL)isAppleSearchAdSavedToDictionary:(NSDictionary *)appleSearchAdDetails {
-    if (appleSearchAdDetails) {
-        NSNumber *hasAppleSearchAdAttribution = appleSearchAdDetails[@"iad-attribution"];
+    NSDictionary *tmp = [appleSearchAdDetails objectForKey:@"Version3.1"];
+    if (tmp && ([tmp isKindOfClass:NSDictionary.class] || [tmp isKindOfClass:NSMutableDictionary.class])) {
+        NSNumber *hasAppleSearchAdAttribution = [tmp objectForKey:@"iad-attribution"];
         return [hasAppleSearchAdAttribution boolValue];
     }
     return NO;
 }
 
 - (BOOL)isDateWithinWindow:(NSDate *)installDate {
+    // install date should NOT be after current date
+    NSDate *now = [NSDate date];
+    if ([installDate compare:now] == NSOrderedDescending) {
+        return NO;
+    }
+    
+    // install date + 30 should be after current date
     NSDate *installDatePlus30 = [installDate dateByAddingTimeInterval:(30.0*24.0*60.0*60.0)];
-    if ([installDatePlus30 compare:[NSDate date]] == NSOrderedAscending) {
+    if ([installDatePlus30 compare:now] == NSOrderedDescending) {
         return YES;
     }
+    
     return NO;
 }
 
@@ -104,6 +113,50 @@
         return YES;
     }
     return NO;
+}
+
+/*
+Expected test payload from Apple.
+
+Printing description of attributionDetails:
+{
+    "Version3.1" =     {
+        "iad-adgroup-id" = 1234567890;
+        "iad-adgroup-name" = AdGroupName;
+        "iad-attribution" = true;
+        "iad-campaign-id" = 1234567890;
+        "iad-campaign-name" = CampaignName;
+        "iad-click-date" = "2019-10-24T00:14:36Z";
+        "iad-conversion-date" = "2019-10-24T00:14:36Z";
+        "iad-conversion-type" = Download;
+        "iad-country-or-region" = US;
+        "iad-creativeset-id" = 1234567890;
+        "iad-creativeset-name" = CreativeSetName;
+        "iad-keyword" = Keyword;
+        "iad-keyword-id" = KeywordID;
+        "iad-keyword-matchtype" = Broad;
+        "iad-lineitem-id" = 1234567890;
+        "iad-lineitem-name" = LineName;
+        "iad-org-id" = 1234567890;
+        "iad-org-name" = OrgName;
+        "iad-purchase-date" = "2019-10-24T00:14:36Z";
+    };
+}
+*/
+- (BOOL)isAppleTestData:(NSDictionary *)appleSearchAdDetails {
+    BOOL isTestData = NO;
+    
+    NSDictionary *tmp = [appleSearchAdDetails objectForKey:@"Version3.1"];
+    if ([@"1234567890" isEqualToString:[tmp objectForKey:@"iad-adgroup-id"]] &&
+        [@"AdGroupName" isEqualToString:[tmp objectForKey:@"iad-adgroup-name"]] &&
+        [@"1234567890" isEqualToString:[tmp objectForKey:@"iad-campaign-id"]] &&
+        [@"CampaignName" isEqualToString:[tmp objectForKey:@"iad-campaign-name"]] &&
+        [@"1234567890" isEqualToString:[tmp objectForKey:@"iad-org-id"]] &&
+        [@"OrgName" isEqualToString:[tmp objectForKey:@"iad-org-name"]]) {
+        isTestData = YES;
+    }
+    
+    return isTestData;
 }
 
 - (void)requestAttributionWithCompletion:(void (^_Nullable)(NSDictionary *__nullable attributionDetails, NSError *__nullable error, NSTimeInterval elapsedSeconds))completion {
