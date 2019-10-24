@@ -665,6 +665,7 @@
 			children = (
 				5F3D671D2330638D00454FF1 /* cannedData */,
 				5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */,
+				5F892EBA2360F0290023AEC1 /* BNCAppleSearchAdsTests.m */,
 				5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */,
 				4D1683972098C901008819E3 /* BNCApplication.Test.m */,
 				4D7881FB209CF2D4002B750F /* BNCApplication+BNCTest.h */,
@@ -713,7 +714,6 @@
 				5F73FC8023314697000EBD32 /* BNCJSONUtilityTests.m */,
 				5F3D6719233062FD00454FF1 /* BNCJsonLoader.h */,
 				5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */,
-				5F892EBA2360F0290023AEC1 /* BNCAppleSearchAdsTests.m */,
 			);
 			name = "Branch-SDK-Tests";
 			path = "../Branch-SDK-Tests";
