@@ -161,7 +161,7 @@
         }
     });
     [branch clearNetworkQueue];
-    [branch handleDeepLinkWithNewSession:[NSURL URLWithString:@"https://myapp.app.link/bob/link?oauth=true"]];
+    [branch handleDeepLink:[NSURL URLWithString:@"https://myapp.app.link/bob/link?oauth=true"]];
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
     [serverInterfaceMock stopMocking];
     [BNCPreferenceHelper preferenceHelper].referringURL = nil;
@@ -200,7 +200,7 @@
             [expectation fulfill];
         }
     });
-    [branch handleDeepLinkWithNewSession:[NSURL URLWithString:@"https://myapp.app.link/bob/link"]];
+    [branch handleDeepLink:[NSURL URLWithString:@"https://myapp.app.link/bob/link"]];
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
     [serverInterfaceMock stopMocking];
     [BNCPreferenceHelper preferenceHelper].referringURL = nil;

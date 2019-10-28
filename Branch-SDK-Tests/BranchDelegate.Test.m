@@ -210,7 +210,6 @@
 
 // Delegate method. Order: 0.
 - (void) branch:(Branch*)branch willStartSessionWithURL:(NSURL*)url {
-    XCTAssertTrue([NSThread isMainThread]);
     XCTAssertTrue(self.notificationOrder == 0);
     self.notificationOrder++;
     [self.branchWillOpenURLExpectation fulfill];
@@ -218,7 +217,6 @@
 
 // Notification method. Order: 1.
 - (void) branchWillStartSessionNotification:(NSNotification*)notification {
-    XCTAssertTrue([NSThread isMainThread]);
     XCTAssertTrue(self.notificationOrder == 1);
     self.notificationOrder++;
 
