@@ -80,10 +80,6 @@ NSString * const BNCSpotlightFeature = @"spotlight";
 #define CSSearchableItemActivityIdentifier @"kCSSearchableItemActivityIdentifier"
 #endif
 
-static inline dispatch_time_t BNCDispatchTimeFromSeconds(NSTimeInterval seconds) {
-    return dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC);
-}
-
 #pragma mark - Load Categories
 
 void ForceCategoriesToLoad(void);
@@ -1936,10 +1932,6 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 #pragma mark - Session Initialization
 
 - (void)initUserSessionAndCallCallback:(BOOL)callCallback {
-    if (self.initializationStatus == BNCInitStatusInitialized) {
-        return;
-    }
-    
     dispatch_async(self.isolationQueue, ^(){
         NSString *urlstring = nil;
         if (self.preferenceHelper.universalLinkUrl.length) {
@@ -1980,7 +1972,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     });
 }
 
-// only called from initUserSessionAndCallCallback
+// only called from initUserSessionAndCallCallback!
 - (void)initializeSessionAndCallCallback:(BOOL)callCallback {
 	Class clazz = [BranchInstallRequest class];
 	if (self.preferenceHelper.identityID) {
