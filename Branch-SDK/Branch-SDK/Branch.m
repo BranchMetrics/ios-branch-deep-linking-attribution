@@ -1950,16 +1950,20 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         }
         // If the session was initialized, but callCallback was specified, do so.
         else if (callCallback && self.initializationStatus == BNCInitStatusInitialized) {
-            if (self.sessionInitWithParamsCallback) {
-                self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
-            }
-            else if (self.sessionInitWithBranchUniversalObjectCallback) {
-                self.sessionInitWithBranchUniversalObjectCallback(
-                    [self getLatestReferringBranchUniversalObject],
-                    [self getLatestReferringBranchLinkProperties],
-                    nil
-                );
-            }
+            
+            // callback on main, this is generally what the client expects and maintains our previous behavior
+            dispatch_async(dispatch_get_main_queue(), ^ {
+                if (self.sessionInitWithParamsCallback) {
+                    self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
+                }
+                else if (self.sessionInitWithBranchUniversalObjectCallback) {
+                    self.sessionInitWithBranchUniversalObjectCallback(
+                        [self getLatestReferringBranchUniversalObject],
+                        [self getLatestReferringBranchLinkProperties],
+                        nil
+                    );
+                }
+            });
         }
     });
 }
@@ -1972,6 +1976,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 	}
 
     callbackWithStatus initSessionCallback = ^(BOOL success, NSError *error) {
+        // callback on main, this is generally what the client expects and maintains our previous behavior
 		dispatch_async(dispatch_get_main_queue(), ^ {
 			if (error) {
 				[self handleInitFailure:error callCallback:callCallback];
