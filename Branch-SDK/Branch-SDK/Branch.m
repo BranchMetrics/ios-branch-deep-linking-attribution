@@ -603,17 +603,13 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
 
-    // If the SDK is already initialized, this means that initSession is being called later in the app lifecycle
-    // and that the developer is expecting to receive deep link parameters via the callback block immediately
-//    if (self.initializationStatus == BNCInitStatusInitialized) {
-//        [self initUserSessionAndCallCallback:YES];
-//    }
+    // If the SDK is already initialized, this means that initSession was called after other lifecycle calls.
+    if (self.initializationStatus == BNCInitStatusInitialized) {
+        [self initUserSessionAndCallCallback:YES];
+        return;
+    }
 
-    // THIS IS NOT TRUE...
-    // The rest of this function assumes that initSession is being called BEFORE continueUserActivity and openUrl
-    // in the application life cycle, and that the SDK is not yet initialized.
-
-    // Handle push notification on app launch
+    // Save data from push notification on app launch
     if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
         id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
         if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
@@ -622,7 +618,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         }
     }
     
-    // Handle case where there's no URI scheme or Universal Link
+    // Handle case where there's no URI scheme or Universal Link.
     if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
         
         // queue up async attribution checks
@@ -633,8 +629,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         [self initUserSessionAndCallCallback:YES];
     }
 }
-
-
 
 //these params will be added
 - (void)setDeepLinkDebugMode:(NSDictionary *)debugParams {
@@ -792,8 +786,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        // If we're already in-progress cancel the last open and do this one.
-        [self removeInstallOrOpen];
         return [self handleDeepLink:userActivity.webpageURL];
     }
 
