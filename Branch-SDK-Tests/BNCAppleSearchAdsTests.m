@@ -125,11 +125,11 @@
 }
 
 /*
- Expected payload varies by simulator.  In general, there is a payload of some sort.
+ Expected payload varies by simulator or test device.  In general, there is a payload of some sort.
  
  This test fails on iOS 10 simulators.  iPad simulators never respond.  iPhone simulators return an error.
  */
-- (void)testRequestAppleSearchAds_Simulator {
+- (void)testRequestAppleSearchAds {
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
     
     [self.appleSearchAds requestAttributionWithCompletion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
