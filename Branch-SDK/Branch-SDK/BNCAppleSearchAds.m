@@ -159,8 +159,6 @@ Printing description of attributionDetails:
 }
 */
 - (BOOL)isAppleTestData:(NSDictionary *)appleSearchAdDetails {
-    BOOL isTestData = NO;
-    
     NSDictionary *tmp = [appleSearchAdDetails objectForKey:@"Version3.1"];
     if ([@"1234567890" isEqualToString:[tmp objectForKey:@"iad-adgroup-id"]] &&
         [@"AdGroupName" isEqualToString:[tmp objectForKey:@"iad-adgroup-name"]] &&
@@ -168,10 +166,10 @@ Printing description of attributionDetails:
         [@"CampaignName" isEqualToString:[tmp objectForKey:@"iad-campaign-name"]] &&
         [@"1234567890" isEqualToString:[tmp objectForKey:@"iad-org-id"]] &&
         [@"OrgName" isEqualToString:[tmp objectForKey:@"iad-org-name"]]) {
-        isTestData = YES;
+        return YES;
     }
     
-    return isTestData;
+    return NO;
 }
 
 // iOS 10, iPad simulators never respond.
