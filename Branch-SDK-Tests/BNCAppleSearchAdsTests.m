@@ -146,7 +146,7 @@
     }];
     
     [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
-        
+        NSLog(@"%@", error);
     }];
 }
 
