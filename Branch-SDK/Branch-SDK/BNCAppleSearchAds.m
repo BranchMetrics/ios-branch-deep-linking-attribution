@@ -8,6 +8,7 @@
 
 #import "BNCAppleSearchAds.h"
 #import "NSError+Branch.h"
+#import <UIKit/UIKit.h>
 
 @interface BNCAppleSearchAds()
 @property (nonatomic, strong, readwrite) Class adClientClass;
@@ -173,8 +174,18 @@ Printing description of attributionDetails:
     return isTestData;
 }
 
+- (BOOL)isBrokenSimulator {
+    #if TARGET_OS_SIMULATOR
+    UIDevice *currentDevice = [UIDevice currentDevice];
+    double version = [currentDevice.systemVersion doubleValue];
+    if ([currentDevice.model rangeOfString:@"iPad"].location != NSNotFound && version < 11.0) {
+        return YES;
+    }
+    #endif
+    return NO;
+}
+
 - (void)requestAttributionWithCompletion:(void (^_Nullable)(NSDictionary *__nullable attributionDetails, NSError *__nullable error, NSTimeInterval elapsedSeconds))completion {
-    
     if (![self isAdClientAvailable]) {
         if (completion) {
             completion(nil, [NSError branchErrorWithCode:BNCGeneralError localizedMessage:@"ADClient is not available. Requires iAD.framework and iOS 10+"], 0);
@@ -182,11 +193,19 @@ Printing description of attributionDetails:
         return;
     }
     
+    if ([self isBrokenSimulator]) {
+        if (completion) {
+            completion(nil, [NSError branchErrorWithCode:BNCGeneralError localizedMessage:@"AdClient does not callback on iPad Simulator 10.3.5"], 0);
+        }
+        return;
+    }
+    
     id adClient = ((id (*)(id, SEL))[self.adClientClass methodForSelector:self.adClientSharedClient])(self.adClientClass, self.adClientSharedClient);
     
     __block NSDate *startDate = [NSDate date];
-    void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) = ^ void(NSDictionary *__nullable attributionDetails, NSError *__nullable error) {
+    void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) = ^ void(NSDictionary *__nullable attributionDetails, NSError *__nullable error) {        
         NSTimeInterval elapsedSeconds = - [startDate timeIntervalSinceNow];
+        
         if (completion) {
             completion(attributionDetails, error, elapsedSeconds);
         }

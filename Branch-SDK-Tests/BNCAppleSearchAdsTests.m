@@ -125,14 +125,9 @@
 }
 
 /*
- Expected payload on simulator
+ Expected payload varies by simulator.  In general, there is a payload of some sort.
  
- Printing description of attributionDetails:
- {
-     "Version3.1" =     {
-         "iad-attribution" = false;
-     };
- }
+ This test fails on iPad 10.3.1 simulator since AdClient fails to respond.
  */
 - (void)testRequestAppleSearchAds_Simulator {
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
@@ -146,7 +141,6 @@
         
         NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
         XCTAssertNotNil(tmpBool);
-        XCTAssertFalse([tmpBool boolValue]);
         
         [expectation fulfill];
     }];
