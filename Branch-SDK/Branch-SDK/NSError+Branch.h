@@ -29,7 +29,7 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCSpotlightIdentifierError     = 1013,
     BNCSpotlightPublicIndexError    = 1014,
     BNCTrackingDisabledError        = 1015,
-    BNCGeneralError = 1016, // General Branch SDK Error
+    BNCGeneralError                 = 1016, // General Branch SDK Error
     BNCHighestError
 };
 
