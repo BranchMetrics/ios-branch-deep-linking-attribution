@@ -18,21 +18,21 @@
 }
 
 + (BOOL)isString:(nullable id)string {
-    if (string && ([string isKindOfClass:[NSString class]] || [string isKindOfClass:[NSMutableString class]])) {
+    if (string && ([string isKindOfClass:[NSString class]])) {
         return YES;
     }
     return NO;
 }
 
 + (BOOL)isDictionary:(nullable id)dictionary {
-    if (dictionary && ([dictionary isKindOfClass:[NSDictionary class]] || [dictionary isKindOfClass:[NSMutableDictionary class]])) {
+    if (dictionary && ([dictionary isKindOfClass:[NSDictionary class]])) {
         return YES;
     }
     return NO;
 }
 
 + (BOOL)isArray:(nullable id)array {
-    if (array && ([array isKindOfClass:[NSArray class]] || [array isKindOfClass:[NSMutableArray class]])) {
+    if (array && ([array isKindOfClass:[NSArray class]])) {
         return YES;
     }
     return NO;
