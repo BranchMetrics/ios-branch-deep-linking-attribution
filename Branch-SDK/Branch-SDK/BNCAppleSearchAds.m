@@ -96,7 +96,7 @@
 
 - (BOOL)isAppleSearchAdSavedToDictionary:(NSDictionary *)appleSearchAdDetails {
     NSDictionary *tmp = [appleSearchAdDetails objectForKey:@"Version3.1"];
-    if (tmp && ([tmp isKindOfClass:NSDictionary.class] || [tmp isKindOfClass:NSMutableDictionary.class])) {
+    if (tmp && ([tmp isKindOfClass:NSDictionary.class])) {
         NSNumber *hasAppleSearchAdAttribution = [tmp objectForKey:@"iad-attribution"];
         return [hasAppleSearchAdAttribution boolValue];
     }
@@ -110,7 +110,7 @@
         return NO;
     }
     
-    // install date + 30 should be after current date
+    // install date + 30 days should be after current date
     NSDate *installDatePlus30 = [installDate dateByAddingTimeInterval:(30.0*24.0*60.0*60.0)];
     if ([installDatePlus30 compare:now] == NSOrderedDescending) {
         return YES;
