@@ -127,7 +127,7 @@
 /*
  Expected payload varies by simulator.  In general, there is a payload of some sort.
  
- This test fails on iPad 10.3.1 simulator since AdClient fails to respond.
+ This test fails on iOS 10 simulators.  iPad simulators never respond.  iPhone simulators return an error.
  */
 - (void)testRequestAppleSearchAds_Simulator {
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];

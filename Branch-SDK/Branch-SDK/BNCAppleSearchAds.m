@@ -174,6 +174,7 @@ Printing description of attributionDetails:
     return isTestData;
 }
 
+// iOS 10, iPad simulators never respond.
 - (BOOL)isBrokenSimulator {
     #if TARGET_OS_SIMULATOR
     UIDevice *currentDevice = [UIDevice currentDevice];
@@ -195,7 +196,7 @@ Printing description of attributionDetails:
     
     if ([self isBrokenSimulator]) {
         if (completion) {
-            completion(nil, [NSError branchErrorWithCode:BNCGeneralError localizedMessage:@"AdClient does not callback on iPad Simulator 10.3.5"], 0);
+            completion(nil, [NSError branchErrorWithCode:BNCGeneralError localizedMessage:@"AdClient does not callback on the iOS 10, iPad Simulators"], 0);
         }
         return;
     }
