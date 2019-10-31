@@ -453,7 +453,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)resetUserSession {
-    self.initializationStatus = BNCInitStatusUninitialized;
+    dispatch_async(self.isolationQueue, ^(){
+        self.initializationStatus = BNCInitStatusUninitialized;
+    });
 }
 
 - (BOOL)isUserIdentified {
@@ -674,7 +676,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     
     // we've been resetting the session on all deeplinks for quite some time
     // this allows foreground links to callback
-    [self resetUserSession];
+    self.initializationStatus = BNCInitStatusUninitialized;
     
     NSString *blackListPattern = nil;
     blackListPattern = [self.URLBlackList blackListPatternMatchingURL:url];
