@@ -203,6 +203,7 @@ void BranchClassInitializeLog(void) {
     });
 }
 
+// deprecated
 + (Branch *)getTestInstance {
     Branch.useTestBranchKey = YES;
     return Branch.getInstance;
@@ -475,11 +476,11 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)disableCookieBasedMatching {
-    // deprecate this
+    // deprecated
 }
 
 - (void)accountForFacebookSDKPreventingAppLaunch {
-    // deprecate this
+    // deprecated
 }
 
 - (void)suppressWarningLogs {
@@ -491,24 +492,24 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)enableDelayedInit {
-    // deprecate this
+    // deprecated
 }
 
 - (void)disableDelayedInit {
-    // deprecate this
+    // deprecated
 }
 
 - (NSURL *)getUrlForOnboardingWithRedirectUrl:(NSString *)redirectUrl {
-    // deprecate this
+    // deprecated
     return nil;
 }
 
 - (void)resumeInit {
-    // deprecate this
+    // deprecated
 }
 
 - (void)setInstallRequestDelay:(NSInteger)installRequestDelay {
-    // deprecate this
+    // deprecated
 }
 
 + (BOOL)trackingDisabled {
@@ -666,8 +667,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
 }
 
-// deprecate this, it's the same as handleDeeplink
-// replaced all internal references to this method
+// This is currently the same as handleDeeplink
 - (BOOL)handleDeepLinkWithNewSession:(NSURL *)url {
     return [self handleDeepLink:url];
 }
