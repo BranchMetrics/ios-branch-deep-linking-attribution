@@ -70,7 +70,6 @@
 		4D1683C12098C902008819E3 /* BNCApplication.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683972098C901008819E3 /* BNCApplication.Test.m */; };
 		4D1683C22098C902008819E3 /* BranchUserCompletedActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683982098C901008819E3 /* BranchUserCompletedActionTests.m */; };
 		4D1683C32098C902008819E3 /* BranchLoadRewardsRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1683992098C901008819E3 /* BranchLoadRewardsRequestTests.m */; };
-		4D1683C52098C902008819E3 /* BranchSDKLoadTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16839B2098C901008819E3 /* BranchSDKLoadTests.m */; };
 		4D1683C62098C902008819E3 /* BranchEvent.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16839C2098C901008819E3 /* BranchEvent.Test.m */; };
 		4D1683C72098C902008819E3 /* BNCCrashlyticsWrapper.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16839D2098C901008819E3 /* BNCCrashlyticsWrapper.Test.m */; };
 		4D1683C82098C902008819E3 /* NSString+Branch.Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D16839E2098C901008819E3 /* NSString+Branch.Test.m */; };
@@ -368,7 +367,6 @@
 		4D1683972098C901008819E3 /* BNCApplication.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCApplication.Test.m; sourceTree = "<group>"; };
 		4D1683982098C901008819E3 /* BranchUserCompletedActionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchUserCompletedActionTests.m; sourceTree = "<group>"; };
 		4D1683992098C901008819E3 /* BranchLoadRewardsRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLoadRewardsRequestTests.m; sourceTree = "<group>"; };
-		4D16839B2098C901008819E3 /* BranchSDKLoadTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchSDKLoadTests.m; sourceTree = "<group>"; };
 		4D16839C2098C901008819E3 /* BranchEvent.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchEvent.Test.m; sourceTree = "<group>"; };
 		4D16839D2098C901008819E3 /* BNCCrashlyticsWrapper.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCCrashlyticsWrapper.Test.m; sourceTree = "<group>"; };
 		4D16839E2098C901008819E3 /* NSString+Branch.Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Branch.Test.m"; sourceTree = "<group>"; };
@@ -706,7 +704,6 @@
 				4D16837F2098C901008819E3 /* BranchOpenRequestTests.m */,
 				4D16838A2098C901008819E3 /* BranchRedeemRewardsRequestTests.m */,
 				4D1683862098C901008819E3 /* BranchSDKFunctionalityTests.m */,
-				4D16839B2098C901008819E3 /* BranchSDKLoadTests.m */,
 				4D16837B2098C901008819E3 /* BranchSetIdentityRequestTests.m */,
 				4D1683912098C901008819E3 /* BranchShortUrlRequestTests.m */,
 				4D1683942098C901008819E3 /* BranchShortUrlSyncRequestTests.m */,
@@ -1382,7 +1379,6 @@
 				4DB5EB4C209B9A6B00149DC9 /* BranchEvent.Test.swift in Sources */,
 				4D1683AD2098C902008819E3 /* BNCDebug.Test.m in Sources */,
 				4D1683B12098C902008819E3 /* BranchLogoutRequestTests.m in Sources */,
-				4D1683C52098C902008819E3 /* BranchSDKLoadTests.m in Sources */,
 				5F909B5E23314CE900A774D2 /* BNCJSONUtilityTests.m in Sources */,
 				5F909B722332BEF600A774D2 /* BranchLastAttributedTouchDataTests.m in Sources */,
 				4D7881FE209CF2D4002B750F /* BNCTestCase.Test.m in Sources */,
