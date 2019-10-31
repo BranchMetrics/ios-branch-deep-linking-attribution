@@ -624,10 +624,18 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         // queue up async attribution checks
         [self checkFacebookAppLinks];
         [self checkAppleSearchAdsAttribution];
-        
-        // queue up install/open
-        [self initUserSessionAndCallCallback:YES];
+        [self checkAttributionStatusAndInitialize];
     }
+}
+
+- (void)checkAttributionStatusAndInitialize {
+    dispatch_async(self.isolationQueue, ^(){
+        if ([BNCPreferenceHelper preferenceHelper].faceBookAppLink) {
+            [self handleDeepLink:[BNCPreferenceHelper preferenceHelper].faceBookAppLink];
+        } else {
+            [self initUserSessionAndCallCallback:YES];
+        }
+    });
 }
 
 //these params will be added
@@ -851,7 +859,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (urlStr && [[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
         NSURL *url = [NSURL URLWithString:urlStr];
-        if (url) [self handleDeepLink:url];
+        if (url)  {
+            [self handleDeepLink:url];
+        }
     }
 }
 
@@ -907,8 +917,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     dispatch_async(self.isolationQueue, ^(){
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         [[BNCFacebookAppLinks sharedInstance] fetchFacebookAppLinkWithCompletion:^(NSURL * _Nullable appLink, NSError * _Nullable error) {
-            // TODO: save the FB appLink so we know to open this properly
-            
+            if (appLink && !error) {
+                [BNCPreferenceHelper preferenceHelper].faceBookAppLink = appLink;
+            }
             dispatch_semaphore_signal(semaphore);
         }];
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
