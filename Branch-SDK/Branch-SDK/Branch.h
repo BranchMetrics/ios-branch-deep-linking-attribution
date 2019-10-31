@@ -653,7 +653,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  Specify that Branch should NOT use an invisible SFSafariViewController to attempt cookie-based matching upon install.
  If you call this method, we will fall back to using our pool of cookie-IDFA pairs for matching.
  */
-- (void)disableCookieBasedMatching __attribute__((deprecated(("Feature removed in iOS 11+"))));
+- (void)disableCookieBasedMatching __attribute__((deprecated(("Feature removed.  Did not work on iOS 11+"))));
 
 /**
  TL;DR: If you're using a version of the Facebook SDK that prevents application:didFinishLaunchingWithOptions: from
@@ -685,9 +685,9 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 - (void)disableDelayedInit __attribute__((deprecated(("No longer valid with new init process"))));
 
-- (nullable NSURL *)getUrlForOnboardingWithRedirectUrl:(nullable NSString *)redirectUrl __attribute__((deprecated(("Feature removed in iOS 11+"))));;
+- (nullable NSURL *)getUrlForOnboardingWithRedirectUrl:(nullable NSString *)redirectUrl __attribute__((deprecated(("Feature removed.  Did not work on iOS 11+"))));;
 
-- (void)resumeInit __attribute__((deprecated(("Feature removed in iOS 11+"))));
+- (void)resumeInit __attribute__((deprecated(("Feature removed.  Did not work on iOS 11+"))));
 
 - (void)setInstallRequestDelay:(NSInteger)installRequestDelay __attribute__((deprecated(("No longer valid with new init process"))));
 
