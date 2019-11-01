@@ -90,7 +90,7 @@ class CommerceEventTableViewController: UITableViewController {
             disableTouches:true
         )
         
-        Branch.getInstance()?.send(
+        Branch.getInstance().send(
             commerceEvent,
             metadata: commerceEventCustomMetadata,
             withCompletion: { (response, error) in

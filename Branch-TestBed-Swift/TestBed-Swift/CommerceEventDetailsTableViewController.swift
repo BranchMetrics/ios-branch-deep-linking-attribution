@@ -101,7 +101,7 @@ class CommerceEventDetailsTableViewController: UITableViewController, UITextFiel
     }
     
     func refreshControls() {
-        guard var commerceEvent = CommerceEventData.commerceEvent() else {
+        guard let commerceEvent = CommerceEventData.commerceEvent() else {
             return
         }
 

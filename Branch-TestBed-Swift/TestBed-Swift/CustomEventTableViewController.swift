@@ -107,9 +107,9 @@ class CustomEventTableViewController: UITableViewController {
         }
         
         if customEventMetadata.count == 0 {
-            branch?.userCompletedAction(customEventName)
+            branch.userCompletedAction(customEventName)
         } else {
-            branch?.userCompletedAction(customEventName, withState: customEventMetadata)
+            branch.userCompletedAction(customEventName, withState: customEventMetadata)
         }
         self.showAlert(String(format: "Custom event '%@' dispatched", customEventName), withDescription: "")
     }

@@ -41,7 +41,7 @@ class ReferralRewardsTableViewController: UITableViewController {
             self.performSegue(withIdentifier: "TextViewForm", sender: "RewardPointsToRedeem")
         case (0,5) :
             let branch = Branch.getInstance()
-            branch?.getCreditHistory { (creditHistory, error) in
+            branch.getCreditHistory { (creditHistory, error) in
                 if (error == nil) {
                     self.creditHistory = creditHistory as Array?
                     self.performSegue(withIdentifier: "CreditHistory", sender: "CreditHistory")
@@ -122,12 +122,12 @@ class ReferralRewardsTableViewController: UITableViewController {
         rewardsBalanceOfBucketTextField.isHidden = true
         activityIndicator.startAnimating()
         let branch = Branch.getInstance()
-        branch?.loadRewards { (changed, error) in
+        branch.loadRewards { (changed, error) in
             if (error == nil) {
                 if self.rewardsBucketTextField.text == "" {
-                    self.rewardsBalanceOfBucketTextField.text = String(format: "%ld", (branch?.getCredits())!)
+                    self.rewardsBalanceOfBucketTextField.text = String(format: "%ld", (branch.getCredits()))
                 } else {
-                    self.rewardsBalanceOfBucketTextField.text = String(format: "%ld", (branch?.getCreditsForBucket(self.rewardsBucketTextField.text))!)
+                    self.rewardsBalanceOfBucketTextField.text = String(format: "%ld", (branch.getCreditsForBucket(self.rewardsBucketTextField.text ?? "")))
                 }
             }
         }
@@ -140,7 +140,7 @@ class ReferralRewardsTableViewController: UITableViewController {
         let bucket = rewardsBucketTextField.text != "" ? rewardsBucketTextField.text : "default"
         
         let branch = Branch.getInstance()
-        branch?.redeemRewards(points!, forBucket: bucket) { (changed, error) in
+        branch.redeemRewards(points!, forBucket: bucket) { (changed, error) in
             
             defer {
                 self.rewardsBalanceOfBucketTextField.isHidden = false
