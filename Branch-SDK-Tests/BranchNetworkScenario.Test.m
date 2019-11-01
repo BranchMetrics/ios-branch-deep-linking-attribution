@@ -12,7 +12,7 @@
 #import "Branch.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCPreferenceHelper.h"
-#import "BNCError.h"
+#import "NSError+Branch.h"
 #import "BranchOpenRequest.h"
 
 
@@ -584,7 +584,7 @@
 
     @synchronized (self) {
         if (badRequestCallback) {
-            NSError * error = [NSError errorWithDomain:BNCErrorDomain code:BNCServerProblemError userInfo:nil];
+            NSError * error = [NSError branchErrorWithCode:BNCServerProblemError];
             badRequestCallback(nil, error);
         } else {
             XCTAssert(badRequestCallback);
@@ -644,7 +644,7 @@
         sleep(1); // Sleep so that network queue can processes
         @synchronized (self) {
             if (badRequestCallback) {
-                badRequestCallback(nil, [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:nil]);
+                badRequestCallback(nil, [NSError branchErrorWithCode:BNCBadRequestError]);
                 badRequestCallback = nil;
             } else if (goodRequestCallback) {
                 goodRequestCallback([[BNCServerResponse alloc] init], nil);

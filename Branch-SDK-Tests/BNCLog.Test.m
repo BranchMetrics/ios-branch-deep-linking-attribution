@@ -286,20 +286,6 @@ extern void BNCLogInternalErrorFunction(int linenumber, NSString*format, ...);
     BNCLogSetOutputFunction(origPtr);
 }
 
-- (void) testLogObject {
-    BNCLogSetOutputFunction(TestLogProcedure);
-    NSData *data = [@"Test string." dataUsingEncoding:NSUTF8StringEncoding];
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wformat-security"
-    BNCLog((id)data);
-    #pragma clang diagnostic pop
-    BNCLogFlushMessages();
-    XCTAssert([globalTestLogString bnc_isEqualToMaskedString:
-        @"[branch.io] BNCLog.Test.m(***) Log: "
-         "0x**************** <NSConcreteMutableData> "
-         "<54657374 20737472 696e672e>"]);
-}
-
 #pragma mark - Test BNCLogSetOutputToURLRecordWrapSize
 
 extern void BNCLogSetOutputToURLRecordWrapSize(NSURL *_Nullable url, long maxRecords, long recordSize);

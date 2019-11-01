@@ -9,7 +9,7 @@
 #import "BNCServerInterface.h"
 #import "BNCConfig.h"
 #import "BNCEncodingUtils.h"
-#import "BNCError.h"
+#import "NSError+Branch.h"
 #import "BranchConstants.h"
 #import "BNCDeviceInfo.h"
 #import "NSMutableDictionary+Branch.h"

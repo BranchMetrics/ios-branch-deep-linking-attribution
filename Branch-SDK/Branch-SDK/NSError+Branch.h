@@ -1,5 +1,5 @@
 /**
- @file          BNCError.h
+ @file          NSError+Branch.h
  @package       Branch-SDK
  @brief         Branch errors.
 
@@ -8,13 +8,9 @@
  @copyright     Copyright © 2014 Branch. All rights reserved.
 */
 
-#if __has_feature(modules)
 @import Foundation;
-#else
-#import <Foundation/Foundation.h>
-#endif
 
-FOUNDATION_EXPORT NSString *_Nonnull const BNCErrorDomain;
+NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCInitError                    = 1000,
@@ -33,14 +29,21 @@ typedef NS_ENUM(NSInteger, BNCErrorCode) {
     BNCSpotlightIdentifierError     = 1013,
     BNCSpotlightPublicIndexError    = 1014,
     BNCTrackingDisabledError        = 1015,
-    BNCHighestError,
+    BNCGeneralError                 = 1016, // General Branch SDK Error
+    BNCHighestError
 };
 
+// This should be renamed.  It's actually a category and not a class.
 @interface NSError (Branch)
-+ (NSError*_Nonnull) branchErrorWithCode:(BNCErrorCode)errorCode;
-+ (NSError*_Nonnull) branchErrorWithCode:(BNCErrorCode)errorCode error:(NSError*_Nullable)error;
-+ (NSError*_Nonnull) branchErrorWithCode:(BNCErrorCode)errorCode localizedMessage:(NSString*_Nullable)message;
+
++ (NSString *)bncErrorDomain;
+
++ (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode;
++ (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode error:(NSError *_Nullable)error;
++ (NSError *) branchErrorWithCode:(BNCErrorCode)errorCode localizedMessage:(NSString *_Nullable)message;
+
 @end
 
-void BNCForceNSErrorCategoryToLoad(void)
-    __attribute__((constructor));
+NS_ASSUME_NONNULL_END
+
+void BNCForceNSErrorCategoryToLoad(void) __attribute__((constructor));
