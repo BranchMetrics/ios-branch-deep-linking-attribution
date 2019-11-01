@@ -369,7 +369,7 @@ static NSString *type = @"some type";
 
 - (IBAction) openBranchLinkInApp:(id)sender {
     NSURL *URL = [NSURL URLWithString:@"https://bnctestbed.app.link/izPBY2xCqF"];
-    [[Branch getInstance] handleDeepLinkWithNewSession:URL];
+    [[Branch getInstance] handleDeepLink:URL];
 }
 
 #pragma mark - Commerce Events

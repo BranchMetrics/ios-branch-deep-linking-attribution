@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BNCAppleReceipt : NSObject
 
-+ (BNCAppleReceipt *)instance;
++ (BNCAppleReceipt *)sharedInstance;
 
 // this is only available on builds from Apple
 - (nullable NSString *)installReceipt;

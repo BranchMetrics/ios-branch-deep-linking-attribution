@@ -76,7 +76,6 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
             universalLinkUrl = _universalLinkUrl,
             externalIntentURI = _externalIntentURI,
             isDebug = _isDebug,
-            shouldWaitForInit = _shouldWaitForInit,
             retryCount = _retryCount,
             retryInterval = _retryInterval,
             timeout = _timeout,

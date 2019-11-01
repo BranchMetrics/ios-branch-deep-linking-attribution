@@ -7,7 +7,7 @@
 //
 
 #import "BranchUniversalObject.h"
-#import "BNCError.h"
+#import "NSError+Branch.h"
 #import "BranchConstants.h"
 #import "BNCDeviceInfo.h"
 #import "BNCLog.h"
