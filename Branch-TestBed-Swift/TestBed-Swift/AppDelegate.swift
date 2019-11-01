@@ -57,131 +57,126 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyer
         activateSingular()
         activateStitch()
         
-        if let branch = Branch.getInstance(branchKey) {
+        let branch = Branch.getInstance(branchKey)
             
-            if StartupOptionsData.getPendingSetDebugEnabled()! {
-                branch.setDebug()
-                StartupOptionsData.setActiveSetDebugEnabled(true)
-            } else {
-                StartupOptionsData.setActiveSetDebugEnabled(false)
+        if StartupOptionsData.getPendingSetDebugEnabled()! {
+            branch.setDebug()
+            StartupOptionsData.setActiveSetDebugEnabled(true)
+        } else {
+            StartupOptionsData.setActiveSetDebugEnabled(false)
+        }
+        
+        // To use automaticallyDisplayDeepLinkController:
+        // 1) Uncomment the following code block
+        // 2) Comment out the code in the 'if (error == nil)' code block in initSession callback below
+        // 3) Change automaticallyDisplayDeepLinkController to true
+        /* let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UINavigationController
+         branch.registerDeepLinkController(navigationController, forKey:"~referring_link")*/
+        
+        // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is false).
+        
+        branch.initSession(
+            launchOptions: launchOptions,
+            automaticallyDisplayDeepLinkController: false,
+            deepLinkHandler: { params, error in
+            
+            defer {
+                let notificationName = Notification.Name("BranchCallbackCompleted")
+                NotificationCenter.default.post(name: notificationName, object: nil)
             }
             
-            // To use automaticallyDisplayDeepLinkController:
-            // 1) Uncomment the following code block
-            // 2) Comment out the code in the 'if (error == nil)' code block in initSession callback below
-            // 3) Change automaticallyDisplayDeepLinkController to true
-            /* let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as! UINavigationController
-             branch.registerDeepLinkController(navigationController, forKey:"~referring_link")*/
+            guard error == nil else {
+                print("Branch TestBed: Initialization failed: " + error!.localizedDescription)
+                return
+            }
             
-            // Required. Initialize session. automaticallyDisplayDeepLinkController is optional (default is false).
+            guard let paramsDictionary = (params as? Dictionary<String, Any>) else {
+                print("No Branch parameters returned")
+                return
+            }
             
-            branch.initSession(
-                launchOptions: launchOptions,
-                automaticallyDisplayDeepLinkController: false,
-                deepLinkHandler: { params, error in
-                
-                defer {
-                    let notificationName = Notification.Name("BranchCallbackCompleted")
-                    NotificationCenter.default.post(name: notificationName, object: nil)
-                }
-                
-                guard error == nil else {
-                    print("Branch TestBed: Initialization failed: " + error!.localizedDescription)
-                    return
-                }
-                
-                guard let paramsDictionary = (params as? Dictionary<String, Any>) else {
-                    print("No Branch parameters returned")
-                    return
-                }
-                
 
-                let clickedBranchLink = params?[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool?
-                
-                if  let referringLink = paramsDictionary["~referring_link"] as! String?,
-                    let trackerId = paramsDictionary["ios_tracker_id"] as! String?,
-                    let clickedBranchLink = clickedBranchLink,
-                    clickedBranchLink {
-                    var adjustUrl = URLComponents(string: referringLink)
-                    var adjust_tracker:URLQueryItem
-                    //
-                    // Here's how to add Adjust attribution:
-                    //
-                    // Check if the deeplink is a Universal link.
-                    if referringLink.starts(with: "https://") || referringLink.starts(with: "http://") {
-                        adjust_tracker = URLQueryItem(name: "adjust_t", value: trackerId)
-                    } else {
-                        adjust_tracker = URLQueryItem(name: "adjust_tracker", value: trackerId)
-                    }
-                    let adjust_campaign = URLQueryItem(name: "adjust_campaign", value: paramsDictionary[BRANCH_INIT_KEY_CAMPAIGN] as? String)
-                    let adjust_adgroup = URLQueryItem(name: "adjust_adgroup", value: paramsDictionary[BRANCH_INIT_KEY_CHANNEL] as? String)
-                    let adjust_creative = URLQueryItem(name: "adjust_creative", value: paramsDictionary[BRANCH_INIT_KEY_FEATURE] as? String)
-                    let queryItems = [adjust_tracker,adjust_campaign,adjust_adgroup,adjust_creative]
-                    adjustUrl?.queryItems = queryItems
-                    if let url = adjustUrl?.url {
-                        Adjust.appWillOpen(url)
-                    }
-                }
-                
-                // Deeplinking logic for use when automaticallyDisplayDeepLinkController = false
-                if let clickedBranchLink = clickedBranchLink,
-                   clickedBranchLink {
-                    let nc = self.window!.rootViewController as! UINavigationController
-                    let storyboard = UIStoryboard(name: "Content", bundle: nil)
-                    let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
-                    nc.pushViewController(contentViewController, animated: true)
-                    
-                    let referringLink = paramsDictionary["~referring_link"] as! String
-                    let content = String(format:"\nReferring link: \(referringLink)\n\nSession Details:\n\(paramsDictionary.JSONDescription())")
-                    contentViewController.content = content
-                    contentViewController.contentType = "Content"
+            let clickedBranchLink = params?[BRANCH_INIT_KEY_CLICKED_BRANCH_LINK] as! Bool?
+            
+            if  let referringLink = paramsDictionary["~referring_link"] as! String?,
+                let trackerId = paramsDictionary["ios_tracker_id"] as! String?,
+                let clickedBranchLink = clickedBranchLink,
+                clickedBranchLink {
+                var adjustUrl = URLComponents(string: referringLink)
+                var adjust_tracker:URLQueryItem
+                //
+                // Here's how to add Adjust attribution:
+                //
+                // Check if the deeplink is a Universal link.
+                if referringLink.starts(with: "https://") || referringLink.starts(with: "http://") {
+                    adjust_tracker = URLQueryItem(name: "adjust_t", value: trackerId)
                 } else {
-                    print(String(format: "Branch TestBed: Finished init with params\n%@", paramsDictionary.description))
+                    adjust_tracker = URLQueryItem(name: "adjust_tracker", value: trackerId)
+                }
+                let adjust_campaign = URLQueryItem(name: "adjust_campaign", value: paramsDictionary[BRANCH_INIT_KEY_CAMPAIGN] as? String)
+                let adjust_adgroup = URLQueryItem(name: "adjust_adgroup", value: paramsDictionary[BRANCH_INIT_KEY_CHANNEL] as? String)
+                let adjust_creative = URLQueryItem(name: "adjust_creative", value: paramsDictionary[BRANCH_INIT_KEY_FEATURE] as? String)
+                let queryItems = [adjust_tracker,adjust_campaign,adjust_adgroup,adjust_creative]
+                adjustUrl?.queryItems = queryItems
+                if let url = adjustUrl?.url {
+                    Adjust.appWillOpen(url)
+                }
+            }
+            
+            // Deeplinking logic for use when automaticallyDisplayDeepLinkController = false
+            if let clickedBranchLink = clickedBranchLink,
+               clickedBranchLink {
+                let nc = self.window!.rootViewController as! UINavigationController
+                let storyboard = UIStoryboard(name: "Content", bundle: nil)
+                let contentViewController = storyboard.instantiateViewController(withIdentifier: "Content") as! ContentViewController
+                nc.pushViewController(contentViewController, animated: true)
+                
+                let referringLink = paramsDictionary["~referring_link"] as! String
+                let content = String(format:"\nReferring link: \(referringLink)\n\nSession Details:\n\(paramsDictionary.JSONDescription())")
+                contentViewController.content = content
+                contentViewController.contentType = "Content"
+            } else {
+                print(String(format: "Branch TestBed: Finished init with params\n%@", paramsDictionary.description))
+            }
+            
+            // Adobe
+            if IntegratedSDKsData.activeAdobeEnabled()! {
+                let adobeVisitorID = ADBMobile.trackingIdentifier()
+                
+                branch.setRequestMetadataKey("$adobe_visitor_id", value:adobeVisitorID)
+            }
+            
+            
+            // Amplitude
+            if IntegratedSDKsData.activeAmplitudeEnabled()! {
+                var userID: String
+                
+                if paramsDictionary["developer_identity"] != nil {
+                    userID = paramsDictionary["developer_identity"] as! String
+                } else {
+                    userID = "Anonymous"
                 }
                 
-                // Adobe
-                if IntegratedSDKsData.activeAdobeEnabled()! {
-                    let adobeVisitorID = ADBMobile.trackingIdentifier()
-                    
-                    branch.setRequestMetadataKey("$adobe_visitor_id", value:adobeVisitorID)
+                Amplitude.instance().setUserId(userID)
+                branch.setRequestMetadataKey("$amplitude_user_id",
+                                             value: userID)
+            }
+            
+            // Mixpanel
+            if IntegratedSDKsData.activeMixpanelEnabled()! {
+                var userID: String
+                
+                if paramsDictionary["developer_identity"] != nil {
+                    userID = paramsDictionary["developer_identity"] as! String
+                } else {
+                    userID = "Anonymous"
                 }
                 
-                
-                // Amplitude
-                if IntegratedSDKsData.activeAmplitudeEnabled()! {
-                    var userID: String
-                    
-                    if paramsDictionary["developer_identity"] != nil {
-                        userID = paramsDictionary["developer_identity"] as! String
-                    } else {
-                        userID = "Anonymous"
-                    }
-                    
-                    Amplitude.instance().setUserId(userID)
-                    branch.setRequestMetadataKey("$amplitude_user_id",
-                                                 value: userID)
-                }
-                
-                // Mixpanel
-                if IntegratedSDKsData.activeMixpanelEnabled()! {
-                    var userID: String
-                    
-                    if paramsDictionary["developer_identity"] != nil {
-                        userID = paramsDictionary["developer_identity"] as! String
-                    } else {
-                        userID = "Anonymous"
-                    }
-                    
-                    Mixpanel.sharedInstance()?.identify(userID)
-                    branch.setRequestMetadataKey("$mixpanel_distinct_id",
-                                                 value: userID)
-                }
-            })
-        } else {
-            print("Branch TestBed: Invalid Key\n")
-            StartupOptionsData.setActiveBranchKey("")
-            StartupOptionsData.setPendingBranchKey("")
-        }
+                Mixpanel.sharedInstance()?.identify(userID)
+                branch.setRequestMetadataKey("$mixpanel_distinct_id",
+                                             value: userID)
+            }
+        })
         
         return true
     }
