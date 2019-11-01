@@ -168,13 +168,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @warning This method is not meant to be used in production!
 */
-+ (nullable Branch *) getTestInstance __attribute__((deprecated(("Use `Branch.useTestBranchKey = YES;` instead."))));
++ (Branch *)getTestInstance __attribute__((deprecated(("Use `Branch.useTestBranchKey = YES;` instead."))));
 
 
 /**
  Gets the global, live Branch instance.
  */
-+ (nullable Branch *)getInstance;
++ (Branch *)getInstance;
 
 /**
  Gets the global Branch instance, configures using the specified key
@@ -182,7 +182,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param branchKey The Branch key to be used by the Branch instance. This can be any live or test key.
  @warning This method is not the recommended way of using Branch. Try using your project's `Info.plist` if possible.
  */
-+ (nullable Branch *)getInstance:(NSString *)branchKey;
++ (Branch *)getInstance:(NSString *)branchKey;
 
 /**
  Set the network service class.
@@ -947,7 +947,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void) sendCommerceEvent:(BNCCommerceEvent*)commerceEvent
 				  metadata:(NSDictionary<NSString*,id>*)metadata
-			withCompletion:(void (^) (NSDictionary*response, NSError*error))completion __attribute__((deprecated(("Please use BranchEvent to track commerce events."))));
+			withCompletion:(void (^) (NSDictionary* _Nullable response, NSError* _Nullable error))completion __attribute__((deprecated(("Please use BranchEvent to track commerce events."))));
 
 
 #pragma mark - Query methods

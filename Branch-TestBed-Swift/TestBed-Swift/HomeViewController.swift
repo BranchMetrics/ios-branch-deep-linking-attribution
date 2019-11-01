@@ -226,20 +226,19 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
                 let _ = nc.topViewController as! ReferralRewardsTableViewController
             case "LatestReferringParams":
                 let vc = (segue.destination as! ContentViewController)
-                let dict: Dictionary = Branch.getInstance().getLatestReferringParams()
-                
-                if dict["~referring_link"] != nil {
-                    vc.contentType = "LatestReferringParams"
-                } else {
-                    vc.contentType = "\nNot a referred session"
+                vc.contentType = "\nNot a referred session"
+                if let dict: Dictionary = Branch.getInstance().getLatestReferringParams() {
+                    if dict["~referring_link"] != nil {
+                        vc.contentType = "LatestReferringParams"
+                    }
                 }
             case "FirstReferringParams":
                 let vc = (segue.destination as! ContentViewController)
-                let dict: Dictionary = Branch.getInstance().getFirstReferringParams()
-                if dict.count > 0 {
-                    vc.contentType = "FirstReferringParams"
-                } else {
-                    vc.contentType = "\nApp has not yet been opened via a Branch link"
+                vc.contentType = "\nApp has not yet been opened via a Branch link"
+                if let dict: Dictionary = Branch.getInstance().getFirstReferringParams() {
+                    if dict.count > 0 {
+                        vc.contentType = "FirstReferringParams"
+                    }
                 }
             case "StartupOptions":
                 let nc = segue.destination as! UINavigationController
@@ -308,7 +307,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
                     
                     guard userID != "" else {
                         
-                        branch?.logout { (changed, error) in
+                        branch.logout { (changed, error) in
                             if (error != nil || !changed) {
                                 print(String(format: "Branch TestBed: Unable to clear User ID: %@", error! as CVarArg))
                                 self.showAlert("Error simulating logout", withDescription: error!.localizedDescription)
@@ -320,14 +319,14 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
                                 // Amplitude
                                 if IntegratedSDKsData.activeAmplitudeEnabled()! {
                                     Amplitude.instance().setUserId(userID)
-                                    branch?.setRequestMetadataKey("$amplitude_user_id",
+                                    branch.setRequestMetadataKey("$amplitude_user_id",
                                                                  value: userID)
                                 }
                                 
                                 // Mixpanel
                                 if IntegratedSDKsData.activeMixpanelEnabled()! {
                                     Mixpanel.sharedInstance()?.identify(userID)
-                                    branch?.setRequestMetadataKey("$mixpanel_distinct_id",
+                                    branch.setRequestMetadataKey("$mixpanel_distinct_id",
                                                                   value: userID)
                                 }
                                 
@@ -336,7 +335,7 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
                         return
                     }
                     
-                    branch?.setIdentity(userID) { (params, error) in
+                    branch.setIdentity(userID) { (params, error) in
                         if (error == nil) {
                             print(String(format: "Branch TestBed: Identity set: %@", userID))
                             self.userIDTextField.text = userID
@@ -345,14 +344,14 @@ class HomeViewController: UITableViewController, BranchShareLinkDelegate {
                             // Amplitude
                             if IntegratedSDKsData.activeMixpanelEnabled()! {
                                 Amplitude.instance().setUserId(userID)
-                                branch?.setRequestMetadataKey("$amplitude_user_id",
+                                branch.setRequestMetadataKey("$amplitude_user_id",
                                                               value: userID)
                             }
                             
                             // Mixpanel
                             if IntegratedSDKsData.activeMixpanelEnabled()! {
                                 Mixpanel.sharedInstance()?.identify(userID)
-                                branch?.setRequestMetadataKey("$mixpanel_distinct_id",
+                                branch.setRequestMetadataKey("$mixpanel_distinct_id",
                                                               value: userID)
                             }
                             

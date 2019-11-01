@@ -206,16 +206,16 @@ void BranchClassInitializeLog(void) {
 // deprecated
 + (Branch *)getTestInstance {
     Branch.useTestBranchKey = YES;
-    return Branch.getInstance;
+    return [Branch getInstance];
 }
 
 + (Branch *)getInstance {
-    return [Branch getInstanceInternal:self.class.branchKey returnNilIfNoCurrentInstance:NO];
+    return [Branch getInstanceInternal:self.class.branchKey];
 }
 
 + (Branch *)getInstance:(NSString *)branchKey {
     self.branchKey = branchKey;
-    return [Branch getInstanceInternal:self.branchKey returnNilIfNoCurrentInstance:NO];
+    return [Branch getInstanceInternal:self.branchKey];
 }
 
 - (id)initWithInterface:(BNCServerInterface *)interface
@@ -1496,14 +1496,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 #pragma mark - Private methods
 
-+ (Branch *)getInstanceInternal:(NSString *)key returnNilIfNoCurrentInstance:(BOOL)returnNilIfNoCurrentInstance {
++ (Branch *)getInstanceInternal:(NSString *)key {
 
     static Branch *branch = nil;
     @synchronized (self) {
-        if (!branch && returnNilIfNoCurrentInstance) {
-            return nil;
-        }
-
         static dispatch_once_t onceToken = 0;
         dispatch_once(&onceToken, ^{
             BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
