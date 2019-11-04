@@ -495,7 +495,7 @@ exit:
     return found;
 }
 
-// workaround for new V1 APIs that expect V2 API format
+// workaround for new V1 APIs that expects different format
 - (BOOL)isNewV1API:(NSString *)urlstring {
     NSArray<NSString *> *newV1Apis = @[ BRANCH_REQUEST_ENDPOINT_CPID, BRANCH_REQUEST_ENDPOINT_LATD ];
     for (NSString *tmp in newV1Apis) {
@@ -508,21 +508,44 @@ exit:
     return NO;
 }
 
+// SDK-635  Follow up ticket to redesign this.  The payload format should be the responsibility of the network request class.
+- (NSMutableDictionary *)buildExtendedParametersForURL:(NSString *)url withPostDictionary:(NSDictionary *)post {
+    NSMutableDictionary *extendedParams = nil;
+    
+    // v2 endpoints expect a user data section
+    if ([self isV2APIURL:url]) {
+        extendedParams = [NSMutableDictionary new];
+        if (post) {
+            [extendedParams addEntriesFromDictionary:post];
+        }
+        NSDictionary *d = [[BNCDeviceInfo getInstance] v2dictionary];
+        if (d.count) {
+            extendedParams[@"user_data"] = d;
+        }
+    
+    // cpid and latd endpoints expect a v2 format, except with possible customization
+    } else if ([self isNewV1API:url]) {
+        extendedParams = [NSMutableDictionary new];
+        
+        NSMutableDictionary *tmp = [NSMutableDictionary dictionaryWithDictionary: [[BNCDeviceInfo getInstance] v2dictionary]];
+        if (tmp.count) {
+            extendedParams[@"user_data"] = tmp;
+            [tmp addEntriesFromDictionary:post];
+        }
+    
+    } else {
+        extendedParams = [self updateDeviceInfoToParams:post];
+    }
+    return extendedParams;
+}
+
 - (void)postRequest:(NSDictionary *)post
                 url:(NSString *)url
         retryNumber:(NSInteger)retryNumber
                 key:(NSString *)key
            callback:(BNCServerCallback)callback {
 
-    NSMutableDictionary *extendedParams = nil;
-    if ([self isV2APIURL:url] || [self isNewV1API:url]) {
-        extendedParams = [NSMutableDictionary new];
-        if (post) [extendedParams addEntriesFromDictionary:post];
-        NSDictionary *d = [[BNCDeviceInfo getInstance] v2dictionary];
-        if (d.count) extendedParams[@"user_data"] = d;
-    } else {
-        extendedParams = [self updateDeviceInfoToParams:post];
-    }
+    NSMutableDictionary *extendedParams = [self buildExtendedParametersForURL:url withPostDictionary:post];
     NSURLRequest *request = [self preparePostRequest:extendedParams url:url key:key retryNumber:retryNumber];
     
     // Instrumentation metrics
