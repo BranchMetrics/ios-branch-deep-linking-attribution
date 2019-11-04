@@ -952,9 +952,21 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 #pragma mark - Query methods
 
+/**
+ Branch includes SDK methods to allow retrieval of our Cross Platform ID (CPID) from the client. This results in an asynchronous call being made to Branch’s servers with CPID data returned when possible.
+ 
+ @param completion callback with cross platform id data
+ */
 - (void)crossPlatformIdDataWithCompletion:(void(^) (BranchCrossPlatformID * _Nullable cpid))completion;
 
-- (void)lastTouchAttributedDataWithCompletion:(void(^) (BranchLastAttributedTouchData * _Nullable ltad))completion;
+/**
+ Branch includes SDK methods to allow retrieval of our last attributed touch data (LATD) from the client. This results in an asynchronous call being made to Branch's servers with LATD data returned when possible.
+ Last attributed touch data contains the information associated with that user's last viewed impression or clicked link.
+ 
+ @param window attribution window in days.  If the window is outside the server supported range, it will default to 30 days.
+ @param completion callback with attribution data
+ */
+- (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd))completion;
 
 #pragma mark - Short Url Sync methods
 
