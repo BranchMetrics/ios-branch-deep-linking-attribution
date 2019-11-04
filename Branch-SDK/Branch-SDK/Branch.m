@@ -958,6 +958,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         }
         return;
     }
+    
+    [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         BranchSetIdentityRequest *req = [[BranchSetIdentityRequest alloc] initWithUserId:userId callback:callback];
         [self.requestQueue enqueue:req];
@@ -1015,6 +1017,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     if (!action) {
         return;
     }
+    
+    [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         BranchUserCompletedActionRequest *req = [[BranchUserCompletedActionRequest alloc] initWithAction:action state:state];
         [self.requestQueue enqueue:req];
@@ -1027,6 +1031,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)sendServerRequest:(BNCServerRequest*)request {
+    [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         [self.requestQueue enqueue:request];
         [self processNextQueueItem];
@@ -1039,6 +1044,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)sendCommerceEvent:(BNCCommerceEvent *)commerceEvent metadata:(NSDictionary*)metadata withCompletion:(void (^)(NSDictionary *, NSError *))completion {
+    [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         BranchCommerceEventRequest *request = [[BranchCommerceEventRequest alloc] initWithCommerceEvent:commerceEvent metadata:metadata completion:completion];
         [self.requestQueue enqueue:request];
@@ -1049,6 +1055,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 #pragma mark - Credit methods
 
 - (void)loadRewardsWithCallback:(callbackWithStatus)callback {
+    [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         BranchLoadRewardsRequest *req = [[BranchLoadRewardsRequest alloc] initWithCallback:callback];
         [self.requestQueue enqueue:req];
@@ -1097,7 +1104,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         }
         return;
     }
-
+    [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         BranchRedeemRewardsRequest *req = [[BranchRedeemRewardsRequest alloc] initWithAmount:count bucket:bucket callback:callback];
         [self.requestQueue enqueue:req];
@@ -1118,6 +1125,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)getCreditHistoryForBucket:(NSString *)bucket after:(NSString *)creditTransactionId number:(NSInteger)length order:(BranchCreditHistoryOrder)order andCallback:(callbackWithList)callback {
+    [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         BranchCreditHistoryRequest *req = [[BranchCreditHistoryRequest alloc] initWithBucket:bucket creditTransactionId:creditTransactionId length:length order:order callback:callback];
         [self.requestQueue enqueue:req];
@@ -1317,6 +1325,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback {
+    [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         BranchSpotlightUrlRequest *req = [[BranchSpotlightUrlRequest alloc] initWithParams:params callback:callback];
         [self.requestQueue enqueue:req];
@@ -1550,6 +1559,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 andStage:(NSString *)stage
              andCampaign:campaign andParams:(NSDictionary *)params
              andCallback:(callbackWithUrl)callback {
+    
+    [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         BNCLinkData *linkData = [self prepareLinkDataFor:tags
                                                 andAlias:alias
@@ -1742,6 +1753,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 #pragma mark - BranchUniversalObject methods
 
 - (void)registerViewWithParams:(NSDictionary *)params andCallback:(callbackWithParams)callback {
+    [self initSafetyCheck];
     dispatch_async(self.isolationQueue, ^(){
         BranchUniversalObject *buo = [[BranchUniversalObject alloc] init];
         buo.contentMetadata.customMetadata = (id) params;
@@ -1931,6 +1943,16 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 #pragma mark - Session Initialization
+
+// SDK-631 Workaround to maintain existing error handling behavior.
+// Some methods require init before they are called.  Instead of returning an error, we try to fix the situation by calling init ourselves.
+// There is a follow up ticket to improve this.  SDK-633
+- (void)initSafetyCheck {
+    if (self.initializationStatus == BNCInitStatusUninitialized) {
+        BNCLogWarning(@"Branch avoided an error by preemptively initializing.");
+        [self initUserSessionAndCallCallback:NO];
+    }
+}
 
 - (void)initUserSessionAndCallCallback:(BOOL)callCallback {
     dispatch_async(self.isolationQueue, ^(){
