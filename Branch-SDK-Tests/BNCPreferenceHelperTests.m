@@ -12,30 +12,41 @@
 #import "BNCTestCase.h"
 
 @interface BNCPreferenceHelperTests : BNCTestCase
+@property (nonatomic, strong, readwrite) BNCPreferenceHelper *prefHelper;
 @end
 
 @implementation BNCPreferenceHelperTests
 
-#pragma mark - Default storage tests
+- (void)setUp {
+    self.prefHelper = [BNCPreferenceHelper new];
+}
+
+- (void)tearDown {
+
+}
+
 - (void)testPreferenceDefaults {
-    BNCPreferenceHelper *prefHelper = [[BNCPreferenceHelper alloc] init];
-    
-    // Defaults
-    XCTAssertEqual(prefHelper.timeout, 5.5);
-    XCTAssertEqual(prefHelper.retryInterval, 0);
-    XCTAssertEqual(prefHelper.retryCount, 3);
+    XCTAssertEqual(self.prefHelper.timeout, 5.5);
+    XCTAssertEqual(self.prefHelper.retryInterval, 0);
+    XCTAssertEqual(self.prefHelper.retryCount, 3);
 }
 
 - (void)testPreferenceSets {
-    BNCPreferenceHelper *prefHelper = [[BNCPreferenceHelper alloc] init];
+    self.prefHelper.retryCount = NSIntegerMax;
+    self.prefHelper.retryInterval = NSIntegerMax;
+    self.prefHelper.timeout = NSIntegerMax;
     
-    prefHelper.retryCount = NSIntegerMax;
-    prefHelper.retryInterval = NSIntegerMax;
-    prefHelper.timeout = NSIntegerMax;
+    XCTAssertEqual(self.prefHelper.retryCount, NSIntegerMax);
+    XCTAssertEqual(self.prefHelper.retryInterval, NSIntegerMax);
+    XCTAssertEqual(self.prefHelper.timeout, NSIntegerMax);
+}
+
+- (void)testBlacklistURL {
+    XCTAssertTrue([@"https://cdn.branch.io" isEqualToString:self.prefHelper.branchBlacklistURL]);
     
-    XCTAssertEqual(prefHelper.retryCount, NSIntegerMax);
-    XCTAssertEqual(prefHelper.retryInterval, NSIntegerMax);
-    XCTAssertEqual(prefHelper.timeout, NSIntegerMax);
+    NSString *customBlacklistURL = @"https://blacklist.branch.io";
+    self.prefHelper.branchBlacklistURL = customBlacklistURL;
+    XCTAssertTrue([customBlacklistURL isEqualToString:self.prefHelper.branchBlacklistURL]);
 }
 
 @end
