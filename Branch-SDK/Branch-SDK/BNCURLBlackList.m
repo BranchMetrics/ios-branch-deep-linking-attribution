@@ -123,8 +123,7 @@
     self.error = nil;
     NSString *urlString = [self.blackListJSONURL absoluteString];
     if (!urlString) {
-        urlString = [NSString stringWithFormat:@"https://cdn.branch.io/sdk/uriskiplist_v%ld.json",
-            (long) self.blackListVersion+1];
+        urlString = [NSString stringWithFormat:@"%@/sdk/uriskiplist_v%ld.json", [BNCPreferenceHelper preferenceHelper].branchBlacklistURL, (long) self.blackListVersion+1];
     }
     NSMutableURLRequest *request =
         [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]
