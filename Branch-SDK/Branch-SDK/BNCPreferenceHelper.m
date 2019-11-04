@@ -108,6 +108,8 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     _persistPrefsQueue = [[NSOperationQueue alloc] init];
     _persistPrefsQueue.maxConcurrentOperationCount = 1;
 
+    self.branchBlacklistURL = @"https://cdn.branch.io";
+    
     return self;
 }
 
