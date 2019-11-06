@@ -237,8 +237,7 @@ Printing description of attributionDetails:
     [NSThread sleepForTimeInterval:self.delay];
     
     // track timeout
-    __block BOOL searchAdsResponded = NO;
-    __block BOOL timedOut = NO;
+    __block BOOL raceIsOver = NO;
     __block NSObject *timedOutLock = [NSObject new];
     
     // track apple search ads API performance
@@ -252,10 +251,10 @@ Printing description of attributionDetails:
 
         // skip callback if request already timed out
         @synchronized (timedOutLock) {
-            if (timedOut) {
+            if (raceIsOver) {
                 return;
             } else {
-                searchAdsResponded = YES;
+                raceIsOver = YES;
             }
         }
         
@@ -274,10 +273,10 @@ Printing description of attributionDetails:
     // timer for timeout, this is racing the call to Apple Search Ads
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.timeOut * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         @synchronized (timedOutLock) {
-            if (searchAdsResponded) {
+            if (raceIsOver) {
                 return;
             } else {
-                timedOut = YES;
+                raceIsOver = YES;
             }
         }
         
