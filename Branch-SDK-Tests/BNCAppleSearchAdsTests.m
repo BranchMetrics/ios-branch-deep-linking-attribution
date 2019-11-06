@@ -7,6 +7,8 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <UIKit/UIKit.h>
+#import <iAd/iAd.h>
 #import "BNCAppleSearchAds.h"
 
 // expose private methods for unit testing
@@ -16,6 +18,7 @@
 - (BOOL)isDateWithinWindow:(NSDate *)installDate;
 - (BOOL)isAdClientAvailable;
 - (BOOL)isAppleTestData:(NSDictionary *)appleSearchAdDetails;
+- (BOOL)isSearchAdsErrorRetryable:(nullable NSError *)error;
 
 - (void)requestAttributionWithCompletion:(void (^_Nullable)(NSDictionary *__nullable attributionDetails, NSError *__nullable error, NSTimeInterval elapsedSeconds))completion;
 
@@ -124,10 +127,38 @@
     XCTAssertFalse([self.appleSearchAds isAppleTestData:testDataIndicators]);
 }
 
+- (void)testIsSearchAdsErrorRetryable_Nil {
+    XCTAssertFalse([self.appleSearchAds isSearchAdsErrorRetryable:nil]);
+}
+
+// ADClientErrorUnknown
+- (void)testIsSearchAdsErrorRetryable_0 {
+    NSError *error = [NSError errorWithDomain:@"" code:ADClientErrorUnknown userInfo:nil];
+    XCTAssertTrue([self.appleSearchAds isSearchAdsErrorRetryable:error]);
+}
+
+// ADClientErrorLimitAdTracking
+- (void)testIsSearchAdsErrorRetryable_1 {
+    NSError *error = [NSError errorWithDomain:@"" code:ADClientErrorLimitAdTracking userInfo:nil];
+    XCTAssertFalse([self.appleSearchAds isSearchAdsErrorRetryable:error]);
+}
+
+// ADClientErrorMissingData
+- (void)testIsSearchAdsErrorRetryable_2 {
+    NSError *error = [NSError errorWithDomain:@"" code:ADClientErrorMissingData userInfo:nil];
+    XCTAssertTrue([self.appleSearchAds isSearchAdsErrorRetryable:error]);
+}
+
+// ADClientErrorCorruptResponse
+- (void)testIsSearchAdsErrorRetryable_3 {
+    NSError *error = [NSError errorWithDomain:@"" code:ADClientErrorCorruptResponse userInfo:nil];
+    XCTAssertTrue([self.appleSearchAds isSearchAdsErrorRetryable:error]);
+}
+
 /*
  Expected payload varies by simulator or test device.  In general, there is a payload of some sort.
  
- This test fails on iOS 10 simulators.  iPad simulators never respond.  iPhone simulators return an error.
+ This test fails on iOS 10 simulators.  Some iPad simulators never respond.  Some iPhone simulators return an error.
  */
 - (void)testRequestAppleSearchAds {
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
