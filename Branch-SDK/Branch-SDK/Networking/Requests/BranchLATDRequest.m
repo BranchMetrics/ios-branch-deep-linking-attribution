@@ -12,13 +12,21 @@
 
 @implementation BranchLATDRequest
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.attributionWindow = 30;
+    }
+    return self;
+}
+
 - (NSString *)serverURL {
     return [[BNCPreferenceHelper preferenceHelper] getAPIURL:BRANCH_REQUEST_ENDPOINT_LATD];
 }
 
-// all required fields for this request is added by BNCServerInterface
 - (NSMutableDictionary *)buildRequestParams {
     NSMutableDictionary *params = [NSMutableDictionary new];
+    [params setObject:@(self.attributionWindow) forKey:@"attribution_window"];
     return params;
 }
 
