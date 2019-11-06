@@ -9,6 +9,7 @@
 #import "BranchLastAttributedTouchData.h"
 #import "BranchLATDRequest.h"
 #import "BNCJSONUtility.h"
+#import "BNCLog.h"
 
 @implementation BranchLastAttributedTouchData
 
@@ -25,8 +26,16 @@
     return nil;
 }
 
-+ (void)requestLastTouchAttributedData:(BNCServerInterface *)serverInterface key:(NSString *)key completion:(void(^) (BranchLastAttributedTouchData *ltad))completion {
++ (void)requestLastTouchAttributedData:(BNCServerInterface *)serverInterface key:(NSString *)key attributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData *latd))completion {
     BranchLATDRequest *request = [BranchLATDRequest new];
+    
+    // Limit attribution range to about a year.  Although the server only supports up to 90 days as of Nov. 2019, it will fail gracefully for higher values.
+    if (window > -1 && window < 365) {
+        request.attributionWindow = window;
+    } else {
+        BNCLogWarning(@"Attribution window is outside the expected range, using 30 days.");
+    }
+    
     [request makeRequest:serverInterface key:key callback:^(BNCServerResponse *response, NSError *error) {
         
         // error is logged by the network service, skip parsing on error
