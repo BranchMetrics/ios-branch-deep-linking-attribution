@@ -14,10 +14,15 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BNCAppleSearchAds : NSObject
 
 @property (nonatomic, assign, readwrite) BOOL enableAppleSearchAdsCheck;
+@property (nonatomic, assign, readwrite) BOOL ignoreAppleTestData;
 
 + (BNCAppleSearchAds *)sharedInstance;
 
-// checks Apple Search Ads and updates preferences.  This acquires a lock on BNCPreferenceHelper.
+// Apple suggests a longer delay, however this is detrimental to app launch times
+- (void)useAppleRecommendedDelay;
+
+// Checks Apple Search Ads and updates preferences
+// This method blocks the thread, it should only be called on a background thread.
 - (void)checkAppleSearchAdsSaveTo:(BNCPreferenceHelper *)preferenceHelper installDate:(NSDate *)installDate completion:(void (^_Nullable)(void))completion;
 
 @end
