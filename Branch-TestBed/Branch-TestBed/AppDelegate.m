@@ -13,14 +13,6 @@
 #import "Branch.h"
 #import "BNCEncodingUtils.h"
 
-// Ignore Safari availability for iOS 8 and lower in this example.
-#pragma clang diagnostic ignored "-Wpartial-availability"
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-
-@interface AppDelegate() <SFSafariViewControllerDelegate>
-@property (nonatomic, strong) SFSafariViewController *onboardingVC;
-@end
-
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application
@@ -47,9 +39,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Check for Apple Search Ad attribution (trade-off: slows down app startup):
     [branch delayInitToCheckForSearchAds];
-    
-    // Optional. Use if presenting SFSafariViewController as part of onboarding. Cannot use with setDebug.
-    // [self onboardUserOnInstall];
 
     /*
      *    Required: Initialize Branch, passing a deep link handler block:
@@ -116,43 +105,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
                 deeplinkText, [[[Branch getInstance] getLatestReferringParams] description]];
         logOutputViewController.logOutput = logOutput;
     }
-}
-
-- (void)onboardUserOnInstall {
-    NSURL *urlForOnboarding = [NSURL URLWithString:@"http://example.com"]; // Put your onboarding link here
-    
-    id notInstall = [[NSUserDefaults standardUserDefaults] objectForKey:@"notInstall"];
-    if (!notInstall) {
-        [[NSUserDefaults standardUserDefaults] setObject:@YES forKey:@"notInstall"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-
-        Branch *branch = [Branch getInstance];
-
-        // Note that this must be invoked *before* initSession
-        [branch enableDelayedInit];
-
-        NSURL *updatedUrlForOnboarding = [branch getUrlForOnboardingWithRedirectUrl:urlForOnboarding.absoluteString];
-        if (updatedUrlForOnboarding) {
-            // replace url for onboarding with the URL provided by Branch
-            urlForOnboarding = updatedUrlForOnboarding;
-        }
-        else {
-            // do not replace url for onboarding
-            NSLog(@"Was unable to get onboarding URL from Branch SDK, so proceeding with normal onboarding URL.");
-            [branch disableDelayedInit];
-        }
-
-        self.onboardingVC = [[SFSafariViewController alloc] initWithURL:urlForOnboarding];
-        self.onboardingVC.delegate = self;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[[[UIApplication sharedApplication].delegate window] rootViewController]
-                 presentViewController:self.onboardingVC animated:YES completion:NULL];
-        });
-    }
-}
-
-- (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
-    [[Branch getInstance] resumeInit];
 }
 
 - (BOOL)application:(UIApplication *)application
