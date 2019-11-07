@@ -6,18 +6,12 @@
 
 #import <Availability.h>
 
-#ifndef __IPHONE_5_0
-#warning "This project uses features only available in iOS SDK 5.0 and later."
-#endif
-
 #ifdef __OBJC__
     #if __has_feature(modules)
     @import Foundation;
     @import UIKit;
-    @import SafariServices;
     #else
     #import <Foundation/Foundation.h>
     #import <UIKit/UIKit.h>
-    #import <SafariServices/SafariServices.h>
     #endif
 #endif
