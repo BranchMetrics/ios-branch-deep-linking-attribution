@@ -899,6 +899,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [[BNCAppleSearchAds sharedInstance] useAppleConfig];
 }
 
+- (void)ignoreAppleSearchAdsTestData {
+    [BNCAppleSearchAds sharedInstance].ignoreAppleTestData = YES;
+}
+
 - (void)checkAppleSearchAdsAttribution {
     if (![BNCAppleSearchAds sharedInstance].enableAppleSearchAdsCheck) {
         return;
