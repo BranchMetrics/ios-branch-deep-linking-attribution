@@ -624,9 +624,18 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)registerFacebookDeepLinkingClass:(id)FBSDKAppLinkUtility;
 
 /**
- Check for Apple Search Ads before initialization. Will add about 1 second from call to initSession to callback due to Apple's latency.
+ Check for Apple Search Ads before initialization.
+ This will add about 1 second to first time startup.  Up to 3.5 seconds if Apple Search Ads fails to respond.
  */
 - (void)delayInitToCheckForSearchAds;
+
+/**
+ Increases the amount of time the SDK waits for Apple Search Ads to respond.
+ The default wait has a better than 95% success rate, however waiting longer can improve success rate.
+
+ This will increase the wait up to about 15 seconds if Apple Search Ads fails to respond.
+ */
+- (void)useLongerWaitForAppleSearchAds;
 
 /**
  Specify the time to wait in seconds between retries in the case of a Branch server error

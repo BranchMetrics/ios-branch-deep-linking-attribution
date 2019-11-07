@@ -18,6 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BNCAppleSearchAds *)sharedInstance;
 
+// Default delay and retry configuration.  ~p95
+// typically less than 1s delay, up to 3.5s delay on first app start
+- (void)useBranchConfig;
+
+// Apple suggests a longer delay, however this is detrimental to app launch times
+// typically less than 1s delay, up to 14s delay on first app start
+- (void)useAppleConfig;
+
 // Checks Apple Search Ads and updates preferences
 // This method blocks the thread, it should only be called on a background thread.
 - (void)checkAppleSearchAdsSaveTo:(BNCPreferenceHelper *)preferenceHelper installDate:(NSDate *)installDate completion:(void (^_Nullable)(void))completion;
