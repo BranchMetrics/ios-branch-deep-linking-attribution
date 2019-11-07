@@ -10,11 +10,7 @@
 #import "NSError+Branch.h"
 #import <UIKit/UIKit.h>
 
-@interface BNCAppleSearchAds()
-
-@property (nonatomic, strong, readwrite) Class adClientClass;
-@property (nonatomic, assign, readwrite) SEL adClientSharedClient;
-@property (nonatomic, assign, readwrite) SEL adClientRequestAttribution;
+@interface BNCAppleSearchAdsConfig : NSObject
 
 // Maximum number of tries
 @property (nonatomic, assign, readwrite) NSInteger maxAttempts;
@@ -24,6 +20,16 @@
 
 // Apple recommends implementing our own timeout per request to Apple Search Ads
 @property (nonatomic, assign, readwrite) NSTimeInterval timeOut;
+
+@end
+
+@interface BNCAppleSearchAds()
+
+@property (nonatomic, strong, readwrite) Class adClientClass;
+@property (nonatomic, assign, readwrite) SEL adClientSharedClient;
+@property (nonatomic, assign, readwrite) SEL adClientRequestAttribution;
+
+@property (nonatomic, strong, readwrite) BNCAppleSearchAdsConfig *config;
 
 @end
 
@@ -47,23 +53,37 @@
         self.adClientRequestAttribution = NSSelectorFromString(@"requestAttributionDetailsWithBlock:");
         
         self.ignoreAppleTestData = NO;
-        [self useBranchRecommendedDelay];
+        self.config = [BNCAppleSearchAds branchConfig];
     }
     return self;
 }
 
-// Based on discussions with Apple, our default values are p95
-- (void)useBranchRecommendedDelay {
-    self.delay = 0.5;
-    self.maxAttempts = 1;
-    self.timeOut = 3.0;
+// Default delay and retry configuration.  ~p95
+// typically less than 1s delay, up to 3.5s delay on first app start
++ (BNCAppleSearchAdsConfig *)branchConfig {
+    static BNCAppleSearchAdsConfig *config;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        config = [BNCAppleSearchAdsConfig new];
+        config.delay = 0.5;
+        config.maxAttempts = 1;
+        config.timeOut = 3.0;
+    });
+    return config;
 }
 
 // Apple suggests a longer delay, however this is detrimental to app launch times
-- (void)useAppleRecommendedDelay {
-    self.delay = 2.0;
-    self.maxAttempts = 2;
-    self.timeOut = 5.0;
+// typically less than 1s delay, up to 14s delay on first app start
++ (BNCAppleSearchAdsConfig *)appleConfig {
+    static BNCAppleSearchAdsConfig *config;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        config = [BNCAppleSearchAdsConfig new];
+        config.delay = 2.0;
+        config.maxAttempts = 2;
+        config.timeOut = 5.0;
+    });
+    return config;
 }
 
 // business logic around checking and storing Apple Search Ads attribution
@@ -80,34 +100,41 @@
         return;
     }
     
+    [self requestAttributionWithMaxAttempts:self.config.maxAttempts completion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
+        
+        if (self.ignoreAppleTestData && [self isAppleTestData:attributionDetails]) {
+            [self saveToPreferences:preferenceHelper attributionDetails:@{} error:error elapsedSeconds:elapsedSeconds];
+        } else {
+            [self saveToPreferences:preferenceHelper attributionDetails:attributionDetails error:error elapsedSeconds:elapsedSeconds];
+        }
+
+        if (completion) {
+            completion();
+        }
+    }];
+}
+
+- (void)requestAttributionWithMaxAttempts:(NSInteger)maxAttempts completion:(void (^_Nullable)(NSDictionary *__nullable attributionDetails, NSError *__nullable error, NSTimeInterval elapsedSeconds))completion {
+    
     // recursive retry using blocks.  maybe I should have tried to rework this into a loop.
     __block NSInteger attempts = 1;
     
     // define the retry block
     __block void (^retryBlock)(NSDictionary *attrDetails, NSError *error, NSTimeInterval elapsedSeconds);
-    
+
     // define a weak version of the retry block
     __unsafe_unretained __block void (^weakRetryBlock)(NSDictionary *attrDetails, NSError *error, NSTimeInterval elapsedSeconds);
-    
+
     // retry block will retry the call to Apple Search Ads using the weak retry block on retryable error
     retryBlock = ^ void(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
-        if ([self isSearchAdsErrorRetryable:error] && attempts < self.maxAttempts) {
+        if ([self isSearchAdsErrorRetryable:error] && attempts < maxAttempts) {
             attempts++;
             [self requestAttributionWithCompletion:weakRetryBlock];
-            
+
         } else {
             
-            if (self.ignoreAppleTestData && [self isAppleTestData:attributionDetails]) {
-                [self saveToPreferences:preferenceHelper attributionDetails:@{} error:error elapsedSeconds:elapsedSeconds];
-
-            } else {
-            
-                // save search ads data for future use and callback
-                [self saveToPreferences:preferenceHelper attributionDetails:attributionDetails error:error elapsedSeconds:elapsedSeconds];
-            }
-            
             if (completion) {
-                completion();
+                completion(attributionDetails, error, elapsedSeconds);
             }
         }
     };
@@ -234,11 +261,11 @@ Printing description of attributionDetails:
 - (void)requestAttributionWithCompletion:(void (^_Nullable)(NSDictionary *__nullable attributionDetails, NSError *__nullable error, NSTimeInterval elapsedSeconds))completion {
     
     // Apple recommends waiting for a short delay between requests for Search Ads, even the very first request to Apple Search Ads
-    [NSThread sleepForTimeInterval:self.delay];
+    [NSThread sleepForTimeInterval:self.config.delay];
     
     // track timeout
     __block BOOL raceIsOver = NO;
-    __block NSObject *timedOutLock = [NSObject new];
+    __block NSObject *raceLock = [NSObject new];
     
     // track apple search ads API performance
     __block NSDate *startDate = [NSDate date];
@@ -246,11 +273,11 @@ Printing description of attributionDetails:
     // get ADClint using reflection
     id adClient = ((id (*)(id, SEL))[self.adClientClass methodForSelector:self.adClientSharedClient])(self.adClientClass, self.adClientSharedClient);
     
-    // block to handle ADClient response
+    // completion block to handle ADClient response
     void (^__nullable completionBlock)(NSDictionary *attrDetails, NSError *error) = ^ void(NSDictionary *__nullable attributionDetails, NSError *__nullable error) {
 
         // skip callback if request already timed out
-        @synchronized (timedOutLock) {
+        @synchronized (raceLock) {
             if (raceIsOver) {
                 return;
             } else {
@@ -271,8 +298,8 @@ Printing description of attributionDetails:
     (adClient, self.adClientRequestAttribution, completionBlock);
     
     // timer for timeout, this is racing the call to Apple Search Ads
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.timeOut * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        @synchronized (timedOutLock) {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.config.timeOut * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        @synchronized (raceLock) {
             if (raceIsOver) {
                 return;
             } else {

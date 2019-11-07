@@ -18,9 +18,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BNCAppleSearchAds *)sharedInstance;
 
-// Apple suggests a longer delay, however this is detrimental to app launch times
-- (void)useAppleRecommendedDelay;
-
 // Checks Apple Search Ads and updates preferences
 // This method blocks the thread, it should only be called on a background thread.
 - (void)checkAppleSearchAdsSaveTo:(BNCPreferenceHelper *)preferenceHelper installDate:(NSDate *)installDate completion:(void (^_Nullable)(void))completion;
