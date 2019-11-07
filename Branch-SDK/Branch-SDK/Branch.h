@@ -625,6 +625,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Check for Apple Search Ads before initialization.
+ 
  This will add about 1 second to first time startup.  Up to 3.5 seconds if Apple Search Ads fails to respond.
  */
 - (void)delayInitToCheckForSearchAds;
@@ -636,6 +637,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  This will increase the wait up to about 15 seconds if Apple Search Ads fails to respond.
  */
 - (void)useLongerWaitForAppleSearchAds;
+
+/**
+ Ignores Apple Search Ads test data.
+ 
+ Apple returns test data for all calls made to the Apple Search Ads API on developer and testflight builds.
+ */
+- (void)ignoreAppleSearchAdsTestData;
 
 /**
  Specify the time to wait in seconds between retries in the case of a Branch server error
