@@ -36,12 +36,44 @@
     XCTAssertTrue([ADClient sharedClient] == [BNCAppleAdClient new].adClient);
 }
 
-- (void)testErrorOnFailureToLoad {
+/*
+Expected payload varies by simulator or test device.  In general, there is a payload of some sort.
+
+This test fails on iOS 10 simulators.  Some iPad simulators never respond.  Some iPhone simulators return an error.
+*/
+- (void)testRequestAttribution {
+    __block XCTestExpectation *expectation = [self expectationWithDescription:@"BNCAppleAdClient"];
+    
+    BNCAppleAdClient *adClient = [BNCAppleAdClient new];
+    [adClient requestAttributionDetailsWithBlock:^(NSDictionary<NSString *,NSObject *> * _Nonnull attributionDetails, NSError * _Nonnull error) {
+        XCTAssertNil(error);
+        
+        id tmp = [attributionDetails objectForKey:@"Version3.1"];
+        if ([tmp isKindOfClass:NSDictionary.class]) {
+            NSDictionary *tmpDict = (NSDictionary *)tmp;
+            XCTAssertNotNil(tmpDict);
+                   
+            NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
+            XCTAssertNotNil(tmpBool);
+        } else {
+            XCTFail(@"Did not find Search Ads attribution");
+        }
+        
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        NSLog(@"%@", error);
+    }];
+}
+
+- (void)testRequestAttribution_Error {
+    
     // simulate failure to load by setting adClient to nil
     BNCAppleAdClient *adClient = [BNCAppleAdClient new];
     adClient.adClient = nil;
     
-    __block XCTestExpectation *expectation = [self expectationWithDescription:@""];
+    __block XCTestExpectation *expectation = [self expectationWithDescription:@"BNCAppleAdClient"];
     
     [adClient requestAttributionDetailsWithBlock:^(NSDictionary<NSString *,NSObject *> * _Nonnull attributionDetails, NSError * _Nonnull error) {
         XCTAssertNotNil(error);
