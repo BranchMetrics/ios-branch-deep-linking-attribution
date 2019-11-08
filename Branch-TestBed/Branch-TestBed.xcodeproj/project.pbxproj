@@ -170,6 +170,9 @@
 		5F3D671F2330638D00454FF1 /* cpid.json in Resources */ = {isa = PBXBuildFile; fileRef = 5F3D671E2330638D00454FF1 /* cpid.json */; };
 		5F44AC3E2339474B007A9A7C /* cpid_empty_dev_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 5F44AC3A23394742007A9A7C /* cpid_empty_dev_id.json */; };
 		5F44AC3F2339474B007A9A7C /* cpid_missing_dev_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 5F44AC3B23394742007A9A7C /* cpid_missing_dev_id.json */; };
+		5F5EC45B2374D95300AAAFC7 /* BNCAppleAdClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F5EC4592374D95300AAAFC7 /* BNCAppleAdClient.h */; };
+		5F5EC45C2374D95300AAAFC7 /* BNCAppleAdClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5EC45A2374D95300AAAFC7 /* BNCAppleAdClient.m */; };
+		5F5EC4602374E96B00AAAFC7 /* BNCAppleAdClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5EC45F2374E96B00AAAFC7 /* BNCAppleAdClientTests.m */; };
 		5F67F48E228F535500067429 /* BNCEncodingUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */; };
 		5F73FC7E23313F7A000EBD32 /* BNCJSONUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F73FC7C23313F7A000EBD32 /* BNCJSONUtility.h */; };
 		5F73FC7F23313F7A000EBD32 /* BNCJSONUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F73FC7D23313F7A000EBD32 /* BNCJSONUtility.m */; };
@@ -435,6 +438,9 @@
 		5F3D671E2330638D00454FF1 /* cpid.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cpid.json; sourceTree = "<group>"; };
 		5F44AC3A23394742007A9A7C /* cpid_empty_dev_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cpid_empty_dev_id.json; sourceTree = "<group>"; };
 		5F44AC3B23394742007A9A7C /* cpid_missing_dev_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cpid_missing_dev_id.json; sourceTree = "<group>"; };
+		5F5EC4592374D95300AAAFC7 /* BNCAppleAdClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCAppleAdClient.h; sourceTree = "<group>"; };
+		5F5EC45A2374D95300AAAFC7 /* BNCAppleAdClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCAppleAdClient.m; sourceTree = "<group>"; };
+		5F5EC45F2374E96B00AAAFC7 /* BNCAppleAdClientTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCAppleAdClientTests.m; sourceTree = "<group>"; };
 		5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCEncodingUtilsTests.m; sourceTree = "<group>"; };
 		5F73FC7C23313F7A000EBD32 /* BNCJSONUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCJSONUtility.h; sourceTree = "<group>"; };
 		5F73FC7D23313F7A000EBD32 /* BNCJSONUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCJSONUtility.m; sourceTree = "<group>"; };
@@ -664,6 +670,7 @@
 			children = (
 				5F3D671D2330638D00454FF1 /* cannedData */,
 				5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */,
+				5F5EC45F2374E96B00AAAFC7 /* BNCAppleAdClientTests.m */,
 				5F892EBA2360F0290023AEC1 /* BNCAppleSearchAdsTests.m */,
 				5F892ECD23624E0A0023AEC1 /* BNCFacebookAppLinksTests.m */,
 				5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */,
@@ -848,6 +855,8 @@
 			children = (
 				5F892ED7236258390023AEC1 /* BNCFacebookAppLinks.h */,
 				5F892ED6236258390023AEC1 /* BNCFacebookAppLinks.m */,
+				5F5EC4592374D95300AAAFC7 /* BNCAppleAdClient.h */,
+				5F5EC45A2374D95300AAAFC7 /* BNCAppleAdClient.m */,
 				5F892EB72360EFE90023AEC1 /* BNCAppleSearchAds.h */,
 				5F892EB62360EFE90023AEC1 /* BNCAppleSearchAds.m */,
 				5FC7326622D81002006E6FBC /* BNCAppleReceipt.h */,
@@ -963,6 +972,7 @@
 				9A2B7DD51FEC3BAF00CD188B /* Branch+Validator.h in Headers */,
 				F185BAAA1F3D30D70056300C /* BNCSpotlightService.h in Headers */,
 				4DCAC80F1F426F7C00405D1D /* BNCAvailability.h in Headers */,
+				5F5EC45B2374D95300AAAFC7 /* BNCAppleAdClient.h in Headers */,
 				4D955CCC2035021400FB8008 /* BNCURLBlackList.h in Headers */,
 				E2B9474A1D15D75000F2270D /* BNCCallbacks.h in Headers */,
 				4DCAC8011F426F7C00405D1D /* BNCCommerceEvent.h in Headers */,
@@ -1290,6 +1300,7 @@
 				5F892EB82360EFE90023AEC1 /* BNCAppleSearchAds.m in Sources */,
 				466B58591B17779C00A69EDE /* BNCPreferenceHelper.m in Sources */,
 				4D8999ED1DC108FF00F7EE0A /* BNCAvailability.m in Sources */,
+				5F5EC45C2374D95300AAAFC7 /* BNCAppleAdClient.m in Sources */,
 				4D59B5222006979C00F89FD5 /* BNCKeyChain.m in Sources */,
 				F1D359211ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m in Sources */,
 				466B585F1B17779C00A69EDE /* BNCSystemObserver.m in Sources */,
@@ -1397,6 +1408,7 @@
 				4D7881FF209CF2D4002B750F /* BNCApplication+BNCTest.m in Sources */,
 				5F3D671B233062FD00454FF1 /* BNCJsonLoader.m in Sources */,
 				4D1683C02098C902008819E3 /* BranchUniversalObject.Test.m in Sources */,
+				5F5EC4602374E96B00AAAFC7 /* BNCAppleAdClientTests.m in Sources */,
 				4D1683B52098C902008819E3 /* BNCLocalization.Test.m in Sources */,
 				5FC7327022DD1F93006E6FBC /* BNCAppleReceiptTests.m in Sources */,
 				4D1683C82098C902008819E3 /* NSString+Branch.Test.m in Sources */,
