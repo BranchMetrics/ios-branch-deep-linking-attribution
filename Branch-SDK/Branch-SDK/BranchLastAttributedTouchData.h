@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, readonly) NSNumber *attributionWindow;
 
-+ (BranchLastAttributedTouchData *)buildFromJSON:(NSDictionary *)json;
++ (nullable BranchLastAttributedTouchData *)buildFromJSON:(NSDictionary *)json;
 
 + (void)requestLastTouchAttributedData:(BNCServerInterface *)serverInterface key:(NSString *)key attributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData *latd))completion;
 
