@@ -49,7 +49,7 @@
     return self;
 }
 
-// Default delay and retry configuration.  ~p95
+// Default delay and retry configuration.  ~p90
 // typically less than 1s delay, up to 3.5s delay on first app start
 - (void)useBranchConfig {
     self.delay = 0.5;
