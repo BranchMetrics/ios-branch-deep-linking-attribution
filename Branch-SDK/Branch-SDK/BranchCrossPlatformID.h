@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *crossPlatformID;
 @property (nonatomic, copy, readonly) NSNumber *score;
 
-+ (BranchProbabilisticCrossPlatformID *)buildFromJSON:(NSDictionary *)json;
++ (nullable BranchProbabilisticCrossPlatformID *)buildFromJSON:(NSDictionary *)json;
 
 @end
 
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) NSArray<NSString *> *pastCrossPlatformIDs;
 @property (nonatomic, strong, readonly) NSArray<BranchProbabilisticCrossPlatformID *> *probabiliticCrossPlatformIDs;
 
-+ (BranchCrossPlatformID *)buildFromJSON:(NSDictionary *)json;
++ (nullable BranchCrossPlatformID *)buildFromJSON:(NSDictionary *)json;
 
 + (void)requestCrossPlatformIdData:(BNCServerInterface *)serverInterface key:(NSString *)key completion:(void(^) (BranchCrossPlatformID * _Nullable cpid))completion;
 
