@@ -7,6 +7,7 @@
 //
 
 #import "BNCAppleAdClient.h"
+#import "NSError+Branch.h"
 
 @interface BNCAppleAdClient()
 
@@ -56,6 +57,10 @@
         ((void (*)(id, SEL, void (^ __nullable)(NSDictionary *__nullable attrDetails, NSError * __nullable error)))
         [self.adClient methodForSelector:self.adClientRequestAttribution])
         (self.adClient, self.adClientRequestAttribution, completionHandler);
+    } else {
+        if (completionHandler) {
+            completionHandler(nil, [NSError branchErrorWithCode:BNCGeneralError localizedMessage:@"ADClient is not available. Requires iAD.framework and iOS 10+"]);
+        }
     }
 }
 

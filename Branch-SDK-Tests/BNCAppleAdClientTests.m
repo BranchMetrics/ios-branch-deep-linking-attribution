@@ -32,8 +32,27 @@
 }
 
 // verifies AdClient loaded via reflection is the sharedClient
-- (void)testReflection {
+- (void)testAdClientLoadsViaReflection {
     XCTAssertTrue([ADClient sharedClient] == [BNCAppleAdClient new].adClient);
+}
+
+- (void)testErrorOnFailureToLoad {
+    // simulate failure to load by setting adClient to nil
+    BNCAppleAdClient *adClient = [BNCAppleAdClient new];
+    adClient.adClient = nil;
+    
+    __block XCTestExpectation *expectation = [self expectationWithDescription:@""];
+    
+    [adClient requestAttributionDetailsWithBlock:^(NSDictionary<NSString *,NSObject *> * _Nonnull attributionDetails, NSError * _Nonnull error) {
+        XCTAssertNotNil(error);
+        XCTAssertTrue([error.localizedFailureReason containsString:@"ADClient is not available"]);
+        
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        NSLog(@"%@", error);
+    }];
 }
 
 @end
