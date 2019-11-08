@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BNCAppleSearchAds *)sharedInstance;
 
-// Default delay and retry configuration.  ~p95
+// Default delay and retry configuration.  ~p90
 // typically less than 1s delay, up to 3.5s delay on first app start
 - (void)useBranchConfig;
 
