@@ -233,8 +233,8 @@ Printing description of attributionDetails:
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.delay * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
         // track timeout
-        __block BOOL raceIsOver = NO;
-        __block NSObject *raceLock = [NSObject new];
+        __block BOOL completed = NO;
+        __block NSObject *lock = [NSObject new];
         
         // track apple search ads API performance
         __block NSDate *startDate = [NSDate date];
@@ -242,11 +242,11 @@ Printing description of attributionDetails:
         [self.adClient requestAttributionDetailsWithBlock:^(NSDictionary<NSString *,NSObject *> * _Nonnull attributionDetails, NSError * _Nonnull error) {
             
             // skip callback if request already timed out
-            @synchronized (raceLock) {
-                if (raceIsOver) {
+            @synchronized (lock) {
+                if (completed) {
                     return;
                 } else {
-                    raceIsOver = YES;
+                    completed = YES;
                 }
             }
             
@@ -259,11 +259,11 @@ Printing description of attributionDetails:
         
         // Apple recommends we implement our own timeout, this is racing the call to Apple Search Ads
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.timeOut * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            @synchronized (raceLock) {
-                if (raceIsOver) {
+            @synchronized (lock) {
+                if (completed) {
                     return;
                 } else {
-                    raceIsOver = YES;
+                    completed = YES;
                 }
             }
             
