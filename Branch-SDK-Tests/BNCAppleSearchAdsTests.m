@@ -166,25 +166,21 @@
     XCTAssertFalse([self.appleSearchAds isSearchAdsErrorRetryable:nil]);
 }
 
-// ADClientErrorUnknown
 - (void)testIsSearchAdsErrorRetryable_ADClientErrorUnknown {
     NSError *error = [NSError errorWithDomain:@"" code:ADClientErrorUnknown userInfo:nil];
     XCTAssertTrue([self.appleSearchAds isSearchAdsErrorRetryable:error]);
 }
 
-// ADClientErrorLimitAdTracking
 - (void)testIsSearchAdsErrorRetryable_ADClientErrorLimitAdTracking {
     NSError *error = [NSError errorWithDomain:@"" code:ADClientErrorLimitAdTracking userInfo:nil];
     XCTAssertFalse([self.appleSearchAds isSearchAdsErrorRetryable:error]);
 }
 
-// ADClientErrorMissingData
 - (void)testIsSearchAdsErrorRetryable_ADClientErrorMissingData {
     NSError *error = [NSError errorWithDomain:@"" code:ADClientErrorMissingData userInfo:nil];
     XCTAssertTrue([self.appleSearchAds isSearchAdsErrorRetryable:error]);
 }
 
-// ADClientErrorCorruptResponse
 - (void)testIsSearchAdsErrorRetryable_ADClientErrorCorruptResponse {
     NSError *error = [NSError errorWithDomain:@"" code:ADClientErrorCorruptResponse userInfo:nil];
     XCTAssertTrue([self.appleSearchAds isSearchAdsErrorRetryable:error]);
