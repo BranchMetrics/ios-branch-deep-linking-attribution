@@ -44,14 +44,14 @@
         
         self.enableAppleSearchAdsCheck = NO;
         self.ignoreAppleTestData = NO;
-        [self useBranchConfig];
+        [self useDefaultAppleSearchAdsConfig];
     }
     return self;
 }
 
 // Default delay and retry configuration.  ~p90
 // typically less than 1s delay, up to 3.5s delay on first app start
-- (void)useBranchConfig {
+- (void)useDefaultAppleSearchAdsConfig {
     self.delay = 0.5;
     self.maxAttempts = 1;
     self.timeOut = 3.0;
@@ -59,7 +59,7 @@
 
 // Apple suggests a longer delay, however this is detrimental to app launch times
 // typically less than 1s delay, up to 14s delay on first app start
-- (void)useAppleConfig {
+- (void)useLongWaitAppleSearchAdsConfig {
     self.delay = 2.0;
     self.maxAttempts = 2;
     self.timeOut = 5.0;

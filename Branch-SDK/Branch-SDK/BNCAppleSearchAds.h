@@ -20,11 +20,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Default delay and retry configuration.  ~p90
 // typically less than 1s delay, up to 3.5s delay on first app start
-- (void)useBranchConfig;
+- (void)useDefaultAppleSearchAdsConfig;
 
 // Apple suggests a longer delay, however this is detrimental to app launch times
 // typically less than 1s delay, up to 14s delay on first app start
-- (void)useAppleConfig;
+- (void)useLongWaitAppleSearchAdsConfig;
 
 // Checks Apple Search Ads and updates preferences
 // This method blocks the thread, it should only be called on a background thread.

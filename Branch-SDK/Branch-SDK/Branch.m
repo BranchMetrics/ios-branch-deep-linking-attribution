@@ -896,7 +896,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)useLongerWaitForAppleSearchAds {
-    [[BNCAppleSearchAds sharedInstance] useAppleConfig];
+    [[BNCAppleSearchAds sharedInstance] useLongWaitAppleSearchAdsConfig];
 }
 
 - (void)ignoreAppleSearchAdsTestData {
