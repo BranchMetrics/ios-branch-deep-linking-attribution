@@ -46,11 +46,11 @@
     NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
     if (receiptURL) {
         self.isSandboxReceipt = [receiptURL.lastPathComponent isEqualToString:@"sandboxReceipt"];
-    }
-    
-    NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
-    if (receiptData) {
-        self.receipt = [receiptData base64EncodedStringWithOptions:0];
+        
+        NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
+        if (receiptData) {
+            self.receipt = [receiptData base64EncodedStringWithOptions:0];
+        }
     }
 }
 

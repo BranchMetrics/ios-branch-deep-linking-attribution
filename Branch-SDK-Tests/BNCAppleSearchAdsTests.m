@@ -7,15 +7,57 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <UIKit/UIKit.h>
+#import <iAd/iAd.h>
 #import "BNCAppleSearchAds.h"
+#import "BNCAppleAdClient.h"
 
-// expose private methods for unit testing
+@interface BNCAppleAdClientMock : NSObject <BNCAppleAdClientProtocol>
+
+@property (nonatomic, assign, readwrite) NSInteger ignoreCount;
+@property (nonatomic, assign, readwrite) NSInteger numIgnores;
+
+- (void)requestAttributionDetailsWithBlock:(void (^)(NSDictionary<NSString *,NSObject *> * _Nonnull, NSError * _Nonnull))completionHandler;
+
+@end
+
+@implementation BNCAppleAdClientMock
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.numIgnores = 0;
+        self.ignoreCount = 0;
+    }
+    return self;
+}
+
+- (void)requestAttributionDetailsWithBlock:(void (^)(NSDictionary<NSString *,NSObject *> * _Nonnull, NSError * _Nonnull))completionHandler {
+    if (self.ignoreCount < self.numIgnores) {
+        self.ignoreCount++;
+        return;
+    }
+    
+    // Search Ads requires iOS 10+ but the API is iOS 9+
+    if (@available(iOS 9, *)) {
+        [[ADClient sharedClient] requestAttributionDetailsWithBlock:completionHandler];
+    }
+}
+
+@end
+
 @interface BNCAppleSearchAds()
+
+// Expose private methods for testing
+@property (nonatomic, strong, readwrite) id <BNCAppleAdClientProtocol> adClient;
 
 - (BOOL)isAppleSearchAdSavedToDictionary:(NSDictionary *)appleSearchAdDetails;
 - (BOOL)isDateWithinWindow:(NSDate *)installDate;
 - (BOOL)isAdClientAvailable;
 - (BOOL)isAppleTestData:(NSDictionary *)appleSearchAdDetails;
+- (BOOL)isSearchAdsErrorRetryable:(nullable NSError *)error;
+
+- (void)requestAttributionWithMaxAttempts:(NSInteger)maxAttempts completion:(void (^_Nullable)(NSDictionary *__nullable attributionDetails, NSError *__nullable error, NSTimeInterval elapsedSeconds))completion;
 
 - (void)requestAttributionWithCompletion:(void (^_Nullable)(NSDictionary *__nullable attributionDetails, NSError *__nullable error, NSTimeInterval elapsedSeconds))completion;
 
@@ -35,10 +77,6 @@
 
 - (void)tearDown {
 
-}
-
-- (void)testAdClientIsAvailable {
-    XCTAssertTrue([self.appleSearchAds isAdClientAvailable]);
 }
 
 - (void)testDateIsWithinWindow_DistantPast {
@@ -124,10 +162,34 @@
     XCTAssertFalse([self.appleSearchAds isAppleTestData:testDataIndicators]);
 }
 
+- (void)testIsSearchAdsErrorRetryable_Nil {
+    XCTAssertFalse([self.appleSearchAds isSearchAdsErrorRetryable:nil]);
+}
+
+- (void)testIsSearchAdsErrorRetryable_ADClientErrorUnknown {
+    NSError *error = [NSError errorWithDomain:@"" code:ADClientErrorUnknown userInfo:nil];
+    XCTAssertTrue([self.appleSearchAds isSearchAdsErrorRetryable:error]);
+}
+
+- (void)testIsSearchAdsErrorRetryable_ADClientErrorLimitAdTracking {
+    NSError *error = [NSError errorWithDomain:@"" code:ADClientErrorLimitAdTracking userInfo:nil];
+    XCTAssertFalse([self.appleSearchAds isSearchAdsErrorRetryable:error]);
+}
+
+- (void)testIsSearchAdsErrorRetryable_ADClientErrorMissingData {
+    NSError *error = [NSError errorWithDomain:@"" code:ADClientErrorMissingData userInfo:nil];
+    XCTAssertTrue([self.appleSearchAds isSearchAdsErrorRetryable:error]);
+}
+
+- (void)testIsSearchAdsErrorRetryable_ADClientErrorCorruptResponse {
+    NSError *error = [NSError errorWithDomain:@"" code:ADClientErrorCorruptResponse userInfo:nil];
+    XCTAssertTrue([self.appleSearchAds isSearchAdsErrorRetryable:error]);
+}
+
 /*
  Expected payload varies by simulator or test device.  In general, there is a payload of some sort.
  
- This test fails on iOS 10 simulators.  iPad simulators never respond.  iPhone simulators return an error.
+ This test fails on iOS 10 simulators.  Some iPad simulators never respond.  Some iPhone simulators return an error.
  */
 - (void)testRequestAppleSearchAds {
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
@@ -142,6 +204,98 @@
         NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
         XCTAssertNotNil(tmpBool);
         
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        NSLog(@"%@", error);
+    }];
+}
+
+// min attempts = 1, so this should ignore the max attempts
+- (void)testRequestAppleSearchAdsWithRetry_0 {
+    __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
+    
+    [self.appleSearchAds requestAttributionWithMaxAttempts:0 completion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
+        XCTAssertNil(error);
+        XCTAssertTrue(elapsedSeconds > 0);
+        
+        NSDictionary *tmpDict = [attributionDetails objectForKey:@"Version3.1"];
+        XCTAssertNotNil(tmpDict);
+        
+        NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
+        XCTAssertNotNil(tmpBool);
+        
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        NSLog(@"%@", error);
+    }];
+}
+
+// should work as a basic pass through
+- (void)testRequestAppleSearchAdsWithRetry_1 {
+    __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
+    
+    [self.appleSearchAds requestAttributionWithMaxAttempts:1 completion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
+        XCTAssertNil(error);
+        XCTAssertTrue(elapsedSeconds > 0);
+        
+        NSDictionary *tmpDict = [attributionDetails objectForKey:@"Version3.1"];
+        XCTAssertNotNil(tmpDict);
+        
+        NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
+        XCTAssertNotNil(tmpBool);
+        
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        NSLog(@"%@", error);
+    }];
+}
+
+- (void)testRequestAppleSearchAdsWithRetry_NoResponse {
+    __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
+
+    // Mock the adClient to never respond
+    self.appleSearchAds.adClient = nil;
+    
+    [self.appleSearchAds requestAttributionWithMaxAttempts:1 completion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
+        XCTAssertNotNil(error);
+        XCTAssertTrue(elapsedSeconds > 0);
+        XCTAssertNil(attributionDetails);
+                
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:5 handler:^(NSError * _Nullable error) {
+        NSLog(@"%@", error);
+    }];
+}
+
+- (void)testRequestAppleSearchAdsWithRetry_3 {
+    __block XCTestExpectation *expectation = [self expectationWithDescription:@"AppleSearchAds"];
+
+    // Mock the adClient to ignore 2 times
+    __block BNCAppleAdClientMock *mock = [BNCAppleAdClientMock new];
+    mock.ignoreCount = 2;
+    self.appleSearchAds.adClient = mock;
+    
+    [self.appleSearchAds requestAttributionWithMaxAttempts:3 completion:^(NSDictionary * _Nullable attributionDetails, NSError * _Nullable error, NSTimeInterval elapsedSeconds) {
+        XCTAssertNil(error);
+        XCTAssertTrue(elapsedSeconds > 0);
+        
+        NSDictionary *tmpDict = [attributionDetails objectForKey:@"Version3.1"];
+        XCTAssertNotNil(tmpDict);
+        
+        NSNumber *tmpBool = [tmpDict objectForKey:@"iad-attribution"];
+        XCTAssertNotNil(tmpBool);
+        
+        // verifies things were ignored
+        XCTAssert(mock.ignoreCount == 2);
+                
         [expectation fulfill];
     }];
     
