@@ -20,13 +20,13 @@
 #else
 #import <UIKit/UIKit.h>
 #endif
-#import <sys/sysctl.h> // @import not available in Xcode 7
+#import <sys/sysctl.h>
 #import <net/if.h>
 #import <ifaddrs.h>
 #import <arpa/inet.h>
 #import <netinet/in.h>
 
-// Forward declare this for older versions of iOS
+// Forward declare this for pre iOS 10
 @interface NSLocale (BranchAvailability)
 - (NSString*) countryCode;
 - (NSString*) languageCode;
@@ -313,26 +313,17 @@ exit:
 }
 
 + (NSString*) systemBuildVersion {
-    int mib[2] = { CTL_KERN, KERN_OSVERSION };
-    u_int namelen = sizeof(mib) / sizeof(mib[0]);
+    
+    // get build size
+    size_t size;
+    sysctlbyname("kern.osversion", NULL, &size, NULL, 0);
+    
+    // get build value
+    char *build = malloc(size);
+    sysctlbyname("kern.osversion", build, &size, NULL, 0);
 
-    //	Get the size for the buffer --
-
-    size_t bufferSize = 0;
-    sysctl(mib, namelen, NULL, &bufferSize, NULL, 0);
-	if (bufferSize <= 0) return nil;
-
-    u_char buildBuffer[bufferSize];
-    int result = sysctl(mib, namelen, buildBuffer, &bufferSize, NULL, 0);
-
-	NSString *version = nil;
-    if (result >= 0) {
-        version = [[NSString alloc]
-            initWithBytes:buildBuffer
-            length:bufferSize-1
-            encoding:NSUTF8StringEncoding];
-    }
-    return version;
+    NSString *buildVersion = @(build);
+    return buildVersion;
 }
 
 + (NSString *)userAgentString {
