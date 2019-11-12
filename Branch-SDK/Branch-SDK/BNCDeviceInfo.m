@@ -312,7 +312,9 @@ exit:
     return nil;
 }
 
-+ (NSString*) systemBuildVersion {
+// Build info from the Software Version
+// Example: "iOS 13.2.2 (17B102)" would return "17B102"
++ (NSString *)systemBuildVersion {
     
     // get build size
     size_t size;
@@ -322,7 +324,10 @@ exit:
     char *build = malloc(size);
     sysctlbyname("kern.osversion", build, &size, NULL, 0);
 
+    // create NSString with c string, free it after
     NSString *buildVersion = @(build);
+    free(build);
+    
     return buildVersion;
 }
 
