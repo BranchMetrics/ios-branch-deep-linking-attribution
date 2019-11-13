@@ -1931,7 +1931,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 
             }
 
-            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(queue, ^ {
                 [req makeRequest:self.serverInterface key:self.class.branchKey callback:
                     ^(BNCServerResponse* response, NSError* error) {
