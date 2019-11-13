@@ -670,7 +670,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-TestBed-Swift/Pods-TestBed-Swift-frameworks.sh",
-				"${PODS_ROOT}/Localytics/Localytics-iOS-5.5.0/Localytics.framework",
+				"${PODS_ROOT}/Localytics/Localytics-iOS-5.8.0/Localytics.framework",
 				"${PODS_ROOT}/Tune/Tune.framework",
 				"${PODS_ROOT}/YandexMobileMetrica/dynamic/YandexMobileMetrica.framework",
 				"${PODS_ROOT}/YandexMobileMetrica/dynamic/YandexMobileMetricaCrashes.framework",

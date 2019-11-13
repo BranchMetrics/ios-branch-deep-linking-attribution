@@ -5,8 +5,8 @@ Branch iOS SDK Change Log
   * SDK-513 update Apple Search Ads behavior and API
   * SDK-614 last attributed touch API now accepts attribution window
   * SDK-605 add blacklist url configuration
-  * SDK-608 remove deprecated Safari cookie integration
-  * SDK-598 fix race condition on SDK init
+  * SDK-608 remove deprecated Safari cookie matching
+  * SDK-598 fix potential race condition on SDK init
   * SDK-603 fix Carthage build from source
   * SDK-554 fix Swift getInstance nullability
   * SDK-450 fix object serialization error
