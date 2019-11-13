@@ -626,7 +626,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Check for Apple Search Ads before initialization.
  
- This will usually add less than 1 second to first time startup.  Up to 3.5 seconds if Apple Search Ads fails to respond.
+ This will usually add less than 1 second on first time startup.  Up to 3.5 seconds if Apple Search Ads fails to respond.
  */
 - (void)delayInitToCheckForSearchAds;
 
@@ -634,7 +634,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  Increases the amount of time the SDK waits for Apple Search Ads to respond.
  The default wait has a better than 90% success rate, however waiting longer can improve the success rate.
 
- This will increase the usual delay to about 3 seconds to first time startup.  Up to about 15 seconds if Apple Search Ads fails to respond.
+ This will increase the usual delay to about 3 seconds on first time startup.  Up to about 15 seconds if Apple Search Ads fails to respond.
  */
 - (void)useLongerWaitForAppleSearchAds;
 
