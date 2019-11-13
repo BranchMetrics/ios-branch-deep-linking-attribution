@@ -44,8 +44,7 @@ nano ChangeLog.md
 # Pre-release CocoaPod lint
 echo ">>> Linting build for release..." 1>&2
 
-# allowing warnings until nullability warnings are fixed with SDK-518
-pod lib lint Branch.podspec --verbose --allow-warnings
+pod lib lint Branch.podspec --verbose
 
 # Build the framework
 echo ">>> Building the framework..." 1>&2

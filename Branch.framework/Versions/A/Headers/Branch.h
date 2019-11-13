@@ -18,7 +18,7 @@
 #import "BNCCommerceEvent.h"
 #import "BNCConfig.h"
 #import "BNCDebug.h"
-#import "BNCError.h"
+#import "NSError+Branch.h"
 #import "BNCLinkCache.h"
 #import "BNCLog.h"
 #import "BNCPreferenceHelper.h"
@@ -168,13 +168,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
  @warning This method is not meant to be used in production!
 */
-+ (nullable Branch *) getTestInstance __attribute__((deprecated(("Use `Branch.useTestBranchKey = YES;` instead."))));
++ (Branch *)getTestInstance __attribute__((deprecated(("Use `Branch.useTestBranchKey = YES;` instead."))));
 
 
 /**
  Gets the global, live Branch instance.
  */
-+ (nullable Branch *)getInstance;
++ (Branch *)getInstance;
 
 /**
  Gets the global Branch instance, configures using the specified key
@@ -182,7 +182,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @param branchKey The Branch key to be used by the Branch instance. This can be any live or test key.
  @warning This method is not the recommended way of using Branch. Try using your project's `Info.plist` if possible.
  */
-+ (nullable Branch *)getInstance:(NSString *)branchKey;
++ (Branch *)getInstance:(NSString *)branchKey;
 
 /**
  Set the network service class.
@@ -624,9 +624,26 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)registerFacebookDeepLinkingClass:(id)FBSDKAppLinkUtility;
 
 /**
- Check for Apple Search Ads before initialization. Will add about 1 second from call to initSession to callback due to Apple's latency.
+ Check for Apple Search Ads before initialization.
+ 
+ This will usually add less than 1 second on first time startup.  Up to 3.5 seconds if Apple Search Ads fails to respond.
  */
 - (void)delayInitToCheckForSearchAds;
+
+/**
+ Increases the amount of time the SDK waits for Apple Search Ads to respond.
+ The default wait has a better than 90% success rate, however waiting longer can improve the success rate.
+
+ This will increase the usual delay to about 3 seconds on first time startup.  Up to about 15 seconds if Apple Search Ads fails to respond.
+ */
+- (void)useLongerWaitForAppleSearchAds;
+
+/**
+ Ignores Apple Search Ads test data.
+ 
+ Apple returns test data for all calls made to the Apple Search Ads API on developer and testflight builds.
+ */
+- (void)ignoreAppleSearchAdsTestData;
 
 /**
  Specify the time to wait in seconds between retries in the case of a Branch server error
@@ -653,7 +670,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  Specify that Branch should NOT use an invisible SFSafariViewController to attempt cookie-based matching upon install.
  If you call this method, we will fall back to using our pool of cookie-IDFA pairs for matching.
  */
-- (void)disableCookieBasedMatching;
+- (void)disableCookieBasedMatching __attribute__((deprecated(("Feature removed.  Did not work on iOS 11+"))));
 
 /**
  TL;DR: If you're using a version of the Facebook SDK that prevents application:didFinishLaunchingWithOptions: from
@@ -681,15 +698,15 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)setRequestMetadataKey:(NSString *)key value:(nullable id)value;
 
-- (void)enableDelayedInit;
+- (void)enableDelayedInit __attribute__((deprecated(("No longer valid with new init process"))));
 
-- (void)disableDelayedInit;
+- (void)disableDelayedInit __attribute__((deprecated(("No longer valid with new init process"))));
 
-- (nullable NSURL *)getUrlForOnboardingWithRedirectUrl:(nullable NSString *)redirectUrl;
+- (nullable NSURL *)getUrlForOnboardingWithRedirectUrl:(nullable NSString *)redirectUrl __attribute__((deprecated(("Feature removed.  Did not work on iOS 11+"))));;
 
-- (void)resumeInit;
+- (void)resumeInit __attribute__((deprecated(("Feature removed.  Did not work on iOS 11+"))));
 
-- (void)setInstallRequestDelay:(NSInteger)installRequestDelay;
+- (void)setInstallRequestDelay:(NSInteger)installRequestDelay __attribute__((deprecated(("No longer valid with new init process"))));
 
 /**
  Disables the Branch SDK from tracking the user. This is useful for GDPR privacy compliance.
@@ -947,14 +964,26 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void) sendCommerceEvent:(BNCCommerceEvent*)commerceEvent
 				  metadata:(NSDictionary<NSString*,id>*)metadata
-			withCompletion:(void (^) (NSDictionary*response, NSError*error))completion __attribute__((deprecated(("Please use BranchEvent to track commerce events."))));
+			withCompletion:(void (^) (NSDictionary* _Nullable response, NSError* _Nullable error))completion __attribute__((deprecated(("Please use BranchEvent to track commerce events."))));
 
 
 #pragma mark - Query methods
 
+/**
+ Branch includes SDK methods to allow retrieval of our Cross Platform ID (CPID) from the client. This results in an asynchronous call being made to Branch’s servers with CPID data returned when possible.
+ 
+ @param completion callback with cross platform id data
+ */
 - (void)crossPlatformIdDataWithCompletion:(void(^) (BranchCrossPlatformID * _Nullable cpid))completion;
 
-- (void)lastTouchAttributedDataWithCompletion:(void(^) (BranchLastAttributedTouchData * _Nullable ltad))completion;
+/**
+ Branch includes SDK methods to allow retrieval of our last attributed touch data (LATD) from the client. This results in an asynchronous call being made to Branch's servers with LATD data returned when possible.
+ Last attributed touch data contains the information associated with that user's last viewed impression or clicked link.
+ 
+ @param window attribution window in days.  If the window is outside the server supported range, it will default to 30 days.
+ @param completion callback with attribution data
+ */
+- (void)lastAttributedTouchDataWithAttributionWindow:(NSInteger)window completion:(void(^) (BranchLastAttributedTouchData * _Nullable latd))completion;
 
 #pragma mark - Short Url Sync methods
 

@@ -33,7 +33,6 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (strong, nonatomic) NSString *sessionParams;
 @property (strong, nonatomic) NSString *installParams;
 @property (assign, nonatomic) BOOL isDebug;
-@property (assign, nonatomic) BOOL shouldWaitForInit;
 @property (assign, nonatomic) BOOL checkedFacebookAppLinks;
 @property (assign, nonatomic) BOOL checkedAppleSearchAdAttribution;
 @property (assign, nonatomic) NSInteger retryCount;
@@ -41,15 +40,17 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (assign, nonatomic) NSTimeInterval timeout;
 @property (strong, atomic)    NSString *externalIntentURI;
 @property (strong, nonatomic) NSMutableDictionary *savedAnalyticsData;
-@property (assign, nonatomic) NSInteger installRequestDelay;
 @property (strong, nonatomic) NSDictionary *appleSearchAdDetails;
 @property (assign, nonatomic) BOOL          appleSearchAdNeedsSend;
 @property (strong, nonatomic) NSString *lastSystemBuildVersion;
 @property (strong, nonatomic) NSString *browserUserAgentString;
 @property (strong, atomic) NSString *referringURL;
 @property (strong, atomic) NSString *branchAPIURL;
+@property (nonatomic, strong, readwrite) NSString *branchBlacklistURL;
 @property (assign, atomic) BOOL      limitFacebookTracking;
 @property (strong, atomic) NSDate   *previousAppBuildDate;
+
+@property (strong, nonatomic, readwrite) NSURL *faceBookAppLink;
 
 @property (strong, atomic) NSArray<NSString*> *URLBlackList;
 @property (assign, atomic) NSInteger URLBlackListVersion;
