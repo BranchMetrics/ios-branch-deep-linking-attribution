@@ -1,5 +1,16 @@
 Branch iOS SDK Change Log
 
+- v0.30.0
+* _*Master Release*_ - Nov 13, 2019
+  * SDK-513 update Apple Search Ads behavior and API
+  * SDK-614 last attributed touch API now accepts attribution window
+  * SDK-605 add blacklist url configuration
+  * SDK-608 remove deprecated Safari cookie integration
+  * SDK-598 fix race condition on SDK init
+  * SDK-603 fix Carthage build from source
+  * SDK-554 fix Swift getInstance nullability
+  * SDK-450 fix object serialization error
+
 - v0.29.3
 * _*Master Release*_ - Oct 16, 2019
   * SDK-594 fix Tune data check
