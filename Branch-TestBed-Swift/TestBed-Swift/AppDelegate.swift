@@ -12,6 +12,15 @@ import Crashlytics
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, AdjustDelegate, AppsFlyerTrackerDelegate {
     
+    func onConversionDataSuccess(_ conversionInfo: [AnyHashable : Any]!) {
+        
+    }
+    
+    func onConversionDataFail(_ error: Error!) {
+        
+    }
+    
+    
     var window: UIWindow?
     
     func application(_
