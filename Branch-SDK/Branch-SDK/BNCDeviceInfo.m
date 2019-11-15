@@ -14,13 +14,13 @@
 #import "BNCConfig.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCUserAgentCollector.h"
+#import "BNCTelephony.h"
 
 #if __has_feature(modules)
 @import UIKit;
 #else
 #import <UIKit/UIKit.h>
 #endif
-#import <sys/sysctl.h>
 #import <net/if.h>
 #import <ifaddrs.h>
 #import <arpa/inet.h>
@@ -130,8 +130,10 @@ exit:
 #pragma mark - BNCDeviceInfo
 
 @interface BNCDeviceInfo()
-@end
 
+@property (nonatomic, strong, readwrite) BNCTelephony *telephony;
+
+@end
 
 @implementation BNCDeviceInfo {
     NSString    *_vendorId;
@@ -142,15 +144,17 @@ exit:
     static BNCDeviceInfo *bnc_deviceInfo = 0;
     static dispatch_once_t onceToken = 0;
     dispatch_once(&onceToken, ^{
-        bnc_deviceInfo = [[BNCDeviceInfo alloc] init];
+        bnc_deviceInfo = [BNCDeviceInfo new];
     });
     return bnc_deviceInfo;
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     if (!self) return self;
 
+    self.telephony = [BNCTelephony new];
+    
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     BOOL isRealHardwareId;
     NSString *hardwareIdType;
@@ -312,26 +316,8 @@ exit:
     return nil;
 }
 
-// Build info from the Software Version
-// Example: "iOS 13.2.2 (17B102)" would return "17B102"
-+ (NSString *)systemBuildVersion {
-    
-    // get build size
-    size_t size;
-    sysctlbyname("kern.osversion", NULL, &size, NULL, 0);
-    
-    // get build value
-    char *build = malloc(size);
-    sysctlbyname("kern.osversion", build, &size, NULL, 0);
-
-    // create NSString with c string, free it after
-    NSString *buildVersion = @(build);
-    free(build);
-    
-    return buildVersion;
-}
-
 + (NSString *)userAgentString {
+    // Cached WebView user agent
     return [BNCUserAgentCollector instance].userAgent;
 }
 

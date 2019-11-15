@@ -13,7 +13,6 @@
 #import "Branch.h"
 #import "BNCApplication+BNCTest.h"
 
-#import "BNCDeviceInfo.h"
 #import "BNCUserAgentCollector.h"
 
 @interface Branch (BNCTest)
@@ -51,7 +50,7 @@ BOOL BNCTestStringMatchesRegex(NSString *string, NSString *regex) {
     
     // user agent needs to be loaded since many tests assume it's synchronously lazy loaded
     __block XCTestExpectation *expectation = [self expectationWithDescription:@"setup"];
-    [[BNCUserAgentCollector instance] loadUserAgentForSystemBuildVersion:[BNCDeviceInfo systemBuildVersion] withCompletion:^(NSString * _Nullable userAgent) {
+    [[BNCUserAgentCollector instance] loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
         [expectation fulfill];
     }];
     [self waitForExpectationsWithTimeout:2.0 handler:^(NSError * _Nullable error) { }];
