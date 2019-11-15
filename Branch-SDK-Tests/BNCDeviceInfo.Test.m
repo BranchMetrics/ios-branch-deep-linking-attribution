@@ -86,9 +86,6 @@
     NSRange range = NSMakeRange(0, string.length);
     NSArray<NSTextCheckingResult*>*matches = [regex matchesInString:string options:0 range:range];
     XCTAssert(matches.count == 1 && NSEqualRanges(matches[0].range, range));
-
-    string = [BNCDeviceInfo systemBuildVersion];
-    XCTAssertTrue([string isKindOfClass:[NSString class]] && string.length > 0);
 }
 
 - (void)testStress {

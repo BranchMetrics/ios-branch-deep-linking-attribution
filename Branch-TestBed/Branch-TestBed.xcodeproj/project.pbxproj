@@ -168,6 +168,13 @@
 		5F3D671B233062FD00454FF1 /* BNCJsonLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */; };
 		5F3D671C233062FD00454FF1 /* BNCJsonLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */; };
 		5F3D671F2330638D00454FF1 /* cpid.json in Resources */ = {isa = PBXBuildFile; fileRef = 5F3D671E2330638D00454FF1 /* cpid.json */; };
+		5F437E35237DDF770052064B /* BNCTelephony.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F437E33237DDF770052064B /* BNCTelephony.h */; };
+		5F437E36237DDF770052064B /* BNCTelephony.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F437E34237DDF770052064B /* BNCTelephony.m */; };
+		5F437E38237DE1320052064B /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F437E37237DE1320052064B /* CoreTelephony.framework */; };
+		5F437E3A237DE3480052064B /* BNCTelephonyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F437E39237DE3480052064B /* BNCTelephonyTests.m */; };
+		5F437E3D237E03C00052064B /* BNCDeviceSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F437E3B237E03C00052064B /* BNCDeviceSystem.h */; };
+		5F437E3E237E03C00052064B /* BNCDeviceSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F437E3C237E03C00052064B /* BNCDeviceSystem.m */; };
+		5F437E40237E1A560052064B /* BNCDeviceSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F437E3F237E1A560052064B /* BNCDeviceSystemTests.m */; };
 		5F44AC3E2339474B007A9A7C /* cpid_empty_dev_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 5F44AC3A23394742007A9A7C /* cpid_empty_dev_id.json */; };
 		5F44AC3F2339474B007A9A7C /* cpid_missing_dev_id.json in Resources */ = {isa = PBXBuildFile; fileRef = 5F44AC3B23394742007A9A7C /* cpid_missing_dev_id.json */; };
 		5F5EC45B2374D95300AAAFC7 /* BNCAppleAdClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F5EC4592374D95300AAAFC7 /* BNCAppleAdClient.h */; };
@@ -436,6 +443,13 @@
 		5F3D6719233062FD00454FF1 /* BNCJsonLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCJsonLoader.h; sourceTree = "<group>"; };
 		5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCJsonLoader.m; sourceTree = "<group>"; };
 		5F3D671E2330638D00454FF1 /* cpid.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cpid.json; sourceTree = "<group>"; };
+		5F437E33237DDF770052064B /* BNCTelephony.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCTelephony.h; sourceTree = "<group>"; };
+		5F437E34237DDF770052064B /* BNCTelephony.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCTelephony.m; sourceTree = "<group>"; };
+		5F437E37237DE1320052064B /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
+		5F437E39237DE3480052064B /* BNCTelephonyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCTelephonyTests.m; sourceTree = "<group>"; };
+		5F437E3B237E03C00052064B /* BNCDeviceSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCDeviceSystem.h; sourceTree = "<group>"; };
+		5F437E3C237E03C00052064B /* BNCDeviceSystem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCDeviceSystem.m; sourceTree = "<group>"; };
+		5F437E3F237E1A560052064B /* BNCDeviceSystemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCDeviceSystemTests.m; sourceTree = "<group>"; };
 		5F44AC3A23394742007A9A7C /* cpid_empty_dev_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cpid_empty_dev_id.json; sourceTree = "<group>"; };
 		5F44AC3B23394742007A9A7C /* cpid_missing_dev_id.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cpid_missing_dev_id.json; sourceTree = "<group>"; };
 		5F5EC4592374D95300AAAFC7 /* BNCAppleAdClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCAppleAdClient.h; sourceTree = "<group>"; };
@@ -548,6 +562,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F437E38237DE1320052064B /* CoreTelephony.framework in Frameworks */,
 				5F205D05231864E800C776D1 /* WebKit.framework in Frameworks */,
 				466B584F1B17775900A69EDE /* AdSupport.framework in Frameworks */,
 				F1CF14111F4CC79F00BB2694 /* CoreSpotlight.framework in Frameworks */,
@@ -722,6 +737,8 @@
 				5F3D6719233062FD00454FF1 /* BNCJsonLoader.h */,
 				5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */,
 				4D16839F2098C901008819E3 /* Info.plist */,
+				5F437E39237DE3480052064B /* BNCTelephonyTests.m */,
+				5F437E3F237E1A560052064B /* BNCDeviceSystemTests.m */,
 			);
 			name = "Branch-SDK-Tests";
 			path = "../Branch-SDK-Tests";
@@ -799,6 +816,7 @@
 		670016621940F51400A9E103 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5F437E37237DE1320052064B /* CoreTelephony.framework */,
 				5F205D04231864E800C776D1 /* WebKit.framework */,
 				4DD056112177A65C009BD3DD /* libOCMock.a */,
 				4DD056132177A65C009BD3DD /* libOHHTTPStubs.a */,
@@ -880,6 +898,12 @@
 				F1D3591F1ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.m */,
 				7D5882301CA1BEEA00FF6358 /* BNCDeviceInfo.h */,
 				7D5882391CA1DF2700FF6358 /* BNCDeviceInfo.m */,
+				670016C71946309100A9E103 /* BNCSystemObserver.h */,
+				670016C81946309100A9E103 /* BNCSystemObserver.m */,
+				5F437E3B237E03C00052064B /* BNCDeviceSystem.h */,
+				5F437E3C237E03C00052064B /* BNCDeviceSystem.m */,
+				5F437E33237DDF770052064B /* BNCTelephony.h */,
+				5F437E34237DDF770052064B /* BNCTelephony.m */,
 				5FB0AA69231875B400A0F9EA /* BNCUserAgentCollector.h */,
 				5FB0AA6A231875B500A0F9EA /* BNCUserAgentCollector.m */,
 				464EA3991ACB38EC000E4094 /* BNCEncodingUtils.h */,
@@ -899,8 +923,6 @@
 				670016C21946309100A9E103 /* BNCPreferenceHelper.m */,
 				F185BAA81F3D30D70056300C /* BNCSpotlightService.h */,
 				F185BAA91F3D30D70056300C /* BNCSpotlightService.m */,
-				670016C71946309100A9E103 /* BNCSystemObserver.h */,
-				670016C81946309100A9E103 /* BNCSystemObserver.m */,
 				4D7881F6209CF28E002B750F /* BNCThreads.h */,
 				4D7881F5209CF28E002B750F /* BNCThreads.m */,
 				4D955CCA2035021400FB8008 /* BNCURLBlackList.h */,
@@ -992,6 +1014,7 @@
 				4DCAC8101F426F7C00405D1D /* Branch.h in Headers */,
 				4DCAC8111F426F7C00405D1D /* BranchActivityItemProvider.h in Headers */,
 				4DCAC8121F426F7C00405D1D /* BranchConstants.h in Headers */,
+				5F437E3D237E03C00052064B /* BNCDeviceSystem.h in Headers */,
 				4DCAC8171F426F7C00405D1D /* BranchDeepLinkingController.h in Headers */,
 				5F892EB92360EFE90023AEC1 /* BNCAppleSearchAds.h in Headers */,
 				4DB327FF1FA10B9000ACF9B0 /* BranchDelegate.h in Headers */,
@@ -1014,6 +1037,7 @@
 				4DCAC8131F426F7C00405D1D /* BranchContentDiscoverer.h in Headers */,
 				4DCAC8141F426F7C00405D1D /* BranchContentDiscoveryManifest.h in Headers */,
 				4DCAC8151F426F7C00405D1D /* BranchContentPathProperties.h in Headers */,
+				5F437E35237DDF770052064B /* BNCTelephony.h in Headers */,
 				4DCAC8161F426F7C00405D1D /* BranchCSSearchableItemAttributeSet.h in Headers */,
 				4DCAC8231F426F7C00405D1D /* BranchCloseRequest.h in Headers */,
 				4DCAC8241F426F7C00405D1D /* BranchCreditHistoryRequest.h in Headers */,
@@ -1288,6 +1312,7 @@
 				7D0C971D1D875465004E14B1 /* BranchContentDiscoveryManifest.m in Sources */,
 				466D5A121B5991E3009DB845 /* BNCContentDiscoveryManager.m in Sources */,
 				466B58551B17779C00A69EDE /* Branch.m in Sources */,
+				5F437E3E237E03C00052064B /* BNCDeviceSystem.m in Sources */,
 				4DBC88651F3A55B700E119BF /* NSString+Branch.m in Sources */,
 				54FF1F8E1BD1D4AE0004CE2E /* BranchUniversalObject.m in Sources */,
 				4DA577181E67B1D600A43BDD /* BNCLog.m in Sources */,
@@ -1324,6 +1349,7 @@
 				466B58681B17779C00A69EDE /* BNCLinkData.m in Sources */,
 				4D130E8E1EE0C7B100A69A0A /* BranchSetIdentityRequest.m in Sources */,
 				4D130E961EE0C7B100A69A0A /* BranchUserCompletedActionRequest.m in Sources */,
+				5F437E36237DDF770052064B /* BNCTelephony.m in Sources */,
 				4D130E821EE0C7B100A69A0A /* BranchInstallRequest.m in Sources */,
 				4D130E801EE0C7B100A69A0A /* BranchCreditHistoryRequest.m in Sources */,
 				5F892ED8236258390023AEC1 /* BNCFacebookAppLinks.m in Sources */,
@@ -1395,6 +1421,7 @@
 				4D1683C62098C902008819E3 /* BranchEvent.Test.m in Sources */,
 				5F205D0823186AF700C776D1 /* BNCUserAgentCollectorTests.m in Sources */,
 				4D1683C12098C902008819E3 /* BNCApplication.Test.m in Sources */,
+				5F437E3A237DE3480052064B /* BNCTelephonyTests.m in Sources */,
 				4D1683B92098C902008819E3 /* BNCSystemObserver.Test.m in Sources */,
 				4D1683BE2098C902008819E3 /* BranchShortUrlSyncRequestTests.m in Sources */,
 				4D1683CA2098C902008819E3 /* BNCPreferenceHelperTests.m in Sources */,
@@ -1421,6 +1448,7 @@
 				4D1683BC2098C902008819E3 /* BranchDelegate.Test.m in Sources */,
 				4D1683B62098C902008819E3 /* BNCURLBlackList.Test.m in Sources */,
 				5F892EBB2360F0290023AEC1 /* BNCAppleSearchAdsTests.m in Sources */,
+				5F437E40237E1A560052064B /* BNCDeviceSystemTests.m in Sources */,
 				4D1683AC2098C902008819E3 /* BranchInstallRequestTests.m in Sources */,
 				4D1683C72098C902008819E3 /* BNCCrashlyticsWrapper.Test.m in Sources */,
 				5F892ED1236257AF0023AEC1 /* BNCFacebookMock.m in Sources */,

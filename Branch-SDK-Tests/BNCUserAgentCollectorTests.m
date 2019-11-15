@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "BNCPreferenceHelper.h"
+#import "BNCDeviceSystem.h"
 #import "BNCUserAgentCollector.h"
 
 // expose private methods for unit testing
@@ -76,10 +77,9 @@
 
 - (void)testLoadUserAgent_EmptyDataStore {
     XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
-    NSString *systemBuildVersion = @"test";
 
     BNCUserAgentCollector *collector = [BNCUserAgentCollector new];
-    [collector loadUserAgentForSystemBuildVersion:systemBuildVersion withCompletion:^(NSString * _Nullable userAgent) {
+    [collector loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
         XCTAssertNotNil(userAgent);
         XCTAssertTrue([userAgent containsString:@"AppleWebKit"]);
         [expectation fulfill];
@@ -92,12 +92,11 @@
 
 - (void)testLoadUserAgent_FilledDataStore {
     XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
-    NSString *systemBuildVersion = @"test";
     NSString *savedUserAgent = @"UserAgent";
     
     BNCUserAgentCollector *collector = [BNCUserAgentCollector new];
-    [collector saveUserAgent:savedUserAgent forSystemBuildVersion:systemBuildVersion];
-    [collector loadUserAgentForSystemBuildVersion:systemBuildVersion withCompletion:^(NSString * _Nullable userAgent) {
+    [collector saveUserAgent:savedUserAgent forSystemBuildVersion:[BNCDeviceSystem sharedInstance].systemBuildVersion];
+    [collector loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
         XCTAssertNotNil(userAgent);
         XCTAssertTrue([userAgent isEqualToString:savedUserAgent]);
         XCTAssertFalse([userAgent containsString:@"AppleWebKit"]);

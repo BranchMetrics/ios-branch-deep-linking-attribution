@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, readwrite) NSString *userAgent;
 
-- (void)loadUserAgentForSystemBuildVersion:(NSString *)systemBuildVersion withCompletion:(void (^)(NSString * _Nullable userAgent))completion;
+- (void)loadUserAgentWithCompletion:(void (^)(NSString * _Nullable userAgent))completion;
 
 @end
 

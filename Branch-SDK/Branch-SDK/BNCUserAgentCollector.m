@@ -8,6 +8,7 @@
 
 #import "BNCUserAgentCollector.h"
 #import "BNCPreferenceHelper.h"
+#import "BNCDeviceSystem.h"
 @import WebKit;
 
 @interface BNCUserAgentCollector()
@@ -26,8 +27,11 @@
     return collector;
 }
 
-- (void)loadUserAgentForSystemBuildVersion:(NSString *)systemBuildVersion withCompletion:(void (^)(NSString *userAgent))completion {
+- (void)loadUserAgentWithCompletion:(void (^)(NSString *userAgent))completion {
     
+    // if the system build version changes, then the WebView might have been updated
+    __block NSString *systemBuildVersion = [BNCDeviceSystem sharedInstance].systemBuildVersion;
+
     NSString *savedUserAgent = [self loadUserAgentForSystemBuildVersion:systemBuildVersion];
     if (savedUserAgent) {
         self.userAgent = savedUserAgent;
