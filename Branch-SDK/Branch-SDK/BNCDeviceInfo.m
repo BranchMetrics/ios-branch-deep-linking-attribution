@@ -15,6 +15,7 @@
 #import "BNCPreferenceHelper.h"
 #import "BNCUserAgentCollector.h"
 #import "BNCTelephony.h"
+#import "BNCReachability.h"
 
 #if __has_feature(modules)
 @import UIKit;
@@ -131,7 +132,11 @@ exit:
 
 @interface BNCDeviceInfo()
 
+@property (nonatomic, strong, readwrite) NSString *pluginName;
+@property (nonatomic, strong, readwrite) NSString *pluginVersion;
+
 @property (nonatomic, strong, readwrite) BNCTelephony *telephony;
+@property (nonatomic, strong, readwrite) BNCReachability *reachability;
 
 @end
 
@@ -154,7 +159,8 @@ exit:
     if (!self) return self;
 
     self.telephony = [BNCTelephony new];
-    
+    self.reachability = [BNCReachability new];
+
     BNCPreferenceHelper *preferenceHelper = [BNCPreferenceHelper preferenceHelper];
     BOOL isRealHardwareId;
     NSString *hardwareIdType;

@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)useDefaultAppleSearchAdsConfig;
 
 // Apple suggests a longer delay, however this is detrimental to app launch times
-// typically less than 1s delay, up to 14s delay on first app start
+// typically less than 3s delay, up to 14s delay on first app start
 - (void)useLongWaitAppleSearchAdsConfig;
 
 // Checks Apple Search Ads and updates preferences
