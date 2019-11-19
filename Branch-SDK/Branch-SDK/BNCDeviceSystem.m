@@ -12,15 +12,6 @@
 
 @implementation BNCDeviceSystem
 
-+ (BNCDeviceSystem *)sharedInstance {
-    static BNCDeviceSystem *deviceSystem;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        deviceSystem = [BNCDeviceSystem new];
-    });
-    return deviceSystem;
-}
-
 - (instancetype)init {
     self = [super init];
     if (self) {

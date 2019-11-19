@@ -14,6 +14,9 @@
 @interface BNCUserAgentCollector()
 // need to hold onto the webview until the async user agent fetch is done
 @property (nonatomic, strong, readwrite) WKWebView *webview;
+
+// use system build as an indicator that the OS has been updated
+@property (nonatomic, copy, readwrite) NSString *systemBuildVersion;
 @end
 
 @implementation BNCUserAgentCollector
@@ -27,12 +30,16 @@
     return collector;
 }
 
-- (void)loadUserAgentWithCompletion:(void (^)(NSString *userAgent))completion {
-    
-    // if the system build version changes, then the WebView might have been updated
-    __block NSString *systemBuildVersion = [BNCDeviceSystem sharedInstance].systemBuildVersion;
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.systemBuildVersion = [BNCDeviceSystem new].systemBuildVersion;
+    }
+    return self;
+}
 
-    NSString *savedUserAgent = [self loadUserAgentForSystemBuildVersion:systemBuildVersion];
+- (void)loadUserAgentWithCompletion:(void (^)(NSString *userAgent))completion {
+    NSString *savedUserAgent = [self loadUserAgentForSystemBuildVersion:self.systemBuildVersion];
     if (savedUserAgent) {
         self.userAgent = savedUserAgent;
         if (completion) {
@@ -41,7 +48,7 @@
     } else {
         [self collectUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
             self.userAgent = userAgent;
-            [self saveUserAgent:userAgent forSystemBuildVersion:systemBuildVersion];
+            [self saveUserAgent:userAgent forSystemBuildVersion:self.systemBuildVersion];
             if (completion) {
                 completion(userAgent);
             }

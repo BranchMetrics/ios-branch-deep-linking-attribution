@@ -95,7 +95,7 @@
     NSString *savedUserAgent = @"UserAgent";
     
     BNCUserAgentCollector *collector = [BNCUserAgentCollector new];
-    [collector saveUserAgent:savedUserAgent forSystemBuildVersion:[BNCDeviceSystem sharedInstance].systemBuildVersion];
+    [collector saveUserAgent:savedUserAgent forSystemBuildVersion:[BNCDeviceSystem new].systemBuildVersion];
     [collector loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
         XCTAssertNotNil(userAgent);
         XCTAssertTrue([userAgent isEqualToString:savedUserAgent]);

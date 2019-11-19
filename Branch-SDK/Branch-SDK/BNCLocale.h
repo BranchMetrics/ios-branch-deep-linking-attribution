@@ -1,5 +1,5 @@
 //
-//  BNCReachability.h
+//  BNCLocale.h
 //  Branch
 //
 //  Created by Ernest Cho on 11/18/19.
@@ -10,9 +10,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface BNCReachability : NSObject
+@interface BNCLocale : NSObject
 
-- (nullable NSString *)reachabilityStatus;
+// hides details of gathering country and language on iOS 8 and iOS 9
+- (nullable NSString *)country;
+- (nullable NSString *)language;
 
 @end
 
