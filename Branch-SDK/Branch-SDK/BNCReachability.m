@@ -82,7 +82,7 @@ typedef NS_ENUM(NSInteger, BNCNetworkStatus) {
 }
 
 // Translates the enum into a string the server accepts
-- (NSString *)translateReachabilityStatus:(BNCNetworkStatus)status {
+- (nullable NSString *)translateReachabilityStatus:(BNCNetworkStatus)status {
     switch(status) {
         case BNCNetworkStatusReachableViaWiFi:
             return @"wifi";
@@ -93,7 +93,7 @@ typedef NS_ENUM(NSInteger, BNCNetworkStatus) {
     }
 }
 
-- (NSString *)reachabilityStatus {
+- (nullable NSString *)reachabilityStatus {
     return [self translateReachabilityStatus:[self currentReachabilityStatus]];
 }
 

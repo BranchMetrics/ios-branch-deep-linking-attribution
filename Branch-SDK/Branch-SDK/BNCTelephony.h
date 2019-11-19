@@ -14,16 +14,16 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BNCTelephony : NSObject
 
 // Example: "AT&T"
-@property (nonatomic, copy, readwrite) NSString *carrierName;
+@property (nonatomic, copy, nullable) NSString *carrierName;
 
 // Example: "us"
-@property (nonatomic, copy, readwrite) NSString *isoCountryCode;
+@property (nonatomic, copy, nullable) NSString *isoCountryCode;
 
 // Example: "310"
-@property (nonatomic, copy, readwrite) NSString *mobileCountryCode;
+@property (nonatomic, copy, nullable) NSString *mobileCountryCode;
 
 // Example: "410"
-@property (nonatomic, copy, readwrite) NSString *mobileNetworkCode;
+@property (nonatomic, copy, nullable) NSString *mobileNetworkCode;
 
 @end
 

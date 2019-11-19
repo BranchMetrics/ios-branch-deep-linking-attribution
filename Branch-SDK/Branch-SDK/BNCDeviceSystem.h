@@ -26,8 +26,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readwrite) NSNumber *cpuType;
 @property (nonatomic, copy, readwrite) NSNumber *cpuSubType;
 
-+ (BNCDeviceSystem *)sharedInstance;
-
 @end
 
 NS_ASSUME_NONNULL_END

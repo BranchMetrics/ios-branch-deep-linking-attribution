@@ -16,6 +16,7 @@
 #import "BNCUserAgentCollector.h"
 #import "BNCTelephony.h"
 #import "BNCReachability.h"
+#import "BNCLocale.h"
 
 #if __has_feature(modules)
 @import UIKit;
@@ -26,12 +27,6 @@
 #import <ifaddrs.h>
 #import <arpa/inet.h>
 #import <netinet/in.h>
-
-// Forward declare this for pre iOS 10
-@interface NSLocale (BranchAvailability)
-- (NSString*) countryCode;
-- (NSString*) languageCode;
-@end
 
 #pragma mark BRNNetworkInfo
 
@@ -135,6 +130,7 @@ exit:
 @property (nonatomic, strong, readwrite) NSString *pluginName;
 @property (nonatomic, strong, readwrite) NSString *pluginVersion;
 
+@property (nonatomic, strong, readwrite) BNCLocale *locale;
 @property (nonatomic, strong, readwrite) BNCTelephony *telephony;
 @property (nonatomic, strong, readwrite) BNCReachability *reachability;
 
@@ -158,6 +154,7 @@ exit:
     self = [super init];
     if (!self) return self;
 
+    self.locale = [BNCLocale new];
     self.telephony = [BNCTelephony new];
     self.reachability = [BNCReachability new];
 
@@ -182,8 +179,8 @@ exit:
     _screenHeight = [BNCSystemObserver getScreenHeight].copy;
     _isAdTrackingEnabled = [BNCSystemObserver adTrackingSafe];
 
-    _country = [BNCDeviceInfo bnc_country].copy;
-    _language = [BNCDeviceInfo bnc_language].copy;
+    _country = [self.locale country].copy;
+    _language = [self.locale language].copy;
     _extensionType = self.class.extensionType.copy;
     _branchSDKVersion = [NSString stringWithFormat:@"ios%@", BNC_SDK_VERSION];
     _applicationVersion = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
@@ -244,82 +241,6 @@ exit:
         [array addObject:inf.description];
     }
     return array;
-}
-
-+ (NSString*) bnc_country {
-
-    NSString *country = nil;
-    #define returnIfValidCountry() \
-        if ([country isKindOfClass:[NSString class]] && country.length) { \
-            return country; \
-        } else { \
-            country = nil; \
-        }
-
-    // Should work on iOS 10
-    NSLocale *currentLocale = [NSLocale currentLocale];
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wpartial-availability"
-    if ([currentLocale respondsToSelector:@selector(countryCode)]) {
-        country = [currentLocale countryCode];
-    }
-    #pragma clang diagnostic pop
-    returnIfValidCountry();
-
-    // Should work on iOS 9
-    NSString *rawLanguage = [[NSLocale preferredLanguages] firstObject];
-    NSDictionary *languageDictionary = [NSLocale componentsFromLocaleIdentifier:rawLanguage];
-    country = [languageDictionary objectForKey:@"kCFLocaleCountryCodeKey"];
-    returnIfValidCountry();
-
-    // Should work on iOS 8 and below.
-    //NSString* language = [[NSLocale preferredLanguages] firstObject];
-    NSString *rawLocale = currentLocale.localeIdentifier;
-    NSRange range = [rawLocale rangeOfString:@"_"];
-    if (range.location != NSNotFound) {
-        range = NSMakeRange(range.location+1, rawLocale.length-range.location-1);
-        country = [rawLocale substringWithRange:range];
-    }
-    returnIfValidCountry();
-
-    #undef returnIfValidCountry
-
-    return nil;
-}
-
-+ (NSString*) bnc_language {
-
-    NSString *language = nil;
-    #define returnIfValidLanguage() \
-        if ([language isKindOfClass:[NSString class]] && language.length) { \
-            return language; \
-        } else { \
-            language = nil; \
-        } \
-
-    // Should work on iOS 10
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wpartial-availability"
-    NSLocale *currentLocale = [NSLocale currentLocale];
-    if ([currentLocale respondsToSelector:@selector(languageCode)]) {
-        language = [currentLocale languageCode];
-    }
-    #pragma clang diagnostic pop
-    returnIfValidLanguage();
-
-    // Should work on iOS 9
-    NSString *rawLanguage = [[NSLocale preferredLanguages] firstObject];
-    NSDictionary *languageDictionary = [NSLocale componentsFromLocaleIdentifier:rawLanguage];
-    language = [languageDictionary  objectForKey:@"kCFLocaleLanguageCodeKey"];
-    returnIfValidLanguage();
-
-    // Should work on iOS 8 and below.
-    language = [[NSLocale preferredLanguages] firstObject];
-    returnIfValidLanguage();
-
-    #undef returnIfValidLanguage
-
-    return nil;
 }
 
 + (NSString *)userAgentString {
