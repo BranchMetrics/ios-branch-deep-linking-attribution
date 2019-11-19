@@ -70,12 +70,7 @@
 }
 
 + (NSString *)getVendorId {
-    NSString *vendorId = nil;
-    
-    if (NSClassFromString(@"UIDevice")) {
-        vendorId = [[UIDevice currentDevice].identifierForVendor UUIDString];
-    }
-    
+    NSString *vendorId = [[UIDevice currentDevice].identifierForVendor UUIDString];    
     return vendorId;
 }
 

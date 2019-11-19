@@ -40,7 +40,6 @@
 #import "BNCApplication.h"
 #import "BNCURLBlackList.h"
 #import "BNCUserAgentCollector.h"
-#import "BNCDeviceInfo.h"
 #import "BNCAppleSearchAds.h"
 #import "BNCFacebookAppLinks.h"
 
