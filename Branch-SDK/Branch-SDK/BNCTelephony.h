@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-// general country, carrier level information
+// General country, carrier level information from CoreTelephony
 @interface BNCTelephony : NSObject
 
 // Example: "AT&T"

@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// Handles network connectivity and type information
 @interface BNCReachability : NSObject
 
 - (nullable NSString *)reachabilityStatus;

@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// Handles User Agent lookup from WebKit
 @interface BNCUserAgentCollector : NSObject
 
 + (BNCUserAgentCollector *)instance;

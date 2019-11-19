@@ -909,7 +909,7 @@ exit:
         dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = isRealHardwareId;
     }
     
-    [self safeSetValue:deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
+    [self safeSetValue:[BNCDeviceInfo vendorId] forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
     [self safeSetValue:deviceInfo.brandName forKey:BRANCH_REQUEST_KEY_BRAND onDict:dict];
     [self safeSetValue:deviceInfo.modelName forKey:BRANCH_REQUEST_KEY_MODEL onDict:dict];
     [self safeSetValue:deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
@@ -920,7 +920,7 @@ exit:
     [self safeSetValue:[BNCDeviceInfo userAgentString] forKey:@"user_agent" onDict:dict];
     [self safeSetValue:deviceInfo.country forKey:@"country" onDict:dict];
     [self safeSetValue:deviceInfo.language forKey:@"language" onDict:dict];
-    dict[@"local_ip"] = deviceInfo.localIPAddress;
+    dict[@"local_ip"] = [BNCDeviceInfo localIPAddress];
 
     dict[BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED] = @(deviceInfo.isAdTrackingEnabled);
 }

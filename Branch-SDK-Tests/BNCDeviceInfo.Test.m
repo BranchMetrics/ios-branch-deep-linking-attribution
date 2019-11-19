@@ -59,7 +59,7 @@
         [device.hardwareIdType isEqualToString:@"vendor_id"]
     );
     XCTAssertTrue(device.isRealHardwareId);
-    maskedStringAssert(vendorId,        @"********-****-****-*****************");
+    //maskedStringAssert(vendorId,        @"********-****-****-*****************");
     maskedStringAssert(brandName,       @"Apple");
     maskedStringAssert(modelName,       @"x86_64");
     maskedStringAssert(osName,          @"iOS");
@@ -147,7 +147,7 @@
     truth[@"screen_dpi"] = [NSNumber numberWithFloat:scale];
     truth[@"screen_height"] = [NSNumber numberWithFloat:bounds.size.height * scale];
     truth[@"screen_width"] = [NSNumber numberWithFloat:bounds.size.width * scale];
-    truth[@"local_ip"] = [BNCDeviceInfo getInstance].localIPAddress;
+    truth[@"local_ip"] = [BNCDeviceInfo localIPAddress];
     if (!self.class.isApplication) truth[@"app_version"] = nil;
     
     // Check that *something* is in user agent:
@@ -158,7 +158,7 @@
 }
 
 - (void) testLocalIPAddress {
-    NSString *address = [BNCDeviceInfo getInstance].localIPAddress;
+    NSString *address = [BNCDeviceInfo localIPAddress];
     XCTAssertNotNil(address);
     XCTAssertStringMatchesRegex(address, @"[0-9]*\\.[0-9]*\\.[0-9]*\\.[0-9]*");
 }

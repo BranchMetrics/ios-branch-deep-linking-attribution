@@ -10,9 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// Hides details of gathering country and language on iOS 8 and iOS 9
+// This can be removed once iOS 10 becomes the min version
 @interface BNCLocale : NSObject
 
-// hides details of gathering country and language on iOS 8 and iOS 9
 - (nullable NSString *)country;
 - (nullable NSString *)language;
 
