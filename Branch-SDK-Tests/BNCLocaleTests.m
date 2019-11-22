@@ -47,11 +47,6 @@
         actual = [self.locale countryOS10];
         XCTAssert([expected isEqualToString:actual]);
         
-        // TODO: verify on iOS 9 device
-        // This doesn't work on iOS 10+
-        //actual = [self.locale countryOS9];
-        //XCTAssert([expected isEqualToString:actual]);
-        
         actual = [self.locale countryOS8];
         XCTAssert([expected isEqualToString:actual]);
     }
