@@ -171,7 +171,7 @@
         [dictionary bnc_safeSetObject:self.locale forKey:@"locale"];
         [dictionary bnc_safeSetObject:self.country forKey:@"country"];
         [dictionary bnc_safeSetObject:self.language forKey:@"language"];
-        [dictionary bnc_safeSetObject:self.carrierName forKey:@"carrier_name"];
+        [dictionary bnc_safeSetObject:self.carrierName forKey:@"device_carrier"];
         [dictionary bnc_safeSetObject:[self connectionType] forKey:@"connection_type"];
         [dictionary bnc_safeSetObject:[BNCUserAgentCollector instance].userAgent forKey:@"user_agent"];
 
