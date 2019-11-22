@@ -919,19 +919,28 @@ exit:
         
         [self safeSetValue:deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
         [self safeSetValue:deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
-        // environment
+        [self safeSetValue:deviceInfo.osBuildVersion forKey:@"build" onDict:dict];
+        [self safeSetValue:deviceInfo.extensionType forKey:@"environment" onDict:dict];
+        [self safeSetValue:deviceInfo.locale forKey:@"locale" onDict:dict];
         [self safeSetValue:deviceInfo.country forKey:@"country" onDict:dict];
         [self safeSetValue:deviceInfo.language forKey:@"language" onDict:dict];
         [self safeSetValue:deviceInfo.brandName forKey:BRANCH_REQUEST_KEY_BRAND onDict:dict];
-        // application version
         [self safeSetValue:deviceInfo.modelName forKey:BRANCH_REQUEST_KEY_MODEL onDict:dict];
-        // screen dpi
+        [self safeSetValue:deviceInfo.cpuType forKey:@"cpu_type" onDict:dict];
+        [self safeSetValue:deviceInfo.screenScale forKey:@"screen_dpi" onDict:dict];
         [self safeSetValue:deviceInfo.screenHeight forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
         [self safeSetValue:deviceInfo.screenWidth forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
+        [self safeSetValue:deviceInfo.carrierName forKey:@"device_carrier" onDict:dict];
+        
         [self safeSetValue:[deviceInfo localIPAddress] forKey:@"local_ip" onDict:dict];
+        [self safeSetValue:[deviceInfo connectionType] forKey:@"connection_type" onDict:dict];
         [self safeSetValue:[deviceInfo userAgentString] forKey:@"user_agent" onDict:dict];
         
         [self safeSetValue:@(deviceInfo.isAdTrackingEnabled) forKey:BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED onDict:dict];
+        
+        [self safeSetValue:deviceInfo.applicationVersion forKey:@"app_version" onDict:dict];
+        [self safeSetValue:deviceInfo.pluginName forKey:@"plugin_name" onDict:dict];
+        [self safeSetValue:deviceInfo.pluginVersion forKey:@"plugin_version" onDict:dict];
     }
 }
 
