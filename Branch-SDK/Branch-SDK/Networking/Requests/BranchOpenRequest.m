@@ -14,7 +14,6 @@
 #import "NSMutableDictionary+Branch.h"
 #import "BNCEncodingUtils.h"
 #import "BNCCrashlyticsWrapper.h"
-#import "BNCDeviceInfo.h"
 #import "Branch.h"
 #import "BNCApplication.h"
 #import "BNCAppleReceipt.h"
@@ -284,7 +283,6 @@ static BOOL openRequestWaitQueueIsSuspended = NO;
 
 + (void) waitForOpenResponseLock {
     BNCLogDebugSDK(@"Waiting for openRequestWaitQueue.");
-    [BNCDeviceInfo userAgentString];    //  Make sure we do this lock first to prevent a deadlock.
     dispatch_sync(openRequestWaitQueue, ^ {
         BNCLogDebugSDK(@"Finished waitForOpenResponseLock.");
     });

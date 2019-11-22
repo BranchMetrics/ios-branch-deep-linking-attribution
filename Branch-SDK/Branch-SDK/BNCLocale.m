@@ -14,10 +14,6 @@
     NSString *country = [self countryOS10];
     
     if (!country) {
-        country = [self countryOS9];
-    }
-    
-    if (!country) {
         country = [self countryOS8];
     }
     
@@ -32,16 +28,6 @@
     NSString *country = nil;
     if (@available(iOS 10, *)) {
         country = [[NSLocale currentLocale] countryCode];
-    }
-    return country;
-}
-
-- (nullable NSString *)countryOS9 {
-    NSString *country = nil;
-    if (@available(iOS 9, *)) {
-        NSString *rawLanguage = [[NSLocale preferredLanguages] firstObject];
-        NSDictionary *languageDictionary = [NSLocale componentsFromLocaleIdentifier:rawLanguage];
-        country = [languageDictionary objectForKey:@"kCFLocaleCountryCodeKey"];
     }
     return country;
 }
