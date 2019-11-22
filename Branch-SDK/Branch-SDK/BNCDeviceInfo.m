@@ -55,8 +55,10 @@
 }
 
 - (void)registerPluginName:(NSString *)name version:(NSString *)version {
-    self.pluginName = name;
-    self.pluginVersion = version;
+    @synchronized (self) {
+        self.pluginName = name;
+        self.pluginVersion = version;
+    }
 }
 
 - (void)loadDeviceInfo {

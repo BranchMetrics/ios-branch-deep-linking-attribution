@@ -21,8 +21,9 @@
 - (NSDictionary *) v2dictionary;
 
 /*
- Everything below this line should be private.
- Currently BNCServerInterface updateDeviceInfoToMutableDictionary uses it.
+ Everything below this line should be private.  Thread safety is the callee's responsibility!
+ 
+ Currently BNCServerInterface.updateDeviceInfoToMutableDictionary and unit tests use these.
  */
 
 - (void)checkAdvertisingIdentifier;
