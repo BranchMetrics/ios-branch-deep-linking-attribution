@@ -42,6 +42,7 @@
 #import "BNCUserAgentCollector.h"
 #import "BNCAppleSearchAds.h"
 #import "BNCFacebookAppLinks.h"
+#import "BNCDeviceInfo.h"
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
@@ -2312,6 +2313,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (void)registerPluginName:(NSString *)name version:(NSString *)version {
+    [[BNCDeviceInfo getInstance] registerPluginName:name version:version];
+}
 
 #pragma mark - BranchDeepLinkingControllerCompletionDelegate methods
 
