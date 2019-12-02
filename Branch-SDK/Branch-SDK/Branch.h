@@ -514,6 +514,35 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /// @name Push Notification Support
 ///--------------------------------
 
+#pragma mark - Delayed Initialization
+
+/**
+ When certain actions are required to complete prior to Branch initialization, call this method passing in dispatch_block_t,
+ initBlock, which contains the desired initialization of Branch (i.e. any of the initSessionWithLaunchOptions functions) and an int,
+ waitTime, which inidicates the number of seconds Branch should wait for the user to call invokeDelayedInitialization, after this
+ time, the initialization block will be invoked automatically.
+
+ @param initBlock         dispatch_block_t object that contains one of the initSessionWithLaunchOptions functions.
+ @param waitTime           An int inidicating the number of seconds Branch should wait for the user to call
+                     invokeDelayedInitialization before invoke the initBlock itself.
+ @warning            To avoid memory leaks take care to ensure that initBlock object does not capture any resources
+                     that require execution of the block body in order to be released, such as memory allocated with malloc(3)
+                     on which the block body calls free(3).
+ */
+- (void)dispatchInit:(dispatch_block_t)initBlock After:(int)waitTime;
+
+/**
+ Call this method if delayed initilization is no longer desired.
+ 
+ @warning       Does not affect an initialization that is already in progress.
+ */
+- (void)cancelDelayedInitialization;
+
+/**
+ Used together with dispatchInitAfter, call this method after prerequisite tasks for Branch initialization have completed.
+ */
+- (void)invokeDelayedInitialization;
+
 #pragma mark - Push Notification support
 
 /**
