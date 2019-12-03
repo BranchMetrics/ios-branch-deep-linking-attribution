@@ -517,31 +517,31 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 #pragma mark - Delayed Initialization
 
 /**
- When certain actions are required to complete prior to Branch initialization, call this method passing in dispatch_block_t,
- initBlock, which contains the desired initialization of Branch (i.e. any of the initSessionWithLaunchOptions functions) and an int,
- waitTime, which inidicates the number of seconds Branch should wait for the user to call invokeDelayedInitialization, after this
- time, the initialization block will be invoked automatically.
+ When certain actions are required to complete prior to session initialization, call this method passing in dispatch_block_t,
+ which contains session initialization, and an int, inidicating the number of seconds Branch should wait for the user
+ to  invoke the delayed Branch session initialization (see invokeDelayedInitialization). After this time, Branch will automatically
+ invoke the delayed session initialization.
 
- @param initBlock         dispatch_block_t object that contains one of the initSessionWithLaunchOptions functions.
- @param waitTime           An int inidicating the number of seconds Branch should wait for the user to call
-                     invokeDelayedInitialization before invoke the initBlock itself.
+ @param initBlock         dispatch_block_t object with Branch initialization in it
+ @param waitTime           An int inidicating the number of seconds Branch should wait for the user to
+                     invoke the delayed initialization.
  @warning            To avoid memory leaks take care to ensure that initBlock object does not capture any resources
                      that require execution of the block body in order to be released, such as memory allocated with malloc(3)
                      on which the block body calls free(3).
  */
-- (void)dispatchInit:(dispatch_block_t)initBlock After:(int)waitTime;
+- (void)dispatchInitSession:(dispatch_block_t)initBlock After:(int)waitTime;
 
 /**
  Call this method if delayed initilization is no longer desired.
  
  @warning       Does not affect an initialization that is already in progress.
  */
-- (void)cancelDelayedInitialization;
+- (void)cancelDelayedInitSession;
 
 /**
  Used together with dispatchInitAfter, call this method after prerequisite tasks for Branch initialization have completed.
  */
-- (void)invokeDelayedInitialization;
+- (void)invokeDelayedInitSession;
 
 #pragma mark - Push Notification support
 

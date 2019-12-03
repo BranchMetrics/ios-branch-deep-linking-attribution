@@ -921,22 +921,22 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 #pragma mark - Delayed initialization
 
-- (void) dispatchInit:(dispatch_block_t) initBlock After:(int)waitTime {
+- (void) dispatchInitSession:(dispatch_block_t) initBlock After:(int)waitTime {
     self.delayedInitBlock = initBlock;
     dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(waitTime * NSEC_PER_SEC));
     dispatch_after(time, dispatch_get_main_queue(), self.delayedInitBlock);
 }
 
-- (void)cancelDelayedInitialization {
+- (void)cancelDelayedInitSession {
     // does not affect execution of the block object that is already in progress,
     // but it does prevent future invocation of the same block
     dispatch_block_cancel(self.delayedInitBlock);
     NSLog(@"BranchSDK: cancelDelayedInitialization %@", @"success");
 }
 
-- (void)invokeDelayedInitialization {
+- (void)invokeDelayedInitSession {
     self.delayedInitBlock();
-    [self cancelDelayedInitialization];
+    [self cancelDelayedInitSession];
     NSLog(@"BranchSDK: invokeDelayedInitialization %@", @"success");
 }
 

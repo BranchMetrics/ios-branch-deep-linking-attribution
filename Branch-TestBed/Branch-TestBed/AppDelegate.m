@@ -53,12 +53,12 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         }];
         NSLog(@"BranchSDK: initBlock has been invoked %@", @"success");
     });
-    [branch dispatchInit:initBlock After:5];
+    [branch dispatchInitSession:initBlock After:5];
 
     // pretend that something prerequisite task completed in 2 seconds
     dispatch_time_t twoSecFromNow = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC));
     dispatch_after(twoSecFromNow, dispatch_get_main_queue(), ^{
-        [branch invokeDelayedInitialization];
+        [branch invokeDelayedInitSession];
     });
 
     // Push notification support (Optional)
