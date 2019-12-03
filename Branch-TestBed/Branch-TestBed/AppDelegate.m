@@ -45,21 +45,11 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
      */
 
     // [branch setIdentity:@"Bobby Branch"];
-    dispatch_block_t initBlock = dispatch_block_create(DISPATCH_BLOCK_ASSIGN_CURRENT, ^{
-        [branch initSessionWithLaunchOptions:launchOptions
-            andRegisterDeepLinkHandlerUsingBranchUniversalObject:
-            ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
-                [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
-        }];
-        NSLog(@"BranchSDK: initBlock has been invoked %@", @"success");
-    });
-    [branch dispatchInitSession:initBlock After:5];
-
-    // pretend that something prerequisite task completed in 2 seconds
-    dispatch_time_t twoSecFromNow = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC));
-    dispatch_after(twoSecFromNow, dispatch_get_main_queue(), ^{
-        [branch invokeDelayedInitSession];
-    });
+    [branch initSessionWithLaunchOptions:launchOptions
+        andRegisterDeepLinkHandlerUsingBranchUniversalObject:
+        ^ (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) {
+            [self handleDeepLinkObject:universalObject linkProperties:linkProperties error:error];
+    }];
 
     // Push notification support (Optional)
     [self registerForPushNotifications:application];
