@@ -1798,12 +1798,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-//    if (!Branch.trackingDisabled) {
-//        if ((self.initializationStatus != BNCInitStatusInitialized) &&
-//            ![self.requestQueue containsInstallOrOpen]) {
-//            [self initUserSessionAndCallCallback:YES];
-//        }
-//    }
+    if (!Branch.trackingDisabled &&
+        self.initializationStatus != BNCInitStatusInitialized &&
+        [self.requestQueue containsInstallOrOpen] &&
+        self.delayedInitBlock == nil) {
+        [self initUserSessionAndCallCallback:YES];
+    }
 }
 
 - (void)applicationWillResignActive {

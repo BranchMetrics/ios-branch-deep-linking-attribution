@@ -48,8 +48,6 @@
     [self waitForExpectationsWithTimeout:4 handler:^(NSError * _Nullable error) {
         NSLog(@"%@", error);
     }];
-    
-    
 }
 
 - (void)testCancelDelayedInitSession {
