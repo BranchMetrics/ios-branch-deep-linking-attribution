@@ -30,14 +30,6 @@
 
     self.expectFailure = NO;
     self.notificationOrder = 0;
-    self.branchWillOpenURLExpectation =
-        [self expectationWithDescription:@"branchWillOpenURLExpectation"];
-    self.branchWillOpenURLNotificationExpectation =
-        [self expectationWithDescription:@"branchWillOpenURLNotificationExpectation"];
-    self.branchDidOpenURLExpectation =
-        [self expectationWithDescription:@"branchDidOpenURLExpectation"];
-    self.branchDidOpenURLNotificationExpectation =
-        [self expectationWithDescription:@"branchDidOpenURLNotificationExpectation"];
 
     [[NSNotificationCenter defaultCenter]
         addObserver:self
@@ -125,14 +117,6 @@
 
     self.expectFailure = YES;
     self.notificationOrder = 0;
-    self.branchWillOpenURLExpectation =
-        [self expectationWithDescription:@"branchWillOpenURLExpectation"];
-    self.branchWillOpenURLNotificationExpectation =
-        [self expectationWithDescription:@"branchWillOpenURLNotificationExpectation"];
-    self.branchDidOpenURLExpectation =
-        [self expectationWithDescription:@"branchDidOpenURLExpectation"];
-    self.branchDidOpenURLNotificationExpectation =
-        [self expectationWithDescription:@"branchDidOpenURLNotificationExpectation"];
 
     [[NSNotificationCenter defaultCenter]
         addObserver:self
@@ -327,6 +311,17 @@ failedToStartSessionWithURL:(NSURL*)url
     }
 
     [self.branchDidOpenURLNotificationExpectation fulfill];
+}
+
+- (void)setUp {
+    self.branchWillOpenURLExpectation =
+        [self expectationWithDescription:@"branchWillOpenURLExpectation"];
+    self.branchWillOpenURLNotificationExpectation =
+        [self expectationWithDescription:@"branchWillOpenURLNotificationExpectation"];
+    self.branchDidOpenURLExpectation =
+        [self expectationWithDescription:@"branchDidOpenURLExpectation"];
+    self.branchDidOpenURLNotificationExpectation =
+        [self expectationWithDescription:@"branchDidOpenURLNotificationExpectation"];
 }
 
 @end
