@@ -7,13 +7,19 @@
 //
 
 #import "BNCFacebookMock.h"
+#import "NSError+Branch.h"
 
 @implementation BNCFacebookMock
 
 - (void)fetchDeferredAppLink:(void (^_Nullable)(NSURL *__nullable appLink, NSError * __nullable error))completion {
     if (completion) {
-        NSURL *url = [NSURL URLWithString:@"https://branch.io"];
-        completion(url, nil);
+        if (![NSThread isMainThread]) {
+            // fetchDeferredAppLink must be called from main thread
+            // https://developers.facebook.com/docs/reference/ios/current/class/FBSDKAppLinkUtility
+            completion(nil, [NSError branchErrorWithCode:BNCGeneralError localizedMessage:@"fetchDeferredAppLink must be called from main thread"]);
+        } else {
+            completion([NSURL URLWithString:@"https://branch.io"], nil);
+        }
     }
 }
 
