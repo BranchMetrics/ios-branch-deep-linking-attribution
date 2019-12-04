@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.30.1
+* _*Master Release*_ - Dec 3, 2019
+  * SDK-679 Call FB SDK on the main thread
+
 - v0.30.0
 * _*Master Release*_ - Nov 13, 2019
   * SDK-513 update Apple Search Ads behavior and API
