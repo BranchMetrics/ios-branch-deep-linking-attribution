@@ -64,7 +64,7 @@
      };
 
     dispatch_async(dispatch_get_main_queue(), ^{
-     ((void (*)(id, SEL, void (^ __nullable)(NSURL *__nullable appLink, NSError * __nullable error)))[self.appLinkUtility methodForSelector:self.fetchDeferredAppLink])(self.appLinkUtility, self.fetchDeferredAppLink, completionBlock);
+        ((void (*)(id, SEL, void (^ __nullable)(NSURL *__nullable appLink, NSError * __nullable error)))[self.appLinkUtility methodForSelector:self.fetchDeferredAppLink])(self.appLinkUtility, self.fetchDeferredAppLink, completionBlock);
     });
  }
 
