@@ -21,6 +21,7 @@ typedef NS_ENUM(NSInteger, BNCNetworkStatus) {
 @end
 
 // Based on Apple's Reachability Sample
+// https://developer.apple.com/library/archive/samplecode/Reachability/Introduction/Intro.html
 @implementation BNCReachability
 
 - (instancetype)init {

@@ -115,7 +115,9 @@ exit:
 + (NSArray<NSString *> *)allIPAddresses {
     NSMutableArray *array = [NSMutableArray new];
     for (BNCNetworkInterface *inf in [BNCNetworkInterface currentInterfaces]) {
-        [array addObject:inf.description];
+        if (inf.description) {
+            [array addObject:inf.description];
+        }
     }
     return array;
 }
