@@ -690,6 +690,9 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 - (void)suppressWarningLogs;
 
+// For use by other Branch SDKs.  For example, Unity or React Native.
+- (void)registerPluginName:(NSString *)name version:(NSString *)version;
+
 /**
  Key-value pairs to be included in the metadata on every request.
 
