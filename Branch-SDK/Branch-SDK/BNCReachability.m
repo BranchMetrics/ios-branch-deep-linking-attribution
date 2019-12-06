@@ -20,8 +20,11 @@ typedef NS_ENUM(NSInteger, BNCNetworkStatus) {
 @property (nonatomic, assign, readwrite) SCNetworkReachabilityRef reachability;
 @end
 
-// Based on Apple's Reachability Sample
-// https://developer.apple.com/library/archive/samplecode/Reachability/Introduction/Intro.html
+/**
+ Based on Apple's Reachability Sample
+ 
+ @link https://developer.apple.com/library/archive/samplecode/Reachability/Introduction/Intro.html
+ */
 @implementation BNCReachability
 
 - (instancetype)init {
