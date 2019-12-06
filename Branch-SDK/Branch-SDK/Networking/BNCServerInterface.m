@@ -899,30 +899,49 @@ exit:
 
 - (void)updateDeviceInfoToMutableDictionary:(NSMutableDictionary *)dict {
     BNCDeviceInfo *deviceInfo  = [BNCDeviceInfo getInstance];
+    @synchronized (deviceInfo) {
+        [deviceInfo checkAdvertisingIdentifier];
+        
+        // hardware id information.  idfa, idfv or random
+        NSString *hardwareId = [deviceInfo.hardwareId copy];
+        NSString *hardwareIdType = [deviceInfo.hardwareIdType copy];
+        NSNumber *isRealHardwareId = @(deviceInfo.isRealHardwareId);
+        if (hardwareId != nil && hardwareIdType != nil && isRealHardwareId != nil) {
+            dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
+            dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = hardwareIdType;
+            dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = isRealHardwareId;
+        }
 
-    NSString *hardwareId = [deviceInfo.hardwareId copy];
-    NSString *hardwareIdType = [deviceInfo.hardwareIdType copy];
-    NSNumber *isRealHardwareId = @(deviceInfo.isRealHardwareId);
-    if (hardwareId != nil && hardwareIdType != nil && isRealHardwareId != nil) {
-        dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = hardwareId;
-        dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = hardwareIdType;
-        dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = isRealHardwareId;
+        // idfv is duplicated in the hardware id field when idfa is unavailable
+        [self safeSetValue:deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
+        // idfa is only in the hardware id field
+        // [self safeSetValue:deviceInfo.advertiserId forKey:@"idfa" onDict:dict];
+        
+        [self safeSetValue:deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
+        [self safeSetValue:deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
+        [self safeSetValue:deviceInfo.osBuildVersion forKey:@"build" onDict:dict];
+        [self safeSetValue:deviceInfo.extensionType forKey:@"environment" onDict:dict];
+        [self safeSetValue:deviceInfo.locale forKey:@"locale" onDict:dict];
+        [self safeSetValue:deviceInfo.country forKey:@"country" onDict:dict];
+        [self safeSetValue:deviceInfo.language forKey:@"language" onDict:dict];
+        [self safeSetValue:deviceInfo.brandName forKey:BRANCH_REQUEST_KEY_BRAND onDict:dict];
+        [self safeSetValue:deviceInfo.modelName forKey:BRANCH_REQUEST_KEY_MODEL onDict:dict];
+        [self safeSetValue:deviceInfo.cpuType forKey:@"cpu_type" onDict:dict];
+        [self safeSetValue:deviceInfo.screenScale forKey:@"screen_dpi" onDict:dict];
+        [self safeSetValue:deviceInfo.screenHeight forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
+        [self safeSetValue:deviceInfo.screenWidth forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
+        [self safeSetValue:deviceInfo.carrierName forKey:@"device_carrier" onDict:dict];
+        
+        [self safeSetValue:[deviceInfo localIPAddress] forKey:@"local_ip" onDict:dict];
+        [self safeSetValue:[deviceInfo connectionType] forKey:@"connection_type" onDict:dict];
+        [self safeSetValue:[deviceInfo userAgentString] forKey:@"user_agent" onDict:dict];
+        
+        [self safeSetValue:@(deviceInfo.isAdTrackingEnabled) forKey:BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED onDict:dict];
+        
+        [self safeSetValue:deviceInfo.applicationVersion forKey:@"app_version" onDict:dict];
+        [self safeSetValue:deviceInfo.pluginName forKey:@"plugin_name" onDict:dict];
+        [self safeSetValue:deviceInfo.pluginVersion forKey:@"plugin_version" onDict:dict];
     }
-    
-    [self safeSetValue:deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
-    [self safeSetValue:deviceInfo.brandName forKey:BRANCH_REQUEST_KEY_BRAND onDict:dict];
-    [self safeSetValue:deviceInfo.modelName forKey:BRANCH_REQUEST_KEY_MODEL onDict:dict];
-    [self safeSetValue:deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
-    [self safeSetValue:deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
-    [self safeSetValue:deviceInfo.screenWidth forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
-    [self safeSetValue:deviceInfo.screenHeight forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
-
-    [self safeSetValue:[BNCDeviceInfo userAgentString] forKey:@"user_agent" onDict:dict];
-    [self safeSetValue:deviceInfo.country forKey:@"country" onDict:dict];
-    [self safeSetValue:deviceInfo.language forKey:@"language" onDict:dict];
-    dict[@"local_ip"] = deviceInfo.localIPAddress;
-
-    dict[BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED] = @(deviceInfo.isAdTrackingEnabled);
 }
 
 - (NSMutableDictionary*)updateDeviceInfoToParams:(NSDictionary *)params {

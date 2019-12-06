@@ -691,6 +691,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)suppressWarningLogs;
 
 /**
+ For use by other Branch SDKs
+ 
+ @param name Plugin name.  For example, Unity or React Native
+ @param version Plugin version
+ */
+- (void)registerPluginName:(NSString *)name version:(NSString *)version;
+
+/**
  Key-value pairs to be included in the metadata on every request.
 
  @param key String to be included in request metadata

@@ -40,9 +40,9 @@
 #import "BNCApplication.h"
 #import "BNCURLBlackList.h"
 #import "BNCUserAgentCollector.h"
-#import "BNCDeviceInfo.h"
 #import "BNCAppleSearchAds.h"
 #import "BNCFacebookAppLinks.h"
+#import "BNCDeviceInfo.h"
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
@@ -872,7 +872,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (void)loadUserAgent {
     dispatch_async(self.isolationQueue, ^(){
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        [[BNCUserAgentCollector instance] loadUserAgentForSystemBuildVersion:[BNCDeviceInfo systemBuildVersion] withCompletion:^(NSString * _Nullable userAgent) {
+        [[BNCUserAgentCollector instance] loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
             dispatch_semaphore_signal(semaphore);
         }];
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
@@ -2313,6 +2313,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (void)registerPluginName:(NSString *)name version:(NSString *)version {
+    [[BNCDeviceInfo getInstance] registerPluginName:name version:version];
+}
 
 #pragma mark - BranchDeepLinkingControllerCompletionDelegate methods
 
