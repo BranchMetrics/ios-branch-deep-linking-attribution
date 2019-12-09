@@ -9,7 +9,11 @@
 #import "BNCUserAgentCollector.h"
 #import "BNCPreferenceHelper.h"
 #import "BNCDeviceSystem.h"
+#if __has_feature(modules)
 @import WebKit;
+#else
+#import <WebKit/WebKit.h>
+#endif
 
 @interface BNCUserAgentCollector()
 // need to hold onto the webview until the async user agent fetch is done
