@@ -919,19 +919,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 #pragma mark - Pre-initialization support
 
-- (void) dispatchPreInitBlock:(dispatch_block_t) initBlock executeAfter:(int)waitTime {
-    dispatch_async(self.isolationQueue, ^(){
-        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(waitTime * NSEC_PER_SEC)), self.isolationQueue, ^{
-            @try {
-               initBlock();
-            } @catch (NSException *ignored) {}
-            dispatch_semaphore_signal(semaphore);
-        });
-        
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    });
+- (void) dispatchToIsolationQueue:(dispatch_block_t) initBlock {
+    dispatch_async(self.isolationQueue, initBlock);
 }
 
 #pragma mark - Facebook App Link Check
