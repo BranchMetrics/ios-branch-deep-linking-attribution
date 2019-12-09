@@ -517,13 +517,17 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 #pragma mark - Pre-initialization support
 
 /**
- When certain actions are required to complete prior to session initialization, call this method passing in a dispatch_block_t
- object and an int, inidicating the number of seconds Branch should wait to  invoke the passed in block.
+ DO NOT USE unless you are familiar with the SDK's threading model.
+ 
+ When certain actions are required to complete prior to session initialization, this method can be used to pass in a blocking dispatch_block_t.
+ The structure of the dispatch_block_t should be as follows:
+ 1. obtain semaphore
+ 2. initiate async task that signals the sephamore in its callback
+ 3. make sephamore wait for the signal
  
  @param initBlock         dispatch_block_t object to be executed prior to session initialization
- @param waitTime           An int inidicating the number of seconds Branch should wait before executing the passed in block
  */
-- (void)dispatchPreInitBlock:(dispatch_block_t)initBlock executeAfter:(int)waitTime;
+- (void)dispatchToIsolationQueue:(dispatch_block_t)initBlock;
 
 #pragma mark - Push Notification support
 

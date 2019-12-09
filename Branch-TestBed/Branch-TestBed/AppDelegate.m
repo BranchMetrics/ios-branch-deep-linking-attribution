@@ -29,6 +29,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     //
     Branch *branch = [Branch getInstance];
+    
+    
+    // test pre init support
+//    [self testDispatchToIsolationQueue:branch]
 
     // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
     // Note: Unit tests will fail if 'setDebug' is set.
@@ -55,6 +59,21 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [self registerForPushNotifications:application];
 
     return YES;
+}
+
+// pre init support is meant for extensions, for exmaple, when Adobe axtension needs to pass in Adobe IDs
+// before init session is called. This method will block the queue used by open/install requests until the
+// the passsed in block completes
+- (void) testDispatchToIsolationQueue:(Branch*)branch {
+    [branch dispatchToIsolationQueue:^{
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)),
+                       dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [branch setRequestMetadataKey:@"keykey" value:@"valuevalue"];
+            dispatch_semaphore_signal(semaphore);
+        });
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    }];
 }
 
 - (void) handleDeepLinkParams:(NSDictionary*)params error:(NSError*)error {
