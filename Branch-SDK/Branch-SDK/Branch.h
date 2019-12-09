@@ -520,10 +520,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  DO NOT USE unless you are familiar with the SDK's threading model.
  
  When certain actions are required to complete prior to session initialization, this method can be used to pass in a blocking dispatch_block_t.
- The structure of the dispatch_block_t should be as follows:
- 1. obtain semaphore
- 2. initiate async task that signals the sephamore in its callback
- 3. make sephamore wait for the signal
+ The passed in dispatch_block_t will block Branch initialization thread, not the main thread.
  
  @param initBlock         dispatch_block_t object to be executed prior to session initialization
  */
