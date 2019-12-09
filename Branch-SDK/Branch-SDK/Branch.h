@@ -517,9 +517,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 #pragma mark - Pre-initialization support
 
 /**
- When certain actions are required to complete prior to session initialization, call this method passing in dispatch_block_t,
- which contains session initialization, and an int, inidicating the number of seconds Branch should wait to  invoke the
- passed in block.
+ When certain actions are required to complete prior to session initialization, call this method passing in a dispatch_block_t
+ object and an int, inidicating the number of seconds Branch should wait to  invoke the passed in block.
  
  @param initBlock         dispatch_block_t object to be executed prior to session initialization
  @param waitTime           An int inidicating the number of seconds Branch should wait before executing the passed in block
