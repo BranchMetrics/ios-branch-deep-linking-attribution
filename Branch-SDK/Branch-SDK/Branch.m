@@ -119,9 +119,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 }
 
 // This isolation queue protects branch initialization and ensures things are processed in order.
-@property (nonatomic, strong) dispatch_queue_t isolationQueue;
-// Delayed initialization block to be used when other tasks are required to complete before initializing
-@property (nonatomic, strong) dispatch_block_t preInitBlock;
+@property (nonatomic, strong, readwrite) dispatch_queue_t isolationQueue;
 
 @property (strong, nonatomic) BNCServerInterface *serverInterface;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
