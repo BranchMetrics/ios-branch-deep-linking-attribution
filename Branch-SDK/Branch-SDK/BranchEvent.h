@@ -85,8 +85,8 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 @property (nonatomic, assign) BranchEventAdType                 adType;
 
 
-@property (nonatomic, copy) NSMutableArray<BranchUniversalObject*>*_Nonnull       contentItems;
-@property (nonatomic, copy) NSMutableDictionary<NSString*, NSString*> *_Nonnull   customData;
+@property (nonatomic, copy) NSArray<BranchUniversalObject*>*_Nonnull       contentItems;
+@property (nonatomic, copy) NSDictionary<NSString*, NSString*> *_Nonnull   customData;
 
 - (void) logEvent;                      //!< Logs the event on the Branch server.
 - (NSDictionary*_Nonnull) dictionary;   //!< Returns a dictionary representation of the event.
