@@ -271,8 +271,9 @@
 
     BranchEvent *event = [BranchEvent standardEvent:BranchStandardEventCompleteRegistration];
     event.eventDescription = @"Product Search";
-    event.searchQuery = @"product name";
-    event.customData[@"rating"] = @"5";
+    event.searchQuery = @"product name";    
+    event.customData = @{ @"rating": @"5" };
+    
     [event logEvent];
 }
 
