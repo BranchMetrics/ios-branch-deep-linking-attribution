@@ -25,7 +25,7 @@
     [self.prefHelper setRequestMetadataKey:@"$marketing_cloud_visitor_id" value:@"dummy"];
 }
 
-- (void)testDispatchInitSession {
+- (void)testPreInitBlock {
     __block XCTestExpectation *expectation = [self expectationWithDescription:@""];
     
     [self.branch dispatchPreInitBlock:^{
