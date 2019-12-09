@@ -121,7 +121,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 // This isolation queue protects branch initialization and ensures things are processed in order.
 @property (nonatomic, strong) dispatch_queue_t isolationQueue;
 // Delayed initialization block to be used when other tasks are required to complete before initializing
-@property (nonatomic, strong) dispatch_block_t delayedInitBlock;
+@property (nonatomic, strong) dispatch_block_t preInitBlock;
 
 @property (strong, nonatomic) BNCServerInterface *serverInterface;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
@@ -919,25 +919,21 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     });
 }
 
-#pragma mark - Delayed initialization
+#pragma mark - Pre-initialization support
 
-- (void) dispatchInitSession:(dispatch_block_t) initBlock After:(int)waitTime {
-    self.delayedInitBlock = initBlock;
-    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(waitTime * NSEC_PER_SEC));
-    dispatch_after(time, dispatch_get_main_queue(), self.delayedInitBlock);
-}
-
-- (void)cancelDelayedInitSession {
-    // does not affect execution of the block object that is already in progress,
-    // but it does prevent future invocation of the same block
-    dispatch_block_cancel(self.delayedInitBlock);
-    NSLog(@"BranchSDK: cancelDelayedInitialization %@", @"success");
-}
-
-- (void)invokeDelayedInitSession {
-    self.delayedInitBlock();
-    [self cancelDelayedInitSession];
-    NSLog(@"BranchSDK: invokeDelayedInitialization %@", @"success");
+- (void) dispatchPreInitBlock:(dispatch_block_t) initBlock executeAfter:(int)waitTime {
+    dispatch_async(self.isolationQueue, ^(){
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(waitTime * NSEC_PER_SEC)), self.isolationQueue, ^{
+            @try {
+               initBlock();
+            } @catch (NSException *ignored) {}
+            dispatch_semaphore_signal(semaphore);
+        });
+        
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    });
 }
 
 #pragma mark - Facebook App Link Check
@@ -1800,8 +1796,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (void)applicationDidBecomeActive {
     if (!Branch.trackingDisabled &&
         self.initializationStatus != BNCInitStatusInitialized &&
-        [self.requestQueue containsInstallOrOpen] &&
-        self.delayedInitBlock == nil) {
+        [self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:YES];
     }
 }

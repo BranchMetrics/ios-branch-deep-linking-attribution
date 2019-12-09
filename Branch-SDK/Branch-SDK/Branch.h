@@ -514,34 +514,17 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /// @name Push Notification Support
 ///--------------------------------
 
-#pragma mark - Delayed Initialization
+#pragma mark - Pre-initialization support
 
 /**
  When certain actions are required to complete prior to session initialization, call this method passing in dispatch_block_t,
- which contains session initialization, and an int, inidicating the number of seconds Branch should wait for the user
- to  invoke the delayed Branch session initialization (see invokeDelayedInitialization). After this time, Branch will automatically
- invoke the delayed session initialization.
-
- @param initBlock         dispatch_block_t object with Branch initialization in it
- @param waitTime           An int inidicating the number of seconds Branch should wait for the user to
-                     invoke the delayed initialization.
- @warning            To avoid memory leaks take care to ensure that initBlock object does not capture any resources
-                     that require execution of the block body in order to be released, such as memory allocated with malloc(3)
-                     on which the block body calls free(3).
- */
-- (void)dispatchInitSession:(dispatch_block_t)initBlock After:(int)waitTime;
-
-/**
- Call this method if delayed initilization is no longer desired.
+ which contains session initialization, and an int, inidicating the number of seconds Branch should wait to  invoke the
+ passed in block.
  
- @warning       Does not affect an initialization that is already in progress.
+ @param initBlock         dispatch_block_t object to be executed prior to session initialization
+ @param waitTime           An int inidicating the number of seconds Branch should wait before executing the passed in block
  */
-- (void)cancelDelayedInitSession;
-
-/**
- Used together with dispatchInitAfter, call this method after prerequisite tasks for Branch initialization have completed.
- */
-- (void)invokeDelayedInitSession;
+- (void)dispatchPreInitBlock:(dispatch_block_t)initBlock executeAfter:(int)waitTime;
 
 #pragma mark - Push Notification support
 

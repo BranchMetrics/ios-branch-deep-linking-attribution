@@ -24,7 +24,7 @@
 		4683F0751B20A73F00A432E7 /* CreditHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAA790119E89F67008D4A83 /* CreditHistoryViewController.m */; };
 		4683F0761B20A73F00A432E7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 670016731940F51400A9E103 /* AppDelegate.m */; };
 		46DC406E1B2A328900D2D203 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67BBCF271A69E49A009C7DAE /* AdSupport.framework */; };
-		4A0C5F982397176500AE6628 /* BNCDelayedInitSessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0C5F942397006800AE6628 /* BNCDelayedInitSessionTests.m */; };
+		4AB16368239E3A2700D42931 /* BNCPreInitBlockTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AB16367239E3A2700D42931 /* BNCPreInitBlockTests.m */; };
 		4D130E731EE0C7B100A69A0A /* BNCNetworkService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E4D1EE0C7B000A69A0A /* BNCNetworkService.m */; };
 		4D130E761EE0C7B100A69A0A /* BNCServerInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E501EE0C7B000A69A0A /* BNCServerInterface.m */; };
 		4D130E781EE0C7B100A69A0A /* BNCServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D130E521EE0C7B000A69A0A /* BNCServerRequest.m */; };
@@ -302,7 +302,7 @@
 		466D5A0F1B5991E3009DB845 /* BNCContentDiscoveryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCContentDiscoveryManager.h; sourceTree = "<group>"; };
 		466D5A101B5991E3009DB845 /* BNCContentDiscoveryManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCContentDiscoveryManager.m; sourceTree = "<group>"; };
 		46DBB42F1B335A9B00642FC8 /* BranchDeepLinkingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchDeepLinkingController.h; sourceTree = "<group>"; };
-		4A0C5F942397006800AE6628 /* BNCDelayedInitSessionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCDelayedInitSessionTests.m; sourceTree = "<group>"; };
+		4AB16367239E3A2700D42931 /* BNCPreInitBlockTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCPreInitBlockTests.m; sourceTree = "<group>"; };
 		4D130E4C1EE0C7B000A69A0A /* BNCNetworkService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCNetworkService.h; sourceTree = "<group>"; };
 		4D130E4D1EE0C7B000A69A0A /* BNCNetworkService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCNetworkService.m; sourceTree = "<group>"; };
 		4D130E4E1EE0C7B000A69A0A /* BNCNetworkServiceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCNetworkServiceProtocol.h; sourceTree = "<group>"; };
@@ -724,6 +724,7 @@
 				5F3D6719233062FD00454FF1 /* BNCJsonLoader.h */,
 				5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */,
 				4D16839F2098C901008819E3 /* Info.plist */,
+				4AB16367239E3A2700D42931 /* BNCPreInitBlockTests.m */,
 			);
 			name = "Branch-SDK-Tests";
 			path = "../Branch-SDK-Tests";
@@ -763,7 +764,6 @@
 		5F8B7B3C21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests */ = {
 			isa = PBXGroup;
 			children = (
-				4A0C5F942397006800AE6628 /* BNCDelayedInitSessionTests.m */,
 				5FC7327622DE9A44006E6FBC /* BNCServerInterfaceTests.m */,
 				5F67F48D228F535500067429 /* BNCEncodingUtilsTests.m */,
 				5F8B7B4621B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m */,
@@ -1358,7 +1358,6 @@
 			files = (
 				5F67F48E228F535500067429 /* BNCEncodingUtilsTests.m in Sources */,
 				5F8B7B4721B5F5F0009CE0A6 /* Branch_setBranchKeyTests.m in Sources */,
-				4A0C5F982397176500AE6628 /* BNCDelayedInitSessionTests.m in Sources */,
 				5F3D671C233062FD00454FF1 /* BNCJsonLoader.m in Sources */,
 				5FC7327722DE9A44006E6FBC /* BNCServerInterfaceTests.m in Sources */,
 			);
@@ -1402,6 +1401,7 @@
 				4D1683B92098C902008819E3 /* BNCSystemObserver.Test.m in Sources */,
 				4D1683BE2098C902008819E3 /* BranchShortUrlSyncRequestTests.m in Sources */,
 				4D1683CA2098C902008819E3 /* BNCPreferenceHelperTests.m in Sources */,
+				4AB16368239E3A2700D42931 /* BNCPreInitBlockTests.m in Sources */,
 				4D1683B32098C902008819E3 /* BranchGetCreditHistoryRequestTests.m in Sources */,
 				5F892ECE23624E0A0023AEC1 /* BNCFacebookAppLinksTests.m in Sources */,
 				4D1683BB2098C902008819E3 /* BranchShortUrlRequestTests.m in Sources */,
