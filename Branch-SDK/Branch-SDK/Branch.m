@@ -917,6 +917,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     });
 }
 
+#pragma mark - Pre-initialization support
+
+- (void) dispatchToIsolationQueue:(dispatch_block_t) initBlock {
+    dispatch_async(self.isolationQueue, initBlock);
+}
+
 #pragma mark - Facebook App Link Check
 
 - (void)registerFacebookDeepLinkingClass:(id)FBSDKAppLinkUtility {
@@ -1775,11 +1781,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 #pragma mark - Application State Change methods
 
 - (void)applicationDidBecomeActive {
-    if (!Branch.trackingDisabled) {
-        if ((self.initializationStatus != BNCInitStatusInitialized) &&
-            ![self.requestQueue containsInstallOrOpen]) {
-            [self initUserSessionAndCallCallback:YES];
-        }
+    if (!Branch.trackingDisabled &&
+        self.initializationStatus != BNCInitStatusInitialized &&
+        [self.requestQueue containsInstallOrOpen]) {
+        [self initUserSessionAndCallCallback:YES];
     }
 }
 

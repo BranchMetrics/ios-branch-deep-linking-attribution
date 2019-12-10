@@ -91,6 +91,16 @@
                ReferencedContainer = "container:Branch-TestBed.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5F8B7B3A21B5F5CD009CE0A6"
+               BuildableName = "Branch-SDK-Unhosted-Tests.xctest"
+               BlueprintName = "Branch-SDK-Unhosted-Tests"
+               ReferencedContainer = "container:Branch-TestBed.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
