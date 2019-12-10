@@ -8,11 +8,19 @@
 
 #import "BNCUserAgentCollector.h"
 #import "BNCPreferenceHelper.h"
+#import "BNCDeviceSystem.h"
+#if __has_feature(modules)
 @import WebKit;
+#else
+#import <WebKit/WebKit.h>
+#endif
 
 @interface BNCUserAgentCollector()
 // need to hold onto the webview until the async user agent fetch is done
 @property (nonatomic, strong, readwrite) WKWebView *webview;
+
+// use system build as an indicator that the OS has been updated
+@property (nonatomic, copy, readwrite) NSString *systemBuildVersion;
 @end
 
 @implementation BNCUserAgentCollector
@@ -26,9 +34,16 @@
     return collector;
 }
 
-- (void)loadUserAgentForSystemBuildVersion:(NSString *)systemBuildVersion withCompletion:(void (^)(NSString *userAgent))completion {
-    
-    NSString *savedUserAgent = [self loadUserAgentForSystemBuildVersion:systemBuildVersion];
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.systemBuildVersion = [BNCDeviceSystem new].systemBuildVersion;
+    }
+    return self;
+}
+
+- (void)loadUserAgentWithCompletion:(void (^)(NSString *userAgent))completion {
+    NSString *savedUserAgent = [self loadUserAgentForSystemBuildVersion:self.systemBuildVersion];
     if (savedUserAgent) {
         self.userAgent = savedUserAgent;
         if (completion) {
@@ -37,7 +52,7 @@
     } else {
         [self collectUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
             self.userAgent = userAgent;
-            [self saveUserAgent:userAgent forSystemBuildVersion:systemBuildVersion];
+            [self saveUserAgent:userAgent forSystemBuildVersion:self.systemBuildVersion];
             if (completion) {
                 completion(userAgent);
             }

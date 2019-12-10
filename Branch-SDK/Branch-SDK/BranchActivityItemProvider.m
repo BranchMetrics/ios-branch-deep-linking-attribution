@@ -10,7 +10,7 @@
 #import "Branch.h"
 #import "BranchConstants.h"
 #import "BNCSystemObserver.h"
-#import "BNCDeviceInfo.h"
+#import "BNCUserAgentCollector.h"
 
 @interface BranchActivityItemProvider ()
 
@@ -60,7 +60,7 @@
             _stage = stage;
             _campaign = campaign;
             _alias = alias;
-            _userAgentString = [BNCDeviceInfo userAgentString];
+            _userAgentString = [BNCUserAgentCollector instance].userAgent;
             _delegate = delegate;
         }
     } else {
@@ -71,7 +71,7 @@
             _stage = stage;
             _campaign = campaign;
             _alias = alias;
-            _userAgentString = [BNCDeviceInfo userAgentString];
+            _userAgentString = [BNCUserAgentCollector instance].userAgent;
             _delegate = delegate;
         }
     }
