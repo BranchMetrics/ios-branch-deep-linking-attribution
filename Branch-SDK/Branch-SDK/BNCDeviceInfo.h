@@ -8,42 +8,57 @@
 
 #if __has_feature(modules)
 @import Foundation;
-@import CoreGraphics;
 #else
 #import <Foundation/Foundation.h>
-#import <CoreGraphics/CoreGraphics.h>
 #endif
 
 @interface BNCDeviceInfo : NSObject
 
-//---------Properties-------------//
-@property (atomic, copy, readonly) NSString *hardwareId;
-@property (atomic, copy, readonly) NSString *hardwareIdType;
-@property (atomic, readonly) BOOL isRealHardwareId;
-@property (atomic, copy, readonly) NSString *vendorId;          //!< VendorId can be nil initially and non-nil later.
-@property (atomic, copy, readonly) NSString *brandName;
-@property (atomic, copy, readonly) NSString *modelName;
-@property (atomic, copy, readonly) NSString *osName;
-@property (atomic, copy, readonly) NSString *osVersion;
-@property (atomic, copy, readonly) NSNumber *screenWidth;
-@property (atomic, copy, readonly) NSNumber *screenHeight;
-@property (atomic, readonly) BOOL isAdTrackingEnabled;
-
-@property (atomic, copy, readonly) NSString         *extensionType;
-@property (atomic, copy, readonly) NSString         *branchSDKVersion;
-@property (atomic, copy, readonly) NSString         *applicationVersion;
-@property (atomic, assign, readonly) CGFloat        screenScale;
-@property (atomic, copy,   readonly) NSString*      adId;
-@property (atomic, assign, readonly) BOOL           unidentifiedDevice;
-
-@property (atomic, copy, readonly) NSString* country;            //!< The iso2 Country name (us, in,etc).
-@property (atomic, copy, readonly) NSString* language;           //!< The iso2 language code (en, ml).
-@property (atomic, copy, readonly) NSString* localIPAddress;     //!< The current local IP address.
-@property (atomic, copy, readonly) NSArray<NSString*> *allIPAddresses; //!< All local IP addresses.
-//----------Methods----------------//
 + (BNCDeviceInfo *)getInstance;
-+ (NSString*) userAgentString;          // Warning:  Has an implied lock on main thread on first call.
-+ (NSString*) systemBuildVersion;
 
-- (NSDictionary*) v2dictionary;
+- (void)registerPluginName:(NSString *)name version:(NSString *)version;
+
+- (NSDictionary *) v2dictionary;
+
+/*
+ Everything below this line should be private.  Thread safety is the callee's responsibility!
+ 
+ Currently BNCServerInterface.updateDeviceInfoToMutableDictionary and unit tests use these.
+ */
+
+- (void)checkAdvertisingIdentifier;
+
+@property (nonatomic, copy, readwrite) NSString *hardwareId;
+@property (nonatomic, copy, readwrite) NSString *hardwareIdType;
+@property (nonatomic, assign, readwrite) BOOL isRealHardwareId;
+
+@property (nonatomic, copy, readwrite) NSString *advertiserId;
+@property (nonatomic, copy, readwrite) NSString *vendorId;
+@property (nonatomic, assign, readwrite) BOOL isAdTrackingEnabled;
+@property (nonatomic, assign, readwrite) BOOL unidentifiedDevice;
+- (NSString *)localIPAddress;
+- (NSString *)connectionType;
+
+@property (nonatomic, copy, readwrite) NSString *brandName;
+@property (nonatomic, copy, readwrite) NSString *modelName;
+@property (nonatomic, copy, readwrite) NSString *osName;
+@property (nonatomic, copy, readwrite) NSString *osVersion;
+@property (nonatomic, copy, readwrite) NSString *osBuildVersion;
+@property (nonatomic, copy, readwrite) NSString *extensionType;
+@property (nonatomic, copy, readwrite) NSNumber *cpuType;
+@property (nonatomic, copy, readwrite) NSNumber *screenWidth;
+@property (nonatomic, copy, readwrite) NSNumber *screenHeight;
+@property (nonatomic, copy, readwrite) NSNumber *screenScale;
+@property (nonatomic, copy, readwrite) NSString *carrierName;
+@property (nonatomic, copy, readwrite) NSString *locale;
+@property (nonatomic, copy, readwrite) NSString *country; //!< The iso2 Country name (us, in,etc).
+@property (nonatomic, copy, readwrite) NSString *language; //!< The iso2 language code (en, ml).
+- (NSString *)userAgentString;
+
+@property (nonatomic, copy, readwrite) NSString *applicationVersion;
+@property (nonatomic, copy, readwrite) NSString *pluginName;
+@property (nonatomic, copy, readwrite) NSString *pluginVersion;
+@property (nonatomic, copy, readwrite) NSString *branchSDKVersion;
+
+
 @end

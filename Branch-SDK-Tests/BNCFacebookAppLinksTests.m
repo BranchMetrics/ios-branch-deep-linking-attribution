@@ -48,8 +48,28 @@
     [self.applinks registerFacebookDeepLinkingClass:[BNCFacebookMock new]];
     [self.applinks fetchFacebookAppLinkWithCompletion:^(NSURL * _Nullable appLink, NSError * _Nullable error) {
         XCTAssertTrue([[appLink absoluteString] isEqualToString:@"https://branch.io"]);
+        XCTAssertTrue([NSThread isMainThread]);
         [expectation fulfill];
     }];
+    
+    [self waitForExpectationsWithTimeout:2 handler:^(NSError * _Nullable error) {
+        NSLog(@"%@", error);
+    }];
+}
+
+// check if FBSDKAppLinkUtility.fetchDeferredAppLink is called on the main thread
+// https://developers.facebook.com/docs/reference/ios/current/class/FBSDKAppLinkUtility
+- (void)testFetchFacebookAppLink_BackgroundThead {
+    __block XCTestExpectation *expectation = [self expectationWithDescription:@""];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.applinks registerFacebookDeepLinkingClass:[BNCFacebookMock new]];
+        [self.applinks fetchFacebookAppLinkWithCompletion:^(NSURL * _Nullable appLink, NSError * _Nullable error) {
+            XCTAssertTrue([[appLink absoluteString] isEqualToString:@"https://branch.io"]);
+            XCTAssertTrue([NSThread isMainThread]);
+            [expectation fulfill];
+        }];
+    });
     
     [self waitForExpectationsWithTimeout:2 handler:^(NSError * _Nullable error) {
         NSLog(@"%@", error);

@@ -103,12 +103,8 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
 
 #pragma mark - BranchEvent
 
-@interface BranchEvent () {
-    NSMutableDictionary *_customData;
-    NSMutableArray      *_contentItems;
-}
+@interface BranchEvent ()
 @property (nonatomic, strong) NSString*  eventName;
-
 @end
 
 @implementation BranchEvent : NSObject
@@ -117,7 +113,8 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     self = [super init];
     if (!self) return self;
     _eventName = name;
-    
+    _contentItems = [NSArray new];
+    _customData = [NSDictionary new];
     _adType = BranchEventAdTypeNone;
     return self;
 }
@@ -130,7 +127,7 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
                withContentItem:(BranchUniversalObject*)contentItem {
     BranchEvent *e = [BranchEvent standardEvent:standardEvent];
     if (contentItem) {
-        e.contentItems = (NSMutableArray*) @[ contentItem ];
+        e.contentItems = @[ contentItem ];
     }
     return e;
 }
@@ -143,34 +140,9 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
                          contentItem:(BranchUniversalObject*)contentItem {
     BranchEvent *e = [BranchEvent customEventWithName:name];
     if (contentItem) {
-        e.contentItems = (NSMutableArray*) @[ contentItem ];
+        e.contentItems = @[ contentItem ];
     }
     return e;
-}
-
-- (NSMutableDictionary*) customData {
-    if (!_customData) _customData = [NSMutableDictionary new];
-    return _customData;
-}
-
-- (void) setCustomData:(NSMutableDictionary<NSString *,NSString *> *)userInfo {
-    _customData = [userInfo mutableCopy];
-}
-
-- (NSMutableArray*) contentItems {
-    if (!_contentItems) _contentItems = [NSMutableArray new];
-    return _contentItems;
-}
-
-- (void) setContentItems:(NSMutableArray<BranchUniversalObject *> *)contentItems {
-    
-    
-    if ([contentItems isKindOfClass:[BranchUniversalObject class]]) {
-        _contentItems = [NSMutableArray arrayWithObject:contentItems];
-    } else
-    if ([contentItems isKindOfClass:[NSArray class]]) {
-        _contentItems = [contentItems mutableCopy];
-    }
 }
 
 - (NSString *)jsonStringForAdType:(BranchEventAdType)adType {
