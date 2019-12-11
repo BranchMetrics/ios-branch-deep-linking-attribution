@@ -188,7 +188,7 @@
         [self expectationWithDescription:@"Scenario3 Expectation2"];
     
     // Simulate network return, shouldn't call init!
-    [serverInterfaceMock stopMocking];
+    //[serverInterfaceMock stopMocking];
     
     // Request should just work
     [self makeSuccessfulNonReplayableRequest:branch serverInterface:serverInterfaceMock callback:^{
