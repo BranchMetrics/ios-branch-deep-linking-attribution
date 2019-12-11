@@ -760,12 +760,9 @@
 				5F3D6719233062FD00454FF1 /* BNCJsonLoader.h */,
 				5F3D671A233062FD00454FF1 /* BNCJsonLoader.m */,
 				4D16839F2098C901008819E3 /* Info.plist */,
-<<<<<<< HEAD
 				4AB16367239E3A2700D42931 /* DispatchToIsolationQueueTests.m */,
-=======
 				5F437E39237DE3480052064B /* BNCTelephonyTests.m */,
 				5F437E3F237E1A560052064B /* BNCDeviceSystemTests.m */,
->>>>>>> 16154d53d1bb758765658b3bc2368881e658cc89
 			);
 			name = "Branch-SDK-Tests";
 			path = "../Branch-SDK-Tests";
