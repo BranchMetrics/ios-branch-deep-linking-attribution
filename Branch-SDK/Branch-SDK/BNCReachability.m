@@ -101,4 +101,11 @@ typedef NS_ENUM(NSInteger, BNCNetworkStatus) {
     return [self translateReachabilityStatus:[self currentReachabilityStatus]];
 }
 
+- (void)dealloc {
+    if (self.reachability) {
+        CFRelease(self.reachability);
+        self.reachability = nil;
+    }
+}
+
 @end
