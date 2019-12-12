@@ -1,4 +1,10 @@
 Branch iOS SDK Change Log
+- v0.31.0
+* _*Master Release*_ - Dec 11, 2019
+  * SDK-562 Add fields for Tune compatibility.  Carrier name, connection type, cpu type.
+  * SDK-667 Add fallback for disabled module support.  C++ compatibility.
+  * SDK-696 BranchEvent safety improvement.  Thanks bryanmontz!
+  * SDK-104 Add APIs for plugin support.
 
 - v0.30.1
 * _*Master Release*_ - Dec 3, 2019
