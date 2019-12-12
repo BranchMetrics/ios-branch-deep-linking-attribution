@@ -514,6 +514,18 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /// @name Push Notification Support
 ///--------------------------------
 
+#pragma mark - Pre-initialization support
+
+/**
+ DO NOT USE unless you are familiar with the SDK's threading model.
+ 
+ When certain actions are required to complete prior to session initialization, this method can be used to pass in a blocking dispatch_block_t.
+ The passed in dispatch_block_t will block Branch initialization thread, not the main thread.
+ 
+ @param initBlock         dispatch_block_t object to be executed prior to session initialization
+ */
+- (void)dispatchToIsolationQueue:(dispatch_block_t)initBlock;
+
 #pragma mark - Push Notification support
 
 /**
@@ -689,6 +701,14 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)accountForFacebookSDKPreventingAppLaunch __attribute__((deprecated(("Please ensure application:didFinishLaunchingWithOptions: always returns YES/true instead of using this method. It will be removed in a future release."))));
 
 - (void)suppressWarningLogs;
+
+/**
+ For use by other Branch SDKs
+ 
+ @param name Plugin name.  For example, Unity or React Native
+ @param version Plugin version
+ */
+- (void)registerPluginName:(NSString *)name version:(NSString *)version;
 
 /**
  Key-value pairs to be included in the metadata on every request.
