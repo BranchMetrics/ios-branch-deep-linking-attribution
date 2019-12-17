@@ -1964,7 +1964,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // There is a follow up ticket to improve this.  SDK-633
 - (void)initSafetyCheck {
     if (self.initializationStatus == BNCInitStatusUninitialized) {
-        BNCLogWarning(@"Branch avoided an error by preemptively initializing.");
+        BNCLogDebug(@"Branch avoided an error by preemptively initializing.");
         [self initUserSessionAndCallCallback:NO];
     }
 }
