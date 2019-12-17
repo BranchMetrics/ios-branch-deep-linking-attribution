@@ -1052,9 +1052,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     });
 }
 
+// deprecated, use sendServerRequest
 - (void)sendServerRequestWithoutSession:(BNCServerRequest*)request {
-    [self.requestQueue enqueue:request];
-    [self processNextQueueItem];
+    [self sendServerRequest:request];
 }
 
 - (void)sendCommerceEvent:(BNCCommerceEvent *)commerceEvent metadata:(NSDictionary*)metadata withCompletion:(void (^)(NSDictionary *, NSError *))completion {

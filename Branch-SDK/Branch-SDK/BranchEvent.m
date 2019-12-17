@@ -229,7 +229,7 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
 
     NSDictionary *eventDictionary = [self buildEventDictionary];
     BranchEventRequest *request = [self buildRequestWithEventDictionary:eventDictionary];
-    [[Branch getInstance] sendServerRequestWithoutSession:request];
+    [[Branch getInstance] sendServerRequest:request];
 }
 
 - (BranchEventRequest *)buildRequestWithEventDictionary:(NSDictionary *)eventDictionary {

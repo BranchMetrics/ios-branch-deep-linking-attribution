@@ -1697,7 +1697,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
     __attribute__((deprecated(("This API is deprecated. Please use BranchEvent:BranchStandardEventViewItem instead."))));
 
 - (void) sendServerRequest:(BNCServerRequest*)request;
-- (void) sendServerRequestWithoutSession:(BNCServerRequest*)request;
+- (void) sendServerRequestWithoutSession:(BNCServerRequest*)request __attribute__((deprecated(("This API is deprecated. Please use sendServerRequest instead."))));
 
 /**
  This is the block that is called each time a new Branch session is started. It is automatically set
