@@ -121,6 +121,9 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 // This isolation queue protects branch initialization and ensures things are processed in order.
 @property (nonatomic, strong, readwrite) dispatch_queue_t isolationQueue;
 
+// SDK-716 used to confirm init is on queue
+@property (nonatomic, assign, readwrite) BOOL initSessionHasBeenCalled;
+
 @property (strong, nonatomic) BNCServerInterface *serverInterface;
 @property (strong, nonatomic) BNCServerRequestQueue *requestQueue;
 @property (strong, nonatomic) dispatch_semaphore_t processing_sema;
@@ -229,6 +232,8 @@ void BranchClassInitializeLog(void) {
         
     // Initialize instance variables
     self.isolationQueue = dispatch_queue_create([@"branchIsolationQueue" UTF8String], DISPATCH_QUEUE_SERIAL);
+    self.initSessionHasBeenCalled = NO;
+    
     _serverInterface = interface;
     _serverInterface.preferenceHelper = preferenceHelper;
     _requestQueue = queue;
@@ -603,6 +608,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
       automaticallyDisplayController:(BOOL)automaticallyDisplayController {
     
     [self.class addBranchSDKVersionToCrashlyticsReport];
+    
+    @synchronized (self) {
+        self.initSessionHasBeenCalled = YES;
+    }
     
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
 
@@ -1963,8 +1972,16 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // Some methods require init before they are called.  Instead of returning an error, we try to fix the situation by calling init ourselves.
 // There is a follow up ticket to improve this.  SDK-633
 - (void)initSafetyCheck {
+    
+    // SDK-716 user has already queued init via initSession
+    @synchronized (self) {
+        if (self.initSessionHasBeenCalled) {
+            return;
+        }
+    }
+    
     if (self.initializationStatus == BNCInitStatusUninitialized) {
-        BNCLogDebug(@"Branch avoided an error by preemptively initializing.");
+        BNCLogWarning(@"Branch avoided an error by preemptively initializing.");
         [self initUserSessionAndCallCallback:NO];
     }
 }
