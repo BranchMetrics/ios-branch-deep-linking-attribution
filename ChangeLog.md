@@ -1,4 +1,9 @@
 Branch iOS SDK Change Log
+
+- v0.31.1
+* _*Master Release*_ - Dec 17, 2019
+  * SDK-716 Fix first run issue with logEvent
+
 - v0.31.0
 * _*Master Release*_ - Dec 11, 2019
   * SDK-562 Add fields for Tune compatibility.  Carrier name, connection type, cpu type.
