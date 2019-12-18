@@ -229,6 +229,7 @@ void BranchClassInitializeLog(void) {
         
     // Initialize instance variables
     self.isolationQueue = dispatch_queue_create([@"branchIsolationQueue" UTF8String], DISPATCH_QUEUE_SERIAL);
+    
     _serverInterface = interface;
     _serverInterface.preferenceHelper = preferenceHelper;
     _requestQueue = queue;
@@ -603,7 +604,6 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
       automaticallyDisplayController:(BOOL)automaticallyDisplayController {
     
     [self.class addBranchSDKVersionToCrashlyticsReport];
-    
     self.shouldAutomaticallyDeepLink = automaticallyDisplayController;
 
     // If the SDK is already initialized, this means that initSession was called after other lifecycle calls.
@@ -1052,9 +1052,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     });
 }
 
+// deprecated, use sendServerRequest
 - (void)sendServerRequestWithoutSession:(BNCServerRequest*)request {
-    [self.requestQueue enqueue:request];
-    [self processNextQueueItem];
+    [self sendServerRequest:request];
 }
 
 - (void)sendCommerceEvent:(BNCCommerceEvent *)commerceEvent metadata:(NSDictionary*)metadata withCompletion:(void (^)(NSDictionary *, NSError *))completion {
@@ -1964,7 +1964,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 // There is a follow up ticket to improve this.  SDK-633
 - (void)initSafetyCheck {
     if (self.initializationStatus == BNCInitStatusUninitialized) {
-        BNCLogWarning(@"Branch avoided an error by preemptively initializing.");
+        BNCLogDebug(@"Branch avoided an error by preemptively initializing.");
         [self initUserSessionAndCallCallback:NO];
     }
 }
