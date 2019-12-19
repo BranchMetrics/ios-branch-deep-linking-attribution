@@ -79,7 +79,11 @@
     self.osName = [BNCSystemObserver getOS];
     self.osVersion = [BNCSystemObserver getOSVersion];
     self.osBuildVersion = deviceSystem.systemBuildVersion;
-    self.cpuType = deviceSystem.cpuType;
+    
+    if (deviceSystem.cpuType) {
+        self.cpuType = [deviceSystem.cpuType stringValue];
+    }
+    
     self.screenWidth = [BNCSystemObserver getScreenWidth];
     self.screenHeight = [BNCSystemObserver getScreenHeight];
     self.screenScale = @([UIScreen mainScreen].scale);
