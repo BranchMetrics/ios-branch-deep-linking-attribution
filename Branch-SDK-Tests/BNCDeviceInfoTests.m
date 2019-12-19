@@ -59,13 +59,13 @@
 }
 
 - (void)testCpuType_Simulator {
-    NSNumber *expected = @(7);
-    XCTAssert([expected isEqualToNumber:self.deviceInfo.cpuType]);
+    NSString *expected = @"7";
+    XCTAssert([expected isEqualToString:self.deviceInfo.cpuType]);
 }
 
 //- (void)testCpuType_iPhone7 {
-//    NSNumber *expected = @(16777228);
-//    XCTAssert([expected isEqualToNumber:self.deviceInfo.cpuType]);
+//    NSString *expected = @"16777228";
+//    XCTAssert([expected isEqualToString:self.deviceInfo.cpuType]);
 //}
 
 - (void)testScreenWidth {
