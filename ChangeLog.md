@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.31.2
+* _*Master Release*_ - Dec 18, 2019
+  * SDK-717 Critical fix for breaking server side change. 0.31.0 and 0.31.1 are affected.
+
 - v0.31.1
 * _*Master Release*_ - Dec 17, 2019
   * SDK-716 Fix first run issue with logEvent
