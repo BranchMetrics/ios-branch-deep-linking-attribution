@@ -1783,7 +1783,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (void)applicationDidBecomeActive {
     if (!Branch.trackingDisabled &&
         self.initializationStatus != BNCInitStatusInitialized &&
-        [self.requestQueue containsInstallOrOpen]) {
+        ![self.requestQueue containsInstallOrOpen]) {
         [self initUserSessionAndCallCallback:YES];
     }
 }
