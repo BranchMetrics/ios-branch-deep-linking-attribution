@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.31.3
+* _*Master Release*_ - Dec 30, 2019
+  * SDK-720 Critical fix regarding session initialization when app starts from background.
+
 - v0.31.2
 * _*Master Release*_ - Dec 18, 2019
   * SDK-717 Critical fix for breaking server side change. 0.31.0 and 0.31.1 are affected.
