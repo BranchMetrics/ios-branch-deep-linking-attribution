@@ -746,23 +746,6 @@ Note that this can add up to 10 seconds from call to initSession to callback due
 Branch.getInstance().delayInitToCheckForSearchAds
 ```
 
-##### `- (void) setAppleSearchAdsDebugMode`
-
-The `setAppleSearchAdsDebugMode` method sets the SDK into Apple Search Ad debug mode.  In this mode
-fake campaign params are returned 100% of the time.  This is for testing only.
-
-Warning: This should not be used in production.
-
-###### Objective-C
-```objc
-[[Branch getInstance] setAppleSearchAdsDebugMode];
-```
-
-###### Swift
-```swift
-Branch.getInstance().setAppleSearchAdsDebugMode
-```
-
 ### Enable or Disable User Tracking
 In order to comply with tracking requirements, you can disable tracking at the SDK level. Simply call:
 
