@@ -86,7 +86,12 @@ Presents a UIActivityViewController that shares the Branch link.
 ///The title for the share sheet.
 @property (nonatomic, strong) NSString*_Nullable title;
 
-///Share text for the item.
+// Override the default placeholder URL
+// iOS 13+ fetches a preview header icon, text and domain name from this URL.
+// By default, we use the Branch bnc.lt link, but if you wish more control override it here.
+@property (nonatomic, strong, nullable) NSURL *placeholderURL;
+
+///Share text for the item.  This is not the text in the iOS 13+ preview header.
 ///This text can be changed later when the `branchShareSheetWillShare:` delegate method is called.
 @property (nonatomic, strong) NSString*_Nullable shareText;
 
