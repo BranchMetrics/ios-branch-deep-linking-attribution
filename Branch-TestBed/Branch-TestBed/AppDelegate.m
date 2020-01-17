@@ -32,7 +32,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     
     // test pre init support
-//    [self testDispatchToIsolationQueue:branch]
+    //[self testDispatchToIsolationQueue:branch]
 
     // Comment out (for match guarantee testing) / or un-comment to toggle debugging:
     // Note: Unit tests will fail if 'setDebug' is set.
@@ -42,7 +42,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     //[branch validateSDKIntegration];
 
     // Check for Apple Search Ad attribution (trade-off: slows down app startup):
-    [branch delayInitToCheckForSearchAds];
+    //[branch delayInitToCheckForSearchAds];
 
     /*
      *    Required: Initialize Branch, passing a deep link handler block:
@@ -61,10 +61,10 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     return YES;
 }
 
-// pre init support is meant for extensions, for exmaple, when Adobe axtension needs to pass in Adobe IDs
+// pre init support is meant for extensions, for example, when Adobe axtension needs to pass in Adobe IDs
 // before init session is called. This method will block the queue used by open/install requests until the
 // the passsed in block completes
-- (void) testDispatchToIsolationQueue:(Branch*)branch {
+- (void)testDispatchToIsolationQueue:(Branch *)branch {
     [branch dispatchToIsolationQueue:^{
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)),
