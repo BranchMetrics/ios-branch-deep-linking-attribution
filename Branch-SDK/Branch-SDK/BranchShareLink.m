@@ -134,19 +134,29 @@ typedef NS_ENUM(NSInteger, BranchShareActivityItemType) {
         [_activityItems addObject:item];
     }
 
-    NSString *URLString =
-        [[Branch getInstance]
-            getLongURLWithParams:self.serverParameters
-            andChannel:self.linkProperties.channel
-            andTags:self.linkProperties.tags
-            andFeature:self.linkProperties.feature
-            andStage:self.linkProperties.stage
-            andAlias:self.linkProperties.alias];
-    self.shareURL = [[NSURL alloc] initWithString:URLString];
-    if (self.returnURL)
+    if (self.placeholderURL) {
+        // use user provided placeholder url
+        self.shareURL = self.placeholderURL;
+    } else {
+        
+        // use long link as the placeholder url
+        NSString *URLString =
+            [[Branch getInstance]
+                getLongURLWithParams:self.serverParameters
+                andChannel:self.linkProperties.channel
+                andTags:self.linkProperties.tags
+                andFeature:self.linkProperties.feature
+                andStage:self.linkProperties.stage
+                andAlias:self.linkProperties.alias];
+        self.shareURL = [[NSURL alloc] initWithString:URLString];
+    }
+    
+    if (self.returnURL) {
         item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareURL];
-    else
+    } else {
         item = [[BranchShareActivityItem alloc] initWithPlaceholderItem:self.shareURL.absoluteString];
+    }
+    
     item.itemType = BranchShareActivityItemTypeBranchURL;
     item.parent = self;
     [_activityItems addObject:item];
