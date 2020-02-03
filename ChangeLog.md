@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.31.4
+* _*Master Release*_ - Feb 3, 2020
+  * INTENG-8456 Sharesheet placeholder URL override.  Allows more customization of iOS 13 sharesheet preview header.
+
 - v0.31.3
 * _*Master Release*_ - Dec 30, 2019
   * SDK-720 Critical fix regarding session initialization when app starts from background.
