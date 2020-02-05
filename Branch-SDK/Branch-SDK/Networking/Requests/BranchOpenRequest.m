@@ -217,7 +217,11 @@ typedef NS_ENUM(NSInteger, BNCUpdateState) {
     else {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         NSString *link = sessionDataDict[BRANCH_RESPONSE_KEY_BRANCH_REFERRING_LINK];
-        if (link.length) referringURL = link;
+        if ([link isKindOfClass:[NSString class]]) {
+            if (link.length) {
+                referringURL = link;
+            }
+        }
     }
 
     // Clear link identifiers so they don't get reused on the next open
