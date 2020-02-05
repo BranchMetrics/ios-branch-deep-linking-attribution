@@ -778,19 +778,20 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
             NSDictionary *persistenceDict = nil;
             @try {
                 NSError *error = nil;
-                NSData *data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile
-                    options:0 error:&error];
-                if (!error && data)
+                NSData *data = [NSData dataWithContentsOfURL:self.class.URLForPrefsFile options:0 error:&error];
+                if (!error && data) {
                     persistenceDict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+                }
             }
             @catch (NSException*) {
                 BNCLogWarning(@"Failed to load preferences from storage.");
             }
 
-            if ([persistenceDict isKindOfClass:[NSDictionary class]])
+            if ([persistenceDict isKindOfClass:[NSDictionary class]]) {
                 _persistenceDict = [persistenceDict mutableCopy];
-            else
+            } else {
                 _persistenceDict = [[NSMutableDictionary alloc] init];
+            }
         }
         return _persistenceDict;
     }
@@ -806,16 +807,30 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 - (NSString *)readStringFromDefaults:(NSString *)key {
     @synchronized(self) {
         id str = self.persistenceDict[key];
+        
+        // protect against NSNumber
         if ([str isKindOfClass:[NSNumber class]]) {
             str = [str stringValue];
         }
+        
+        // protect against anything else
+        if (![str isKindOfClass:[NSString class]]) {
+            str = nil;
+        }
+        
         return str;
     }
 }
 
 - (BOOL)readBoolFromDefaults:(NSString *)key {
     @synchronized(self) {
-        BOOL boo = [self.persistenceDict[key] boolValue];
+        BOOL boo = NO;
+
+        NSNumber *boolean = self.persistenceDict[key];
+        if ([boolean respondsToSelector:@selector(boolValue)]) {
+            boo = [boolean boolValue];
+        }
+        
         return boo;
     }
 }
@@ -823,7 +838,7 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
 - (NSInteger)readIntegerFromDefaults:(NSString *)key {
     @synchronized(self) {
         NSNumber *number = self.persistenceDict[key];
-        if (number != nil) {
+        if (number != nil && [number respondsToSelector:@selector(integerValue)]) {
             return [number integerValue];
         }
         return NSNotFound;
