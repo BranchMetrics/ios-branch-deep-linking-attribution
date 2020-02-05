@@ -362,7 +362,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
     }
 
     NSDictionary *plainDecodedDictionary = [NSJSONSerialization JSONObjectWithData:tempData options:NSJSONReadingMutableContainers error:nil];
-    if (plainDecodedDictionary) {
+    if (plainDecodedDictionary && [plainDecodedDictionary isKindOfClass:[NSDictionary class]]) {
         return plainDecodedDictionary;
     }
 
@@ -374,7 +374,7 @@ NSString* BNCWireFormatFromString(NSString *string) {
     }
 
     NSDictionary *base64DecodedDictionary = [NSJSONSerialization JSONObjectWithData:tempData options:NSJSONReadingMutableContainers error:nil];
-    if (base64DecodedDictionary) {
+    if (base64DecodedDictionary && [base64DecodedDictionary isKindOfClass:[NSDictionary class]]) {
         return base64DecodedDictionary;
     }
 
