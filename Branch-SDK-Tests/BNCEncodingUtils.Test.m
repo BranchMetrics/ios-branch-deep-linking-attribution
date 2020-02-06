@@ -592,4 +592,11 @@
     XCTAssertEqualObjects(result, truth);
 }
 
+// Branch servers never return a json array at the top level.  However, our parser should enforce it.
+- (void)testArrayJSON {
+    NSString *test = @"[\"helloworld\"]";
+    NSDictionary *tmp = [BNCEncodingUtils decodeJsonStringToDictionary:test];
+    XCTAssert([tmp isKindOfClass:[NSDictionary class]]);
+}
+
 @end
