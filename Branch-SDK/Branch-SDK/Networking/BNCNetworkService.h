@@ -40,7 +40,5 @@
 - (BNCNetworkOperation*) networkOperationWithURLRequest:(NSMutableURLRequest*)request
                 completion:(void (^)(id<BNCNetworkOperationProtocol>operation))completion;
 
-- (NSError*) pinSessionToPublicSecKeyRefs:(NSArray/**<SecKeyRef>*/*)publicKeys;
-
 @property (strong) NSDictionary *userInfo;
 @end
