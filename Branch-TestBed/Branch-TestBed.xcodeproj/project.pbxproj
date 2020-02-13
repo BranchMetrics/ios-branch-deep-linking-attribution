@@ -159,6 +159,9 @@
 		54FF1F921BD1DC320004CE2E /* BranchLinkProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */; };
 		5F08461123480008005B17E6 /* BNCTuneUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F08460F23480008005B17E6 /* BNCTuneUtility.h */; };
 		5F08461223480008005B17E6 /* BNCTuneUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F08461023480008005B17E6 /* BNCTuneUtility.m */; };
+		5F0F01DD23F614CC00764114 /* BranchTvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F0F01D423F614CC00764114 /* BranchTvOS.framework */; };
+		5F0F01E223F614CC00764114 /* BranchTvOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F0F01E123F614CC00764114 /* BranchTvOSTests.m */; };
+		5F0F01E423F614CC00764114 /* BranchTvOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F0F01D623F614CC00764114 /* BranchTvOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F205D05231864E800C776D1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F205D04231864E800C776D1 /* WebKit.framework */; };
 		5F205D062318659500C776D1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F205D04231864E800C776D1 /* WebKit.framework */; };
 		5F205D0823186AF700C776D1 /* BNCUserAgentCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */; };
@@ -279,6 +282,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6700165F1940F51400A9E103;
 			remoteInfo = "Branch-TestBed";
+		};
+		5F0F01DE23F614CC00764114 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 670016581940F51400A9E103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5F0F01D323F614CC00764114;
+			remoteInfo = BranchTvOS;
 		};
 		5F8B7B4121B5F5CD009CE0A6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -445,6 +455,12 @@
 		54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLinkProperties.m; sourceTree = "<group>"; };
 		5F08460F23480008005B17E6 /* BNCTuneUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCTuneUtility.h; sourceTree = "<group>"; };
 		5F08461023480008005B17E6 /* BNCTuneUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCTuneUtility.m; sourceTree = "<group>"; };
+		5F0F01D423F614CC00764114 /* BranchTvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BranchTvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F0F01D623F614CC00764114 /* BranchTvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BranchTvOS.h; sourceTree = "<group>"; };
+		5F0F01D723F614CC00764114 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5F0F01DC23F614CC00764114 /* BranchTvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BranchTvOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F0F01E123F614CC00764114 /* BranchTvOSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchTvOSTests.m; sourceTree = "<group>"; };
+		5F0F01E323F614CC00764114 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCUserAgentCollectorTests.m; sourceTree = "<group>"; };
 		5F205D04231864E800C776D1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		5F3D6712232C589100454FF1 /* BranchLastAttributedTouchData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLastAttributedTouchData.m; sourceTree = "<group>"; };
@@ -590,6 +606,21 @@
 				466B58521B17776500A69EDE /* Foundation.framework in Frameworks */,
 				4D1851C120180F3300E48994 /* Security.framework in Frameworks */,
 				466B58531B17776A00A69EDE /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5F0F01D123F614CC00764114 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5F0F01D923F614CC00764114 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F0F01DD23F614CC00764114 /* BranchTvOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -777,6 +808,24 @@
 			path = "Branch-TestBed-UITests";
 			sourceTree = "<group>";
 		};
+		5F0F01D523F614CC00764114 /* BranchTvOS */ = {
+			isa = PBXGroup;
+			children = (
+				5F0F01D623F614CC00764114 /* BranchTvOS.h */,
+				5F0F01D723F614CC00764114 /* Info.plist */,
+			);
+			path = BranchTvOS;
+			sourceTree = "<group>";
+		};
+		5F0F01E023F614CC00764114 /* BranchTvOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				5F0F01E123F614CC00764114 /* BranchTvOSTests.m */,
+				5F0F01E323F614CC00764114 /* Info.plist */,
+			);
+			path = BranchTvOSTests;
+			sourceTree = "<group>";
+		};
 		5F3D671D2330638D00454FF1 /* cannedData */ = {
 			isa = PBXGroup;
 			children = (
@@ -819,6 +868,8 @@
 				5F8B7B3C21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests */,
 				670016691940F51400A9E103 /* Branch-TestBed */,
 				4D93D85E2098D43C00CFABA6 /* Branch-TestBed-UITests */,
+				5F0F01D523F614CC00764114 /* BranchTvOS */,
+				5F0F01E023F614CC00764114 /* BranchTvOSTests */,
 				670016621940F51400A9E103 /* Frameworks */,
 				670016611940F51400A9E103 /* Products */,
 				3139CE2E340910BAB529F78F /* Pods */,
@@ -833,6 +884,8 @@
 				466B58381B17773000A69EDE /* libBranch.a */,
 				F1D4F9AC1F323F01002D13FF /* Branch-TestBed-UITests.xctest */,
 				5F8B7B3B21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests.xctest */,
+				5F0F01D423F614CC00764114 /* BranchTvOS.framework */,
+				5F0F01DC23F614CC00764114 /* BranchTvOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1100,6 +1153,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5F0F01CF23F614CC00764114 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F0F01E423F614CC00764114 /* BranchTvOS.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -1119,6 +1180,42 @@
 			productName = Branch;
 			productReference = 466B58381B17773000A69EDE /* libBranch.a */;
 			productType = "com.apple.product-type.library.static";
+		};
+		5F0F01D323F614CC00764114 /* BranchTvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5F0F01E923F614CC00764114 /* Build configuration list for PBXNativeTarget "BranchTvOS" */;
+			buildPhases = (
+				5F0F01CF23F614CC00764114 /* Headers */,
+				5F0F01D023F614CC00764114 /* Sources */,
+				5F0F01D123F614CC00764114 /* Frameworks */,
+				5F0F01D223F614CC00764114 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BranchTvOS;
+			productName = BranchTvOS;
+			productReference = 5F0F01D423F614CC00764114 /* BranchTvOS.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		5F0F01DB23F614CC00764114 /* BranchTvOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5F0F01EA23F614CC00764114 /* Build configuration list for PBXNativeTarget "BranchTvOSTests" */;
+			buildPhases = (
+				5F0F01D823F614CC00764114 /* Sources */,
+				5F0F01D923F614CC00764114 /* Frameworks */,
+				5F0F01DA23F614CC00764114 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5F0F01DF23F614CC00764114 /* PBXTargetDependency */,
+			);
+			name = BranchTvOSTests;
+			productName = BranchTvOSTests;
+			productReference = 5F0F01DC23F614CC00764114 /* BranchTvOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		5F8B7B3A21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests */ = {
 			isa = PBXNativeTarget;
@@ -1202,11 +1299,22 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = BNC;
+				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = "Branch, Inc.";
 				TargetAttributes = {
 					466B58371B17773000A69EDE = {
 						CreatedOnToolsVersion = 6.3.2;
+					};
+					5F0F01D323F614CC00764114 = {
+						CreatedOnToolsVersion = 11.3.1;
+						DevelopmentTeam = R63EM248DP;
+						ProvisioningStyle = Automatic;
+					};
+					5F0F01DB23F614CC00764114 = {
+						CreatedOnToolsVersion = 11.3.1;
+						DevelopmentTeam = R63EM248DP;
+						ProvisioningStyle = Automatic;
 					};
 					5F8B7B3A21B5F5CD009CE0A6 = {
 						CreatedOnToolsVersion = 10.1;
@@ -1257,11 +1365,27 @@
 				7E6B3B501AA42D0E005F45BF /* Branch-SDK-Tests */,
 				5F8B7B3A21B5F5CD009CE0A6 /* Branch-SDK-Unhosted-Tests */,
 				F1D4F9AB1F323F01002D13FF /* Branch-TestBed-UITests */,
+				5F0F01D323F614CC00764114 /* BranchTvOS */,
+				5F0F01DB23F614CC00764114 /* BranchTvOSTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5F0F01D223F614CC00764114 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5F0F01DA23F614CC00764114 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5F8B7B3921B5F5CD009CE0A6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1412,6 +1536,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5F0F01D023F614CC00764114 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5F0F01D823F614CC00764114 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F0F01E223F614CC00764114 /* BranchTvOSTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5F8B7B3721B5F5CD009CE0A6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1521,6 +1660,11 @@
 			target = 6700165F1940F51400A9E103 /* Branch-TestBed */;
 			targetProxy = 4D337DDC201019B8009A5774 /* PBXContainerItemProxy */;
 		};
+		5F0F01DF23F614CC00764114 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5F0F01D323F614CC00764114 /* BranchTvOS */;
+			targetProxy = 5F0F01DE23F614CC00764114 /* PBXContainerItemProxy */;
+		};
 		5F8B7B4221B5F5CD009CE0A6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 466B58371B17773000A69EDE /* Branch */;
@@ -1581,6 +1725,118 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = /headers;
 				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		5F0F01E523F614CC00764114 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = R63EM248DP;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = BranchTvOS/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchTvOS;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 13.2;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		5F0F01E623F614CC00764114 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = R63EM248DP;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = BranchTvOS/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchTvOS;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 13.2;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		5F0F01E723F614CC00764114 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = R63EM248DP;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = BranchTvOSTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchTvOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 13.2;
+			};
+			name = Debug;
+		};
+		5F0F01E823F614CC00764114 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = R63EM248DP;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = BranchTvOSTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = io.branch.BranchTvOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 13.2;
 			};
 			name = Release;
 		};
@@ -1881,6 +2137,24 @@
 			buildConfigurations = (
 				466B58491B17773000A69EDE /* Debug */,
 				466B584A1B17773000A69EDE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5F0F01E923F614CC00764114 /* Build configuration list for PBXNativeTarget "BranchTvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F0F01E523F614CC00764114 /* Debug */,
+				5F0F01E623F614CC00764114 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5F0F01EA23F614CC00764114 /* Build configuration list for PBXNativeTarget "BranchTvOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F0F01E723F614CC00764114 /* Debug */,
+				5F0F01E823F614CC00764114 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
