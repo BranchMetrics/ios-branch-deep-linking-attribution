@@ -12,7 +12,6 @@
 #import "BNCLog.h"
 #import "BNCConfig.h"
 #import "BNCNetworkInterface.h"
-#import "BNCUserAgentCollector.h"
 #import "BNCReachability.h"
 #import "BNCLocale.h"
 #import "NSMutableDictionary+Branch.h"
@@ -20,6 +19,7 @@
 
 #if !TARGET_OS_TV
 #import "BNCTelephony.h"
+#import "BNCUserAgentCollector.h"
 #endif
 
 #if __has_feature(modules)
@@ -124,7 +124,12 @@
 }
 
 - (NSString *)userAgentString {
+    #if !TARGET_OS_TV
     return [BNCUserAgentCollector instance].userAgent;
+    #else
+    // tvOS has not web browser or webview
+    return @"";
+    #endif
 }
 
 // IDFA should never be cached
@@ -185,8 +190,11 @@
         [dictionary bnc_safeSetObject:self.language forKey:@"language"];
         [dictionary bnc_safeSetObject:self.carrierName forKey:@"device_carrier"];
         [dictionary bnc_safeSetObject:[self connectionType] forKey:@"connection_type"];
+        
+        #if !TARGET_OS_TV
         [dictionary bnc_safeSetObject:[BNCUserAgentCollector instance].userAgent forKey:@"user_agent"];
-
+        #endif
+        
         [dictionary bnc_safeSetObject:[BNCPreferenceHelper preferenceHelper].userIdentity forKey:@"developer_identity"];
         [dictionary bnc_safeSetObject:[BNCPreferenceHelper preferenceHelper].deviceFingerprintID forKey:@"device_fingerprint_id"];
         

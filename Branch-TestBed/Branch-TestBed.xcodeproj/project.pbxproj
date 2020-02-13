@@ -199,8 +199,6 @@
 		5F0F020D23F614F400764114 /* BNCReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B23023834AFD00CA909B /* BNCReachability.m */; };
 		5F0F021023F614F400764114 /* BNCLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F92B2372383703700CA909B /* BNCLocale.h */; };
 		5F0F021123F614F400764114 /* BNCLocale.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B2382383703700CA909B /* BNCLocale.m */; };
-		5F0F021223F614F400764114 /* BNCUserAgentCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB0AA69231875B400A0F9EA /* BNCUserAgentCollector.h */; };
-		5F0F021323F614F400764114 /* BNCUserAgentCollector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB0AA6A231875B500A0F9EA /* BNCUserAgentCollector.m */; };
 		5F0F021423F614F400764114 /* BNCEncodingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 464EA3991ACB38EC000E4094 /* BNCEncodingUtils.h */; };
 		5F0F021523F614F400764114 /* BNCEncodingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 464EA39A1ACB38EC000E4094 /* BNCEncodingUtils.m */; };
 		5F0F021623F614F400764114 /* BNCFieldDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DE649191FE1D7F500226507 /* BNCFieldDefines.h */; };
@@ -1374,7 +1372,6 @@
 				5F0F026523F6150900764114 /* BranchShortUrlRequest.h in Headers */,
 				5F0F024A23F6150300764114 /* BNCNetworkServiceProtocol.h in Headers */,
 				5F0F023523F614F900764114 /* BranchContentPathProperties.h in Headers */,
-				5F0F021223F614F400764114 /* BNCUserAgentCollector.h in Headers */,
 				5F0F025323F6150900764114 /* BranchCloseRequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1797,7 +1794,6 @@
 				5F0F026823F6150900764114 /* BranchShortUrlSyncRequest.m in Sources */,
 				5F0F024C23F6150300764114 /* BNCServerInterface.m in Sources */,
 				5F0F020323F614F400764114 /* BNCDeepLinkViewControllerInstance.m in Sources */,
-				5F0F021323F614F400764114 /* BNCUserAgentCollector.m in Sources */,
 				5F0F022E23F614F400764114 /* BranchActivityItemProvider.m in Sources */,
 				5F0F025223F6150300764114 /* BNCServerResponse.m in Sources */,
 				5F0F01FD23F614F400764114 /* BNCContentDiscoveryManager.m in Sources */,
