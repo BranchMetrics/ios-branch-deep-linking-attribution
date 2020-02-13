@@ -197,8 +197,6 @@
 		5F0F020B23F614F400764114 /* BNCNetworkInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B23E238486E200CA909B /* BNCNetworkInterface.m */; };
 		5F0F020C23F614F400764114 /* BNCReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F92B22F23834AFD00CA909B /* BNCReachability.h */; };
 		5F0F020D23F614F400764114 /* BNCReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B23023834AFD00CA909B /* BNCReachability.m */; };
-		5F0F020E23F614F400764114 /* BNCTelephony.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F437E33237DDF770052064B /* BNCTelephony.h */; };
-		5F0F020F23F614F400764114 /* BNCTelephony.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F437E34237DDF770052064B /* BNCTelephony.m */; };
 		5F0F021023F614F400764114 /* BNCLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F92B2372383703700CA909B /* BNCLocale.h */; };
 		5F0F021123F614F400764114 /* BNCLocale.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F92B2382383703700CA909B /* BNCLocale.m */; };
 		5F0F021223F614F400764114 /* BNCUserAgentCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FB0AA69231875B400A0F9EA /* BNCUserAgentCollector.h */; };
@@ -1372,7 +1370,6 @@
 				5F0F020A23F614F400764114 /* BNCNetworkInterface.h in Headers */,
 				5F0F026923F6150900764114 /* BranchSpotlightUrlRequest.h in Headers */,
 				5F0F022123F614F400764114 /* BNCPreferenceHelper.h in Headers */,
-				5F0F020E23F614F400764114 /* BNCTelephony.h in Headers */,
 				5F0F027123F6150E00764114 /* BNCJSONUtility.h in Headers */,
 				5F0F026523F6150900764114 /* BranchShortUrlRequest.h in Headers */,
 				5F0F024A23F6150300764114 /* BNCNetworkServiceProtocol.h in Headers */,
@@ -1827,7 +1824,6 @@
 				5F0F022823F614F400764114 /* BNCURLBlackList.m in Sources */,
 				5F0F020B23F614F400764114 /* BNCNetworkInterface.m in Sources */,
 				5F0F025423F6150900764114 /* BranchCloseRequest.m in Sources */,
-				5F0F020F23F614F400764114 /* BNCTelephony.m in Sources */,
 				5F0F022623F614F400764114 /* BNCThreads.m in Sources */,
 				5F0F026223F6150900764114 /* BranchRegisterViewRequest.m in Sources */,
 				5F0F01FB23F614F400764114 /* BNCConfig.m in Sources */,
