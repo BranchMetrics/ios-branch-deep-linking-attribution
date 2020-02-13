@@ -13,7 +13,10 @@
 #import "BNCLocalization.h"
 #import "BNCEncodingUtils.h"
 #import "Branch.h"
+
+#if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
+#endif
 
 #pragma mark BranchContentSchema
 
@@ -369,7 +372,11 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
     }
     
     // user agent should be cached on startup
-    NSString *UAString = [BNCUserAgentCollector instance].userAgent;
+    NSString *UAString = nil;
+    #if !TARGET_OS_TV
+    UAString = [BNCUserAgentCollector instance].userAgent;
+    #endif
+    
     return [[Branch getInstance] getShortURLWithParams:[self getParamsForServerRequestWithAddedLinkProperties:linkProperties]
                                         andTags:linkProperties.tags
                                      andChannel:linkProperties.channel

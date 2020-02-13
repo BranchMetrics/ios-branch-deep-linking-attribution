@@ -39,10 +39,13 @@
 #import "BNCSpotlightService.h"
 #import "BNCApplication.h"
 #import "BNCURLBlackList.h"
-#import "BNCUserAgentCollector.h"
 #import "BNCAppleSearchAds.h"
 #import "BNCFacebookAppLinks.h"
 #import "BNCDeviceInfo.h"
+
+#if !TARGET_OS_TV
+#import "BNCUserAgentCollector.h"
+#endif
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";
@@ -870,6 +873,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 #pragma mark - async data collection
 
 - (void)loadUserAgent {
+    #if !TARGET_OS_TV
     dispatch_async(self.isolationQueue, ^(){
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         [[BNCUserAgentCollector instance] loadUserAgentWithCompletion:^(NSString * _Nullable userAgent) {
@@ -877,6 +881,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         }];
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     });
+    #endif
 }
 
 - (void)loadApplicationData {
