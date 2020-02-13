@@ -13,11 +13,14 @@
 #import "BNCConfig.h"
 #import "BNCNetworkInterface.h"
 #import "BNCUserAgentCollector.h"
-#import "BNCTelephony.h"
 #import "BNCReachability.h"
 #import "BNCLocale.h"
 #import "NSMutableDictionary+Branch.h"
 #import "BNCDeviceSystem.h"
+
+#if !TARGET_OS_TV
+#import "BNCTelephony.h"
+#endif
 
 #if __has_feature(modules)
 @import UIKit;
@@ -64,7 +67,6 @@
 - (void)loadDeviceInfo {
     
     BNCLocale *locale = [BNCLocale new];
-    BNCTelephony *telephony = [BNCTelephony new];
     BNCDeviceSystem *deviceSystem = [BNCDeviceSystem new];
     
     self.reachability = [BNCReachability new];
@@ -87,7 +89,11 @@
     self.screenWidth = [BNCSystemObserver getScreenWidth];
     self.screenHeight = [BNCSystemObserver getScreenHeight];
     self.screenScale = @([UIScreen mainScreen].scale);
+    
+    #if !TARGET_OS_TV
+    BNCTelephony *telephony = [BNCTelephony new];
     self.carrierName = telephony.carrierName;
+    #endif
     
     self.locale = [NSLocale currentLocale].localeIdentifier;
     self.country = [locale country];
