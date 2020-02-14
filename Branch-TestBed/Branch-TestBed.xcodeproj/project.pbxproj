@@ -164,10 +164,6 @@
 		5F0F01E423F614CC00764114 /* BranchTvOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F0F01D623F614CC00764114 /* BranchTvOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F0F01EB23F614F400764114 /* BNCFacebookAppLinks.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F892ED7236258390023AEC1 /* BNCFacebookAppLinks.h */; };
 		5F0F01EC23F614F400764114 /* BNCFacebookAppLinks.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892ED6236258390023AEC1 /* BNCFacebookAppLinks.m */; };
-		5F0F01ED23F614F400764114 /* BNCAppleAdClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F5EC4592374D95300AAAFC7 /* BNCAppleAdClient.h */; };
-		5F0F01EE23F614F400764114 /* BNCAppleAdClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5EC45A2374D95300AAAFC7 /* BNCAppleAdClient.m */; };
-		5F0F01EF23F614F400764114 /* BNCAppleSearchAds.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F892EB72360EFE90023AEC1 /* BNCAppleSearchAds.h */; };
-		5F0F01F023F614F400764114 /* BNCAppleSearchAds.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F892EB62360EFE90023AEC1 /* BNCAppleSearchAds.m */; };
 		5F0F01F123F614F400764114 /* BNCAppleReceipt.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FC7326622D81002006E6FBC /* BNCAppleReceipt.h */; };
 		5F0F01F223F614F400764114 /* BNCAppleReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC7326722D81002006E6FBC /* BNCAppleReceipt.m */; };
 		5F0F01F323F614F400764114 /* BNCApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D59B51B2006979B00F89FD5 /* BNCApplication.h */; };
@@ -1308,7 +1304,6 @@
 				5F0F023723F614FD00764114 /* BranchCSSearchableItemAttributeSet.h in Headers */,
 				5F0F025F23F6150900764114 /* BranchRedeemRewardsRequest.h in Headers */,
 				5F0F024F23F6150300764114 /* BNCServerRequestQueue.h in Headers */,
-				5F0F01EF23F614F400764114 /* BNCAppleSearchAds.h in Headers */,
 				5F0F027523F6150E00764114 /* NSMutableDictionary+Branch.h in Headers */,
 				5F0F025123F6150300764114 /* BNCServerResponse.h in Headers */,
 				5F0F025B23F6150900764114 /* BranchLogoutRequest.h in Headers */,
@@ -1316,7 +1311,6 @@
 				5F0F01EB23F614F400764114 /* BNCFacebookAppLinks.h in Headers */,
 				5F0F024423F614FD00764114 /* BranchCrossPlatformID.h in Headers */,
 				5F0F020223F614F400764114 /* BNCDeepLinkViewControllerInstance.h in Headers */,
-				5F0F01ED23F614F400764114 /* BNCAppleAdClient.h in Headers */,
 				5F0F021623F614F400764114 /* BNCFieldDefines.h in Headers */,
 				5F0F023123F614F900764114 /* BranchContentDiscoverer.h in Headers */,
 				5F0F026F23F6150900764114 /* BranchLATDRequest.h in Headers */,
@@ -1765,7 +1759,6 @@
 				5F0F026E23F6150900764114 /* BranchCPIDRequest.m in Sources */,
 				5F0F01F623F614F400764114 /* BNCAvailability.m in Sources */,
 				5F0F024523F614FD00764114 /* BranchCrossPlatformID.m in Sources */,
-				5F0F01F023F614F400764114 /* BNCAppleSearchAds.m in Sources */,
 				5F0F021C23F614F400764114 /* BNCLinkData.m in Sources */,
 				5F0F021823F614F400764114 /* BNCKeyChain.m in Sources */,
 				5F0F026423F6150900764114 /* BranchSetIdentityRequest.m in Sources */,
@@ -1797,7 +1790,6 @@
 				5F0F022E23F614F400764114 /* BranchActivityItemProvider.m in Sources */,
 				5F0F025223F6150300764114 /* BNCServerResponse.m in Sources */,
 				5F0F01FD23F614F400764114 /* BNCContentDiscoveryManager.m in Sources */,
-				5F0F01EE23F614F400764114 /* BNCAppleAdClient.m in Sources */,
 				5F0F026C23F6150900764114 /* BranchUserCompletedActionRequest.m in Sources */,
 				5F0F023423F614F900764114 /* BranchContentDiscoveryManifest.m in Sources */,
 				5F0F027223F6150E00764114 /* BNCJSONUtility.m in Sources */,

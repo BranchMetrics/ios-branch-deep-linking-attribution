@@ -39,12 +39,12 @@
 #import "BNCSpotlightService.h"
 #import "BNCApplication.h"
 #import "BNCURLBlackList.h"
-#import "BNCAppleSearchAds.h"
 #import "BNCFacebookAppLinks.h"
 #import "BNCDeviceInfo.h"
 
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
+#import "BNCAppleSearchAds.h"
 #endif
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -897,18 +897,25 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 #pragma mark - Apple Search Ad Check
 
 - (void)delayInitToCheckForSearchAds {
+    #if !TARGET_OS_TV
     [BNCAppleSearchAds sharedInstance].enableAppleSearchAdsCheck = YES;
+    #endif
 }
 
 - (void)useLongerWaitForAppleSearchAds {
+    #if !TARGET_OS_TV
     [[BNCAppleSearchAds sharedInstance] useLongWaitAppleSearchAdsConfig];
+    #endif
 }
 
 - (void)ignoreAppleSearchAdsTestData {
+    #if !TARGET_OS_TV
     [BNCAppleSearchAds sharedInstance].ignoreAppleTestData = YES;
+    #endif
 }
 
 - (void)checkAppleSearchAdsAttribution {
+    #if !TARGET_OS_TV
     if (![BNCAppleSearchAds sharedInstance].enableAppleSearchAdsCheck) {
         return;
     }
@@ -920,6 +927,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         }];
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     });
+    #endif
 }
 
 #pragma mark - Pre-initialization support
