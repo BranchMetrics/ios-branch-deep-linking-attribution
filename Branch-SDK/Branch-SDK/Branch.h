@@ -8,10 +8,8 @@
 
 #if __has_feature(modules)
 @import Foundation;
-@import UIKit;
 #else
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 #endif
 
 #import "BNCCallbacks.h"
@@ -25,18 +23,21 @@
 #import "BNCServerInterface.h"
 #import "BNCServerRequestQueue.h"
 #import "BNCAvailability.h"
-#import "BranchActivityItemProvider.h"
 #import "BranchConstants.h"
-#import "BranchCSSearchableItemAttributeSet.h"
 #import "BranchDeepLinkingController.h"
 #import "BranchEvent.h"
 #import "BranchLinkProperties.h"
 #import "BranchDelegate.h"
-#import "BranchShareLink.h"
 #import "BranchUniversalObject.h"
 #import "BranchCrossPlatformID.h"
 #import "BranchLastAttributedTouchData.h"
 #import "UIViewController+Branch.h"
+
+#if !TARGET_OS_TV
+#import "BranchShareLink.h"
+#import "BranchActivityItemProvider.h"
+#import "BranchCSSearchableItemAttributeSet.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -275,7 +276,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 @property (weak, nullable) NSObject<BranchDelegate>* delegate;
 
 #pragma mark - BranchActivityItemProvider methods
-
+#if !TARGET_OS_TV
 ///-----------------------------------------
 /// @name BranchActivityItemProvider methods
 ///-----------------------------------------
@@ -364,7 +365,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params feature:(nullable NSString *)feature stage:(nullable NSString *)stage tags:(nullable NSArray *)tags alias:(nullable NSString *)alias delegate:(nullable id <BranchActivityItemProviderDelegate>)delegate;
 
-
+#endif
 
 #pragma mark - Initialization methods
 
@@ -1428,6 +1429,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback;
 
 #pragma mark - Content Discovery methods
+#if !TARGET_OS_TV
 
 ///--------------------------------
 /// @name Content Discovery methods
@@ -1680,6 +1682,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  @warning These functions are only usable on iOS 9 or above. Earlier versions will simply receive the callback with an error.
  */
 - (void)removeAllPrivateContentFromSpotLightWithCallback:(void (^_Nullable)(NSError * _Nullable error))completion;
+
+#endif
 
 /**
  Method for creating a one of Branch instance and specifying its dependencies.

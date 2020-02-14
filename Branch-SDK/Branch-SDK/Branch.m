@@ -7,7 +7,6 @@
 //
 
 #import "Branch.h"
-#import "BNCContentDiscoveryManager.h"
 #import "BNCCrashlyticsWrapper.h"
 #import "BNCDeepLinkViewControllerInstance.h"
 #import "BNCEncodingUtils.h"
@@ -36,7 +35,6 @@
 #import "NSMutableDictionary+Branch.h"
 #import "NSString+Branch.h"
 #import "Branch+Validator.h"
-#import "BNCSpotlightService.h"
 #import "BNCApplication.h"
 #import "BNCURLBlackList.h"
 #import "BNCFacebookAppLinks.h"
@@ -45,6 +43,8 @@
 #if !TARGET_OS_TV
 #import "BNCUserAgentCollector.h"
 #import "BNCAppleSearchAds.h"
+#import "BNCSpotlightService.h"
+#import "BNCContentDiscoveryManager.h"
 #endif
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
@@ -132,12 +132,15 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (assign, nonatomic) BOOL shouldAutomaticallyDeepLink;
 @property (strong, nonatomic) BNCLinkCache *linkCache;
 @property (strong, nonatomic) BNCPreferenceHelper *preferenceHelper;
-@property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
 @property (strong, nonatomic) NSMutableDictionary *deepLinkControllers;
 @property (weak,   nonatomic) UIViewController *deepLinkPresentingController;
 @property (strong, nonatomic) NSDictionary *deepLinkDebugParams;
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
 @property (strong, nonatomic) BNCURLBlackList *URLBlackList;
+
+#if !TARGET_OS_TV
+@property (strong, nonatomic) BNCContentDiscoveryManager *contentDiscoveryManager;
+#endif
 
 @end
 
@@ -238,12 +241,16 @@ void BranchClassInitializeLog(void) {
     _requestQueue = queue;
     _linkCache = cache;
     _preferenceHelper = preferenceHelper;
-    _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
     _initializationStatus = BNCInitStatusUninitialized;
     _processing_sema = dispatch_semaphore_create(1);
     _networkCount = 0;
     _deepLinkControllers = [[NSMutableDictionary alloc] init];
     _whiteListedSchemeList = [[NSMutableArray alloc] init];
+    
+    #if !TARGET_OS_TV
+    _contentDiscoveryManager = [[BNCContentDiscoveryManager alloc] init];
+    #endif
+    
     self.class.branchKey = key;
     self.URLBlackList = [BNCURLBlackList new];
     
@@ -297,6 +304,7 @@ static Class bnc_networkServiceClass = NULL;
 }
 
 #pragma mark - BrachActivityItemProvider methods
+#if !TARGET_OS_TV
 
 + (BranchActivityItemProvider *)getBranchActivityItemWithParams:(NSDictionary *)params {
     return [[BranchActivityItemProvider alloc] initWithParams:params tags:nil feature:nil stage:nil campaign:nil alias:nil delegate:nil];
@@ -326,6 +334,7 @@ static Class bnc_networkServiceClass = NULL;
     return [[BranchActivityItemProvider alloc] initWithParams:params tags:tags feature:feature stage:stage campaign:nil alias:alias delegate:delegate];
 }
 
+#endif
 
 #pragma mark - Configuration methods
 
@@ -804,8 +813,11 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         return [self handleDeepLink:userActivity.webpageURL];
     }
 
+    NSString *spotlightIdentifier = nil;
+    
+    #if !TARGET_OS_TV
     // Check to see if a spotlight activity needs to be handled
-    NSString *spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
+    spotlightIdentifier = [self.contentDiscoveryManager spotlightIdentifierFromActivity:userActivity];
     NSURL *webURL = userActivity.webpageURL;
 
     if ([self isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
@@ -820,6 +832,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             self.preferenceHelper.spotlightIdentifier = nonBranchSpotlightIdentifier;
         }
     }
+    #endif
 
     [self initUserSessionAndCallCallback:YES];
 
@@ -1390,6 +1403,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 #pragma mark - Discoverable content methods
+#if !TARGET_OS_TV
 
 - (void)createDiscoverableContentWithTitle:(NSString *)title description:(NSString *)description {
     [self.contentDiscoveryManager indexContentWithTitle:title description:description];
@@ -1533,6 +1547,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         completion(error);
     }];
 }
+#endif
 
 #pragma mark - Private methods
 
