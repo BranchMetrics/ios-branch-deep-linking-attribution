@@ -616,6 +616,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
 
     // Save data from push notification on app launch
+    #if !TARGET_OS_TV
     if ([options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
         id branchUrlFromPush = [options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey][BRANCH_PUSH_NOTIFICATION_PAYLOAD_KEY];
         if ([branchUrlFromPush isKindOfClass:[NSString class]]) {
@@ -623,6 +624,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             self.preferenceHelper.referringURL = branchUrlFromPush;
         }
     }
+    #endif
     
     // Handle case where there's no URI scheme or Universal Link.
     if (![options.allKeys containsObject:UIApplicationLaunchOptionsURLKey] && ![options.allKeys containsObject:UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
