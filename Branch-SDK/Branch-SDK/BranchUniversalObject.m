@@ -296,9 +296,13 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         if (callback) callback([[NSDictionary alloc] init], error);
         return;
     }
+    
+    #if !TARGET_OS_TV
     if (self.locallyIndex) {
         [self listOnSpotlight];
     }
+    #endif
+    
     [[BranchEvent standardEvent:BranchStandardEventViewItem withContentItem:self] logEvent];
     if (callback) callback(@{}, nil);
 }
@@ -320,8 +324,11 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         actionPayload[self.canonicalIdentifier] = linkParams;
         if (state) [actionPayload addEntriesFromDictionary:state];
 
-        if ([action isEqualToString:BNCRegisterViewEvent])
+        #if !TARGET_OS_TV
+        if ([action isEqualToString:BNCRegisterViewEvent]) {
             [self listOnSpotlight];
+        }
+        #endif
     }
 }
 
@@ -405,6 +412,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
 }
 
 #pragma mark - Share Sheets
+#if !TARGET_OS_TV
 
 - (UIActivityItemProvider *)getBranchActivityItemWithLinkProperties:(BranchLinkProperties *)linkProperties {
     if (!self.canonicalIdentifier && !self.canonicalUrl && !self.title) {
@@ -616,6 +624,7 @@ BranchCondition _Nonnull BranchConditionRefurbished   = @"REFURBISHED";
         if (completion) completion(error);
     }
 }
+#endif
 
 #pragma mark - Dictionary Methods
 
