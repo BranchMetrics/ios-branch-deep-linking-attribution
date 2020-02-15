@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Branch"
-  s.version          = "0.32.0"
+  s.version          = "0.31.4"
   s.summary          = "Create an HTTP URL for any piece of content in your app"
   s.description      = <<-DESC
 - Want the highest possible conversions on your sharing feature?
@@ -16,23 +16,18 @@ Use the Branch SDK (branch.io) to create and power the links that point back to 
   s.license          = 'Proprietary'
   s.author           = { "Branch" => "support@branch.io" }
   s.source           = { git: "https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK.git", tag: s.version.to_s }
-  
-  s.ios.deployment_target = '8.0'
-  s.tvos.deployment_target = '9.0'
+  s.platform         = :ios, '8.0'
+  s.requires_arc     = true
 
-  s.ios.source_files = "Branch-SDK/Branch-SDK/*.{h,m}", "Branch-SDK/Branch-SDK/Networking/*.{h,m}", "Branch-SDK/Branch-SDK/Networking/Requests/*.{h,m}"
+  source_files =
+    "Branch-SDK/Branch-SDK/*.{h,m}",
+    "Branch-SDK/Branch-SDK/Networking/*.{h,m}",
+    "Branch-SDK/Branch-SDK/Networking/Requests/*.{h,m}",
+  s.default_subspec = 'Core'
 
-  s.tvos.source_files = "Branch-SDK/Branch-SDK/*.{h,m}","Branch-SDK/Branch-SDK/Networking/*.{h,m}","Branch-SDK/Branch-SDK/Networking/Requests/*.{h,m}"
-  s.tvos.exclude_files = "Branch-SDK/Branch-SDK/BNCAdClient.{h,m}",
-	"Branch-SDK/Branch-SDK/BNCAppleSearchAds.{h,m}",
-	"Branch-SDK/Branch-SDK/BNCContentDiscoveryManager.{h,m}",
-	"Branch-SDK/Branch-SDK/BNCTelephony.{h,m}",
-	"Branch-SDK/Branch-SDK/BNCUserAgentCollector.{h,m}",
-	"Branch-SDK/Branch-SDK/BNCSpotlightService.{h,m}",
-	"Branch-SDK/Branch-SDK/BranchActivityItemProvider.{h,m}",
-	"Branch-SDK/Branch-SDK/BranchCSSearchableItemAttributeSet.{h,m}",
-	"Branch-SDK/Branch-SDK/BranchShareLink.{h,m}"
+  s.subspec 'Core' do |core|
+    core.source_files = source_files
+    core.frameworks = 'AdSupport', 'MobileCoreServices', 'WebKit', 'iAd', 'SystemConfiguration', 'CoreTelephony'
+  end
 
-  s.frameworks = 'AdSupport', 'MobileCoreServices', 'SystemConfiguration'
-  s.ios.frameworks = 'WebKit', 'iAd', 'CoreTelephony'
 end
