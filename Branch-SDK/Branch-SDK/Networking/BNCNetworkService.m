@@ -28,7 +28,7 @@
 
 #pragma mark - BNCNetworkService
 
-@interface BNCNetworkService () <NSURLSessionDelegate, NSURLSessionTaskDelegate> {
+@interface BNCNetworkService () {
     NSURLSession    *_session;
     NSTimeInterval  _defaultTimeoutInterval;
     NSInteger       _maximumConcurrentOperations;
