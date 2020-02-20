@@ -42,7 +42,7 @@ extern NSString* BNCWireFormatFromString(NSString *string);
 + (NSString *)base64EncodeData:(NSData *)objData;
 + (NSData *)base64DecodeString:(NSString *)strBase64;
 
-+ (NSString *)md5Encode:(NSString *)input;
++ (NSString *)sha256Encode:(NSString *)input;
 
 + (NSString *)urlEncodedString:(NSString *)string;
 + (NSString *)encodeArrayToJsonString:(NSArray *)dictionary;
