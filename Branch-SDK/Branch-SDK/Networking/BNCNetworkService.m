@@ -11,7 +11,6 @@
 #import "BNCLog.h"
 #import "BNCDebug.h"
 #import "NSError+Branch.h"
-#import "BNCConfig.h"
 
 #pragma mark BNCNetworkOperation
 
@@ -29,11 +28,10 @@
 
 #pragma mark - BNCNetworkService
 
-@interface BNCNetworkService () <NSURLSessionDelegate, NSURLSessionTaskDelegate> {
+@interface BNCNetworkService () {
     NSURLSession    *_session;
     NSTimeInterval  _defaultTimeoutInterval;
     NSInteger       _maximumConcurrentOperations;
-    NSMutableArray  *_pinnedPublicKeys;
 }
 
 - (void) startOperation:(BNCNetworkOperation*)operation;
@@ -88,26 +86,6 @@
 }
 
 #pragma mark - Getters & Setters
-
-- (NSError*) pinSessionToPublicSecKeyRefs:(NSArray/**<SecKeyRef>*/*)publicKeys {
-    @synchronized (self) {
-        _pinnedPublicKeys = [NSMutableArray array];
-        for (id secKey in publicKeys) {
-            if (CFGetTypeID((SecKeyRef)secKey) == SecKeyGetTypeID())
-                [_pinnedPublicKeys addObject:secKey];
-            else {
-                return [NSError branchErrorWithCode:BNCInvalidNetworkPublicKeyError];
-            }
-        }
-        return nil;
-    }
-}
-
-- (NSArray*) pinnedPublicKeys {
-    @synchronized (self) {
-        return _pinnedPublicKeys;
-    }
-}
 
 - (void) setDefaultTimeoutInterval:(NSTimeInterval)defaultTimeoutInterval {
     @synchronized (self) {
@@ -237,72 +215,6 @@
     @synchronized (self) {
         [self.session invalidateAndCancel];
         _session = nil;
-    }
-}
-
-- (void) URLSession:(NSURLSession *)session
-               task:(NSURLSessionTask *)task
-didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
-  completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler {
-
-    BOOL trusted = NO;
-    SecTrustResultType trustResult = 0;
-    OSStatus err = 0;
-    NSArray *localPinnedKeys = self.pinnedPublicKeys; // Keep a local copy in case it mutates.
-
-    // Release these:
-    SecKeyRef key = nil;
-    SecPolicyRef hostPolicy = nil;
-
-    // Get remote certificate
-    SecTrustRef serverTrust = challenge.protectionSpace.serverTrust;
-    @synchronized ((__bridge id<NSObject, OS_dispatch_semaphore>)serverTrust) {
-
-        // Set SSL policies for domain name check
-        hostPolicy = SecPolicyCreateSSL(true, (__bridge CFStringRef)challenge.protectionSpace.host);
-        if (!hostPolicy) goto exit;
-        SecTrustSetPolicies(serverTrust, (__bridge CFTypeRef _Nonnull)(@[ (__bridge id)hostPolicy ]));
-
-        // Evaluate server certificate
-        SecTrustEvaluate(serverTrust, &trustResult);
-        if (! (trustResult == kSecTrustResultUnspecified || trustResult == kSecTrustResultProceed)) {
-            goto exit;
-        }
-
-        if (localPinnedKeys.count == 0) {
-            trusted = YES;
-            goto exit;
-        }
-
-        key = SecTrustCopyPublicKey(serverTrust);
-        if (!key) goto exit;
-    }
-
-    for (id<NSObject> pinnedKey in localPinnedKeys) {
-        if ([pinnedKey isEqual:(__bridge id<NSObject>)key]) {
-            trusted = YES;
-            goto exit;
-        }
-    }
-
-    if (!BNC_API_PINNED) {
-        trusted = YES;
-        goto exit;
-    }
-
-exit:
-    if (err) {
-        NSError *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:err userInfo:nil];
-        BNCLogError(@"Error while validating cert: %@.", error);
-    }
-    if (key) CFRelease(key);
-    if (hostPolicy) CFRelease(hostPolicy);
-
-    if (trusted) {
-        NSURLCredential *credential = [NSURLCredential credentialForTrust:serverTrust];
-        completionHandler(NSURLSessionAuthChallengeUseCredential, credential);
-    } else {
-        completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, NULL);
     }
 }
 
