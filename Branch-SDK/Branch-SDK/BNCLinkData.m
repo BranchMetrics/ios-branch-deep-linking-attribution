@@ -122,16 +122,16 @@
 
     NSString *encodedParams = [BNCEncodingUtils encodeDictionaryToJsonString:self.params];
     result = prime * result + self.type;
-    result = prime * result + [[BNCEncodingUtils md5Encode:self.alias] hash];
-    result = prime * result + [[BNCEncodingUtils md5Encode:self.channel] hash];
-    result = prime * result + [[BNCEncodingUtils md5Encode:self.feature] hash];
-    result = prime * result + [[BNCEncodingUtils md5Encode:self.stage] hash];
-    result = prime * result + [[BNCEncodingUtils md5Encode:self.campaign] hash];
-    result = prime * result + [[BNCEncodingUtils md5Encode:encodedParams] hash];
+    result = prime * result + [[BNCEncodingUtils sha256Encode:self.alias] hash];
+    result = prime * result + [[BNCEncodingUtils sha256Encode:self.channel] hash];
+    result = prime * result + [[BNCEncodingUtils sha256Encode:self.feature] hash];
+    result = prime * result + [[BNCEncodingUtils sha256Encode:self.stage] hash];
+    result = prime * result + [[BNCEncodingUtils sha256Encode:self.campaign] hash];
+    result = prime * result + [[BNCEncodingUtils sha256Encode:encodedParams] hash];
     result = prime * result + self.duration;
     
     for (NSString *tag in self.tags) {
-        result = prime * result + [[BNCEncodingUtils md5Encode:tag] hash];
+        result = prime * result + [[BNCEncodingUtils sha256Encode:tag] hash];
     }
     
     return result;

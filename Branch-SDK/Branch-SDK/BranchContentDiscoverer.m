@@ -253,7 +253,7 @@
         contentData = [contentData substringToIndex:self.contentManifest.maxTextLen];
     }
     if (!isClearText) {
-        contentData = [BNCEncodingUtils md5Encode:contentData];
+        contentData = [BNCEncodingUtils sha256Encode:contentData];
     }
     if (contentData)
         [contentDataArray addObject:contentData];
