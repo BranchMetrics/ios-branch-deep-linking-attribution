@@ -43,6 +43,7 @@
 #import "BNCAppleSearchAds.h"
 #import "BNCFacebookAppLinks.h"
 #import "BNCDeviceInfo.h"
+#import "BNCCallbackMap.h"
 
 NSString * const BRANCH_FEATURE_TAG_SHARE = @"share";
 NSString * const BRANCH_FEATURE_TAG_REFERRAL = @"referral";

@@ -8,6 +8,7 @@
 
 #import "BranchEvent.h"
 #import "BNCLog.h"
+#import "BNCCallbackMap.h"
 
 #pragma mark BranchStandardEvents
 
@@ -179,7 +180,7 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     addString(coupon,           coupon);
     addString(affiliation,      affiliation);
     addString(eventDescription, description);
-    addString(searchQuery,      search_query)
+    addString(searchQuery,      search_query);
     addDictionary(customData,   custom_data);
     
     #include "BNCFieldDefines.h"
@@ -220,16 +221,27 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     ];
 }
 
-- (void) logEvent {
-
+- (void)logEventWithCompletion:(void (^_Nullable)(NSString *statusMessage))completion {
     if (![_eventName isKindOfClass:[NSString class]] || _eventName.length == 0) {
         BNCLogError(@"Invalid event type '%@' or empty string.", NSStringFromClass(_eventName.class));
+        
+        if (completion) {
+            completion(@"Error");
+        }
+        
         return;
     }
 
     NSDictionary *eventDictionary = [self buildEventDictionary];
     BranchEventRequest *request = [self buildRequestWithEventDictionary:eventDictionary];
+    
+    [[BNCCallbackMap shared] storeRequest:request withCompletion:completion];
+    
     [[Branch getInstance] sendServerRequest:request];
+}
+
+- (void) logEvent {
+    [self logEventWithCompletion:nil];
 }
 
 - (BranchEventRequest *)buildRequestWithEventDictionary:(NSDictionary *)eventDictionary {
