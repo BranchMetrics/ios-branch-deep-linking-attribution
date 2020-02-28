@@ -456,7 +456,13 @@
     if (self.preferenceHelper.instrumentationDictionary.count && [reqType isEqualToString:@"POST"]) {
         fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = self.preferenceHelper.instrumentationDictionary;
     }
-   
+    
+    // TODO: follow up with server team to get format and value location correct
+    BOOL disableAdNetworkCallouts = self.preferenceHelper.disableAdNetworkCallouts;
+    if (disableAdNetworkCallouts) {
+        [fullParamDict setObject:[NSNumber numberWithInt:1] forKey:@"disable_ad_network_callouts"];
+    }
+    
     return fullParamDict;
 }
 
