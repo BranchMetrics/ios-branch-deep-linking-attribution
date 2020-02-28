@@ -679,6 +679,11 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)setNetworkTimeout:(NSTimeInterval)timeout;
 
 /**
+ 
+ */
+- (void)disableAdNetworkCallouts:(BOOL)disableCallouts;
+
+/**
  Specify that Branch should NOT use an invisible SFSafariViewController to attempt cookie-based matching upon install.
  If you call this method, we will fall back to using our pool of cookie-IDFA pairs for matching.
  */

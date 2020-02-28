@@ -49,6 +49,7 @@ NSURL* /* _Nonnull */ BNCURLForBranchDirectory(void);
 @property (nonatomic, strong, readwrite) NSString *branchBlacklistURL;
 @property (assign, atomic) BOOL      limitFacebookTracking;
 @property (strong, atomic) NSDate   *previousAppBuildDate;
+@property (assign, nonatomic, readwrite) BOOL disableAdNetworkCallouts;
 
 @property (strong, nonatomic, readwrite) NSURL *faceBookAppLink;
 
