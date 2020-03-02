@@ -457,12 +457,6 @@
         fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = self.preferenceHelper.instrumentationDictionary;
     }
     
-    // TODO: follow up with server team to get format and value location correct
-    BOOL disableAdNetworkCallouts = self.preferenceHelper.disableAdNetworkCallouts;
-    if (disableAdNetworkCallouts) {
-        [fullParamDict setObject:[NSNumber numberWithInt:1] forKey:@"disable_ad_network_callouts"];
-    }
-    
     return fullParamDict;
 }
 
@@ -535,6 +529,11 @@
         [self safeSetValue:deviceInfo.applicationVersion forKey:@"app_version" onDict:dict];
         [self safeSetValue:deviceInfo.pluginName forKey:@"plugin_name" onDict:dict];
         [self safeSetValue:deviceInfo.pluginVersion forKey:@"plugin_version" onDict:dict];
+        
+        BOOL disableAdNetworkCallouts = self.preferenceHelper.disableAdNetworkCallouts;
+        if (disableAdNetworkCallouts) {
+            [dict setObject:[NSNumber numberWithBool:disableAdNetworkCallouts] forKey:@"disable_ad_network_callouts"];
+        }
     }
 }
 
