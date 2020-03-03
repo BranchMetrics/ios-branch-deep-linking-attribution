@@ -151,7 +151,7 @@
         
         BOOL disableAdNetworkCallouts = [BNCPreferenceHelper preferenceHelper].disableAdNetworkCallouts;
         if (disableAdNetworkCallouts) {
-            [dictionary setObject:[NSNumber numberWithBool:disableAdNetworkCallouts] forKey:@"disable_ad_network_callouts"];
+            dictionary[@"disable_ad_network_callouts"] = [NSNumber numberWithBool:disableAdNetworkCallouts];
         }
         
         if ([BNCPreferenceHelper preferenceHelper].isDebug) {

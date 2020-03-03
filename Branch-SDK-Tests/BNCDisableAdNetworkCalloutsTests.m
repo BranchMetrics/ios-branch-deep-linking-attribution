@@ -35,12 +35,12 @@
 - (void)testV2Dictionary {
     NSDictionary *dict = [[BNCDeviceInfo getInstance] v2dictionary];
     XCTAssertNotNil(dict);
-    XCTAssertNotNil([dict objectForKey:@"brand"]);
-    XCTAssertNotNil([dict objectForKey:@"os"]);
-    XCTAssertNotNil([dict objectForKey:@"sdk"]);
-    XCTAssertNotNil([dict objectForKey:@"sdk_version"]);
+    XCTAssertNotNil(dict[@"brand"]);
+    XCTAssertNotNil(dict[@"os"]);
+    XCTAssertNotNil(dict[@"sdk"]);
+    XCTAssertNotNil(dict[@"sdk_version"]);
     
-    XCTAssertTrue([dict objectForKey:@"disable_ad_network_callouts"]);
+    XCTAssertTrue(dict[@"disable_ad_network_callouts"]);
 }
 
 // check on V1 payload
@@ -52,7 +52,7 @@
     [interface updateDeviceInfoToMutableDictionary:tmp];
     
     XCTAssertNotNil(tmp);
-    XCTAssertTrue([tmp objectForKey:@"disable_ad_network_callouts"]);
+    XCTAssertTrue(tmp[@"disable_ad_network_callouts"]);
 }
 
 @end
