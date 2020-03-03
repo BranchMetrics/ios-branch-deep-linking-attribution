@@ -140,6 +140,8 @@
     XCTAssertNotNil([dict objectForKey:@"os"]);
     XCTAssertNotNil([dict objectForKey:@"sdk"]);
     XCTAssertNotNil([dict objectForKey:@"sdk_version"]);
+    
+    XCTAssertNil([dict objectForKey:@"disable_ad_network_callouts"]);
 }
 
 @end
