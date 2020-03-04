@@ -1621,7 +1621,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
         if ([self.linkCache objectForKey:linkData]) {
             if (callback) {
-                callback([self.linkCache objectForKey:linkData], nil);
+                // callback on main, this is generally what the client expects and maintains our previous behavior
+                dispatch_async(dispatch_get_main_queue(), ^ {
+                    callback([self.linkCache objectForKey:linkData], nil);
+                });
             }
             return;
         }
@@ -1804,7 +1807,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         BranchUniversalObject *buo = [[BranchUniversalObject alloc] init];
         buo.contentMetadata.customMetadata = (id) params;
         [[BranchEvent standardEvent:BranchStandardEventViewItem withContentItem:buo] logEvent];
-        if (callback) callback(@{}, nil);
+        if (callback) {
+            // callback on main, this is generally what the client expects and maintains our previous behavior
+            dispatch_async(dispatch_get_main_queue(), ^ {
+                callback(@{}, nil);
+            });
+        }
     });
 }
 
