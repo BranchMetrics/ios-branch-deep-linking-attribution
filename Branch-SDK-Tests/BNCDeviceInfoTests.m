@@ -136,10 +136,12 @@
 - (void)testV2Dictionary {
     NSDictionary *dict = [self.deviceInfo v2dictionary];
     XCTAssertNotNil(dict);
-    XCTAssertNotNil([dict objectForKey:@"brand"]);
-    XCTAssertNotNil([dict objectForKey:@"os"]);
-    XCTAssertNotNil([dict objectForKey:@"sdk"]);
-    XCTAssertNotNil([dict objectForKey:@"sdk_version"]);
+    XCTAssertNotNil(dict[@"brand"]);
+    XCTAssertNotNil(dict[@"os"]);
+    XCTAssertNotNil(dict[@"sdk"]);
+    XCTAssertNotNil(dict[@"sdk_version"]);
+    
+    XCTAssertNil(dict[@"disable_ad_network_callouts"]);
 }
 
 @end
