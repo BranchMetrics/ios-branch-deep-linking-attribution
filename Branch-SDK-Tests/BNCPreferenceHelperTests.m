@@ -29,6 +29,7 @@
     XCTAssertEqual(self.prefHelper.timeout, 5.5);
     XCTAssertEqual(self.prefHelper.retryInterval, 0);
     XCTAssertEqual(self.prefHelper.retryCount, 3);
+    XCTAssertFalse(self.prefHelper.disableAdNetworkCallouts);
 }
 
 - (void)testPreferenceSets {

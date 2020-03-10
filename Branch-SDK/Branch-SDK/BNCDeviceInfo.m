@@ -149,6 +149,11 @@
     @synchronized (self) {
         [self checkAdvertisingIdentifier];
         
+        BOOL disableAdNetworkCallouts = [BNCPreferenceHelper preferenceHelper].disableAdNetworkCallouts;
+        if (disableAdNetworkCallouts) {
+            dictionary[@"disable_ad_network_callouts"] = [NSNumber numberWithBool:disableAdNetworkCallouts];
+        }
+        
         if ([BNCPreferenceHelper preferenceHelper].isDebug) {
             dictionary[@"unidentified_device"] = @(YES);
         } else {
