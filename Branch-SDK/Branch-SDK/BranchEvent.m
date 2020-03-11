@@ -226,7 +226,7 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
         BNCLogError(@"Invalid event type '%@' or empty string.", NSStringFromClass(_eventName.class));
         
         if (completion) {
-            completion(@"Error");
+            completion(@"Error: Invalid event type");
         }
         
         return;
