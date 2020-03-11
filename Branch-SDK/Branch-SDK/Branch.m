@@ -1870,7 +1870,16 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         error.code == BNCBadRequestError ||
         error.code == BNCDuplicateResourceError) {
 
-        BNCPerformBlockOnMainThreadSync(^{ [req processResponse:response error:error]; });
+        BNCPerformBlockOnMainThreadSync(^{
+            [req processResponse:response error:error];
+            if ([req isKindOfClass:[BranchEventRequest class]]) {
+                NSString *status = @"Complete";
+                if (error) {
+                    [NSString stringWithFormat:@"Error: %@", error.description];
+                }
+                [[BNCCallbackMap shared] callCompletionForRequest:req withStatusMessage:status];
+            }
+        });
 
         [self.requestQueue dequeue];
         self.networkCount = 0;
@@ -1911,7 +1920,13 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 
         // Finally, call all the requests callbacks with the error
         for (BNCServerRequest *request in requestsToFail) {
-            BNCPerformBlockOnMainThreadSync(^ { [request processResponse:nil error:error]; });
+            BNCPerformBlockOnMainThreadSync(^ {
+                [request processResponse:nil error:error];
+                
+                if ([request isKindOfClass:[BranchEventRequest class]]) {
+                    [[BNCCallbackMap shared] callCompletionForRequest:req withStatusMessage:[NSString stringWithFormat:@"Error: %@", error.description]];
+                }
+            });
         }
     }
 }
