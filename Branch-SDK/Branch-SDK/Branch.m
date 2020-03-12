@@ -465,6 +465,10 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     return self.preferenceHelper.userIdentity != nil;
 }
 
+- (void)disableAdNetworkCallouts:(BOOL)disableCallouts {
+    self.preferenceHelper.disableAdNetworkCallouts = disableCallouts;
+}
+
 - (void)setNetworkTimeout:(NSTimeInterval)timeout {
     self.preferenceHelper.timeout = timeout;
 }

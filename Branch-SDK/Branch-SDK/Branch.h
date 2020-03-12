@@ -679,6 +679,15 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)setNetworkTimeout:(NSTimeInterval)timeout;
 
 /**
+ Set disable_ad_network_callouts server flag.  Default value is NO.
+
+ By calling this method with YES, the flag disable_ad_network_callouts = true will be set on all events for a user.
+ Those events will not be sent to ad networks that have been specified by the customer on the dashboard.
+ Customer is required to select the ad networks that the event should not be sent to on the dashboard in order for the flag to be effective.
+ */
+- (void)disableAdNetworkCallouts:(BOOL)disableCallouts;
+
+/**
  Specify that Branch should NOT use an invisible SFSafariViewController to attempt cookie-based matching upon install.
  If you call this method, we will fall back to using our pool of cookie-IDFA pairs for matching.
  */
