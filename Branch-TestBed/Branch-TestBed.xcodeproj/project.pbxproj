@@ -450,6 +450,7 @@
 		54FF1F901BD1DC320004CE2E /* BranchLinkProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLinkProperties.m; sourceTree = "<group>"; };
 		5F08460F23480008005B17E6 /* BNCTuneUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCTuneUtility.h; sourceTree = "<group>"; };
 		5F08461023480008005B17E6 /* BNCTuneUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCTuneUtility.m; sourceTree = "<group>"; };
+		5F2035CB240DDE90004FDC3E /* BNCDisableAdNetworkCalloutsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCDisableAdNetworkCalloutsTests.m; sourceTree = "<group>"; };
 		5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCUserAgentCollectorTests.m; sourceTree = "<group>"; };
 		5F205D04231864E800C776D1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		5F3D6712232C589100454FF1 /* BranchLastAttributedTouchData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLastAttributedTouchData.m; sourceTree = "<group>"; };
@@ -772,6 +773,7 @@
 				5F437E39237DE3480052064B /* BNCTelephonyTests.m */,
 				5F437E3F237E1A560052064B /* BNCDeviceSystemTests.m */,
 				5FE694372405FA2700E3AEE2 /* BNCCallbackMapTests.m */,
+				5F2035CB240DDE90004FDC3E /* BNCDisableAdNetworkCalloutsTests.m */,
 			);
 			name = "Branch-SDK-Tests";
 			path = "../Branch-SDK-Tests";

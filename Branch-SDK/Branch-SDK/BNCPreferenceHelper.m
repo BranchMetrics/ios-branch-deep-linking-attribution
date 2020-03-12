@@ -97,19 +97,19 @@ static NSString * const BRANCH_PREFS_KEY_ANALYTICS_MANIFEST = @"bnc_branch_analy
     return preferenceHelper;
 }
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
-    if (!self) return self;
+    if (self) {
+        _timeout = DEFAULT_TIMEOUT;
+        _retryCount = DEFAULT_RETRY_COUNT;
+        _retryInterval = DEFAULT_RETRY_INTERVAL;
+        _isDebug = NO;
+        _persistPrefsQueue = [[NSOperationQueue alloc] init];
+        _persistPrefsQueue.maxConcurrentOperationCount = 1;
 
-    _timeout = DEFAULT_TIMEOUT;
-    _retryCount = DEFAULT_RETRY_COUNT;
-    _retryInterval = DEFAULT_RETRY_INTERVAL;
-    _isDebug = NO;
-    _persistPrefsQueue = [[NSOperationQueue alloc] init];
-    _persistPrefsQueue.maxConcurrentOperationCount = 1;
-
-    self.branchBlacklistURL = @"https://cdn.branch.io";
-    
+        self.branchBlacklistURL = @"https://cdn.branch.io";
+        self.disableAdNetworkCallouts = NO;
+    }
     return self;
 }
 
