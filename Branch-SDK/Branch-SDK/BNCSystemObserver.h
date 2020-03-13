@@ -19,6 +19,7 @@
                           andType:(NSString *__autoreleasing*)type;
 + (NSString *)getVendorId;
 + (NSString *)getDefaultUriScheme;
++ (NSArray *) getAllClientUriSchemes;
 + (NSString *)getAppVersion;
 + (NSString *)getBundleID;
 + (NSString *)getTeamIdentifier;

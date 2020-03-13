@@ -86,6 +86,22 @@
     return YES;
 }
 
++ (NSArray *) filterOutSanPrefixs:(NSArray*)urlSchemes {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"NOT SELF BEGINSWITH[c] %@", @"fb", @"db", @"twitterkit-", @"pdk", @"pin", @"com.googleusercontent.apps"];
+    NSArray *filteredArray = [urlSchemes filteredArrayUsingPredicate:predicate];
+    return filteredArray;
+}
+
++ (NSArray *) getAllClientUriSchemes {
+    NSMutableArray *usersUriSchemes = [NSMutableArray new];
+    for (NSDictionary *urlType in [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"]) {
+        for (NSString *uriScheme in [urlType objectForKey:@"CFBundleURLSchemes"]) {
+            [usersUriSchemes addObject:uriScheme];
+        }
+    }
+    return [self filterOutSanPrefixs:usersUriSchemes];
+}
+
 + (NSString *)getDefaultUriScheme {
     NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
 

@@ -28,6 +28,11 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     dispatch_after(BNCDispatchTimeFromSeconds(seconds), dispatch_get_main_queue(), block);
 }
 
+typedef struct {
+    NSString *branchUriScheme;
+    BOOL doesMatchServerScheme;
+} ValidatedClientUriSchemeModel;
+
 #pragma mark - Branch (Validator)
 
 @implementation Branch (Validator)
@@ -55,6 +60,21 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
         }];
 }
 
+- (ValidatedClientUriSchemeModel) validateClientScheme:(NSArray*)clientUriSchemes withServerScheme:(NSString*)serverUriScheme {
+    ValidatedClientUriSchemeModel model;
+    model.doesMatchServerScheme = NO;
+    
+    for (id uriScheme in clientUriSchemes) {
+        NSString *formattedClientUriScheme = [NSString stringWithFormat:@"%@%@", uriScheme, @"://"];
+        
+        if ([serverUriScheme isEqualToString:formattedClientUriScheme]) {
+            model.branchUriScheme = formattedClientUriScheme; model.doesMatchServerScheme = YES;
+            return model;
+        }
+    }
+    return model;
+}
+
 - (void) validateIntegrationWithServerResponse:(BNCServerResponse*)response {
     NSString*passString = @"PASS";
     NSString*errorString = @"ERROR";
@@ -69,11 +89,12 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
     NSLog(@"-------------------------------------------------");
 
     NSLog(@"------ Checking for URI scheme correctness ------");
-    NSString *clientUriScheme = [NSString stringWithFormat:@"%@%@", [BNCSystemObserver getDefaultUriScheme], @"://"];
-    NSString *uriScheme = [serverUriScheme isEqualToString:clientUriScheme] ? passString : errorString;
-    NSString *uriSchemeMessage =
-        [NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'",
-            uriScheme, serverUriScheme, clientUriScheme];
+    ValidatedClientUriSchemeModel branchUriSchemeModel = [self validateClientScheme:[BNCSystemObserver getAllClientUriSchemes] withServerScheme:serverUriScheme];
+    NSString *uriScheme = branchUriSchemeModel.doesMatchServerScheme ? passString : errorString;
+    NSString *uriSchemeMessage = [
+            NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'",
+            uriScheme, serverUriScheme, branchUriSchemeModel.branchUriScheme
+    ];
     NSLog(@"%@",uriSchemeMessage);
     NSLog(@"-------------------------------------------------");
 
@@ -114,7 +135,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
 
     // Build an alert string:
     NSString *alertString = @"\n";
-    if (serverUriScheme.length && [serverUriScheme isEqualToString:clientUriScheme]) {
+    if (serverUriScheme.length && [serverUriScheme isEqualToString:branchUriSchemeModel.branchUriScheme]) {
         alertString = [alertString stringByAppendingFormat:@"%@URI Scheme matches:\n\t'%@'\n",
             kPassMark,  serverUriScheme];
     } else {
