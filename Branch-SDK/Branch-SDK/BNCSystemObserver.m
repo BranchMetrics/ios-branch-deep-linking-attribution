@@ -86,12 +86,23 @@
     return YES;
 }
 
+/**
+ @brief Filters out any URI scheme that would be used by a SAN provider (facebook, twitter, etc)
+ @discussion This method will accept an array of URI schemes Strings and will return another array with only the URI schemes that were created by the client.
+ @param urlSchemes The array of URI schemes to be filtered
+ @return NSArray The filtered array which only contains client generated URI schemes
+ */
 + (NSArray *) filterOutSanPrefixs:(NSArray*)urlSchemes {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"NOT SELF BEGINSWITH[c] %@", @"fb", @"db", @"twitterkit-", @"pdk", @"pin", @"com.googleusercontent.apps"];
     NSArray *filteredArray = [urlSchemes filteredArrayUsingPredicate:predicate];
     return filteredArray;
 }
 
+/**
+ @brief Will return an array of all client URI schemes from the plist file
+ @discussion This method will loop through every URL type and retrieve the URL scheme then return the filtered array with only client URI schemes
+ @return NSArray The filtered array which contains client generated URI schcmes 
+ */
 + (NSArray *) getAllClientUriSchemes {
     NSMutableArray *usersUriSchemes = [NSMutableArray new];
     for (NSDictionary *urlType in [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"]) {

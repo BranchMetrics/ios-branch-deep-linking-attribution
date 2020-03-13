@@ -29,7 +29,7 @@ static inline void BNCAfterSecondsPerformBlockOnMainThread(NSTimeInterval second
 }
 
 typedef struct {
-    NSString *branchUriScheme;
+    NSString *uriScheme;
     BOOL doesMatchServerScheme;
 } ValidatedClientUriSchemeModel;
 
@@ -60,6 +60,14 @@ typedef struct {
         }];
 }
 
+/**
+ @brief Will compare the clients URI scheme to the uri scheme from within the Branch backend/dashboard
+ @discussion This method will accept both the array of clients URI schemes and the string representing the URI scheme the user gave Branch.
+ This method will loop through the clients URI schemes and compare each index with the uri scheme in Branch to look for a match.
+ @param clientUriSchemes NSArray representing each URI scheme present in the users plist file
+ @param serverUriScheme NSString representing the URI scheme Branch has for the client
+ @returns ValidatedClientUriSchemeModel : Struct which contains the necessary info to toggle validation logic in testing
+ */
 - (ValidatedClientUriSchemeModel) validateClientScheme:(NSArray*)clientUriSchemes withServerScheme:(NSString*)serverUriScheme {
     ValidatedClientUriSchemeModel model;
     model.doesMatchServerScheme = NO;
@@ -68,7 +76,7 @@ typedef struct {
         NSString *formattedClientUriScheme = [NSString stringWithFormat:@"%@%@", uriScheme, @"://"];
         
         if ([serverUriScheme isEqualToString:formattedClientUriScheme]) {
-            model.branchUriScheme = formattedClientUriScheme; model.doesMatchServerScheme = YES;
+            model.uriScheme = formattedClientUriScheme; model.doesMatchServerScheme = YES;
             return model;
         }
     }
@@ -89,11 +97,11 @@ typedef struct {
     NSLog(@"-------------------------------------------------");
 
     NSLog(@"------ Checking for URI scheme correctness ------");
-    ValidatedClientUriSchemeModel branchUriSchemeModel = [self validateClientScheme:[BNCSystemObserver getAllClientUriSchemes] withServerScheme:serverUriScheme];
-    NSString *uriScheme = branchUriSchemeModel.doesMatchServerScheme ? passString : errorString;
+    ValidatedClientUriSchemeModel clientUriSchemeModel = [self validateClientScheme:[BNCSystemObserver getAllClientUriSchemes] withServerScheme:serverUriScheme];
+    NSString *uriScheme = clientUriSchemeModel.doesMatchServerScheme ? passString : errorString;
     NSString *uriSchemeMessage = [
             NSString stringWithFormat:@"%@: Dashboard Link Settings page '%@' compared to client side '%@'",
-            uriScheme, serverUriScheme, branchUriSchemeModel.branchUriScheme
+            uriScheme, serverUriScheme, clientUriSchemeModel.uriScheme
     ];
     NSLog(@"%@",uriSchemeMessage);
     NSLog(@"-------------------------------------------------");
@@ -135,7 +143,7 @@ typedef struct {
 
     // Build an alert string:
     NSString *alertString = @"\n";
-    if (serverUriScheme.length && [serverUriScheme isEqualToString:branchUriSchemeModel.branchUriScheme]) {
+    if (serverUriScheme.length && [serverUriScheme isEqualToString:clientUriSchemeModel.uriScheme]) {
         alertString = [alertString stringByAppendingFormat:@"%@URI Scheme matches:\n\t'%@'\n",
             kPassMark,  serverUriScheme];
     } else {
