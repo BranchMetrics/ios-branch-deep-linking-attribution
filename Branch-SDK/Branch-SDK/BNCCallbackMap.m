@@ -39,6 +39,14 @@
     [self.callbacks setObject:completion forKey:request];
 }
 
+- (BOOL)containsRequest:(BNCServerRequest *)request {
+    BOOL contains = NO;
+    if ([self.callbacks objectForKey:request] != nil) {
+        contains = YES;
+    }
+    return contains;
+}
+
 - (void)callCompletionForRequest:(BNCServerRequest *)request withStatusMessage:(NSString *)statusMessage {
     void (^completion)(NSString *) = [self.callbacks objectForKey:request];
     if (completion) {
