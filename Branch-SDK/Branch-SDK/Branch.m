@@ -1905,16 +1905,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         // Next, remove all the requests that should not be replayed. Note, we do this before
         // calling callbacks, in case any of the callbacks try to kick off another request, which
         // could potentially start another request (and call these callbacks again)
-
-        NSSet<Class> *replayableRequests = [[NSSet alloc] initWithArray:@[
-            BranchEventRequest.class,
-            BranchUserCompletedActionRequest.class,
-            BranchSetIdentityRequest.class,
-            BranchCommerceEventRequest.class,
-        ]];
-
         for (BNCServerRequest *request in requestsToFail) {
-            if (Branch.trackingDisabled || ![replayableRequests containsObject:request.class]) {
+            if (Branch.trackingDisabled || ![self isReplayableRequest:request]) {
                 [self.requestQueue remove:request];
             }
         }
@@ -1927,12 +1919,36 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             BNCPerformBlockOnMainThreadSync(^ {
                 [request processResponse:nil error:error];
                 
+                // BranchEventRequests can have callbacks directly tied to them.
                 if ([request isKindOfClass:[BranchEventRequest class]]) {
                     [[BNCCallbackMap shared] callCompletionForRequest:req withStatusMessage:[NSString stringWithFormat:@"Error: %@", error.description]];
                 }
             });
         }
     }
+}
+
+- (BOOL)isReplayableRequest:(BNCServerRequest *)request {
+    
+    // These request types
+    NSSet<Class> *replayableRequests = [[NSSet alloc] initWithArray:@[
+        BranchEventRequest.class,
+        BranchUserCompletedActionRequest.class,
+        BranchSetIdentityRequest.class,
+        BranchCommerceEventRequest.class,
+    ]];
+    
+    if ([replayableRequests containsObject:request.class]) {
+        
+        // Check if the client registered a callback for this request.
+        // This indicates the client will handle retry themselves, so fail it.
+        if ([[BNCCallbackMap shared] containsRequest:request]) {
+            return NO;
+        } else {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 - (void)processNextQueueItem {

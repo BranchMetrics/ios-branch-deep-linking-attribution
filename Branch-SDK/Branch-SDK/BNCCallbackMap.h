@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)storeRequest:(BNCServerRequest *)request withCompletion:(void (^_Nullable)(NSString *statusMessage))completion;
 
+- (BOOL)containsRequest:(BNCServerRequest *)request;
+
 - (void)callCompletionForRequest:(BNCServerRequest *)request withStatusMessage:(NSString *)statusMessage;
 
 @end
