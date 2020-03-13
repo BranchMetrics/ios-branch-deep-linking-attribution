@@ -9,6 +9,7 @@
 #import "BranchEvent.h"
 #import "BNCLog.h"
 #import "BNCCallbackMap.h"
+#import "BNCReachability.h"
 
 #pragma mark BranchStandardEvents
 
@@ -224,17 +225,22 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
 - (void)logEventWithCompletion:(void (^_Nullable)(NSString *statusMessage))completion {
     if (![_eventName isKindOfClass:[NSString class]] || _eventName.length == 0) {
         BNCLogError(@"Invalid event type '%@' or empty string.", NSStringFromClass(_eventName.class));
-        
         if (completion) {
             completion(@"Error: Invalid event type");
         }
-        
+        return;
+    }
+    
+    // logEvent requests without a completion are automatically retried later
+    if (completion != nil && [[BNCReachability shared] reachabilityStatus] == nil) {
+        if (completion) {
+            completion(@"Error: No connectivity");
+        }
         return;
     }
 
     NSDictionary *eventDictionary = [self buildEventDictionary];
     BranchEventRequest *request = [self buildRequestWithEventDictionary:eventDictionary];
-    
     [[BNCCallbackMap shared] storeRequest:request withCompletion:completion];
     
     [[Branch getInstance] sendServerRequest:request];
