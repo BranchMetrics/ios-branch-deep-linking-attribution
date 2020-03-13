@@ -41,6 +41,7 @@
     }];
     
     // confirm there's one entry
+    XCTAssert([map containsRequest:request] != NO);
     XCTAssert(map.callbacks.count == 1);
     
     // call callback
@@ -63,12 +64,12 @@
     }];
     
     // confirm there's one entry
+    XCTAssert([map containsRequest:request] != NO);
     XCTAssert(map.callbacks.count == 1);
     
-    // wipe the data from the map
+    // confirm a new request results in no callback
     request = [BNCServerRequest new];
-    
-    // call callback
+    XCTAssert([map containsRequest:request] == NO);
     [map callCompletionForRequest:request withStatusMessage:@"callback"];
     
     // check if variable was updated
