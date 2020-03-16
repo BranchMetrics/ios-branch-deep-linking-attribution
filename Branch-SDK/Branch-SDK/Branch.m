@@ -1877,11 +1877,15 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         BNCPerformBlockOnMainThreadSync(^{
             [req processResponse:response error:error];
             if ([req isKindOfClass:[BranchEventRequest class]]) {
-                NSString *status = @"Complete";
                 if (error) {
-                    [NSString stringWithFormat:@"Error: %@", error.description];
+                    NSString *message = @"Error: server returned an error";
+                    if (error.description) {
+                        message = [NSString stringWithFormat:@"Error: %@", error.description];
+                    }
+                    [[BNCCallbackMap shared] callCompletionForRequest:req withSuccessStatus:NO message:message];
+                } else {
+                    [[BNCCallbackMap shared] callCompletionForRequest:req withSuccessStatus:YES message:@"Success"];
                 }
-                [[BNCCallbackMap shared] callCompletionForRequest:req withStatusMessage:status];
             }
         });
 
@@ -1921,7 +1925,8 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                 
                 // BranchEventRequests can have callbacks directly tied to them.
                 if ([request isKindOfClass:[BranchEventRequest class]]) {
-                    [[BNCCallbackMap shared] callCompletionForRequest:req withStatusMessage:[NSString stringWithFormat:@"Error: %@", error.description]];
+                    NSString *message = @"Error: server returned an error. Cancelling queued network requests";
+                    [[BNCCallbackMap shared] callCompletionForRequest:request withSuccessStatus:NO message:message];
                 }
             });
         }
