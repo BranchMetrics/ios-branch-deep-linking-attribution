@@ -31,7 +31,6 @@
 - (void)testSingleSave {
     BNCCallbackMap *map = [BNCCallbackMap new];
     
-    // block variable callback will update
     __block BOOL successResult = NO;
     __block NSString *statusMessageResult = @"no callback";
     
@@ -57,7 +56,6 @@
 - (void)testDeletedRequest {
     BNCCallbackMap *map = [BNCCallbackMap new];
     
-    // block variable callback will update
     __block BOOL successResult = NO;
     __block NSString *statusMessageResult = @"no callback";
     
