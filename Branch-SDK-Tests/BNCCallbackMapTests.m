@@ -32,12 +32,14 @@
     BNCCallbackMap *map = [BNCCallbackMap new];
     
     // block variable callback will update
-    __block NSString *status = @"no callback";
+    __block BOOL successResult = NO;
+    __block NSString *statusMessageResult = @"no callback";
     
     // store a request and callback block
     BNCServerRequest *request = [BNCServerRequest new];
-    [map storeRequest:request withCompletion:^(NSString * _Nonnull statusMessage) {
-        status = statusMessage;
+    [map storeRequest:request withCompletion:^(BOOL success, NSString * _Nonnull statusMessage) {
+        successResult = success;
+        statusMessageResult = statusMessage;
     }];
     
     // confirm there's one entry
@@ -45,22 +47,25 @@
     XCTAssert(map.callbacks.count == 1);
     
     // call callback
-    [map callCompletionForRequest:request withStatusMessage:@"callback"];
+    [map callCompletionForRequest:request withSuccessStatus:YES message:@"callback"];
     
     // check if variable was updated
-    XCTAssert([@"callback" isEqualToString:status]);
+    XCTAssertTrue(successResult);
+    XCTAssert([@"callback" isEqualToString:statusMessageResult]);
 }
 
 - (void)testDeletedRequest {
     BNCCallbackMap *map = [BNCCallbackMap new];
     
     // block variable callback will update
-    __block NSString *status = @"no callback";
+    __block BOOL successResult = NO;
+    __block NSString *statusMessageResult = @"no callback";
     
     // store a request and callback block
     BNCServerRequest *request = [BNCServerRequest new];
-    [map storeRequest:request withCompletion:^(NSString * _Nonnull statusMessage) {
-        status = statusMessage;
+    [map storeRequest:request withCompletion:^(BOOL success, NSString * _Nonnull statusMessage) {
+        successResult = success;
+        statusMessageResult = statusMessage;
     }];
     
     // confirm there's one entry
@@ -70,10 +75,11 @@
     // confirm a new request results in no callback
     request = [BNCServerRequest new];
     XCTAssert([map containsRequest:request] == NO);
-    [map callCompletionForRequest:request withStatusMessage:@"callback"];
+    [map callCompletionForRequest:request withSuccessStatus:YES message:@"callback"];
     
     // check if variable was updated
-    XCTAssert([@"no callback" isEqualToString:status]);
+    XCTAssertFalse(successResult);
+    XCTAssert([@"no callback" isEqualToString:statusMessageResult]);
 }
 
 - (void)testSeveralBlocks {
@@ -82,13 +88,13 @@
     __block int count = 0;
     
     BNCServerRequest *request = [BNCServerRequest new];
-    [map storeRequest:request withCompletion:^(NSString * _Nonnull statusMessage) {
+    [map storeRequest:request withCompletion:^(BOOL success, NSString * _Nonnull statusMessage) {
         count++;
     }];
     
     for (int i=0; i<100; i++) {
         BNCServerRequest *tmp = [BNCServerRequest new];
-        [map storeRequest:tmp withCompletion:^(NSString * _Nonnull statusMessage) {
+        [map storeRequest:tmp withCompletion:^(BOOL success, NSString * _Nonnull statusMessage) {
              count++;
         }];
     }
@@ -96,7 +102,7 @@
     // confirm there's less than 100 entries.  By not retaining the tmp request, they should be getting ARC'd
     XCTAssert(map.callbacks.count < 100);
     
-    [map callCompletionForRequest:request withStatusMessage:@"callback"];
+    [map callCompletionForRequest:request withSuccessStatus:YES message:@"callback"];
     XCTAssert(count == 1);
 }
 

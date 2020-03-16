@@ -222,11 +222,11 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     ];
 }
 
-- (void)logEventWithCompletion:(void (^_Nullable)(NSString *statusMessage))completion {
+- (void)logEventWithCompletion:(void (^_Nullable)(BOOL success, NSString *statusMessage))completion {
     if (![_eventName isKindOfClass:[NSString class]] || _eventName.length == 0) {
         BNCLogError(@"Invalid event type '%@' or empty string.", NSStringFromClass(_eventName.class));
         if (completion) {
-            completion(@"Error: Invalid event type");
+            completion(NO, @"Error: Invalid event type");
         }
         return;
     }
@@ -234,7 +234,7 @@ BranchStandardEvent BranchStandardEventReserve                = @"RESERVE";
     // logEvent requests without a completion are automatically retried later
     if (completion != nil && [[BNCReachability shared] reachabilityStatus] == nil) {
         if (completion) {
-            completion(@"Error: No connectivity");
+            completion(NO, @"Error: No connectivity");
         }
         return;
     }
