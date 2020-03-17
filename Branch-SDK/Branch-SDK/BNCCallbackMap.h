@@ -15,11 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)shared;
 
-- (void)storeRequest:(BNCServerRequest *)request withCompletion:(void (^_Nullable)(BOOL success, NSString *statusMessage))completion;
+- (void)storeRequest:(BNCServerRequest *)request withCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completion;
 
 - (BOOL)containsRequest:(BNCServerRequest *)request;
 
-- (void)callCompletionForRequest:(BNCServerRequest *)request withSuccessStatus:(BOOL)status message:(NSString *)statusMessage;
+- (void)callCompletionForRequest:(BNCServerRequest *)request withSuccessStatus:(BOOL)status error:(nullable NSError *)error;
 
 @end
 

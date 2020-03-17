@@ -91,7 +91,7 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 /**
  Logs the event on the Branch server.  This version will callback on success/failure.
  */
-- (void)logEventWithCompletion:(void (^_Nullable)(BOOL success, NSString * _Nullable statusMessage))completion;
+- (void)logEventWithCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completion;
 
 - (void) logEvent;                      //!< Logs the event on the Branch server.  This version automatically caches and retries as necessary.
 - (NSDictionary*_Nonnull) dictionary;   //!< Returns a dictionary representation of the event.
