@@ -35,7 +35,7 @@
     return self;
 }
 
-- (void)storeRequest:(BNCServerRequest *)request withCompletion:(void (^_Nullable)(BOOL success, NSString *statusMessage))completion {
+- (void)storeRequest:(BNCServerRequest *)request withCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completion {
     [self.callbacks setObject:completion forKey:request];
 }
 
@@ -47,10 +47,10 @@
     return contains;
 }
 
-- (void)callCompletionForRequest:(BNCServerRequest *)request withSuccessStatus:(BOOL)status message:(NSString *)statusMessage {
-    void (^completion)(BOOL, NSString *) = [self.callbacks objectForKey:request];
+- (void)callCompletionForRequest:(BNCServerRequest *)request withSuccessStatus:(BOOL)status error:(nullable NSError *)error {
+    void (^completion)(BOOL, NSError * _Nullable) = [self.callbacks objectForKey:request];
     if (completion) {
-        completion(status, statusMessage);
+        completion(status, error);
     }
 }
 
