@@ -29,8 +29,6 @@
 
 @interface BNCDeviceInfo()
 
-@property (nonatomic, strong, readwrite) BNCReachability *reachability;
-
 @property (nonatomic, copy, readwrite) NSString *randomId;
 
 @end
@@ -66,9 +64,7 @@
     BNCLocale *locale = [BNCLocale new];
     BNCTelephony *telephony = [BNCTelephony new];
     BNCDeviceSystem *deviceSystem = [BNCDeviceSystem new];
-    
-    self.reachability = [BNCReachability new];
-    
+        
     // The random id is regenerated per app launch.  This maintains existing behavior.
     self.randomId = [[NSUUID UUID] UUIDString];
     self.vendorId = [BNCSystemObserver getVendorId];
@@ -114,7 +110,7 @@
 }
 
 - (NSString *)connectionType {
-    return [self.reachability reachabilityStatus];
+    return [[BNCReachability shared] reachabilityStatus];
 }
 
 - (NSString *)userAgentString {
@@ -160,7 +156,7 @@
             [dictionary bnc_safeSetObject:self.vendorId forKey:@"idfv"];
             [dictionary bnc_safeSetObject:self.advertiserId forKey:@"idfa"];
         }
-        [dictionary bnc_safeSetObject:[BNCNetworkInterface localIPAddress] forKey:@"local_ip"];
+        [dictionary bnc_safeSetObject:[self localIPAddress] forKey:@"local_ip"];
         
         if (!self.isAdTrackingEnabled) {
             dictionary[@"limit_ad_tracking"] = @(YES);
@@ -184,7 +180,7 @@
         [dictionary bnc_safeSetObject:self.language forKey:@"language"];
         [dictionary bnc_safeSetObject:self.carrierName forKey:@"device_carrier"];
         [dictionary bnc_safeSetObject:[self connectionType] forKey:@"connection_type"];
-        [dictionary bnc_safeSetObject:[BNCUserAgentCollector instance].userAgent forKey:@"user_agent"];
+        [dictionary bnc_safeSetObject:[self userAgentString] forKey:@"user_agent"];
 
         [dictionary bnc_safeSetObject:[BNCPreferenceHelper preferenceHelper].userIdentity forKey:@"developer_identity"];
         [dictionary bnc_safeSetObject:[BNCPreferenceHelper preferenceHelper].deviceFingerprintID forKey:@"device_fingerprint_id"];
