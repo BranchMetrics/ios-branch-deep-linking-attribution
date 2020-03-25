@@ -32,7 +32,7 @@
 
 #pragma mark - BNCNetworkService
 
-@interface BNCNetworkService : NSObject <BNCNetworkServiceProtocol>
+@interface BNCNetworkService : NSObject <BNCNetworkServiceProtocol, NSURLSessionDelegate>
 + (instancetype) new;
 
 - (void) cancelAllOperations;

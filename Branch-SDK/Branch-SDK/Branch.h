@@ -1712,7 +1712,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  This is the block that is called each time a new Branch session is started. It is automatically set
  when Branch is initialized with `initSessionWithLaunchOptions:andRegisterDeepLinkHandler`.
  */
-@property (copy,   nonatomic) void(^ sessionInitWithParamsCallback) (NSDictionary * _Nullable params, NSError * _Nullable error);
+@property (copy, nonatomic) void(^ sessionInitWithParamsCallback) (NSDictionary * _Nullable params, NSError * _Nullable error);
 
 /**
  This is the block that is called each time a new Branch session is started. It is automatically set
@@ -1721,7 +1721,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  The difference with this callback from `sessionInitWithParamsCallback` is that it is called with a
  BranchUniversalObject.
  */
-@property (copy,   nonatomic) void (^ sessionInitWithBranchUniversalObjectCallback) (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error);
+@property (copy, nonatomic) void (^ sessionInitWithBranchUniversalObjectCallback) (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error);
 
 // Read-only property exposed for unit testing.
 @property (strong, readonly) BNCServerInterface* serverInterface;
