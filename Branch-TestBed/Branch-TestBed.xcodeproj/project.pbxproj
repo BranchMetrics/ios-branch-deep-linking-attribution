@@ -164,6 +164,8 @@
 		5F205D0823186AF700C776D1 /* BNCUserAgentCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */; };
 		5F22AFC0240600A200837CF5 /* BNCCallbackMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE693F62405E91500E3AEE2 /* BNCCallbackMap.m */; };
 		5F22AFC1240600BE00837CF5 /* BNCCallbackMap.m in Headers */ = {isa = PBXBuildFile; fileRef = 5FE693F62405E91500E3AEE2 /* BNCCallbackMap.m */; };
+		5F32D7C3242AC339000DE539 /* BranchScene.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F32D7C1242AC338000DE539 /* BranchScene.h */; };
+		5F32D7C4242AC339000DE539 /* BranchScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F32D7C2242AC338000DE539 /* BranchScene.m */; };
 		5F3D6714232C589100454FF1 /* BranchLastAttributedTouchData.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3D6712232C589100454FF1 /* BranchLastAttributedTouchData.m */; };
 		5F3D6715232C589100454FF1 /* BranchLastAttributedTouchData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F3D6713232C589100454FF1 /* BranchLastAttributedTouchData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F3D6718233061CB00454FF1 /* BranchCrossPlatformIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3D6717233061CB00454FF1 /* BranchCrossPlatformIDTests.m */; };
@@ -453,6 +455,8 @@
 		5F2035CB240DDE90004FDC3E /* BNCDisableAdNetworkCalloutsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCDisableAdNetworkCalloutsTests.m; sourceTree = "<group>"; };
 		5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCUserAgentCollectorTests.m; sourceTree = "<group>"; };
 		5F205D04231864E800C776D1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		5F32D7C1242AC338000DE539 /* BranchScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchScene.h; sourceTree = "<group>"; };
+		5F32D7C2242AC338000DE539 /* BranchScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchScene.m; sourceTree = "<group>"; };
 		5F3D6712232C589100454FF1 /* BranchLastAttributedTouchData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchLastAttributedTouchData.m; sourceTree = "<group>"; };
 		5F3D6713232C589100454FF1 /* BranchLastAttributedTouchData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchLastAttributedTouchData.h; sourceTree = "<group>"; };
 		5F3D6717233061CB00454FF1 /* BranchCrossPlatformIDTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BranchCrossPlatformIDTests.m; sourceTree = "<group>"; };
@@ -971,6 +975,8 @@
 				4D955CCB2035021400FB8008 /* BNCURLBlackList.m */,
 				670016BD1946309100A9E103 /* Branch.h */,
 				670016BE1946309100A9E103 /* Branch.m */,
+				5F32D7C1242AC338000DE539 /* BranchScene.h */,
+				5F32D7C2242AC338000DE539 /* BranchScene.m */,
 				9A2B7DD31FEC3BAE00CD188B /* Branch+Validator.h */,
 				9A2B7DD41FEC3BAE00CD188B /* Branch+Validator.m */,
 				D258D2C41A794D64004A1C90 /* BranchActivityItemProvider.h */,
@@ -1112,6 +1118,7 @@
 				F1D359201ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h in Headers */,
 				7B18DF491F1F00E200C25C84 /* BNCCrashlyticsWrapper.h in Headers */,
 				4D9726BA1F27FF7400028BDE /* BNCLocalization.h in Headers */,
+				5F32D7C3242AC339000DE539 /* BranchScene.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1388,6 +1395,7 @@
 				4D130E8A1EE0C7B100A69A0A /* BranchRedeemRewardsRequest.m in Sources */,
 				4665AF261B28B9BB00184037 /* BranchConstants.m in Sources */,
 				4D130E901EE0C7B100A69A0A /* BranchShortUrlRequest.m in Sources */,
+				5F32D7C4242AC339000DE539 /* BranchScene.m in Sources */,
 				4DCF4AFB1F4388F600AF9AAB /* BranchEvent.m in Sources */,
 				5FB0AA6C231875B500A0F9EA /* BNCUserAgentCollector.m in Sources */,
 				4D9607F51FBF9473008AB3C2 /* UIViewController+Branch.m in Sources */,
