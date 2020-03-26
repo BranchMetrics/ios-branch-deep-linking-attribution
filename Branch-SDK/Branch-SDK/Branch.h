@@ -450,6 +450,9 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(nullable callbackWithParams)callback;
 
+// init callback with sceneIdentifier
+ - (void)initSessionWithLaunchOptions:(NSDictionary *)options registerDeepLinkHandlerWithSceneIdentifier:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, NSString * _Nullable sceneIdentifier))callback;
+
 /**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
 
@@ -457,6 +460,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (BOOL)handleDeepLink:(nullable NSURL *)url;
 
+- (BOOL)handleDeepLink:(nullable NSURL *)url sceneIdentifier:(nullable NSString *)sceneIdentifier;
 
 /**
  Have Branch end the current deep link session and start a new session with the provided URL.
@@ -476,6 +480,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 - (BOOL)continueUserActivity:(nullable NSUserActivity *)userActivity;
 
+- (BOOL)continueUserActivity:(nullable NSUserActivity *)userActivity sceneIdentifier:(nullable NSString *)sceneIdentifier;
+
 /**
  Call this method from inside your app delegate's `application:openURL:sourceApplication:annotation:`
  method so that Branch can open the passed URL. This method is for pre-iOS 9 compatibility: If you don't need
@@ -494,6 +500,11 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
             openURL:(nullable NSURL *)url
   sourceApplication:(nullable NSString *)sourceApplication
          annotation:(nullable id)annotation;
+
+- (BOOL)sceneIdentifier:(nullable NSString *)sceneIdentifier
+                openURL:(nullable NSURL *)url
+      sourceApplication:(nullable NSString *)sourceApplication
+             annotation:(nullable id)annotation;
 
 /**
  Call this method from inside your app delegate's `application:openURL:options:` method so that Branch can

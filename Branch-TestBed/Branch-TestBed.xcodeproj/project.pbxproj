@@ -164,7 +164,7 @@
 		5F205D0823186AF700C776D1 /* BNCUserAgentCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F205D022318641700C776D1 /* BNCUserAgentCollectorTests.m */; };
 		5F22AFC0240600A200837CF5 /* BNCCallbackMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE693F62405E91500E3AEE2 /* BNCCallbackMap.m */; };
 		5F22AFC1240600BE00837CF5 /* BNCCallbackMap.m in Headers */ = {isa = PBXBuildFile; fileRef = 5FE693F62405E91500E3AEE2 /* BNCCallbackMap.m */; };
-		5F32D7C3242AC339000DE539 /* BranchScene.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F32D7C1242AC338000DE539 /* BranchScene.h */; };
+		5F32D7C3242AC339000DE539 /* BranchScene.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F32D7C1242AC338000DE539 /* BranchScene.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F32D7C4242AC339000DE539 /* BranchScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F32D7C2242AC338000DE539 /* BranchScene.m */; };
 		5F3D6714232C589100454FF1 /* BranchLastAttributedTouchData.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F3D6712232C589100454FF1 /* BranchLastAttributedTouchData.m */; };
 		5F3D6715232C589100454FF1 /* BranchLastAttributedTouchData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F3D6713232C589100454FF1 /* BranchLastAttributedTouchData.h */; settings = {ATTRIBUTES = (Public, ); }; };
