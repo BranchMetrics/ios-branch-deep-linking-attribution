@@ -8,6 +8,7 @@
 
 #import "BranchScene.h"
 #import "Branch.h"
+#import "BNCLog.h"
 
 @interface BranchScene()
 @property (strong, nonatomic, readwrite) NSMutableDictionary<NSString *, UIScene *> *scenes;
@@ -23,7 +24,7 @@
     return self;
 }
 
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene, UISceneSession * _Nullable sceneSession))callback {
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback {
     [[Branch getInstance] initSessionWithLaunchOptions:options andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
         
     }];
@@ -31,12 +32,19 @@
 
 - (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity {
     NSString *identifier = [self saveScene:scene];
-    
+    [[Branch getInstance] continueUserActivity:userActivity sceneIdentifier:identifier];
 }
 
 - (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
-    NSString *identifier = [self saveScene:scene];
+    if (URLContexts.count != 1) {
+        BNCLogWarning(@"Branch only supports a single URLContext");
+    }
     
+    UIOpenURLContext *context = [URLContexts allObjects].firstObject;
+    if (context) {
+        NSString *identifier = [self saveScene:scene];
+        [[Branch getInstance] sceneIdentifier:identifier openURL:context.URL sourceApplication:context.options.sourceApplication annotation:context.options.annotation];
+    }
 }
 
 - (NSString *)saveScene:(UIScene *)scene {

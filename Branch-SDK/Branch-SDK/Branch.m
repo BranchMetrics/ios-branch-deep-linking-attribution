@@ -137,6 +137,8 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
 @property (strong, nonatomic) BNCURLBlackList *URLBlackList;
 
+@property (nonatomic, copy, nullable) void (^sessionInitWithParamsAndSceneIdentifierCallback)(NSDictionary * _Nullable params, NSError * _Nullable error, NSString * _Nullable sceneIdentifier);
+
 @end
 
 @implementation Branch
@@ -542,7 +544,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             // Set the flag:
             [BNCPreferenceHelper preferenceHelper].trackingDisabled = NO;
             // Initialize a Branch session:
-            [Branch.getInstance initUserSessionAndCallCallback:NO];
+            [Branch.getInstance initUserSessionAndCallCallback:NO sceneIdentifier:nil];
         }
     }
 }
@@ -589,8 +591,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:YES automaticallyDisplayController:automaticallyDisplayController registerDeepLinkHandler:callback];
 }
 
-
 #pragma mark - Actual Init Session
+
+- (void)initSessionWithLaunchOptions:(NSDictionary *)options registerDeepLinkHandlerWithSceneIdentifier:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, NSString * _Nullable sceneIdentifier))callback {
+    self.sessionInitWithParamsAndSceneIdentifierCallback = callback;
+    [self initSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO];
+}
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback {
     self.sessionInitWithBranchUniversalObjectCallback = callback;
@@ -613,7 +619,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     // If the SDK is already initialized, this means that initSession was called after other lifecycle calls.
     if (self.initializationStatus == BNCInitStatusInitialized) {
-        [self initUserSessionAndCallCallback:YES];
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
         return;
     }
 
@@ -639,9 +645,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 - (void)checkAttributionStatusAndInitialize {
     dispatch_async(self.isolationQueue, ^(){
         if ([BNCPreferenceHelper preferenceHelper].faceBookAppLink) {
-            [self handleDeepLink:[BNCPreferenceHelper preferenceHelper].faceBookAppLink];
+            [self handleDeepLink:[BNCPreferenceHelper preferenceHelper].faceBookAppLink sceneIdentifier:nil];
         } else {
-            [self initUserSessionAndCallCallback:YES];
+            [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
         }
     });
 }
@@ -674,10 +680,14 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 // This is currently the same as handleDeeplink
 - (BOOL)handleDeepLinkWithNewSession:(NSURL *)url {
-    return [self handleDeepLink:url];
+    return [self handleDeepLink:url sceneIdentifier:nil];
 }
 
 - (BOOL)handleDeepLink:(NSURL *)url {
+    return [self handleDeepLink:url sceneIdentifier:nil];
+}
+
+- (BOOL)handleDeepLink:(NSURL *)url sceneIdentifier:(NSString *)sceneIdentifier {
     
     // we've been resetting the session on all deeplinks for quite some time
     // this allows foreground links to callback
@@ -693,7 +703,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         self.preferenceHelper.externalIntentURI = blackListPattern;
         self.preferenceHelper.referringURL = blackListPattern;
         
-        [self initUserSessionAndCallCallback:YES];
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier];
         return NO;
     }
 
@@ -737,7 +747,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-    [self initUserSessionAndCallCallback:YES];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
     return handled;
 }
 
@@ -746,7 +756,14 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation {
-    return [self  handleDeepLink:url];
+    return [self handleDeepLink:url sceneIdentifier:nil];
+}
+
+- (BOOL)sceneIdentifier:(NSString *)sceneIdentifier
+                openURL:(NSURL *)url
+      sourceApplication:(NSString *)sourceApplication
+             annotation:(id)annotation {
+    return [self  handleDeepLink:url sceneIdentifier:nil];
 }
 
 - (BOOL)application:(UIApplication *)application
@@ -772,7 +789,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         self.preferenceHelper.referringURL = urlString;
     }
 
-    [self initUserSessionAndCallCallback:YES];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
 
     id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
     if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] && [urlString bnc_containsString:branchUniversalLinkDomains]) {
@@ -797,11 +814,15 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (BOOL)continueUserActivity:(NSUserActivity *)userActivity {
+    return [self continueUserActivity:userActivity sceneIdentifier:nil];
+}
+
+- (BOOL)continueUserActivity:(NSUserActivity *)userActivity sceneIdentifier:(NSString *)sceneIdentifier {
     BNCLogDebugSDK(@"continueUserActivity:");
 
     // Check to see if a browser activity needs to be handled
     if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        return [self handleDeepLink:userActivity.webpageURL];
+        return [self handleDeepLink:userActivity.webpageURL sceneIdentifier:sceneIdentifier];
     }
 
     // Check to see if a spotlight activity needs to be handled
@@ -809,9 +830,9 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     NSURL *webURL = userActivity.webpageURL;
 
     if ([self isBranchLink:userActivity.userInfo[CSSearchableItemActivityIdentifier]]) {
-        return [self handleDeepLink:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]]];
+        return [self handleDeepLink:[NSURL URLWithString:userActivity.userInfo[CSSearchableItemActivityIdentifier]] sceneIdentifier:sceneIdentifier];
     } else if (webURL != nil && [self isBranchLink:[webURL absoluteString]]) {
-        return [self handleDeepLink:webURL];
+        return [self handleDeepLink:webURL sceneIdentifier:sceneIdentifier];
     } else if (spotlightIdentifier) {
         self.preferenceHelper.spotlightIdentifier = spotlightIdentifier;
     } else {
@@ -821,7 +842,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
         }
     }
 
-    [self initUserSessionAndCallCallback:YES];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier];
 
     return spotlightIdentifier != nil;
 }
@@ -867,7 +888,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     if (urlStr && [[UIApplicationClass sharedApplication] applicationState] == UIApplicationStateActive) {
         NSURL *url = [NSURL URLWithString:urlStr];
         if (url)  {
-            [self handleDeepLink:url];
+            [self handleDeepLink:url sceneIdentifier:nil];
         }
     }
 }
@@ -1797,7 +1818,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     if (!Branch.trackingDisabled &&
         self.initializationStatus != BNCInitStatusInitialized &&
         ![self.requestQueue containsInstallOrOpen]) {
-        [self initUserSessionAndCallCallback:YES];
+        [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
     }
 }
 
@@ -2006,11 +2027,11 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 - (void)initSafetyCheck {
     if (self.initializationStatus == BNCInitStatusUninitialized) {
         BNCLogDebug(@"Branch avoided an error by preemptively initializing.");
-        [self initUserSessionAndCallCallback:NO];
+        [self initUserSessionAndCallCallback:NO sceneIdentifier:nil];
     }
 }
 
-- (void)initUserSessionAndCallCallback:(BOOL)callCallback {
+- (void)initUserSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
     dispatch_async(self.isolationQueue, ^(){
         NSString *urlstring = nil;
         if (self.preferenceHelper.universalLinkUrl.length) {
