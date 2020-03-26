@@ -80,6 +80,8 @@
 		4DB5673A1E79FDAF00A8A324 /* BranchShareLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB567381E79FDAF00A8A324 /* BranchShareLink.h */; platformFilter = ios; settings = {ATTRIBUTES = (Public, ); }; };
 		4DB5673B1E79FDAF00A8A324 /* BranchShareLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB567391E79FDAF00A8A324 /* BranchShareLink.m */; platformFilter = ios; };
 		4DCF4B011F438A2B00AF9AAB /* BNCLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD7C3D91F27CEDB003696AF /* BNCLog.h */; platformFilter = ios; settings = {ATTRIBUTES = (Public, ); }; };
+		5F32D7C8242D323C000DE539 /* BNCCallbackMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F32D7C6242D323B000DE539 /* BNCCallbackMap.m */; };
+		5F32D7C9242D323C000DE539 /* BNCCallbackMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F32D7C7242D323B000DE539 /* BNCCallbackMap.h */; };
 		5F7DB5FB237C95C30077A95F /* BNCAppleAdClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F7DB5F9237C95C30077A95F /* BNCAppleAdClient.h */; platformFilter = ios; };
 		5F7DB5FC237C95C30077A95F /* BNCAppleAdClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F7DB5FA237C95C30077A95F /* BNCAppleAdClient.m */; };
 		5F8FC239236BB18A00B8474A /* BNCFacebookAppLinks.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F8FC235236BB18900B8474A /* BNCFacebookAppLinks.m */; };
@@ -228,6 +230,8 @@
 		4DB328041FA10C6300ACF9B0 /* BranchEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchEvent.m; sourceTree = "<group>"; };
 		4DB567381E79FDAF00A8A324 /* BranchShareLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchShareLink.h; sourceTree = "<group>"; };
 		4DB567391E79FDAF00A8A324 /* BranchShareLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BranchShareLink.m; sourceTree = "<group>"; };
+		5F32D7C6242D323B000DE539 /* BNCCallbackMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCCallbackMap.m; sourceTree = "<group>"; };
+		5F32D7C7242D323B000DE539 /* BNCCallbackMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCCallbackMap.h; sourceTree = "<group>"; };
 		5F7DB5F9237C95C30077A95F /* BNCAppleAdClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BNCAppleAdClient.h; sourceTree = "<group>"; };
 		5F7DB5FA237C95C30077A95F /* BNCAppleAdClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCAppleAdClient.m; sourceTree = "<group>"; };
 		5F8FC235236BB18900B8474A /* BNCFacebookAppLinks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCFacebookAppLinks.m; sourceTree = "<group>"; };
@@ -468,6 +472,8 @@
 				4DAF63B91F86C26A006316E9 /* BranchDelegate.m */,
 				4DB328031FA10C6200ACF9B0 /* BranchEvent.h */,
 				4DB328041FA10C6300ACF9B0 /* BranchEvent.m */,
+				5F32D7C7242D323B000DE539 /* BNCCallbackMap.h */,
+				5F32D7C6242D323B000DE539 /* BNCCallbackMap.m */,
 				E230A1381D03DB9E006181D8 /* BranchLinkProperties.h */,
 				E230A1391D03DB9E006181D8 /* BranchLinkProperties.m */,
 				4DB567381E79FDAF00A8A324 /* BranchShareLink.h */,
@@ -533,6 +539,7 @@
 				4DAB17A01EE8A31B0079EEB4 /* BNCServerInterface.h in Headers */,
 				4DAB17A61EE8A31B0079EEB4 /* BNCServerResponse.h in Headers */,
 				4D1ED2811FB3A472007390A8 /* BNCSpotlightService.h in Headers */,
+				5F32D7C9242D323C000DE539 /* BNCCallbackMap.h in Headers */,
 				4DAB17A21EE8A31B0079EEB4 /* BNCServerRequest.h in Headers */,
 				4DAB17A41EE8A31B0079EEB4 /* BNCServerRequestQueue.h in Headers */,
 				E230A1861D03DB9E006181D8 /* Branch.h in Headers */,
@@ -713,6 +720,7 @@
 				9A149C6820336601002135DC /* Branch+Validator.m in Sources */,
 				5FED519B236B9E12008ECAFD /* NSError+Branch.m in Sources */,
 				5FB6D3DE23219C46006C5094 /* BNCThreads.m in Sources */,
+				5F32D7C8242D323C000DE539 /* BNCCallbackMap.m in Sources */,
 				4D78C9661F2679F000EEDD5F /* BNCCrashlyticsWrapper.m in Sources */,
 				2BD7C3E61F27CF68003696AF /* NSString+Branch.m in Sources */,
 				5F9071C5233D5FD5003AACAD /* BranchLastAttributedTouchData.m in Sources */,
