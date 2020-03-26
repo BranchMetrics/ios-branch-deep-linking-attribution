@@ -113,6 +113,6 @@
 
 /// Pins the session to the array of public keys.
 @optional
-- (NSError*) pinSessionToPublicSecKeyRefs:(NSArray/**<SecKeyRef>*/*)publicKeys;
+- (NSError*) pinSessionToPublicSecKeyRefs:(NSArray/**<SecKeyRef>*/*)publicKeys __deprecated;
 
 @end
