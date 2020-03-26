@@ -679,6 +679,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)setNetworkTimeout:(NSTimeInterval)timeout;
 
 /**
+ Disable callouts to ad networks for all events for a user; by default Branch sends callouts to ad networks.
+ 
+ By calling this method with YES, Branch will not send any events to the ad networks specified in your Branch account.  If ad networks are not specified in your Branch account, this method will be ignored and events will still be sent.
+ */
+- (void)disableAdNetworkCallouts:(BOOL)disableCallouts;
+
+/**
  Specify that Branch should NOT use an invisible SFSafariViewController to attempt cookie-based matching upon install.
  If you call this method, we will fall back to using our pool of cookie-IDFA pairs for matching.
  */

@@ -88,7 +88,20 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 @property (nonatomic, copy) NSArray<BranchUniversalObject*>*_Nonnull       contentItems;
 @property (nonatomic, copy) NSDictionary<NSString*, NSString*> *_Nonnull   customData;
 
-- (void) logEvent;                      //!< Logs the event on the Branch server.
+/**
+ Logs the event on the Branch server.
+ 
+ This version will callback on success/failure.
+ */
+- (void)logEventWithCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completion;
+
+/**
+ Logs the event on the Branch server.
+ 
+ This version automatically caches and retries as necessary.
+ */
+- (void)logEvent;
+
 - (NSDictionary*_Nonnull) dictionary;   //!< Returns a dictionary representation of the event.
 - (NSString* _Nonnull) description;     //!< Returns a string description of the event.
 @end
