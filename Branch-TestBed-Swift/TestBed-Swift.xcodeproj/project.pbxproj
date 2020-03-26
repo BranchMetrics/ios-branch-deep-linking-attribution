@@ -694,10 +694,10 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-TestBed-Swift/Pods-TestBed-Swift-resources.sh",
-				"${PODS_ROOT}/Amplitude-iOS/Amplitude/api.amplitude.com.der",
-				"${PODS_ROOT}/Amplitude-iOS/Amplitude/ComodoCaLimitedRsaCertificationAuthority.der",
-				"${PODS_ROOT}/Amplitude-iOS/Amplitude/ComodoRsaCA.der",
-				"${PODS_ROOT}/Amplitude-iOS/Amplitude/ComodoRsaDomainValidationCA.der",
+				"${PODS_ROOT}/Amplitude-iOS/Sources/Amplitude/api.amplitude.com.der",
+				"${PODS_ROOT}/Amplitude-iOS/Sources/Amplitude/ComodoCaLimitedRsaCertificationAuthority.der",
+				"${PODS_ROOT}/Amplitude-iOS/Sources/Amplitude/ComodoRsaCA.der",
+				"${PODS_ROOT}/Amplitude-iOS/Sources/Amplitude/ComodoRsaDomainValidationCA.der",
 				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/ABKContentCardsStoryboard.storyboard",
 				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/ar.lproj/AppboyContentCardsLocalizable.strings",
 				"${PODS_ROOT}/Appboy-iOS-SDK/AppboyUI/ABKContentCards/Resources/Base.lproj/AppboyContentCardsLocalizable.strings",

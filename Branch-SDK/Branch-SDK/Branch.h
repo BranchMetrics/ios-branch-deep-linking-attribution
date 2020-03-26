@@ -679,11 +679,9 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 - (void)setNetworkTimeout:(NSTimeInterval)timeout;
 
 /**
- Set disable_ad_network_callouts server flag.  Default value is NO.
-
- By calling this method with YES, the flag disable_ad_network_callouts = true will be set on all events for a user.
- Those events will not be sent to ad networks that have been specified by the customer on the dashboard.
- Customer is required to select the ad networks that the event should not be sent to on the dashboard in order for the flag to be effective.
+ Disable callouts to ad networks for all events for a user; by default Branch sends callouts to ad networks.
+ 
+ By calling this method with YES, Branch will not send any events to the ad networks specified in your Branch account.  If ad networks are not specified in your Branch account, this method will be ignored and events will still be sent.
  */
 - (void)disableAdNetworkCallouts:(BOOL)disableCallouts;
 
