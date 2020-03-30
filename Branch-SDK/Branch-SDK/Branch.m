@@ -137,7 +137,7 @@ typedef NS_ENUM(NSInteger, BNCInitStatus) {
 @property (strong, nonatomic) NSMutableArray *whiteListedSchemeList;
 @property (strong, nonatomic) BNCURLBlackList *URLBlackList;
 
-@property (nonatomic, copy, nullable) void (^sessionInitWithParamsAndSceneIdentifierCallback)(NSDictionary * _Nullable params, NSError * _Nullable error, NSString * _Nullable sceneIdentifier);
+@property (nonatomic, copy, nullable) void (^sceneSessionInitWithCallback)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error);
 
 @end
 
@@ -593,21 +593,39 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
 #pragma mark - Actual Init Session
 
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options registerDeepLinkHandlerWithSceneIdentifier:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, NSString * _Nullable sceneIdentifier))callback {
-    self.sessionInitWithParamsAndSceneIdentifierCallback = callback;
-    [self initSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO];
-}
-
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandlerUsingBranchUniversalObject:(callbackWithBranchUniversalObject)callback {
-    self.sessionInitWithBranchUniversalObjectCallback = callback;
-    [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
+
+    [self initSceneSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController
+                    registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
+        if (callback) {
+            if (initResponse) {
+                callback(initResponse.universalObject, initResponse.linkProperties, error);
+            } else {
+                callback([BranchUniversalObject new], [BranchLinkProperties new], error);
+            }
+        }
+    }];
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController registerDeepLinkHandler:(callbackWithParams)callback {
-    self.sessionInitWithParamsCallback = callback;
-    [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
+  
+    [self initSceneSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController
+                    registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
+        if (callback) {
+            if (initResponse) {
+                callback(initResponse.params, error);
+            } else {
+                callback([NSDictionary new], error);
+            }
+        }
+    }];
 }
 
+- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
+                  registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback {
+    self.sceneSessionInitWithCallback = callback;
+    [self initSessionWithLaunchOptions:options isReferrable:isReferrable explicitlyRequestedReferrable:explicitlyRequestedReferrable automaticallyDisplayController:automaticallyDisplayController];
+}
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options
                         isReferrable:(BOOL)isReferrable
@@ -2061,15 +2079,13 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             
             // callback on main, this is generally what the client expects and maintains our previous behavior
             dispatch_async(dispatch_get_main_queue(), ^ {
-                if (self.sessionInitWithParamsCallback) {
-                    self.sessionInitWithParamsCallback([self getLatestReferringParams], nil);
-                }
-                else if (self.sessionInitWithBranchUniversalObjectCallback) {
-                    self.sessionInitWithBranchUniversalObjectCallback(
-                        [self getLatestReferringBranchUniversalObject],
-                        [self getLatestReferringBranchLinkProperties],
-                        nil
-                    );
+  
+                if (self.sceneSessionInitWithCallback) {
+                    BNCInitSessionResponse *response = [BNCInitSessionResponse new];
+                    response.params = [self getLatestReferringParams];
+                    response.universalObject = [self getLatestReferringBranchUniversalObject];
+                    response.linkProperties = [self getLatestReferringBranchLinkProperties];
+                    self.sceneSessionInitWithCallback(response, nil);
                 }
             });
         }
@@ -2158,14 +2174,13 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 
     if (callCallback) {
-        if (self.sessionInitWithParamsCallback) {
-            self.sessionInitWithParamsCallback(latestReferringParams, nil);
-        } else if (self.sessionInitWithBranchUniversalObjectCallback) {
-            self.sessionInitWithBranchUniversalObjectCallback(
-                [self getLatestReferringBranchUniversalObject],
-                [self getLatestReferringBranchLinkProperties],
-                nil
-            );
+
+        if (self.sceneSessionInitWithCallback) {
+            BNCInitSessionResponse *response = [BNCInitSessionResponse new];
+            response.params = [self getLatestReferringParams];
+            response.universalObject = [self getLatestReferringBranchUniversalObject];
+            response.linkProperties = [self getLatestReferringBranchLinkProperties];
+            self.sceneSessionInitWithCallback(response, nil);
         }
     }
     [self sendOpenNotificationWithLinkParameters:latestReferringParams error:nil];
@@ -2361,15 +2376,13 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     self.initializationStatus = BNCInitStatusUninitialized;
     
     if (callCallback) {
-        if (self.sessionInitWithParamsCallback) {
-            self.sessionInitWithParamsCallback([[NSDictionary alloc] init], error);
-        }
-        else if (self.sessionInitWithBranchUniversalObjectCallback) {
-            self.sessionInitWithBranchUniversalObjectCallback(
-                [[BranchUniversalObject alloc] init],
-                [[BranchLinkProperties alloc] init],
-                error
-            );
+        if (self.sceneSessionInitWithCallback) {
+            BNCInitSessionResponse *response = [BNCInitSessionResponse new];
+            response.error = error;
+            response.params = [NSDictionary new];
+            response.universalObject = [BranchUniversalObject new];
+            response.linkProperties = [BranchLinkProperties new];
+            self.sceneSessionInitWithCallback(response, error);
         }
     }
 

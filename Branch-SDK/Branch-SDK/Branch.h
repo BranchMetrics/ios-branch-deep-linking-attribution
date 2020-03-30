@@ -36,6 +36,7 @@
 #import "BranchUniversalObject.h"
 #import "BranchCrossPlatformID.h"
 #import "BranchLastAttributedTouchData.h"
+#import "BNCInitSessionResponse.h"
 #import "UIViewController+Branch.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -450,9 +451,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(nullable callbackWithParams)callback;
 
-// init callback with sceneIdentifier
- - (void)initSessionWithLaunchOptions:(NSDictionary *)options registerDeepLinkHandlerWithSceneIdentifier:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, NSString * _Nullable sceneIdentifier))callback;
-
+- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
+                  registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback;
 /**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
 
@@ -1721,7 +1721,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  This is the block that is called each time a new Branch session is started. It is automatically set
  when Branch is initialized with `initSessionWithLaunchOptions:andRegisterDeepLinkHandler`.
  */
-@property (copy, nonatomic) void(^ sessionInitWithParamsCallback) (NSDictionary * _Nullable params, NSError * _Nullable error);
+@property (copy, nonatomic) void(^ sessionInitWithParamsCallback) (NSDictionary * _Nullable params, NSError * _Nullable error) DEPRECATED_ATTRIBUTE;
 
 /**
  This is the block that is called each time a new Branch session is started. It is automatically set
@@ -1730,7 +1730,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  The difference with this callback from `sessionInitWithParamsCallback` is that it is called with a
  BranchUniversalObject.
  */
-@property (copy, nonatomic) void (^ sessionInitWithBranchUniversalObjectCallback) (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error);
+@property (copy, nonatomic) void (^ sessionInitWithBranchUniversalObjectCallback) (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) DEPRECATED_ATTRIBUTE;
 
 // Read-only property exposed for unit testing.
 @property (strong, readonly) BNCServerInterface* serverInterface;

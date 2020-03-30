@@ -234,6 +234,8 @@
 		5FC7326922D81002006E6FBC /* BNCAppleReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC7326722D81002006E6FBC /* BNCAppleReceipt.m */; };
 		5FC7327022DD1F93006E6FBC /* BNCAppleReceiptTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */; };
 		5FC7327722DE9A44006E6FBC /* BNCServerInterfaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC7327622DE9A44006E6FBC /* BNCServerInterfaceTests.m */; };
+		5FE276AF2432705B00EA1BD2 /* BNCInitSessionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FE276AD2432705B00EA1BD2 /* BNCInitSessionResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5FE276B02432705B00EA1BD2 /* BNCInitSessionResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE276AE2432705B00EA1BD2 /* BNCInitSessionResponse.m */; };
 		5FE693F72405E91500E3AEE2 /* BNCCallbackMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FE693F52405E91500E3AEE2 /* BNCCallbackMap.h */; };
 		5FE693F82405E91500E3AEE2 /* BNCCallbackMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE693F62405E91500E3AEE2 /* BNCCallbackMap.m */; };
 		5FE694382405FA2700E3AEE2 /* BNCCallbackMapTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE694372405FA2700E3AEE2 /* BNCCallbackMapTests.m */; };
@@ -527,6 +529,8 @@
 		5FC7326722D81002006E6FBC /* BNCAppleReceipt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BNCAppleReceipt.m; sourceTree = "<group>"; };
 		5FC7326F22DD1F93006E6FBC /* BNCAppleReceiptTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCAppleReceiptTests.m; sourceTree = "<group>"; };
 		5FC7327622DE9A44006E6FBC /* BNCServerInterfaceTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCServerInterfaceTests.m; sourceTree = "<group>"; };
+		5FE276AD2432705B00EA1BD2 /* BNCInitSessionResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCInitSessionResponse.h; sourceTree = "<group>"; };
+		5FE276AE2432705B00EA1BD2 /* BNCInitSessionResponse.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCInitSessionResponse.m; sourceTree = "<group>"; };
 		5FE693F52405E91500E3AEE2 /* BNCCallbackMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BNCCallbackMap.h; sourceTree = "<group>"; };
 		5FE693F62405E91500E3AEE2 /* BNCCallbackMap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCCallbackMap.m; sourceTree = "<group>"; };
 		5FE694372405FA2700E3AEE2 /* BNCCallbackMapTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BNCCallbackMapTests.m; sourceTree = "<group>"; };
@@ -975,6 +979,8 @@
 				4D955CCB2035021400FB8008 /* BNCURLBlackList.m */,
 				670016BD1946309100A9E103 /* Branch.h */,
 				670016BE1946309100A9E103 /* Branch.m */,
+				5FE276AD2432705B00EA1BD2 /* BNCInitSessionResponse.h */,
+				5FE276AE2432705B00EA1BD2 /* BNCInitSessionResponse.m */,
 				5F32D7C1242AC338000DE539 /* BranchScene.h */,
 				5F32D7C2242AC338000DE539 /* BranchScene.m */,
 				9A2B7DD31FEC3BAE00CD188B /* Branch+Validator.h */,
@@ -1115,6 +1121,7 @@
 				4DCAC8301F426F7C00405D1D /* NSMutableDictionary+Branch.h in Headers */,
 				4DCAC8311F426F7C00405D1D /* NSString+Branch.h in Headers */,
 				5F892ED9236258390023AEC1 /* BNCFacebookAppLinks.h in Headers */,
+				5FE276AF2432705B00EA1BD2 /* BNCInitSessionResponse.h in Headers */,
 				F1D359201ED4DCC500A93FD5 /* BNCDeepLinkViewControllerInstance.h in Headers */,
 				7B18DF491F1F00E200C25C84 /* BNCCrashlyticsWrapper.h in Headers */,
 				4D9726BA1F27FF7400028BDE /* BNCLocalization.h in Headers */,
@@ -1363,6 +1370,7 @@
 				5FC7326922D81002006E6FBC /* BNCAppleReceipt.m in Sources */,
 				7D58823A1CA1DF2700FF6358 /* BNCDeviceInfo.m in Sources */,
 				5F8F3E63232AD7F3002D0418 /* BranchCrossPlatformID.m in Sources */,
+				5FE276B02432705B00EA1BD2 /* BNCInitSessionResponse.m in Sources */,
 				5FA179032326F6D90012B500 /* BranchCPIDRequest.m in Sources */,
 				7B18DF4A1F1F00E200C25C84 /* BNCCrashlyticsWrapper.m in Sources */,
 				7D0C971D1D875465004E14B1 /* BranchContentDiscoveryManifest.m in Sources */,
