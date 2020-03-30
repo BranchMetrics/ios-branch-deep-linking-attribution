@@ -25,8 +25,14 @@
 }
 
 - (void)initSessionWithLaunchOptions:(NSDictionary *)options registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback {
-    [[Branch getInstance] initSessionWithLaunchOptions:options andRegisterDeepLinkHandler:^(NSDictionary * _Nullable params, NSError * _Nullable error) {
-        
+    [[Branch getInstance] initSceneSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
+        if (callback) {
+            if (initResponse) {
+                callback(initResponse.params, error, [self sceneForIdentifier:initResponse.sceneIdentifier]);
+            } else {
+                callback([NSDictionary new], error, nil);
+            }
+        }
     }];
 }
 
@@ -53,6 +59,14 @@
         [self.scenes setObject:scene forKey:identifier];
     }
     return identifier;
+}
+
+- (nullable UIScene *)sceneForIdentifier:(NSString *)identifier {
+    UIScene *scene = nil;
+    if (identifier) {
+        scene = [self.scenes objectForKey:identifier];
+    }
+    return scene;
 }
 
 - (void)removeSceneWithIdentifier:(NSString *)identifier {
