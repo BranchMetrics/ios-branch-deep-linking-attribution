@@ -11,8 +11,8 @@
 #import "BNCServerInterface.h"
 #import "BNCPreferenceHelper.h"
 #import <OCMock/OCMock.h>
-#import <OHHTTPStubs/OHHTTPStubs.h>
-#import <OHHTTPStubs/OHHTTPStubsResponse+JSON.h>
+#import <OHHTTPStubs/HTTPStubs.h>
+#import <OHHTTPStubs/HTTPStubsResponse+JSON.h>
 
 typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 
@@ -24,7 +24,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 #pragma mark - Tear Down
 
 - (void)tearDown {
-  [OHHTTPStubs removeAllStubs];
+  [HTTPStubs removeAllStubs];
   [super tearDown];
 }
 
@@ -36,13 +36,13 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 // This test checks to see that the branch key has been added to the GET request
 
 - (void)testParamAddForBranchKey {
-  [OHHTTPStubs removeAllStubs];
+  [HTTPStubs removeAllStubs];
   BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
   XCTestExpectation* expectation =
     [self expectationWithDescription:@"NSURLSessionDataTask completed"];
 
   __block int callCount = 0;
-  [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+  [HTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         // We're not sending a request, just verifying a "branch_key=key_xxx" is present.
         callCount++;
         NSLog(@"\n\nCall count %d.\nRequest: %@\n", callCount, request);
@@ -54,15 +54,15 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
         }
         return NO;
     }
-    withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+    withStubResponse:^HTTPStubsResponse *(NSURLRequest *request) {
         NSDictionary* dummyJSONResponse = @{@"key": @"value"};
-        return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+        return [HTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
     }
   ];
   
   [serverInterface getRequest:nil url:@"http://foo" key:@"key_live_foo" callback:NULL];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
-  [OHHTTPStubs removeAllStubs];
+  [HTTPStubs removeAllStubs];
 }
 
 #pragma mark - Retry tests
@@ -73,7 +73,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 // for 4 connections.
 
 - (void)testGetRequestAsyncRetriesWhenAppropriate {
-  [OHHTTPStubs removeAllStubs];
+  [HTTPStubs removeAllStubs];
 
   //Set up nsurlsession and data task, catching response
   BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
@@ -86,12 +86,12 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   __block NSInteger failedConnections = 0;
   __block NSInteger successfulConnections = 0;
   
-  [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+  [HTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
     BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
     XCTAssertEqual(foundBranchKey, TRUE);
     return foundBranchKey;
     
-  } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+  } withStubResponse:^HTTPStubsResponse*(NSURLRequest *request) {
     @synchronized (self) {
         connectionAttempts++;
         NSLog(@"Attempt # %lu", (unsigned long)connectionAttempts);
@@ -101,7 +101,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
           NSDictionary* dummyJSONResponse = @{@"bad": @"data"};
           
           ++failedConnections;
-          return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:504 headers:nil];
+          return [HTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:504 headers:nil];
           
         } else if (connectionAttempts == 3) {
 
@@ -114,12 +114,12 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
           });
 
           NSDictionary* dummyJSONResponse = @{@"key": @"value"};
-          return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+          return [HTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
 
         } else {
 
             XCTFail(@"Too many connection attempts: %ld.", (long) connectionAttempts);
-            return [OHHTTPStubsResponse responseWithJSONObject:[NSDictionary new] statusCode:200 headers:nil];
+            return [HTTPStubsResponse responseWithJSONObject:[NSDictionary new] statusCode:200 headers:nil];
 
         }
     }
@@ -135,7 +135,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 // count > 0, but retries aren't needed. Based on Test #3 above.
 
 - (void)testGetRequestAsyncRetriesWhenInappropriateResponse {
-  [OHHTTPStubs removeAllStubs];
+  [HTTPStubs removeAllStubs];
 
   BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
   serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
@@ -145,12 +145,12 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   
   __block NSUInteger connectionAttempts = 0;
   
-  [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+  [HTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
     BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
     XCTAssertEqual(foundBranchKey, TRUE);
     return foundBranchKey;
     
-  } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+  } withStubResponse:^HTTPStubsResponse*(NSURLRequest *request) {
     @synchronized (self) {
         // Return actual data on first attempt
         NSDictionary* dummyJSONResponse = @{@"key": @"value"};
@@ -159,7 +159,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
         BNCAfterSecondsPerformBlockOnMainThread(0.01, ^ {
             [successExpectation fulfill];
         });
-        return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+        return [HTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
     }
   }];
   
@@ -173,7 +173,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 // count == 0, but retries aren't needed. Based on Test #4 above
 
 - (void)testGetRequestAsyncRetriesWhenInappropriateRetryCount {
-  [OHHTTPStubs removeAllStubs];
+  [HTTPStubs removeAllStubs];
 
   BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
   serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
@@ -183,12 +183,12 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   
   __block NSUInteger connectionAttempts = 0;
   
-  [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+  [HTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
     BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
     XCTAssertEqual(foundBranchKey, TRUE);
     return foundBranchKey;
     
-  } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+  } withStubResponse:^HTTPStubsResponse*(NSURLRequest *request) {
     @synchronized (self) {
         // Return actual data on first attempt
         NSDictionary* dummyJSONResponse = @{@"key": @"value"};
@@ -197,7 +197,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
         BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{
             [successExpectation fulfill];
         });
-        return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+        return [HTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
     }
   }];
   
@@ -211,7 +211,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 // for 4 connections. Based on Test #3 above
 
 - (void)testPostRequestAsyncRetriesWhenAppropriate {
-  [OHHTTPStubs removeAllStubs];
+  [HTTPStubs removeAllStubs];
 
   //Set up nsurlsession and data task, catching response
   BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
@@ -225,12 +225,12 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   __block NSUInteger failedConnections = 0;
   __block NSUInteger successfulConnections = 0;
   
-  [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+  [HTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
     BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
     XCTAssertEqual(foundBranchKey, TRUE);
     return foundBranchKey;
     
-  } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+  } withStubResponse:^HTTPStubsResponse*(NSURLRequest *request) {
     connectionAttempts++;
     NSLog(@"attempt # %lu", (unsigned long)connectionAttempts);
     if (connectionAttempts < 3) {
@@ -238,7 +238,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
       NSDictionary* dummyJSONResponse = @{@"bad": @"data"};
       
       ++failedConnections;
-      return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:504 headers:nil];
+      return [HTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:504 headers:nil];
       
     } else if (connectionAttempts == 3) {
 
@@ -250,12 +250,12 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
         NSLog(@"==>> Fullfill <<==");
         [successExpectation fulfill];
       });
-      return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+      return [HTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
 
     } else {
 
         XCTFail(@"Too many connection attempts: %ld.", (long) connectionAttempts);
-        return [OHHTTPStubsResponse responseWithJSONObject:[NSDictionary new] statusCode:200 headers:nil];
+        return [HTTPStubsResponse responseWithJSONObject:[NSDictionary new] statusCode:200 headers:nil];
 
     }
   }];
@@ -270,7 +270,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 // count == 0, and retries aren't needed. Based on Test #4 above
 
 - (void)testPostRequestAsyncRetriesWhenInappropriateResponse {
-  [OHHTTPStubs removeAllStubs];
+  [HTTPStubs removeAllStubs];
 
   BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
   serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
@@ -280,18 +280,18 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   
   __block NSUInteger connectionAttempts = 0;
   
-  [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+  [HTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
     BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
     XCTAssertEqual(foundBranchKey, TRUE);
     return foundBranchKey;
     
-  } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+  } withStubResponse:^HTTPStubsResponse*(NSURLRequest *request) {
     // Return actual data on first attempt
     NSDictionary* dummyJSONResponse = @{@"key": @"value"};
     connectionAttempts++;
     XCTAssertEqual(connectionAttempts, 1);
     BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{ [successExpectation fulfill]; });
-    return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+    return [HTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
     
   }];
   
@@ -306,7 +306,7 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
 // count == 0, and retries aren't needed. Based on Test #4 above
 
 - (void)testPostRequestAsyncRetriesWhenInappropriateRetryCount {
-  [OHHTTPStubs removeAllStubs];
+  [HTTPStubs removeAllStubs];
 
   BNCServerInterface *serverInterface = [[BNCServerInterface alloc] init];
   serverInterface.preferenceHelper = [[BNCPreferenceHelper alloc] init];
@@ -316,18 +316,18 @@ typedef void (^UrlConnectionCallback)(NSURLResponse *, NSData *, NSError *);
   
   __block NSUInteger connectionAttempts = 0;
   
-  [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+  [HTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
     BOOL foundBranchKey = [request.URL.query rangeOfString:@"branch_key=key_"].location != NSNotFound;
     XCTAssertEqual(foundBranchKey, TRUE);
     return foundBranchKey;
     
-  } withStubResponse:^OHHTTPStubsResponse*(NSURLRequest *request) {
+  } withStubResponse:^HTTPStubsResponse*(NSURLRequest *request) {
     // Return actual data on first attempt
     NSDictionary* dummyJSONResponse = @{@"key": @"value"};
     connectionAttempts++;
     XCTAssertEqual(connectionAttempts, 1);
     BNCAfterSecondsPerformBlockOnMainThread(0.01, ^{ [successExpectation fulfill]; });
-    return [OHHTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
+    return [HTTPStubsResponse responseWithJSONObject:dummyJSONResponse statusCode:200 headers:nil];
   }];
   
   [serverInterface getRequest:nil url:@"http://foo" key:@"key_live_foo" callback:NULL];
