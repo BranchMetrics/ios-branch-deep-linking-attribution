@@ -10,10 +10,6 @@
 #import "Branch.h"
 #import "BNCLog.h"
 
-@interface BranchScene()
-@property (strong, nonatomic, readwrite) NSMutableDictionary<NSString *, UIScene *> *scenes;
-@end
-
 @implementation BranchScene
 
 + (BranchScene *)shared {
@@ -23,14 +19,6 @@
         bscene = [BranchScene new];
     });
     return bscene;
-}
-
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        self.scenes = [NSMutableDictionary<NSString *, UIScene *> new];
-    }
-    return self;
 }
 
 - (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback {
@@ -46,7 +34,7 @@
 }
 
 - (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity {
-    NSString *identifier = [self saveScene:scene];
+    NSString *identifier = scene.session.persistentIdentifier;
     [[Branch getInstance] continueUserActivity:userActivity sceneIdentifier:identifier];
 }
 
@@ -57,31 +45,22 @@
     
     UIOpenURLContext *context = [URLContexts allObjects].firstObject;
     if (context) {
-        NSString *identifier = [self saveScene:scene];
+        NSString *identifier = scene.session.persistentIdentifier;
         [[Branch getInstance] sceneIdentifier:identifier openURL:context.URL sourceApplication:context.options.sourceApplication annotation:context.options.annotation];
     }
-}
-
-- (NSString *)saveScene:(UIScene *)scene {
-    NSString *identifier = scene.session.persistentIdentifier;
-    if (identifier) {
-        [self.scenes setObject:scene forKey:identifier];
-    }
-    return identifier;
 }
 
 - (nullable UIScene *)sceneForIdentifier:(NSString *)identifier {
     UIScene *scene = nil;
     if (identifier) {
-        scene = [self.scenes objectForKey:identifier];
+        NSArray<UIScene *> *scenes = [[[UIApplication sharedApplication] connectedScenes] allObjects];
+        for (UIScene *scene in scenes) {
+            if ([identifier isEqualToString:scene.session.persistentIdentifier]) {
+                return scene;
+            }
+        }
     }
     return scene;
-}
-
-- (void)removeSceneWithIdentifier:(NSString *)identifier {
-    if (identifier) {
-        [self.scenes removeObjectForKey:identifier];
-    }
 }
 
 @end
