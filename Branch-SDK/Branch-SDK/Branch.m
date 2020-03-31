@@ -781,7 +781,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
                 openURL:(NSURL *)url
       sourceApplication:(NSString *)sourceApplication
              annotation:(id)annotation {
-    return [self  handleDeepLink:url sceneIdentifier:nil];
+    return [self  handleDeepLink:url sceneIdentifier:sceneIdentifier];
 }
 
 - (BOOL)application:(UIApplication *)application
