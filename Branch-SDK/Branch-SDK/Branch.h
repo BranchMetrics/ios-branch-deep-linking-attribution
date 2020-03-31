@@ -810,6 +810,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Indicates whether or not this user has a custom identity specified for them. Note that this is *independent of installs*. If you call setIdentity, this device
  will have that identity associated with this user until `logout` is called. This includes persisting through uninstalls, as we track device id.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  */
 - (BOOL)isUserIdentified;
 
@@ -851,6 +855,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Loads credit totals from the server.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
  @param callback The callback that is called once the request has completed.
  */
@@ -859,6 +867,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Redeem credits from the default bucket.
 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param count The number of credits to redeem.
  @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
  */
@@ -867,6 +879,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Redeem credits from the default bucket.
 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param count The number of credits to redeem.
  @param callback The callback that is called once the request has completed.
  @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
@@ -876,6 +892,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Redeem credits from the specified bucket.
 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param count The number of credits to redeem.
  @param bucket The bucket to redeem credits from.
  @warning You must `loadRewardsWithCallback:` before calling `redeemRewards`.
@@ -884,7 +904,11 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Redeem credits from the specified bucket.
-
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param count The number of credits to redeem.
  @param bucket The bucket to redeem credits from.
  @param callback The callback that is called once the request has completed.
@@ -910,6 +934,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Loads the last 100 credit transaction history items for the default bucket.
 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param callback The callback to call with the list of transactions.
  */
 - (void)getCreditHistoryWithCallback:(nullable callbackWithList)callback;
@@ -917,6 +945,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Loads the last 100 credit transaction history items for the specified bucket.
 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param bucket The bucket to get transaction history for.
  @param callback The callback to call with the list of transactions.
  */
@@ -925,6 +957,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Loads the last n credit transaction history items after the specified transaction ID for the default.
 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param creditTransactionId The ID of the transaction to start from.
  @param length The number of transactions to pull.
  @param order The direction to order transactions in the callback list. Least recent first means oldest items will be in the front of the response array, most recent means newest items will be front.
@@ -935,6 +971,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Loads the last n credit transaction history items after the specified transaction ID for the specified bucket.
 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param bucket The bucket to get transaction history for.
  @param creditTransactionId The ID of the transaction to start from.
  @param length The number of transactions to pull.
@@ -952,6 +992,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Send a user action to the server. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param action The action string.
  */
 - (void)userCompletedAction:(nullable NSString *)action;
@@ -959,6 +1003,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Send a user action to the server with additional state items. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param action The action string.
  @param state The additional state items associated with the action.
  */
@@ -966,6 +1014,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Send a user action to the server with additional state items. Some examples actions could be things like `viewed_personal_welcome`, `purchased_an_item`, etc.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
  @param action The action string.
  @param state The additional state items associated with the action.
@@ -982,6 +1034,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  makes an in-app purchase, or buys a subscription.  The commerce events are tracked in
  the Branch dashboard along with your other events so you can judge the effectiveness of
  campaigns and other analytics.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
  @param commerceEvent 	The BNCCommerceEvent that describes the purchase.
  @param metadata        Optional metadata you may want add to the event.
@@ -999,6 +1055,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Branch includes SDK methods to allow retrieval of our Cross Platform ID (CPID) from the client. This results in an asynchronous call being made to Branch’s servers with CPID data returned when possible.
  
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param completion callback with cross platform id data
  */
 - (void)crossPlatformIdDataWithCompletion:(void(^) (BranchCrossPlatformID * _Nullable cpid))completion;
@@ -1006,6 +1066,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Branch includes SDK methods to allow retrieval of our last attributed touch data (LATD) from the client. This results in an asynchronous call being made to Branch's servers with LATD data returned when possible.
  Last attributed touch data contains the information associated with that user's last viewed impression or clicked link.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  
  @param window attribution window in days.  If the window is outside the server supported range, it will default to 30 days.
  @param completion callback with attribution data
@@ -1278,6 +1342,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Get a short url without any items specified. The usage type will default to unlimited.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
  @param callback Callback called with the url.
  */
@@ -1285,6 +1353,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Get a short url with the specified params. The usage type will default to unlimited.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
  @param params Dictionary of parameters to include in the link.
  @param callback Callback called with the url.
@@ -1293,6 +1365,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Get a short url with the specified params, channel, and feature. The usage type will default to unlimited.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1303,6 +1379,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Get a short url with the specified params, channel, feature, and stage. The usage type will default to unlimited.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1314,6 +1394,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Get a short url with the specified params, channel, feature, stage, and alias. The usage type will default to unlimited.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1327,6 +1411,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Get a short url with the specified params, channel, feature, stage, and link type.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1339,6 +1427,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Get a short url with the specified params, channel, feature, stage, and match duration. The usage type will default to unlimited.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1351,6 +1443,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Get a short url with the specified params, tags, channel, feature, and stage. The usage type will default to unlimited.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
  @param params Dictionary of parameters to include in the link.
  @param tags An array of tags to associate with this link, useful for tracking.
@@ -1363,6 +1459,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and alias. The usage type will default to unlimited.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1377,6 +1477,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and link type.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
@@ -1391,6 +1495,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and match duration. The usage type will default to unlimited.
 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param tags An array of tags to associate with this link, useful for tracking.
@@ -1404,6 +1512,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, tags, channel, feature, stage, and match duration. The usage type will default to unlimited.
 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param tags An array of tags to associate with this link, useful for tracking.
@@ -1419,6 +1531,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 /**
  Get a short url with the specified params, tags, channel, feature, stage, campaign and match duration. The usage type will default to unlimited.
 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+ 
  @param params Dictionary of parameters to include in the link.
  @param channel The channel for the link. Examples could be Facebook, Twitter, SMS, etc, depending on where it will be shared.
  @param tags An array of tags to associate with this link, useful for tracking.
@@ -1432,6 +1548,13 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)getShortUrlWithParams:(nullable NSDictionary *)params andTags:(nullable NSArray *)tags andAlias:(nullable NSString *)alias andMatchDuration:(NSUInteger)duration andChannel:(nullable NSString *)channel andFeature:(nullable NSString *)feature andStage:(nullable NSString *)stage andCampaign:(nullable NSString *)campaign andCallback:(nullable callbackWithUrl)callback;
 
+/**
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
+
+ */
 - (void)getSpotlightUrlWithParams:(NSDictionary *)params callback:(callbackWithParams)callback;
 
 #pragma mark - Content Discovery methods
@@ -1697,6 +1820,10 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 /**
  Method used by BranchUniversalObject to register a view on content
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
 
  @warning This is meant for use internally only and should not be used by apps.
  */
