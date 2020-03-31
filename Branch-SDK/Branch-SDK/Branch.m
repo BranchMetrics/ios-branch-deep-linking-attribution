@@ -727,13 +727,13 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 
     NSString *scheme = [url scheme];
     if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
-        return [self handleUniversalDeepLink_private:url.absoluteString];
+        return [self handleUniversalDeepLink_private:url.absoluteString sceneIdentifier:sceneIdentifier];
     } else {
-        return [self handleSchemeDeepLink_private:url];
+        return [self handleSchemeDeepLink_private:url sceneIdentifier:sceneIdentifier];
     }
 }
 
-- (BOOL)handleSchemeDeepLink_private:(NSURL*)url {
+- (BOOL)handleSchemeDeepLink_private:(NSURL*)url sceneIdentifier:(NSString *)sceneIdentifier {
     BOOL handled = NO;
     self.preferenceHelper.referringURL = nil;
     if (url && ![url isEqual:[NSNull null]]) {
@@ -765,7 +765,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
             self.preferenceHelper.linkClickIdentifier = params[@"link_click_id"];
         }
     }
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier];
     return handled;
 }
 
@@ -801,13 +801,13 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     return [self application:application openURL:url sourceApplication:source annotation:annotation];
 }
 
-- (BOOL)handleUniversalDeepLink_private:(NSString*)urlString {
+- (BOOL)handleUniversalDeepLink_private:(NSString*)urlString sceneIdentifier:(NSString *)sceneIdentifier {
     if (urlString.length) {
         self.preferenceHelper.universalLinkUrl = urlString;
         self.preferenceHelper.referringURL = urlString;
     }
 
-    [self initUserSessionAndCallCallback:YES sceneIdentifier:nil];
+    [self initUserSessionAndCallCallback:YES sceneIdentifier:sceneIdentifier];
 
     id branchUniversalLinkDomains = [self.preferenceHelper getBranchUniversalLinkDomains];
     if ([branchUniversalLinkDomains isKindOfClass:[NSString class]] && [urlString bnc_containsString:branchUniversalLinkDomains]) {
@@ -2072,7 +2072,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         
         // If the session is not yet initialized
         if (self.initializationStatus == BNCInitStatusUninitialized) {
-            [self initializeSessionAndCallCallback:callCallback];
+            [self initializeSessionAndCallCallback:callCallback sceneIdentifier:sceneIdentifier];
         }
         // If the session was initialized, but callCallback was specified, do so.
         else if (callCallback && self.initializationStatus == BNCInitStatusInitialized) {
@@ -2085,6 +2085,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
                     response.params = [self getLatestReferringParams];
                     response.universalObject = [self getLatestReferringBranchUniversalObject];
                     response.linkProperties = [self getLatestReferringBranchLinkProperties];
+                    response.sceneIdentifier = sceneIdentifier;
                     self.sceneSessionInitWithCallback(response, nil);
                 }
             });
@@ -2093,7 +2094,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
 }
 
 // only called from initUserSessionAndCallCallback!
-- (void)initializeSessionAndCallCallback:(BOOL)callCallback {
+- (void)initializeSessionAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
 	Class clazz = [BranchInstallRequest class];
 	if (self.preferenceHelper.identityID) {
 		clazz = [BranchOpenRequest class];
@@ -2103,9 +2104,9 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
         // callback on main, this is generally what the client expects and maintains our previous behavior
 		dispatch_async(dispatch_get_main_queue(), ^ {
 			if (error) {
-				[self handleInitFailure:error callCallback:callCallback];
+				[self handleInitFailure:error callCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
 			} else {
-				[self handleInitSuccessAndCallCallback:callCallback];
+				[self handleInitSuccessAndCallCallback:callCallback sceneIdentifier:(NSString *)sceneIdentifier];
 			}
 		});
     };
@@ -2149,7 +2150,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-- (void)handleInitSuccessAndCallCallback:(BOOL)callCallback {
+- (void)handleInitSuccessAndCallCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
 
     self.initializationStatus = BNCInitStatusInitialized;
     NSDictionary *latestReferringParams = [self getLatestReferringParams];
@@ -2180,6 +2181,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             response.params = [self getLatestReferringParams];
             response.universalObject = [self getLatestReferringBranchUniversalObject];
             response.linkProperties = [self getLatestReferringBranchLinkProperties];
+            response.sceneIdentifier = sceneIdentifier;
             self.sceneSessionInitWithCallback(response, nil);
         }
     }
@@ -2372,7 +2374,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
     }
 }
 
-- (void)handleInitFailure:(NSError *)error callCallback:(BOOL)callCallback {
+- (void)handleInitFailure:(NSError *)error callCallback:(BOOL)callCallback sceneIdentifier:(NSString *)sceneIdentifier {
     self.initializationStatus = BNCInitStatusUninitialized;
     
     if (callCallback) {
@@ -2382,6 +2384,7 @@ static inline void BNCPerformBlockOnMainThreadSync(dispatch_block_t block) {
             response.params = [NSDictionary new];
             response.universalObject = [BranchUniversalObject new];
             response.linkProperties = [BranchLinkProperties new];
+            response.sceneIdentifier = sceneIdentifier;
             self.sceneSessionInitWithCallback(response, error);
         }
     }

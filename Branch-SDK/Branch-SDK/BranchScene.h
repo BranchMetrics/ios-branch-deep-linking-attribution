@@ -17,7 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 API_AVAILABLE(ios(13.0))
 @interface BranchScene : NSObject
 
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options
++ (BranchScene *)shared;
+
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options
              registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback;
 
 - (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity;

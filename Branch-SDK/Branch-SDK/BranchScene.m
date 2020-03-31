@@ -16,6 +16,15 @@
 
 @implementation BranchScene
 
++ (BranchScene *)shared {
+    static BranchScene *bscene;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        bscene = [BranchScene new];
+    });
+    return bscene;
+}
+
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -24,13 +33,13 @@
     return self;
 }
 
-- (void)initSessionWithLaunchOptions:(NSDictionary *)options registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback {
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback {
     [[Branch getInstance] initSceneSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
         if (callback) {
             if (initResponse) {
                 callback(initResponse.params, error, [self sceneForIdentifier:initResponse.sceneIdentifier]);
             } else {
-                callback([NSDictionary new], error, nil);
+                callback([NSDictionary new], error, [self sceneForIdentifier:initResponse.sceneIdentifier]);
             }
         }
     }];
