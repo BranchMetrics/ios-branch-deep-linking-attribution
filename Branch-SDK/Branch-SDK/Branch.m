@@ -444,11 +444,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
     }
 }
 
+- (void)enableLogging {
+    BNCLogSetDisplayLevel(BNCLogLevelDebug);
+}
+
 - (void)setDebug {
-    self.preferenceHelper.isDebug = YES;
-    if (BNCLogDisplayLevel() > BNCLogLevelDebug) {
-        BNCLogSetDisplayLevel(BNCLogLevelDebug);
-    }
+    // deprecated
 }
 
 - (void)validateSDKIntegration {
@@ -490,7 +491,7 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)suppressWarningLogs {
-    BNCLogSetDisplayLevel(BNCLogLevelError);
+    // deprecated
 }
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value {
