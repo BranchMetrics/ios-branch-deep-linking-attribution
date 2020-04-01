@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
 Use the Branch SDK (branch.io) to create and power the links that point back to your apps for all of these things and more. Branch makes it incredibly simple to create powerful deep links that can pass data across app install and open while handling all edge cases (using on desktop vs. mobile vs. already having the app installed, etc). Best of all, it's really simple to start using the links for your own app: only 2 lines of code to register the deep link router and one more line of code to create the links with custom data.
                        DESC
   s.homepage         = "https://branch.io"
-  s.license          = 'Proprietary'
+  s.license          = 'MIT'
   s.author           = { "Branch" => "support@branch.io" }
   s.source           = { git: "https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK.git", tag: s.version.to_s }
   s.platform         = :ios, '8.0'
