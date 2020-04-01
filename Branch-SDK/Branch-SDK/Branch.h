@@ -559,12 +559,18 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 ///--------------------
 
 /**
- Have Branch treat this device / session as a debug session, causing more information to be logged,
- and info to be available in the debug tab of the dashboard.
-
- @warning This should not be used in production.
+ Enable debug messages to NSLog.
  */
-- (void)setDebug;
+- (void)enableLogging;
+
+/**
+ setDebug is deprecated and all functionality has been disabled.
+ 
+ If you wish to enable logging, please invoke enableLogging.
+
+ If you wish to simulate installs, please see add a Test Device (https://help.branch.io/using-branch/docs/adding-test-devices) then reset your test device's data (https://help.branch.io/using-branch/docs/adding-test-devices#section-resetting-your-test-device-data).
+ */
+- (void)setDebug __attribute__((deprecated(("setDebug is replaced by enableLogging and test devices. https://help.branch.io/using-branch/docs/adding-test-devices"))));
 
 /**
   @brief        Use the `validateSDKIntegration` method as a debugging aid to assure that you've
@@ -707,7 +713,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)accountForFacebookSDKPreventingAppLaunch __attribute__((deprecated(("Please ensure application:didFinishLaunchingWithOptions: always returns YES/true instead of using this method. It will be removed in a future release."))));
 
-- (void)suppressWarningLogs;
+- (void)suppressWarningLogs __attribute__((deprecated(("suppressWarningLogs is deprecated and all functionality has been disabled. If you wish to turn off all logging, please invoke BNCLogSetDisplayLevel(BNCLogLevelNone)."))));
 
 /**
  For use by other Branch SDKs
