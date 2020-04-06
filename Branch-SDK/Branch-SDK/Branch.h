@@ -36,6 +36,7 @@
 #import "BranchUniversalObject.h"
 #import "BranchCrossPlatformID.h"
 #import "BranchLastAttributedTouchData.h"
+#import "BNCInitSessionResponse.h"
 #import "UIViewController+Branch.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -450,6 +451,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options automaticallyDisplayDeepLinkController:(BOOL)automaticallyDisplayController isReferrable:(BOOL)isReferrable deepLinkHandler:(nullable callbackWithParams)callback;
 
+- (void)initSceneSessionWithLaunchOptions:(NSDictionary *)options isReferrable:(BOOL)isReferrable explicitlyRequestedReferrable:(BOOL)explicitlyRequestedReferrable automaticallyDisplayController:(BOOL)automaticallyDisplayController
+                  registerDeepLinkHandler:(void (^)(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error))callback;
 /**
  Allow Branch to handle a link opening the app, returning whether it was from a Branch link or not.
 
@@ -457,6 +460,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  */
 - (BOOL)handleDeepLink:(nullable NSURL *)url;
 
+- (BOOL)handleDeepLink:(nullable NSURL *)url sceneIdentifier:(nullable NSString *)sceneIdentifier;
 
 /**
  Have Branch end the current deep link session and start a new session with the provided URL.
@@ -476,6 +480,8 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
 
 - (BOOL)continueUserActivity:(nullable NSUserActivity *)userActivity;
 
+- (BOOL)continueUserActivity:(nullable NSUserActivity *)userActivity sceneIdentifier:(nullable NSString *)sceneIdentifier;
+
 /**
  Call this method from inside your app delegate's `application:openURL:sourceApplication:annotation:`
  method so that Branch can open the passed URL. This method is for pre-iOS 9 compatibility: If you don't need
@@ -494,6 +500,11 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
             openURL:(nullable NSURL *)url
   sourceApplication:(nullable NSString *)sourceApplication
          annotation:(nullable id)annotation;
+
+- (BOOL)sceneIdentifier:(nullable NSString *)sceneIdentifier
+                openURL:(nullable NSURL *)url
+      sourceApplication:(nullable NSString *)sourceApplication
+             annotation:(nullable id)annotation;
 
 /**
  Call this method from inside your app delegate's `application:openURL:options:` method so that Branch can
@@ -1843,7 +1854,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  This is the block that is called each time a new Branch session is started. It is automatically set
  when Branch is initialized with `initSessionWithLaunchOptions:andRegisterDeepLinkHandler`.
  */
-@property (copy,   nonatomic) void(^ sessionInitWithParamsCallback) (NSDictionary * _Nullable params, NSError * _Nullable error);
+@property (copy, nonatomic) void(^ sessionInitWithParamsCallback) (NSDictionary * _Nullable params, NSError * _Nullable error) DEPRECATED_ATTRIBUTE;
 
 /**
  This is the block that is called each time a new Branch session is started. It is automatically set
@@ -1852,7 +1863,7 @@ typedef NS_ENUM(NSUInteger, BranchCreditHistoryOrder) {
  The difference with this callback from `sessionInitWithParamsCallback` is that it is called with a
  BranchUniversalObject.
  */
-@property (copy,   nonatomic) void (^ sessionInitWithBranchUniversalObjectCallback) (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error);
+@property (copy, nonatomic) void (^ sessionInitWithBranchUniversalObjectCallback) (BranchUniversalObject * _Nullable universalObject, BranchLinkProperties * _Nullable linkProperties, NSError * _Nullable error) DEPRECATED_ATTRIBUTE;
 
 // Read-only property exposed for unit testing.
 @property (strong, readonly) BNCServerInterface* serverInterface;
