@@ -451,7 +451,12 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)setDebug {
-    // deprecated
+    NSLog(@"Branch setDebug is deprecated and all functionality has been disabled. "
+          "If you wish to enable logging, please invoke enableLogging. "
+          "If you wish to simulate installs, please see add a Test Device "
+          "(https://help.branch.io/using-branch/docs/adding-test-devices) "
+          "then reset your test device's data "
+          "(https://help.branch.io/using-branch/docs/adding-test-devices#section-resetting-your-test-device-data).");
 }
 
 - (void)validateSDKIntegration {
@@ -493,7 +498,8 @@ static BOOL bnc_enableFingerprintIDInCrashlyticsReports = YES;
 }
 
 - (void)suppressWarningLogs {
-    // deprecated
+    NSLog(@"suppressWarningLogs is deprecated and all functionality has been disabled. "
+          "If you wish to turn off all logging, please invoke BNCLogSetDisplayLevel(BNCLogLevelNone).");
 }
 
 - (void)setRequestMetadataKey:(NSString *)key value:(NSObject *)value {
