@@ -911,7 +911,7 @@ NSURL* _Null_unspecified BNCCreateDirectoryForBranchURLWithSearchPath_Unthreaded
         if (success) {
             return branchURL;
         } else  {
-            NSLog(@"[branch.io] Info: CreateBranchURL failed: %@ URL: %@.", error, branchURL);
+            BNCLogWarning(@"CreateBranchURL failed: %@ URL: %@.", error, branchURL);
         }
     }
     return nil;
@@ -943,7 +943,7 @@ NSURL* _Nonnull BNCURLForBranchDirectory_Unthreaded() {
             attributes:nil
             error:&error];
     if (!success) {
-        NSLog(@"[io.branch] Error: Worst case CreateBranchURL error was: %@ URL: %@.", error, branchURL);
+        BNCLogError(@"Worst case CreateBranchURL error was: %@ URL: %@.", error, branchURL);
     }
     return branchURL;
 }
