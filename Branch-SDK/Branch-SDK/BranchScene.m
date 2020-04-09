@@ -12,7 +12,7 @@
 
 @implementation BranchScene
 
-+ (BranchScene *)shared {
++ (BranchScene *)shared NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
     static BranchScene *bscene;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -21,7 +21,7 @@
     return bscene;
 }
 
-- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback {
+- (void)initSessionWithLaunchOptions:(nullable NSDictionary *)options registerDeepLinkHandler:(void (^ _Nonnull)(NSDictionary * _Nullable params, NSError * _Nullable error, UIScene * _Nullable scene))callback NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
     [[Branch getInstance] initSceneSessionWithLaunchOptions:options isReferrable:YES explicitlyRequestedReferrable:NO automaticallyDisplayController:NO registerDeepLinkHandler:^(BNCInitSessionResponse * _Nullable initResponse, NSError * _Nullable error) {
         if (callback) {
             if (initResponse) {
@@ -33,12 +33,12 @@
     }];
 }
 
-- (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity {
+- (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
     NSString *identifier = scene.session.persistentIdentifier;
     [[Branch getInstance] continueUserActivity:userActivity sceneIdentifier:identifier];
 }
 
-- (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
+- (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
     if (URLContexts.count != 1) {
         BNCLogWarning(@"Branch only supports a single URLContext");
     }
@@ -50,7 +50,7 @@
     }
 }
 
-- (nullable UIScene *)sceneForIdentifier:(NSString *)identifier {
+- (nullable UIScene *)sceneForIdentifier:(NSString *)identifier NS_EXTENSION_UNAVAILABLE("BranchScene does not support Extensions") {
     UIScene *scene = nil;
     if (identifier) {
         NSArray<UIScene *> *scenes = [[[UIApplication sharedApplication] connectedScenes] allObjects];
