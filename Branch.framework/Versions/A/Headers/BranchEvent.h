@@ -90,15 +90,21 @@ typedef NS_ENUM(NSInteger, BranchEventAdType) {
 
 /**
  Logs the event on the Branch server.
- 
  This version will callback on success/failure.
+  
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  */
 - (void)logEventWithCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completion;
 
 /**
  Logs the event on the Branch server.
- 
  This version automatically caches and retries as necessary.
+ 
+ This method should only be invoked after initSession.
+ If it is invoked before, then we will silently initialize the SDK before the callback has been set, in order to carry out this method's required task.
+ As a result, you may experience issues where the initSession callback does not fire. Again, the solution to this issue is to only invoke this method after you have invoked initSession.
  */
 - (void)logEvent;
 

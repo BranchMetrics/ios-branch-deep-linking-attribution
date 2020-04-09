@@ -1,5 +1,11 @@
 Branch iOS SDK Change Log
 
+- v0.33.0
+* _*Master Release*_ - April 9, 2020
+  * SDK-938, SDK-937, SDK-934 Logging API updates
+  * SDK-870 Deeplink handler with UIScene
+  * Xcode 11+ is now required.  Apple will no longer accept submissions from older versions.
+
 - v0.32.0
 * _*Master Release*_ - March 26, 2020
   * SDK-842 - disableAdNetworkCallouts
