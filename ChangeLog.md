@@ -1,5 +1,9 @@
 Branch iOS SDK Change Log
 
+- v0.33.1
+* _*Master Release*_ - April 16, 2020
+  * SDK-957 Carthage missing BranchScene.h
+
 - v0.33.0
 * _*Master Release*_ - April 9, 2020
   * SDK-938, SDK-937, SDK-934 Logging API updates
