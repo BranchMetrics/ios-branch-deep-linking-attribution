@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4D1B997F1FA135C3008AEFC8 /* Branch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B997E1FA135B2008AEFC8 /* Branch.framework */; };
-		4D1B99801FA135C3008AEFC8 /* Branch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B997E1FA135B2008AEFC8 /* Branch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4D3A944B1E64C777007127B3 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D3A944A1E64C777007127B3 /* iAd.framework */; };
 		4D510D771F0D61BE003D720B /* Branch.m in Sources */ = {isa = PBXBuildFile; fileRef = 63AAF0F01CF7594400CA98BD /* Branch.m */; };
 		4DF867F41E6DDC4E00BE4C5F /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DF867F31E6DDC4E00BE4C5F /* AdSupport.framework */; };
@@ -80,23 +78,6 @@
 		866B64ACE405DBB9AB9EB483 /* libPods-TestBed-Swift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8225BB463EBCEBED0D965277 /* libPods-TestBed-Swift.a */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		4D1B997D1FA135B2008AEFC8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B99791FA135B2008AEFC8 /* BranchSDK.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E298D0521C73D1B800589D22;
-			remoteInfo = Branch;
-		};
-		4D1B99811FA135C3008AEFC8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4D1B99791FA135B2008AEFC8 /* BranchSDK.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = E298D0511C73D1B800589D22;
-			remoteInfo = Branch;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		4D1B99831FA135C3008AEFC8 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -104,7 +85,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4D1B99801FA135C3008AEFC8 /* Branch.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -112,7 +92,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4D1B99791FA135B2008AEFC8 /* BranchSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BranchSDK.xcodeproj; path = "../carthage-files/BranchSDK.xcodeproj"; sourceTree = "<group>"; };
 		4D3A944A1E64C777007127B3 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		4DF867F31E6DDC4E00BE4C5F /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		5FB6D3E023219CA6006C5094 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -201,7 +180,6 @@
 				5FB6D3E123219CA6006C5094 /* WebKit.framework in Frameworks */,
 				6339D5D21F7451B300C6C562 /* libsqlite3.0.tbd in Frameworks */,
 				6339D5D01F7451A200C6C562 /* SystemConfiguration.framework in Frameworks */,
-				4D1B997F1FA135C3008AEFC8 /* Branch.framework in Frameworks */,
 				4DF867F41E6DDC4E00BE4C5F /* AdSupport.framework in Frameworks */,
 				4D3A944B1E64C777007127B3 /* iAd.framework in Frameworks */,
 				63ECFAFC1D8F9624007F50AA /* SafariServices.framework in Frameworks */,
@@ -225,14 +203,6 @@
 				8225BB463EBCEBED0D965277 /* libPods-TestBed-Swift.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		4D1B997A1FA135B2008AEFC8 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				4D1B997E1FA135B2008AEFC8 /* Branch.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		6306FFF21D6BEFB20031D2E3 /* Custom Events */ = {
@@ -359,7 +329,6 @@
 		63AAF0B51CF758AF00CA98BD = {
 			isa = PBXGroup;
 			children = (
-				4D1B99791FA135B2008AEFC8 /* BranchSDK.xcodeproj */,
 				6339D5C71F74506D00C6C562 /* AdobeMobileLibrary */,
 				63AAF0C01CF758AF00CA98BD /* TestBed-Swift */,
 				63AAF0BF1CF758AF00CA98BD /* Products */,
@@ -533,7 +502,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				4D1B99821FA135C3008AEFC8 /* PBXTargetDependency */,
 			);
 			name = "TestBed-Swift";
 			productName = "TestBed-Swift";
@@ -574,28 +542,12 @@
 			mainGroup = 63AAF0B51CF758AF00CA98BD;
 			productRefGroup = 63AAF0BF1CF758AF00CA98BD /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 4D1B997A1FA135B2008AEFC8 /* Products */;
-					ProjectRef = 4D1B99791FA135B2008AEFC8 /* BranchSDK.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				63AAF0BD1CF758AF00CA98BD /* TestBed-Swift */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		4D1B997E1FA135B2008AEFC8 /* Branch.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Branch.framework;
-			remoteRef = 4D1B997D1FA135B2008AEFC8 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		63AAF0BC1CF758AF00CA98BD /* Resources */ = {
@@ -1024,14 +976,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		4D1B99821FA135C3008AEFC8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Branch;
-			targetProxy = 4D1B99811FA135C3008AEFC8 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		63AAF0CA1CF758AF00CA98BD /* LaunchScreen.storyboard */ = {
