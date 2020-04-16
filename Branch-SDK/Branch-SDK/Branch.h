@@ -38,6 +38,7 @@
 #import "BranchLastAttributedTouchData.h"
 #import "BNCInitSessionResponse.h"
 #import "UIViewController+Branch.h"
+#import "BranchScene.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
