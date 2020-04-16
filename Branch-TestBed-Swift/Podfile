@@ -1,6 +1,7 @@
 platform :ios, '10.0'
 
 target "TestBed-Swift" do
+  pod 'Branch', :path => '..'
   pod 'Adjust'
   pod 'Mixpanel'
   pod 'Amplitude-iOS'
