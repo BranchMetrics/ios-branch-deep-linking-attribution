@@ -227,6 +227,7 @@ CFStringRef SecCopyErrorMessageString(OSStatus status, void *reserved) {
         
         NSDictionary* dictionary = @{
             (__bridge id)kSecClass:                 (__bridge id)kSecClassGenericPassword,
+            (__bridge id)kSecAttrService:           @"BranchKeychainService",
             (__bridge id)kSecReturnAttributes:      (__bridge id)kCFBooleanTrue,
             (__bridge id)kSecAttrSynchronizable:    (__bridge id)kSecAttrSynchronizableAny,
             (__bridge id)kSecMatchLimit:            (__bridge id)kSecMatchLimitOne
