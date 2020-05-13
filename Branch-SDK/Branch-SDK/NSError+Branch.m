@@ -42,7 +42,7 @@ __attribute__((constructor)) void BNCForceNSErrorCategoryToLoad() {
         [messages setObject:@"Can't redeem zero credits." forKey:@(BNCRedeemZeroCreditsError)];
         [messages setObject:@"The Spotlight identifier is required to remove indexing from spotlight." forKey:@(BNCSpotlightIdentifierError)];
         [messages setObject:@"Spotlight cannot remove publicly indexed content." forKey:@(BNCSpotlightPublicIndexError)];
-        [messages setObject:@"The Branch user session has not been initialized." forKey:@(BNCTrackingDisabledError)];
+        [messages setObject:@"User tracking is disabled and the request is not on the whitelist" forKey:@(BNCTrackingDisabledError)];
     });
     
     NSString *errorMessage = [messages objectForKey:@(code)];
